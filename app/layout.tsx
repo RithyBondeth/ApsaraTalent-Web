@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
+import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 
-const roboto = Roboto({
+const ubuntu = Open_Sans({
   subsets: ['latin'],
-  weight: ["100", "300", "400", "500", "700", "900"],
+  weight: ['300', '400', '500', '600', '700', '800'],
   display: 'swap',
 });
 
@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" dir="ltr">
       <body
-        className={`${roboto.className} antialiased`}
+        className={`${ubuntu.className} antialiased`}
       >
         <ThemeProvider 
            attribute="class"
