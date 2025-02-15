@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import { Open_Sans } from "next/font/google";
+import { Ubuntu } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 
-const ubuntu = Open_Sans({
+const ubuntu = Ubuntu({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800'],
+  weight: ['300', '400', '500', '700'],
   display: 'swap',
 });
 
@@ -24,14 +23,14 @@ export default function RootLayout({
       <body
         className={`${ubuntu.className} antialiased`}
       >
-        <ThemeProvider 
+        {/* <ThemeProvider 
            attribute="class"
            defaultTheme="system"
            enableSystem
            disableTransitionOnChange
-        >
+        > */}
         {children}
-        </ThemeProvider>
+        {/* </ThemeProvider> */}
       </body>
     </html>
   );
