@@ -1,9 +1,12 @@
 "use client"
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import SocialButton from "@/components/utils/buttons/social-button";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2"
 import { TypographyMuted } from "@/components/utils/typography/typography-muted"
+import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { googleIcon, facebookIcon, linkedinIcon, githubIcon } from '@/constants/asset.constant';
 import { LucideEye, LucideEyeOff, LucideLock, LucideMail } from "lucide-react";
 import { useState } from "react";
@@ -40,25 +43,39 @@ function LoginPage() {
             </div>
             {/* End Divider Section */}
             {/* Login Form Section Section */}
-            <div className="w-full flex flex-col items-start gap-3">
-              <Input
-                prefix={<LucideMail/>}
-                placeholder="Email"
-                type="email"
-                name="email"
-                required
-              />
-              <Input
-                prefix={<LucideLock/>}
-                suffix={passwordVisibility 
-                  ? <LucideEyeOff onClick={() => setPasswordVisibility(false)}/> 
-                  : <LucideEye onClick={() => setPasswordVisibility(true)}/>}
-                placeholder="Password"
-                type={passwordVisibility ? "text" : "password"}
-                name="password"
-                required
-              />
-            </div>
+            <form  className="w-full flex flex-col items-stretch gap-5" method="POST">
+              <div className="flex flex-col gap-5">
+                <Input
+                  prefix={<LucideMail/>}
+                  placeholder="Email"
+                  type="email"
+                  name="email"
+                  required
+                />
+                <Input
+                  prefix={<LucideLock/>}
+                  suffix={passwordVisibility 
+                    ? <LucideEyeOff onClick={() => setPasswordVisibility(false)}/> 
+                    : <LucideEye onClick={() => setPasswordVisibility(true)}/>}
+                  placeholder="Password"
+                  type={passwordVisibility ? "text" : "password"}
+                  name="password"
+                  required
+                />
+              </div>
+              <div className="flex justify-between items-center mb-5">
+                  <div className="flex items-center gap-1">
+                      <Checkbox/>
+                      <TypographyMuted className="text-xs">Remember me</TypographyMuted>
+                  </div>
+                  <TypographySmall className="text-xs cursor-pointer hover:text-muted-foreground">Forgot Passowrd?</TypographySmall>
+              </div>
+              <Button type="submit">Login</Button>
+              <div className="flex items-center gap-2 mx-auto">
+                  <TypographyMuted>Do not have account?</TypographyMuted>
+                  <TypographySmall className="text-xs cursor-pointer hover:text-muted-foreground">Create account</TypographySmall>
+              </div>
+            </form>
             {/* End Login Form Section Section */}
          </div>
       </div>
