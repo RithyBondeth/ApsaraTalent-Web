@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import LogoComponent from "@/components/utils/logo";
 
 export default function SignupPage() {
-  const [selectedRole, setSelectedRole] = useState<'freelancer' | 'employer'>('freelancer');
+  const [selectedRole, setSelectedRole] = useState<'freelancer' | 'employer' | null>(null);
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [confirmPassVisibility, setConfirmPassVisibility] = useState<boolean>(false);
   const router = useRouter();
@@ -33,36 +33,36 @@ export default function SignupPage() {
         </div>
         <div className="flex items-center gap-3">
           <Input
-            preffix={<LucideUser/>}
+            prefix={<LucideUser/>}
             type="text"
             placeholder="Username"
             name="username"
           />
-          <Select onValueChange={(value: 'freelancer' | 'employer') => setSelectedRole(value)} value={selectedRole}>
+          <Select onValueChange={(value: 'freelancer' | 'employer') => setSelectedRole(value)} value={selectedRole || ""}>
             <SelectTrigger className="h-12 text-muted-foreground">
               <SelectValue placeholder="Who are you looking for?" />
             </SelectTrigger>    
             <SelectContent>
-              <SelectItem value="freelancer">Freelancer or Employee</SelectItem>
-              <SelectItem value="employer">Employer or Company</SelectItem>
+              <SelectItem value="freelancer">Freelancer (Employee)</SelectItem>
+              <SelectItem value="employer">Employer (Company)</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div className="flex flex-col items-stretch gap-5">
           <Input 
-            preffix={<LucidePhone/>}
+            prefix={<LucidePhone/>}
             type="number"
             placeholder="Mobile"
             name="mobile"
           />   
           <Input 
-            preffix={<LucideMail/>}
+            prefix={<LucideMail/>}
             type="email"
             placeholder="Email"
             name="email"
           />   
           <Input 
-            preffix={<LucideLockKeyhole/>}
+            prefix={<LucideLockKeyhole/>}
             suffix={passwordVisibility 
               ? <LucideEyeClosed onClick={() => setPasswordVisibility(false)}/> 
               : <LucideEye onClick={() => setPasswordVisibility(true)}/>}
@@ -71,7 +71,7 @@ export default function SignupPage() {
             name="password"
           />                
           <Input 
-            preffix={<LucideLockKeyhole/>}
+            prefix={<LucideLockKeyhole/>}
             suffix={confirmPassVisibility 
               ? <LucideEyeClosed onClick={() => setConfirmPassVisibility(false)}/> 
               : <LucideEye onClick={() => setConfirmPassVisibility(true)}/>}

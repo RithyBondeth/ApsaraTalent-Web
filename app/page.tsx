@@ -3,7 +3,7 @@ import Image from "next/image";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { Button } from "@/components/ui/button";
-import { LucideUserPlus } from "lucide-react";
+import { LucideBriefcaseBusiness } from "lucide-react";
 import Link from "next/link";
 import landingSvg from "@/assets/svg/landing.svg";
 
@@ -22,7 +22,7 @@ export default function IndexPage() {
               </TypographyMuted>
             </div>
             <Link href="/signup">
-              <Button preffix={<LucideUserPlus/>}>Create a new account</Button>
+              <Button preffix={<LucideBriefcaseBusiness/>}>Create a new account</Button>
             </Link>
         </div>
       </div>
