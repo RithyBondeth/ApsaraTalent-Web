@@ -1,7 +1,8 @@
-"use client"
-import { ThemeProvider as NextThemeProvider } from "next-themes"
-import { ComponentProps } from "react"
+import { ThemeProviderClient } from "./theme-provider-client";
+import { cookies } from "next/headers";
 
-export function ThemeProvider({ children, ...props }: ComponentProps<typeof NextThemeProvider>) {
-    return <NextThemeProvider {...props}>{children}</NextThemeProvider>
+export async function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const theme = (await cookies()).get("theme")?.value || "system";
+
+  return <ThemeProviderClient defaultTheme={theme}>{children}</ThemeProviderClient>;
 }

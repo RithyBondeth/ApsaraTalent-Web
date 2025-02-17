@@ -22,7 +22,7 @@ export default function IndexPage() {
               </TypographyMuted>
             </div>
             <Link href="/signup">
-              <Button preffix={<LucideBriefcaseBusiness/>}>Create a new account</Button>
+              <Button prefixIcon={<LucideBriefcaseBusiness/>}>Create a new account</Button>
             </Link>
         </div>
       </div>

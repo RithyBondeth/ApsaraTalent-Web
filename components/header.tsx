@@ -1,11 +1,26 @@
+"use client"
+
 import { Button } from "./ui/button";
 import LogoComponent from "./utils/logo";
 import { Label } from "./ui/label";
 import { Switch } from "./ui/switch";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { LucideMoon, LucideSun } from "lucide-react";
+import { useThemeStore } from "@/stores/theme-store";
+import { useTheme } from "next-themes";
+import { useEffect } from "react";
+import { setCookie } from "cookies-next";
 
 export default function Header({ className }: { className?: string }) {
+    const { theme, toggleTheme } = useThemeStore();
+    const { resolvedTheme, setTheme } = useTheme();
+
+  useEffect(() => {
+    setTheme(theme);
+    setCookie("theme", theme); // Save theme for SSR
+  }, [theme, setTheme]);
+
     return (
         <nav className={cn("flex justify-between items-center p-3", className)}>
             {/* Left Menu Section */}
@@ -24,6 +39,9 @@ export default function Header({ className }: { className?: string }) {
                     <Switch/>
                     <Label>KH</Label>
                 </div>
+                <Button variant="outline" onClick={toggleTheme}>
+                    {resolvedTheme === 'dark' ? <LucideSun/> : <LucideMoon/> }
+                </Button>
                 <Link href="/login">
                     <Button>Login</Button>
                 </Link>

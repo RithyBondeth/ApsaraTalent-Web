@@ -33,14 +33,14 @@ const buttonVariants = cva(
   }
 )
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>,VariantProps<typeof buttonVariants> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
   asChild?: boolean,
-  preffix?: React.ReactNode,
+  prefixIcon?: React.ReactNode,
   suffix?: React.ReactNode
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, preffix, suffix, children, asChild = false, ...props }, ref) => {
+  ({ className, variant, size, prefixIcon, suffix, children, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
     return (
       <Comp
@@ -48,7 +48,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         {...props}
       >
-        {preffix && <span className="mr-2">{preffix}</span>}
+        {prefixIcon && <span className="mr-2">{prefixIcon}</span>}  
         {children}
         {suffix && <span className="ml-2">{suffix}</span>}
       </Comp>

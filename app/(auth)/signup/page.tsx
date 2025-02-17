@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import LogoComponent from "@/components/utils/logo";
+import { useThemeStore } from "@/stores/theme-store";
 
 export default function SignupPage() {
   const [selectedRole, setSelectedRole] = useState<'freelancer' | 'employer' | null>(null);
@@ -16,11 +17,13 @@ export default function SignupPage() {
   const [confirmPassVisibility, setConfirmPassVisibility] = useState<boolean>(false);
   const router = useRouter();
 
+  const { theme } = useThemeStore();
+
   return (
     <div className="size-[70%] flex flex-col items-start gap-3">
       {/* Title Section */}
       <div className="mb-5">
-        <LogoComponent/>
+        <LogoComponent isBlackLogo={theme === 'light' ? false : true}/>
         <TypographyH2>Welcome to Apsara Talent</TypographyH2>
         <TypographyMuted className="text-md">Connect with professional community around the world.</TypographyMuted>
       </div>
@@ -28,8 +31,8 @@ export default function SignupPage() {
       {/* Form Section */}
       <div className="w-full flex flex-col items-stretch gap-5">
         <div className="flex items-center gap-3">
-          <Input placeholder="Firstname" type="text" name="firstname"/>
-          <Input placeholder="Lastname" type="text" name="lastname"/>
+          <Input placeholder="Firstname" type="text" name="first-name"/>
+          <Input placeholder="Lastname" type="text" name="last-name"/>
         </div>
         <div className="flex items-center gap-3">
           <Input
@@ -84,7 +87,7 @@ export default function SignupPage() {
             <Button 
               className="flex-1" 
               variant="outline" 
-              preffix={<LucideArrowLeft/>} 
+              prefixIcon={<LucideArrowLeft/>} 
               onClick={() => router.push('/login')}
             >Back
             </Button>

@@ -25,7 +25,7 @@ export default function ResetPasswordPage() {
                     {/* Form Section */}
                     <form action="" className="flex flex-col gap-3">
                         <Input 
-                            preffix={<LucideLockKeyhole/>}
+                            prefix={<LucideLockKeyhole/>}
                             suffix={passwordVisibility 
                             ? <LucideEyeClosed onClick={() => setPasswordVisibility(false)}/> 
                             : <LucideEye onClick={() => setPasswordVisibility(true)}/>}
@@ -34,7 +34,7 @@ export default function ResetPasswordPage() {
                             name="password"
                         />                
                         <Input 
-                            preffix={<LucideLockKeyhole/>}
+                            prefix={<LucideLockKeyhole/>}
                             suffix={confirmPassVisibility 
                             ? <LucideEyeClosed onClick={() => setConfirmPassVisibility(false)}/> 
                             : <LucideEye onClick={() => setConfirmPassVisibility(true)}/>}

@@ -34,7 +34,7 @@ export default function PhoneOTPPage() {
                                 <InputOTPSlot index={5} className="input-otp-slot"/>
                             </InputOTPGroup>
                         </InputOTP>
-                        <TypographySmall className="text-muted-foreground">Enter your one time passord code here.</TypographySmall>
+                        <TypographySmall className="text-muted-foreground">Enter your one time password code here.</TypographySmall>
                     </div>
                     <Button type="submit">Continue</Button>
                 </form>

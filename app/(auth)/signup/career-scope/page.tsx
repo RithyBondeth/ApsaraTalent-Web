@@ -58,7 +58,7 @@ export default function CareerScopePage() {
     return (
         <div className="size-[70%] flex flex-col items-stretch gap-8">
            {/* Navigate Button */}
-           <Button preffix={<LucideArrowLeft/>} className="absolute top-5 left-5" onClick={() => router.push('/signup')}>Back</Button>
+           <Button prefixIcon={<LucideArrowLeft/>} className="absolute top-5 left-5" onClick={() => router.push('/signup')}>Back</Button>
           
            {/* Title Section */}
             <div> 
@@ -67,7 +67,7 @@ export default function CareerScopePage() {
             </div>
 
             {/* Search Section */}
-            <Button variant="outline" preffix={<LucideSearch/>} onClick={() => setOpenSearchDialog(true)}>Search your career</Button>
+            <Button variant="outline" prefixIcon={<LucideSearch/>} onClick={() => setOpenSearchDialog(true)}>Search your career</Button>
             <CommandDialog open={openSearchDialog} onOpenChange={setOpenSearchDialog}>
                 
                 <DialogTitle className="sr-only">Search Careers</DialogTitle>

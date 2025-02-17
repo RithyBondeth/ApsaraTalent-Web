@@ -25,7 +25,7 @@ export default function ForgotPasswordPage() {
                     {/* Title Section */}
                     <div className="mb-5">
                         <TypographyH2>Forgot your Password?</TypographyH2>
-                        <TypographyMuted className="text-md">Enter your Email or Mobile. We will help you reset your passord.</TypographyMuted>
+                        <TypographyMuted className="text-md">Enter your Email or Mobile. We will help you reset your password.</TypographyMuted>
                     </div>
 
                     {/* Form Section */}
@@ -35,10 +35,10 @@ export default function ForgotPasswordPage() {
                             placeholder="Email or Mobile"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
-                            preffix={isEmailInput ? <LucideMail/> : isNumberInput ? <LucidePhone/> : null}
+                            prefix={isEmailInput ? <LucideMail/> : isNumberInput ? <LucidePhone/> : null}
                         />
                         <div className="flex items-center justify-stretch gap-3 [&>button]:w-1/2">
-                            <Button preffix={<LucideArrowLeft/>} type="button" onClick={() => router.push('/login')}>Back</Button>
+                            <Button prefixIcon={<LucideArrowLeft/>} type="button" onClick={() => router.push('/login')}>Back</Button>
                             <Button type="submit">Continue</Button>
                         </div>
                     </form>

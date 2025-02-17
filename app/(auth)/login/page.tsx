@@ -10,15 +10,28 @@ import { TypographySmall } from "@/components/utils/typography/typography-small"
 import { googleIcon, facebookIcon, linkedinIcon, githubIcon } from '@/constants/asset.constant';
 import { LucideEye, LucideEyeClosed, LucideLockKeyhole, LucideMail, LucidePhone } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import LogoComponent from "@/components/utils/logo";
 import loginWhiteSvg from "@/assets/svg/login-white.svg";
+import loginBlackSvg from "@/assets/svg/login-black.svg";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 
 function LoginPage() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const router = useRouter();
+
+  const { resolvedTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+  
+    useEffect(() => {
+      setMounted(true);
+    }, []);
+  
+    // Determine which image to display (avoid SSR issues)
+    const currentTheme = mounted ? resolvedTheme : "light";
+    const loginImage = currentTheme === "dark" ? loginWhiteSvg : loginBlackSvg;
 
   return (
     <div className="h-screen w-screen flex justify-between items-stretch">
@@ -41,7 +54,7 @@ function LoginPage() {
                 <SocialButton image={linkedinIcon} label="LinkedIn" variant="outline" className="w-1/2"/>
                 <SocialButton image={githubIcon} label="Github" variant="outline" className="w-1/2"/>
               </div>
-              <Button variant="outline" preffix={<LucidePhone/>} onClick={() => router.push('login/phone-number')}>Phone Number</Button>
+              <Button variant="outline" prefixIcon={<LucidePhone/>} onClick={() => router.push('login/phone-number')}>Phone Number</Button>
             </div>
             {/* End Social Button Login Section */}
             {/* Divider Section */}
@@ -55,14 +68,14 @@ function LoginPage() {
             <form  className="w-full flex flex-col items-stretch gap-5" method="POST">
               <div className="flex flex-col gap-5">
                 <Input
-                  preffix={<LucideMail/>}
+                  prefix={<LucideMail/>}
                   placeholder="Email"
                   type="email"
                   name="email"
                   required
                 />
                 <Input
-                  preffix={<LucideLockKeyhole/>}
+                  prefix={<LucideLockKeyhole/>}
                   suffix={passwordVisibility 
                     ? <LucideEyeClosed onClick={() => setPasswordVisibility(false)}/> 
                     : <LucideEye onClick={() => setPasswordVisibility(true)}/>}
@@ -93,7 +106,7 @@ function LoginPage() {
          </div>
       </div>
       <div className="w-1/2 flex justify-center items-center bg-primary">
-        <Image src={loginWhiteSvg} alt="login" height={undefined} width={600}/>
+        <Image src={loginImage} alt="login" height={undefined} width={600}/>
       </div>
     </div>
   )

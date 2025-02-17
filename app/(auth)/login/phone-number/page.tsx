@@ -27,14 +27,14 @@ export default function PhoneNumberPage() {
                 {/* Form Section */}
                 <form action="" className="flex flex-col items-stretch gap-3">
                     <Input
-                        preffix={<LucidePhone/>}
+                        prefix={<LucidePhone/>}
                         type="number"  
                         placeholder="Phone Number"
                         name="phone-number"
                         required
                     />
                    <Input
-                        preffix={<LucideLockKeyhole/>}
+                        prefix={<LucideLockKeyhole/>}
                         suffix={passwordVisibility 
                             ? <LucideEyeClosed onClick={() => setPasswordVisibility(false)}/> 
                             : <LucideEye onClick={() => setPasswordVisibility(true)}/>}

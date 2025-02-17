@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Ubuntu } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/utils/themes/theme-provider";
 
 const ubuntu = Ubuntu({
   subsets: ['latin'],
@@ -19,18 +20,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" dir="ltr">
-      <body
-        className={`${ubuntu.className} antialiased`}
-      >
-        {/* <ThemeProvider 
-           attribute="class"
-           defaultTheme="system"
-           enableSystem
-           disableTransitionOnChange
-        > */}
+    <html lang="en" dir="ltr" suppressHydrationWarning>
+      <body className={`${ubuntu.className} antialiased`}>
+        <ThemeProvider>
         {children}
-        {/* </ThemeProvider> */}
+        </ThemeProvider>
       </body>
     </html>
   );
