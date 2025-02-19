@@ -6,13 +6,13 @@ import Profile from "./profile";
 export default function Sidebar() {
     return (
         <div className="w-[20%] absolute top-0 left-0 bottom-0 flex flex-col items-start justify-between p-5 border border-r-muted">
-            <div>
+            <div className="w-full">
                 <LogoComponent/>
                 <div className="flex flex-col gap-1 mt-8">
                     <SidebarItem
                         icon={<LucideHandshake/>}
-                        label="Home"
-                        link="/home"
+                        label="Feed"
+                        link="/feed"
                     />
                     <SidebarItem
                         icon={<LucideSearchCheck/>}
