@@ -1,4 +1,4 @@
-import { LucideBellRing, LucideContactRound, LucideMenu, LucideMessageCircleHeart, LucideSearchCheck } from "lucide-react";
+import { LucideBellRing, LucideHandshake, LucideMenu, LucideMessageCircleMore, LucideSearchCheck } from "lucide-react";
 import LogoComponent from "../utils/logo";
 import SidebarItem from "./sidebar-item";
 import Profile from "./profile";
@@ -10,7 +10,7 @@ export default function Sidebar() {
                 <LogoComponent/>
                 <div className="flex flex-col gap-1 mt-8">
                     <SidebarItem
-                        icon={<LucideContactRound/>}
+                        icon={<LucideHandshake/>}
                         label="Home"
                         link="/home"
                     />
@@ -20,7 +20,7 @@ export default function Sidebar() {
                         link="/search"
                     />
                     <SidebarItem
-                        icon={<LucideMessageCircleHeart/>}
+                        icon={<LucideMessageCircleMore/>}
                         label="Message"
                         link="/message"
                     />

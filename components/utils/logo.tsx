@@ -6,9 +6,10 @@ import WhiteLogo from "@/assets/svg/logo-white.svg";
 import { useTheme } from "next-themes";
 import { ILogoProps } from "@/utils/interfaces/logo.interface";
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 export default function LogoComponent(props: ILogoProps) {
-  const { height = 80, width = 160 } = props; // Removed `isBlackLogo` from destructuring
+  const { height = 80, width = 160, className } = props; // Removed `isBlackLogo` from destructuring
   const { resolvedTheme } = useTheme(); // Get system-aware theme resolution
   const [mounted, setMounted] = useState(false);
 
@@ -20,5 +21,5 @@ export default function LogoComponent(props: ILogoProps) {
   const currentTheme = mounted ? resolvedTheme : "light";
   const isBlackLogo = currentTheme === "light"; // Dynamically set logo color
 
-  return <Image src={isBlackLogo ? BlackLogo : WhiteLogo} alt="logo" height={height} width={width} />;
+  return <Image src={isBlackLogo ? BlackLogo : WhiteLogo} alt="logo" height={height} width={width} className={cn(className)} />;
 }

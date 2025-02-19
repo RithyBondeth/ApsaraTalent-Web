@@ -22,10 +22,10 @@ export default function Header({ className }: { className?: string }) {
   }, [theme, setTheme]);
 
     return (
-        <nav className={cn("flex justify-between items-center p-3", className)}>
+        <nav className={cn("flex justify-between items-center py-3 px-6", className)}>
             {/* Left Menu Section */}
-            <div className="flex items-center gap-5">
-                <LogoComponent/>
+            <div className="flex items-center">
+                <LogoComponent className="mr-5"/>
                 <Button variant="ghost">Products</Button>
                 <Button variant="ghost">Learn</Button>
                 <Button variant="ghost">Safety</Button>
