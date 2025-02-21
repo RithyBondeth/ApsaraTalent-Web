@@ -1,16 +1,17 @@
-import { LucideBellRing, LucideHandshake, LucideMenu, LucideMessageCircleMore, LucideSearchCheck } from "lucide-react";
+import { LucideBellRing, LucideHandshake, LucideHome, LucideLogOut, LucideMessageCircleMore, LucideSearchCheck } from "lucide-react";
 import LogoComponent from "../utils/logo";
 import SidebarItem from "./sidebar-item";
 import Profile from "./profile";
+import { cn } from "@/lib/utils";
 
-export default function Sidebar() {
+export default function Sidebar({className}: {className?: string}) {
     return (
-        <div className="w-[20%] absolute top-0 left-0 bottom-0 flex flex-col items-start justify-between p-5 border border-r-muted">
+        <div className={cn("sticky top-5 flex flex-col items-start justify-between p-5 border border-r-muted", className)}>
             <div className="w-full">
                 <LogoComponent/>
-                <div className="flex flex-col gap-1 mt-8">
+                <div className="flex flex-col gap-3 mt-8">
                     <SidebarItem
-                        icon={<LucideHandshake/>}
+                        icon={<LucideHome/>}
                         label="Feed"
                         link="/feed"
                     />
@@ -18,6 +19,11 @@ export default function Sidebar() {
                         icon={<LucideSearchCheck/>}
                         label="Search"
                         link="/search"
+                    />
+                     <SidebarItem
+                        icon={<LucideHandshake/>}
+                        label="Matching"
+                        link="/matching"
                     />
                     <SidebarItem
                         icon={<LucideMessageCircleMore/>}
@@ -32,11 +38,11 @@ export default function Sidebar() {
                     <Profile/>
                 </div>
             </div>
-            <div>
+            <div className="w-full">
                 <SidebarItem
-                    icon={<LucideMenu/>}
-                    label="More"
-                    link="/settings"
+                    icon={<LucideLogOut/>}
+                    label="Logout"
+                    link="/logout"
                 />
             </div>
         </div>
