@@ -1,8 +1,9 @@
 import { LucideBellRing, LucideHandshake, LucideHome, LucideLogOut, LucideMessageCircleMore, LucideSearchCheck } from "lucide-react";
-import LogoComponent from "../utils/logo";
-import SidebarItem from "./sidebar-item";
-import Profile from "./profile";
+import LogoComponent from "../../utils/logo";
+import MenuItem from "./menu-item";
 import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { TypographyP } from "@/components/utils/typography/typography-p";
 
 export default function Sidebar({className}: {className?: string}) {
     return (
@@ -10,36 +11,41 @@ export default function Sidebar({className}: {className?: string}) {
             <div className="w-full">
                 <LogoComponent/>
                 <div className="flex flex-col gap-3 mt-8">
-                    <SidebarItem
+                    <MenuItem
                         icon={<LucideHome/>}
                         label="Feed"
                         link="/feed"
                     />
-                    <SidebarItem
+                    <MenuItem
                         icon={<LucideSearchCheck/>}
                         label="Search"
                         link="/search"
                     />
-                     <SidebarItem
+                     <MenuItem
                         icon={<LucideHandshake/>}
                         label="Matching"
                         link="/matching"
                     />
-                    <SidebarItem
+                    <MenuItem
                         icon={<LucideMessageCircleMore/>}
                         label="Message"
                         link="/message"
                     />
-                    <SidebarItem
+                    <MenuItem
                         icon={<LucideBellRing/>}
                         label="Notification"
                         link="/notification"
                     />
-                    <Profile/>
+                    <div className="flex items-center gap-3 mt-3">
+                        <Avatar>
+                            <AvatarFallback>BN</AvatarFallback>
+                        </Avatar>
+                        <TypographyP className="!m-0 !text-sm">Rithy Bondeth</TypographyP>
+                    </div>
                 </div>
             </div>
             <div className="w-full">
-                <SidebarItem
+                <MenuItem
                     icon={<LucideLogOut/>}
                     label="Logout"
                     link="/logout"

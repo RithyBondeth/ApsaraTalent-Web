@@ -1,11 +1,11 @@
 import { cn } from "@/lib/utils";
 import { LucideChevronRight, LucideEdit, LucideSearch, LucideUserCheck, LucideUsers } from "lucide-react";
-import { TypographyP } from "../utils/typography/typography-p";
-import { Input } from "../ui/input";
-import { Avatar, AvatarFallback } from "../ui/avatar";
-import { TypographyMuted } from "../utils/typography/typography-muted";
-import Divider from "../utils/divider";
-import { Button } from "../ui/button";
+import { TypographyP } from "../../utils/typography/typography-p";
+import { Input } from "../../ui/input";
+import { Avatar, AvatarFallback } from "../../ui/avatar";
+import { TypographyMuted } from "../../utils/typography/typography-muted";
+import Divider from "../../utils/divider";
+import { Button } from "../../ui/button";
 
 export default function RightSidebar({className}: {className?: string}) {
     return (
@@ -33,7 +33,7 @@ export default function RightSidebar({className}: {className?: string}) {
                         </div>
                     ))}
                     <div className="w-full flex items-center cursor-pointer">
-                        <Button variant='outline' className="w-full text-xs" suffix={<LucideChevronRight/>}>View all</Button>    
+                        <Button variant='secondary' className="w-full text-xs" suffix={<LucideChevronRight/>}>View all</Button>    
                     </div>
                 </div>
             </div>
@@ -58,7 +58,7 @@ export default function RightSidebar({className}: {className?: string}) {
                         </div>
                     ))}
                     <div className="w-full flex items-center cursor-pointer">
-                        <Button variant='outline' className="w-full text-xs" suffix={<LucideChevronRight/>}>View all</Button>    
+                        <Button variant='secondary' className="w-full text-xs" suffix={<LucideChevronRight/>}>View all</Button>    
                     </div>
                 </div>
             </div>
@@ -83,7 +83,7 @@ export default function RightSidebar({className}: {className?: string}) {
                         </div>
                     ))}
                     <div className="w-full flex items-center cursor-pointer">
-                        <Button variant='outline' className="w-full text-xs" suffix={<LucideChevronRight/>}>View all</Button>    
+                        <Button variant='secondary' className="w-full text-xs" suffix={<LucideChevronRight/>}>View all</Button>    
                     </div>
                 </div>
             </div>

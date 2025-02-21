@@ -45,7 +45,7 @@ export default function FeedCard() {
                     Resume
                     <LucideFileUser/>
                 </Button>
-                <Button className="text-sm">
+                <Button className="text-sm" variant='secondary'>
                     View
                     <LucideCircleArrowRight/>
                 </Button>
