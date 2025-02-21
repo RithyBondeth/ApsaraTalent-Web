@@ -7,7 +7,7 @@ import { TypographySmall } from "../utils/typography/typography-small";
 import { LucideCircleArrowRight, LucideFileUser, LucideHeartHandshake, LucideMapPin } from "lucide-react";
 export default function FeedCard() {
     return (
-        <div className="h-fit w-full flex flex-col items-start gap-3 p-3 rounded-lg border border-muted cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:border-primary">
+        <div className="h-fit w-full flex flex-col items-start gap-5 p-3 rounded-lg border border-muted cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:border-primary">
             {/* Profile Section */}
             <div className="w-full flex items-start justify-between">
                 <div className="flex items-center gap-3">

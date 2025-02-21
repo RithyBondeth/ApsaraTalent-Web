@@ -41,6 +41,10 @@ export default function FeedPage() {
                 <FeedCard/>
                 <FeedCard/>
                 <FeedCard/>
+                <FeedCard/>
+                <FeedCard/>
+                <FeedCard/>
+                <FeedCard/>
             </div>
         </div>
     )
