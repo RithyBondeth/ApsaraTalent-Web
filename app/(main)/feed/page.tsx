@@ -9,6 +9,7 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { useState } from "react";
 import { useEffect } from "react";
 import { useTheme } from "next-themes";
+import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 
 export default function FeedPage() {
     const { resolvedTheme } = useTheme();
@@ -23,16 +24,24 @@ export default function FeedPage() {
       const feedImage = currentTheme === "dark" ? feedBlackSvg : feedWhiteSvg;
 
     return (
-        <div>
+        <div className="w-full flex flex-col items-start gap-5">
             {/* Header Section */}
-            <div className='flex items-start justify-between gap-5'>
-                <div className="flex flex-col items-start gap-5">
+            <div className='w-full flex items-start justify-between gap-5'>
+                <div className="flex flex-col items-start gap-3">
                     <TypographyH2 className="leading-relaxed">Apply to your favorite jobs from anywhere.</TypographyH2>
+                    <TypographyH4 className="leading-relaxed">Connect with professionals around the world.</TypographyH4>
                     <TypographyMuted className="leading-relaxed">Find your dream job with ease and apply to it from anywhere.</TypographyMuted>
                 </div>
                 <Image src={feedImage} alt='feed' height={300} width={400}/>
             </div>
-            <FeedCard/>
+            
+            {/* Feed Card Section */}
+            <div className="w-full grid grid-cols-2 gap-5">
+                <FeedCard/>
+                <FeedCard/>
+                <FeedCard/>
+                <FeedCard/>
+            </div>
         </div>
     )
 }
