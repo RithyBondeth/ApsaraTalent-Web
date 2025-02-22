@@ -1,6 +1,6 @@
 "use client"
 
-import FeedCard from "@/components/feed-card";
+import UserCard from "@/components/user-card";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import Image from "next/image";
 import feedBlackSvg from "@/assets/svg/feed-black.svg";
@@ -37,14 +37,14 @@ export default function FeedPage() {
             
             {/* Feed Card Section */}
             <div className="w-full grid grid-cols-2 gap-5">
-                <FeedCard/>
-                <FeedCard/>
-                <FeedCard/>
-                <FeedCard/>
-                <FeedCard/>
-                <FeedCard/>
-                <FeedCard/>
-                <FeedCard/>
+                <UserCard/>
+                <UserCard/>
+                <UserCard/>
+                <UserCard/>
+                <UserCard/>
+                <UserCard/>
+                <UserCard/>
+                <UserCard/>
             </div>
         </div>
     )

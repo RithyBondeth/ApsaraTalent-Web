@@ -10,7 +10,7 @@ import landingSvg from "@/assets/svg/landing.svg";
 export default function IndexPage() {
   return (
    <div className="h-screen w-screen flex items-stretch justify-between relative">
-      <Header className="absolute top-0 left-0 right-0"/>
+      <Header className="absolute top-0 left-0 right-0 z-10"/>
       <div className="w-1/2 flex justify-center items-center">
         <div className="size-[70%] flex flex-col items-stretch justify-start">
             <div className="flex flex-col items-start mb-10">
@@ -26,8 +26,10 @@ export default function IndexPage() {
             </Link>
         </div>
       </div>
-      <div className="w-1/2 flex flex-col justify-center items-center gap-12">
-          <Image src={landingSvg} alt="landing" width={600} height={undefined}/>
+      <div className="w-1/2 flex flex-col justify-center items-center gap-12 relative">
+          <div className="w-[85%] h-full relative">
+            <Image src={landingSvg} alt="landing" fill className="object-contain"/>
+          </div>
       </div>
    </div>
   );
