@@ -1,9 +1,10 @@
-import { LucideBellRing, LucideHandshake, LucideHome, LucideLogOut, LucideMessageCircleMore, LucideSearchCheck } from "lucide-react";
+import { LucideBellRing, LucideHandshake, LucideHome, LucideMessageCircleMore, LucideSearchCheck } from "lucide-react";
 import LogoComponent from "../../utils/logo";
 import MenuItem from "./menu-item";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { TypographyP } from "@/components/utils/typography/typography-p";
+import DropdownMore from "./dropdown-more";
 
 export default function Sidebar({className}: {className?: string}) {
     return (
@@ -44,12 +45,8 @@ export default function Sidebar({className}: {className?: string}) {
                     </div>
                 </div>
             </div>
-            <div className="w-full">
-                <MenuItem
-                    icon={<LucideLogOut/>}
-                    label="Logout"
-                    link="/logout"
-                />
+            <div className="w-full flex justify-center">
+                <DropdownMore/>
             </div>
         </div>
     );

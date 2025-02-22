@@ -1,11 +1,18 @@
+"use client"
+import { useRoleStore } from "@/stores/role-store";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Button } from "../ui/button";
 import Tag from "../utils/tag";
 import { TypographyMuted } from "../utils/typography/typography-muted";
 import { TypographyP } from "../utils/typography/typography-p";
 import { TypographySmall } from "../utils/typography/typography-small";
-import { LucideCircleArrowRight, LucideFileUser, LucideHeartHandshake, LucideMapPin } from "lucide-react";
+import { LucideBriefcaseBusiness, LucideCircleArrowRight, LucideFileUser, LucideHeartHandshake, LucideMapPin } from "lucide-react";
+import { cn } from "@/lib/utils";
+
 export default function FeedCard() {
+    const { role, changeRole } = useRoleStore();
+
+
     return (
         <div className="h-fit w-full flex flex-col items-start gap-5 p-3 rounded-lg border border-muted cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:border-primary">
             {/* Profile Section */}
@@ -40,12 +47,17 @@ export default function FeedCard() {
             </TypographyP> 
 
             {/* button Section */}
-            <div className="w-full flex items-center justify-end gap-3">
-                <Button className="text-sm" variant='outline'>
+            <div className={cn("w-full flex items-center gap-3", role === "employee" ? 'justify-end' : 'justify-between')}>
+                {role === 'employee' 
+                ? <Button className="text-sm" variant='outline'>
                     Resume
                     <LucideFileUser/>
-                </Button>
-                <Button className="text-sm" variant='secondary'>
+                </Button> 
+                : <div className="flex items-center gap-1">
+                    <LucideBriefcaseBusiness className="size-5"/>
+                    <TypographyP className="!m-0 text-xs font-medium">10 Positions Open</TypographyP>
+                </div>}
+                <Button className="text-sm" variant='secondary' onClick={() => changeRole('employer')}>
                     View
                     <LucideCircleArrowRight/>
                 </Button>
