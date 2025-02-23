@@ -19,9 +19,44 @@ export default function FeedPage() {
       setMounted(true);
     }, []);
     
-      // Determine which image to display (avoid SSR issues)
-      const currentTheme = mounted ? resolvedTheme : "light";
-      const feedImage = currentTheme === "dark" ? feedBlackSvg : feedWhiteSvg;
+    // Determine which image to display (avoid SSR issues)
+    const currentTheme = mounted ? resolvedTheme : "light";
+    const feedImage = currentTheme === "dark" ? feedBlackSvg : feedWhiteSvg;
+
+    const userList = [
+        {
+            avatar: "JAN",
+            name: "John Doe",
+            job: "Software Engineer",
+            location: "Phnom Penh, Cambodia",
+            skills: ["Software Engineer", "Graphic Designer"],
+            description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
+            resume: "resume.pdf",
+            status: [{ label: 'Profile Completion', value: '90%' }, { label: 'Accomplishment', value: '20+' }, { label: 'Likes', value: '35' }],
+            experience: "5+ years experience",
+            availability: "Available for full time",
+            educations: [
+                { school: 'Cambodia Academic Digital and Technology', degree: 'Computer Science' }, 
+                { school: 'Royal University of Phnom Penh', degree: 'English' },
+            ]
+        },
+        {
+            avatar: "JAN",
+            name: "John Doe",
+            job: "Software Engineer",
+            location: "Phnom Penh, Cambodia",
+            skills: ["Software Engineer", "Graphic Designer"],
+            description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
+            resume: "resume.pdf",
+            status: [{ label: 'Profile Completion', value: '90%' }, { label: 'Accomplishment', value: '20+' }, { label: 'Likes', value: '35' }],
+            experience: "5+ years experience",
+            availability: "Available for full time",
+            educations: [
+                { school: 'Cambodia Academic Digital and Technology', degree: 'Computer Science' }, 
+                { school: 'Royal University of Phnom Penh', degree: 'English' },
+            ]
+        }
+    ]
 
     return (
         <div className="w-full flex flex-col items-start gap-5">
@@ -37,14 +72,22 @@ export default function FeedPage() {
             
             {/* Feed Card Section */}
             <div className="w-full grid grid-cols-2 gap-5">
-                <UserCard/>
-                <UserCard/>
-                <UserCard/>
-                <UserCard/>
-                <UserCard/>
-                <UserCard/>
-                <UserCard/>
-                <UserCard/>
+                {userList.map((user) => (
+                    <UserCard
+                        key={user.name}
+                        avatar={user.avatar}
+                        name={user.name}
+                        job={user.job}
+                        location={user.location}
+                        skills={user.skills}
+                        description={user.description}
+                        resume={user.resume}
+                        status={user.status}
+                        experience={user.experience}
+                        availability={user.availability}
+                        educations={user.educations}
+                    />
+                ))}
             </div>
         </div>
     )

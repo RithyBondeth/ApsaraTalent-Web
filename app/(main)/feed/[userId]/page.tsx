@@ -5,7 +5,7 @@ import Tag from "@/components/utils/tag";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { LucideAtSign, LucideCalendar, LucideDownload, LucideEye, LucideGraduationCap, LucideMail, LucideMapPin, LucidePhone, LucideSchool, LucideUser } from "lucide-react";
+import { LucideAtSign, LucideBookmark, LucideCalendar, LucideDownload, LucideEye, LucideGraduationCap, LucideHeartHandshake, LucideMail, LucideMapPin, LucidePhone, LucideSchool, LucideUser } from "lucide-react";
 import facebookIcon from '@/assets/socials/facebook.png';
 import linkedInIcon from '@/assets/socials/linkedin.png';
 import githubIcon from '@/assets/socials/github.png';
@@ -25,6 +25,7 @@ export default function UserDetailPage() {
 
     return (
         <div className="flex flex-col gap-5">
+            {/* Personal Information Section */}
             <div className="w-full flex items-stretch justify-between border border-muted py-5 px-10">
                 <div className="flex flex-col items-center gap-5">
                     <Avatar className="size-40">
@@ -64,8 +65,11 @@ export default function UserDetailPage() {
                     </div>
                 </div>
             </div>
+
+            {/* Education, Skill and Experience Section */}
             <div className="flex items-stretch gap-5">
                 <div className="w-2/3 flex flex-col gap-5">
+                    {/* Education Section */}
                     <div className="flex flex-col gap-5 border border-muted p-5">
                         <div className="flex flex-col gap-2">
                             <TypographyH4>Education</TypographyH4>
@@ -82,6 +86,8 @@ export default function UserDetailPage() {
                             <Label icon={<LucideCalendar className="!size-5"/>} text="2020 - 2024"/>
                         </div>
                     </div>
+
+                    {/* Experience Section */}
                     <div className="flex flex-col gap-5 border border-muted p-5">
                         <div className="flex flex-col gap-2">
                             <TypographyH4>Experience</TypographyH4>
@@ -104,6 +110,8 @@ export default function UserDetailPage() {
                            </div>
                         </div>
                     </div>
+
+                    {/* Skills Section */}
                     <div className="flex flex-col gap-5 border border-muted p-5">
                         <div className="flex flex-col gap-2">
                             <TypographyH4>Skills</TypographyH4>
@@ -114,7 +122,10 @@ export default function UserDetailPage() {
                         </div>
                     </div>
                 </div>
+
+                {/* Resume and Contact Section */}
                 <div className="w-1/3 flex flex-col gap-5">
+                    {/* Resume Section */}
                     <div className="flex flex-col gap-5 border border-muted p-5">
                         <div className="flex flex-col gap-2">
                             <TypographyH4>Resume</TypographyH4>
@@ -143,6 +154,8 @@ export default function UserDetailPage() {
                             </div>
                         </div>
                     </div>
+
+                    {/* Contact Section */}
                     <div className="flex flex-col gap-5 border border-muted p-5">
                         <div className="flex flex-col gap-2">
                             <TypographyH4>Contact</TypographyH4>
@@ -158,6 +171,12 @@ export default function UserDetailPage() {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {/* Action Buttons Section */}
+            <div className="flex items-center gap-2">
+                <Button variant={'outline'} prefixIcon={<LucideBookmark/>}>Save to favorite</Button>
+                <Button prefixIcon={<LucideHeartHandshake/>}>Like</Button>
             </div>
         </div>
     )

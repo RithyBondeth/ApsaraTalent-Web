@@ -10,8 +10,22 @@ import { useState, useRef, useEffect } from "react";
 import UserDialog from "../user-dialog";
 import { useRouter } from "next/navigation";
 
-export default function UserCard() {
-    const [openDialog, setOpenDialog] = useState<boolean>(false);
+interface IUserCardProps {
+    avatar: string;
+    name: string;
+    job: string;
+    location: string;
+    skills: string[];
+    description: string;
+    resume: string;
+    status: { label: string, value: string }[];
+    experience: string;
+    availability: string;
+    educations: { school: string, degree: string }[];
+}
+
+export default function UserCard(props: IUserCardProps) {
+    const [openProfileDialog, setOpenProfileDialog] = useState<boolean>(false);
     const ignoreNextClick = useRef<boolean>(false);
     const router = useRouter();
 
@@ -27,18 +41,18 @@ export default function UserCard() {
             return;
         }
     
-        setOpenDialog(true);
+        setOpenProfileDialog(true);
     };
 
     useEffect(() => {
-        if (!openDialog) {
+        if (!openProfileDialog) {
             // Prevent reopening immediately after closing
             ignoreNextClick.current = true;
             setTimeout(() => {
                 ignoreNextClick.current = false;
             }, 200);
         }
-    }, [openDialog]);
+    }, [openProfileDialog]);
 
     
     return (
@@ -47,14 +61,14 @@ export default function UserCard() {
             <div className="w-full flex items-start justify-between" onClick={handleClickDialog}>
                 <div className="flex items-center gap-3">
                     <Avatar className="size-20">
-                        <AvatarFallback>JAN</AvatarFallback>
+                        <AvatarFallback>{props.avatar}</AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col items-start gap-1">
-                        <TypographyP className="font-semibold">John Doe</TypographyP>
-                        <TypographyMuted>Software Engineer</TypographyMuted>
+                        <TypographyP className="font-semibold">{props.name}</TypographyP>
+                        <TypographyMuted>{props.job}</TypographyMuted>
                         <TypographySmall className="text-xs flex items-center gap-1 text-muted-foreground">
                             <LucideMapPin className="size-3 "/>
-                            <span>Phnom Penh, Cambodia</span>
+                            <span>{props.location}</span>
                         </TypographySmall>
                     </div>
                 </div>
@@ -65,14 +79,11 @@ export default function UserCard() {
 
             {/* Tag Section */}
             <div className="w-full flex flex-wrap gap-1">
-                <Tag label="Software Engineer" />
-                <Tag label="Graphic Designer" />
+                {props.skills.map((skill) => <Tag key={skill} label={skill} />)}
             </div>
 
             {/* Description Section */}
-            <TypographyP className="!m-0 text-sm leading-relaxed">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. amet consectetur adipisicing.
-            </TypographyP> 
+            <TypographyP className="!m-0 text-sm leading-relaxed">{props.description}</TypographyP> 
 
             {/* button Section */}
             <div className="w-full flex items-center justify-end gap-3">
@@ -84,8 +95,18 @@ export default function UserCard() {
                     View
                     <LucideCircleArrowRight/>
                 </Button>
-            </div>
-            <UserDialog open={openDialog} setOpen={setOpenDialog}/>
-        </div>   
+            </div>  
+            <UserDialog open={openProfileDialog} setOpen={setOpenProfileDialog}
+                avatar={props.avatar}
+                name={props.name}
+                job={props.job}
+                location={props.location}
+                experience={props.experience}
+                availability={props.availability}
+                skills={props.skills}
+                educations={props.educations}
+                status={props.status}
+            />
+        </div>      
     );
 }
