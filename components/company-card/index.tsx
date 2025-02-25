@@ -1,4 +1,4 @@
-import { LucideBookmark, LucideBriefcaseBusiness, LucideBuilding, LucideCircleArrowRight, LucideClock, LucideMapPin } from "lucide-react";
+import { LucideBookmark, LucideBriefcaseBusiness, LucideBuilding, LucideCircleArrowRight, LucideClock, LucideMapPin, LucideUsers } from "lucide-react";
 
 import { LucideHeartHandshake } from "lucide-react";
 import { Avatar, AvatarFallback } from "../ui/avatar";
@@ -22,7 +22,10 @@ export default function CompanyCard() {
                     </Avatar>
                     <div className="flex flex-col items-start gap-1">
                         <TypographyP className="font-semibold">TechCorp Solutions</TypographyP>
-                        <TypographyMuted>Technology and Software</TypographyMuted>
+                        <TypographySmall className="text-xs flex items-center gap-1 text-muted-foreground">
+                            <LucideUsers className="size-3 "/>
+                            <span>500+ employees</span>
+                        </TypographySmall>
                         <TypographySmall className="text-xs flex items-center gap-1 text-muted-foreground">
                             <LucideMapPin className="size-3 "/>
                             <span>Phnom Penh, Cambodia</span>
@@ -33,7 +36,13 @@ export default function CompanyCard() {
                     <LucideHeartHandshake className="!size-6 transition-all duration-300 ease-in-out" />
                 </Button>
             </div>
-            
+
+            {/* Industry Section */}
+            <div className="w-full flex flex-col gap-3">
+                <IconLabel text="Industry" icon={<LucideBuilding/>} className="[&>p]:text-primary [&>p]:font-medium"/>
+                <TypographyMuted>Software Development & IT Services</TypographyMuted>
+            </div>
+
             {/* Tag Section */}
             <div className="flex flex-col gap-5">
                 <div className="flex flex-col gap-3">
