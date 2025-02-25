@@ -8,9 +8,9 @@ import IconLabel from "../utils/icon-label"
 import { TypographyH4 } from "../utils/typography/typography-h4"
 import { TypographySmall } from "../utils/typography/typography-small"
 import { Button } from "../ui/button"
-import { IUserDialogProps } from "./props"
+import { IEmployeeDialogProps } from "./props"
 
-export default function UserDialog(props: IUserDialogProps) {
+export default function EmployeeDialog(props: IEmployeeDialogProps) {
     return (
         <Dialog open={props.open} onOpenChange={(isOpen) => props.setOpen(isOpen)}>
             <DialogContent className="dialog-content">

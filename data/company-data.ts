@@ -2,9 +2,10 @@ import { ICompany } from "@/utils/interfaces/company.interface";
 
 export const companyList: ICompany[]  = [
     {
-        "id": 3,
+        "id": 1,
         "name": "NextGen Innovations",
-        "description": "Pioneering AI & Cloud Solutions",
+        "industry": "Pioneering AI & Cloud Solutions",
+        "description": "Pioneering AI & Cloud Solutions lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
         "avatar": "NXG",
         "companySize": 250,
         "foundedYear": 2018,
@@ -79,7 +80,8 @@ export const companyList: ICompany[]  = [
     {
         "id": 2,
         "name": "InnoTech Solutions",
-        "description": "Innovative Technology & IT Consulting",
+        "industry": "Innovative Technology & IT Consulting",
+        "description": "Innovative Technology & IT Consulting lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
         "avatar": "INN",
         "companySize": 150,
         "foundedYear": 2015,

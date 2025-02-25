@@ -9,6 +9,7 @@ import { LucideAtSign, LucideBookmark, LucideCalendar, LucideDownload, LucideEye
 import Image from "next/image";
 import Divider from "@/components/utils/divider";
 import { userList } from "@/data/user-data";
+import { IEducation, IExperience, ISocial } from "@/utils/interfaces/employee.interface";
 
 export default function EmployeeDetailPage() {
     const employeeId = 1;
@@ -60,7 +61,7 @@ export default function EmployeeDetailPage() {
                 </div>
             </div>
 
-            {/* Education, Skill and Experience Section */}
+            {/* Education, Skill and Experience Section */}     
             <div className="flex items-stretch gap-5">
                 <div className="w-2/3 flex flex-col gap-5">
                     {/* Education Section */}
@@ -68,8 +69,8 @@ export default function EmployeeDetailPage() {
                         <div className="flex flex-col gap-2">
                             <TypographyH4>Education</TypographyH4>
                             <Divider/>
-                        </div>
-                        {userList[employeeId].educations.map((item) => (
+                        </div>  
+                        {userList[employeeId].educations.map((item: IEducation) => (
                            <div className="flex flex-col gap-2 border-l-4 border-primary pl-4" key={item.id}>
                                 <IconLabel icon={<LucideSchool/>} text={item.school}/>      
                                 <IconLabel icon={<LucideGraduationCap/>} text={item.degree}/>
@@ -85,7 +86,7 @@ export default function EmployeeDetailPage() {
                             <Divider/>
                         </div>
                         <div className="flex flex-col gap-5">
-                            {userList[employeeId].experiences.map((item) => (
+                            {userList[employeeId].experiences.map((item: IExperience) => (
                                <div className="border-l-4 border-primary pl-4 space-y-2" key={item.id}>  
                                     <div className="flex flex-col gap-1">
                                         <TypographyP>{item.title}</TypographyP>
@@ -105,7 +106,7 @@ export default function EmployeeDetailPage() {
                             <Divider/>
                         </div>
                         <div className="flex flex-wrap gap-3">
-                            {userList[employeeId].skills.map((item) => <Tag key={item} label={item} />)}
+                                {userList[employeeId].skills.map((item: string) => <Tag key={item} label={item} />)}
                         </div>
                     </div>
                 </div>
@@ -155,7 +156,7 @@ export default function EmployeeDetailPage() {
                             <Divider/>
                         </div>
                         <div className="flex flex-col gap-5">
-                            {userList[employeeId].social.map((item) => (         
+                            {userList[employeeId].social.map((item: ISocial) => (         
                                 <div className="flex items-center gap-2 cursor-pointer" key={item.id}>
                                     <Image src={item.icon} alt={item.label} height={undefined} width={25} className="rounded-full"/>
                                     <TypographyP className="!m-0 text-sm">{item.label}</TypographyP>

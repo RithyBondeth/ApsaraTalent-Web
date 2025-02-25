@@ -9,15 +9,11 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Carousel } from "@/components/ui/carousel";
 import Divider from "@/components/utils/divider";
+import { companyList } from "@/data/company-data";
+import { ILabelItem } from "@/utils/interfaces/company.interface";
 
-export default function EmployerDetailPage() {
-
-    const positions = [
-        { position: 'Software Engineer', shift: 'Full Time' },
-        { position: 'QA Tester', shift: 'Intern' },
-        { position: 'DevOps Engineer', shift: 'Part Time' },
-        { position: 'UI/UX Designer', shift: 'Remote' },
-    ];
+export default function CompanyDetailPage() {
+    const companyId = 1;
 
     return (
         <div className="flex flex-col gap-5">
@@ -25,17 +21,17 @@ export default function EmployerDetailPage() {
             <div className="w-full flex items-stretch justify-between border border-muted py-5 px-10">
                 <div className="flex items-start gap-5">
                     <Avatar className="size-32">
-                        <AvatarFallback>BON</AvatarFallback>  
+                        <AvatarFallback>{companyList[companyId].avatar}</AvatarFallback>  
                     </Avatar>
                     <div className="h-full flex flex-col items-start justify-between">
                        <div className="flex flex-col items-start gap-1">
-                            <TypographyH2>TechCorp Solutions</TypographyH2>
-                            <TypographyMuted className="text-md">Software Development & IT Services</TypographyMuted>
+                            <TypographyH2>{companyList[companyId].name}</TypographyH2>
+                            <TypographyMuted className="text-md">{companyList[companyId].industry}</TypographyMuted>
                        </div>
                         <div className="flex items-center gap-3 [&>div>p]:text-primary [&>div>p]:font-medium">
-                            <IconLabel icon={<LucideMapPin/>} text="San Francisco, CA"/>
-                            <IconLabel icon={<LucideUsers/>} text="100+ Employees"/>
-                            <IconLabel icon={<LucideBuilding/>} text="Founded in 2010"/>   
+                            <IconLabel icon={<LucideMapPin/>} text={companyList[companyId].location}/>
+                            <IconLabel icon={<LucideUsers/>} text={`${companyList[companyId].companySize}+ Employees`}/>
+                            <IconLabel icon={<LucideBuilding/>} text={`Founded in ${companyList[companyId].foundedYear}`}/>   
                         </div>
                     </div>
                 </div>
@@ -48,15 +44,12 @@ export default function EmployerDetailPage() {
                 <div className="w-2/3 flex flex-col items-stretch gap-5">
                     <div className="w-full flex flex-col items-start gap-3 border border-muted py-5 px-10">
                         <div className="w-full flex flex-col gap-2">
-                            <TypographyH4>About TechCorp Solutions</TypographyH4>
+                            <TypographyH4>About {companyList[companyId].name}</TypographyH4>
                             <Divider/>
                         </div>
                         <div className="flex items-start gap-3">
                             <div className="h-full w-2 bg-primary"/>
-                            <TypographyMuted className="leading-loose">
-                                TechCorp Solutions is a software development and IT services company that provides a wide range of services to its clients. 
-                                We are a team of experienced professionals who are dedicated to providing the best possible services to our clients.
-                            </TypographyMuted>
+                            <TypographyMuted className="leading-loose">{companyList[companyId].description}</TypographyMuted>
                         </div>
                     </div>
                     <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
@@ -68,24 +61,24 @@ export default function EmployerDetailPage() {
                             <div className="w-1/2 flex flex-col gap-3 border border-muted px-5 py-3 rounded-md">
                                 <TypographyP className="font-medium">Values</TypographyP>
                                 <div className="flex flex-col gap-2">
-                                    <IconLabel icon={<LucideCircleCheck stroke="white" fill="#69B41E"/>} text="Innovation"/>
-                                    <IconLabel icon={<LucideCircleCheck stroke="white" fill="#69B41E"/>} text="Collaboration"/>
-                                    <IconLabel icon={<LucideCircleCheck stroke="white" fill="#69B41E"/>} text="Customer Satisfaction"/>
+                                    {companyList[companyId].values.map((item: ILabelItem) => (
+                                        <IconLabel key={item.id} icon={<LucideCircleCheck stroke="white" fill="#69B41E"/>} text={item.label}/>
+                                    ))}
                                 </div>
                             </div>
                             <div className="w-1/2 flex flex-col gap-3 border border-muted px-5 py-3 rounded-md">
                                 <TypographyP className="font-medium">Benefits</TypographyP>
                                 <div className="flex flex-col gap-2">
-                                    <IconLabel icon={<LucideCircleCheck stroke="white" fill="#0073E6"/>} text="Health Insurance"/>
-                                    <IconLabel icon={<LucideCircleCheck stroke="white" fill="#0073E6"/>} text="Dental Insurance"/>
-                                    <IconLabel icon={<LucideCircleCheck stroke="white" fill="#0073E6"/>} text="Vision Insurance"/>
+                                    {companyList[companyId].benefits.map((item: ILabelItem) => (
+                                        <IconLabel key={item.id} icon={<LucideCircleCheck stroke="white" fill="#0073E6"/>} text={item.label}/>
+                                    ))}
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
                         <div className="w-full flex flex-col gap-2">
-                            <TypographyH4>Life at TechCorp Solutions</TypographyH4>
+                            <TypographyH4>Life at {companyList[companyId].name}</TypographyH4>
                             <Divider/>
                         </div>
                         <div className="w-full">
@@ -115,20 +108,20 @@ export default function EmployerDetailPage() {
                         <div className="flex flex-col gap-3 [&>div>p]:text-primary [&>div>p]:font-medium [&>div>p]:text-md">
                             <IconLabel 
                                 icon={<TypographyMuted>Industry</TypographyMuted>} 
-                                text="Software Development & IT Services" 
+                                text={companyList[companyId].industry} 
                                 className="flex-col items-start"
                             />
                             <IconLabel 
                                 icon={<TypographyMuted>Phone</TypographyMuted>} 
-                                text="+123 456 7890" className="flex-col items-start"
+                                text={companyList[companyId].phone} className="flex-col items-start"
                             />
                             <IconLabel 
                                 icon={<TypographyMuted>Email</TypographyMuted>} 
-                                text="techcorp@gmail.com" className="flex-col items-start"
+                                text={companyList[companyId].email} className="flex-col items-start"
                             />
                              <IconLabel 
                                 icon={<TypographyMuted>Website</TypographyMuted>} 
-                                text="https://techcorp.com" className="flex-col items-start [&>p]:!text-blue-500"
+                                text={companyList[companyId].website} className="flex-col items-start [&>p]:!text-blue-500"
                             />
                         </div>
                     </div>
@@ -138,10 +131,10 @@ export default function EmployerDetailPage() {
                             <Divider/>
                         </div>
                         <div className="w-full flex flex-col gap-3">
-                           {positions.map((item) => (
-                            <div className="border border-muted px-5 py-3 rounded-md" key={item.position}>
-                                <TypographyP className="font-medium">{item.position}</TypographyP>
-                                <TypographyMuted className="text-sm">{item.shift}</TypographyMuted>
+                           {companyList[companyId].openPositions.map((item) => (
+                            <div className="border border-muted px-5 py-3 rounded-md" key={item.id}>
+                                <TypographyP className="font-medium">{item.title}</TypographyP>
+                                <TypographyMuted className="text-sm">{item.type}</TypographyMuted>
                             </div>
                            ))}
                         </div>

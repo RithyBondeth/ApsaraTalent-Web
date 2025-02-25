@@ -14,6 +14,7 @@ import { useState } from "react";
 import { ICompanyCardProps } from "./props";
 import { useRef } from "react";
 import CompanyDialog from "../company-dialog";
+import { IJobPosition, ILabelItem } from "@/utils/interfaces/company.interface";      
 
 export default function CompanyCard(props: ICompanyCardProps) {
     const [openCompanyDialog, setOpenCompanyDialog] = useState<boolean>(false);
@@ -80,13 +81,13 @@ export default function CompanyCard(props: ICompanyCardProps) {
                 <div className="flex flex-col gap-3">
                     <IconLabel text="6 Open Positions" icon={<LucideBriefcaseBusiness/>} className="[&>p]:text-primary [&>p]:font-medium"/>
                     <div className="w-full flex flex-wrap gap-2">
-                        {props.openPositions.map((item) => <Tag key={item.id} label={item.title} />)}
+                        {props.openPositions.map((item: IJobPosition) => <Tag key={item.id} label={item.title} />)}
                     </div>
                 </div>
                 <div className="flex flex-col gap-3">
                     <IconLabel text="Available times" icon={<LucideClock/>} className="[&>p]:text-primary [&>p]:font-medium"/>
                     <div className="w-full flex flex-wrap gap-2">
-                        {props.availableTimes.map((item) => <Tag key={item.id} label={item.label} />)}
+                        {props.availableTimes.map((item: ILabelItem) => <Tag key={item.id} label={item.label} />)}
                     </div>
                 </div>
             </div>

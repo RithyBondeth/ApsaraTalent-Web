@@ -1,6 +1,7 @@
-export interface Company {
+export interface ICompany {
     id: number;
     name: string;
+    industry: string;
     description: string;
     avatar: string;
     companySize: number;

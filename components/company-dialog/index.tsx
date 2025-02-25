@@ -8,6 +8,7 @@ import IconLabel from "../utils/icon-label";
 import { TypographyP } from "../utils/typography/typography-p";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import { LabelItem } from "@/utils/interfaces/company.interface";
 export default function CompanyDialog(props: ICompanyDialogProps) {
     return (
         <Dialog open={props.open} onOpenChange={props.setOpen}>
@@ -21,7 +22,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                             <div className="flex flex-col items-start gap-5 font-normal">
                                 <div>
                                     <TypographyH4>{props.name}</TypographyH4>
-                                    <TypographyMuted>{props.description}</TypographyMuted>
+                                    <TypographyMuted>{props.industry}</TypographyMuted>
                                 </div>
                                 <div className="space-y-2">
                                     <IconLabel icon={<LucideMapPin/>} text={props.location}/> 
@@ -40,7 +41,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                             <div className="space-y-2">
                                 <TypographyP className="font-medium">Benefits</TypographyP>
                                 <div className="flex flex-wrap gap-2">
-                                    {props.benefits.map((benefit) => (
+                                    {props.benefits.map((benefit: LabelItem) => (
                                         <div key={benefit.id} className="px-3 py-2 rounded-2xl bg-muted">
                                             <IconLabel icon={<LucideCircleCheck stroke="white" fill="#0073E6"/>} text={benefit.label}/>
                                         </div>
@@ -50,7 +51,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                             <div className="space-y-2">
                                 <TypographyP className="font-medium">Values</TypographyP>
                                 <div className="flex flex-wrap gap-2">
-                                    {props.values.map((value) => (
+                                    {props.values.map((value: LabelItem) => (
                                         <div key={value.id} className="px-3 py-2 rounded-2xl bg-muted">
                                             <IconLabel icon={<LucideCircleCheck stroke="white" fill="#69B41E"/>} text={value.label}/>
                                         </div>
@@ -58,7 +59,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                                 </div>
                             </div>
                             <div className="w-full flex justify-end">
-                               <Link href={`/feed/employer/1`}>
+                               <Link href={`/feed/employer/${props.id}`}>
                                     <Button>View Company</Button>
                                </Link>
                             </div>

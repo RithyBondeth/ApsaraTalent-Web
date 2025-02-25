@@ -7,10 +7,10 @@ import { TypographyP } from "../utils/typography/typography-p";
 import { TypographySmall } from "../utils/typography/typography-small";
 import { LucideBookmark, LucideCircleArrowRight, LucideHeartHandshake, LucideMapPin } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
-import UserDialog from "../user-dialog";
-import { IUserCardProps } from "./props";
+import { IEmployeeCardProps } from "./props";
+import EmployeeDialog from "../employee-dialog";
 
-export default function UserCard(props: IUserCardProps) {
+export default function EmployeeCard(props: IEmployeeCardProps) {
     const [openProfileDialog, setOpenProfileDialog] = useState<boolean>(false);
     const ignoreNextClick = useRef<boolean>(false);
 
@@ -81,7 +81,7 @@ export default function UserCard(props: IUserCardProps) {
                     <LucideCircleArrowRight/>
                 </Button>
             </div>  
-            <UserDialog open={openProfileDialog} setOpen={setOpenProfileDialog}
+            <EmployeeDialog open={openProfileDialog} setOpen={setOpenProfileDialog}
                 {...props}
             />
         </div>      

@@ -3,7 +3,7 @@ import linkedInIcon from '@/assets/socials/linkedin.png';
 import githubIcon from '@/assets/socials/github.png';
 import emailIcon from '@/assets/socials/email.png';
 import browserIcon from '@/assets/socials/browser.png';
-import { IUser } from "@/utils/interfaces/user.interface";
+import { IUser } from "@/utils/interfaces/employee.interface";
 
 export const userList: IUser[] = [
         {

@@ -1,6 +1,6 @@
 "use client"
 
-import UserCard from "@/components/user-card";
+import EmployeeCard from "@/components/employee-card";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import Image from "next/image";
 import feedBlackSvg from "@/assets/svg/feed-black.svg";
@@ -53,11 +53,11 @@ export default function FeedPage() {
                     />
                 ))}
                 {userList.map((user) => (
-                    <UserCard
+                    <EmployeeCard
                         key={user.id}
                         {...user}
                         onSaveClick={() => {}}
-                        onViewClick={() => router.push(`/feed/${role === "employee" ? "employee" : "employer"}/${user.id}`)}
+                        onViewClick={() => router.push(`/feed/${role === "employee" ? "employee" : "company"}/${user.id}`)}
                     />
                 ))}
             </div>
