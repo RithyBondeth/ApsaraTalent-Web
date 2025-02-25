@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import { userList } from "@/data/user-data";
 import { useRoleStore } from "@/stores/role-store";
 import CompanyCard from "@/components/company-card";
-
+import { companyList } from "@/data/company-data";
 export default function FeedPage() {
     const { resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
@@ -44,35 +44,22 @@ export default function FeedPage() {
             
             {/* Feed Card Section */}
             <div className="w-full grid grid-cols-2 gap-5">
+                {companyList.map((company) => (
+                    <CompanyCard
+                        key={company.id}
+                        {...company}
+                        onViewClick={() => {}}
+                        onSaveClick={() => {}}
+                    />
+                ))}
                 {userList.map((user) => (
                     <UserCard
                         key={user.id}
-                        avatar={user.avatar}
-                        name={user.username}
-                        job={user.job}
-                        location={user.location}
-                        skills={user.skills}
-                        description={user.description}
-                        resume={user.document.resume}
-                        status={user.status}
-                        yearsOfExperience={user.yearsOfExperience}
-                        availability={user.availability}
-                        educations={user.educations}
+                        {...user}
                         onSaveClick={() => {}}
                         onViewClick={() => router.push(`/feed/${role === "employee" ? "employee" : "employer"}/${user.id}`)}
                     />
                 ))}
-                <CompanyCard
-                    name="TechCorp Solutions"
-                    description="Software Development & IT Services"
-                    // avatar="TH"
-                    numberOfEmployees={500}
-                    location="Phnom Penh, Cambodia"
-                    openPositions={["Software Developer", "UI/UX Designer", "Sales"]}
-                    availableTimes={["Full-time", "Part-time", "Remote", "Intern"]}
-                    onViewClick={() => {}}
-                    onSaveClick={() => {}}
-                />
             </div>
         </div>
     )

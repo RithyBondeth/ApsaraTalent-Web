@@ -18,11 +18,11 @@ export default function UserDialog(props: IUserDialogProps) {
                     <DialogTitle>
                         <div className="flex items-stretch justify-start gap-3">
                             <Avatar className="!size-36">
-                                <AvatarFallback>{!props.avatar ? props.name.slice(0, 2) : props.avatar}</AvatarFallback>
+                                <AvatarFallback>{props.avatar}</AvatarFallback>
                             </Avatar>
                             <div className="flex flex-col items-start gap-5 font-normal">
                                 <div>
-                                    <TypographyH4>{props.name}</TypographyH4>
+                                    <TypographyH4>{props.firstname} {props.lastname}</TypographyH4>
                                     <TypographyMuted>{props.job}</TypographyMuted>
                                 </div>
                                 <div className="space-y-2">

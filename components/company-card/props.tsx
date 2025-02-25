@@ -1,11 +1,6 @@
-export interface ICompanyCardProps {
-    name: string;
-    description: string;
-    avatar?: string;
-    numberOfEmployees: number;
-    location: string;
-    openPositions: string[];
-    availableTimes: string[];
+import { ICompany } from "@/utils/interfaces/company.interface";
+
+export interface ICompanyCardProps extends ICompany {
     onViewClick: () => void;
     onSaveClick: () => void;
 }

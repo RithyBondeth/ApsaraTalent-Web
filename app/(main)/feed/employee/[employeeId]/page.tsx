@@ -5,7 +5,7 @@ import Tag from "@/components/utils/tag";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { LucideAtSign, LucideBookmark, LucideCalendar, LucideDownload, LucideEye, LucideGraduationCap, LucideHeartHandshake, LucideMail, LucideMapPin, LucidePhone, LucideSchool, LucideUser } from "lucide-react";
+import { LucideAtSign, LucideBookmark, LucideCalendar, LucideDownload, LucideEye, LucideFileText, LucideGraduationCap, LucideHeartHandshake, LucideMail, LucideMapPin, LucidePhone, LucideSchool, LucideUser } from "lucide-react";
 import Image from "next/image";
 import Divider from "@/components/utils/divider";
 import { userList } from "@/data/user-data";
@@ -119,7 +119,10 @@ export default function EmployeeDetailPage() {
                             <Divider/>
                         </div>
                         <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
-                            <TypographyMuted>{userList[employeeId].document.resume}</TypographyMuted>
+                            <div className="flex items-center text-muted-foreground gap-1">
+                                <LucideFileText/>
+                                <TypographyMuted>{userList[employeeId].document.resume}</TypographyMuted>
+                            </div>
                             <div className="flex items-center gap-1">
                                 <Button variant="outline" size="icon">
                                     <LucideEye/>
@@ -130,7 +133,10 @@ export default function EmployeeDetailPage() {
                             </div>
                         </div>
                         <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
-                            <TypographyMuted>{userList[employeeId].document.coverLetter}</TypographyMuted>
+                            <div className="flex items-center text-muted-foreground gap-1">
+                                <LucideFileText/>
+                                <TypographyMuted>{userList[employeeId].document.coverLetter}</TypographyMuted>
+                            </div>
                             <div className="flex items-center gap-1">
                                 <Button variant="outline" size="icon">
                                     <LucideEye/>

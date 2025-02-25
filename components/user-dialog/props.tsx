@@ -1,13 +1,6 @@
-export interface IUserDialogProps {
+import { IUser } from "@/utils/interfaces/user.interface";
+
+export interface IUserDialogProps extends IUser {
     open: boolean;
     setOpen: (open: boolean) => void;
-    avatar: string;
-    name: string;
-    job: string;
-    location: string;
-    yearsOfExperience: string;
-    availability: string;
-    skills: string[];
-    educations: { school: string, degree: string }[];
-    status: { label: string, value: string }[]; 
 }

@@ -56,7 +56,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
                         <TypographyP className="font-semibold">{props.name}</TypographyP>
                         <TypographySmall className="text-xs flex items-center gap-1 text-muted-foreground">
                             <LucideUsers className="size-3 "/>
-                            <span>{props.numberOfEmployees} employees</span>
+                            <span>{props.companySize} employees</span>
                         </TypographySmall>
                         <TypographySmall className="text-xs flex items-center gap-1 text-muted-foreground">
                             <LucideMapPin className="size-3 "/>
@@ -80,13 +80,13 @@ export default function CompanyCard(props: ICompanyCardProps) {
                 <div className="flex flex-col gap-3">
                     <IconLabel text="6 Open Positions" icon={<LucideBriefcaseBusiness/>} className="[&>p]:text-primary [&>p]:font-medium"/>
                     <div className="w-full flex flex-wrap gap-2">
-                        {props.openPositions.map((item) => <Tag key={item} label={item} />)}
+                        {props.openPositions.map((item) => <Tag key={item.id} label={item.title} />)}
                     </div>
                 </div>
                 <div className="flex flex-col gap-3">
                     <IconLabel text="Available times" icon={<LucideClock/>} className="[&>p]:text-primary [&>p]:font-medium"/>
                     <div className="w-full flex flex-wrap gap-2">
-                        {props.availableTimes.map((item) => <Tag key={item} label={item} />)}
+                        {props.availableTimes.map((item) => <Tag key={item.id} label={item.label} />)}
                     </div>
                 </div>
             </div>
@@ -104,7 +104,11 @@ export default function CompanyCard(props: ICompanyCardProps) {
             </div>  
             
             {/* Hidden Dialog Section */}
-            <CompanyDialog open={openCompanyDialog} setOpen={setOpenCompanyDialog}/>
+            <CompanyDialog  
+                open={openCompanyDialog} 
+                setOpen={setOpenCompanyDialog}
+                {...props}
+            />
         </div>
     )
 }

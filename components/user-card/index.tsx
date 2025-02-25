@@ -46,10 +46,10 @@ export default function UserCard(props: IUserCardProps) {
             <div className="w-full flex items-start justify-between" onClick={handleClickDialog}>
                 <div className="flex items-center gap-3">
                     <Avatar className="size-20">
-                        <AvatarFallback>{!props.avatar ? props.name.slice(0, 2) : props.avatar}</AvatarFallback>
+                        <AvatarFallback>{props.avatar}</AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col items-start gap-1">
-                        <TypographyP className="font-semibold">{props.name}</TypographyP>
+                        <TypographyP className="font-semibold">{props.username}</TypographyP>
                         <TypographyMuted>{props.job}</TypographyMuted>
                         <TypographySmall className="text-xs flex items-center gap-1 text-muted-foreground">
                             <LucideMapPin className="size-3 "/>
@@ -82,15 +82,7 @@ export default function UserCard(props: IUserCardProps) {
                 </Button>
             </div>  
             <UserDialog open={openProfileDialog} setOpen={setOpenProfileDialog}
-                avatar={props.avatar}
-                name={props.name}
-                job={props.job}
-                location={props.location}
-                yearsOfExperience={props.yearsOfExperience}
-                availability={props.availability}
-                skills={props.skills}
-                educations={props.educations}
-                status={props.status}
+                {...props}
             />
         </div>      
     );
