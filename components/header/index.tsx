@@ -1,9 +1,9 @@
 "use client"
 
-import { Button } from "./ui/button";
-import LogoComponent from "./utils/logo";
-import { Label } from "./ui/label";
-import { Switch } from "./ui/switch";
+import { Button } from "../ui/button";
+import LogoComponent from "../utils/logo";
+import { Label } from "../ui/label";
+import { Switch } from "../ui/switch";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { LucideMoon, LucideSun } from "lucide-react";

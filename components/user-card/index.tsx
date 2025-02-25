@@ -5,29 +5,14 @@ import Tag from "../utils/tag";
 import { TypographyMuted } from "../utils/typography/typography-muted";
 import { TypographyP } from "../utils/typography/typography-p";
 import { TypographySmall } from "../utils/typography/typography-small";
-import { LucideCircleArrowRight, LucideFileUser, LucideHeartHandshake, LucideMapPin } from "lucide-react";
+import { LucideBookmark, LucideCircleArrowRight, LucideHeartHandshake, LucideMapPin } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import UserDialog from "../user-dialog";
-import { useRouter } from "next/navigation";
-
-interface IUserCardProps {
-    avatar: string;
-    name: string;
-    job: string;
-    location: string;
-    skills: string[];
-    description: string;
-    resume: string;
-    status: { label: string, value: string }[];
-    experience: string;
-    availability: string;
-    educations: { school: string, degree: string }[];
-}
+import { IUserCardProps } from "./props";
 
 export default function UserCard(props: IUserCardProps) {
     const [openProfileDialog, setOpenProfileDialog] = useState<boolean>(false);
     const ignoreNextClick = useRef<boolean>(false);
-    const router = useRouter();
 
     const handleClickDialog = (e: React.MouseEvent) => {
         // Prevent reopening immediately after closing
@@ -78,7 +63,7 @@ export default function UserCard(props: IUserCardProps) {
             </div>
 
             {/* Tag Section */}
-            <div className="w-full flex flex-wrap gap-1">
+            <div className="w-full flex flex-wrap gap-2">
                 {props.skills.map((skill) => <Tag key={skill} label={skill} />)}
             </div>
 
@@ -88,10 +73,10 @@ export default function UserCard(props: IUserCardProps) {
             {/* button Section */}
             <div className="w-full flex items-center justify-end gap-3">
                 <Button className="text-sm" variant='outline'>
-                    Resume
-                    <LucideFileUser/>
+                    Save
+                    <LucideBookmark/>
                 </Button> 
-                <Button className="text-sm" variant='secondary' onClick={() => router.push('/feed/123')}>
+                <Button className="text-sm" variant='secondary' onClick={props.onViewClick}>
                     View
                     <LucideCircleArrowRight/>
                 </Button>
@@ -101,7 +86,7 @@ export default function UserCard(props: IUserCardProps) {
                 name={props.name}
                 job={props.job}
                 location={props.location}
-                experience={props.experience}
+                yearsOfExperience={props.yearsOfExperience}
                 availability={props.availability}
                 skills={props.skills}
                 educations={props.educations}

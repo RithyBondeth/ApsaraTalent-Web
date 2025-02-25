@@ -4,24 +4,11 @@ import { TypographyMuted } from "../utils/typography/typography-muted"
 import { TypographyP } from "../utils/typography/typography-p"
 import Tag from "../utils/tag"
 import { Avatar, AvatarFallback } from "../ui/avatar"
-import Label from "../utils/label"
+import IconLabel from "../utils/icon-label"
 import { TypographyH4 } from "../utils/typography/typography-h4"
 import { TypographySmall } from "../utils/typography/typography-small"
 import { Button } from "../ui/button"
-
-interface IUserDialogProps {
-    open: boolean;
-    setOpen: (open: boolean) => void;
-    avatar: string;
-    name: string;
-    job: string;
-    location: string;
-    experience: string;
-    availability: string;
-    skills: string[];
-    educations: { school: string, degree: string }[];
-    status: { label: string, value: string }[];
-}
+import { IUserDialogProps } from "./props"
 
 export default function UserDialog(props: IUserDialogProps) {
     return (
@@ -39,9 +26,9 @@ export default function UserDialog(props: IUserDialogProps) {
                                     <TypographyMuted>{props.job}</TypographyMuted>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label text={props.location} icon={<LucideMapPin className="!size-5"/>}/>
-                                    <Label text={props.experience} icon={<LucideUser className="!size-5"/>}/>
-                                    <Label text={props.availability} icon={<LucideClock className="!size-5"/>}/>
+                                    <IconLabel icon={<LucideMapPin/>} text={props.location}/> 
+                                    <IconLabel icon={<LucideUser/>} text={props.yearsOfExperience}/>
+                                    <IconLabel icon={<LucideClock/>} text={props.availability}/>
                                 </div>
                             </div>
                         </div>
@@ -53,8 +40,8 @@ export default function UserDialog(props: IUserDialogProps) {
                                 <div className="flex flex-col items-start gap-5">
                                     {props.educations.map((education) => (
                                         <div key={education.school} className="flex flex-col items-start gap-2">
-                                            <Label text={education.school} icon={<LucideUniversity className="!size-5"/>}/>
-                                            <Label text={education.degree} icon={<LucideGraduationCap className="!size-5"/>}/>
+                                            <IconLabel icon={<LucideUniversity/>} text={education.school}/>
+                                            <IconLabel icon={<LucideGraduationCap/>} text={education.degree}/>
                                         </div>
                                     ))}
                                 </div>

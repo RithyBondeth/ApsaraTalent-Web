@@ -1,27 +1,17 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import Label from "@/components/utils/label";
+import IconLabel from "@/components/utils/icon-label";
 import Tag from "@/components/utils/tag";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { LucideAtSign, LucideBookmark, LucideCalendar, LucideDownload, LucideEye, LucideGraduationCap, LucideHeartHandshake, LucideMail, LucideMapPin, LucidePhone, LucideSchool, LucideUser } from "lucide-react";
-import facebookIcon from '@/assets/socials/facebook.png';
-import linkedInIcon from '@/assets/socials/linkedin.png';
-import githubIcon from '@/assets/socials/github.png';
-import emailIcon from '@/assets/socials/email.png';
-import browserIcon from '@/assets/socials/browser.png';
 import Image from "next/image";
 import Divider from "@/components/utils/divider";
+import { userList } from "@/data/user-data";
 
-export default function UserDetailPage() {
-    const connectList = [
-        { id: 1, label: 'Benx', icon: facebookIcon, link: '' },
-        { id: 2, label: 'Rithy Bondeth', icon: linkedInIcon, link: '' },
-        { id: 3, label: 'Rithy Bondeth', icon: githubIcon, link: '' },
-        { id: 4, label: 'rithybondeth@gmail.com', icon: emailIcon, link: '' },
-        { id: 5, label: 'codehub.dev', icon: browserIcon, link: '' },
-    ]
+export default function EmployeeDetailPage() {
+    const employeeId = 1;
 
     return (
         <div className="flex flex-col gap-5">
@@ -29,39 +19,39 @@ export default function UserDetailPage() {
             <div className="w-full flex items-stretch justify-between border border-muted py-5 px-10">
                 <div className="flex flex-col items-center gap-5">
                     <Avatar className="size-40">
-                        <AvatarFallback>BN</AvatarFallback>
+                        <AvatarFallback>{userList[employeeId].avatar}</AvatarFallback>  
                     </Avatar>
                     <div className="flex flex-col items-center gap-1">
-                        <TypographyH4>Hem RithyBondeth</TypographyH4>
-                        <TypographyMuted>Software Engineer</TypographyMuted>
+                        <TypographyH4>{userList[employeeId].firstname} {userList[employeeId].lastname}</TypographyH4>
+                        <TypographyMuted>{userList[employeeId].job}</TypographyMuted>
                     </div>
                 </div>
                 <div className="flex flex-col items-start gap-5">
                     <div className="flex flex-col items-start gap-2">
                         <TypographyMuted>Firstname</TypographyMuted>
-                        <Label icon={<LucideUser className="!size-5"/>} text="Hem"/>        
+                        <IconLabel icon={<LucideUser/>} text={userList[employeeId].firstname}/>          
                     </div>
                    <div className="flex flex-col items-start gap-2">
                         <TypographyMuted>Lastname</TypographyMuted>
-                        <Label icon={<LucideUser className="!size-5"/>} text="RithyBondeth" />        
+                        <IconLabel icon={<LucideUser/>} text={userList[employeeId].lastname} />        
                     </div>
                     <div className="flex flex-col items-start gap-2">
                         <TypographyMuted>Username</TypographyMuted>
-                        <Label icon={<LucideAtSign className="!size-5"/>} text="_benx123_" />        
+                        <IconLabel icon={<LucideAtSign/>} text={userList[employeeId].username} />        
                     </div>
                 </div>
                 <div className="flex flex-col items-start gap-5">
                     <div className="flex flex-col items-start gap-2">
                         <TypographyMuted>Email</TypographyMuted>
-                        <Label icon={<LucideMail className="!size-5"/>} text="rithybondeth@gmail.com" />        
+                        <IconLabel icon={<LucideMail/>} text={userList[employeeId].email} />            
                     </div>
                     <div className="flex flex-col items-start gap-2">
                         <TypographyMuted>Phone</TypographyMuted>
-                        <Label icon={<LucidePhone className="!size-5"/>} text="085872582" />
+                        <IconLabel icon={<LucidePhone/>} text={userList[employeeId].phone} />   
                     </div>
                     <div className="flex flex-col items-start gap-2">
                         <TypographyMuted>Address</TypographyMuted>
-                        <Label icon={<LucideMapPin className="!size-5"/>} text="Phnom Penh, Cambodia" />
+                        <IconLabel icon={<LucideMapPin/>} text={userList[employeeId].location} />
                     </div>
                 </div>
             </div>
@@ -75,16 +65,13 @@ export default function UserDetailPage() {
                             <TypographyH4>Education</TypographyH4>
                             <Divider/>
                         </div>
-                        <div className="flex flex-col gap-2 border-l-4 border-primary pl-4">
-                            <Label icon={<LucideSchool className="!size-5"/>} text="Cambodia Academic Digital and Technology (CADT)"/>
-                            <Label icon={<LucideGraduationCap className="!size-5"/>} text="Bachelor Degree of Computer Science"/>
-                            <Label icon={<LucideCalendar className="!size-5"/>} text="2020 - 2024"/>
-                        </div>
-                        <div className="flex flex-col gap-2 border-l-4 border-primary pl-4">
-                            <Label icon={<LucideSchool className="!size-5"/>} text="Royal University of Phnom Penh (RUPP)"/>
-                            <Label icon={<LucideGraduationCap className="!size-5"/>} text="Bachelor Degree of English"/>
-                            <Label icon={<LucideCalendar className="!size-5"/>} text="2020 - 2024"/>
-                        </div>
+                        {userList[employeeId].educations.map((item) => (
+                           <div className="flex flex-col gap-2 border-l-4 border-primary pl-4" key={item.id}>
+                                <IconLabel icon={<LucideSchool/>} text={item.school}/>      
+                                <IconLabel icon={<LucideGraduationCap/>} text={item.degree}/>
+                                <IconLabel icon={<LucideCalendar/>} text={item.year}/>
+                            </div>
+                        ))}
                     </div>
 
                     {/* Experience Section */}
@@ -94,20 +81,16 @@ export default function UserDetailPage() {
                             <Divider/>
                         </div>
                         <div className="flex flex-col gap-5">
-                           <div className="border-l-4 border-primary pl-4 space-y-2"> 
-                                <div className="flex flex-col gap-1">
-                                    <TypographyP>Software Engineer at Google Inc.</TypographyP>
-                                    <TypographyMuted>2020 - 2024</TypographyMuted>
+                            {userList[employeeId].experiences.map((item) => (
+                               <div className="border-l-4 border-primary pl-4 space-y-2" key={item.id}>  
+                                    <div className="flex flex-col gap-1">
+                                        <TypographyP>{item.title}</TypographyP>
+                                        <TypographyMuted>{item.startDate} - {item.endDate}</TypographyMuted>
+                                    </div>
+                                    <TypographyMuted className="text-primary">{item.description}</TypographyMuted>
                                 </div>
-                                <TypographyMuted className="text-primary">Team Lead of Dart and Flutter framework.</TypographyMuted>
-                           </div>
-                           <div className="border-l-4 border-primary pl-4 space-y-2"> 
-                                <div className="flex flex-col gap-1">
-                                    <TypographyP>Software Engineer at Google Inc.</TypographyP>
-                                    <TypographyMuted>2020 - 2024</TypographyMuted>
-                                </div>
-                                <TypographyMuted className="text-primary">Team Lead of Dart and Flutter framework.</TypographyMuted>
-                           </div>
+                            ))}
+                           
                         </div>
                     </div>
 
@@ -118,7 +101,7 @@ export default function UserDetailPage() {
                             <Divider/>
                         </div>
                         <div className="flex flex-wrap gap-3">
-                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => <Tag key={item} label="Mobile Development" />)}
+                            {userList[employeeId].skills.map((item) => <Tag key={item} label={item} />)}
                         </div>
                     </div>
                 </div>
@@ -132,7 +115,7 @@ export default function UserDetailPage() {
                             <Divider/>
                         </div>
                         <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
-                            <TypographyMuted>Bondeth-Resume.pdf</TypographyMuted>
+                            <TypographyMuted>{userList[employeeId].document.resume}</TypographyMuted>
                             <div className="flex items-center gap-1">
                                 <Button variant="outline" size="icon">
                                     <LucideEye/>
@@ -143,7 +126,7 @@ export default function UserDetailPage() {
                             </div>
                         </div>
                         <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
-                            <TypographyMuted>Bondeth-coverletter.pdf</TypographyMuted>
+                            <TypographyMuted>{userList[employeeId].document.coverLetter}</TypographyMuted>
                             <div className="flex items-center gap-1">
                                 <Button variant="outline" size="icon">
                                     <LucideEye/>
@@ -162,7 +145,7 @@ export default function UserDetailPage() {
                             <Divider/>
                         </div>
                         <div className="flex flex-col gap-5">
-                            {connectList.map((item) => (
+                            {userList[employeeId].social.map((item) => (         
                                 <div className="flex items-center gap-2 cursor-pointer" key={item.id}>
                                     <Image src={item.icon} alt={item.label} height={undefined} width={25} className="rounded-full"/>
                                     <TypographyP className="!m-0 text-sm">{item.label}</TypographyP>

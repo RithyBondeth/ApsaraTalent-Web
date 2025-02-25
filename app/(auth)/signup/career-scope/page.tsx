@@ -8,7 +8,7 @@ import { DialogTitle } from "@/components/ui/dialog";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { careerOptions } from "@/data/data";
+import { careerOptions } from "@/data/career-data";
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { LucideArrowLeft, LucideSearch } from "lucide-react";
 import { useRouter } from "next/navigation";
