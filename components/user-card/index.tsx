@@ -46,7 +46,7 @@ export default function UserCard(props: IUserCardProps) {
             <div className="w-full flex items-start justify-between" onClick={handleClickDialog}>
                 <div className="flex items-center gap-3">
                     <Avatar className="size-20">
-                        <AvatarFallback>{props.avatar}</AvatarFallback>
+                        <AvatarFallback>{!props.avatar ? props.name.slice(0, 2) : props.avatar}</AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col items-start gap-1">
                         <TypographyP className="font-semibold">{props.name}</TypographyP>
@@ -72,7 +72,7 @@ export default function UserCard(props: IUserCardProps) {
 
             {/* button Section */}
             <div className="w-full flex items-center justify-end gap-3">
-                <Button className="text-sm" variant='outline'>
+                <Button className="text-sm" variant='outline' onClick={props.onSaveClick}>
                     Save
                     <LucideBookmark/>
                 </Button> 

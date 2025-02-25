@@ -11,4 +11,5 @@ export interface IUserCardProps {
     availability: string;
     educations: { school: string, degree: string }[];
     onViewClick: () => void;
+    onSaveClick: () => void;
 }

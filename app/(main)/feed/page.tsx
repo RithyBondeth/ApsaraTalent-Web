@@ -58,10 +58,21 @@ export default function FeedPage() {
                         yearsOfExperience={user.yearsOfExperience}
                         availability={user.availability}
                         educations={user.educations}
+                        onSaveClick={() => {}}
                         onViewClick={() => router.push(`/feed/${role === "employee" ? "employee" : "employer"}/${user.id}`)}
                     />
                 ))}
-                <CompanyCard/>
+                <CompanyCard
+                    name="TechCorp Solutions"
+                    description="Software Development & IT Services"
+                    // avatar="TH"
+                    numberOfEmployees={500}
+                    location="Phnom Penh, Cambodia"
+                    openPositions={["Software Developer", "UI/UX Designer", "Sales"]}
+                    availableTimes={["Full-time", "Part-time", "Remote", "Intern"]}
+                    onViewClick={() => {}}
+                    onSaveClick={() => {}}
+                />
             </div>
         </div>
     )

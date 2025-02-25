@@ -1,5 +1,6 @@
-import { LucideBookmark, LucideBriefcaseBusiness, LucideBuilding, LucideCircleArrowRight, LucideClock, LucideMapPin, LucideUsers } from "lucide-react";
+"use client"
 
+import { LucideBookmark, LucideBriefcaseBusiness, LucideBuilding, LucideCircleArrowRight, LucideClock, LucideMapPin, LucideUsers } from "lucide-react";
 import { LucideHeartHandshake } from "lucide-react";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { TypographyMuted } from "../utils/typography/typography-muted";
@@ -8,27 +9,58 @@ import { TypographySmall } from "../utils/typography/typography-small";
 import { Button } from "../ui/button";
 import Tag from "../utils/tag";
 import IconLabel from "../utils/icon-label";
+import { useEffect } from "react";
+import { useState } from "react";
+import { ICompanyCardProps } from "./props";
+import { useRef } from "react";
+import CompanyDialog from "../company-dialog";
 
-export default function CompanyCard() {
+export default function CompanyCard(props: ICompanyCardProps) {
+    const [openCompanyDialog, setOpenCompanyDialog] = useState<boolean>(false);
+    const ignoreNextClick = useRef<boolean>(false);
+
+    const handleClickDialog = (e: React.MouseEvent) => {
+        // Prevent reopening immediately after closing
+        if (ignoreNextClick.current) {
+            ignoreNextClick.current = false;
+            return;
+        }
+    
+        // Check if the click happened inside the DialogContent
+        if ((e.target as HTMLElement).closest(".dialog-content")) {
+            return;
+        }
+    
+        setOpenCompanyDialog(true);
+    };
+
+    useEffect(() => {
+        if (!openCompanyDialog) {
+            // Prevent reopening immediately after closing
+            ignoreNextClick.current = true;
+            setTimeout(() => {
+                ignoreNextClick.current = false;
+            }, 200);
+        }
+    }, [openCompanyDialog]);
+
     return (
         <div className="h-fit w-full flex flex-col items-start gap-6 p-3 rounded-lg border border-muted cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:border-primary">
             {/* Profile Section */}
-            <div className="w-full flex items-start justify-between">
+            <div className="w-full flex items-start justify-between" onClick={handleClickDialog}>
                 <div className="flex items-center gap-3">
                     <Avatar className="size-20">
-                        <AvatarFallback>
-                            <LucideBuilding/>
-                        </AvatarFallback>
+                        <AvatarFallback>{!props.avatar ? <LucideBuilding/> : props.avatar}</AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col items-start gap-1">
-                        <TypographyP className="font-semibold">TechCorp Solutions</TypographyP>
+                        <TypographyP className="font-semibold">{props.name}</TypographyP>
                         <TypographySmall className="text-xs flex items-center gap-1 text-muted-foreground">
                             <LucideUsers className="size-3 "/>
-                            <span>500+ employees</span>
+                            <span>{props.numberOfEmployees} employees</span>
                         </TypographySmall>
                         <TypographySmall className="text-xs flex items-center gap-1 text-muted-foreground">
                             <LucideMapPin className="size-3 "/>
-                            <span>Phnom Penh, Cambodia</span>
+                            <span>{props.location}</span>
                         </TypographySmall>
                     </div>
                 </div>
@@ -40,7 +72,7 @@ export default function CompanyCard() {
             {/* Industry Section */}
             <div className="w-full flex flex-col gap-3">
                 <IconLabel text="Industry" icon={<LucideBuilding/>} className="[&>p]:text-primary [&>p]:font-medium"/>
-                <TypographyMuted>Software Development & IT Services</TypographyMuted>
+                <TypographyMuted>{props.description}</TypographyMuted>
             </div>
 
             {/* Tag Section */}
@@ -48,28 +80,31 @@ export default function CompanyCard() {
                 <div className="flex flex-col gap-3">
                     <IconLabel text="6 Open Positions" icon={<LucideBriefcaseBusiness/>} className="[&>p]:text-primary [&>p]:font-medium"/>
                     <div className="w-full flex flex-wrap gap-2">
-                        {['Software Development', 'UI/UX Design', 'Marketing', 'Sales', 'Human Resource', 'Customer Service'].map((item) => <Tag key={item} label={item} />)}
+                        {props.openPositions.map((item) => <Tag key={item} label={item} />)}
                     </div>
                 </div>
                 <div className="flex flex-col gap-3">
                     <IconLabel text="Available times" icon={<LucideClock/>} className="[&>p]:text-primary [&>p]:font-medium"/>
                     <div className="w-full flex flex-wrap gap-2">
-                        {['Fulltime', 'Parttime', 'Remote', 'Intern'].map((item) => <Tag key={item} label={item} />)}
+                        {props.availableTimes.map((item) => <Tag key={item} label={item} />)}
                     </div>
                 </div>
             </div>
 
            {/* button Section */}
             <div className="w-full flex items-center justify-end gap-3">
-                <Button className="text-sm" variant='outline'>
+                <Button className="text-sm" variant='outline' onClick={props.onSaveClick}>
                     Save
                     <LucideBookmark/>
                 </Button> 
-                <Button className="text-sm" variant='secondary'>
+                <Button className="text-sm" variant='secondary' onClick={props.onViewClick}>
                     View
                     <LucideCircleArrowRight/>
                 </Button>
             </div>  
+            
+            {/* Hidden Dialog Section */}
+            <CompanyDialog open={openCompanyDialog} setOpen={setOpenCompanyDialog}/>
         </div>
     )
 }

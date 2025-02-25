@@ -19,7 +19,11 @@ export default function EmployeeDetailPage() {
             <div className="w-full flex items-stretch justify-between border border-muted py-5 px-10">
                 <div className="flex flex-col items-center gap-5">
                     <Avatar className="size-40">
-                        <AvatarFallback>{userList[employeeId].avatar}</AvatarFallback>  
+                        <AvatarFallback>
+                            { !userList[employeeId].avatar 
+                            ? userList[employeeId].firstname.slice(0, 2) 
+                            : userList[employeeId].avatar}
+                        </AvatarFallback>  
                     </Avatar>
                     <div className="flex flex-col items-center gap-1">
                         <TypographyH4>{userList[employeeId].firstname} {userList[employeeId].lastname}</TypographyH4>
