@@ -1,14 +1,14 @@
 import { LucideBuilding, LucideCircleCheck, LucideMapPin, LucideUsers } from "lucide-react";
-import { Avatar, AvatarFallback } from "../ui/avatar";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
-import { TypographyH4 } from "../utils/typography/typography-h4";
-import { TypographyMuted } from "../utils/typography/typography-muted";
+import { Avatar, AvatarFallback } from "../../ui/avatar";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../../ui/dialog";
+import { TypographyH4 } from "../../utils/typography/typography-h4";
+import { TypographyMuted } from "../../utils/typography/typography-muted";
 import { ICompanyDialogProps } from "./props";
-import IconLabel from "../utils/icon-label";
-import { TypographyP } from "../utils/typography/typography-p";
-import { Button } from "../ui/button";
+import IconLabel from "../../utils/icon-label";
+import { TypographyP } from "../../utils/typography/typography-p";
+import { Button } from "../../ui/button";
 import Link from "next/link";
-import { LabelItem } from "@/utils/interfaces/company.interface";
+import { ILabelItem } from "@/utils/interfaces/company.interface";
 export default function CompanyDialog(props: ICompanyDialogProps) {
     return (
         <Dialog open={props.open} onOpenChange={props.setOpen}>
@@ -41,7 +41,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                             <div className="space-y-2">
                                 <TypographyP className="font-medium">Benefits</TypographyP>
                                 <div className="flex flex-wrap gap-2">
-                                    {props.benefits.map((benefit: LabelItem) => (
+                                    {props.benefits.map((benefit: ILabelItem) => (
                                         <div key={benefit.id} className="px-3 py-2 rounded-2xl bg-muted">
                                             <IconLabel icon={<LucideCircleCheck stroke="white" fill="#0073E6"/>} text={benefit.label}/>
                                         </div>
@@ -51,7 +51,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                             <div className="space-y-2">
                                 <TypographyP className="font-medium">Values</TypographyP>
                                 <div className="flex flex-wrap gap-2">
-                                    {props.values.map((value: LabelItem) => (
+                                    {props.values.map((value: ILabelItem) => (
                                         <div key={value.id} className="px-3 py-2 rounded-2xl bg-muted">
                                             <IconLabel icon={<LucideCircleCheck stroke="white" fill="#69B41E"/>} text={value.label}/>
                                         </div>

@@ -6,21 +6,45 @@ interface ThemeState {
   theme: TTheme;
   setTheme: (theme: TTheme) => void;
   toggleTheme: () => void;
+  systemTheme: "light" | "dark"; // Track system preference
 }
 
 export const useThemeStore = create<ThemeState>()(
   persist(
-    (set, get) => ({
-      theme: "system",
-      setTheme: (theme) => set({ theme }),
-      toggleTheme: () => {
-        const currentTheme = get().theme;
-        const newTheme = currentTheme === "light" ? "dark" : "light";
-        set({ theme: newTheme });
-      },
-    }),
+    (set, get) => {
+      // Function to detect system dark mode
+      const getSystemTheme = () =>
+        window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+
+      return {
+        theme: "system", // Default theme
+        systemTheme: getSystemTheme(),
+
+        setTheme: (theme) => set({ theme }),
+
+        toggleTheme: () => {
+          const currentTheme = get().theme;
+          let newTheme: TTheme;
+
+          if (currentTheme === "light") newTheme = "dark";
+          else if (currentTheme === "dark") newTheme = "light";
+          else newTheme = getSystemTheme(); // If "system", switch to detected theme
+
+          set({ theme: newTheme });
+        },
+      };
+    },
     {
-      name: "theme-storage", // Persist theme in localStorage
+      name: "theme-storage",
     }
   )
 );
+
+// Listen for system theme changes
+if (typeof window !== "undefined") {
+  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  const updateSystemTheme = () => {
+    useThemeStore.setState({ systemTheme: mediaQuery.matches ? "dark" : "light" });
+  };
+  mediaQuery.addEventListener("change", updateSystemTheme);
+}

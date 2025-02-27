@@ -1,6 +1,6 @@
 "use client"
 
-import EmployeeCard from "@/components/employee-card";
+import EmployeeCard from "@/components/employee/employee-card";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import Image from "next/image";
 import feedBlackSvg from "@/assets/svg/feed-black.svg";
@@ -13,7 +13,7 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { useRouter } from "next/navigation";
 import { userList } from "@/data/user-data";
 import { useRoleStore } from "@/stores/role-store";
-import CompanyCard from "@/components/company-card";
+import CompanyCard from "@/components/company/company-card";
 import { companyList } from "@/data/company-data";
 export default function FeedPage() {
     const { resolvedTheme } = useTheme();

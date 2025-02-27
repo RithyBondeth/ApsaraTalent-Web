@@ -2,13 +2,13 @@
 
 import { LucideBookmark, LucideBriefcaseBusiness, LucideBuilding, LucideCircleArrowRight, LucideClock, LucideMapPin, LucideUsers } from "lucide-react";
 import { LucideHeartHandshake } from "lucide-react";
-import { Avatar, AvatarFallback } from "../ui/avatar";
-import { TypographyMuted } from "../utils/typography/typography-muted";
-import { TypographyP } from "../utils/typography/typography-p";
-import { TypographySmall } from "../utils/typography/typography-small";
-import { Button } from "../ui/button";
-import Tag from "../utils/tag";
-import IconLabel from "../utils/icon-label";
+import { Avatar, AvatarFallback } from "../../ui/avatar";
+import { TypographyMuted } from "../../utils/typography/typography-muted";
+import { TypographyP } from "../../utils/typography/typography-p";
+import { TypographySmall } from "../../utils/typography/typography-small";
+import { Button } from "../../ui/button";
+import Tag from "../../utils/tag";
+import IconLabel from "../../utils/icon-label";
 import { useEffect } from "react";
 import { useState } from "react";
 import { ICompanyCardProps } from "./props";

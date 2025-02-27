@@ -16,13 +16,13 @@ export interface ICompany {
     x: string;
     telegram: string;
     images: string[];
-    openPositions: JobPosition[];
-    availableTimes: LabelItem[];
-    values: LabelItem[];
-    benefits: LabelItem[];
+    openPositions: IJobPosition[];
+    availableTimes: ILabelItem[];
+    values: ILabelItem[];
+    benefits: ILabelItem[];
 }
 
-export interface JobPosition {
+export interface IJobPosition {
     id: number;
     title: string;
     description: string;
@@ -33,7 +33,7 @@ export interface JobPosition {
     skills: string[];
 }
 
-export interface LabelItem {
+export interface ILabelItem {
     id: number;
     label: string;
 }

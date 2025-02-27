@@ -1,10 +1,10 @@
 "use client"
-import { Avatar, AvatarFallback } from "../ui/avatar";
-import { Button } from "../ui/button";
-import Tag from "../utils/tag";
-import { TypographyMuted } from "../utils/typography/typography-muted";
-import { TypographyP } from "../utils/typography/typography-p";
-import { TypographySmall } from "../utils/typography/typography-small";
+import { Avatar, AvatarFallback } from "../../ui/avatar";
+import { Button } from "../../ui/button";
+import Tag from "../../utils/tag";
+import { TypographyMuted } from "../../utils/typography/typography-muted";
+import { TypographyP } from "../../utils/typography/typography-p";
+import { TypographySmall } from "../../utils/typography/typography-small";
 import { LucideBookmark, LucideCircleArrowRight, LucideHeartHandshake, LucideMapPin } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { IEmployeeCardProps } from "./props";
