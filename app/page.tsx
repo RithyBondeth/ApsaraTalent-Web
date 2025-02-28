@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { LucideBriefcaseBusiness } from "lucide-react";
 import Link from "next/link";
 import landingSvg from "@/assets/svg/landing.svg";
-import ParticlesBackground from "@/components/utils/animate-background";
+import ParticlesBackground from "@/components/utils/particle-background";
 import { TypographyH1 } from "@/components/utils/typography/typography-h1";
 export default function IndexPage() {
   return (

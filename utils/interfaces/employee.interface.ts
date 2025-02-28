@@ -1,3 +1,5 @@
+import { StaticImageData } from "next/image";
+
 export interface IEducation {
     id: number;
     school: string;
@@ -15,8 +17,9 @@ export interface IEducation {
   
   export interface ISocial {
     id: number;
-    icon: string;
+    icon: StaticImageData;
     label: string;
+    value: string;
   }
 
 export interface IEmployee {

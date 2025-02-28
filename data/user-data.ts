@@ -3,9 +3,9 @@ import linkedInIcon from '@/assets/socials/linkedin.png';
 import githubIcon from '@/assets/socials/github.png';
 import emailIcon from '@/assets/socials/email.png';
 import browserIcon from '@/assets/socials/browser.png';
-import { IUser } from "@/utils/interfaces/employee.interface";
+import { IEmployee } from '@/utils/interfaces/employee.interface';
 
-export const userList: IUser[] = [
+export const userList: IEmployee[] = [
         {
             id: 1,
             avatar: "JAN",

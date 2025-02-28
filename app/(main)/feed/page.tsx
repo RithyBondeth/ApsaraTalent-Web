@@ -12,14 +12,12 @@ import { useTheme } from "next-themes";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { useRouter } from "next/navigation";
 import { userList } from "@/data/user-data";
-import { useRoleStore } from "@/stores/role-store";
 import CompanyCard from "@/components/company/company-card";
 import { companyList } from "@/data/company-data";
 export default function FeedPage() {
     const { resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
     const router = useRouter();
-    const { role } = useRoleStore();
     
     useEffect(() => {
       setMounted(true);
@@ -48,7 +46,7 @@ export default function FeedPage() {
                     <CompanyCard
                         key={company.id}
                         {...company}
-                        onViewClick={() => {}}
+                        onViewClick={() => router.push('feed/company/1')}
                         onSaveClick={() => {}}
                     />
                 ))}
@@ -57,7 +55,7 @@ export default function FeedPage() {
                         key={user.id}
                         {...user}
                         onSaveClick={() => {}}
-                        onViewClick={() => router.push(`/feed/${role === "employee" ? "employee" : "company"}/${user.id}`)}
+                        onViewClick={() => router.push(`/feed/employee/1`)}
                     />
                 ))}
             </div>
