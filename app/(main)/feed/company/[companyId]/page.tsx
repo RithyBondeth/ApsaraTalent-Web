@@ -14,7 +14,7 @@ import { ILabelItem } from "@/utils/interfaces/company.interface";
 
 export default function CompanyDetailPage() {
     const companyId = 1;
-
+    
     return (
         <div className="flex flex-col gap-5">
             {/* Personal Information Section */}

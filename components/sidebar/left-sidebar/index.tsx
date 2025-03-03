@@ -40,7 +40,7 @@ export default function Sidebar({className}: {className?: string}) {
                         label="Notification"
                         link="/notification"
                     />
-                    <Link href="/profile">
+                    <Link href="/profile/employee">
                         <div className="flex items-center gap-3 mt-3 cursor-pointer">
                             <Avatar>
                                 <AvatarFallback>BN</AvatarFallback>

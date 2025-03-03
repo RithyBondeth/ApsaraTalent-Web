@@ -10,7 +10,7 @@ export default function MainLayout({children}: {children: React.ReactNode}) {
     const pathname = usePathname();
 
     // Exclude dynamic feed pages but include /feed
-    if (pathname.startsWith("/feed/") && pathname !== "/feed") {
+    if ((pathname.startsWith("/feed/") && pathname !== "/feed") || (pathname === "/profile/employee") || (pathname === "/profile/company")) {
         return (
             <div className="relative p-5"> 
                 <Link href="/feed">
