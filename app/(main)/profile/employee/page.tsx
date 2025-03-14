@@ -8,8 +8,16 @@ import LabelInput from "@/components/utils/label-input";
 import { TypographyH3 } from "@/components/utils/typography/typography-h3";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { LucideEye, LucideEyeClosed, LucideLock, LucideMail, LucidePhone } from "lucide-react";
+import { LucideAlarmCheck, LucideBriefcaseBusiness, LucideCalendarDays, LucideEye, LucideEyeClosed, LucideGraduationCap, LucideLock, LucideMail, LucidePhone, LucidePlus, LucideSchool, LucideUser } from "lucide-react";
 import { useState } from "react";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { TGender } from "@/utils/types/gender.type";
+import { TLocations } from "@/utils/types/location.type";
+import { genderConstant, locationConstant } from "@/utils/constant";
+import { Textarea } from "@/components/ui/textarea";
+import IconLabel from "@/components/utils/icon-label";
+import { DatePicker } from "@/components/ui/date-picker";
+
 
 export default function EmployeeProfilePage() {
 
@@ -18,7 +26,9 @@ export default function EmployeeProfilePage() {
         new: false,
         confirm: false,
     });
-
+    const [selectedGender, setSelectedGender] = useState<TGender | null>(null);
+    const [selectedLocation, setSelectedLocation] = useState<TLocations | null>(null);
+    const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
     return (
         <div className="flex flex-col gap-5">
@@ -36,6 +46,8 @@ export default function EmployeeProfilePage() {
             </div>
             <div className="flex items-start gap-5">
                 <div className="w-[60%] flex flex-col gap-5">
+
+                    {/* Personal Information Form Section */}
                     <div className="w-full flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
                         <div className="flex flex-col gap-1">
                             <TypographyH4>Personal Information</TypographyH4>
@@ -56,6 +68,32 @@ export default function EmployeeProfilePage() {
                                     input={<Input placeholder="Username" id="username" name="username"/>} 
                                 />
                             </div>
+                            <div className="w-full flex items-center justify-between gap-5 [&>div]:w-1/2">
+                                <div className="flex flex-col items-start gap-1">
+                                    <TypographyMuted className="text-xs">Locations</TypographyMuted>
+                                    <Select onValueChange={(value: TLocations) => setSelectedLocation(value)} value={selectedLocation || ''}>
+                                        <SelectTrigger className="h-12 text-muted-foreground">
+                                        <SelectValue placeholder="Location" />
+                                        </SelectTrigger>    
+                                        <SelectContent>
+                                            {locationConstant.map((location) => <SelectItem key={location} value={location}>{location}</SelectItem>)}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="flex flex-col items-start gap-1">
+                                    <TypographyMuted className="text-xs">Gender</TypographyMuted>
+                                    <Select onValueChange={(value: TGender) => setSelectedGender(value)} value={selectedGender || ''}>
+                                        <SelectTrigger className="h-12 text-muted-foreground">
+                                        <SelectValue placeholder="Gender" />
+                                        </SelectTrigger>    
+                                        <SelectContent>
+                                            {genderConstant.map((gender) => 
+                                                <SelectItem key={gender.id} value={gender.value}>{gender.label}</SelectItem>
+                                            )}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
                             <LabelInput
                                 label="Email"
                                 input={<Input placeholder="Email" id="email" name="email" prefix={<LucideMail/>}/>}
@@ -66,11 +104,115 @@ export default function EmployeeProfilePage() {
                             />
                         </form>
                     </div>
-                    <div className="border border-muted rounded-md p-5">
+
+                    {/* Professional Information Form Section */}
+                    <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
                         <div className="flex flex-col gap-1">
-                            <TypographyH4>Contact Information</TypographyH4>
+                            <TypographyH4>Professional Information</TypographyH4>
                             <Divider/>
                         </div>
+                        <form action="" className="flex flex-col items-start gap-5">
+                            <LabelInput 
+                                label="Profession"
+                                input={<Input placeholder="Profession" id="profession" name="profession" prefix={<LucideUser/>}/>}
+                            />
+                            <div className="w-full flex justify-between items-center gap-5">
+                                <LabelInput 
+                                    label="Year of Experience"
+                                    input={<Input placeholder="Year of Experience" id="yearOfExperience" name="yearOfExperience" prefix={<LucideBriefcaseBusiness/>}/>}
+                                />
+                                <LabelInput 
+                                    label="Availability"
+                                    input={<Input placeholder="Availability" id="availability" name="availability" prefix={<LucideAlarmCheck/>}/>}
+                                />
+                            </div>
+                            <div className="w-full flex flex-col items-start gap-1">
+                                <TypographyMuted className="text-xs">Description</TypographyMuted>
+                                <Textarea placeholder="Description"/>
+                            </div>
+                        </form>
+                    </div>
+
+                    {/* Education Information Form Section */}
+                    <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
+                        <div className="flex flex-col gap-1">
+                            <div className="flex justify-between items-center">
+                                <TypographyH4>Education Information</TypographyH4>
+                                <IconLabel 
+                                    text="Add Education" 
+                                    icon={<LucidePlus className="text-muted-foreground"/>}
+                                    className="cursor-pointer"
+                                />
+                            </div>
+                            <Divider/>
+                        </div>
+                        <form action="" className="flex flex-col items-start gap-5">
+                            <div className="w-full flex flex-col items-start gap-3">
+                                <TypographyMuted>Education 1</TypographyMuted>
+                                <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
+                                    <LabelInput 
+                                        label="School"
+                                        input={<Input placeholder="School" id="school" name="school" prefix={<LucideSchool/>}/>}
+                                    />
+                                    <LabelInput 
+                                        label="Degree"
+                                        input={<Input placeholder="Degree" id="degree" name="degree" prefix={<LucideGraduationCap/>}/>}
+                                    />
+                                    <LabelInput 
+                                        label="Graduation Year"
+                                        input={<Input placeholder="Year" id="year" name="year" prefix={<LucideCalendarDays/>}/>}
+                                    />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    {/* Experience Information Form Section */}
+                    <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
+                        <div className="flex flex-col gap-1">
+                            <div className="flex justify-between items-center">
+                                <TypographyH4>Experience Information</TypographyH4>
+                                <IconLabel 
+                                    text="Add Education" 
+                                    icon={<LucidePlus className="text-muted-foreground"/>}
+                                    className="cursor-pointer"
+                                />
+                            </div>
+                            <Divider/>
+                        </div>
+                        <form action="" className="flex flex-col items-start gap-5">
+                            <div className="w-full flex flex-col items-start gap-3">
+                                <TypographyMuted>Experience 1</TypographyMuted>
+                                <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
+                                    <div className="w-full flex justify-between items-center gap-5">
+                                        <LabelInput 
+                                            label="Title"
+                                            input={<Input placeholder="Title" id="title" name="title" prefix={<LucideBriefcaseBusiness/>}/>}
+                                        />
+                                        <LabelInput 
+                                            label="Description"
+                                            input={<Input placeholder="Description" id="description" name="description" prefix={<LucideGraduationCap/>}/>}
+                                        />
+                                    </div>
+                                    <div className="w-full flex justify-between items-center gap-5">
+                                        <div className="w-1/2 flex flex-col items-start gap-1">
+                                            <TypographyMuted className="text-xs">Start Date</TypographyMuted>
+                                            <DatePicker 
+                                                date={selectedDate}
+                                                onDateChange={setSelectedDate}
+                                            />
+                                        </div>
+                                        <div className="w-1/2 flex flex-col items-start gap-1">
+                                            <TypographyMuted className="text-xs">End Date</TypographyMuted>
+                                            <DatePicker 
+                                                date={selectedDate}
+                                                onDateChange={setSelectedDate}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
                 <div className="w-[40%] flex flex-col gap-5">

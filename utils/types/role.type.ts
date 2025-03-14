@@ -1,1 +1,1 @@
-export type TUserRole = 'employee' | 'employer';
+export type TUserRole = 'employee' | 'company';
