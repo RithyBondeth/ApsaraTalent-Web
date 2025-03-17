@@ -91,18 +91,13 @@ export default function SignupPage() {
           />                
         </div>
         <div className="flex items-center gap-3">
-            <Button 
-              className="flex-1" 
-              variant="outline" 
-              prefixIcon={<LucideArrowLeft/>} 
-              onClick={() => router.push('/login')}
-            >Back
+            <Button className="flex-1" variant="outline" onClick={() => router.push('/login')}> 
+              <LucideArrowLeft/>
+              Back
             </Button>
-            <Button 
-              className="flex-1" 
-              suffix={<LucideArrowRight/>} 
-              onClick={() => router.push('/signup/career-scope')}
-            >Next
+            <Button className="flex-1"  onClick={() => router.push('/signup/career-scope')}> 
+              <LucideArrowRight/>
+              Next
             </Button>
         </div>
       </div>

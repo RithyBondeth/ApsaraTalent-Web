@@ -18,7 +18,10 @@ function DropdownMore() {
   return (
     <DropdownMenu>
         <DropdownMenuTrigger asChild className='w-full focus:outline-none focus:ring-0 focus-visible:ring-0'>
-            <Button variant='secondary' prefixIcon={<LucideMenu/>}>More</Button>
+            <Button variant='secondary'>
+                <LucideMenu/>
+                More
+            </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-[var(--radix-popper-anchor-width)]">
             <DropdownMenuGroup>

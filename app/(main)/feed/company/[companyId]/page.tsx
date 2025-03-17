@@ -36,8 +36,14 @@ export default function CompanyDetailPage() {
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button variant="outline" prefixIcon={<LucideBookmark/>}>Save to Favorite</Button>  
-                    <Button prefixIcon={<LucideHeartHandshake/>}>Like</Button>
+                    <Button variant="outline">
+                        <LucideBookmark/>
+                        Save to Favorite
+                    </Button>  
+                    <Button>
+                        <LucideHeartHandshake/>
+                        Like
+                    </Button>
                 </div>
             </div>
             <div className="w-full flex items-stretch gap-5">

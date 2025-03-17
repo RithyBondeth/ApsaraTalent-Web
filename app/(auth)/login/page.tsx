@@ -54,7 +54,10 @@ function LoginPage() {
                 <SocialButton image={linkedinIcon} label="LinkedIn" variant="outline" className="w-1/2"/>
                 <SocialButton image={githubIcon} label="Github" variant="outline" className="w-1/2"/>
               </div>
-              <Button variant="outline" prefixIcon={<LucidePhone/>} onClick={() => router.push('login/phone-number')}>Phone Number</Button>
+              <Button variant="outline" onClick={() => router.push('login/phone-number')}>
+                <LucidePhone/>
+                Phone Number
+              </Button>
             </div>
             {/* End Social Button Login Section */}
             {/* Divider Section */}

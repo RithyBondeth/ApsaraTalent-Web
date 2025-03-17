@@ -8,7 +8,7 @@ import LabelInput from "@/components/utils/label-input";
 import { TypographyH3 } from "@/components/utils/typography/typography-h3";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { LucideAlarmCheck, LucideBriefcaseBusiness, LucideCalendarDays, LucideEye, LucideEyeClosed, LucideGraduationCap, LucideLock, LucideMail, LucidePhone, LucidePlus, LucideSchool, LucideUser } from "lucide-react";
+import { LucideAlarmCheck, LucideBriefcaseBusiness, LucideCalendarDays, LucideEye, LucideEyeClosed, LucideGraduationCap, LucideLink2, LucideLock, LucideMail, LucidePhone, LucidePlus, LucideSchool, LucideUser } from "lucide-react";
 import { useState } from "react";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { TGender } from "@/utils/types/gender.type";
@@ -17,6 +17,7 @@ import { genderConstant, locationConstant } from "@/utils/constant";
 import { Textarea } from "@/components/ui/textarea";
 import IconLabel from "@/components/utils/icon-label";
 import { DatePicker } from "@/components/ui/date-picker";
+import Tag from "@/components/utils/tag";
 
 
 export default function EmployeeProfilePage() {
@@ -198,6 +199,7 @@ export default function EmployeeProfilePage() {
                                         <div className="w-1/2 flex flex-col items-start gap-1">
                                             <TypographyMuted className="text-xs">Start Date</TypographyMuted>
                                             <DatePicker 
+                                                placeholder="Start Date"
                                                 date={selectedDate}
                                                 onDateChange={setSelectedDate}
                                             />
@@ -205,6 +207,7 @@ export default function EmployeeProfilePage() {
                                         <div className="w-1/2 flex flex-col items-start gap-1">
                                             <TypographyMuted className="text-xs">End Date</TypographyMuted>
                                             <DatePicker 
+                                                placeholder="End Date"
                                                 date={selectedDate}
                                                 onDateChange={setSelectedDate}
                                             />
@@ -234,7 +237,8 @@ export default function EmployeeProfilePage() {
                                             ? <LucideEyeClosed onClick={() => setIsShowPassword({...isShowPassword, current: false})}/> 
                                             : <LucideEye onClick={() => setIsShowPassword({...isShowPassword, current: true})}
                                         />}
-                                    />}
+                                    />
+                                }
                             />
                             <LabelInput
                                 label="New Password"
@@ -266,6 +270,83 @@ export default function EmployeeProfilePage() {
                                     />
                                 }
                             />
+                        </form>
+                    </div>
+                    
+                    {/* Skill Section */}
+                    <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
+                        <div className="w-full flex flex-col gap-1">
+                            <div className="w-full flex justify-between items-center">
+                                <TypographyH4>Skills</TypographyH4>
+                                <IconLabel 
+                                    text="Add Skill" 
+                                    icon={<LucidePlus className="text-muted-foreground"/>}
+                                    className="cursor-pointer"
+                                />
+                            </div>
+                            <Divider/>
+                        </div>
+                        <div className="flex flex-wrap gap-3">
+                         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((skill) => <Tag key={skill} label="Typescript"/>)}
+                        </div>
+                    </div>
+
+                    {/* CareerScopes Section */}
+                    <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
+                        <div className="w-full flex flex-col gap-1">
+                            <div className="w-full flex justify-between items-center">
+                                <TypographyH4>Career Scopes</TypographyH4>
+                                <IconLabel 
+                                    text="Add Career" 
+                                    icon={<LucidePlus className="text-muted-foreground"/>}
+                                    className="cursor-pointer"
+                                />
+                            </div>
+                            <Divider/>
+                        </div>
+                        <div className="flex flex-wrap gap-3">
+                         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((skill) => <Tag key={skill} label="AI & Machine Learning"/>)}
+                        </div>
+                    </div>
+
+                     {/* Experience Information Form Section */}
+                     <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
+                        <div className="flex flex-col gap-1">
+                            <div className="flex justify-between items-center">
+                                <TypographyH4>Social Information</TypographyH4>
+                                <IconLabel 
+                                    text="Add Social" 
+                                    icon={<LucidePlus className="text-muted-foreground"/>}
+                                    className="cursor-pointer"
+                                />
+                            </div>
+                            <Divider/>
+                        </div>
+                        <form action="" className="flex flex-col items-start gap-5">
+                            <div className="w-full flex flex-col items-start gap-3">
+                                <TypographyMuted>Social 1</TypographyMuted>
+                                <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
+                                    <div className="w-full flex justify-between items-center gap-5 [&>div]:w-1/2">
+                                        <div className="flex flex-col items-start gap-1">
+                                            <TypographyMuted className="text-xs">Platform</TypographyMuted>
+                                            <Select onValueChange={(value: TGender) => setSelectedGender(value)} value={selectedGender || ''}>
+                                                <SelectTrigger className="h-12 text-muted-foreground">
+                                                <SelectValue placeholder="Gender" />
+                                                </SelectTrigger>    
+                                                <SelectContent>
+                                                    {genderConstant.map((gender) => 
+                                                        <SelectItem key={gender.id} value={gender.value}>{gender.label}</SelectItem>
+                                                    )}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <LabelInput 
+                                            label="Link"
+                                            input={<Input placeholder="Link" id="link" name="link" prefix={<LucideLink2/>}/>}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                         </form>
                     </div>
                     <div className="border border-muted rounded-md p-5">

@@ -169,8 +169,14 @@ export default function EmployeeDetailPage() {
 
             {/* Action Buttons Section */}
             <div className="flex items-center gap-2">
-                <Button variant={'outline'} prefixIcon={<LucideBookmark/>}>Save to favorite</Button>
-                <Button prefixIcon={<LucideHeartHandshake/>}>Like</Button>
+                <Button variant={'outline'}>
+                    <LucideBookmark/>
+                    Save to favorite
+                </Button>
+                <Button>
+                    <LucideHeartHandshake/>
+                    Like
+                </Button>
             </div>
         </div>
     )
