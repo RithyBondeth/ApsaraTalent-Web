@@ -55,7 +55,7 @@ export default function CareerScopePage() {
     };
 
     return (
-        <div className="h-fit w-[80%] flex flex-col items-stretch gap-8 tablet-xl:w-[90%] tablet-xl:mt-10">
+        <div className="h-fit w-[80%] flex flex-col items-stretch gap-8 tablet-xl:w-[90%] tablet-xl:mt-20">
            {/* Navigate Button */}
            <Button className="absolute top-5 left-5" onClick={() => router.push('/signup')}>
                 <LucideArrowLeft/>
@@ -63,7 +63,7 @@ export default function CareerScopePage() {
            </Button>
           
            {/* Title Section */}
-            <div> 
+            <div className="phone-xl:mt-10"> 
                 <TypographyH2>Choose Your Career Opportunity</TypographyH2>
                 <TypographyMuted className="text-md">Connect with top professionals and explore new opportunities.</TypographyMuted>
             </div>
