@@ -14,7 +14,7 @@ export default function SignupLayout({ children }: { children: ReactNode }) {
     useEffect(() => {
       setMounted(true);
     }, []);
-  
+ 
     // Determine which image to display (avoid SSR issues)
     const currentTheme = mounted ? resolvedTheme : "light";
     const signupImage = currentTheme === "dark" ? signupBlackSvg : signupWhiteSvg;

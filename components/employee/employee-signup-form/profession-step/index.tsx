@@ -5,10 +5,10 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { Input } from "@/components/ui/input";
 import { LucideAlarmClock, LucideBriefcaseBusiness, LucideUser } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { TProfessionStepInfo } from "../validation";
+import { TEmployeeSignUp } from "../validation";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 
-export default function ProfessionStepForm({ register }: IStepFormProps<TProfessionStepInfo>) {
+export default function ProfessionStepForm({ register }: IStepFormProps<TEmployeeSignUp>) {
   return (
     <div className="flex flex-col items-start gap-5">
       <TypographyH4>Add profession information</TypographyH4>
@@ -18,7 +18,7 @@ export default function ProfessionStepForm({ register }: IStepFormProps<TProfess
           <Input
             placeholder="Profession"
             id="profession"
-            name="profession"
+            {...register('profession.job')}
             prefix={<LucideUser />}
           />
         }
@@ -30,7 +30,7 @@ export default function ProfessionStepForm({ register }: IStepFormProps<TProfess
             <Input
               placeholder="Year of Experience"
               id="yearOfExperience"
-              name="yearOfExperience"
+              {...register('profession.yearOfExperience')}
               prefix={<LucideBriefcaseBusiness />}
             />
           }
@@ -41,7 +41,7 @@ export default function ProfessionStepForm({ register }: IStepFormProps<TProfess
             <Input
               placeholder="Availability"
               id="availability"
-              name="availability"
+              {...register('profession.availability')}
               prefix={<LucideAlarmClock />}
             />
           }
@@ -49,7 +49,7 @@ export default function ProfessionStepForm({ register }: IStepFormProps<TProfess
       </div>
       <div className="w-full flex flex-col items-start gap-1">
         <TypographyMuted className="text-xs">Description</TypographyMuted>
-        <Textarea placeholder="Description" />
+        <Textarea placeholder="Description"  {...register('profession.description')}/>
       </div>
     </div>
   );

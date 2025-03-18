@@ -1,11 +1,12 @@
 import LabelInput from "@/components/utils/label-input";
 import { IStepFormProps } from "../props";
-import { TEducationStepInfo } from "../validation";
+import { TEmployeeSignUp } from "../validation";
 import { Input } from "@/components/ui/input";
-import { LucideCalendarDays, LucideGraduationCap, LucideSchool } from "lucide-react";
+import { LucideCalendarDays, LucideGraduationCap, LucidePlus, LucideSchool } from "lucide-react";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { Button } from "@/components/ui/button";
 
-export default function EducationStepForm({ register }: IStepFormProps<TEducationStepInfo>) {
+export default function EducationStepForm({ register }: IStepFormProps<TEmployeeSignUp>) {
   return (
     <div className="w-full flex flex-col items-start gap-5">
       <TypographyH4>Add your educations information</TypographyH4>
@@ -15,7 +16,7 @@ export default function EducationStepForm({ register }: IStepFormProps<TEducatio
           <Input
             placeholder="School"
             id="school"
-            name="school"
+            {...register(`educations.${0}.school`)}
             prefix={<LucideSchool />}
           />
         }
@@ -26,7 +27,7 @@ export default function EducationStepForm({ register }: IStepFormProps<TEducatio
           <Input
             placeholder="Degree"
             id="degree"
-            name="degree"
+            {...register(`educations.${0}.degree`)}
             prefix={<LucideGraduationCap />}
           />
         }
@@ -37,11 +38,17 @@ export default function EducationStepForm({ register }: IStepFormProps<TEducatio
           <Input
             placeholder="Year"
             id="year"
-            name="year"
+            {...register(`educations.${0}.year`)} 
             prefix={<LucideCalendarDays />}
           />
         }
       />
+      <div className="w-full flex justify-end">
+        <Button variant='secondary' onClick={() => { alert('Add More') }}>
+          Add More
+          <LucidePlus/>
+        </Button>
+      </div>
     </div>
   );
 }

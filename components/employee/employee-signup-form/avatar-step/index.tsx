@@ -1,17 +1,10 @@
-"use client"
-
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { IStepFormProps } from "../props";
-import { TAvatarStepInfo } from "../validation";
-import { DragDropFile } from "@/components/utils/dragdrop-file.";
-import { useState } from "react";
+import { TEmployeeSignUp } from "../validation";
+import { DragDropFile } from "@/components/utils/drag-drop-file.";
 
-export default function AvatarStepForm({ register }: IStepFormProps<TAvatarStepInfo>) {
-    
-    const [files, setFiles] = useState<File[]>([]);
-
+export default function AvatarStepForm({ register }: IStepFormProps<TEmployeeSignUp>) {
     const handleFilesSelected = (files: File[]): void => {
-        setFiles(files);
         console.log('Selected files:', files);
     };
 
@@ -22,11 +15,12 @@ export default function AvatarStepForm({ register }: IStepFormProps<TAvatarStepI
                 <DragDropFile
                     onFilesSelected={handleFilesSelected}
                     acceptedFileTypes="image/*"
-                    maxFileSize={5242880} // 5MB
+                    maxFileSize={5242880}
                     multiple={false}
-                    className="max-w-md"
                     boxText="Drop your profile image here"
                     boxSubText="JPG, PNG or GIF files up to 5MB"
+                    className="max-w-md"
+                    {...register("avatar")}
                 />
             </div>
         </div>

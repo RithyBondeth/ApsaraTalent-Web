@@ -13,6 +13,7 @@ import { useThemeStore } from "@/stores/theme-store";
 import { TUserRole } from "@/utils/types/role.type";
 import { genderConstant, userRoleConstant } from "@/utils/constant";
 import { TGender } from "@/utils/types/gender.type";
+import { useRoleStore } from "@/stores/role-store";
 
 export default function SignupPage() {
   const [selectedRole, setSelectedRole] = useState<TUserRole | null>(null);
@@ -22,6 +23,7 @@ export default function SignupPage() {
   const [selectedGender, setSelectedGender] = useState<TGender | null>(null);
 
   const { theme } = useThemeStore();
+  const { role } = useRoleStore(); 
 
   return (
     <div className="size-[70%] flex flex-col items-start gap-3">
@@ -95,7 +97,7 @@ export default function SignupPage() {
               <LucideArrowLeft/>
               Back
             </Button>
-            <Button className="flex-1"  onClick={() => router.push('/signup/career-scope')}> 
+            <Button className="flex-1"  onClick={() => router.push(`/signup/${role}`)}> 
               <LucideArrowRight/>
               Next
             </Button>

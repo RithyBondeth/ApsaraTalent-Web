@@ -2,8 +2,6 @@
 
 import { Button } from "../ui/button";
 import LogoComponent from "../utils/logo";
-import { Label } from "../ui/label";
-import { Switch } from "../ui/switch";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { LucideMoon, LucideSun } from "lucide-react";
@@ -24,7 +22,7 @@ export default function Header({ className }: { className?: string }) {
     return (
         <nav className={cn("flex justify-between items-center py-3 px-6", className)}>
             {/* Left Menu Section */}
-            <div className="flex items-center">
+            <div className="flex items-center tablet-lg:[&>button]:hidden">
                 <LogoComponent className="mr-5"/>
                 <Button variant="ghost">Products</Button>
                 <Button variant="ghost">Learn</Button>
@@ -34,11 +32,6 @@ export default function Header({ className }: { className?: string }) {
 
             {/* Right Menu Section */}
             <div className="flex items-center gap-5">
-                <div className="flex items-center gap-2">
-                    <Label>EN</Label>
-                    <Switch/>
-                    <Label>KH</Label>
-                </div>
                 <Button variant="outline" onClick={toggleTheme}>
                     {resolvedTheme === 'dark' ? <LucideSun/> : <LucideMoon/> }
                 </Button>

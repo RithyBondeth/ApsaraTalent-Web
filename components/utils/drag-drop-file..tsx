@@ -2,22 +2,13 @@ import React, { useState, useRef, ChangeEvent, DragEvent, useEffect } from 'reac
 import Image from 'next/image';
 import { LucideCircleX, LucideUserCircle } from 'lucide-react';
 import { TypographyMuted } from './typography/typography-muted';
-
-interface IDragDropFileProps {
-  onFilesSelected: (files: File[]) => void;
-  acceptedFileTypes?: string;
-  maxFileSize?: number;
-  multiple?: boolean;
-  className?: string;
-  boxText?: string;
-  boxSubText?: string;
-}
+import { IDragDropFileProps } from '@/utils/interfaces/drag-drop-file.interface';
 
 export const DragDropFile = ({
   onFilesSelected,
   acceptedFileTypes = "image/*",
-  maxFileSize = 10485760, // 10MB in bytes
-  multiple = false, // Default to single file for inline preview
+  maxFileSize = 10485760,
+  multiple = false,
   className = "",
   boxText = "Drag and drop image here, or click to select",
   boxSubText = "JPG, PNG or GIF files up to 10MB"
@@ -100,7 +91,7 @@ export const DragDropFile = ({
 
   return (
     <div
-      className={`w-52 h-52 flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-5 text-center cursor-pointer relative ${
+      className={`w-full h-60 flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-5 text-center cursor-pointer relative ${
         isDragging ? 'border-blue-500 bg-blue-50' : 'border-muted-foreground'
       } ${className} h-64`}
       onDragEnter={handleDragEnter}
@@ -121,6 +112,7 @@ export const DragDropFile = ({
       {preview ? (
         <div className='absolute top-0 right-0 left-0 bottom-0'>
           <LucideCircleX 
+            strokeWidth='1.5px'
             className='absolute top-2 left-2 text-primary' 
             onClick={(e) => {
               e.stopPropagation();
@@ -137,7 +129,7 @@ export const DragDropFile = ({
         </div>
       ) : (
         <div className='flex flex-col items-center justify-center gap-3'> 
-          <LucideUserCircle className='text-muted-foreground size-12'/>
+          <LucideUserCircle className='text-muted-foreground size-20' strokeWidth='0.5px'/>
           <TypographyMuted>{boxText}</TypographyMuted>
           <TypographyMuted>{boxSubText}</TypographyMuted>
         </div>

@@ -10,12 +10,16 @@ import ExperienceStepForm from "@/components/employee/employee-signup-form/exper
 import EducationStepForm from "@/components/employee/employee-signup-form/education-step";
 import SkillReferenceStepForm from "@/components/employee/employee-signup-form/skill-reference-step";
 import AvatarStepForm from "@/components/employee/employee-signup-form/avatar-step";
+import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function EmployeeSignup() {
+    const router = useRouter();
     const [step, setStep] = useState<number>(1);
     const totalSteps = 5;
-    
+
     const { handleSubmit, register } = useForm<TEmployeeSignUp>({
+      mode: 'onChange',
       defaultValues: {
         profession: {
           job: "",
@@ -52,9 +56,13 @@ export default function EmployeeSignup() {
     };
 
     const prevStep = () => setStep((prev) => prev - 1);
-    
+   
     return (
-        <div className="size-[70%] flex flex-col items-start gap-3">
+        <div className="size-[70%] flex flex-col items-start gap-3"> 
+        {/* Back Button Section */}
+        <Button className="absolute top-5 left-5" variant="outline" onClick={() => router.push('/signup')}>
+          <LucideArrowLeft/>
+        </Button>
             {/* Title Section */}
             <div className="mb-5">
                 <TypographyH2>Sign up as employee</TypographyH2>
@@ -89,9 +97,13 @@ export default function EmployeeSignup() {
                 
                 {/* Next & Previous Step */}
                 <div className="flex justify-between mt-8">
-                  {step > 1 && <Button type='button' onClick={prevStep}>Back</Button>}
+                  {step > 1 && <Button type='button' onClick={prevStep}>
+                    <LucideArrowLeft/>
+                    Back  
+                  </Button>}
                   <Button type='submit'>
                     {step === 5 ? "Submit" : "Next"}
+                    <LucideArrowRight/>
                   </Button>
                 </div>
               </form>

@@ -1,14 +1,15 @@
 import LabelInput from "@/components/utils/label-input";
 import { IStepFormProps } from "../props";
-import { TExperienceStepInfo } from "../validation";
+import { TEmployeeSignUp } from "../validation";
 import { Input } from "@/components/ui/input";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { LucideBriefcaseBusiness, LucideUser } from "lucide-react";
+import { LucideBriefcaseBusiness, LucidePlus, LucideUser } from "lucide-react";
 import { DatePicker } from "@/components/ui/date-picker";
 import { useState } from "react";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { Button } from "@/components/ui/button";
 
-export default function ExperienceStepForm({ register }: IStepFormProps<TExperienceStepInfo>) {
+export default function ExperienceStepForm({ register }: IStepFormProps<TEmployeeSignUp>) {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
   return (
@@ -20,7 +21,7 @@ export default function ExperienceStepForm({ register }: IStepFormProps<TExperie
           <Input
             placeholder="Title"
             id="title"
-            name="title"
+            {...register(`experience.${0}.title`)}
             prefix={<LucideBriefcaseBusiness />}
           />
         }
@@ -31,7 +32,7 @@ export default function ExperienceStepForm({ register }: IStepFormProps<TExperie
           <Input
             placeholder="Description"
             id="description"
-            name="description"
+            {...register(`experience.${0}.description`)}
             prefix={<LucideUser/>}
           />
         }
@@ -42,6 +43,7 @@ export default function ExperienceStepForm({ register }: IStepFormProps<TExperie
           <DatePicker
             placeholder="Start Date"
             date={selectedDate}
+            {...register(`experience.${0}.startDate`)}
             onDateChange={setSelectedDate}
           />
         </div>
@@ -50,9 +52,16 @@ export default function ExperienceStepForm({ register }: IStepFormProps<TExperie
           <DatePicker
             placeholder="End Date"
             date={selectedDate}
+            {...register(`experience.${0}.endDate`)}
             onDateChange={setSelectedDate}
           />
         </div>
+      </div>
+      <div className="w-full flex justify-end">
+        <Button variant='secondary' onClick={() => { alert('Add More') }}>
+          Add More
+          <LucidePlus/>
+        </Button>
       </div>
     </div>
   );
