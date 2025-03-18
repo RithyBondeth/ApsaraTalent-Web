@@ -34,7 +34,7 @@ export default function CareerScopePage() {
 
     // Determine dynamic page numbers with ellipsis
     const getPageNumbers = () => {
-        const maxVisiblePages = 3; // Only show 3 consecutive pages
+        const maxVisiblePages = 1; // Only show 3 consecutive pages
         const pages: (number | "...")[] = [];
 
         const startPage = Math.max(1, Math.min(currentPage, totalPages - maxVisiblePages));
@@ -54,9 +54,8 @@ export default function CareerScopePage() {
         return pages;
     };
 
-
     return (
-        <div className="size-[70%] flex flex-col items-stretch gap-8">
+        <div className="h-fit w-[80%] flex flex-col items-stretch gap-8 tablet-xl:w-[90%] tablet-xl:mt-10">
            {/* Navigate Button */}
            <Button className="absolute top-5 left-5" onClick={() => router.push('/signup')}>
                 <LucideArrowLeft/>

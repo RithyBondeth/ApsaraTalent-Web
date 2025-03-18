@@ -12,7 +12,7 @@ const Input = React.forwardRef<HTMLInputElement, IInputProps>(
         {prefix && <span className="mr-2 text-muted-foreground">{prefix}</span>}
         <input
           type={type}
-          className="flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
+          className="flex-1 bg-transparent outline-none placeholder:text-muted-foreground placeholder:text-sm"
           ref={ref}
           {...props}
         />

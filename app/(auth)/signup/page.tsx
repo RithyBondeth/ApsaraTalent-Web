@@ -26,7 +26,7 @@ export default function SignupPage() {
   const { role } = useRoleStore(); 
 
   return (
-    <div className="size-[70%] flex flex-col items-start gap-3">
+    <div className="size-[70%] flex flex-col items-start justify-center gap-3 tablet-sm:w-[85%]">
       {/* Title Section */}
       <div className="mb-5">
         <LogoComponent isBlackLogo={theme === 'light' ? false : true}/>
@@ -36,12 +36,12 @@ export default function SignupPage() {
       {/* End Title Section */}
       {/* Form Section */}
       <div className="w-full flex flex-col items-stretch gap-5">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
           <Input placeholder="Firstname" type="text" name="first-name"/>
           <Input placeholder="Lastname" type="text" name="last-name"/>
         </div>
-        <div className="flex items-center gap-3">
-          <Input type="text" placeholder="Username" name="username"/>
+        <div className="flex items-center gap-3 [&>select]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
+          <Input type="text" placeholder="Username" name="username" className="w-1/2"/>
           <Select onValueChange={(value: TUserRole) => setSelectedRole(value)} value={selectedRole || ""}>
             <SelectTrigger className="h-12 text-muted-foreground">
               <SelectValue placeholder="Who are you looking for?"/>
@@ -54,7 +54,7 @@ export default function SignupPage() {
           </Select>
         </div>
         <div className="flex flex-col items-stretch gap-5">
-          <div className="flex gap-3">
+          <div className="flex gap-3 [&>select]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
               <Select onValueChange={(value: TGender) => setSelectedGender(value)} value={selectedGender || ''}>
                 <SelectTrigger className="h-12 text-muted-foreground">
                 <SelectValue placeholder="Gender" />
@@ -65,7 +65,7 @@ export default function SignupPage() {
                   )}
                 </SelectContent>
               </Select>
-              <Input type="number" placeholder="Mobile" name="mobile"/>   
+              <Input type="number" placeholder="Mobile" name="mobile" className="w-1/2"/>   
           </div>
           <Input 
             prefix={<LucideMail/>}

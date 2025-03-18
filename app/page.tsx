@@ -7,6 +7,7 @@ import Link from "next/link";
 import landingSvg from "@/assets/svg/landing.svg";
 import ParticlesBackground from "@/components/utils/particle-background";
 import { TypographyH1 } from "@/components/utils/typography/typography-h1";
+
 export default function IndexPage() {
   return (
    <div className="h-screen flex items-center justify-between relative tablet-md:flex-col">
@@ -21,7 +22,7 @@ export default function IndexPage() {
                 connects you with the right opportunities.<span className="tablet-md:hidden">For businesses and employers, find top-tier talent to drive success 
                 and innovation.</span>
               </TypographyMuted>
-              <Link href="/signup" className="mt-3">
+              <Link href="/login" className="mt-3">
                 <Button className="tablet-sm:text-xs">
                   <LucideBriefcaseBusiness/>
                   Explore Now

@@ -19,13 +19,13 @@ export default function ForgotPasswordPage() {
     const isNumberInput = /^\d+$/.test(inputValue) && inputValue.length > 0;
 
     return (
-        <div className="h-screen w-screen flex justify-between items-stretch">
-            <div className="h-screen w-1/2 flex justify-center items-center bg-primary-foreground">
-                <div className="size-[60%] flex flex-col items-stretch gap-3">
+        <div className="h-screen w-screen flex items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
+            <div className="w-1/2 flex justify-center items-center bg-primary-foreground tablet-md:h-[40%]">
+                <div className="size-[60%] flex flex-col items-stretch gap-3 tablet-md:justify-center tablet-md:size-full tablet-md:pb-10 tablet-md:p-5">
                     {/* Title Section */}
                     <div className="mb-5">
-                        <TypographyH2>Forgot your Password?</TypographyH2>
-                        <TypographyMuted className="text-md">Enter your Email or Mobile. We will help you reset your password.</TypographyMuted>
+                        <TypographyH2 className="tablet-sm:text-2xl">Forgot your Password?</TypographyH2>
+                        <TypographyMuted className="text-md tablet-sm:text-sm">Enter your Email or Mobile. We will help you reset your password.</TypographyMuted>
                     </div>
 
                     {/* Form Section */}
@@ -38,13 +38,16 @@ export default function ForgotPasswordPage() {
                             prefix={isEmailInput ? <LucideMail/> : isNumberInput ? <LucidePhone/> : null}
                         />
                         <div className="flex items-center justify-stretch gap-3 [&>button]:w-1/2">
-                            <Button prefixIcon={<LucideArrowLeft/>} type="button" onClick={() => router.push('/login')}>Back</Button>
+                            <Button type="button" onClick={() => router.push('/login')}>
+                                <LucideArrowLeft/>
+                                Back
+                            </Button>
                             <Button type="submit">Continue</Button>
                         </div>
                     </form>
                 </div>
             </div>
-            <div className="w-1/2 flex justify-center items-center bg-primary">
+            <div className="w-1/2 flex justify-center items-center bg-primary tablet-md:h-[60%]">
                 <Image src={forgotPasswordWhiteSvg} alt="forgot-password" height={undefined} width={600}/>
             </div>
         </div>

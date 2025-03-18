@@ -58,7 +58,7 @@ export default function EmployeeSignup() {
     const prevStep = () => setStep((prev) => prev - 1);
    
     return (
-        <div className="size-[70%] flex flex-col items-start gap-3"> 
+        <div className="h-[80%] w-[85%] flex flex-col items-start gap-3 tablet-lg:w-full"> 
         {/* Back Button Section */}
         <Button className="absolute top-5 left-5" variant="outline" onClick={() => router.push('/signup')}>
           <LucideArrowLeft/>
@@ -88,7 +88,7 @@ export default function EmployeeSignup() {
               </div>
 
               {/* Form Section */}
-              <form onSubmit={handleSubmit(onSubmit)}>
+              <form onSubmit={handleSubmit(onSubmit)} className="w-full">
                 {step === 1 && <ProfessionStepForm register={register}/>}
                 {step === 2 && <ExperienceStepForm register={register}/>}
                 {step === 3 && <EducationStepForm register={register}/>}

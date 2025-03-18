@@ -33,7 +33,10 @@ export default function RightSidebar({className}: {className?: string}) {
                         </div>
                     ))}
                     <div className="w-full flex items-center cursor-pointer">
-                        <Button variant='secondary' className="w-full text-xs" suffix={<LucideChevronRight/>}>View all</Button>    
+                        <Button variant='secondary' className="w-full text-xs">
+                            View all
+                            <LucideChevronRight/>
+                        </Button>    
                     </div>
                 </div>
             </div>
@@ -58,7 +61,10 @@ export default function RightSidebar({className}: {className?: string}) {
                         </div>
                     ))}
                     <div className="w-full flex items-center cursor-pointer">
-                        <Button variant='secondary' className="w-full text-xs" suffix={<LucideChevronRight/>}>View all</Button>    
+                        <Button variant='secondary' className="w-full text-xs">
+                            View all
+                            <LucideChevronRight/>
+                        </Button>    
                     </div>
                 </div>
             </div>
@@ -83,7 +89,10 @@ export default function RightSidebar({className}: {className?: string}) {
                         </div>
                     ))}
                     <div className="w-full flex items-center cursor-pointer">
-                        <Button variant='secondary' className="w-full text-xs" suffix={<LucideChevronRight/>}>View all</Button>    
+                        <Button variant='secondary' className="w-full text-xs">
+                            View all
+                            <LucideChevronRight/>
+                        </Button>    
                     </div>
                 </div>
             </div>

@@ -14,14 +14,14 @@ export default function PhoneNumberPage() {
     const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
     
    return (
-    <div className="h-screen w-screen flex justify-between items-stretch">
-        <div className="h-screen w-1/2 flex justify-center items-center bg-primary-foreground">
-            <div className="size-[70%] flex flex-col items-stretch gap-3">
+    <div className="h-screen w-screen flex justify-between items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
+        <div className="h-screen w-1/2 flex justify-center items-center">
+            <div className="h-fit w-[70%] flex flex-col items-stretch gap-3 tablet-lg:w-[85%] tablet-md:w-[95%] tablet-md:py-10">
                 {/* Title Section */}
                 <div className="mb-5">
                     <LogoComponent/>
-                    <TypographyH2>Sign in with Your Phone Number</TypographyH2>
-                    <TypographyMuted className="text-md">Enter your phone number and password to access your account.</TypographyMuted>
+                    <TypographyH2 className="phone-xl:text-xl">Sign in with Your Phone Number</TypographyH2>
+                    <TypographyMuted className="text-md phone-xl:text-sm">Enter your phone number and password to access your account.</TypographyMuted>
                 </div>
                 
                 {/* Form Section */}
@@ -47,7 +47,7 @@ export default function PhoneNumberPage() {
                 </form>
             </div>
         </div>
-        <div className="w-1/2 flex justify-center items-center bg-primary">
+        <div className="w-1/2 flex justify-center items-center bg-primary tablet-sm:p-10">
             <Image src={phoneNumberWhiteSvg} alt="phone-number" height={undefined} width={600}/>
         </div>
     </div>

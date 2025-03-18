@@ -20,9 +20,9 @@ export default function SignupLayout({ children }: { children: ReactNode }) {
     const signupImage = currentTheme === "dark" ? signupBlackSvg : signupWhiteSvg;
 
     return (
-        <div className="h-screen w-screen flex justify-between items-stretch">
-            <div className="h-screen w-1/2 flex justify-center items-center">{children}</div>
-            <div className="w-1/2 flex justify-center items-center bg-primary">
+        <div className="h-screen w-screen flex items-center tablet-xl:flex-col tablet-xl:[&>div]:w-full">
+            <div className="w-1/2 h-full flex justify-center items-center tablet-xl:h-full tablet-xl:p-10 phone-xl:!px-0 [&>div]:phone-xl:!px-5 [&>div]:phone-xl:!mt-8">{children}</div>
+            <div className="w-1/2 h-full flex justify-center items-center bg-primary tablet-xl:p-10">
                 <Image src={signupImage} alt="signup" height={undefined} width={600}/>
             </div>
         </div>

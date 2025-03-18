@@ -13,13 +13,13 @@ export default function ResetPasswordPage() {
     const [confirmPassVisibility, setConfirmPassVisibility] = useState<boolean>(false);
 
     return (
-        <div className="h-screen w-screen flex justify-between items-stretch">
+        <div className="h-screen w-screen flex justify-between items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
             <div className="h-screen w-1/2 flex justify-center items-center bg-primary-foreground">
-                <div className="size-[60%] flex flex-col items-stretch gap-3">
+                <div className="h-fit w-[60%] flex flex-col items-stretch gap-3 tablet-lg:w-[80%] tablet-md:py-10">
                     {/* Title Section */}
                     <div className="mb-5">
-                        <TypographyH2>Set Up Your New Password</TypographyH2>
-                        <TypographyMuted className="text-md">Create a strong password to keep your account safe.</TypographyMuted>
+                        <TypographyH2 className="phone-xl:text-2xl">Set Up Your New Password</TypographyH2>
+                        <TypographyMuted className="text-md phone-xl:text-sm">Create a strong password to keep your account safe.</TypographyMuted>
                     </div>
 
                     {/* Form Section */}
@@ -46,7 +46,7 @@ export default function ResetPasswordPage() {
                     </form>
                 </div>
             </div>
-            <div className="w-1/2 flex justify-center items-center bg-primary">
+            <div className="w-1/2 flex justify-center items-center bg-primary tablet-md:p-10">
                 <Image src={resetPasswordWhiteSvg} alt="" height={undefined} width={600}/>
             </div>
         </div>

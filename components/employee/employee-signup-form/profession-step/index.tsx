@@ -23,7 +23,7 @@ export default function ProfessionStepForm({ register }: IStepFormProps<TEmploye
           />
         }
       />
-      <div className="w-full flex justify-between items-center gap-5">
+      <div className="w-full flex justify-between items-center gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
         <LabelInput
           label="Year of Experience"
           input={

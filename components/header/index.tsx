@@ -31,12 +31,12 @@ export default function Header({ className }: { className?: string }) {
             </div>
 
             {/* Right Menu Section */}
-            <div className="flex items-center gap-5">
+            <div className="flex items-center gap-5 tablet-sm:gap-2">
                 <Button variant="outline" onClick={toggleTheme}>
                     {resolvedTheme === 'dark' ? <LucideSun/> : <LucideMoon/> }
                 </Button>
                 <Link href="/login">
-                    <Button>Login</Button>
+                    <Button className="tablet-sm:text-xs">Login</Button>
                 </Link>
             </div>
         </nav>

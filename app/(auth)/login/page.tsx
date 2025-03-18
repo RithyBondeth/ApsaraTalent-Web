@@ -34,14 +34,14 @@ function LoginPage() {
     const loginImage = currentTheme === "dark" ? loginWhiteSvg : loginBlackSvg;
 
   return (
-    <div className="h-screen w-screen flex justify-between items-stretch">
+    <div className="h-screen w-screen flex justify-between items-stretch tablet-lg:flex-col tablet-lg:[&>div]:w-full">
       <div className="h-screen w-1/2 flex justify-center items-center bg-primary-foreground">
-         <div className="size-[70%] flex flex-col items-start gap-3">
+         <div className="size-[70%] flex flex-col items-start justify-center gap-3 tablet-md:w-[85%] tablet-md:py-10">
             {/* Title Section */}
             <div>
               <LogoComponent/>
-              <TypographyH2>Log in to your Account</TypographyH2>
-              <TypographyMuted className="text-md">Welcome to Apsara Talent! Select method to log in</TypographyMuted>
+              <TypographyH2 className="phone-xl:text-2xl">Log in to your Account</TypographyH2>
+              <TypographyMuted className="text-md phone-xl:text-sm">Welcome to Apsara Talent! Select method to log in</TypographyMuted>
             </div>
             {/* End Title Section */}
             {/* Social Button Login Section */}
@@ -108,7 +108,7 @@ function LoginPage() {
             {/* End Login Form Section Section */}
          </div>
       </div>
-      <div className="w-1/2 flex justify-center items-center bg-primary">
+      <div className="w-1/2 flex justify-center items-center bg-primary tablet-lg:p-10">
         <Image src={loginImage} alt="login" height={undefined} width={600}/>
       </div>
     </div>
