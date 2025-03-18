@@ -26,7 +26,7 @@ export default function SignupPage() {
   const { role } = useRoleStore(); 
 
   return (
-    <div className="size-[70%] flex flex-col items-start justify-center gap-3 tablet-sm:w-[85%]">
+    <div className="size-[70%] flex flex-col items-start justify-center gap-3 tablet-sm:w-[90%]">
       {/* Title Section */}
       <div className="mb-5">
         <LogoComponent isBlackLogo={theme === 'light' ? false : true}/>

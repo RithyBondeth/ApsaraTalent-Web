@@ -21,7 +21,7 @@ export default function SignupLayout({ children }: { children: ReactNode }) {
 
     return (
         <div className="h-screen w-screen flex items-center tablet-xl:flex-col tablet-xl:[&>div]:w-full">
-            <div className="w-1/2 h-full flex justify-center items-center tablet-xl:h-full tablet-xl:p-10 phone-xl:!px-0 [&>div]:phone-xl:!px-5 [&>div]:phone-xl:!mt-8">{children}</div>
+            <div className="w-1/2 h-full flex justify-center items-center tablet-lg:h-fit tablet-xl:p-10 tablet-xl:[&>div]:pb-20 phone-xl:!px-0 [&>div]:phone-xl:!px-5 [&>div]:phone-xl:!mt-8">{children}</div>
             <div className="w-1/2 h-full flex justify-center items-center bg-primary tablet-xl:p-10">
                 <Image src={signupImage} alt="signup" height={undefined} width={600}/>
             </div>
