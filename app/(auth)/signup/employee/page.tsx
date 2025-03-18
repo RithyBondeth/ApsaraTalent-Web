@@ -101,7 +101,11 @@ export default function EmployeeSignup() {
                     <LucideArrowLeft/>
                     Back  
                   </Button>}
-                  <Button type='submit'>
+                  <Button type='submit' onClick={() => {
+                    if(step === 5) {
+                      router.push('/signup/career-scope')
+                    } 
+                  }}>
                     {step === 5 ? "Submit" : "Next"}
                     <LucideArrowRight/>
                   </Button>
