@@ -12,14 +12,18 @@ interface ThemeState {
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set, get) => {
-      // Function to detect system dark mode
-      const getSystemTheme = () =>
-        window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      // Function to detect system dark mode (only on client-side)
+      const getSystemTheme = () => {
+        if (typeof window !== "undefined") {
+          return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+        return "light"; // Default to light theme server-side
+      };
 
       return {
         theme: "system", // Default theme
-        systemTheme: getSystemTheme(),
-
+        systemTheme: getSystemTheme(), 
+        
         setTheme: (theme) => set({ theme }),
 
         toggleTheme: () => {
@@ -40,7 +44,7 @@ export const useThemeStore = create<ThemeState>()(
   )
 );
 
-// Listen for system theme changes
+// Listen for system theme changes (only in client-side)
 if (typeof window !== "undefined") {
   const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
   const updateSystemTheme = () => {
