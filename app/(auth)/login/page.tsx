@@ -35,7 +35,7 @@ function LoginPage() {
 
   return (
     <div className="h-screen w-screen flex justify-between items-stretch tablet-lg:flex-col tablet-lg:[&>div]:w-full">
-      <div className="h-screen w-1/2 flex justify-center items-center bg-primary-foreground">
+      <div className="h-screen w-1/2 flex justify-center items-center bg-primary-foreground tablet-lg:h-fit">
          <div className="size-[70%] flex flex-col items-start justify-center gap-3 tablet-md:w-[85%] tablet-md:py-10">
             {/* Title Section */}
             <div>
