@@ -23,15 +23,15 @@ export default function PhoneOTPPage() {
                     <div className="flex flex-col items-start gap-3">
                         <InputOTP maxLength={6}>
                             <InputOTPGroup>
-                                <InputOTPSlot index={0} className="input-otp-slot tablet-md:!size-12"/>
-                                <InputOTPSlot index={1} className="input-otp-slot tablet-md:!size-12"/>
-                                <InputOTPSlot index={2} className="input-otp-slot tablet-md:!size-12"/>
+                                <InputOTPSlot index={0} className="input-otp-slot tablet-md:!size-10"/>
+                                <InputOTPSlot index={1} className="input-otp-slot tablet-md:!size-10"/>
+                                <InputOTPSlot index={2} className="input-otp-slot tablet-md:!size-10"/>
                             </InputOTPGroup>
                             <InputOTPSeparator/>
                             <InputOTPGroup>
-                                <InputOTPSlot index={3} className="input-otp-slot tablet-md:!size-12"/>
-                                <InputOTPSlot index={4} className="input-otp-slot tablet-md:!size-12"/>
-                                <InputOTPSlot index={5} className="input-otp-slot tablet-md:!size-12"/>
+                                <InputOTPSlot index={3} className="input-otp-slot tablet-md:!size-10"/>
+                                <InputOTPSlot index={4} className="input-otp-slot tablet-md:!size-10"/>
+                                <InputOTPSlot index={5} className="input-otp-slot tablet-md:!size-10"/>
                             </InputOTPGroup>
                         </InputOTP>
                         <TypographySmall className="text-muted-foreground phone-xl:text-sm">Enter your one time password code here.</TypographySmall>
