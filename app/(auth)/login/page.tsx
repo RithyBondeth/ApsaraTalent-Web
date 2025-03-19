@@ -29,9 +29,9 @@ function LoginPage() {
     setMounted(true);
   }, []);
   
-    // Determine which image to display (avoid SSR issues)
-    const currentTheme = mounted ? resolvedTheme : "light";
-    const loginImage = currentTheme === "dark" ? loginWhiteSvg : loginBlackSvg;
+  // Determine which image to display (avoid SSR issues)
+  const currentTheme = mounted ? resolvedTheme : "light";
+  const loginImage = currentTheme === "dark" ? loginWhiteSvg : loginBlackSvg;
 
   return (
     <div className="h-screen w-screen flex justify-between items-stretch tablet-lg:flex-col tablet-lg:[&>div]:w-full">
