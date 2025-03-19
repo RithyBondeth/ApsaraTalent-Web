@@ -17,9 +17,9 @@ export default function EmployeeDetailPage() {
     return (
         <div className="flex flex-col gap-5">
             {/* Personal Information Section */}
-            <div className="w-full flex items-stretch justify-between border border-muted py-5 px-10">
+            <div className="w-full flex items-stretch justify-between border border-muted py-5 px-10 tablet-xl:flex-col tablet-xl:[&>div]:w-full tablet-xl:gap-5">
                 <div className="flex flex-col items-center gap-5">
-                    <Avatar className="size-40">
+                    <Avatar className="size-40 tablet-xl:!size-52">
                         <AvatarFallback>
                             { !userList[employeeId].avatar 
                             ? userList[employeeId].firstname.slice(0, 2) 
@@ -62,7 +62,7 @@ export default function EmployeeDetailPage() {
             </div>
 
             {/* Education, Skill and Experience Section */}     
-            <div className="flex items-stretch gap-5">
+            <div className="flex items-stretch gap-5 tablet-xl:flex-col tablet-xl:[&>div]:w-full">
                 <div className="w-2/3 flex flex-col gap-5">
                     {/* Education Section */}
                     <div className="flex flex-col gap-5 border border-muted p-5">

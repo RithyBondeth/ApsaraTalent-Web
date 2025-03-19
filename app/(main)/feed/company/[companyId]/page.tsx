@@ -18,24 +18,24 @@ export default function CompanyDetailPage() {
     return (
         <div className="flex flex-col gap-5">
             {/* Personal Information Section */}
-            <div className="w-full flex items-stretch justify-between border border-muted py-5 px-10">
-                <div className="flex items-start gap-5">
-                    <Avatar className="size-32">
+            <div className="w-full flex items-stretch justify-between border border-muted py-5 px-10 laptop-sm:!flex-col laptop-sm:!items-start laptop-sm:!gap-8">
+                <div className="flex items-start gap-5 tablet-sm:flex-col tablet-sm:items-center">
+                    <Avatar className="size-32 tablet-lg:!size-40">
                         <AvatarFallback>{companyList[companyId].avatar}</AvatarFallback>  
                     </Avatar>
-                    <div className="h-full flex flex-col items-start justify-between">
+                    <div className="h-full flex flex-col items-start justify-between gap-5 tablet-sm:w-full">
                        <div className="flex flex-col items-start gap-1">
                             <TypographyH2>{companyList[companyId].name}</TypographyH2>
                             <TypographyMuted className="text-md">{companyList[companyId].industry}</TypographyMuted>
                        </div>
-                        <div className="flex items-center gap-3 [&>div>p]:text-primary [&>div>p]:font-medium">
+                        <div className="flex items-center gap-3 [&>div>p]:text-primary [&>div>p]:font-medium tablet-lg:!flex-col tablet-lg:!items-start ">
                             <IconLabel icon={<LucideMapPin/>} text={companyList[companyId].location}/>
                             <IconLabel icon={<LucideUsers/>} text={`${companyList[companyId].companySize}+ Employees`}/>
                             <IconLabel icon={<LucideBuilding/>} text={`Founded in ${companyList[companyId].foundedYear}`}/>   
                         </div>
                     </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 phone-lg:flex-col phone-lg:items-stretch">
                     <Button variant="outline">
                         <LucideBookmark/>
                         Save to Favorite
@@ -46,7 +46,7 @@ export default function CompanyDetailPage() {
                     </Button>
                 </div>
             </div>
-            <div className="w-full flex items-stretch gap-5">
+            <div className="w-full flex items-stretch gap-5 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
                 <div className="w-2/3 flex flex-col items-stretch gap-5">
                     <div className="w-full flex flex-col items-start gap-3 border border-muted py-5 px-10">
                         <div className="w-full flex flex-col gap-2">
@@ -63,7 +63,7 @@ export default function CompanyDetailPage() {
                             <TypographyH4>Company Culture</TypographyH4>
                             <Divider/>
                         </div>
-                        <div className="w-full flex justify-between items-start gap-3">
+                        <div className="w-full flex justify-between items-start gap-3 tablet-sm:!flex-col tablet-sm:[&>div]:w-full">
                             <div className="w-1/2 flex flex-col gap-3 border border-muted px-5 py-3 rounded-md">
                                 <TypographyP className="font-medium">Values</TypographyP>
                                 <div className="flex flex-col gap-2">
