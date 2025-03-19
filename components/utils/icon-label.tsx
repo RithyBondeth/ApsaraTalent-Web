@@ -6,7 +6,7 @@ export default function IconLabel(props: ILabelProps) {
     return (
         <div className={cn("flex items-center gap-2", props.className)}> 
             {props.icon && <span className="[&>svg]:!size-5">{props.icon}</span>}
-            <TypographyMuted>{props.text}</TypographyMuted>
+            <TypographyMuted className="text-left">{props.text}</TypographyMuted>
         </div>
     )
 }

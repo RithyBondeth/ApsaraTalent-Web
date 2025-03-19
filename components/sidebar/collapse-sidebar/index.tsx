@@ -9,62 +9,26 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "../ui/sidebar";
-import LogoComponent from "../utils/logo";
-import { Collapsible, CollapsibleTrigger } from "../ui/collapsible";
-import {
-  BellRing,
-  Handshake,
-  Home,
-  MessageCircle,
-  SearchCheck,
-} from "lucide-react";
+} from "../../ui/sidebar";
+import LogoComponent from "../../utils/logo";
+import { Collapsible, CollapsibleTrigger } from "../../ui/collapsible";
 import { useRouter } from "next/navigation";
 import { SidebarDropdownFooter } from "./sidebar-dropdown-footer";
+import { Separator } from "@/components/ui/separator";
+import { sidebarList } from "@/constants/sidebar.constant";
 
-export default function CollapseSidebar({
-  ...props
-}: React.ComponentProps<typeof Sidebar>) {
+export default function CollapseSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter();
-
-  const navList = [
-    {
-      title: "Feed",
-      url: "/feed",
-      icon: Home,
-      isActive: true,
-    },
-    {
-      title: "Search",
-      url: "/search",
-      icon: SearchCheck,
-    },
-    {
-      title: "Matching",
-      url: "/matching",
-      icon: Handshake,
-    },
-    {
-      title: "Message",
-      url: "/message",
-      icon: MessageCircle,
-    },
-    {
-      title: "Notification",
-      url: "/notification",
-      icon: BellRing,
-    },
-  ];
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <LogoComponent />
+        <LogoComponent/>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarMenu>
-            {navList.map((item) => (
+          <SidebarMenu className="space-y-3">
+            {sidebarList.map((item) => (
               <Collapsible
                 key={item.title}
                 asChild
@@ -74,8 +38,8 @@ export default function CollapseSidebar({
               >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuButton tooltip={item.title}>
-                      {item.icon && <item.icon />}
+                    <SidebarMenuButton tooltip={item.title} className="text-sm">
+                      {item.icon && <item.icon/>}
                       <span>{item.title}</span>
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
@@ -85,6 +49,7 @@ export default function CollapseSidebar({
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
+      <Separator/>
       <SidebarFooter>
         <SidebarDropdownFooter user={{
             name: "Rithy Bondeth",

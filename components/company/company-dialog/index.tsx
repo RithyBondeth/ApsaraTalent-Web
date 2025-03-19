@@ -15,12 +15,12 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>
-                        <div className="flex items-stretch justify-start gap-3">
+                        <div className="flex items-stretch justify-start gap-3 tablet-sm:flex-col">
                             <Avatar className="!size-36">
                                 <AvatarFallback>{props.avatar}</AvatarFallback>
                             </Avatar>
                             <div className="flex flex-col items-start gap-5 font-normal">
-                                <div>
+                                <div className="flex flex-col items-start">
                                     <TypographyH4>{props.name}</TypographyH4>
                                     <TypographyMuted>{props.industry}</TypographyMuted>
                                 </div>
@@ -32,13 +32,13 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                             </div>
                         </div>
                     </DialogTitle>
-                    <DialogDescription asChild>
+                    <DialogDescription asChild className="">
                         <div className="flex flex-col items-start gap-5 text-primary !mt-5">
-                            <div className="space-y-2">
+                            <div className="flex flex-col items-start gap-2">
                                 <TypographyP className="font-medium">About {props.name}</TypographyP>
-                                <TypographyMuted className="leading-loose">{props.description}</TypographyMuted>
+                                <TypographyMuted className="leading-loose text-left">{props.description}</TypographyMuted>
                             </div>
-                            <div className="space-y-2">
+                            <div className="flex flex-col items-start gap-2 tablet-sm:hidden">
                                 <TypographyP className="font-medium">Benefits</TypographyP>
                                 <div className="flex flex-wrap gap-2">
                                     {props.benefits.map((benefit: ILabelItem) => (
@@ -48,7 +48,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                                     ))} 
                                 </div>
                             </div>
-                            <div className="space-y-2">
+                            <div className="flex flex-col items-start gap-2 tablet-sm:hidden">
                                 <TypographyP className="font-medium">Values</TypographyP>
                                 <div className="flex flex-wrap gap-2">
                                     {props.values.map((value: ILabelItem) => (
@@ -59,7 +59,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                                 </div>
                             </div>
                             <div className="w-full flex justify-end">
-                               <Link href={`/feed/employer/${props.id}`}>
+                               <Link href={`/feed/company/${props.id}`}>
                                     <Button>View Company</Button>
                                </Link>
                             </div>

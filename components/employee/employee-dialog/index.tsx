@@ -9,6 +9,7 @@ import { TypographyH4 } from "../../utils/typography/typography-h4"
 import { TypographySmall } from "../../utils/typography/typography-small"
 import { Button } from "../../ui/button"
 import { IEmployeeDialogProps } from "./props"
+import Link from "next/link"
 
 export default function EmployeeDialog(props: IEmployeeDialogProps) {
     return (
@@ -16,16 +17,16 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
             <DialogContent className="dialog-content">
                 <DialogHeader>
                     <DialogTitle>
-                        <div className="flex items-stretch justify-start gap-3">
+                        <div className="flex items-stretch justify-start gap-3 tablet-sm:flex-col">
                             <Avatar className="!size-36">
                                 <AvatarFallback>{props.avatar}</AvatarFallback>
                             </Avatar>
                             <div className="flex flex-col items-start gap-5 font-normal">
-                                <div>
+                                <div className="flex flex-col items-start">
                                     <TypographyH4>{props.firstname} {props.lastname}</TypographyH4>
                                     <TypographyMuted>{props.job}</TypographyMuted>
                                 </div>
-                                <div className="space-y-2">
+                                <div className="flex flex-col items-start gap-2">
                                     <IconLabel icon={<LucideMapPin/>} text={props.location}/> 
                                     <IconLabel icon={<LucideUser/>} text={props.yearsOfExperience}/>
                                     <IconLabel icon={<LucideClock/>} text={props.availability}/>
@@ -35,7 +36,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
                     </DialogTitle>
                     <DialogDescription asChild>
                         <div className="flex flex-col items-start gap-5 text-primary !mt-5">
-                            <div className="space-y-2">
+                            <div className="flex flex-col items-start gap-2 tablet-sm:hidden">
                                 <TypographyP className="font-medium">Education</TypographyP>
                                 <div className="flex flex-col items-start gap-5">
                                     {props.educations.map((education) => (
@@ -46,7 +47,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
                                     ))}
                                 </div>
                             </div>
-                            <div className="space-y-2">
+                            <div className="flex flex-col items-start gap-2 tablet-sm:hidden">
                                 <TypographyP className="font-medium">Skills</TypographyP>
                                 <div className="flex flex-wrap gap-2">
                                     {props.skills.map((skill) => (
@@ -56,7 +57,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
                                     ))}
                                 </div>
                             </div>
-                            <div className="w-full flex flex-col items-start gap-3">
+                            <div className="w-full flex flex-col items-start gap-3 tablet-sm:hidden">
                                 <TypographyP className="font-medium">Status</TypographyP>
                                 <div className="w-full flex items-stretch gap-3">
                                     {props.status.map((item, index) => (
@@ -67,6 +68,11 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
                                         </Button>
                                     ))}
                                 </div>
+                            </div>
+                            <div className="w-full flex justify-end">
+                               <Link href={`/feed/employee/${props.id}`}>
+                                    <Button>View Employee</Button>
+                               </Link>
                             </div>
                         </div>
                     </DialogDescription>

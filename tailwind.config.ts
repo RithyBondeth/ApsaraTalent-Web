@@ -33,7 +33,10 @@ export default {
   			},
   			'tablet-xl': {
   				max: '1050px'
-  			}
+  			},
+			'laptop-sm': {
+				max: '1280px'
+			}
   		},
   		keyframes: {
   			'caret-blink': {

@@ -11,7 +11,7 @@ export default function RightSidebar({className}: {className?: string}) {
     return (
         <div className={cn('flex flex-col items-start gap-5', className)}>
             {/* Message Section */}
-            <div className="w-full flex flex-col items-start gap-3 border border-l-muted p-5 rounded-lg">
+            <div className="w-full flex flex-col items-start gap-3 border border-l-muted p-5">
                 <div className='w-full flex flex-col items-start gap-3'>
                     <div className="flex items-center justify-between w-full">
                         <TypographyP>Messages</TypographyP>

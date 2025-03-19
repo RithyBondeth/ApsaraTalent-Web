@@ -31,17 +31,17 @@ export default function FeedPage() {
         <div className="w-full flex flex-col items-start gap-5">
         
             {/* Header Section */}
-            <div className='w-full flex items-start justify-between gap-5'>
-                <div className="flex flex-col items-start gap-3">
-                    <TypographyH2 className="leading-relaxed">Apply to your favorite jobs from anywhere.</TypographyH2>
-                    <TypographyH4 className="leading-relaxed">Connect with professionals around the world.</TypographyH4>
-                    <TypographyMuted className="leading-relaxed">Find your dream job with ease and apply to it from anywhere.</TypographyMuted>
+            <div className='w-full flex items-start justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center'>
+                <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
+                    <TypographyH2 className="leading-relaxed tablet-xl:text-center">Apply to your favorite jobs from anywhere.</TypographyH2>
+                    <TypographyH4 className="leading-relaxed tablet-xl:text-center">Connect with professionals around the world.</TypographyH4>
+                    <TypographyMuted className="leading-relaxed tablet-xl:text-center">Find your dream job with ease and apply to it from anywhere.</TypographyMuted>
                 </div>
-                <Image src={feedImage} alt='feed' height={300} width={400}/>
+                <Image src={feedImage} alt='feed' height={300} width={400} className="tablet-xl:!w-full"/>
             </div>
             
             {/* Feed Card Section */}
-            <div className="w-full grid grid-cols-2 gap-5">
+            <div className="w-full grid grid-cols-2 gap-5 tablet-md:grid-cols-1">
                 {companyList.map((company) => (
                     <CompanyCard
                         key={company.id}
