@@ -22,7 +22,7 @@ export default function IndexPage() {
                 connects you with the right opportunities.<span className="tablet-md:hidden">For businesses and employers, find top-tier talent to drive success 
                 and innovation.</span>
               </TypographyMuted>
-              <Link href="/login" className="mt-3">
+              <Link href="/feed" className="mt-3">
                 <Button className="tablet-sm:text-xs">
                   <LucideBriefcaseBusiness/>
                   Explore Now

@@ -8,6 +8,14 @@ export const userRoleConstant = [
     { id: 2, label: 'Company or (Employer)', value: 'company' }
 ];
 
+export const platformConstant = [
+    { id: 1, label: 'Facebook', value: 'facebook' },
+    { id: 2, label: 'Instagram', value: 'Instagram' },
+    { id: 3, label: 'Telegram', value: 'telegram' },
+    { id: 4, label: 'LinkedIn', value: 'linkedin' },
+    { id: 5, label: 'Github', value: 'github' },
+];
+
 export const locationConstant = [
     'Banteay Meanchey',
     'Battambang',

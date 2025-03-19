@@ -13,11 +13,12 @@ import { useState } from "react";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { TGender } from "@/utils/types/gender.type";
 import { TLocations } from "@/utils/types/location.type";
-import { genderConstant, locationConstant } from "@/utils/constant";
+import { genderConstant, locationConstant, platformConstant } from "@/utils/constant";
 import { Textarea } from "@/components/ui/textarea";
 import IconLabel from "@/components/utils/icon-label";
 import { DatePicker } from "@/components/ui/date-picker";
 import Tag from "@/components/utils/tag";
+import { TPlatform } from "@/utils/types/platform.type";
 
 
 export default function EmployeeProfilePage() {
@@ -30,22 +31,23 @@ export default function EmployeeProfilePage() {
     const [selectedGender, setSelectedGender] = useState<TGender | null>(null);
     const [selectedLocation, setSelectedLocation] = useState<TLocations | null>(null);
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+    const [selectedPlatform, setSelectedPlatform] = useState<TPlatform | null>(null); 
 
     return (
-        <div className="flex flex-col gap-5">
-            <div className="flex items-center justify-between border border-muted rounded-md p-5">
-                <div className="flex items-center justify-start gap-5">
+        <div className="!min-w-full flex flex-col gap-5">
+            <div className="flex items-center justify-between border border-muted rounded-md p-5 tablet-sm:flex-col tablet-sm:[&>div]:w-full tablet-sm:gap-5">
+                <div className="flex items-center justify-start gap-5 tablet-sm:flex-col">
                     <Avatar className="size-28">
                         <AvatarFallback>BN</AvatarFallback>
                     </Avatar>
-                    <div className="flex flex-col items-start gap-1">
+                    <div className="flex flex-col items-start gap-1 tablet-sm:items-center">
                         <TypographyH3>Rithy Bondeth</TypographyH3>
                         <TypographyMuted>Software Engineer</TypographyMuted>
                     </div>
                 </div>
                 <Button>Edit Profile</Button>
             </div>
-            <div className="flex items-start gap-5">
+            <div className="flex items-start gap-5 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
                 <div className="w-[60%] flex flex-col gap-5">
 
                     {/* Personal Information Form Section */}
@@ -55,7 +57,7 @@ export default function EmployeeProfilePage() {
                             <Divider/>
                         </div>
                         <form action="" className="flex flex-col items-start gap-5">
-                            <div className="w-full flex items-center justify-between gap-5">
+                            <div className="w-full flex items-center justify-between gap-5 [&>div]:!w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
                                 <LabelInput 
                                     label="Firstname" 
                                     input={<Input placeholder="Firstname" id="firstname" name="firstname"/>} 
@@ -64,11 +66,11 @@ export default function EmployeeProfilePage() {
                                     label="Lastname" 
                                     input={<Input placeholder="Lastname" id="lastname" name="lastname"/>} 
                                 />
-                                <LabelInput 
-                                    label="Username" 
-                                    input={<Input placeholder="Username" id="username" name="username"/>} 
-                                />
                             </div>
+                            <LabelInput 
+                                label="Username" 
+                                input={<Input placeholder="Username" id="username" name="username"/>} 
+                            />
                             <div className="w-full flex items-center justify-between gap-5 [&>div]:w-1/2">
                                 <div className="flex flex-col items-start gap-1">
                                     <TypographyMuted className="text-xs">Locations</TypographyMuted>
@@ -117,7 +119,7 @@ export default function EmployeeProfilePage() {
                                 label="Profession"
                                 input={<Input placeholder="Profession" id="profession" name="profession" prefix={<LucideUser/>}/>}
                             />
-                            <div className="w-full flex justify-between items-center gap-5">
+                            <div className="w-full flex justify-between items-center gap-5 [&>div]:w-1/2 tablet-md:flex-col tablet-md:[&>div]:w-full">
                                 <LabelInput 
                                     label="Year of Experience"
                                     input={<Input placeholder="Year of Experience" id="yearOfExperience" name="yearOfExperience" prefix={<LucideBriefcaseBusiness/>}/>}
@@ -185,7 +187,7 @@ export default function EmployeeProfilePage() {
                             <div className="w-full flex flex-col items-start gap-3">
                                 <TypographyMuted>Experience 1</TypographyMuted>
                                 <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
-                                    <div className="w-full flex justify-between items-center gap-5">
+                                    <div className="w-full flex justify-between items-center gap-5 [&>div]:w-1/2 tablet-md:flex-col tablet-md:[&>div]:w-full">
                                         <LabelInput 
                                             label="Title"
                                             input={<Input placeholder="Title" id="title" name="title" prefix={<LucideBriefcaseBusiness/>}/>}
@@ -195,7 +197,7 @@ export default function EmployeeProfilePage() {
                                             input={<Input placeholder="Description" id="description" name="description" prefix={<LucideGraduationCap/>}/>}
                                         />
                                     </div>
-                                    <div className="w-full flex justify-between items-center gap-5">
+                                    <div className="w-full flex justify-between items-center gap-5 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
                                         <div className="w-1/2 flex flex-col items-start gap-1">
                                             <TypographyMuted className="text-xs">Start Date</TypographyMuted>
                                             <DatePicker 
@@ -326,16 +328,16 @@ export default function EmployeeProfilePage() {
                             <div className="w-full flex flex-col items-start gap-3">
                                 <TypographyMuted>Social 1</TypographyMuted>
                                 <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
-                                    <div className="w-full flex justify-between items-center gap-5 [&>div]:w-1/2">
+                                    <div className="w-full flex justify-between items-center gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
                                         <div className="flex flex-col items-start gap-1">
                                             <TypographyMuted className="text-xs">Platform</TypographyMuted>
-                                            <Select onValueChange={(value: TGender) => setSelectedGender(value)} value={selectedGender || ''}>
+                                            <Select onValueChange={(value: TPlatform) => setSelectedPlatform(value)} value={selectedPlatform || ''}>
                                                 <SelectTrigger className="h-12 text-muted-foreground">
-                                                <SelectValue placeholder="Gender" />
+                                                <SelectValue placeholder="Platform" />
                                                 </SelectTrigger>    
                                                 <SelectContent>
-                                                    {genderConstant.map((gender) => 
-                                                        <SelectItem key={gender.id} value={gender.value}>{gender.label}</SelectItem>
+                                                    {platformConstant.map((platform) => 
+                                                        <SelectItem key={platform.id} value={platform.value}>{platform.label}</SelectItem>
                                                     )}
                                                 </SelectContent>
                                             </Select>
@@ -348,12 +350,6 @@ export default function EmployeeProfilePage() {
                                 </div>
                             </div>
                         </form>
-                    </div>
-                    <div className="border border-muted rounded-md p-5">
-                        <div className="flex flex-col gap-1">
-                            <TypographyH4>Privacy Settings</TypographyH4>
-                            <Divider/>
-                        </div>
                     </div>
                 </div>
             </div>

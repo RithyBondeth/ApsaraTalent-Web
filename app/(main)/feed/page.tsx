@@ -41,7 +41,7 @@ export default function FeedPage() {
             </div>
             
             {/* Feed Card Section */}
-            <div className="w-full grid grid-cols-2 gap-5 tablet-md:grid-cols-1">
+            <div className="w-full grid grid-cols-2 gap-5 tablet-lg:grid-cols-1">
                 {companyList.map((company) => (
                     <CompanyCard
                         key={company.id}

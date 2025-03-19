@@ -89,7 +89,7 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => router.push('/profile/employee')}>
+              <DropdownMenuItem onClick={() => router.push('/profile/company')}>
                 <LucideUser />
                 My Profile
               </DropdownMenuItem>

@@ -20,13 +20,13 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     pathname === "/profile/company"
   ) {
     return (
-      <div className="relative p-5">
-        <Link href="/feed">
-          <Button variant={"outline"} size="icon" className="absolute top-5 left-5">
+      <div className="relative">
+        <Link href="/feed"  className="absolute top-5 left-5 z-20">
+          <Button variant={"outline"} size="icon">
             <LucideArrowLeft />
           </Button>
         </Link>
-        <div className="container mx-auto">{children}</div>
+        <div className="container mx-auto p-5">{children}</div>
       </div>
     ); // No layout for /feed/[userId]
   }
