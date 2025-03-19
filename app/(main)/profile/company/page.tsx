@@ -64,7 +64,7 @@ export default function ProfilePage() {
                             />
                             <div className="w-full flex flex-col items-start gap-2">
                                 <TypographyMuted className="text-xs">Company Description</TypographyMuted>
-                                <Textarea placeholder="Company Description" id="company-description" name="company-description"/>
+                                <Textarea placeholder="Company Description" id="company-description" name="company-description" className="placeholder:text-sm"/>
                             </div>
                             <LabelInput 
                                 label="Username" 
@@ -131,7 +131,7 @@ export default function ProfilePage() {
                                     />
                                     <div className="w-full flex flex-col items-start gap-2">
                                         <TypographyMuted className="text-xs">Description</TypographyMuted>
-                                        <Textarea placeholder="Description" id="description" name="description"/>
+                                        <Textarea placeholder="Description" id="description" name="description" className="placeholder:text-sm"/>
                                     </div>
                                     <LabelInput 
                                         label="Experience Requirement"
