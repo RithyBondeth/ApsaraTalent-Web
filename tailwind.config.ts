@@ -10,6 +10,9 @@ export default {
   theme: {
   	extend: {
   		screens: {
+			'message-xs': {
+				max: '430px'
+			},
   			'phone-xl': {
   				max: '480px'
   			},

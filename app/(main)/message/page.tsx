@@ -13,7 +13,26 @@ const MessagePage = () => {
   const [chats, setChats] = useState<IChatPreview[]>();
   const [activeChat, setActiveChat] = useState<IChatPreview | null>(null);
   const [messages, setMessages] = useState<IMessage[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); 
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 980 && window.innerWidth >= 430) {
+        setSidebarOpen(false); // Close sidebar on smaller screens
+      } else if (window.innerWidth < 430) {
+        setSidebarOpen(true);
+      } else {
+        setSidebarOpen(true); // Open sidebar on larger screens
+      }
+    };
+
+    handleResize(); // Call once to set the initial state
+
+    window.addEventListener('resize', handleResize); // Add event listener for resizing
+    return () => {
+      window.removeEventListener('resize', handleResize); // Cleanup the event listener on unmount
+    };
+  }, [])
 
   // Fetch chats on component mount
   useEffect(() => {
@@ -82,7 +101,7 @@ const MessagePage = () => {
   }
 
   return (
-    <div className="w-full h-full flex bg-background border-border">
+    <div className="w-full h-full flex bg-background border-border message-xs:flex-col message-xs:[&>div]:w-full">
       <ChatSidebar 
         chats={chats}
         activeChat={activeChat}

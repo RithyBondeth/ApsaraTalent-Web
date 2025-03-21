@@ -12,6 +12,7 @@ import { sidebarList } from "@/constants/sidebar.constant";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const sidebarData = sidebarList.filter((item) => item.url === pathname);
 
   // Exclude dynamic feed pages but include /feed
   if (
@@ -36,15 +37,21 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     return (
       <SidebarProvider>
         <CollapseSidebar/>
-        <SidebarInset>
-            <SidebarTrigger/>
-        </SidebarInset>
-        <div className="w-full">{children}</div>
+        <div className="w-full h-screen flex flex-col">
+          <SidebarInset>
+            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+              <div className="flex items-center gap-2 px-4">
+                <SidebarTrigger/>
+                <Separator orientation="vertical" className="mr-2 h-4" />
+                <TypographyP className="!m-0">{sidebarData[0].description}</TypographyP>
+              </div>
+            </header>
+          </SidebarInset>
+          <div className="h-full">{children}</div>
+        </div>
       </SidebarProvider>
     );
   }
-
-  const sidebarData = sidebarList.filter((item) => item.url === pathname);
   
   // Default layout with both sidebars
   return (

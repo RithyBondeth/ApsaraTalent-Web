@@ -9,6 +9,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "../../ui/sidebar";
 import LogoComponent from "../../utils/logo";
 import { Collapsible, CollapsibleTrigger } from "../../ui/collapsible";
@@ -16,14 +17,24 @@ import { useRouter } from "next/navigation";
 import { SidebarDropdownFooter } from "./sidebar-dropdown-footer";
 import { Separator } from "@/components/ui/separator";
 import { sidebarList } from "@/constants/sidebar.constant";
+import { TypographyP } from "@/components/utils/typography/typography-p";
 
-export default function CollapseSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export default function CollapseSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter();
+  const { open } = useSidebar();
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <LogoComponent/>
+        {open ? (
+          <LogoComponent />
+        ) : (
+          <SidebarMenuButton tooltip="Apsara Talent" className="text-sm">
+            <TypographyP className="!m-0 text-md font-bold">AP</TypographyP>    
+          </SidebarMenuButton>
+        )}
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -39,7 +50,7 @@ export default function CollapseSidebar({ ...props }: React.ComponentProps<typeo
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton tooltip={item.title} className="text-sm">
-                      {item.icon && <item.icon/>}
+                      {item.icon && <item.icon />}
                       <span>{item.title}</span>
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
@@ -49,9 +60,10 @@ export default function CollapseSidebar({ ...props }: React.ComponentProps<typeo
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      <Separator/>
+      <Separator />
       <SidebarFooter>
-        <SidebarDropdownFooter user={{
+        <SidebarDropdownFooter
+          user={{
             name: "Rithy Bondeth",
             email: "rithybondeth999@gamil.com",
             avatar: "",

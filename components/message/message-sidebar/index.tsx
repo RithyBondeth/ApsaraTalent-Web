@@ -7,15 +7,17 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useState } from 'react';
 import { IChatPreview } from '../props';
+import { cn } from '@/lib/utils';
 
 interface ChatSidebarProps {
   chats: IChatPreview[] | undefined;
   activeChat: IChatPreview | null;
   isOpen: boolean;
+  className?: string;
   onChatSelect: (chat: IChatPreview) => void;
 }
 
-const ChatSidebar = ({ chats, activeChat, isOpen, onChatSelect }: ChatSidebarProps) => {
+const ChatSidebar = ({ chats, activeChat, className, isOpen, onChatSelect }: ChatSidebarProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   
   const filteredChats = searchQuery 
@@ -27,7 +29,7 @@ const ChatSidebar = ({ chats, activeChat, isOpen, onChatSelect }: ChatSidebarPro
 
   return (
     <div 
-      className={`${isOpen ? 'w-96' : 'w-20'} border-r flex flex-col transition-all duration-300 ease-in-out overflow-hidden`}
+      className={cn(`${isOpen ? 'w-96' : 'w-20'} border-r flex flex-col transition-all duration-300 ease-in-out overflow-hidden`, className)}
     >
       {/* Header */}
       {isOpen ? (

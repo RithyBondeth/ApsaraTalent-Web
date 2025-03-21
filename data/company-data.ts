@@ -32,7 +32,9 @@ export const companyList: ICompany[]  = [
                 "type": "Full Time",
                 "experience": "4+ years",
                 "education": "Master's Degree",
-                "skills": ["Python", "TensorFlow", "Deep Learning", "NLP"]
+                "skills": ["Python", "TensorFlow", "Deep Learning", "NLP"],
+                "postedDate": "02/03/2025",
+                "deadlineDate": "02/04/2025",
             },
             { 
                 "id": 2, 
@@ -42,7 +44,9 @@ export const companyList: ICompany[]  = [
                 "type": "Full Time",
                 "experience": "5+ years",
                 "education": "Bachelor's Degree",
-                "skills": ["AWS", "Azure", "Google Cloud", "Kubernetes", "DevOps"]
+                "skills": ["AWS", "Azure", "Google Cloud", "Kubernetes", "DevOps"],
+                "postedDate": "02/03/2025",
+                "deadlineDate": "02/04/2025",
             },
             { 
                 "id": 3, 
@@ -52,7 +56,9 @@ export const companyList: ICompany[]  = [
                 "type": "Full Time",
                 "experience": "2+ years",
                 "education": "Bachelor's Degree",
-                "skills": ["SQL", "Power BI", "Tableau", "Python", "Data Visualization"]
+                "skills": ["SQL", "Power BI", "Tableau", "Python", "Data Visualization"],
+                "postedDate": "02/03/2025",
+                "deadlineDate": "02/04/2025",
             }
         ],
         "availableTimes": [
@@ -108,7 +114,9 @@ export const companyList: ICompany[]  = [
                 "type": "Full Time",
                 "experience": "2+ years",
                 "education": "Bachelor's Degree",
-                "skills": ["React", "Vue.js", "CSS", "JavaScript"]
+                "skills": ["React", "Vue.js", "CSS", "JavaScript"],
+                "postedDate": "02/03/2025",
+                "deadlineDate": "02/04/2025",
             },
             { 
                 "id": 2, 
@@ -118,7 +126,9 @@ export const companyList: ICompany[]  = [
                 "type": "Full Time",
                 "experience": "3+ years",
                 "education": "Bachelor's Degree",
-                "skills": ["Figma", "Adobe XD", "Wireframing", "Prototyping"]
+                "skills": ["Figma", "Adobe XD", "Wireframing", "Prototyping"],
+                "postedDate": "02/03/2025",
+                "deadlineDate": "02/04/2025",
             }
         ],
         "availableTimes": [

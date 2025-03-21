@@ -31,6 +31,8 @@ export interface IJobPosition {
     experience: string;
     education: string;
     skills: string[];
+    postedDate: string;
+    deadlineDate: string;
 }
 
 export interface ILabelItem {
