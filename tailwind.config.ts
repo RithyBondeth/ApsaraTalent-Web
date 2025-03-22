@@ -11,7 +11,10 @@ export default {
   	extend: {
   		screens: {
 			'message-xs': {
-				max: '430px'
+				max: '400px'
+			},
+			'message-xl': {
+				max: '980px'
 			},
   			'phone-xl': {
   				max: '480px'

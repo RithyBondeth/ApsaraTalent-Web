@@ -1,3 +1,5 @@
+import { LucideProps } from "lucide-react";
+
 export interface IDragDropFileProps {
     onFilesSelected: (files: File[]) => void;
     acceptedFileTypes?: string;
@@ -6,4 +8,5 @@ export interface IDragDropFileProps {
     className?: string;
     boxText?: string;
     boxSubText?: string;
+    icon?: React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>
 }

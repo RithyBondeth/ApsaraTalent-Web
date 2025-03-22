@@ -9,6 +9,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import forgotPasswordWhiteSvg from "@/assets/svg/forgot-password-white.svg";
 import Image from "next/image";
+import { useForm } from "react-hook-form";
+import { forgotPasswordSchema, TForgotPasswordForm } from "./validate";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function ForgotPasswordPage() {
     const router = useRouter();
@@ -17,6 +20,14 @@ export default function ForgotPasswordPage() {
     // Check if input is a number (mobile) or contains "@" (email)
     const isEmailInput = /^[a-zA-Z@.\-_]+$/.test(inputValue) || inputValue.includes("@");
     const isNumberInput = /^\d+$/.test(inputValue) && inputValue.length > 0;
+
+    const { handleSubmit, register, formState: { errors } } = useForm<TForgotPasswordForm>({
+        resolver: zodResolver(forgotPasswordSchema)
+    });
+
+    const onSubmit = (data: TForgotPasswordForm) => {
+        console.log(data);
+    }
 
     return (
         <div className="h-screen w-screen flex items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
@@ -29,13 +40,15 @@ export default function ForgotPasswordPage() {
                     </div>
 
                     {/* Form Section */}
-                    <form action="" className="flex flex-col gap-3">
+                    <form action="" className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
                         <Input 
                             type="text"
                             placeholder="Email or Mobile"
                             value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
                             prefix={isEmailInput ? <LucideMail/> : isNumberInput ? <LucidePhone/> : null}
+                            {...register('forgotPassword')}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            validationMessage={errors.forgotPassword?.message}
                         />
                         <div className="flex items-center justify-stretch gap-3 [&>button]:w-1/2">
                             <Button type="button" onClick={() => router.push('/login')}>

@@ -17,6 +17,9 @@ import loginWhiteSvg from "@/assets/svg/login-white.svg";
 import loginBlackSvg from "@/assets/svg/login-black.svg";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import { useForm } from "react-hook-form";
+import { loginSchema, TLoginForm } from "./validation";
+import { zodResolver } from '@hookform/resolvers/zod';
 
 function LoginPage() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
@@ -24,6 +27,14 @@ function LoginPage() {
 
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+
+  const { handleSubmit, register, formState: { errors } } = useForm<TLoginForm>({
+    resolver: zodResolver(loginSchema)
+  });
+
+  const onSubmit = (data: TLoginForm) => {
+    console.log(data);
+  }
   
   useEffect(() => {
     setMounted(true);
@@ -68,14 +79,14 @@ function LoginPage() {
             </div>
             {/* End Divider Section */}
             {/* Login Form Section Section */}
-            <form  className="w-full flex flex-col items-stretch gap-5" method="POST">
+            <form  className="w-full flex flex-col items-stretch gap-5" onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-5">
                 <Input
                   prefix={<LucideMail/>}
                   placeholder="Email"
                   type="email"
-                  name="email"
-                  required
+                  {...register('email')}
+                  validationMessage={errors.email?.message}
                 />
                 <Input
                   prefix={<LucideLockKeyhole/>}
@@ -84,8 +95,8 @@ function LoginPage() {
                     : <LucideEye onClick={() => setPasswordVisibility(true)}/>}
                   placeholder="Password"
                   type={passwordVisibility ? "text" : "password"}
-                  name="password"
-                  required
+                  {...register('password')}
+                  validationMessage={errors.password?.message}
                 />
               </div>
               <div className="flex justify-between items-center mb-5">

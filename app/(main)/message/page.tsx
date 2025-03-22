@@ -17,9 +17,9 @@ const MessagePage = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 980 && window.innerWidth >= 430) {
+      if (window.innerWidth < 980 && window.innerWidth >= 400) {
         setSidebarOpen(false); // Close sidebar on smaller screens
-      } else if (window.innerWidth < 430) {
+      } else if (window.innerWidth < 400) {
         setSidebarOpen(true);
       } else {
         setSidebarOpen(true); // Open sidebar on larger screens

@@ -2,7 +2,7 @@
 
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { IStepFormProps } from "../props";
-import { TEmployeeSignUp } from "../validation";
+
 import Tag from "@/components/utils/tag";
 import { Input } from "@/components/ui/input";
 import LabelInput from "@/components/utils/label-input";
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { LucidePlus } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { useState } from "react";
+import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
 
 export default function SkillReferenceStepForm({ register }: IStepFormProps<TEmployeeSignUp>) {
   const [openPopOver, setOpenPopOver] = useState<boolean>(false);
@@ -25,7 +26,7 @@ export default function SkillReferenceStepForm({ register }: IStepFormProps<TEmp
         </div>
         <Popover open={openPopOver} onOpenChange={setOpenPopOver}>
           <PopoverTrigger asChild>
-            <Button className="w-full" variant='secondary'>
+            <Button className="w-full text-xs" variant='secondary'>
               Add Skill
               <LucidePlus/>
             </Button>

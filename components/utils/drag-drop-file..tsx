@@ -11,7 +11,8 @@ export const DragDropFile = ({
   multiple = false,
   className = "",
   boxText = "Drag and drop image here, or click to select",
-  boxSubText = "JPG, PNG or GIF files up to 10MB"
+  boxSubText = "JPG, PNG or GIF files up to 10MB",
+  icon = LucideUserCircle,
 }: IDragDropFileProps) => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [preview, setPreview] = useState<string | null>(null);
@@ -129,7 +130,7 @@ export const DragDropFile = ({
         </div>
       ) : (
         <div className='flex flex-col items-center justify-center gap-3'> 
-          <LucideUserCircle className='text-muted-foreground size-20' strokeWidth='0.5px'/>
+          {icon && React.createElement(icon, { className: 'text-muted-foreground size-20', strokeWidth: '1px' })}
           <TypographyMuted>{boxText}</TypographyMuted>
           <TypographyMuted>{boxSubText}</TypographyMuted>
         </div>

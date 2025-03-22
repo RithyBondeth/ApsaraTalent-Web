@@ -9,10 +9,21 @@ import { useState } from "react";
 import LogoComponent from "@/components/utils/logo";
 import phoneNumberWhiteSvg from "@/assets/svg/phone-number-white.svg";
 import Image from "next/image";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { phoneLoginSchema, TPhoneLoginForm } from "./validation";
 
 export default function PhoneNumberPage() {
     const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
-    
+
+    const { handleSubmit, register, formState: { errors } } = useForm<TPhoneLoginForm>({
+        resolver: zodResolver(phoneLoginSchema)
+    });
+
+    const onSubmit = (data: TPhoneLoginForm) => {
+        console.log(data);
+    }
+
    return (
     <div className="h-screen w-screen flex justify-between items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
         <div className="h-screen w-1/2 flex justify-center items-center">
@@ -25,13 +36,13 @@ export default function PhoneNumberPage() {
                 </div>
                 
                 {/* Form Section */}
-                <form action="" className="flex flex-col items-stretch gap-3">
+                <form action="" className="flex flex-col items-stretch gap-3" onSubmit={handleSubmit(onSubmit)}>
                     <Input
                         prefix={<LucidePhone/>}
                         type="number"  
-                        placeholder="Phone Number"
-                        name="phone-number"
-                        required
+                        placeholder="phone"
+                        {...register('phone')}
+                        validationMessage={errors.phone?.message}
                     />
                    <Input
                         prefix={<LucideLockKeyhole/>}
@@ -40,8 +51,8 @@ export default function PhoneNumberPage() {
                             : <LucideEye onClick={() => setPasswordVisibility(true)}/>}
                         placeholder="Password"
                         type={passwordVisibility ? "text" : "password"}
-                        name="password"
-                        required
+                        {...register('password')}
+                        validationMessage={errors.password?.message}
                     />
                     <Button>Login</Button>
                 </form>

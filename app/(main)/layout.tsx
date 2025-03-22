@@ -37,7 +37,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     return (
       <SidebarProvider>
         <CollapseSidebar/>
-        <div className="w-full h-screen flex flex-col">
+        <div className="w-full h-screen message-xs:h-full flex flex-col">
           <SidebarInset>
             <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
               <div className="flex items-center gap-2 px-4">

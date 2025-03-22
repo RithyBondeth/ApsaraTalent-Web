@@ -13,7 +13,11 @@ import { useThemeStore } from "@/stores/theme-store";
 import { TUserRole } from "@/utils/types/role.type";
 import { genderConstant, userRoleConstant } from "@/utils/constant";
 import { TGender } from "@/utils/types/gender.type";
-import { useRoleStore } from "@/stores/role-store";
+//import { useRoleStore } from "@/stores/role-store";
+import { useForm } from "react-hook-form";
+import { basicSignupSchema, TBasicSignupSchema } from "./validation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
 
 export default function SignupPage() {
   const [selectedRole, setSelectedRole] = useState<TUserRole | null>(null);
@@ -23,7 +27,15 @@ export default function SignupPage() {
   const [selectedGender, setSelectedGender] = useState<TGender | null>(null);
 
   const { theme } = useThemeStore();
-  const { role } = useRoleStore(); 
+  //const { role } = useRoleStore(); 
+
+  const { handleSubmit, register, formState: { errors } } = useForm<TBasicSignupSchema>({
+    resolver: zodResolver(basicSignupSchema)  
+  });
+
+  const onSubmit = (data: TBasicSignupSchema) => {
+    console.log(data);
+  }
 
   return (
     <div className="size-[70%] flex flex-col items-start justify-center gap-3 tablet-sm:w-[90%]">
@@ -35,43 +47,58 @@ export default function SignupPage() {
       </div>
       {/* End Title Section */}
       {/* Form Section */}
-      <div className="w-full flex flex-col items-stretch gap-5">
+      <form className="w-full flex flex-col items-stretch gap-5" onSubmit={handleSubmit(onSubmit)}>
         <div className="flex items-center gap-3 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
-          <Input placeholder="Firstname" type="text" name="first-name"/>
-          <Input placeholder="Lastname" type="text" name="last-name"/>
+          <Input placeholder="Firstname" type="text" {...register('firstName')} validationMessage={errors.firstName?.message}/>
+          <Input placeholder="Lastname" type="text" {...register('lastName')} validationMessage={errors.lastName?.message}/>
         </div>
-        <div className="flex items-center gap-3 [&>select]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
-          <Input type="text" placeholder="Username" name="username" className="w-1/2"/>
-          <Select onValueChange={(value: TUserRole) => setSelectedRole(value)} value={selectedRole || ""}>
-            <SelectTrigger className="h-12 text-muted-foreground">
-              <SelectValue placeholder="Who are you looking for?"/>
-            </SelectTrigger>    
-            <SelectContent>
-              {userRoleConstant.map((role) => (
-                <SelectItem key={role.id} value={role.value}>{role.label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="w-full flex items-center gap-3 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
+          <Input type="text" placeholder="Username" className="w-full" {...register('username')} validationMessage={errors.username?.message}/>
+          <div className="w-full flex flex-col items-start gap-1">
+            <Select 
+              onValueChange={(value: TUserRole) => setSelectedRole(value)} 
+              value={selectedRole || ""} 
+              {...register('selectedRole')}
+            > 
+              <SelectTrigger className="h-12 text-muted-foreground">
+                <SelectValue placeholder="Who are you looking for?"/>
+              </SelectTrigger>    
+              <SelectContent>
+                {userRoleConstant.map((role) => (
+                  <SelectItem key={role.id} value={role.value}>{role.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <TypographySmall className="text-xs text-red-500">{errors.selectedRole?.message}</TypographySmall>
+          </div>
         </div>
         <div className="flex flex-col items-stretch gap-5">
           <div className="flex gap-3 [&>select]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
-              <Select onValueChange={(value: TGender) => setSelectedGender(value)} value={selectedGender || ''}>
-                <SelectTrigger className="h-12 text-muted-foreground">
-                <SelectValue placeholder="Gender" />
-                </SelectTrigger>    
-                <SelectContent>
-                  {genderConstant.map((gender) => 
-                    <SelectItem key={gender.id} value={gender.value}>{gender.label}</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-              <Input type="number" placeholder="Mobile" name="mobile" className="w-1/2"/>   
+              <div className="w-full flex flex-col items-start gap-1">
+                <Select 
+                  onValueChange={(value: TGender) => setSelectedGender(value)} 
+                  value={selectedGender || ''}
+                  {...register('gender')}
+                >
+                  <SelectTrigger className="h-12 text-muted-foreground">
+                  <SelectValue placeholder="Gender" />
+                  </SelectTrigger>   
+                  <SelectContent>
+                    {genderConstant.map((gender) => 
+                      <SelectItem key={gender.id} value={gender.value}>{gender.label}</SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+                <TypographySmall className="text-xs text-red-500">{errors.gender?.message}</TypographySmall>
+              </div>
+              <Input type="number" placeholder="Mobile" className="w-full" {...register('phone')} validationMessage={errors.phone?.message}/>   
           </div>
           <Input 
             prefix={<LucideMail/>}
             type="email"
             placeholder="Email"
-            name="email"
+            {...register('email')}
+            validationMessage={errors.email?.message}
           />   
           <Input 
             prefix={<LucideLockKeyhole/>}
@@ -80,7 +107,8 @@ export default function SignupPage() {
               : <LucideEye onClick={() => setPasswordVisibility(true)}/>}
             type={passwordVisibility ? "text" : "password"}
             placeholder="Password"
-            name="password"
+            {...register('password')}
+            validationMessage={errors.password?.message}
           />                
           <Input 
             prefix={<LucideLockKeyhole/>}
@@ -89,7 +117,8 @@ export default function SignupPage() {
               : <LucideEye onClick={() => setConfirmPassVisibility(true)}/>}
             type={confirmPassVisibility ? "text" : "password"}
             placeholder="Confirm Password"
-            name="confirm-password"
+            {...register('confirmPassword')}
+            validationMessage={errors.confirmPassword?.message}
           />                
         </div>
         <div className="flex items-center gap-3">
@@ -97,12 +126,12 @@ export default function SignupPage() {
               <LucideArrowLeft/>
               Back
             </Button>
-            <Button className="flex-1"  onClick={() => router.push(`/signup/${role}`)}> 
+            <Button className="flex-1" type="submit"> 
               <LucideArrowRight/>
               Next
             </Button>
         </div>
-      </div>
+      </form>
       {/* End Form Section */}
     </div>
   )

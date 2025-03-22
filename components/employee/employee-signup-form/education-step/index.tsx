@@ -1,6 +1,6 @@
 import LabelInput from "@/components/utils/label-input";
 import { IStepFormProps } from "../props";
-import { TEmployeeSignUp } from "../validation";
+import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
 import { Input } from "@/components/ui/input";
 import { LucideCalendarDays, LucideGraduationCap, LucidePlus, LucideSchool } from "lucide-react";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
@@ -44,7 +44,7 @@ export default function EducationStepForm({ register }: IStepFormProps<TEmployee
         }
       />
       <div className="w-full flex justify-end">
-        <Button variant='secondary' onClick={() => { alert('Add More') }}>
+        <Button variant='secondary' className="text-xs" onClick={() => { alert('Add More') }}>
           Add More
           <LucidePlus/>
         </Button>

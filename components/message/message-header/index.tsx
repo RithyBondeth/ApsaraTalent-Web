@@ -14,7 +14,7 @@ const ChatHeader = ({ chat, isSidebarOpen, onToggleSidebar }: ChatHeaderProps) =
   return (
     <div className="p-4 border-b flex justify-between items-center">
       <div className="flex items-center">
-        <Button variant="ghost" size="icon" onClick={onToggleSidebar} className="mr-2 tablet-sm:hidden">
+        <Button variant="ghost" size="icon" onClick={onToggleSidebar} className="mr-2 message-xl:hidden">
           {isSidebarOpen ? (
             <ChevronLeft className="h-5 w-5" />
           ) : (

@@ -1,5 +1,4 @@
 "use client"
-import { TEmployeeSignUp } from "@/components/employee/employee-signup-form/validation";
 import { Button } from "@/components/ui/button";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
@@ -12,6 +11,7 @@ import SkillReferenceStepForm from "@/components/employee/employee-signup-form/s
 import AvatarStepForm from "@/components/employee/employee-signup-form/avatar-step";
 import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { TEmployeeSignUp } from "./validation";
 
 export default function EmployeeSignup() {
     const router = useRouter();
@@ -58,13 +58,13 @@ export default function EmployeeSignup() {
     const prevStep = () => setStep((prev) => prev - 1);
    
     return (
-        <div className="h-[80%] w-[85%] flex flex-col items-start gap-3 tablet-lg:w-full"> 
+        <div className="h-[80%] w-[85%] flex flex-col items-start gap-3 tablet-lg:w-full tablet-lg:p-5"> 
         {/* Back Button Section */}
         <Button className="absolute top-5 left-5" variant="outline" onClick={() => router.push('/signup')}>
           <LucideArrowLeft/>
         </Button>
             {/* Title Section */}
-            <div className="mb-5">
+            <div className="mb-5"> 
                 <TypographyH2>Sign up as employee</TypographyH2>
                 <TypographyMuted className="text-md">Explore your dream job with our platform, Apsara Talent.</TypographyMuted>
             </div>
@@ -88,7 +88,7 @@ export default function EmployeeSignup() {
               </div>
 
               {/* Form Section */}
-              <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+              <form onSubmit={handleSubmit(onSubmit)} className="w-full">      
                 {step === 1 && <ProfessionStepForm register={register}/>}
                 {step === 2 && <ExperienceStepForm register={register}/>}
                 {step === 3 && <EducationStepForm register={register}/>}

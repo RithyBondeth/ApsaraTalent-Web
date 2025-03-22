@@ -7,10 +7,21 @@ import { LucideEye, LucideEyeClosed, LucideLockKeyhole } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
 import resetPasswordWhiteSvg from "@/assets/svg/reset-password-white.svg"
+import { useForm } from "react-hook-form";
+import { resetPasswordSchema, TResetPasswordForm } from "./validate";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function ResetPasswordPage() {
     const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
     const [confirmPassVisibility, setConfirmPassVisibility] = useState<boolean>(false);
+
+    const { handleSubmit, register, formState: { errors } } = useForm<TResetPasswordForm>({
+        resolver: zodResolver(resetPasswordSchema)
+    });
+
+    const onSubmit = (data: TResetPasswordForm) => {
+        console.log(data);
+    }
 
     return (
         <div className="h-screen w-screen flex justify-between items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
@@ -23,7 +34,7 @@ export default function ResetPasswordPage() {
                     </div>
 
                     {/* Form Section */}
-                    <form action="" className="flex flex-col gap-3">
+                    <form action="" className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
                         <Input 
                             prefix={<LucideLockKeyhole/>}
                             suffix={passwordVisibility 
@@ -31,7 +42,8 @@ export default function ResetPasswordPage() {
                             : <LucideEye onClick={() => setPasswordVisibility(true)}/>}
                             type={passwordVisibility ? "text" : "password"}
                             placeholder="Password"
-                            name="password"
+                            {...register('password')}
+                            validationMessage={errors.password?.message}
                         />                
                         <Input 
                             prefix={<LucideLockKeyhole/>}
@@ -40,7 +52,8 @@ export default function ResetPasswordPage() {
                             : <LucideEye onClick={() => setConfirmPassVisibility(true)}/>}
                             type={confirmPassVisibility ? "text" : "password"}
                             placeholder="Confirm Password"
-                            name="confirm-password"
+                            {...register("confirmPassword")}
+                            validationMessage={errors.confirmPassword?.message}
                         />    
                         <Button type="submit">Continue</Button>           
                     </form>

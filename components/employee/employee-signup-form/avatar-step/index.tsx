@@ -1,6 +1,6 @@
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { IStepFormProps } from "../props";
-import { TEmployeeSignUp } from "../validation";
+import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
 import { DragDropFile } from "@/components/utils/drag-drop-file.";
 
 export default function AvatarStepForm({ register }: IStepFormProps<TEmployeeSignUp>) {

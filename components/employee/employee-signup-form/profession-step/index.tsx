@@ -5,8 +5,8 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { Input } from "@/components/ui/input";
 import { LucideAlarmClock, LucideBriefcaseBusiness, LucideUser } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { TEmployeeSignUp } from "../validation";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
 
 export default function ProfessionStepForm({ register }: IStepFormProps<TEmployeeSignUp>) {
   return (
@@ -49,7 +49,7 @@ export default function ProfessionStepForm({ register }: IStepFormProps<TEmploye
       </div>
       <div className="w-full flex flex-col items-start gap-1">
         <TypographyMuted className="text-xs">Description</TypographyMuted>
-        <Textarea placeholder="Description"  {...register('profession.description')}/>
+        <Textarea placeholder="Description"  {...register('profession.description')} className="placeholder:text-sm"/>
       </div>
     </div>
   );
