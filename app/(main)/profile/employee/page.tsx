@@ -74,7 +74,10 @@ export default function EmployeeProfilePage() {
             <TypographyMuted>Software Engineer</TypographyMuted>
           </div>
         </div>
-        <Button>Edit Profile</Button>
+        <Button>
+          <LucideEdit/>
+          Edit Profile
+        </Button>
       </div>
       <div className="flex items-start gap-5 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
         <div className="w-[60%] flex flex-col gap-5">

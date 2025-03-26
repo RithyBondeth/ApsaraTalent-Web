@@ -1,6 +1,6 @@
 "use client"
 
-import { LucideBookmark, LucideBriefcaseBusiness, LucideBuilding, LucideCircleArrowRight, LucideClock, LucideMapPin, LucideUsers } from "lucide-react";
+import { LucideBookmark, LucideBriefcaseBusiness, LucideBuilding, LucideCircleArrowRight, LucideClock, LucideEye, LucideMapPin, LucideUsers } from "lucide-react";
 import { LucideHeartHandshake } from "lucide-react";
 import { Avatar, AvatarFallback } from "../../ui/avatar";
 import { TypographyMuted } from "../../utils/typography/typography-muted";
@@ -48,7 +48,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
     return (
         <div className="h-fit w-full flex flex-col items-start gap-6 p-3 rounded-lg border border-muted cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:border-primary">
             {/* Profile Section */}
-            <div className="w-full flex items-start justify-between" onClick={handleClickDialog}>
+            <div className="w-full flex items-start justify-between">
                 <div className="flex items-center gap-3">
                     <Avatar className="size-20">
                         <AvatarFallback>{!props.avatar ? <LucideBuilding/> : props.avatar}</AvatarFallback>
@@ -65,9 +65,14 @@ export default function CompanyCard(props: ICompanyCardProps) {
                         </TypographySmall>
                     </div>
                 </div>
-                <Button className="size-12 rounded-full transition-all duration-300 ease-in-out hover:scale-105">
-                    <LucideHeartHandshake className="!size-6 transition-all duration-300 ease-in-out" />
-                </Button>
+                <div className="flex items-center gap-2">
+                    <Button className="size-12 rounded-full transition-all duration-300 ease-in-out hover:scale-105" onClick={handleClickDialog}>
+                        <LucideEye className="!size-6 transition-all duration-300 ease-in-out" />
+                    </Button>
+                        <Button className="size-12 rounded-full transition-all duration-300 ease-in-out hover:scale-105">
+                        <LucideHeartHandshake className="!size-6 transition-all duration-300 ease-in-out" />
+                    </Button>
+                </div>
             </div>
 
             {/* Industry Section */}
