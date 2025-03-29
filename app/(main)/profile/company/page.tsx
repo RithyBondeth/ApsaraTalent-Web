@@ -1,5 +1,6 @@
 "use client";
 
+import OpenPositionForm from "@/components/company/profile/open-position-form";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,7 +10,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
 import {
   SelectContent,
@@ -48,6 +48,9 @@ import {
   LucideUsers,
 } from "lucide-react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { openPositionSchema, TOpenPositionForm } from "./validation";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function ProfilePage() {
   const companyId = 1;
@@ -58,13 +61,50 @@ export default function ProfilePage() {
     new: false,
     confirm: false,
   });
-  const [selectedLocation, setSelectedLocation] = useState<TLocations | null>(
-    null
-  );
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
-  const [selectedPlatform, setSelectedPlatform] = useState<TPlatform | null>(
-    null
-  );
+  const [selectedLocation, setSelectedLocation] = useState<TLocations | null>(null);
+  const [selectedPlatform, setSelectedPlatform] = useState<TPlatform | null>(null);
+  const [selectedDates, setSelectedDates] = useState<Record<string, { posted?: Date; deadline?: Date }>>({});
+  
+  const getPostedDate = (positionId: string, fallback: Date) =>
+    selectedDates[positionId]?.posted ?? fallback;
+  
+  const getDeadlineDate = (positionId: string, fallback: Date) =>
+    selectedDates[positionId]?.deadline ?? fallback;
+
+  const handleDateChange = (
+    positionId: string,
+    type: "posted" | "deadline",
+    date: Date
+  ) => {
+    setSelectedDates((prev) => ({
+      ...prev,
+      [positionId]: {
+        ...prev[positionId],
+        [type]: date,
+      },
+    }));
+  };
+
+  const form = useForm<TOpenPositionForm>({
+    resolver: zodResolver(openPositionSchema),
+    defaultValues: {
+    openPositions: companyList[companyId].openPositions.map(position => ({
+      title: position.title,
+      description: position.description,
+      experienceRequirement: position.experience,
+      educationRequirement: position.education,
+      salary: position.salary,
+      postedDate: new Date(position.postedDate),
+      deadlineDate: new Date(position.deadlineDate),
+      skill: position.skills
+      }))
+    }
+  });
+
+  const onSubmit = (data: TOpenPositionForm) => {
+    console.log(data);
+  }
+
 
   return (
     <div className="flex flex-col gap-5">
@@ -262,87 +302,42 @@ export default function ProfilePage() {
               </div>
               <Divider />
             </div>
-            <form action="" className="flex flex-col items-start gap-5">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col items-start gap-5">
               {companyList[companyId].openPositions &&
-                companyList[companyId].openPositions.map((position) => (
-                  <div
-                    className="w-full flex flex-col items-start gap-3"
-                    key={position.id}
-                  >
-                    <TypographyMuted>Position {position.id}</TypographyMuted>
-                    <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
-                      <LabelInput
-                        label="Title"
-                        input={
-                          <Input placeholder="Title" id="title" name="title" />
+                companyList[companyId].openPositions.map((position, index) => {
+                  const positionId = position.id.toString();
+                  const postedFallback = new Date(position.postedDate);
+                  const deadlineFallback = new Date(position.deadlineDate);
+                  return (
+                    <OpenPositionForm
+                      key={position.id}
+                      index={index}
+                      form={form}
+                      positionLabel={`Position ${position.id}`}
+                      isEdit={isEdit}
+                      title={position.title}
+                      description={position.description}
+                      experience={position.experience}
+                      education={position.education}
+                      skill={position.skills}
+                      salary={position.salary}
+                      postedDate={{
+                        defaultValue: postedFallback,
+                        data: getPostedDate(positionId, postedFallback),
+                        onDataChange: (date: Date | undefined) => {
+                          if(date) handleDateChange(positionId, "posted", date);
                         }
-                      />
-                      <div className="w-full flex flex-col items-start gap-2">
-                        <TypographyMuted className="text-xs">
-                          Description
-                        </TypographyMuted>
-                        <Textarea
-                          placeholder="Description"
-                          id="description"
-                          name="description"
-                          className="placeholder:text-sm"
-                        />
-                      </div>
-                      <LabelInput
-                        label="Experience Requirement"
-                        input={
-                          <Input
-                            placeholder="Experience Requirement"
-                            id="experience-requirement"
-                            name="experience-requirement"
-                          />
+                      }}
+                      deadlineDate={{
+                        defaultValue: deadlineFallback,
+                        data: getDeadlineDate(positionId, deadlineFallback),
+                        onDataChange: (date: Date | undefined) => {
+                          if(date) handleDateChange(positionId, "deadline", date);
                         }
-                      />
-                      <LabelInput
-                        label="Education Requirement"
-                        input={
-                          <Input
-                            placeholder="Education Requirement"
-                            id="education-requirement"
-                            name="education-requirement"
-                          />
-                        }
-                      />
-                      <LabelInput
-                        label="Skill Requirement"
-                        input={
-                          <Input
-                            placeholder="Skill Requirement"
-                            id="skill-requirement"
-                            name="skill-requirement"
-                          />
-                        }
-                      />
-                      <div className="w-full flex justify-between items-center gap-5 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
-                        <div className="w-1/2 flex flex-col items-start gap-1">
-                          <TypographyMuted className="text-xs">
-                            Announce Date
-                          </TypographyMuted>
-                          <DatePicker
-                            placeholder="Announce Date"
-                            date={selectedDate}
-                            onDateChange={setSelectedDate}
-                          />
-                        </div>
-                        <div className="w-1/2 flex flex-col items-start gap-1">
-                          <TypographyMuted className="text-xs">
-                            Deadline Date
-                          </TypographyMuted>
-                          <DatePicker
-                            placeholder="Deadline Date"
-                            date={selectedDate}
-                            onDateChange={setSelectedDate}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                      }}
+                    />
+                  );
+                })}
             </form>
           </div>
           {/* Company Multiple Images Section */}

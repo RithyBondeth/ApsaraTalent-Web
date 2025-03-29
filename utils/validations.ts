@@ -35,3 +35,8 @@ export const phoneOrEmailValidation = z
     // Check if the value is either a valid email or a Khmer phone number
     return emailRegex.test(value) || khmerPhoneNumberRegex.test(value);
     }, "Invalid email or Khmer phone number");
+
+export const dateValidation = (label: string) => z.date({
+    required_error: `${label} is required`,
+    invalid_type_error: `${label} date must be a valid date`,
+});

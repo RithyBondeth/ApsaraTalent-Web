@@ -45,6 +45,7 @@ export function DatePicker({
         <Calendar
           mode="single"
           selected={date}
+          // defaultMonth={date}
           onSelect={onDateChange}
           initialFocus
           disabled={disabled}
