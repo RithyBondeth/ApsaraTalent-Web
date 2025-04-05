@@ -11,8 +11,10 @@ import {
 } from "@/components/ui/popover";
 import { useState } from "react";
 import IconLabel from "@/components/utils/icon-label";
+import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
+import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
 
-export default function BenefitValueStepForm() {
+export default function BenefitValueStepForm({ register }: IStepFormProps<TCompanySignup>) {
   const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
   const  [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
 
@@ -38,7 +40,7 @@ export default function BenefitValueStepForm() {
             </Button>
           </PopoverTrigger>
           <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
-            <Input placeholder="Enter your benefit (e.g. Unlimited PTO, Yearly Tech Stipend etc.)" />
+            <Input placeholder="Enter your benefit (e.g. Unlimited PTO, Yearly Tech Stipend etc.)" {...register('benefits')}/>
             <div className="flex items-center gap-1 [&>button]:text-xs">
               <Button variant="outline" onClick={() => setOpenBenefitPopOver(false)}>
                 Cancel

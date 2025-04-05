@@ -338,6 +338,9 @@ export default function ProfilePage() {
                     />
                   );
                 })}
+                <div className="w-full flex justify-end">
+                  <Button type="submit" className="text-xs">Submit</Button>
+                </div>
             </form>
           </div>
           {/* Company Multiple Images Section */}

@@ -1,8 +1,10 @@
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { DragDropFile } from "@/components/utils/drag-drop-file.";
 import { ImagePlus } from "lucide-react";
+import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
+import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 
-export default function CoverCompanyStepForm() {
+export default function CoverCompanyStepForm({ register }: IStepFormProps<TCompanySignup>) {
     const handleFilesSelected = (files: File[]): void => {
         console.log('Selected files:', files);
     };
@@ -20,6 +22,7 @@ export default function CoverCompanyStepForm() {
                         boxSubText="JPG, PNG or GIF files up to 5MB"
                         icon={ImagePlus}
                         className="max-w-md"
+                        {...register('cover')}
                    />
             </div>
         </div>

@@ -13,8 +13,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
+import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
 
-export default function OpenPositionStepForm() {
+export default function OpenPositionStepForm({
+  register,
+}: IStepFormProps<TCompanySignup>) {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
 
@@ -26,17 +30,27 @@ export default function OpenPositionStepForm() {
       <div className="w-full flex justify-between items-center gap-3 [&>div]:w-1/3 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
         <LabelInput
           label="Title"
-          input={<Input placeholder="Title" id="title" />}
+          input={
+            <Input
+              placeholder="Title"
+              id="title"
+              {...register(`openPositions.${0}.title`)}
+            />
+          }
         />
         <LabelInput
           label="Experience Required"
           input={
-            <Input placeholder="Experience" id="experience-required" />
+            <Input
+              placeholder="Experience"
+              id="experience-required"
+              {...register(`openPositions.${0}.experienceRequirement`)}
+            />
           }
         />
         <LabelInput
           label="Education Required"
-          input={<Input placeholder="Education" id="education-required" />}
+          input={<Input placeholder="Education" id="education-required" {...register(`openPositions.${0}.educationRequirement`)}/>}
         />
       </div>
       <div className="w-full flex justify-between gap-3 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
@@ -45,6 +59,7 @@ export default function OpenPositionStepForm() {
           <Textarea
             placeholder="Description"
             className="placeholder:text-sm h-full"
+            {...register(`openPositions.${0}.description`)}
           />
         </div>
         <div className="w-1/3 flex flex-col items-start gap-3 [&>div]:w-full">
@@ -58,6 +73,7 @@ export default function OpenPositionStepForm() {
               placeholder="Deadline Date"
               date={selectedDate}
               onDateChange={setSelectedDate}
+              {...register(`openPositions.${0}.deadlineDate`)}
             />
           </div>
         </div>
@@ -77,7 +93,7 @@ export default function OpenPositionStepForm() {
             </Button>
           </PopoverTrigger>
           <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
-            <Input placeholder="Enter your benefit (e.g. Unlimited PTO, Yearly Tech Stipend etc.)" />
+            <Input placeholder="Enter your benefit (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"  {...register(`openPositions.${0}.skill`)}/>
             <div className="flex items-center gap-1 [&>button]:text-xs">
               <Button
                 variant="outline"
@@ -91,7 +107,13 @@ export default function OpenPositionStepForm() {
         </Popover>
       </div>
       <div className="w-full flex justify-end">
-        <Button variant="secondary" className="text-xs" onClick={() => { alert("Add More") }}>
+        <Button
+          variant="secondary"
+          className="text-xs"
+          onClick={() => {
+            alert("Add More");
+          }}
+        >
           Add More
           <LucidePlus />
         </Button>

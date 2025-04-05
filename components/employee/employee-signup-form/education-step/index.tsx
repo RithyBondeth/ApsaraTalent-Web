@@ -6,7 +6,7 @@ import { LucideCalendarDays, LucideGraduationCap, LucidePlus, LucideSchool } fro
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { Button } from "@/components/ui/button";
 
-export default function EducationStepForm({ register }: IStepFormProps<TEmployeeSignUp>) {
+export default function EducationStepForm({ register, errors }: IStepFormProps<TEmployeeSignUp>) {
   return (
     <div className="w-full flex flex-col items-start gap-5">
       <TypographyH4>Add your educations information</TypographyH4>
@@ -18,6 +18,7 @@ export default function EducationStepForm({ register }: IStepFormProps<TEmployee
             id="school"
             {...register(`educations.${0}.school`)}
             prefix={<LucideSchool />}
+            validationMessage={errors!.educations?.[0]?.school?.message}
           />
         }
       />
@@ -29,6 +30,7 @@ export default function EducationStepForm({ register }: IStepFormProps<TEmployee
             id="degree"
             {...register(`educations.${0}.degree`)}
             prefix={<LucideGraduationCap />}
+            validationMessage={errors!.educations?.[0]?.degree?.message}
           />
         }
       />
@@ -40,6 +42,7 @@ export default function EducationStepForm({ register }: IStepFormProps<TEmployee
             id="year"
             {...register(`educations.${0}.year`)} 
             prefix={<LucideCalendarDays />}
+            validationMessage={errors!.educations?.[0]?.year?.message}
           />
         }
       />

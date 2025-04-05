@@ -2,6 +2,9 @@
 // Starts with +855 or 855, followed by 10 digits starting with 1, 7, or 8 (valid mobile prefixes in Cambodia)
 export const khmerPhoneNumberRegex = /^(?:\+855|855)(1|7|8)\d{7}$/;
 
+export const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+export const DOCUMENT_SIZE = 5 * 1024 * 1024;
+
 export const genderConstant = [
     { id: 1, label: 'Male', value: 'male' },
     { id: 2, label: 'Female', value: 'female' },

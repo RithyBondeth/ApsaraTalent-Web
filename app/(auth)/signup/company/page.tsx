@@ -12,16 +12,20 @@ import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react"
 import { useForm } from "react-hook-form";
+import { companySignupSchema, TCompanySignup } from "./validation";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function CompanySignup() {
     const router = useRouter();
     const [step, setStep] = useState<number>(1);
     const totalSteps = 5;   
 
-    interface TCompanyForm { name: string, password: string };
-    const { handleSubmit } = useForm<TCompanyForm>();
+    const { handleSubmit, register } = useForm<TCompanySignup>({ 
+        mode: 'onChange',
+        resolver: zodResolver(companySignupSchema)
+    });
 
-    const onSubmit = (data: TCompanyForm) => {
+    const onSubmit = (data: TCompanySignup) => {
         if(step === totalSteps) {
             console.log("Final Data:", data);
         } else {
@@ -63,11 +67,11 @@ export default function CompanySignup() {
 
                 {/* Form Section */}
                 <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
-                    {step === 1 && <BasicInfoStepForm/>}
-                    {step === 2 && <OpenPositionStepForm/>}
-                    {step === 3 && <BenefitValueStepForm/>}
-                    {step === 4 && <AvatarCompanyStepForm/>}
-                    {step === 5 && <CoverCompanyStepForm/>}
+                    {step === 1 && <BasicInfoStepForm register={register}/>}
+                    {step === 2 && <OpenPositionStepForm register={register}/>}
+                    {step === 3 && <BenefitValueStepForm register={register}/>}
+                    {step === 4 && <AvatarCompanyStepForm register={register}/>}
+                    {step === 5 && <CoverCompanyStepForm register={register}/>}
 
                     {/* Next & Previous Step */}
                     <div className="flex justify-between mt-8">

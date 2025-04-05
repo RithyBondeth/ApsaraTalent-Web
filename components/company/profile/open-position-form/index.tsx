@@ -75,7 +75,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
               <Tag key={item} label={item} />
             ))}
           </div>
-          <Popover open={openValuePopOver} onOpenChange={setOpenValuePopOver}>
+          {props.isEdit && <Popover open={openValuePopOver} onOpenChange={setOpenValuePopOver}>
           <PopoverTrigger asChild>
             <Button className="w-full text-xs" variant="secondary">
               Add skill
@@ -91,7 +91,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
               <Button>Save</Button>
             </div>
           </PopoverContent>
-        </Popover>
+        </Popover>}
         </div> 
         <LabelInput
           label="Salary Range"

@@ -5,12 +5,16 @@ import { Input } from "@/components/ui/input";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { LucideBriefcaseBusiness, LucidePlus, LucideUser } from "lucide-react";
 import { DatePicker } from "@/components/ui/date-picker";
-import { useState } from "react";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { Button } from "@/components/ui/button";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { Controller } from "react-hook-form";
 
-export default function ExperienceStepForm({ register }: IStepFormProps<TEmployeeSignUp>) {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+export default function ExperienceStepForm({
+  register,
+  errors,
+  control,
+}: IStepFormProps<TEmployeeSignUp>) {
 
   return (
     <div className="w-full flex flex-col items-start gap-5">
@@ -23,6 +27,7 @@ export default function ExperienceStepForm({ register }: IStepFormProps<TEmploye
             id="title"
             {...register(`experience.${0}.title`)}
             prefix={<LucideBriefcaseBusiness />}
+            validationMessage={errors!.experience?.[0]?.title?.message}
           />
         }
       />
@@ -33,34 +38,65 @@ export default function ExperienceStepForm({ register }: IStepFormProps<TEmploye
             placeholder="Description"
             id="description"
             {...register(`experience.${0}.description`)}
-            prefix={<LucideUser/>}
+            prefix={<LucideUser />}
+            validationMessage={errors!.experience?.[0]?.description?.message}
           />
         }
       />
       <div className="w-full flex items-center justify-between gap-5">
         <div className="w-1/2 flex flex-col items-start gap-1">
           <TypographyMuted className="text-xs">Start Date</TypographyMuted>
-          <DatePicker
-            placeholder="Start Date"
-            date={selectedDate}
-            {...register(`experience.${0}.startDate`)}
-            onDateChange={setSelectedDate}
-          />
+          <div className="flex flex-col items-start gap-2 w-full">
+            <Controller
+              name={`experience.${0}.startDate`}
+              control={control}
+              render={({ field }) => (
+                <DatePicker
+                  placeholder="Start Date"
+                  date={field.value ? new Date(field.value) : undefined}
+                  onDateChange={(date) =>
+                    field.onChange(date?.toISOString() || "")
+                  }
+                />
+              )}
+            />
+            <TypographySmall className="text-xs text-red-500">
+              {errors!.experience?.[0]?.startDate?.message}
+            </TypographySmall>
+          </div>
         </div>
         <div className="w-1/2 flex flex-col items-start gap-1">
           <TypographyMuted className="text-xs">End Date</TypographyMuted>
-          <DatePicker
-            placeholder="End Date"
-            date={selectedDate}
-            {...register(`experience.${0}.endDate`)}
-            onDateChange={setSelectedDate}
-          />
+          <div className="flex flex-col items-start gap-2 w-full">
+            <Controller
+              name={`experience.${0}.endDate`}
+              control={control}
+              render={({ field }) => (
+                <DatePicker
+                  placeholder="End Date"
+                  date={field.value ? new Date(field.value) : undefined}
+                  onDateChange={(date) =>
+                    field.onChange(date?.toISOString() || "")
+                  }
+                />
+              )}
+            />
+            <TypographySmall className="text-xs text-red-500">
+              {errors!.experience?.[0]?.endDate?.message}
+            </TypographySmall>
+          </div>
         </div>
       </div>
       <div className="w-full flex justify-end">
-        <Button variant='secondary' className="text-xs" onClick={() => { alert('Add More') }}>
+        <Button
+          variant="secondary"
+          className="text-xs"
+          onClick={() => {
+            alert("Add More");
+          }}
+        >
           Add More
-          <LucidePlus/>
+          <LucidePlus />
         </Button>
       </div>
     </div>
