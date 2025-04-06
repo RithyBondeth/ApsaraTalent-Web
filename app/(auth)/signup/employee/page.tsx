@@ -31,7 +31,7 @@ export default function EmployeeSignup() {
     control,
     getValues,
     setValue,
-    formState: { errors },
+    formState: { errors, isSubmitted },
   } = methods;
 
   // Field groups per step for selective validation
@@ -46,6 +46,7 @@ export default function EmployeeSignup() {
   // Handles next step or final submit
   const nextStep = async () => {
     const fieldsToValidate = stepFieldMap[step];
+
     const isValid = await trigger(fieldsToValidate);
 
     if (isValid) {
@@ -134,7 +135,14 @@ export default function EmployeeSignup() {
               trigger={trigger}
             />
           )}
-          {step === 5 && <AvatarStepForm register={register} errors={errors} />}
+          {step === 5 && (
+            <AvatarStepForm
+              register={register}
+              errors={errors}
+              getValues={getValues}
+              setValue={setValue}
+            />
+          )}
 
           {/* Navigation Buttons */}
           <div className="flex justify-between mt-8">

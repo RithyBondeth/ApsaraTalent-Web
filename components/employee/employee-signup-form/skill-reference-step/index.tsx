@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IStepFormProps } from "../props";
 import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
@@ -15,15 +15,20 @@ import {
 import { LucidePlus, LucideXCircle } from "lucide-react";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { getErrorMessage } from "@/utils/get-error-message";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 
 export default function SkillReferenceStepForm({
   errors,
   setValue,
   getValues,
-  trigger
+  register,
+  trigger,
 }: IStepFormProps<TEmployeeSignUp>) {
   const [openPopOver, setOpenPopOver] = useState(false);
   const [skillInput, setSkillInput] = useState("");
+  const { toast } = useToast()
 
   const initialSkills = getValues?.("skillAndReference.skills") || [];
   const [skills, setSkills] = useState<string[]>(initialSkills);
@@ -32,9 +37,22 @@ export default function SkillReferenceStepForm({
     const trimmed = skillInput.trim();
     if (!trimmed) return;
 
+    // Prevent duplicates (case-insensitive)
+    const alreadyExists = skills.some(
+      (skill) => skill.toLowerCase() === trimmed.toLowerCase()
+    );
+    if (alreadyExists) {
+      toast({
+        variant: "destructive",
+        title: "Duplicated Skill",
+        description: "Please input another skill.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      })
+      return;
+    }
+
     const updated = [...skills, trimmed];
     setSkills(updated);
-
     setValue?.("skillAndReference.skills", updated);
 
     // Trigger validation for the skills field
@@ -50,6 +68,12 @@ export default function SkillReferenceStepForm({
     setValue?.("skillAndReference.skills", updated);
     await trigger?.("skillAndReference.skills");
   };
+
+  useEffect(() => {
+    register("skillAndReference.skills", { required: true });
+    register("skillAndReference.resume", { required: true });
+    register("skillAndReference.coverLetter", { required: true });
+  }, [register]);
 
   return (
     <div className="w-full flex flex-col items-start gap-8">
@@ -84,13 +108,12 @@ export default function SkillReferenceStepForm({
             </div>
           </PopoverContent>
         </Popover>
-        {/* {errors?.skillAndReference?.skills && errors.skillAndReference.skills.map((item, i) => (
-          <TypographySmall className="text-xs text-red-500" key={i}>
-            {item?.message}
+        {errors?.skillAndReference?.skills && (
+          <TypographySmall className="text-xs text-red-500">
+            {getErrorMessage(errors.skillAndReference.skills)}
           </TypographySmall>
-        ))} */}
-      </div>
-
+        )}
+     </div>
       <div className="w-full flex flex-col items-start gap-3">
         <TypographyH4>Add your references</TypographyH4>
         <div className="w-full flex items-start gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
@@ -123,9 +146,7 @@ export default function SkillReferenceStepForm({
                       });
                     }
                   }}
-                  validationMessage={getErrorMessage(
-                    errors?.skillAndReference?.resume
-                  )}
+                  validationMessage={getErrorMessage(errors?.skillAndReference?.resume)}
                 />
               }
             />
@@ -159,9 +180,7 @@ export default function SkillReferenceStepForm({
                       });
                     }
                   }}
-                  validationMessage={getErrorMessage(
-                    errors?.skillAndReference?.coverLetter
-                  )}
+                  validationMessage={getErrorMessage(errors?.skillAndReference?.coverLetter)}
                 />
               }
             />

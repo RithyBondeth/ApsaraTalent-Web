@@ -7,4 +7,5 @@ export interface IStepFormProps<T extends FieldValues> {
     setValue?: UseFormSetValue<T>;
     getValues?: UseFormGetValues<T>;
     trigger?: UseFormTrigger<T>;
+    showErrors?: boolean;
 }

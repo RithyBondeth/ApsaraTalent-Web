@@ -51,35 +51,44 @@ export const educationStepSchema = z.object({
 export const skillReferenceStepSchema = z.object({
   skillAndReference: z.object({
     skills: z.string().array().min(1, { message: "Skill is required" }),
-    resume: z
-      .any()
-      .refine((file) => file instanceof File, {
-        message: "Resume is required",
-      })
-      .refine((file) => file && file.size <= DOCUMENT_SIZE, {
-        message: "Max file size is 5MB",
-      })
-      .refine((file) => file && ACCEPTED_FILE_TYPES.includes(file.type), {
-        message: "Only .pdf, .doc, .docx are supported",
-      }),
+    resume: z.any()
+    .refine((file) => file instanceof File, {
+      message: "Resume is required",
+    })
+    .refine((file) => file && file.size <= DOCUMENT_SIZE, {
+      message: "Max file size is 5MB",
+    })
+    .refine((file) => file && ACCEPTED_FILE_TYPES.includes(file.type), {
+      message: "Only .pdf, .doc, .docx are supported",
+    }),
 
     coverLetter: z
-      .any()
-      .refine((file) => file instanceof File, {
-        message: "Cover letter is required",
-      })
-      .refine((file) => file && file.size <= DOCUMENT_SIZE, {
-        message: "Max file size is 5MB",
-      })
-      .refine((file) => file && ACCEPTED_FILE_TYPES.includes(file.type), {
-        message: "Only .pdf, .doc, .docx are supported",
-      }),
+    .any()
+    .refine((file) => file instanceof File, {
+      message: "Cover letter is required",
+    })
+    .refine((file) => file && file.size <= DOCUMENT_SIZE, {
+      message: "Max file size is 5MB",
+    })
+    .refine((file) => file && ACCEPTED_FILE_TYPES.includes(file.type), {
+      message: "Only .pdf, .doc, .docx are supported",
+    }),
   }),
 });
 
 // Define schema for step 5
 export const avatarStepSchema = z.object({
-  avatar: z.string().url(),
+  avatar:  z
+  .any()
+  .refine((file) => file instanceof File, {
+    message: "Avatar is required",
+  })
+  .refine((file) => !!file && file.size <= 5 * 1024 * 1024, {
+    message: "Max file size is 5MB",
+  })
+  .refine((file) => !!file && file.type.startsWith("image/"), {
+    message: "Only image files are allowed",
+  }),
 });
 
 // FormSchema
