@@ -29,8 +29,8 @@ export default function SignupPage() {
   const { theme } = useThemeStore();
   //const { role } = useRoleStore(); 
 
-  const { handleSubmit, register, formState: { errors } } = useForm<TBasicSignupSchema>({
-    resolver: zodResolver(basicSignupSchema)  
+  const { handleSubmit, register, setValue, trigger, formState: { errors } } = useForm<TBasicSignupSchema>({
+    resolver: zodResolver(basicSignupSchema)
   });
 
   const onSubmit = (data: TBasicSignupSchema) => {
@@ -56,10 +56,14 @@ export default function SignupPage() {
           <Input type="text" placeholder="Username" className="w-full" {...register('username')} validationMessage={errors.username?.message}/>
           <div className="w-full flex flex-col items-start gap-1">
             <Select 
-              onValueChange={(value: TUserRole) => setSelectedRole(value)} 
+              onValueChange={(value: TUserRole) => {
+                setSelectedRole(value);
+                setValue('selectedRole', value, { shouldValidate: true });
+                trigger('selectedRole');
+              }} 
               value={selectedRole || ""} 
               {...register('selectedRole')}
-            > 
+            >
               <SelectTrigger className="h-12 text-muted-foreground">
                 <SelectValue placeholder="Who are you looking for?"/>
               </SelectTrigger>    
@@ -76,9 +80,12 @@ export default function SignupPage() {
           <div className="flex gap-3 [&>select]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
               <div className="w-full flex flex-col items-start gap-1">
                 <Select 
-                  onValueChange={(value: TGender) => setSelectedGender(value)} 
+                  onValueChange={(value: TGender) => {
+                    setSelectedGender(value);
+                    setValue('gender', value, { shouldValidate: true });
+                    trigger('gender');
+                  }} 
                   value={selectedGender || ''}
-                  {...register('gender')}
                 >
                   <SelectTrigger className="h-12 text-muted-foreground">
                   <SelectValue placeholder="Gender" />

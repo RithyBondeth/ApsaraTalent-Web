@@ -1,0 +1,1 @@
+export type TAvailability = "full_time" | "part_time" | "internship" | "remote";

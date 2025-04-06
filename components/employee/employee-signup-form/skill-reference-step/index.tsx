@@ -70,7 +70,6 @@ export default function SkillReferenceStepForm({
   };
 
   useEffect(() => {
-    register("skillAndReference.skills", { required: true });
     register("skillAndReference.resume", { required: true });
     register("skillAndReference.coverLetter", { required: true });
   }, [register]);

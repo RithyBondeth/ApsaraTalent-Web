@@ -22,6 +22,19 @@ export default function EmployeeSignup() {
   const methods = useForm<TEmployeeSignUp>({
     mode: "onChange",
     resolver: zodResolver(employeeSignUpSchema),
+    defaultValues: {
+      experience: [
+        {
+          title: "",
+          description: "",
+          startDate: "" as unknown as Date,
+          endDate: "" as unknown as Date,
+        },
+      ],
+      skillAndReference: {
+        skills: [], 
+      },
+    },
   });
 
   const {
@@ -110,7 +123,12 @@ export default function EmployeeSignup() {
       <FormProvider {...methods}>
         <form onSubmit={(e) => e.preventDefault()} className="w-full">
           {step === 1 && (
-            <ProfessionStepForm register={register} errors={errors} />
+            <ProfessionStepForm
+              register={register}
+              errors={errors}
+              setValue={setValue}
+              trigger={trigger}
+            />
           )}
           {step === 2 && (
             <ExperienceStepForm
@@ -145,7 +163,7 @@ export default function EmployeeSignup() {
           )}
 
           {/* Navigation Buttons */}
-          <div className="flex justify-between mt-8">
+          <div className="flex justify-between my-8">
             {step > 1 && (
               <Button type="button" onClick={prevStep}>
                 <LucideArrowLeft />

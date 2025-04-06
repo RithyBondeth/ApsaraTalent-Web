@@ -1,5 +1,22 @@
 import * as z from "zod";
-import { khmerPhoneNumberRegex, MAX_IMAGE_SIZE } from "./constant";
+import {
+  ACCEPTED_FILE_TYPES,
+  DOCUMENT_SIZE,
+  MAX_IMAGE_SIZE,
+} from "./constant";
+
+export const fileValidation = (label: string) =>
+  z
+    .any()
+    .refine((file) => file instanceof File, {
+      message: `${label} is required`,
+    })
+    .refine((file) => file && file.size <= DOCUMENT_SIZE, {
+      message: "Max file size is 5MB",
+    })
+    .refine((file) => file && ACCEPTED_FILE_TYPES.includes(file.type), {
+      message: "Only .pdf, .doc, .docx are supported",
+    });
 
 export const textValidation = (label: string, max: number) =>
   z
@@ -12,11 +29,8 @@ export const positiveNumberValidation = (label: string) =>
 
 export const selectedValidation = (label: string) =>
   z
-    .string()
-    .min(1, `Please select a ${label}`) // Custom message for "required" case
-    .refine((val) => val !== "", {
-      message: `Please select a ${label}`, // Ensure non-empty value
-    });
+    .string({ required_error: `Please select your ${label}` })
+    .min(1, { message: `Please select your ${label}` });
 
 export const emailValidation = z
   .string()
@@ -37,7 +51,7 @@ export const khmerPhoneNumberValidation = z
   .string()
   .min(1, "Phone number is required")
   .regex(
-    khmerPhoneNumberRegex,
+    /^(?:\+855|0)(?:1\d{8}|[2-9]\d{7,8})$/,
     "Invalid Khmer phone number (must start with +855 or 855 and a valid prefix)"
   );
 
@@ -48,18 +62,22 @@ export const phoneOrEmailValidation = z
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     // Check if the value is either a valid email or a Khmer phone number
-    return emailRegex.test(value) || khmerPhoneNumberRegex.test(value);
+    return emailRegex.test(value) || /^(?:\+855|0)(?:1\d{8}|[2-9]\d{7,8})$/.test(value);
   }, "Invalid email or Khmer phone number");
 
-export const dateValidation = (label: string) =>
-  z.preprocess(
-    (arg) =>
-      typeof arg === "string" || arg instanceof Date ? new Date(arg) : arg,
-    z.date({
-      invalid_type_error: `${label} must be a valid date`,
-      required_error: `${label} is required`,
-    })
-  );
+  export const dateValidation = (label: string) =>
+    z.preprocess(
+      (arg) => {
+        if (typeof arg === "string" && arg.trim() === "") return undefined;
+        if (arg instanceof Date) return arg;
+        if (typeof arg === "string" || typeof arg === "number") return new Date(arg);
+        return arg;
+      },
+      z.date({
+        required_error: `${label} is required`,
+        invalid_type_error: `${label} must be a valid date`,
+      })
+    );
 
 export const imageValidation = (label: string) =>
   z.custom<File>(
