@@ -13,7 +13,7 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import LabelInput from "@/components/utils/label-input";
-import Tag from "@/components/utils/tag";
+
 import {
   Popover,
   PopoverContent,
@@ -24,6 +24,7 @@ import { TypographySmall } from "@/components/utils/typography/typography-small"
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@radix-ui/react-toast";
 import { getErrorMessage } from "@/utils/get-error-message";
+import ErrorMessage from "@/components/utils/error-message";
 
 export default function OpenPositionStepForm({
   register,
@@ -44,24 +45,6 @@ export default function OpenPositionStepForm({
     control,
     name: "openPositions",
   });
-
-  // Add skill tag to a specific openPosition
-  // const addSkill = async (index: number) => {
-  //   const trimmed = skillInput.trim();
-  //   if (!trimmed) return;
-
-  //   const existing = getValues?.(`openPositions.${index}.skills`) || [];
-  //   if (existing.includes(trimmed)) return;
-
-  //   const updatedSkills = [...existing, trimmed];
-  //   setValue?.(`openPositions.${index}.skills`, updatedSkills);
-  //   update(index, { ...fields[index], skills: updatedSkills });
-
-  //   await trigger?.(`openPositions.${index}.skills`);
-
-  //   setSkillInput("");
-  //   setOpenBenefitPopOver(false);
-  // };
 
   const addSkill = async (index: number) => {
     const trimmed = skillInput.trim();
@@ -272,7 +255,7 @@ export default function OpenPositionStepForm({
                   <LucidePlus size={14} />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="p-5 w-[300px] flex flex-col gap-3">
+              <PopoverContent className="p-5 flex flex-col gap-3 w-[var(--radix-popper-anchor-width)]">
                 <Input
                   placeholder="e.g. React, Tailwind"
                   value={skillInput}
@@ -292,9 +275,7 @@ export default function OpenPositionStepForm({
                 </div>
               </PopoverContent>
             </Popover>
-            <TypographySmall className="text-xs text-red-500">
-              {errors!.openPositions?.[index]?.skills?.message}
-            </TypographySmall>
+            <ErrorMessage>{errors!.openPositions?.[index]?.skills?.message}</ErrorMessage>
           </div>
         </Card>
       ))}
