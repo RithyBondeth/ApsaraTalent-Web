@@ -31,8 +31,8 @@ export const openPositionStepSchema = z.object({
 // Define schema for step 3
 export const benefitAndValueStepSchema = z.object({
     benefitsAndValues: z.object({
-        benefits: textValidation("Benefit", 20).array(),
-        values: textValidation("Value", 20).array(),
+        benefits: z.array(z.string()).min(1, { message: "At least one benefit is required" }),
+        values: z.array(z.string()).min(1, { message: "At least one value is required" }),
     })
 });
 

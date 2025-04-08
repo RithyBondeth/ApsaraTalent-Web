@@ -32,8 +32,8 @@ export default function OpenPositionStepForm({
   getValues,
   trigger,
 }: IStepFormProps<TCompanySignup>) {
-  const [openPopOver, setOpenPopOver] = useState(false);
-  const [skillInput, setSkillInput] = useState("");
+  const [openPopOver, setOpenPopOver] = useState<boolean>(false);
+  const [skillInput, setSkillInput] = useState<string>("");
   const { toast } = useToast();
 
   const initialSkills = getValues?.(`openPositions.${0}.skills`) || [];
@@ -46,7 +46,7 @@ export default function OpenPositionStepForm({
 
   const addSkill = async (index: number) => {
     const trimmed = skillInput.trim();
-    if (!trimmed) return;
+    if (!trimmed) return
   
     // Prevent duplicates (case-insensitive)
     const alreadyExists = skills.some(

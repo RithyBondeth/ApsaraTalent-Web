@@ -25,18 +25,22 @@ export default function CompanySignup() {
     mode: "onChange",
     resolver: zodResolver(companySignupSchema),
     defaultValues: {
-        openPositions: [
-            {
-                title: "",
-                description: "",
-                experienceRequirement: "",
-                educationRequirement: "",
-                skills: [],
-                salary: "",
-                deadlineDate: "" as unknown as Date,
-            }
-        ]
-    }
+      openPositions: [
+        {
+          title: "",
+          description: "",
+          experienceRequirement: "",
+          educationRequirement: "",
+          skills: [],
+          salary: "",
+          deadlineDate: "" as unknown as Date,
+        },
+      ],
+      benefitsAndValues: {
+        benefits: [],
+        values: []
+      }
+    },
   });
 
   const {
@@ -146,7 +150,15 @@ export default function CompanySignup() {
                 control={control}
               />
             )}
-            {step === 3 && <BenefitValueStepForm register={register} />}
+            {step === 3 && (
+              <BenefitValueStepForm
+                register={register}
+                getValues={getValues}
+                setValue={setValue}
+                trigger={trigger}
+                errors={errors}
+              />
+            )}
             {step === 4 && <AvatarCompanyStepForm register={register} />}
             {step === 5 && <CoverCompanyStepForm register={register} />}
             {step === 6 && <CompanyCareerScopeStepForm register={register} />}
