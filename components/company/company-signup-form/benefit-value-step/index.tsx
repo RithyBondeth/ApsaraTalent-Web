@@ -40,7 +40,7 @@ export default function BenefitValueStepForm({ register }: IStepFormProps<TCompa
             </Button>
           </PopoverTrigger>
           <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
-            <Input placeholder="Enter your benefit (e.g. Unlimited PTO, Yearly Tech Stipend etc.)" {...register('benefits')}/>
+            <Input placeholder="Enter your benefit (e.g. Unlimited PTO, Yearly Tech Stipend etc.)" {...register('benefitsAndValues.benefits')}/>
             <div className="flex items-center gap-1 [&>button]:text-xs">
               <Button variant="outline" onClick={() => setOpenBenefitPopOver(false)}>
                 Cancel

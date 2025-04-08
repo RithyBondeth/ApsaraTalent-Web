@@ -44,7 +44,7 @@ export const educationStepSchema = z.object({
 // Define schema for step 4
 export const skillReferenceStepSchema = z.object({
   skillAndReference: z.object({
-    skills: z.array(z.string()).min(1, { message: "Skill is required" }),
+    skills: z.array(z.string()).min(1, { message: "At least one skill is required" }),
     resume: fileValidation('Resume'),
     coverLetter: fileValidation('Cover letter'),
   }),
@@ -55,6 +55,10 @@ export const avatarStepSchema = z.object({
   avatar: imageValidation('Avatar')
 });
 
+export const careerScopesStepSchema = z.object({
+  careerScopes: z.array(z.string()).min(1, { message: "Please select at least one career option" }),
+})
+
 // FormSchema
 export const employeeSignUpSchema = z.object({
   ...professionStepSchema.shape,
@@ -62,6 +66,7 @@ export const employeeSignUpSchema = z.object({
   ...educationStepSchema.shape,
   ...skillReferenceStepSchema.shape,
   ...avatarStepSchema.shape,
+  ...careerScopesStepSchema.shape,
 });
 
 export type TProfessionStepInfo = z.infer<typeof professionStepSchema>;
@@ -69,5 +74,6 @@ export type TExperienceStepInfo = z.infer<typeof experienceStepSchema>;
 export type TEducationStepInfo = z.infer<typeof educationStepSchema>;
 export type TSkillReferenceStepInfo = z.infer<typeof skillReferenceStepSchema>;
 export type TAvatarStepInfo = z.infer<typeof avatarStepSchema>;
+export type TCareerScopeStepInfo = z.infer<typeof careerScopesStepSchema>;
 
 export type TEmployeeSignUp = z.infer<typeof employeeSignUpSchema>;

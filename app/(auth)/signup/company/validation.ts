@@ -7,8 +7,8 @@ export const basicInfoStepSchema = z.object({
         name: textValidation("Name", 20),
         description: textValidation("Description", 100),
         industry: textValidation("Industry", 100),
-        companySize: textValidation("Company size", 20),
-        foundedYear: textValidation("Founded Year", 10),
+        companySize: textValidation("Company size", 100),
+        foundedYear: textValidation("Founded Year", 100),
         location: selectedValidation("location"),
     })
 });
@@ -17,22 +17,23 @@ export const basicInfoStepSchema = z.object({
 export const openPositionStepSchema = z.object({
     openPositions: z.array(
         z.object({
-          title: textValidation("title", 30),
-          description: textValidation("description", 100),
-          experienceRequirement: textValidation("experience requirement", 20),
-          educationRequirement: textValidation("education requirement", 20),
-          skill: z.array(textValidation("skill", 20)),
-          salary: textValidation("salary", 20),
-          postedDate: dateValidation("postedDate"),
-          deadlineDate: dateValidation("datelineDate"),
+          title: textValidation("Title", 100),
+          description: textValidation("Description", 100),
+          experienceRequirement: textValidation("Experience requirement", 100),
+          educationRequirement: textValidation("Education requirement", 100),
+          skills: z.array(z.string()).min(1, { message: "At least one skill is required" }),
+          salary: textValidation("Salary", 100),
+          deadlineDate: dateValidation("Deadline"),
         })
     )
 });
 
 // Define schema for step 3
 export const benefitAndValueStepSchema = z.object({
-    benefits: textValidation("Benefit", 20).array(),
-    values: textValidation("Value", 20).array(),
+    benefitsAndValues: z.object({
+        benefits: textValidation("Benefit", 20).array(),
+        values: textValidation("Value", 20).array(),
+    })
 });
 
 // Define schema for step 4
@@ -45,6 +46,10 @@ export const companyCoverStepSchema = z.object({
     cover: imageValidation("cover")  
 })
 
+export const careerScopesStepSchema = z.object({
+    careerScopes: z.array(z.string()).min(1, { message: "Please select at least one career option" }),
+})
+
 // FormSchema
 export const companySignupSchema = z.object({
     ...basicInfoStepSchema.shape,
@@ -52,6 +57,7 @@ export const companySignupSchema = z.object({
     ...benefitAndValueStepSchema.shape,
     ...companyAvatarStepSchema.shape,
     ...companyCoverStepSchema.shape,  
+    ...careerScopesStepSchema.shape,
 });
 
 export type TBasicInfoStep = z.infer<typeof basicInfoStepSchema>;
@@ -59,5 +65,6 @@ export type TOpenPositionStep = z.infer<typeof openPositionStepSchema>;
 export type TBenefitAndValueStep = z.infer<typeof benefitAndValueStepSchema>;
 export type TCompanyAvatarStep = z.infer<typeof companyAvatarStepSchema>;
 export type TCompanyCoverStep = z.infer<typeof companyCoverStepSchema>;
+export type TCompanyCareerStep = z.infer<typeof careerScopesStepSchema>;
 
 export type TCompanySignup = z.infer<typeof companySignupSchema>;

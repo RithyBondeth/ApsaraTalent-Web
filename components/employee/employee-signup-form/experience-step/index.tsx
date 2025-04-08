@@ -41,17 +41,22 @@ export default function ExperienceStepForm({
           key={field.id}
           className="relative flex flex-col items-start gap-3 w-full border border-muted-foreground/10 rounded-xl bg-muted p-5"
         >
-          {/* Delete Button */}
+          {/* Header Without Remove Button */}
           {fields.length === 1 && (
             <div className="w-full mb-3">
-              <TypographyMuted className="text-md">Experience {index+1}</TypographyMuted>
+              <TypographyMuted className="text-md">
+                Experience {index + 1}
+              </TypographyMuted>
             </div>
           )}
 
+          {/* Header With Remove Button */}
           {fields.length > 1 && (
             <div className="w-full flex items-center justify-between mb-3">
-              <TypographyMuted className="text-md">Experience {index+1}</TypographyMuted>
-                <Button
+              <TypographyMuted className="text-md">
+                Experience {index + 1}
+              </TypographyMuted>
+              <Button
                 variant="ghost"
                 size="icon"
                 type="button"

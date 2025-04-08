@@ -13,11 +13,12 @@ import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { employeeSignUpSchema, TEmployeeSignUp } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import EmployeeCareerScopeStepForm from "@/components/employee/employee-signup-form/career-scope-step";
 
 export default function EmployeeSignup() {
   const router = useRouter();
   const [step, setStep] = useState<number>(1);
-  const totalSteps = 5;
+  const totalSteps = 6;
 
   const methods = useForm<TEmployeeSignUp>({
     mode: "onChange",
@@ -31,8 +32,15 @@ export default function EmployeeSignup() {
           endDate: "" as unknown as Date,
         },
       ],
+      educations: [
+        {
+          school: "",
+          degree: "",
+          year: "" as unknown as Date,
+        },
+      ],
       skillAndReference: {
-        skills: [], 
+        skills: [],
       },
     },
   });
@@ -44,7 +52,7 @@ export default function EmployeeSignup() {
     control,
     getValues,
     setValue,
-    formState: { errors, isSubmitted },
+    formState: { errors },
   } = methods;
 
   // Field groups per step for selective validation
@@ -54,6 +62,7 @@ export default function EmployeeSignup() {
     3: ["educations"],
     4: ["skillAndReference"],
     5: ["avatar"],
+    6: ["careerScopes"],
   };
 
   // Handles next step or final submit
@@ -66,7 +75,7 @@ export default function EmployeeSignup() {
       if (step === totalSteps) {
         handleSubmit((data) => {
           console.log("Final Data:", data);
-          router.push("/signup/career-scope");
+          router.push("/feed");
         })();
       } else {
         setStep((prev) => prev + 1);
@@ -97,26 +106,28 @@ export default function EmployeeSignup() {
 
       {/* Step progress indicator */}
       <div className="w-full flex items-center mb-5">
-        {[1, 2, 3, 4, 5].map((st, index) => (
-          <div key={st} className="w-full flex items-center">
-            <div
-              className={`size-8 flex items-center justify-center rounded-full text-muted font-bold transition-all ${
-                step >= st ? "bg-primary" : "bg-muted text-muted-foreground"
-              }`}
-            >
-              {st}
-            </div>
-            {index < totalSteps - 1 && (
-              <div className="flex-1 h-1 bg-muted relative">
-                <div
-                  className={`absolute top-0 left-0 h-full transition-all duration-300 ${
-                    step > st ? "bg-primary w-full" : "bg-muted w-0"
-                  }`}
-                />
+        {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
+          (st, index) => (
+            <div key={st} className="w-full flex items-center">
+              <div
+                className={`size-8 flex items-center justify-center rounded-full text-muted font-bold transition-all ${
+                  step >= st ? "bg-primary" : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {st}
               </div>
-            )}
-          </div>
-        ))}
+              {index < totalSteps - 1 && (
+                <div className="flex-1 h-1 bg-muted relative">
+                  <div
+                    className={`absolute top-0 left-0 h-full transition-all duration-300 ${
+                      step > st ? "bg-primary w-full" : "bg-muted w-0"
+                    }`}
+                  />
+                </div>
+              )}
+            </div>
+          )
+        )}
       </div>
 
       {/* Form */}
@@ -159,6 +170,14 @@ export default function EmployeeSignup() {
               errors={errors}
               getValues={getValues}
               setValue={setValue}
+            />
+          )}
+          {step === 6 && (
+            <EmployeeCareerScopeStepForm
+              register={register}
+              getValues={getValues}
+              setValue={setValue}
+              errors={errors}
             />
           )}
 
