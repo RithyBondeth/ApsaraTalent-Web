@@ -40,7 +40,7 @@ import {
   genderConstant,
   locationConstant,
   platformConstant,
-} from "@/utils/constant";
+} from "@/utils/constants/app.constant";
 import { Textarea } from "@/components/ui/textarea";
 import IconLabel from "@/components/utils/icon-label";
 import { DatePicker } from "@/components/ui/date-picker";

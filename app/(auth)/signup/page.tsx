@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import LogoComponent from "@/components/utils/logo";
 import { useThemeStore } from "@/stores/theme-store";
 import { TUserRole } from "@/utils/types/role.type";
-import { genderConstant, userRoleConstant } from "@/utils/constant";
+import { genderConstant, userRoleConstant } from "@/utils/constants/app.constant";
 import { TGender } from "@/utils/types/gender.type";
 //import { useRoleStore } from "@/stores/role-store";
 import { useForm } from "react-hook-form";

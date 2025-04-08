@@ -16,7 +16,7 @@ import { Collapsible, CollapsibleTrigger } from "../../ui/collapsible";
 import { useRouter } from "next/navigation";
 import { SidebarDropdownFooter } from "./sidebar-dropdown-footer";
 import { Separator } from "@/components/ui/separator";
-import { sidebarList } from "@/constants/sidebar.constant";
+import { sidebarList } from "@/utils/constants/sidebar.constant";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 
 export default function CollapseSidebar({

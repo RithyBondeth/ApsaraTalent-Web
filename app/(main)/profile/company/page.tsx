@@ -28,7 +28,7 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { companyList } from "@/data/company-data";
-import { locationConstant, platformConstant } from "@/utils/constant";
+import { locationConstant, platformConstant } from "@/utils/constants/app.constant";
 import { TLocations } from "@/utils/types/location.type";
 import { TPlatform } from "@/utils/types/platform.type";
 import { Select } from "@radix-ui/react-select";

@@ -8,7 +8,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { sidebarList } from "@/constants/sidebar.constant";
+import { sidebarList } from "@/utils/constants/sidebar.constant";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

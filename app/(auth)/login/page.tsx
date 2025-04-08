@@ -7,7 +7,7 @@ import SocialButton from "@/components/utils/buttons/social-button";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2"
 import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { googleIcon, facebookIcon, linkedinIcon, githubIcon } from '@/constants/asset.constant';
+import { googleIcon, facebookIcon, linkedinIcon, githubIcon } from '@/utils/constants/asset.constant';
 import { LucideEye, LucideEyeClosed, LucideLockKeyhole, LucideMail, LucidePhone } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";

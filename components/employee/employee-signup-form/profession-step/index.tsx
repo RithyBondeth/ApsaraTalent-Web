@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { availabilityConstant } from "@/utils/constant";
+import { availabilityConstant } from "@/utils/constants/app.constant";
 import { TAvailability } from "@/utils/types/availability.type";
 import { useState } from "react";
 import ErrorMessage from "@/components/utils/error-message";

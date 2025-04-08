@@ -15,7 +15,7 @@ import ErrorMessage from "@/components/utils/error-message";
 import LabelInput from "@/components/utils/label-input";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { locationConstant } from "@/utils/constant";
+import { locationConstant } from "@/utils/constants/app.constant";
 import { TLocations } from "@/utils/types/location.type";
 import { useState } from "react";
 
