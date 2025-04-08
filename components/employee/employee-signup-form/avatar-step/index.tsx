@@ -2,7 +2,7 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { IStepFormProps } from "../props";
 import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
 import { DragDropFile } from "@/components/utils/drag-drop-file.";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
+import ErrorMessage from "@/components/utils/error-message";
 
 export default function AvatarStepForm({ setValue, errors }: IStepFormProps<TEmployeeSignUp>) {
     const handleFilesSelected = (files: File[]): void => {
@@ -27,7 +27,7 @@ export default function AvatarStepForm({ setValue, errors }: IStepFormProps<TEmp
         />
       </div>
       {errors?.avatar && (
-        <TypographySmall className="text-xs text-red-500">{errors.avatar.message}</TypographySmall>
+        <ErrorMessage>{errors.avatar.message}</ErrorMessage>
       )}
     </div>
   );

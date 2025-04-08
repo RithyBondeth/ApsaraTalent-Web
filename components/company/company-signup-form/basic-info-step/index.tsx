@@ -11,10 +11,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import ErrorMessage from "@/components/utils/error-message";
 import LabelInput from "@/components/utils/label-input";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { locationConstant } from "@/utils/constant";
 import { TLocations } from "@/utils/types/location.type";
 import { useState } from "react";
@@ -54,7 +54,7 @@ export default function BasicInfoStepForm({
             {...register("basicInfo.description")}
           />
         </div>
-        <TypographySmall className="text-red-500 text-xs">{errors!.basicInfo?.description?.message}</TypographySmall>
+        <ErrorMessage>{errors!.basicInfo?.description?.message}</ErrorMessage>
       </div>
       <div className="w-full flex justify-between items-center gap-3 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
         <LabelInput
@@ -117,7 +117,7 @@ export default function BasicInfoStepForm({
               </SelectContent>
             </Select>
           </div>
-          <TypographySmall className="text-red-500 text-xs">{errors!.basicInfo?.location?.message}</TypographySmall>
+          <ErrorMessage>{errors!.basicInfo?.location?.message}</ErrorMessage>
         </div>
       </div>
     </div>

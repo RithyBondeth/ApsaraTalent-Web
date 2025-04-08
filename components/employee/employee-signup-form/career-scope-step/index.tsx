@@ -31,6 +31,7 @@ import { DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { LucideArrowLeft, LucideSearch } from "lucide-react";
 import { careerOptions } from "@/data/career-data";
+import ErrorMessage from "@/components/utils/error-message";
 
 export default function EmployeeCareerScopeStepForm({
   register,
@@ -164,7 +165,7 @@ export default function EmployeeCareerScopeStepForm({
 
       {/* Validation Message */}
       {errors?.careerScopes && (
-        <p className="text-sm text-red-500">{errors.careerScopes.message}</p>
+        <ErrorMessage>{errors.careerScopes.message}</ErrorMessage>
       )}
 
       {/* Pagination */}

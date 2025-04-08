@@ -17,7 +17,7 @@ import { TGender } from "@/utils/types/gender.type";
 import { useForm } from "react-hook-form";
 import { basicSignupSchema, TBasicSignupSchema } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
+import ErrorMessage from "@/components/utils/error-message";
 
 export default function SignupPage() {
   const [selectedRole, setSelectedRole] = useState<TUserRole | null>(null);
@@ -73,7 +73,7 @@ export default function SignupPage() {
                 ))}
               </SelectContent>
             </Select>
-            <TypographySmall className="text-xs text-red-500">{errors.selectedRole?.message}</TypographySmall>
+            <ErrorMessage>{errors.selectedRole?.message}</ErrorMessage>
           </div>
         </div>
         <div className="flex flex-col items-stretch gap-5">
@@ -96,7 +96,7 @@ export default function SignupPage() {
                     )}
                   </SelectContent>
                 </Select>
-                <TypographySmall className="text-xs text-red-500">{errors.gender?.message}</TypographySmall>
+                <ErrorMessage>{errors.gender?.message}</ErrorMessage>
               </div>
               <Input type="number" placeholder="Mobile" className="w-full" {...register('phone')} validationMessage={errors.phone?.message}/>   
           </div>

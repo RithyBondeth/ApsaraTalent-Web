@@ -12,8 +12,8 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { Button } from "@/components/ui/button";
 import { Controller, useFieldArray } from "react-hook-form";
 import { DatePicker } from "@/components/ui/date-picker";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import ErrorMessage from "@/components/utils/error-message";
 
 export default function EducationStepForm({
   register,
@@ -115,9 +115,7 @@ export default function EducationStepForm({
                 )}
               />
             </div>
-            <TypographySmall className="text-xs text-red-500">
-              {errors!.educations?.[index]?.year?.message}
-            </TypographySmall>
+           <ErrorMessage>{errors!.educations?.[index]?.year?.message}</ErrorMessage>
           </div>
         </div>
       ))}

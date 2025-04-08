@@ -8,10 +8,10 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { Input } from "@/components/ui/input";
 import LabelInput from "@/components/utils/label-input";
 import { Button } from "@/components/ui/button";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { DatePicker } from "@/components/ui/date-picker";
 import { LucidePlus, LucideTrash2 } from "lucide-react";
+import ErrorMessage from "@/components/utils/error-message";
 
 export default function ExperienceStepForm({
   register,
@@ -111,9 +111,7 @@ export default function ExperienceStepForm({
                   />
                 )}
               />
-              <TypographySmall className="text-xs text-red-500">
-                {errors?.experience?.[index]?.startDate?.message}
-              </TypographySmall>
+              <ErrorMessage>{errors?.experience?.[index]?.startDate?.message}</ErrorMessage>
             </div>
 
             {/* End Date */}
@@ -132,9 +130,7 @@ export default function ExperienceStepForm({
                   />
                 )}
               />
-              <TypographySmall className="text-xs text-red-500">
-                {errors?.experience?.[index]?.endDate?.message}
-              </TypographySmall>
+              <ErrorMessage>{errors?.experience?.[index]?.endDate?.message}</ErrorMessage>
             </div>
           </div>
         </div>

@@ -15,9 +15,9 @@ import {
 import { LucidePlus, LucideXCircle } from "lucide-react";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { getErrorMessage } from "@/utils/get-error-message";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
+import ErrorMessage from "@/components/utils/error-message";
 
 export default function SkillReferenceStepForm({
   errors,
@@ -108,9 +108,7 @@ export default function SkillReferenceStepForm({
           </PopoverContent>
         </Popover>
         {errors?.skillAndReference?.skills && (
-          <TypographySmall className="text-xs text-red-500">
-            {getErrorMessage(errors.skillAndReference.skills)}
-          </TypographySmall>
+          <ErrorMessage>{getErrorMessage(errors.skillAndReference.skills)}</ErrorMessage>
         )}
      </div>
       <div className="w-full flex flex-col items-start gap-3">

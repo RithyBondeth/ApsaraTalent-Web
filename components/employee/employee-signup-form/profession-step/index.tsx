@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
 import {
   Select,
   SelectContent,
@@ -17,6 +16,7 @@ import {
 import { availabilityConstant } from "@/utils/constant";
 import { TAvailability } from "@/utils/types/availability.type";
 import { useState } from "react";
+import ErrorMessage from "@/components/utils/error-message";
 
 export default function ProfessionStepForm({
   register,
@@ -76,9 +76,7 @@ export default function ProfessionStepForm({
               </SelectContent>
             </Select>
           </div>
-          <TypographySmall className="text-xs text-red-500">
-            {errors!.profession?.availability?.message}
-          </TypographySmall>
+         <ErrorMessage>{errors!.profession?.availability?.message}</ErrorMessage>
         </div>
       </div>
       <div className="w-full flex flex-col items-start gap-1">
@@ -89,9 +87,7 @@ export default function ProfessionStepForm({
             {...register("profession.description")}
             className="placeholder:text-sm"
           />
-          <TypographySmall className="text-xs text-red-500">
-            {errors!.profession?.description?.message}
-          </TypographySmall>
+          <ErrorMessage>{errors!.profession?.description?.message}</ErrorMessage>
         </div>
       </div>
     </div>

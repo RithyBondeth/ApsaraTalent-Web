@@ -20,10 +20,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { LucidePlus, LucideTrash2, LucideXCircle } from "lucide-react";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@radix-ui/react-toast";
-import { getErrorMessage } from "@/utils/get-error-message";
 import ErrorMessage from "@/components/utils/error-message";
 
 export default function OpenPositionStepForm({
@@ -153,9 +151,7 @@ export default function OpenPositionStepForm({
               className="placeholder:text-sm"
               {...register(`openPositions.${index}.description`)}
             />
-            <TypographySmall className="text-xs text-red-500">
-              {errors?.openPositions?.[index]?.description?.message}
-            </TypographySmall>
+          <ErrorMessage>{errors?.openPositions?.[index]?.description?.message}</ErrorMessage>
           </div>
 
           <div className="w-full flex gap-3 [&>div]:w-1/2 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
@@ -218,9 +214,7 @@ export default function OpenPositionStepForm({
                   />
                 )}
               />
-              <TypographySmall className="text-xs text-red-500">
-                {errors?.openPositions?.[index]?.deadlineDate?.message}
-              </TypographySmall>
+              <ErrorMessage>{errors?.openPositions?.[index]?.deadlineDate?.message}</ErrorMessage>
             </div>
           </div>
 
