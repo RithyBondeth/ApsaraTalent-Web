@@ -38,12 +38,12 @@ export const benefitAndValueStepSchema = z.object({
 
 // Define schema for step 4
 export const companyAvatarStepSchema = z.object({
-    avatar: imageValidation("avatar")
+    avatar: imageValidation("Avatar")
 })
 
 // Define schema for step 5
 export const companyCoverStepSchema = z.object({
-    cover: imageValidation("cover")  
+    cover: imageValidation("Cover")  
 })
 
 export const careerScopesStepSchema = z.object({

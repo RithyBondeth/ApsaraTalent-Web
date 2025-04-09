@@ -38,8 +38,8 @@ export default function CompanySignup() {
       ],
       benefitsAndValues: {
         benefits: [],
-        values: []
-      }
+        values: [],
+      },
     },
   });
 
@@ -159,9 +159,29 @@ export default function CompanySignup() {
                 errors={errors}
               />
             )}
-            {step === 4 && <AvatarCompanyStepForm register={register} />}
-            {step === 5 && <CoverCompanyStepForm register={register} />}
-            {step === 6 && <CompanyCareerScopeStepForm register={register} />}
+            {step === 4 && (
+              <AvatarCompanyStepForm
+                register={register}
+                setValue={setValue}
+                getValues={getValues}
+                errors={errors}
+              />
+            )}
+            {step === 5 && (
+              <CoverCompanyStepForm
+                register={register}
+                setValue={setValue}
+                errors={errors}
+              />
+            )}
+            {step === 6 && (
+              <CompanyCareerScopeStepForm
+                register={register}
+                getValues={getValues}
+                setValue={setValue}
+                errors={errors}
+              />
+            )}
 
             {/* Next & Previous Step */}
             {/* Navigation Buttons */}

@@ -8,5 +8,6 @@ export interface IDragDropFileProps {
     className?: string;
     boxText?: string;
     boxSubText?: string;
+    preview?: string | null;
     icon?: React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>
 }

@@ -13,9 +13,9 @@ export const DragDropFile = ({
   boxText = "Drag and drop image here, or click to select",
   boxSubText = "JPG, PNG or GIF files up to 10MB",
   icon = LucideUserCircle,
+  preview, // Receive the preview image as a prop
 }: IDragDropFileProps) => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [preview, setPreview] = useState<string | null>(null);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -44,7 +44,7 @@ export const DragDropFile = ({
     
     const droppedFiles = Array.from(e.dataTransfer.files);
     if (droppedFiles.length > 0) {
-      processFile(droppedFiles[0]); // Process only the first file for inline preview
+      processFile(droppedFiles[0]);
       onFilesSelected(multiple ? droppedFiles : [droppedFiles[0]]);
     }
   };
@@ -58,11 +58,14 @@ export const DragDropFile = ({
   };
 
   const processFile = (file: File): void => {
-    // Check if file is an image
     if (file.type.startsWith('image/') && file.size <= maxFileSize) {
       const objectUrl = URL.createObjectURL(file);
-      setPreview(objectUrl);
       setSelectedFileName(file.name);
+
+      // Set preview
+      if (preview !== undefined) {
+        preview = objectUrl; // Update preview when file is selected
+      }
     }
   };
 
@@ -73,19 +76,22 @@ export const DragDropFile = ({
   };
 
   const removeFile = (): void => {
-    setPreview(null);
     setSelectedFileName(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
     onFilesSelected([]);
+
+    // Reset the preview if passed
+    if (preview !== undefined) {
+      preview = null;
+    }
   };
 
-  // Clean up object URL when component unmounts or when preview changes
   useEffect(() => {
     return () => {
       if (preview) {
-        URL.revokeObjectURL(preview);
+        URL.revokeObjectURL(preview); // Clean up preview when component is unmounted
       }
     };
   }, [preview]);
