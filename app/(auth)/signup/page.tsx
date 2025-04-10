@@ -13,7 +13,6 @@ import { useThemeStore } from "@/stores/theme-store";
 import { TUserRole } from "@/utils/types/role.type";
 import { genderConstant, userRoleConstant } from "@/utils/constants/app.constant";
 import { TGender } from "@/utils/types/gender.type";
-//import { useRoleStore } from "@/stores/role-store";
 import { useForm } from "react-hook-form";
 import { basicSignupSchema, TBasicSignupSchema } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,9 +24,7 @@ export default function SignupPage() {
   const [confirmPassVisibility, setConfirmPassVisibility] = useState<boolean>(false);
   const router = useRouter();
   const [selectedGender, setSelectedGender] = useState<TGender | null>(null);
-
   const { theme } = useThemeStore();
-  //const { role } = useRoleStore(); 
 
   const { handleSubmit, register, setValue, trigger, formState: { errors } } = useForm<TBasicSignupSchema>({
     resolver: zodResolver(basicSignupSchema)
@@ -35,6 +32,7 @@ export default function SignupPage() {
 
   const onSubmit = (data: TBasicSignupSchema) => {
     console.log(data);
+    router.push(`signup/${data.selectedRole}`);
   }
 
   return (
