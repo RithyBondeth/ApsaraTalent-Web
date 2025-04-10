@@ -62,38 +62,43 @@ export const phoneOrEmailValidation = z
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     // Check if the value is either a valid email or a Khmer phone number
-    return emailRegex.test(value) || /^(?:\+855|0)(?:1\d{8}|[2-9]\d{7,8})$/.test(value);
+    return (
+      emailRegex.test(value) ||
+      /^(?:\+855|0)(?:1\d{8}|[2-9]\d{7,8})$/.test(value)
+    );
   }, "Invalid email or Khmer phone number");
 
-  export const dateValidation = (label: string) =>
-    z.preprocess(
-      (arg) => {
-        if (typeof arg === "string" && arg.trim() === "") return undefined;
-        if (arg instanceof Date) return arg;
-        if (typeof arg === "string" || typeof arg === "number") return new Date(arg);
-        return arg;
-      },
-      z.date({
-        required_error: `${label} is required`,
-        invalid_type_error: `${label} must be a valid date`,
-      })
-    );
+export const dateValidation = (label: string) =>
+  z.preprocess(
+    (arg) => {
+      if (typeof arg === "string" && arg.trim() === "") return undefined;
+      if (arg instanceof Date) return arg;
+      if (typeof arg === "string" || typeof arg === "number")
+        return new Date(arg);
+      return arg;
+    },
+    z.date({
+      required_error: `${label} is required`,
+      invalid_type_error: `${label} must be a valid date`,
+    })
+  );
 
-    export const imageValidation = (label: string) =>
-      z
-        .union([ // Union to accept either File or null
-          z.custom<File>(
-            (file) => {
-              if (!(file instanceof File)) return false;
-              const validTypes = ["image/jpeg", "image/png", "image/webp"];
-              return validTypes.includes(file.type) && file.size <= MAX_IMAGE_SIZE;
-            },
-            {
-              message: `Invalid file: ${label} must be an image (jpeg, png, webp) and < 5MB`,
-            }
-          ),
-          z.null(), // Allow null as a valid value
-        ])
-        .refine((file) => file === null || file instanceof File, {
-          message: `Please upload a valid file or leave it empty.`,
-        });
+export const imageValidation = (label: string) =>
+  z
+    .union([
+      // Union to accept either File or null
+      z.custom<File>(
+        (file) => {
+          if (!(file instanceof File)) return false;
+          const validTypes = ["image/jpeg", "image/png", "image/webp"];
+          return validTypes.includes(file.type) && file.size <= MAX_IMAGE_SIZE;
+        },
+        {
+          message: `Invalid file: ${label} must be an image (jpeg, png, webp) and < 5MB`,
+        }
+      ),
+      z.null(), // Allow null as a valid value
+    ])
+    .refine((file) => file === null || file instanceof File, {
+      message: `Please upload a valid file or leave it empty.`,
+    });

@@ -8,12 +8,12 @@ import ProfessionStepForm from "@/components/employee/employee-signup-form/profe
 import ExperienceStepForm from "@/components/employee/employee-signup-form/experience-step";
 import EducationStepForm from "@/components/employee/employee-signup-form/education-step";
 import SkillReferenceStepForm from "@/components/employee/employee-signup-form/skill-reference-step";
-import AvatarStepForm from "@/components/employee/employee-signup-form/avatar-step";
 import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { employeeSignUpSchema, TEmployeeSignUp } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import EmployeeCareerScopeStepForm from "@/components/employee/employee-signup-form/career-scope-step";
+import AvatarStepForm from "@/components/employee/employee-signup-form/avatar-step";
 
 export default function EmployeeSignup() {
   const router = useRouter();

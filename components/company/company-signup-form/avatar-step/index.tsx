@@ -37,17 +37,20 @@ export default function AvatarCompanyStepForm({
     <div className="w-full flex flex-col items-center gap-5">
       <TypographyH4>Add your company profile picture</TypographyH4>
       <div className="w-full flex justify-center">
-        <DragDropFile
-          onFilesSelected={handleFilesSelected}
-          acceptedFileTypes="image/*"
-          maxFileSize={5242880}
-          multiple={false}
-          boxText="Drop your company profile picture here"
-          boxSubText="JPG, PNG or GIF files up to 5MB"
-          icon={LucideBuilding}
-          className="max-w-md"
-          preview={preview} // Pass the preview to the DragDropFile component
-        />
+        {setValue && (
+          <DragDropFile<TCompanySignup>
+            onFilesSelected={handleFilesSelected}
+            acceptedFileTypes="image/*"
+            maxFileSize={5242880}
+            multiple={false}
+            boxText="Drop your company profile picture here"
+            boxSubText="JPG, PNG or GIF files up to 5MB"
+            className="max-w-md"
+            preview={preview} 
+            fileName="avatar"
+            setValue={setValue}
+          />
+        )}
       </div>
       {errors?.avatar && <ErrorMessage>{errors.avatar.message}</ErrorMessage>}
     </div>

@@ -171,6 +171,7 @@ export default function CompanySignup() {
               <CoverCompanyStepForm
                 register={register}
                 setValue={setValue}
+                getValues={getValues}
                 errors={errors}
               />
             )}

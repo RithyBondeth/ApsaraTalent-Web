@@ -28,7 +28,7 @@ export default function AvatarStepForm({
     const avatar = getValues?.("avatar");
     if (avatar) {
       const objectUrl = URL.createObjectURL(avatar);
-      setPreview(objectUrl); // Update preview when the component is loaded
+      setPreview(objectUrl); // Update preview when the component is loaded or when getValues is changed
     }
   }, [getValues]);
 
@@ -36,16 +36,19 @@ export default function AvatarStepForm({
     <div className="w-full flex flex-col items-center gap-5">
       <TypographyH4>Add your profile picture</TypographyH4>
       <div className="w-full flex justify-center">
-        <DragDropFile
-          onFilesSelected={handleFilesSelected}
-          acceptedFileTypes="image/*"
-          maxFileSize={5242880}
-          multiple={false}
-          boxText="Drop your profile picture here"
-          boxSubText="JPG, PNG or GIF files up to 5MB"
-          className="max-w-md"
-          preview={preview} // Pass the preview to the DragDropFile component
-        />
+        {setValue && (
+          <DragDropFile<TEmployeeSignUp>
+            preview={preview} // Directly pass the preview state
+            onFilesSelected={handleFilesSelected}
+            acceptedFileTypes="image/*"
+            maxFileSize={5242880}
+            multiple={false}
+            boxText="Drop your company profile picture here"
+            boxSubText="JPG, PNG or GIF files up to 5MB"
+            fileName='avatar'
+            setValue={setValue}
+          />
+        )}
       </div>
       {errors?.avatar && <ErrorMessage>{errors.avatar.message}</ErrorMessage>}
     </div>

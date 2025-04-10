@@ -3,8 +3,9 @@ import Image from 'next/image';
 import { LucideCircleX, LucideUserCircle } from 'lucide-react';
 import { TypographyMuted } from './typography/typography-muted';
 import { IDragDropFileProps } from '@/utils/interfaces/drag-drop-file.interface';
+import { FieldValues, Path, PathValue } from 'react-hook-form';
 
-export const DragDropFile = ({
+export const DragDropFile = <T extends FieldValues>({
   onFilesSelected,
   acceptedFileTypes = "image/*",
   maxFileSize = 10485760,
@@ -14,9 +15,12 @@ export const DragDropFile = ({
   boxSubText = "JPG, PNG or GIF files up to 10MB",
   icon = LucideUserCircle,
   preview, // Receive the preview image as a prop
-}: IDragDropFileProps) => {
+  setValue,  // Assuming this is used to update the form state
+  fileName, // Ensure this is passed correctly as 'avatar' or 'cover'
+}: IDragDropFileProps<T>) => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
+  const [filePreview, setFilePreview] = useState<string | null>(preview || null);  // Store the preview URL
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDragEnter = (e: DragEvent<HTMLDivElement>): void => {
@@ -60,11 +64,12 @@ export const DragDropFile = ({
   const processFile = (file: File): void => {
     if (file.type.startsWith('image/') && file.size <= maxFileSize) {
       const objectUrl = URL.createObjectURL(file);
+      setFilePreview(objectUrl);
       setSelectedFileName(file.name);
 
-      // Set preview
-      if (preview !== undefined) {
-        preview = objectUrl; // Update preview when file is selected
+      // Set the preview in form state
+      if (setValue && fileName) {
+        setValue(fileName as Path<T>, file as unknown as PathValue<T, Path<T>>, { shouldValidate: true });
       }
     }
   };
@@ -76,24 +81,32 @@ export const DragDropFile = ({
   };
 
   const removeFile = (): void => {
-    setSelectedFileName(null);
+    setFilePreview(null); // Clears the preview
+    setSelectedFileName(null); // Clears the selected file name
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = ''; // Resets the file input
     }
-    onFilesSelected([]);
-
+    onFilesSelected([]); // Calls the callback to notify that no file is selected
+    
     // Reset the preview if passed
-    if (preview !== undefined) {
-      preview = null;
+    if (setValue && fileName) {
+      setValue(fileName as Path<T>, null as unknown as PathValue<T, Path<T>>, { shouldValidate: true }); // Use `null` to remove from form
     }
   };
 
   useEffect(() => {
     return () => {
-      if (preview) {
-        URL.revokeObjectURL(preview); // Clean up preview when component is unmounted
+      if (filePreview) {
+        URL.revokeObjectURL(filePreview); // Clean up preview when component is unmounted
       }
     };
+  }, [filePreview]);
+
+  // Ensure that the preview is set correctly when the component is re-rendered (e.g. stepping back)
+  useEffect(() => {
+    if (preview && preview !== filePreview) {
+      setFilePreview(preview);
+    }
   }, [preview]);
 
   return (
@@ -116,7 +129,7 @@ export const DragDropFile = ({
         multiple={multiple}
       />
       
-      {preview ? (
+      {filePreview ? (
         <div className='absolute top-0 right-0 left-0 bottom-0'>
           <LucideCircleX 
             strokeWidth='1.5px'
@@ -127,7 +140,7 @@ export const DragDropFile = ({
             }}
           />
           <Image
-            src={preview}
+            src={filePreview}
             alt={selectedFileName || "Preview"}
             width={0}
             height={0}
