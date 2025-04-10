@@ -1,5 +1,4 @@
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { LucideBuilding } from "lucide-react";
 import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
 import { useState, useEffect } from "react";

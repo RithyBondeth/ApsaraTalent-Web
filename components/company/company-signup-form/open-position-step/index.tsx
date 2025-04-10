@@ -34,7 +34,7 @@ export default function OpenPositionStepForm({
   // Initialize an array to manage the visibility of the Popover for each form
   const [openPopOvers, setOpenPopOvers] = useState<boolean[]>([]);
 
-  const { fields, append, remove, update } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "openPositions",
   });

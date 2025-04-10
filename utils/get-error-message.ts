@@ -3,7 +3,7 @@ import { FieldError, FieldErrorsImpl, Merge } from "react-hook-form";
 // error handling utility
 type ErrorLike =
   | FieldError
-  | Merge<FieldError, FieldErrorsImpl<any>>
+  | Merge<FieldError, FieldErrorsImpl>
   | Merge<FieldError, (FieldError | undefined)[]>
   | FieldError[]
   | (FieldError | undefined)[]
