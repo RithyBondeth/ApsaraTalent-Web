@@ -121,7 +121,7 @@ export default function SkillReferenceStepForm({
               <TypographyMuted>{getValues('skillAndReference.resume').name.trim()}</TypographyMuted>
               <LucideXCircle strokeWidth='1.3px' className="text-muted-foreground cursor-pointer"
                 onClick={() =>
-                  setValue?.("skillAndReference.resume", undefined as any, {
+                  setValue?.("skillAndReference.resume", null as unknown as File, {
                     shouldValidate: true,
                   })
                 }
@@ -155,7 +155,7 @@ export default function SkillReferenceStepForm({
               <TypographyMuted>{getValues('skillAndReference.coverLetter').name.trim()}</TypographyMuted>
                 <LucideXCircle strokeWidth='1.3px' className="text-muted-foreground cursor-pointer"
                   onClick={() =>
-                    setValue?.("skillAndReference.coverLetter", undefined as any, {
+                    setValue?.("skillAndReference.coverLetter", null as unknown as File, {
                       shouldValidate: true,
                     })
                   }

@@ -104,27 +104,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             />
           }
         />
-        <div className="w-full flex justify-between items-center gap-5 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
-          <div className="w-1/2 flex flex-col items-start gap-1">
-            <TypographyMuted className="text-xs">Announce Date</TypographyMuted>
-            <Controller
-              control={control}
-              name={`openPositions.${props.index}.postedDate`}
-              render={({ field, fieldState }) => (
-                <>
-                  <DatePicker
-                    date={field.value}
-                    onDateChange={field.onChange}
-                    disabled={!props.isEdit}
-                  />
-                  {fieldState.error && (
-                    <p className="text-red-500 text-xs mt-1">{fieldState.error.message}</p>
-                  )}
-                </>
-              )}
-            />
-          </div>
-          <div className="w-1/2 flex flex-col items-start gap-1">
+       <div className="w-full flex flex-col items-start gap-1">
             <TypographyMuted className="text-xs">Deadline Date</TypographyMuted>
             <Controller
               control={control}
@@ -143,7 +123,6 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
               )}
             />
           </div>
-        </div>
       </div>
     </div>
   );
