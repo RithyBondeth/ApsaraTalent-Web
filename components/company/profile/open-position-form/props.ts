@@ -9,7 +9,6 @@ export interface IOpenPositionFormProps {
    education: string | undefined;
    skill: string[];
    salary: string | undefined;
-   postedDate: IDatePickerItemProps;
    deadlineDate: IDatePickerItemProps;
    isEdit: boolean;
    form: UseFormReturn<TOpenPositionForm>;

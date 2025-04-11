@@ -128,11 +128,11 @@ export default function CompanyCareerScopeStepForm({
             {careerOptions.slice(0, 5).map((item, index) => (
               <CommandItem key={index} className="flex items-center gap-2">
                 <Checkbox
-                  checked={selectedCareers.includes(item)}
-                  onCheckedChange={() => toggleCareer(item)}
+                  checked={selectedCareers.includes(item.value)}
+                  onCheckedChange={() => toggleCareer(item.value)}
                   onClick={(e) => e.stopPropagation()}
                 />
-                <Label className="text-sm">{item}</Label>
+                <Label className="text-sm">{item.label}</Label>
               </CommandItem>
             ))}
           </CommandGroup>
@@ -142,7 +142,7 @@ export default function CompanyCareerScopeStepForm({
       {/* Career Options Grid */}
       <div className="flex flex-wrap gap-3">
         {paginatedCareers.map((item, index) => {
-          const isChecked = selectedCareers.includes(item);
+          const isChecked = selectedCareers.includes(item.value);
           return (
             <Card
               key={index}
@@ -152,10 +152,10 @@ export default function CompanyCareerScopeStepForm({
             >
               <Checkbox
                 checked={isChecked}
-                onCheckedChange={() => toggleCareer(item)}
+                onCheckedChange={() => toggleCareer(item.value)}
                 onClick={(e) => e.stopPropagation()}
               />
-              <Label className="text-sm">{item}</Label>
+              <Label className="text-sm">{item.label}</Label>
             </Card>
           );
         })}

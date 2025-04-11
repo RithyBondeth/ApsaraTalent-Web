@@ -2,7 +2,6 @@
 
 import OpenPositionForm from "@/components/company/profile/open-position-form";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import {
   Carousel,
   CarouselContent,
@@ -28,11 +27,16 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { companyList } from "@/data/company-data";
-import { locationConstant, platformConstant } from "@/utils/constants/app.constant";
+import {
+  locationConstant,
+  platformConstant,
+} from "@/utils/constants/app.constant";
 import { TLocations } from "@/utils/types/location.type";
 import { TPlatform } from "@/utils/types/platform.type";
 import { Select } from "@radix-ui/react-select";
 import {
+  Check,
+  ChevronDown,
   LucideBuilding,
   LucideCircleCheck,
   LucideCircleX,
@@ -51,23 +55,91 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { openPositionSchema, TOpenPositionForm } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Button } from "@/components/ui/button";
+import { careerOptions } from "@/data/career-data";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 
 export default function ProfilePage() {
   const companyId = 1;
   const [isEdit, setIsEdit] = useState<boolean>(false);
+  const { toast } = useToast();
+
+  // Benefits
+  const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
+  const [benefitInput, setBenefitInput] = useState<string>("");
+
+  // Values
+  const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
+  const [valueInput, setValueInput] = useState<string>("");
+
+  // Careers
+  const [openCareersPopOver, setOpenCareersPopOver] = useState<boolean>(false);
+  const [careersInput, setCareersInput] = useState<string>("");
+  const [careers, setCareers] = useState<string[]>([]);
+
+  const addCareers = () => {
+    const trimmed = careersInput.trim();
+    if (!trimmed) return;
+
+    // Check for duplicate careers
+    const alreadyExists = careers.some(
+      (career) => career.toLowerCase() === trimmed.toLowerCase()
+    );
+
+    if (alreadyExists) {
+      toast({
+        variant: "destructive",
+        title: "Duplicated career",
+        description: "Please input another career.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+      return;
+    }
+
+    // Add new career
+    const updatedCareers = [...careers, trimmed];
+    setCareers(updatedCareers);
+
+    // Clear input field
+    setCareersInput("");
+    setOpenCareersPopOver(false); // Close popover after adding career
+  };
+
+  // Handle the career selection from the dropdown or input
+  const handleCareerSelect = (selectedCareer: string) => {
+    setCareersInput(selectedCareer); // Set the selected career to input
+    setOpenCareersPopOver(false); // Close popover after selecting
+  };
 
   const [isShowPassword, setIsShowPassword] = useState({
     current: false,
     new: false,
     confirm: false,
   });
-  const [selectedLocation, setSelectedLocation] = useState<TLocations | null>(null);
-  const [selectedPlatform, setSelectedPlatform] = useState<TPlatform | null>(null);
-  const [selectedDates, setSelectedDates] = useState<Record<string, { posted?: Date; deadline?: Date }>>({});
-  
-  const getPostedDate = (positionId: string, fallback: Date) =>
-    selectedDates[positionId]?.posted ?? fallback;
-  
+  const [selectedLocation, setSelectedLocation] = useState<TLocations | null>(
+    null
+  );
+  const [selectedPlatform, setSelectedPlatform] = useState<TPlatform | null>(
+    null
+  );
+  const [selectedDates, setSelectedDates] = useState<
+    Record<string, { posted?: Date; deadline?: Date }>
+  >({});
+
   const getDeadlineDate = (positionId: string, fallback: Date) =>
     selectedDates[positionId]?.deadline ?? fallback;
 
@@ -88,23 +160,22 @@ export default function ProfilePage() {
   const form = useForm<TOpenPositionForm>({
     resolver: zodResolver(openPositionSchema),
     defaultValues: {
-    openPositions: companyList[companyId].openPositions.map(position => ({
-      title: position.title,
-      description: position.description,
-      experienceRequirement: position.experience,
-      educationRequirement: position.education,
-      salary: position.salary,
-      postedDate: new Date(position.postedDate),
-      deadlineDate: new Date(position.deadlineDate),
-      skill: position.skills
-      }))
-    }
+      openPositions: companyList[companyId].openPositions.map((position) => ({
+        title: position.title,
+        description: position.description,
+        experienceRequirement: position.experience,
+        educationRequirement: position.education,
+        salary: position.salary,
+        postedDate: new Date(position.postedDate),
+        deadlineDate: new Date(position.deadlineDate),
+        skill: position.skills,
+      })),
+    },
   });
 
   const onSubmit = (data: TOpenPositionForm) => {
     console.log(data);
-  }
-
+  };
 
   return (
     <div className="flex flex-col gap-5">
@@ -167,6 +238,7 @@ export default function ProfilePage() {
                     }
                     id="company-name"
                     name="company-name"
+                    disabled={!isEdit}
                   />
                 }
               />
@@ -183,6 +255,7 @@ export default function ProfilePage() {
                   id="company-description"
                   name="company-description"
                   className="placeholder:text-sm"
+                  disabled={!isEdit}
                 />
               </div>
               <div className="w-full flex items-center justify-between gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
@@ -195,6 +268,7 @@ export default function ProfilePage() {
                       }
                       id="industry"
                       name="industry"
+                      disabled={!isEdit}
                     />
                   }
                 />
@@ -207,6 +281,7 @@ export default function ProfilePage() {
                       setSelectedLocation(value)
                     }
                     value={selectedLocation || ""}
+                    disabled={!isEdit}
                   >
                     <SelectTrigger className="h-12 text-muted-foreground">
                       <SelectValue
@@ -240,6 +315,7 @@ export default function ProfilePage() {
                       id="company-size"
                       name="company-size"
                       prefix={<LucideUsers />}
+                      disabled={!isEdit}
                     />
                   }
                 />
@@ -256,6 +332,7 @@ export default function ProfilePage() {
                       id="company-founded-year"
                       name="company-founded-year"
                       prefix={<LucideBuilding />}
+                      disabled={!isEdit}
                     />
                   }
                 />
@@ -270,6 +347,7 @@ export default function ProfilePage() {
                     id="email"
                     name="email"
                     prefix={<LucideMail />}
+                    disabled={!isEdit}
                   />
                 }
               />
@@ -283,6 +361,7 @@ export default function ProfilePage() {
                     id="phone"
                     name="phone"
                     prefix={<LucidePhone />}
+                    disabled={!isEdit}
                   />
                 }
               />
@@ -302,11 +381,13 @@ export default function ProfilePage() {
               </div>
               <Divider />
             </div>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col items-start gap-5">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex flex-col items-start gap-5"
+            >
               {companyList[companyId].openPositions &&
                 companyList[companyId].openPositions.map((position, index) => {
                   const positionId = position.id.toString();
-                  const postedFallback = new Date(position.postedDate);
                   const deadlineFallback = new Date(position.deadlineDate);
                   return (
                     <OpenPositionForm
@@ -321,26 +402,24 @@ export default function ProfilePage() {
                       education={position.education}
                       skill={position.skills}
                       salary={position.salary}
-                      postedDate={{
-                        defaultValue: postedFallback,
-                        data: getPostedDate(positionId, postedFallback),
-                        onDataChange: (date: Date | undefined) => {
-                          if(date) handleDateChange(positionId, "posted", date);
-                        }
-                      }}
                       deadlineDate={{
                         defaultValue: deadlineFallback,
                         data: getDeadlineDate(positionId, deadlineFallback),
                         onDataChange: (date: Date | undefined) => {
-                          if(date) handleDateChange(positionId, "deadline", date);
-                        }
+                          if (date)
+                            handleDateChange(positionId, "deadline", date);
+                        },
                       }}
                     />
                   );
                 })}
+              {isEdit && (
                 <div className="w-full flex justify-end">
-                  <Button type="submit" className="text-xs">Submit</Button>
+                  <Button type="submit" className="text-xs">
+                    Submit
+                  </Button>
                 </div>
+              )}
             </form>
           </div>
           {/* Company Multiple Images Section */}
@@ -445,6 +524,7 @@ export default function ProfilePage() {
                         />
                       )
                     }
+                    disabled={!isEdit}
                   />
                 }
               />
@@ -478,6 +558,7 @@ export default function ProfilePage() {
                         />
                       )
                     }
+                    disabled={!isEdit}
                   />
                 }
               />
@@ -487,131 +568,225 @@ export default function ProfilePage() {
           {/* Benefits Section */}
           <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
             <div className="w-full flex flex-col gap-1">
-              <div className="w-full flex justify-between items-center">
-                <TypographyH4>Benefits</TypographyH4>
-                <IconLabel
-                  text="Add Benefit"
-                  icon={<LucidePlus className="text-muted-foreground" />}
-                  className="cursor-pointer"
-                />
-              </div>
+              <TypographyH4>Benefits</TypographyH4>
               <Divider />
             </div>
-            <div className="flex flex-wrap gap-3">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((skill) => (
-                <div key={skill} className="px-3 py-2 rounded-2xl bg-muted">
-                  <IconLabel
-                    icon={<LucideCircleCheck stroke="white" fill="#0073E6" />}
-                    text="Full Health Coverage"
+            <div className="flex flex-col items-stretch gap-3">
+              <div className="flex flex-wrap gap-3">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((skill) => (
+                  <div key={skill} className="px-3 py-2 rounded-2xl bg-muted">
+                    <IconLabel
+                      icon={<LucideCircleCheck stroke="white" fill="#0073E6" />}
+                      text="Full Health Coverage"
+                    />
+                  </div>
+                ))}
+              </div>
+              <Popover
+                open={openBenefitPopOver}
+                onOpenChange={setOpenBenefitPopOver}
+              >
+                <PopoverTrigger asChild>
+                  <Button className="w-full text-xs" variant="secondary">
+                    Add benefit
+                    <LucidePlus />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
+                  <Input
+                    placeholder="Enter your benefit (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
+                    value={benefitInput}
+                    onChange={(e) => setBenefitInput(e.target.value)}
                   />
-                </div>
-              ))}
+                  <div className="flex items-center gap-1 [&>button]:text-xs">
+                    <Button
+                      variant="outline"
+                      onClick={() => setOpenBenefitPopOver(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button onClick={() => {}}>Save</Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
 
           {/* Values Section */}
           <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
             <div className="w-full flex flex-col gap-1">
-              <div className="w-full flex justify-between items-center">
-                <TypographyH4>Values</TypographyH4>
-                <IconLabel
-                  text="Add Value"
-                  icon={<LucidePlus className="text-muted-foreground" />}
-                  className="cursor-pointer"
-                />
-              </div>
+              <TypographyH4>Values</TypographyH4>
               <Divider />
             </div>
-            <div className="flex flex-wrap gap-3">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((skill) => (
-                <div key={skill} className="px-3 py-2 rounded-2xl bg-muted">
-                  <IconLabel
-                    icon={<LucideCircleCheck stroke="white" fill="#69B41E" />}
-                    text="Full Health Coverage"
+            <div className="flex flex-col items-stretch gap-3">
+              <div className="flex flex-wrap gap-3">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((skill) => (
+                  <div key={skill} className="px-3 py-2 rounded-2xl bg-muted">
+                    <IconLabel
+                      icon={<LucideCircleCheck stroke="white" fill="#69B41E" />}
+                      text="Full Health Coverage"
+                    />
+                  </div>
+                ))}
+              </div>
+              <Popover
+                open={openValuePopOver}
+                onOpenChange={setOpenValuePopOver}
+              >
+                <PopoverTrigger asChild>
+                  <Button className="w-full text-xs" variant="secondary">
+                    Add value
+                    <LucidePlus />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
+                  <Input
+                    placeholder="Enter your value (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
+                    value={valueInput}
+                    onChange={(e) => setValueInput(e.target.value)}
                   />
-                </div>
-              ))}
+                  <div className="flex items-center gap-1 [&>button]:text-xs">
+                    <Button
+                      variant="outline"
+                      onClick={() => setOpenValuePopOver(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button onClick={() => {}}>Save</Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
 
-          {/* CareerScopes Section */}
+          {/* CareersScopes Section */}
           <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
             <div className="w-full flex flex-col gap-1">
-              <div className="w-full flex justify-between items-center">
-                <TypographyH4>Career Scopes</TypographyH4>
-                <IconLabel
-                  text="Add Career"
-                  icon={<LucidePlus className="text-muted-foreground" />}
-                  className="cursor-pointer"
-                />
-              </div>
+              <TypographyH4>Careers Scopes</TypographyH4>
               <Divider />
             </div>
-            <div className="flex flex-wrap gap-3">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((skill) => (
-                <Tag key={skill} label="AI & Machine Learning" />
-              ))}
+            <div className="w-full flex flex-col items-stretch gap-3">
+              <div className="flex flex-wrap gap-3">
+                {careers.map((career, index) => (
+                  <Tag key={index} label={career} />
+                ))}
+              </div>
             </div>
+            <Popover
+              open={openCareersPopOver}
+              onOpenChange={setOpenCareersPopOver}
+            >
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  className="w-full justify-between"
+                >
+                  {careersInput
+                    ? careerOptions.find(
+                        (career) => career.value === careersInput
+                      )?.label
+                    : "Select careers..."}
+                  <ChevronDown className="opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="p-0">
+                <Command>
+                  <CommandInput
+                    placeholder="Select careers..."
+                    className="h-9"
+                  />
+                  <CommandList>
+                    <CommandEmpty>No career found.</CommandEmpty>
+                    <CommandGroup>
+                      {careerOptions.map((career, index) => (
+                        <CommandItem
+                          key={index}
+                          value={career.value}
+                          onSelect={() => handleCareerSelect(career.value)} // Handle career selection
+                        >
+                          {career.label}
+                          <LucideCircleCheck
+                            className={
+                              careersInput === career.value
+                                ? "opacity-100"
+                                : "opacity-0"
+                            }
+                          />
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+            <Button
+              variant="secondary"
+              className="w-full text-xs"
+              onClick={addCareers}
+            >
+              <LucidePlus />
+              Add Career
+            </Button>
           </div>
 
           {/* Social Information Form Section */}
           <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
             <div className="flex flex-col gap-1">
-              <div className="flex justify-between items-center">
-                <TypographyH4>Social Information</TypographyH4>
-                <IconLabel
-                  text="Add Social"
-                  icon={<LucidePlus className="text-muted-foreground" />}
-                  className="cursor-pointer"
-                />
-              </div>
+              <TypographyH4>Social Information</TypographyH4>
               <Divider />
             </div>
-            <form action="" className="flex flex-col items-start gap-5">
-              <div className="w-full flex flex-col items-start gap-3">
-                <TypographyMuted>Social 1</TypographyMuted>
-                <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
-                  <div className="w-full flex justify-between items-center gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
-                    <div className="flex flex-col items-start gap-1">
-                      <TypographyMuted className="text-xs">
-                        Platform
-                      </TypographyMuted>
-                      <Select
-                        onValueChange={(value: TPlatform) =>
-                          setSelectedPlatform(value)
+            <div className="w-full flex flex-col items-start gap-5">
+              <div className="w-full flex flex-col items-stretch gap-3">
+                <div className="w-full flex flex-col items-start gap-3">
+                  <TypographyMuted>Social 1</TypographyMuted>
+                  <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
+                    <div className="w-full flex justify-between items-center gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
+                      <div className="flex flex-col items-start gap-1">
+                        <TypographyMuted className="text-xs">
+                          Platform
+                        </TypographyMuted>
+                        <Select
+                          onValueChange={(value: TPlatform) =>
+                            setSelectedPlatform(value)
+                          }
+                          value={selectedPlatform || ""}
+                        >
+                          <SelectTrigger className="h-12 text-muted-foreground">
+                            <SelectValue placeholder="Platform" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {platformConstant.map((platform) => (
+                              <SelectItem
+                                key={platform.id}
+                                value={platform.value}
+                              >
+                                {platform.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <LabelInput
+                        label="Link"
+                        input={
+                          <Input
+                            placeholder="Link"
+                            id="link"
+                            name="link"
+                            prefix={<LucideLink2 />}
+                          />
                         }
-                        value={selectedPlatform || ""}
-                      >
-                        <SelectTrigger className="h-12 text-muted-foreground">
-                          <SelectValue placeholder="Platform" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {platformConstant.map((platform) => (
-                            <SelectItem
-                              key={platform.id}
-                              value={platform.value}
-                            >
-                              {platform.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      />
                     </div>
-                    <LabelInput
-                      label="Link"
-                      input={
-                        <Input
-                          placeholder="Link"
-                          id="link"
-                          name="link"
-                          prefix={<LucideLink2 />}
-                        />
-                      }
-                    />
                   </div>
                 </div>
+                <Button variant="secondary" className="text-xs w-full">
+                  <LucidePlus />
+                  Add new social
+                </Button>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       </div>
