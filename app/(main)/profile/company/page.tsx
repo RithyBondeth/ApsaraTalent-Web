@@ -50,6 +50,7 @@ import {
   LucidePhone,
   LucidePlus,
   LucideUsers,
+  LucideXCircle,
 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -72,6 +73,8 @@ import { Button } from "@/components/ui/button";
 import { careerOptions } from "@/data/career-data";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { string } from "zod";
 
 export default function ProfilePage() {
   const companyId = 1;
@@ -81,15 +84,86 @@ export default function ProfilePage() {
   // Benefits
   const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
   const [benefitInput, setBenefitInput] = useState<string>("");
+  const [benefits, setBenefits] = useState<string[]>([]);
 
   // Values
   const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
   const [valueInput, setValueInput] = useState<string>("");
+  const [values, setValues] = useState<string[]>([]);
 
   // Careers
   const [openCareersPopOver, setOpenCareersPopOver] = useState<boolean>(false);
   const [careersInput, setCareersInput] = useState<string>("");
   const [careers, setCareers] = useState<string[]>([]);
+
+  const addBenefits = () => {
+    const trimmed = benefitInput.trim();
+    if (!trimmed) return;
+
+    const alreadyExists = benefits.some(
+      (bf) => bf.toLowerCase() === trimmed.toLowerCase()
+    );
+
+    if (alreadyExists) {
+      toast({
+        variant: "destructive",
+        title: "Duplicated Benefit",
+        description: "Please input another benefit.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+      setBenefitInput("");
+      setOpenBenefitPopOver(false);
+      return;
+    }
+
+    const updated = [...benefits, trimmed];
+    setBenefits(updated);
+
+    setBenefitInput("");
+    setOpenBenefitPopOver(false);
+  };
+
+  const removeBenefit = async (benefitToRemove: string) => {
+    const updated = benefits.filter((bf) => bf !== benefitToRemove);
+    setBenefits(updated);
+    // setValue?.("benefitsAndValues.benefits", updated);
+
+    // await trigger?.("benefitsAndValues.benefits");
+  };
+
+  const addValue = () => {
+    const trimmed = valueInput.trim();
+    if (!trimmed) return;
+
+    // Check for duplicate value
+    const alreadyExists = values.some(
+      (value) => value.toLowerCase() === trimmed.toLowerCase()
+    );
+
+    if (alreadyExists) {
+      toast({
+        variant: "destructive",
+        title: "Duplicated value",
+        description: "Please input another value.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+      setValueInput("");
+      setOpenValuePopOver(false);
+      return;
+    }
+
+    // Update new value
+    const updated = [...values, trimmed];
+    setValues(updated);
+
+    setValueInput("");
+    setOpenValuePopOver(false);
+  };
+
+  const removeValue = async (valueToRemove: string) => {
+    const updated = values.filter((value) => value !== valueToRemove);
+    setValues(updated);
+  };
 
   const addCareers = () => {
     const trimmed = careersInput.trim();
@@ -107,6 +181,8 @@ export default function ProfilePage() {
         description: "Please input another career.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
+      setCareersInput("");
+      setOpenCareersPopOver(false);
       return;
     }
 
@@ -123,6 +199,14 @@ export default function ProfilePage() {
   const handleCareerSelect = (selectedCareer: string) => {
     setCareersInput(selectedCareer); // Set the selected career to input
     setOpenCareersPopOver(false); // Close popover after selecting
+  };
+
+  // Handle delete career
+  const removeCareer = (careerToRemove: string) => {
+    const updatedCareers = careers.filter(
+      (career) => career !== careerToRemove
+    );
+    setCareers(updatedCareers);
   };
 
   const [isShowPassword, setIsShowPassword] = useState({
@@ -571,16 +655,27 @@ export default function ProfilePage() {
               <TypographyH4>Benefits</TypographyH4>
               <Divider />
             </div>
-            <div className="flex flex-col items-stretch gap-3">
-              <div className="flex flex-wrap gap-3">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((skill) => (
-                  <div key={skill} className="px-3 py-2 rounded-2xl bg-muted">
-                    <IconLabel
-                      icon={<LucideCircleCheck stroke="white" fill="#0073E6" />}
-                      text="Full Health Coverage"
-                    />
-                  </div>
-                ))}
+            <div className="w-full flex flex-col items-stretch gap-3">
+              <div className="w-full flex flex-wrap gap-3">
+                {benefits &&
+                  benefits.map((benefit) => (
+                    <div
+                      className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted"
+                      key={benefit}
+                    >
+                      <IconLabel
+                        icon={
+                          <LucideCircleCheck stroke="white" fill="#0073E6" />
+                        }
+                        text={benefit}
+                      />
+                      <LucideXCircle
+                        className="text-muted-foreground cursor-pointer"
+                        width={"18px"}
+                        onClick={() => removeBenefit(benefit)}
+                      />
+                    </div>
+                  ))}
               </div>
               <Popover
                 open={openBenefitPopOver}
@@ -605,7 +700,7 @@ export default function ProfilePage() {
                     >
                       Cancel
                     </Button>
-                    <Button onClick={() => {}}>Save</Button>
+                    <Button onClick={addBenefits}>Save</Button>
                   </div>
                 </PopoverContent>
               </Popover>
@@ -618,16 +713,25 @@ export default function ProfilePage() {
               <TypographyH4>Values</TypographyH4>
               <Divider />
             </div>
-            <div className="flex flex-col items-stretch gap-3">
-              <div className="flex flex-wrap gap-3">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((skill) => (
-                  <div key={skill} className="px-3 py-2 rounded-2xl bg-muted">
-                    <IconLabel
-                      icon={<LucideCircleCheck stroke="white" fill="#69B41E" />}
-                      text="Full Health Coverage"
-                    />
-                  </div>
-                ))}
+            <div className="w-full flex flex-col items-stretch gap-3">
+              <div className="w-full flex flex-wrap gap-3">
+                {values &&
+                  values.map((value) => (
+                    <div
+                      className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted"
+                      key={value}
+                    >
+                      <IconLabel
+                        icon={<LucideCircleCheck stroke="white" fill="#69B41E" />}
+                        text={value}
+                      />
+                      <LucideXCircle
+                        className="text-muted-foreground cursor-pointer"
+                        width={"18px"}
+                        onClick={() => removeValue(value)}
+                      />
+                    </div>
+                  ))}
               </div>
               <Popover
                 open={openValuePopOver}
@@ -652,7 +756,7 @@ export default function ProfilePage() {
                     >
                       Cancel
                     </Button>
-                    <Button onClick={() => {}}>Save</Button>
+                    <Button onClick={addValue}>Save</Button>
                   </div>
                 </PopoverContent>
               </Popover>
@@ -668,7 +772,19 @@ export default function ProfilePage() {
             <div className="w-full flex flex-col items-stretch gap-3">
               <div className="flex flex-wrap gap-3">
                 {careers.map((career, index) => (
-                  <Tag key={index} label={career} />
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted"
+                  >
+                    <TypographySmall>{career}</TypographySmall>
+                    <LucideCircleX
+                      className="text-muted-foreground cursor-pointer"
+                      width={"18px"}
+                      onClick={() => {
+                        removeCareer(career);
+                      }}
+                    />
+                  </div>
                 ))}
               </div>
             </div>
