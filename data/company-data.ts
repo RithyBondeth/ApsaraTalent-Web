@@ -1,3 +1,4 @@
+import { locationConstant } from "@/utils/constants/app.constant";
 import { ICompany } from "@/utils/interfaces/company.interface";
 
 export const companyList: ICompany[]  = [
@@ -7,10 +8,12 @@ export const companyList: ICompany[]  = [
         "industry": "Pioneering AI & Cloud Solutions",
         "description": "Pioneering AI & Cloud Solutions lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
         "avatar": "NXG",
+        "cover": "NXG.png",
         "companySize": 250,
         "foundedYear": 2018,
-        "location": "Seattle, WA",
+        "location": locationConstant[0],
         "email": "nextgen@gmail.com",
+        "password": "nano-tech-123",
         "phone": "+1122334455",
         "website": "https://nextgen.com",
         "facebook": "https://www.facebook.com/nextgen",
@@ -62,25 +65,28 @@ export const companyList: ICompany[]  = [
             }
         ],
         "availableTimes": [
-            { "id": 1, "label": "Full Time" },
-            { "id": 2, "label": "Remote" },
-            { "id": 3, "label": "Hybrid" },
-            { "id": 4, "label": "Freelance" }
+            "Full Time",
+            "Remote",
+            "Contract"
         ],
         "values": [
-            { "id": 1, "label": "Innovation & Creativity" },
-            { "id": 2, "label": "Employee Well-being" },
-            { "id": 3, "label": "Collaboration & Teamwork" },
-            { "id": 4, "label": "Continuous Learning" },
-            { "id": 5, "label": "Customer-Centric Approach" }
+            "Innovation",
+            "Work-Life Balance",
+            "Diversity & Inclusion",
+            "Growth Mindset"
         ],
         "benefits": [
-            { "id": 1, "label": "Full Health Coverage" },
-            { "id": 2, "label": "Unlimited PTO" },
-            { "id": 3, "label": "Remote & Hybrid Work Flexibility" },
-            { "id": 4, "label": "Equity & Stock Options" },
-            { "id": 5, "label": "Yearly Tech Stipend" },
-            { "id": 6, "label": "Employee Wellness Programs" }
+            "Comprehensive Health Insurance",
+            "Flexible Work Hours",
+            "Remote Work Option",
+            "Stock Options",
+            "Performance Bonuses",
+        ],
+        "careerScopes": ["Web Developer", "Software Engineer", "Accountant", "Finance"],
+        "socials": [
+            { "id": 1, "social": "Facebook", "link": "bondeth.com" },
+            { "id": 2, "social": "Instagram", "link": "rithy-bondeth.com" },
+            { "id": 3, "social": "Telegram", "link": "telegram/rithy-bondeth" }
         ]
     },
     {
@@ -89,10 +95,12 @@ export const companyList: ICompany[]  = [
         "industry": "Innovative Technology & IT Consulting",
         "description": "Innovative Technology & IT Consulting lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
         "avatar": "INN",
+        "cover": "NXG.png",
         "companySize": 150,
         "foundedYear": 2015,
-        "location": "New York, NY",
+        "location": locationConstant[1],
         "email": "innotech@gmail.com",
+        "password": "nano-tech-123",
         "phone": "+1987654321",
         "website": "https://innotech.com",
         "facebook": "https://www.facebook.com/innotech",
@@ -132,22 +140,28 @@ export const companyList: ICompany[]  = [
             }
         ],
         "availableTimes": [
-            { "id": 1, "label": "Full Time" },
-            { "id": 2, "label": "Remote" },
-            { "id": 3, "label": "Contract" }
+            "Full Time",
+            "Remote",
+            "Contract"
         ],
         "values": [
-            { "id": 1, "label": "Innovation" },
-            { "id": 2, "label": "Work-Life Balance" },
-            { "id": 3, "label": "Diversity & Inclusion" },
-            { "id": 4, "label": "Growth Mindset" }
+            "Innovation",
+            "Work-Life Balance",
+            "Diversity & Inclusion",
+            "Growth Mindset"
         ],
         "benefits": [
-            { "id": 1, "label": "Comprehensive Health Insurance" },
-            { "id": 2, "label": "Flexible Work Hours" },
-            { "id": 3, "label": "Remote Work Option" },
-            { "id": 4, "label": "Stock Options" },
-            { "id": 5, "label": "Performance Bonuses" }
+            "Comprehensive Health Insurance",
+            "Flexible Work Hours",
+            "Remote Work Option",
+            "Stock Options",
+            "Performance Bonuses",
+        ],
+        "careerScopes": ["Web Developer", "Software Engineer", "Accountant", "Finance"],
+        "socials": [
+            { "id": 1, "social": "Facebook", "link": "bondeth.com" },
+            { "id": 2, "social": "Instagram", "link": "rithy-bondeth.com" },
+            { "id": 3, "social": "Telegram", "link": "telegram/rithy-bondeth" }
         ]
     }
 ]

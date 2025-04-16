@@ -21,7 +21,6 @@ import BlurBackGroundOverlay from "@/components/utils/bur-background-overlay";
 import Divider from "@/components/utils/divider";
 import IconLabel from "@/components/utils/icon-label";
 import LabelInput from "@/components/utils/label-input";
-import Tag from "@/components/utils/tag";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
@@ -53,8 +52,8 @@ import {
   LucideXCircle,
 } from "lucide-react";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { openPositionSchema, TOpenPositionForm } from "./validation";
+import { Controller, useForm } from "react-hook-form";
+import { companyFormSchema, TCompanyProfileForm } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Popover,
@@ -74,27 +73,73 @@ import { careerOptions } from "@/data/career-data";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { string } from "zod";
+import { getValue } from "tsparticles-engine";
 
 export default function ProfilePage() {
   const companyId = 1;
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const { toast } = useToast();
 
+  const form = useForm<TCompanyProfileForm>({
+    resolver: zodResolver(companyFormSchema),
+    defaultValues: {
+      basicInfo: {
+        name: companyList[companyId].name ?? "",
+        description: companyList[companyId].description ?? "",
+        industry: companyList[companyId].industry ?? "",
+        companySize: companyList[companyId].companySize ?? "",
+        foundedYear: companyList[companyId].foundedYear ?? "",
+        location: companyList[companyId].location ?? "",
+        avatar: companyList[companyId].avatar ? new File([], "avatar.png") : null,
+        cover: companyList[companyId].cover ? new File([], "cover.png") : null,
+      },
+      accountSetting: {
+        email: companyList[companyId].email ?? "",
+        phone: companyList[companyId].phone ?? "",
+        currentPassword: companyList[companyId].password ?? null,
+        newPassword: "",
+        confirmPassword: "",
+      },
+      openPositions: companyList[companyId].openPositions.map((position) => ({
+        title: position.title ?? "", 
+        description: position.description ?? "",
+        experienceRequirement: position.experience ?? "",
+        educationRequirement: position.education ?? "",
+        salary: position.salary ?? "",
+        postedDate: new Date(position.postedDate) ?? null,
+        deadlineDate: new Date(position.deadlineDate) ?? null,
+        skill: position.skills ?? [],
+      })),
+      images: companyList[companyId].images.map((img) => img ? new File([], 'image.png') : null),
+      benefitsAndValues: {
+        benefits: companyList[companyId].benefits ?? [],
+        values: companyList[companyId].values ?? [],
+      },
+      careerScopes: companyList[companyId].careerScopes ?? [],
+      socials: companyList[companyId].socials.map((social) => ({
+           social: social.social,
+           link: social.link,
+      }))
+    },
+  });
+
   // Benefits
   const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
   const [benefitInput, setBenefitInput] = useState<string>("");
-  const [benefits, setBenefits] = useState<string[]>([]);
+  const initialBenefit = form.getValues?.('benefitsAndValues.benefits') || [];
+  const [benefits, setBenefits] = useState<string[]>(initialBenefit);
 
   // Values
   const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
   const [valueInput, setValueInput] = useState<string>("");
-  const [values, setValues] = useState<string[]>([]);
+  const initialValue = form.getValues?.('benefitsAndValues.values') || [];
+  const [values, setValues] = useState<string[]>(initialValue);
 
   // Careers
   const [openCareersPopOver, setOpenCareersPopOver] = useState<boolean>(false);
   const [careersInput, setCareersInput] = useState<string>("");
-  const [careers, setCareers] = useState<string[]>([]);
+  const initialCareerScope = form.getValues?.('careerScopes') || [];
+  const [careers, setCareers] = useState<string[]>(initialCareerScope);
 
   const addBenefits = () => {
     const trimmed = benefitInput.trim();
@@ -214,9 +259,7 @@ export default function ProfilePage() {
     new: false,
     confirm: false,
   });
-  const [selectedLocation, setSelectedLocation] = useState<TLocations | null>(
-    null
-  );
+  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(companyList[companyId].location);
   const [selectedPlatform, setSelectedPlatform] = useState<TPlatform | null>(
     null
   );
@@ -241,23 +284,7 @@ export default function ProfilePage() {
     }));
   };
 
-  const form = useForm<TOpenPositionForm>({
-    resolver: zodResolver(openPositionSchema),
-    defaultValues: {
-      openPositions: companyList[companyId].openPositions.map((position) => ({
-        title: position.title,
-        description: position.description,
-        experienceRequirement: position.experience,
-        educationRequirement: position.education,
-        salary: position.salary,
-        postedDate: new Date(position.postedDate),
-        deadlineDate: new Date(position.deadlineDate),
-        skill: position.skills,
-      })),
-    },
-  });
-
-  const onSubmit = (data: TOpenPositionForm) => {
+  const onSubmit = (data: TCompanyProfileForm) => {
     console.log(data);
   };
 
@@ -317,11 +344,9 @@ export default function ProfilePage() {
                 label="Company Name"
                 input={
                   <Input
-                    placeholder={
-                      isEdit ? "Company Name" : companyList[companyId].name
-                    }
+                    placeholder={isEdit ? "Company Name" : companyList[companyId].name}
                     id="company-name"
-                    name="company-name"
+                    {...form.register('basicInfo.name')}
                     disabled={!isEdit}
                   />
                 }
@@ -331,13 +356,9 @@ export default function ProfilePage() {
                   Company Description
                 </TypographyMuted>
                 <Textarea
-                  placeholder={
-                    isEdit
-                      ? "Company Description"
-                      : companyList[companyId].description
-                  }
+                  placeholder={isEdit ? "Company Description" : companyList[companyId].description}
                   id="company-description"
-                  name="company-description"
+                  {...form.register('basicInfo.description')}
                   className="placeholder:text-sm"
                   disabled={!isEdit}
                 />
@@ -347,41 +368,41 @@ export default function ProfilePage() {
                   label="Industry"
                   input={
                     <Input
-                      placeholder={
-                        isEdit ? "Industry" : companyList[companyId].industry
-                      }
+                      placeholder={isEdit ? "Industry" : companyList[companyId].industry}
                       id="industry"
-                      name="industry"
+                      {...form.register('basicInfo.industry')}
                       disabled={!isEdit}
                     />
                   }
                 />
-                <div className="flex flex-col items-start gap-1">
+                <div className="flex flex-col items-start gap-2">
                   <TypographyMuted className="text-xs">
                     Locations
                   </TypographyMuted>
-                  <Select
-                    onValueChange={(value: TLocations) =>
-                      setSelectedLocation(value)
-                    }
-                    value={selectedLocation || ""}
-                    disabled={!isEdit}
-                  >
-                    <SelectTrigger className="h-12 text-muted-foreground">
-                      <SelectValue
-                        placeholder={
-                          isEdit ? "Location" : companyList[companyId].location
-                        }
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {locationConstant.map((location) => (
-                        <SelectItem key={location} value={location}>
-                          {location}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Controller
+                    name="basicInfo.location" 
+                    control={form.control} 
+                    defaultValue={selectedLocation}
+                    render={({ field }) => (
+                      <Select
+                        value={field.value}  
+                        onValueChange={(value: TLocations) => field.onChange(value)}  
+                        disabled={!isEdit}  
+                      >
+                        <SelectTrigger className="h-12 text-muted-foreground">
+                          <SelectValue placeholder={isEdit ? "Select Location" : selectedLocation} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {/* Map over your locations and create SelectItems */}
+                          {locationConstant.map((location) => (
+                            <SelectItem key={location} value={location}>
+                              {location}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
                 </div>
               </div>
               <div className="w-full flex items-center justify-between gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
@@ -391,13 +412,9 @@ export default function ProfilePage() {
                     <Input
                       type="number"
                       placeholder={
-                        isEdit
-                          ? "Company Size"
-                          : companyList[companyId].companySize.toString() +
-                            "+ Employee"
-                      }
+                        isEdit ? "Company Size" : companyList[companyId].companySize.toString() + "+ Employee"}
                       id="company-size"
-                      name="company-size"
+                      {...form.register('basicInfo.companySize')}
                       prefix={<LucideUsers />}
                       disabled={!isEdit}
                     />
@@ -409,12 +426,9 @@ export default function ProfilePage() {
                     <Input
                       type="number"
                       placeholder={
-                        isEdit
-                          ? "Founded Year"
-                          : companyList[companyId].foundedYear.toString()
-                      }
+                        isEdit ? "Founded Year" : companyList[companyId].foundedYear.toString()}
                       id="company-founded-year"
-                      name="company-founded-year"
+                      {...form.register('basicInfo.foundedYear')}
                       prefix={<LucideBuilding />}
                       disabled={!isEdit}
                     />
@@ -425,11 +439,9 @@ export default function ProfilePage() {
                 label="Email"
                 input={
                   <Input
-                    placeholder={
-                      isEdit ? "Email" : companyList[companyId].email
-                    }
+                    placeholder={isEdit ? "Email" : companyList[companyId].email}
                     id="email"
-                    name="email"
+                    {...form.register('accountSetting.email')}
                     prefix={<LucideMail />}
                     disabled={!isEdit}
                   />
@@ -439,11 +451,9 @@ export default function ProfilePage() {
                 label="Phone Number"
                 input={
                   <Input
-                    placeholder={
-                      isEdit ? "Phone number" : companyList[companyId].phone
-                    }
+                    placeholder={isEdit ? "Phone number" : companyList[companyId].phone}
                     id="phone"
-                    name="phone"
+                    {...form.register('accountSetting.phone')}
                     prefix={<LucidePhone />}
                     disabled={!isEdit}
                   />
@@ -557,7 +567,8 @@ export default function ProfilePage() {
                   <Input
                     placeholder="Current Password"
                     id="current-password"
-                    name="current-password"
+                    {...form.register("accountSetting.currentPassword")}
+                    disabled={!isEdit}
                     type={isShowPassword.current ? "text" : "password"}
                     prefix={<LucideLock />}
                     suffix={
@@ -590,7 +601,8 @@ export default function ProfilePage() {
                   <Input
                     placeholder="New Password"
                     id="new-password"
-                    name="new-password"
+                    {...form.register("accountSetting.newPassword")}
+                    disabled={!isEdit}
                     type={isShowPassword.new ? "text" : "password"}
                     prefix={<LucideLock />}
                     suffix={
@@ -608,7 +620,6 @@ export default function ProfilePage() {
                         />
                       )
                     }
-                    disabled={!isEdit}
                   />
                 }
               />
@@ -618,7 +629,8 @@ export default function ProfilePage() {
                   <Input
                     placeholder="Confirm Password"
                     id="confirm-password"
-                    name="confirm-password"
+                    {...form.register("accountSetting.confirmPassword")}
+                    disabled={!isEdit}
                     type={isShowPassword.confirm ? "text" : "password"}
                     prefix={<LucideLock />}
                     suffix={
@@ -642,7 +654,6 @@ export default function ProfilePage() {
                         />
                       )
                     }
-                    disabled={!isEdit}
                   />
                 }
               />
@@ -669,15 +680,15 @@ export default function ProfilePage() {
                         }
                         text={benefit}
                       />
-                      <LucideXCircle
+                      {isEdit && <LucideXCircle
                         className="text-muted-foreground cursor-pointer"
                         width={"18px"}
                         onClick={() => removeBenefit(benefit)}
-                      />
+                      />}
                     </div>
                   ))}
               </div>
-              <Popover
+              {isEdit && <Popover
                 open={openBenefitPopOver}
                 onOpenChange={setOpenBenefitPopOver}
               >
@@ -703,7 +714,7 @@ export default function ProfilePage() {
                     <Button onClick={addBenefits}>Save</Button>
                   </div>
                 </PopoverContent>
-              </Popover>
+              </Popover>}
             </div>
           </div>
 
@@ -725,15 +736,15 @@ export default function ProfilePage() {
                         icon={<LucideCircleCheck stroke="white" fill="#69B41E" />}
                         text={value}
                       />
-                      <LucideXCircle
+                      {isEdit && <LucideXCircle
                         className="text-muted-foreground cursor-pointer"
                         width={"18px"}
                         onClick={() => removeValue(value)}
-                      />
+                      />}
                     </div>
                   ))}
               </div>
-              <Popover
+              {isEdit && <Popover
                 open={openValuePopOver}
                 onOpenChange={setOpenValuePopOver}
               >
@@ -759,7 +770,7 @@ export default function ProfilePage() {
                     <Button onClick={addValue}>Save</Button>
                   </div>
                 </PopoverContent>
-              </Popover>
+              </Popover>}
             </div>
           </div>
 
@@ -777,18 +788,18 @@ export default function ProfilePage() {
                     className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted"
                   >
                     <TypographySmall>{career}</TypographySmall>
-                    <LucideCircleX
+                    {isEdit && <LucideCircleX
                       className="text-muted-foreground cursor-pointer"
                       width={"18px"}
                       onClick={() => {
                         removeCareer(career);
                       }}
-                    />
+                    />}
                   </div>
                 ))}
               </div>
             </div>
-            <Popover
+           {isEdit && <Popover
               open={openCareersPopOver}
               onOpenChange={setOpenCareersPopOver}
             >
@@ -835,15 +846,15 @@ export default function ProfilePage() {
                   </CommandList>
                 </Command>
               </PopoverContent>
-            </Popover>
-            <Button
+            </Popover>}
+            {isEdit && <Button
               variant="secondary"
               className="w-full text-xs"
               onClick={addCareers}
             >
               <LucidePlus />
               Add Career
-            </Button>
+            </Button>}
           </div>
 
           {/* Social Information Form Section */}

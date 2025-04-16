@@ -14,9 +14,11 @@ export const basicInfoSchema = z.object({
       name: textValidation("Name", 20).optional(),
       description: textValidation("Description", 100).optional(),
       industry: textValidation("Industry", 100).optional(),
-      companySize: textValidation("Company size", 100).optional(),
-      foundedYear: textValidation("Founded Year", 100).optional(),
+      companySize: z.number().positive().optional(),
+      foundedYear: z.number().positive().optional(),
       location: selectedValidation("location").optional(),
+      avatar: imageValidation('Avatar').optional(),
+      cover: imageValidation('Cover').optional(),
     }).optional(),
 });
 
@@ -66,7 +68,7 @@ export const benefitAndValueSchema = z.object({
   }).optional(), 
 });
 
-export const careerScopesStepSchema = z.object({
+export const careerScopesSchema = z.object({
   careerScopes: z.array(z.string()).min(1, { message: "Please select at least one career option" }).optional(), 
 });
 
@@ -80,4 +82,14 @@ export const socialSchema = z.object({
     ).optional(),
 });
 
-export type TOpenPositionForm = z.infer<typeof openPositionSchema>;
+export const companyFormSchema = z.object({
+  ...basicInfoSchema.shape,
+  ...accountSettingSchema.shape,
+  ...openPositionSchema.shape,
+  ...imagesSchema.shape,
+  ...benefitAndValueSchema.shape,
+  ...careerScopesSchema.shape,
+  ...socialSchema.shape,
+})
+
+export type TCompanyProfileForm = z.infer<typeof companyFormSchema>;

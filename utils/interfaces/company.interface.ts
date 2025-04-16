@@ -4,10 +4,12 @@ export interface ICompany {
     industry: string;
     description: string;
     avatar: string;
+    cover: string;
     companySize: number;
     foundedYear: number;
     location: string;
     email: string;
+    password: string;
     phone: string;
     website: string;
     facebook: string;
@@ -17,9 +19,11 @@ export interface ICompany {
     telegram: string;
     images: string[];
     openPositions: IJobPosition[];
-    availableTimes: ILabelItem[];
-    values: ILabelItem[];
-    benefits: ILabelItem[];
+    availableTimes: string[];
+    values: string[];
+    benefits: string[];
+    careerScopes: string[];
+    socials: ISocial[];
 }
 
 export interface IJobPosition {
@@ -35,7 +39,8 @@ export interface IJobPosition {
     deadlineDate: string;
 }
 
-export interface ILabelItem {
-    id: number;
-    label: string;
+export interface ISocial {
+    id?: number;
+    social: string;
+    link: string;
 }
