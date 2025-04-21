@@ -58,7 +58,7 @@ export const openPositionSchema = z.object({
 });
 
 export const imagesSchema = z.object({
-  images: z.array(imageValidation("images").optional()).optional(),
+  images: z.array(imageValidation("images")).optional(),
 });
 
 export const benefitAndValueSchema = z.object({

@@ -89,7 +89,9 @@ export default function ProfilePage() {
         companySize: companyList[companyId].companySize ?? "",
         foundedYear: companyList[companyId].foundedYear ?? "",
         location: companyList[companyId].location ?? "",
-        avatar: companyList[companyId].avatar ? new File([], "avatar.png") : null,
+        avatar: companyList[companyId].avatar
+          ? new File([], "avatar.png")
+          : null,
         cover: companyList[companyId].cover ? new File([], "cover.png") : null,
       },
       accountSetting: {
@@ -100,7 +102,7 @@ export default function ProfilePage() {
         confirmPassword: "",
       },
       openPositions: companyList[companyId].openPositions.map((position) => ({
-        title: position.title ?? "", 
+        title: position.title ?? "",
         description: position.description ?? "",
         experienceRequirement: position.experience ?? "",
         educationRequirement: position.education ?? "",
@@ -109,35 +111,35 @@ export default function ProfilePage() {
         deadlineDate: new Date(position.deadlineDate) ?? null,
         skill: position.skills ?? [],
       })),
-      images: companyList[companyId].images.map((img) => img ? new File([], 'image.png') : null),
+      images: companyList[companyId].images ?? [],
       benefitsAndValues: {
         benefits: companyList[companyId].benefits ?? [],
         values: companyList[companyId].values ?? [],
       },
       careerScopes: companyList[companyId].careerScopes ?? [],
       socials: companyList[companyId].socials.map((social) => ({
-           social: social.social,
-           link: social.link,
-      }))
+        social: social.social,
+        link: social.link,
+      })),
     },
   });
 
   // Benefits
   const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
   const [benefitInput, setBenefitInput] = useState<string>("");
-  const initialBenefit = form.getValues?.('benefitsAndValues.benefits') || [];
+  const initialBenefit = form.getValues?.("benefitsAndValues.benefits") || [];
   const [benefits, setBenefits] = useState<string[]>(initialBenefit);
 
   // Values
   const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
   const [valueInput, setValueInput] = useState<string>("");
-  const initialValue = form.getValues?.('benefitsAndValues.values') || [];
+  const initialValue = form.getValues?.("benefitsAndValues.values") || [];
   const [values, setValues] = useState<string[]>(initialValue);
 
   // Careers
   const [openCareersPopOver, setOpenCareersPopOver] = useState<boolean>(false);
   const [careersInput, setCareersInput] = useState<string>("");
-  const initialCareerScope = form.getValues?.('careerScopes') || [];
+  const initialCareerScope = form.getValues?.("careerScopes") || [];
   const [careers, setCareers] = useState<string[]>(initialCareerScope);
 
   const addBenefits = () => {
@@ -258,7 +260,9 @@ export default function ProfilePage() {
     new: false,
     confirm: false,
   });
-  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(companyList[companyId].location);
+  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
+    companyList[companyId].location
+  );
   const [selectedPlatform, setSelectedPlatform] = useState<TPlatform | null>(
     null
   );
@@ -343,9 +347,11 @@ export default function ProfilePage() {
                 label="Company Name"
                 input={
                   <Input
-                    placeholder={isEdit ? "Company Name" : companyList[companyId].name}
+                    placeholder={
+                      isEdit ? "Company Name" : companyList[companyId].name
+                    }
                     id="company-name"
-                    {...form.register('basicInfo.name')}
+                    {...form.register("basicInfo.name")}
                     disabled={!isEdit}
                   />
                 }
@@ -355,9 +361,13 @@ export default function ProfilePage() {
                   Company Description
                 </TypographyMuted>
                 <Textarea
-                  placeholder={isEdit ? "Company Description" : companyList[companyId].description}
+                  placeholder={
+                    isEdit
+                      ? "Company Description"
+                      : companyList[companyId].description
+                  }
                   id="company-description"
-                  {...form.register('basicInfo.description')}
+                  {...form.register("basicInfo.description")}
                   className="placeholder:text-sm"
                   disabled={!isEdit}
                 />
@@ -367,9 +377,11 @@ export default function ProfilePage() {
                   label="Industry"
                   input={
                     <Input
-                      placeholder={isEdit ? "Industry" : companyList[companyId].industry}
+                      placeholder={
+                        isEdit ? "Industry" : companyList[companyId].industry
+                      }
                       id="industry"
-                      {...form.register('basicInfo.industry')}
+                      {...form.register("basicInfo.industry")}
                       disabled={!isEdit}
                     />
                   }
@@ -379,17 +391,23 @@ export default function ProfilePage() {
                     Locations
                   </TypographyMuted>
                   <Controller
-                    name="basicInfo.location" 
-                    control={form.control} 
+                    name="basicInfo.location"
+                    control={form.control}
                     defaultValue={selectedLocation}
                     render={({ field }) => (
                       <Select
-                        value={field.value}  
-                        onValueChange={(value: TLocations) => field.onChange(value)}  
-                        disabled={!isEdit}  
+                        value={field.value}
+                        onValueChange={(value: TLocations) =>
+                          field.onChange(value)
+                        }
+                        disabled={!isEdit}
                       >
                         <SelectTrigger className="h-12 text-muted-foreground">
-                          <SelectValue placeholder={isEdit ? "Select Location" : selectedLocation} />
+                          <SelectValue
+                            placeholder={
+                              isEdit ? "Select Location" : selectedLocation
+                            }
+                          />
                         </SelectTrigger>
                         <SelectContent>
                           {/* Map over your locations and create SelectItems */}
@@ -411,9 +429,13 @@ export default function ProfilePage() {
                     <Input
                       type="number"
                       placeholder={
-                        isEdit ? "Company Size" : companyList[companyId].companySize.toString() + "+ Employee"}
+                        isEdit
+                          ? "Company Size"
+                          : companyList[companyId].companySize.toString() +
+                            "+ Employee"
+                      }
                       id="company-size"
-                      {...form.register('basicInfo.companySize')}
+                      {...form.register("basicInfo.companySize")}
                       prefix={<LucideUsers />}
                       disabled={!isEdit}
                     />
@@ -425,9 +447,12 @@ export default function ProfilePage() {
                     <Input
                       type="number"
                       placeholder={
-                        isEdit ? "Founded Year" : companyList[companyId].foundedYear.toString()}
+                        isEdit
+                          ? "Founded Year"
+                          : companyList[companyId].foundedYear.toString()
+                      }
                       id="company-founded-year"
-                      {...form.register('basicInfo.foundedYear')}
+                      {...form.register("basicInfo.foundedYear")}
                       prefix={<LucideBuilding />}
                       disabled={!isEdit}
                     />
@@ -438,9 +463,11 @@ export default function ProfilePage() {
                 label="Email"
                 input={
                   <Input
-                    placeholder={isEdit ? "Email" : companyList[companyId].email}
+                    placeholder={
+                      isEdit ? "Email" : companyList[companyId].email
+                    }
                     id="email"
-                    {...form.register('accountSetting.email')}
+                    {...form.register("accountSetting.email")}
                     prefix={<LucideMail />}
                     disabled={!isEdit}
                   />
@@ -450,9 +477,11 @@ export default function ProfilePage() {
                 label="Phone Number"
                 input={
                   <Input
-                    placeholder={isEdit ? "Phone number" : companyList[companyId].phone}
+                    placeholder={
+                      isEdit ? "Phone number" : companyList[companyId].phone
+                    }
                     id="phone"
-                    {...form.register('accountSetting.phone')}
+                    {...form.register("accountSetting.phone")}
                     prefix={<LucidePhone />}
                     disabled={!isEdit}
                   />
@@ -523,30 +552,53 @@ export default function ProfilePage() {
             </div>
             <Carousel className="w-full">
               <CarouselContent className="w-full">
-                {[1].map((item) => (
-                  <CarouselItem key={item} className="max-w-[280px]">
-                    <div
-                      className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center"
-                      // style={{backgroundImage: `url(${item})`}}
+                {form.watch("images")?.map((img, index) => {
+                  let imageUrl = "";
+
+                  if (typeof img === "string") {
+                    imageUrl = img;
+                  } else if (img instanceof File) {
+                    imageUrl = URL.createObjectURL(img);
+                  }
+
+                  return (
+                    <CarouselItem key={index} className="max-w-[280px] relative group">
+                      <div className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center" style={{ backgroundImage: `url(${imageUrl})` }} />
+                      {isEdit && (
+                        <LucideXCircle
+                          className="absolute top-3 right-1 text-red-500 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => {
+                            const updated = form.watch("images")?.filter((_, i) => i !== index);
+                            form.setValue("images", updated);
+                          }}
+                        />
+                      )}
+                    </CarouselItem>
+                  );
+                })}
+                {isEdit && <CarouselItem className="max-w-[280px]">
+                  <label htmlFor="image-upload" className="h-[180px] bg-muted rounded-md my-2 ml-2 flex justify-center items-center cursor-pointer">
+                    <input
+                      id="image-upload"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const files = e.target.files;
+                        if (!files) return;
+
+                        const currentImages = form.watch("images") || [];
+                        form.setValue("images", [...currentImages, files[0]]);
+                      }}
                     />
-                  </CarouselItem>
-                ))}
-                <CarouselItem className="max-w-[280px]">
-                  <div
-                    className="h-[180px] bg-muted rounded-md my-2 ml-2 flex justify-center items-center cursor-pointer"
-                    onClick={() => alert("Add Company Image")}
-                  >
-                    <div className="flex flex-col items-center gap-5">
-                      <LucideImagePlus
-                        className="text-muted-foreground"
-                        strokeWidth="1.2px"
-                      />
+                    <div className="flex flex-col items-center gap-2">
+                      <LucidePlus className="text-muted-foreground" />
                       <TypographyMuted className="text-xs">
                         Add Company Image
                       </TypographyMuted>
                     </div>
-                  </div>
-                </CarouselItem>
+                  </label>
+                </CarouselItem>}
               </CarouselContent>
               <CarouselPrevious className="ml-8" />
               <CarouselNext className="mr-8" />
@@ -674,46 +726,44 @@ export default function ProfilePage() {
                       key={benefit}
                     >
                       <IconLabel
-                        icon={
-                          <LucideCircleCheck stroke="white" fill="#0073E6" />
-                        }
+                        icon={<LucideCircleCheck stroke="white" fill="#0073E6" />}
                         text={benefit}
                       />
-                      {isEdit && <LucideXCircle
-                        className="text-muted-foreground cursor-pointer"
-                        width={"18px"}
-                        onClick={() => removeBenefit(benefit)}
-                      />}
+                      {isEdit && (
+                        <LucideXCircle className="text-muted-foreground cursor-pointer" onClick={() => removeBenefit(benefit)}/>
+                      )}
                     </div>
                   ))}
               </div>
-              {isEdit && <Popover
-                open={openBenefitPopOver}
-                onOpenChange={setOpenBenefitPopOver}
-              >
-                <PopoverTrigger asChild>
-                  <Button className="w-full text-xs" variant="secondary">
-                    Add benefit
-                    <LucidePlus />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
-                  <Input
-                    placeholder="Enter your benefit (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
-                    value={benefitInput}
-                    onChange={(e) => setBenefitInput(e.target.value)}
-                  />
-                  <div className="flex items-center gap-1 [&>button]:text-xs">
-                    <Button
-                      variant="outline"
-                      onClick={() => setOpenBenefitPopOver(false)}
-                    >
-                      Cancel
+              {isEdit && (
+                <Popover
+                  open={openBenefitPopOver}
+                  onOpenChange={setOpenBenefitPopOver}
+                >
+                  <PopoverTrigger asChild>
+                    <Button className="w-full text-xs" variant="secondary">
+                      Add benefit
+                      <LucidePlus />
                     </Button>
-                    <Button onClick={addBenefits}>Save</Button>
-                  </div>
-                </PopoverContent>
-              </Popover>}
+                  </PopoverTrigger>
+                  <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
+                    <Input
+                      placeholder="Enter your benefit (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
+                      value={benefitInput}
+                      onChange={(e) => setBenefitInput(e.target.value)}
+                    />
+                    <div className="flex items-center gap-1 [&>button]:text-xs">
+                      <Button
+                        variant="outline"
+                        onClick={() => setOpenBenefitPopOver(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button onClick={addBenefits}>Save</Button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              )}
             </div>
           </div>
 
@@ -735,41 +785,41 @@ export default function ProfilePage() {
                         icon={<LucideCircleCheck stroke="white" fill="#69B41E" />}
                         text={value}
                       />
-                      {isEdit && <LucideXCircle
-                        className="text-muted-foreground cursor-pointer"
-                        width={"18px"}
-                        onClick={() => removeValue(value)}
-                      />}
+                      {isEdit && (
+                        <LucideXCircle className="text-muted-foreground cursor-pointer" onClick={() => removeValue(value)} />
+                      )}
                     </div>
                   ))}
               </div>
-              {isEdit && <Popover
-                open={openValuePopOver}
-                onOpenChange={setOpenValuePopOver}
-              >
-                <PopoverTrigger asChild>
-                  <Button className="w-full text-xs" variant="secondary">
-                    Add value
-                    <LucidePlus />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
-                  <Input
-                    placeholder="Enter your value (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
-                    value={valueInput}
-                    onChange={(e) => setValueInput(e.target.value)}
-                  />
-                  <div className="flex items-center gap-1 [&>button]:text-xs">
-                    <Button
-                      variant="outline"
-                      onClick={() => setOpenValuePopOver(false)}
-                    >
-                      Cancel
+              {isEdit && (
+                <Popover
+                  open={openValuePopOver}
+                  onOpenChange={setOpenValuePopOver}
+                >
+                  <PopoverTrigger asChild>
+                    <Button className="w-full text-xs" variant="secondary">
+                      Add value
+                      <LucidePlus />
                     </Button>
-                    <Button onClick={addValue}>Save</Button>
-                  </div>
-                </PopoverContent>
-              </Popover>}
+                  </PopoverTrigger>
+                  <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
+                    <Input
+                      placeholder="Enter your value (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
+                      value={valueInput}
+                      onChange={(e) => setValueInput(e.target.value)}
+                    />
+                    <div className="flex items-center gap-1 [&>button]:text-xs">
+                      <Button
+                        variant="outline"
+                        onClick={() => setOpenValuePopOver(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button onClick={addValue}>Save</Button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              )}
             </div>
           </div>
 
@@ -787,73 +837,73 @@ export default function ProfilePage() {
                     className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted"
                   >
                     <TypographySmall>{career}</TypographySmall>
-                    {isEdit && <LucideCircleX
-                      className="text-muted-foreground cursor-pointer"
-                      width={"18px"}
-                      onClick={() => {
-                        removeCareer(career);
-                      }}
-                    />}
+                    {isEdit && (
+                      <LucideCircleX className="text-muted-foreground cursor-pointer" onClick={() => removeCareer(career)} />
+                    )}
                   </div>
                 ))}
               </div>
             </div>
-           {isEdit && <Popover
-              open={openCareersPopOver}
-              onOpenChange={setOpenCareersPopOver}
-            >
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  className="w-full justify-between"
-                >
-                  {careersInput
-                    ? careerOptions.find(
-                        (career) => career.value === careersInput
-                      )?.label
-                    : "Select careers..."}
-                  <ChevronDown className="opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="p-0">
-                <Command>
-                  <CommandInput
-                    placeholder="Select careers..."
-                    className="h-9"
-                  />
-                  <CommandList>
-                    <CommandEmpty>No career found.</CommandEmpty>
-                    <CommandGroup>
-                      {careerOptions.map((career, index) => (
-                        <CommandItem
-                          key={index}
-                          value={career.value}
-                          onSelect={() => handleCareerSelect(career.value)} // Handle career selection
-                        >
-                          {career.label}
-                          <LucideCircleCheck
-                            className={
-                              careersInput === career.value
-                                ? "opacity-100"
-                                : "opacity-0"
-                            }
-                          />
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>}
-            {isEdit && <Button
-              variant="secondary"
-              className="w-full text-xs"
-              onClick={addCareers}
-            >
-              <LucidePlus />
-              Add Career
-            </Button>}
+            {isEdit && (
+              <Popover
+                open={openCareersPopOver}
+                onOpenChange={setOpenCareersPopOver}
+              >
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    className="w-full justify-between"
+                  >
+                    {careersInput
+                      ? careerOptions.find(
+                          (career) => career.value === careersInput
+                        )?.label
+                      : "Select careers..."}
+                    <ChevronDown className="opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="p-0">
+                  <Command>
+                    <CommandInput
+                      placeholder="Select careers..."
+                      className="h-9"
+                    />
+                    <CommandList>
+                      <CommandEmpty>No career found.</CommandEmpty>
+                      <CommandGroup>
+                        {careerOptions.map((career, index) => (
+                          <CommandItem
+                            key={index}
+                            value={career.value}
+                            onSelect={() => handleCareerSelect(career.value)} // Handle career selection
+                          >
+                            {career.label}
+                            <LucideCircleCheck
+                              className={
+                                careersInput === career.value
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              }
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            )}
+            {isEdit && (
+              <Button
+                variant="secondary"
+                className="w-full text-xs"
+                onClick={addCareers}
+              >
+                <LucidePlus />
+                Add Career
+              </Button>
+            )}
           </div>
 
           {/* Social Information Form Section */}

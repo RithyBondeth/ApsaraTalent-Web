@@ -22,9 +22,8 @@ export const companyList: ICompany[]  = [
         "x": "https://www.x.com/nextgen",
         "telegram": "https://t.me/nextgen",
         "images": [
-            "https://picsum.photos/200/304",
-            "https://picsum.photos/200/305",
-            "https://picsum.photos/200/306"
+            "https://www.sharespace.work/blog/wp-content/uploads/2021/06/Campfire_2.max-1000x1000-1.jpg",
+            "https://d17422uxibeifn.cloudfront.net/wordpress/wp-content/uploads/2020/10/02161646/Google-workspace-header.jpg",
         ],
         "openPositions": [
             { 
@@ -109,9 +108,8 @@ export const companyList: ICompany[]  = [
         "x": "https://www.x.com/innotech",
         "telegram": "https://t.me/innotech",
         "images": [
-            "https://picsum.photos/200/301",
-            "https://picsum.photos/200/302",
-            "https://picsum.photos/200/303"
+            "https://www.workdesign.com/wp-content/uploads/2020/03/Google-Open-Workspace-Photo-Courtesy-of-Google-e1583416661584.png",
+            "https://ml5enisp4q1t.i.optimole.com/w:1600/h:965/q:mauto/f:best/https://interiorarchitects.com/wp-content/uploads/2019/08/21NOKX_0017_000_IA_Nokia_HERE_N3_iawebsite-e1566587330816.jpg",
         ],
         "openPositions": [
             { 
