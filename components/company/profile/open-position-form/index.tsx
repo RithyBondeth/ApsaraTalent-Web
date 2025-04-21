@@ -11,18 +11,18 @@ import { Popover } from "@radix-ui/react-popover";
 import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { LucidePlus, LucideXCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 
 export default function OpenPositionForm(props: IOpenPositionFormProps) {
-  const { register, control, getValues, setValue } = props.form;
+  const { register, control, getValues } = props.form;
   const { toast } = useToast();
 
   const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
   const [skillInput, setSkillInput] = useState<string>("") 
-  const initialSkill = getValues(`openPositions.${props.index}.skills`) || [];
+  const initialSkill = getValues(`openPositions.${props.index}.skill`) || [];
   const [skills, setSkills] = useState<string[]>(initialSkill);
 
   const addSkills = () => {
@@ -50,7 +50,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
 
     setSkillInput("");
     setOpenSkillPopOver(false);        
-  }
+  }  
 
   const removeSkills = (skillToRemove: string) => {
     const updatedSkills = skills.filter(
@@ -59,9 +59,6 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
     setSkills(updatedSkills);
   }
 
-  useEffect(() => {
-    setValue(`openPositions.${props.index}.skills`, skills);
-  }, [skills, props.index, setValue])
 
   return (
     <div className="w-full flex flex-col items-start gap-3">

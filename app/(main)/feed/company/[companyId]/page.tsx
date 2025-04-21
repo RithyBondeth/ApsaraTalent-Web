@@ -9,7 +9,6 @@ import { CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@
 import { Carousel } from "@/components/ui/carousel";
 import Divider from "@/components/utils/divider";
 import { companyList } from "@/data/company-data";
-import { ILabelItem } from "@/utils/interfaces/company.interface";
 import BlurBackGroundOverlay from "@/components/utils/bur-background-overlay";
 import { Button } from "@/components/ui/button";
 import Tag from "@/components/utils/tag";
@@ -170,16 +169,16 @@ export default function CompanyDetailPage() {
                             <div className="flex flex-col gap-3 border border-muted px-5 py-3 rounded-md">
                                 <TypographyP className="font-medium">Values</TypographyP>
                                 <div className="flex flex-col gap-2">
-                                    {companyList[companyId].values.map((item: ILabelItem) => (
-                                        <IconLabel key={item.id} icon={<LucideCircleCheck stroke="white" fill="#69B41E"/>} text={item.label}/>
+                                    {companyList[companyId].values.map((item: any, index) => (
+                                        <IconLabel key={index} icon={<LucideCircleCheck stroke="white" fill="#69B41E"/>} text={item.label}/>
                                     ))}
                                 </div>
                             </div>
                             <div className="flex flex-col gap-3 border border-muted px-5 py-3 rounded-md">
                                 <TypographyP className="font-medium">Benefits</TypographyP>
                                 <div className="flex flex-col gap-2">
-                                    {companyList[companyId].benefits.map((item: ILabelItem) => (
-                                        <IconLabel key={item.id} icon={<LucideCircleCheck stroke="white" fill="#0073E6"/>} text={item.label}/>
+                                    {companyList[companyId].benefits.map((item: any, index) => (
+                                        <IconLabel key={index} icon={<LucideCircleCheck stroke="white" fill="#0073E6"/>} text={item.label}/>
                                     ))}
                                 </div>
                             </div>
