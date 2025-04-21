@@ -73,7 +73,6 @@ import { careerOptions } from "@/data/career-data";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { getValue } from "tsparticles-engine";
 
 export default function ProfilePage() {
   const companyId = 1;

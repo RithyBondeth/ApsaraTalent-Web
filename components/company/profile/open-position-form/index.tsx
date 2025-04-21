@@ -6,18 +6,62 @@ import { Textarea } from "@/components/ui/textarea";
 import LabelInput from "@/components/utils/label-input";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { IOpenPositionFormProps } from "./props";
-import Tag from "@/components/utils/tag";
 import { Controller } from "react-hook-form";
 import { Popover } from "@radix-ui/react-popover";
 import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { LucidePlus } from "lucide-react";
+import { LucidePlus, LucideXCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/hooks/use-toast";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
 
 export default function OpenPositionForm(props: IOpenPositionFormProps) {
-  const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
+  const { register, control, getValues, setValue } = props.form;
+  const { toast } = useToast();
 
-  const { register, control } = props.form;
+  const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
+  const [skillInput, setSkillInput] = useState<string>("") 
+  const initialSkill = getValues(`openPositions.${props.index}.skills`) || [];
+  const [skills, setSkills] = useState<string[]>(initialSkill);
+
+  const addSkills = () => {
+    const trimmed = skillInput.trim();
+    if(!trimmed) return;
+
+    const alreadyExists = skills.some(
+      (skill) => skill.toLowerCase() === trimmed.toLowerCase()
+    );
+    
+    if (alreadyExists) {
+      toast({
+        variant: "destructive",
+        title: "Duplicated Benefit",
+        description: "Please input another benefit.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+      setSkillInput("");
+      setOpenSkillPopOver(false);
+      return;
+    }
+
+    const updated = [ ...skills, trimmed ];
+    setSkills(updated);
+
+    setSkillInput("");
+    setOpenSkillPopOver(false);        
+  }
+
+  const removeSkills = (skillToRemove: string) => {
+    const updatedSkills = skills.filter(
+      (skill) => skill !== skillToRemove
+    );
+    setSkills(updatedSkills);
+  }
+
+  useEffect(() => {
+    setValue(`openPositions.${props.index}.skills`, skills);
+  }, [skills, props.index, setValue])
 
   return (
     <div className="w-full flex flex-col items-start gap-3">
@@ -71,11 +115,21 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             Skill Requirements
           </TypographyMuted>
           <div className="flex flex-wrap gap-2">
-            {props.skill?.map((item) => (
-              <Tag key={item} label={item} />
+            {skills?.map((item, index) => (
+              <div
+              key={index}
+              className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted"
+            >
+              <TypographySmall>{item}</TypographySmall>
+              {props.isEdit && <LucideXCircle
+                className="text-muted-foreground cursor-pointer"
+                width={"18px"}
+                onClick={() => removeSkills(item)}
+              />}
+            </div>
             ))}
           </div>
-          {props.isEdit && <Popover open={openValuePopOver} onOpenChange={setOpenValuePopOver}>
+          {props.isEdit && <Popover open={openSkillPopOver} onOpenChange={setOpenSkillPopOver}>
           <PopoverTrigger asChild>
             <Button className="w-full text-xs" variant="secondary">
               Add skill
@@ -83,12 +137,16 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             </Button>
           </PopoverTrigger>
           <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
-            <Input placeholder="Enter your skill (e.g. Figma, Photo shop etc.)" />
+            <Input 
+              placeholder="Enter your skill (e.g. Figma, Photo shop etc.)" 
+              onChange={(e) => setSkillInput(e.target.value)}
+              value={skillInput}
+            />
             <div className="flex items-center gap-1 [&>button]:text-xs">
-              <Button variant="outline" onClick={() => setOpenValuePopOver(false)}>
+              <Button variant="outline" onClick={() => setOpenSkillPopOver(false)}>
                 Cancel
               </Button>
-              <Button>Save</Button>
+              <Button onClick={addSkills}>Save</Button>
             </div>
           </PopoverContent>
         </Popover>}

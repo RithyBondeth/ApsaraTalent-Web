@@ -8,7 +8,6 @@ import IconLabel from "../../utils/icon-label";
 import { TypographyP } from "../../utils/typography/typography-p";
 import { Button } from "../../ui/button";
 import Link from "next/link";
-import { ILabelItem } from "@/utils/interfaces/company.interface";
 export default function CompanyDialog(props: ICompanyDialogProps) {
     return (
         <Dialog open={props.open} onOpenChange={props.setOpen}>
@@ -41,8 +40,8 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                             <div className="flex flex-col items-start gap-2 tablet-sm:hidden">
                                 <TypographyP className="font-medium">Benefits</TypographyP>
                                 <div className="flex flex-wrap gap-2">
-                                    {props.benefits.map((benefit: ILabelItem) => (
-                                        <div key={benefit.id} className="px-3 py-2 rounded-2xl bg-muted">
+                                    {props.benefits.map((benefit: any, index) => (
+                                        <div key={index} className="px-3 py-2 rounded-2xl bg-muted">
                                             <IconLabel icon={<LucideCircleCheck stroke="white" fill="#0073E6"/>} text={benefit.label}/>
                                         </div>
                                     ))} 
@@ -51,8 +50,8 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                             <div className="flex flex-col items-start gap-2 tablet-sm:hidden">
                                 <TypographyP className="font-medium">Values</TypographyP>
                                 <div className="flex flex-wrap gap-2">
-                                    {props.values.map((value: ILabelItem) => (
-                                        <div key={value.id} className="px-3 py-2 rounded-2xl bg-muted">
+                                    {props.values.map((value: any, index) => (
+                                        <div key={index} className="px-3 py-2 rounded-2xl bg-muted">
                                             <IconLabel icon={<LucideCircleCheck stroke="white" fill="#69B41E"/>} text={value.label}/>
                                         </div>
                                     ))} 
