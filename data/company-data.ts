@@ -122,7 +122,7 @@ export const companyList: ICompany[]  = [
                 "education": "Bachelor's Degree",
                 "skills": ["React", "Vue.js", "CSS", "JavaScript"],
                 "postedDate": "02/03/2025",
-                "deadlineDate": "02/04/2025",
+                "deadlineDate": "11/10/2025",
             },
             { 
                 "id": 2, 
@@ -134,7 +134,7 @@ export const companyList: ICompany[]  = [
                 "education": "Bachelor's Degree",
                 "skills": ["Figma", "Adobe XD", "Wireframing", "Prototyping"],
                 "postedDate": "02/03/2025",
-                "deadlineDate": "02/04/2025",
+                "deadlineDate": "10/08/2025",
             }
         ],
         "availableTimes": [

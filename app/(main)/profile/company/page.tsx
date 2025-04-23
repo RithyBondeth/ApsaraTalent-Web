@@ -31,10 +31,8 @@ import {
   platformConstant,
 } from "@/utils/constants/app.constant";
 import { TLocations } from "@/utils/types/location.type";
-import { TPlatform } from "@/utils/types/platform.type";
 import { Select } from "@radix-ui/react-select";
 import {
-  Check,
   ChevronDown,
   LucideBuilding,
   LucideCircleCheck,
@@ -42,7 +40,6 @@ import {
   LucideEdit,
   LucideEye,
   LucideEyeClosed,
-  LucideImagePlus,
   LucideLink2,
   LucideLock,
   LucideMail,
@@ -73,6 +70,7 @@ import { careerOptions } from "@/data/career-data";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
+import Link from "next/link";
 
 export default function ProfilePage() {
   const companyId = 1;
@@ -141,6 +139,13 @@ export default function ProfilePage() {
   const [careersInput, setCareersInput] = useState<string>("");
   const initialCareerScope = form.getValues?.("careerScopes") || [];
   const [careers, setCareers] = useState<string[]>(initialCareerScope);
+
+  // Socials
+  const [socialInput, setSocialInput] = useState<{ social: string; link: string;}>({ social: "", link: "" });
+  const initialSocial = (form.getValues?.("socials") || []).filter(
+    (s): s is { social: string; link: string } => s !== undefined
+  );
+  const [socials, setSocials] = useState<{ social: string; link: string }[]>(initialSocial);
 
   const addBenefits = () => {
     const trimmed = benefitInput.trim();
@@ -255,23 +260,51 @@ export default function ProfilePage() {
     setCareers(updatedCareers);
   };
 
+  const addSocial = () => {
+    const trimmedSocial = socialInput.social.trim();
+    const trimmedLink = socialInput.link.trim();
+
+    if (!trimmedSocial || !trimmedLink) return;
+
+    // Check for duplicate social entries
+    const alreadyExists = socials.some(
+      (s) => s.social.toLowerCase() === trimmedSocial.toLowerCase()
+    );
+
+    if (alreadyExists) {
+      toast({
+        variant: "destructive",
+        title: "Duplicate Social",
+        description: "This social platform already exists.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+      return;
+    }
+
+    const updatedSocials = [
+      ...socials,
+      { social: trimmedSocial, link: trimmedLink },
+    ];
+    setSocials(updatedSocials); // Update the state
+    setSocialInput({ social: "", link: "" }); // Reset the input
+  };
+
+  const removeSocial = (index: number) => {
+    const updatedSocials = socials.filter((_, i) => i !== index);
+    setSocials(updatedSocials); // Update the state
+  };
+
   const [isShowPassword, setIsShowPassword] = useState({
     current: false,
     new: false,
     confirm: false,
   });
-  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
-    companyList[companyId].location
-  );
-  const [selectedPlatform, setSelectedPlatform] = useState<TPlatform | null>(
-    null
-  );
-  const [selectedDates, setSelectedDates] = useState<
-    Record<string, { posted?: Date; deadline?: Date }>
-  >({});
+  
+  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(companyList[companyId].location);
 
-  const getDeadlineDate = (positionId: string, fallback: Date) =>
-    selectedDates[positionId]?.deadline ?? fallback;
+  const [selectedDates, setSelectedDates] = useState<Record<string, { posted?: Date; deadline?: Date }>>({});
+
+  const getDeadlineDate = (positionId: string, fallback: Date) => selectedDates[positionId]?.deadline ?? fallback;
 
   const handleDateChange = (
     positionId: string,
@@ -397,20 +430,16 @@ export default function ProfilePage() {
                     render={({ field }) => (
                       <Select
                         value={field.value}
-                        onValueChange={(value: TLocations) =>
-                          field.onChange(value)
-                        }
+                        onValueChange={(value: TLocations) => {
+                          field.onChange(value); 
+                          setSelectedLocation(value);
+                        }}
                         disabled={!isEdit}
                       >
                         <SelectTrigger className="h-12 text-muted-foreground">
-                          <SelectValue
-                            placeholder={
-                              isEdit ? "Select Location" : selectedLocation
-                            }
-                          />
+                          <SelectValue placeholder={isEdit ? "Select Location" : selectedLocation} />
                         </SelectTrigger>
                         <SelectContent>
-                          {/* Map over your locations and create SelectItems */}
                           {locationConstant.map((location) => (
                             <SelectItem key={location} value={location}>
                               {location}
@@ -562,13 +591,21 @@ export default function ProfilePage() {
                   }
 
                   return (
-                    <CarouselItem key={index} className="max-w-[280px] relative group">
-                      <div className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center" style={{ backgroundImage: `url(${imageUrl})` }} />
+                    <CarouselItem
+                      key={index}
+                      className="max-w-[280px] relative group"
+                    >
+                      <div
+                        className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center"
+                        style={{ backgroundImage: `url(${imageUrl})` }}
+                      />
                       {isEdit && (
                         <LucideXCircle
                           className="absolute top-3 right-1 text-red-500 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
                           onClick={() => {
-                            const updated = form.watch("images")?.filter((_, i) => i !== index);
+                            const updated = form
+                              .watch("images")
+                              ?.filter((_, i) => i !== index);
                             form.setValue("images", updated);
                           }}
                         />
@@ -576,29 +613,34 @@ export default function ProfilePage() {
                     </CarouselItem>
                   );
                 })}
-                {isEdit && <CarouselItem className="max-w-[280px]">
-                  <label htmlFor="image-upload" className="h-[180px] bg-muted rounded-md my-2 ml-2 flex justify-center items-center cursor-pointer">
-                    <input
-                      id="image-upload"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        const files = e.target.files;
-                        if (!files) return;
+                {isEdit && (
+                  <CarouselItem className="max-w-[280px]">
+                    <label
+                      htmlFor="image-upload"
+                      className="h-[180px] bg-muted rounded-md my-2 ml-2 flex justify-center items-center cursor-pointer"
+                    >
+                      <input
+                        id="image-upload"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const files = e.target.files;
+                          if (!files) return;
 
-                        const currentImages = form.watch("images") || [];
-                        form.setValue("images", [...currentImages, files[0]]);
-                      }}
-                    />
-                    <div className="flex flex-col items-center gap-2">
-                      <LucidePlus className="text-muted-foreground" />
-                      <TypographyMuted className="text-xs">
-                        Add Company Image
-                      </TypographyMuted>
-                    </div>
-                  </label>
-                </CarouselItem>}
+                          const currentImages = form.watch("images") || [];
+                          form.setValue("images", [...currentImages, files[0]]);
+                        }}
+                      />
+                      <div className="flex flex-col items-center gap-2">
+                        <LucidePlus className="text-muted-foreground" />
+                        <TypographyMuted className="text-xs">
+                          Add Company Image
+                        </TypographyMuted>
+                      </div>
+                    </label>
+                  </CarouselItem>
+                )}
               </CarouselContent>
               <CarouselPrevious className="ml-8" />
               <CarouselNext className="mr-8" />
@@ -726,11 +768,17 @@ export default function ProfilePage() {
                       key={benefit}
                     >
                       <IconLabel
-                        icon={<LucideCircleCheck stroke="white" fill="#0073E6" />}
+                        icon={
+                          <LucideCircleCheck stroke="white" fill="#0073E6" />
+                        }
                         text={benefit}
                       />
                       {isEdit && (
-                        <LucideXCircle className="text-muted-foreground cursor-pointer" onClick={() => removeBenefit(benefit)}/>
+                        <LucideXCircle
+                          className="text-muted-foreground cursor-pointer"
+                          width={"18px"}
+                          onClick={() => removeBenefit(benefit)}
+                        />
                       )}
                     </div>
                   ))}
@@ -782,11 +830,17 @@ export default function ProfilePage() {
                       key={value}
                     >
                       <IconLabel
-                        icon={<LucideCircleCheck stroke="white" fill="#69B41E" />}
+                        icon={
+                          <LucideCircleCheck stroke="white" fill="#69B41E" />
+                        }
                         text={value}
                       />
                       {isEdit && (
-                        <LucideXCircle className="text-muted-foreground cursor-pointer" onClick={() => removeValue(value)} />
+                        <LucideXCircle
+                          className="text-muted-foreground cursor-pointer"
+                          width={"18px"}
+                          onClick={() => removeValue(value)}
+                        />
                       )}
                     </div>
                   ))}
@@ -838,7 +892,11 @@ export default function ProfilePage() {
                   >
                     <TypographySmall>{career}</TypographySmall>
                     {isEdit && (
-                      <LucideCircleX className="text-muted-foreground cursor-pointer" onClick={() => removeCareer(career)} />
+                      <LucideCircleX
+                        className="text-muted-foreground cursor-pointer"
+                        width={"18px"}
+                        onClick={() => removeCareer(career)}
+                      />
                     )}
                   </div>
                 ))}
@@ -914,53 +972,66 @@ export default function ProfilePage() {
             </div>
             <div className="w-full flex flex-col items-start gap-5">
               <div className="w-full flex flex-col items-stretch gap-3">
-                <div className="w-full flex flex-col items-start gap-3">
-                  <TypographyMuted>Social 1</TypographyMuted>
-                  <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
-                    <div className="w-full flex justify-between items-center gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
-                      <div className="flex flex-col items-start gap-1">
-                        <TypographyMuted className="text-xs">
-                          Platform
-                        </TypographyMuted>
-                        <Select
-                          onValueChange={(value: TPlatform) =>
-                            setSelectedPlatform(value)
-                          }
-                          value={selectedPlatform || ""}
-                        >
-                          <SelectTrigger className="h-12 text-muted-foreground">
-                            <SelectValue placeholder="Platform" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {platformConstant.map((platform) => (
-                              <SelectItem
-                                key={platform.id}
-                                value={platform.value}
-                              >
-                                {platform.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <LabelInput
-                        label="Link"
-                        input={
-                          <Input
-                            placeholder="Link"
-                            id="link"
-                            name="link"
-                            prefix={<LucideLink2 />}
-                          />
-                        }
+                {socials.map((item, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <TypographySmall>{item.social}:</TypographySmall>
+                    <Link href={item.link} className="text-blue-500 underline">
+                      <TypographySmall>{item.link}</TypographySmall>
+                    </Link>
+                    {isEdit && (
+                      <LucideXCircle
+                        className="text-muted-foreground cursor-pointer"
+                        width={"18px"}
+                        onClick={() => removeSocial(index)}
                       />
-                    </div>
+                    )}
                   </div>
-                </div>
-                <Button variant="secondary" className="text-xs w-full">
-                  <LucidePlus />
-                  Add new social
-                </Button>
+                ))}
+                {isEdit && (
+                  <div>
+                    <div className="w-full flex flex-col items-start gap-5 p-5 mt-3 border-[1px] border-muted rounded-md">
+                      <div className="w-full flex justify-between items-center gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
+                        <div className="w-full flex flex-col items-start gap-1">
+                          <TypographyMuted className="text-xs">
+                            Platform
+                          </TypographyMuted>
+                          <Select
+                            onValueChange={(value: string) => setSocialInput({ ...socialInput, social: value })}
+                            value={socialInput.social}
+                          >
+                            <SelectTrigger className="h-12 text-muted-foreground">
+                              <SelectValue placeholder="Platform" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {platformConstant.map((platform) => (
+                                <SelectItem key={platform.id} value={platform.value}>
+                                  {platform.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <LabelInput
+                          label="Link"
+                          input={
+                            <Input
+                              placeholder="Link"
+                              id="link"
+                              name="link"
+                              value={socialInput.link}
+                              onChange={(e) => setSocialInput({ ...socialInput, link: e.target.value })}
+                              prefix={<LucideLink2 />}
+                            />
+                          }
+                        />
+                      </div>
+                    </div>
+                    <Button variant="secondary" className="text-xs w-full" onClick={addSocial}>
+                      <LucidePlus />
+                      Add new social
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

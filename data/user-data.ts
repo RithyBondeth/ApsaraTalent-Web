@@ -1,4 +1,4 @@
-import facebookIcon from '@/assets/socials/facebook.png';
+import facebookIcon from '@/assets/socials/facebook.webp';
 import linkedInIcon from '@/assets/socials/linkedin.png';
 import githubIcon from '@/assets/socials/github.png';
 import emailIcon from '@/assets/socials/email.png';
