@@ -73,7 +73,7 @@ import { TypographySmall } from "@/components/utils/typography/typography-small"
 import Link from "next/link";
 
 export default function ProfilePage() {
-  const companyId = 1;
+  const companyId = 0;
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const { toast } = useToast();
 
@@ -107,7 +107,7 @@ export default function ProfilePage() {
         salary: position.salary ?? "",
         postedDate: new Date(position.postedDate) ?? null,
         deadlineDate: new Date(position.deadlineDate) ?? null,
-        skill: position.skills ?? [],
+        skills: position.skills ?? [],
       })),
       images: companyList[companyId].images ?? [],
       benefitsAndValues: {
@@ -325,13 +325,10 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="flex flex-col gap-5">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5">
       <div
         className="relative h-72 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center"
-        style={{
-          backgroundImage:
-            "url(https://plus.unsplash.com/premium_photo-1661962642401-ebd5ae0514ca?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8YXBwbGUlMjBvZmZpY2V8ZW58MHx8MHx8fDA%3D)",
-        }}
+        style={{ backgroundImage: `url(${companyList[companyId].cover})` }}
       >
         <BlurBackGroundOverlay />
         <div className="relative flex items-center gap-5 tablet-sm:flex-col">
@@ -375,7 +372,7 @@ export default function ProfilePage() {
               <TypographyH4>Company Information</TypographyH4>
               <Divider />
             </div>
-            <form action="" className="flex flex-col items-start gap-5">
+            <div className="flex flex-col items-start gap-5">
               <LabelInput
                 label="Company Name"
                 input={
@@ -516,7 +513,7 @@ export default function ProfilePage() {
                   />
                 }
               />
-            </form>
+            </div>
           </div>
 
           {/* OpenPosition Information Form Section */}
@@ -532,7 +529,7 @@ export default function ProfilePage() {
               </div>
               <Divider />
             </div>
-            <form
+            <div
               onSubmit={form.handleSubmit(onSubmit)}
               className="flex flex-col items-start gap-5"
             >
@@ -551,7 +548,7 @@ export default function ProfilePage() {
                       description={position.description}
                       experience={position.experience}
                       education={position.education}
-                      skill={position.skills}
+                      skills={position.skills}
                       salary={position.salary}
                       deadlineDate={{
                         defaultValue: deadlineFallback,
@@ -564,14 +561,7 @@ export default function ProfilePage() {
                     />
                   );
                 })}
-              {isEdit && (
-                <div className="w-full flex justify-end">
-                  <Button type="submit" className="text-xs">
-                    Submit
-                  </Button>
-                </div>
-              )}
-            </form>
+            </div>
           </div>
           {/* Company Multiple Images Section */}
           <div className="w-full p-5 border-[1px] border-muted rounded-md">
@@ -653,7 +643,7 @@ export default function ProfilePage() {
               <TypographyH4>Account Settings</TypographyH4>
               <Divider />
             </div>
-            <form action="" className="flex flex-col items-start gap-5">
+            <div className="flex flex-col items-start gap-5">
               <LabelInput
                 label="Current Password"
                 input={
@@ -750,7 +740,7 @@ export default function ProfilePage() {
                   />
                 }
               />
-            </form>
+            </div>
           </div>
 
           {/* Benefits Section */}
@@ -1035,8 +1025,15 @@ export default function ProfilePage() {
               </div>
             </div>
           </div>
+          {isEdit && (
+            <div className="w-full flex justify-end">
+              <Button type="submit" className="text-xs w-full">
+                Submit
+              </Button>
+            </div>
+          )}
         </div>
       </div>
-    </div>
+    </form>
   );
 }

@@ -27,8 +27,13 @@ export default function AvatarStepForm({
   useEffect(() => {
     const avatar = getValues?.("avatar");
     if (avatar) {
-      const objectUrl = URL.createObjectURL(avatar);
-      setPreview(objectUrl); // Update preview when the component is loaded or when getValues is changed
+      let objectUrl = "";
+      if (avatar instanceof File) {
+        objectUrl = URL.createObjectURL(avatar); // Create object URL for the file
+      } else if (typeof avatar === "string") {
+        objectUrl = avatar; // Use the avatar URL directly if it's a string
+      }
+      setPreview(objectUrl); // Set the preview
     }
   }, [getValues]);
 

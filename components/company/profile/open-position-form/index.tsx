@@ -22,7 +22,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
 
   const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
   const [skillInput, setSkillInput] = useState<string>("") 
-  const initialSkill = getValues(`openPositions.${props.index}.skill`) || [];
+  const initialSkill = getValues(`openPositions.${props.index}.skills`) || [];
   const [skills, setSkills] = useState<string[]>(initialSkill);
 
   const addSkills = () => {

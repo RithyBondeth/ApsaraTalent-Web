@@ -40,9 +40,9 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                             <div className="flex flex-col items-start gap-2 tablet-sm:hidden">
                                 <TypographyP className="font-medium">Benefits</TypographyP>
                                 <div className="flex flex-wrap gap-2">
-                                    {props.benefits.map((benefit: any, index) => (
+                                    {props.benefits.map((benefit, index) => (
                                         <div key={index} className="px-3 py-2 rounded-2xl bg-muted">
-                                            <IconLabel icon={<LucideCircleCheck stroke="white" fill="#0073E6"/>} text={benefit.label}/>
+                                            <IconLabel icon={<LucideCircleCheck stroke="white" fill="#0073E6"/>} text={benefit}/>
                                         </div>
                                     ))} 
                                 </div>
@@ -50,9 +50,9 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                             <div className="flex flex-col items-start gap-2 tablet-sm:hidden">
                                 <TypographyP className="font-medium">Values</TypographyP>
                                 <div className="flex flex-wrap gap-2">
-                                    {props.values.map((value: any, index) => (
+                                    {props.values.map((value, index) => (
                                         <div key={index} className="px-3 py-2 rounded-2xl bg-muted">
-                                            <IconLabel icon={<LucideCircleCheck stroke="white" fill="#69B41E"/>} text={value.label}/>
+                                            <IconLabel icon={<LucideCircleCheck stroke="white" fill="#69B41E"/>} text={value}/>
                                         </div>
                                     ))} 
                                 </div>

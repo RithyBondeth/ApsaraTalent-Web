@@ -28,8 +28,13 @@ export default function CoverCompanyStepForm({
   useEffect(() => {
     const cover = getValues?.("cover");
     if (cover) {
-      const objectUrl = URL.createObjectURL(cover);
-      setPreview(objectUrl); // Update preview when the component is loaded
+      let objectUrl = "";
+      if (cover instanceof File) {
+        objectUrl = URL.createObjectURL(cover); // Create object URL for the file
+      } else if (typeof cover === "string") {
+        objectUrl = cover; // Use the cover URL directly if it's a string
+      }
+      setPreview(objectUrl); // Set the preview
     }
   }, [getValues]);
 

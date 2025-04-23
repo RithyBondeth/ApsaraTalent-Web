@@ -1,4 +1,4 @@
-import { TOpenPositionForm } from "@/app/(main)/profile/company/validation";
+import { TCompanyProfileForm } from "@/app/(main)/profile/company/validation";
 import { UseFormReturn } from "react-hook-form";
 
 export interface IOpenPositionFormProps {
@@ -7,11 +7,11 @@ export interface IOpenPositionFormProps {
    description: string | undefined;
    experience: string | undefined;
    education: string | undefined;
-   skill: string[];
+   skills: string[];
    salary: string | undefined;
    deadlineDate: IDatePickerItemProps;
    isEdit: boolean;
-   form: UseFormReturn<TOpenPositionForm>;
+   form: UseFormReturn<TCompanyProfileForm>;
    index: number;
 }
 interface IDatePickerItemProps {

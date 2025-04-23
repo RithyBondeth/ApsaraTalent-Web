@@ -92,7 +92,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
                 <div className="flex flex-col gap-3">
                     <IconLabel text="Available times" icon={<LucideClock/>} className="[&>p]:text-primary [&>p]:font-medium"/>
                     <div className="w-full flex flex-wrap gap-2">
-                        {props.availableTimes.map((item: any, index) => <Tag key={index} label={item.label} />)}
+                        {props.availableTimes.map((item , index) => <Tag key={index} label={item} />)}
                     </div>
                 </div>
             </div>
