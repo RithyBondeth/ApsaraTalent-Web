@@ -49,7 +49,7 @@ import {
   LucideUsers,
   LucideXCircle,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { companyFormSchema, TCompanyProfileForm } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
