@@ -2,6 +2,7 @@ import { TCompanyProfileForm } from "@/app/(main)/profile/company/validation";
 import { UseFormReturn } from "react-hook-form";
 
 export interface IOpenPositionFormProps {
+   positionId: number;
    positionLabel: string | undefined;
    title: string | undefined;
    description: string | undefined;
@@ -13,6 +14,7 @@ export interface IOpenPositionFormProps {
    isEdit: boolean;
    form: UseFormReturn<TCompanyProfileForm>;
    index: number;
+   onRemove: (positionId: number) => void;
 }
 interface IDatePickerItemProps {
    defaultValue: Date;

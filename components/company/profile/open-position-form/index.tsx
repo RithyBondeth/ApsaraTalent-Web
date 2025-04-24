@@ -9,7 +9,7 @@ import { IOpenPositionFormProps } from "./props";
 import { Controller } from "react-hook-form";
 import { Popover } from "@radix-ui/react-popover";
 import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { LucidePlus, LucideXCircle } from "lucide-react";
+import { LucidePlus, LucideTrash2, LucideXCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { ToastAction } from "@/components/ui/toast";
@@ -62,7 +62,16 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
 
   return (
     <div className="w-full flex flex-col items-start gap-3">
-      <TypographyMuted>{props.positionLabel}</TypographyMuted>
+      <div className="w-full flex items-center justify-between">
+        <TypographyMuted>{props.positionLabel}</TypographyMuted>
+        {props.isEdit && (
+          <LucideTrash2 
+            onClick={() => props.onRemove(props.positionId)} 
+            className="cursor-pointer text-red-500"
+            width={'18px'}
+          />
+        )}
+      </div>
       <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
         <LabelInput
           label="Title"
@@ -119,7 +128,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             >
               <TypographySmall>{item}</TypographySmall>
               {props.isEdit && <LucideXCircle
-                className="text-muted-foreground cursor-pointer"
+                className="text-muted-foreground cursor-pointer text-red-500"
                 width={"18px"}
                 onClick={() => removeSkills(item)}
               />}

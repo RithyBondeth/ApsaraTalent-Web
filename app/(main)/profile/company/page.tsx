@@ -1,7 +1,7 @@
 "use client";
 
 import OpenPositionForm from "@/components/company/profile/open-position-form";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Carousel,
   CarouselContent,
@@ -35,6 +35,7 @@ import { Select } from "@radix-ui/react-select";
 import {
   ChevronDown,
   LucideBuilding,
+  LucideCamera,
   LucideCircleCheck,
   LucideCircleX,
   LucideEdit,
@@ -48,7 +49,7 @@ import {
   LucideUsers,
   LucideXCircle,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { companyFormSchema, TCompanyProfileForm } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -76,6 +77,7 @@ export default function ProfilePage() {
   const companyId = 0;
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const { toast } = useToast();
+  const [openPositions, setOpenPositions] = useState(companyList[companyId].openPositions);
 
   const form = useForm<TCompanyProfileForm>({
     resolver: zodResolver(companyFormSchema),
@@ -121,6 +123,34 @@ export default function ProfilePage() {
       })),
     },
   });
+
+  const addOpenPosition = () => {
+  
+    const newPosition = {
+      id: Date.now(), // This runs only after component mounts on client
+      title: "",
+      description: "",
+      experienceRequirement: "",
+      educationRequirement: "",
+      skills: [],
+      salary: "",
+      type: "Full Time", // Default value
+      experience: "",
+      education: "",
+      postedDate: new Date().toISOString(),
+      deadlineDate: new Date().toISOString(),
+    };
+
+    setOpenPositions((prevPositions) => [...prevPositions, newPosition]);
+  };
+
+  // Remove an open position
+  const removeOpenPosition = (positionId: number) => {
+    setOpenPositions((prevPositions) => 
+      prevPositions.filter((position) => position.id !== positionId)
+    );
+  };
+
 
   // Benefits
   const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
@@ -320,22 +350,76 @@ export default function ProfilePage() {
     }));
   };
 
-  const onSubmit = (data: TCompanyProfileForm) => {
-    console.log(data);
+  const avatarInputRef = useRef<HTMLInputElement | null>(null);
+  const coverInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, type: 'avatar' | 'cover') => {
+    const file = event.target.files ? event.target.files[0] : null;
+    if (file) {
+      if (type === 'avatar') {
+        setAvatarFile(file);
+        form.setValue("basicInfo.avatar", file);
+      } else if (type === 'cover') {
+        setCoverFile(file);
+        form.setValue("basicInfo.cover", file);
+      }
+    }
   };
+
+  const onSubmit = (data: TCompanyProfileForm) => {
+    console.log("Company Profile: ", data);
+  };
+
+  const { errors } = form.formState;
+  console.log(errors);
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5">
       <div
         className="relative h-72 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center"
-        style={{ backgroundImage: `url(${companyList[companyId].cover})` }}
-      >
+        style={{ backgroundImage: `url(${coverFile ? URL.createObjectURL(coverFile) : companyList[companyId].cover})` }}
+      > 
         <BlurBackGroundOverlay />
+        {isEdit && (
+          <div 
+            className="flex items-center gap-2 cursor-pointer absolute bottom-5 right-5 py-1 px-3 rounded-full bg-foreground text-primary-foreground"
+            onClick={() => coverInputRef.current?.click()} 
+          >
+            <LucideCamera strokeWidth={"1.2px"} width={"18px"}/>
+            <TypographySmall className="text-xs">Change Cover</TypographySmall>
+          </div>
+        )}
+        <input
+          ref={coverInputRef}
+          type="file"
+          className="hidden"
+          accept="image/*"
+          onChange={(e) => handleFileChange(e, 'cover')}
+        />
         <div className="relative flex items-center gap-5 tablet-sm:flex-col">
-          <Avatar className="size-32 tablet-sm:size-28" rounded="md">
-            <AvatarFallback>
-              {companyList[companyId].avatar.slice(0, 2)}
+          <Avatar className="size-32 tablet-sm:size-28 relative bg-primary-foreground" rounded="md">
+            <AvatarImage src={avatarFile ? URL.createObjectURL(avatarFile) : companyList[companyId].avatar} alt="Avatar"/>
+            <AvatarFallback className="uppercase">
+              {companyList[companyId].name.slice(0, 3)}
             </AvatarFallback>
+            {isEdit && (
+              <div 
+                className="size-8 flex justify-center items-center cursor-pointer absolute bottom-1 right-1 p-1 rounded-full bg-foreground text-primary-foreground"
+                onClick={() => avatarInputRef.current?.click()}
+              >
+                <LucideCamera width={"18px"} strokeWidth={"1.2px"}/>
+              </div>
+            )}
+            <input
+              ref={avatarInputRef}
+              type="file"
+              className="hidden"
+              accept="image/*"
+              onChange={(e) => handleFileChange(e, 'avatar')}
+            />
           </Avatar>
           <div className="flex flex-col items-start gap-2 text-muted tablet-sm:items-center">
             <TypographyH2 className="tablet-sm:text-center tablet-sm:text-xl">
@@ -457,8 +541,8 @@ export default function ProfilePage() {
                       placeholder={
                         isEdit
                           ? "Company Size"
-                          : companyList[companyId].companySize.toString() +
-                            "+ Employee"
+                          : companyList[companyId].companySize.toString()
+                        
                       }
                       id="company-size"
                       {...form.register("basicInfo.companySize")}
@@ -521,11 +605,12 @@ export default function ProfilePage() {
             <div className="flex flex-col gap-1">
               <div className="flex justify-between items-center">
                 <TypographyH4>Open Position Information</TypographyH4>
-                <IconLabel
-                  text="Add Open Position"
-                  icon={<LucidePlus className="text-muted-foreground" />}
-                  className="cursor-pointer"
-                />
+                  {isEdit && (
+                    <div className="flex items-center gap-1 cursor-pointer" onClick={addOpenPosition}>
+                      <LucidePlus className="text-muted-foreground" width={'18px'}/>
+                      <TypographyMuted>Add New</TypographyMuted>
+                    </div>
+                  )}
               </div>
               <Divider />
             </div>
@@ -533,34 +618,35 @@ export default function ProfilePage() {
               onSubmit={form.handleSubmit(onSubmit)}
               className="flex flex-col items-start gap-5"
             >
-              {companyList[companyId].openPositions &&
-                companyList[companyId].openPositions.map((position, index) => {
-                  const positionId = position.id.toString();
-                  const deadlineFallback = new Date(position.deadlineDate);
-                  return (
-                    <OpenPositionForm
-                      key={position.id}
-                      index={index}
-                      form={form}
-                      positionLabel={`Position ${position.id}`}
-                      isEdit={isEdit}
-                      title={position.title}
-                      description={position.description}
-                      experience={position.experience}
-                      education={position.education}
-                      skills={position.skills}
-                      salary={position.salary}
-                      deadlineDate={{
-                        defaultValue: deadlineFallback,
-                        data: getDeadlineDate(positionId, deadlineFallback),
-                        onDataChange: (date: Date | undefined) => {
-                          if (date)
-                            handleDateChange(positionId, "deadline", date);
+              {openPositions.map((position, index) => {
+                const positionId = position.id.toString();
+                const deadlineFallback = new Date(position.deadlineDate);
+                return (
+                  <OpenPositionForm
+                    key={index}
+                    index={index}
+                    form={form}
+                    positionId={position.id}
+                    positionLabel={`Position ${index + 1}`}
+                    isEdit={isEdit}
+                    title={position.title}
+                    description={position.description}
+                    experience={position.experience}
+                    education={position.education}
+                    skills={position.skills}
+                    salary={position.salary}
+                    deadlineDate={{
+                      defaultValue: deadlineFallback,
+                      data: getDeadlineDate(positionId, deadlineFallback),
+                      onDataChange: (date: Date | undefined) => {
+                        if (date)
+                          handleDateChange(positionId, "deadline", date);
                         },
-                      }}
-                    />
-                  );
-                })}
+                    }}
+                    onRemove={removeOpenPosition}
+                  />
+                )
+              })}
             </div>
           </div>
           {/* Company Multiple Images Section */}
@@ -583,7 +669,7 @@ export default function ProfilePage() {
                   return (
                     <CarouselItem
                       key={index}
-                      className="max-w-[280px] relative group"
+                      className="max-w-[280px] relative"
                     >
                       <div
                         className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center"
@@ -591,7 +677,7 @@ export default function ProfilePage() {
                       />
                       {isEdit && (
                         <LucideXCircle
-                          className="absolute top-3 right-1 text-red-500 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-3 right-1 cursor-pointer text-red-500"
                           onClick={() => {
                             const updated = form
                               .watch("images")
@@ -765,7 +851,7 @@ export default function ProfilePage() {
                       />
                       {isEdit && (
                         <LucideXCircle
-                          className="text-muted-foreground cursor-pointer"
+                          className="text-muted-foreground cursor-pointer text-red-500"
                           width={"18px"}
                           onClick={() => removeBenefit(benefit)}
                         />
@@ -827,7 +913,7 @@ export default function ProfilePage() {
                       />
                       {isEdit && (
                         <LucideXCircle
-                          className="text-muted-foreground cursor-pointer"
+                          className="text-muted-foreground cursor-pointer text-red-500"
                           width={"18px"}
                           onClick={() => removeValue(value)}
                         />
@@ -883,7 +969,7 @@ export default function ProfilePage() {
                     <TypographySmall>{career}</TypographySmall>
                     {isEdit && (
                       <LucideCircleX
-                        className="text-muted-foreground cursor-pointer"
+                        className="text-muted-foreground cursor-pointer text-red-500"
                         width={"18px"}
                         onClick={() => removeCareer(career)}
                       />
@@ -964,13 +1050,13 @@ export default function ProfilePage() {
               <div className="w-full flex flex-col items-stretch gap-3">
                 {socials.map((item, index) => (
                   <div key={index} className="flex items-center gap-2">
-                    <TypographySmall>{item.social}:</TypographySmall>
-                    <Link href={item.link} className="text-blue-500 underline">
+                    <TypographySmall className="font-medium">{item.social}:</TypographySmall>
+                    <Link href={item.link} className="px-3 bg-blue-100 text-blue-600 rounded-2xl hover:underline">
                       <TypographySmall>{item.link}</TypographySmall>
                     </Link>
                     {isEdit && (
                       <LucideXCircle
-                        className="text-muted-foreground cursor-pointer"
+                        className="text-muted-foreground cursor-pointer text-red-500"
                         width={"18px"}
                         onClick={() => removeSocial(index)}
                       />
