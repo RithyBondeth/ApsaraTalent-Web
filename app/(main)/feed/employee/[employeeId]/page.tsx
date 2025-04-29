@@ -6,15 +6,16 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { LucideAtSign, LucideBookmark, LucideCalendar, LucideDownload, LucideEye, LucideFileText, LucideGraduationCap, LucideHeartHandshake, LucideMail, LucideMapPin, LucidePhone, LucideSchool, LucideUser } from "lucide-react";
-import Image from "next/image";
 import Divider from "@/components/utils/divider";
-import { userList } from "@/data/user-data";
-import { IEducation, IExperience, ISkill, ISocial } from "@/utils/interfaces/employee.interface";
+import { IEducation, IExperience, ISkill, ISocial } from "@/utils/interfaces/user-interface/employee.interface";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import Link from "next/link";
+import { userList } from "@/data/user-data";
 
 export default function EmployeeDetailPage() {
-    const employeeId = 1;
+    const userId = 1;
+    const employee = userList.filter((user) => user.role === "employee");
+    const employeeList = employee[userId].employee;    
 
     return (
         <div className="flex flex-col gap-5">
@@ -23,42 +24,42 @@ export default function EmployeeDetailPage() {
                 <div className="flex flex-col items-center gap-5">
                     <Avatar className="size-40 tablet-xl:!size-52">
                         <AvatarFallback>
-                            { !userList[employeeId].avatar 
-                            ? userList[employeeId].firstname.slice(0, 2) 
-                            : userList[employeeId].avatar}
+                            { !employeeList?.avatar 
+                            ? employeeList?.firstname.slice(0, 2) 
+                            : employeeList?.avatar}
                         </AvatarFallback>  
                     </Avatar>
                     <div className="flex flex-col items-center gap-1">
-                        <TypographyH4>{userList[employeeId].firstname} {userList[employeeId].lastname}</TypographyH4>
-                        <TypographyMuted>{userList[employeeId].job}</TypographyMuted>
+                        <TypographyH4>{employeeList?.firstname} {employeeList?.lastname}</TypographyH4>
+                        <TypographyMuted>{employeeList?.job}</TypographyMuted>
                     </div>
                 </div>
                 <div className="flex flex-col items-start gap-5">
                     <div className="flex flex-col items-start gap-2">
                         <TypographyMuted>Firstname</TypographyMuted>
-                        <IconLabel icon={<LucideUser/>} text={userList[employeeId].firstname}/>          
+                        <IconLabel icon={<LucideUser/>} text={employeeList!.firstname}/>          
                     </div>
                    <div className="flex flex-col items-start gap-2">
                         <TypographyMuted>Lastname</TypographyMuted>
-                        <IconLabel icon={<LucideUser/>} text={userList[employeeId].lastname} />        
+                        <IconLabel icon={<LucideUser/>} text={employeeList!.lastname} />        
                     </div>
                     <div className="flex flex-col items-start gap-2">
                         <TypographyMuted>Username</TypographyMuted>
-                        <IconLabel icon={<LucideAtSign/>} text={userList[employeeId].username} />        
+                        <IconLabel icon={<LucideAtSign/>} text={employeeList!.username} />        
                     </div>
                 </div>
                 <div className="flex flex-col items-start gap-5">
                     <div className="flex flex-col items-start gap-2">
                         <TypographyMuted>Email</TypographyMuted>
-                        <IconLabel icon={<LucideMail/>} text={userList[employeeId].email} />            
+                        <IconLabel icon={<LucideMail/>} text={employeeList!.email} />            
                     </div>
                     <div className="flex flex-col items-start gap-2">
                         <TypographyMuted>Phone</TypographyMuted>
-                        <IconLabel icon={<LucidePhone/>} text={userList[employeeId].phone} />   
+                        <IconLabel icon={<LucidePhone/>} text={employeeList!.phone} />   
                     </div>
                     <div className="flex flex-col items-start gap-2">
                         <TypographyMuted>Address</TypographyMuted>
-                        <IconLabel icon={<LucideMapPin/>} text={userList[employeeId].location} />
+                        <IconLabel icon={<LucideMapPin/>} text={employeeList!.location} />
                     </div>
                 </div>
             </div>
@@ -72,7 +73,7 @@ export default function EmployeeDetailPage() {
                             <TypographyH4>Education</TypographyH4>
                             <Divider/>
                         </div>  
-                        {userList[employeeId].educations.map((item: IEducation) => (
+                        {employeeList?.educations.map((item: IEducation) => (
                            <div className="flex flex-col gap-2 border-l-4 border-primary pl-4" key={item.id}>
                                 <IconLabel icon={<LucideSchool/>} text={item.school}/>      
                                 <IconLabel icon={<LucideGraduationCap/>} text={item.degree}/>
@@ -88,7 +89,7 @@ export default function EmployeeDetailPage() {
                             <Divider/>
                         </div>
                         <div className="flex flex-col gap-5">
-                            {userList[employeeId].experiences.map((item: IExperience) => (
+                            {employeeList?.experiences.map((item: IExperience) => (
                                <div className="border-l-4 border-primary pl-4 space-y-2" key={item.id}>  
                                     <div className="flex flex-col gap-1">
                                         <TypographyP>{item.title}</TypographyP>
@@ -108,7 +109,7 @@ export default function EmployeeDetailPage() {
                             <Divider/>
                         </div>
                         <div className="flex flex-wrap gap-3">
-                                {userList[employeeId].skills.map((item: ISkill) => <Tag key={item.id} label={item.name} />)}
+                                {employeeList?.skills.map((item: ISkill) => <Tag key={item.id} label={item.name} />)}
                         </div>
                     </div>
                 </div>
@@ -124,7 +125,7 @@ export default function EmployeeDetailPage() {
                         <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
                             <div className="flex items-center text-muted-foreground gap-1">
                                 <LucideFileText/>
-                                <TypographyMuted>{userList[employeeId].resume}</TypographyMuted>
+                                <TypographyMuted>{employeeList?.resume}</TypographyMuted>
                             </div>
                             <div className="flex items-center gap-1">
                                 <Button variant="outline" size="icon">
@@ -138,7 +139,7 @@ export default function EmployeeDetailPage() {
                         <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
                             <div className="flex items-center text-muted-foreground gap-1">
                                 <LucideFileText/>
-                                <TypographyMuted>{userList[employeeId].coverLetter}</TypographyMuted>
+                                <TypographyMuted>{employeeList?.coverLetter}</TypographyMuted>
                             </div>
                             <div className="flex items-center gap-1">
                                 <Button variant="outline" size="icon">
@@ -158,7 +159,7 @@ export default function EmployeeDetailPage() {
                             <Divider/>
                         </div>
                         <div className="flex flex-col gap-5">
-                            {userList[employeeId].socials.map((item: ISocial) => (         
+                            {employeeList?.socials.map((item: ISocial) => (         
                                 <div key={item.id} className="flex items-center gap-2">
                                 <TypographySmall className="font-medium">{item.platform}:</TypographySmall>
                                 <Link href={item.url} className="px-3 bg-blue-100 text-blue-600 rounded-2xl hover:underline">

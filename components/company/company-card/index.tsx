@@ -14,7 +14,7 @@ import { useState } from "react";
 import { ICompanyCardProps } from "./props";
 import { useRef } from "react";
 import CompanyDialog from "../company-dialog";
-import { IJobPosition } from "@/utils/interfaces/company.interface";      
+import { IJobPosition } from "@/utils/interfaces/user-interface/company.interface";      
 
 export default function CompanyCard(props: ICompanyCardProps) {
     const [openCompanyDialog, setOpenCompanyDialog] = useState<boolean>(false);

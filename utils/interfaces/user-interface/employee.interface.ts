@@ -1,4 +1,4 @@
-import { TGender } from "../types/gender.type";
+import { TGender } from "../../types/gender.type";
 
 export interface IEmployee {
   id: number;

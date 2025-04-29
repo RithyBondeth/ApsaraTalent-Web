@@ -30,7 +30,7 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { LucideArrowLeft, LucideSearch } from "lucide-react";
-import { careerOptions } from "@/data/career-data";
+import { careerScopesList } from "@/data/career-data";
 import ErrorMessage from "@/components/utils/error-message";
 
 export default function EmployeeCareerScopeStepForm({
@@ -44,7 +44,7 @@ export default function EmployeeCareerScopeStepForm({
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCareers, setSelectedCareers] = useState<string[]>([]);
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(careerOptions.length / itemsPerPage);
+  const totalPages = Math.ceil(careerScopesList.length / itemsPerPage);
   const hasMounted = useRef(false); // To prevent re-initializing on every render
 
   // Register field and sync initial value ONCE
@@ -69,7 +69,7 @@ export default function EmployeeCareerScopeStepForm({
     });
   };
 
-  const paginatedCareers = careerOptions.slice(
+  const paginatedCareers = careerScopesList.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -127,7 +127,7 @@ export default function EmployeeCareerScopeStepForm({
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Suggestions">
-            {careerOptions.slice(0, 5).map((item, index) => (
+            {careerScopesList.slice(0, 5).map((item, index) => (
               <CommandItem key={index} className="flex items-center gap-2">
                 <Checkbox
                   checked={selectedCareers.includes(item.value)}

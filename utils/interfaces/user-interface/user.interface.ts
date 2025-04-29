@@ -1,4 +1,4 @@
-import { TUserRole } from "../types/role.type";
+import { TUserRole } from "../../types/role.type";
 import { ICompany } from "./company.interface";
 import { IEmployee } from "./employee.interface";
 

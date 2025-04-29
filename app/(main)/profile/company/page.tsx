@@ -25,7 +25,6 @@ import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { companyList } from "@/data/company-data";
 import {
   locationConstant,
   platformConstant,
@@ -67,41 +66,45 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
-import { careerOptions } from "@/data/career-data";
+import { careerScopesList } from "@/data/career-data";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import Link from "next/link";
+import { userList } from "@/data/user-data";
 
 export default function ProfilePage() {
-  const companyId = 0;
+  const userId = 0;
+  const company = userList.filter((user) => user.role === 'company');
+  const companyList = company[userId].company;
+  
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const { toast } = useToast();
-  const [openPositions, setOpenPositions] = useState(companyList[companyId].openPositions);
+  const [openPositions, setOpenPositions] = useState(companyList?.openPositions);
 
   const form = useForm<TCompanyProfileForm>({
     resolver: zodResolver(companyFormSchema),
     defaultValues: {
       basicInfo: {
-        name: companyList[companyId].name ?? "",
-        description: companyList[companyId].description ?? "",
-        industry: companyList[companyId].industry ?? "",
-        companySize: companyList[companyId].companySize ?? "",
-        foundedYear: companyList[companyId].foundedYear ?? "",
-        location: companyList[companyId].location ?? "",
-        avatar: companyList[companyId].avatar
+        name: companyList?.name ?? "",
+        description: companyList?.description ?? "",
+        industry: companyList?.industry ?? "",
+        companySize: companyList!.companySize ?? "",
+        foundedYear: companyList!.foundedYear ?? "",
+        location: companyList?.location ?? "",
+        avatar: companyList?.avatar
           ? new File([], "avatar.png")
           : null,
-        cover: companyList[companyId].cover ? new File([], "cover.png") : null,
+        cover: companyList?.cover ? new File([], "cover.png") : null,
       },
       accountSetting: {
-        email: companyList[companyId].email ?? "",
-        phone: companyList[companyId].phone ?? "",
-        currentPassword: companyList[companyId].password ?? null,
+        email: companyList?.email ?? "",
+        phone: companyList?.phone ?? "",
+        currentPassword: companyList!.password ?? null,
         newPassword: "",
         confirmPassword: "",
       },
-      openPositions: companyList[companyId].openPositions.map((position) => ({
+      openPositions: companyList?.openPositions.map((position) => ({
         title: position.title ?? "",
         description: position.description ?? "",
         experienceRequirement: position.experience ?? "",
@@ -111,13 +114,13 @@ export default function ProfilePage() {
         deadlineDate: new Date(position.deadlineDate) ?? null,
         skills: position.skills ?? [],
       })),
-      images: companyList[companyId].images ?? [],
+      images: companyList?.images ?? [],
       benefitsAndValues: {
-        benefits: companyList[companyId].benefits ?? [],
-        values: companyList[companyId].values ?? [],
+        benefits: companyList?.benefits ?? [],
+        values: companyList?.values ?? [],
       },
-      careerScopes: companyList[companyId].careerScopes ?? [],
-      socials: companyList[companyId].socials.map((social) => ({
+      careerScopes: companyList?.careerScopes ?? [],
+      socials: companyList?.socials.map((social) => ({
         platform: social.platform,
         url: social.url,
       })),
@@ -142,13 +145,13 @@ export default function ProfilePage() {
       deadlineDate: new Date().toISOString(),
     };
 
-    setOpenPositions((prevPositions) => [...prevPositions, newPosition]);
+    setOpenPositions((prevPositions) => [...prevPositions!, newPosition]);
   };
 
   // Remove an open position
   const removeOpenPosition = (positionId: number) => {
     setOpenPositions((prevPositions) => 
-      prevPositions.filter((position) => position.id !== positionId)
+      prevPositions!.filter((position) => position.id !== positionId)
     );
   };
 
@@ -331,7 +334,7 @@ export default function ProfilePage() {
     confirm: false,
   });
   
-  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(companyList[companyId].location);
+  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(companyList!.location);
 
   const [selectedDates, setSelectedDates] = useState<Record<string, { posted?: Date; deadline?: Date }>>({});
 
@@ -380,7 +383,7 @@ export default function ProfilePage() {
       },
       careerScopes: careers,
       socials: socials,
-      openPositions: openPositions.map((position, index) => ({
+      openPositions: openPositions?.map((position, index) => ({
         id: position.id,
         title: data.openPositions?.[index]?.title || position.title,
         description: data.openPositions?.[index]?.description || position.description,
@@ -399,7 +402,7 @@ export default function ProfilePage() {
     // Update your local state if needed
     // For example, you might want to update the companyList state
     // const updatedCompanyList = [...companyList];
-    // updatedCompanyList[companyId] = {...updatedCompanyList[companyId], ...updatedData};
+    // updatedcompanyList = {...updatedcompanyList, ...updatedData};
     // setCompanyList(updatedCompanyList);
     
     // Show success message
@@ -441,7 +444,7 @@ export default function ProfilePage() {
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <div
         className="relative h-72 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center"
-        style={{ backgroundImage: `url(${coverFile ? URL.createObjectURL(coverFile) : companyList[companyId].cover})` }}
+        style={{ backgroundImage: `url(${coverFile ? URL.createObjectURL(coverFile) : companyList?.cover})` }}
       > 
         <BlurBackGroundOverlay />
         {isEdit && (
@@ -462,9 +465,9 @@ export default function ProfilePage() {
         />
         <div className="relative flex items-center gap-5 tablet-sm:flex-col">
           <Avatar className="size-32 tablet-sm:size-28 relative bg-primary-foreground" rounded="md">
-            <AvatarImage src={avatarFile ? URL.createObjectURL(avatarFile) : companyList[companyId].avatar} alt="Avatar"/>
+            <AvatarImage src={avatarFile ? URL.createObjectURL(avatarFile) : companyList?.avatar} alt="Avatar"/>
             <AvatarFallback className="uppercase">
-              {companyList[companyId].name.slice(0, 3)}
+              {companyList?.name.slice(0, 3)}
             </AvatarFallback>
             {isEdit && (
               <div 
@@ -484,10 +487,10 @@ export default function ProfilePage() {
           </Avatar>
           <div className="flex flex-col items-start gap-2 text-muted tablet-sm:items-center">
             <TypographyH2 className="tablet-sm:text-center tablet-sm:text-xl">
-              {companyList[companyId].name}
+              {companyList?.name}
             </TypographyH2>
             <TypographyP className="!m-0 tablet-sm:text-center tablet-sm:text-sm">
-              {companyList[companyId].industry}
+              {companyList?.industry}
             </TypographyP>
           </div>
         </div>
@@ -523,7 +526,7 @@ export default function ProfilePage() {
                 input={
                   <Input
                     placeholder={
-                      isEdit ? "Company Name" : companyList[companyId].name
+                      isEdit ? "Company Name" : companyList?.name
                     }
                     id="company-name"
                     {...form.register("basicInfo.name")}
@@ -539,7 +542,7 @@ export default function ProfilePage() {
                   placeholder={
                     isEdit
                       ? "Company Description"
-                      : companyList[companyId].description
+                      : companyList?.description
                   }
                   id="company-description"
                   {...form.register("basicInfo.description")}
@@ -553,7 +556,7 @@ export default function ProfilePage() {
                   input={
                     <Input
                       placeholder={
-                        isEdit ? "Industry" : companyList[companyId].industry
+                        isEdit ? "Industry" : companyList?.industry
                       }
                       id="industry"
                       {...form.register("basicInfo.industry")}
@@ -602,7 +605,7 @@ export default function ProfilePage() {
                       placeholder={
                         isEdit
                           ? "Company Size"
-                          : companyList[companyId].companySize.toString()
+                          : companyList?.companySize.toString()
                         
                       }
                       id="company-size"
@@ -620,7 +623,7 @@ export default function ProfilePage() {
                       placeholder={
                         isEdit
                           ? "Founded Year"
-                          : companyList[companyId].foundedYear.toString()
+                          : companyList?.foundedYear.toString()
                       }
                       id="company-founded-year"
                       {...form.register("basicInfo.foundedYear")}
@@ -635,7 +638,7 @@ export default function ProfilePage() {
                 input={
                   <Input
                     placeholder={
-                      isEdit ? "Email" : companyList[companyId].email
+                      isEdit ? "Email" : companyList?.email
                     }
                     id="email"
                     {...form.register("accountSetting.email")}
@@ -649,7 +652,7 @@ export default function ProfilePage() {
                 input={
                   <Input
                     placeholder={
-                      isEdit ? "Phone number" : companyList[companyId].phone
+                      isEdit ? "Phone number" : companyList?.phone
                     }
                     id="phone"
                     {...form.register("accountSetting.phone")}
@@ -679,7 +682,7 @@ export default function ProfilePage() {
               onSubmit={form.handleSubmit(onSubmit)}
               className="flex flex-col items-start gap-5"
             >
-              {openPositions.map((position, index) => {
+              {openPositions?.map((position, index) => {
                 const positionId = position.id.toString();
                 const deadlineFallback = new Date(position.deadlineDate);
                 return (
@@ -1051,7 +1054,7 @@ export default function ProfilePage() {
                     className="w-full justify-between"
                   >
                     {careersInput
-                      ? careerOptions.find(
+                      ? careerScopesList.find(
                           (career) => career.value === careersInput
                         )?.label
                       : "Select careers..."}
@@ -1067,7 +1070,7 @@ export default function ProfilePage() {
                     <CommandList>
                       <CommandEmpty>No career found.</CommandEmpty>
                       <CommandGroup>
-                        {careerOptions.map((career, index) => (
+                        {careerScopesList.map((career, index) => (
                           <CommandItem
                             key={index}
                             value={career.value}

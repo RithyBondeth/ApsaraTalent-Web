@@ -1,4 +1,4 @@
-import { ICompany } from "@/utils/interfaces/company.interface";
+import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
 
 export interface ICompanyCardProps extends ICompany {
     onViewClick: () => void;

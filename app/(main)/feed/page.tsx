@@ -11,9 +11,8 @@ import { useEffect } from "react";
 import { useTheme } from "next-themes";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { useRouter } from "next/navigation";
-import { userList } from "@/data/user-data";
 import CompanyCard from "@/components/company/company-card";
-import { companyList } from "@/data/company-data";
+import { userList } from "@/data/user-data";
 export default function FeedPage() {
     const { resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
@@ -26,7 +25,10 @@ export default function FeedPage() {
     // Determine which image to display (avoid SSR issues)
     const currentTheme = mounted ? resolvedTheme : "light";
     const feedImage = currentTheme === "dark" ? feedBlackSvg : feedWhiteSvg;
-
+    
+    const companyList = userList.filter((user) => user.role === 'company');
+    const employeeList = userList.filter((user) => user.role === 'employee');
+    
     return (
         <div className="w-full flex flex-col items-start gap-5">
         
@@ -42,18 +44,18 @@ export default function FeedPage() {
             
             {/* Feed Card Section */}
             <div className="w-full grid grid-cols-2 gap-5 tablet-lg:grid-cols-1">
-                {companyList.map((company) => (
+                {companyList.map((user) => (
                     <CompanyCard
-                        key={company.id}
-                        {...company}
+                        key={user.id}
+                        {...user.company!}
                         onViewClick={() => router.push('feed/company/1')}
                         onSaveClick={() => {}}
                     />
                 ))}
-                {userList.map((user) => (
+                {employeeList.map((user) => (
                     <EmployeeCard
                         key={user.id}
-                        {...user}
+                        {...user.employee!}
                         onSaveClick={() => {}}
                         onViewClick={() => router.push(`/feed/employee/1`)}
                     />

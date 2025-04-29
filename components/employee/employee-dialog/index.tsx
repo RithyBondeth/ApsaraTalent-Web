@@ -51,8 +51,8 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
                                 <TypographyP className="font-medium">Skills</TypographyP>
                                 <div className="flex flex-wrap gap-2">
                                     {props.skills.map((skill) => (
-                                        <div key={skill}>
-                                            <Tag label={skill}/>
+                                        <div key={skill.id}>
+                                            <Tag label={skill.name}/>
                                         </div>
                                     ))}
                                 </div>

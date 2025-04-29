@@ -1,4 +1,4 @@
-export const careerOptions = [
+export const careerScopesList = [
   { label: "Software Engineering", value: "Software Engineering" },
   { label: "Data Science", value: "Data Science" },
   { label: "Cybersecurity", value: "Cybersecurity" },

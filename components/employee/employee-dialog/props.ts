@@ -1,4 +1,4 @@
-import { IEmployee } from "@/utils/interfaces/employee.interface";
+import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
 
 export interface IEmployeeDialogProps extends IEmployee {
     open: boolean;

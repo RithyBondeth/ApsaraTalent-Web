@@ -21,34 +21,37 @@ import {
 } from "@/components/ui/carousel";
 import { Carousel } from "@/components/ui/carousel";
 import Divider from "@/components/utils/divider";
-import { companyList } from "@/data/company-data";
 import BlurBackGroundOverlay from "@/components/utils/bur-background-overlay";
 import { Button } from "@/components/ui/button";
 import Tag from "@/components/utils/tag";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { userList } from "@/data/user-data";
 
 export default function CompanyDetailPage() {
+
   const companyId = 0;
+  const company = userList.filter((user) => user.role === 'company');
+  const companyList = company[companyId].company;
 
   return (
     <div className="flex flex-col gap-5">
       {/* Header Section */}
       <div
         className="relative h-72 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center tablet-sm:items-start"
-        style={{ backgroundImage: `url(${companyList[companyId].cover})` }}
+        style={{ backgroundImage: `url(${companyList?.cover})` }}
       >
         <BlurBackGroundOverlay />
         <div className="relative flex items-center gap-5 tablet-sm:flex-col">
           <Avatar className="size-32 tablet-sm:size-28" rounded="md">
-            <AvatarImage src={companyList[companyId].avatar}/>
-            <AvatarFallback className="uppercase">{companyList[companyId].name.slice(0, 3)}</AvatarFallback>
+            <AvatarImage src={companyList?.avatar}/>
+            <AvatarFallback className="uppercase">{companyList?.name.slice(0, 3)}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-start gap-2 text-muted tablet-sm:items-center">
             <TypographyH2 className="tablet-sm:text-center tablet-sm:text-xl">
-              {companyList[companyId].name}
+              {companyList?.name}
             </TypographyH2>
             <TypographyP className="!m-0 tablet-sm:text-center tablet-sm:text-sm">
-              {companyList[companyId].industry}
+              {companyList?.industry}
             </TypographyP>
           </div>
         </div>
@@ -68,13 +71,13 @@ export default function CompanyDetailPage() {
           {/* Description Section */}
           <div className="w-full flex flex-col items-start gap-3 border border-muted py-5 px-10">
             <div className="w-full flex flex-col gap-2">
-              <TypographyH4>About {companyList[companyId].name}</TypographyH4>
+              <TypographyH4>About {companyList?.name}</TypographyH4>
               <Divider />
             </div>
             <div className="flex items-start gap-3">
               <div className="h-full w-2 bg-primary" />
               <TypographyMuted className="leading-loose">
-                {companyList[companyId].description}
+                {companyList?.description}
               </TypographyMuted>
             </div>
           </div>
@@ -85,7 +88,7 @@ export default function CompanyDetailPage() {
               <Divider />
             </div>
             <div className="w-full flex flex-col gap-3">
-              {companyList[companyId].openPositions.map((item) => (
+              {companyList?.openPositions?.map((item) => (
                 <div className="border border-muted px-5 py-3 rounded-md" key={item.id}>
                   <div className="flex flex-col items-start gap-5">
                     <div className="w-full flex items-center justify-between tablet-md:flex-col tablet-md:gap-5 tablet-md:[&>div]:w-full">
@@ -156,13 +159,13 @@ export default function CompanyDetailPage() {
           </div>
           <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
             <div className="w-full flex flex-col gap-2">
-              <TypographyH4>Life at {companyList[companyId].name}</TypographyH4>
+              <TypographyH4>Life at {companyList?.name}</TypographyH4>
               <Divider />
             </div>
             <div className="w-full">
               <Carousel className="w-full">
                 <CarouselContent className="w-full">
-                  {companyList[companyId].images?.map((item) => (
+                  {companyList?.images?.map((item) => (
                     <CarouselItem key={item} className="max-w-[280px]">
                       <div
                         className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center"
@@ -186,17 +189,17 @@ export default function CompanyDetailPage() {
             <div className="flex flex-col gap-3 [&>div>p]:text-primary [&>div>p]:font-medium [&>div>p]:text-md">
               <IconLabel
                 icon={<TypographyMuted>Industry</TypographyMuted>}
-                text={companyList[companyId].industry}
+                text={companyList!.industry}
                 className="flex-col items-start"
               />
               <IconLabel
                 icon={<TypographyMuted>Phone</TypographyMuted>}
-                text={companyList[companyId].phone}
+                text={companyList!.phone}
                 className="flex-col items-start"
               />
               <IconLabel
                 icon={<TypographyMuted>Email</TypographyMuted>}
-                text={companyList[companyId].email}
+                text={companyList!.email}
                 className="flex-col items-start"
               />
             </div>
@@ -211,7 +214,7 @@ export default function CompanyDetailPage() {
               <div className="flex flex-col gap-3 border border-muted px-5 py-3 rounded-md">
                 <TypographyP className="font-medium">Values</TypographyP>
                 <div className="flex flex-col gap-2">
-                  {companyList[companyId].values.map((item) => (
+                  {companyList?.values?.map((item) => (
                     <IconLabel
                       key={item.id}
                       icon={<LucideCircleCheck stroke="white" fill="#69B41E" />}
@@ -223,7 +226,7 @@ export default function CompanyDetailPage() {
               <div className="flex flex-col gap-3 border border-muted px-5 py-3 rounded-md">
                 <TypographyP className="font-medium">Benefits</TypographyP>
                 <div className="flex flex-col gap-2">
-                  {companyList[companyId].benefits.map((item) => (
+                  {companyList?.benefits?.map((item) => (
                     <IconLabel
                       key={item.id}
                       icon={<LucideCircleCheck stroke="white" fill="#0073E6" />}
