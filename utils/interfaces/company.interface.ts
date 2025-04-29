@@ -3,27 +3,39 @@ export interface ICompany {
     name: string;
     industry: string;
     description: string;
-    avatar: string;
-    cover: string;
+    avatar?: string;
+    cover?: string;
     companySize: number;
     foundedYear: number;
     location: string;
     email: string;
     password: string;
     phone: string;
-    website: string;
-    facebook: string;
-    instagram: string;
-    linkedin: string;
-    x: string;
-    telegram: string;
-    images: string[];
+    images?: string[];
     openPositions: IJobPosition[];
     availableTimes: string[];
-    values: string[];
-    benefits: string[];
-    careerScopes: string[];
+    values: IValues[];
+    benefits: IBenefits[];
+    careerScopes: ICareerScopes[];
     socials: ISocial[];
+    createdAt?: string;
+}
+
+export interface IBenefits {
+    id?: number;
+    label: string;
+}
+
+export interface IValues {
+    id?: number;
+    label: string;
+}
+
+export interface ICareerScopes {
+    id?: string;
+    name: string;
+    description?: string;
+   
 }
 
 export interface IJobPosition {
@@ -41,6 +53,6 @@ export interface IJobPosition {
 
 export interface ISocial {
     id?: number;
-    social: string;
-    link: string;
+    platform: string;
+    url: string;
 }

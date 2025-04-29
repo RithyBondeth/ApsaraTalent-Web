@@ -12,15 +12,9 @@ export const companyList: ICompany[]  = [
         "companySize": 250,
         "foundedYear": 2018,
         "location": locationConstant[0],
-        "email": "nextgen@gmail.com",
-        "password": "nano-tech-123",
-        "phone": "+1122334455",
-        "website": "https://nextgen.com",
-        "facebook": "https://www.facebook.com/nextgen",
-        "instagram": "https://www.instagram.com/nextgen",
-        "linkedin": "https://www.linkedin.com/company/nextgen",
-        "x": "https://www.x.com/nextgen",
-        "telegram": "https://t.me/nextgen",
+        "email": "nextgen@gmail.com", //hide
+        "password": "nano-tech-123", //hide
+        "phone": "+1122334455", //hide
         "images": [
             "https://www.sharespace.work/blog/wp-content/uploads/2021/06/Campfire_2.max-1000x1000-1.jpg",
             "https://d17422uxibeifn.cloudfront.net/wordpress/wp-content/uploads/2020/10/02161646/Google-workspace-header.jpg",
@@ -48,7 +42,7 @@ export const companyList: ICompany[]  = [
                 "education": "Bachelor's Degree",
                 "skills": ["AWS", "Azure", "Google Cloud", "Kubernetes", "DevOps"],
                 "postedDate": "02/03/2025",
-                "deadlineDate": "02/04/2025",
+                "deadlineDate": "02/05/2025",
             },
             { 
                 "id": 3, 
@@ -60,7 +54,7 @@ export const companyList: ICompany[]  = [
                 "education": "Bachelor's Degree",
                 "skills": ["SQL", "Power BI", "Tableau", "Python", "Data Visualization"],
                 "postedDate": "02/03/2025",
-                "deadlineDate": "02/04/2025",
+                "deadlineDate": "02/06/2025",
             }
         ],
         "availableTimes": [
@@ -69,31 +63,64 @@ export const companyList: ICompany[]  = [
             "Contract"
         ],
         "values": [
-            "Innovation",
-            "Work-Life Balance",
-            "Diversity & Inclusion",
-            "Growth Mindset"
+            {
+                "id": 1,
+                "label": "Innovation & Creativity"
+            },
+            {
+                "id": 2,
+                "label": "Customer First"
+            },
+            {
+                "id": 3,
+                "label": "Integrity & Transparency"
+            }
         ],
         "benefits": [
-            "Comprehensive Health Insurance",
-            "Flexible Work Hours",
-            "Remote Work Option",
-            "Stock Options",
-            "Performance Bonuses",
+            {
+                "id": 1,
+                "label": "Health Insurance"
+            },
+            {
+                "id": 2,
+                "label": "Flexible Work Hours"
+            },
+            {
+                "id": 3,
+                "label": "401(k) Matching"
+            }
         ],
-        "careerScopes": ["Web Developer", "Software Engineer", "Accountant", "Finance"],
+        "careerScopes": [
+            {
+                "id": "d414f632-648a-44b7-a282-886769be2f57",
+                "name": "Software Engineering",
+                "description": "Building scalable applications and solutions."
+            },
+            {
+                "id": "967a7c48-5278-4f9a-80fb-537ae1fd5e5c",
+                "name": "Artificial Intelligence",
+                "description": "Advancing AI and machine learning technology."
+            },
+            {
+                "id": "714ee33e-d27c-49a0-9158-68831160f269",
+                "name": "AI & Machine Learning",
+                "description": "Advancing AI solutions for real-world applications."
+            }
+        ],
         "socials": [
-            { "id": 1, "social": "Facebook", "link": "bondeth.com" },
-            { "id": 2, "social": "Instagram", "link": "rithy-bondeth.com" },
-            { "id": 3, "social": "Telegram", "link": "telegram/rithy-bondeth" }
-        ]
+            { "id": 1, "platform": "Facebook", "url": "bondeth.com" },
+            { "id": 2, "platform": "Instagram", "url": "rithy-bondeth.com" },
+            { "id": 3, "platform": "Telegram", "url": "telegram/rithy-bondeth" },
+            { "id": 4, "platform": "Website", "url": "rithy-bondeth.com" }
+        ],
+        "createdAt": "2025-03-11T22:10:12.171Z",
     },
     {
         "id": 2,
         "name": "InnoTech Solutions",
         "industry": "Innovative Technology & IT Consulting",
         "description": "Innovative Technology & IT Consulting lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
-        "avatar": "https://img.freepik.com/free-psd/3d-illustration-with-online-avatar_23-2151303063.jpg?semt=ais_hybrid&w=740",
+        "avatar": "https://imageio.forbes.com/specials-images/imageserve/613df8e8d679a21b766a1636/bigbun-2/960x0.jpg?height=711&width=711&fit=bounds",
         "cover": "https://plus.unsplash.com/premium_photo-1661962642401-ebd5ae0514ca?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8YXBwbGUlMjBvZmZpY2V8ZW58MHx8MHx8fDA%3D",
         "companySize": 150,
         "foundedYear": 2015,
@@ -101,12 +128,6 @@ export const companyList: ICompany[]  = [
         "email": "innotech@gmail.com",
         "password": "nano-tech-123",
         "phone": "+1987654321",
-        "website": "https://innotech.com",
-        "facebook": "https://www.facebook.com/innotech",
-        "instagram": "https://www.instagram.com/innotech",
-        "linkedin": "https://www.linkedin.com/company/innotech",
-        "x": "https://www.x.com/innotech",
-        "telegram": "https://t.me/innotech",
         "images": [
             "https://www.workdesign.com/wp-content/uploads/2020/03/Google-Open-Workspace-Photo-Courtesy-of-Google-e1583416661584.png",
             "https://ml5enisp4q1t.i.optimole.com/w:1600/h:965/q:mauto/f:best/https://interiorarchitects.com/wp-content/uploads/2019/08/21NOKX_0017_000_IA_Nokia_HERE_N3_iawebsite-e1566587330816.jpg",
@@ -143,23 +164,72 @@ export const companyList: ICompany[]  = [
             "Contract"
         ],
         "values": [
-            "Innovation",
-            "Work-Life Balance",
-            "Diversity & Inclusion",
-            "Growth Mindset"
+            {
+                "id": 1,
+                "label": "Innovation & Creativity"
+            },
+            {
+                "id": 2,
+                "label": "Customer First"
+            },
+            {
+                "id": 3,
+                "label": "Integrity & Transparency"
+            }
         ],
         "benefits": [
-            "Comprehensive Health Insurance",
-            "Flexible Work Hours",
-            "Remote Work Option",
-            "Stock Options",
-            "Performance Bonuses",
+            {
+                "id": 1,
+                "label": "Health Insurance"
+            },
+            {
+                "id": 2,
+                "label": "Flexible Work Hours"
+            },
+            {
+                "id": 3,
+                "label": "401(k) Matching"
+            }
         ],
-        "careerScopes": ["Web Developer", "Software Engineer", "Accountant", "Finance"],
+        "careerScopes": [
+            {
+                "id": "d414f632-648a-44b7-a282-886769be2f57",
+                "name": "Software Engineering",
+                "description": "Building scalable applications and solutions."
+            },
+            {
+                "id": "967a7c48-5278-4f9a-80fb-537ae1fd5e5c",
+                "name": "Artificial Intelligence",
+                "description": "Advancing AI and machine learning technology."
+            },
+            {
+                "id": "714ee33e-d27c-49a0-9158-68831160f269",
+                "name": "AI & Machine Learning",
+                "description": "Advancing AI solutions for real-world applications."
+            }
+        ],
         "socials": [
-            { "id": 1, "social": "Facebook", "link": "bondeth.com" },
-            { "id": 2, "social": "Instagram", "link": "rithy-bondeth.com" },
-            { "id": 3, "social": "Telegram", "link": "telegram/rithy-bondeth" }
-        ]
+            { 
+                "id": 1, 
+                "platform": "Facebook", 
+                "url": "bondeth.com"
+            },
+            { 
+                "id": 2, 
+                "platform": "Instagram", 
+                "url": "rithy-bondeth.com" 
+            },
+            { 
+                "id": 3, 
+                "platform": "Telegram", 
+                "url": "telegram/rithy-bondeth" 
+            },
+            { 
+                "id": 4, 
+                "platform": "Website", 
+                "url": "rithy-bondeth.com"
+            }
+        ],
+        "createdAt": "2025-03-11T22:10:12.171Z",
     }
 ]

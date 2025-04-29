@@ -1,51 +1,56 @@
-import { StaticImageData } from "next/image";
-
-export interface IEducation {
-    id: number;
-    school: string;
-    degree: string;
-    year: string;
-  }
-  
-  export interface IExperience {
-    id: number;
-    title: string;
-    startDate: string;
-    endDate: string;
-    description: string;
-  }
-  
-  export interface ISocial {
-    id: number;
-    icon: StaticImageData;
-    label: string;
-    value: string;
-  }
+import { TGender } from "../types/gender.type";
 
 export interface IEmployee {
-    id: number;
-    avatar: string;
-    firstname: string;
-    lastname: string;
-    username: string;
-    phone: string;
-    email: string;
-    job: string;
-    location: string;
-    skills: string[];
-    description: string;
-    document: {
-        resume: string;
-        coverLetter: string;
-    };
-    status: {
-        id: number;
-        label: string;
-        value: string;
-    }[];
-    yearsOfExperience: string;
-    experiences: IExperience[];
-    availability: string;
-    educations: IEducation[];
-    social: ISocial[];
+  id: number;
+  firstname: string;
+  lastname: string;
+  username: string;
+  gender: TGender;
+  avatar?: string;
+  phone: string; //hide
+  email: string; //hide
+  job: string;
+  yearsOfExperience: string;
+  availability: string;
+  description: string;
+  location: string;
+  resume?: string;
+  coverLetter?: string;
+  skills: ISkill[];
+  status: {
+      id: number;
+      label: string;
+      value: string;
+  }[];
+  experiences: IExperience[];
+  educations: IEducation[];
+  socials: ISocial[];
+  createdAt?: string;
 }
+
+export interface ISkill {
+  id?: string;
+  name: string;
+  description?: string; 
+}
+  
+export interface IExperience {
+  id?: string;
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+}
+ 
+export interface IEducation {
+  id?: string;
+  school: string;
+  degree: string;
+  year: string;
+}
+export interface ISocial {
+  id?: string;
+  platform: string;
+  url: string;
+}
+

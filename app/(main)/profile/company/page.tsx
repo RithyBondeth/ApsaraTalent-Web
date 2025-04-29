@@ -118,10 +118,11 @@ export default function ProfilePage() {
       },
       careerScopes: companyList[companyId].careerScopes ?? [],
       socials: companyList[companyId].socials.map((social) => ({
-        social: social.social,
-        link: social.link,
+        platform: social.platform,
+        url: social.url,
       })),
     },
+    shouldFocusError: false, 
   });
 
   const addOpenPosition = () => {
@@ -156,33 +157,33 @@ export default function ProfilePage() {
   const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
   const [benefitInput, setBenefitInput] = useState<string>("");
   const initialBenefit = form.getValues?.("benefitsAndValues.benefits") || [];
-  const [benefits, setBenefits] = useState<string[]>(initialBenefit);
+  const [benefits, setBenefits] = useState<{ label: string }[]>(initialBenefit);
 
   // Values
   const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
   const [valueInput, setValueInput] = useState<string>("");
   const initialValue = form.getValues?.("benefitsAndValues.values") || [];
-  const [values, setValues] = useState<string[]>(initialValue);
+  const [values, setValues] = useState<{ label: string }[]>(initialValue);
 
   // Careers
   const [openCareersPopOver, setOpenCareersPopOver] = useState<boolean>(false);
   const [careersInput, setCareersInput] = useState<string>("");
   const initialCareerScope = form.getValues?.("careerScopes") || [];
-  const [careers, setCareers] = useState<string[]>(initialCareerScope);
+  const [careers, setCareers] = useState<{ name: string }[]>(initialCareerScope);
 
   // Socials
   const [socialInput, setSocialInput] = useState<{ social: string; link: string;}>({ social: "", link: "" });
   const initialSocial = (form.getValues?.("socials") || []).filter(
-    (s): s is { social: string; link: string } => s !== undefined
+    (s): s is { platform: string; url: string } => s !== undefined
   );
-  const [socials, setSocials] = useState<{ social: string; link: string }[]>(initialSocial);
+  const [socials, setSocials] = useState<{ platform: string; url: string }[]>(initialSocial);
 
   const addBenefits = () => {
     const trimmed = benefitInput.trim();
     if (!trimmed) return;
 
     const alreadyExists = benefits.some(
-      (bf) => bf.toLowerCase() === trimmed.toLowerCase()
+      (bf) => bf.label.toLowerCase() === trimmed.toLowerCase()
     );
 
     if (alreadyExists) {
@@ -197,7 +198,7 @@ export default function ProfilePage() {
       return;
     }
 
-    const updated = [...benefits, trimmed];
+    const updated = [...benefits, { label: trimmed }];
     setBenefits(updated);
 
     setBenefitInput("");
@@ -205,7 +206,7 @@ export default function ProfilePage() {
   };
 
   const removeBenefit = async (benefitToRemove: string) => {
-    const updated = benefits.filter((bf) => bf !== benefitToRemove);
+    const updated = benefits.filter((bf) => bf.label !== benefitToRemove);
     setBenefits(updated);
     // setValue?.("benefitsAndValues.benefits", updated);
 
@@ -218,7 +219,7 @@ export default function ProfilePage() {
 
     // Check for duplicate value
     const alreadyExists = values.some(
-      (value) => value.toLowerCase() === trimmed.toLowerCase()
+      (value) => value.label.toLowerCase() === trimmed.toLowerCase()
     );
 
     if (alreadyExists) {
@@ -234,7 +235,7 @@ export default function ProfilePage() {
     }
 
     // Update new value
-    const updated = [...values, trimmed];
+    const updated = [...values, { label: trimmed }];
     setValues(updated);
 
     setValueInput("");
@@ -242,7 +243,7 @@ export default function ProfilePage() {
   };
 
   const removeValue = async (valueToRemove: string) => {
-    const updated = values.filter((value) => value !== valueToRemove);
+    const updated = values.filter((value) => value.label !== valueToRemove);
     setValues(updated);
   };
 
@@ -252,7 +253,7 @@ export default function ProfilePage() {
 
     // Check for duplicate careers
     const alreadyExists = careers.some(
-      (career) => career.toLowerCase() === trimmed.toLowerCase()
+      (career) => career.name.toLowerCase() === trimmed.toLowerCase()
     );
 
     if (alreadyExists) {
@@ -268,7 +269,7 @@ export default function ProfilePage() {
     }
 
     // Add new career
-    const updatedCareers = [...careers, trimmed];
+    const updatedCareers = [...careers, { name: trimmed }];
     setCareers(updatedCareers);
 
     // Clear input field
@@ -285,7 +286,7 @@ export default function ProfilePage() {
   // Handle delete career
   const removeCareer = (careerToRemove: string) => {
     const updatedCareers = careers.filter(
-      (career) => career !== careerToRemove
+      (career) => career.name !== careerToRemove
     );
     setCareers(updatedCareers);
   };
@@ -298,7 +299,7 @@ export default function ProfilePage() {
 
     // Check for duplicate social entries
     const alreadyExists = socials.some(
-      (s) => s.social.toLowerCase() === trimmedSocial.toLowerCase()
+      (s) => s.platform.toLowerCase() === trimmedSocial.toLowerCase()
     );
 
     if (alreadyExists) {
@@ -313,7 +314,7 @@ export default function ProfilePage() {
 
     const updatedSocials = [
       ...socials,
-      { social: trimmedSocial, link: trimmedLink },
+      { platform: trimmedSocial, url: trimmedLink },
     ];
     setSocials(updatedSocials); // Update the state
     setSocialInput({ social: "", link: "" }); // Reset the input
@@ -370,14 +371,74 @@ export default function ProfilePage() {
   };
 
   const onSubmit = (data: TCompanyProfileForm) => {
-    console.log("Company Profile: ", data);
+    // Make sure any local state is synced with form data
+    const updatedData = {
+      ...data,
+      benefitsAndValues: {
+        benefits: benefits,
+        values: values
+      },
+      careerScopes: careers,
+      socials: socials,
+      openPositions: openPositions.map((position, index) => ({
+        id: position.id,
+        title: data.openPositions?.[index]?.title || position.title,
+        description: data.openPositions?.[index]?.description || position.description,
+        experience: data.openPositions?.[index]?.experienceRequirement || position.experience,
+        education: data.openPositions?.[index]?.educationRequirement || position.education,
+        salary: data.openPositions?.[index]?.salary || position.salary,
+        skills: data.openPositions?.[index]?.skills || position.skills,
+        postedDate: position.postedDate,
+        deadlineDate: selectedDates[position.id.toString()]?.deadline?.toISOString() || position.deadlineDate,
+        type: "Full Time" // Default value or get from form if you have this field
+      }))
+    };
+  
+    console.log("Updated Company Profile:", updatedData);
+    
+    // Update your local state if needed
+    // For example, you might want to update the companyList state
+    // const updatedCompanyList = [...companyList];
+    // updatedCompanyList[companyId] = {...updatedCompanyList[companyId], ...updatedData};
+    // setCompanyList(updatedCompanyList);
+    
+    // Show success message
+    toast({
+      title: "Success!",
+      description: "Company profile updated successfully.",
+    });
+  
+    // Exit edit mode
+    setIsEdit(false);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    // Explicitly sync all state variables with the form
+    form.setValue("benefitsAndValues.benefits", benefits);
+    form.setValue("benefitsAndValues.values", values);
+    form.setValue("careerScopes", careers);
+    form.setValue("socials", socials);
+    
+    // Also sync any file uploads that might be managed outside the form
+    if (avatarFile) {
+      form.setValue("basicInfo.avatar", avatarFile);
+    }
+    
+    if (coverFile) {
+      form.setValue("basicInfo.cover", coverFile);
+    }
+    
+    // Now submit the form
+    form.handleSubmit(onSubmit)(e);
   };
 
   const { errors } = form.formState;
-  console.log(errors);
+  console.log("Error: ", errors);
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <div
         className="relative h-72 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center"
         style={{ backgroundImage: `url(${coverFile ? URL.createObjectURL(coverFile) : companyList[companyId].cover})` }}
@@ -841,19 +902,19 @@ export default function ProfilePage() {
                   benefits.map((benefit) => (
                     <div
                       className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted"
-                      key={benefit}
+                      key={benefit.label}
                     >
                       <IconLabel
                         icon={
                           <LucideCircleCheck stroke="white" fill="#0073E6" />
                         }
-                        text={benefit}
+                        text={benefit.label}
                       />
                       {isEdit && (
                         <LucideXCircle
                           className="text-muted-foreground cursor-pointer text-red-500"
                           width={"18px"}
-                          onClick={() => removeBenefit(benefit)}
+                          onClick={() => removeBenefit(benefit.label)}
                         />
                       )}
                     </div>
@@ -900,22 +961,22 @@ export default function ProfilePage() {
             <div className="w-full flex flex-col items-stretch gap-3">
               <div className="w-full flex flex-wrap gap-3">
                 {values &&
-                  values.map((value) => (
+                  values.map((value, index) => (
                     <div
                       className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted"
-                      key={value}
+                      key={index}
                     >
                       <IconLabel
                         icon={
                           <LucideCircleCheck stroke="white" fill="#69B41E" />
                         }
-                        text={value}
+                        text={value.label}
                       />
                       {isEdit && (
                         <LucideXCircle
                           className="text-muted-foreground cursor-pointer text-red-500"
                           width={"18px"}
-                          onClick={() => removeValue(value)}
+                          onClick={() => removeValue(value.label)}
                         />
                       )}
                     </div>
@@ -966,12 +1027,12 @@ export default function ProfilePage() {
                     key={index}
                     className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted"
                   >
-                    <TypographySmall>{career}</TypographySmall>
+                    <TypographySmall>{career.name}</TypographySmall>
                     {isEdit && (
                       <LucideCircleX
                         className="text-muted-foreground cursor-pointer text-red-500"
                         width={"18px"}
-                        onClick={() => removeCareer(career)}
+                        onClick={() => removeCareer(career.name)}
                       />
                     )}
                   </div>
@@ -1050,9 +1111,9 @@ export default function ProfilePage() {
               <div className="w-full flex flex-col items-stretch gap-3">
                 {socials.map((item, index) => (
                   <div key={index} className="flex items-center gap-2">
-                    <TypographySmall className="font-medium">{item.social}:</TypographySmall>
-                    <Link href={item.link} className="px-3 bg-blue-100 text-blue-600 rounded-2xl hover:underline">
-                      <TypographySmall>{item.link}</TypographySmall>
+                    <TypographySmall className="font-medium">{item.platform}:</TypographySmall>
+                    <Link href={item.url} className="px-3 bg-blue-100 text-blue-600 rounded-2xl hover:underline">
+                      <TypographySmall>{item.url}</TypographySmall>
                     </Link>
                     {isEdit && (
                       <LucideXCircle

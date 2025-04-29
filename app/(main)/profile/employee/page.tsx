@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Divider from "@/components/utils/divider";
@@ -48,6 +48,8 @@ import Tag from "@/components/utils/tag";
 import { TPlatform } from "@/utils/types/platform.type";
 
 export default function EmployeeProfilePage() {
+  const employeeId = 1;
+
   const [isShowPassword, setIsShowPassword] = useState({
     current: false,
     new: false,
@@ -66,7 +68,8 @@ export default function EmployeeProfilePage() {
     <div className="!min-w-full flex flex-col gap-5">
       <div className="flex items-center justify-between border border-muted rounded-md p-5 tablet-sm:flex-col tablet-sm:[&>div]:w-full tablet-sm:gap-5">
         <div className="flex items-center justify-start gap-5 tablet-sm:flex-col">
-          <Avatar className="size-28">
+          <Avatar className="size-36">
+            <AvatarImage/>
             <AvatarFallback>BN</AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-start gap-1 tablet-sm:items-center">
@@ -74,7 +77,7 @@ export default function EmployeeProfilePage() {
             <TypographyMuted>Software Engineer</TypographyMuted>
           </div>
         </div>
-        <Button>
+        <Button className="text-xs"> 
           <LucideEdit/>
           Edit Profile
         </Button>

@@ -9,7 +9,9 @@ import { LucideAtSign, LucideBookmark, LucideCalendar, LucideDownload, LucideEye
 import Image from "next/image";
 import Divider from "@/components/utils/divider";
 import { userList } from "@/data/user-data";
-import { IEducation, IExperience, ISocial } from "@/utils/interfaces/employee.interface";
+import { IEducation, IExperience, ISkill, ISocial } from "@/utils/interfaces/employee.interface";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import Link from "next/link";
 
 export default function EmployeeDetailPage() {
     const employeeId = 1;
@@ -106,7 +108,7 @@ export default function EmployeeDetailPage() {
                             <Divider/>
                         </div>
                         <div className="flex flex-wrap gap-3">
-                                {userList[employeeId].skills.map((item: string) => <Tag key={item} label={item} />)}
+                                {userList[employeeId].skills.map((item: ISkill) => <Tag key={item.id} label={item.name} />)}
                         </div>
                     </div>
                 </div>
@@ -122,7 +124,7 @@ export default function EmployeeDetailPage() {
                         <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
                             <div className="flex items-center text-muted-foreground gap-1">
                                 <LucideFileText/>
-                                <TypographyMuted>{userList[employeeId].document.resume}</TypographyMuted>
+                                <TypographyMuted>{userList[employeeId].resume}</TypographyMuted>
                             </div>
                             <div className="flex items-center gap-1">
                                 <Button variant="outline" size="icon">
@@ -136,7 +138,7 @@ export default function EmployeeDetailPage() {
                         <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
                             <div className="flex items-center text-muted-foreground gap-1">
                                 <LucideFileText/>
-                                <TypographyMuted>{userList[employeeId].document.coverLetter}</TypographyMuted>
+                                <TypographyMuted>{userList[employeeId].coverLetter}</TypographyMuted>
                             </div>
                             <div className="flex items-center gap-1">
                                 <Button variant="outline" size="icon">
@@ -156,11 +158,13 @@ export default function EmployeeDetailPage() {
                             <Divider/>
                         </div>
                         <div className="flex flex-col gap-5">
-                            {userList[employeeId].social.map((item: ISocial) => (         
-                                <div className="flex items-center gap-2 cursor-pointer" key={item.id}>
-                                    <Image src={item.icon} alt={item.label} height={undefined} width={25} className="rounded-full"/>
-                                    <TypographyP className="!m-0 text-sm">{item.label}</TypographyP>
-                                </div>
+                            {userList[employeeId].socials.map((item: ISocial) => (         
+                                <div key={item.id} className="flex items-center gap-2">
+                                <TypographySmall className="font-medium">{item.platform}:</TypographySmall>
+                                <Link href={item.url} className="px-3 bg-blue-100 text-blue-600 rounded-2xl hover:underline">
+                                  <TypographySmall>{item.url}</TypographySmall>
+                                </Link>
+                              </div>
                             ))}
                         </div>
                     </div>

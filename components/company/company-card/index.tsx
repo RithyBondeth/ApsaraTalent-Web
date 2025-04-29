@@ -2,7 +2,7 @@
 
 import { LucideBookmark, LucideBriefcaseBusiness, LucideBuilding, LucideCircleArrowRight, LucideClock, LucideEye, LucideMapPin, LucideUsers } from "lucide-react";
 import { LucideHeartHandshake } from "lucide-react";
-import { Avatar, AvatarFallback } from "../../ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { TypographyMuted } from "../../utils/typography/typography-muted";
 import { TypographyP } from "../../utils/typography/typography-p";
 import { TypographySmall } from "../../utils/typography/typography-small";
@@ -51,6 +51,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
             <div className="w-full flex items-start justify-between">
                 <div className="flex items-center gap-3">
                     <Avatar className="size-20">
+                        <AvatarImage src={props.avatar && props.avatar}/>
                         <AvatarFallback>{!props.avatar ? <LucideBuilding/> : props.avatar}</AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col items-start gap-1">

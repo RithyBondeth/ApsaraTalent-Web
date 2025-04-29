@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import IconLabel from "@/components/utils/icon-label";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
@@ -28,29 +28,27 @@ import Tag from "@/components/utils/tag";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 
 export default function CompanyDetailPage() {
-  const companyId = 1;
+  const companyId = 0;
 
   return (
     <div className="flex flex-col gap-5">
       {/* Header Section */}
       <div
         className="relative h-72 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center tablet-sm:items-start"
-        style={{
-          backgroundImage:
-            "url(https://plus.unsplash.com/premium_photo-1661962642401-ebd5ae0514ca?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8YXBwbGUlMjBvZmZpY2V8ZW58MHx8MHx8fDA%3D)",
-        }}
+        style={{ backgroundImage: `url(${companyList[companyId].cover})` }}
       >
         <BlurBackGroundOverlay />
         <div className="relative flex items-center gap-5 tablet-sm:flex-col">
           <Avatar className="size-32 tablet-sm:size-28" rounded="md">
-            <AvatarFallback>BON</AvatarFallback>
+            <AvatarImage src={companyList[companyId].avatar}/>
+            <AvatarFallback className="uppercase">{companyList[companyId].name.slice(0, 3)}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-start gap-2 text-muted tablet-sm:items-center">
             <TypographyH2 className="tablet-sm:text-center tablet-sm:text-xl">
-              TechCorps Solutions
+              {companyList[companyId].name}
             </TypographyH2>
             <TypographyP className="!m-0 tablet-sm:text-center tablet-sm:text-sm">
-              Technology & Software Development
+              {companyList[companyId].industry}
             </TypographyP>
           </div>
         </div>
@@ -88,10 +86,7 @@ export default function CompanyDetailPage() {
             </div>
             <div className="w-full flex flex-col gap-3">
               {companyList[companyId].openPositions.map((item) => (
-                <div
-                  className="border border-muted px-5 py-3 rounded-md"
-                  key={item.id}
-                >
+                <div className="border border-muted px-5 py-3 rounded-md" key={item.id}>
                   <div className="flex flex-col items-start gap-5">
                     <div className="w-full flex items-center justify-between tablet-md:flex-col tablet-md:gap-5 tablet-md:[&>div]:w-full">
                       <div className="flex flex-col items-start gap-2">
@@ -167,11 +162,11 @@ export default function CompanyDetailPage() {
             <div className="w-full">
               <Carousel className="w-full">
                 <CarouselContent className="w-full">
-                  {[1, 2, 3, 4, 5].map((item) => (
+                  {companyList[companyId].images.map((item) => (
                     <CarouselItem key={item} className="max-w-[280px]">
                       <div
                         className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center"
-                        // style={{backgroundImage: `url(${item})`}}
+                        style={{backgroundImage: `url(${item})`}}
                       />
                     </CarouselItem>
                   ))}
@@ -207,7 +202,7 @@ export default function CompanyDetailPage() {
               <IconLabel
                 icon={<TypographyMuted>Website</TypographyMuted>}
                 text={companyList[companyId].website}
-                className="flex-col items-start [&>p]:!text-blue-500"
+                className="flex-col items-start cursor-pointer [&>p]:!text-blue-500"
               />
             </div>
           </div>
@@ -217,7 +212,7 @@ export default function CompanyDetailPage() {
               <TypographyH4>Company Culture</TypographyH4>
               <Divider />
             </div>
-            <div className="w-full flex flex-col items-stretch [&>div]:w-full">
+            <div className="w-full flex flex-col items-stretch gap-3 [&>div]:w-full">
               <div className="flex flex-col gap-3 border border-muted px-5 py-3 rounded-md">
                 <TypographyP className="font-medium">Values</TypographyP>
                 <div className="flex flex-col gap-2">
