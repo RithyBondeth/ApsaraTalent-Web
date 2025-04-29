@@ -48,7 +48,7 @@ export default function FeedPage() {
                     <CompanyCard
                         key={user.id}
                         {...user.company!}
-                        onViewClick={() => router.push('feed/company/1')}
+                        onViewClick={() => router.push(`feed/company/${user.company?.id}`)}
                         onSaveClick={() => {}}
                     />
                 ))}
@@ -57,7 +57,7 @@ export default function FeedPage() {
                         key={user.id}
                         {...user.employee!}
                         onSaveClick={() => {}}
-                        onViewClick={() => router.push(`/feed/employee/1`)}
+                        onViewClick={() => router.push(`/feed/employee/${user.employee?.id}`)}
                     />
                 ))}
             </div>

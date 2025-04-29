@@ -1,11 +1,11 @@
 "use client"
-import { Avatar, AvatarFallback } from "../../ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import Tag from "../../utils/tag";
 import { TypographyMuted } from "../../utils/typography/typography-muted";
 import { TypographyP } from "../../utils/typography/typography-p";
 import { TypographySmall } from "../../utils/typography/typography-small";
-import { LucideBookmark, LucideCircleArrowRight, LucideEye, LucideHeartHandshake, LucideMapPin } from "lucide-react";
+import { LucideBookmark, LucideCircleArrowRight, LucideEye, LucideHeartHandshake, LucideMapPin, LucideUser } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { IEmployeeCardProps } from "./props";
 import EmployeeDialog from "../employee-dialog";
@@ -46,7 +46,8 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
             <div className="w-full flex items-start justify-between">
                 <div className="flex items-center gap-3">
                     <Avatar className="size-20">
-                        <AvatarFallback>{props.avatar}</AvatarFallback>
+                        <AvatarImage src={props.avatar!}/>
+                        <AvatarFallback className="uppercase">{!props.avatar ? <LucideUser/> : props.username.slice(0, 3)}</AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col items-start gap-1">
                         <TypographyP className="font-semibold">{props.username}</TypographyP>

@@ -98,9 +98,9 @@ export default function ProfilePage() {
         cover: companyList?.cover ? new File([], "cover.png") : null,
       },
       accountSetting: {
-        email: companyList?.email ?? "",
+        email: company[userId]?.email ?? "",
         phone: companyList?.phone ?? "",
-        currentPassword: companyList!.password ?? null,
+        currentPassword: company[userId]?.password ?? null,
         newPassword: "",
         confirmPassword: "",
       },
@@ -114,7 +114,7 @@ export default function ProfilePage() {
         deadlineDate: new Date(position.deadlineDate) ?? null,
         skills: position.skills ?? [],
       })),
-      images: companyList?.images ?? [],
+      images: companyList?.images?.map((image) => image.image ?? []),
       benefitsAndValues: {
         benefits: companyList?.benefits ?? [],
         values: companyList?.values ?? [],
@@ -465,7 +465,7 @@ export default function ProfilePage() {
         />
         <div className="relative flex items-center gap-5 tablet-sm:flex-col">
           <Avatar className="size-32 tablet-sm:size-28 relative bg-primary-foreground" rounded="md">
-            <AvatarImage src={avatarFile ? URL.createObjectURL(avatarFile) : companyList?.avatar} alt="Avatar"/>
+            <AvatarImage src={avatarFile ? URL.createObjectURL(avatarFile) : companyList?.avatar!}/>
             <AvatarFallback className="uppercase">
               {companyList?.name.slice(0, 3)}
             </AvatarFallback>
@@ -638,7 +638,7 @@ export default function ProfilePage() {
                 input={
                   <Input
                     placeholder={
-                      isEdit ? "Email" : companyList?.email
+                      isEdit ? "Email" : company[userId].email
                     }
                     id="email"
                     {...form.register("accountSetting.email")}

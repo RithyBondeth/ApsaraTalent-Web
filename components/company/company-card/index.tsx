@@ -51,8 +51,8 @@ export default function CompanyCard(props: ICompanyCardProps) {
             <div className="w-full flex items-start justify-between">
                 <div className="flex items-center gap-3">
                     <Avatar className="size-20">
-                        <AvatarImage src={props.avatar && props.avatar}/>
-                        <AvatarFallback>{!props.avatar ? <LucideBuilding/> : props.avatar}</AvatarFallback>
+                        <AvatarImage src={props.avatar!}/>
+                        <AvatarFallback className="uppercase">{!props.avatar ? <LucideBuilding/> : props.name.slice(0, 3)}</AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col items-start gap-1">
                         <TypographyP className="font-semibold">{props.name}</TypographyP>

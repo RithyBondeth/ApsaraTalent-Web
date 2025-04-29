@@ -3,15 +3,13 @@ export interface ICompany {
     name: string;
     industry: string;
     description: string;
-    avatar?: string;
+    avatar?: string | null;
     cover?: string;
     companySize: number;
     foundedYear: number;
     location: string;
-    email: string;
-    password: string;
     phone: string;
-    images?: string[];
+    images?: IImage[];
     openPositions: IJobPosition[];
     availableTimes: string[];
     values: IValues[];
@@ -49,6 +47,11 @@ export interface IJobPosition {
     skills: string[];
     postedDate: string;
     deadlineDate: string;
+}
+
+export interface IImage {
+    id?: string;
+    image: string;   
 }
 
 export interface ISocial {

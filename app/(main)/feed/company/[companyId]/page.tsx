@@ -1,3 +1,5 @@
+"use client"
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import IconLabel from "@/components/utils/icon-label";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
@@ -26,12 +28,15 @@ import { Button } from "@/components/ui/button";
 import Tag from "@/components/utils/tag";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { userList } from "@/data/user-data";
+import { useParams } from "next/navigation";
+import { IImage } from "@/utils/interfaces/user-interface/company.interface";
 
 export default function CompanyDetailPage() {
-
-  const companyId = 0;
-  const company = userList.filter((user) => user.role === 'company');
-  const companyList = company[companyId].company;
+  const param = useParams();
+  const id = Number(param.companyId) - 1;
+  
+  const companies = userList.filter((user) => user.role === 'company');
+  const companyList = companies[id].company;
 
   return (
     <div className="flex flex-col gap-5">
@@ -43,7 +48,7 @@ export default function CompanyDetailPage() {
         <BlurBackGroundOverlay />
         <div className="relative flex items-center gap-5 tablet-sm:flex-col">
           <Avatar className="size-32 tablet-sm:size-28" rounded="md">
-            <AvatarImage src={companyList?.avatar}/>
+            <AvatarImage src={companyList?.avatar!}/>
             <AvatarFallback className="uppercase">{companyList?.name.slice(0, 3)}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-start gap-2 text-muted tablet-sm:items-center">
@@ -165,8 +170,8 @@ export default function CompanyDetailPage() {
             <div className="w-full">
               <Carousel className="w-full">
                 <CarouselContent className="w-full">
-                  {companyList?.images?.map((item) => (
-                    <CarouselItem key={item} className="max-w-[280px]">
+                  {companyList?.images?.map((item: IImage) => (
+                    <CarouselItem key={item.id} className="max-w-[280px]">
                       <div
                         className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center"
                         style={{backgroundImage: `url(${item})`}}
@@ -199,7 +204,7 @@ export default function CompanyDetailPage() {
               />
               <IconLabel
                 icon={<TypographyMuted>Email</TypographyMuted>}
-                text={companyList!.email}
+                text={companies[id]!.email}
                 className="flex-col items-start"
               />
             </div>

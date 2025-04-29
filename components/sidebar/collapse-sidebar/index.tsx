@@ -18,12 +18,16 @@ import { SidebarDropdownFooter } from "./sidebar-dropdown-footer";
 import { Separator } from "@/components/ui/separator";
 import { sidebarList } from "@/utils/constants/sidebar.constant";
 import { TypographyP } from "@/components/utils/typography/typography-p";
+import { userList } from "@/data/user-data";
 
 export default function CollapseSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter();
   const { open } = useSidebar();
+
+  const employeeList = userList.filter((user) => user.role === "employee");
+  const employee = employeeList[1].employee;
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -64,9 +68,9 @@ export default function CollapseSidebar({
       <SidebarFooter>
         <SidebarDropdownFooter
           user={{
-            name: "Rithy Bondeth",
-            email: "rithybondeth999@gamil.com",
-            avatar: "",
+            name: employee?.firstname + " " + employee?.lastname,
+            email: employeeList[1].email,
+            avatar: employee?.avatar!,
           }}
         />
       </SidebarFooter>

@@ -16,8 +16,8 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                     <DialogTitle>
                         <div className="flex items-stretch justify-start gap-3 tablet-sm:flex-col">
                             <Avatar className="!size-36">
-                                <AvatarImage src={props.avatar && props.avatar}/>
-                                <AvatarFallback>{props.avatar}</AvatarFallback>
+                                <AvatarImage src={props.avatar!}/>
+                                <AvatarFallback className="uppercase">{!props.avatar ? <LucideBuilding/> : props.name.slice(0, 3)}</AvatarFallback>
                             </Avatar>
                             <div className="flex flex-col items-start gap-5 font-normal">
                                 <div className="flex flex-col items-start">

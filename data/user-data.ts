@@ -34,12 +34,16 @@ export const userList: IUser[] = [
       companySize: 250,
       foundedYear: 2018,
       location: locationConstant[0],
-      email: "nextgen@gmail.com", //hide
-      password: "nano-tech-123", //hide
-      phone: "+1122334455", //hide
+      phone: "+1122334455",
       images: [
-        "https://www.sharespace.work/blog/wp-content/uploads/2021/06/Campfire_2.max-1000x1000-1.jpg",
-        "https://d17422uxibeifn.cloudfront.net/wordpress/wp-content/uploads/2020/10/02161646/Google-workspace-header.jpg",
+        {
+          id: "b85113af-ef83-41c2-80af-b59d847959a3",
+          image: "https://www.sharespace.work/blog/wp-content/uploads/2021/06/Campfire_2.max-1000x1000-1.jpg",
+        },
+        {
+          id: "114822cf-9fa5-4c4d-bc39-a0813c0dbd7c",
+          image: "https://d17422uxibeifn.cloudfront.net/wordpress/wp-content/uploads/2020/10/02161646/Google-workspace-header.jpg",
+        }
       ],
       openPositions: [
         {
@@ -174,12 +178,16 @@ export const userList: IUser[] = [
       companySize: 150,
       foundedYear: 2015,
       location: locationConstant[1],
-      email: "innotech@gmail.com",
-      password: "nano-tech-123",
       phone: "+1987654321",
       images: [
-        "https://www.workdesign.com/wp-content/uploads/2020/03/Google-Open-Workspace-Photo-Courtesy-of-Google-e1583416661584.png",
-        "https://ml5enisp4q1t.i.optimole.com/w:1600/h:965/q:mauto/f:best/https://interiorarchitects.com/wp-content/uploads/2019/08/21NOKX_0017_000_IA_Nokia_HERE_N3_iawebsite-e1566587330816.jpg",
+        {
+          id: "b85113af-ef83-41c2-80af-b59d847959a3",
+          image: "https://www.workdesign.com/wp-content/uploads/2020/03/Google-Open-Workspace-Photo-Courtesy-of-Google-e1583416661584.png",
+        },
+        {
+          id: "114822cf-9fa5-4c4d-bc39-a0813c0dbd7c",
+          image: "https://ml5enisp4q1t.i.optimole.com/w:1600/h:965/q:mauto/f:best/https://interiorarchitects.com/wp-content/uploads/2019/08/21NOKX_0017_000_IA_Nokia_HERE_N3_iawebsite-e1566587330816.jpg",
+        }
       ],
       openPositions: [
         {
@@ -306,9 +314,8 @@ export const userList: IUser[] = [
         lastname: 'Bondeth',
         username: 'Benx',
         gender: 'male',
-        avatar: "BON",
+        avatar: 'https://marketplace.canva.com/EAFe2pEjKjQ/1/0/1600w/canva-colorful-gradient-background-man-3d-avatar-tK46u2vZgPY.jpg',
         phone: '+855 96 555 5555',
-        email: 'rithybondeth@example.com',
         job: "Software Engineer",
         location: "Phnom Penh, Cambodia",
         skills: [
@@ -323,9 +330,9 @@ export const userList: IUser[] = [
                 description: "Expert in React.js frontend framework.",
             }
         ],
-        description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
-        resume: "resume.pdf",
-        coverLetter: "cover_letter.pdf",
+        description: "Currently looking for Software Developer senior position. Specialize in Web, Mobile Development, DevOps. Feel free to contact me.",
+        resume: "bondeth-resume.pdf",
+        coverLetter: "bondeth-cover-letter.pdf",
         status: [
             { id: 1, label: 'Profile Completion', value: '90%' }, 
             { id: 2, label: 'Accomplishment', value: '20+' }, 
@@ -376,11 +383,10 @@ export const userList: IUser[] = [
         id: 2,
         firstname: 'Jane',
         lastname: 'Jane',
-        username: 'baby jane',
+        username: 'Baby Jane',
         gender: 'female',
-        avatar: "JAN",
+        avatar: "https://img.freepik.com/free-psd/3d-render-avatar-character_23-2150611759.jpg",
         phone: '+855 96 555 5555',
-        email: 'janejane@gmail.com',
         job: "Software Engineer",
         location: "Phnom Penh, Cambodia",
         skills: [
@@ -393,7 +399,17 @@ export const userList: IUser[] = [
                 id: "2cd319c5-95b1-4da7-b52c-e3d912d2c8c2",
                 name: "React.js ",
                 description: "Expert in React.js frontend framework.",
-            }
+            },
+            {
+              id: "9221f97-7c5d-40bf-b14c-e71aa7dbe7d1",
+              name: "Laravel",
+              description: "Expert in Laravel backend framework."
+          }, 
+          {
+              id: "2csd319c5-95b1-4da7-b52c-e3d912d2c8c2",
+              name: "Docker",
+              description: "Expert in Docker.",
+          }
         ],
         description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
         resume: "resume.pdf",

@@ -83,27 +83,6 @@ export const dateValidation = (label: string) =>
     })
   );
 
-// export const imageValidation = (label: string) =>
-//   z
-//     .union([
-//       // Union to accept either File or null
-//       z.custom<File>(
-//         (file) => {
-//           if (!(file instanceof File)) return false;
-//           const validTypes = ["image/jpeg", "image/png", "image/webp"];
-//           return validTypes.includes(file.type) && file.size <= MAX_IMAGE_SIZE;
-//         },
-//         {
-//           message: `Invalid file: ${label} must be an image (jpeg, png, webp) and < 5MB`,
-//         }
-//       ),
-//       z.string(),
-//       z.null(), // Allow null as a valid value
-//     ])
-//     .refine((file) => file === null || file instanceof File, {
-//       message: `Please upload a valid file or leave it empty.`,
-//     });
-
 export const imageValidation = (label: string) =>
   z
     .union([

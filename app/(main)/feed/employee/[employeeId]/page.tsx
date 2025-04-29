@@ -1,4 +1,6 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+"use client"
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import IconLabel from "@/components/utils/icon-label";
 import Tag from "@/components/utils/tag";
@@ -11,11 +13,15 @@ import { IEducation, IExperience, ISkill, ISocial } from "@/utils/interfaces/use
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import Link from "next/link";
 import { userList } from "@/data/user-data";
+import { useParams } from "next/navigation";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
 export default function EmployeeDetailPage() {
-    const userId = 1;
+    const params = useParams();
+    const id = Number(params.employeeId) - 1;
+
     const employee = userList.filter((user) => user.role === "employee");
-    const employeeList = employee[userId].employee;    
+    const employeeList = employee[id].employee;    
 
     return (
         <div className="flex flex-col gap-5">
@@ -23,10 +29,9 @@ export default function EmployeeDetailPage() {
             <div className="w-full flex items-stretch justify-between border border-muted py-5 px-10 tablet-xl:flex-col tablet-xl:[&>div]:w-full tablet-xl:gap-5">
                 <div className="flex flex-col items-center gap-5">
                     <Avatar className="size-40 tablet-xl:!size-52">
-                        <AvatarFallback>
-                            { !employeeList?.avatar 
-                            ? employeeList?.firstname.slice(0, 2) 
-                            : employeeList?.avatar}
+                        <AvatarImage src={employeeList?.avatar!}/>
+                        <AvatarFallback className="uppercase">
+                            {!employeeList?.avatar ? <LucideUser/> : employeeList.avatar.slice(0, 3)}
                         </AvatarFallback>  
                     </Avatar>
                     <div className="flex flex-col items-center gap-1">
@@ -51,7 +56,7 @@ export default function EmployeeDetailPage() {
                 <div className="flex flex-col items-start gap-5">
                     <div className="flex flex-col items-start gap-2">
                         <TypographyMuted>Email</TypographyMuted>
-                        <IconLabel icon={<LucideMail/>} text={employeeList!.email} />            
+                        <IconLabel icon={<LucideMail/>} text={employee[id].email} />            
                     </div>
                     <div className="flex flex-col items-start gap-2">
                         <TypographyMuted>Phone</TypographyMuted>
@@ -64,9 +69,20 @@ export default function EmployeeDetailPage() {
                 </div>
             </div>
 
-            {/* Education, Skill and Experience Section */}     
+            {/* Description, Education, Skill and Experience Section */}     
             <div className="flex items-stretch gap-5 tablet-xl:flex-col tablet-xl:[&>div]:w-full">
                 <div className="w-2/3 flex flex-col gap-5">
+                    {/* Description Section */}
+                    <div className="flex flex-col gap-5 border border-muted p-5">
+                        <div className="flex flex-col gap-2">
+                            <TypographyH4>Description</TypographyH4>
+                            <Divider/>
+                        </div> 
+                        <div className="flex flex-col gap-2 border-l-4 border-primary pl-4">
+                            <TypographySmall className="leading-loose">{employeeList!.description}</TypographySmall>    
+                        </div>
+                    </div>
+
                     {/* Education Section */}
                     <div className="flex flex-col gap-5 border border-muted p-5">
                         <div className="flex flex-col gap-2">
@@ -109,7 +125,18 @@ export default function EmployeeDetailPage() {
                             <Divider/>
                         </div>
                         <div className="flex flex-wrap gap-3">
-                                {employeeList?.skills.map((item: ISkill) => <Tag key={item.id} label={item.name} />)}
+                            {employeeList?.skills.map((item: ISkill) => (
+                                <HoverCard key={item.id}>
+                                    <HoverCardTrigger>
+                                        <Tag label={item.name} />
+                                    </HoverCardTrigger>
+                                    <HoverCardContent className="flex flex-col items-start gap-1">
+                                        <TypographySmall className="text-sm">{item.name}</TypographySmall>
+                                        <TypographyMuted className="text-xs">{item.description}</TypographyMuted>
+                                    </HoverCardContent>
+                                </HoverCard>
+                            
+                            ))}
                         </div>
                     </div>
                 </div>

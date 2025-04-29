@@ -6,9 +6,8 @@ export interface IEmployee {
   lastname: string;
   username: string;
   gender: TGender;
-  avatar?: string;
+  avatar?: string | null;
   phone: string; //hide
-  email: string; //hide
   job: string;
   yearsOfExperience: string;
   availability: string;

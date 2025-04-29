@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { TypographyMuted } from "../../utils/typography/typography-muted"
 import { TypographyP } from "../../utils/typography/typography-p"
 import Tag from "../../utils/tag"
-import { Avatar, AvatarFallback } from "../../ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar"
 import IconLabel from "../../utils/icon-label"
 import { TypographyH4 } from "../../utils/typography/typography-h4"
 import { TypographySmall } from "../../utils/typography/typography-small"
@@ -19,7 +19,8 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
                     <DialogTitle>
                         <div className="flex items-stretch justify-start gap-3 tablet-sm:flex-col">
                             <Avatar className="!size-36">
-                                <AvatarFallback>{props.avatar}</AvatarFallback>
+                                <AvatarImage src={props.avatar!}/>
+                                <AvatarFallback className="uppercase">{!props.avatar ? <LucideUser/> : props.avatar.slice(0, 3)}</AvatarFallback>
                             </Avatar>
                             <div className="flex flex-col items-start gap-5 font-normal">
                                 <div className="flex flex-col items-start">
