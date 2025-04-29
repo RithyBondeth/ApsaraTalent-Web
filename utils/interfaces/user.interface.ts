@@ -7,22 +7,22 @@ export interface IUser {
     role: TUserRole;   
     email: string;
     password: string;
-    phone?: string;
-    otpCode?: string;
-    otpCodeExpires?: Date,
-    pushNotificationToken?: string;
-    resetPasswordToken?: string;
-    resetPasswordExpires?: Date;
-    refreshToken?: string;
+    phone?: string | null;
+    otpCode?: string | null;
+    otpCodeExpires?: string | null,
+    pushNotificationToken?: string | null; 
+    resetPasswordToken?: string | null;
+    resetPasswordExpires?: string | null;
+    refreshToken?: string | null;
     isEmailVerified?: boolean;
-    emailVerificationToken?: string;
-    isTwoFactorEnabled?: boolean;
-    twoFactorSecret?: string;
-    facebookId?: string;
-    googleId?: string;
-    linkedinId?: string;
-    githubId?: string;
+    emailVerificationToken?: string | null;
+    isTwoFactorEnabled?: boolean | null;
+    twoFactorSecret?: string | null;
+    facebookId?: string | null;
+    googleId?: string | null;
+    linkedinId?: string | null;
+    githubId?: string | null;
     employee: IEmployee | null;
     company: ICompany | null;
-    createdAt: Date;
+    createdAt: string;
 }

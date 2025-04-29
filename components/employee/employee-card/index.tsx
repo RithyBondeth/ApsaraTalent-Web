@@ -69,7 +69,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
 
             {/* Tag Section */}
             <div className="w-full flex flex-wrap gap-2">
-                {props.skills.map((skill) => <Tag key={skill} label={skill} />)}
+                {props.skills.map((skill) => <Tag key={skill.id} label={skill.name} />)}
             </div>
 
             {/* Description Section */}

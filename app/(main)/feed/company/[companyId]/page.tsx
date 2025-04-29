@@ -162,7 +162,7 @@ export default function CompanyDetailPage() {
             <div className="w-full">
               <Carousel className="w-full">
                 <CarouselContent className="w-full">
-                  {companyList[companyId].images.map((item) => (
+                  {companyList[companyId].images?.map((item) => (
                     <CarouselItem key={item} className="max-w-[280px]">
                       <div
                         className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center"
@@ -199,11 +199,6 @@ export default function CompanyDetailPage() {
                 text={companyList[companyId].email}
                 className="flex-col items-start"
               />
-              <IconLabel
-                icon={<TypographyMuted>Website</TypographyMuted>}
-                text={companyList[companyId].website}
-                className="flex-col items-start cursor-pointer [&>p]:!text-blue-500"
-              />
             </div>
           </div>
           {/* Culture and Benefit Section */}
@@ -216,11 +211,11 @@ export default function CompanyDetailPage() {
               <div className="flex flex-col gap-3 border border-muted px-5 py-3 rounded-md">
                 <TypographyP className="font-medium">Values</TypographyP>
                 <div className="flex flex-col gap-2">
-                  {companyList[companyId].values.map((item, index) => (
+                  {companyList[companyId].values.map((item) => (
                     <IconLabel
-                      key={index}
+                      key={item.id}
                       icon={<LucideCircleCheck stroke="white" fill="#69B41E" />}
-                      text={item}
+                      text={item.label}
                     />
                   ))}
                 </div>
@@ -228,11 +223,11 @@ export default function CompanyDetailPage() {
               <div className="flex flex-col gap-3 border border-muted px-5 py-3 rounded-md">
                 <TypographyP className="font-medium">Benefits</TypographyP>
                 <div className="flex flex-col gap-2">
-                  {companyList[companyId].benefits.map((item, index) => (
+                  {companyList[companyId].benefits.map((item) => (
                     <IconLabel
-                      key={index}
+                      key={item.id}
                       icon={<LucideCircleCheck stroke="white" fill="#0073E6" />}
-                      text={item}
+                      text={item.label}
                     />
                   ))}
                 </div>
