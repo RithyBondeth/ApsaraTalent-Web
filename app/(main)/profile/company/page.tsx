@@ -72,6 +72,8 @@ import { ToastAction } from "@/components/ui/toast";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import Link from "next/link";
 import { userList } from "@/data/user-data";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import Tag from "@/components/utils/tag";
 
 export default function ProfilePage() {
   const userId = 0;
@@ -155,7 +157,6 @@ export default function ProfilePage() {
     );
   };
 
-
   // Benefits
   const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
   const [benefitInput, setBenefitInput] = useState<string>("");
@@ -172,7 +173,9 @@ export default function ProfilePage() {
   const [openCareersPopOver, setOpenCareersPopOver] = useState<boolean>(false);
   const [careersInput, setCareersInput] = useState<string>("");
   const initialCareerScope = form.getValues?.("careerScopes") || [];
-  const [careers, setCareers] = useState<{ name: string }[]>(initialCareerScope);
+  const [careers, setCareers] = useState<{ name: string, description: string }[]>(
+    initialCareerScope.map(career => ({ ...career, description: career.description || '' }))
+  );
 
   // Socials
   const [socialInput, setSocialInput] = useState<{ social: string; link: string;}>({ social: "", link: "" });
@@ -272,7 +275,7 @@ export default function ProfilePage() {
     }
 
     // Add new career
-    const updatedCareers = [...careers, { name: trimmed }];
+    const updatedCareers = [...careers, { name: trimmed, description: '' }];
     setCareers(updatedCareers);
 
     // Clear input field
@@ -1026,18 +1029,22 @@ export default function ProfilePage() {
             <div className="w-full flex flex-col items-stretch gap-3">
               <div className="flex flex-wrap gap-3">
                 {careers.map((career, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted"
-                  >
-                    <TypographySmall>{career.name}</TypographySmall>
-                    {isEdit && (
-                      <LucideCircleX
-                        className="text-muted-foreground cursor-pointer text-red-500"
-                        width={"18px"}
-                        onClick={() => removeCareer(career.name)}
-                      />
-                    )}
+                  <div key={index} className="rounded-3xl border-2 border-muted duration-300 ease-linear hover:border-muted-foreground">
+                    <HoverCard>
+                      <HoverCardTrigger className="flex items-center bg-muted rounded-3xl">
+                        <Tag label={career.name}/>
+                        {isEdit && (
+                          <LucideCircleX
+                            className="text-muted-foreground cursor-pointer mr-2 text-red-500"
+                            width={"18px"}
+                            onClick={() => removeCareer(career.name)}
+                          />
+                        )}
+                      </HoverCardTrigger>
+                      <HoverCardContent>
+                        <TypographySmall>{career.description ? career.description : career.name}</TypographySmall>
+                      </HoverCardContent>
+                    </HoverCard>
                   </div>
                 ))}
               </div>

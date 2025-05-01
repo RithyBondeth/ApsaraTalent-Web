@@ -3,9 +3,6 @@ import {
   dateValidation,
   emailValidation,
   imageValidation,
-  khmerPhoneNumberValidation,
-  passwordValidation,
-  selectedValidation,
   textValidation,
 } from "@/utils/validations";
 import * as z from "zod";
@@ -133,7 +130,8 @@ export const benefitAndValueSchema = z.object({
 
 export const careerScopesSchema = z.object({
   careerScopes: z.array(z.object({
-    name: z.string()
+    name: z.string(),
+    description: z.string().optional(),
   })).min(1, { message: "Please select at least one career option" }).optional(), 
 });
 

@@ -8,10 +8,12 @@ import {
   LucideAlarmClock,
   LucideBookmark,
   LucideBriefcaseBusiness,
+  LucideBuilding,
   LucideCalendarDays,
   LucideCircleCheck,
   LucideHeartHandshake,
   LucideUser,
+  LucideUsers,
 } from "lucide-react";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyP } from "@/components/utils/typography/typography-p";
@@ -31,6 +33,7 @@ import { userList } from "@/data/user-data";
 import { useParams } from "next/navigation";
 import { IImage } from "@/utils/interfaces/user-interface/company.interface";
 import Link from "next/link";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
 export default function CompanyDetailPage() {
   const param = useParams();
@@ -59,6 +62,18 @@ export default function CompanyDetailPage() {
             <TypographyP className="!m-0 tablet-sm:text-center tablet-sm:text-sm">
               {companyList?.industry}
             </TypographyP>
+            <div className="flex items-center gap-5">
+              <IconLabel
+                icon={<LucideBuilding/>}
+                text={`Founded in ${companyList?.foundedYear}`}
+                className="[&>p]:text-primary-foreground"
+              />
+              <IconLabel
+                icon={<LucideUsers/>}
+                text={`${companyList?.companySize}+ Employees`}
+                className="[&>p]:text-primary-foreground"
+              />
+            </div>
           </div>
         </div>
         <div className="z-10 absolute right-3 bottom-3 flex items-center gap-3">
@@ -174,11 +189,15 @@ export default function CompanyDetailPage() {
             <div className="w-full flex flex-col items-stretch gap-3">
               <div className="flex flex-wrap gap-3">
                 {companyList!.careerScopes.map((career, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted"
-                  >
-                    <TypographySmall>{career.name}</TypographySmall>
+                  <div key={index} className="rounded-3xl border-2 border-muted duration-300 ease-linear hover:border-muted-foreground">
+                    <HoverCard>
+                      <HoverCardTrigger>
+                        <Tag label={career.name}/>
+                      </HoverCardTrigger>
+                      <HoverCardContent>
+                        <TypographySmall>{career.description}</TypographySmall>
+                      </HoverCardContent>
+                    </HoverCard>
                   </div>
                 ))}
               </div>
