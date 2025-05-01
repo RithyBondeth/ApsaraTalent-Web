@@ -93,7 +93,7 @@ export default function CompanyDetailPage() {
     <div className="flex flex-col gap-5">
       {/* Header Section */}
       <div
-        className="relative h-72 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center tablet-sm:items-start"
+        className="relative h-80 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center tablet-sm:items-start"
         style={{ backgroundImage: `url(${companyList?.cover})` }}
       >
         <BlurBackGroundOverlay />

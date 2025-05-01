@@ -485,7 +485,7 @@ export default function ProfilePage() {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <div
-        className="relative h-72 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center"
+        className="relative h-80 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center"
         style={{ backgroundImage: `url(${coverFile ? URL.createObjectURL(coverFile) : companyList?.cover})` }}
       > 
         <BlurBackGroundOverlay />
