@@ -34,6 +34,8 @@ import { useParams } from "next/navigation";
 import { IImage } from "@/utils/interfaces/user-interface/company.interface";
 import Link from "next/link";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import ImagePopup from "@/components/utils/image-popup";
+import React, { useEffect, useRef, useState } from "react";
 
 export default function CompanyDetailPage() {
   const param = useParams();
@@ -41,6 +43,40 @@ export default function CompanyDetailPage() {
   
   const companies = userList.filter((user) => user.role === 'company');
   const companyList = companies.find((cmp) => cmp.company?.id === id)?.company;
+
+  const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
+  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
+  const ignoreNextClick = useRef<boolean>(false);
+  const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(null);
+
+  const handleClickImagePopup = (e: React.MouseEvent) => {
+    if(ignoreNextClick.current) {
+      ignoreNextClick.current = false;
+      return;  
+    }
+
+    if((e.target as HTMLElement).closest(".dialog-content")) return;
+
+    setOpenImagePopup(true);
+  }
+
+  const handleClickProfilePopup = (e: React.MouseEvent) => {
+    if(ignoreNextClick.current) {
+      ignoreNextClick.current = false;
+      return;  
+    }
+
+    if((e.target as HTMLElement).closest(".dialog-content")) return;
+
+    setOpenProfilePopup(true);
+  }
+
+  useEffect(() => {
+    if(openImagePopup || openProfilePopup) {
+      ignoreNextClick.current = true;
+      setTimeout(() => ignoreNextClick.current = false, 200);
+    }
+  }, [openImagePopup, openProfilePopup]);
 
   return (
     <div className="flex flex-col gap-5">
@@ -51,7 +87,7 @@ export default function CompanyDetailPage() {
       >
         <BlurBackGroundOverlay />
         <div className="relative flex items-center gap-5 tablet-sm:flex-col">
-          <Avatar className="size-32 tablet-sm:size-28" rounded="md">
+          <Avatar className="size-32 tablet-sm:size-28" rounded="md" onClick={handleClickProfilePopup}>
             <AvatarImage src={companyList?.avatar!}/>
             <AvatarFallback className="uppercase">{companyList?.name.slice(0, 3)}</AvatarFallback>
           </Avatar>
@@ -216,6 +252,10 @@ export default function CompanyDetailPage() {
                   {companyList?.images?.map((item: IImage) => (
                     <CarouselItem key={item.id} className="max-w-[280px]">
                       <div
+                        onClick={(e) => {
+                          handleClickImagePopup(e);
+                          setCurrentCompanyImage(item.image);
+                        }}
                         className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center"
                         style={{backgroundImage: `url(${item.image})`}}
                       />
@@ -321,6 +361,11 @@ export default function CompanyDetailPage() {
           </div>
         </div>
       </div>
+      
+      {/* Image Popup */}
+      <ImagePopup open={openImagePopup} setOpen={setOpenImagePopup} image={currentCompanyImage!}/>
+      {/* Profile Popup */}
+      <ImagePopup open={openProfilePopup} setOpen={setOpenProfilePopup} image={companyList?.avatar!}/>
     </div>
   );
 }

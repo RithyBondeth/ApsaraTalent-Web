@@ -39,9 +39,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
         if (!openCompanyDialog) {
             // Prevent reopening immediately after closing
             ignoreNextClick.current = true;
-            setTimeout(() => {
-                ignoreNextClick.current = false;
-            }, 200);
+            setTimeout(() => ignoreNextClick.current = false, 200);
         }
     }, [openCompanyDialog]);
 
