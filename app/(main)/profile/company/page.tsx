@@ -131,7 +131,7 @@ export default function ProfilePage() {
   const addOpenPosition = () => {
   
     const newPosition = {
-      id: Date.now(), // This runs only after component mounts on client
+      id: Date.now().toString(), // Convert to string
       title: "",
       description: "",
       experienceRequirement: "",
@@ -151,7 +151,7 @@ export default function ProfilePage() {
   // Remove an open position
   const removeOpenPosition = (positionId: number) => {
     setOpenPositions((prevPositions) => 
-      prevPositions!.filter((position) => position.id !== positionId)
+      prevPositions!.filter((position) => position.id !== positionId.toString())
     );
   };
 
@@ -690,7 +690,7 @@ export default function ProfilePage() {
                     key={index}
                     index={index}
                     form={form}
-                    positionId={position.id}
+                    positionId={Number(position.id)}
                     positionLabel={`Position ${index + 1}`}
                     isEdit={isEdit}
                     title={position.title}

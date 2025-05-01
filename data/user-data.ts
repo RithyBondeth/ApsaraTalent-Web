@@ -25,7 +25,7 @@ export const userList: IUser[] = [
     createdAt: "2025-03-11T22:10:20.366Z",
     employee: null,
     company: {
-      id: 1,
+      id: "b85113af-ef83-41c2-80af-b59d847959a",
       name: "NextGen Innovations",
       industry: "Pioneering AI & Cloud Solutions",
       description: "Pioneering AI & Cloud Solutions lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
@@ -47,7 +47,7 @@ export const userList: IUser[] = [
       ],
       openPositions: [
         {
-          id: 1,
+          id: "c1e3bebb-6e0c-4fac-b04d-5ac0469d0778",
           title: "Machine Learning Engineer",
           description:
             "Develop and optimize AI models for real-world applications.",
@@ -60,7 +60,7 @@ export const userList: IUser[] = [
           deadlineDate: "02/04/2025",
         },
         {
-          id: 2,
+          id: "c1e3s2bb-6e0c-4fac-b04d-5ac0469d0778",
           title: "Cloud Architect",
           description: "Design and implement scalable cloud infrastructures.",
           salary: "$110,000 - $140,000",
@@ -72,7 +72,7 @@ export const userList: IUser[] = [
           deadlineDate: "02/05/2025",
         },
         {
-          id: 3,
+          id: "f1e3bebb-6e0c-4fac-b04d-5ac0469d0778",
           title: "Data Analyst",
           description:
             "Analyze complex data to drive business insights and strategies.",
@@ -138,10 +138,10 @@ export const userList: IUser[] = [
         },
       ],
       socials: [
-        { id: 1, platform: "Facebook", url: "bondeth.com" },
-        { id: 2, platform: "Instagram", url: "rithy-bondeth.com" },
-        { id: 3, platform: "Telegram", url: "telegram/rithy-bondeth" },
-        { id: 4, platform: "Website", url: "rithy-bondeth.com" },
+        { id: "9c04e4d3-5402-450b-8e88-09058f1fad0e", platform: "Facebook", url: "bondeth.com" },
+        { id: "9c04e4sd3-5402-450b-8e88-09058f1fad0e", platform: "Instagram", url: "rithy-bondeth.com" },
+        { id: "9d04e4d3-5402-450b-8e88-09058f1fad0e", platform: "Telegram", url: "telegram/rithy-bondeth" },
+        { id: "9c04e4d3-5402-450b-8e88-0sds58f1fad0e", platform: "Website", url: "rithy-bondeth.com" },
       ],
       createdAt: "2025-03-11T22:10:12.171Z",
     },
@@ -169,7 +169,7 @@ export const userList: IUser[] = [
     createdAt: "2025-03-11T22:10:20.366Z",
     employee: null,
     company: {
-      id: 2,
+      id: "b85113af-ef83-41c2-80af-b59d847959",
       name: "InnoTech Solutions",
       industry: "Innovative Technology & IT Consulting",
       description: "Innovative Technology & IT Consulting lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
@@ -191,7 +191,7 @@ export const userList: IUser[] = [
       ],
       openPositions: [
         {
-          id: 1,
+          id: "66fb491a-7238-4715-a777-aac598fcce3e",
           title: "Frontend Developer",
           description: "Develop modern web applications with cutting-edge technologies.",
           salary: "$90,000 - $110,000",
@@ -203,7 +203,7 @@ export const userList: IUser[] = [
           deadlineDate: "11/10/2025",
         },
         {
-          id: 2,
+          id: "c1e3bebb-6e0c-4fac-b04d-5ac0469d0778",
           title: "UI/UX Designer",
           description: "Create engaging user experiences through innovative design solutions.",
           salary: "$80,000 - $100,000",
@@ -263,22 +263,22 @@ export const userList: IUser[] = [
       ],
       socials: [
         {
-          id: 1,
+          id: "9qw04e4d3-5402-450b-8e88-09058f1fad0e",
           platform: "Facebook",
           url: "bondeth.com",
         },
         {
-          id: 2,
+          id: "9c04e4d3-54012-450b-8e88-09058f1fad0e",
           platform: "Instagram",
           url: "rithy-bondeth.com",
         },
         {
-          id: 3,
+          id: "9cd4e4d3-5402-450b-8a88-09058f1fad0e",
           platform: "Telegram",
           url: "telegram/rithy-bondeth",
         },
         {
-          id: 4,
+          id: "9c04e4d3-5402-450b-8e88-090q32f1fad0e",
           platform: "Website",
           url: "rithy-bondeth.com",
         },
@@ -309,7 +309,7 @@ export const userList: IUser[] = [
     createdAt: "2025-03-11T22:10:20.366Z",
     company: null,
     employee: {
-        id: 1,
+        id: "5128b7xd-5824-4698-a51a-e722b1844cb2",
         firstname: 'Rithy',
         lastname: 'Bondeth',
         username: 'Benx',
@@ -333,11 +333,6 @@ export const userList: IUser[] = [
         description: "Currently looking for Software Developer senior position. Specialize in Web, Mobile Development, DevOps. Feel free to contact me.",
         resume: "bondeth-resume.pdf",
         coverLetter: "bondeth-cover-letter.pdf",
-        status: [
-            { id: 1, label: 'Profile Completion', value: '90%' }, 
-            { id: 2, label: 'Accomplishment', value: '20+' }, 
-            { id: 3, label: 'Likes', value: '35' }
-        ],
         yearsOfExperience: "5+ years experience",
         experiences: [
             { id: "337f4edf-c8b0-4d57-987b-3d22fef5e9bb", title: 'Software Engineer', description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.', startDate: '2020-01-01', endDate: '2024-01-01' },
@@ -380,7 +375,7 @@ export const userList: IUser[] = [
     createdAt: "2025-03-11T22:10:20.366Z",
     company: null, 
     employee: {
-        id: 2,
+        id: "5128b7cb-5824-4698-a51a-e722b1844cb2",
         firstname: 'Jane',
         lastname: 'Jane',
         username: 'Baby Jane',
@@ -414,11 +409,6 @@ export const userList: IUser[] = [
         description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
         resume: "resume.pdf",
         coverLetter: "cover_letter.pdf",
-        status: [
-            { id: 1, label: 'Profile Completion', value: '90%' }, 
-            { id: 2, label: 'Accomplishment', value: '20+' }, 
-            { id: 3, label: 'Likes', value: '35' },
-        ],
         yearsOfExperience: "3+ years experience",
         experiences: [
             { id: "337f4edf-c8b0-4d57-987b-3d22fef5e9bb", title: 'Software Engineer', description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.', startDate: '2020-01-01', endDate: '2024-01-01' },

@@ -85,7 +85,11 @@ export default function CompanyCard(props: ICompanyCardProps) {
             {/* Tag Section */}
             <div className="flex flex-col gap-5">
                 <div className="flex flex-col gap-3">
-                    <IconLabel text="6 Open Positions" icon={<LucideBriefcaseBusiness/>} className="[&>p]:text-primary [&>p]:font-medium"/>
+                    <IconLabel 
+                        text={`${props.openPositions.length} Open Positions`} 
+                        icon={<LucideBriefcaseBusiness/>} 
+                        className="[&>p]:text-primary [&>p]:font-medium"
+                    />
                     <div className="w-full flex flex-wrap gap-2">
                         {props.openPositions.map((item: IJobPosition, index) => <Tag key={index} label={item.title} />)}
                     </div>

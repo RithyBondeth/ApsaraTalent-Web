@@ -58,7 +58,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
                                     ))}
                                 </div>
                             </div>
-                            <div className="w-full flex flex-col items-start gap-3 tablet-sm:hidden">
+                            {/* <div className="w-full flex flex-col items-start gap-3 tablet-sm:hidden">
                                 <TypographyP className="font-medium">Status</TypographyP>
                                 <div className="w-full flex items-stretch gap-3">
                                     {props.status.map((item, index) => (
@@ -69,7 +69,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
                                         </Button>
                                     ))}
                                 </div>
-                            </div>
+                            </div> */}
                             <div className="w-full flex justify-end">
                                <Link href={`/feed/employee/${props.id}`}>
                                     <Button>View Employee</Button>

@@ -30,13 +30,14 @@ import { TypographySmall } from "@/components/utils/typography/typography-small"
 import { userList } from "@/data/user-data";
 import { useParams } from "next/navigation";
 import { IImage } from "@/utils/interfaces/user-interface/company.interface";
+import Link from "next/link";
 
 export default function CompanyDetailPage() {
   const param = useParams();
-  const id = Number(param.companyId) - 1;
+  const id = param.companyId;
   
   const companies = userList.filter((user) => user.role === 'company');
-  const companyList = companies[id].company;
+  const companyList = companies.find((cmp) => cmp.company?.id === id)?.company;
 
   return (
     <div className="flex flex-col gap-5">
@@ -86,6 +87,7 @@ export default function CompanyDetailPage() {
               </TypographyMuted>
             </div>
           </div>
+
           {/* Open Positions Section */}
           <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
             <div className="w-full flex flex-col gap-2">
@@ -105,8 +107,8 @@ export default function CompanyDetailPage() {
                           </TypographyP>
                         </div>
                         <div className="flex items-center gap-3">
-                          <Tag icon={<LucideAlarmClock />} label="Full Time" />
-                          <Tag icon={<LucideUser />} label="3+ years" />
+                          <Tag icon={<LucideAlarmClock />} label={item.type} />
+                          <Tag icon={<LucideUser />} label={item.experience} />
                         </div>
                       </div>
                       <div className="flex flex-col items-start gap-2">
@@ -114,13 +116,13 @@ export default function CompanyDetailPage() {
                           icon={
                             <LucideCalendarDays className="text-muted-foreground" />
                           }
-                          text={`PostedDate ${item.postedDate}`}
+                          text={`Post - ${item.postedDate}`}
                         />
                         <IconLabel
                           icon={
                             <LucideCalendarDays className="text-muted-foreground" />
                           }
-                          text={`Deadline ${item.deadlineDate}`}
+                          text={`Deadline - ${item.deadlineDate}`}
                         />
                       </div>
                     </div>
@@ -162,6 +164,28 @@ export default function CompanyDetailPage() {
               ))}
             </div>
           </div>
+
+          {/* Careers Section */}
+          <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
+            <div className="w-full flex flex-col gap-1">
+              <TypographyH4>Company Careers</TypographyH4>
+              <Divider />
+            </div>
+            <div className="w-full flex flex-col items-stretch gap-3">
+              <div className="flex flex-wrap gap-3">
+                {companyList!.careerScopes.map((career, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted"
+                  >
+                    <TypographySmall>{career.name}</TypographySmall>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Life at Company Section */}
           <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
             <div className="w-full flex flex-col gap-2">
               <TypographyH4>Life at {companyList?.name}</TypographyH4>
@@ -174,7 +198,7 @@ export default function CompanyDetailPage() {
                     <CarouselItem key={item.id} className="max-w-[280px]">
                       <div
                         className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center"
-                        style={{backgroundImage: `url(${item})`}}
+                        style={{backgroundImage: `url(${item.image})`}}
                       />
                     </CarouselItem>
                   ))}
@@ -198,17 +222,33 @@ export default function CompanyDetailPage() {
                 className="flex-col items-start"
               />
               <IconLabel
+                icon={<TypographyMuted>Location</TypographyMuted>}
+                text={companyList!.location}
+                className="flex-col items-start"
+              />
+              <IconLabel
+                icon={<TypographyMuted>Founded Year</TypographyMuted>}
+                text={companyList!.foundedYear.toString()}
+                className="flex-col items-start"
+              />
+              <IconLabel
+                icon={<TypographyMuted>Company Size</TypographyMuted>}
+                text={`${companyList!.companySize}+ Employees`}
+                className="flex-col items-start"
+              />
+              <IconLabel
                 icon={<TypographyMuted>Phone</TypographyMuted>}
                 text={companyList!.phone}
                 className="flex-col items-start"
               />
               <IconLabel
                 icon={<TypographyMuted>Email</TypographyMuted>}
-                text={companies[id]!.email}
+                text={companies.find((cmp) => cmp.company?.id === id)?.email!}
                 className="flex-col items-start"
               />
             </div>
           </div>
+
           {/* Culture and Benefit Section */}
           <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
             <div className="w-full flex flex-col gap-2">
@@ -240,6 +280,24 @@ export default function CompanyDetailPage() {
                   ))}
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Social Section */}
+          <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
+            <div className="w-full flex flex-col gap-2">
+              <TypographyH4>Company Socials</TypographyH4>
+              <Divider />
+            </div>
+            <div className="w-full flex flex-col items-stretch gap-3">
+              {companyList?.socials.map((item, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <TypographySmall className="font-medium">{item.platform}:</TypographySmall>
+                  <Link href={item.url} className="px-3 bg-blue-100 text-blue-600 rounded-2xl hover:underline">
+                    <TypographySmall>{item.url}</TypographySmall>
+                  </Link>          
+                </div>
+              ))}
             </div>
           </div>
         </div>

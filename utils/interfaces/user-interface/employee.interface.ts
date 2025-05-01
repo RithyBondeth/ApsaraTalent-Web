@@ -1,13 +1,13 @@
 import { TGender } from "../../types/gender.type";
 
 export interface IEmployee {
-  id: number;
+  id: string;
   firstname: string;
   lastname: string;
   username: string;
   gender: TGender;
-  avatar?: string | null;
-  phone: string; //hide
+  avatar?: string;
+  phone: string;
   job: string;
   yearsOfExperience: string;
   availability: string;
@@ -16,11 +16,6 @@ export interface IEmployee {
   resume?: string;
   coverLetter?: string;
   skills: ISkill[];
-  status: {
-      id: number;
-      label: string;
-      value: string;
-  }[];
   experiences: IExperience[];
   educations: IEducation[];
   socials: ISocial[];

@@ -1,5 +1,5 @@
 export interface ICompany {
-    id: number;
+    id: string;
     name: string;
     industry: string;
     description: string;
@@ -37,7 +37,7 @@ export interface ICareerScopes {
 }
 
 export interface IJobPosition {
-    id: number;
+    id: string;
     title: string;
     description: string;
     salary: string;
@@ -55,7 +55,7 @@ export interface IImage {
 }
 
 export interface ISocial {
-    id?: number;
+    id?: string;
     platform: string;
     url: string;
 }

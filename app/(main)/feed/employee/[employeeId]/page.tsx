@@ -18,10 +18,10 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/h
 
 export default function EmployeeDetailPage() {
     const params = useParams();
-    const id = Number(params.employeeId) - 1;
+    const id = params.employeeId;
 
     const employee = userList.filter((user) => user.role === "employee");
-    const employeeList = employee[id].employee;    
+    const employeeList = employee.find((emp) => emp.employee?.id === id)?.employee;
 
     return (
         <div className="flex flex-col gap-5">
@@ -56,7 +56,7 @@ export default function EmployeeDetailPage() {
                 <div className="flex flex-col items-start gap-5">
                     <div className="flex flex-col items-start gap-2">
                         <TypographyMuted>Email</TypographyMuted>
-                        <IconLabel icon={<LucideMail/>} text={employee[id].email} />            
+                        <IconLabel icon={<LucideMail/>} text={employee.find((emp) => emp.employee?.id === id)?.email!} />            
                     </div>
                     <div className="flex flex-col items-start gap-2">
                         <TypographyMuted>Phone</TypographyMuted>
