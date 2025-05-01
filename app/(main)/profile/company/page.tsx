@@ -75,6 +75,9 @@ import { userList } from "@/data/user-data";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import Tag from "@/components/utils/tag";
 import ImagePopup from "@/components/utils/image-popup";
+import { getSocialPlatformTypeIcon } from "@/utils/get-social-type";
+import { TPlatform } from "@/utils/types/platform.type";
+import { ISocial } from "@/utils/interfaces/user-interface/company.interface";
 
 export default function ProfilePage() {
   const userId = 0;
@@ -951,7 +954,7 @@ export default function ProfilePage() {
                 {benefits &&
                   benefits.map((benefit) => (
                     <div
-                      className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted"
+                      className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted [&>div>p]:text-xs"
                       key={benefit.label}
                     >
                       <IconLabel
@@ -1013,7 +1016,7 @@ export default function ProfilePage() {
                 {values &&
                   values.map((value, index) => (
                     <div
-                      className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted"
+                      className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted [&>div>p]:text-xs"
                       key={index}
                     >
                       <IconLabel
@@ -1163,21 +1166,25 @@ export default function ProfilePage() {
             </div>
             <div className="w-full flex flex-col items-start gap-5">
               <div className="w-full flex flex-col items-stretch gap-3">
-                {socials.map((item, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <TypographySmall className="font-medium">{item.platform}:</TypographySmall>
-                    <Link href={item.url} className="px-3 bg-blue-100 text-blue-600 rounded-2xl hover:underline">
-                      <TypographySmall>{item.url}</TypographySmall>
-                    </Link>
-                    {isEdit && (
+                <div className="flex flex-wrap gap-3">
+                  {socials.map((item: ISocial, index) => (
+                    <Link
+                        key={index}
+                        href={item.url}
+                        className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
+                    >
+                        {getSocialPlatformTypeIcon(item.platform as TPlatform)}
+                        <TypographySmall>{item.platform}</TypographySmall>
+                        {isEdit && (
                       <LucideXCircle
                         className="text-muted-foreground cursor-pointer text-red-500"
                         width={"18px"}
                         onClick={() => removeSocial(index)}
                       />
                     )}
-                  </div>
-                ))}
+                    </Link>
+                  ))}
+                </div>
                 {isEdit && (
                   <div>
                     <div className="w-full flex flex-col items-start gap-5 p-5 mt-3 border-[1px] border-muted rounded-md">

@@ -48,7 +48,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
             {/* Profile Section */}
             <div className="w-full flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                    <Avatar className="size-20">
+                    <Avatar className="size-20" onClick={props.onProfileImageClick}>
                         <AvatarImage src={props.avatar!}/>
                         <AvatarFallback className="uppercase">{!props.avatar ? <LucideBuilding/> : props.name.slice(0, 3)}</AvatarFallback>
                     </Avatar>

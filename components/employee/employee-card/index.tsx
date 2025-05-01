@@ -45,7 +45,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
             {/* Profile Section */}
             <div className="w-full flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                    <Avatar className="size-20">
+                    <Avatar className="size-20" onClick={props.onProfileImageClick}>
                         <AvatarImage src={props.avatar!}/>
                         <AvatarFallback className="uppercase">{!props.avatar ? <LucideUser/> : props.username.slice(0, 3)}</AvatarFallback>
                     </Avatar>

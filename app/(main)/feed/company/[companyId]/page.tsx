@@ -399,13 +399,13 @@ export default function CompanyDetailPage() {
         </div>
       </div>
 
-      {/* Image Popup */}
+      {/* Image Popup Section */}
       <ImagePopup
         open={openImagePopup}
         setOpen={setOpenImagePopup}
         image={currentCompanyImage!}
       />
-      {/* Profile Popup */}
+      {/* Profile Popup Section */}
       <ImagePopup
         open={openProfilePopup}
         setOpen={setOpenProfilePopup}

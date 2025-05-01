@@ -6,13 +6,14 @@ import Image from "next/image";
 import feedBlackSvg from "@/assets/svg/feed-black.svg";
 import feedWhiteSvg from "@/assets/svg/feed-white.svg";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useEffect } from "react";
 import { useTheme } from "next-themes";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { useRouter } from "next/navigation";
 import CompanyCard from "@/components/company/company-card";
 import { userList } from "@/data/user-data";
+import ImagePopup from "@/components/utils/image-popup";
 export default function FeedPage() {
     const { resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
@@ -28,7 +29,29 @@ export default function FeedPage() {
     
     const companyList = userList.filter((user) => user.role === 'company');
     const employeeList = userList.filter((user) => user.role === 'employee');
+
+    const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
+    const ignoreNextClick = useRef<boolean>(false);
+    const [currentProfileImage, setCurrentProfileImage] = useState<string | null>(null);
+
+    const handleClickProfilePopup = (e: React.MouseEvent) => {
+        if (ignoreNextClick.current) {
+          ignoreNextClick.current = false;
+          return;
+        }
     
+        if ((e.target as HTMLElement).closest(".dialog-content")) return;
+    
+        setOpenProfilePopup(true);
+    };
+
+    useEffect(() => {
+        if (openProfilePopup) {
+          ignoreNextClick.current = true;
+          setTimeout(() => (ignoreNextClick.current = false), 200);
+        }
+    }, [openProfilePopup]);
+
     return (
         <div className="w-full flex flex-col items-start gap-5">
         
@@ -50,6 +73,10 @@ export default function FeedPage() {
                         {...user.company!}
                         onViewClick={() => router.push(`feed/company/${user.company?.id}`)}
                         onSaveClick={() => {}}
+                        onProfileImageClick={(e: React.MouseEvent) => {
+                            handleClickProfilePopup(e);
+                            setCurrentProfileImage(user.company?.avatar!);
+                        }}
                     />
                 ))}
                 {employeeList.map((user) => (
@@ -58,9 +85,19 @@ export default function FeedPage() {
                         {...user.employee!}
                         onSaveClick={() => {}}
                         onViewClick={() => router.push(`/feed/employee/${user.employee?.id}`)}
+                        onProfileImageClick={(e: React.MouseEvent) => {
+                            handleClickProfilePopup(e);
+                            setCurrentProfileImage(user.employee?.avatar!);
+                        }}
                     />
                 ))}
             </div>
+            {/* Image Popup */}
+            <ImagePopup
+                open={openProfilePopup}
+                setOpen={setOpenProfilePopup}
+                image={currentProfileImage!}
+            />
         </div>
     )
 }
