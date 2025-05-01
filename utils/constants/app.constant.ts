@@ -23,6 +23,7 @@ export const platformConstant = [
     { id: 3, label: 'Telegram', value: 'telegram' },
     { id: 4, label: 'LinkedIn', value: 'linkedin' },
     { id: 5, label: 'Github', value: 'github' },
+    { id: 6, label: 'Website', value: 'website' },
 ];
 
 export const availabilityConstant = [

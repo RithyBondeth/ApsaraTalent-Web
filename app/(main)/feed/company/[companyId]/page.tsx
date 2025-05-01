@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import IconLabel from "@/components/utils/icon-label";
@@ -12,6 +12,9 @@ import {
   LucideCalendarDays,
   LucideCircleCheck,
   LucideHeartHandshake,
+  LucideMail,
+  LucideMapPinned,
+  LucidePhone,
   LucideUser,
   LucideUsers,
 } from "lucide-react";
@@ -31,50 +34,58 @@ import Tag from "@/components/utils/tag";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { userList } from "@/data/user-data";
 import { useParams } from "next/navigation";
-import { IImage } from "@/utils/interfaces/user-interface/company.interface";
+import { IImage, ISocial } from "@/utils/interfaces/user-interface/company.interface";
 import Link from "next/link";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import ImagePopup from "@/components/utils/image-popup";
 import React, { useEffect, useRef, useState } from "react";
+import { getSocialPlatformTypeIcon } from "@/utils/get-social-type";
+import { TPlatform } from "@/utils/types/platform.type";
 
 export default function CompanyDetailPage() {
   const param = useParams();
   const id = param.companyId;
-  
-  const companies = userList.filter((user) => user.role === 'company');
+
+  const companies = userList.filter((user) => user.role === "company");
   const companyList = companies.find((cmp) => cmp.company?.id === id)?.company;
 
   const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
   const ignoreNextClick = useRef<boolean>(false);
-  const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(null);
+  const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(
+    null
+  );
 
   const handleClickImagePopup = (e: React.MouseEvent) => {
-    if(ignoreNextClick.current) {
+    if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
-      return;  
+      return;
     }
 
-    if((e.target as HTMLElement).closest(".dialog-content")) return;
+    if ((e.target as HTMLElement).closest(".dialog-content")) return;
 
     setOpenImagePopup(true);
-  }
+  };
 
   const handleClickProfilePopup = (e: React.MouseEvent) => {
-    if(ignoreNextClick.current) {
+    if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
-      return;  
+      return;
     }
 
-    if((e.target as HTMLElement).closest(".dialog-content")) return;
+    if ((e.target as HTMLElement).closest(".dialog-content")) return;
 
     setOpenProfilePopup(true);
-  }
+  };
 
   useEffect(() => {
-    if(openImagePopup || openProfilePopup) {
+    if (openImagePopup || openProfilePopup) {
       ignoreNextClick.current = true;
-      setTimeout(() => ignoreNextClick.current = false, 200);
+      setTimeout(() => (ignoreNextClick.current = false), 200);
     }
   }, [openImagePopup, openProfilePopup]);
 
@@ -87,9 +98,15 @@ export default function CompanyDetailPage() {
       >
         <BlurBackGroundOverlay />
         <div className="relative flex items-center gap-5 tablet-sm:flex-col">
-          <Avatar className="size-32 tablet-sm:size-28" rounded="md" onClick={handleClickProfilePopup}>
-            <AvatarImage src={companyList?.avatar!}/>
-            <AvatarFallback className="uppercase">{companyList?.name.slice(0, 3)}</AvatarFallback>
+          <Avatar
+            className="size-32 tablet-sm:size-28"
+            rounded="md"
+            onClick={handleClickProfilePopup}
+          >
+            <AvatarImage src={companyList?.avatar!} />
+            <AvatarFallback className="uppercase">
+              {companyList?.name.slice(0, 3)}
+            </AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-start gap-2 text-muted tablet-sm:items-center">
             <TypographyH2 className="tablet-sm:text-center tablet-sm:text-xl">
@@ -100,12 +117,12 @@ export default function CompanyDetailPage() {
             </TypographyP>
             <div className="flex items-center gap-5">
               <IconLabel
-                icon={<LucideBuilding/>}
+                icon={<LucideCalendarDays />}
                 text={`Founded in ${companyList?.foundedYear}`}
                 className="[&>p]:text-primary-foreground"
               />
               <IconLabel
-                icon={<LucideUsers/>}
+                icon={<LucideUsers />}
                 text={`${companyList?.companySize}+ Employees`}
                 className="[&>p]:text-primary-foreground"
               />
@@ -147,7 +164,10 @@ export default function CompanyDetailPage() {
             </div>
             <div className="w-full flex flex-col gap-3">
               {companyList?.openPositions?.map((item) => (
-                <div className="border border-muted px-5 py-3 rounded-md" key={item.id}>
+                <div
+                  className="border border-muted px-5 py-3 rounded-md"
+                  key={item.id}
+                >
                   <div className="flex flex-col items-start gap-5">
                     <div className="w-full flex items-center justify-between tablet-md:flex-col tablet-md:gap-5 tablet-md:[&>div]:w-full">
                       <div className="flex flex-col items-start gap-2">
@@ -165,13 +185,13 @@ export default function CompanyDetailPage() {
                       <div className="flex flex-col items-start gap-2">
                         <IconLabel
                           icon={
-                            <LucideCalendarDays className="text-muted-foreground" />
+                            <LucideCalendarDays className="text-muted-foreground" strokeWidth={"1.5px"}/>
                           }
                           text={`Post - ${item.postedDate}`}
                         />
                         <IconLabel
                           icon={
-                            <LucideCalendarDays className="text-muted-foreground" />
+                            <LucideCalendarDays className="text-muted-foreground" strokeWidth={"1.5px"}/>
                           }
                           text={`Deadline - ${item.deadlineDate}`}
                         />
@@ -225,10 +245,13 @@ export default function CompanyDetailPage() {
             <div className="w-full flex flex-col items-stretch gap-3">
               <div className="flex flex-wrap gap-3">
                 {companyList!.careerScopes.map((career, index) => (
-                  <div key={index} className="rounded-3xl border-2 border-muted duration-300 ease-linear hover:border-muted-foreground">
+                  <div
+                    key={index}
+                    className="rounded-3xl border-2 border-muted duration-300 ease-linear hover:border-muted-foreground"
+                  >
                     <HoverCard>
                       <HoverCardTrigger>
-                        <Tag label={career.name}/>
+                        <Tag label={career.name} />
                       </HoverCardTrigger>
                       <HoverCardContent>
                         <TypographySmall>{career.description}</TypographySmall>
@@ -257,7 +280,7 @@ export default function CompanyDetailPage() {
                           setCurrentCompanyImage(item.image);
                         }}
                         className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center"
-                        style={{backgroundImage: `url(${item.image})`}}
+                        style={{ backgroundImage: `url(${item.image})` }}
                       />
                     </CarouselItem>
                   ))}
@@ -274,37 +297,49 @@ export default function CompanyDetailPage() {
               <TypographyH4>Company Information</TypographyH4>
               <Divider />
             </div>
-            <div className="flex flex-col gap-3 [&>div>p]:text-primary [&>div>p]:font-medium [&>div>p]:text-md">
-              <IconLabel
-                icon={<TypographyMuted>Industry</TypographyMuted>}
-                text={companyList!.industry}
-                className="flex-col items-start"
-              />
-              <IconLabel
-                icon={<TypographyMuted>Location</TypographyMuted>}
-                text={companyList!.location}
-                className="flex-col items-start"
-              />
-              <IconLabel
-                icon={<TypographyMuted>Founded Year</TypographyMuted>}
-                text={companyList!.foundedYear.toString()}
-                className="flex-col items-start"
-              />
-              <IconLabel
-                icon={<TypographyMuted>Company Size</TypographyMuted>}
-                text={`${companyList!.companySize}+ Employees`}
-                className="flex-col items-start"
-              />
-              <IconLabel
-                icon={<TypographyMuted>Phone</TypographyMuted>}
-                text={companyList!.phone}
-                className="flex-col items-start"
-              />
-              <IconLabel
-                icon={<TypographyMuted>Email</TypographyMuted>}
-                text={companies.find((cmp) => cmp.company?.id === id)?.email!}
-                className="flex-col items-start"
-              />
+            <div className="flex flex-col gap-5 [&>div>p]:text-primary [&>div>p]:font-medium [&>div>p]:text-md">
+              <div className="flex flex-col items-start gap-2">
+                <TypographyMuted>Industry</TypographyMuted>
+                <IconLabel
+                  icon={<LucideBuilding className="text-muted-foreground" strokeWidth={"1.5px"}/>}
+                  text={companyList!.industry}
+                />
+              </div>
+              <div className="flex flex-col items-start gap-2">
+                <TypographyMuted>Location</TypographyMuted>
+                <IconLabel
+                  icon={<LucideMapPinned className="text-muted-foreground" strokeWidth={"1.5px"}/>}
+                  text={companyList!.location}
+                />
+              </div>
+              <div className="flex flex-col items-start gap-2">
+                <TypographyMuted>Founded</TypographyMuted>
+                <IconLabel
+                  icon={<LucideCalendarDays className="text-muted-foreground" strokeWidth={"1.5px"}/>}
+                  text={`Founded in ${companyList!.foundedYear}`}
+                />
+              </div>
+              <div className="flex flex-col items-start gap-2">
+                <TypographyMuted>Company Size</TypographyMuted>
+                <IconLabel
+                  icon={<LucideUsers className="text-muted-foreground" strokeWidth={"1.5px"}/>}
+                  text={`Founded in ${companyList!.companySize}`}
+                />
+              </div>
+              <div className="flex flex-col items-start gap-2">
+                <TypographyMuted>Phone</TypographyMuted>
+                <IconLabel 
+                  icon={<LucidePhone className="text-muted-foreground" strokeWidth={"1.5px"}/>} 
+                  text={companyList!.phone} 
+                />
+              </div>
+              <div className="flex flex-col items-start gap-2">
+                <TypographyMuted>Email</TypographyMuted>
+                <IconLabel
+                  icon={<LucideMail className="text-muted-foreground" strokeWidth={"1.5px"}/>}
+                  text={companies.find((cmp) => cmp.company?.id === id)?.email!}
+                />
+              </div>
             </div>
           </div>
 
@@ -348,24 +383,34 @@ export default function CompanyDetailPage() {
               <TypographyH4>Company Socials</TypographyH4>
               <Divider />
             </div>
-            <div className="w-full flex flex-col items-stretch gap-3">
-              {companyList?.socials.map((item, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <TypographySmall className="font-medium">{item.platform}:</TypographySmall>
-                  <Link href={item.url} className="px-3 bg-blue-100 text-blue-600 rounded-2xl hover:underline">
-                    <TypographySmall>{item.url}</TypographySmall>
-                  </Link>          
-                </div>
+            <div className="w-full flex flex-wrap gap-3">
+            {companyList?.socials.map((item: ISocial) => (
+                <Link
+                    key={item.id}
+                    href={item.url}
+                    className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
+                >
+                    {getSocialPlatformTypeIcon(item.platform as TPlatform)}
+                    <TypographySmall>{item.platform}</TypographySmall>
+                </Link>
               ))}
             </div>
           </div>
         </div>
       </div>
-      
+
       {/* Image Popup */}
-      <ImagePopup open={openImagePopup} setOpen={setOpenImagePopup} image={currentCompanyImage!}/>
+      <ImagePopup
+        open={openImagePopup}
+        setOpen={setOpenImagePopup}
+        image={currentCompanyImage!}
+      />
       {/* Profile Popup */}
-      <ImagePopup open={openProfilePopup} setOpen={setOpenProfilePopup} image={companyList?.avatar!}/>
+      <ImagePopup
+        open={openProfilePopup}
+        setOpen={setOpenProfilePopup}
+        image={companyList?.avatar!}
+      />
     </div>
   );
 }

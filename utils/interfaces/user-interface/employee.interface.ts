@@ -1,4 +1,5 @@
 import { TGender } from "../../types/gender.type";
+import { TPlatform } from "@/utils/types/platform.type";
 
 export interface IEmployee {
   id: string;
@@ -44,7 +45,7 @@ export interface IEducation {
 }
 export interface ISocial {
   id?: string;
-  platform: string;
+  platform: TPlatform;
   url: string;
 }
 

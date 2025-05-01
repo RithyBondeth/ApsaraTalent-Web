@@ -348,7 +348,7 @@ export const userList: IUser[] = [
             { id: "f2130f72-c1d2-4764-a3b5-41ffc26f828f", platform: 'Github', url: 'https://www.github.com/john_doe' },
             { id: "f2130f72-d1d2-4764-a3b5-41ffc26f828f", platform: 'LinkedIn', url: 'https://www.linkedin.com/in/john_doe' },
             { id: "f2130f72-e1d2-4764-a3b5-41ffc26f828f", platform: 'Website', url: 'https://www.john-doe.com' }, 
-            { id: "f2130f72-f1d2-4764-a3b5-41ffc26f828f", platform: 'Email', url: 'john.doe@example.com' },
+            { id: "f2130f72-e1d2-4764-a3b5-41ffc26fsd8f", platform: 'Telegram', url: 'https://www.john-doe.com' }, 
         ]
     }, 
   },
@@ -423,8 +423,8 @@ export const userList: IUser[] = [
             { id: "f2130f72-b1d2-4764-a3b5-41ffc26f828f", platform: 'Facebook', url: 'https://www.facebook.com/john_doe' },
             { id: "f2130f72-c1d2-4764-a3b5-41ffc26f828f", platform: 'Github', url: 'https://www.github.com/john_doe' },
             { id: "f2130f72-d1d2-4764-a3b5-41ffc26f828f", platform: 'LinkedIn', url: 'https://www.linkedin.com/in/john_doe' },
-            { id: "f2130f72-e1d2-4764-a3b5-41ffc26f828f", platform: 'Website', url: 'https://www.john-doe.com' }, 
-            { id: "f2130f72-f1d2-4764-a3b5-41ffc26f828f", platform: 'Email', url: 'john.doe@example.com' },
+            { id: "f2130f72-e1d2-4764-a3b5-41ffc26f828f", platform: 'Website', url: 'https://www.john-doe.com' },
+            { id: "f2130f72-e1d2-4764-a3b5-41ffc26fsd8f", platform: 'Telegram', url: 'https://www.john-doe.com' },  
         ]
     }
   }

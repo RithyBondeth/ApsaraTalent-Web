@@ -12,14 +12,15 @@ import {
   LucideBookmark,
   LucideBriefcaseBusiness,
   LucideCalendar,
+  LucideClock,
   LucideDownload,
   LucideEye,
+  LucideFacebook,
   LucideFileText,
   LucideGraduationCap,
   LucideHeartHandshake,
-  LucideInfo,
   LucideMail,
-  LucideMapPin,
+  LucideMapPinned,
   LucidePhone,
   LucideSchool,
   LucideTransgender,
@@ -43,6 +44,8 @@ import {
 } from "@/components/ui/hover-card";
 import { useEffect, useRef, useState } from "react";
 import ImagePopup from "@/components/utils/image-popup";
+import { getSocialPlatformTypeIcon } from "@/utils/get-social-type";
+import { TPlatform } from "@/utils/types/platform.type";
 
 export default function EmployeeDetailPage() {
   const params = useParams();
@@ -103,36 +106,36 @@ export default function EmployeeDetailPage() {
         <div className="flex flex-col items-start gap-5">
           <div className="flex flex-col items-start gap-2">
             <TypographyMuted>Firstname</TypographyMuted>
-            <IconLabel icon={<LucideUser />} text={employeeList!.firstname} />
+            <IconLabel icon={<LucideUser strokeWidth={"1.5px"}/>} text={employeeList!.firstname} />
           </div>
           <div className="flex flex-col items-start gap-2">
             <TypographyMuted>Lastname</TypographyMuted>
-            <IconLabel icon={<LucideUser />} text={employeeList!.lastname} />
+            <IconLabel icon={<LucideUser strokeWidth={"1.5px"}/>} text={employeeList!.lastname} />
           </div>
           <div className="flex flex-col items-start gap-2">
             <TypographyMuted>Username</TypographyMuted>
-            <IconLabel icon={<LucideAtSign />} text={employeeList!.username} />
+            <IconLabel icon={<LucideAtSign strokeWidth={"1.5px"}/>} text={employeeList!.username} />
           </div>
         </div>
         <div className="flex flex-col items-start gap-5">
           <div className="flex flex-col items-start gap-2">
             <TypographyMuted>Gender</TypographyMuted>
             <IconLabel
-              icon={<LucideTransgender />}
+              icon={<LucideTransgender strokeWidth={"1.5px"}/>}
               text={employeeList!.gender.toUpperCase()}
             />
           </div>
           <div className="flex flex-col items-start gap-2">
             <TypographyMuted>Experience</TypographyMuted>
             <IconLabel
-              icon={<LucideBriefcaseBusiness />}
+              icon={<LucideBriefcaseBusiness strokeWidth={"1.5px"}/>}
               text={employeeList!.yearsOfExperience}
             />
           </div>
           <div className="flex flex-col items-start gap-2">
             <TypographyMuted>Status</TypographyMuted>
             <IconLabel
-              icon={<LucideInfo />}
+              icon={<LucideClock strokeWidth={"1.5px"}/>}
               text={employeeList!.availability}
             />
           </div>
@@ -166,9 +169,9 @@ export default function EmployeeDetailPage() {
                 className="flex flex-col gap-2 border-l-4 border-primary pl-4"
                 key={item.id}
               >
-                <IconLabel icon={<LucideSchool />} text={item.school} />
-                <IconLabel icon={<LucideGraduationCap />} text={item.degree} />
-                <IconLabel icon={<LucideCalendar />} text={item.year} />
+                <IconLabel icon={<LucideSchool strokeWidth={"1.5px"}/>} text={item.school} />
+                <IconLabel icon={<LucideGraduationCap strokeWidth={"1.5px"}/>} text={item.degree} />
+                <IconLabel icon={<LucideCalendar strokeWidth={"1.5px"}/>} text={item.year} />
               </div>
             ))}
           </div>
@@ -235,7 +238,7 @@ export default function EmployeeDetailPage() {
             </div>
             <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
               <div className="flex items-center text-muted-foreground gap-1">
-                <LucideFileText />
+                <LucideFileText strokeWidth={"1.5px"}/>
                 <TypographyMuted>{employeeList?.resume}</TypographyMuted>
               </div>
               <div className="flex items-center gap-1">
@@ -249,7 +252,7 @@ export default function EmployeeDetailPage() {
             </div>
             <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
               <div className="flex items-center text-muted-foreground gap-1">
-                <LucideFileText />
+                <LucideFileText strokeWidth={"1.5px"}/>
                 <TypographyMuted>{employeeList?.coverLetter}</TypographyMuted>
               </div>
               <div className="flex items-center gap-1">
@@ -273,21 +276,21 @@ export default function EmployeeDetailPage() {
                 <div className="flex flex-col items-start gap-2">
                     <TypographyMuted>Phone</TypographyMuted>
                     <IconLabel
-                        icon={<LucidePhone />}
+                        icon={<LucidePhone strokeWidth={"1.5px"}/>}
                         text={employeeList!.phone}
                     />
                 </div>
                 <div className="flex flex-col items-start gap-2">
                     <TypographyMuted>Email</TypographyMuted>
                     <IconLabel
-                        icon={<LucideMail />}
+                        icon={<LucideMail strokeWidth={"1.5px"}/>}
                         text={employee.find((emp) => emp.employee?.id === id)?.email!}
                     />
                 </div>
                 <div className="flex flex-col items-start gap-2">
                     <TypographyMuted>Address</TypographyMuted>
                     <IconLabel
-                        icon={<LucideMapPin />}
+                        icon={<LucideMapPinned strokeWidth={"1.5px"}/>}
                         text={employeeList!.location}
                     />
                 </div>
@@ -300,19 +303,16 @@ export default function EmployeeDetailPage() {
               <TypographyH4>Socials</TypographyH4>
               <Divider />
             </div>
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-wrap gap-3">
               {employeeList?.socials.map((item: ISocial) => (
-                <div key={item.id} className="flex items-center gap-2">
-                  <TypographySmall className="font-medium">
-                    {item.platform}:
-                  </TypographySmall>
-                  <Link
+                <Link
+                    key={item.id}
                     href={item.url}
-                    className="px-3 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
-                  >
-                    <TypographySmall>{item.url}</TypographySmall>
-                  </Link>
-                </div>
+                    className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
+                >
+                    {getSocialPlatformTypeIcon(item.platform)}
+                    <TypographySmall>{item.platform}</TypographySmall>
+                </Link>
               ))}
             </div>
           </div>
