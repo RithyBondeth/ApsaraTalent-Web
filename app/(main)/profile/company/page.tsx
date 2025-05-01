@@ -48,7 +48,7 @@ import {
   LucideUsers,
   LucideXCircle,
 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { companyFormSchema, TCompanyProfileForm } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -74,6 +74,7 @@ import Link from "next/link";
 import { userList } from "@/data/user-data";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import Tag from "@/components/utils/tag";
+import ImagePopup from "@/components/utils/image-popup";
 
 export default function ProfilePage() {
   const userId = 0;
@@ -82,6 +83,41 @@ export default function ProfilePage() {
   
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const { toast } = useToast();
+
+  const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
+  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
+  const ignoreNextClick = useRef<boolean>(false);
+  const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(null);
+
+  const handleClickImagePopup = (e: React.MouseEvent) => {
+    if(ignoreNextClick.current) {
+      ignoreNextClick.current = false;
+      return;  
+    }
+
+    if((e.target as HTMLElement).closest(".dialog-content")) return;
+
+    setOpenImagePopup(true);
+  }
+
+  const handleClickProfilePopup = (e: React.MouseEvent) => {
+    if(ignoreNextClick.current) {
+      ignoreNextClick.current = false;
+      return;  
+    }
+
+    if((e.target as HTMLElement).closest(".dialog-content")) return;
+
+    setOpenProfilePopup(true);
+  }
+
+  useEffect(() => {
+    if(openImagePopup || openProfilePopup) {
+      ignoreNextClick.current = true;
+      setTimeout(() => ignoreNextClick.current = false, 200);
+    }
+  }, [openImagePopup, openProfilePopup]);
+
   const [openPositions, setOpenPositions] = useState(companyList?.openPositions);
 
   const form = useForm<TCompanyProfileForm>({
@@ -467,7 +503,12 @@ export default function ProfilePage() {
           onChange={(e) => handleFileChange(e, 'cover')}
         />
         <div className="relative flex items-center gap-5 tablet-sm:flex-col">
-          <Avatar className="size-32 tablet-sm:size-28 relative bg-primary-foreground" rounded="md">
+          <Avatar 
+            className="size-32 tablet-sm:size-28 relative bg-primary-foreground" rounded="md" 
+            onClick={(e) => {
+              if(!isEdit) handleClickProfilePopup(e)
+            }}
+          >
             <AvatarImage src={avatarFile ? URL.createObjectURL(avatarFile) : companyList?.avatar!}/>
             <AvatarFallback className="uppercase">
               {companyList?.name.slice(0, 3)}
@@ -734,11 +775,14 @@ export default function ProfilePage() {
                   }
 
                   return (
-                    <CarouselItem
-                      key={index}
-                      className="max-w-[280px] relative"
-                    >
+                    <CarouselItem key={index} className="max-w-[280px] relative">
                       <div
+                        onClick={(e) => {
+                          if(!isEdit) {
+                            handleClickImagePopup(e);
+                            setCurrentCompanyImage(img!.toString());
+                          }
+                        }}
                         className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center"
                         style={{ backgroundImage: `url(${imageUrl})` }}
                       />
@@ -1191,6 +1235,16 @@ export default function ProfilePage() {
           )}
         </div>
       </div>
+        
+      {/* Image Popup Section */}
+      <ImagePopup open={openImagePopup} setOpen={setOpenImagePopup} image={currentCompanyImage!}/>
+
+      {/* Profile Popup Section */}
+      <ImagePopup 
+        open={openProfilePopup} 
+        setOpen={setOpenProfilePopup}
+        image={avatarFile ? URL.createObjectURL(avatarFile) : companyList?.avatar!}
+      />
     </form>
   );
 }

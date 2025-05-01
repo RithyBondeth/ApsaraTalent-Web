@@ -314,7 +314,7 @@ export const userList: IUser[] = [
         lastname: 'Bondeth',
         username: 'Benx',
         gender: 'male',
-        avatar: 'https://marketplace.canva.com/EAFe2pEjKjQ/1/0/1600w/canva-colorful-gradient-background-man-3d-avatar-tK46u2vZgPY.jpg',
+        avatar: 'https://img.freepik.com/free-psd/3d-illustration-human-avatar-profile_23-2150671116.jpg?semt=ais_hybrid&w=740',
         phone: '+855 96 555 5555',
         job: "Software Engineer",
         location: "Phnom Penh, Cambodia",
