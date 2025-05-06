@@ -52,7 +52,11 @@ import { userList } from "@/data/user-data";
 import { Controller, useForm } from "react-hook-form";
 import { employeeFormSchema, TEmployeeProfileForm } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IEducation, IExperience } from "@/utils/interfaces/user-interface/employee.interface";
+import { IEducation, IExperience, ISkill } from "@/utils/interfaces/user-interface/employee.interface";
+import { ICareerScopes } from "@/utils/interfaces/user-interface/company.interface";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 export default function EmployeeProfilePage() {
   const employeeId = 2;
@@ -140,6 +144,24 @@ export default function EmployeeProfilePage() {
       } 
     }
   };
+
+  const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
+  const initialSkill = form.getValues('skills') || [];
+  const [skills, setSkills] = useState<ISkill[]>(
+    initialSkill.map((skill) => ({
+      name: skill?.name ?? '',
+      description: skill?.description ?? '',
+    }))
+  ); 
+
+  const [openCareerPopOver, setOpenCareerPopOver] = useState<boolean>(false);
+  const initialCareerScope = form.getValues("careerScopes") || [];
+  const [careerScopes, setCareerScopes] = useState<ICareerScopes[]>(
+    initialCareerScope.map((cp) => ({
+      name: cp?.name ?? "",
+      description: cp?.description ?? "",
+    }))
+  );
 
   return (
     <form className="!min-w-full flex flex-col gap-5">
@@ -463,12 +485,15 @@ export default function EmployeeProfilePage() {
                         />
                       }
                     />
-                    <Textarea 
-                      placeholder="Description"
-                      id="description"
-                      {...form.register(`experiences.${index}.description`)}
-                      disabled={!isEdit}
-                    />
+                    <div className="w-full flex flex-col items-start gap-2">
+                      <TypographyMuted className="text-xs">Description</TypographyMuted>
+                      <Textarea 
+                        placeholder="Description"
+                        id="description"
+                        {...form.register(`experiences.${index}.description`)}
+                        disabled={!isEdit}
+                      />
+                    </div>  
                     <div className="w-full flex justify-between items-center gap-5 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
                       <div className="w-1/2 flex flex-col items-start gap-1">
                         <TypographyMuted className="text-xs">
@@ -630,10 +655,40 @@ export default function EmployeeProfilePage() {
               <Divider />
             </div>
             <div className="flex flex-wrap gap-3">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((skill) => (
-                <Tag key={skill} label="Typescript" />
+              {skills.map((skill, index) => (
+                <HoverCard key={index}>
+                  <HoverCardTrigger>
+                    <Tag label={skill.name} />
+                  </HoverCardTrigger>
+                  <HoverCardContent>
+                    <TypographySmall>{skill.description}</TypographySmall>
+                  </HoverCardContent>
+                </HoverCard>
               ))}
             </div>
+            {isEdit && <Popover open={openSkillPopOver} onOpenChange={setOpenSkillPopOver}>
+              <PopoverTrigger asChild>
+                <Button className="w-full text-xs" variant="secondary">
+                  Add Skill
+                  <LucidePlus />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
+                <Input
+                  placeholder="Enter your skill" 
+                  onChange={(e) => {}}
+              />
+              <div className="flex items-center gap-1 [&>button]:text-xs">
+                  <Button
+                    variant="outline"
+                    onClick={() => setOpenSkillPopOver(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button onClick={() => {}}>Save</Button>
+                </div>
+              </PopoverContent>
+            </Popover>}
           </div>
 
           {/* CareerScopes Section */}
@@ -650,13 +705,43 @@ export default function EmployeeProfilePage() {
               <Divider />
             </div>
             <div className="flex flex-wrap gap-3">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((skill) => (
-                <Tag key={skill} label="AI & Machine Learning" />
+              {careerScopes.map((skill, index) => (
+                <HoverCard key={index}>
+                  <HoverCardTrigger>
+                    <Tag label={skill.name} />
+                  </HoverCardTrigger>
+                  <HoverCardContent>
+                    <TypographySmall>{skill.description}</TypographySmall>
+                  </HoverCardContent>
+                </HoverCard>
               ))}
             </div>
+            {isEdit && <Popover open={openCareerPopOver} onOpenChange={setOpenCareerPopOver}>
+              <PopoverTrigger asChild>
+                <Button className="w-full text-xs" variant="secondary">
+                  Add Career
+                  <LucidePlus />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
+                <Input
+                  placeholder="Enter your skill" 
+                  onChange={(e) => {}}
+              />
+              <div className="flex items-center gap-1 [&>button]:text-xs">
+                  <Button
+                    variant="outline"
+                    onClick={() => setOpenCareerPopOver(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button onClick={() => {}}>Save</Button>
+                </div>
+              </PopoverContent>
+            </Popover>}
           </div>
 
-          {/**/}
+          {/* Reference Section */}
           <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
             <TypographyH4>Add your references</TypographyH4>
             <div className="w-full flex flex-col items-start gap-5 [&>div]:w-full">
