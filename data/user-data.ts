@@ -423,6 +423,23 @@ export const userList: IUser[] = [
           url: "https://www.john-doe.com",
         },
       ],
+      careerScopes: [
+        {
+          id: "d414f632-648a-44b7-a282-886769be2f57",
+          name: "Software Engineering",
+          description: "Building scalable applications and solutions.",
+        },
+        {
+          id: "967a7c48-5278-4f9a-80fb-537ae1fd5e5c",
+          name: "Artificial Intelligence",
+          description: "Advancing AI and machine learning technology.",
+        },
+        {
+          id: "714ee33e-d27c-49a0-9158-68831160f269",
+          name: "AI & Machine Learning",
+          description: "Advancing AI solutions for real-world applications.",
+        },
+      ],
     },
   },
   {
@@ -457,7 +474,7 @@ export const userList: IUser[] = [
         "https://img.freepik.com/free-psd/3d-render-avatar-character_23-2150611759.jpg",
       phone: "+855 96 555 5555",
       job: "Software Engineer",
-      location: "Phnom Penh, Cambodia",
+      location: "Phnom Penh",
       skills: [
         {
           id: "9223cf97-7c5d-40bf-b14c-e71aa7dbe7d1",
@@ -545,6 +562,23 @@ export const userList: IUser[] = [
           url: "https://www.john-doe.com",
         },
       ],
+      careerScopes: [
+        {
+          id: "d414f632-648a-44b7-a282-886769be2f57",
+          name: "Software Engineering",
+          description: "Building scalable applications and solutions.",
+        },
+        {
+          id: "967a7c48-5278-4f9a-80fb-537ae1fd5e5c",
+          name: "Artificial Intelligence",
+          description: "Advancing AI and machine learning technology.",
+        },
+        {
+          id: "714ee33e-d27c-49a0-9158-68831160f269",
+          name: "AI & Machine Learning",
+          description: "Advancing AI solutions for real-world applications.",
+        },
+      ],
     },
   },
   {
@@ -579,7 +613,7 @@ export const userList: IUser[] = [
         "https://mir-s3-cdn-cf.behance.net/project_modules/1400/baa20698931623.5ee79b6a8ec2b.jpg",
       phone: "+855 95 777 7777",
       job: "Full Stack Developer",
-      location: "Siem Reap, Cambodia",
+      location: "Siem Reap",
       skills: [
         {
           id: "c2031f97-1b5c-42bf-a18c-f71aa7dbe7a1",
@@ -636,6 +670,23 @@ export const userList: IUser[] = [
           school: "Paññāsāstra University of Cambodia",
           degree: "Business English",
           year: "2017-2021",
+        },
+      ],
+      careerScopes: [
+        {
+          id: "d414f632-648a-44b7-a282-886769be2f57",
+          name: "Software Engineering",
+          description: "Building scalable applications and solutions.",
+        },
+        {
+          id: "967a7c48-5278-4f9a-80fb-537ae1fd5e5c",
+          name: "Artificial Intelligence",
+          description: "Advancing AI and machine learning technology.",
+        },
+        {
+          id: "714ee33e-d27c-49a0-9158-68831160f269",
+          name: "AI & Machine Learning",
+          description: "Advancing AI solutions for real-world applications.",
         },
       ],
       socials: [

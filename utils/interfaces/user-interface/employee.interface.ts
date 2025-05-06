@@ -20,7 +20,14 @@ export interface IEmployee {
   experiences: IExperience[];
   educations: IEducation[];
   socials: ISocial[];
+  careerScopes: ICareerScopes[];
   createdAt?: string;
+}
+
+export interface ICareerScopes {
+  id?: string;
+  name: string;
+  description?: string;
 }
 
 export interface ISkill {

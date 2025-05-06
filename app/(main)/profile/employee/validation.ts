@@ -135,4 +135,4 @@ export const employeeFormSchema = z.object({
     ...socialSchema.shape,
 });
 
-export type TEmployeeProfileForm = z.infer<typeof employeeFormSchema>;
+export type TEmployeeProfileForm = z.infer<typeof employeeFormSchema>

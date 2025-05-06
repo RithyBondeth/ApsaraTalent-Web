@@ -12,7 +12,7 @@ import {
   LucideAlarmCheck,
   LucideBriefcaseBusiness,
   LucideCalendarDays,
-  LucideClock,
+  LucideCamera,
   LucideDownload,
   LucideEdit,
   LucideEye,
@@ -28,7 +28,7 @@ import {
   LucideUser,
   LucideXCircle,
 } from "lucide-react";
-import { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Select,
   SelectTrigger,
@@ -49,10 +49,13 @@ import { DatePicker } from "@/components/ui/date-picker";
 import Tag from "@/components/utils/tag";
 import { TPlatform } from "@/utils/types/platform.type";
 import { userList } from "@/data/user-data";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import { employeeFormSchema, TEmployeeProfileForm } from "./validation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { IEducation, IExperience } from "@/utils/interfaces/user-interface/employee.interface";
 
 export default function EmployeeProfilePage() {
-  const employeeId = 1;
+  const employeeId = 2;
   const employee = userList.filter((user) => user.role === 'employee');
   const employeeList= employee[employeeId].employee;
   
@@ -63,37 +66,116 @@ export default function EmployeeProfilePage() {
     new: false,
     confirm: false,
   });
-  const [selectedGender, setSelectedGender] = useState<TGender | null>(null);
-  const [selectedLocation, setSelectedLocation] = useState<TLocations | null>(
-    null
-  );
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
-  const [selectedPlatform, setSelectedPlatform] = useState<TPlatform | null>(
-    null
-  );
+  const [selectedGender, setSelectedGender] = useState<TGender | string>(employeeList!.gender);
+  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(employeeList!.location);
+  const [selectedPlatform, setSelectedPlatform] = useState<TPlatform | null>(null);
+
+  const [education, setEducation] = useState<IEducation[]>(employeeList!.educations);
+  const [experience, setExperience] = useState<IExperience[]>(employeeList!.experiences);
  
-  const form = useForm()
+  const form = useForm<TEmployeeProfileForm>({
+    resolver: zodResolver(employeeFormSchema),
+    defaultValues: {
+      basicInfo: {
+        firstname: employeeList?.firstname ?? "",
+        lastname: employeeList?.lastname ?? "",
+        username: employeeList?.username ?? "",
+        gender: employeeList?.gender ?? "",
+        location: employeeList?.location ?? "",
+        avatar: employeeList?.avatar ? new File([], 'avatar.png') : null,
+      },
+      accountSetting: {
+        email: employee[employeeId].email ?? "",
+        phone: employeeList?.phone,
+        currentPassword: employee[employeeId].password ?? "",
+        newPassword: "",
+        confirmPassword: "",
+      },
+      profession: {
+        job: employeeList?.job ?? "",
+        yearOfExperience: employeeList?.yearsOfExperience ?? "",
+        availability: employeeList?.availability ?? "",
+        description: employeeList?.description ?? "",
+      },
+      educations: employeeList?.educations.map((edu) => ({
+        school: edu.school,
+        degree: edu.degree,
+        year: edu.year,
+      })) || [],
+      experiences: employeeList?.experiences.map((exp) => ({
+        title: exp.title,
+        description: exp.description,
+        startDate: new Date(exp.startDate),
+        endDate: new Date(exp.endDate),
+      })) || [],
+      skills: employeeList?.skills.map((skill) => ({
+        name: skill.name,
+        description: skill.description,
+      })) || [],
+      references: {
+        resume: employeeList?.resume ?? null,
+        coverLetter: employeeList?.coverLetter ?? null, 
+      },
+      careerScopes: employeeList?.careerScopes.map((cp) => ({
+          name: cp.name,
+          description: cp.description,
+      })) || [],
+      socials: employeeList?.socials.map((social) => ({
+          platform: social.platform,
+          url: social.url,
+      })),
+    },
+  });
+
+  const avatarInputRef = useRef<HTMLInputElement | null>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, type: 'avatar' | 'resume' | 'coverLetter') => {
+    const file = event.target.files ? event.target.files[0] : null; 
+    
+    if(file) {
+      if(type === 'avatar') {
+        setAvatarFile(file);
+        form.setValue("basicInfo.avatar", file);
+      } 
+    }
+  };
 
   return (
-    <div className="!min-w-full flex flex-col gap-5">
+    <form className="!min-w-full flex flex-col gap-5">
       <div className="flex items-center justify-between border border-muted rounded-md p-5 tablet-sm:flex-col tablet-sm:[&>div]:w-full tablet-sm:gap-5">
         <div className="flex items-center justify-start gap-5 tablet-sm:flex-col">
-          <Avatar className="size-36">
-            <AvatarImage/>
-            <AvatarFallback>BN</AvatarFallback>
-          </Avatar>
+          <div className="relative">
+            <Avatar className="size-36" rounded="md">
+              <AvatarImage src={avatarFile ? URL.createObjectURL(avatarFile) : employeeList!.avatar}/>
+              <AvatarFallback className="uppercase">{employeeList!.username.slice(0, 3)}</AvatarFallback>
+            </Avatar>
+            {isEdit && <Button 
+              className="size-8 flex justify-center items-center cursor-pointer absolute bottom-1 right-1 p-1 rounded-full bg-foreground text-primary-foreground"
+              onClick={() => avatarInputRef.current?.click()}  
+            >
+              <LucideCamera width={"18px"} strokeWidth={"1.2px"}/>
+            </Button>}
+          </div>
+          <input
+            ref={avatarInputRef}
+            type="file"
+            className="hidden"
+            accept="image/*"
+            onChange={(e) => handleFileChange(e, 'avatar')}
+          />
           <div className="flex flex-col items-start gap-1 tablet-sm:items-center">
             <TypographyH3>{employeeList?.username}</TypographyH3>
             <TypographyMuted>{employeeList?.job}</TypographyMuted>
           </div>
         </div>
         {isEdit ? (
-          <Button className="text-xs" onClick={() => setIsEdit(false)}>
+          <Button type="button" className="text-xs" onClick={() => setIsEdit(false)}>
             Cancel 
             <LucideXCircle/>
           </Button> 
         ) : (
-          <Button className="text-xs" onClick={() => setIsEdit(true)}> 
+          <Button type="button" className="text-xs" onClick={() => setIsEdit(true)}> 
             Edit Profile
             <LucideEdit/>
           </Button>
@@ -107,7 +189,7 @@ export default function EmployeeProfilePage() {
               <TypographyH4>Personal Information</TypographyH4>
               <Divider />
             </div>
-            <form action="" className="flex flex-col items-start gap-5">
+            <div className="flex flex-col items-start gap-5">
               <div className="w-full flex items-center justify-between gap-5 [&>div]:!w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
                 <LabelInput
                   label="Firstname"
@@ -115,7 +197,8 @@ export default function EmployeeProfilePage() {
                     <Input
                       placeholder="Firstname"
                       id="firstname"
-                      name="firstname"
+                      {...form.register('basicInfo.firstname')}
+                      disabled={!isEdit}
                     />
                   }
                 />
@@ -125,7 +208,8 @@ export default function EmployeeProfilePage() {
                     <Input
                       placeholder="Lastname"
                       id="lastname"
-                      name="lastname"
+                      {...form.register('basicInfo.lastname')}
+                      disabled={!isEdit}
                     />
                   }
                 />
@@ -133,7 +217,12 @@ export default function EmployeeProfilePage() {
               <LabelInput
                   label="Username"
                   input={
-                    <Input placeholder="Username" id="username" name="username" />
+                    <Input 
+                      placeholder="Username" 
+                      id="username" 
+                      {...form.register('basicInfo.username')}
+                      disabled={!isEdit}
+                    />
                   }
               />
               <div className="w-full flex items-center justify-between gap-5 [&>div]:w-1/2">
@@ -141,41 +230,61 @@ export default function EmployeeProfilePage() {
                   <TypographyMuted className="text-xs">
                     Locations
                   </TypographyMuted>
-                  <Select
-                    onValueChange={(value: TLocations) =>
-                      setSelectedLocation(value)
-                    }
-                    value={selectedLocation || ""}
-                  >
-                    <SelectTrigger className="h-12 text-muted-foreground">
-                      <SelectValue placeholder="Location" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {locationConstant.map((location) => (
-                        <SelectItem key={location} value={location}>
-                          {location}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Controller
+                    name="basicInfo.location"
+                    control={form.control}
+                    defaultValue={selectedLocation}
+                    render={({ field }) => (
+                      <Select
+                        onValueChange={(value: TLocations) => {
+                          field.onChange(value);
+                          setSelectedLocation(value);
+                        }}
+                        value={field.value}
+                        disabled={!isEdit}
+                      >
+                        <SelectTrigger className="h-12 text-muted-foreground">
+                          <SelectValue placeholder="Location" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {locationConstant.map((location) => (
+                            <SelectItem key={location} value={location}>
+                              {location}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
                 </div>
                 <div className="flex flex-col items-start gap-1">
                   <TypographyMuted className="text-xs">Gender</TypographyMuted>
-                  <Select
-                    onValueChange={(value: TGender) => setSelectedGender(value)}
-                    value={selectedGender || ""}
-                  >
-                    <SelectTrigger className="h-12 text-muted-foreground">
-                      <SelectValue placeholder="Gender" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {genderConstant.map((gender) => (
-                        <SelectItem key={gender.id} value={gender.value}>
-                          {gender.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Controller
+                    name="basicInfo.gender"
+                    control={form.control}
+                    defaultValue={selectedGender}
+                    render={({ field }) => (
+                        <Select
+                          onValueChange={(value: TGender) => {
+                            field.onChange(value);
+                            setSelectedGender(value);
+                          }}
+                          value={field.value}
+                          disabled={!isEdit}
+                        >
+                          <SelectTrigger className="h-12 text-muted-foreground">
+                            <SelectValue placeholder="Gender" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {genderConstant.map((gender) => (
+                              <SelectItem key={gender.id} value={gender.value}>
+                                {gender.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
                 </div>
               </div>
               <LabelInput
@@ -184,8 +293,9 @@ export default function EmployeeProfilePage() {
                   <Input
                     placeholder="Email"
                     id="email"
-                    name="email"
+                    {...form.register('accountSetting.email')}
                     prefix={<LucideMail />}
+                    disabled={!isEdit}
                   />
                 }
               />
@@ -195,12 +305,13 @@ export default function EmployeeProfilePage() {
                   <Input
                     placeholder="Phone Number"
                     id="phone"
-                    name="phone"
+                    {...form.register('accountSetting.phone')}
                     prefix={<LucidePhone />}
+                    disabled={!isEdit}
                   />
                 }
               />
-            </form>
+            </div>
           </div>
 
           {/* Professional Information Form Section */}
@@ -209,15 +320,16 @@ export default function EmployeeProfilePage() {
               <TypographyH4>Professional Information</TypographyH4>
               <Divider />
             </div>
-            <form action="" className="flex flex-col items-start gap-5">
+            <div className="flex flex-col items-start gap-5">
               <LabelInput
                 label="Profession"
                 input={
                   <Input
                     placeholder="Profession"
                     id="profession"
-                    name="profession"
+                    {...form.register("profession.job")}
                     prefix={<LucideUser />}
+                    disabled={!isEdit}
                   />
                 }
               />
@@ -228,8 +340,9 @@ export default function EmployeeProfilePage() {
                     <Input
                       placeholder="Year of Experience"
                       id="yearOfExperience"
-                      name="yearOfExperience"
+                      {...form.register("profession.yearOfExperience")}
                       prefix={<LucideBriefcaseBusiness />}
+                      disabled={!isEdit}
                     />
                   }
                 />
@@ -239,8 +352,9 @@ export default function EmployeeProfilePage() {
                     <Input
                       placeholder="Availability"
                       id="availability"
-                      name="availability"
+                      {...form.register("profession.availability")}
                       prefix={<LucideAlarmCheck />}
+                      disabled={!isEdit}
                     />
                   }
                 />
@@ -249,9 +363,14 @@ export default function EmployeeProfilePage() {
                 <TypographyMuted className="text-xs">
                   Description
                 </TypographyMuted>
-                <Textarea placeholder="Description" />
+                <Textarea 
+                  placeholder="Description" 
+                  id="description" 
+                  {...form.register("profession.description")} 
+                  disabled={!isEdit}
+                />
               </div>
-            </form>
+            </div>
           </div>
 
           {/* Education Information Form Section */}
@@ -267,46 +386,51 @@ export default function EmployeeProfilePage() {
               </div>
               <Divider />
             </div>
-            <form action="" className="flex flex-col items-start gap-5">
-              <div className="w-full flex flex-col items-start gap-3">
-                <TypographyMuted>Education 1</TypographyMuted>
-                <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
-                  <LabelInput
-                    label="School"
-                    input={
-                      <Input
-                        placeholder="School"
-                        id="school"
-                        name="school"
-                        prefix={<LucideSchool />}
-                      />
-                    }
-                  />
-                  <LabelInput
-                    label="Degree"
-                    input={
-                      <Input
-                        placeholder="Degree"
-                        id="degree"
-                        name="degree"
-                        prefix={<LucideGraduationCap />}
-                      />
-                    }
-                  />
-                  <LabelInput
-                    label="Graduation Year"
-                    input={
-                      <Input
-                        placeholder="Year"
-                        id="year"
-                        name="year"
-                        prefix={<LucideCalendarDays />}
-                      />
-                    }
-                  />
+            <div className="flex flex-col items-start gap-5">
+              {education.map((edu, index) => (
+                <div className="w-full flex flex-col items-start gap-3" key={edu.id}>
+                  <TypographyMuted>Education {index + 1}</TypographyMuted>
+                  <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
+                    <LabelInput
+                      label="School"
+                      input={
+                        <Input
+                          placeholder="School"
+                          id="school"
+                          {...form.register(`educations.${index}.school`)}
+                          prefix={<LucideSchool />}
+                          disabled={!isEdit}
+                        />
+                      }
+                    />
+                    <LabelInput
+                      label="Degree"
+                      input={
+                        <Input
+                          placeholder="Degree"
+                          id="degree"
+                          {...form.register(`educations.${index}.degree`)}
+                          prefix={<LucideGraduationCap />}
+                          disabled={!isEdit}
+                        />
+                      }
+                    />
+                    <LabelInput
+                      label="Graduation Year"
+                      input={
+                        <Input
+                          placeholder="Year"
+                          id="year"
+                          {...form.register(`educations.${index}.year`)}
+                          prefix={<LucideCalendarDays />}
+                          disabled={!isEdit}
+                        />
+                      }
+                    />
+                  </div>
                 </div>
-              </div>
-            </form>
+              ))}
+            </div>
           </div>
 
           {/* Experience Information Form Section */}
@@ -322,59 +446,69 @@ export default function EmployeeProfilePage() {
               </div>
               <Divider />
             </div>
-            <form action="" className="flex flex-col items-start gap-5">
-              <div className="w-full flex flex-col items-start gap-3">
-                <TypographyMuted>Experience 1</TypographyMuted>
-                <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
-                  <div className="w-full flex justify-between items-center gap-5 [&>div]:w-1/2 tablet-md:flex-col tablet-md:[&>div]:w-full">
+            <div className="flex flex-col items-start gap-5">
+              {experience.map((exp, index) => (
+                <div className="w-full flex flex-col items-start gap-3" key={exp.id}>
+                  <TypographyMuted>Experience {index + 1}</TypographyMuted>
+                  <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
                     <LabelInput
                       label="Title"
                       input={
                         <Input
                           placeholder="Title"
                           id="title"
-                          name="title"
+                          {...form.register(`experiences.${index}.title`)}
                           prefix={<LucideBriefcaseBusiness />}
+                          disabled={!isEdit}
                         />
                       }
                     />
-                    <LabelInput
-                      label="Description"
-                      input={
-                        <Input
-                          placeholder="Description"
-                          id="description"
-                          name="description"
-                          prefix={<LucideGraduationCap />}
-                        />
-                      }
+                    <Textarea 
+                      placeholder="Description"
+                      id="description"
+                      {...form.register(`experiences.${index}.description`)}
+                      disabled={!isEdit}
                     />
-                  </div>
-                  <div className="w-full flex justify-between items-center gap-5 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
-                    <div className="w-1/2 flex flex-col items-start gap-1">
-                      <TypographyMuted className="text-xs">
-                        Start Date
-                      </TypographyMuted>
-                      <DatePicker
-                        placeholder="Start Date"
-                        date={selectedDate}
-                        onDateChange={setSelectedDate}
-                      />
-                    </div>
-                    <div className="w-1/2 flex flex-col items-start gap-1">
-                      <TypographyMuted className="text-xs">
-                        End Date
-                      </TypographyMuted>
-                      <DatePicker
-                        placeholder="End Date"
-                        date={selectedDate}
-                        onDateChange={setSelectedDate}
-                      />
+                    <div className="w-full flex justify-between items-center gap-5 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
+                      <div className="w-1/2 flex flex-col items-start gap-1">
+                        <TypographyMuted className="text-xs">
+                          Start Date
+                        </TypographyMuted>
+                        <Controller
+                          control={form.control}
+                          name={`experiences.${index}.startDate`}
+                          render={({ field, fieldState }) => (
+                            <DatePicker
+                              placeholder="Start Date"
+                              date={field.value}
+                              onDateChange={field.onChange}
+                              disabled={!isEdit}
+                            />
+                          )}
+                        />
+                      </div>
+                      <div className="w-1/2 flex flex-col items-start gap-1">
+                        <TypographyMuted className="text-xs">
+                          End Date
+                        </TypographyMuted>
+                        <Controller
+                          control={form.control}
+                          name={`experiences.${index}.endDate`}
+                          render={({ field, fieldState }) => (
+                            <DatePicker
+                              placeholder="End Date"
+                              date={field.value}
+                              onDateChange={field.onChange}
+                              disabled={!isEdit}
+                            />
+                          )}
+                        /> 
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </form>
+              ))}
+            </div>
           </div>
         </div>
         <div className="w-[40%] flex flex-col gap-5">
@@ -383,18 +517,19 @@ export default function EmployeeProfilePage() {
               <TypographyH4>Account Settings</TypographyH4>
               <Divider />
             </div>
-            <form action="" className="flex flex-col items-start gap-5">
+            <div className="flex flex-col items-start gap-5">
               <LabelInput
                 label="Current Password"
                 input={
                   <Input
                     placeholder="Current Password"
-                    id="current-password"
-                    name="current-password"
+                    id="currentPassword"
+                    {...form.register("accountSetting.currentPassword")}
                     type={isShowPassword.current ? "text" : "password"}
+                    disabled={!isEdit}
                     prefix={<LucideLock />}
                     suffix={
-                      isShowPassword.current ? (
+                      isEdit && (isShowPassword.current ? (
                         <LucideEyeClosed
                           onClick={() =>
                             setIsShowPassword({
@@ -413,7 +548,7 @@ export default function EmployeeProfilePage() {
                           }
                         />
                       )
-                    }
+                    )}
                   />
                 }
               />
@@ -422,12 +557,13 @@ export default function EmployeeProfilePage() {
                 input={
                   <Input
                     placeholder="New Password"
-                    id="new-password"
-                    name="new-password"
+                    id="newPassword"
+                    {...form.register("accountSetting.newPassword")}
                     type={isShowPassword.new ? "text" : "password"}
+                    disabled={!isEdit}
                     prefix={<LucideLock />}
                     suffix={
-                      isShowPassword.new ? (
+                      isEdit && (isShowPassword.new ? (
                         <LucideEyeClosed
                           onClick={() =>
                             setIsShowPassword({ ...isShowPassword, new: false })
@@ -440,7 +576,7 @@ export default function EmployeeProfilePage() {
                           }
                         />
                       )
-                    }
+                    )}
                   />
                 }
               />
@@ -449,12 +585,12 @@ export default function EmployeeProfilePage() {
                 input={
                   <Input
                     placeholder="Confirm Password"
-                    id="confirm-password"
-                    name="confirm-password"
+                    id="confirmPassword"
+                    {...form.register("accountSetting.confirmPassword")}
                     type={isShowPassword.confirm ? "text" : "password"}
                     prefix={<LucideLock />}
                     suffix={
-                      isShowPassword.confirm ? (
+                      isEdit && ( isShowPassword.confirm ? (
                         <LucideEyeClosed
                           onClick={() =>
                             setIsShowPassword({
@@ -473,11 +609,11 @@ export default function EmployeeProfilePage() {
                           }
                         />
                       )
-                    }
+                    )}
                   />
                 }
               />
-            </form>
+            </div>
           </div>
 
           {/* Skill Section */}
@@ -574,7 +710,7 @@ export default function EmployeeProfilePage() {
               </div>
               <Divider />
             </div>
-            <form action="" className="flex flex-col items-start gap-5">
+            <div className="flex flex-col items-start gap-5">
               <div className="w-full flex flex-col items-start gap-3">
                 <TypographyMuted>Social 1</TypographyMuted>
                 <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
@@ -618,10 +754,10 @@ export default function EmployeeProfilePage() {
                   </div>
                 </div>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </form>
   );
 }
