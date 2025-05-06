@@ -153,6 +153,6 @@ export const companyFormSchema = z.object({
   ...benefitAndValueSchema.shape,
   ...careerScopesSchema.shape,
   ...socialSchema.shape,
-})
+});
 
 export type TCompanyProfileForm = z.infer<typeof companyFormSchema>;

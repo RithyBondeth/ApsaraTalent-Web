@@ -49,6 +49,7 @@ import { DatePicker } from "@/components/ui/date-picker";
 import Tag from "@/components/utils/tag";
 import { TPlatform } from "@/utils/types/platform.type";
 import { userList } from "@/data/user-data";
+import { useForm } from "react-hook-form";
 
 export default function EmployeeProfilePage() {
   const employeeId = 1;
@@ -70,6 +71,8 @@ export default function EmployeeProfilePage() {
   const [selectedPlatform, setSelectedPlatform] = useState<TPlatform | null>(
     null
   );
+ 
+  const form = useForm()
 
   return (
     <div className="!min-w-full flex flex-col gap-5">
