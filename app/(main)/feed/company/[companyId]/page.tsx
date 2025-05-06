@@ -172,7 +172,7 @@ export default function CompanyDetailPage() {
                     <div className="w-full flex items-center justify-between tablet-md:flex-col tablet-md:gap-5 tablet-md:[&>div]:w-full">
                       <div className="flex flex-col items-start gap-2">
                         <div className="flex items-center gap-2">
-                          <LucideBriefcaseBusiness strokeWidth="1.5px" />
+                          <LucideBriefcaseBusiness strokeWidth={"1.5px"} />
                           <TypographyP className="font-medium !m-0">
                             {item.title}
                           </TypographyP>
@@ -198,7 +198,7 @@ export default function CompanyDetailPage() {
                       </div>
                     </div>
                     <Divider />
-                    <div className="flex flex-col items-start gap-3">
+                    <div className="flex flex-col items-start gap-5">
                       <div className="flex flex-col items-start gap-2">
                         <TypographySmall className="font-medium">
                           Description
@@ -224,7 +224,7 @@ export default function CompanyDetailPage() {
                       {item.salary && (
                         <div className="flex flex-col items-start gap-2">
                           <TypographySmall className="font-medium">
-                            Salary
+                            Salary Range
                           </TypographySmall>
                           <TypographyMuted>{item.salary}</TypographyMuted>
                         </div>

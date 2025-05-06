@@ -31,7 +31,7 @@ export const userList: IUser[] = [
       description:
         "Pioneering AI & Cloud Solutions lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
       avatar:
-        "https://img.freepik.com/free-psd/3d-rendering-dj-character_23-2151437601.jpg?semt=ais_hybrid&w=740",
+        "https://freeillustrations.xyz/wp-content/uploads/2020/07/Toy-Faces-3D-Avatar-Library@4x.png",
       cover: "https://www.fracttal.com/hubfs/apple-park.webp",
       companySize: 250,
       foundedYear: 2018,

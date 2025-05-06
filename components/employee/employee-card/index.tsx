@@ -76,6 +76,12 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
             {/* Description Section */}
             <TypographyP className="!m-0 text-sm leading-relaxed">{props.description}</TypographyP> 
 
+            {/* Experience Section */}
+            <div className="flex flex-wrap gap-2 items-center">
+                <Tag label={props.yearsOfExperience}/>
+                <Tag label={props.availability}/>
+            </div>
+
             {/* button Section */}
             <div className="w-full flex items-center justify-end gap-3">
                 <Button className="text-sm" variant='outline' onClick={props.onSaveClick}>

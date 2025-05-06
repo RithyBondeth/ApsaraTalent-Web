@@ -12,6 +12,7 @@ import {
   LucideAlarmCheck,
   LucideBriefcaseBusiness,
   LucideCalendarDays,
+  LucideClock,
   LucideDownload,
   LucideEdit,
   LucideEye,
@@ -25,6 +26,7 @@ import {
   LucidePlus,
   LucideSchool,
   LucideUser,
+  LucideXCircle,
 } from "lucide-react";
 import { useState } from "react";
 import {
@@ -46,9 +48,14 @@ import IconLabel from "@/components/utils/icon-label";
 import { DatePicker } from "@/components/ui/date-picker";
 import Tag from "@/components/utils/tag";
 import { TPlatform } from "@/utils/types/platform.type";
+import { userList } from "@/data/user-data";
 
 export default function EmployeeProfilePage() {
   const employeeId = 1;
+  const employee = userList.filter((user) => user.role === 'employee');
+  const employeeList= employee[employeeId].employee;
+  
+  const [isEdit, setIsEdit] = useState<boolean>(false);  
 
   const [isShowPassword, setIsShowPassword] = useState({
     current: false,
@@ -73,14 +80,21 @@ export default function EmployeeProfilePage() {
             <AvatarFallback>BN</AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-start gap-1 tablet-sm:items-center">
-            <TypographyH3>Rithy Bondeth</TypographyH3>
-            <TypographyMuted>Software Engineer</TypographyMuted>
+            <TypographyH3>{employeeList?.username}</TypographyH3>
+            <TypographyMuted>{employeeList?.job}</TypographyMuted>
           </div>
         </div>
-        <Button className="text-xs"> 
-          <LucideEdit/>
-          Edit Profile
-        </Button>
+        {isEdit ? (
+          <Button className="text-xs" onClick={() => setIsEdit(false)}>
+            Cancel 
+            <LucideXCircle/>
+          </Button> 
+        ) : (
+          <Button className="text-xs" onClick={() => setIsEdit(true)}> 
+            Edit Profile
+            <LucideEdit/>
+          </Button>
+        )}
       </div>
       <div className="flex items-start gap-5 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
         <div className="w-[60%] flex flex-col gap-5">
@@ -114,10 +128,10 @@ export default function EmployeeProfilePage() {
                 />
               </div>
               <LabelInput
-                label="Username"
-                input={
-                  <Input placeholder="Username" id="username" name="username" />
-                }
+                  label="Username"
+                  input={
+                    <Input placeholder="Username" id="username" name="username" />
+                  }
               />
               <div className="w-full flex items-center justify-between gap-5 [&>div]:w-1/2">
                 <div className="flex flex-col items-start gap-1">
