@@ -76,6 +76,8 @@ import {
 } from "@/components/ui/popover";
 import Link from "next/link";
 import { getSocialPlatformTypeIcon } from "@/utils/get-social-type";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 
 export default function EmployeeProfilePage() {
   const employeeId = 2;
@@ -84,28 +86,17 @@ export default function EmployeeProfilePage() {
 
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
+  const { toast } = useToast();
+
   const [isShowPassword, setIsShowPassword] = useState({
     current: false,
     new: false,
     confirm: false,
   });
-  const [selectedGender, setSelectedGender] = useState<TGender | string>(
-    employeeList!.gender
-  );
-  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
-    employeeList!.location
-  );
-  const [selectedPlatform, setSelectedPlatform] = useState<TPlatform | null>(
-    null
-  );
+  const [selectedGender, setSelectedGender] = useState<TGender | string>(employeeList!.gender);
+  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(employeeList!.location);
 
-  const [education, setEducation] = useState<IEducation[]>(
-    employeeList!.educations
-  );
-  const [experience, setExperience] = useState<IExperience[]>(
-    employeeList!.experiences
-  );
-
+  // Form   
   const form = useForm<TEmployeeProfileForm>({
     resolver: zodResolver(employeeFormSchema),
     defaultValues: {
@@ -164,6 +155,9 @@ export default function EmployeeProfilePage() {
     },
   });
 
+  // Education
+  const [education, setEducation] = useState<IEducation[]>(employeeList!.educations);
+
   const addEducation = () => {
     const newEducation = {
       id: Date.now().toString(),
@@ -171,7 +165,6 @@ export default function EmployeeProfilePage() {
       degree: "",
       year: "",
     };
-
     setEducation((prevEducation) => [...prevEducation, newEducation]);
   };
 
@@ -181,6 +174,9 @@ export default function EmployeeProfilePage() {
     );
   };
 
+  // Experience
+  const [experience, setExperience] = useState<IExperience[]>(employeeList!.experiences);
+
   const addExperience = () => {
     const newExperience = {
       id: Date.now().toString(),
@@ -189,7 +185,6 @@ export default function EmployeeProfilePage() {
       startDate: "",
       endDate: "",
     };
-
     setExperience((prevExperience) => [...prevExperience, newExperience]);
   };
 
@@ -226,6 +221,7 @@ export default function EmployeeProfilePage() {
     }
   };
 
+  // Skill
   const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
   const initialSkill = form.getValues("skills") || [];
   const [skills, setSkills] = useState<ISkill[]>(
@@ -234,7 +230,43 @@ export default function EmployeeProfilePage() {
       description: skill?.description ?? "",
     }))
   );
+  const [skillInput, setSkillInput] = useState<string>("");
+  
+  const addSkills = () => {
+    const trimmed = skillInput.trim();
+    if(!trimmed) return; 
 
+    const alreadyExists = skills.some(
+      (skill) => skill.name.toLowerCase() === trimmed.toLowerCase()
+    );
+    
+    if(alreadyExists) {
+      toast({
+        variant: "destructive",
+        title: "Duplicated Skill",
+        description: "Please input another skill.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+      setSkillInput("");
+      setOpenSkillPopOver(false);
+      return;
+    }
+
+    const updated = [...skills, { name: trimmed }];
+    setSkills(updated);
+
+    setSkillInput("");
+    setOpenSkillPopOver(false);
+  }
+
+  const removeSkill = async (skillToRemove: string) => {
+    const updated = skills.filter((skill) => skill.name !== skillToRemove);
+    setSkills(updated);
+    form.setValue("skills", updated);
+    await form.trigger("skills");
+  }
+
+  // CareerScope
   const [openCareerPopOver, setOpenCareerPopOver] = useState<boolean>(false);
   const initialCareerScope = form.getValues("careerScopes") || [];
   const [careerScopes, setCareerScopes] = useState<ICareerScopes[]>(
@@ -243,6 +275,44 @@ export default function EmployeeProfilePage() {
       description: cp?.description ?? "",
     }))
   );
+  const [careerScopeInput, setCareerScopeInput] = useState<string>("");
+
+
+  const addCareerScope = () => {
+    const trimmed = careerScopeInput.trim();
+    if(!trimmed) return;
+    
+    const alreadyExists = careerScopes.some(
+      (cs) => cs.name.toLowerCase() === trimmed.toLowerCase()
+    );
+
+    if(alreadyExists) {
+      toast({
+        variant: "destructive",
+        title: "Duplicated Skill",
+        description: "Please input another skill.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+
+      setCareerScopeInput("");
+      setOpenCareerPopOver(false);
+      return;
+    }
+
+    const updated = [...careerScopes, { name: trimmed }];
+    setCareerScopes(updated);
+
+    setCareerScopeInput("");
+    setOpenCareerPopOver(false);
+  }
+
+  const removeCareerScope = async (careerToRemove: string) => {
+    const updated = careerScopes.filter((cs) => cs.name !== careerToRemove);
+    setCareerScopes(updated);
+    form.setValue("careerScopes", updated);
+    await form.trigger("careerScopes");
+  }
+
 
   return (
     <form className="!min-w-full flex flex-col gap-5">
@@ -793,7 +863,16 @@ export default function EmployeeProfilePage() {
               {skills.map((skill, index) => (
                 <HoverCard key={index}>
                   <HoverCardTrigger>
-                    <Tag label={skill.name} />
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs">
+                      <IconLabel icon={null} text={skill.name}/>
+                      {isEdit && (
+                        <LucideXCircle
+                          className="text-muted-foreground cursor-pointer text-red-500"
+                          width={"18px"}
+                          onClick={() => removeSkill(skill.name)}
+                        />
+                      )}
+                    </div>
                   </HoverCardTrigger>
                   <HoverCardContent>
                     <TypographySmall>{skill.description}</TypographySmall>
@@ -813,7 +892,10 @@ export default function EmployeeProfilePage() {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
-                  <Input placeholder="Enter your skill" onChange={(e) => {}} />
+                  <Input 
+                    placeholder="Enter your skill" 
+                    onChange={(e) => setSkillInput(e.target.value)} 
+                  />
                   <div className="flex items-center gap-1 [&>button]:text-xs">
                     <Button
                       variant="outline"
@@ -821,7 +903,7 @@ export default function EmployeeProfilePage() {
                     >
                       Cancel
                     </Button>
-                    <Button onClick={() => {}}>Save</Button>
+                    <Button onClick={addSkills}>Save</Button>
                   </div>
                 </PopoverContent>
               </Popover>
@@ -835,13 +917,22 @@ export default function EmployeeProfilePage() {
               <Divider />
             </div>
             <div className="flex flex-wrap gap-3">
-              {careerScopes.map((skill, index) => (
+              {careerScopes.map((career, index) => (
                 <HoverCard key={index}>
                   <HoverCardTrigger>
-                    <Tag label={skill.name} />
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs">
+                      <IconLabel icon={null} text={career.name}/>
+                      {isEdit && (
+                        <LucideXCircle
+                          className="text-muted-foreground cursor-pointer text-red-500"
+                          width={"18px"}
+                          onClick={() => removeCareerScope(career.name)}
+                        />
+                      )}
+                    </div>
                   </HoverCardTrigger>
                   <HoverCardContent>
-                    <TypographySmall>{skill.description}</TypographySmall>
+                    <TypographySmall>{career.description}</TypographySmall>
                   </HoverCardContent>
                 </HoverCard>
               ))}
@@ -858,7 +949,7 @@ export default function EmployeeProfilePage() {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
-                  <Input placeholder="Enter your skill" onChange={(e) => {}} />
+                  <Input placeholder="Enter your skill" onChange={(e) => {setCareerScopeInput(e.target.value)}} />
                   <div className="flex items-center gap-1 [&>button]:text-xs">
                     <Button
                       variant="outline"
@@ -866,7 +957,7 @@ export default function EmployeeProfilePage() {
                     >
                       Cancel
                     </Button>
-                    <Button onClick={() => {}}>Save</Button>
+                    <Button onClick={addCareerScope}>Save</Button>
                   </div>
                 </PopoverContent>
               </Popover>

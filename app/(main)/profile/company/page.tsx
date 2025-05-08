@@ -1016,7 +1016,7 @@ export default function ProfilePage() {
                 {values &&
                   values.map((value, index) => (
                     <div
-                      className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted [&>div>p]:text-xs"
+                      className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs"
                       key={index}
                     >
                       <IconLabel
