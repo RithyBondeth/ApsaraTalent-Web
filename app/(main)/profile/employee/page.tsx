@@ -25,6 +25,8 @@ import {
   LucidePhone,
   LucidePlus,
   LucideSchool,
+  LucideTrash,
+  LucideTrash2,
   LucideUser,
   LucideXCircle,
 } from "lucide-react";
@@ -52,31 +54,58 @@ import { userList } from "@/data/user-data";
 import { Controller, useForm } from "react-hook-form";
 import { employeeFormSchema, TEmployeeProfileForm } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IEducation, IExperience, ISkill } from "@/utils/interfaces/user-interface/employee.interface";
-import { ICareerScopes } from "@/utils/interfaces/user-interface/company.interface";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import {
+  IEducation,
+  IExperience,
+  ISkill,
+} from "@/utils/interfaces/user-interface/employee.interface";
+import {
+  ICareerScopes,
+  ISocial,
+} from "@/utils/interfaces/user-interface/company.interface";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import Link from "next/link";
+import { getSocialPlatformTypeIcon } from "@/utils/get-social-type";
 
 export default function EmployeeProfilePage() {
   const employeeId = 2;
-  const employee = userList.filter((user) => user.role === 'employee');
-  const employeeList= employee[employeeId].employee;
-  
-  const [isEdit, setIsEdit] = useState<boolean>(false);  
+  const employee = userList.filter((user) => user.role === "employee");
+  const employeeList = employee[employeeId].employee;
+
+  const [isEdit, setIsEdit] = useState<boolean>(false);
 
   const [isShowPassword, setIsShowPassword] = useState({
     current: false,
     new: false,
     confirm: false,
   });
-  const [selectedGender, setSelectedGender] = useState<TGender | string>(employeeList!.gender);
-  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(employeeList!.location);
-  const [selectedPlatform, setSelectedPlatform] = useState<TPlatform | null>(null);
+  const [selectedGender, setSelectedGender] = useState<TGender | string>(
+    employeeList!.gender
+  );
+  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
+    employeeList!.location
+  );
+  const [selectedPlatform, setSelectedPlatform] = useState<TPlatform | null>(
+    null
+  );
 
-  const [education, setEducation] = useState<IEducation[]>(employeeList!.educations);
-  const [experience, setExperience] = useState<IExperience[]>(employeeList!.experiences);
- 
+  const [education, setEducation] = useState<IEducation[]>(
+    employeeList!.educations
+  );
+  const [experience, setExperience] = useState<IExperience[]>(
+    employeeList!.experiences
+  );
+
   const form = useForm<TEmployeeProfileForm>({
     resolver: zodResolver(employeeFormSchema),
     defaultValues: {
@@ -86,7 +115,7 @@ export default function EmployeeProfilePage() {
         username: employeeList?.username ?? "",
         gender: employeeList?.gender ?? "",
         location: employeeList?.location ?? "",
-        avatar: employeeList?.avatar ? new File([], 'avatar.png') : null,
+        avatar: employeeList?.avatar ? new File([], "avatar.png") : null,
       },
       accountSetting: {
         email: employee[employeeId].email ?? "",
@@ -101,58 +130,110 @@ export default function EmployeeProfilePage() {
         availability: employeeList?.availability ?? "",
         description: employeeList?.description ?? "",
       },
-      educations: employeeList?.educations.map((edu) => ({
-        school: edu.school,
-        degree: edu.degree,
-        year: edu.year,
-      })) || [],
-      experiences: employeeList?.experiences.map((exp) => ({
-        title: exp.title,
-        description: exp.description,
-        startDate: new Date(exp.startDate),
-        endDate: new Date(exp.endDate),
-      })) || [],
-      skills: employeeList?.skills.map((skill) => ({
-        name: skill.name,
-        description: skill.description,
-      })) || [],
+      educations:
+        employeeList?.educations.map((edu) => ({
+          school: edu.school,
+          degree: edu.degree,
+          year: edu.year,
+        })) || [],
+      experiences:
+        employeeList?.experiences.map((exp) => ({
+          title: exp.title,
+          description: exp.description,
+          startDate: new Date(exp.startDate),
+          endDate: new Date(exp.endDate),
+        })) || [],
+      skills:
+        employeeList?.skills.map((skill) => ({
+          name: skill.name,
+          description: skill.description,
+        })) || [],
       references: {
         resume: employeeList?.resume ?? null,
-        coverLetter: employeeList?.coverLetter ?? null, 
+        coverLetter: employeeList?.coverLetter ?? null,
       },
-      careerScopes: employeeList?.careerScopes.map((cp) => ({
+      careerScopes:
+        employeeList?.careerScopes.map((cp) => ({
           name: cp.name,
           description: cp.description,
-      })) || [],
+        })) || [],
       socials: employeeList?.socials.map((social) => ({
-          platform: social.platform,
-          url: social.url,
+        platform: social.platform,
+        url: social.url,
       })),
     },
   });
 
+  const addEducation = () => {
+    const newEducation = {
+      id: Date.now().toString(),
+      school: "",
+      degree: "",
+      year: "",
+    };
+
+    setEducation((prevEducation) => [...prevEducation, newEducation]);
+  };
+
+  const removeEducation = (educationId: string) => {
+    setEducation((prevEducation) =>
+      prevEducation.filter((edu) => edu.id !== educationId)
+    );
+  };
+
+  const addExperience = () => {
+    const newExperience = {
+      id: Date.now().toString(),
+      title: "",
+      description: "",
+      startDate: "",
+      endDate: "",
+    };
+
+    setExperience((prevExperience) => [...prevExperience, newExperience]);
+  };
+
+  const removeExperience = (experienceId: string) => {
+    setExperience((prevExperience) =>
+      prevExperience.filter((exp) => exp.id !== experienceId)
+    );
+  };
+
+  //Socials
+  const [socialInput, setSocialInput] = useState<{
+    social: string;
+    link: string;
+  }>({ social: "", link: "" });
+  const initialSocial = (form.getValues?.("socials") || []).filter(
+    (s): s is { platform: string; url: string } => s !== undefined
+  );
+  const [socials, setSocials] = useState<ISocial[]>(initialSocial);
+
   const avatarInputRef = useRef<HTMLInputElement | null>(null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, type: 'avatar' | 'resume' | 'coverLetter') => {
-    const file = event.target.files ? event.target.files[0] : null; 
-    
-    if(file) {
-      if(type === 'avatar') {
+  const handleFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    type: "avatar" | "resume" | "coverLetter"
+  ) => {
+    const file = event.target.files ? event.target.files[0] : null;
+
+    if (file) {
+      if (type === "avatar") {
         setAvatarFile(file);
         form.setValue("basicInfo.avatar", file);
-      } 
+      }
     }
   };
 
   const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
-  const initialSkill = form.getValues('skills') || [];
+  const initialSkill = form.getValues("skills") || [];
   const [skills, setSkills] = useState<ISkill[]>(
     initialSkill.map((skill) => ({
-      name: skill?.name ?? '',
-      description: skill?.description ?? '',
+      name: skill?.name ?? "",
+      description: skill?.description ?? "",
     }))
-  ); 
+  );
 
   const [openCareerPopOver, setOpenCareerPopOver] = useState<boolean>(false);
   const initialCareerScope = form.getValues("careerScopes") || [];
@@ -169,22 +250,32 @@ export default function EmployeeProfilePage() {
         <div className="flex items-center justify-start gap-5 tablet-sm:flex-col">
           <div className="relative">
             <Avatar className="size-36" rounded="md">
-              <AvatarImage src={avatarFile ? URL.createObjectURL(avatarFile) : employeeList!.avatar}/>
-              <AvatarFallback className="uppercase">{employeeList!.username.slice(0, 3)}</AvatarFallback>
+              <AvatarImage
+                src={
+                  avatarFile
+                    ? URL.createObjectURL(avatarFile)
+                    : employeeList!.avatar
+                }
+              />
+              <AvatarFallback className="uppercase">
+                {employeeList!.username.slice(0, 3)}
+              </AvatarFallback>
             </Avatar>
-            {isEdit && <Button 
-              className="size-8 flex justify-center items-center cursor-pointer absolute bottom-1 right-1 p-1 rounded-full bg-foreground text-primary-foreground"
-              onClick={() => avatarInputRef.current?.click()}  
-            >
-              <LucideCamera width={"18px"} strokeWidth={"1.2px"}/>
-            </Button>}
+            {isEdit && (
+              <Button
+                className="size-8 flex justify-center items-center cursor-pointer absolute bottom-1 right-1 p-1 rounded-full bg-foreground text-primary-foreground"
+                onClick={() => avatarInputRef.current?.click()}
+              >
+                <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
+              </Button>
+            )}
           </div>
           <input
             ref={avatarInputRef}
             type="file"
             className="hidden"
             accept="image/*"
-            onChange={(e) => handleFileChange(e, 'avatar')}
+            onChange={(e) => handleFileChange(e, "avatar")}
           />
           <div className="flex flex-col items-start gap-1 tablet-sm:items-center">
             <TypographyH3>{employeeList?.username}</TypographyH3>
@@ -192,14 +283,22 @@ export default function EmployeeProfilePage() {
           </div>
         </div>
         {isEdit ? (
-          <Button type="button" className="text-xs" onClick={() => setIsEdit(false)}>
-            Cancel 
-            <LucideXCircle/>
-          </Button> 
+          <Button
+            type="button"
+            className="text-xs"
+            onClick={() => setIsEdit(false)}
+          >
+            Cancel
+            <LucideXCircle />
+          </Button>
         ) : (
-          <Button type="button" className="text-xs" onClick={() => setIsEdit(true)}> 
+          <Button
+            type="button"
+            className="text-xs"
+            onClick={() => setIsEdit(true)}
+          >
             Edit Profile
-            <LucideEdit/>
+            <LucideEdit />
           </Button>
         )}
       </div>
@@ -219,7 +318,7 @@ export default function EmployeeProfilePage() {
                     <Input
                       placeholder="Firstname"
                       id="firstname"
-                      {...form.register('basicInfo.firstname')}
+                      {...form.register("basicInfo.firstname")}
                       disabled={!isEdit}
                     />
                   }
@@ -230,22 +329,22 @@ export default function EmployeeProfilePage() {
                     <Input
                       placeholder="Lastname"
                       id="lastname"
-                      {...form.register('basicInfo.lastname')}
+                      {...form.register("basicInfo.lastname")}
                       disabled={!isEdit}
                     />
                   }
                 />
               </div>
               <LabelInput
-                  label="Username"
-                  input={
-                    <Input 
-                      placeholder="Username" 
-                      id="username" 
-                      {...form.register('basicInfo.username')}
-                      disabled={!isEdit}
-                    />
-                  }
+                label="Username"
+                input={
+                  <Input
+                    placeholder="Username"
+                    id="username"
+                    {...form.register("basicInfo.username")}
+                    disabled={!isEdit}
+                  />
+                }
               />
               <div className="w-full flex items-center justify-between gap-5 [&>div]:w-1/2">
                 <div className="flex flex-col items-start gap-1">
@@ -286,27 +385,27 @@ export default function EmployeeProfilePage() {
                     control={form.control}
                     defaultValue={selectedGender}
                     render={({ field }) => (
-                        <Select
-                          onValueChange={(value: TGender) => {
-                            field.onChange(value);
-                            setSelectedGender(value);
-                          }}
-                          value={field.value}
-                          disabled={!isEdit}
-                        >
-                          <SelectTrigger className="h-12 text-muted-foreground">
-                            <SelectValue placeholder="Gender" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {genderConstant.map((gender) => (
-                              <SelectItem key={gender.id} value={gender.value}>
-                                {gender.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
+                      <Select
+                        onValueChange={(value: TGender) => {
+                          field.onChange(value);
+                          setSelectedGender(value);
+                        }}
+                        value={field.value}
+                        disabled={!isEdit}
+                      >
+                        <SelectTrigger className="h-12 text-muted-foreground">
+                          <SelectValue placeholder="Gender" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {genderConstant.map((gender) => (
+                            <SelectItem key={gender.id} value={gender.value}>
+                              {gender.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
                 </div>
               </div>
               <LabelInput
@@ -315,7 +414,7 @@ export default function EmployeeProfilePage() {
                   <Input
                     placeholder="Email"
                     id="email"
-                    {...form.register('accountSetting.email')}
+                    {...form.register("accountSetting.email")}
                     prefix={<LucideMail />}
                     disabled={!isEdit}
                   />
@@ -327,7 +426,7 @@ export default function EmployeeProfilePage() {
                   <Input
                     placeholder="Phone Number"
                     id="phone"
-                    {...form.register('accountSetting.phone')}
+                    {...form.register("accountSetting.phone")}
                     prefix={<LucidePhone />}
                     disabled={!isEdit}
                   />
@@ -385,10 +484,10 @@ export default function EmployeeProfilePage() {
                 <TypographyMuted className="text-xs">
                   Description
                 </TypographyMuted>
-                <Textarea 
-                  placeholder="Description" 
-                  id="description" 
-                  {...form.register("profession.description")} 
+                <Textarea
+                  placeholder="Description"
+                  id="description"
+                  {...form.register("profession.description")}
                   disabled={!isEdit}
                 />
               </div>
@@ -400,18 +499,37 @@ export default function EmployeeProfilePage() {
             <div className="flex flex-col gap-1">
               <div className="flex justify-between items-center">
                 <TypographyH4>Education Information</TypographyH4>
-                <IconLabel
-                  text="Add Education"
-                  icon={<LucidePlus className="text-muted-foreground" />}
-                  className="cursor-pointer"
-                />
+                {isEdit && (
+                  <div onClick={addEducation}>
+                    <IconLabel
+                      text="Add Education"
+                      icon={<LucidePlus className="text-muted-foreground" />}
+                      className="cursor-pointer"
+                    />
+                  </div>
+                )}
               </div>
               <Divider />
             </div>
             <div className="flex flex-col items-start gap-5">
               {education.map((edu, index) => (
-                <div className="w-full flex flex-col items-start gap-3" key={edu.id}>
-                  <TypographyMuted>Education {index + 1}</TypographyMuted>
+                <div
+                  className="w-full flex flex-col items-start gap-3"
+                  key={edu.id}
+                >
+                  <div className="w-full flex items-center justify-between">
+                    <TypographyMuted>Education {index + 1}</TypographyMuted>
+                    {isEdit && (
+                      <LucideTrash2
+                        className="cursor-pointer text-red-500"
+                        strokeWidth={"1.5px"}
+                        width={"18px"}
+                        onClick={() =>
+                          edu.id && removeEducation(edu.id.toString())
+                        }
+                      />
+                    )}
+                  </div>
                   <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
                     <LabelInput
                       label="School"
@@ -460,18 +578,37 @@ export default function EmployeeProfilePage() {
             <div className="flex flex-col gap-1">
               <div className="flex justify-between items-center">
                 <TypographyH4>Experience Information</TypographyH4>
-                <IconLabel
-                  text="Add Education"
-                  icon={<LucidePlus className="text-muted-foreground" />}
-                  className="cursor-pointer"
-                />
+                {isEdit && (
+                  <div onClick={addExperience}>
+                    <IconLabel
+                      text="Add Education"
+                      icon={<LucidePlus className="text-muted-foreground" />}
+                      className="cursor-pointer"
+                    />
+                  </div>
+                )}
               </div>
               <Divider />
             </div>
             <div className="flex flex-col items-start gap-5">
               {experience.map((exp, index) => (
-                <div className="w-full flex flex-col items-start gap-3" key={exp.id}>
-                  <TypographyMuted>Experience {index + 1}</TypographyMuted>
+                <div
+                  className="w-full flex flex-col items-start gap-3"
+                  key={exp.id}
+                >
+                  <div className="w-full flex items-center justify-between">
+                    <TypographyMuted>Experience {index + 1}</TypographyMuted>
+                    {isEdit && (
+                      <LucideTrash2
+                        className="cursor-pointer text-red-500"
+                        strokeWidth={"1.5px"}
+                        width={"18px"}
+                        onClick={() =>
+                          exp.id && removeExperience(exp.id.toString())
+                        }
+                      />
+                    )}
+                  </div>
                   <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
                     <LabelInput
                       label="Title"
@@ -486,14 +623,16 @@ export default function EmployeeProfilePage() {
                       }
                     />
                     <div className="w-full flex flex-col items-start gap-2">
-                      <TypographyMuted className="text-xs">Description</TypographyMuted>
-                      <Textarea 
+                      <TypographyMuted className="text-xs">
+                        Description
+                      </TypographyMuted>
+                      <Textarea
                         placeholder="Description"
                         id="description"
                         {...form.register(`experiences.${index}.description`)}
                         disabled={!isEdit}
                       />
-                    </div>  
+                    </div>
                     <div className="w-full flex justify-between items-center gap-5 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
                       <div className="w-1/2 flex flex-col items-start gap-1">
                         <TypographyMuted className="text-xs">
@@ -527,7 +666,7 @@ export default function EmployeeProfilePage() {
                               disabled={!isEdit}
                             />
                           )}
-                        /> 
+                        />
                       </div>
                     </div>
                   </div>
@@ -554,7 +693,8 @@ export default function EmployeeProfilePage() {
                     disabled={!isEdit}
                     prefix={<LucideLock />}
                     suffix={
-                      isEdit && (isShowPassword.current ? (
+                      isEdit &&
+                      (isShowPassword.current ? (
                         <LucideEyeClosed
                           onClick={() =>
                             setIsShowPassword({
@@ -572,8 +712,8 @@ export default function EmployeeProfilePage() {
                             })
                           }
                         />
-                      )
-                    )}
+                      ))
+                    }
                   />
                 }
               />
@@ -588,7 +728,8 @@ export default function EmployeeProfilePage() {
                     disabled={!isEdit}
                     prefix={<LucideLock />}
                     suffix={
-                      isEdit && (isShowPassword.new ? (
+                      isEdit &&
+                      (isShowPassword.new ? (
                         <LucideEyeClosed
                           onClick={() =>
                             setIsShowPassword({ ...isShowPassword, new: false })
@@ -600,8 +741,8 @@ export default function EmployeeProfilePage() {
                             setIsShowPassword({ ...isShowPassword, new: true })
                           }
                         />
-                      )
-                    )}
+                      ))
+                    }
                   />
                 }
               />
@@ -615,7 +756,8 @@ export default function EmployeeProfilePage() {
                     type={isShowPassword.confirm ? "text" : "password"}
                     prefix={<LucideLock />}
                     suffix={
-                      isEdit && ( isShowPassword.confirm ? (
+                      isEdit &&
+                      (isShowPassword.confirm ? (
                         <LucideEyeClosed
                           onClick={() =>
                             setIsShowPassword({
@@ -633,8 +775,8 @@ export default function EmployeeProfilePage() {
                             })
                           }
                         />
-                      )
-                    )}
+                      ))
+                    }
                   />
                 }
               />
@@ -644,14 +786,7 @@ export default function EmployeeProfilePage() {
           {/* Skill Section */}
           <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
             <div className="w-full flex flex-col gap-1">
-              <div className="w-full flex justify-between items-center">
-                <TypographyH4>Skills</TypographyH4>
-                <IconLabel
-                  text="Add Skill"
-                  icon={<LucidePlus className="text-muted-foreground" />}
-                  className="cursor-pointer"
-                />
-              </div>
+              <TypographyH4>Skills</TypographyH4>
               <Divider />
             </div>
             <div className="flex flex-wrap gap-3">
@@ -666,42 +801,37 @@ export default function EmployeeProfilePage() {
                 </HoverCard>
               ))}
             </div>
-            {isEdit && <Popover open={openSkillPopOver} onOpenChange={setOpenSkillPopOver}>
-              <PopoverTrigger asChild>
-                <Button className="w-full text-xs" variant="secondary">
-                  Add Skill
-                  <LucidePlus />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
-                <Input
-                  placeholder="Enter your skill" 
-                  onChange={(e) => {}}
-              />
-              <div className="flex items-center gap-1 [&>button]:text-xs">
-                  <Button
-                    variant="outline"
-                    onClick={() => setOpenSkillPopOver(false)}
-                  >
-                    Cancel
+            {isEdit && (
+              <Popover
+                open={openSkillPopOver}
+                onOpenChange={setOpenSkillPopOver}
+              >
+                <PopoverTrigger asChild>
+                  <Button className="w-full text-xs" variant="secondary">
+                    Add Skill
+                    <LucidePlus />
                   </Button>
-                  <Button onClick={() => {}}>Save</Button>
-                </div>
-              </PopoverContent>
-            </Popover>}
+                </PopoverTrigger>
+                <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
+                  <Input placeholder="Enter your skill" onChange={(e) => {}} />
+                  <div className="flex items-center gap-1 [&>button]:text-xs">
+                    <Button
+                      variant="outline"
+                      onClick={() => setOpenSkillPopOver(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button onClick={() => {}}>Save</Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
           </div>
 
           {/* CareerScopes Section */}
           <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
             <div className="w-full flex flex-col gap-1">
-              <div className="w-full flex justify-between items-center">
-                <TypographyH4>Career Scopes</TypographyH4>
-                <IconLabel
-                  text="Add Career"
-                  icon={<LucidePlus className="text-muted-foreground" />}
-                  className="cursor-pointer"
-                />
-              </div>
+              <TypographyH4>Career Scopes</TypographyH4>
               <Divider />
             </div>
             <div className="flex flex-wrap gap-3">
@@ -716,44 +846,48 @@ export default function EmployeeProfilePage() {
                 </HoverCard>
               ))}
             </div>
-            {isEdit && <Popover open={openCareerPopOver} onOpenChange={setOpenCareerPopOver}>
-              <PopoverTrigger asChild>
-                <Button className="w-full text-xs" variant="secondary">
-                  Add Career
-                  <LucidePlus />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
-                <Input
-                  placeholder="Enter your skill" 
-                  onChange={(e) => {}}
-              />
-              <div className="flex items-center gap-1 [&>button]:text-xs">
-                  <Button
-                    variant="outline"
-                    onClick={() => setOpenCareerPopOver(false)}
-                  >
-                    Cancel
+            {isEdit && (
+              <Popover
+                open={openCareerPopOver}
+                onOpenChange={setOpenCareerPopOver}
+              >
+                <PopoverTrigger asChild>
+                  <Button className="w-full text-xs" variant="secondary">
+                    Add Career
+                    <LucidePlus />
                   </Button>
-                  <Button onClick={() => {}}>Save</Button>
-                </div>
-              </PopoverContent>
-            </Popover>}
+                </PopoverTrigger>
+                <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
+                  <Input placeholder="Enter your skill" onChange={(e) => {}} />
+                  <div className="flex items-center gap-1 [&>button]:text-xs">
+                    <Button
+                      variant="outline"
+                      onClick={() => setOpenCareerPopOver(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button onClick={() => {}}>Save</Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
           </div>
 
           {/* Reference Section */}
           <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
-            <TypographyH4>Add your references</TypographyH4>
+            <TypographyH4>References Information</TypographyH4>
             <div className="w-full flex flex-col items-start gap-5 [&>div]:w-full">
               <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
                 <div className="flex items-center text-muted-foreground gap-1">
                   <LucideFileText />
-                  <TypographyMuted>Resume</TypographyMuted>
+                  <TypographyMuted>{employeeList?.resume}</TypographyMuted>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Button variant="outline" size="icon">
-                    <LucideEdit />
-                  </Button>
+                  {isEdit && (
+                    <Button variant="outline" size="icon">
+                      <LucideEdit />
+                    </Button>
+                  )}
                   <Button variant="outline" size="icon">
                     <LucideEye />
                   </Button>
@@ -765,12 +899,14 @@ export default function EmployeeProfilePage() {
               <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
                 <div className="flex items-center text-muted-foreground gap-1">
                   <LucideFileText />
-                  <TypographyMuted>Cover Letter</TypographyMuted>
+                  <TypographyMuted>{employeeList?.coverLetter}</TypographyMuted>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Button variant="outline" size="icon">
-                    <LucideEdit />
-                  </Button>
+                  {isEdit && (
+                    <Button variant="outline" size="icon">
+                      <LucideEdit />
+                    </Button>
+                  )}
                   <Button variant="outline" size="icon">
                     <LucideEye />
                   </Button>
@@ -785,30 +921,45 @@ export default function EmployeeProfilePage() {
           {/* Experience Information Form Section */}
           <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
             <div className="flex flex-col gap-1">
-              <div className="flex justify-between items-center">
-                <TypographyH4>Social Information</TypographyH4>
-                <IconLabel
-                  text="Add Social"
-                  icon={<LucidePlus className="text-muted-foreground" />}
-                  className="cursor-pointer"
-                />
-              </div>
+              <TypographyH4>Social Information</TypographyH4>
               <Divider />
             </div>
-            <div className="flex flex-col items-start gap-5">
-              <div className="w-full flex flex-col items-start gap-3">
-                <TypographyMuted>Social 1</TypographyMuted>
-                <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
+            <div className="w-full flex flex-col items-start gap-5">
+              <div className="w-full flex flex-col items-stretch gap-3">
+                <div className="flex flex-wrap gap-3">
+                  {socials.map((item: ISocial, index) => (
+                    <Link
+                      key={index}
+                      href={item.url}
+                      className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
+                    >
+                      {getSocialPlatformTypeIcon(item.platform as TPlatform)}
+                      <TypographySmall>{item.platform}</TypographySmall>
+                      {isEdit && (
+                        <LucideXCircle
+                          className="text-muted-foreground cursor-pointer text-red-500"
+                          width={"18px"}
+                          onClick={() => {}}
+                        />
+                      )}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+            {isEdit && (
+              <div>
+                <div className="w-full flex flex-col items-start gap-5 p-5 mt-3 border-[1px] border-muted rounded-md">
                   <div className="w-full flex justify-between items-center gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
-                    <div className="flex flex-col items-start gap-1">
+                    <div className="w-full flex flex-col items-start gap-1">
                       <TypographyMuted className="text-xs">
                         Platform
                       </TypographyMuted>
                       <Select
-                        onValueChange={(value: TPlatform) =>
-                          setSelectedPlatform(value)
+                        onValueChange={(value: string) =>
+                          setSocialInput({ ...socialInput, social: value })
                         }
-                        value={selectedPlatform || ""}
+                        value={socialInput.social}
                       >
                         <SelectTrigger className="h-12 text-muted-foreground">
                           <SelectValue placeholder="Platform" />
@@ -832,14 +983,29 @@ export default function EmployeeProfilePage() {
                           placeholder="Link"
                           id="link"
                           name="link"
+                          value={socialInput.link}
+                          onChange={(e) =>
+                            setSocialInput({
+                              ...socialInput,
+                              link: e.target.value,
+                            })
+                          }
                           prefix={<LucideLink2 />}
                         />
                       }
                     />
                   </div>
                 </div>
+                <Button
+                  variant="secondary"
+                  className="text-xs w-full"
+                  onClick={() => {}}
+                >
+                  <LucidePlus />
+                  Add new social
+                </Button>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

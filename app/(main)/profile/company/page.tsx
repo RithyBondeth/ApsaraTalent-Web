@@ -172,14 +172,14 @@ export default function ProfilePage() {
   const addOpenPosition = () => {
   
     const newPosition = {
-      id: Date.now().toString(), // Convert to string
+      id: Date.now().toString(),
       title: "",
       description: "",
       experienceRequirement: "",
       educationRequirement: "",
       skills: [],
       salary: "",
-      type: "Full Time", // Default value
+      type: "Full Time",
       experience: "",
       education: "",
       postedDate: new Date().toISOString(),
@@ -221,7 +221,7 @@ export default function ProfilePage() {
   const initialSocial = (form.getValues?.("socials") || []).filter(
     (s): s is { platform: string; url: string } => s !== undefined
   );
-  const [socials, setSocials] = useState<{ platform: string; url: string }[]>(initialSocial);
+  const [socials, setSocials] = useState<ISocial[]>(initialSocial);
 
   const addBenefits = () => {
     const trimmed = benefitInput.trim();
