@@ -345,6 +345,19 @@ export default function EmployeeProfilePage() {
     }
   }, [resumeFile, coverLetterFile]);
 
+  const handleDownloadfile = (file: File) => {
+    if(!file) return;
+
+    const url = URL.createObjectURL(file);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = file.name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url); // clean up
+  }
+
   return (
     <form className="!min-w-full flex flex-col gap-5">
       <div className="flex items-center justify-between border border-muted rounded-md p-5 tablet-sm:flex-col tablet-sm:[&>div]:w-full tablet-sm:gap-5">
@@ -1031,7 +1044,12 @@ export default function EmployeeProfilePage() {
                   ) :  <Button type="button" variant="outline" size="icon">
                   <LucideEye />
                   </Button>}
-                  <Button variant="outline" size="icon">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="icon" 
+                    onClick={() => handleDownloadfile(resumeFile!)}
+                  >
                     <LucideDownload />
                   </Button>
                 </div>
@@ -1068,7 +1086,12 @@ export default function EmployeeProfilePage() {
                   ) :  <Button type="button" variant="outline" size="icon">
                   <LucideEye />
                   </Button>}
-                  <Button variant="outline" size="icon">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="icon" 
+                    onClick={() => handleDownloadfile(coverLetterFile!)}
+                  >
                     <LucideDownload />
                   </Button>
                 </div>
