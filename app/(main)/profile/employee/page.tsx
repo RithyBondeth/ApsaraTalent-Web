@@ -25,12 +25,11 @@ import {
   LucidePhone,
   LucidePlus,
   LucideSchool,
-  LucideTrash,
   LucideTrash2,
   LucideUser,
   LucideXCircle,
 } from "lucide-react";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Select,
   SelectTrigger,
@@ -204,8 +203,16 @@ export default function EmployeeProfilePage() {
   );
   const [socials, setSocials] = useState<ISocial[]>(initialSocial);
 
+
+  // Avatar and References
   const avatarInputRef = useRef<HTMLInputElement | null>(null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
+
+  const resumeInputRef = useRef<HTMLInputElement | null>(null);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+
+  const coverLetterInputRef = useRef<HTMLInputElement | null>(null);
+  const [coverLetterFile, setCoverLetterFile] = useState<File | null>(null);
 
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -217,6 +224,12 @@ export default function EmployeeProfilePage() {
       if (type === "avatar") {
         setAvatarFile(file);
         form.setValue("basicInfo.avatar", file);
+      } else if (type === "resume") {
+        setResumeFile(file);
+        form.setValue("references.resume", file);
+      } else if (type === "coverLetter") {
+        setCoverLetterFile(file);
+        form.setValue("references.coverLetter", file); 
       }
     }
   };
@@ -313,6 +326,24 @@ export default function EmployeeProfilePage() {
     await form.trigger("careerScopes");
   }
 
+  const [resumeUrl, setResumeUrl] = useState<string | null>(null);
+  const [coverLetterUrl, setCoverLetterUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (resumeFile) {
+      const objectUrl = URL.createObjectURL(resumeFile);
+      setResumeUrl(objectUrl);
+
+      return () => URL.revokeObjectURL(objectUrl); // Cleanup to prevent memory leak
+    }
+
+    if(coverLetterFile) {
+      const objectUrl = URL.createObjectURL(coverLetterFile) ;
+      setCoverLetterUrl(objectUrl);
+    
+      return () => URL.revokeObjectURL(objectUrl); // Cleanup to prevent memory leak
+    }
+  }, [resumeFile, coverLetterFile]);
 
   return (
     <form className="!min-w-full flex flex-col gap-5">
@@ -971,17 +1002,35 @@ export default function EmployeeProfilePage() {
               <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
                 <div className="flex items-center text-muted-foreground gap-1">
                   <LucideFileText />
-                  <TypographyMuted>{employeeList?.resume}</TypographyMuted>
+                  <TypographyMuted>{resumeFile ? resumeFile.name : employeeList?.resume}</TypographyMuted>
+                  <input 
+                    type="file"
+                    accept="application/pdf"
+                    className="hidden"
+                    ref={resumeInputRef}
+                    onChange={(e) => handleFileChange(e, "resume")}
+                  />
                 </div>
                 <div className="flex items-center gap-1">
                   {isEdit && (
-                    <Button variant="outline" size="icon">
+                    <Button 
+                      type="button"
+                      variant="outline" 
+                      size="icon" 
+                      onClick={() => resumeInputRef.current?.click()}
+                    >
                       <LucideEdit />
                     </Button>
                   )}
-                  <Button variant="outline" size="icon">
-                    <LucideEye />
-                  </Button>
+                  {resumeUrl ? (
+                    <Link target="_blank" href={resumeUrl}>
+                      <Button type="button" variant="outline" size="icon">
+                        <LucideEye />
+                      </Button>
+                    </Link>
+                  ) :  <Button type="button" variant="outline" size="icon">
+                  <LucideEye />
+                  </Button>}
                   <Button variant="outline" size="icon">
                     <LucideDownload />
                   </Button>
@@ -990,17 +1039,35 @@ export default function EmployeeProfilePage() {
               <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
                 <div className="flex items-center text-muted-foreground gap-1">
                   <LucideFileText />
-                  <TypographyMuted>{employeeList?.coverLetter}</TypographyMuted>
+                  <TypographyMuted>{coverLetterFile ? coverLetterFile.name : employeeList?.coverLetter}</TypographyMuted>
+                  <input 
+                    type="file"
+                    accept="application/pdf"
+                    className="hidden"
+                    ref={coverLetterInputRef}
+                    onChange={(e) => handleFileChange(e, "coverLetter")}
+                  />
                 </div>
                 <div className="flex items-center gap-1">
                   {isEdit && (
-                    <Button variant="outline" size="icon">
+                    <Button 
+                      type="button"
+                      variant="outline" 
+                      size="icon"  
+                      onClick={() => coverLetterInputRef.current?.click()}
+                    >
                       <LucideEdit />
                     </Button>
                   )}
-                  <Button variant="outline" size="icon">
-                    <LucideEye />
-                  </Button>
+                  {coverLetterUrl ? (
+                    <Link target="_blank" href={coverLetterUrl}>
+                      <Button type="button" variant="outline" size="icon">
+                        <LucideEye />
+                      </Button>
+                    </Link>
+                  ) :  <Button type="button" variant="outline" size="icon">
+                  <LucideEye />
+                  </Button>}
                   <Button variant="outline" size="icon">
                     <LucideDownload />
                   </Button>
