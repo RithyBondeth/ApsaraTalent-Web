@@ -77,6 +77,7 @@ import Link from "next/link";
 import { getSocialPlatformTypeIcon } from "@/utils/get-social-type";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
+import ImagePopup from "@/components/utils/image-popup";
 
 export default function EmployeeProfilePage() {
   const employeeId = 2;
@@ -154,6 +155,9 @@ export default function EmployeeProfilePage() {
     },
   });
 
+  // Profile Popup
+  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
+  
   // Education
   const [education, setEducation] = useState<IEducation[]>(employeeList!.educations);
 
@@ -194,15 +198,40 @@ export default function EmployeeProfilePage() {
   };
 
   //Socials
-  const [socialInput, setSocialInput] = useState<{
-    social: string;
-    link: string;
-  }>({ social: "", link: "" });
+  const [socialInput, setSocialInput] = useState<{ platform: string; url: string }>({ platform: "", url: "" });
   const initialSocial = (form.getValues?.("socials") || []).filter(
     (s): s is { platform: string; url: string } => s !== undefined
   );
   const [socials, setSocials] = useState<ISocial[]>(initialSocial);
 
+  const addSocial = () => {
+      const trimmedPlatform = socialInput.platform.trim();
+      const trimmedUrl = socialInput.url.trim();
+
+      if(!trimmedPlatform || !trimmedUrl) return;
+  
+      const alreadyExists = socials.some(
+        (s) => s.platform.toLowerCase() === trimmedPlatform.toLowerCase()
+      );
+
+      if(alreadyExists) {
+        toast({
+          variant: "destructive",
+          title: "Duplicate Social",
+          description: "This social platform already exists.",
+          action: <ToastAction altText="Try again">Try again</ToastAction>,
+        })
+        return;
+      }
+
+      setSocials([...socials, { platform: trimmedPlatform, url: trimmedUrl }]);
+      setSocialInput({ platform: "", url: "" });
+  }
+
+  const removeSocial = (index: number) => {
+    const updatedSocials = socials.filter((_, i) => i !== index);
+    setSocials(updatedSocials);  
+  }
 
   // Avatar and References
   const avatarInputRef = useRef<HTMLInputElement | null>(null);
@@ -362,7 +391,7 @@ export default function EmployeeProfilePage() {
     <form className="!min-w-full flex flex-col gap-5">
       <div className="flex items-center justify-between border border-muted rounded-md p-5 tablet-sm:flex-col tablet-sm:[&>div]:w-full tablet-sm:gap-5">
         <div className="flex items-center justify-start gap-5 tablet-sm:flex-col">
-          <div className="relative">
+          <div className="relative" onClick={() => setOpenProfilePopup(true)}>
             <Avatar className="size-36" rounded="md">
               <AvatarImage
                 src={
@@ -529,7 +558,7 @@ export default function EmployeeProfilePage() {
                     placeholder="Email"
                     id="email"
                     {...form.register("accountSetting.email")}
-                    prefix={<LucideMail />}
+                    prefix={<LucideMail strokeWidth={"1.3px"}/>}
                     disabled={!isEdit}
                   />
                 }
@@ -541,7 +570,7 @@ export default function EmployeeProfilePage() {
                     placeholder="Phone Number"
                     id="phone"
                     {...form.register("accountSetting.phone")}
-                    prefix={<LucidePhone />}
+                    prefix={<LucidePhone strokeWidth={"1.3px"}/>}
                     disabled={!isEdit}
                   />
                 }
@@ -563,7 +592,7 @@ export default function EmployeeProfilePage() {
                     placeholder="Profession"
                     id="profession"
                     {...form.register("profession.job")}
-                    prefix={<LucideUser />}
+                    prefix={<LucideUser strokeWidth={"1.3px"}/>}
                     disabled={!isEdit}
                   />
                 }
@@ -576,7 +605,7 @@ export default function EmployeeProfilePage() {
                       placeholder="Year of Experience"
                       id="yearOfExperience"
                       {...form.register("profession.yearOfExperience")}
-                      prefix={<LucideBriefcaseBusiness />}
+                      prefix={<LucideBriefcaseBusiness strokeWidth={"1.3px"}/>}
                       disabled={!isEdit}
                     />
                   }
@@ -588,7 +617,7 @@ export default function EmployeeProfilePage() {
                       placeholder="Availability"
                       id="availability"
                       {...form.register("profession.availability")}
-                      prefix={<LucideAlarmCheck />}
+                      prefix={<LucideAlarmCheck strokeWidth={"1.3px"}/>}
                       disabled={!isEdit}
                     />
                   }
@@ -652,7 +681,7 @@ export default function EmployeeProfilePage() {
                           placeholder="School"
                           id="school"
                           {...form.register(`educations.${index}.school`)}
-                          prefix={<LucideSchool />}
+                          prefix={<LucideSchool strokeWidth={"1.3px"}/>}
                           disabled={!isEdit}
                         />
                       }
@@ -664,7 +693,7 @@ export default function EmployeeProfilePage() {
                           placeholder="Degree"
                           id="degree"
                           {...form.register(`educations.${index}.degree`)}
-                          prefix={<LucideGraduationCap />}
+                          prefix={<LucideGraduationCap strokeWidth={"1.3px"}/>}
                           disabled={!isEdit}
                         />
                       }
@@ -676,7 +705,7 @@ export default function EmployeeProfilePage() {
                           placeholder="Year"
                           id="year"
                           {...form.register(`educations.${index}.year`)}
-                          prefix={<LucideCalendarDays />}
+                          prefix={<LucideCalendarDays strokeWidth={"1.3px"}/>}
                           disabled={!isEdit}
                         />
                       }
@@ -731,7 +760,7 @@ export default function EmployeeProfilePage() {
                           placeholder="Title"
                           id="title"
                           {...form.register(`experiences.${index}.title`)}
-                          prefix={<LucideBriefcaseBusiness />}
+                          prefix={<LucideBriefcaseBusiness strokeWidth={"1.3px"}/>}
                           disabled={!isEdit}
                         />
                       }
@@ -805,11 +834,12 @@ export default function EmployeeProfilePage() {
                     {...form.register("accountSetting.currentPassword")}
                     type={isShowPassword.current ? "text" : "password"}
                     disabled={!isEdit}
-                    prefix={<LucideLock />}
+                    prefix={<LucideLock strokeWidth={"1.3px"}/>}
                     suffix={
                       isEdit &&
                       (isShowPassword.current ? (
                         <LucideEyeClosed
+                          strokeWidth={"1.3px"}
                           onClick={() =>
                             setIsShowPassword({
                               ...isShowPassword,
@@ -819,6 +849,7 @@ export default function EmployeeProfilePage() {
                         />
                       ) : (
                         <LucideEye
+                          strokeWidth={"1.3px"}
                           onClick={() =>
                             setIsShowPassword({
                               ...isShowPassword,
@@ -840,17 +871,19 @@ export default function EmployeeProfilePage() {
                     {...form.register("accountSetting.newPassword")}
                     type={isShowPassword.new ? "text" : "password"}
                     disabled={!isEdit}
-                    prefix={<LucideLock />}
+                    prefix={<LucideLock strokeWidth={"1.3px"}/>}
                     suffix={
                       isEdit &&
                       (isShowPassword.new ? (
                         <LucideEyeClosed
+                          strokeWidth={"1.3px"}
                           onClick={() =>
                             setIsShowPassword({ ...isShowPassword, new: false })
                           }
                         />
                       ) : (
                         <LucideEye
+                          strokeWidth={"1.3px"}
                           onClick={() =>
                             setIsShowPassword({ ...isShowPassword, new: true })
                           }
@@ -868,11 +901,12 @@ export default function EmployeeProfilePage() {
                     id="confirmPassword"
                     {...form.register("accountSetting.confirmPassword")}
                     type={isShowPassword.confirm ? "text" : "password"}
-                    prefix={<LucideLock />}
+                    prefix={<LucideLock strokeWidth={"1.3px"}/>}
                     suffix={
                       isEdit &&
                       (isShowPassword.confirm ? (
                         <LucideEyeClosed
+                          strokeWidth={"1.3px"}
                           onClick={() =>
                             setIsShowPassword({
                               ...isShowPassword,
@@ -882,6 +916,7 @@ export default function EmployeeProfilePage() {
                         />
                       ) : (
                         <LucideEye
+                          strokeWidth={"1.3px"}
                           onClick={() =>
                             setIsShowPassword({
                               ...isShowPassword,
@@ -1014,7 +1049,7 @@ export default function EmployeeProfilePage() {
             <div className="w-full flex flex-col items-start gap-5 [&>div]:w-full">
               <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
                 <div className="flex items-center text-muted-foreground gap-1">
-                  <LucideFileText />
+                  <LucideFileText strokeWidth={"1.3px"}/>
                   <TypographyMuted>{resumeFile ? resumeFile.name : employeeList?.resume}</TypographyMuted>
                   <input 
                     type="file"
@@ -1044,19 +1079,26 @@ export default function EmployeeProfilePage() {
                   ) :  <Button type="button" variant="outline" size="icon">
                   <LucideEye />
                   </Button>}
-                  <Button 
+                  {isEdit ? (<Button 
+                    type="button" 
+                    variant="outline" 
+                    size="icon" 
+                    onClick={() => setResumeFile(null)}
+                  >
+                    <LucideTrash2 />
+                  </Button>) : (<Button 
                     type="button" 
                     variant="outline" 
                     size="icon" 
                     onClick={() => handleDownloadfile(resumeFile!)}
                   >
                     <LucideDownload />
-                  </Button>
+                  </Button>)}
                 </div>
               </div>
               <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
                 <div className="flex items-center text-muted-foreground gap-1">
-                  <LucideFileText />
+                  <LucideFileText strokeWidth={"1.3px"}/>
                   <TypographyMuted>{coverLetterFile ? coverLetterFile.name : employeeList?.coverLetter}</TypographyMuted>
                   <input 
                     type="file"
@@ -1086,14 +1128,21 @@ export default function EmployeeProfilePage() {
                   ) :  <Button type="button" variant="outline" size="icon">
                   <LucideEye />
                   </Button>}
-                  <Button 
+                  {isEdit ? (<Button 
+                    type="button" 
+                    variant="outline" 
+                    size="icon" 
+                    onClick={() => setCoverLetterFile(null)}
+                  >
+                    <LucideTrash2 />
+                  </Button>) : (<Button 
                     type="button" 
                     variant="outline" 
                     size="icon" 
                     onClick={() => handleDownloadfile(coverLetterFile!)}
                   >
                     <LucideDownload />
-                  </Button>
+                  </Button>)}
                 </div>
               </div>
             </div>
@@ -1138,9 +1187,9 @@ export default function EmployeeProfilePage() {
                       </TypographyMuted>
                       <Select
                         onValueChange={(value: string) =>
-                          setSocialInput({ ...socialInput, social: value })
+                          setSocialInput({ ...socialInput, platform: value })
                         }
-                        value={socialInput.social}
+                        value={socialInput.platform}
                       >
                         <SelectTrigger className="h-12 text-muted-foreground">
                           <SelectValue placeholder="Platform" />
@@ -1164,11 +1213,11 @@ export default function EmployeeProfilePage() {
                           placeholder="Link"
                           id="link"
                           name="link"
-                          value={socialInput.link}
+                          value={socialInput.url}
                           onChange={(e) =>
                             setSocialInput({
                               ...socialInput,
-                              link: e.target.value,
+                              url: e.target.value,
                             })
                           }
                           prefix={<LucideLink2 />}
@@ -1178,6 +1227,7 @@ export default function EmployeeProfilePage() {
                   </div>
                 </div>
                 <Button
+                  type="button"
                   variant="secondary"
                   className="text-xs w-full"
                   onClick={() => {}}
@@ -1190,6 +1240,9 @@ export default function EmployeeProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Profile Popup Section */}
+      <ImagePopup open={openProfilePopup} setOpen={setOpenProfilePopup} image={employeeList?.avatar!}/>
     </form>
   );
 }
