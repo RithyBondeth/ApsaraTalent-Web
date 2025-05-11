@@ -221,6 +221,7 @@ export default function EmployeeProfilePage() {
           description: "This social platform already exists.",
           action: <ToastAction altText="Try again">Try again</ToastAction>,
         })
+        setSocialInput({ platform: "", url: "" });
         return;
       }
 
@@ -1169,7 +1170,7 @@ export default function EmployeeProfilePage() {
                         <LucideXCircle
                           className="text-muted-foreground cursor-pointer text-red-500"
                           width={"18px"}
-                          onClick={() => {}}
+                          onClick={() => removeSocial(index)}
                         />
                       )}
                     </Link>
@@ -1230,7 +1231,7 @@ export default function EmployeeProfilePage() {
                   type="button"
                   variant="secondary"
                   className="text-xs w-full"
-                  onClick={() => {}}
+                  onClick={addSocial}
                 >
                   <LucidePlus />
                   Add new social

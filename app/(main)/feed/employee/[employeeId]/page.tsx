@@ -42,10 +42,10 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ImagePopup from "@/components/utils/image-popup";
 import { getSocialPlatformTypeIcon } from "@/utils/get-social-type";
-import { TPlatform } from "@/utils/types/platform.type";
+import { Input } from "@/components/ui/input";
 
 export default function EmployeeDetailPage() {
   const params = useParams();
@@ -76,6 +76,42 @@ export default function EmployeeDetailPage() {
       setTimeout(() => (ignoreNextClick.current = false), 200);
     }
   }, [openProfilePopup]);
+
+  // References Section
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [resumeUrl, setResumeUrl] = useState<string>("");
+
+  const [coverLetterFile, setCoverLetterFile] = useState<File | null>(null);
+  const [coverLetterUrl, setCoverLetterUrl] = useState<string>("");
+
+  useEffect(() => {
+    if (resumeFile) {
+      const objectUrl = URL.createObjectURL(resumeFile);
+      setResumeUrl(objectUrl);
+
+      return () => URL.revokeObjectURL(objectUrl); // Cleanup to prevent memory leak
+    }
+
+    if(coverLetterFile) {
+      const objectUrl = URL.createObjectURL(coverLetterFile) ;
+      setCoverLetterUrl(objectUrl);
+    
+      return () => URL.revokeObjectURL(objectUrl); // Cleanup to prevent memory leak
+    }
+  }, [resumeFile, coverLetterFile]);
+
+  const handleDownloadfile = (file: File) => {
+    if(!file) return;
+
+    const url = URL.createObjectURL(file);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = file.name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url); // clean up
+  }
 
   return (
     <div className="flex flex-col gap-5">
@@ -242,10 +278,16 @@ export default function EmployeeDetailPage() {
                 <TypographyMuted>{employeeList?.resume}</TypographyMuted>
               </div>
               <div className="flex items-center gap-1">
-                <Button variant="outline" size="icon">
-                  <LucideEye />
-                </Button>
-                <Button variant="outline" size="icon">
+                <Link href={resumeUrl} target="_blank">
+                  <Button variant="outline" size="icon">
+                    <LucideEye />
+                  </Button>
+                </Link>
+                <Button 
+                  variant="outline"
+                  size="icon" 
+                  onClick={() => handleDownloadfile(resumeFile!)}
+                >
                   <LucideDownload />
                 </Button>
               </div>
@@ -256,10 +298,16 @@ export default function EmployeeDetailPage() {
                 <TypographyMuted>{employeeList?.coverLetter}</TypographyMuted>
               </div>
               <div className="flex items-center gap-1">
-                <Button variant="outline" size="icon">
-                  <LucideEye />
-                </Button>
-                <Button variant="outline" size="icon">
+                <Link href={coverLetterUrl} target="_blank">
+                  <Button variant="outline" size="icon">
+                    <LucideEye />
+                  </Button>
+                </Link>
+                <Button 
+                  variant="outline"
+                  size="icon" 
+                  onClick={() => handleDownloadfile(coverLetterFile!)}
+                >
                   <LucideDownload />
                 </Button>
               </div>
