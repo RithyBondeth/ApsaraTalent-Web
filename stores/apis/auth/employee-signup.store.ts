@@ -1,0 +1,104 @@
+import { API_AUTH_SIGNUP_URL } from "@/utils/constants/apis/auth_url";
+import { IUser } from "@/utils/interfaces/user-interface/user.interface";
+import axios from "axios";
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+
+type TEmployeeSignupResponse = {
+  accessToken: string | null;
+  refreshToken: string | null;
+  message: string | null;
+};
+
+type TEmployeeSignupState = TEmployeeSignupResponse & {
+  loading: boolean;
+  error: string | null;
+  signup: (body: IUser) => Promise<void>;
+};
+
+export const useEmployeeSignupStore = create<TEmployeeSignupState>()(
+  persist(
+    (set) => ({
+      accessToken: null,
+      refreshToken: null,
+      message: null,
+      loading: false,
+      error: null,
+      signup: async (body: IUser) => {
+        set({ loading: true, error: null });
+
+        const employeeBody = body.employee;
+        try {
+          const response = await axios.post<TEmployeeSignupResponse>(
+            API_AUTH_SIGNUP_URL.EMPLOYEE,
+            {
+              email: body.email,
+              password: body.password,
+              firstname: employeeBody?.firstname,
+              lastname: employeeBody?.lastname,
+              username: employeeBody?.username,
+              gender: employeeBody?.gender,
+              job: employeeBody?.job,
+              yearsOfExperience: employeeBody?.yearsOfExperience,
+              availability: employeeBody?.availability,
+              description: employeeBody?.description,
+              location: employeeBody?.location,
+              phone: employeeBody?.phone,
+              education: employeeBody?.educations.map((edu) => ({
+                school: edu.school,
+                degree: edu.degree,
+                year: edu.year,
+              })),
+              experiences: employeeBody?.experiences.map((exp) => ({
+                title: exp.title,
+                description: exp.description,
+                startDate: exp.startDate,
+                endDate: exp.endDate,
+              })),
+              skills: employeeBody?.skills.map((skill) => ({
+                name: skill.name,
+                description: skill.description,
+              })),
+              careerScopes: employeeBody?.careerScopes.map((cs) => ({
+                name: cs.name,
+                description: cs.description,
+              })),
+              socials: employeeBody?.socials.map((social) => ({
+                platform: social.platform,
+                url: social.url,
+              })),
+            }
+          );
+          set({
+            loading: false,
+            accessToken: response.data.accessToken,
+            refreshToken: response.data.refreshToken,
+            error: null,
+          });
+        } catch (error) {
+          if (axios.isAxiosError(error)) {
+            const errorMessage =
+              error.response?.data?.message instanceof Array
+                ? error.response.data.message.join(", ")
+                : error.response?.data?.message || error.message;
+
+            set({ loading: false, error: errorMessage });
+          } else {
+            set({
+              loading: false,
+              error: "An error occurred while signing up as employee",
+            });
+          }
+        }
+      },
+    }),
+    {
+      name: "EmployeeSignupStore",
+      partialize: (state) => ({
+        accessToken: state.accessToken,
+        refreshToken: state.refreshToken,
+        message: state.message,
+      }),
+    }
+  )
+);
