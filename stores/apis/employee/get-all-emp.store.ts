@@ -4,14 +4,14 @@ import axios from "axios";
 import { create } from "zustand";
 
 type TGetAllEmployeeState = {
-    employeeData: IEmployee[] | null,
+    employeesData: IEmployee[] | null,
     loading: boolean,
     error: string | null,
     queryEmployee: () => Promise<void>,
 }
 
 export const useGetAllEmployeeStore = create<TGetAllEmployeeState>((set) => ({
-    employeeData: null,
+    employeesData: null,
     loading: false,
     error: null,
     queryEmployee: async () => {
@@ -19,7 +19,7 @@ export const useGetAllEmployeeStore = create<TGetAllEmployeeState>((set) => ({
 
         try {
             const response = await axios.get<IEmployee[]>(API_GET_ALL_EMP_URL);
-            set({ loading: false, error: null, employeeData: response.data });
+            set({ loading: false, error: null, employeesData: response.data });
         } catch (error) {
             if(axios.isAxiosError(error)) 
                 set({ loading: false, error: error.response?.data?.message || error.message })
