@@ -4,27 +4,36 @@ import axios from "axios";
 import { create } from "zustand";
 
 type TGetAllEmployeeState = {
-    employeesData: IEmployee[] | null,
-    loading: boolean,
-    error: string | null,
-    queryEmployee: () => Promise<void>,
-}
+  employeesData: IEmployee[] | null;
+  loading: boolean;
+  error: string | null;
+  queryEmployee: (token: string) => Promise<void>;
+};
 
 export const useGetAllEmployeeStore = create<TGetAllEmployeeState>((set) => ({
-    employeesData: null,
-    loading: false,
-    error: null,
-    queryEmployee: async () => {
-        set({ loading: true, error: null });
+  employeesData: null,
+  loading: false,
+  error: null,
+  queryEmployee: async (token: string) => {
+    set({ loading: true, error: null });
 
-        try {
-            const response = await axios.get<IEmployee[]>(API_GET_ALL_EMP_URL);
-            set({ loading: false, error: null, employeesData: response.data });
-        } catch (error) {
-            if(axios.isAxiosError(error)) 
-                set({ loading: false, error: error.response?.data?.message || error.message })
-            else 
-                set({ loading: false, error: "An error occurred while fetching all employees" })       
-        }
+    try {
+      const response = await axios.get<IEmployee[]>(
+        API_GET_ALL_EMP_URL,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      set({ loading: false, error: null, employeesData: response.data });
+    } catch (error) {
+      if (axios.isAxiosError(error))
+        set({
+          loading: false,
+          error: error.response?.data?.message || error.message,
+        });
+      else
+        set({
+          loading: false,
+          error: "An error occurred while fetching all employees",
+        });
     }
+  },
 }));

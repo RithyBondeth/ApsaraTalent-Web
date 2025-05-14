@@ -12,7 +12,7 @@ type TUpdateOneEmployeeResponse = {
 type TUpdateOneEmployeeState = TUpdateOneEmployeeResponse & {
   loading: boolean;
   error: string | null;
-  updateOneEmployee: (employeeID: string, body: IUser) => Promise<void>;
+  updateOneEmployee: (employeeID: string, body: IUser, token: string) => Promise<void>;
 };
 
 export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
@@ -21,7 +21,7 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
     employee: null,
     error: null,
     loading: false,
-    updateOneEmployee: async (employeeID: string, body: IUser) => {
+    updateOneEmployee: async (employeeID: string, body: IUser, token: string) => {
       set({ loading: true, error: null });
 
       const employeeBody = body.employee;
@@ -64,7 +64,8 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
               platform: social.platform,
               url: social.url,
             })),
-          }
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         set({
           message: response.data.message,
