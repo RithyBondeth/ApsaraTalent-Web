@@ -26,7 +26,6 @@ export const useLoginStore = create<TLoginState>()(
       error: null,
       login: async (email: string, password: string) => {
         set({ loading: true, error: null });
-
         try {
           const response = await axios.post<TLoginResponse>(
             API_AUTH_LOGIN_URL,
@@ -44,9 +43,17 @@ export const useLoginStore = create<TLoginState>()(
           });
         } catch (error) {
           if (axios.isAxiosError(error)) 
-            set({ loading: false, error: error.response?.data?.message || error.message });
+            set({
+              loading: false,
+              error: error.response?.data?.message || error.message,
+              message: error.response?.data?.message || "Something went wrong"
+            });
           else 
-            set({ loading: false, error: "An error occurred while signin" });
+          set({
+            loading: false,
+            error: "An error occurred while login",
+            message: "An error occurred while login"
+          });
         }
       },
       clearToken: () => set({ accessToken: null, refreshToken: null, message: null }),

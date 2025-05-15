@@ -8,7 +8,7 @@ import { TypographyH2 } from "@/components/utils/typography/typography-h2"
 import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { googleIcon, facebookIcon, linkedinIcon, githubIcon } from '@/utils/constants/asset.constant';
-import { LucideEye, LucideEyeClosed, LucideLockKeyhole, LucideMail, LucidePhone } from "lucide-react";
+import { LucideEye, LucideEyeClosed, LucideInfo, LucideLockKeyhole, LucideMail, LucidePhone, LucideUser, LucideUser2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -20,6 +20,10 @@ import { useTheme } from "next-themes";
 import { useForm } from "react-hook-form";
 import { loginSchema, TLoginForm } from "./validation";
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useLoginStore } from "@/stores/apis/auth/login.store";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
+import { ClipLoader } from "react-spinners";
 
 function LoginPage() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
@@ -28,17 +32,43 @@ function LoginPage() {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  const { handleSubmit, register, formState: { errors } } = useForm<TLoginForm>({
+  const { toast } = useToast();
+
+  const { handleSubmit, register, formState: { errors }, reset } = useForm<TLoginForm>({
     resolver: zodResolver(loginSchema)
   });
 
-  const onSubmit = (data: TLoginForm) => {
-    console.log(data);
+  const { accessToken, refreshToken, message, login, error, loading } = useLoginStore(); 
+
+  const onSubmit = async (data: TLoginForm) => {
+    await login(data.email, data.password);
+    console.log({
+      message: message,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    });
   }
   
   useEffect(() => {
+    if(accessToken && refreshToken) router.push("/feed");
+    
+    if(loading) toast({
+      description: <div className="flex items-center gap-2">
+        <ClipLoader/>
+        <TypographySmall className="font-semibold">Logging in...</TypographySmall>
+      </div>
+    });
+
+    if(error) toast({
+      variant: "destructive",
+      description: <div className="flex flex-row items-center gap-2">
+        <LucideInfo/>
+        <TypographySmall className="font-semibold">{message}</TypographySmall>
+      </div>,
+      action: <ToastAction altText="Try again" onClick={() => reset()}>Retry</ToastAction>,
+    })
     setMounted(true);
-  }, []);
+  }, [accessToken, refreshToken, error, message]);
   
   // Determine which image to display (avoid SSR issues)
   const currentTheme = mounted ? resolvedTheme : "light";
@@ -108,7 +138,7 @@ function LoginPage() {
                     <Link href="/forgot-password">Forgot Password?</Link>
                   </TypographySmall>
               </div>
-              <Button type="submit">Login</Button>
+              <Button type="submit" disabled={loading}>Login</Button>
               <div className="flex items-center gap-2 mx-auto">
                   <TypographyMuted>Do not have account?</TypographyMuted>
                   <Link href='/signup'>
