@@ -1,4 +1,4 @@
-import { emailValidation, passwordValidation } from "@/utils/validations";
+import { emailValidation, passwordValidation } from "@/utils/functions/validations";
 import * as z from "zod";
 
 export const loginSchema = z.object({

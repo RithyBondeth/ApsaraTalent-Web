@@ -1,0 +1,1 @@
+export const isNumberPhoneInput = (inputValue: string) => /^\d+$/.test(inputValue) && inputValue.length > 0;

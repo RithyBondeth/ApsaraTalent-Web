@@ -3,7 +3,7 @@ import {
   ACCEPTED_FILE_TYPES,
   DOCUMENT_SIZE,
   MAX_IMAGE_SIZE,
-} from "./constants/app.constant";
+} from "../constants/app.constant";
 
 export const fileValidation = (label: string) =>
   z

@@ -5,7 +5,7 @@ import {
   positiveNumberValidation,
   selectedValidation,
   textValidation,
-} from "@/utils/validations";
+} from "@/utils/functions/validations";
 import * as z from "zod";
 
 // Define schema for step 1

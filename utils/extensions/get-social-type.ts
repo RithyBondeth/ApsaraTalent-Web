@@ -1,5 +1,5 @@
 import { EarthIcon, FacebookIcon, GithubIcon, InstagramIcon, LinkedinIcon, LucideIcon, SendIcon } from "lucide-react";
-import { TPlatform } from "./types/platform.type";
+import { TPlatform } from "../types/platform.type";
 import React from "react";
 
 export const getSocialPlatformTypeIcon = (platform: TPlatform): React.ReactNode => {
@@ -13,4 +13,4 @@ export const getSocialPlatformTypeIcon = (platform: TPlatform): React.ReactNode 
     };
     const Icon = icons[platform];
     return Icon ? React.createElement(Icon, { strokeWidth: 1.5, size: 20 }) : null;
-} 
+}

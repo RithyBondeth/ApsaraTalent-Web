@@ -1,4 +1,4 @@
-import { dateValidation, imageValidation, selectedValidation, textValidation } from "@/utils/validations";
+import { dateValidation, imageValidation, selectedValidation, textValidation } from "@/utils/functions/validations";
 import * as z from "zod";
 
 // Define Schema for step 1

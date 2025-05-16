@@ -43,7 +43,7 @@ import {
 } from "@/components/ui/hover-card";
 import ImagePopup from "@/components/utils/image-popup";
 import React, { useEffect, useRef, useState } from "react";
-import { getSocialPlatformTypeIcon } from "@/utils/get-social-type";
+import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { TPlatform } from "@/utils/types/platform.type";
 
 export default function CompanyDetailPage() {

@@ -1,4 +1,4 @@
-import { khmerPhoneNumberValidation, passwordValidation } from "@/utils/validations";
+import { khmerPhoneNumberValidation, passwordValidation } from "@/utils/functions/validations";
 import * as z from "zod";
 
 export const phoneLoginSchema = z.object({

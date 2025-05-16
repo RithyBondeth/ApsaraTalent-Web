@@ -1,5 +1,5 @@
 import { MAX_IMAGE_SIZE, ACCEPTED_FILE_TYPES, DOCUMENT_SIZE } from "@/utils/constants/app.constant";
-import { dateValidation, emailValidation, selectedValidation } from "@/utils/validations";
+import { dateValidation, emailValidation, selectedValidation } from "@/utils/functions/validations";
 import * as z from "zod";
 
 export const basicInfoSchema = z.object({

@@ -74,7 +74,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import Link from "next/link";
-import { getSocialPlatformTypeIcon } from "@/utils/get-social-type";
+import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import ImagePopup from "@/components/utils/image-popup";

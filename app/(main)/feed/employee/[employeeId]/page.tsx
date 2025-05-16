@@ -44,7 +44,7 @@ import {
 } from "@/components/ui/hover-card";
 import React, { useEffect, useRef, useState } from "react";
 import ImagePopup from "@/components/utils/image-popup";
-import { getSocialPlatformTypeIcon } from "@/utils/get-social-type";
+import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { Input } from "@/components/ui/input";
 
 export default function EmployeeDetailPage() {

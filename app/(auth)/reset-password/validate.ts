@@ -1,4 +1,4 @@
-import { passwordValidation } from "@/utils/validations";
+import { passwordValidation } from "@/utils/functions/validations";
 import * as z from "zod";
 
 export const resetPasswordSchema = z.object({

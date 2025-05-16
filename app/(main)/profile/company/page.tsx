@@ -75,7 +75,7 @@ import { userList } from "@/data/user-data";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import Tag from "@/components/utils/tag";
 import ImagePopup from "@/components/utils/image-popup";
-import { getSocialPlatformTypeIcon } from "@/utils/get-social-type";
+import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { TPlatform } from "@/utils/types/platform.type";
 import { ISocial } from "@/utils/interfaces/user-interface/company.interface";
 

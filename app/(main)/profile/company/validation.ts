@@ -4,7 +4,7 @@ import {
   emailValidation,
   imageValidation,
   textValidation,
-} from "@/utils/validations";
+} from "@/utils/functions/validations";
 import * as z from "zod";
 
 export const basicInfoSchema = z.object({

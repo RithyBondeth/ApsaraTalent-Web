@@ -23,17 +23,13 @@ import { ClipLoader } from "react-spinners";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
+import { isEmailInput } from "@/utils/extensions/check-email-input";
+import { isNumberPhoneInput } from "@/utils/extensions/check-phone-input";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
   const [inputValue, setInputValue] = useState<string>("");
   const { toast } = useToast();
-
-  // Check if input is a number (mobile) or contains "@" (email)
-  const isEmailInput =
-    /^[a-zA-Z@.\-_]+$/.test(inputValue) || inputValue.includes("@");
-  const isNumberInput = /^\d+$/.test(inputValue) && inputValue.length > 0;
-
   const { loading, error, message, forgotPassword } = useForgotPasswordStore();
 
   const {
@@ -128,9 +124,9 @@ export default function ForgotPasswordPage() {
               placeholder="Email or Mobile"
               value={inputValue}
               prefix={
-                isEmailInput ? (
+                isEmailInput(inputValue) ? (
                   <LucideMail />
-                ) : isNumberInput ? (
+                ) : isNumberPhoneInput(inputValue) ? (
                   <LucidePhone />
                 ) : null
               }
