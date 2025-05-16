@@ -29,10 +29,10 @@ import loginWhiteSvg from "@/assets/svg/login-white.svg";
 import loginBlackSvg from "@/assets/svg/login-black.svg";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { loginSchema, TLoginForm } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLoginStore } from "@/stores/apis/auth/login.store";
+import { useLocalLoginStore, useLoginStore, useSessionLoginStore } from "@/stores/apis/auth/login.store";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { ClipLoader } from "react-spinners";
@@ -49,6 +49,7 @@ function LoginPage() {
     register,
     formState: { errors },
     reset,
+    control
   } = useForm<TLoginForm>({
     resolver: zodResolver(loginSchema),
   });
@@ -57,7 +58,8 @@ function LoginPage() {
     useLoginStore();
 
   const onSubmit = async (data: TLoginForm) => {
-    await login(data.email, data.password);
+    console.log(data);
+    await login(data.email, data.password, data.rememberMe!);
     console.log({
       message: message,
       accessToken: accessToken,
@@ -75,11 +77,9 @@ function LoginPage() {
         duration: 2000,
       });
   
-      const timeout = window.setTimeout(() => {
-        router.push("/feed");
-      }, 1000); // 2-second delay
+      const timeout = window.setTimeout(() =>  router.push("/feed"), 1000);
   
-      return () => clearTimeout(timeout); // Cleanup
+      return () => clearTimeout(timeout);
     }
 
     if (loading)
@@ -112,6 +112,21 @@ function LoginPage() {
         ),
       });
   }, [accessToken, refreshToken, error, message]);
+
+  useEffect(() => {
+    const local = useLocalLoginStore.getState();
+    const session = useSessionLoginStore.getState();
+    const source = local.accessToken ? local : session;
+  
+    if (source.accessToken) {
+      useLoginStore.setState({
+        accessToken: source.accessToken,
+        refreshToken: source.refreshToken,
+        message: source.message,
+        rememberMe: source === local,
+      });
+    }
+  }, []);
 
   // Determine which image to display (avoid SSR issues)
   const currentTheme = resolvedTheme || "light";
@@ -212,7 +227,17 @@ function LoginPage() {
             </div>
             <div className="flex justify-between items-center mb-5">
               <div className="flex items-center gap-1">
-                <Checkbox name="remember" />
+                <Controller
+                  name="rememberMe"
+                  control={control}
+                  defaultValue={false}
+                  render={({ field }) => (
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  )}
+                />
                 <TypographyMuted className="text-xs">
                   Remember me
                 </TypographyMuted>
