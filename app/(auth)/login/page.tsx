@@ -44,13 +44,7 @@ function LoginPage() {
   const { resolvedTheme } = useTheme();
   const { toast } = useToast();
 
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-    reset,
-    control
-  } = useForm<TLoginForm>({
+  const { handleSubmit, register, formState: { errors }, reset, control} = useForm<TLoginForm>({
     resolver: zodResolver(loginSchema),
   });
 
@@ -58,7 +52,6 @@ function LoginPage() {
     useLoginStore();
 
   const onSubmit = async (data: TLoginForm) => {
-    console.log(data);
     await login(data.email, data.password, data.rememberMe!);
     console.log({
       message: message,
@@ -111,7 +104,7 @@ function LoginPage() {
           </ToastAction>
         ),
       });
-  }, [accessToken, refreshToken, error, message]);
+  }, [accessToken, refreshToken, error, message, loading]);
 
   useEffect(() => {
     const local = useLocalLoginStore.getState();
@@ -128,7 +121,6 @@ function LoginPage() {
     }
   }, []);
 
-  // Determine which image to display (avoid SSR issues)
   const currentTheme = resolvedTheme || "light";
   const loginImage = currentTheme === "dark" ? loginWhiteSvg : loginBlackSvg;
 
