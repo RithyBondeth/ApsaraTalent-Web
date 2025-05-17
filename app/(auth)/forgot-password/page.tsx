@@ -53,7 +53,7 @@ export default function ForgotPasswordPage() {
           <div className="flex items-center gap-2">
             <ClipLoader />
             <TypographySmall className="font-medium">
-              Logging in...
+              Loading...
             </TypographySmall>
           </div>
         ),
@@ -66,7 +66,7 @@ export default function ForgotPasswordPage() {
         description: (
           <div className="flex flex-row items-center gap-2">
             <LucideInfo />
-            <TypographySmall className="font-medium leading-normal">
+            <TypographySmall className="font-medium leading-loose">
               {message}
             </TypographySmall>
           </div>
@@ -87,15 +87,9 @@ export default function ForgotPasswordPage() {
             <TypographySmall className="font-medium">{message}</TypographySmall>
           </div>
         ),
-        duration: 2000,
+        duration: 1500,
       });
-
-      const timeout = window.setTimeout(
-        () => router.push("/reset-password"),
-        1000
-      );
-
-      return () => clearTimeout(timeout);
+      router.push("/reset-password");
     }
   }, [error, message, loading]);
 

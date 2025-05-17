@@ -67,12 +67,9 @@ function LoginPage() {
           <LucideCheck/>
           <TypographySmall className="font-medium">Logged in successfully</TypographySmall>
         </div>,
-        duration: 2000,
+        duration: 1000,
       });
-  
-      const timeout = window.setTimeout(() =>  router.push("/feed"), 1000);
-  
-      return () => clearTimeout(timeout);
+      router.push("/feed")
     }
 
     if (loading)
