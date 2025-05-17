@@ -4,35 +4,97 @@ import { Input } from "@/components/ui/input";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import {
+  LucideCheck,
   LucideEye,
   LucideEyeClosed,
+  LucideInfo,
   LucideKey,
   LucideLockKeyhole,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import resetPasswordWhiteSvg from "@/assets/svg/reset-password-white.svg";
 import { useForm } from "react-hook-form";
 import { resetPasswordSchema, TResetPasswordForm } from "./validate";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
+import { useResetPasswordStore } from "@/stores/apis/auth/reset-password.store";
+import { ClipLoader } from "react-spinners";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { ToastAction } from "@/components/ui/toast";
+import { useRouter } from "next/navigation";
 
 export default function ResetPasswordPage() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [confirmPassVisibility, setConfirmPassVisibility] = useState<boolean>(false);
+  const router = useRouter();
   const { toast } = useToast();
+
+  const { loading, error, message, resetPassword } = useResetPasswordStore();
 
   const {
     handleSubmit,
     register,
     formState: { errors },
+    reset,
   } = useForm<TResetPasswordForm>({
     resolver: zodResolver(resetPasswordSchema),
   });
 
-  const onSubmit = (data: TResetPasswordForm) => {
-    console.log(data);
+  const onSubmit = async (data: TResetPasswordForm) => {
+    await resetPassword(data.token, data.password, data.confirmPassword);
+    console.log({
+      token: data.token,
+      newPassword: data.password,
+      confirmPassword: data.confirmPassword,
+    });
   };
+
+  useEffect(() => {
+    if (loading)
+      toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <ClipLoader />
+            <TypographySmall className="font-medium">
+              Loading...
+            </TypographySmall>
+          </div>
+        ),
+      });
+
+    if (error)
+      toast({
+        variant: "destructive",
+        description: (
+          <div className="flex flex-row items-center gap-2">
+            <LucideInfo />
+            <TypographySmall className="font-medium leading-loose">
+              {message}
+            </TypographySmall>
+          </div>
+        ),
+        action: (
+          <ToastAction altText="Try again" onClick={() => reset()}>
+            Retry
+          </ToastAction>
+        ),
+      });
+
+    if (!loading && !error && message) {
+      toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <LucideCheck />
+            <TypographySmall className="font-medium">{message}</TypographySmall>
+          </div>
+        ),
+        duration: 1500,
+      });
+      router.push("/login");
+    }
+
+  }, [error, loading, message]);
 
   return (
     <div className="h-screen w-screen flex justify-between items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
