@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import ProfessionStepForm from "@/components/employee/employee-signup-form/profession-step";
 import ExperienceStepForm from "@/components/employee/employee-signup-form/experience-step";
@@ -14,12 +14,18 @@ import { employeeSignUpSchema, TEmployeeSignUp } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import EmployeeCareerScopeStepForm from "@/components/employee/employee-signup-form/career-scope-step";
 import AvatarStepForm from "@/components/employee/employee-signup-form/avatar-step";
+import { useBasicSignupDataStore } from "@/stores/apis/auth/basic-signup-data.store";
+import { useEmployeeSignupStore } from "@/stores/apis/auth/employee-signup.store";
+import { basicInfoSchema } from "@/app/(main)/profile/company/validation";
+import { TUserRole } from "@/utils/types/role.type";
 
 export default function EmployeeSignup() {
   const router = useRouter();
   const [step, setStep] = useState<number>(1);
   const totalSteps = 6;
-
+  const { basicSignupData } = useBasicSignupDataStore();
+  const { loading, error, message, signup } = useEmployeeSignupStore();  
+  
   const methods = useForm<TEmployeeSignUp>({
     mode: "onChange",
     resolver: zodResolver(employeeSignUpSchema),
@@ -74,8 +80,8 @@ export default function EmployeeSignup() {
     if (isValid) {
       if (step === totalSteps) {
         handleSubmit((data) => {
-          console.log("Final Data:", data);
-          router.push("/feed");
+          if (!basicSignupData) return;
+          
         })();
       } else {
         setStep((prev) => prev + 1);
@@ -84,6 +90,8 @@ export default function EmployeeSignup() {
   };
 
   const prevStep = () => setStep((prev) => prev - 1);
+
+  useEffect(() => console.log(basicSignupData), [basicSignupData]);
 
   return (
     <div className="h-[80%] w-[85%] flex flex-col items-start gap-3 tablet-lg:w-full tablet-lg:p-5">

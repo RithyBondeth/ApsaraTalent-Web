@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/popover";
 import { LucidePlus, LucideXCircle } from "lucide-react";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { getErrorMessage } from "@/utils/get-error-message";
+import { getErrorMessage } from "@/utils/extensions/get-error-message";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import ErrorMessage from "@/components/utils/error-message";
