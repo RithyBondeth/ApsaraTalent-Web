@@ -26,6 +26,7 @@ import { useThemeStore } from "@/stores/theme-store";
 import { TUserRole } from "@/utils/types/role.type";
 import {
   genderConstant,
+  locationConstant,
   userRoleConstant,
 } from "@/utils/constants/app.constant";
 import { TGender } from "@/utils/types/gender.type";
@@ -34,9 +35,13 @@ import { basicSignupSchema, TBasicSignupSchema } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ErrorMessage from "@/components/utils/error-message";
 import { useBasicSignupDataStore } from "@/stores/apis/auth/basic-signup-data.store";
+import { TLocations } from "@/utils/types/location.type";
 
 export default function SignupPage() {
   const [selectedRole, setSelectedRole] = useState<TUserRole | null>(null);
+  const [selectedLocation, setSelectionLocation] = useState<TLocations | null>(
+    null
+  );
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [confirmPassVisibility, setConfirmPassVisibility] =
     useState<boolean>(false);
@@ -153,6 +158,28 @@ export default function SignupPage() {
               {...register("phone")}
               validationMessage={errors.phone?.message}
             />
+          </div>
+          <div className="w-full flex flex-col items-start gap-1">
+            <Select
+              onValueChange={(value: TLocations) => {
+                setSelectionLocation(value);
+                setValue("selectedLocation", value, { shouldValidate: true });
+                trigger("selectedLocation");
+              }}
+              value={selectedLocation || ""}
+            >
+              <SelectTrigger className="h-12 text-muted-foreground">
+                <SelectValue placeholder="Location" />
+              </SelectTrigger>
+              <SelectContent>
+                {locationConstant.map((location, index) => (
+                  <SelectItem key={index} value={location}>
+                    {location}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <ErrorMessage>{errors.gender?.message}</ErrorMessage>
           </div>
           <Input
             prefix={<LucideMail />}

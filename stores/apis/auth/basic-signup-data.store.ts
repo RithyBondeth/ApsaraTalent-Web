@@ -7,6 +7,7 @@ type TBasicSignupData = {
   gender: string;
   selectedRole: string;
   phone: string;
+  selectedLocation: string;
   email: string;
   password: string;
   confirmPassword: string;

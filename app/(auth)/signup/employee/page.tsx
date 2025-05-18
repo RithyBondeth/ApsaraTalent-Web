@@ -18,6 +18,7 @@ import { useBasicSignupDataStore } from "@/stores/apis/auth/basic-signup-data.st
 import { useEmployeeSignupStore } from "@/stores/apis/auth/employee-signup.store";
 import { basicInfoSchema } from "@/app/(main)/profile/company/validation";
 import { TUserRole } from "@/utils/types/role.type";
+import { TGender } from "@/utils/types/gender.type";
 
 export default function EmployeeSignup() {
   const router = useRouter();
@@ -81,7 +82,40 @@ export default function EmployeeSignup() {
       if (step === totalSteps) {
         handleSubmit((data) => {
           if (!basicSignupData) return;
-          
+          signup({
+            email: basicSignupData.email,
+            password: basicSignupData.password,
+            firstname: basicSignupData.firstName,
+            lastname: basicSignupData.lastName,
+            username: basicSignupData.username,
+            gender: basicSignupData.gender as TGender,
+            job: data.profession.job,
+            yearsOfExperience: data.profession.yearOfExperience.toString(),
+            availability: data.profession.availability,
+            description: data.profession.description, 
+            location: basicSignupData.selectedLocation,
+            phone: basicSignupData.phone,
+            educations: data.educations.map((edu) => ({
+              school: edu.school,
+              degree: edu.degree,
+              year: edu.year.toISOString(),
+            })),
+            experiences: data.experience.map((exp) => ({
+              title: exp.title,
+              description: exp.description,
+              startDate: exp.startDate.toISOString(),
+              endDate: exp.endDate.toISOString(),
+            })),
+            skills: data.skillAndReference.skills.map((skill) => ({
+              name: skill,
+              description: skill,
+            })),
+            careerScopes: data.careerScopes.map((cs) => ({
+              name: cs,
+              description: cs,
+            })),
+            socials: [],
+          });
         })();
       } else {
         setStep((prev) => prev + 1);

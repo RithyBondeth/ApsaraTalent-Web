@@ -11,10 +11,12 @@ type TEmployeeSignupResponse = {
   message: string | null;
 };
 
+type TEmployeeSignupBodyType = Omit<IEmployee, 'id'> & { email: string, password: string };
+
 type TEmployeeSignupState = TEmployeeSignupResponse & {
   loading: boolean;
   error: string | null;
-  signup: (body: IEmployee & { email: string, password: string }) => Promise<void>;
+  signup: (body: TEmployeeSignupBodyType) => Promise<void>;
 };
 
 export const useEmployeeSignupStore = create<TEmployeeSignupState>()(
@@ -25,7 +27,7 @@ export const useEmployeeSignupStore = create<TEmployeeSignupState>()(
       message: null,
       loading: false,
       error: null,
-      signup: async (body: IEmployee & { email: string, password: string }) => {
+      signup: async (body: TEmployeeSignupBodyType) => {
         set({ loading: true, error: null });
 
         try {
@@ -66,7 +68,7 @@ export const useEmployeeSignupStore = create<TEmployeeSignupState>()(
               socials: body?.socials.map((social) => ({
                 platform: social.platform,
                 url: social.url,
-              })),
+              })) ?? [],
             }
           );
           set({
