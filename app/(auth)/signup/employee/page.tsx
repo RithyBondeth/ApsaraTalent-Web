@@ -8,7 +8,7 @@ import ProfessionStepForm from "@/components/employee/employee-signup-form/profe
 import ExperienceStepForm from "@/components/employee/employee-signup-form/experience-step";
 import EducationStepForm from "@/components/employee/employee-signup-form/education-step";
 import SkillReferenceStepForm from "@/components/employee/employee-signup-form/skill-reference-step";
-import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
+import { LucideArrowLeft, LucideArrowRight, LucideCheck, LucideInfo } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { employeeSignUpSchema, TEmployeeSignUp } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,16 +16,19 @@ import EmployeeCareerScopeStepForm from "@/components/employee/employee-signup-f
 import AvatarStepForm from "@/components/employee/employee-signup-form/avatar-step";
 import { useBasicSignupDataStore } from "@/stores/apis/auth/basic-signup-data.store";
 import { useEmployeeSignupStore } from "@/stores/apis/auth/employee-signup.store";
-import { basicInfoSchema } from "@/app/(main)/profile/company/validation";
-import { TUserRole } from "@/utils/types/role.type";
 import { TGender } from "@/utils/types/gender.type";
+import { useToast } from "@/hooks/use-toast";
+import { ClipLoader } from "react-spinners";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { ToastAction } from "@/components/ui/toast";
 
 export default function EmployeeSignup() {
   const router = useRouter();
   const [step, setStep] = useState<number>(1);
   const totalSteps = 6;
   const { basicSignupData } = useBasicSignupDataStore();
-  const { loading, error, message, signup } = useEmployeeSignupStore();  
+  const { toast } = useToast();
+  const { loading, error, message, accessToken, refreshToken, signup  } = useEmployeeSignupStore();  
   
   const methods = useForm<TEmployeeSignUp>({
     mode: "onChange",
@@ -80,9 +83,10 @@ export default function EmployeeSignup() {
 
     if (isValid) {
       if (step === totalSteps) {
-        handleSubmit((data) => {
+        handleSubmit(async (data) => {
           if (!basicSignupData) return;
-          signup({
+
+          const employee = {
             email: basicSignupData.email,
             password: basicSignupData.password,
             firstname: basicSignupData.firstName,
@@ -90,7 +94,7 @@ export default function EmployeeSignup() {
             username: basicSignupData.username,
             gender: basicSignupData.gender as TGender,
             job: data.profession.job,
-            yearsOfExperience: data.profession.yearOfExperience.toString(),
+            yearsOfExperience: data.profession.yearOfExperience,
             availability: data.profession.availability,
             description: data.profession.description, 
             location: basicSignupData.selectedLocation,
@@ -115,7 +119,8 @@ export default function EmployeeSignup() {
               description: cs,
             })),
             socials: [],
-          });
+          }
+          await signup(employee);
         })();
       } else {
         setStep((prev) => prev + 1);
@@ -125,7 +130,47 @@ export default function EmployeeSignup() {
 
   const prevStep = () => setStep((prev) => prev - 1);
 
-  useEffect(() => console.log(basicSignupData), [basicSignupData]);
+  useEffect(() => {
+    if(accessToken && refreshToken) {
+      toast({
+        description: <div className="flex items-center gap-2"> 
+          <LucideCheck/>
+          <TypographySmall className="font-medium">Registered Successfully</TypographySmall>
+        </div>,
+        duration: 1000,
+      });
+    } 
+
+    if(loading) 
+      toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <ClipLoader />
+            <TypographySmall className="font-medium">
+              Loading...
+            </TypographySmall>
+          </div>
+        ),
+      });
+
+    if(error)
+      toast({
+        variant: "destructive",
+        description: (
+          <div className="flex flex-row items-center gap-2">
+            <LucideInfo/>
+            <TypographySmall className="font-medium leading-normal">
+              {message}
+            </TypographySmall>
+          </div>
+        ),
+        action: (
+          <ToastAction altText="Try again">
+            Retry
+          </ToastAction>
+        ),
+      });
+  }, [loading, error, message, accessToken, refreshToken, signup, basicSignupData]);
 
   return (
     <div className="h-[80%] w-[85%] flex flex-col items-start gap-3 tablet-lg:w-full tablet-lg:p-5">
@@ -231,7 +276,7 @@ export default function EmployeeSignup() {
                 Back
               </Button>
             )}
-            <Button type="button" onClick={nextStep}>
+            <Button type="button" onClick={nextStep} disabled={loading}>
               {step === totalSteps ? "Submit" : "Next"}
               <LucideArrowRight />
             </Button>

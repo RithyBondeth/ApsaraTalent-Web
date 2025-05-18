@@ -165,7 +165,7 @@ export default function EmployeeDetailPage() {
             <TypographyMuted>Experience</TypographyMuted>
             <IconLabel
               icon={<LucideBriefcaseBusiness strokeWidth={"1.5px"}/>}
-              text={employeeList!.yearsOfExperience}
+              text={employeeList!.yearsOfExperience.toString()} 
             />
           </div>
           <div className="flex flex-col items-start gap-2">

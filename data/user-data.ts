@@ -362,7 +362,7 @@ export const userList: IUser[] = [
         "Currently looking for Software Developer senior position. Specialize in Web, Mobile Development, DevOps. Feel free to contact me.",
       resume: "bondeth-resume.pdf",
       coverLetter: "bondeth-cover-letter.pdf",
-      yearsOfExperience: "5+ years experience",
+      yearsOfExperience: 5,
       experiences: [
         {
           id: "337f4edf-c8b0-4d57-987b-3d22fef5e9bb",
@@ -501,7 +501,7 @@ export const userList: IUser[] = [
         "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
       resume: "resume.pdf",
       coverLetter: "cover_letter.pdf",
-      yearsOfExperience: "3+ years experience",
+      yearsOfExperience: 3,
       experiences: [
         {
           id: "337f4edf-c8b0-4d57-987b-3d22fef5e9bb",
@@ -640,7 +640,7 @@ export const userList: IUser[] = [
         "A passionate developer focused on clean code, performance, and scalability.",
       resume: "sara_resume.pdf",
       coverLetter: "sara_cover_letter.pdf",
-      yearsOfExperience: "4+ years experience",
+      yearsOfExperience: 4,
       experiences: [
         {
           id: "e3d1b2cd-b07e-48f1-b345-8fbe6486ef77",

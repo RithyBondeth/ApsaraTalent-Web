@@ -1,6 +1,5 @@
 import { API_AUTH_SIGNUP_URL } from "@/utils/constants/apis/auth_url";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
-import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 import axios from "axios";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -29,7 +28,7 @@ export const useEmployeeSignupStore = create<TEmployeeSignupState>()(
       error: null,
       signup: async (body: TEmployeeSignupBodyType) => {
         set({ loading: true, error: null });
-
+        console.log("url: ", API_AUTH_SIGNUP_URL.EMPLOYEE);
         try {
           const response = await axios.post<TEmployeeSignupResponse>(
             API_AUTH_SIGNUP_URL.EMPLOYEE,
@@ -71,6 +70,7 @@ export const useEmployeeSignupStore = create<TEmployeeSignupState>()(
               })) ?? [],
             }
           );
+          console.log(response);
           set({
             loading: false,
             accessToken: response.data.accessToken,

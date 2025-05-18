@@ -117,7 +117,7 @@ export default function EmployeeProfilePage() {
       },
       profession: {
         job: employeeList?.job ?? "",
-        yearOfExperience: employeeList?.yearsOfExperience ?? "",
+        yearOfExperience: employeeList?.yearsOfExperience?.toString(),
         availability: employeeList?.availability ?? "",
         description: employeeList?.description ?? "",
       },
