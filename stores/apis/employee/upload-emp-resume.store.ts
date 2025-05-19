@@ -21,10 +21,16 @@ export const useUploadEmployeeResumeStore = create<TUploadEmployeeAvatarState>(
       set({ loading: true, error: null });
 
       try {
+        const formData = new FormData();
+        formData.append("resume", _resume);       
+
         const response = await axios.post<TUploadEmployeeResumeResponse>(
           API_UPLOAD_EMP_RESUME_URL(_employeeID),
+          formData,
           {
-            resume: _resume,
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
           }
         );
         set({ loading: false, error: null, message: response.data.message });

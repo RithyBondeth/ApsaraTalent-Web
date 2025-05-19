@@ -182,19 +182,25 @@ export default function SignupPage() {
             <ErrorMessage>{errors.gender?.message}</ErrorMessage>
           </div>
           <Input
-            prefix={<LucideMail />}
+            prefix={<LucideMail strokeWidth={"1.3px"}/>}
             type="email"
             placeholder="Email"
             {...register("email")}
             validationMessage={errors.email?.message}
           />
           <Input
-            prefix={<LucideLockKeyhole />}
+            prefix={<LucideLockKeyhole strokeWidth={"1.3px"}/>}
             suffix={
               passwordVisibility ? (
-                <LucideEyeClosed onClick={() => setPasswordVisibility(false)} />
+                <LucideEyeClosed 
+                  strokeWidth={"1.3px"}
+                  onClick={() => setPasswordVisibility(false)} 
+                />
               ) : (
-                <LucideEye onClick={() => setPasswordVisibility(true)} />
+                <LucideEye 
+                  strokeWidth={"1.3px"}
+                  onClick={() => setPasswordVisibility(true)} 
+                />
               )
             }
             type={passwordVisibility ? "text" : "password"}
@@ -203,14 +209,18 @@ export default function SignupPage() {
             validationMessage={errors.password?.message}
           />
           <Input
-            prefix={<LucideLockKeyhole />}
+            prefix={<LucideLockKeyhole strokeWidth={"1.3px"}/>}
             suffix={
               confirmPassVisibility ? (
                 <LucideEyeClosed
+                  strokeWidth={"1.3px"}
                   onClick={() => setConfirmPassVisibility(false)}
                 />
               ) : (
-                <LucideEye onClick={() => setConfirmPassVisibility(true)} />
+                <LucideEye 
+                  strokeWidth={"1.3px"} 
+                  onClick={() => setConfirmPassVisibility(true)} 
+                />
               )
             }
             type={confirmPassVisibility ? "text" : "password"}

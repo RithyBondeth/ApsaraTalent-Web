@@ -1,5 +1,6 @@
 import { API_AUTH_SIGNUP_URL } from "@/utils/constants/apis/auth_url";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
+import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 import axios from "axios";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -15,7 +16,7 @@ type TEmployeeSignupBodyType = Omit<IEmployee, 'id'> & { email: string, password
 type TEmployeeSignupState = TEmployeeSignupResponse & {
   loading: boolean;
   error: string | null;
-  signup: (body: TEmployeeSignupBodyType) => Promise<void>;
+  signup: (body: TEmployeeSignupBodyType) => Promise<string | undefined>;
 };
 
 export const useEmployeeSignupStore = create<TEmployeeSignupState>()(
@@ -28,9 +29,8 @@ export const useEmployeeSignupStore = create<TEmployeeSignupState>()(
       error: null,
       signup: async (body: TEmployeeSignupBodyType) => {
         set({ loading: true, error: null });
-        console.log("url: ", API_AUTH_SIGNUP_URL.EMPLOYEE);
         try {
-          const response = await axios.post<TEmployeeSignupResponse>(
+          const response = await axios.post<TEmployeeSignupResponse & { user: IUser }>(
             API_AUTH_SIGNUP_URL.EMPLOYEE,
             {
               email: body.email,
@@ -45,7 +45,7 @@ export const useEmployeeSignupStore = create<TEmployeeSignupState>()(
               description: body?.description,
               location: body?.location,
               phone: body?.phone,
-              education: body?.educations.map((edu) => ({
+              educations: body?.educations.map((edu) => ({
                 school: edu.school,
                 degree: edu.degree,
                 year: edu.year,
@@ -70,13 +70,18 @@ export const useEmployeeSignupStore = create<TEmployeeSignupState>()(
               })) ?? [],
             }
           );
-          console.log(response);
+
+          const employee = response.data.user.employee;
+          const employeeID = employee?.id;
+
           set({
             loading: false,
             accessToken: response.data.accessToken,
             refreshToken: response.data.refreshToken,
             error: null,
           });
+
+          return employeeID;
         } catch (error) {
           if (axios.isAxiosError(error)) {
             const errorMessage =

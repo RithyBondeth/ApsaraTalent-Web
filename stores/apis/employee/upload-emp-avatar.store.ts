@@ -19,12 +19,18 @@ export const useUploadEmployeeAvatarStore = create<TUploadEmployeeAvatarState>(
     error: null,
     uploadAvatar: async (_employeeID: string, _avatar: File) => {
       set({ loading: true, error: null });
-
+      
       try {
+        const formData = new FormData();
+        formData.append("avatar", _avatar);
+
         const response = await axios.post<TUploadEmployeeAvatarResponse>(
           API_UPLOAD_EMP_AVATAR_URL(_employeeID),
+          formData,
           {
-            avatar: _avatar,
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
           }
         );
         set({ loading: false, error: null, message: response.data.message });

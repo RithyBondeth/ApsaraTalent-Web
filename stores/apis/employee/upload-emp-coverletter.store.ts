@@ -21,10 +21,16 @@ export const useUploadEmployeeCoverLetter =
       set({ loading: true, error: null });
 
       try {
+        const formData = new FormData();
+        formData.append("coverLetter", _coverLetter);
+
         const response = await axios.post<TUploadEmployeeCoverLetterResponse>(
           API_UPLOAD_EMP_COVER_LETTER_URL(_employeeID),
+          formData,
           {
-            coverLetter: _coverLetter,
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
           }
         );
         set({ loading: false, error: null, message: response.data.message });

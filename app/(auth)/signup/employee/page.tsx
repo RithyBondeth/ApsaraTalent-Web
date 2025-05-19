@@ -8,7 +8,12 @@ import ProfessionStepForm from "@/components/employee/employee-signup-form/profe
 import ExperienceStepForm from "@/components/employee/employee-signup-form/experience-step";
 import EducationStepForm from "@/components/employee/employee-signup-form/education-step";
 import SkillReferenceStepForm from "@/components/employee/employee-signup-form/skill-reference-step";
-import { LucideArrowLeft, LucideArrowRight, LucideCheck, LucideInfo } from "lucide-react";
+import {
+  LucideArrowLeft,
+  LucideArrowRight,
+  LucideCheck,
+  LucideInfo,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { employeeSignUpSchema, TEmployeeSignUp } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,6 +26,9 @@ import { useToast } from "@/hooks/use-toast";
 import { ClipLoader } from "react-spinners";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { ToastAction } from "@/components/ui/toast";
+import { useUploadEmployeeAvatarStore } from "@/stores/apis/employee/upload-emp-avatar.store";
+import { useUploadEmployeeResumeStore } from "@/stores/apis/employee/upload-emp-resume.store";
+import { useUploadEmployeeCoverLetter } from "@/stores/apis/employee/upload-emp-coverletter.store";
 
 export default function EmployeeSignup() {
   const router = useRouter();
@@ -28,8 +36,12 @@ export default function EmployeeSignup() {
   const totalSteps = 6;
   const { basicSignupData } = useBasicSignupDataStore();
   const { toast } = useToast();
-  const { loading, error, message, accessToken, refreshToken, signup  } = useEmployeeSignupStore();  
-  
+
+  const empSignup = useEmployeeSignupStore();
+  const uploadAvatar = useUploadEmployeeAvatarStore();
+  const uploadResume = useUploadEmployeeResumeStore();
+  const uploadCoverLetter = useUploadEmployeeCoverLetter();
+
   const methods = useForm<TEmployeeSignUp>({
     mode: "onChange",
     resolver: zodResolver(employeeSignUpSchema),
@@ -85,8 +97,7 @@ export default function EmployeeSignup() {
       if (step === totalSteps) {
         handleSubmit(async (data) => {
           if (!basicSignupData) return;
-
-          const employee = {
+          const employeeId = await empSignup.signup({
             email: basicSignupData.email,
             password: basicSignupData.password,
             firstname: basicSignupData.firstName,
@@ -96,19 +107,19 @@ export default function EmployeeSignup() {
             job: data.profession.job,
             yearsOfExperience: data.profession.yearOfExperience,
             availability: data.profession.availability,
-            description: data.profession.description, 
+            description: data.profession.description,
             location: basicSignupData.selectedLocation,
             phone: basicSignupData.phone,
             educations: data.educations.map((edu) => ({
               school: edu.school,
               degree: edu.degree,
-              year: edu.year.toISOString(),
+              year: new Date(edu.year).toISOString(),
             })),
             experiences: data.experience.map((exp) => ({
               title: exp.title,
               description: exp.description,
-              startDate: exp.startDate.toISOString(),
-              endDate: exp.endDate.toISOString(),
+              startDate: new Date(exp.startDate).toISOString(),
+              endDate: new Date(exp.endDate).toISOString(),
             })),
             skills: data.skillAndReference.skills.map((skill) => ({
               name: skill,
@@ -119,8 +130,48 @@ export default function EmployeeSignup() {
               description: cs,
             })),
             socials: [],
+          });
+
+          // After signup, get the employee ID
+
+          if (!employeeId) {
+            console.error("Employee ID not found after signup");
+            return;
           }
-          await signup(employee);
+
+          // Upload files in parallel
+          const uploadTasks = [];
+
+          if (data.avatar instanceof File) {
+            uploadTasks.push(
+              uploadAvatar.uploadAvatar(employeeId, data.avatar)
+            );
+          }
+
+          if (data.skillAndReference.resume instanceof File) {
+            uploadTasks.push(
+              uploadResume.uploadResume(
+                employeeId,
+                data.skillAndReference.resume
+              )
+            );
+          }
+
+          if (data.skillAndReference.coverLetter instanceof File) {
+            uploadTasks.push(
+              uploadCoverLetter.uploadCoverLetter(
+                employeeId,
+                data.skillAndReference.coverLetter
+              )
+            );
+          }
+
+          await Promise.all(uploadTasks);
+
+          console.log({
+            resume: data.skillAndReference.resume,
+            coverLetter: data.skillAndReference.coverLetter,
+          });
         })();
       } else {
         setStep((prev) => prev + 1);
@@ -131,17 +182,23 @@ export default function EmployeeSignup() {
   const prevStep = () => setStep((prev) => prev - 1);
 
   useEffect(() => {
-    if(accessToken && refreshToken) {
+    console.log(basicSignupData);
+
+    if (empSignup.accessToken && empSignup.refreshToken) {
       toast({
-        description: <div className="flex items-center gap-2"> 
-          <LucideCheck/>
-          <TypographySmall className="font-medium">Registered Successfully</TypographySmall>
-        </div>,
+        description: (
+          <div className="flex items-center gap-2">
+            <LucideCheck />
+            <TypographySmall className="font-medium">
+              Registered Successfully
+            </TypographySmall>
+          </div>
+        ),
         duration: 1000,
       });
-    } 
+    }
 
-    if(loading) 
+    if (empSignup.loading || uploadAvatar.loading || uploadCoverLetter.loading)
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -153,24 +210,34 @@ export default function EmployeeSignup() {
         ),
       });
 
-    if(error)
+    if (empSignup.error || uploadAvatar.error || uploadCoverLetter.loading)
       toast({
         variant: "destructive",
         description: (
           <div className="flex flex-row items-center gap-2">
-            <LucideInfo/>
+            <LucideInfo />
             <TypographySmall className="font-medium leading-normal">
-              {message}
+              {empSignup.message}
             </TypographySmall>
           </div>
         ),
-        action: (
-          <ToastAction altText="Try again">
-            Retry
-          </ToastAction>
-        ),
+        action: <ToastAction altText="Try again">Retry</ToastAction>,
       });
-  }, [loading, error, message, accessToken, refreshToken, signup, basicSignupData]);
+  }, [
+    empSignup.loading,
+    uploadAvatar.loading,
+    uploadCoverLetter.loading,
+    uploadAvatar.error,
+    empSignup.error,
+    uploadCoverLetter.error,
+    empSignup.message,
+    empSignup.accessToken,
+    empSignup.refreshToken,
+    empSignup.signup,
+    uploadAvatar.uploadAvatar,
+    uploadResume.uploadResume,
+    uploadCoverLetter.uploadCoverLetter,
+  ]);
 
   return (
     <div className="h-[80%] w-[85%] flex flex-col items-start gap-3 tablet-lg:w-full tablet-lg:p-5">
@@ -276,7 +343,11 @@ export default function EmployeeSignup() {
                 Back
               </Button>
             )}
-            <Button type="button" onClick={nextStep} disabled={loading}>
+            <Button
+              type="button"
+              onClick={nextStep}
+              disabled={empSignup.loading}
+            >
               {step === totalSteps ? "Submit" : "Next"}
               <LucideArrowRight />
             </Button>
