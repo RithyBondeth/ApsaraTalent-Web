@@ -35,7 +35,7 @@ export default function EducationStepForm({
 
   return (
     <div className="flex flex-col gap-5 w-full max-h-[500px] overflow-y-auto">
-      <TypographyH4>Add your experiences information</TypographyH4>
+      <TypographyH4>Add your education information</TypographyH4>
       {fields.map((field, index) => (
         <div
           className="relative flex flex-col items-start gap-3 w-full border border-muted-foreground/10 rounded-xl bg-muted p-5"
