@@ -1,31 +1,31 @@
-import { API_UPLOAD_CMP_AVATAR_URL } from "@/utils/constants/apis/company_url";
+import { API_UPLOAD_CMP_COVER_URL } from "@/utils/constants/apis/company_url";
 import axios from "axios";
 import { create } from "zustand";
 
-type TUploadCompanyAvatarResponse = {
+type TUploadCompanyCoverResponse = {
   message: string | null;
 };
 
-type TUploadCompanyAvatarState = TUploadCompanyAvatarResponse & {
+type TUploadCompanyCoverState = TUploadCompanyCoverResponse & {
   loading: boolean;
   error: string | null;
-  uploadAvatar: (companyID: string, avatar: File) => Promise<void>;
+  uploadCover: (companyID: string, cover: File) => Promise<void>;
 };
 
-export const useUploadCompanyAvatarStore = create<TUploadCompanyAvatarState>(
+export const useUploadCompanyCoverStore = create<TUploadCompanyCoverState>(
   (set) => ({
     message: null,
     loading: false,
     error: null,
-    uploadAvatar: async (_companyID: string, _avatar: File) => {
+    uploadCover: async (_companyID: string, _cover: File) => {
       set({ loading: true, error: null });
 
       try {
         const formData = new FormData();
-        formData.append("avatar", _avatar);
+        formData.append("cover", _cover);
 
-        const response = await axios.post<TUploadCompanyAvatarResponse>(
-          API_UPLOAD_CMP_AVATAR_URL(_companyID),
+        const response = await axios.post<TUploadCompanyCoverResponse>(
+          API_UPLOAD_CMP_COVER_URL(_companyID),
           formData,
           {
             headers: {
@@ -45,7 +45,7 @@ export const useUploadCompanyAvatarStore = create<TUploadCompanyAvatarState>(
         } else {
           set({
             loading: false,
-            error: "An error occurred while uploading company's avatar",
+            error: "An error occurred while uploading company's cover",
           });
         }
       }
