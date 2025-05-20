@@ -39,9 +39,7 @@ import { TLocations } from "@/utils/types/location.type";
 
 export default function SignupPage() {
   const [selectedRole, setSelectedRole] = useState<TUserRole | null>(null);
-  const [selectedLocation, setSelectionLocation] = useState<TLocations | null>(
-    null
-  );
+  const [selectedLocation, setSelectionLocation] = useState<TLocations | null>(null);
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [confirmPassVisibility, setConfirmPassVisibility] =
     useState<boolean>(false);

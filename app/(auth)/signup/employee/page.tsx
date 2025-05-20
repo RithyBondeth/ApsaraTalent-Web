@@ -41,6 +41,7 @@ export default function EmployeeSignup() {
   const uploadAvatar = useUploadEmployeeAvatarStore();
   const uploadResume = useUploadEmployeeResumeStore();
   const uploadCoverLetter = useUploadEmployeeCoverLetter();
+  const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
 
   const methods = useForm<TEmployeeSignUp>({
     mode: "onChange",
@@ -132,8 +133,6 @@ export default function EmployeeSignup() {
             socials: [],
           });
 
-          // After signup, get the employee ID
-
           if (!employeeId) {
             console.error("Employee ID not found after signup");
             return;
@@ -142,35 +141,33 @@ export default function EmployeeSignup() {
           // Upload files in parallel
           const uploadTasks = [];
 
-          if (data.avatar instanceof File) {
+          if (data.avatar instanceof File)
             uploadTasks.push(
               uploadAvatar.uploadAvatar(employeeId, data.avatar)
             );
-          }
 
-          if (data.skillAndReference.resume instanceof File) {
+          if (data.skillAndReference.resume instanceof File)
             uploadTasks.push(
               uploadResume.uploadResume(
                 employeeId,
                 data.skillAndReference.resume
               )
             );
-          }
 
-          if (data.skillAndReference.coverLetter instanceof File) {
+          if (data.skillAndReference.coverLetter instanceof File)
             uploadTasks.push(
               uploadCoverLetter.uploadCoverLetter(
                 employeeId,
                 data.skillAndReference.coverLetter
               )
             );
-          }
 
           await Promise.all(uploadTasks);
+          setUploadsComplete(true);
 
           console.log({
-            resume: data.skillAndReference.resume,
-            coverLetter: data.skillAndReference.coverLetter,
+            accessToken: empSignup.accessToken,
+            refreshToken: empSignup.refreshToken,
           });
         })();
       } else {
@@ -182,9 +179,15 @@ export default function EmployeeSignup() {
   const prevStep = () => setStep((prev) => prev - 1);
 
   useEffect(() => {
-    console.log(basicSignupData);
-
-    if (empSignup.accessToken && empSignup.refreshToken) {
+    if (
+      empSignup.accessToken &&
+      empSignup.refreshToken &&
+      uploadsComplete &&
+      !empSignup.loading &&
+      !uploadAvatar.loading &&
+      !uploadCoverLetter.loading &&
+      !uploadResume.loading
+    ) {
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -196,6 +199,7 @@ export default function EmployeeSignup() {
         ),
         duration: 1000,
       });
+      router.push("/feed");
     }
 
     if (empSignup.loading || uploadAvatar.loading || uploadCoverLetter.loading)
@@ -210,19 +214,29 @@ export default function EmployeeSignup() {
         ),
       });
 
-    if (empSignup.error || uploadAvatar.error || uploadCoverLetter.loading)
-      toast({
-        variant: "destructive",
-        description: (
-          <div className="flex flex-row items-center gap-2">
-            <LucideInfo />
-            <TypographySmall className="font-medium leading-normal">
-              {empSignup.message}
-            </TypographySmall>
-          </div>
-        ),
-        action: <ToastAction altText="Try again">Retry</ToastAction>,
-      });
+    const errors = [
+      { error: empSignup.error, message: empSignup.message },
+      { error: uploadAvatar.error, message: uploadAvatar.message },
+      { error: uploadResume.error, message: uploadResume.message },
+      { error: uploadCoverLetter.error, message: uploadCoverLetter.message },
+    ];
+
+    errors.forEach(({ error, message }) => {
+      if (error) {
+        toast({
+          variant: "destructive",
+          description: (
+            <div className="flex items-center gap-2">
+              <LucideInfo />
+              <TypographySmall className="font-medium leading-normal">
+                {message}
+              </TypographySmall>
+            </div>
+          ),
+          action: <ToastAction altText="Try again">Retry</ToastAction>,
+        });
+      }
+    });
   }, [
     empSignup.loading,
     uploadAvatar.loading,
@@ -233,6 +247,7 @@ export default function EmployeeSignup() {
     empSignup.message,
     empSignup.accessToken,
     empSignup.refreshToken,
+    uploadsComplete,
     empSignup.signup,
     uploadAvatar.uploadAvatar,
     uploadResume.uploadResume,
