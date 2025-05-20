@@ -15,11 +15,19 @@ import { FormProvider, useForm } from "react-hook-form";
 import { companySignupSchema, TCompanySignup } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import CompanyCareerScopeStepForm from "@/components/company/company-signup-form/career-scope-step";
+import { useBasicSignupDataStore } from "@/stores/apis/auth/basic-signup-data.store";
+import { useToast } from "@/hooks/use-toast";
+import { useCompanySignupStore } from "@/stores/apis/auth/company-signup.store";
 
 export default function CompanySignup() {
   const router = useRouter();
   const [step, setStep] = useState<number>(1);
   const totalSteps = 6;
+  const { basicSignupData } = useBasicSignupDataStore();
+  const { toast } = useToast();
+
+  const compSignup = useCompanySignupStore();
+  const [uploadComplete, setUploadComplete] = useState<boolean>(false);
 
   const methods = useForm<TCompanySignup>({
     mode: "onChange",
