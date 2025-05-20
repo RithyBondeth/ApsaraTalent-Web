@@ -1,6 +1,5 @@
 import { API_UPDATE_EMP_INFO_URL } from "@/utils/constants/apis/employee_url";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
-import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 import axios from "axios";
 import { create } from "zustand";
 
@@ -9,10 +8,19 @@ type TUpdateOneEmployeeResponse = {
   employee: IEmployee | null;
 };
 
+type TUpdateOneEmployeeUpdateBody = Omit<IEmployee, "id"> & {
+  email: string;
+  password: string;
+};
+
 type TUpdateOneEmployeeState = TUpdateOneEmployeeResponse & {
   loading: boolean;
   error: string | null;
-  updateOneEmployee: (employeeID: string, body: IUser, token: string) => Promise<void>;
+  updateOneEmployee: (
+    employeeID: string,
+    body: TUpdateOneEmployeeUpdateBody,
+    token: string
+  ) => Promise<void>;
 };
 
 export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
@@ -21,46 +29,48 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
     employee: null,
     error: null,
     loading: false,
-    updateOneEmployee: async (employeeID: string, body: IUser, token: string) => {
+    updateOneEmployee: async (
+      employeeID: string,
+      body: TUpdateOneEmployeeUpdateBody,
+      token: string
+    ) => {
       set({ loading: true, error: null });
-
-      const employeeBody = body.employee;
       try {
         const response = await axios.patch(
           API_UPDATE_EMP_INFO_URL(employeeID),
           {
             email: body.email,
             password: body.password,
-            firstname: employeeBody?.firstname,
-            lastname: employeeBody?.lastname,
-            username: employeeBody?.username,
-            gender: employeeBody?.gender,
-            job: employeeBody?.job,
-            yearsOfExperience: employeeBody?.yearsOfExperience,
-            availability: employeeBody?.availability,
-            description: employeeBody?.description,
-            location: employeeBody?.location,
-            phone: employeeBody?.phone,
-            education: employeeBody?.educations.map((edu) => ({
+            firstname: body.firstname,
+            lastname: body.lastname,
+            username: body.username,
+            gender: body.gender,
+            job: body.job,
+            yearsOfExperience: body.yearsOfExperience,
+            availability: body.availability,
+            description: body.description,
+            location: body.location,
+            phone: body.phone,
+            education: body.educations.map((edu) => ({
               school: edu.school,
               degree: edu.degree,
               year: edu.year,
             })),
-            experiences: employeeBody?.experiences.map((exp) => ({
+            experiences: body.experiences.map((exp) => ({
               title: exp.title,
               description: exp.description,
               startDate: exp.startDate,
               endDate: exp.endDate,
             })),
-            skills: employeeBody?.skills.map((skill) => ({
+            skills: body.skills.map((skill) => ({
               name: skill.name,
               description: skill.description,
             })),
-            careerScopes: employeeBody?.careerScopes.map((cs) => ({
+            careerScopes: body.careerScopes.map((cs) => ({
               name: cs.name,
               description: cs.description,
             })),
-            socials: employeeBody?.socials.map((social) => ({
+            socials: body.socials.map((social) => ({
               platform: social.platform,
               url: social.url,
             })),
@@ -84,7 +94,7 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
         } else {
           set({
             loading: false,
-            error: "An error occurred while updating an employee",
+            error: "An error occurred while updating employee's information",
           });
         }
       }
