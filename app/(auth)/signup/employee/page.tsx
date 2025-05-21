@@ -98,19 +98,20 @@ export default function EmployeeSignup() {
       if (step === totalSteps) {
         handleSubmit(async (data) => {
           if (!basicSignupData) return;
+
           const employeeId = await empSignup.signup({
-            email: basicSignupData.email,
-            password: basicSignupData.password,
-            firstname: basicSignupData.firstName,
-            lastname: basicSignupData.lastName,
-            username: basicSignupData.username,
+            email: basicSignupData.email!,
+            password: basicSignupData.password!,
+            firstname: basicSignupData.firstName!,
+            lastname: basicSignupData.lastName!,
+            username: basicSignupData.username!,
             gender: basicSignupData.gender as TGender,
             job: data.profession.job,
             yearsOfExperience: data.profession.yearOfExperience,
             availability: data.profession.availability,
             description: data.profession.description,
-            location: basicSignupData.selectedLocation,
-            phone: basicSignupData.phone,
+            location: basicSignupData.selectedLocation!,
+            phone: basicSignupData.phone!,
             educations: data.educations.map((edu) => ({
               school: edu.school,
               degree: edu.degree,

@@ -18,6 +18,8 @@ import CompanyCareerScopeStepForm from "@/components/company/company-signup-form
 import { useBasicSignupDataStore } from "@/stores/apis/auth/basic-signup-data.store";
 import { useToast } from "@/hooks/use-toast";
 import { useCompanySignupStore } from "@/stores/apis/auth/company-signup.store";
+import { useUploadCompanyAvatarStore } from "@/stores/apis/company/upload-cmp-avatar.store";
+import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cover.store";
 
 export default function CompanySignup() {
   const router = useRouter();
@@ -26,7 +28,9 @@ export default function CompanySignup() {
   const { basicSignupData } = useBasicSignupDataStore();
   const { toast } = useToast();
 
-  const compSignup = useCompanySignupStore();
+  const cmpSignup = useCompanySignupStore();
+  const uploadAvatar = useUploadCompanyAvatarStore();
+  const uploadResume = useUploadCompanyCoverStore();
   const [uploadComplete, setUploadComplete] = useState<boolean>(false);
 
   const methods = useForm<TCompanySignup>({
@@ -79,7 +83,8 @@ export default function CompanySignup() {
 
     if (isValid) {
       if (step === totalSteps) {
-        handleSubmit((data) => {
+        handleSubmit(async (data) => {
+          if(!basicSignupData) return;
           console.log("Final Data:", data);
           router.push("/feed");
         })();

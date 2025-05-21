@@ -1,16 +1,16 @@
 import { create } from "zustand";
 
 type TBasicSignupData = {
-  firstName: string;
-  lastName: string;
-  username: string;
-  gender: string;
-  selectedRole: string;
-  phone: string;
-  selectedLocation: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+  gender?: string;
+  selectedRole?: string;
+  phone?: string;
+  selectedLocation?: string;
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
 };
 
 type TBasicSignupDataState = {

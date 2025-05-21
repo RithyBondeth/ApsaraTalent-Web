@@ -11,7 +11,7 @@ import {
   LucideLockKeyhole,
   LucideMail,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -30,16 +30,24 @@ import {
   userRoleConstant,
 } from "@/utils/constants/app.constant";
 import { TGender } from "@/utils/types/gender.type";
-import { useForm } from "react-hook-form";
-import { basicSignupSchema, TBasicSignupSchema } from "./validation";
+import { useForm, FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ErrorMessage from "@/components/utils/error-message";
 import { useBasicSignupDataStore } from "@/stores/apis/auth/basic-signup-data.store";
 import { TLocations } from "@/utils/types/location.type";
+import {
+  basicSignupEmployeeSchema,
+  basicSignupCompanySchema,
+  TBasicSignupEmployeeSchema,
+  TBasicSignupCompanySchema,
+} from "./validation";
+import { companySignupSchema } from "./company/validation";
 
 export default function SignupPage() {
   const [selectedRole, setSelectedRole] = useState<TUserRole | null>(null);
-  const [selectedLocation, setSelectionLocation] = useState<TLocations | null>(null);
+  const [selectedLocation, setSelectionLocation] = useState<TLocations | null>(
+    null
+  );
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [confirmPassVisibility, setConfirmPassVisibility] =
     useState<boolean>(false);
@@ -47,21 +55,42 @@ export default function SignupPage() {
   const [selectedGender, setSelectedGender] = useState<TGender | null>(null);
   const { theme } = useThemeStore();
 
-  const { setBasicSignupData } = useBasicSignupDataStore();
-  const {
-    handleSubmit,
-    register,
-    setValue,
-    trigger,
-    formState: { errors },
-  } = useForm<TBasicSignupSchema>({
-    resolver: zodResolver(basicSignupSchema),
+  const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
+  const isEmployeeForm = basicSignupData?.selectedRole === "employee";
+
+  const cmpForm = useForm<TBasicSignupCompanySchema>({
+    resolver: zodResolver(basicSignupCompanySchema),
+  });
+  const empForm = useForm<TBasicSignupEmployeeSchema>({
+    resolver: zodResolver(basicSignupEmployeeSchema),
   });
 
-  const onSubmit = (data: TBasicSignupSchema) => {
+  const employeeErrors = empForm.formState
+    .errors as FieldErrors<TBasicSignupEmployeeSchema>;
+  const companyErrors = cmpForm.formState
+    .errors as FieldErrors<TBasicSignupCompanySchema>;
+
+  const onSubmitEmployee = (data: TBasicSignupEmployeeSchema) => {
+    console.log(data);
     setBasicSignupData(data);
-    router.push(`signup/${data.selectedRole}`);
+    router.push("signup/employee");
   };
+
+  const onSubmitCompany = (data: TBasicSignupCompanySchema) => {
+    console.log(data);
+    setBasicSignupData(data);
+    router.push("signup/company");
+  };
+
+  useEffect(() => {
+    console.log(basicSignupData?.selectedRole);
+    console.log(cmpForm.formState.errors);
+    console.log(empForm.formState.errors);
+  }, [
+    basicSignupData?.selectedRole,
+    cmpForm.formState.errors,
+    empForm.formState.errors,
+  ]);
 
   return (
     <div className="size-[70%] flex flex-col items-start justify-center gap-3 tablet-sm:w-[90%]">
@@ -77,92 +106,50 @@ export default function SignupPage() {
       {/* Form Section */}
       <form
         className="w-full flex flex-col items-stretch gap-5"
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={
+          isEmployeeForm
+            ? empForm.handleSubmit(onSubmitEmployee)
+            : cmpForm.handleSubmit(onSubmitCompany)
+        }
       >
-        <div className="flex items-center gap-3 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
-          <Input
-            placeholder="Firstname"
-            type="text"
-            {...register("firstName")}
-            validationMessage={errors.firstName?.message}
-          />
-          <Input
-            placeholder="Lastname"
-            type="text"
-            {...register("lastName")}
-            validationMessage={errors.lastName?.message}
-          />
-        </div>
-        <div className="w-full flex items-center gap-3 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
-          <Input
-            type="text"
-            placeholder="Username"
-            className="w-full"
-            {...register("username")}
-            validationMessage={errors.username?.message}
-          />
-          <div className="w-full flex flex-col items-start gap-1">
-            <Select
-              onValueChange={(value: TUserRole) => {
-                setSelectedRole(value);
-                setValue("selectedRole", value, { shouldValidate: true });
-                trigger("selectedRole");
-              }}
-              value={selectedRole || ""}
-              {...register("selectedRole")}
-            >
-              <SelectTrigger className="h-12 text-muted-foreground">
-                <SelectValue placeholder="Who are you looking for?" />
-              </SelectTrigger>
-              <SelectContent>
-                {userRoleConstant.map((role) => (
-                  <SelectItem key={role.id} value={role.value}>
-                    {role.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <ErrorMessage>{errors.selectedRole?.message}</ErrorMessage>
-          </div>
-        </div>
-        <div className="flex flex-col items-stretch gap-5">
-          <div className="flex gap-3 [&>select]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
-            <div className="w-full flex flex-col items-start gap-1">
-              <Select
-                onValueChange={(value: TGender) => {
-                  setSelectedGender(value);
-                  setValue("gender", value, { shouldValidate: true });
-                  trigger("gender");
-                }}
-                value={selectedGender || ""}
-              >
-                <SelectTrigger className="h-12 text-muted-foreground">
-                  <SelectValue placeholder="Gender" />
-                </SelectTrigger>
-                <SelectContent>
-                  {genderConstant.map((gender) => (
-                    <SelectItem key={gender.id} value={gender.value}>
-                      {gender.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <ErrorMessage>{errors.gender?.message}</ErrorMessage>
-            </div>
+        {isEmployeeForm && (
+          <div className="flex items-center gap-3 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
             <Input
-              type="number"
-              placeholder="Mobile"
-              className="w-full"
-              {...register("phone")}
-              validationMessage={errors.phone?.message}
+              placeholder="Firstname"
+              type="text"
+              {...empForm.register("firstName")}
+              validationMessage={employeeErrors.firstName?.message}
+            />
+            <Input
+              placeholder="Lastname"
+              type="text"
+              {...empForm.register("lastName")}
+              validationMessage={employeeErrors.lastName?.message}
             />
           </div>
+        )}
+        <div className="w-full flex items-center gap-3 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
+          {isEmployeeForm && (
+            <Input
+              type="text"
+              placeholder="Username"
+              className="w-full"
+              {...empForm.register("username")}
+              validationMessage={employeeErrors.username?.message}
+            />
+          )}
           <div className="w-full flex flex-col items-start gap-1">
             <Select
               onValueChange={(value: TLocations) => {
                 setSelectionLocation(value);
-                setValue("selectedLocation", value, { shouldValidate: true });
-                trigger("selectedLocation");
+                empForm.setValue("selectedLocation", value, {
+                  shouldValidate: true,
+                });
+                empForm.trigger("selectedLocation");
+                cmpForm.setValue("selectedLocation", value, {
+                  shouldValidate: true,
+                });
+                cmpForm.trigger("selectedLocation");
               }}
               value={selectedLocation || ""}
             >
@@ -177,55 +164,192 @@ export default function SignupPage() {
                 ))}
               </SelectContent>
             </Select>
-            <ErrorMessage>{errors.gender?.message}</ErrorMessage>
+            <ErrorMessage>
+              {isEmployeeForm
+                ? employeeErrors.selectedLocation?.message
+                : companyErrors.selectedLocation?.message}
+            </ErrorMessage>
           </div>
-          <Input
-            prefix={<LucideMail strokeWidth={"1.3px"}/>}
-            type="email"
-            placeholder="Email"
-            {...register("email")}
-            validationMessage={errors.email?.message}
-          />
-          <Input
-            prefix={<LucideLockKeyhole strokeWidth={"1.3px"}/>}
-            suffix={
-              passwordVisibility ? (
-                <LucideEyeClosed 
-                  strokeWidth={"1.3px"}
-                  onClick={() => setPasswordVisibility(false)} 
-                />
-              ) : (
-                <LucideEye 
-                  strokeWidth={"1.3px"}
-                  onClick={() => setPasswordVisibility(true)} 
-                />
-              )
-            }
-            type={passwordVisibility ? "text" : "password"}
-            placeholder="Password"
-            {...register("password")}
-            validationMessage={errors.password?.message}
-          />
-          <Input
-            prefix={<LucideLockKeyhole strokeWidth={"1.3px"}/>}
-            suffix={
-              confirmPassVisibility ? (
-                <LucideEyeClosed
-                  strokeWidth={"1.3px"}
-                  onClick={() => setConfirmPassVisibility(false)}
-                />
-              ) : (
-                <LucideEye 
-                  strokeWidth={"1.3px"} 
-                  onClick={() => setConfirmPassVisibility(true)} 
-                />
-              )
-            }
-            type={confirmPassVisibility ? "text" : "password"}
-            placeholder="Confirm Password"
-            {...register("confirmPassword")}
-            validationMessage={errors.confirmPassword?.message}
-          />
+        </div>
+        <div className="flex flex-col items-stretch gap-5">
+          <div className="flex gap-3 [&>select]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
+            {isEmployeeForm && (
+              <div className="w-full flex flex-col items-start gap-1">
+                <Select
+                  onValueChange={(value: TGender) => {
+                    setSelectedGender(value);
+                    empForm.setValue("gender", value, { shouldValidate: true });
+                    empForm.trigger("gender");
+                  }}
+                  value={selectedGender || ""}
+                >
+                  <SelectTrigger className="h-12 text-muted-foreground">
+                    <SelectValue placeholder="Gender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {genderConstant.map((gender) => (
+                      <SelectItem key={gender.id} value={gender.value}>
+                        {gender.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <ErrorMessage>{employeeErrors.gender?.message}</ErrorMessage>
+              </div>
+            )}
+            {isEmployeeForm ? (
+              <Input
+                type="number"
+                placeholder="Mobile"
+                className="w-full"
+                {...empForm.register("phone")}
+                validationMessage={
+                  isEmployeeForm
+                    ? employeeErrors.phone?.message
+                    : companyErrors.phone?.message
+                }
+              />
+            ) : (
+              <Input
+                type="number"
+                placeholder="Mobile"
+                className="w-full"
+                {...cmpForm.register("phone")}
+                validationMessage={
+                  isEmployeeForm
+                    ? employeeErrors.phone?.message
+                    : companyErrors.phone?.message
+                }
+              />
+            )}
+          </div>
+          {isEmployeeForm ? (
+            <Input
+              prefix={<LucideMail strokeWidth={"1.3px"} />}
+              type="email"
+              placeholder="Email"
+              {...empForm.register("email")}
+              validationMessage={
+                isEmployeeForm
+                  ? employeeErrors.email?.message
+                  : companyErrors.email?.message
+              }
+            />
+          ) : (
+            <Input
+              prefix={<LucideMail strokeWidth={"1.3px"} />}
+              type="email"
+              placeholder="Email"
+              {...cmpForm.register("email")}
+              validationMessage={
+                isEmployeeForm
+                  ? employeeErrors.email?.message
+                  : companyErrors.email?.message
+              }
+            />
+          )}
+          {isEmployeeForm ? (
+            <Input
+              prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
+              suffix={
+                passwordVisibility ? (
+                  <LucideEyeClosed
+                    strokeWidth={"1.3px"}
+                    onClick={() => setPasswordVisibility(false)}
+                  />
+                ) : (
+                  <LucideEye
+                    strokeWidth={"1.3px"}
+                    onClick={() => setPasswordVisibility(true)}
+                  />
+                )
+              }
+              type={passwordVisibility ? "text" : "password"}
+              placeholder="Password"
+              {...empForm.register("password")}
+              validationMessage={
+                isEmployeeForm
+                  ? employeeErrors.password?.message
+                  : companyErrors.password?.message
+              }
+            />
+          ) : (
+            <Input
+              prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
+              suffix={
+                passwordVisibility ? (
+                  <LucideEyeClosed
+                    strokeWidth={"1.3px"}
+                    onClick={() => setPasswordVisibility(false)}
+                  />
+                ) : (
+                  <LucideEye
+                    strokeWidth={"1.3px"}
+                    onClick={() => setPasswordVisibility(true)}
+                  />
+                )
+              }
+              type={passwordVisibility ? "text" : "password"}
+              placeholder="Password"
+              {...cmpForm.register("password")}
+              validationMessage={
+                isEmployeeForm
+                  ? employeeErrors.password?.message
+                  : companyErrors.password?.message
+              }
+            />
+          )}
+          {isEmployeeForm ? (
+            <Input
+              prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
+              suffix={
+                confirmPassVisibility ? (
+                  <LucideEyeClosed
+                    strokeWidth={"1.3px"}
+                    onClick={() => setConfirmPassVisibility(false)}
+                  />
+                ) : (
+                  <LucideEye
+                    strokeWidth={"1.3px"}
+                    onClick={() => setConfirmPassVisibility(true)}
+                  />
+                )
+              }
+              type={confirmPassVisibility ? "text" : "password"}
+              placeholder="Confirm Password"
+              {...empForm.register("confirmPassword")}
+              validationMessage={
+                isEmployeeForm
+                  ? employeeErrors.confirmPassword?.message
+                  : companyErrors.confirmPassword?.message
+              }
+            />
+          ) : (
+            <Input
+              prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
+              suffix={
+                confirmPassVisibility ? (
+                  <LucideEyeClosed
+                    strokeWidth={"1.3px"}
+                    onClick={() => setConfirmPassVisibility(false)}
+                  />
+                ) : (
+                  <LucideEye
+                    strokeWidth={"1.3px"}
+                    onClick={() => setConfirmPassVisibility(true)}
+                  />
+                )
+              }
+              type={confirmPassVisibility ? "text" : "password"}
+              placeholder="Confirm Password"
+              {...cmpForm.register("confirmPassword")}
+              validationMessage={
+                isEmployeeForm
+                  ? employeeErrors.confirmPassword?.message
+                  : companyErrors.confirmPassword?.message
+              }
+            />
+          )}
         </div>
         <div className="flex items-center gap-3">
           <Button

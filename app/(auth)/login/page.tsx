@@ -238,7 +238,7 @@ function LoginPage() {
             <Button type="submit" disabled={loading}>Login</Button>
             <div className="flex items-center gap-2 mx-auto">
               <TypographyMuted>Do not have account?</TypographyMuted>
-              <Link href="/signup">
+              <Link href="/signup/option">
                 <TypographySmall className="text-xs cursor-pointer hover:text-muted-foreground">
                   Create account
                 </TypographySmall>
