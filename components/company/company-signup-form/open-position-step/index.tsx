@@ -78,7 +78,9 @@ export default function OpenPositionStepForm({
 
   const removeSkill = async (skillToRemove: string, index: number) => {
     const currentSkills = getValues?.(`openPositions.${index}.skills`) || [];
-    const updatedSkills = currentSkills.filter((skill) => skill !== skillToRemove);
+    const updatedSkills = currentSkills.filter(
+      (skill) => skill !== skillToRemove
+    );
     setValue?.(`openPositions.${index}.skills`, updatedSkills);
 
     // Trigger validation after removing the skill
@@ -92,6 +94,7 @@ export default function OpenPositionStepForm({
       experienceRequirement: "",
       educationRequirement: "",
       skills: [],
+      types: "",
       salary: "",
       deadlineDate: "" as unknown as Date,
     });
@@ -105,12 +108,22 @@ export default function OpenPositionStepForm({
       <TypographyH4>Add Open Position Information</TypographyH4>
 
       {fields.map((field, index) => (
-        <Card key={field.id} className="relative flex flex-col items-start gap-3 w-full p-5">
+        <Card
+          key={field.id}
+          className="relative flex flex-col items-start gap-3 w-full p-5"
+        >
           {/* Header With Remove Button */}
           {fields.length > 1 && (
             <div className="w-full flex items-center justify-between mb-3">
-              <TypographyMuted className="text-md">Open Position {index + 1}</TypographyMuted>
-              <Button variant="ghost" size="icon" type="button" onClick={() => remove(index)}>
+              <TypographyMuted className="text-md">
+                Open Position {index + 1}
+              </TypographyMuted>
+              <Button
+                variant="ghost"
+                size="icon"
+                type="button"
+                onClick={() => remove(index)}
+              >
                 <LucideTrash2 size={16} />
               </Button>
             </div>
@@ -123,7 +136,19 @@ export default function OpenPositionStepForm({
               <Input
                 placeholder="Title"
                 {...register(`openPositions.${index}.title`)}
-                validationMessage={errors?.openPositions?.[index]?.title?.message}
+                validationMessage={
+                  errors?.openPositions?.[index]?.title?.message
+                }
+              />
+            }
+          />
+          <LabelInput
+            label="Type"
+            input={
+              <Input
+                placeholder="Type"
+                {...register(`openPositions.${index}.types`)}
+                validationMessage={errors?.openPositions?.[index]?.types?.message?.toString()}
               />
             }
           />
@@ -134,7 +159,9 @@ export default function OpenPositionStepForm({
               className="placeholder:text-sm"
               {...register(`openPositions.${index}.description`)}
             />
-            <ErrorMessage>{errors?.openPositions?.[index]?.description?.message}</ErrorMessage>
+            <ErrorMessage>
+              {errors?.openPositions?.[index]?.description?.message}
+            </ErrorMessage>
           </div>
 
           <div className="w-full flex gap-3 [&>div]:w-1/2 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
@@ -144,7 +171,10 @@ export default function OpenPositionStepForm({
                 <Input
                   placeholder="Experience"
                   {...register(`openPositions.${index}.experienceRequirement`)}
-                  validationMessage={errors?.openPositions?.[index]?.experienceRequirement?.message}
+                  validationMessage={
+                    errors?.openPositions?.[index]?.experienceRequirement
+                      ?.message
+                  }
                 />
               }
             />
@@ -154,7 +184,10 @@ export default function OpenPositionStepForm({
                 <Input
                   placeholder="Education"
                   {...register(`openPositions.${index}.educationRequirement`)}
-                  validationMessage={errors?.openPositions?.[index]?.educationRequirement?.message}
+                  validationMessage={
+                    errors?.openPositions?.[index]?.educationRequirement
+                      ?.message
+                  }
                 />
               }
             />
@@ -168,12 +201,16 @@ export default function OpenPositionStepForm({
                 <Input
                   placeholder="Salary"
                   {...register(`openPositions.${index}.salary`)}
-                  validationMessage={errors?.openPositions?.[index]?.salary?.message}
+                  validationMessage={
+                    errors?.openPositions?.[index]?.salary?.message
+                  }
                 />
               }
             />
             <div className="flex flex-col gap-2">
-              <TypographyMuted className="text-xs">Deadline Date</TypographyMuted>
+              <TypographyMuted className="text-xs">
+                Deadline Date
+              </TypographyMuted>
               <Controller
                 control={control}
                 name={`openPositions.${index}.deadlineDate`}
@@ -181,36 +218,56 @@ export default function OpenPositionStepForm({
                   <DatePicker
                     placeholder="Deadline"
                     date={field.value ? new Date(field.value) : undefined}
-                    onDateChange={(date) => field.onChange(date ? new Date(date) : "")}
+                    onDateChange={(date) =>
+                      field.onChange(date ? new Date(date) : "")
+                    }
                   />
                 )}
               />
-              <ErrorMessage>{errors?.openPositions?.[index]?.deadlineDate?.message}</ErrorMessage>
+              <ErrorMessage>
+                {errors?.openPositions?.[index]?.deadlineDate?.message}
+              </ErrorMessage>
             </div>
           </div>
 
           {/* Skill Tags + Add Skill */}
           <div className="w-full flex flex-col gap-2">
-            <TypographyMuted className="text-xs">Skills Required</TypographyMuted>
+            <TypographyMuted className="text-xs">
+              Skills Required
+            </TypographyMuted>
             <div className="flex flex-wrap gap-3">
-              {(getValues?.(`openPositions.${index}.skills`) || []).map((skill, i) => (
-                <div key={i} className="flex items-center gap-3 py-2 px-3 rounded-3xl bg-muted">
-                  <TypographyMuted className="text-xs">{skill}</TypographyMuted>
-                  <LucideXCircle
-                    className="text-muted-foreground cursor-pointer"
-                    width="18px"
-                    onClick={() => removeSkill(skill, index)}
-                  />
-                </div>
-              ))}
+              {(getValues?.(`openPositions.${index}.skills`) || []).map(
+                (skill, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-3 py-2 px-3 rounded-3xl bg-muted"
+                  >
+                    <TypographyMuted className="text-xs">
+                      {skill}
+                    </TypographyMuted>
+                    <LucideXCircle
+                      className="text-muted-foreground cursor-pointer"
+                      width="18px"
+                      onClick={() => removeSkill(skill, index)}
+                    />
+                  </div>
+                )
+              )}
             </div>
-            <Popover open={openPopOvers[index]} onOpenChange={(state) => {
-              const updatedState = [...openPopOvers];
-              updatedState[index] = state;
-              setOpenPopOvers(updatedState);
-            }}>
+            <Popover
+              open={openPopOvers[index]}
+              onOpenChange={(state) => {
+                const updatedState = [...openPopOvers];
+                updatedState[index] = state;
+                setOpenPopOvers(updatedState);
+              }}
+            >
               <PopoverTrigger asChild>
-                <Button variant="secondary" size="sm" className="text-xs w-full">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="text-xs w-full"
+                >
                   Add skill
                   <LucidePlus size={14} />
                 </Button>
@@ -222,11 +279,17 @@ export default function OpenPositionStepForm({
                   onChange={(e) => setSkillInput(e.target.value)}
                 />
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={() => setOpenPopOvers((prevState) => {
-                    const updatedState = [...prevState];
-                    updatedState[index] = false;
-                    return updatedState;
-                  })}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setOpenPopOvers((prevState) => {
+                        const updatedState = [...prevState];
+                        updatedState[index] = false;
+                        return updatedState;
+                      })
+                    }
+                  >
                     Cancel
                   </Button>
                   <Button size="sm" onClick={() => addSkill(index)}>
@@ -235,14 +298,21 @@ export default function OpenPositionStepForm({
                 </div>
               </PopoverContent>
             </Popover>
-            <ErrorMessage>{errors!.openPositions?.[index]?.skills?.message}</ErrorMessage>
+            <ErrorMessage>
+              {errors!.openPositions?.[index]?.skills?.message}
+            </ErrorMessage>
           </div>
         </Card>
       ))}
 
       {/* Add More Button */}
       <div className="w-full flex justify-end">
-        <Button variant="secondary" size="sm" onClick={addOpenPosition} type="button">
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={addOpenPosition}
+          type="button"
+        >
           Add More
           <LucidePlus size={14} />
         </Button>

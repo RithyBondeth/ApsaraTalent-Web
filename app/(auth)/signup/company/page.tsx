@@ -45,6 +45,7 @@ export default function CompanySignup() {
           educationRequirement: "",
           skills: [],
           salary: "",
+          types: "",
           deadlineDate: "" as unknown as Date,
         },
       ],
@@ -85,8 +86,35 @@ export default function CompanySignup() {
       if (step === totalSteps) {
         handleSubmit(async (data) => {
           if(!basicSignupData) return;
-          console.log("Final Data:", data);
-          router.push("/feed");
+          
+          // const companyId = await cmpSignup.signup({
+          //   email: basicSignupData.email!,
+          //   password: basicSignupData.password!,
+          //   name: data.basicInfo.name,
+          //   description: data.basicInfo.description,
+          //   phone: basicSignupData.phone!,
+          //   industry: data.basicInfo.industry,
+          //   location: data.basicInfo.location,
+          //   companySize: Number(data.basicInfo.companySize),
+          //   foundedYear: Number(data.basicInfo.foundedYear),
+          //   openPositions: data.openPositions?.map((job) => ({
+              
+          //     title: job.title,
+          //     description: job.description,
+          //     type: '',
+          //     experience: job.experienceRequirement,
+          //     education: job.educationRequirement,
+          //     skills: job.skills,
+          //     salary: job.salary,
+          //     postedDate: new Date().toISOString(),
+          //     deadlineDate: job.deadlineDate.toISOString()
+          //   })),
+          //   values: data.benefitsAndValues.values.map((value, index) => ({ id: index + 1, label: value })),
+          //   benefits: data.benefitsAndValues.benefits.map((benefit, index) => ({ id: index + 1, label: benefit })),
+          //   careerScopes: data.careerScopes.map(cs => ({ id: crypto.randomUUID(), name: cs, description: "" })),
+          //   availableTimes: ["FULL_TIME"],
+          //   socials: []
+          // }) 
         })();
       } else {
         setStep((prev) => prev + 1);

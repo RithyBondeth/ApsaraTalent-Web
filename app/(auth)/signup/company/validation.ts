@@ -23,6 +23,7 @@ export const openPositionStepSchema = z.object({
           educationRequirement: textValidation("Education requirement", 100),
           skills: z.array(z.string()).min(1, { message: "At least one skill is required" }),
           salary: textValidation("Salary", 100),
+          types: textValidation("Type", 100),
           deadlineDate: dateValidation("Deadline"),
         })
     )

@@ -255,6 +255,8 @@ export default function EmployeeSignup() {
     uploadCoverLetter.uploadCoverLetter,
   ]);
 
+  useEffect(() => console.log(basicSignupData), [basicSignupData]);
+
   return (
     <div className="h-[80%] w-[85%] flex flex-col items-start gap-3 tablet-lg:w-full tablet-lg:p-5">
       {/* Back to main signup page */}
