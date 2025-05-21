@@ -11,7 +11,7 @@ import {
   LucideLockKeyhole,
   LucideMail,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -23,11 +23,9 @@ import {
 import { useRouter } from "next/navigation";
 import LogoComponent from "@/components/utils/logo";
 import { useThemeStore } from "@/stores/theme-store";
-import { TUserRole } from "@/utils/types/role.type";
 import {
   genderConstant,
   locationConstant,
-  userRoleConstant,
 } from "@/utils/constants/app.constant";
 import { TGender } from "@/utils/types/gender.type";
 import { useForm, FieldErrors } from "react-hook-form";
@@ -41,16 +39,11 @@ import {
   TBasicSignupEmployeeSchema,
   TBasicSignupCompanySchema,
 } from "./validation";
-import { companySignupSchema } from "./company/validation";
 
 export default function SignupPage() {
-  const [selectedRole, setSelectedRole] = useState<TUserRole | null>(null);
-  const [selectedLocation, setSelectionLocation] = useState<TLocations | null>(
-    null
-  );
+  const [selectedLocation, setSelectionLocation] = useState<TLocations | null>(null);
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
-  const [confirmPassVisibility, setConfirmPassVisibility] =
-    useState<boolean>(false);
+  const [confirmPassVisibility, setConfirmPassVisibility] = useState<boolean>(false);
   const router = useRouter();
   const [selectedGender, setSelectedGender] = useState<TGender | null>(null);
   const { theme } = useThemeStore();
@@ -81,16 +74,6 @@ export default function SignupPage() {
     setBasicSignupData(data);
     router.push("signup/company");
   };
-
-  useEffect(() => {
-    console.log(basicSignupData?.selectedRole);
-    console.log(cmpForm.formState.errors);
-    console.log(empForm.formState.errors);
-  }, [
-    basicSignupData?.selectedRole,
-    cmpForm.formState.errors,
-    empForm.formState.errors,
-  ]);
 
   return (
     <div className="size-[70%] flex flex-col items-start justify-center gap-3 tablet-sm:w-[90%]">
