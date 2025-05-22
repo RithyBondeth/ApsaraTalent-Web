@@ -11,7 +11,7 @@ export interface ICompany {
     phone: string;
     images?: IImage[];
     openPositions: IJobPosition[];
-    availableTimes: string[];
+    availableTimes?: string[];
     values: IValues[];
     benefits: IBenefits[];
     careerScopes: ICareerScopes[];
@@ -37,7 +37,7 @@ export interface ICareerScopes {
 }
 
 export interface IJobPosition {
-    id: string;
+    id?: string;
     title: string;
     description: string;
     salary: string;
@@ -45,7 +45,7 @@ export interface IJobPosition {
     experience: string;
     education: string;
     skills: string[];
-    postedDate: string;
+    postedDate?: string;
     deadlineDate: string;
 }
 
