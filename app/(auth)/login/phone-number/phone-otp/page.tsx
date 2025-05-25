@@ -11,7 +11,7 @@ export default function PhoneOTPPage() {
     return (
         <div className="h-screen w-screen flex items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
         <div className="h-screen w-1/2 flex justify-center items-center bg-primary-foreground tablet-md:h-fit">
-            <div className="h-full w-[70%] flex flex-col items-stretch gap-3 tablet-md:w-[90%] tablet-md:py-10">
+            <div className="w-[70%] flex flex-col items-stretch gap-3 tablet-md:w-[90%] tablet-md:py-10">
                 {/* Title Section */}
                 <div className="mb-5">
                     <TypographyH2 className="phone-xl:text-2xl">OTP Verification</TypographyH2>

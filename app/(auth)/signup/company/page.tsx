@@ -22,7 +22,6 @@ import { useUploadCompanyAvatarStore } from "@/stores/apis/company/upload-cmp-av
 import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cover.store";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { ClipLoader } from "react-spinners";
-import { error } from "console";
 import { ToastAction } from "@/components/ui/toast";
 
 export default function CompanySignup() {
@@ -209,7 +208,7 @@ export default function CompanySignup() {
       }
     })
   }, [
-    
+
   ]);
 
   return (
