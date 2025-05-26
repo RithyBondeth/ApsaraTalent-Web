@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import LogoComponent from "@/components/utils/logo";
-import { useThemeStore } from "@/stores/theme-store";
+import { useThemeStore } from "@/stores/themes/theme-store";
 import {
   genderConstant,
   locationConstant,
@@ -31,7 +31,7 @@ import { TGender } from "@/utils/types/gender.type";
 import { useForm, FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ErrorMessage from "@/components/utils/error-message";
-import { useBasicSignupDataStore } from "@/stores/apis/auth/basic-signup-data.store";
+import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
 import { TLocations } from "@/utils/types/location.type";
 import {
   basicSignupEmployeeSchema,

@@ -12,16 +12,22 @@ import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { phoneLoginSchema, TPhoneLoginForm } from "./validation";
+import { useRouter } from "next/navigation";
+import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 
 export default function PhoneNumberPage() {
     const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
+    const router = useRouter();
+    const { setBasicPhoneSignupData } = useBasicPhoneSignupDataStore();
+    
 
     const { handleSubmit, register, formState: { errors } } = useForm<TPhoneLoginForm>({
         resolver: zodResolver(phoneLoginSchema)
     });
 
     const onSubmit = (data: TPhoneLoginForm) => {
-        console.log(data);
+        setBasicPhoneSignupData({ phone: data.phone, password: data.password });
+        router.push('/signup/option');
     }
 
    return (

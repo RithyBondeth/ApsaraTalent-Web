@@ -31,7 +31,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useThemeStore } from '@/stores/theme-store'
+import { useThemeStore } from '@/stores/themes/theme-store'
 import { useTheme } from 'next-themes'
 import { setCookie } from 'cookies-next/client'
 import { useEffect } from "react";

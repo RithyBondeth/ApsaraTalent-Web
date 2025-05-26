@@ -91,7 +91,7 @@ export const useCompanySignupStore = create<TCompanySignupState>()((set) => ({
       } else {
         set({
           loading: false,
-          error: "An error occurred while signing up as company",
+          error: "An error occurred while signing up as company.",
         });
       }
     }

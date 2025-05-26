@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState, useMemo } from "react";
 import { loadFull } from "tsparticles";
 import { Engine, IOptions } from "tsparticles-engine";
 import Particles from "react-tsparticles";
-import { useThemeStore } from "@/stores/theme-store";
+import { useThemeStore } from "@/stores/themes/theme-store";
 
 const ParticlesBackground = () => {
   const { theme, systemTheme } = useThemeStore();

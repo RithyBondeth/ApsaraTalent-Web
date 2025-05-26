@@ -1,7 +1,7 @@
 "use client";
 
 import { ThemeProvider as NextThemesProvider } from "next-themes";
-import { useThemeStore } from "@/stores/theme-store";
+import { useThemeStore } from "@/stores/themes/theme-store";
 import { useEffect, useState } from "react";
 
 export function ThemeProviderClient({

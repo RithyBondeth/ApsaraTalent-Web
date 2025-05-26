@@ -5,7 +5,7 @@ import LogoComponent from "../utils/logo";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { LucideMoon, LucideSun } from "lucide-react";
-import { useThemeStore } from "@/stores/theme-store";
+import { useThemeStore } from "@/stores/themes/theme-store";
 import { useTheme } from "next-themes";
 import { useEffect } from "react";
 import { setCookie } from "cookies-next";

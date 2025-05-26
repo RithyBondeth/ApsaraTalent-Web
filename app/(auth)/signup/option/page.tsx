@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
-import { useBasicSignupDataStore } from "@/stores/apis/auth/basic-signup-data.store";
+import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
 import { userRoleConstant } from "@/utils/constants/app.constant";
 import { TUserRole } from "@/utils/types/role.type";
 import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
@@ -13,17 +13,24 @@ import { useForm } from "react-hook-form";
 import { signupOptionSchema, TSignupOptionSchema } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ErrorMessage from "@/components/utils/error-message";
+import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 
 export default function SingUpOption() {
     const [selectedRole, setSelectedRole] = useState<TUserRole | null>(null);
     const router = useRouter();
     const { setBasicSignupData } = useBasicSignupDataStore();
+    const { basicPhoneSignupData, setBasicPhoneSignupData } = useBasicPhoneSignupDataStore();
     const { handleSubmit, setValue, trigger, register, formState: { errors } } = useForm<TSignupOptionSchema>({
         resolver: zodResolver(signupOptionSchema)
     });
     const onSubmit = (data: TSignupOptionSchema) => {
-        setBasicSignupData({ selectedRole: data.selectedRole });
-        router.push('/signup');
+        if(basicPhoneSignupData) {
+            setBasicPhoneSignupData({ ...basicPhoneSignupData, role: data.selectedRole });
+            router.push(`${data.selectedRole}`);
+        } else {
+            setBasicSignupData({ selectedRole: data.selectedRole });
+            router.push('/signup');
+        }
     }
 
     return (

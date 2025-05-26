@@ -19,7 +19,7 @@ import { employeeSignUpSchema, TEmployeeSignUp } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import EmployeeCareerScopeStepForm from "@/components/employee/employee-signup-form/career-scope-step";
 import AvatarStepForm from "@/components/employee/employee-signup-form/avatar-step";
-import { useBasicSignupDataStore } from "@/stores/apis/auth/basic-signup-data.store";
+import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
 import { useEmployeeSignupStore } from "@/stores/apis/auth/employee-signup.store";
 import { TGender } from "@/utils/types/gender.type";
 import { useToast } from "@/hooks/use-toast";
@@ -29,12 +29,14 @@ import { ToastAction } from "@/components/ui/toast";
 import { useUploadEmployeeAvatarStore } from "@/stores/apis/employee/upload-emp-avatar.store";
 import { useUploadEmployeeResumeStore } from "@/stores/apis/employee/upload-emp-resume.store";
 import { useUploadEmployeeCoverLetter } from "@/stores/apis/employee/upload-emp-coverletter.store";
+import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 
 export default function EmployeeSignup() {
   const router = useRouter();
   const [step, setStep] = useState<number>(1);
   const totalSteps = 6;
   const { basicSignupData } = useBasicSignupDataStore();
+  const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
   const { toast } = useToast();
 
   const empSignup = useEmployeeSignupStore();
@@ -96,9 +98,8 @@ export default function EmployeeSignup() {
 
     if (isValid) {
       if (step === totalSteps) {
-        handleSubmit(async (data) => {
-          if (!basicSignupData) return;
-
+        handleSubmit(async (data) => {      
+          if (basicSignupData) {
           const employeeId = await empSignup.signup({
             email: basicSignupData.email!,
             password: basicSignupData.password!,
@@ -170,6 +171,82 @@ export default function EmployeeSignup() {
             accessToken: empSignup.accessToken,
             refreshToken: empSignup.refreshToken,
           });
+        }
+
+        if(basicPhoneSignupData) {
+          const employeeId = await empSignup.signup({
+            email: "",
+            password: basicPhoneSignupData.password!,
+            firstname: "",
+            lastname: "",
+            username: "",
+            gender: "male",
+            job: data.profession.job,
+            yearsOfExperience: data.profession.yearOfExperience,
+            availability: data.profession.availability,
+            description: data.profession.description,
+            location: "",
+            phone: basicPhoneSignupData.phone!,
+            educations: data.educations.map((edu) => ({
+              school: edu.school,
+              degree: edu.degree,
+              year: new Date(edu.year).toISOString(),
+            })),
+            experiences: data.experience.map((exp) => ({
+              title: exp.title,
+              description: exp.description,
+              startDate: new Date(exp.startDate).toISOString(),
+              endDate: new Date(exp.endDate).toISOString(),
+            })),
+            skills: data.skillAndReference.skills.map((skill) => ({
+              name: skill,
+              description: skill,
+            })),
+            careerScopes: data.careerScopes.map((cs) => ({
+              name: cs,
+              description: cs,
+            })),
+            socials: [],
+          });
+
+          if (!employeeId) {
+            console.error("Employee ID not found after signup");
+            return;
+          }
+
+          // Upload files in parallel
+          const uploadTasks = [];
+
+          if (data.avatar instanceof File)
+            uploadTasks.push(
+              uploadAvatar.uploadAvatar(employeeId, data.avatar)
+            );
+
+          if (data.skillAndReference.resume instanceof File)
+            uploadTasks.push(
+              uploadResume.uploadResume(
+                employeeId,
+                data.skillAndReference.resume
+              )
+            );
+
+          if (data.skillAndReference.coverLetter instanceof File)
+            uploadTasks.push(
+              uploadCoverLetter.uploadCoverLetter(
+                employeeId,
+                data.skillAndReference.coverLetter
+              )
+            );
+
+          await Promise.all(uploadTasks);
+          setUploadsComplete(true);
+
+          console.log({
+            accessToken: empSignup.accessToken,
+            refreshToken: empSignup.refreshToken,
+          });
+        }
+        
         })();
       } else {
         setStep((prev) => prev + 1);
@@ -255,7 +332,10 @@ export default function EmployeeSignup() {
     uploadCoverLetter.uploadCoverLetter,
   ]);
 
-  useEffect(() => console.log(basicSignupData), [basicSignupData]);
+  useEffect(() => {
+    console.log("Basic Signup Data: ", basicSignupData);
+    console.log("Basic Phone Signup Data: ", basicPhoneSignupData);
+  }, [basicSignupData, basicPhoneSignupData]);
 
   return (
     <div className="h-[80%] w-[85%] flex flex-col items-start gap-3 tablet-lg:w-full tablet-lg:p-5">
@@ -263,7 +343,7 @@ export default function EmployeeSignup() {
       <Button
         className="absolute top-5 left-5"
         variant="outline"
-        onClick={() => router.push("/signup")}
+        onClick={() => router.push("/signup/option")}
       >
         <LucideArrowLeft />
       </Button>
