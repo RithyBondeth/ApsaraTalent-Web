@@ -35,13 +35,13 @@ export const useLoginStore = create<TLoginState>((set) => ({
   error: null,
   rememberMe: false,
 
-  login: async (email: string, password: string, rememberMe: boolean) => {
+  login: async (identifier: string, password: string, rememberMe: boolean) => {
     set({ loading: true, error: null });
 
     try {
       const response = await axios.post(API_AUTH_LOGIN_URL, {
-        email,
-        password,
+        identifier: identifier,
+        password: password,
       });
 
       const { accessToken, refreshToken, message } = response.data;

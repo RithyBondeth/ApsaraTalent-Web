@@ -53,11 +53,6 @@ function LoginPage() {
 
   const onSubmit = async (data: TLoginForm) => {
     await login(data.email, data.password, data.rememberMe!);
-    console.log({
-      message: message,
-      accessToken: accessToken,
-      refreshToken: refreshToken,
-    });
   };
 
   useEffect(() => {
@@ -69,7 +64,7 @@ function LoginPage() {
         </div>,
         duration: 1000,
       });
-      router.push("/feed")
+      router.push("/feed");
     }
 
     if (loading)
