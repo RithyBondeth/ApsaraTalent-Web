@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 type TBasicPhoneSignupData = {
     phone?: string;
-    password?: string;  
+    rememberMe?: boolean,
     role?: string; 
 };
 
