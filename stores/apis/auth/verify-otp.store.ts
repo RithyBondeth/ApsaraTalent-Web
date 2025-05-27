@@ -1,6 +1,7 @@
 import { API_AUTH_VERIFY_OTP_URL } from "@/utils/constants/apis/auth_url";
 import axios from "axios";
 import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 type TVerifyOTPResponse = {
   message: string | null;
@@ -11,7 +12,9 @@ type TVerifyOTPResponse = {
 type TVerifyOTPStoreState = TVerifyOTPResponse & {
   loading: boolean;
   error: string | null;
-  verifyOtp: (phone: string, otpCode: string) => Promise<void>;
+  rememberMe: boolean;
+  verifyOtp: (phone: string, otpCode: string, rememberMe: boolean) => Promise<void>;
+  clearToken: () => void;
 };
 
 export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
@@ -20,7 +23,8 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
   message: null,
   accessToken: null,
   refreshToken: null,
-  verifyOtp: async (phone: string, otpCode: string) => {
+  rememberMe: false,
+  verifyOtp: async (phone: string, otpCode: string, rememberMe: boolean) => {
     set({ loading: true, error: null });
 
     try {
@@ -32,11 +36,25 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
         }
       );
 
+      if(rememberMe) 
+        useLocalVerifyOTPStore.setState({
+          accessToken: response.data.accessToken,
+          refreshToken: response.data.refreshToken,
+          message: response.data.message,
+        });
+      else 
+        useSessionVerifyOTPStore.setState({
+          accessToken: response.data.accessToken,
+          refreshToken: response.data.refreshToken,
+          message: response.data.message,
+        });
+
       set({
         loading: false,
         accessToken: response.data.accessToken,
         refreshToken: response.data.refreshToken,
         message: response.data.message,
+        rememberMe: rememberMe,
       });
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -54,4 +72,42 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
       }
     }
   },
+  clearToken: () => {
+    localStorage.removeItem("VerifyOTPStore-local");
+    sessionStorage.removeItem("VerifyOTPStore-session");
+    set({
+      accessToken: null,
+      refreshToken: null,
+      message: null,
+      rememberMe: false,
+    });
+  },
 }));
+
+export const useLocalVerifyOTPStore = create<TVerifyOTPResponse>()(
+  persist(
+    (set) => ({
+      accessToken: null,
+      refreshToken: null,
+      message: null,
+    }),
+    {
+      name: "VerifyOTPStore-local",
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
+
+export const useSessionVerifyOTPStore = create<TVerifyOTPResponse>()(
+  persist(
+    (set) => ({
+      accessToken: null,
+      refreshToken: null,
+      message: null,
+    }),
+    {
+      name: "VerifyOTPStore-session",
+      storage: createJSONStorage(() => sessionStorage),
+    }
+  )
+);
