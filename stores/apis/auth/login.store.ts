@@ -1,5 +1,6 @@
 import { API_AUTH_LOGIN_URL } from "@/utils/constants/apis/auth_url";
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 import axios from "axios";
 
 type TLoginResponse = {
@@ -11,9 +12,11 @@ type TLoginResponse = {
 type TLoginState = TLoginResponse & {
   loading: boolean;
   error: string | null;
+  rememberMe: boolean;
   login: (
     email: string,
     password: string,
+    rememberMe: boolean
   ) => Promise<void>;
   clearToken: () => void;
 };
@@ -30,7 +33,8 @@ export const useLoginStore = create<TLoginState>((set) => ({
   message: null,
   loading: false,
   error: null,
-  login: async (identifier: string, password: string) => {
+  rememberMe: false,
+  login: async (identifier: string, password: string, rememberMe: boolean) => {
     set({ loading: true, error: null });
 
     try {
@@ -38,15 +42,21 @@ export const useLoginStore = create<TLoginState>((set) => ({
         identifier: identifier,
         password: password,
       });
-
+      console.log("Verify OTP Response: ", response);
       const { accessToken, refreshToken, message } = response.data;
 
+      if (rememberMe) 
+        useLocalLoginStore.setState({ accessToken, refreshToken, message });
+      else 
+        useSessionLoginStore.setState({ accessToken, refreshToken, message });
+      
       set({
         accessToken,
         refreshToken,
         message,
         loading: false,
         error: null,
+        rememberMe: rememberMe,
       });
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -71,6 +81,35 @@ export const useLoginStore = create<TLoginState>((set) => ({
       accessToken: null,
       refreshToken: null,
       message: null,
+      rememberMe: false,
     });
   },
 }));
+
+export const useLocalLoginStore = create<TLoginStoreState>()(
+  persist(
+    (set) => ({
+      accessToken: null,
+      refreshToken: null,
+      message: null,
+    }),
+    {
+      name: "LoginStore-local",
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
+
+export const useSessionLoginStore = create<TLoginStoreState>()(
+  persist(
+    (set) => ({
+      accessToken: null,
+      refreshToken: null,
+      message: null,
+    }),
+    {
+      name: "LoginStore-session",
+      storage: createJSONStorage(() => sessionStorage),
+    }
+  )
+);

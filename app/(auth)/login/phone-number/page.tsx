@@ -14,11 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { phoneLoginSchema, TPhoneLoginForm } from "./validation";
 import { useRouter } from "next/navigation";
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
-import {
-  useLocalLoginOTPStore,
-  useLoginOTPStore,
-  useSessionLoginOTPStore,
-} from "@/stores/apis/auth/login-otp.store";
+import { useLoginOTPStore } from "@/stores/apis/auth/login-otp.store";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { ClipLoader } from "react-spinners";
@@ -42,9 +38,12 @@ export default function PhoneNumberPage() {
   });
 
   const onSubmit = async (data: TPhoneLoginForm) => {
-    setBasicPhoneSignupData(data);
+    setBasicPhoneSignupData({
+        phone: data.phone,
+        rememberMe: data.rememberMe
+    });
     const phone = data.phone.replace("0", "+855");
-    await loginOtp(phone, data.rememberMe!);
+    await loginOtp(phone);
   };
 
   useEffect(() => {
@@ -53,14 +52,12 @@ export default function PhoneNumberPage() {
         description: (
           <div className="flex items-center gap-2">
             <LucideCheck />
-            <TypographySmall className="font-medium">
-              {message}
-            </TypographySmall>
+            <TypographySmall className="font-medium">{message}</TypographySmall>
           </div>
         ),
         duration: 1000,
       });
-      router.replace('/login/phone-number/phone-otp');
+      router.replace("/login/phone-number/phone-otp");
     }
 
     if (loading)
@@ -93,20 +90,6 @@ export default function PhoneNumberPage() {
         ),
       });
   }, [error, loading, isSuccess, message]);
-
-  useEffect(() => {
-    const local = useLocalLoginOTPStore.getState();
-    const session = useSessionLoginOTPStore.getState();
-    const source = local.message ? local : session;
-
-    if (source.message) {
-      useLoginOTPStore.setState({
-        message: source.message,
-        isSuccess: source.isSuccess,
-        rememberMe: source === local,
-      });
-    }
-  }, []);
 
   return (
     <div className="h-screen w-screen flex justify-between items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">

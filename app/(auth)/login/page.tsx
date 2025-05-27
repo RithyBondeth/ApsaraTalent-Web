@@ -32,7 +32,7 @@ import { useTheme } from "next-themes";
 import { Controller, useForm } from "react-hook-form";
 import { loginSchema, TLoginForm } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLoginStore } from "@/stores/apis/auth/login.store";
+import { useLocalLoginStore, useLoginStore, useSessionLoginStore } from "@/stores/apis/auth/login.store";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { ClipLoader } from "react-spinners";
@@ -52,7 +52,12 @@ function LoginPage() {
     useLoginStore();
 
   const onSubmit = async (data: TLoginForm) => {
-    await login(data.email, data.password);
+    await login(data.email, data.password, data.rememberMe!);
+    console.log({
+      message: message,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    });
   };
 
   useEffect(() => {
@@ -97,6 +102,21 @@ function LoginPage() {
         ),
       });
   }, [accessToken, refreshToken, error, message, loading]);
+
+  useEffect(() => {
+    const local = useLocalLoginStore.getState();
+    const session = useSessionLoginStore.getState();
+    const source = local.accessToken ? local : session;
+  
+    if (source.accessToken) {
+      useLoginStore.setState({
+        accessToken: source.accessToken,
+        refreshToken: source.refreshToken,
+        message: source.message,
+        rememberMe: source === local,
+      });
+    }
+  }, []);
 
   const currentTheme = resolvedTheme || "light";
   const loginImage = currentTheme === "dark" ? loginWhiteSvg : loginBlackSvg;

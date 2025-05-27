@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,16 +14,98 @@ import phoneOTPWhiteSvg from "@/assets/svg/phone-otp-white.svg";
 import Image from "next/image";
 import { Controller, useForm } from "react-hook-form";
 import ErrorMessage from "@/components/utils/error-message";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
+import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
+import {
+  useLocalVerifyOTPStore,
+  useSessionVerifyOTPStore,
+  useVerifyOTPStore,
+} from "@/stores/apis/auth/verify-otp.store";
+import { useEffect } from "react";
+import { LucideCheck, LucideInfo } from "lucide-react";
+import { ClipLoader } from "react-spinners";
+import { ToastAction } from "@/components/ui/toast";
 
 export default function PhoneOTPPage() {
+  const router = useRouter();
+  const { toast } = useToast();
+  const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
+  const { loading, error, message, accessToken, refreshToken, verifyOtp } =
+    useVerifyOTPStore();
+
   const {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<{ otp: string }>();
-  const onSubmit = (data: { otp: string }) => {
-    console.log(data);
+  const onSubmit = async (data: { otp: string }) => {
+    const phone =  basicPhoneSignupData?.phone?.replace('0', '+855')!;
+    await verifyOtp(phone, data.otp, basicPhoneSignupData?.rememberMe!);
   };
+
+  useEffect(() => {
+    if (accessToken && refreshToken) {
+      toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <LucideCheck />
+            <TypographySmall className="font-medium">
+              Logged in successfully
+            </TypographySmall>
+          </div>
+        ),
+        duration: 1000,
+      });
+      router.replace("/feed");
+    }
+
+    if (loading)
+      toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <ClipLoader />
+            <TypographySmall className="font-medium">
+              Verifying in...
+            </TypographySmall>
+          </div>
+        ),
+      });
+
+    if (error)
+      toast({
+        variant: "destructive",
+        description: (
+          <div className="flex flex-row items-center gap-2">
+            <LucideInfo />
+            <TypographySmall className="font-medium leading-normal">
+              {message}
+            </TypographySmall>
+          </div>
+        ),
+        action: (
+          <ToastAction altText="Try again" onClick={() => reset()}>
+            Retry
+          </ToastAction>
+        ),
+      });
+  }, [loading, error, message, accessToken, refreshToken]);
+
+  useEffect(() => {
+    const local = useLocalVerifyOTPStore.getState();
+    const session = useSessionVerifyOTPStore.getState();
+    const source = local.accessToken ? local : session;
+
+    if (source.accessToken) {
+      useVerifyOTPStore.setState({
+        accessToken: source.accessToken,
+        refreshToken: source.refreshToken,
+        message: source.message,
+        rememberMe: source === local,
+      });
+    }
+  }, []);
 
   return (
     <div className="h-screen w-screen flex items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
@@ -40,7 +122,10 @@ export default function PhoneOTPPage() {
           </div>
 
           {/* Form Section */}
-          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-stretch gap-5">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col items-stretch gap-5"
+          >
             <Controller
               name="otp"
               control={control}
@@ -54,7 +139,11 @@ export default function PhoneOTPPage() {
               }}
               render={({ field }) => (
                 <div className="flex flex-col items-start gap-3">
-                  <InputOTP maxLength={6} value={field.value} onChange={field.onChange}>
+                  <InputOTP
+                    maxLength={6}
+                    value={field.value}
+                    onChange={field.onChange}
+                  >
                     <InputOTPGroup>
                       <InputOTPSlot
                         index={0}
@@ -88,7 +177,9 @@ export default function PhoneOTPPage() {
                   <TypographySmall className="text-muted-foreground phone-xl:text-sm">
                     Enter your one time password code here.
                   </TypographySmall>
-                  {errors.otp && <ErrorMessage>{errors.otp.message}</ErrorMessage>}
+                  {errors.otp && (
+                    <ErrorMessage>{errors.otp.message}</ErrorMessage>
+                  )}
                 </div>
               )}
             />
@@ -97,7 +188,12 @@ export default function PhoneOTPPage() {
         </div>
       </div>
       <div className="w-1/2 flex justify-center items-center bg-primary tablet-md:p-10 tablet-md:h-full">
-        <Image src={phoneOTPWhiteSvg} alt="phone-otp" height={undefined} width={600}/>
+        <Image
+          src={phoneOTPWhiteSvg}
+          alt="phone-otp"
+          height={undefined}
+          width={600}
+        />
       </div>
     </div>
   );
