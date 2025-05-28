@@ -11,8 +11,9 @@ type TEmployeeSignupResponse = {
 };
 
 type TEmployeeSignupBody = Omit<IEmployee, 'id'> & {
-  email: string;
-  password: string;
+  email: string | null;
+  password: string | null;
+  authEmail: boolean;
 };
 
 type TEmployeeSignupState = TEmployeeSignupResponse & {
@@ -33,6 +34,7 @@ export const useEmployeeSignupStore = create<TEmployeeSignupState>()((set) => ({
       const response = await axios.post<TEmployeeSignupResponse & { user: IUser }>(
         API_AUTH_SIGNUP_URL.EMPLOYEE,
         {
+          authEmail: body.authEmail,
           email: body.email,
           password: body.password,
           firstname: body.firstname,

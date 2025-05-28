@@ -42,7 +42,13 @@ export default function PhoneOTPPage() {
   } = useForm<{ otp: string }>();
   const onSubmit = async (data: { otp: string }) => {
     const phone =  basicPhoneSignupData?.phone?.replace('0', '+855')!;
-    await verifyOtp(phone, data.otp, basicPhoneSignupData?.rememberMe!);
+    const user = await verifyOtp(phone, data.otp, basicPhoneSignupData?.rememberMe!);
+    
+    if(user.role === 'none' && !user.profileCompleted) {
+      router.push('/signup/option')
+    } else {
+      router.push('/feed');   
+    }
   };
 
   useEffect(() => {

@@ -3,9 +3,9 @@ import { TPlatform } from "@/utils/types/platform.type";
 
 export interface IEmployee {
   id: string;
-  firstname: string;
-  lastname: string;
-  username: string;
+  firstname?: string | null;
+  lastname?: string | null;
+  username?: string | null;
   gender: TGender;
   avatar?: string;
   phone: string;
@@ -13,7 +13,7 @@ export interface IEmployee {
   yearsOfExperience: number;
   availability: string;
   description: string;
-  location: string;
+  location?: string | null;
   resume?: string;
   coverLetter?: string;
   skills: ISkill[];

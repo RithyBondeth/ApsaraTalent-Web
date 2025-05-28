@@ -25,9 +25,11 @@ export default function SingUpOption() {
     });
     const onSubmit = (data: TSignupOptionSchema) => {
         if(basicPhoneSignupData) {
+            console.log("Basic Phone Signup Data: ", { ...basicPhoneSignupData, role: data.selectedRole });
             setBasicPhoneSignupData({ ...basicPhoneSignupData, role: data.selectedRole });
-            router.push(`${data.selectedRole}`);
+            router.push(`/signup/${data.selectedRole}`);
         } else {
+            console.log("Basic Signup Data: ", { selectedRole: data.selectedRole });
             setBasicSignupData({ selectedRole: data.selectedRole });
             router.push('/signup');
         }
@@ -36,7 +38,7 @@ export default function SingUpOption() {
     return (
         <div className="h-[80%] w-[85%] flex flex-col items-center justify-start gap-3 tablet-lg:w-full tablet-lg:p-5">
             <form className="flex flex-col items-start gap-5" onSubmit={handleSubmit(onSubmit)}>
-                <TypographyH2>Who are you looking for?</TypographyH2>
+                <TypographyH2>Who do you wanna be in our platform?</TypographyH2>
                 <div className="w-full flex flex-col items-start gap-2">
                     <Select
                     onValueChange={(value: TUserRole) => {

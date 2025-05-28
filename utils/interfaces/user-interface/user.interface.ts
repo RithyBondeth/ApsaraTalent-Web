@@ -4,7 +4,7 @@ import { IEmployee } from "./employee.interface";
 
 export interface IUser {
     id: string;
-    role: TUserRole;   
+    role: TUserRole; 
     email: string;
     password: string;
     phone?: string | null;
@@ -15,6 +15,7 @@ export interface IUser {
     resetPasswordExpires?: string | null;
     refreshToken?: string | null;
     isEmailVerified?: boolean;
+    profileCompleted?: boolean;
     emailVerificationToken?: string | null;
     isTwoFactorEnabled?: boolean | null;
     twoFactorSecret?: string | null;
