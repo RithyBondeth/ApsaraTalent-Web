@@ -65,7 +65,9 @@ function LoginPage() {
       toast({
         description: <div className="flex items-center gap-2"> 
           <LucideCheck/>
-          <TypographySmall className="font-medium">Logged in successfully</TypographySmall>
+          <TypographySmall className="font-medium leading-relaxed">
+            {message}
+          </TypographySmall>
         </div>,
         duration: 1000,
       });

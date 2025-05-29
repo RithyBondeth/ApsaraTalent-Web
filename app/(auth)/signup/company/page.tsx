@@ -230,7 +230,7 @@ export default function CompanySignup() {
         description: (
           <div className="flex items-center gap-2">
             <LucideCheck />
-            <TypographySmall className="font-medium">
+            <TypographySmall className="font-medium leading-relaxed">
               {cmpSignup.message}
             </TypographySmall>
           </div>

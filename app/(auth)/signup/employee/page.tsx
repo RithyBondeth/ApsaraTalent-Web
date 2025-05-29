@@ -264,7 +264,7 @@ export default function EmployeeSignup() {
         description: (
           <div className="flex items-center gap-2">
             <LucideCheck />
-            <TypographySmall className="font-medium">
+            <TypographySmall className="font-medium leading-relaxed">
               {empSignup.message}
             </TypographySmall>
           </div>

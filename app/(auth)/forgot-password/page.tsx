@@ -84,7 +84,9 @@ export default function ForgotPasswordPage() {
         description: (
           <div className="flex items-center gap-2">
             <LucideCheck />
-            <TypographySmall className="font-medium">{message}</TypographySmall>
+            <TypographySmall className="font-medium leading-relaxed">
+              {message}
+            </TypographySmall>
           </div>
         ),
         duration: 1500,
