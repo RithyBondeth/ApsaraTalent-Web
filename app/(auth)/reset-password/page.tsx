@@ -69,7 +69,7 @@ export default function ResetPasswordPage() {
         description: (
           <div className="flex flex-row items-center gap-2">
             <LucideInfo />
-            <TypographySmall className="font-medium leading-loose">
+            <TypographySmall className="font-medium leading-relaxed">
               {message}
             </TypographySmall>
           </div>
@@ -86,7 +86,7 @@ export default function ResetPasswordPage() {
         description: (
           <div className="flex items-center gap-2">
             <LucideCheck />
-            <TypographySmall className="font-medium">{message}</TypographySmall>
+            <TypographySmall className="font-medium leading-relaxed">{message}</TypographySmall>
           </div>
         ),
         duration: 1500,

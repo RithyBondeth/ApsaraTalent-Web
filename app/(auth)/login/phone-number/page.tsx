@@ -39,8 +39,8 @@ export default function PhoneNumberPage() {
 
   const onSubmit = async (data: TPhoneLoginForm) => {
     setBasicPhoneSignupData({
-        phone: data.phone,
-        rememberMe: data.rememberMe
+      phone: data.phone,
+      rememberMe: data.rememberMe,
     });
     const phone = data.phone.replace("0", "+855");
     await loginOtp(phone);
@@ -52,7 +52,9 @@ export default function PhoneNumberPage() {
         description: (
           <div className="flex items-center gap-2">
             <LucideCheck />
-            <TypographySmall className="font-medium leading-relaxed">{message}</TypographySmall>
+            <TypographySmall className="font-medium leading-relaxed">
+              {message}
+            </TypographySmall>
           </div>
         ),
         duration: 1000,
@@ -78,7 +80,7 @@ export default function PhoneNumberPage() {
         description: (
           <div className="flex flex-row items-center gap-2">
             <LucideInfo />
-            <TypographySmall className="font-medium leading-normal">
+            <TypographySmall className="font-medium leading-relaxed">
               {message}
             </TypographySmall>
           </div>

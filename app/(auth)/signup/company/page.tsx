@@ -96,7 +96,6 @@ export default function CompanySignup() {
       if (step === totalSteps) {
         handleSubmit(async (data) => {
           if (basicSignupData) {
-            console.log("BasicSignupData: true");
             const companyId = await cmpSignup.signup({
               authEmail: true,
               email: basicSignupData.email!,
@@ -153,7 +152,6 @@ export default function CompanySignup() {
           }
 
           if (basicPhoneSignupData) {
-            console.log("BasicPhoneSignupData: true");
             const companyId = await cmpSignup.signup({
               authEmail: false,
               email: null,
@@ -266,7 +264,7 @@ export default function CompanySignup() {
           description: (
             <div className="flex items-center gap-2">
               <LucideInfo />
-              <TypographySmall className="font-medium leading-normal">
+              <TypographySmall className="font-medium leading-relaxed">
                 {message}
               </TypographySmall>
             </div>

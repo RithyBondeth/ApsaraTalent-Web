@@ -73,7 +73,7 @@ export default function PhoneOTPPage() {
           <div className="flex items-center gap-2">
             <ClipLoader />
             <TypographySmall className="font-medium">
-              Verifying in...
+              Verifying your otp code...
             </TypographySmall>
           </div>
         ),
@@ -85,7 +85,7 @@ export default function PhoneOTPPage() {
         description: (
           <div className="flex flex-row items-center gap-2">
             <LucideInfo />
-            <TypographySmall className="font-medium leading-normal">
+            <TypographySmall className="font-medium leading-relaxed">
               {message}
             </TypographySmall>
           </div>

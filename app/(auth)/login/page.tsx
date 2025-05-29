@@ -92,7 +92,7 @@ function LoginPage() {
         description: (
           <div className="flex flex-row items-center gap-2">
             <LucideInfo/>
-            <TypographySmall className="font-medium leading-normal">
+            <TypographySmall className="font-medium leading-relaxed">
               {message}
             </TypographySmall>
           </div>

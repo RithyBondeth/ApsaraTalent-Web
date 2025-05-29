@@ -66,7 +66,7 @@ export default function ForgotPasswordPage() {
         description: (
           <div className="flex flex-row items-center gap-2">
             <LucideInfo />
-            <TypographySmall className="font-medium leading-loose">
+            <TypographySmall className="font-medium leading-relaxed">
               {message}
             </TypographySmall>
           </div>
