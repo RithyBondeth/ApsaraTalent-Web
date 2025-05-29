@@ -231,13 +231,13 @@ export default function CompanySignup() {
           <div className="flex items-center gap-2">
             <LucideCheck />
             <TypographySmall className="font-medium">
-              Registered Successfully
+              {cmpSignup.message}
             </TypographySmall>
           </div>
         ),
         duration: 1000,
       });
-      router.push("/feed");
+      router.replace("/login");
     }
 
     if (cmpSignup.loading || uploadAvatar.loading || uploadCover.loading) {

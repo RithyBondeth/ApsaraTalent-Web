@@ -168,11 +168,6 @@ export default function EmployeeSignup() {
 
           await Promise.all(uploadTasks);
           setUploadsComplete(true);
-
-          console.log({
-            accessToken: empSignup.accessToken,
-            refreshToken: empSignup.refreshToken,
-          });
         }
 
         if(basicPhoneSignupData) {
@@ -244,11 +239,6 @@ export default function EmployeeSignup() {
 
           await Promise.all(uploadTasks);
           setUploadsComplete(true);
-
-          console.log({
-            accessToken: empSignup.accessToken,
-            refreshToken: empSignup.refreshToken,
-          });
         }
         
         })();
@@ -275,13 +265,13 @@ export default function EmployeeSignup() {
           <div className="flex items-center gap-2">
             <LucideCheck />
             <TypographySmall className="font-medium">
-              Registered Successfully
+              {empSignup.message}
             </TypographySmall>
           </div>
         ),
         duration: 1000,
       });
-      router.push("/feed");
+      router.replace('/login');
     }
 
     if (empSignup.loading || uploadAvatar.loading || uploadCoverLetter.loading)

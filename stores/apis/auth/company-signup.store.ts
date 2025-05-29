@@ -76,6 +76,7 @@ export const useCompanySignupStore = create<TCompanySignupState>()((set) => ({
         loading: false,
         accessToken: response.data.accessToken,
         refreshToken: response.data.refreshToken,
+        message: response.data.message,
         error: null,
       });
 

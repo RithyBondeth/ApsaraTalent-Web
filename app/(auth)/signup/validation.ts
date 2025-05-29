@@ -33,7 +33,6 @@ export const basicSignupEmployeeSchema = z
  export const basicSignupCompanySchema = z
   .object({
     phone: khmerPhoneNumberValidation,
-    selectedLocation: selectedValidation("Location"),
     email: emailValidation,
     password: passwordValidation,
     confirmPassword: z.string().min(1, "Confirm password is required"),

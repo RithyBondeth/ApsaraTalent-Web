@@ -58,7 +58,7 @@ export default function PhoneOTPPage() {
           <div className="flex items-center gap-2">
             <LucideCheck />
             <TypographySmall className="font-medium">
-              Logged in successfully
+              {message}
             </TypographySmall>
           </div>
         ),

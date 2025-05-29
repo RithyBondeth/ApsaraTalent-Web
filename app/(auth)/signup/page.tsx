@@ -121,7 +121,7 @@ export default function SignupPage() {
               validationMessage={employeeErrors.username?.message}
             />
           )}
-          <div className="w-full flex flex-col items-start gap-1">
+          {isEmployeeForm && <div className="w-full flex flex-col items-start gap-1">
             <Select
               onValueChange={(value: TLocations) => {
                 setSelectionLocation(value);
@@ -129,10 +129,6 @@ export default function SignupPage() {
                   shouldValidate: true,
                 });
                 empForm.trigger("selectedLocation");
-                cmpForm.setValue("selectedLocation", value, {
-                  shouldValidate: true,
-                });
-                cmpForm.trigger("selectedLocation");
               }}
               value={selectedLocation || ""}
             >
@@ -147,12 +143,8 @@ export default function SignupPage() {
                 ))}
               </SelectContent>
             </Select>
-            <ErrorMessage>
-              {isEmployeeForm
-                ? employeeErrors.selectedLocation?.message
-                : companyErrors.selectedLocation?.message}
-            </ErrorMessage>
-          </div>
+            <ErrorMessage>{employeeErrors.selectedLocation?.message}</ErrorMessage>
+          </div>}
         </div>
         <div className="flex flex-col items-stretch gap-5">
           <div className="flex gap-3 [&>select]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
