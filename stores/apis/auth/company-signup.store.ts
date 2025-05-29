@@ -11,8 +11,9 @@ type TCompanySignupResponse = {
 };
 
 type TCompanySignupBody = Omit<ICompany, 'id'> & {
-  email: string;
-  password: string; 
+  email: string | null;
+  password: string | null;  
+  authEmail: boolean;
 };
 
 type TCompanySignupState = TCompanySignupResponse & {
@@ -33,6 +34,7 @@ export const useCompanySignupStore = create<TCompanySignupState>()((set) => ({
       const response = await axios.post<TCompanySignupResponse & { user: IUser }>(
         API_AUTH_SIGNUP_URL.COMPANY,
         {
+          authEmail: body.authEmail,
           email: body.email,
           password: body.password,
           name: body?.name,
@@ -50,17 +52,15 @@ export const useCompanySignupStore = create<TCompanySignupState>()((set) => ({
             educationRequired: job.education,
             salary: job.salary,
             expireDate: job.deadlineDate,
-            skillsRequired: job.skills,
+            skillsRequired: job.skills.join(", "),
           })),
           benefits: body?.benefits.map((benefit) => ({
             label: benefit.label,
           })),
-          values: body?.values.map((value) => ({
-            label: value,
-          })),
+          values: body?.values,
           careerScopes: body?.careerScopes.map((cs) => ({
             name: cs.name,
-            description: cs.description,
+            description: cs.description ?? "",
           })),
           socials: body?.socials.map((social) => ({
             platform: social.platform,

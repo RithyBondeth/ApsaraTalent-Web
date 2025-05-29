@@ -8,7 +8,12 @@ import OpenPositionStepForm from "@/components/company/company-signup-form/open-
 import { Button } from "@/components/ui/button";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { LucideArrowLeft, LucideArrowRight, LucideCheck, LucideInfo } from "lucide-react";
+import {
+  LucideArrowLeft,
+  LucideArrowRight,
+  LucideCheck,
+  LucideInfo,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -23,12 +28,14 @@ import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cov
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { ClipLoader } from "react-spinners";
 import { ToastAction } from "@/components/ui/toast";
+import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 
 export default function CompanySignup() {
   const router = useRouter();
   const [step, setStep] = useState<number>(1);
   const totalSteps = 6;
   const { basicSignupData } = useBasicSignupDataStore();
+  const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
   const { toast } = useToast();
 
   const cmpSignup = useCompanySignupStore();
@@ -88,58 +95,119 @@ export default function CompanySignup() {
     if (isValid) {
       if (step === totalSteps) {
         handleSubmit(async (data) => {
-          if (!basicSignupData) return;
+          if (basicSignupData) {
+            console.log("BasicSignupData: true");
+            const companyId = await cmpSignup.signup({
+              authEmail: true,
+              email: basicSignupData.email!,
+              password: basicSignupData.password!,
+              name: data.basicInfo.name,
+              description: data.basicInfo.description,
+              phone: basicSignupData.phone!,
+              industry: data.basicInfo.industry,
+              location: data.basicInfo.location,
+              companySize: Number(data.basicInfo.companySize),
+              foundedYear: Number(data.basicInfo.foundedYear),
+              openPositions: data.openPositions?.map((job) => ({
+                title: job.title,
+                description: job.description,
+                type: job.types,
+                experience: job.experienceRequirement,
+                education: job.educationRequirement,
+                skills: job.skills,
+                salary: job.salary,
+                deadlineDate: job.deadlineDate.toISOString(),
+              })),
+              benefits: data.benefitsAndValues.benefits.map((bf) => ({
+                label: bf,
+              })),
+              values: data.benefitsAndValues.values.map((value) => ({
+                label: value,
+              })),
+              careerScopes: data.careerScopes.map((cs) => ({
+                name: cs,
+              })),
+              socials: [],
+            });
 
-          const companyId = await cmpSignup.signup({
-            email: basicSignupData.email!,
-            password: basicSignupData.password!,
-            name: data.basicInfo.name,
-            description: data.basicInfo.description,
-            phone: basicSignupData.phone!,
-            industry: data.basicInfo.industry,
-            location: data.basicInfo.location,
-            companySize: Number(data.basicInfo.companySize),
-            foundedYear: Number(data.basicInfo.foundedYear),
-            openPositions: data.openPositions?.map((job) => ({
-              title: job.title,
-              description: job.description,
-              type: job.types,
-              experience: job.experienceRequirement,
-              education: job.educationRequirement,
-              skills: job.skills,
-              salary: job.salary,
-              deadlineDate: job.deadlineDate.toISOString(),
-            })),
-            benefits: data.benefitsAndValues.benefits.map((bf) => ({
-              label: bf,
-            })),
-            values: data.benefitsAndValues.values.map((value) => ({
-              label: value,
-            })),
-            careerScopes: data.careerScopes.map((cs) => ({
-              name: cs,
-            })),
-            socials: [],
-          });
+            if (!companyId) {
+              console.error("Company ID not found after signup");
+              return;
+            }
 
-          if (!companyId) {
-            console.error("Company ID not found after signup");
-            return;
+            // Upload files in parallel
+            const uploadTasks = [];
+
+            if (data.avatar instanceof File) {
+              uploadTasks.push(
+                uploadAvatar.uploadAvatar(companyId, data.avatar)
+              );
+            }
+
+            if (data.cover instanceof File) {
+              uploadTasks.push(uploadCover.uploadCover(companyId, data.cover));
+            }
+
+            await Promise.all(uploadTasks);
+            setUploadsComplete(true);
           }
 
-          // Upload files in parallel
-          const uploadTasks = [];
+          if (basicPhoneSignupData) {
+            console.log("BasicPhoneSignupData: true");
+            const companyId = await cmpSignup.signup({
+              authEmail: false,
+              email: null,
+              password: null,
+              name: data.basicInfo.description,
+              description: data.basicInfo.description,
+              phone: basicPhoneSignupData.phone!,
+              industry: data.basicInfo.industry,
+              location: data.basicInfo.location,
+              companySize: Number(data.basicInfo.companySize),
+              foundedYear: Number(data.basicInfo.foundedYear),
+              openPositions: data.openPositions?.map((job) => ({
+                title: job.title,
+                description: job.description,
+                type: job.types,
+                experience: job.experienceRequirement,
+                education: job.educationRequirement,
+                skills: job.skills,
+                salary: job.salary,
+                deadlineDate: job.deadlineDate.toISOString(),
+              })),
+              benefits: data.benefitsAndValues.benefits.map((bf) => ({
+                label: bf,
+              })),
+              values: data.benefitsAndValues.values.map((value) => ({
+                label: value,
+              })),
+              careerScopes: data.careerScopes.map((cs) => ({
+                name: cs,
+              })),
+              socials: [],
+            });
 
-          if (data.avatar instanceof File) {
-            uploadTasks.push(uploadAvatar.uploadAvatar(companyId, data.avatar));
+            if (!companyId) {
+              console.error("Company ID not found after signup");
+              return;
+            }
+
+            // Upload files in parallel
+            const uploadTasks = [];
+
+            if (data.avatar instanceof File) {
+              uploadTasks.push(
+                uploadAvatar.uploadAvatar(companyId, data.avatar)
+              );
+            }
+
+            if (data.cover instanceof File) {
+              uploadTasks.push(uploadCover.uploadCover(companyId, data.cover));
+            }
+
+            await Promise.all(uploadTasks);
+            setUploadsComplete(true);
           }
-
-          if (data.cover instanceof File) {
-            uploadTasks.push(uploadCover.uploadCover(companyId, data.cover));
-          }
-
-          await Promise.all(uploadTasks);
-          setUploadsComplete(true);
         })();
       } else {
         setStep((prev) => prev + 1);
@@ -172,7 +240,7 @@ export default function CompanySignup() {
       router.push("/feed");
     }
 
-    if(cmpSignup.loading || uploadAvatar.loading || uploadCover.loading) {
+    if (cmpSignup.loading || uploadAvatar.loading || uploadCover.loading) {
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -192,7 +260,7 @@ export default function CompanySignup() {
     ];
 
     errors.forEach(({ error, message }) => {
-      if(error) {
+      if (error) {
         toast({
           variant: "destructive",
           description: (
@@ -206,10 +274,29 @@ export default function CompanySignup() {
           action: <ToastAction altText="Try again">Retry</ToastAction>,
         });
       }
-    })
+    });
   }, [
-
+    cmpSignup.loading,
+    cmpSignup.error,
+    cmpSignup.message,
+    cmpSignup.refreshToken,
+    cmpSignup.accessToken,
+    cmpSignup.signup,
+    uploadAvatar.loading,
+    uploadAvatar.error,
+    uploadAvatar.message,
+    uploadAvatar.uploadAvatar,
+    uploadCover.loading,
+    uploadCover.error,
+    uploadCover.message,
+    uploadCover.uploadCover,
+    uploadsComplete,
   ]);
+
+  useEffect(() => {
+    console.log("Basic Signup Data: ", basicSignupData);
+    console.log("Basic Phone Signup Data: ", basicPhoneSignupData);
+  }, [basicSignupData, basicPhoneSignupData]);
 
   return (
     <div className="h-[80%] w-[85%] flex flex-col items-start gap-3 tablet-lg:w-full tablet-lg:p-5 tablet-xl:mb-5">

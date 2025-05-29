@@ -326,6 +326,8 @@ export default function EmployeeSignup() {
     uploadAvatar.error,
     empSignup.error,
     uploadCoverLetter.error,
+    uploadCoverLetter.message,
+    uploadResume.message,
     empSignup.message,
     empSignup.accessToken,
     empSignup.refreshToken,
