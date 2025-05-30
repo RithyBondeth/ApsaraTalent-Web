@@ -121,9 +121,9 @@ export default function ForgotPasswordPage() {
               value={inputValue}
               prefix={
                 isEmailInput(inputValue) ? (
-                  <LucideMail />
+                  <LucideMail strokeWidth={"1.3px"}/>
                 ) : isNumberPhoneInput(inputValue) ? (
-                  <LucidePhone />
+                  <LucidePhone strokeWidth={"1.3px"}/>
                 ) : null
               }
               {...register("forgotPassword")}

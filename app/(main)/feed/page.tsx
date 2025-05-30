@@ -14,8 +14,9 @@ import { useRouter } from "next/navigation";
 import CompanyCard from "@/components/company/company-card";
 import { userList } from "@/data/user-data";
 import ImagePopup from "@/components/utils/image-popup";
-import { useGetAllEmployeeStore } from "@/stores/apis/employee/get-all-emp.store";
 import { useLoginStore } from "@/stores/apis/auth/login.store";
+import { useGetAllUsersStore } from "@/stores/apis/users/get-all-user.store";
+import EmployeeCardSkeleton from "@/components/employee/employee-card/skeleton";
 export default function FeedPage() {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -45,7 +46,6 @@ export default function FeedPage() {
     }
 
     if ((e.target as HTMLElement).closest(".dialog-content")) return;
-
     setOpenProfilePopup(true);
   };
 
@@ -57,11 +57,10 @@ export default function FeedPage() {
   }, [openProfilePopup]);
 
   const { accessToken } = useLoginStore();
-  const { error, loading, employeesData, queryEmployee } = useGetAllEmployeeStore();
+  const { users, getAllUsers } = useGetAllUsersStore();
 
   useEffect(() => {
-    queryEmployee(accessToken!);
-    console.log(employeesData);   
+    getAllUsers(); 
   }, []);
 
   return (
@@ -90,7 +89,7 @@ export default function FeedPage() {
 
       {/* Feed Card Section */}
       <div className="w-full grid grid-cols-2 gap-5 tablet-lg:grid-cols-1">
-        {companyList.map((user) => (
+        {/* {companyList.map((user) => (
           <CompanyCard
             key={user.id}
             {...user.company!}
@@ -101,21 +100,23 @@ export default function FeedPage() {
               setCurrentProfileImage(user.company?.avatar!);
             }}
           />
-        ))}
-        {employeeList.map((user) => (
+        ))} */}
+        {(users && users.length > 0) ? users.map((user) => (
           <EmployeeCard
             key={user.id}
             {...user.employee!}
             onSaveClick={() => {}}
             onViewClick={() =>
-              router.push(`/feed/employee/${user.employee?.id}`)
+              router.push(`/feed/employee/${user.id}`)
             }
             onProfileImageClick={(e: React.MouseEvent) => {
               handleClickProfilePopup(e);
               setCurrentProfileImage(user.employee?.avatar!);
             }}
           />
-        ))}
+        )) : (
+          Array.from({ length: 5 }).map((_, index) => <EmployeeCardSkeleton key={index}/>) 
+        )}
       </div>
       {/* Image Popup */}
       <ImagePopup

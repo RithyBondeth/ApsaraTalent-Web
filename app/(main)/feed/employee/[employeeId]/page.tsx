@@ -46,15 +46,16 @@ import React, { useEffect, useRef, useState } from "react";
 import ImagePopup from "@/components/utils/image-popup";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { Input } from "@/components/ui/input";
+import { useGetOneUserStore } from "@/stores/apis/users/get-one-user.store";
 
 export default function EmployeeDetailPage() {
   const params = useParams();
   const id = params.employeeId;
 
-  const employee = userList.filter((user) => user.role === "employee");
-  const employeeList = employee.find(
-    (emp) => emp.employee?.id === id
-  )?.employee;
+  // const employee = userList.filter((user) => user.role === "employee");
+  // const user?.employee?= employee.find(
+  //   (emp) => emp.employee?.id === id
+  // )?.employee;
 
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
   const ignoreNextClick = useRef<boolean>(false);
@@ -113,6 +114,13 @@ export default function EmployeeDetailPage() {
     URL.revokeObjectURL(url); // clean up
   }
 
+  const { loading, error, user, getOneUerByID } = useGetOneUserStore();
+  console.log("ID: ", id);
+
+  useEffect(() => {
+    getOneUerByID('3359ed5c-9ae3-4e74-8b2e-4e6cd5e6bb64');
+  }, [id])
+  
   return (
     <div className="flex flex-col gap-5">
       {/* Personal Information Section */}
@@ -123,34 +131,34 @@ export default function EmployeeDetailPage() {
             rounded="md"
             onClick={handleClickProfilePopup}
           >
-            <AvatarImage src={employeeList?.avatar!} />
+            <AvatarImage src={user?.employee?.avatar!} />
             <AvatarFallback className="uppercase">
-              {!employeeList?.avatar ? (
+              {!user?.employee?.avatar ? (
                 <LucideUser />
               ) : (
-                employeeList.avatar.slice(0, 3)
+                user?.employee?.avatar.slice(0, 3)
               )}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-center gap-1">
             <TypographyH4>
-              {employeeList?.firstname} {employeeList?.lastname}
+              {user?.employee?.firstname} {user?.employee?.lastname}
             </TypographyH4>
-            <TypographyMuted>{employeeList?.job}</TypographyMuted>
+            <TypographyMuted>{user?.employee?.job}</TypographyMuted>
           </div>
         </div>
         <div className="flex flex-col items-start gap-5">
           <div className="flex flex-col items-start gap-2">
             <TypographyMuted>Firstname</TypographyMuted>
-            <IconLabel icon={<LucideUser strokeWidth={"1.5px"}/>} text={employeeList!.firstname} />
+            <IconLabel icon={<LucideUser strokeWidth={"1.5px"}/>} text={user?.employee?.firstname!} />
           </div>
           <div className="flex flex-col items-start gap-2">
             <TypographyMuted>Lastname</TypographyMuted>
-            <IconLabel icon={<LucideUser strokeWidth={"1.5px"}/>} text={employeeList!.lastname} />
+            <IconLabel icon={<LucideUser strokeWidth={"1.5px"}/>} text={user?.employee?.lastname!} />
           </div>
           <div className="flex flex-col items-start gap-2">
             <TypographyMuted>Username</TypographyMuted>
-            <IconLabel icon={<LucideAtSign strokeWidth={"1.5px"}/>} text={employeeList!.username} />
+            <IconLabel icon={<LucideAtSign strokeWidth={"1.5px"}/>} text={user?.employee?.username!} />
           </div>
         </div>
         <div className="flex flex-col items-start gap-5">
@@ -158,21 +166,21 @@ export default function EmployeeDetailPage() {
             <TypographyMuted>Gender</TypographyMuted>
             <IconLabel
               icon={<LucideTransgender strokeWidth={"1.5px"}/>}
-              text={employeeList!.gender.toUpperCase()}
+              text={user?.employee?.gender.toUpperCase()!}
             />
           </div>
           <div className="flex flex-col items-start gap-2">
             <TypographyMuted>Experience</TypographyMuted>
             <IconLabel
               icon={<LucideBriefcaseBusiness strokeWidth={"1.5px"}/>}
-              text={employeeList!.yearsOfExperience.toString()} 
+              text={user?.employee?.yearsOfExperience.toString()!} 
             />
           </div>
           <div className="flex flex-col items-start gap-2">
             <TypographyMuted>Status</TypographyMuted>
             <IconLabel
               icon={<LucideClock strokeWidth={"1.5px"}/>}
-              text={employeeList!.availability}
+              text={user?.employee?.availability!}
             />
           </div>
         </div>
@@ -189,7 +197,7 @@ export default function EmployeeDetailPage() {
             </div>
             <div className="flex flex-col gap-2 border-l-4 border-primary pl-4">
               <TypographySmall className="leading-loose">
-                {employeeList!.description}
+                {user?.employee?.description}
               </TypographySmall>
             </div>
           </div>
@@ -200,7 +208,7 @@ export default function EmployeeDetailPage() {
               <TypographyH4>Education</TypographyH4>
               <Divider />
             </div>
-            {employeeList?.educations.map((item: IEducation) => (
+            {user?.employee?.educations.map((item: IEducation) => (
               <div
                 className="flex flex-col gap-2 border-l-4 border-primary pl-4"
                 key={item.id}
@@ -219,7 +227,7 @@ export default function EmployeeDetailPage() {
               <Divider />
             </div>
             <div className="flex flex-col gap-5">
-              {employeeList?.experiences.map((item: IExperience) => (
+              {user?.employee?.experiences.map((item: IExperience) => (
                 <div
                   className="border-l-4 border-primary pl-4 space-y-2"
                   key={item.id}
@@ -245,7 +253,7 @@ export default function EmployeeDetailPage() {
               <Divider />
             </div>
             <div className="flex flex-wrap gap-3">
-              {employeeList?.skills.map((item: ISkill) => (
+              {user?.employee?.skills.map((item: ISkill) => (
                 <HoverCard key={item.id}>
                   <HoverCardTrigger>
                     <Tag label={item.name} />
@@ -275,7 +283,7 @@ export default function EmployeeDetailPage() {
             <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
               <div className="flex items-center text-muted-foreground gap-1">
                 <LucideFileText strokeWidth={"1.5px"}/>
-                <TypographyMuted>{employeeList?.resume}</TypographyMuted>
+                <TypographyMuted>{user?.employee?.resume}</TypographyMuted>
               </div>
               <div className="flex items-center gap-1">
                 <Link href={resumeUrl} target="_blank">
@@ -295,7 +303,7 @@ export default function EmployeeDetailPage() {
             <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
               <div className="flex items-center text-muted-foreground gap-1">
                 <LucideFileText strokeWidth={"1.5px"}/>
-                <TypographyMuted>{employeeList?.coverLetter}</TypographyMuted>
+                <TypographyMuted>{user?.employee?.coverLetter}</TypographyMuted>
               </div>
               <div className="flex items-center gap-1">
                 <Link href={coverLetterUrl} target="_blank">
@@ -325,21 +333,21 @@ export default function EmployeeDetailPage() {
                     <TypographyMuted>Phone</TypographyMuted>
                     <IconLabel
                         icon={<LucidePhone strokeWidth={"1.5px"}/>}
-                        text={employeeList!.phone}
+                        text={user?.employee?.phone!}
                     />
                 </div>
                 <div className="flex flex-col items-start gap-2">
                     <TypographyMuted>Email</TypographyMuted>
                     <IconLabel
                         icon={<LucideMail strokeWidth={"1.5px"}/>}
-                        text={employee.find((emp) => emp.employee?.id === id)?.email!}
+                        text={user?.email!}
                     />
                 </div>
                 <div className="flex flex-col items-start gap-2">
                     <TypographyMuted>Address</TypographyMuted>
                     <IconLabel
                         icon={<LucideMapPinned strokeWidth={"1.5px"}/>}
-                        text={employeeList!.location}
+                        text={user?.employee?.location!}
                     />
                 </div>
             </div>
@@ -352,7 +360,7 @@ export default function EmployeeDetailPage() {
               <Divider />
             </div>
             <div className="flex flex-wrap gap-3">
-              {employeeList?.socials.map((item: ISocial) => (
+              {user?.employee?.socials.map((item: ISocial) => (
                 <Link
                     key={item.id}
                     href={item.url}
@@ -383,7 +391,7 @@ export default function EmployeeDetailPage() {
       <ImagePopup
         open={openProfilePopup}
         setOpen={setOpenProfilePopup}
-        image={employeeList?.avatar!}
+        image={user?.employee?.avatar!}
       />
     </div>
   );

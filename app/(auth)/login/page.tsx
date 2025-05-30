@@ -193,21 +193,25 @@ function LoginPage() {
           >
             <div className="flex flex-col gap-5">
               <Input
-                prefix={<LucideMail />}
+                prefix={<LucideMail strokeWidth={"1.3px"}/>}
                 placeholder="Email"
                 type="email"
                 {...register("email")}
                 validationMessage={errors.email?.message}
               />
               <Input
-                prefix={<LucideLockKeyhole />}
+                prefix={<LucideLockKeyhole strokeWidth={"1.3px"}/>}
                 suffix={
                   passwordVisibility ? (
-                    <LucideEyeClosed
+                    <LucideEyeClosed 
+                      strokeWidth={"1.3px"}
                       onClick={() => setPasswordVisibility(false)}
                     />
                   ) : (
-                    <LucideEye onClick={() => setPasswordVisibility(true)} />
+                    <LucideEye 
+                      strokeWidth={"1.3px"}
+                      onClick={() => setPasswordVisibility(true)} 
+                    />
                   )
                 }
                 placeholder="Password"
