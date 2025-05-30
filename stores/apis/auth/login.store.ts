@@ -42,7 +42,7 @@ export const useLoginStore = create<TLoginState>((set) => ({
         identifier: identifier,
         password: password,
       });
-      console.log("Verify OTP Response: ", response);
+      console.log("Login Response: ", response);
       const { accessToken, refreshToken, message } = response.data;
 
       if (rememberMe) 

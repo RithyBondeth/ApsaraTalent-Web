@@ -32,11 +32,16 @@ import { useTheme } from "next-themes";
 import { Controller, useForm } from "react-hook-form";
 import { loginSchema, TLoginForm } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLocalLoginStore, useLoginStore, useSessionLoginStore } from "@/stores/apis/auth/login.store";
+import {
+  useLocalLoginStore,
+  useLoginStore,
+  useSessionLoginStore,
+} from "@/stores/apis/auth/login.store";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { ClipLoader } from "react-spinners";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 
 function LoginPage() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
@@ -44,37 +49,41 @@ function LoginPage() {
   const { resolvedTheme } = useTheme();
   const { toast } = useToast();
 
-  const { handleSubmit, register, formState: { errors }, reset, control} = useForm<TLoginForm>({
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+    reset,
+    control,
+  } = useForm<TLoginForm>({
     resolver: zodResolver(loginSchema),
   });
 
   const { accessToken, refreshToken, message, login, error, loading } =
     useLoginStore();
+  const currentUserStore = useGetCurrentUserStore();
 
   const onSubmit = async (data: TLoginForm) => {
     await login(data.email, data.password, data.rememberMe!);
-    console.log({
-      message: message,
-      accessToken: accessToken,
-      refreshToken: refreshToken,
-    });
   };
 
   useEffect(() => {
-    if (accessToken && refreshToken) {
+    if (accessToken && refreshToken && currentUserStore.user) {
       toast({
-        description: <div className="flex items-center gap-2"> 
-          <LucideCheck/>
-          <TypographySmall className="font-medium leading-relaxed">
-            {message}
-          </TypographySmall>
-        </div>,
+        description: (
+          <div className="flex items-center gap-2">
+            <LucideCheck />
+            <TypographySmall className="font-medium leading-relaxed">
+              {message}
+            </TypographySmall>
+          </div>
+        ),
         duration: 1000,
       });
       router.push("/feed");
     }
 
-    if (loading)
+    if (loading || currentUserStore.loading)
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -86,12 +95,12 @@ function LoginPage() {
         ),
       });
 
-    if (error)
+    if (error || currentUserStore.error)
       toast({
         variant: "destructive",
         description: (
           <div className="flex flex-row items-center gap-2">
-            <LucideInfo/>
+            <LucideInfo />
             <TypographySmall className="font-medium leading-relaxed">
               {message}
             </TypographySmall>
@@ -103,13 +112,22 @@ function LoginPage() {
           </ToastAction>
         ),
       });
-  }, [accessToken, refreshToken, error, message, loading]);
+  }, [
+    accessToken,
+    refreshToken,
+    error,
+    message,
+    loading,
+    currentUserStore.loading,
+    currentUserStore.error,
+    currentUserStore.user,
+  ]);
 
   useEffect(() => {
     const local = useLocalLoginStore.getState();
     const session = useSessionLoginStore.getState();
     const source = local.accessToken ? local : session;
-  
+
     if (source.accessToken) {
       useLoginStore.setState({
         accessToken: source.accessToken,
@@ -119,6 +137,12 @@ function LoginPage() {
       });
     }
   }, []);
+
+  useEffect(() => {
+    if (accessToken) {
+      currentUserStore.getCurrentUser(accessToken);
+    }
+  }, [accessToken]);
 
   const currentTheme = resolvedTheme || "light";
   const loginImage = currentTheme === "dark" ? loginWhiteSvg : loginBlackSvg;
@@ -193,24 +217,24 @@ function LoginPage() {
           >
             <div className="flex flex-col gap-5">
               <Input
-                prefix={<LucideMail strokeWidth={"1.3px"}/>}
+                prefix={<LucideMail strokeWidth={"1.3px"} />}
                 placeholder="Email"
                 type="email"
                 {...register("email")}
                 validationMessage={errors.email?.message}
               />
               <Input
-                prefix={<LucideLockKeyhole strokeWidth={"1.3px"}/>}
+                prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
                 suffix={
                   passwordVisibility ? (
-                    <LucideEyeClosed 
+                    <LucideEyeClosed
                       strokeWidth={"1.3px"}
                       onClick={() => setPasswordVisibility(false)}
                     />
                   ) : (
-                    <LucideEye 
+                    <LucideEye
                       strokeWidth={"1.3px"}
-                      onClick={() => setPasswordVisibility(true)} 
+                      onClick={() => setPasswordVisibility(true)}
                     />
                   )
                 }
@@ -241,7 +265,9 @@ function LoginPage() {
                 <Link href="/forgot-password">Forgot Password?</Link>
               </TypographySmall>
             </div>
-            <Button type="submit" disabled={loading}>Login</Button>
+            <Button type="submit" disabled={loading}>
+              Login
+            </Button>
             <div className="flex items-center gap-2 mx-auto">
               <TypographyMuted>Do not have account?</TypographyMuted>
               <Link href="/signup/option">
