@@ -14,30 +14,32 @@ import { useRouter } from "next/navigation";
 import CompanyCard from "@/components/company/company-card";
 import { userList } from "@/data/user-data";
 import ImagePopup from "@/components/utils/image-popup";
-import { useLoginStore } from "@/stores/apis/auth/login.store";
 import { useGetAllUsersStore } from "@/stores/apis/users/get-all-user.store";
 import EmployeeCardSkeleton from "@/components/employee/employee-card/skeleton";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { useLocalLoginStore, useLoginStore, useSessionLoginStore } from "@/stores/apis/auth/login.store";
+import { IUser } from "@/utils/interfaces/user-interface/user.interface";
+
 export default function FeedPage() {
-  const { resolvedTheme } = useTheme();
+
+  // Utils
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
+  useEffect(() =>  setMounted(true), []);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Determine which image to display (avoid SSR issues)
+  // Theme 
+  const { resolvedTheme } = useTheme();
   const currentTheme = mounted ? resolvedTheme : "light";
   const feedImage = currentTheme === "dark" ? feedBlackSvg : feedWhiteSvg;
 
+  // Showing Employee or Company
   const companyList = userList.filter((user) => user.role === "company");
   const employeeList = userList.filter((user) => user.role === "employee");
 
+  // Pop up Dialog
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
   const ignoreNextClick = useRef<boolean>(false);
-  const [currentProfileImage, setCurrentProfileImage] = useState<string | null>(
-    null
-  );
+  const [currentProfileImage, setCurrentProfileImage] = useState<string | null>(null);
 
   const handleClickProfilePopup = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
@@ -56,11 +58,40 @@ export default function FeedPage() {
     }
   }, [openProfilePopup]);
 
-  const { accessToken } = useLoginStore();
+  // API Integration
+  const getCurrentUserStore = useGetCurrentUserStore();  
   const { users, getAllUsers } = useGetAllUsersStore();
+  
+  const currentUserRole = getCurrentUserStore.user?.role;
+  let allUsers: IUser[] = [];
+
+  if (currentUserRole === 'employee') {
+    allUsers = users?.filter((user) => user.role === 'employee') || [];
+  } else {
+    allUsers = users?.filter((user) => user.role === 'company') || [];
+  }
 
   useEffect(() => {
-    getAllUsers(); 
+    getAllUsers();
+  }, []);
+
+  useEffect(() => {
+    const local = useLocalLoginStore.getState();
+    const session = useSessionLoginStore.getState();
+    const source = local.accessToken ? local : session;
+  
+    if (source.accessToken) {
+      // Rehydrate login state
+      useLoginStore.setState({
+        accessToken: source.accessToken,
+        refreshToken: source.refreshToken,
+        message: source.message,
+        rememberMe: source === local,
+      });
+  
+      // Fetch current user
+      getCurrentUserStore.getCurrentUser(source.accessToken);
+    }
   }, []);
 
   return (
@@ -101,7 +132,7 @@ export default function FeedPage() {
             }}
           />
         ))} */}
-        {(users && users.length > 0) ? users.map((user) => (
+        {(allUsers && allUsers.length > 0) ? allUsers.map((user) => (
           <EmployeeCard
             key={user.id}
             {...user.employee!}

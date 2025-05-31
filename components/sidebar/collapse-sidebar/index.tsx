@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -18,7 +18,13 @@ import { SidebarDropdownFooter } from "./sidebar-dropdown-footer";
 import { Separator } from "@/components/ui/separator";
 import { sidebarList } from "@/utils/constants/sidebar.constant";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { userList } from "@/data/user-data";
+import {
+  useLocalLoginStore,
+  useLoginStore,
+  useSessionLoginStore,
+} from "@/stores/apis/auth/login.store";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { SidebarDropdownFooterSkeleton } from "./sidebar-dropdown-footer/skeleton";
 
 export default function CollapseSidebar({
   ...props
@@ -26,17 +32,34 @@ export default function CollapseSidebar({
   const router = useRouter();
   const { open } = useSidebar();
 
-  const employeeList = userList.filter((user) => user.role === "employee");
-  const employee = employeeList[1].employee;
+  const { getCurrentUser, user, loading } = useGetCurrentUserStore();
+  const isEmployee = user?.role === "employee" && user.employee;
+  const isCompany = user?.role === "company" && user.company;
+
+  useEffect(() => {
+    const local = useLocalLoginStore.getState();
+    const session = useSessionLoginStore.getState();
+    const source = local.accessToken ? local : session;
+
+    if (source.accessToken) {
+      useLoginStore.setState({
+        accessToken: source.accessToken,
+        refreshToken: source.refreshToken,
+        message: source.message,
+        rememberMe: source === local,
+      });
+      getCurrentUser(source.accessToken);
+    }
+  }, []);
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader onClick={() => router.push('/feed')}>
+      <SidebarHeader onClick={() => router.push("/feed")}>
         {open ? (
-          <LogoComponent/>
+          <LogoComponent />
         ) : (
           <SidebarMenuButton tooltip="Apsara Talent" className="text-sm">
-            <TypographyP className="!m-0 text-md font-bold">AP</TypographyP>    
+            <TypographyP className="!m-0 text-md font-bold">AP</TypographyP>
           </SidebarMenuButton>
         )}
       </SidebarHeader>
@@ -66,13 +89,25 @@ export default function CollapseSidebar({
       </SidebarContent>
       <Separator />
       <SidebarFooter>
-        <SidebarDropdownFooter
-          user={{
-            name: employee?.firstname + " " + employee?.lastname,
-            email: employeeList[1].email,
-            avatar: employee?.avatar!,
-          }}
-        />
+        {loading || !user ? (
+          <SidebarDropdownFooterSkeleton />
+        ) : (
+          <SidebarDropdownFooter
+            user={{
+              name: isEmployee
+                ? `${user.employee?.username}`
+                : isCompany
+                ? user?.company?.name!
+                : "",
+              email: user?.email! || user?.phone!,
+              avatar: isEmployee
+                ? user.employee?.avatar!
+                : isCompany
+                ? user?.company?.avatar!
+                : "",
+            }}
+          />
+        )}
       </SidebarFooter>
     </Sidebar>
   );

@@ -17,10 +17,10 @@ export default function EmployeeCardSkeleton() {
         </div>
         <div className="flex items-center gap-1">
           <Button disabled className="size-12 rounded-full">
-            <LucideEye className="!size-6 opacity-30" />
+            <LucideEye className="!size-6 opacity-50" />
           </Button>
           <Button disabled className="size-12 rounded-full">
-            <LucideHeartHandshake className="!size-6 opacity-30" />
+            <LucideHeartHandshake className="!size-6 opacity-50" />
           </Button>
         </div>
       </div>
