@@ -17,17 +17,20 @@ import ImagePopup from "@/components/utils/image-popup";
 import { useGetAllUsersStore } from "@/stores/apis/users/get-all-user.store";
 import EmployeeCardSkeleton from "@/components/employee/employee-card/skeleton";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useLocalLoginStore, useLoginStore, useSessionLoginStore } from "@/stores/apis/auth/login.store";
+import {
+  useLocalLoginStore,
+  useLoginStore,
+  useSessionLoginStore,
+} from "@/stores/apis/auth/login.store";
 import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 
 export default function FeedPage() {
-
   // Utils
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
-  useEffect(() =>  setMounted(true), []);
+  useEffect(() => setMounted(true), []);
 
-  // Theme 
+  // Theme
   const { resolvedTheme } = useTheme();
   const currentTheme = mounted ? resolvedTheme : "light";
   const feedImage = currentTheme === "dark" ? feedBlackSvg : feedWhiteSvg;
@@ -35,7 +38,9 @@ export default function FeedPage() {
   // Pop up Dialog
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
   const ignoreNextClick = useRef<boolean>(false);
-  const [currentProfileImage, setCurrentProfileImage] = useState<string | null>(null);
+  const [currentProfileImage, setCurrentProfileImage] = useState<string | null>(
+    null
+  );
 
   const handleClickProfilePopup = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
@@ -55,16 +60,16 @@ export default function FeedPage() {
   }, [openProfilePopup]);
 
   // API Integration
-  const getCurrentUserStore = useGetCurrentUserStore();  
+  const getCurrentUserStore = useGetCurrentUserStore();
   const { users, getAllUsers } = useGetAllUsersStore();
-  
+
   const currentUserRole = getCurrentUserStore.user?.role;
   let allUsers: IUser[] = [];
 
-  if (currentUserRole === 'employee') {
-    allUsers = users?.filter((user) => user.role === 'employee') || [];
+  if (currentUserRole === "employee") {
+    allUsers = users?.filter((user) => user.role === "employee") || [];
   } else {
-    allUsers = users?.filter((user) => user.role === 'company') || [];
+    allUsers = users?.filter((user) => user.role === "company") || [];
   }
 
   useEffect(() => {
@@ -75,19 +80,27 @@ export default function FeedPage() {
     const local = useLocalLoginStore.getState();
     const session = useSessionLoginStore.getState();
     const source = local.accessToken ? local : session;
-  
+
     if (source.accessToken) {
-      // Rehydrate login state
       useLoginStore.setState({
         accessToken: source.accessToken,
         refreshToken: source.refreshToken,
         message: source.message,
         rememberMe: source === local,
       });
-  
-      // Fetch current user
+
+      // Initial fetch
       getCurrentUserStore.getCurrentUser(source.accessToken);
     }
+
+    // Subscribe to accessToken changes
+    const unsub = useLoginStore.subscribe((state) => {
+      if (state.accessToken) {
+        getCurrentUserStore.getCurrentUser(state.accessToken);
+      }
+    });
+
+    return () => unsub(); // Cleanup on unmount
   }, [getCurrentUserStore.getCurrentUser]);
 
   return (
@@ -116,35 +129,39 @@ export default function FeedPage() {
 
       {/* Feed Card Section */}
       <div className="w-full grid grid-cols-2 gap-5 tablet-lg:grid-cols-1">
-        {/* {companyList.map((user) => (
-          <CompanyCard
-            key={user.id}
-            {...user.company!}
-            onViewClick={() => router.push(`feed/company/${user.company?.id}`)}
-            onSaveClick={() => {}}
-            onProfileImageClick={(e: React.MouseEvent) => {
-              handleClickProfilePopup(e);
-              setCurrentProfileImage(user.company?.avatar!);
-            }}
-          />
-        ))} */}
-        {(allUsers && allUsers.length > 0) ? allUsers.map((user) => (
-          <EmployeeCard
-            key={user.id}
-            {...user.employee!}
-            id={user.id}
-            onSaveClick={() => {}}
-            onViewClick={() =>
-              router.push(`/feed/employee/${user.id}`)
-            }
-            onProfileImageClick={(e: React.MouseEvent) => {
-              handleClickProfilePopup(e);
-              setCurrentProfileImage(user.employee?.avatar!);
-            }}
-          />
-        )) : (
-          Array.from({ length: 5 }).map((_, index) => <EmployeeCardSkeleton key={index}/>) 
-        )}
+        {allUsers && allUsers.length > 0
+          ? allUsers.map((user) =>
+              currentUserRole === "company" && user.company ? (
+                <CompanyCard
+                  key={user.id}
+                  {...user.company}
+                  id={user.id}
+                  onViewClick={() =>
+                    router.push(`feed/company/${user.id}`)
+                  }
+                  onSaveClick={() => {}}
+                  onProfileImageClick={(e: React.MouseEvent) => {
+                    handleClickProfilePopup(e);
+                    setCurrentProfileImage(user.company?.avatar!);
+                  }}
+                />
+              ) : user.employee ? (
+                <EmployeeCard
+                  key={user.id}
+                  {...user.employee}
+                  id={user.id}
+                  onSaveClick={() => {}}
+                  onViewClick={() => router.push(`/feed/employee/${user.id}`)}
+                  onProfileImageClick={(e: React.MouseEvent) => {
+                    handleClickProfilePopup(e);
+                    setCurrentProfileImage(user.employee?.avatar!);
+                  }}
+                />
+              ) : null
+            )
+          : Array.from({ length: 6 }).map((_, index) => (
+              <EmployeeCardSkeleton key={`user-skeleton-${index}`} />
+            ))}
       </div>
       {/* Image Popup */}
       <ImagePopup

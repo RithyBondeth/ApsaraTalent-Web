@@ -81,9 +81,9 @@ import EmployeeProfilePageSkeleton from "./skeleton";
 import { useLocalLoginStore, useLoginStore, useSessionLoginStore } from "@/stores/apis/auth/login.store";
 
 export default function EmployeeProfilePage() {
-  // All hooks must be at the top and called in the same order every time
   const { user, loading, getCurrentUser } = useGetCurrentUserStore();
   const employee = user?.employee;
+  
   const { toast } = useToast();
   const form = useForm<TEmployeeProfileForm>({
     resolver: zodResolver(employeeFormSchema),

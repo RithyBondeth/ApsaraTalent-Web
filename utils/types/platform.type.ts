@@ -1,1 +1,1 @@
-export type TPlatform = "Facebook" | "Instagram" | "Telegram" | "LinkedIn" | "Github" | "Website";
+export type TPlatform = "Facebook" | "Instagram" | "Telegram" | "LinkedIn" | "Github" | "Website" | "Twitter";

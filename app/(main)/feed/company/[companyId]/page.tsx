@@ -32,9 +32,8 @@ import BlurBackGroundOverlay from "@/components/utils/bur-background-overlay";
 import { Button } from "@/components/ui/button";
 import Tag from "@/components/utils/tag";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { userList } from "@/data/user-data";
 import { useParams } from "next/navigation";
-import { IImage, ISocial } from "@/utils/interfaces/user-interface/company.interface";
+import { IBenefits, IImage, ISocial } from "@/utils/interfaces/user-interface/company.interface";
 import Link from "next/link";
 import {
   HoverCard,
@@ -45,13 +44,12 @@ import ImagePopup from "@/components/utils/image-popup";
 import React, { useEffect, useRef, useState } from "react";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { TPlatform } from "@/utils/types/platform.type";
+import { useGetOneUserStore } from "@/stores/apis/users/get-one-user.store";
+import EmployeeDetailPageSkeleton from "../../employee/[employeeId]/skeleton";
 
 export default function CompanyDetailPage() {
   const param = useParams();
   const id = param.companyId;
-
-  const companies = userList.filter((user) => user.role === "company");
-  const companyList = companies.find((cmp) => cmp.company?.id === id)?.company;
 
   const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
@@ -89,12 +87,23 @@ export default function CompanyDetailPage() {
     }
   }, [openImagePopup, openProfilePopup]);
 
+  const { loading, user, getOneUerByID } = useGetOneUserStore();
+
+  useEffect(() => {
+    if(id) { 
+      useGetOneUserStore.setState({ user: null });
+      getOneUerByID(id as string);       
+    }
+  }, [id]);
+
+  if (loading && !user) return <EmployeeDetailPageSkeleton/>;
+
   return (
     <div className="flex flex-col gap-5">
       {/* Header Section */}
       <div
         className="relative h-80 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center tablet-sm:items-start"
-        style={{ backgroundImage: `url(${companyList?.cover})` }}
+        style={{ backgroundImage: `url(${user?.company?.cover})` }}
       >
         <BlurBackGroundOverlay />
         <div className="relative flex items-center gap-5 tablet-sm:flex-col">
@@ -103,27 +112,27 @@ export default function CompanyDetailPage() {
             rounded="md"
             onClick={handleClickProfilePopup}
           >
-            <AvatarImage src={companyList?.avatar!} />
+            <AvatarImage src={user?.company?.avatar!} />
             <AvatarFallback className="uppercase">
-              {companyList?.name.slice(0, 3)}
+              {user?.company?.name.slice(0, 3)}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-start gap-2 text-muted tablet-sm:items-center">
             <TypographyH2 className="tablet-sm:text-center tablet-sm:text-xl">
-              {companyList?.name}
+              {user?.company?.name}
             </TypographyH2>
             <TypographyP className="!m-0 tablet-sm:text-center tablet-sm:text-sm">
-              {companyList?.industry}
+              {user?.company?.industry}
             </TypographyP>
             <div className="flex items-center gap-5">
               <IconLabel
                 icon={<LucideCalendarDays />}
-                text={`Founded in ${companyList?.foundedYear}`}
+                text={`Founded in ${user?.company?.foundedYear}`}
                 className="[&>p]:text-primary-foreground"
               />
               <IconLabel
                 icon={<LucideUsers />}
-                text={`${companyList?.companySize}+ Employees`}
+                text={`${user?.company?.companySize}+ Employees`}
                 className="[&>p]:text-primary-foreground"
               />
             </div>
@@ -145,13 +154,13 @@ export default function CompanyDetailPage() {
           {/* Description Section */}
           <div className="w-full flex flex-col items-start gap-3 border border-muted py-5 px-10">
             <div className="w-full flex flex-col gap-2">
-              <TypographyH4>About {companyList?.name}</TypographyH4>
+              <TypographyH4>About {user?.company?.name}</TypographyH4>
               <Divider />
             </div>
             <div className="flex items-start gap-3">
               <div className="h-full w-2 bg-primary" />
               <TypographyMuted className="leading-loose">
-                {companyList?.description}
+                {user?.company?.description}
               </TypographyMuted>
             </div>
           </div>
@@ -163,7 +172,7 @@ export default function CompanyDetailPage() {
               <Divider />
             </div>
             <div className="w-full flex flex-col gap-3">
-              {companyList?.openPositions?.map((item) => (
+              {user?.company?.openPositions?.map((item) => (
                 <div
                   className="border border-muted px-5 py-3 rounded-md"
                   key={item.id}
@@ -244,7 +253,7 @@ export default function CompanyDetailPage() {
             </div>
             <div className="w-full flex flex-col items-stretch gap-3">
               <div className="flex flex-wrap gap-3">
-                {companyList!.careerScopes.map((career, index) => (
+                {user?.company?.careerScopes.map((career, index) => (
                   <div
                     key={index}
                     className="rounded-3xl border-2 border-muted duration-300 ease-linear hover:border-muted-foreground"
@@ -264,15 +273,15 @@ export default function CompanyDetailPage() {
           </div>
 
           {/* Life at Company Section */}
-          <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
+          {user?.company?.images && user.company.images.length > 0 && (<div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
             <div className="w-full flex flex-col gap-2">
-              <TypographyH4>Life at {companyList?.name}</TypographyH4>
+              <TypographyH4>Life at {user.company.name}</TypographyH4>
               <Divider />
             </div>
             <div className="w-full">
               <Carousel className="w-full">
                 <CarouselContent className="w-full">
-                  {companyList?.images?.map((item: IImage) => (
+                  {user.company.images.map((item: IImage) => (
                     <CarouselItem key={item.id} className="max-w-[280px]">
                       <div
                         onClick={(e) => {
@@ -289,7 +298,7 @@ export default function CompanyDetailPage() {
                 <CarouselNext className="mr-3" />
               </Carousel>
             </div>
-          </div>
+          </div>)}
         </div>
         <div className="w-1/3 flex flex-col items-stretch gap-5">
           <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
@@ -302,42 +311,42 @@ export default function CompanyDetailPage() {
                 <TypographyMuted>Industry</TypographyMuted>
                 <IconLabel
                   icon={<LucideBuilding className="text-muted-foreground" strokeWidth={"1.5px"}/>}
-                  text={companyList!.industry}
+                  text={user?.company?.industry!}
                 />
               </div>
               <div className="flex flex-col items-start gap-2">
                 <TypographyMuted>Location</TypographyMuted>
                 <IconLabel
                   icon={<LucideMapPinned className="text-muted-foreground" strokeWidth={"1.5px"}/>}
-                  text={companyList!.location}
+                  text={user?.company?.location!}
                 />
               </div>
               <div className="flex flex-col items-start gap-2">
                 <TypographyMuted>Founded</TypographyMuted>
                 <IconLabel
                   icon={<LucideCalendarDays className="text-muted-foreground" strokeWidth={"1.5px"}/>}
-                  text={`Founded in ${companyList!.foundedYear}`}
+                  text={`Founded in ${user?.company?.foundedYear}`}
                 />
               </div>
               <div className="flex flex-col items-start gap-2">
                 <TypographyMuted>Company Size</TypographyMuted>
                 <IconLabel
                   icon={<LucideUsers className="text-muted-foreground" strokeWidth={"1.5px"}/>}
-                  text={`Founded in ${companyList!.companySize}`}
+                  text={`Founded in ${user?.company?.companySize}`}
                 />
               </div>
               <div className="flex flex-col items-start gap-2">
                 <TypographyMuted>Phone</TypographyMuted>
                 <IconLabel 
                   icon={<LucidePhone className="text-muted-foreground" strokeWidth={"1.5px"}/>} 
-                  text={companyList!.phone} 
+                  text={user?.company?.phone!} 
                 />
               </div>
               <div className="flex flex-col items-start gap-2">
                 <TypographyMuted>Email</TypographyMuted>
                 <IconLabel
                   icon={<LucideMail className="text-muted-foreground" strokeWidth={"1.5px"}/>}
-                  text={companies.find((cmp) => cmp.company?.id === id)?.email!}
+                  text={user?.email!}
                 />
               </div>
             </div>
@@ -353,7 +362,7 @@ export default function CompanyDetailPage() {
               <div className="flex flex-col gap-3 border border-muted px-5 py-3 rounded-md">
                 <TypographyP className="font-medium">Values</TypographyP>
                 <div className="flex flex-col gap-2">
-                  {companyList?.values?.map((item) => (
+                  {user?.company?.values?.map((item) => (
                     <IconLabel
                       key={item.id}
                       icon={<LucideCircleCheck stroke="white" fill="#69B41E" />}
@@ -365,7 +374,7 @@ export default function CompanyDetailPage() {
               <div className="flex flex-col gap-3 border border-muted px-5 py-3 rounded-md">
                 <TypographyP className="font-medium">Benefits</TypographyP>
                 <div className="flex flex-col gap-2">
-                  {companyList?.benefits?.map((item) => (
+                  {user?.company?.benefits?.map((item: IBenefits) => (
                     <IconLabel
                       key={item.id}
                       icon={<LucideCircleCheck stroke="white" fill="#0073E6" />}
@@ -378,24 +387,26 @@ export default function CompanyDetailPage() {
           </div>
 
           {/* Social Section */}
-          <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
-            <div className="w-full flex flex-col gap-2">
-              <TypographyH4>Company Socials</TypographyH4>
-              <Divider />
-            </div>
-            <div className="w-full flex flex-wrap gap-3">
-            {companyList?.socials.map((item: ISocial) => (
-                <Link
+          {user?.company?.socials && user.company.socials.length > 0 && (
+            <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
+              <div className="w-full flex flex-col gap-2">
+                <TypographyH4>Company Socials</TypographyH4>
+                <Divider />
+              </div>
+              <div className="w-full flex flex-wrap gap-3">
+                {user.company.socials.map((item: ISocial) => (
+                  <Link
                     key={item.id}
                     href={item.url}
                     className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
-                >
+                  >
                     {getSocialPlatformTypeIcon(item.platform as TPlatform)}
                     <TypographySmall>{item.platform}</TypographySmall>
-                </Link>
-              ))}
+                  </Link>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -409,7 +420,7 @@ export default function CompanyDetailPage() {
       <ImagePopup
         open={openProfilePopup}
         setOpen={setOpenProfilePopup}
-        image={companyList?.avatar!}
+        image={user?.company?.avatar!}
       />
     </div>
   );

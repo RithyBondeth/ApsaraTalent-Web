@@ -5,7 +5,7 @@ import * as z from "zod";
 export const basicInfoStepSchema = z.object({
     basicInfo: z.object({
         name: textValidation("Name", 20),
-        description: textValidation("Description", 100),
+        description: textValidation("Description", 1000),
         industry: textValidation("Industry", 100),
         companySize: textValidation("Company size", 100),
         foundedYear: textValidation("Founded Year", 100),
@@ -18,12 +18,12 @@ export const openPositionStepSchema = z.object({
     openPositions: z.array(
         z.object({
           title: textValidation("Title", 100),
-          description: textValidation("Description", 100),
+          description: textValidation("Description", 1000),
           experienceRequirement: textValidation("Experience requirement", 100),
           educationRequirement: textValidation("Education requirement", 100),
           skills: z.array(z.string()).min(1, { message: "At least one skill is required" }),
           salary: textValidation("Salary", 100),
-          types: textValidation("Type", 100),
+          types: textValidation("Type", 1000),
           deadlineDate: dateValidation("Deadline"),
         })
     )

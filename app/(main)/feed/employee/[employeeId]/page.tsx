@@ -109,7 +109,10 @@ export default function EmployeeDetailPage() {
   const { loading, user, getOneUerByID } = useGetOneUserStore();
 
   useEffect(() => {
-    getOneUerByID(id as string);
+    if(id) {
+      useGetOneUserStore.setState({ user: null });
+      getOneUerByID(id as string);
+    }
   }, [id]);
 
   if (loading && !user) return <EmployeeDetailPageSkeleton />;
