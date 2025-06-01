@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,8 @@ export function DatePicker({
   popoverSide = "bottom",
   dateFormat = "PPP",
 }: DatePickerProps) {
+  const isValidDate = date instanceof Date && isValid(date);
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -31,20 +33,20 @@ export function DatePicker({
           variant="outline"
           className={cn(
             "w-full justify-between border rounded-md px-4 py-6 text-left text-muted-foreground bg-primary-foreground",
-            !date && "text-muted-foreground",
+            !isValidDate && "text-muted-foreground",
             disabled && "opacity-50 cursor-not-allowed",
             className
           )}
           disabled={disabled}
         >
-          {date ? format(date, dateFormat) : <span>{placeholder}</span>}
+          {isValidDate ? format(date, dateFormat) : <span>{placeholder}</span>}
           <CalendarIcon className="ml-auto h-5 w-5 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start" side={popoverSide}>
         <Calendar
           mode="single"
-          selected={date}
+          selected={isValidDate ? date : undefined}
           // defaultMonth={date}
           onSelect={onDateChange}
           initialFocus

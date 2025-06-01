@@ -46,6 +46,7 @@ import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { TPlatform } from "@/utils/types/platform.type";
 import { useGetOneUserStore } from "@/stores/apis/users/get-one-user.store";
 import EmployeeDetailPageSkeleton from "../../employee/[employeeId]/skeleton";
+import { useLoginStore } from "@/stores/apis/auth/login.store";
 
 export default function CompanyDetailPage() {
   const param = useParams();
@@ -88,11 +89,12 @@ export default function CompanyDetailPage() {
   }, [openImagePopup, openProfilePopup]);
 
   const { loading, user, getOneUerByID } = useGetOneUserStore();
+  const accessToken = useLoginStore((state) => state.accessToken);
 
   useEffect(() => {
-    if(id) { 
+    if(id && accessToken) { 
       useGetOneUserStore.setState({ user: null });
-      getOneUerByID(id as string);       
+      getOneUerByID(id as string, accessToken);       
     }
   }, [id]);
 

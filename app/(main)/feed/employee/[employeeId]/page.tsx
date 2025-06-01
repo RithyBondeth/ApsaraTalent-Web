@@ -47,6 +47,7 @@ import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { useGetOneUserStore } from "@/stores/apis/users/get-one-user.store";
 import EmployeeDetailPageSkeleton from "./skeleton";
 import { dateFormatter } from "@/utils/functions/dateformatter";
+import { useLoginStore } from "@/stores/apis/auth/login.store";
 
 export default function EmployeeDetailPage() {
   const params = useParams();
@@ -107,13 +108,15 @@ export default function EmployeeDetailPage() {
   };
 
   const { loading, user, getOneUerByID } = useGetOneUserStore();
+  const accessToken = useLoginStore((state) => state.accessToken);
 
   useEffect(() => {
-    if(id) {
+    if(id && accessToken) { 
       useGetOneUserStore.setState({ user: null });
-      getOneUerByID(id as string);
+      getOneUerByID(id as string, accessToken);       
     }
   }, [id]);
+
 
   if (loading && !user) return <EmployeeDetailPageSkeleton />;
 

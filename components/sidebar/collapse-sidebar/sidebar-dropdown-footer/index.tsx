@@ -38,6 +38,7 @@ import { useEffect } from "react";
 import { ISidebarDropdownFooterProps } from "./props";
 import { useRouter } from "next/navigation";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { useLoginStore } from "@/stores/apis/auth/login.store";
 
 export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
   const { isMobile } = useSidebar()
@@ -51,6 +52,12 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
   }, [theme, setTheme]);
 
   const currentUser = useGetCurrentUserStore((state) => state.user);
+  const logout = useLoginStore((state) => state.clearToken);
+
+  const handleLogout = async () => {
+    logout();
+    router.push("/");
+  }
   
   return (
     <SidebarMenu>
@@ -117,7 +124,7 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>

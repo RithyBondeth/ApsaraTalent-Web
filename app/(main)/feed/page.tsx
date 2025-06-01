@@ -12,7 +12,6 @@ import { useTheme } from "next-themes";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { useRouter } from "next/navigation";
 import CompanyCard from "@/components/company/company-card";
-import { userList } from "@/data/user-data";
 import ImagePopup from "@/components/utils/image-popup";
 import { useGetAllUsersStore } from "@/stores/apis/users/get-all-user.store";
 import EmployeeCardSkeleton from "@/components/employee/employee-card/skeleton";
@@ -23,6 +22,7 @@ import {
   useSessionLoginStore,
 } from "@/stores/apis/auth/login.store";
 import { IUser } from "@/utils/interfaces/user-interface/user.interface";
+import CompanyCardSkeleton from "@/components/company/company-card/skeleton";
 
 export default function FeedPage() {
   // Utils
@@ -62,6 +62,7 @@ export default function FeedPage() {
   // API Integration
   const getCurrentUserStore = useGetCurrentUserStore();
   const { users, getAllUsers } = useGetAllUsersStore();
+  const accessToken = useLoginStore((state) => state.accessToken);
 
   const currentUserRole = getCurrentUserStore.user?.role;
   let allUsers: IUser[] = [];
@@ -73,8 +74,10 @@ export default function FeedPage() {
   }
 
   useEffect(() => {
-    getAllUsers();
-  }, [users]);
+    if (accessToken) {
+      getAllUsers(accessToken);
+    }
+  }, [accessToken]);
 
   useEffect(() => {
     const local = useLocalLoginStore.getState();
@@ -129,39 +132,47 @@ export default function FeedPage() {
 
       {/* Feed Card Section */}
       <div className="w-full grid grid-cols-2 gap-5 tablet-lg:grid-cols-1">
-        {allUsers && allUsers.length > 0
-          ? allUsers.map((user) =>
-              currentUserRole === "company" && user.company ? (
-                <CompanyCard
-                  key={user.id}
-                  {...user.company}
-                  id={user.id}
-                  onViewClick={() =>
-                    router.push(`feed/company/${user.id}`)
-                  }
-                  onSaveClick={() => {}}
-                  onProfileImageClick={(e: React.MouseEvent) => {
-                    handleClickProfilePopup(e);
-                    setCurrentProfileImage(user.company?.avatar!);
-                  }}
-                />
-              ) : user.employee ? (
-                <EmployeeCard
-                  key={user.id}
-                  {...user.employee}
-                  id={user.id}
-                  onSaveClick={() => {}}
-                  onViewClick={() => router.push(`/feed/employee/${user.id}`)}
-                  onProfileImageClick={(e: React.MouseEvent) => {
-                    handleClickProfilePopup(e);
-                    setCurrentProfileImage(user.employee?.avatar!);
-                  }}
-                />
-              ) : null
-            )
-          : Array.from({ length: 6 }).map((_, index) => (
+        {getCurrentUserStore.loading || !users ? (
+          Array.from({ length: 6 }).map((_, index) => (
+            currentUserRole === "employee" ? (
               <EmployeeCardSkeleton key={`user-skeleton-${index}`} />
-            ))}
+            ) : (
+              <CompanyCardSkeleton key={`company-skeleton-${index}`} />
+            )
+          ))
+        ) : allUsers.length > 0 ? (
+          allUsers.map((user) =>
+            currentUserRole === "company" && user.company ? (
+              <CompanyCard
+                key={user.id}
+                {...user.company}
+                id={user.id}
+                onViewClick={() => router.push(`feed/company/${user.id}`)}
+                onSaveClick={() => {}}
+                onProfileImageClick={(e: React.MouseEvent) => {
+                  handleClickProfilePopup(e);
+                  setCurrentProfileImage(user.company?.avatar!);
+                }}
+              />
+            ) : user.employee ? (
+              <EmployeeCard
+                key={user.id}
+                {...user.employee}
+                id={user.id}
+                onSaveClick={() => {}}
+                onViewClick={() => router.push(`/feed/employee/${user.id}`)}
+                onProfileImageClick={(e: React.MouseEvent) => {
+                  handleClickProfilePopup(e);
+                  setCurrentProfileImage(user.employee?.avatar!);
+                }}
+              />
+            ) : null
+          )
+        ) : (
+          <div className="col-span-2 flex justify-center items-center py-10">
+            <TypographyMuted>No users found</TypographyMuted>
+          </div>
+        )}
       </div>
       {/* Image Popup */}
       <ImagePopup

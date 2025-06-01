@@ -7,18 +7,21 @@ type TGetAllUsersStoreState = {
   error: string | null;
   loading: boolean;
   users: IUser[] | null;
-  getAllUsers: () => Promise<void>;
+  getAllUsers: (token: string) => Promise<void>;
 };
 
 export const useGetAllUsersStore = create<TGetAllUsersStoreState>((set) => ({
   error: null,
   loading: false,
   users: null,
-  getAllUsers: async () => {
+  getAllUsers: async (accessToken: string) => {
     set({ loading: true, error: null });
 
     try {
-      const response = await axios.get<IUser[]>(API_GET_ALL_USERS_URL);
+      const response = await axios.get<IUser[]>(
+        API_GET_ALL_USERS_URL, 
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
       set({ users: response.data, loading: false, error: null });
     } catch (error) {
       if (axios.isAxiosError(error))

@@ -71,48 +71,191 @@ import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import Link from "next/link";
-import { userList } from "@/data/user-data";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import Tag from "@/components/utils/tag";
 import ImagePopup from "@/components/utils/image-popup";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { TPlatform } from "@/utils/types/platform.type";
-import { ISocial } from "@/utils/interfaces/user-interface/company.interface";
+import { ICareerScopes, IJobPosition, ISocial } from "@/utils/interfaces/user-interface/company.interface";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { useLocalLoginStore, useLoginStore, useSessionLoginStore } from "@/stores/apis/auth/login.store";
+import EmployeeProfilePageSkeleton from "../employee/skeleton";
 
 export default function ProfilePage() {
-  const userId = 0;
-  const company = userList.filter((user) => user.role === 'company');
-  const companyList = company[userId].company;
-  
-  const [isEdit, setIsEdit] = useState<boolean>(false);
+  // Store hooks
+  const { user, loading, getCurrentUser } = useGetCurrentUserStore();
+  const company = user?.company;
   const { toast } = useToast();
 
+  // Form hook
+  const form = useForm<TCompanyProfileForm>({
+    resolver: zodResolver(companyFormSchema),
+    defaultValues: {
+      basicInfo: {
+        name: "",
+        description: "",
+        industry: "",
+        companySize: 0,
+        foundedYear: 0,
+        location: "",
+        avatar: null,
+        cover: null,
+      },
+      accountSetting: {
+        email: "",
+        phone: "",
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      },
+      openPositions: [],
+      images: [],
+      benefitsAndValues: {
+        benefits:[],
+        values: [],
+      },
+      careerScopes: [],
+      socials: [],
+    },
+    shouldFocusError: false, 
+  });
+
+  // All useState hooks
+  const [isShowPassword, setIsShowPassword] = useState({ current: false, new: false, confirm: false });
+  const [isEdit, setIsEdit] = useState<boolean>(false);
   const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
-  const ignoreNextClick = useRef<boolean>(false);
   const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(null);
+  const [openPositions, setOpenPositions] = useState<IJobPosition[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>("");
+  const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
+  const [benefitInput, setBenefitInput] = useState<string>("");
+  const [benefits, setBenefits] = useState<{ label: string }[]>([]);
+  const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
+  const [valueInput, setValueInput] = useState<string>("");
+  const [values, setValues] = useState<{ label: string }[]>([]);
+  const [openCareersPopOver, setOpenCareersPopOver] = useState<boolean>(false);
+  const [careersInput, setCareersInput] = useState<string>("");
+  const [careers, setCareers] = useState<ICareerScopes[]>([]);
+  const [socialInput, setSocialInput] = useState<{ social: string; link: string;}>({ social: "", link: "" });
+  const [socials, setSocials] = useState<ISocial[]>([]);
+  const [selectedDates, setSelectedDates] = useState<Record<string, { posted?: Date; deadline?: Date }>>({});
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
 
-  const handleClickImagePopup = (e: React.MouseEvent) => {
-    if(ignoreNextClick.current) {
-      ignoreNextClick.current = false;
-      return;  
+  // All useRef hooks
+  const ignoreNextClick = useRef<boolean>(false);
+  const avatarInputRef = useRef<HTMLInputElement | null>(null);
+  const coverInputRef = useRef<HTMLInputElement | null>(null);
+
+  // All useEffect hooks
+  useEffect(() => {
+    const local = useLocalLoginStore.getState();
+    const session = useSessionLoginStore.getState();
+    const source = local.accessToken ? local : session;
+  
+    if (source.accessToken) {
+      useLoginStore.setState({
+        accessToken: source.accessToken,
+        refreshToken: source.refreshToken,
+        message: source.message,
+        rememberMe: source === local,
+      });
+      getCurrentUser(source.accessToken);
     }
+  }, [getCurrentUser]);
 
-    if((e.target as HTMLElement).closest(".dialog-content")) return;
+  useEffect(() => {
+    if(user && company) {
+      form.reset({
+        basicInfo: {
+          name: company.name ?? "",
+          description: company.description ?? "",
+          industry: company.industry ?? "",
+          companySize: company.companySize ?? null,
+          foundedYear: company.foundedYear ?? null,
+          location: company.location ?? "",
+          avatar: company.avatar ? new File([], "avatar.png") : null,
+          cover: company.cover ? new File([], "cover.png") : null,
+        },
+        accountSetting: {
+          email: user.email ?? "",
+          phone: company.phone,
+          currentPassword: user.password ?? "",
+          newPassword: "",
+          confirmPassword: "",
+        },
+        openPositions: company.openPositions.map((op) => ({
+          title: op.title,
+          description: op.description,
+          educationRequirement: op.education,
+          experienceRequirement: op.experience,
+          salary: op.salary,
+          deadlineDate: new Date(op.deadlineDate),
+          skills: op.skills || []
+        })) || [],
+        images: company.images?.map((img) => img.image) || [],
+        benefitsAndValues: {
+          benefits: company.benefits.map((bf) => ({
+            label: bf.label
+          })) || [],
+          values: company.values.map((vl) => ({
+            label: vl.label
+          })) || [],
+        },
+        careerScopes: company.careerScopes.map((cs) => ({
+           name: cs.name,
+           description: cs.description,
+        })),
+        socials: company.socials.map((sc) => ({
+          platform: sc.platform,
+          url: sc.url,
+        })),
+      });
 
-    setOpenImagePopup(true);
-  }
-
-  const handleClickProfilePopup = (e: React.MouseEvent) => {
-    if(ignoreNextClick.current) {
-      ignoreNextClick.current = false;
-      return;  
+      setSocials(company.socials ?? []);
+      setCareers(company.careerScopes ?? []);
+      setOpenPositions(company.openPositions ?? []);
+      setBenefits(company.benefits ?? []);
+      setValues(company.values ?? []);
+      setSelectedLocation(company.location ?? "");
     }
+  }, [user, company, form]);
 
-    if((e.target as HTMLElement).closest(".dialog-content")) return;
+  useEffect(() => {
+    const initialSocial = (form.getValues?.("socials") || []).filter(
+      (s): s is { platform: string; url: string } => s !== undefined
+    );
+    setSocials(initialSocial);
+  }, [form]);
 
-    setOpenProfilePopup(true);
-  }
+  useEffect(() => {
+    const initialCareerScope = form.getValues("careerScopes") || [];
+    setCareers(
+      initialCareerScope.map((cp) => ({
+        name: cp?.name ?? "",
+        description: cp?.description ?? "",
+      }))
+    );
+  }, [form]);
+
+  useEffect(() => {
+    const initialBenefit = form.getValues("benefitsAndValues.benefits") || [];
+    setBenefits(
+      initialBenefit.map((bf) => ({
+         label: bf.label,
+      }))
+    )
+  }, [form]);
+
+  useEffect(() => {
+    const initialValue = form.getValues("benefitsAndValues.values") || [];
+    setBenefits(
+      initialValue.map((vl) => ({
+         label: vl.label,
+      }))
+    )
+  }, [form]);
 
   useEffect(() => {
     if(openImagePopup || openProfilePopup) {
@@ -121,56 +264,11 @@ export default function ProfilePage() {
     }
   }, [openImagePopup, openProfilePopup]);
 
-  const [openPositions, setOpenPositions] = useState(companyList?.openPositions);
-
-  const form = useForm<TCompanyProfileForm>({
-    resolver: zodResolver(companyFormSchema),
-    defaultValues: {
-      basicInfo: {
-        name: companyList?.name ?? "",
-        description: companyList?.description ?? "",
-        industry: companyList?.industry ?? "",
-        companySize: companyList!.companySize ?? "",
-        foundedYear: companyList!.foundedYear ?? "",
-        location: companyList?.location ?? "",
-        avatar: companyList?.avatar
-          ? new File([], "avatar.png")
-          : null,
-        cover: companyList?.cover ? new File([], "cover.png") : null,
-      },
-      accountSetting: {
-        email: company[userId]?.email ?? "",
-        phone: companyList?.phone ?? "",
-        currentPassword: company[userId]?.password ?? null,
-        newPassword: "",
-        confirmPassword: "",
-      },
-      openPositions: companyList?.openPositions.map((position) => ({
-        title: position.title ?? "",
-        description: position.description ?? "",
-        experienceRequirement: position.experience ?? "",
-        educationRequirement: position.education ?? "",
-        salary: position.salary ?? "",
-        postedDate: new Date(position.postedDate) ?? null,
-        deadlineDate: new Date(position.deadlineDate) ?? null,
-        skills: position.skills ?? [],
-      })),
-      images: companyList?.images?.map((image) => image.image ?? []),
-      benefitsAndValues: {
-        benefits: companyList?.benefits ?? [],
-        values: companyList?.values ?? [],
-      },
-      careerScopes: companyList?.careerScopes ?? [],
-      socials: companyList?.socials.map((social) => ({
-        platform: social.platform,
-        url: social.url,
-      })),
-    },
-    shouldFocusError: false, 
-  });
-
-  const addOpenPosition = () => {
+  if(loading) return (<EmployeeProfilePageSkeleton/>);
+  if(!user || !company) return null;
   
+  // Add an open position
+  const addOpenPosition = () => {
     const newPosition = {
       id: Date.now().toString(),
       title: "",
@@ -189,39 +287,13 @@ export default function ProfilePage() {
     setOpenPositions((prevPositions) => [...prevPositions!, newPosition]);
   };
 
+  
   // Remove an open position
   const removeOpenPosition = (positionId: number) => {
     setOpenPositions((prevPositions) => 
       prevPositions!.filter((position) => position.id !== positionId.toString())
     );
   };
-
-  // Benefits
-  const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
-  const [benefitInput, setBenefitInput] = useState<string>("");
-  const initialBenefit = form.getValues?.("benefitsAndValues.benefits") || [];
-  const [benefits, setBenefits] = useState<{ label: string }[]>(initialBenefit);
-
-  // Values
-  const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
-  const [valueInput, setValueInput] = useState<string>("");
-  const initialValue = form.getValues?.("benefitsAndValues.values") || [];
-  const [values, setValues] = useState<{ label: string }[]>(initialValue);
-
-  // Careers
-  const [openCareersPopOver, setOpenCareersPopOver] = useState<boolean>(false);
-  const [careersInput, setCareersInput] = useState<string>("");
-  const initialCareerScope = form.getValues?.("careerScopes") || [];
-  const [careers, setCareers] = useState<{ name: string, description: string }[]>(
-    initialCareerScope.map(career => ({ ...career, description: career.description || '' }))
-  );
-
-  // Socials
-  const [socialInput, setSocialInput] = useState<{ social: string; link: string;}>({ social: "", link: "" });
-  const initialSocial = (form.getValues?.("socials") || []).filter(
-    (s): s is { platform: string; url: string } => s !== undefined
-  );
-  const [socials, setSocials] = useState<ISocial[]>(initialSocial);
 
   const addBenefits = () => {
     const trimmed = benefitInput.trim();
@@ -370,16 +442,6 @@ export default function ProfilePage() {
     setSocials(updatedSocials); // Update the state
   };
 
-  const [isShowPassword, setIsShowPassword] = useState({
-    current: false,
-    new: false,
-    confirm: false,
-  });
-  
-  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(companyList!.location);
-
-  const [selectedDates, setSelectedDates] = useState<Record<string, { posted?: Date; deadline?: Date }>>({});
-
   const getDeadlineDate = (positionId: string, fallback: Date) => selectedDates[positionId]?.deadline ?? fallback;
 
   const handleDateChange = (
@@ -395,12 +457,6 @@ export default function ProfilePage() {
       },
     }));
   };
-
-  const avatarInputRef = useRef<HTMLInputElement | null>(null);
-  const coverInputRef = useRef<HTMLInputElement | null>(null);
-
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [coverFile, setCoverFile] = useState<File | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, type: 'avatar' | 'cover') => {
     const file = event.target.files ? event.target.files[0] : null;
@@ -426,7 +482,7 @@ export default function ProfilePage() {
       careerScopes: careers,
       socials: socials,
       openPositions: openPositions?.map((position, index) => ({
-        id: position.id,
+        id: position?.id,
         title: data.openPositions?.[index]?.title || position.title,
         description: data.openPositions?.[index]?.description || position.description,
         experience: data.openPositions?.[index]?.experienceRequirement || position.experience,
@@ -434,18 +490,9 @@ export default function ProfilePage() {
         salary: data.openPositions?.[index]?.salary || position.salary,
         skills: data.openPositions?.[index]?.skills || position.skills,
         postedDate: position.postedDate,
-        deadlineDate: selectedDates[position.id.toString()]?.deadline?.toISOString() || position.deadlineDate,
-        type: "Full Time" // Default value or get from form if you have this field
+        deadlineDate: selectedDates[position?.id?.toString() ?? '']?.deadline?.toISOString() || position.deadlineDate,
       }))
     };
-  
-    console.log("Updated Company Profile:", updatedData);
-    
-    // Update your local state if needed
-    // For example, you might want to update the companyList state
-    // const updatedCompanyList = [...companyList];
-    // updatedcompanyList = {...updatedcompanyList, ...updatedData};
-    // setCompanyList(updatedCompanyList);
     
     // Show success message
     toast({
@@ -479,14 +526,30 @@ export default function ProfilePage() {
     form.handleSubmit(onSubmit)(e);
   };
 
-  const { errors } = form.formState;
-  console.log("Error: ", errors);
+  // Profile, Cover and Image Popup handlers
+  const handleClickImagePopup = (e: React.MouseEvent) => {
+    if(ignoreNextClick.current) {
+      ignoreNextClick.current = false;
+      return;  
+    }
+    if((e.target as HTMLElement).closest(".dialog-content")) return;
+    setOpenImagePopup(true);
+  }
+
+  const handleClickProfilePopup = (e: React.MouseEvent) => {
+    if(ignoreNextClick.current) {
+      ignoreNextClick.current = false;
+      return;  
+    }
+    if((e.target as HTMLElement).closest(".dialog-content")) return;
+    setOpenProfilePopup(true);
+  }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <div
         className="relative h-80 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center"
-        style={{ backgroundImage: `url(${coverFile ? URL.createObjectURL(coverFile) : companyList?.cover})` }}
+        style={{ backgroundImage: `url(${coverFile ? URL.createObjectURL(coverFile) : company.cover})` }}
       > 
         <BlurBackGroundOverlay />
         {isEdit && (
@@ -512,9 +575,9 @@ export default function ProfilePage() {
               if(!isEdit) handleClickProfilePopup(e)
             }}
           >
-            <AvatarImage src={avatarFile ? URL.createObjectURL(avatarFile) : companyList?.avatar!}/>
+            <AvatarImage src={avatarFile ? URL.createObjectURL(avatarFile) : company.avatar!}/>
             <AvatarFallback className="uppercase">
-              {companyList?.name.slice(0, 3)}
+              {company.name.slice(0, 3)}
             </AvatarFallback>
             {isEdit && (
               <div 
@@ -534,10 +597,10 @@ export default function ProfilePage() {
           </Avatar>
           <div className="flex flex-col items-start gap-2 text-muted tablet-sm:items-center">
             <TypographyH2 className="tablet-sm:text-center tablet-sm:text-xl">
-              {companyList?.name}
+              {company.name}
             </TypographyH2>
             <TypographyP className="!m-0 tablet-sm:text-center tablet-sm:text-sm">
-              {companyList?.industry}
+              {company.industry}
             </TypographyP>
           </div>
         </div>
@@ -573,7 +636,7 @@ export default function ProfilePage() {
                 input={
                   <Input
                     placeholder={
-                      isEdit ? "Company Name" : companyList?.name
+                      isEdit ? "Company Name" : company.name
                     }
                     id="company-name"
                     {...form.register("basicInfo.name")}
@@ -589,7 +652,7 @@ export default function ProfilePage() {
                   placeholder={
                     isEdit
                       ? "Company Description"
-                      : companyList?.description
+                      : company.description
                   }
                   id="company-description"
                   {...form.register("basicInfo.description")}
@@ -603,7 +666,7 @@ export default function ProfilePage() {
                   input={
                     <Input
                       placeholder={
-                        isEdit ? "Industry" : companyList?.industry
+                        isEdit ? "Industry" : company.industry
                       }
                       id="industry"
                       {...form.register("basicInfo.industry")}
@@ -652,7 +715,7 @@ export default function ProfilePage() {
                       placeholder={
                         isEdit
                           ? "Company Size"
-                          : companyList?.companySize.toString()
+                          : company.companySize.toString()
                         
                       }
                       id="company-size"
@@ -670,7 +733,7 @@ export default function ProfilePage() {
                       placeholder={
                         isEdit
                           ? "Founded Year"
-                          : companyList?.foundedYear.toString()
+                          : company.foundedYear.toString()
                       }
                       id="company-founded-year"
                       {...form.register("basicInfo.foundedYear")}
@@ -685,7 +748,7 @@ export default function ProfilePage() {
                 input={
                   <Input
                     placeholder={
-                      isEdit ? "Email" : company[userId].email
+                      isEdit ? "Email" : user.email
                     }
                     id="email"
                     {...form.register("accountSetting.email")}
@@ -699,7 +762,7 @@ export default function ProfilePage() {
                 input={
                   <Input
                     placeholder={
-                      isEdit ? "Phone number" : companyList?.phone
+                      isEdit ? "Phone number" : company.phone
                     }
                     id="phone"
                     {...form.register("accountSetting.phone")}
@@ -730,8 +793,8 @@ export default function ProfilePage() {
               className="flex flex-col items-start gap-5"
             >
               {openPositions?.map((position, index) => {
-                const positionId = position.id.toString();
-                const deadlineFallback = new Date(position.deadlineDate);
+                const positionId = position.id?.toString();
+                const deadlineFallback = position.deadlineDate ? new Date(position.deadlineDate) : new Date();
                 return (
                   <OpenPositionForm
                     key={index}
@@ -748,11 +811,13 @@ export default function ProfilePage() {
                     salary={position.salary}
                     deadlineDate={{
                       defaultValue: deadlineFallback,
-                      data: getDeadlineDate(positionId, deadlineFallback),
+                      data: selectedDates[positionId ?? '']?.deadline || deadlineFallback,
                       onDataChange: (date: Date | undefined) => {
-                        if (date)
-                          handleDateChange(positionId, "deadline", date);
-                        },
+                        if (date) {
+                          handleDateChange(positionId ?? '', "deadline", date);
+                          form.setValue(`openPositions.${index}.deadlineDate`, date);
+                        }
+                      },
                     }}
                     onRemove={removeOpenPosition}
                   />
@@ -1250,7 +1315,7 @@ export default function ProfilePage() {
       <ImagePopup 
         open={openProfilePopup} 
         setOpen={setOpenProfilePopup}
-        image={avatarFile ? URL.createObjectURL(avatarFile) : companyList?.avatar!}
+        image={avatarFile ? URL.createObjectURL(avatarFile) : company.avatar!}
       />
     </form>
   );
