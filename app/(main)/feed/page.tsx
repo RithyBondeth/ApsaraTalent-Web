@@ -32,10 +32,6 @@ export default function FeedPage() {
   const currentTheme = mounted ? resolvedTheme : "light";
   const feedImage = currentTheme === "dark" ? feedBlackSvg : feedWhiteSvg;
 
-  // Showing Employee or Company
-  const companyList = userList.filter((user) => user.role === "company");
-  const employeeList = userList.filter((user) => user.role === "employee");
-
   // Pop up Dialog
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
   const ignoreNextClick = useRef<boolean>(false);
@@ -73,7 +69,7 @@ export default function FeedPage() {
 
   useEffect(() => {
     getAllUsers();
-  }, []);
+  }, [users]);
 
   useEffect(() => {
     const local = useLocalLoginStore.getState();
@@ -92,7 +88,7 @@ export default function FeedPage() {
       // Fetch current user
       getCurrentUserStore.getCurrentUser(source.accessToken);
     }
-  }, []);
+  }, [getCurrentUserStore.getCurrentUser]);
 
   return (
     <div className="w-full flex flex-col items-start gap-5">
@@ -136,6 +132,7 @@ export default function FeedPage() {
           <EmployeeCard
             key={user.id}
             {...user.employee!}
+            id={user.id}
             onSaveClick={() => {}}
             onViewClick={() =>
               router.push(`/feed/employee/${user.id}`)

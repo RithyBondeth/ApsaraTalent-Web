@@ -37,6 +37,7 @@ import { setCookie } from 'cookies-next/client'
 import { useEffect } from "react";
 import { ISidebarDropdownFooterProps } from "./props";
 import { useRouter } from "next/navigation";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 
 export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
   const { isMobile } = useSidebar()
@@ -49,6 +50,8 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
       setCookie('theme', theme);
   }, [theme, setTheme]);
 
+  const currentUser = useGetCurrentUserStore((state) => state.user);
+  
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -89,7 +92,7 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => router.push('/profile/company')}>
+              <DropdownMenuItem onClick={() => router.push(`/profile/${currentUser?.role}`)}>
                 <LucideUser />
                 My Profile
               </DropdownMenuItem>

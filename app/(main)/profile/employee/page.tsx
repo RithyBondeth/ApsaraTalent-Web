@@ -47,9 +47,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import IconLabel from "@/components/utils/icon-label";
 import { DatePicker } from "@/components/ui/date-picker";
-import Tag from "@/components/utils/tag";
 import { TPlatform } from "@/utils/types/platform.type";
-import { userList } from "@/data/user-data";
 import { Controller, useForm } from "react-hook-form";
 import { employeeFormSchema, TEmployeeProfileForm } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -78,89 +76,211 @@ import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import ImagePopup from "@/components/utils/image-popup";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import EmployeeProfilePageSkeleton from "./skeleton";
+import { useLocalLoginStore, useLoginStore, useSessionLoginStore } from "@/stores/apis/auth/login.store";
 
 export default function EmployeeProfilePage() {
-  const employeeId = 2;
-  const employee = userList.filter((user) => user.role === "employee");
-  const employeeList = employee[employeeId].employee;
-
-  const [isEdit, setIsEdit] = useState<boolean>(false);
-
+  // All hooks must be at the top and called in the same order every time
+  const { user, loading, getCurrentUser } = useGetCurrentUserStore();
+  const employee = user?.employee;
   const { toast } = useToast();
+  const form = useForm<TEmployeeProfileForm>({
+    resolver: zodResolver(employeeFormSchema),
+    defaultValues: {
+      basicInfo: {
+        firstname: "",
+        lastname: "",
+        username: "",
+        gender: "",
+        location: "",
+        avatar: null,
+      },
+      accountSetting: {
+        email: "",
+        phone: "",
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      },
+      profession: {
+        job: "",
+        yearOfExperience: "",
+        availability: "",
+        description: "",
+      },
+      educations: [],
+      experiences: [],
+      skills: [],
+      references: {
+        resume: null,
+        coverLetter: null,
+      },
+      careerScopes: [],
+      socials: [],
+    },
+  });
 
+  // All useState hooks
+  const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isShowPassword, setIsShowPassword] = useState({
     current: false,
     new: false,
     confirm: false,
   });
-  const [selectedGender, setSelectedGender] = useState<TGender | string>(employeeList!.gender);
-  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(employeeList!.location);
+  const [selectedGender, setSelectedGender] = useState<TGender | string>("");
+  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>("");
+  const [education, setEducation] = useState<IEducation[]>([]);
+  const [experience, setExperience] = useState<IExperience[]>([]);
+  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
+  const [socialInput, setSocialInput] = useState<{ platform: string; url: string }>({ platform: "", url: "" });
+  const [socials, setSocials] = useState<ISocial[]>([]);
+  const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
+  const [skills, setSkills] = useState<ISkill[]>([]);
+  const [skillInput, setSkillInput] = useState<string>("");
+  const [openCareerPopOver, setOpenCareerPopOver] = useState<boolean>(false);
+  const [careerScopes, setCareerScopes] = useState<ICareerScopes[]>([]);
+  const [careerScopeInput, setCareerScopeInput] = useState<string>("");
+  const [resumeUrl, setResumeUrl] = useState<string | null>(null);
+  const [coverLetterUrl, setCoverLetterUrl] = useState<string | null>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [coverLetterFile, setCoverLetterFile] = useState<File | null>(null);
 
-  // Form   
-  const form = useForm<TEmployeeProfileForm>({
-    resolver: zodResolver(employeeFormSchema),
-    defaultValues: {
-      basicInfo: {
-        firstname: employeeList?.firstname ?? "",
-        lastname: employeeList?.lastname ?? "",
-        username: employeeList?.username ?? "",
-        gender: employeeList?.gender ?? "",
-        location: employeeList?.location ?? "",
-        avatar: employeeList?.avatar ? new File([], "avatar.png") : null,
-      },
-      accountSetting: {
-        email: employee[employeeId].email ?? "",
-        phone: employeeList?.phone,
-        currentPassword: employee[employeeId].password ?? "",
-        newPassword: "",
-        confirmPassword: "",
-      },
-      profession: {
-        job: employeeList?.job ?? "",
-        yearOfExperience: employeeList?.yearsOfExperience?.toString(),
-        availability: employeeList?.availability ?? "",
-        description: employeeList?.description ?? "",
-      },
-      educations:
-        employeeList?.educations.map((edu) => ({
+  // All useRef hooks
+  const avatarInputRef = useRef<HTMLInputElement | null>(null);
+  const resumeInputRef = useRef<HTMLInputElement | null>(null);
+  const coverLetterInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Update form and states when user/employee data becomes available
+  useEffect(() => {
+    if (user && employee) {
+      form.reset({
+        basicInfo: {
+          firstname: employee.firstname ?? "",
+          lastname: employee.lastname ?? "",
+          username: employee.username ?? "",
+          gender: employee.gender ?? "",
+          location: employee.location ?? "",
+          avatar: employee.avatar ? new File([], "avatar.png") : null,
+        },
+        accountSetting: {
+          email: user.email ?? "",
+          phone: employee.phone,
+          currentPassword: user.password ?? "",
+          newPassword: "",
+          confirmPassword: "",
+        },
+        profession: {
+          job: employee.job ?? "",
+          yearOfExperience: employee.yearsOfExperience?.toString(),
+          availability: employee.availability ?? "",
+          description: employee.description ?? "",
+        },
+        educations: employee.educations.map((edu) => ({
           school: edu.school,
           degree: edu.degree,
           year: edu.year,
         })) || [],
-      experiences:
-        employeeList?.experiences.map((exp) => ({
+        experiences: employee.experiences.map((exp) => ({
           title: exp.title,
           description: exp.description,
           startDate: new Date(exp.startDate),
           endDate: new Date(exp.endDate),
         })) || [],
-      skills:
-        employeeList?.skills.map((skill) => ({
+        skills: employee.skills.map((skill) => ({
           name: skill.name,
           description: skill.description,
         })) || [],
-      references: {
-        resume: employeeList?.resume ?? null,
-        coverLetter: employeeList?.coverLetter ?? null,
-      },
-      careerScopes:
-        employeeList?.careerScopes.map((cp) => ({
+        references: {
+          resume: employee.resume ?? null,
+          coverLetter: employee.coverLetter ?? null,
+        },
+        careerScopes: employee.careerScopes.map((cp) => ({
           name: cp.name,
           description: cp.description,
         })) || [],
-      socials: employeeList?.socials.map((social) => ({
-        platform: social.platform,
-        url: social.url,
-      })),
-    },
-  });
+        socials: employee.socials.map((social) => ({
+          platform: social.platform,
+          url: social.url,
+        })),
+      });
+
+      setSelectedGender(employee.gender ?? "");
+      setSelectedLocation(employee.location ?? "");
+      setEducation(employee.educations ?? []);
+      setExperience(employee.experiences ?? []);
+      setSocials(employee.socials ?? []);
+      setSkills(employee.skills ?? []);
+      setCareerScopes(employee.careerScopes ?? []);
+    }
+  }, [user, employee, form]);
+
+  useEffect(() => {
+    const local = useLocalLoginStore.getState();
+    const session = useSessionLoginStore.getState();
+    const source = local.accessToken ? local : session;
+  
+    if (source.accessToken) {
+      useLoginStore.setState({
+        accessToken: source.accessToken,
+        refreshToken: source.refreshToken,
+        message: source.message,
+        rememberMe: source === local,
+      });
+      getCurrentUser(source.accessToken);
+    }
+  }, [getCurrentUser]);
+
+  useEffect(() => {
+    if (resumeFile) {
+      const objectUrl = URL.createObjectURL(resumeFile);
+      setResumeUrl(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    }
+  }, [resumeFile]);
+
+  useEffect(() => {
+    if (coverLetterFile) {
+      const objectUrl = URL.createObjectURL(coverLetterFile);
+      setCoverLetterUrl(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    }
+  }, [coverLetterFile]);
+
+  useEffect(() => {
+    const initialSocial = (form.getValues?.("socials") || []).filter(
+      (s): s is { platform: string; url: string } => s !== undefined
+    );
+    setSocials(initialSocial);
+  }, [form]);
+
+  useEffect(() => {
+    const initialSkill = form.getValues("skills") || [];
+    setSkills(
+      initialSkill.map((skill) => ({
+        name: skill?.name ?? "",
+        description: skill?.description ?? "",
+      }))
+    );
+  }, [form]);
+
+  useEffect(() => {
+    const initialCareerScope = form.getValues("careerScopes") || [];
+    setCareerScopes(
+      initialCareerScope.map((cp) => ({
+        name: cp?.name ?? "",
+        description: cp?.description ?? "",
+      }))
+    );
+  }, [form]);
+
+  if(loading) return <EmployeeProfilePageSkeleton/>;
+  if(!user || !employee) return null;
 
   // Profile Popup
-  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
   
   // Education
-  const [education, setEducation] = useState<IEducation[]>(employeeList!.educations);
-
   const addEducation = () => {
     const newEducation = {
       id: Date.now().toString(),
@@ -178,8 +298,6 @@ export default function EmployeeProfilePage() {
   };
 
   // Experience
-  const [experience, setExperience] = useState<IExperience[]>(employeeList!.experiences);
-
   const addExperience = () => {
     const newExperience = {
       id: Date.now().toString(),
@@ -198,12 +316,6 @@ export default function EmployeeProfilePage() {
   };
 
   //Socials
-  const [socialInput, setSocialInput] = useState<{ platform: string; url: string }>({ platform: "", url: "" });
-  const initialSocial = (form.getValues?.("socials") || []).filter(
-    (s): s is { platform: string; url: string } => s !== undefined
-  );
-  const [socials, setSocials] = useState<ISocial[]>(initialSocial);
-
   const addSocial = () => {
       const trimmedPlatform = socialInput.platform.trim();
       const trimmedUrl = socialInput.url.trim();
@@ -235,15 +347,6 @@ export default function EmployeeProfilePage() {
   }
 
   // Avatar and References
-  const avatarInputRef = useRef<HTMLInputElement | null>(null);
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-
-  const resumeInputRef = useRef<HTMLInputElement | null>(null);
-  const [resumeFile, setResumeFile] = useState<File | null>(null);
-
-  const coverLetterInputRef = useRef<HTMLInputElement | null>(null);
-  const [coverLetterFile, setCoverLetterFile] = useState<File | null>(null);
-
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     type: "avatar" | "resume" | "coverLetter"
@@ -265,16 +368,6 @@ export default function EmployeeProfilePage() {
   };
 
   // Skill
-  const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
-  const initialSkill = form.getValues("skills") || [];
-  const [skills, setSkills] = useState<ISkill[]>(
-    initialSkill.map((skill) => ({
-      name: skill?.name ?? "",
-      description: skill?.description ?? "",
-    }))
-  );
-  const [skillInput, setSkillInput] = useState<string>("");
-  
   const addSkills = () => {
     const trimmed = skillInput.trim();
     if(!trimmed) return; 
@@ -310,17 +403,6 @@ export default function EmployeeProfilePage() {
   }
 
   // CareerScope
-  const [openCareerPopOver, setOpenCareerPopOver] = useState<boolean>(false);
-  const initialCareerScope = form.getValues("careerScopes") || [];
-  const [careerScopes, setCareerScopes] = useState<ICareerScopes[]>(
-    initialCareerScope.map((cp) => ({
-      name: cp?.name ?? "",
-      description: cp?.description ?? "",
-    }))
-  );
-  const [careerScopeInput, setCareerScopeInput] = useState<string>("");
-
-
   const addCareerScope = () => {
     const trimmed = careerScopeInput.trim();
     if(!trimmed) return;
@@ -356,25 +438,6 @@ export default function EmployeeProfilePage() {
     await form.trigger("careerScopes");
   }
 
-  const [resumeUrl, setResumeUrl] = useState<string | null>(null);
-  const [coverLetterUrl, setCoverLetterUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (resumeFile) {
-      const objectUrl = URL.createObjectURL(resumeFile);
-      setResumeUrl(objectUrl);
-
-      return () => URL.revokeObjectURL(objectUrl); // Cleanup to prevent memory leak
-    }
-
-    if(coverLetterFile) {
-      const objectUrl = URL.createObjectURL(coverLetterFile) ;
-      setCoverLetterUrl(objectUrl);
-    
-      return () => URL.revokeObjectURL(objectUrl); // Cleanup to prevent memory leak
-    }
-  }, [resumeFile, coverLetterFile]);
-
   const handleDownloadfile = (file: File) => {
     if(!file) return;
 
@@ -388,7 +451,7 @@ export default function EmployeeProfilePage() {
     URL.revokeObjectURL(url); // clean up
   }
 
-  return (
+  return user ? (
     <form className="!min-w-full flex flex-col gap-5">
       <div className="flex items-center justify-between border border-muted rounded-md p-5 tablet-sm:flex-col tablet-sm:[&>div]:w-full tablet-sm:gap-5">
         <div className="flex items-center justify-start gap-5 tablet-sm:flex-col">
@@ -398,11 +461,11 @@ export default function EmployeeProfilePage() {
                 src={
                   avatarFile
                     ? URL.createObjectURL(avatarFile)
-                    : employeeList!.avatar
+                    : employee.avatar
                 }
               />
               <AvatarFallback className="uppercase">
-                {employeeList!.username.slice(0, 3)}
+                {employee.username?.slice(0, 3)}
               </AvatarFallback>
             </Avatar>
             {isEdit && (
@@ -422,8 +485,8 @@ export default function EmployeeProfilePage() {
             onChange={(e) => handleFileChange(e, "avatar")}
           />
           <div className="flex flex-col items-start gap-1 tablet-sm:items-center">
-            <TypographyH3>{employeeList?.username}</TypographyH3>
-            <TypographyMuted>{employeeList?.job}</TypographyMuted>
+            <TypographyH3>{employee.username}</TypographyH3>
+            <TypographyMuted>{employee.job}</TypographyMuted>
           </div>
         </div>
         {isEdit ? (
@@ -1051,7 +1114,7 @@ export default function EmployeeProfilePage() {
               <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
                 <div className="flex items-center text-muted-foreground gap-1">
                   <LucideFileText strokeWidth={"1.3px"}/>
-                  <TypographyMuted>{resumeFile ? resumeFile.name : employeeList?.resume}</TypographyMuted>
+                  <TypographyMuted>{resumeFile ? resumeFile.name : employee.resume}</TypographyMuted>
                   <input 
                     type="file"
                     accept="application/pdf"
@@ -1100,7 +1163,7 @@ export default function EmployeeProfilePage() {
               <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
                 <div className="flex items-center text-muted-foreground gap-1">
                   <LucideFileText strokeWidth={"1.3px"}/>
-                  <TypographyMuted>{coverLetterFile ? coverLetterFile.name : employeeList?.coverLetter}</TypographyMuted>
+                  <TypographyMuted>{coverLetterFile ? coverLetterFile.name : employee.coverLetter}</TypographyMuted>
                   <input 
                     type="file"
                     accept="application/pdf"
@@ -1243,7 +1306,7 @@ export default function EmployeeProfilePage() {
       </div>
 
       {/* Profile Popup Section */}
-      <ImagePopup open={openProfilePopup} setOpen={setOpenProfilePopup} image={employeeList?.avatar!}/>
+      <ImagePopup open={openProfilePopup} setOpen={setOpenProfilePopup} image={employee.avatar!}/>
     </form>
-  );
+  ) : null;
 }

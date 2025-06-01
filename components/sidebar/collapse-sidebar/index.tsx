@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -18,11 +18,6 @@ import { SidebarDropdownFooter } from "./sidebar-dropdown-footer";
 import { Separator } from "@/components/ui/separator";
 import { sidebarList } from "@/utils/constants/sidebar.constant";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import {
-  useLocalLoginStore,
-  useLoginStore,
-  useSessionLoginStore,
-} from "@/stores/apis/auth/login.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { SidebarDropdownFooterSkeleton } from "./sidebar-dropdown-footer/skeleton";
 
@@ -32,25 +27,9 @@ export default function CollapseSidebar({
   const router = useRouter();
   const { open } = useSidebar();
 
-  const { getCurrentUser, user, loading } = useGetCurrentUserStore();
+  const { user, loading } = useGetCurrentUserStore();
   const isEmployee = user?.role === "employee" && user.employee;
   const isCompany = user?.role === "company" && user.company;
-
-  useEffect(() => {
-    const local = useLocalLoginStore.getState();
-    const session = useSessionLoginStore.getState();
-    const source = local.accessToken ? local : session;
-
-    if (source.accessToken) {
-      useLoginStore.setState({
-        accessToken: source.accessToken,
-        refreshToken: source.refreshToken,
-        message: source.message,
-        rememberMe: source === local,
-      });
-      getCurrentUser(source.accessToken);
-    }
-  }, []);
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -96,15 +75,11 @@ export default function CollapseSidebar({
             user={{
               name: isEmployee
                 ? `${user.employee?.username}`
-                : isCompany
-                ? user?.company?.name!
-                : "",
+                : isCompany ? user?.company?.name! : '',
               email: user?.email! || user?.phone!,
               avatar: isEmployee
                 ? user.employee?.avatar!
-                : isCompany
-                ? user?.company?.avatar!
-                : "",
+                : isCompany ? user?.company?.avatar! : '',
             }}
           />
         )}
