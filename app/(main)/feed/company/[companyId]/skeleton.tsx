@@ -5,26 +5,26 @@ export function CompanyDetailPageSkeleton() {
   return (
     <div className="flex flex-col gap-5 animate-pulse">
       {/* Cover Section */}
-      <div className="relative h-80 w-full flex items-end p-5 bg-muted">
+      <div className="relative h-80 w-full flex items-end p-5 border border-muted">
         <div className="relative flex items-center gap-5">
           {/* Company Logo */}
-          <Skeleton className="size-32 rounded-md bg-primary-foreground" />
+          <Skeleton className="size-32 rounded-md bg-muted" />
           
           {/* Company Info */}
           <div className="flex flex-col gap-3">
-            <Skeleton className="h-8 w-48 bg-primary-foreground" />
-            <Skeleton className="h-4 w-32 bg-primary-foreground" />
+            <Skeleton className="h-8 w-48 bg-muted" />
+            <Skeleton className="h-4 w-32 bg-muted" />
             <div className="flex gap-4">
-              <Skeleton className="h-4 w-36 bg-primary-foreground" />
-              <Skeleton className="h-4 w-36 bg-primary-foreground" />
+              <Skeleton className="h-4 w-36 bg-muted" />
+              <Skeleton className="h-4 w-36 bg-muted" />
             </div>
           </div>
         </div>
         
         {/* Action Buttons */}
         <div className="absolute right-3 bottom-3 flex gap-3">
-          <Skeleton className="h-10 w-32 bg-primary-foreground" />
-          <Skeleton className="h-10 w-24 bg-primary-foreground" />
+          <Skeleton className="h-10 w-32 bg-muted" />
+          <Skeleton className="h-10 w-24 bg-muted" />
         </div>
       </div>
 
