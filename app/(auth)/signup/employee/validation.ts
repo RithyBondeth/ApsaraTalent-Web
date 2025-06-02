@@ -14,7 +14,7 @@ export const professionStepSchema = z.object({
     job: textValidation("Profession", 50),
     yearOfExperience: positiveNumberValidation("Year of experiences"),
     availability: selectedValidation("availability"),
-    description: textValidation("Description", 200),
+    description: textValidation("Description", 500),
   }),
 });
 

@@ -71,15 +71,27 @@ import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import Link from "next/link";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import Tag from "@/components/utils/tag";
 import ImagePopup from "@/components/utils/image-popup";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { TPlatform } from "@/utils/types/platform.type";
-import { ICareerScopes, IJobPosition, ISocial } from "@/utils/interfaces/user-interface/company.interface";
+import {
+  ICareerScopes,
+  IJobPosition,
+  ISocial,
+} from "@/utils/interfaces/user-interface/company.interface";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useLocalLoginStore, useLoginStore, useSessionLoginStore } from "@/stores/apis/auth/login.store";
-import EmployeeProfilePageSkeleton from "../employee/skeleton";
+import {
+  useLocalLoginStore,
+  useLoginStore,
+  useSessionLoginStore,
+} from "@/stores/apis/auth/login.store";
+import { CompanyProfilePageSkeleton } from "./skeleton";
 
 export default function ProfilePage() {
   // Store hooks
@@ -111,23 +123,31 @@ export default function ProfilePage() {
       openPositions: [],
       images: [],
       benefitsAndValues: {
-        benefits:[],
+        benefits: [],
         values: [],
       },
       careerScopes: [],
       socials: [],
     },
-    shouldFocusError: false, 
+    shouldFocusError: false,
   });
 
   // All useState hooks
-  const [isShowPassword, setIsShowPassword] = useState({ current: false, new: false, confirm: false });
+  const [isShowPassword, setIsShowPassword] = useState({
+    current: false,
+    new: false,
+    confirm: false,
+  });
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
-  const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(null);
+  const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(
+    null
+  );
   const [openPositions, setOpenPositions] = useState<IJobPosition[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>("");
+  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
+    ""
+  );
   const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
   const [benefitInput, setBenefitInput] = useState<string>("");
   const [benefits, setBenefits] = useState<{ label: string }[]>([]);
@@ -137,9 +157,14 @@ export default function ProfilePage() {
   const [openCareersPopOver, setOpenCareersPopOver] = useState<boolean>(false);
   const [careersInput, setCareersInput] = useState<string>("");
   const [careers, setCareers] = useState<ICareerScopes[]>([]);
-  const [socialInput, setSocialInput] = useState<{ social: string; link: string;}>({ social: "", link: "" });
+  const [socialInput, setSocialInput] = useState<{
+    social: string;
+    link: string;
+  }>({ social: "", link: "" });
   const [socials, setSocials] = useState<ISocial[]>([]);
-  const [selectedDates, setSelectedDates] = useState<Record<string, { posted?: Date; deadline?: Date }>>({});
+  const [selectedDates, setSelectedDates] = useState<
+    Record<string, { posted?: Date; deadline?: Date }>
+  >({});
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
 
@@ -153,7 +178,7 @@ export default function ProfilePage() {
     const local = useLocalLoginStore.getState();
     const session = useSessionLoginStore.getState();
     const source = local.accessToken ? local : session;
-  
+
     if (source.accessToken) {
       useLoginStore.setState({
         accessToken: source.accessToken,
@@ -163,10 +188,20 @@ export default function ProfilePage() {
       });
       getCurrentUser(source.accessToken);
     }
+
+    // Subscribe to accessToken changes
+    const unsub = useLoginStore.subscribe((state) => {
+      if (state.accessToken) {
+        getCurrentUser(state.accessToken);
+      }
+    });
+
+    return () => unsub();
   }, [getCurrentUser]);
 
   useEffect(() => {
-    if(user && company) {
+    if (user && company) {
+      // Initialize form data
       form.reset({
         basicInfo: {
           name: company.name ?? "",
@@ -185,27 +220,35 @@ export default function ProfilePage() {
           newPassword: "",
           confirmPassword: "",
         },
-        openPositions: company.openPositions.map((op) => ({
-          title: op.title,
-          description: op.description,
-          educationRequirement: op.education,
-          experienceRequirement: op.experience,
-          salary: op.salary,
-          deadlineDate: new Date(op.deadlineDate),
-          skills: op.skills || []
-        })) || [],
+        openPositions:
+          company.openPositions.map((op) => {
+            // Manually parse DD/MM/YYYY string
+            const [day, month, year] = op.deadlineDate.split("/").map(Number);
+            const deadlineDate = new Date(year, month - 1, day);
+            return {
+              title: op.title,
+              description: op.description,
+              educationRequirement: op.education,
+              experienceRequirement: op.experience,
+              salary: op.salary,
+              deadlineDate: deadlineDate,
+              skills: op.skills || [],
+            };
+          }) || [],
         images: company.images?.map((img) => img.image) || [],
         benefitsAndValues: {
-          benefits: company.benefits.map((bf) => ({
-            label: bf.label
-          })) || [],
-          values: company.values.map((vl) => ({
-            label: vl.label
-          })) || [],
+          benefits:
+            company.benefits.map((bf) => ({
+              label: bf.label,
+            })) || [],
+          values:
+            company.values.map((vl) => ({
+              label: vl.label,
+            })) || [],
         },
         careerScopes: company.careerScopes.map((cs) => ({
-           name: cs.name,
-           description: cs.description,
+          name: cs.name,
+          description: cs.description,
         })),
         socials: company.socials.map((sc) => ({
           platform: sc.platform,
@@ -219,6 +262,14 @@ export default function ProfilePage() {
       setBenefits(company.benefits ?? []);
       setValues(company.values ?? []);
       setSelectedLocation(company.location ?? "");
+      setSelectedDates(
+        Object.fromEntries(
+          company.openPositions.map((op) => [
+            op.id?.toString() ?? "",
+            { deadline: new Date(op.deadlineDate) },
+          ])
+        )
+      );
     }
   }, [user, company, form]);
 
@@ -243,30 +294,30 @@ export default function ProfilePage() {
     const initialBenefit = form.getValues("benefitsAndValues.benefits") || [];
     setBenefits(
       initialBenefit.map((bf) => ({
-         label: bf.label,
+        label: bf.label,
       }))
-    )
+    );
   }, [form]);
 
   useEffect(() => {
     const initialValue = form.getValues("benefitsAndValues.values") || [];
     setBenefits(
       initialValue.map((vl) => ({
-         label: vl.label,
+        label: vl.label,
       }))
-    )
+    );
   }, [form]);
 
   useEffect(() => {
-    if(openImagePopup || openProfilePopup) {
+    if (openImagePopup || openProfilePopup) {
       ignoreNextClick.current = true;
-      setTimeout(() => ignoreNextClick.current = false, 200);
+      setTimeout(() => (ignoreNextClick.current = false), 200);
     }
   }, [openImagePopup, openProfilePopup]);
 
-  if(loading) return (<EmployeeProfilePageSkeleton/>);
-  if(!user || !company) return null;
-  
+  if (loading) return <CompanyProfilePageSkeleton />;
+  if (!user || !company) return null;
+
   // Add an open position
   const addOpenPosition = () => {
     const newPosition = {
@@ -287,10 +338,9 @@ export default function ProfilePage() {
     setOpenPositions((prevPositions) => [...prevPositions!, newPosition]);
   };
 
-  
   // Remove an open position
   const removeOpenPosition = (positionId: number) => {
-    setOpenPositions((prevPositions) => 
+    setOpenPositions((prevPositions) =>
       prevPositions!.filter((position) => position.id !== positionId.toString())
     );
   };
@@ -386,7 +436,7 @@ export default function ProfilePage() {
     }
 
     // Add new career
-    const updatedCareers = [...careers, { name: trimmed, description: '' }];
+    const updatedCareers = [...careers, { name: trimmed, description: "" }];
     setCareers(updatedCareers);
 
     // Clear input field
@@ -442,8 +492,6 @@ export default function ProfilePage() {
     setSocials(updatedSocials); // Update the state
   };
 
-  const getDeadlineDate = (positionId: string, fallback: Date) => selectedDates[positionId]?.deadline ?? fallback;
-
   const handleDateChange = (
     positionId: string,
     type: "posted" | "deadline",
@@ -458,13 +506,16 @@ export default function ProfilePage() {
     }));
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, type: 'avatar' | 'cover') => {
+  const handleFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    type: "avatar" | "cover"
+  ) => {
     const file = event.target.files ? event.target.files[0] : null;
     if (file) {
-      if (type === 'avatar') {
+      if (type === "avatar") {
         setAvatarFile(file);
         form.setValue("basicInfo.avatar", file);
-      } else if (type === 'cover') {
+      } else if (type === "cover") {
         setCoverFile(file);
         form.setValue("basicInfo.cover", file);
       }
@@ -477,87 +528,99 @@ export default function ProfilePage() {
       ...data,
       benefitsAndValues: {
         benefits: benefits,
-        values: values
+        values: values,
       },
       careerScopes: careers,
       socials: socials,
       openPositions: openPositions?.map((position, index) => ({
         id: position?.id,
         title: data.openPositions?.[index]?.title || position.title,
-        description: data.openPositions?.[index]?.description || position.description,
-        experience: data.openPositions?.[index]?.experienceRequirement || position.experience,
-        education: data.openPositions?.[index]?.educationRequirement || position.education,
+        description:
+          data.openPositions?.[index]?.description || position.description,
+        experience:
+          data.openPositions?.[index]?.experienceRequirement ||
+          position.experience,
+        education:
+          data.openPositions?.[index]?.educationRequirement ||
+          position.education,
         salary: data.openPositions?.[index]?.salary || position.salary,
         skills: data.openPositions?.[index]?.skills || position.skills,
         postedDate: position.postedDate,
-        deadlineDate: selectedDates[position?.id?.toString() ?? '']?.deadline?.toISOString() || position.deadlineDate,
-      }))
+        deadlineDate:
+          selectedDates[
+            position?.id?.toString() ?? ""
+          ]?.deadline?.toISOString() || position.deadlineDate,
+      })),
     };
-    
+
     // Show success message
     toast({
       title: "Success!",
       description: "Company profile updated successfully.",
     });
-  
+
     // Exit edit mode
     setIsEdit(false);
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     // Explicitly sync all state variables with the form
     form.setValue("benefitsAndValues.benefits", benefits);
     form.setValue("benefitsAndValues.values", values);
     form.setValue("careerScopes", careers);
     form.setValue("socials", socials);
-    
+
     // Also sync any file uploads that might be managed outside the form
     if (avatarFile) {
       form.setValue("basicInfo.avatar", avatarFile);
     }
-    
+
     if (coverFile) {
       form.setValue("basicInfo.cover", coverFile);
     }
-    
+
     // Now submit the form
     form.handleSubmit(onSubmit)(e);
   };
 
   // Profile, Cover and Image Popup handlers
   const handleClickImagePopup = (e: React.MouseEvent) => {
-    if(ignoreNextClick.current) {
+    if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
-      return;  
+      return;
     }
-    if((e.target as HTMLElement).closest(".dialog-content")) return;
+    if ((e.target as HTMLElement).closest(".dialog-content")) return;
     setOpenImagePopup(true);
-  }
+  };
 
   const handleClickProfilePopup = (e: React.MouseEvent) => {
-    if(ignoreNextClick.current) {
+    if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
-      return;  
+      return;
     }
-    if((e.target as HTMLElement).closest(".dialog-content")) return;
+    if ((e.target as HTMLElement).closest(".dialog-content")) return;
     setOpenProfilePopup(true);
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <div
         className="relative h-80 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center"
-        style={{ backgroundImage: `url(${coverFile ? URL.createObjectURL(coverFile) : company.cover})` }}
-      > 
+        style={{
+          backgroundImage: `url(${
+            coverFile ? URL.createObjectURL(coverFile) : company.cover
+          })`,
+        }}
+      >
         <BlurBackGroundOverlay />
         {isEdit && (
-          <div 
+          <div
             className="flex items-center gap-2 cursor-pointer absolute bottom-5 right-5 py-1 px-3 rounded-full bg-foreground text-primary-foreground"
-            onClick={() => coverInputRef.current?.click()} 
+            onClick={() => coverInputRef.current?.click()}
           >
-            <LucideCamera strokeWidth={"1.2px"} width={"18px"}/>
+            <LucideCamera strokeWidth={"1.2px"} width={"18px"} />
             <TypographySmall className="text-xs">Change Cover</TypographySmall>
           </div>
         )}
@@ -566,25 +629,30 @@ export default function ProfilePage() {
           type="file"
           className="hidden"
           accept="image/*"
-          onChange={(e) => handleFileChange(e, 'cover')}
+          onChange={(e) => handleFileChange(e, "cover")}
         />
         <div className="relative flex items-center gap-5 tablet-sm:flex-col">
-          <Avatar 
-            className="size-32 tablet-sm:size-28 relative bg-primary-foreground" rounded="md" 
+          <Avatar
+            className="size-32 tablet-sm:size-28 relative bg-primary-foreground"
+            rounded="md"
             onClick={(e) => {
-              if(!isEdit) handleClickProfilePopup(e)
+              if (!isEdit) handleClickProfilePopup(e);
             }}
           >
-            <AvatarImage src={avatarFile ? URL.createObjectURL(avatarFile) : company.avatar!}/>
+            <AvatarImage
+              src={
+                avatarFile ? URL.createObjectURL(avatarFile) : company.avatar!
+              }
+            />
             <AvatarFallback className="uppercase">
               {company.name.slice(0, 3)}
             </AvatarFallback>
             {isEdit && (
-              <div 
+              <div
                 className="size-8 flex justify-center items-center cursor-pointer absolute bottom-1 right-1 p-1 rounded-full bg-foreground text-primary-foreground"
                 onClick={() => avatarInputRef.current?.click()}
               >
-                <LucideCamera width={"18px"} strokeWidth={"1.2px"}/>
+                <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
               </div>
             )}
             <input
@@ -592,7 +660,7 @@ export default function ProfilePage() {
               type="file"
               className="hidden"
               accept="image/*"
-              onChange={(e) => handleFileChange(e, 'avatar')}
+              onChange={(e) => handleFileChange(e, "avatar")}
             />
           </Avatar>
           <div className="flex flex-col items-start gap-2 text-muted tablet-sm:items-center">
@@ -635,9 +703,7 @@ export default function ProfilePage() {
                 label="Company Name"
                 input={
                   <Input
-                    placeholder={
-                      isEdit ? "Company Name" : company.name
-                    }
+                    placeholder={isEdit ? "Company Name" : company.name}
                     id="company-name"
                     {...form.register("basicInfo.name")}
                     disabled={!isEdit}
@@ -650,9 +716,7 @@ export default function ProfilePage() {
                 </TypographyMuted>
                 <Textarea
                   placeholder={
-                    isEdit
-                      ? "Company Description"
-                      : company.description
+                    isEdit ? "Company Description" : company.description
                   }
                   id="company-description"
                   {...form.register("basicInfo.description")}
@@ -665,9 +729,7 @@ export default function ProfilePage() {
                   label="Industry"
                   input={
                     <Input
-                      placeholder={
-                        isEdit ? "Industry" : company.industry
-                      }
+                      placeholder={isEdit ? "Industry" : company.industry}
                       id="industry"
                       {...form.register("basicInfo.industry")}
                       disabled={!isEdit}
@@ -686,13 +748,17 @@ export default function ProfilePage() {
                       <Select
                         value={field.value}
                         onValueChange={(value: TLocations) => {
-                          field.onChange(value); 
+                          field.onChange(value);
                           setSelectedLocation(value);
                         }}
                         disabled={!isEdit}
                       >
                         <SelectTrigger className="h-12 text-muted-foreground">
-                          <SelectValue placeholder={isEdit ? "Select Location" : selectedLocation} />
+                          <SelectValue
+                            placeholder={
+                              isEdit ? "Select Location" : selectedLocation
+                            }
+                          />
                         </SelectTrigger>
                         <SelectContent>
                           {locationConstant.map((location) => (
@@ -713,10 +779,7 @@ export default function ProfilePage() {
                     <Input
                       type="number"
                       placeholder={
-                        isEdit
-                          ? "Company Size"
-                          : company.companySize.toString()
-                        
+                        isEdit ? "Company Size" : company.companySize.toString()
                       }
                       id="company-size"
                       {...form.register("basicInfo.companySize")}
@@ -731,9 +794,7 @@ export default function ProfilePage() {
                     <Input
                       type="number"
                       placeholder={
-                        isEdit
-                          ? "Founded Year"
-                          : company.foundedYear.toString()
+                        isEdit ? "Founded Year" : company.foundedYear.toString()
                       }
                       id="company-founded-year"
                       {...form.register("basicInfo.foundedYear")}
@@ -747,9 +808,7 @@ export default function ProfilePage() {
                 label="Email"
                 input={
                   <Input
-                    placeholder={
-                      isEdit ? "Email" : user.email
-                    }
+                    placeholder={isEdit ? "Email" : user.email}
                     id="email"
                     {...form.register("accountSetting.email")}
                     prefix={<LucideMail />}
@@ -761,9 +820,7 @@ export default function ProfilePage() {
                 label="Phone Number"
                 input={
                   <Input
-                    placeholder={
-                      isEdit ? "Phone number" : company.phone
-                    }
+                    placeholder={isEdit ? "Phone number" : company.phone}
                     id="phone"
                     {...form.register("accountSetting.phone")}
                     prefix={<LucidePhone />}
@@ -779,12 +836,18 @@ export default function ProfilePage() {
             <div className="flex flex-col gap-1">
               <div className="flex justify-between items-center">
                 <TypographyH4>Open Position Information</TypographyH4>
-                  {isEdit && (
-                    <div className="flex items-center gap-1 cursor-pointer" onClick={addOpenPosition}>
-                      <LucidePlus className="text-muted-foreground" width={'18px'}/>
-                      <TypographyMuted>Add New</TypographyMuted>
-                    </div>
-                  )}
+                {isEdit && (
+                  <div
+                    className="flex items-center gap-1 cursor-pointer"
+                    onClick={addOpenPosition}
+                  >
+                    <LucidePlus
+                      className="text-muted-foreground"
+                      width={"18px"}
+                    />
+                    <TypographyMuted>Add New</TypographyMuted>
+                  </div>
+                )}
               </div>
               <Divider />
             </div>
@@ -794,7 +857,9 @@ export default function ProfilePage() {
             >
               {openPositions?.map((position, index) => {
                 const positionId = position.id?.toString();
-                const deadlineFallback = position.deadlineDate ? new Date(position.deadlineDate) : new Date();
+                const deadlineDate =
+                  selectedDates[positionId ?? ""]?.deadline ||
+                  new Date(position.deadlineDate);
                 return (
                   <OpenPositionForm
                     key={index}
@@ -810,18 +875,21 @@ export default function ProfilePage() {
                     skills={position.skills}
                     salary={position.salary}
                     deadlineDate={{
-                      defaultValue: deadlineFallback,
-                      data: selectedDates[positionId ?? '']?.deadline || deadlineFallback,
+                      defaultValue: deadlineDate,
+                      data: deadlineDate,
                       onDataChange: (date: Date | undefined) => {
                         if (date) {
-                          handleDateChange(positionId ?? '', "deadline", date);
-                          form.setValue(`openPositions.${index}.deadlineDate`, date);
+                          handleDateChange(positionId ?? "", "deadline", date);
+                          form.setValue(
+                            `openPositions.${index}.deadlineDate`,
+                            date
+                          );
                         }
                       },
                     }}
                     onRemove={removeOpenPosition}
                   />
-                )
+                );
               })}
             </div>
           </div>
@@ -843,10 +911,13 @@ export default function ProfilePage() {
                   }
 
                   return (
-                    <CarouselItem key={index} className="max-w-[280px] relative">
+                    <CarouselItem
+                      key={index}
+                      className="max-w-[280px] relative"
+                    >
                       <div
                         onClick={(e) => {
-                          if(!isEdit) {
+                          if (!isEdit) {
                             handleClickImagePopup(e);
                             setCurrentCompanyImage(img!.toString());
                           }
@@ -1141,10 +1212,13 @@ export default function ProfilePage() {
             <div className="w-full flex flex-col items-stretch gap-3">
               <div className="flex flex-wrap gap-3">
                 {careers.map((career, index) => (
-                  <div key={index} className="rounded-3xl border-2 border-muted duration-300 ease-linear hover:border-muted-foreground">
+                  <div
+                    key={index}
+                    className="rounded-3xl border-2 border-muted duration-300 ease-linear hover:border-muted-foreground"
+                  >
                     <HoverCard>
                       <HoverCardTrigger className="flex items-center bg-muted rounded-3xl">
-                        <Tag label={career.name}/>
+                        <Tag label={career.name} />
                         {isEdit && (
                           <LucideCircleX
                             className="text-muted-foreground cursor-pointer mr-2 text-red-500"
@@ -1154,7 +1228,11 @@ export default function ProfilePage() {
                         )}
                       </HoverCardTrigger>
                       <HoverCardContent>
-                        <TypographySmall>{career.description ? career.description : career.name}</TypographySmall>
+                        <TypographySmall>
+                          {career.description
+                            ? career.description
+                            : career.name}
+                        </TypographySmall>
                       </HoverCardContent>
                     </HoverCard>
                   </div>
@@ -1234,19 +1312,19 @@ export default function ProfilePage() {
                 <div className="flex flex-wrap gap-3">
                   {socials.map((item: ISocial, index) => (
                     <Link
-                        key={index}
-                        href={item.url}
-                        className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
+                      key={index}
+                      href={item.url}
+                      className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
                     >
-                        {getSocialPlatformTypeIcon(item.platform as TPlatform)}
-                        <TypographySmall>{item.platform}</TypographySmall>
-                        {isEdit && (
-                      <LucideXCircle
-                        className="text-muted-foreground cursor-pointer text-red-500"
-                        width={"18px"}
-                        onClick={() => removeSocial(index)}
-                      />
-                    )}
+                      {getSocialPlatformTypeIcon(item.platform as TPlatform)}
+                      <TypographySmall>{item.platform}</TypographySmall>
+                      {isEdit && (
+                        <LucideXCircle
+                          className="text-muted-foreground cursor-pointer text-red-500"
+                          width={"18px"}
+                          onClick={() => removeSocial(index)}
+                        />
+                      )}
                     </Link>
                   ))}
                 </div>
@@ -1259,7 +1337,9 @@ export default function ProfilePage() {
                             Platform
                           </TypographyMuted>
                           <Select
-                            onValueChange={(value: string) => setSocialInput({ ...socialInput, social: value })}
+                            onValueChange={(value: string) =>
+                              setSocialInput({ ...socialInput, social: value })
+                            }
                             value={socialInput.social}
                           >
                             <SelectTrigger className="h-12 text-muted-foreground">
@@ -1267,7 +1347,10 @@ export default function ProfilePage() {
                             </SelectTrigger>
                             <SelectContent>
                               {platformConstant.map((platform) => (
-                                <SelectItem key={platform.id} value={platform.value}>
+                                <SelectItem
+                                  key={platform.id}
+                                  value={platform.value}
+                                >
                                   {platform.label}
                                 </SelectItem>
                               ))}
@@ -1282,14 +1365,23 @@ export default function ProfilePage() {
                               id="link"
                               name="link"
                               value={socialInput.link}
-                              onChange={(e) => setSocialInput({ ...socialInput, link: e.target.value })}
+                              onChange={(e) =>
+                                setSocialInput({
+                                  ...socialInput,
+                                  link: e.target.value,
+                                })
+                              }
                               prefix={<LucideLink2 />}
                             />
                           }
                         />
                       </div>
                     </div>
-                    <Button variant="secondary" className="text-xs w-full" onClick={addSocial}>
+                    <Button
+                      variant="secondary"
+                      className="text-xs w-full"
+                      onClick={addSocial}
+                    >
                       <LucidePlus />
                       Add new social
                     </Button>
@@ -1307,13 +1399,17 @@ export default function ProfilePage() {
           )}
         </div>
       </div>
-        
+
       {/* Image Popup Section */}
-      <ImagePopup open={openImagePopup} setOpen={setOpenImagePopup} image={currentCompanyImage!}/>
+      <ImagePopup
+        open={openImagePopup}
+        setOpen={setOpenImagePopup}
+        image={currentCompanyImage!}
+      />
 
       {/* Profile Popup Section */}
-      <ImagePopup 
-        open={openProfilePopup} 
+      <ImagePopup
+        open={openProfilePopup}
         setOpen={setOpenProfilePopup}
         image={avatarFile ? URL.createObjectURL(avatarFile) : company.avatar!}
       />
