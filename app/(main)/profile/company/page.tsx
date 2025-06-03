@@ -894,7 +894,7 @@ export default function ProfilePage() {
             </div>
           </div>
           {/* Company Multiple Images Section */}
-          <div className="w-full p-5 border-[1px] border-muted rounded-md">
+          {((company.images && company.images?.length > 0) || isEdit) && (<div className="w-full p-5 border-[1px] border-muted rounded-md">
             <div className="flex flex-col gap-1">
               <TypographyH4>Company Images Information</TypographyH4>
               <Divider />
@@ -971,7 +971,7 @@ export default function ProfilePage() {
               <CarouselPrevious className="ml-8" />
               <CarouselNext className="mr-8" />
             </Carousel>
-          </div>
+          </div>)}
         </div>
         <div className="w-[40%] flex flex-col gap-5">
           <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
@@ -1302,94 +1302,96 @@ export default function ProfilePage() {
           </div>
 
           {/* Social Information Form Section */}
-          <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
-            <div className="flex flex-col gap-1">
-              <TypographyH4>Social Information</TypographyH4>
-              <Divider />
-            </div>
-            <div className="w-full flex flex-col items-start gap-5">
-              <div className="w-full flex flex-col items-stretch gap-3">
-                <div className="flex flex-wrap gap-3">
-                  {socials.map((item: ISocial, index) => (
-                    <Link
-                      key={index}
-                      href={item.url}
-                      className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
-                    >
-                      {getSocialPlatformTypeIcon(item.platform as TPlatform)}
-                      <TypographySmall>{item.platform}</TypographySmall>
-                      {isEdit && (
-                        <LucideXCircle
-                          className="text-muted-foreground cursor-pointer text-red-500"
-                          width={"18px"}
-                          onClick={() => removeSocial(index)}
-                        />
-                      )}
-                    </Link>
-                  ))}
-                </div>
-                {isEdit && (
-                  <div>
-                    <div className="w-full flex flex-col items-start gap-5 p-5 mt-3 border-[1px] border-muted rounded-md">
-                      <div className="w-full flex justify-between items-center gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
-                        <div className="w-full flex flex-col items-start gap-1">
-                          <TypographyMuted className="text-xs">
-                            Platform
-                          </TypographyMuted>
-                          <Select
-                            onValueChange={(value: string) =>
-                              setSocialInput({ ...socialInput, social: value })
-                            }
-                            value={socialInput.social}
-                          >
-                            <SelectTrigger className="h-12 text-muted-foreground">
-                              <SelectValue placeholder="Platform" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {platformConstant.map((platform) => (
-                                <SelectItem
-                                  key={platform.id}
-                                  value={platform.value}
-                                >
-                                  {platform.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <LabelInput
-                          label="Link"
-                          input={
-                            <Input
-                              placeholder="Link"
-                              id="link"
-                              name="link"
-                              value={socialInput.link}
-                              onChange={(e) =>
-                                setSocialInput({
-                                  ...socialInput,
-                                  link: e.target.value,
-                                })
-                              }
-                              prefix={<LucideLink2 />}
-                            />
-                          }
-                        />
-                      </div>
-                    </div>
-                    <Button
-                      variant="secondary"
-                      className="text-xs w-full"
-                      onClick={addSocial}
-                    >
-                      <LucidePlus />
-                      Add new social
-                    </Button>
+          {((company.socials && company.socials?.length > 0) || isEdit) && (
+            <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
+              <div className="flex flex-col gap-1">
+                <TypographyH4>Social Information</TypographyH4>
+                <Divider />
+              </div>
+              <div className="w-full flex flex-col items-start gap-5">
+                <div className="w-full flex flex-col items-stretch gap-3">
+                  <div className="flex flex-wrap gap-3">
+                    {socials.map((item: ISocial, index) => (
+                      <Link
+                        key={index}
+                        href={item.url}
+                        className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
+                      >
+                        {getSocialPlatformTypeIcon(item.platform as TPlatform)}
+                        <TypographySmall>{item.platform}</TypographySmall>
+                        {isEdit && (
+                          <LucideXCircle
+                            className="text-muted-foreground cursor-pointer text-red-500"
+                            width={"18px"}
+                            onClick={() => removeSocial(index)}
+                          />
+                        )}
+                      </Link>
+                    ))}
                   </div>
-                )}
+                  {isEdit && (
+                    <div>
+                      <div className="w-full flex flex-col items-start gap-5 p-5 mt-3 border-[1px] border-muted rounded-md">
+                        <div className="w-full flex justify-between items-center gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
+                          <div className="w-full flex flex-col items-start gap-1">
+                            <TypographyMuted className="text-xs">
+                              Platform
+                            </TypographyMuted>
+                            <Select
+                              onValueChange={(value: string) =>
+                                setSocialInput({ ...socialInput, social: value })
+                              }
+                              value={socialInput.social}
+                            >
+                              <SelectTrigger className="h-12 text-muted-foreground">
+                                <SelectValue placeholder="Platform" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {platformConstant.map((platform) => (
+                                  <SelectItem
+                                    key={platform.id}
+                                    value={platform.value}
+                                  >
+                                    {platform.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <LabelInput
+                            label="Link"
+                            input={
+                              <Input
+                                placeholder="Link"
+                                id="link"
+                                name="link"
+                                value={socialInput.link}
+                                onChange={(e) =>
+                                  setSocialInput({
+                                    ...socialInput,
+                                    link: e.target.value,
+                                  })
+                                }
+                                prefix={<LucideLink2 />}
+                              />
+                            }
+                          />
+                        </div>
+                      </div>
+                      <Button
+                        variant="secondary"
+                        className="text-xs w-full"
+                        onClick={addSocial}
+                      >
+                        <LucidePlus />
+                        Add new social
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          )}
           {isEdit && (
             <div className="w-full flex justify-end">
               <Button type="submit" className="text-xs w-full">

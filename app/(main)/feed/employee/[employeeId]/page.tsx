@@ -48,6 +48,7 @@ import { useGetOneUserStore } from "@/stores/apis/users/get-one-user.store";
 import EmployeeDetailPageSkeleton from "./skeleton";
 import { dateFormatter } from "@/utils/functions/dateformatter";
 import { useLocalLoginStore, useLoginStore, useSessionLoginStore } from "@/stores/apis/auth/login.store";
+import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
 
 export default function EmployeeDetailPage() {
   const params = useParams();
@@ -349,12 +350,7 @@ export default function EmployeeDetailPage() {
                 <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
                   <div className="flex items-center text-muted-foreground gap-1">
                     <LucideFileText strokeWidth={"1.5px"} />
-                    <TypographyMuted>
-                      {user.employee.resume.replace(
-                        "http://localhost:3000/storage/resumes/",
-                        ""
-                      )}
-                    </TypographyMuted>
+                    <TypographyMuted>{extractCleanFilename(user.employee.resume)}</TypographyMuted>
                   </div>
                   <div className="flex items-center gap-1">
                     <Link href={user.employee.resume} target="_blank">
@@ -377,12 +373,7 @@ export default function EmployeeDetailPage() {
                 <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
                   <div className="flex items-center text-muted-foreground gap-1">
                     <LucideFileText strokeWidth={"1.5px"} />
-                    <TypographyMuted>
-                      {user.employee.coverLetter.replace(
-                        "http://localhost:3000/storage/cover-letters/",
-                        ""
-                      )}
-                    </TypographyMuted>
+                    <TypographyMuted>{extractCleanFilename(user.employee.coverLetter)}</TypographyMuted>
                   </div>
                   <div className="flex items-center gap-1">
                     <Link href={user.employee.coverLetter} target="_blank">
