@@ -47,6 +47,7 @@ import { TPlatform } from "@/utils/types/platform.type";
 import { useGetOneUserStore } from "@/stores/apis/users/get-one-user.store";
 import { useLocalLoginStore, useLoginStore, useSessionLoginStore } from "@/stores/apis/auth/login.store";
 import { CompanyDetailPageSkeleton } from "./skeleton";
+import { dateFormatterv2 } from "@/utils/functions/dateformatter-v2";
 
 export default function CompanyDetailPage() {
   const param = useParams();
@@ -239,13 +240,13 @@ export default function CompanyDetailPage() {
                             icon={
                               <LucideCalendarDays className="text-muted-foreground" strokeWidth={"1.5px"}/>
                             }
-                            text={`Post - ${item.postedDate}`}
+                          text={`Post - ${dateFormatterv2(item.postedDate?.toString() ?? "")}`}
                           />
                           <IconLabel
                             icon={
                               <LucideCalendarDays className="text-muted-foreground" strokeWidth={"1.5px"}/>
                             }
-                            text={`Deadline - ${item.deadlineDate}`}
+                            text={`Deadline - ${dateFormatterv2(item.deadlineDate?.toString() ?? "")}`}
                           />
                         </div>
                       </div>

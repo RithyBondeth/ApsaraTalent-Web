@@ -2,6 +2,7 @@ import { API_AUTH_LOGIN_URL } from "@/utils/constants/apis/auth_url";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import axios from "axios";
+import { deleteCookie, setCookie } from "cookies-next";
 
 type TLoginResponse = {
   accessToken: string | null;
@@ -58,6 +59,12 @@ export const useLoginStore = create<TLoginState>((set) => ({
         error: null,
         rememberMe: rememberMe,
       });
+      setCookie('auth-token', accessToken, {
+        maxAge: rememberMe ? 30 * 24 * 60 * 60 : undefined, // 30 days for "remember me"
+        httpOnly: false,
+        secure: process.env.NODE_ENV === 'production',
+        path: '/'
+      })
     } catch (error) {
       if (axios.isAxiosError(error)) {
         set({
@@ -77,6 +84,7 @@ export const useLoginStore = create<TLoginState>((set) => ({
   clearToken: () => {
     localStorage.removeItem("LoginStore-local");
     sessionStorage.removeItem("LoginStore-session");
+    deleteCookie('auth-token');
     set({
       accessToken: null,
       refreshToken: null,

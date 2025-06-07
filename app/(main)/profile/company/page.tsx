@@ -141,13 +141,9 @@ export default function ProfilePage() {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
-  const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(
-    null
-  );
+  const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(null);
   const [openPositions, setOpenPositions] = useState<IJobPosition[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
-    ""
-  );
+  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>("");
   const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
   const [benefitInput, setBenefitInput] = useState<string>("");
   const [benefits, setBenefits] = useState<{ label: string }[]>([]);
@@ -157,10 +153,7 @@ export default function ProfilePage() {
   const [openCareersPopOver, setOpenCareersPopOver] = useState<boolean>(false);
   const [careersInput, setCareersInput] = useState<string>("");
   const [careers, setCareers] = useState<ICareerScopes[]>([]);
-  const [socialInput, setSocialInput] = useState<{
-    social: string;
-    link: string;
-  }>({ social: "", link: "" });
+  const [socialInput, setSocialInput] = useState<{ social: string; link: string; }>({ social: "", link: "" });
   const [socials, setSocials] = useState<ISocial[]>([]);
   const [selectedDates, setSelectedDates] = useState<
     Record<string, { posted?: Date; deadline?: Date }>
