@@ -5,6 +5,8 @@ import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import Image from "next/image";
 import feedBlackSvg from "@/assets/svg/feed-black.svg";
 import feedWhiteSvg from "@/assets/svg/feed-white.svg";
+import feedCompanyWhiteSvg from "@/assets/svg/feed-company-white.svg";
+import feedCompanyBlackSvg from "@/assets/svg/feed-company-black.svg";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import React, { useRef, useState } from "react";
 import { useEffect } from "react";
@@ -34,6 +36,7 @@ export default function FeedPage() {
   const { resolvedTheme } = useTheme();
   const currentTheme = mounted ? resolvedTheme : "light";
   const feedImage = currentTheme === "dark" ? feedBlackSvg : feedWhiteSvg;
+  const feedCompanyImage = currentTheme === "dark" ? feedCompanyBlackSvg : feedCompanyWhiteSvg;
 
   // Pop up Dialog
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
@@ -106,19 +109,22 @@ export default function FeedPage() {
     return () => unsub(); // Cleanup on unmount
   }, [getCurrentUserStore.getCurrentUser]);
 
+  const currentUser = useGetCurrentUserStore((state) => state.user);
+  const isEmployee = currentUser?.role === 'employee';
+
   return (
     <div className="w-full flex flex-col items-start gap-5">
       {/* Header Section */}
-      <div className="w-full flex items-start justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
+      {isEmployee ? (<div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
         <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
           <TypographyH2 className="leading-relaxed tablet-xl:text-center">
-            Apply to your favorite jobs from anywhere.
+            🌍 Connect with global professionals and grow your network
           </TypographyH2>
           <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-            Connect with professionals around the world.
+           💼 Start your journey toward a career you love
           </TypographyH4>
           <TypographyMuted className="leading-relaxed tablet-xl:text-center">
-            Find your dream job with ease and apply to it from anywhere.
+            Land your dream job with ease — no matter where you are.
           </TypographyMuted>
         </div>
         <Image
@@ -128,7 +134,26 @@ export default function FeedPage() {
           width={400}
           className="tablet-xl:!w-full"
         />
-      </div>
+      </div>) : (<div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
+        <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
+          <TypographyH2 className="leading-relaxed tablet-xl:text-center">
+            🔍 Find Top Talent from Anywhere
+          </TypographyH2>
+          <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+            🚀 Build your dream team effortlessly, no matter where you are
+          </TypographyH4>
+          <TypographyMuted className="leading-relaxed tablet-xl:text-center">
+            Post jobs, review profiles, and hire faster — all in one place
+          </TypographyMuted>
+        </div>
+        <Image
+          src={feedCompanyImage}
+          alt="feed"
+          height={300}
+          width={400}
+          className="tablet-xl:!w-full"
+        />
+      </div>)}
 
       {/* Feed Card Section */}
       <div className="w-full grid grid-cols-2 gap-5 tablet-lg:grid-cols-1">

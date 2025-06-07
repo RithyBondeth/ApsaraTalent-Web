@@ -1,9 +1,6 @@
 import Header from "@/components/header";
 import Image from "next/image";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { Button } from "@/components/ui/button";
-import { LucideBriefcaseBusiness } from "lucide-react";
-import Link from "next/link";
 import landingSvg from "@/assets/svg/landing.svg";
 import ParticlesBackground from "@/components/utils/particle-background";
 import { TypographyH1 } from "@/components/utils/typography/typography-h1";
@@ -22,12 +19,6 @@ export default function IndexPage() {
                 connects you with the right opportunities.<span className="tablet-md:hidden">For businesses and employers, find top-tier talent to drive success 
                 and innovation.</span>
               </TypographyMuted>
-              <Link href="/feed" className="mt-3">
-                <Button className="tablet-sm:text-xs">
-                  <LucideBriefcaseBusiness/>
-                  Explore Now
-                </Button>
-              </Link>
             </div>
         </div>
       </div>
