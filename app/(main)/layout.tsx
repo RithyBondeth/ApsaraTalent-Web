@@ -33,7 +33,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   }
 
   // Special layout for message page - no right sidebar
-  if (pathname === "/message" || pathname.startsWith("/message/")) {
+  if (pathname === "/message" || pathname.startsWith("/message/") || pathname === "/search") {
     return (
       <SidebarProvider>
         <CollapseSidebar/>

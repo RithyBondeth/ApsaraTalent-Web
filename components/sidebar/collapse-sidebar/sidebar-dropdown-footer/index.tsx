@@ -4,6 +4,7 @@ import {
 ChevronsUpDown,
   LogOut,
   LucideBookmark,
+  LucideBuilding,
   LucideInfo,
   LucideMoon,
   LucideSettings,
@@ -100,7 +101,7 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem onClick={() => router.push(`/profile/${currentUser?.role}`)}>
-                <LucideUser />
+                {currentUser?.role === 'employee' ? <LucideUser /> : <LucideBuilding/>}
                 My Profile
               </DropdownMenuItem>
             </DropdownMenuGroup>
