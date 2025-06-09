@@ -54,7 +54,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
           <Avatar className="size-20" onClick={props.onProfileImageClick}>
             <AvatarImage src={props.avatar!} />
             <AvatarFallback className="uppercase">
-              {!props.avatar ? <LucideUser /> : props.username?.slice(0, 3)}
+              {!props.avatar && props.username?.slice(0, 3)}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-start gap-1">

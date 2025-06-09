@@ -2,7 +2,7 @@ import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import Image from "next/image";
-import feedWhiteSvg from "@/assets/svg/feed-white.svg";
+import EmployeeSearchSvg from "@/assets/svg/employee-search.svg";
 import SearchBar from "@/components/search/search-bar";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { RadioGroup } from "@/components/ui/radio-group";
@@ -21,13 +21,16 @@ export default function SearchPage() {
           <TypographyH4 className="leading-relaxed">
             Search top talent and connect instantly.
           </TypographyH4>
+          <TypographyH4 className="leading-relaxed">
+            Search profiles, review resumes, and reach out directly — instantly.
+          </TypographyH4>
           <TypographyMuted className="leading-relaxed">
             Your next great hire is just a click away.
           </TypographyMuted>
           <SearchBar/>
         </div>
         <Image
-          src={feedWhiteSvg}
+          src={EmployeeSearchSvg}
           alt="feed"
           height={300}
           width={400}

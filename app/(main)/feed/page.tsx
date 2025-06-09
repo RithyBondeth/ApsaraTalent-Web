@@ -25,6 +25,7 @@ import {
 } from "@/stores/apis/auth/login.store";
 import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 import CompanyCardSkeleton from "@/components/company/company-card/skeleton";
+import { BannerSkeleton } from "./banner-skeleton";
 
 export default function FeedPage() {
   // Utils
@@ -71,9 +72,9 @@ export default function FeedPage() {
   let allUsers: IUser[] = [];
 
   if (currentUserRole === "employee") {
-    allUsers = users?.filter((user) => user.role === "employee") || [];
-  } else {
     allUsers = users?.filter((user) => user.role === "company") || [];
+  } else {
+    allUsers = users?.filter((user) => user.role === "employee") || [];
   }
 
   useEffect(() => {
@@ -115,51 +116,57 @@ export default function FeedPage() {
   return (
     <div className="w-full flex flex-col items-start gap-5">
       {/* Header Section */}
-      {isEmployee ? (<div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
-        <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
-          <TypographyH2 className="leading-relaxed tablet-xl:text-center">
-            🌍 Connect with global professionals and grow your network
-          </TypographyH2>
-          <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-           💼 Start your journey toward a career you love
-          </TypographyH4>
-          <TypographyMuted className="leading-relaxed tablet-xl:text-center">
-            Land your dream job with ease — no matter where you are.
-          </TypographyMuted>
+      {getCurrentUserStore.loading ? (
+        <BannerSkeleton/>
+      ) : isEmployee ? (
+        <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
+          <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
+            <TypographyH2 className="leading-relaxed tablet-xl:text-center">
+              Connect with global professionals and grow your network
+            </TypographyH2>
+            <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+              Start your journey toward a career you love
+            </TypographyH4>
+            <TypographyMuted className="leading-relaxed tablet-xl:text-center">
+              Land your dream job with ease — no matter where you are.
+            </TypographyMuted>
+          </div>
+          <Image
+            src={feedCompanyImage}
+            alt="feed"
+            height={300}
+            width={400}
+            className="tablet-xl:!w-full"
+          />
         </div>
-        <Image
-          src={feedImage}
-          alt="feed"
-          height={300}
-          width={400}
-          className="tablet-xl:!w-full"
-        />
-      </div>) : (<div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
-        <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
-          <TypographyH2 className="leading-relaxed tablet-xl:text-center">
-            🔍 Find Top Talent from Anywhere
-          </TypographyH2>
-          <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-            🚀 Build your dream team effortlessly, no matter where you are
-          </TypographyH4>
-          <TypographyMuted className="leading-relaxed tablet-xl:text-center">
-            Post jobs, review profiles, and hire faster — all in one place
-          </TypographyMuted>
+      ) : (
+        <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
+          <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
+            <TypographyH2 className="leading-relaxed tablet-xl:text-center">
+              Find Top Talent from Anywhere
+            </TypographyH2>
+            <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+              Build your dream team effortlessly, no matter where you are
+            </TypographyH4>
+            <TypographyMuted className="leading-relaxed tablet-xl:text-center">
+              Post jobs, review profiles, and hire faster — all in one place
+            </TypographyMuted>
+          </div>
+          <Image
+            src={feedImage}
+            alt="feed"
+            height={300}
+            width={400}
+            className="tablet-xl:!w-full"
+          />
         </div>
-        <Image
-          src={feedCompanyImage}
-          alt="feed"
-          height={300}
-          width={400}
-          className="tablet-xl:!w-full"
-        />
-      </div>)}
+      )}
 
       {/* Feed Card Section */}
       <div className="w-full grid grid-cols-2 gap-5 tablet-lg:grid-cols-1">
         {getCurrentUserStore.loading || !users ? (
           Array.from({ length: 6 }).map((_, index) => (
-            currentUserRole === "employee" ? (
+            currentUserRole === "company" ? (
               <EmployeeCardSkeleton key={`user-skeleton-${index}`} />
             ) : (
               <CompanyCardSkeleton key={`company-skeleton-${index}`} />
@@ -167,7 +174,7 @@ export default function FeedPage() {
           ))
         ) : allUsers.length > 0 ? (
           allUsers.map((user) =>
-            currentUserRole === "company" && user.company ? (
+            currentUserRole === "employee" && user.company ? (
               <CompanyCard
                 key={user.id}
                 {...user.company}

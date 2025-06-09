@@ -50,7 +50,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
                 <div className="flex items-center gap-3">
                     <Avatar className="size-20" onClick={props.onProfileImageClick}>
                         <AvatarImage src={props.avatar!}/>
-                        <AvatarFallback className="uppercase">{!props.avatar ? <LucideBuilding/> : props.name.slice(0, 3)}</AvatarFallback>
+                        <AvatarFallback className="uppercase">{!props.avatar && props.name.slice(0, 3)}</AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col items-start gap-1">
                         <TypographyP className="font-semibold">{props.name}</TypographyP>
@@ -92,12 +92,12 @@ export default function CompanyCard(props: ICompanyCardProps) {
                         {props.openPositions.map((item: IJobPosition, index) => <Tag key={index} label={item.title} />)}
                     </div>
                 </div>
-                <div className="flex flex-col gap-3">
+                {(props.availableTimes && <div className="flex flex-col gap-3">
                     <IconLabel text="Available times" icon={<LucideClock/>} className="[&>p]:text-primary [&>p]:font-medium"/>
                     <div className="w-full flex flex-wrap gap-2">
                         {props.availableTimes.map((item , index) => <Tag key={index} label={item} />)}
                     </div>
-                </div>
+                </div>)}
             </div>
 
            {/* button Section */}
