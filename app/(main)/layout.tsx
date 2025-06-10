@@ -9,10 +9,29 @@ import { usePathname } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { sidebarList } from "@/utils/constants/sidebar.constant";
+import { ThemeProviderClient } from "@/components/utils/themes/theme-provider-client";
+import { useThemeStore } from "@/stores/themes/theme-store";
+import { useLoginStore } from "@/stores/apis/auth/login.store";
+import { useEffect } from "react";
+import { ClipLoader } from "react-spinners";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const sidebarData = sidebarList.filter((item) => item.url === pathname);
+  const { theme } = useThemeStore();
+  const { isInitialized, initialize } = useLoginStore();
+
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
+
+  if (!isInitialized) {
+    return (
+      <div className="h-screen w-screen flex justify-center items-center">
+        <ClipLoader color="#000" />
+      </div>
+    );
+  }
 
   // Exclude dynamic feed pages but include /feed
   if (
@@ -55,21 +74,23 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   
   // Default layout with both sidebars
   return (
-    <SidebarProvider>
-      <CollapseSidebar/>
-      <div className="w-ful">
-        <SidebarInset>
-          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-            <div className="flex items-center gap-2 px-4">
-              <SidebarTrigger/>
-              <Separator orientation="vertical" className="mr-2 h-4" />
-              <TypographyP className="!m-0">{sidebarData[0].description}</TypographyP>
-            </div>
-          </header>
-        </SidebarInset>
-        <div className="!m-5">{children}</div>
-      </div>
-      <RightSidebar className="!min-w-[25%] laptop-sm:hidden"/>
-    </SidebarProvider>
+    <ThemeProviderClient defaultTheme={theme}>
+      <SidebarProvider>
+        <CollapseSidebar/>
+        <div className="w-ful">
+          <SidebarInset>
+            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+              <div className="flex items-center gap-2 px-4">
+                <SidebarTrigger/>
+                <Separator orientation="vertical" className="mr-2 h-4" />
+                <TypographyP className="!m-0">{sidebarData[0].description}</TypographyP>
+              </div>
+            </header>
+          </SidebarInset>
+          <div className="!m-5">{children}</div>
+        </div>
+        <RightSidebar className="!min-w-[25%] laptop-sm:hidden"/>
+      </SidebarProvider>
+    </ThemeProviderClient>
   );
 }

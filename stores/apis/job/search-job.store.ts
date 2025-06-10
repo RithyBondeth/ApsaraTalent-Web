@@ -1,7 +1,4 @@
-import {
-  API_JOB_BASE_URL,
-  API_SEARCH_JOB_URL,
-} from "@/utils/constants/apis/job_url";
+import { API_SEARCH_JOB_URL } from "@/utils/constants/apis/job_url";
 import { IJobPosition } from "@/utils/interfaces/user-interface/company.interface";
 import axios from "axios";
 import { create } from "zustand";
@@ -18,11 +15,8 @@ export type TSearchJobQuery = {
   sortOrder?: "ASC" | "DESC";
 };
 
-type TSearchJobResponse = {
+type TSearchJobState = {
   jobs: IJobPosition[] | null;
-};
-
-type TSearchJobState = TSearchJobResponse & {
   error: string | null;
   loading: boolean;
   querySearchJobs: (query: TSearchJobQuery, token: string) => Promise<void>;
@@ -35,7 +29,7 @@ export const useSearchJobStore = create<TSearchJobState>((set) => ({
   jobs: null,
   querySearchJobs: async (query: TSearchJobQuery, token: string) => {
     set({ loading: true, error: null });
-
+    
     try {
       const queryParams = new URLSearchParams();
 
@@ -49,13 +43,13 @@ export const useSearchJobStore = create<TSearchJobState>((set) => ({
         }
       });
 
-      const response = await axios.get<TSearchJobResponse>(
+      const response = await axios.get(
         `${API_SEARCH_JOB_URL}?${queryParams.toString()}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       set({
-        jobs: response.data.jobs,
+        jobs: response.data,
         loading: false,
         error: null,
       });

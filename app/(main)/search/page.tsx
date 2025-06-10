@@ -1,3 +1,5 @@
+"use client";
+
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
@@ -9,8 +11,40 @@ import { RadioGroup } from "@/components/ui/radio-group";
 import SearchRelevantDropdown from "@/components/search/search-bar/search-relevant-dropdown";
 import RadioGroupItemWithLabel from "@/components/ui/radio-group-item";
 import SearchEmployeeCard from "@/components/search/search-employee-card";
+import { useSearchJobStore } from "@/stores/apis/job/search-job.store";
+import { useEffect } from "react";
+import { useLoginStore } from "@/stores/apis/auth/login.store";
+import SearchEmployeeCardSkeleton from "@/components/search/search-employee-card/skeleton";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function SearchPage() {
+  const { jobs, querySearchJobs } = useSearchJobStore();
+  const accessToken = useLoginStore((state) => state.accessToken);
+  const getCurrentUser = useGetCurrentUserStore(
+    (state) => state.getCurrentUser
+  );
+
+  useEffect(() => {
+    const fetchUserAndJobs = async () => {
+      if (!accessToken) return;
+
+      await getCurrentUser(accessToken);
+      const user = useGetCurrentUserStore.getState().user;
+
+      const scopes =
+        user?.role === "company"
+          ? user?.company?.careerScopes
+          : user?.employee?.careerScopes;
+
+      const scopeNames = scopes?.map((cs) => cs.name) ?? [];
+
+      querySearchJobs({ careerScopes: scopeNames }, accessToken);
+    };
+
+    fetchUserAndJobs();
+  }, [accessToken]);
+
   return (
     <div className="w-full flex flex-col items-start gap-5 px-10">
       <div className="w-full flex items-center justify-between gap-10 laptop-sm:flex-col laptop-sm:items-center">
@@ -27,7 +61,7 @@ export default function SearchPage() {
           <TypographyMuted className="leading-relaxed">
             Your next great hire is just a click away.
           </TypographyMuted>
-          <SearchBar/>
+          <SearchBar />
         </div>
         <Image
           src={EmployeeSearchSvg}
@@ -43,27 +77,63 @@ export default function SearchPage() {
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm">Date Posted</TypographyP>
             <RadioGroup>
-              <RadioGroupItemWithLabel id='r1' value="last 24 hours" htmlFor="r1">Last 2 Hours</RadioGroupItemWithLabel>
-              <RadioGroupItemWithLabel id='r2' value="last 3 days" htmlFor="r2">Last 3 Days</RadioGroupItemWithLabel>
-              <RadioGroupItemWithLabel id='r3' value="last week" htmlFor="r3">Last week</RadioGroupItemWithLabel>              
+              <RadioGroupItemWithLabel
+                id="r1"
+                value="last 24 hours"
+                htmlFor="r1"
+              >
+                Last 2 Hours
+              </RadioGroupItemWithLabel>
+              <RadioGroupItemWithLabel id="r2" value="last 3 days" htmlFor="r2">
+                Last 3 Days
+              </RadioGroupItemWithLabel>
+              <RadioGroupItemWithLabel id="r3" value="last week" htmlFor="r3">
+                Last week
+              </RadioGroupItemWithLabel>
             </RadioGroup>
           </div>
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm">Company Size</TypographyP>
             <RadioGroup>
-              <RadioGroupItemWithLabel id='r1' value="last 24 hours" htmlFor="r1">Start up (1-50)</RadioGroupItemWithLabel>
-              <RadioGroupItemWithLabel id='r2' value="last 3 days" htmlFor="r2">Medium (51-500)</RadioGroupItemWithLabel>
-              <RadioGroupItemWithLabel id='r3' value="last week" htmlFor="r3">Large (500+)</RadioGroupItemWithLabel>              
+              <RadioGroupItemWithLabel
+                id="r1"
+                value="last 24 hours"
+                htmlFor="r1"
+              >
+                Start up (1-50)
+              </RadioGroupItemWithLabel>
+              <RadioGroupItemWithLabel id="r2" value="last 3 days" htmlFor="r2">
+                Medium (51-500)
+              </RadioGroupItemWithLabel>
+              <RadioGroupItemWithLabel id="r3" value="last week" htmlFor="r3">
+                Large (500+)
+              </RadioGroupItemWithLabel>
             </RadioGroup>
           </div>
         </div>
         <div className="w-3/4 flex flex-col items-start gap-3">
           <div className="w-full flex justify-between items-center">
-            <TypographyH4 className="text-lg">1,545 Jobs Found</TypographyH4>
-            <SearchRelevantDropdown/>
+            <TypographyH4 className="text-lg">
+              {jobs && jobs.length > 0 ? (
+                jobs.length === 1 ? (
+                  `${jobs.length} Job Found`
+                ) : (
+                  `${jobs.length} Jobs Found`
+                )
+              ) : (
+                <Skeleton className="h-6 w-40 bg-muted" />
+              )}
+            </TypographyH4>
+            <SearchRelevantDropdown />
           </div>
           <div className="w-full flex flex-col items-start gap-2">
-            {[1, 2, 3, 4, 5, 6].map((item) => <SearchEmployeeCard key={item}/>)}
+            {jobs && jobs.length > 0 ? (
+              jobs.map((item, index) => <SearchEmployeeCard key={index} />)
+            ) : (
+              <div className="w-full mb-3">
+                <SearchEmployeeCardSkeleton />
+              </div>
+            )}
           </div>
         </div>
       </div>

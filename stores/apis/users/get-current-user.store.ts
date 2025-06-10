@@ -7,13 +7,16 @@ type TGetCurrentUserState = {
   loading: boolean;
   error: string | null;
   user: IUser | null;
+  isInitialized: boolean;
   getCurrentUser: (accessToken: string) => Promise<void>;
+  clearUser: () => void;
 };
 
 export const useGetCurrentUserStore = create<TGetCurrentUserState>((set) => ({
   loading: false,
   error: null,
   user: null,
+  isInitialized: false,
   getCurrentUser: async (accessToken: string) => {
     set({ loading: true, error: null });
 
@@ -22,19 +25,34 @@ export const useGetCurrentUserStore = create<TGetCurrentUserState>((set) => ({
         API_GET_CURRENT_USER_URL,
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
-      console.log("Current User Response: ", response.data);
-      set({ loading: false, user: response.data, error: null });
+    
+      set({ 
+        loading: false, 
+        user: response.data, 
+        error: null,
+        isInitialized: true 
+      });
     } catch (error) {
       if (axios.isAxiosError(error))
         set({
           loading: false,
           error: error.response?.data?.message || error.message,
+          isInitialized: true
         });
       else
         set({
           loading: false,
           error: "An error occurred while fetching current user.",
+          isInitialized: true
         });
     }
   },
+  clearUser: () => {
+    set({
+      user: null,
+      loading: false,
+      error: null,
+      isInitialized: false
+    });
+  }
 }));

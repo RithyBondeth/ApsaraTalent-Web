@@ -18,11 +18,7 @@ import ImagePopup from "@/components/utils/image-popup";
 import { useGetAllUsersStore } from "@/stores/apis/users/get-all-user.store";
 import EmployeeCardSkeleton from "@/components/employee/employee-card/skeleton";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import {
-  useLocalLoginStore,
-  useLoginStore,
-  useSessionLoginStore,
-} from "@/stores/apis/auth/login.store";
+import { useLoginStore } from "@/stores/apis/auth/login.store";
 import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 import CompanyCardSkeleton from "@/components/company/company-card/skeleton";
 import { BannerSkeleton } from "./banner-skeleton";
@@ -65,50 +61,24 @@ export default function FeedPage() {
 
   // API Integration
   const getCurrentUserStore = useGetCurrentUserStore();
-  const { users, getAllUsers } = useGetAllUsersStore();
+  const getAllUsersStore = useGetAllUsersStore();
   const accessToken = useLoginStore((state) => state.accessToken);
 
   const currentUserRole = getCurrentUserStore.user?.role;
   let allUsers: IUser[] = [];
 
   if (currentUserRole === "employee") {
-    allUsers = users?.filter((user) => user.role === "company") || [];
+    allUsers = getAllUsersStore.users?.filter((user) => user.role === "company") || [];
   } else {
-    allUsers = users?.filter((user) => user.role === "employee") || [];
+    allUsers = getAllUsersStore.users?.filter((user) => user.role === "employee") || [];
   }
 
   useEffect(() => {
     if (accessToken) {
-      getAllUsers(accessToken);
+      getCurrentUserStore.getCurrentUser(accessToken); 
+      getAllUsersStore.getAllUsers(accessToken);
     }
   }, [accessToken]);
-
-  useEffect(() => {
-    const local = useLocalLoginStore.getState();
-    const session = useSessionLoginStore.getState();
-    const source = local.accessToken ? local : session;
-
-    if (source.accessToken) {
-      useLoginStore.setState({
-        accessToken: source.accessToken,
-        refreshToken: source.refreshToken,
-        message: source.message,
-        rememberMe: source === local,
-      });
-
-      // Initial fetch
-      getCurrentUserStore.getCurrentUser(source.accessToken);
-    }
-
-    // Subscribe to accessToken changes
-    const unsub = useLoginStore.subscribe((state) => {
-      if (state.accessToken) {
-        getCurrentUserStore.getCurrentUser(state.accessToken);
-      }
-    });
-
-    return () => unsub(); // Cleanup on unmount
-  }, [getCurrentUserStore.getCurrentUser]);
 
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const isEmployee = currentUser?.role === 'employee';
@@ -164,7 +134,7 @@ export default function FeedPage() {
 
       {/* Feed Card Section */}
       <div className="w-full grid grid-cols-2 gap-5 tablet-lg:grid-cols-1">
-        {getCurrentUserStore.loading || !users ? (
+        {(getAllUsersStore.loading || !getAllUsersStore.users) ? (
           Array.from({ length: 6 }).map((_, index) => (
             currentUserRole === "company" ? (
               <EmployeeCardSkeleton key={`user-skeleton-${index}`} />
