@@ -15,7 +15,7 @@ export default function RadioGroupItemWithLabel(props: TRadioGroupItemWithLabelP
     return (
         <div className={cn("flex items-center gap-2", props.className)}>
             <RadioGroupItem value={props.value} id={props.id} />
-            <Label htmlFor={props.htmlFor}>{props.children}</Label>
+            <Label htmlFor={props.htmlFor} className="font-normal">{props.children}</Label>
         </div>
     )   
 }

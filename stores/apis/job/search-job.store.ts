@@ -1,5 +1,5 @@
 import { API_SEARCH_JOB_URL } from "@/utils/constants/apis/job_url";
-import { IJobPosition } from "@/utils/interfaces/user-interface/company.interface";
+import { TLocations } from "@/utils/types/location.type";
 import axios from "axios";
 import { create } from "zustand";
 
@@ -15,8 +15,30 @@ export type TSearchJobQuery = {
   sortOrder?: "ASC" | "DESC";
 };
 
+type TSearchJob = {
+    id?: string;
+    title: string;
+    description: string;
+    type: string;
+    salary: string;
+    experience: string;
+    education: string;
+    skills: string[];
+    deadlineDate?: string;
+    postedDate: string;
+    company: {
+        id?: string;
+        name: string;
+        avatar?: string;
+        companySize: number;
+        industry: string;
+        location: TLocations;
+        user: { id: string };
+    }
+}
+
 type TSearchJobState = {
-  jobs: IJobPosition[] | null;
+  jobs: TSearchJob[] | null;
   error: string | null;
   loading: boolean;
   querySearchJobs: (query: TSearchJobQuery, token: string) => Promise<void>;
@@ -47,6 +69,8 @@ export const useSearchJobStore = create<TSearchJobState>((set) => ({
         `${API_SEARCH_JOB_URL}?${queryParams.toString()}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
+      console.log("Job Res: ", response.data);
 
       set({
         jobs: response.data,

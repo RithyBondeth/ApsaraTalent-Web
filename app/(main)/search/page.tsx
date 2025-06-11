@@ -10,13 +10,14 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { RadioGroup } from "@/components/ui/radio-group";
 import SearchRelevantDropdown from "@/components/search/search-bar/search-relevant-dropdown";
 import RadioGroupItemWithLabel from "@/components/ui/radio-group-item";
-import SearchEmployeeCard from "@/components/search/search-employee-card";
 import { useSearchJobStore } from "@/stores/apis/job/search-job.store";
 import { useEffect } from "react";
 import { useLoginStore } from "@/stores/apis/auth/login.store";
-import SearchEmployeeCardSkeleton from "@/components/search/search-employee-card/skeleton";
+import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LucideCalendarDays, LucideUsers } from "lucide-react";
+import SearchCompanyCard from "@/components/search/search-company-card";
 
 export default function SearchPage() {
   const { jobs, querySearchJobs } = useSearchJobStore();
@@ -75,8 +76,11 @@ export default function SearchPage() {
         <div className="w-1/4 flex flex-col items-start gap-5 p-5 shadow-md rounded-md">
           <TypographyH4 className="text-lg">Refine Result</TypographyH4>
           <div className="flex flex-col items-start gap-3">
-            <TypographyP className="text-sm">Date Posted</TypographyP>
-            <RadioGroup>
+            <TypographyP className="text-sm font-medium flex items-center gap-1">
+              <LucideCalendarDays strokeWidth={'1.5px'}/>
+              Date Posted
+            </TypographyP>
+            <RadioGroup className="ml-3">
               <RadioGroupItemWithLabel
                 id="r1"
                 value="last 24 hours"
@@ -93,8 +97,11 @@ export default function SearchPage() {
             </RadioGroup>
           </div>
           <div className="flex flex-col items-start gap-3">
-            <TypographyP className="text-sm">Company Size</TypographyP>
-            <RadioGroup>
+            <TypographyP className="text-sm font-medium flex items-center gap-1">
+              <LucideUsers strokeWidth={'1.5px'}/>
+              Company Size
+            </TypographyP>
+            <RadioGroup className="ml-3">
               <RadioGroupItemWithLabel
                 id="r1"
                 value="last 24 hours"
@@ -128,7 +135,28 @@ export default function SearchPage() {
           </div>
           <div className="w-full flex flex-col items-start gap-2">
             {jobs && jobs.length > 0 ? (
-              jobs.map((item, index) => <SearchEmployeeCard key={index} />)
+              jobs.map((item, index) => (
+                <SearchCompanyCard
+                  key={index}
+                  title={item.title}
+                  description={item.description}
+                  type={item.type}
+                  salary={item.salary}
+                  experience={item.experience}
+                  education={item.education}
+                  skills={item.skills}
+                  postedDate={item.postedDate!}
+                  company={{
+                    id: item.company.id,
+                    name: item.company.name,
+                    avatar: item.company.avatar,
+                    companySize: item.company.companySize,
+                    industry: item.company.industry,
+                    location: item.company.location,
+                    userId: item.company.user.id,
+                  }}
+                />
+              ))
             ) : (
               <div className="w-full mb-3">
                 <SearchEmployeeCardSkeleton />
