@@ -7,7 +7,6 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import {
   LucideAlarmClock,
-  LucideBuilding,
   LucideCircleDollarSign,
   LucideClock2,
   LucideMapPin,
@@ -59,10 +58,7 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
           />
         </div>
         <Link href={`feed/company/${props.company.userId}`}>
-          <Button className="text-xs">
-            View Company
-            <LucideBuilding />
-          </Button>
+          <Button className="text-xs">View Company</Button>
         </Link>
       </div>
     </div>

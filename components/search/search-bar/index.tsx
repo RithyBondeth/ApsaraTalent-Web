@@ -1,19 +1,43 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LucideMapPin, LucideSearch } from "lucide-react";
+import { TSearchBarProps } from "./props";
+import { TEmployeeSearchSchema } from "@/app/(main)/search/employee/validation";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
+import { useState } from "react";
+import { TLocations } from "@/utils/types/location.type";
+import { SelectValue } from "@radix-ui/react-select";
+import { locationConstant } from "@/utils/constants/app.constant";
 
-export default function SearchBar() {
+export default function SearchBar(props: TSearchBarProps<TEmployeeSearchSchema>) {
+    const [selectedLocation, setSelectionLocation] = useState<TLocations | null>(null);
+
     return (
         <div className="w-full flex items-center gap-2 p-3 shadow-md rounded-md tablet-xl:flex-col">
             <Input
                 placeholder="Job title, keywords"
+                {...props.register('keyword')}
                 prefix={<LucideSearch/>}
             />
-            <Input
-                placeholder="Location"
-                prefix={<LucideMapPin/>}
-            />
-            <Button className="text-xs tablet-xl:w-full">Search</Button>
+            <Select
+              onValueChange={(value: TLocations) => {
+                setSelectionLocation(value);
+                props.setValue("location", value);
+              }}
+              value={selectedLocation || ""}
+            >
+              <SelectTrigger className="h-12 text-muted-foreground">
+                <SelectValue placeholder="Location" />
+              </SelectTrigger>
+              <SelectContent>
+                {locationConstant.map((location, index) => (
+                  <SelectItem key={index} value={location}>
+                    {location}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button className="text-xs tablet-xl:w-full" type="submit">Search</Button>
         </div>
     )   
 }

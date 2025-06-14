@@ -52,7 +52,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   }
 
   // Special layout for message page - no right sidebar
-  if (pathname === "/message" || pathname.startsWith("/message/") || pathname === "/search") {
+  if (pathname === "/message" || pathname.startsWith("/message/")) {
     return (
       <SidebarProvider>
         <CollapseSidebar/>
@@ -70,6 +70,26 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         </div>
       </SidebarProvider>
     );
+  }
+
+  if(pathname.startsWith('/search')) {
+    return (
+      <SidebarProvider>
+        <CollapseSidebar/>
+        <div className="w-full h-screen message-xs:h-full flex flex-col">
+          <SidebarInset>
+            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+              <div className="flex items-center gap-2 px-4">
+                <SidebarTrigger/>
+                <Separator orientation="vertical" className="mr-2 h-4" />
+                <TypographyP className="!m-0">Search your favorite</TypographyP>
+              </div>
+            </header>
+          </SidebarInset>
+          <div className="h-full">{children}</div>
+        </div>
+      </SidebarProvider>
+    )
   }
   
   // Default layout with both sidebars

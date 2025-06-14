@@ -51,7 +51,15 @@ export default function CollapseSidebar({
                 asChild
                 defaultOpen={true}
                 className="group/collapsible"
-                onClick={() => router.push(`${item.url}`)}
+                onClick={() => {
+                  
+                  if(item.url === '/search') {
+                    router.push(`${item.url}/${user?.role}`)
+                  } else {
+                    router.push(`${item.url}`)
+                  }
+                    
+                }}
               >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
