@@ -1,16 +1,22 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { LucideMapPin, LucideSearch } from "lucide-react";
+import { LucideSearch } from "lucide-react";
 import { TSearchBarProps } from "./props";
 import { TEmployeeSearchSchema } from "@/app/(main)/search/employee/validation";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TLocations } from "@/utils/types/location.type";
 import { SelectValue } from "@radix-ui/react-select";
 import { locationConstant } from "@/utils/constants/app.constant";
 
 export default function SearchBar(props: TSearchBarProps<TEmployeeSearchSchema>) {
-    const [selectedLocation, setSelectionLocation] = useState<TLocations | null>(null);
+    const [selectedLocation, setSelectionLocation] = useState<TLocations | null>(props.initialLocation || null);
+
+    useEffect(() => {
+        if (props.initialLocation) {
+            setSelectionLocation(props.initialLocation);
+        }
+    }, [props.initialLocation]);
 
     return (
         <div className="w-full flex items-center gap-2 p-3 shadow-md rounded-md tablet-xl:flex-col">

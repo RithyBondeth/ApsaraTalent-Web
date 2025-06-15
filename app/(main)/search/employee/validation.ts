@@ -2,7 +2,7 @@ import { dateValidation, positiveNumberValidation, selectedValidation, textValid
 import * as z from "zod";
 
 export const employeeSearchSchema = z.object({
-    keyword: textValidation('keyword', 100).optional(),
+    keyword: z.string().optional(),
     location: selectedValidation('Location').optional(),
     companySize: z.object({
         min: positiveNumberValidation('Minimum company size').optional(),

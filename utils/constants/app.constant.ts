@@ -34,6 +34,7 @@ export const availabilityConstant = [
 ];
 
 export const locationConstant = [
+    'Phnom Penh',
     'Banteay Meanchey',
     'Battambang',
     'Kampong Cham',
@@ -48,7 +49,6 @@ export const locationConstant = [
     'Mondulkiri',
     'Oddar Meanchey',
     'Pailin',
-    'Phnom Penh',
     'Preah Sihanouk',
     'Preah Vihear',
     'Prey Veng',

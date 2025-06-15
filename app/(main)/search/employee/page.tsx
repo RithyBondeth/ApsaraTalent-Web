@@ -16,14 +16,19 @@ import { useLoginStore } from "@/stores/apis/auth/login.store";
 import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { Skeleton } from "@/components/ui/skeleton";
-import { LucideCalendarDays, LucideUsers } from "lucide-react";
+import {
+  LucideCalendarDays,
+  LucideUsers,
+} from "lucide-react";
 import SearchCompanyCard from "@/components/search/search-company-card";
 import { Controller, useForm } from "react-hook-form";
 import { employeeSearchSchema, TEmployeeSearchSchema } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { TLocations } from "@/utils/types/location.type";
+import { SearchEmployeeCardError } from "@/components/search/search-company-card/error";
 
 export default function SearchPage() {
-  const { jobs, querySearchJobs } = useSearchJobStore();
+  const { error, loading, jobs, querySearchJobs } = useSearchJobStore();
   const accessToken = useLoginStore((state) => state.accessToken);
   const getCurrentUser = useGetCurrentUserStore(
     (state) => state.getCurrentUser
@@ -43,7 +48,31 @@ export default function SearchPage() {
 
       const scopeNames = scopes?.map((cs) => cs.name) ?? [];
 
-      querySearchJobs({ careerScopes: scopeNames }, accessToken);
+      // Set default location from user's location
+      const userLocation =
+        user?.role === "company"
+          ? user.company?.location
+          : user?.employee?.location;
+
+      if (userLocation) {
+        setValue("location", userLocation);
+      }
+
+      const now = new Date();
+      const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
+
+      querySearchJobs(
+        {
+          careerScopes: scopeNames,
+          companySizeMin: 1,
+          companySizeMax: 50,
+          postedDateFrom: twoHoursAgo.toISOString(),
+          postedDateTo: now.toISOString(),
+          sortBy: "title",
+          sortOrder: "DESC",
+        },
+        accessToken
+      );
     };
 
     fetchUserAndJobs();
@@ -52,26 +81,42 @@ export default function SearchPage() {
   const now = new Date();
   const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
 
-  const { register, control, setValue, handleSubmit } = useForm<TEmployeeSearchSchema>({
-    resolver: zodResolver(employeeSearchSchema),
-    defaultValues: {
-      keyword: "",
-      location: undefined,
-      companySize: {
-        min: 1,
-        max: 50,
+  const { register, control, setValue, handleSubmit } =
+    useForm<TEmployeeSearchSchema>({
+      resolver: zodResolver(employeeSearchSchema),
+      defaultValues: {
+        keyword: "",
+        location: undefined,
+        companySize: {
+          min: 1,
+          max: 50,
+        },
+        date: {
+          from: twoHoursAgo,
+          to: now,
+        },
+        sortBy: "title",
+        orderBy: "desc",
       },
-      date: {
-        from: twoHoursAgo,
-        to: now,
-      },
-      sortBy: "relevant",
-      orderBy: "desc",
-    },
-  });
+    });
 
   const onSubmit = (data: TEmployeeSearchSchema) => {
-    console.log(data);
+    if (!accessToken) return;
+
+    querySearchJobs(
+      {
+        careerScopes: [],
+        keyword: data.keyword,
+        location: data.location,
+        companySizeMin: data.companySize?.min,
+        companySizeMax: data.companySize?.max,
+        postedDateFrom: data.date?.from?.toISOString(),
+        postedDateTo: data.date?.to?.toISOString(),
+        sortBy: data.sortBy,
+        sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
+      },
+      accessToken
+    );
   };
 
   return (
@@ -93,7 +138,11 @@ export default function SearchPage() {
           <TypographyMuted className="leading-relaxed">
             Your next great hire is just a click away.
           </TypographyMuted>
-          <SearchBar register={register} setValue={setValue}/>
+          <SearchBar
+            register={register}
+            setValue={setValue}
+            initialLocation={control._formValues.location as TLocations}
+          />
         </div>
         <Image
           src={EmployeeSearchSvg}
@@ -121,7 +170,8 @@ export default function SearchPage() {
                 let selectedValue: string | undefined;
 
                 if (from && to) {
-                  const diffHours = (to.getTime() - from.getTime()) / 1000 / 60 / 60;
+                  const diffHours =
+                    (to.getTime() - from.getTime()) / 1000 / 60 / 60;
                   if (diffHours <= 2) selectedValue = "last 24 hours";
                   else if (diffHours <= 72) selectedValue = "last 3 days";
                   else if (diffHours <= 168) selectedValue = "last week";
@@ -146,7 +196,10 @@ export default function SearchPage() {
                           break;
                       }
 
-                      field.onChange({ from, to: now });
+                      const updated = { from, to: now };
+                      field.onChange(updated);
+                      setValue("date", updated);
+                      handleSubmit(onSubmit)();
                     }}
                     className="ml-3"
                   >
@@ -199,17 +252,23 @@ export default function SearchPage() {
                   <RadioGroup
                     value={selectedValue}
                     onValueChange={(val) => {
+                      let updated;
+
                       switch (val) {
                         case "startup":
-                          field.onChange({ min: 1, max: 50 });
+                          updated = { min: 1, max: 50 };
                           break;
                         case "medium":
-                          field.onChange({ min: 51, max: 500 });
+                          updated = { min: 51, max: 500 };
                           break;
                         case "large":
-                          field.onChange({ min: 501, max: undefined });
+                          updated = { min: 501, max: undefined };
                           break;
                       }
+
+                      field.onChange(updated);
+                      setValue("companySize", updated);
+                      handleSubmit(onSubmit)();
                     }}
                     className="ml-3"
                   >
@@ -243,7 +302,11 @@ export default function SearchPage() {
         <div className="w-3/4 flex flex-col items-start gap-3">
           <div className="w-full flex justify-between items-center">
             <TypographyH4 className="text-lg">
-              {jobs && jobs.length > 0 ? (
+              {loading ? (
+                <Skeleton className="h-6 w-40 bg-muted" />
+              ) : error ? (
+                <span className="text-destructive">0 Job Found</span>
+              ) : jobs && jobs.length > 0 ? (
                 jobs.length === 1 ? (
                   `${jobs.length} Job Found`
                 ) : (
@@ -256,7 +319,18 @@ export default function SearchPage() {
             <SearchRelevantDropdown />
           </div>
           <div className="w-full flex flex-col items-start gap-2">
-            {jobs && jobs.length > 0 ? (
+            {loading ? (
+              <div className="w-full mb-3">
+                <SearchEmployeeCardSkeleton />
+              </div>
+            ) : error ? (
+              <div className="w-full mb-3">
+                <SearchEmployeeCardError
+                  error={error}
+                  errorDescription="Try adjusting your filters or search terms and try again."
+                />
+              </div>
+            ) : jobs && jobs.length > 0 ? (
               jobs.map((item, index) => (
                 <SearchCompanyCard
                   key={index}
