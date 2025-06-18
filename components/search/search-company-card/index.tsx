@@ -12,14 +12,16 @@ import {
   LucideMapPin,
 } from "lucide-react";
 import { TSearchCompanyCardProps } from "./prop";
-import Link from "next/link";
+import { useRouter } from "next/navigation"; 
 
 export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
+  const router = useRouter();
+
   return (
     <div className="w-full flex flex-col items-start gap-4 px-4 py-3 shadow-md rounded-md">
       <div className="flex items-center gap-3">
         <Avatar rounded="md" className="size-28 phone-md:!hidden">
-          <AvatarFallback>{props.company.name.slice(0, 3)}</AvatarFallback>
+          <AvatarFallback>{props.company.name.slice(0, 3).toUpperCase()}</AvatarFallback>
           <AvatarImage src={props.company.avatar} alt={props.company.name}/>
         </Avatar>
         <div className="flex flex-col items-start gap-3">
@@ -57,9 +59,9 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
             icon={<LucideAlarmClock className="text-muted-foreground" strokeWidth={"1.5px"}/>}
           />
         </div>
-        <Link href={`feed/company/${props.company.userId}`}>
-          <Button className="text-xs">View Company</Button>
-        </Link>
+        <Button className="text-xs" onClick={() => {
+          router.replace(`/feed/company/${props.company.userId}`);
+        }}>View Company</Button>
       </div>
     </div>
   );
