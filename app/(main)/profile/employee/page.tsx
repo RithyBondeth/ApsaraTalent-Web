@@ -11,7 +11,6 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import {
   LucideAlarmCheck,
   LucideBriefcaseBusiness,
-  LucideCalendarDays,
   LucideCamera,
   LucideDownload,
   LucideEdit,
@@ -85,6 +84,7 @@ import {
 } from "@/stores/apis/auth/login.store";
 import { dateFormatter } from "@/utils/functions/dateformatter";
 import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
+import { getRandomBadgeColor } from "@/utils/extensions/get-random-badge-color";
 
 export default function EmployeeProfilePage() {
   const { user, loading, getCurrentUser } = useGetCurrentUserStore();
@@ -477,7 +477,11 @@ export default function EmployeeProfilePage() {
         <div className="flex items-center justify-start gap-5 tablet-sm:flex-col">
           <div className="relative" onClick={() => setOpenProfilePopup(true)}>
             <Avatar className="size-36" rounded="md">
-              <AvatarImage src={avatarFile ? URL.createObjectURL(avatarFile) : employee.avatar}/>
+              <AvatarImage
+                src={
+                  avatarFile ? URL.createObjectURL(avatarFile) : employee.avatar
+                }
+              />
               <AvatarFallback className="uppercase">
                 {employee.username?.slice(0, 3)}
               </AvatarFallback>
@@ -1040,11 +1044,19 @@ export default function EmployeeProfilePage() {
                 {skills.map((skill, index) => (
                   <HoverCard key={index}>
                     <HoverCardTrigger>
-                      <div className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs">
-                        <IconLabel icon={null} text={skill.name} />
+                      <div
+                        className={`flex items-center gap-2 px-3 py-2 rounded-2xl cursor-pointer [&>div>p]:text-xs ${getRandomBadgeColor(
+                          skill.name
+                        )}`}
+                      >
+                        <IconLabel
+                          icon={null}
+                          text={skill.name}
+                          className={`${getRandomBadgeColor(skill.name)}`}
+                        />
                         {isEdit && (
                           <LucideXCircle
-                            className="text-muted-foreground cursor-pointer text-red-500"
+                            className="cursor-pointer"
                             width={"18px"}
                             onClick={() => removeSkill(skill.name)}
                           />
@@ -1098,8 +1110,16 @@ export default function EmployeeProfilePage() {
               {careerScopes.map((career, index) => (
                 <HoverCard key={index}>
                   <HoverCardTrigger>
-                    <div className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs">
-                      <IconLabel icon={null} text={career.name} />
+                    <div
+                      className={`flex items-center gap-2 px-3 py-2 rounded-2xl cursor-pointer [&>div>p]:text-xs ${getRandomBadgeColor(
+                        career.name
+                      )}`}
+                    >
+                      <IconLabel
+                        icon={null}
+                        text={career.name}
+                        className={`${getRandomBadgeColor(career.name)}`}
+                      />
                       {isEdit && (
                         <LucideXCircle
                           className="text-muted-foreground cursor-pointer text-red-500"

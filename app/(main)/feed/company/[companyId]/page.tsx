@@ -231,8 +231,8 @@ export default function CompanyDetailPage() {
                             </TypographyP>
                           </div>
                           <div className="flex items-center gap-3">
-                            <Tag icon={<LucideAlarmClock />} label={item.type} />
-                            <Tag icon={<LucideUser />} label={item.experience} />
+                            <Tag icon={<LucideAlarmClock strokeWidth={'1.5px'}/>} label={item.type} />
+                            <Tag icon={<LucideUser strokeWidth={'1.5px'}/>} label={item.experience} />
                           </div>
                         </div>
                         <div className="flex flex-col items-start gap-2">
@@ -302,14 +302,14 @@ export default function CompanyDetailPage() {
                   {user?.company?.careerScopes.map((career, index) => (
                     <div
                       key={index}
-                      className="rounded-3xl border-2 border-muted duration-300 ease-linear hover:border-muted-foreground"
+                      className="rounded-3xl border-[1px] border-muted duration-300 ease-linear hover:border-muted-foreground"
                     >
                       <HoverCard>
                         <HoverCardTrigger>
                           <Tag label={career.name} />
                         </HoverCardTrigger>
                         <HoverCardContent>
-                          <TypographySmall>{career.description}</TypographySmall>
+                          <TypographySmall>{career.description ? career.description : career.name}</TypographySmall>
                         </HoverCardContent>
                       </HoverCard>
                     </div>

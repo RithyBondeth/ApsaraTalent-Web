@@ -8,7 +8,6 @@ import EmployeeSearchSvg from "@/assets/svg/employee-search.svg";
 import SearchBar from "@/components/search/search-bar";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { RadioGroup } from "@/components/ui/radio-group";
-import SearchRelevantDropdown from "@/components/search/search-bar/search-relevant-dropdown";
 import RadioGroupItemWithLabel from "@/components/ui/radio-group-item";
 import { useSearchJobStore } from "@/stores/apis/job/search-job.store";
 import { useEffect, useState } from "react";
@@ -536,7 +535,6 @@ export default function SearchPage() {
                 <Skeleton className="h-6 w-40 bg-muted" />
               )}
             </TypographyH4>
-            <SearchRelevantDropdown />
           </div>
           <div className="w-full flex flex-col items-start gap-2">
             {loading ? (
