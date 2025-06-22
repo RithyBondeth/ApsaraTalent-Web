@@ -7,6 +7,14 @@ export default {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  safelist: [
+	{
+	  pattern: /bg-(blue|green|purple|yellow|pink|indigo|red|teal|orange|emerald|cyan|rose)-100/,
+	},
+	{
+	  pattern: /text-(blue|green|purple|yellow|pink|indigo|red|teal|orange|emerald|cyan|rose)-800/,
+	},
+  ],
   theme: {
   	extend: {
   		screens: {

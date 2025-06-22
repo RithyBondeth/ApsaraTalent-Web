@@ -45,7 +45,7 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
       <TypographyP className="!m-0 text-sm leading-loose">{props.description}</TypographyP>
       <div className="flex flex-wrap items-center gap-3">
         {props.skills.map((item, index) => (
-          <Tag label={item} key={index} />
+          <Tag label={item} key={index}/>
         ))}
       </div>
       <div className="w-full flex items-center justify-between phone-xl:!flex-col phone-xl:!gap-3 phone-xl:!items-start">

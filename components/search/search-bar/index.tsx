@@ -35,7 +35,7 @@ export default function SearchBar(
   return (
     <div className="w-full flex flex-col items-start gap-2 p-3 shadow-md rounded-md">
       <Input
-        placeholder="Job title, keywords"
+        placeholder={props.isEmployee ? "Job title, keywords" : "Position title, keywords"}
         {...props.register("keyword")}
       />
       <div className="w-full flex items-center gap-3 [&>div]:w-1/2">

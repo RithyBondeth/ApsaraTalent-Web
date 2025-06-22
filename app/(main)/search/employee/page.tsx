@@ -27,8 +27,7 @@ import { Controller, useForm } from "react-hook-form";
 import { employeeSearchSchema, TEmployeeSearchSchema } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TLocations } from "@/utils/types/location.type";
-import { SearchEmployeeCardError } from "@/components/search/search-company-card/error";
-import { availabilityConstant } from "@/utils/constants/app.constant";
+import { SearchErrorCard } from "@/components/search/search-error-card";
 
 export default function SearchPage() {
   const { error, loading, jobs, querySearchJobs } = useSearchJobStore();
@@ -152,6 +151,7 @@ export default function SearchPage() {
             Your next great hire is just a click away.
           </TypographyMuted>
           <SearchBar
+            isEmployee={true}
             register={register}
             setValue={setValue}
             initialLocation={control._formValues.location as TLocations}
@@ -543,7 +543,7 @@ export default function SearchPage() {
               </div>
             ) : error ? (
               <div className="w-full mb-3">
-                <SearchEmployeeCardError
+                <SearchErrorCard
                   error={error}
                   errorDescription="Try adjusting your filters or search terms and try again."
                 />

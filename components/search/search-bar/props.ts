@@ -8,4 +8,5 @@ export type TSearchBarProps<T extends FieldValues> = {
     errors?: FieldErrors<T>;
     initialLocation?: TLocations;
     initialJobType?: TAvailability;
+    isEmployee: boolean;
 }
