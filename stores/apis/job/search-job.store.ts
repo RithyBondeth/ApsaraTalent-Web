@@ -70,7 +70,7 @@ export const useSearchJobStore = create<TSearchJobState>((set) => ({
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      console.log("Job Res: ", response.data);
+      console.log("Search Job Res: ", response.data);
 
       set({
         jobs: response.data,

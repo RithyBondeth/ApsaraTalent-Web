@@ -10,26 +10,113 @@ import { Controller, useForm } from "react-hook-form";
 import { companySearchSchema, TCompanySearchSchema } from "./validation";
 import CompanySearchSvg from "@/assets/svg/company-search.svg";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { LucideBriefcaseBusiness, LucideClock, LucideGraduationCap } from "lucide-react";
+import { LucideBriefcaseBusiness, LucideGraduationCap } from "lucide-react";
 import { RadioGroup } from "@/components/ui/radio-group";
 import RadioGroupItemWithLabel from "@/components/ui/radio-group-item";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetAllEmployeeStore } from "@/stores/apis/employee/get-all-emp.store";
 import { SearchErrorCard } from "@/components/search/search-error-card";
 
 import SearchEmployeeCard from "@/components/search/search-employee-card";
+import { useSearchEmployeeStore } from "@/stores/apis/employee/search-emp.store";
+import { useLoginStore } from "@/stores/apis/auth/login.store";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { useEffect, useState } from "react";
+import {
+  availabilityConstant,
+  locationConstant,
+} from "@/utils/constants/app.constant";
+import { TLocations } from "@/utils/types/location.type";
+import { TAvailability } from "@/utils/types/availability.type";
+import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
 
 export default function CompanySearchPage() {
-  const { error, loading, employeesData } = useGetAllEmployeeStore();
+  const { error, loading, employees, querySearchEmployee } =
+    useSearchEmployeeStore();
+  const accessToken = useLoginStore((state) => state.accessToken);
+  const getCurrentUser = useGetCurrentUserStore(
+    (state) => state.getCurrentUser
+  );
+  const user = useGetCurrentUserStore((state) => state.user);
 
-  const { register, setValue, control, handleSubmit } = useForm<TCompanySearchSchema>({
-    resolver: zodResolver(companySearchSchema),
-  });
+  const [scopeNames, setScopeNames] = useState<string[]>();
 
-  const onSubmit = (data: TCompanySearchSchema) => {}
+  useEffect(() => {
+    const fetchUserAndEmployee = async () => {
+      if (!accessToken) return;
+
+      await getCurrentUser(accessToken);
+
+      const scopes =
+        user?.role === "company"
+          ? user?.company?.careerScopes
+          : user?.employee?.careerScopes;
+
+      const names = scopes?.map((cs) => cs.name) ?? [];
+      setScopeNames(names);
+
+      const userLocation =
+        user?.role === "company"
+          ? user?.company?.location
+          : user?.employee?.location;
+
+      if (userLocation) setValue("location", userLocation);
+
+      querySearchEmployee(
+        {
+          careerScopes: names,
+          location: locationConstant[0] as TLocations,
+          jobType: availabilityConstant[0].value as TAvailability,
+          sortBy: "firstname",
+          sortOrder: "DESC",
+        },
+        accessToken
+      )
+    };
+
+    fetchUserAndEmployee();
+  }, [accessToken]);
+
+  const { register, setValue, control, handleSubmit } =
+    useForm<TCompanySearchSchema>({
+      resolver: zodResolver(companySearchSchema),
+      defaultValues: {
+        keyword: "",
+        location: locationConstant[0],
+        jobType: availabilityConstant[0].value,
+        experienceLevel: {
+          min: 0,
+          max: 1,
+        },
+        educationLevel: "Bachelor",
+        sortBy: "firstname",
+        orderBy: "desc",
+      },
+    });
+
+  const onSubmit = (data: TCompanySearchSchema) => {
+    if (!accessToken) return;
+
+    querySearchEmployee(
+      {
+        careerScopes: scopeNames,
+        keyword: data.keyword,
+        location: data.location as TLocations,
+        jobType: data.jobType as TAvailability,
+        experienceMax: data.experienceLevel?.max,
+        experienceMin: data.experienceLevel?.min,
+        education: data.educationLevel,
+        sortBy: data.sortBy,
+        sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
+      },
+      accessToken
+    );
+  };
 
   return (
-    <form className="w-full flex flex-col items-start gap-5 px-10">
+    <form
+      className="w-full flex flex-col items-start gap-5 px-10"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <div className="w-full flex items-center justify-between gap-10 laptop-sm:flex-col laptop-sm:items-center">
         <div className="w-full flex flex-col items-start gap-3 laptop-sm:py-5">
           <TypographyH2 className="leading-relaxed">
@@ -48,6 +135,8 @@ export default function CompanySearchPage() {
             isEmployee={false}
             register={register}
             setValue={setValue}
+            initialLocation={control._formValues.location as TLocations}
+            initialJobType={control._formValues.jobType as TAvailability}
           />
         </div>
         <Image
@@ -67,123 +156,47 @@ export default function CompanySearchPage() {
               Education Level
             </TypographyP>
             <Controller
-              name="keyword"
-              control={control}
-              render={({ field }) => (
-                <RadioGroup
-                  value={field.value}
-                  onValueChange={(val) => {
-                    field.onChange(val);
-                    //setValue("educationLevel", val);
-                    handleSubmit(onSubmit)();
-                  }}
-                  className="ml-3"
-                >
-                  <RadioGroupItemWithLabel
-                    id="Under Graduate"
-                    value="Under Graduate"
-                    htmlFor="edu-undergrad"
-                  >
-                    Under Graduate
-                  </RadioGroupItemWithLabel>
-                  <RadioGroupItemWithLabel
-                    id="Bachelor"
-                    value="Bachelor"
-                    htmlFor="edu-bachelor"
-                  >
-                    Bachelor
-                  </RadioGroupItemWithLabel>
-                  <RadioGroupItemWithLabel
-                    id="Master"
-                    value="Master"
-                    htmlFor="edu-master"
-                  >
-                    Master
-                  </RadioGroupItemWithLabel>
-                  <RadioGroupItemWithLabel
-                    id="PHD"
-                    value="PHD"
-                    htmlFor="edu-phd"
-                  >
-                    PhD
-                  </RadioGroupItemWithLabel>
-                </RadioGroup>
-              )}
-            />
-          </div>
-          <div className="flex flex-col items-start gap-3">
-            <TypographyP className="text-sm font-medium flex items-center gap-1">
-              <LucideBriefcaseBusiness strokeWidth={"1.5px"} />
-              Experience Level
-            </TypographyP>
-            <Controller
-              name="keyword"
+              name="educationLevel"
               control={control}
               render={({ field }) => {
-                // const selectedValue =
-                //   field.value?.min === 0 && field.value?.max === 1
-                //     ? "<1"
-                //     : field.value?.min === 1 && field.value?.max === 2
-                //     ? "1-2"
-                //     : field.value?.min === 2 && field.value?.max === 3
-                //     ? "2-3"
-                //     : field.value?.min === 3 && !field.value?.max
-                //     ? ">3"
-                //     : undefined;
-
+                const education = field.value;
                 return (
                   <RadioGroup
-                    value={null}
+                    value={education}
                     onValueChange={(val) => {
-                      let min = 0,
-                        max: number | undefined = undefined;
-                      if (val === "0-300") {
-                        min = 0;
-                        max = 300;
-                      } else if (val === "300-600") {
-                        min = 300;
-                        max = 600;
-                      } else if (val === "600-1000") {
-                        min = 600;
-                        max = 1000;
-                      } else if (val === "1000+") {
-                        min = 1000;
-                        max = undefined;
-                      }
-                      const updated = { min, max };
-                      field.onChange(updated);
-                      //setValue("salaryRange", updated);
+                      field.onChange(val);
+                      setValue("educationLevel", val);
                       handleSubmit(onSubmit)();
                     }}
                     className="ml-3"
                   >
                     <RadioGroupItemWithLabel
-                      id="exp-less-1"
-                      value="<1"
-                      htmlFor="exp-less-1"
+                      id="Under Graduate"
+                      value="Under Graduate"
+                      htmlFor="edu-undergrad"
                     >
-                      Less than 1 year
+                      Under Graduate
                     </RadioGroupItemWithLabel>
                     <RadioGroupItemWithLabel
-                      id="exp-1-2"
-                      value="1-2"
-                      htmlFor="exp-1-2"
+                      id="Bachelor"
+                      value="Bachelor"
+                      htmlFor="edu-bachelor"
                     >
-                      1 - 2 years
+                      Bachelor
                     </RadioGroupItemWithLabel>
                     <RadioGroupItemWithLabel
-                      id="exp-2-3"
-                      value="2-3"
-                      htmlFor="exp-2-3"
+                      id="Master"
+                      value="Master"
+                      htmlFor="edu-master"
                     >
-                      2 - 3 years
+                      Master
                     </RadioGroupItemWithLabel>
                     <RadioGroupItemWithLabel
-                      id="exp-more-3"
-                      value=">3"
-                      htmlFor="exp-more-3"
+                      id="PHD"
+                      value="PHD"
+                      htmlFor="edu-phd"
                     >
-                      More than 3 years
+                      PhD
                     </RadioGroupItemWithLabel>
                   </RadioGroup>
                 );
@@ -192,35 +205,46 @@ export default function CompanySearchPage() {
           </div>
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
-              <LucideClock strokeWidth={"1.5px"} />
-              Availability
+              <LucideBriefcaseBusiness strokeWidth={"1.5px"} />
+              Experience Level
             </TypographyP>
             <Controller
-              name="keyword"
+              name="experienceLevel"
               control={control}
               render={({ field }) => {
+                const { min, max } = field.value ?? {};
+                const selectedValue = (min === 0 && max === 1) 
+                ? "<1" 
+                : (min === 1 && max === 2) 
+                ? "1-2"
+                : (min === 2 && max === 3) 
+                ? "2=3"
+                : (min === 3 && !max)
+                ? ">3" 
+                : undefined; 
                 return (
                   <RadioGroup
-                    value={null}
+                    value={selectedValue}
                     onValueChange={(val) => {
-                      let min = 0,
-                        max: number | undefined = undefined;
-                      if (val === "0-300") {
-                        min = 0;
-                        max = 300;
-                      } else if (val === "300-600") {
-                        min = 300;
-                        max = 600;
-                      } else if (val === "600-1000") {
-                        min = 600;
-                        max = 1000;
-                      } else if (val === "1000+") {
-                        min = 1000;
-                        max = undefined;
+                      let updated;
+
+                      switch(val) {
+                        case "<1":
+                          updated = { min: 0, max: 1 };
+                          break;
+                        case "1-2":
+                          updated = { min: 1, max: 2 };
+                          break;
+                        case "2-3":
+                          updated = { min: 2, max: 3 };
+                          break;
+                        case ">3":
+                          updated = { min: 3, max: undefined };
+                          break;
                       }
-                      const updated = { min, max };
+                      
                       field.onChange(updated);
-                      //setValue("salaryRange", updated);
+                      setValue("experienceLevel", updated);
                       handleSubmit(onSubmit)();
                     }}
                     className="ml-3"
@@ -266,11 +290,11 @@ export default function CompanySearchPage() {
                 <Skeleton className="h-6 w-40 bg-muted" />
               ) : error ? (
                 <span className="text-destructive">0 Employee Found</span>
-              ) : employeesData && employeesData.length > 0 ? (
-                employeesData.length === 1 ? (
-                  `${employeesData.length} Employee Found`
+              ) : employees && employees.length > 0 ? (
+                employees.length === 1 ? (
+                  `${employees.length} Employee Found`
                 ) : (
-                  `${employeesData.length} Employees Found`
+                  `${employees.length} Employees Found`
                 )
               ) : (
                 <Skeleton className="h-6 w-40 bg-muted" />
@@ -280,7 +304,7 @@ export default function CompanySearchPage() {
           <div className="w-full flex flex-col items-start gap-2">
             {loading ? (
               <div className="w-full mb-3">
-                <SearchEmployeeCard />
+                <SearchEmployeeCardSkeleton />
               </div>
             ) : error ? (
               <div className="w-full mb-3">
@@ -289,13 +313,11 @@ export default function CompanySearchPage() {
                   errorDescription="Try adjusting your filters or search terms and try again."
                 />
               </div>
-            ) : employeesData && employeesData.length > 0 ? (
-              employeesData.map((item, index) => (
-                <SearchEmployeeCard key={index}/>
-              ))
+            ) : employees && employees.length > 0 ? (
+              employees.map((item, index) => <SearchEmployeeCard key={index} />)
             ) : (
               <div className="w-full mb-3">
-                <SearchEmployeeCard />
+                <SearchEmployeeCardSkeleton />
               </div>
             )}
           </div>

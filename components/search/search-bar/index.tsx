@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LucideSearch } from "lucide-react";
 import { TSearchBarProps } from "./props";
-import { TEmployeeSearchSchema } from "@/app/(main)/search/employee/validation";
 import {
   Select,
   SelectContent,
@@ -14,9 +13,10 @@ import { TLocations } from "@/utils/types/location.type";
 import { SelectValue } from "@radix-ui/react-select";
 import { availabilityConstant, locationConstant } from "@/utils/constants/app.constant";
 import { TAvailability } from "@/utils/types/availability.type";
+import { FieldValues } from "react-hook-form";
 
-export default function SearchBar(
-  props: TSearchBarProps<TEmployeeSearchSchema>
+export default function SearchBar<T extends FieldValues>(
+  props: TSearchBarProps<T>
 ) {
   const [selectedLocation, setSelectionLocation] = useState<TLocations | null>(
     props.initialLocation || null
@@ -36,13 +36,13 @@ export default function SearchBar(
     <div className="w-full flex flex-col items-start gap-2 p-3 shadow-md rounded-md">
       <Input
         placeholder={props.isEmployee ? "Job title, keywords" : "Position title, keywords"}
-        {...props.register("keyword")}
+        {...props.register("keyword" as any)}
       />
       <div className="w-full flex items-center gap-3 [&>div]:w-1/2">
         <Select
           onValueChange={(value: TLocations) => {
             setSelectionLocation(value);
-            props.setValue("location", value);
+            props.setValue("location" as any, value as any);
           }}
           value={selectedLocation || ""}
         >
@@ -60,7 +60,7 @@ export default function SearchBar(
         <Select
           onValueChange={(value: TAvailability) => {
             setSelectionJobType(value);
-            props.setValue("jobType", value);
+            props.setValue("jobType" as any, value as any);
           }}
           value={selectedJobType || ""}
         >

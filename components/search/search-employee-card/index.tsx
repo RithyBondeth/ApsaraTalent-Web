@@ -17,7 +17,7 @@ export default function SearchEmployeeCard() {
   return (
     <div className="w-full flex flex-col items-start gap-4 px-4 py-3 shadow-md rounded-md">
       <div className="flex items-center gap-3">
-        <Avatar rounded="full" className="size-28 phone-md:!hidden">
+        <Avatar rounded="md" className="size-28 phone-md:!hidden">
           <AvatarFallback>BON</AvatarFallback>
         </Avatar>
         <div className="flex flex-col items-start gap-3">
@@ -80,7 +80,7 @@ export default function SearchEmployeeCard() {
         </Button>
         <Button>
           <LucideUser />
-          View Employee
+          View
         </Button>
       </div>
     </div>

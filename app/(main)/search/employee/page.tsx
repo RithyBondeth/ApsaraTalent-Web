@@ -524,12 +524,12 @@ export default function SearchPage() {
               {loading ? (
                 <Skeleton className="h-6 w-40 bg-muted" />
               ) : error ? (
-                <span className="text-destructive">0 Job Found</span>
+                <span className="text-destructive">0 Job is listing</span>
               ) : jobs && jobs.length > 0 ? (
                 jobs.length === 1 ? (
-                  `${jobs.length} Job Found`
+                  `${jobs.length} Jobs are listing`
                 ) : (
-                  `${jobs.length} Jobs Found`
+                  `${jobs.length} Jobs are listing`
                 )
               ) : (
                 <Skeleton className="h-6 w-40 bg-muted" />
@@ -553,7 +553,7 @@ export default function SearchPage() {
                 <SearchCompanyCard
                   key={index}
                   title={item.title}
-                  description={""}
+                  description={item.description}
                   type={item.type}
                   salary={item.salary}
                   experience={item.experience}

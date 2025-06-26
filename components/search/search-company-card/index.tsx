@@ -7,9 +7,12 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import {
   LucideAlarmClock,
+  LucideBuilding,
   LucideCircleDollarSign,
   LucideClock2,
+  LucideHeartHandshake,
   LucideMapPin,
+  LucideUsers,
 } from "lucide-react";
 import { TSearchCompanyCardProps } from "./prop";
 import { useRouter } from "next/navigation"; 
@@ -32,6 +35,10 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
           </div>
           <div className="flex items-center gap-3">
             <IconLabel
+              icon={<LucideUsers className="text-muted-foreground" strokeWidth={"1.5px"}/>}
+              text={`${props.company.companySize} employees`}
+            />
+            <IconLabel
               icon={<LucideMapPin className="text-muted-foreground" strokeWidth={"1.5px"}/>}
               text={props.company.location}
             />
@@ -49,7 +56,7 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
         ))}
       </div>
       <div className="w-full flex items-center justify-between phone-xl:!flex-col phone-xl:!gap-3 phone-xl:!items-start">
-        <div className="flex items-center gap-3">
+        <div className="w-full flex items-center gap-3">
           <IconLabel
             text={props.salary}
             icon={<LucideCircleDollarSign className="text-muted-foreground" strokeWidth={"1.5px"}/>}
@@ -59,9 +66,16 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
             icon={<LucideAlarmClock className="text-muted-foreground" strokeWidth={"1.5px"}/>}
           />
         </div>
-        <Button className="text-xs" onClick={() => {
-          router.replace(`/feed/company/${props.company.userId}`);
-        }}>View Company</Button>
+        <div className="w-full flex justify-end items-center gap-2 [&>button]:text-xs">
+          <Button>
+            <LucideHeartHandshake/>
+            Like
+          </Button>
+          <Button className="text-xs" onClick={() => {router.replace(`/feed/company/${props.company.userId}`);}}>
+            <LucideBuilding/>
+            View
+          </Button>
+        </div>
       </div>
     </div>
   );
