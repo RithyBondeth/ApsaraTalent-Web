@@ -71,7 +71,7 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
             <LucideHeartHandshake/>
             Like
           </Button>
-          <Button className="text-xs" onClick={() => {router.replace(`/feed/company/${props.company.userId}`);}}>
+          <Button className="text-xs" onClick={() => {router.replace(`/feed/company/${props.company.userId}`)}}>
             <LucideBuilding/>
             View
           </Button>

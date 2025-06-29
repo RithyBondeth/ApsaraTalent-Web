@@ -32,6 +32,8 @@ export const useSearchEmployeeStore = create<TSearchEmployeeState>((set) => ({
   message: null,
   error: null,
   querySearchEmployee: async (query: TSearchEmpQuery, token: string) => {
+    set({ loading: true, error: null });
+    
     try {
       const queryParams = new URLSearchParams();
 

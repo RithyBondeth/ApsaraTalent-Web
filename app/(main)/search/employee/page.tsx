@@ -89,7 +89,7 @@ export default function SearchPage() {
       resolver: zodResolver(employeeSearchSchema),
       defaultValues: {
         keyword: "",
-        location: undefined,
+        location: "all",
         companySize: {
           min: 51,
           max: 500,
@@ -113,6 +113,7 @@ export default function SearchPage() {
     });
 
   const onSubmit = (data: TEmployeeSearchSchema) => {
+    console.log(data);
     if (!accessToken) return;
 
     querySearchJobs(

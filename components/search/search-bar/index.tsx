@@ -18,12 +18,12 @@ import { FieldValues } from "react-hook-form";
 export default function SearchBar<T extends FieldValues>(
   props: TSearchBarProps<T>
 ) {
-  const [selectedLocation, setSelectionLocation] = useState<TLocations | null>(
-    props.initialLocation || null
+  const [selectedLocation, setSelectionLocation] = useState<TLocations | 'All'>(
+    props.initialLocation || 'All'
   );
 
-  const [selectedJobType, setSelectionJobType] = useState<TAvailability | null>(
-    props.initialJobType || null
+  const [selectedJobType, setSelectionJobType] = useState<TAvailability | 'All'>(
+    props.initialJobType || 'All'
   );
 
   useEffect(() => {
@@ -44,12 +44,15 @@ export default function SearchBar<T extends FieldValues>(
             setSelectionLocation(value);
             props.setValue("location" as any, value as any);
           }}
-          value={selectedLocation || ""}
+          value={selectedLocation === 'All' ? 'All' : selectedLocation}
         >
           <SelectTrigger className="h-12 text-muted-foreground">
             <SelectValue placeholder="Location" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem key="all-location" value="all">
+              All
+            </SelectItem>
             {locationConstant.map((location, index) => (
               <SelectItem key={index} value={location}>
                 {location}
@@ -62,12 +65,15 @@ export default function SearchBar<T extends FieldValues>(
             setSelectionJobType(value);
             props.setValue("jobType" as any, value as any);
           }}
-          value={selectedJobType || ""}
+          value={selectedJobType === 'All' ? 'All' : selectedJobType} 
         >
           <SelectTrigger className="h-12 text-muted-foreground">
             <SelectValue placeholder="Job Type" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem key="all-jobType" value="all">
+              All
+            </SelectItem>
             {availabilityConstant.map((jobType, index) => (
               <SelectItem key={index} value={jobType.value}>
                 {jobType.label}
