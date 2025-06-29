@@ -47,11 +47,11 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
   }, [openProfileDialog]);
 
   return (
-    <div className="h-fit w-full flex flex-col items-start gap-5 p-3 rounded-lg border border-muted cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:border-primary">
+    <div className="h-fit w-full flex flex-col items-start gap-5 p-3 rounded-lg shadow-sm border border-muted cursor-pointer">
       {/* Profile Section */}
       <div className="w-full flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <Avatar className="size-20" onClick={props.onProfileImageClick}>
+          <Avatar className="size-24" rounded="md" onClick={props.onProfileImageClick}>
             <AvatarImage src={props.avatar!} />
             <AvatarFallback className="uppercase">
               {!props.avatar && props.username?.slice(0, 3)}

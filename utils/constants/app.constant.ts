@@ -31,6 +31,7 @@ export const availabilityConstant = [
   { id: 2, label: "Part Time", value: "part_time" },
   { id: 3, label: "Remote", value: "remote" },
   { id: 4, label: "Internship", value: "internship" },
+  { id: 5, label: "Contract", value: "contract" },
 ];
 
 export const locationConstant = [

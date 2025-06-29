@@ -12,9 +12,9 @@ export type TSearchJobQuery = {
   companySizeMax?: number;
   salaryMin?: number;
   salaryMax?: number;
-  experienceMin?: number;
-  experienceMax?: number;
-  education?: string;
+  experienceRequiredMax?: number;
+  experienceRequiredMin?: number;
+  educationRequired?: string;
   postedDateFrom?: string;
   postedDateTo?: string;
   sortBy?: string;

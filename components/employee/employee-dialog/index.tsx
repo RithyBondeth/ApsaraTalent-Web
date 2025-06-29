@@ -29,7 +29,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
         <DialogHeader>
           <DialogTitle>
             <div className="flex items-stretch justify-start gap-3 tablet-sm:flex-col">
-              <Avatar className="!size-36">
+              <Avatar className="!size-36" rounded="md">
                 <AvatarImage src={props.avatar!} />
                 <AvatarFallback className="uppercase">
                   {!props.avatar ? <LucideUser /> : props.avatar.slice(0, 3)}
@@ -43,9 +43,12 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
                   <TypographyMuted>{props.job}</TypographyMuted>
                 </div>
                 <div className="flex flex-col items-start gap-2">
-                  <IconLabel icon={<LucideMapPin />} text={props.location!} />
                   <IconLabel
-                    icon={<LucideUser />}
+                    icon={<LucideMapPin strokeWidth={"1.5px"} />}
+                    text={props.location!}
+                  />
+                  <IconLabel
+                    icon={<LucideUser strokeWidth={"1.5px"} />}
                     text={
                       props.yearsOfExperience === 1
                         ? `${props.yearsOfExperience} year experience`
@@ -53,7 +56,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
                     }
                   />
                   <IconLabel
-                    icon={<LucideClock />}
+                    icon={<LucideClock strokeWidth={"1.5px"} />}
                     text={
                       props.availability.split("_")[0].toUpperCase() +
                       " " +
@@ -98,7 +101,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
               </div>
               <div className="w-full flex justify-end">
                 <Link href={`/feed/employee/${props.id}`}>
-                  <Button>View Employee</Button>
+                  <Button className="text-xs">View Employee</Button>
                 </Link>
               </div>
             </div>

@@ -5,8 +5,7 @@ import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import Image from "next/image";
 import feedBlackSvg from "@/assets/svg/feed-black.svg";
 import feedWhiteSvg from "@/assets/svg/feed-white.svg";
-import feedCompanyWhiteSvg from "@/assets/svg/feed-company-white.svg";
-import feedCompanyBlackSvg from "@/assets/svg/feed-company-black.svg";
+import feedCompanySvg from "@/assets/svg/feed-company.svg";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import React, { useRef, useState } from "react";
 import { useEffect } from "react";
@@ -33,7 +32,7 @@ export default function FeedPage() {
   const { resolvedTheme } = useTheme();
   const currentTheme = mounted ? resolvedTheme : "light";
   const feedImage = currentTheme === "dark" ? feedBlackSvg : feedWhiteSvg;
-  const feedCompanyImage = currentTheme === "dark" ? feedCompanyBlackSvg : feedCompanyWhiteSvg;
+  const feedCompanyImage = feedCompanySvg;
 
   // Pop up Dialog
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
@@ -95,7 +94,10 @@ export default function FeedPage() {
               Connect with global professionals and grow your network
             </TypographyH2>
             <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-              Start your journey toward a career you love
+              Start your journey toward a career you love.
+            </TypographyH4>
+            <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+              Build meaningful connections that open doors to new opportunities.
             </TypographyH4>
             <TypographyMuted className="leading-relaxed tablet-xl:text-center">
               Land your dream job with ease — no matter where you are.
@@ -116,7 +118,7 @@ export default function FeedPage() {
               Find Top Talent from Anywhere
             </TypographyH2>
             <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-              Build your dream team effortlessly, no matter where you are
+              Build your dream team effortlessly, no matter where you are.
             </TypographyH4>
             <TypographyMuted className="leading-relaxed tablet-xl:text-center">
               Post jobs, review profiles, and hire faster — all in one place

@@ -79,9 +79,9 @@ export default function SearchPage() {
         postedDateTo: data.date?.to?.toISOString(),
         salaryMin: data.salaryRange?.min,
         salaryMax: data.salaryRange?.max,
-        education: normalizedEducation,
-        experienceMin: normalizedExperience.min,
-        experienceMax: normalizedExperience.max,
+        educationRequired: normalizedEducation,
+        experienceRequiredMin: normalizedExperience.min,
+        experienceRequiredMax: normalizedExperience.max,
         sortBy: data.sortBy,
         sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
       },
@@ -131,16 +131,16 @@ export default function SearchPage() {
       <div className="w-full flex items-center justify-between gap-10 laptop-sm:flex-col laptop-sm:items-center">
         <div className="w-full flex flex-col items-start gap-3 laptop-sm:py-5">
           <TypographyH2 className="leading-relaxed">
-            Hire Smarter, Anywhere.
+            Find Opportunities, Anywhere.
           </TypographyH2>
           <TypographyH4 className="leading-relaxed">
-            Search top talent and connect instantly.
+            Search top careers and connect instantly.
           </TypographyH4>
           <TypographyH4 className="leading-relaxed">
-            Search profiles, review resumes, and reach out directly — instantly.
+            Search careers, review company, and reach out directly — instantly.
           </TypographyH4>
           <TypographyMuted className="leading-relaxed">
-            Your next great hire is just a click away.
+            Your great opportunity is just a click away.
           </TypographyMuted>
           <SearchBar
             isEmployee={true}
@@ -441,7 +441,7 @@ export default function SearchPage() {
                       value="all"
                       htmlFor="edu-all"
                     >
-                      All
+                      All Levels
                     </RadioGroupItemWithLabel>
                     <RadioGroupItemWithLabel
                       id="Under Graduate"
@@ -531,7 +531,7 @@ export default function SearchPage() {
                       value="all"
                       htmlFor="exp-all"
                     >
-                      All
+                      All Levels
                     </RadioGroupItemWithLabel>
                     <RadioGroupItemWithLabel
                       id="exp-less-1"

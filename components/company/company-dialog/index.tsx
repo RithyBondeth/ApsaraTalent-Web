@@ -1,6 +1,17 @@
-import { LucideBuilding, LucideCircleCheck, LucideMapPin, LucideUsers } from "lucide-react";
+import {
+  LucideBuilding,
+  LucideCircleCheck,
+  LucideMapPin,
+  LucideUsers,
+} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "../../ui/dialog";
 import { TypographyH4 } from "../../utils/typography/typography-h4";
 import { TypographyMuted } from "../../utils/typography/typography-muted";
 import { ICompanyDialogProps } from "./props";
@@ -9,64 +20,89 @@ import { TypographyP } from "../../utils/typography/typography-p";
 import { Button } from "../../ui/button";
 import Link from "next/link";
 export default function CompanyDialog(props: ICompanyDialogProps) {
-    return (
-        <Dialog open={props.open} onOpenChange={props.setOpen}>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>
-                        <div className="flex items-stretch justify-start gap-3 tablet-sm:flex-col">
-                            <Avatar className="!size-36">
-                                <AvatarImage src={props.avatar!}/>
-                                <AvatarFallback className="uppercase">{!props.avatar ? <LucideBuilding/> : props.name.slice(0, 3)}</AvatarFallback>
-                            </Avatar>
-                            <div className="flex flex-col items-start gap-5 font-normal">
-                                <div className="flex flex-col items-start">
-                                    <TypographyH4>{props.name}</TypographyH4>
-                                    <TypographyMuted>{props.industry}</TypographyMuted>
-                                </div>
-                                <div className="space-y-2">
-                                    <IconLabel icon={<LucideMapPin/>} text={props.location}/> 
-                                    <IconLabel icon={<LucideUsers/>} text={`${props.companySize}+ Employees`}/>
-                                    <IconLabel icon={<LucideBuilding/>} text={`Founded in ${props.foundedYear}`}/>
-                                </div>
-                            </div>
-                        </div>
-                    </DialogTitle>
-                    <DialogDescription asChild className="">
-                        <div className="flex flex-col items-start gap-5 text-primary !mt-5">
-                            <div className="flex flex-col items-start gap-2">
-                                <TypographyP className="font-medium">About {props.name}</TypographyP>
-                                <TypographyMuted className="leading-loose text-left">{props.description}</TypographyMuted>
-                            </div>
-                            <div className="flex flex-col items-start gap-2 tablet-sm:hidden">
-                                <TypographyP className="font-medium">Benefits</TypographyP>
-                                <div className="flex flex-wrap gap-2">
-                                    {props.benefits.map((benefit, index) => (
-                                        <div key={index} className="px-3 py-2 rounded-2xl bg-muted">
-                                            <IconLabel icon={<LucideCircleCheck stroke="white" fill="#0073E6"/>} text={benefit.label}/>
-                                        </div>
-                                    ))} 
-                                </div>
-                            </div>
-                            <div className="flex flex-col items-start gap-2 tablet-sm:hidden">
-                                <TypographyP className="font-medium">Values</TypographyP>
-                                <div className="flex flex-wrap gap-2">
-                                    {props.values.map((value, index) => (
-                                        <div key={index} className="px-3 py-2 rounded-2xl bg-muted">
-                                            <IconLabel icon={<LucideCircleCheck stroke="white" fill="#69B41E"/>} text={value.label}/>
-                                        </div>
-                                    ))} 
-                                </div>
-                            </div>
-                            <div className="w-full flex justify-end">
-                               <Link href={`/feed/company/${props.id}`}>
-                                    <Button>View Company</Button>
-                               </Link>
-                            </div>
-                        </div>
-                    </DialogDescription>
-                </DialogHeader>
-            </DialogContent>
-        </Dialog>
-    )
+  return (
+    <Dialog open={props.open} onOpenChange={props.setOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            <div className="flex items-stretch justify-start gap-3 tablet-sm:flex-col">
+              <Avatar className="!size-36" rounded="md">
+                <AvatarImage src={props.avatar!} />
+                <AvatarFallback className="uppercase">
+                  {!props.avatar ? <LucideBuilding /> : props.name.slice(0, 3)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col items-start gap-5 font-normal">
+                <div className="flex flex-col items-start">
+                  <TypographyH4>{props.name}</TypographyH4>
+                  <TypographyMuted>{props.industry}</TypographyMuted>
+                </div>
+                <div className="space-y-2">
+                  <IconLabel
+                    icon={<LucideMapPin strokeWidth={"1.5px"} />}
+                    text={props.location}
+                  />
+                  <IconLabel
+                    icon={<LucideUsers strokeWidth={"1.5px"} />}
+                    text={`${props.companySize}+ Employees`}
+                  />
+                  <IconLabel
+                    icon={<LucideBuilding strokeWidth={"1.5px"} />}
+                    text={`Founded in ${props.foundedYear}`}
+                  />
+                </div>
+              </div>
+            </div>
+          </DialogTitle>
+          <DialogDescription asChild className="">
+            <div className="flex flex-col items-start gap-5 text-primary !mt-5">
+              <div className="flex flex-col items-start gap-2">
+                <TypographyP className="font-medium">
+                  About {props.name}
+                </TypographyP>
+                <TypographyMuted className="leading-loose text-left">
+                  {props.description}
+                </TypographyMuted>
+              </div>
+              <div className="flex flex-col items-start gap-2 tablet-sm:hidden">
+                <TypographyP className="font-medium">Benefits</TypographyP>
+                <div className="flex flex-wrap gap-2">
+                  {props.benefits.map((benefit, index) => (
+                    <div key={index} className="px-3 py-2 rounded-2xl bg-muted">
+                      <IconLabel
+                        icon={
+                          <LucideCircleCheck stroke="white" fill="#0073E6" />
+                        }
+                        text={benefit.label}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col items-start gap-2 tablet-sm:hidden">
+                <TypographyP className="font-medium">Values</TypographyP>
+                <div className="flex flex-wrap gap-2">
+                  {props.values.map((value, index) => (
+                    <div key={index} className="px-3 py-2 rounded-2xl bg-muted">
+                      <IconLabel
+                        icon={
+                          <LucideCircleCheck stroke="white" fill="#69B41E" />
+                        }
+                        text={value.label}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="w-full flex justify-end">
+                <Link href={`/feed/company/${props.id}`}>
+                  <Button className="text-xs">View Company</Button>
+                </Link>
+              </div>
+            </div>
+          </DialogDescription>
+        </DialogHeader>
+      </DialogContent>
+    </Dialog>
+  );
 }
