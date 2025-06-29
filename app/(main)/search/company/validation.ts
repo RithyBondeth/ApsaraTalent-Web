@@ -1,4 +1,4 @@
-import { positiveNumberValidation, selectedValidation, textValidation } from "@/utils/functions/validations";
+import { selectedValidation, textValidation } from "@/utils/functions/validations";
 import * as z from "zod";
 
 export const companySearchSchema = z.object({
@@ -7,8 +7,8 @@ export const companySearchSchema = z.object({
     jobType: selectedValidation("Job Type").optional(),
     educationLevel: selectedValidation('Education').optional(),
     experienceLevel: z.object({
-        min: positiveNumberValidation('Minimum experience level').optional(),
-        max: positiveNumberValidation('Maximum experience level').optional(),
+        min: z.number().min(0, 'Minimum experience level must be 0 or greater').optional(),
+        max: z.number().min(0, 'Maximum experience level must be 0 or greater').optional(),
     }).optional(),
     sortBy: textValidation("Sort By", 100),
     orderBy: textValidation("Sort Order", 100),

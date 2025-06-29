@@ -31,8 +31,8 @@ export const employeeSearchSchema = z.object({
 
   experienceLevel: z
     .object({
-      min: z.number().optional(),
-      max: z.number().optional(),
+      min: z.number().min(0, 'Minimum experience level must be 0 or greater').optional(),
+      max: z.number().min(0, 'Maximum experience level must be 0 or greater').optional(),
     })
     .optional(),
   educationLevel: selectedValidation('Education Level').optional(),

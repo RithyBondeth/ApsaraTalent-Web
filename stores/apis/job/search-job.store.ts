@@ -6,9 +6,15 @@ import { create } from "zustand";
 export type TSearchJobQuery = {
   keyword?: string;
   location?: string;
+  jobType?: string;
   careerScopes?: string[];
   companySizeMin?: number;
   companySizeMax?: number;
+  salaryMin?: number;
+  salaryMax?: number;
+  experienceMin?: number;
+  experienceMax?: number;
+  education?: string;
   postedDateFrom?: string;
   postedDateTo?: string;
   sortBy?: string;

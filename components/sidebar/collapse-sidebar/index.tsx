@@ -52,7 +52,7 @@ export default function CollapseSidebar({
                 defaultOpen={true}
                 className="group/collapsible"
                 onClick={() => {
-                  const searchUserRole = user?.role === 'company' ? 'employee' : 'company'
+                  const searchUserRole = user?.role;
                   if(item.url === '/search') {
                     router.push(`${item.url}/${searchUserRole}`)
                   } else {

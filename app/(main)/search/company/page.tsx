@@ -26,85 +26,83 @@ import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/
 import { debounce } from "lodash";
 
 export default function CompanySearchPage() {
-  const { error, loading, employees, querySearchEmployee } =
-  useSearchEmployeeStore();
-const accessToken = useLoginStore((state) => state.accessToken);
-const getCurrentUser = useGetCurrentUserStore((state) => state.getCurrentUser);
-const user = useGetCurrentUserStore((state) => state.user);
+  const { error, loading, employees, querySearchEmployee } = useSearchEmployeeStore();
+  const accessToken = useLoginStore((state) => state.accessToken);
+  const getCurrentUser = useGetCurrentUserStore((state) => state.getCurrentUser);
+  const user = useGetCurrentUserStore((state) => state.user);
 
-const [scopeNames, setScopeNames] = useState<string[]>();
+  const [scopeNames, setScopeNames] = useState<string[]>();
 
-const { register, setValue, control, handleSubmit, watch } =
-  useForm<TCompanySearchSchema>({
-    resolver: zodResolver(companySearchSchema),
-    defaultValues: {
-      keyword: "",
-      location: "all",
-      jobType: "all",
-      experienceLevel: { min: undefined, max: undefined },
-      educationLevel: "All",
-      sortBy: "firstname",
-      orderBy: "desc",
-    },
-  });
+  const { register, setValue, control, handleSubmit } =
+    useForm<TCompanySearchSchema>({
+      resolver: zodResolver(companySearchSchema),
+      defaultValues: {
+        keyword: "",
+        location: "all",
+        jobType: "all",
+        experienceLevel: { min: undefined, max: undefined },
+        educationLevel: "all",
+        sortBy: "firstname",
+        orderBy: "desc",
+      },
+    });
 
-const onSubmit = (data: TCompanySearchSchema) => {
-  if (!accessToken) return;
+  const onSubmit = (data: TCompanySearchSchema) => {
+    if (!accessToken) return;
 
-  const normalizedJobType = data.jobType === "all" ? undefined : data.jobType;
-  const normalizedLocation = data.location === "all" ? undefined : data.location;
-  const normalizedEducation = data.educationLevel === "All" ? undefined : data.educationLevel;
-  const normalizedExperience =
-    data.experienceLevel?.min === undefined && data.experienceLevel?.max === undefined
-      ? { min: undefined, max: undefined }
-      : data.experienceLevel;
-
-  querySearchEmployee(
-    {
-      careerScopes: scopeNames,
-      keyword: data.keyword,
-      location: normalizedLocation as TLocations,
-      jobType: normalizedJobType as TAvailability,
-      experienceMin: normalizedExperience.min,
-      experienceMax: normalizedExperience.max,
-      education: normalizedEducation,
-      sortBy: data.sortBy,
-      sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
-    },
-    accessToken
-  );
-};
-
-const debouncedSubmit = useMemo(() => debounce(handleSubmit(onSubmit), 300), [handleSubmit]);
-
-useEffect(() => {
-  if (!accessToken) return;
-  (async () => {
-    await getCurrentUser(accessToken);
-
-    const scopes = user?.role === "company" ? user?.company?.careerScopes : user?.employee?.careerScopes;
-    const names = scopes?.map((cs) => cs.name) ?? [];
-    setScopeNames(names);
-
-    const userLocation = user?.role === "company" ? user?.company?.location : user?.employee?.location;
-    if (userLocation) setValue("location", userLocation);
+    const normalizedJobType = data.jobType === "all" ? undefined : data.jobType;
+    const normalizedLocation = data.location === "all" ? undefined : data.location;
+    const normalizedEducation = data.educationLevel === "all" ? undefined : data.educationLevel;
+    const normalizedExperience =
+      data.experienceLevel?.min === undefined && data.experienceLevel?.max === undefined
+        ? { min: undefined, max: undefined }
+        : data.experienceLevel;
 
     querySearchEmployee(
       {
-        careerScopes: names,
-        sortBy: "firstname",
-        sortOrder: "DESC",
+        careerScopes: scopeNames,
+        keyword: data.keyword,
+        location: normalizedLocation as TLocations,
+        jobType: normalizedJobType as TAvailability,
+        experienceMin: normalizedExperience.min,
+        experienceMax: normalizedExperience.max,
+        education: normalizedEducation,
+        sortBy: data.sortBy,
+        sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
       },
       accessToken
     );
-  })();
-}, [accessToken]);
-
-useEffect(() => {
-  return () => {
-    debouncedSubmit.cancel();
   };
-}, [debouncedSubmit]);
+
+  const debouncedSubmit = useMemo(() => debounce(handleSubmit(onSubmit), 300), [handleSubmit]);
+
+  useEffect(() => {
+    if (!accessToken) return;
+    (async () => {
+      await getCurrentUser(accessToken);
+      const scopes = user?.role === "company" ? user?.company?.careerScopes : user?.employee?.careerScopes;
+      const names = scopes?.map((cs) => cs.name) ?? [];
+      setScopeNames(names);
+
+      const userLocation = user?.role === "company" ? user?.company?.location : user?.employee?.location;
+      if (userLocation) setValue("location", userLocation);
+
+      querySearchEmployee(
+        {
+          careerScopes: names,
+          sortBy: "firstname",
+          sortOrder: "DESC",
+        },
+        accessToken
+      );
+    })();
+  }, [accessToken]);
+
+  useEffect(() => {
+    return () => {
+      debouncedSubmit.cancel();
+    };
+  }, [debouncedSubmit]);
 
   return (
     <form className="w-full flex flex-col items-start gap-5 px-10" onSubmit={handleSubmit(onSubmit)}>
@@ -139,21 +137,19 @@ useEffect(() => {
               name="educationLevel"
               control={control}
               render={({ field }) => {
-                const education = field.value ?? "All";
+                const education = field.value ?? "all";
                 return (
                   <RadioGroup
                     value={education}
                     onValueChange={(val) => {
-                      const value = val === "All" ? undefined : val;
+                      const value = val === "all" ? undefined : val;
                       field.onChange(value);
                       setValue("educationLevel", value);
-                      setTimeout(() => {
-                        handleSubmit(onSubmit)();
-                      }, 0);
+                      handleSubmit(onSubmit)();
                     }}
                     className="ml-3"
                   >
-                    <RadioGroupItemWithLabel id="edu-all" value="All" htmlFor="edu-all">
+                    <RadioGroupItemWithLabel id="edu-all" value="all" htmlFor="edu-all">
                       All
                     </RadioGroupItemWithLabel>
                     <RadioGroupItemWithLabel id="edu-undergrad" value="Under Graduate" htmlFor="edu-undergrad">
@@ -187,7 +183,7 @@ useEffect(() => {
                 const { min, max } = field.value ?? {};
                 const selectedValue =
                   min === 0 && max === 1
-                    ? "<1"
+                    ? "0-1"
                     : min === 1 && max === 2
                     ? "1-2"
                     : min === 2 && max === 3
@@ -202,9 +198,10 @@ useEffect(() => {
                   <RadioGroup
                     value={selectedValue}
                     onValueChange={(val) => {
+                      console.log("Experience level changed to:", val);
                       let updated;
                       switch (val) {
-                        case "<1":
+                        case "0-1":
                           updated = { min: 0, max: 1 };
                           break;
                         case "1-2":
@@ -223,18 +220,17 @@ useEffect(() => {
                         default:
                           updated = { min: undefined, max: undefined };
                       }
+                    
                       field.onChange(updated);
                       setValue("experienceLevel", updated);
-                      setTimeout(() => {
-                        handleSubmit(onSubmit)();
-                      }, 0);
+                      handleSubmit(onSubmit)();
                     }}
                     className="ml-3"
                   >
                     <RadioGroupItemWithLabel id="exp-all" value="all" htmlFor="exp-all">
                       All
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="exp-less-1" value="<1" htmlFor="exp-less-1">
+                    <RadioGroupItemWithLabel id="exp-less-1" value="0-1" htmlFor="exp-less-1">
                       Less than 1 year
                     </RadioGroupItemWithLabel>
                     <RadioGroupItemWithLabel id="exp-1-2" value="1-2" htmlFor="exp-1-2">
@@ -274,7 +270,7 @@ useEffect(() => {
           <div className="w-full flex flex-col items-start gap-2">
             {loading ? (
               <div className="w-full mb-3">
-                <SearchEmployeeCardSkeleton />
+                {[1, 2, 3].map((item) => <SearchEmployeeCardSkeleton key={item}/>)}
               </div>
             ) : error ? (
               <div className="w-full mb-3">
@@ -286,6 +282,7 @@ useEffect(() => {
             ) : employees && employees.length > 0 ? (
               employees.map((item, index) => (
                 <SearchEmployeeCard
+                  key={index}
                   id={item.id}
                   firstname={item.firstname ?? ""}
                   lastname={item.lastname ?? ""}
@@ -302,12 +299,11 @@ useEffect(() => {
                       ? item.educations.map((edu) => edu.degree).join(", ")
                       : ""
                   }
-                  key={index}
                 />
               ))
             ) : (
               <div className="w-full mb-3">
-                <SearchEmployeeCardSkeleton />
+                {[1, 2, 3].map((item) => <SearchEmployeeCardSkeleton key={item}/>)}
               </div>
             )}
           </div>

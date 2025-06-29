@@ -10,7 +10,7 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { RadioGroup } from "@/components/ui/radio-group";
 import RadioGroupItemWithLabel from "@/components/ui/radio-group-item";
 import { useSearchJobStore } from "@/stores/apis/job/search-job.store";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLoginStore } from "@/stores/apis/auth/login.store";
 import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
@@ -28,6 +28,8 @@ import { employeeSearchSchema, TEmployeeSearchSchema } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TLocations } from "@/utils/types/location.type";
 import { SearchErrorCard } from "@/components/search/search-error-card";
+import { TAvailability } from "@/utils/types/availability.type";
+import { debounce } from "lodash";
 
 export default function SearchPage() {
   const { error, loading, jobs, querySearchJobs } = useSearchJobStore();
@@ -37,100 +39,89 @@ export default function SearchPage() {
   );
   const [scopeNames, setScopeNames] = useState<string[]>([]);
 
-  useEffect(() => {
-    const fetchUserAndJobs = async () => {
-      if (!accessToken) return;
-
-      await getCurrentUser(accessToken);
-      const user = useGetCurrentUserStore.getState().user;
-
-      const scopes =
-        user?.role === "company"
-          ? user?.company?.careerScopes
-          : user?.employee?.careerScopes;
-
-      const names = scopes?.map((cs) => cs.name) ?? [];
-      setScopeNames(names);
-
-      const userLocation =
-        user?.role === "company"
-          ? user.company?.location
-          : user?.employee?.location;
-
-      if (userLocation) {
-        setValue("location", userLocation);
-      }
-
-      const now = new Date();
-      const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000);
-
-      querySearchJobs(
-        {
-          careerScopes: names,
-          companySizeMin: 51,
-          companySizeMax: 500,
-          postedDateFrom: threeDaysAgo.toISOString(),
-          postedDateTo: now.toISOString(),
-          sortBy: "title",
-          sortOrder: "DESC",
-        },
-        accessToken
-      );
-    };
-
-    fetchUserAndJobs();
-  }, [accessToken]);
-
-  const now = new Date();
-  const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000);
-
   const { register, control, setValue, handleSubmit } =
     useForm<TEmployeeSearchSchema>({
       resolver: zodResolver(employeeSearchSchema),
       defaultValues: {
         keyword: "",
         location: "all",
-        companySize: {
-          min: 51,
-          max: 500,
-        },
-        date: {
-          from: threeDaysAgo,
-          to: now,
-        },
-        salaryRange: {
-          min: 0,
-          max: 300,
-        },
-        educationLevel: "Bachelor",
-        experienceLevel: {
-          min: 0,
-          max: 1,
-        },
+        jobType: "all",
+        companySize: { min: undefined, max: undefined },
+        date: { from: undefined, to: undefined },
+        salaryRange: { min: undefined, max: undefined },
+        educationLevel: "all",
+        experienceLevel: { min: undefined, max: undefined },
         sortBy: "title",
         orderBy: "desc",
       },
     });
 
   const onSubmit = (data: TEmployeeSearchSchema) => {
-    console.log(data);
     if (!accessToken) return;
+
+    const normalizedJobType = data.jobType === "all" ? undefined : data.jobType;
+    const normalizedLocation = data.location === "all" ? undefined : data.location;
+    const normalizedEducation = data.educationLevel === "all" ? undefined : data.educationLevel;
+    const normalizedExperience =
+      data.experienceLevel?.min === undefined && data.experienceLevel?.max === undefined
+        ? { min: undefined, max: undefined }
+        : data.experienceLevel;
 
     querySearchJobs(
       {
         careerScopes: scopeNames,
         keyword: data.keyword,
-        location: data.location,
+        location: normalizedLocation,
+        jobType: normalizedJobType,
         companySizeMin: data.companySize?.min,
         companySizeMax: data.companySize?.max,
         postedDateFrom: data.date?.from?.toISOString(),
         postedDateTo: data.date?.to?.toISOString(),
+        salaryMin: data.salaryRange?.min,
+        salaryMax: data.salaryRange?.max,
+        education: normalizedEducation,
+        experienceMin: normalizedExperience.min,
+        experienceMax: normalizedExperience.max,
         sortBy: data.sortBy,
         sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
       },
       accessToken
     );
   };
+
+  const debouncedSubmit = useMemo(
+    () => debounce(() => handleSubmit(onSubmit)(), 400),
+    [handleSubmit]
+  );
+
+  useEffect(() => {
+    const fetchUserAndJobs = async () => {
+      if (!accessToken) return;
+      await getCurrentUser(accessToken);
+      const user = useGetCurrentUserStore.getState().user;
+      const scopes =
+        user?.role === "company"
+          ? user?.company?.careerScopes
+          : user?.employee?.careerScopes;
+      const names = scopes?.map((cs) => cs.name) ?? [];
+      setScopeNames(names);
+      querySearchJobs(
+        {
+          careerScopes: names,
+          sortBy: "title",
+          sortOrder: "DESC",
+        },
+        accessToken
+      );
+    };
+    fetchUserAndJobs();
+  }, [accessToken]);
+
+  useEffect(() => {
+    return () => {
+      debouncedSubmit.cancel();
+    };
+  }, [debouncedSubmit]);
 
   return (
     <form
@@ -156,6 +147,7 @@ export default function SearchPage() {
             register={register}
             setValue={setValue}
             initialLocation={control._formValues.location as TLocations}
+            initialJobType={control._formValues.jobType as TAvailability}
           />
         </div>
         <Image
@@ -180,37 +172,39 @@ export default function SearchPage() {
               render={({ field }) => {
                 const from = field.value?.from;
                 const to = field.value?.to;
-
                 let selectedValue: string | undefined;
-
-                if (from && to) {
+                if (!from && !to) selectedValue = "all";
+                else if (from && to) {
                   const diffHours =
                     (to.getTime() - from.getTime()) / 1000 / 60 / 60;
                   if (diffHours <= 2) selectedValue = "last 24 hours";
                   else if (diffHours <= 72) selectedValue = "last 3 days";
                   else if (diffHours <= 168) selectedValue = "last week";
                 }
-
                 return (
                   <RadioGroup
                     value={selectedValue}
                     onValueChange={(val) => {
-                      const now = new Date();
-                      let from = new Date();
-
-                      switch (val) {
-                        case "last 24 hours":
-                          from.setHours(now.getHours() - 2);
-                          break;
-                        case "last 3 days":
-                          from.setDate(now.getDate() - 3);
-                          break;
-                        case "last week":
-                          from.setDate(now.getDate() - 7);
-                          break;
+                      let updated: {
+                        from: Date | undefined;
+                        to: Date | undefined;
+                      } = { from: undefined, to: undefined };
+                      if (val !== "all") {
+                        const now = new Date();
+                        let from = new Date();
+                        switch (val) {
+                          case "last 24 hours":
+                            from.setHours(now.getHours() - 2);
+                            break;
+                          case "last 3 days":
+                            from.setDate(now.getDate() - 3);
+                            break;
+                          case "last week":
+                            from.setDate(now.getDate() - 7);
+                            break;
+                        }
+                        updated = { from, to: new Date() };
                       }
-
-                      const updated = { from, to: now };
                       field.onChange(updated);
                       setValue("date", updated);
                       handleSubmit(onSubmit)();
@@ -218,11 +212,18 @@ export default function SearchPage() {
                     className="ml-3"
                   >
                     <RadioGroupItemWithLabel
+                      id="date-all"
+                      value="all"
+                      htmlFor="date-all"
+                    >
+                      All Dates Posted
+                    </RadioGroupItemWithLabel>
+                    <RadioGroupItemWithLabel
                       id="last-24"
                       value="last 24 hours"
                       htmlFor="last-24"
                     >
-                      Last 2 Hours
+                      Last 24 Hours
                     </RadioGroupItemWithLabel>
                     <RadioGroupItemWithLabel
                       id="last-3-days"
@@ -260,7 +261,7 @@ export default function SearchPage() {
                     ? "medium"
                     : min === 501 && max === undefined
                     ? "large"
-                    : undefined;
+                    : "all";
 
                 return (
                   <RadioGroup
@@ -278,6 +279,9 @@ export default function SearchPage() {
                         case "large":
                           updated = { min: 501, max: undefined };
                           break;
+                        case "all":
+                        default:
+                          updated = { min: undefined, max: undefined };
                       }
 
                       field.onChange(updated);
@@ -286,6 +290,13 @@ export default function SearchPage() {
                     }}
                     className="ml-3"
                   >
+                    <RadioGroupItemWithLabel
+                      id="company-all"
+                      value="all"
+                      htmlFor="company-all"
+                    >
+                      All Sizes
+                    </RadioGroupItemWithLabel>
                     <RadioGroupItemWithLabel
                       id="startup"
                       value="startup"
@@ -321,14 +332,17 @@ export default function SearchPage() {
               name="salaryRange"
               control={control}
               render={({ field }) => {
+                const { min, max } = field.value ?? {};
                 const selectedValue =
-                  field.value?.min === 0 && field.value?.max === 300
+                  min === undefined && max === undefined
+                    ? "all"
+                    : min === 0 && max === 300
                     ? "0-300"
-                    : field.value?.min === 300 && field.value?.max === 600
+                    : min === 300 && max === 600
                     ? "300-600"
-                    : field.value?.min === 600 && field.value?.max === 1000
+                    : min === 600 && max === 1000
                     ? "600-1000"
-                    : field.value?.min === 1000 && !field.value?.max
+                    : min === 1000 && max === undefined
                     ? "1000+"
                     : undefined;
 
@@ -350,6 +364,10 @@ export default function SearchPage() {
                         case "1000+":
                           updated = { min: 1000, max: undefined };
                           break;
+                        case "all":
+                        default:
+                          updated = { min: undefined, max: undefined };
+                          break;
                       }
                       field.onChange(updated);
                       setValue("salaryRange", updated);
@@ -357,6 +375,13 @@ export default function SearchPage() {
                     }}
                     className="ml-3"
                   >
+                    <RadioGroupItemWithLabel
+                      id="salary-all"
+                      value="all"
+                      htmlFor="salary-all"
+                    >
+                      All Salaries
+                    </RadioGroupItemWithLabel>
                     <RadioGroupItemWithLabel
                       id="salary-0-300"
                       value="0-300"
@@ -383,7 +408,7 @@ export default function SearchPage() {
                       value="1000+"
                       htmlFor="salary-1000-up"
                     >
-                      Up to 1000$
+                      1000$+
                     </RadioGroupItemWithLabel>
                   </RadioGroup>
                 );
@@ -398,46 +423,57 @@ export default function SearchPage() {
             <Controller
               name="educationLevel"
               control={control}
-              render={({ field }) => (
-                <RadioGroup
-                  value={field.value}
-                  onValueChange={(val) => {
-                    field.onChange(val);
-                    setValue("educationLevel", val);
-                    handleSubmit(onSubmit)();
-                  }}
-                  className="ml-3"
-                >
-                  <RadioGroupItemWithLabel
-                    id="Under Graduate"
-                    value="Under Graduate"
-                    htmlFor="edu-undergrad"
+              render={({ field }) => {
+                const education = field.value ?? "all";
+                return (
+                  <RadioGroup
+                    value={education}
+                    onValueChange={(val) => {
+                      const value = val === "all" ? undefined : val;
+                      field.onChange(value);
+                      setValue("educationLevel", value);
+                      handleSubmit(onSubmit)();
+                    }}
+                    className="ml-3"
                   >
-                    Under Graduate
-                  </RadioGroupItemWithLabel>
-                  <RadioGroupItemWithLabel
-                    id="Bachelor"
-                    value="Bachelor"
-                    htmlFor="edu-bachelor"
-                  >
-                    Bachelor
-                  </RadioGroupItemWithLabel>
-                  <RadioGroupItemWithLabel
-                    id="Master"
-                    value="Master"
-                    htmlFor="edu-master"
-                  >
-                    Master
-                  </RadioGroupItemWithLabel>
-                  <RadioGroupItemWithLabel
-                    id="PHD"
-                    value="PHD"
-                    htmlFor="edu-phd"
-                  >
-                    PhD
-                  </RadioGroupItemWithLabel>
-                </RadioGroup>
-              )}
+                    <RadioGroupItemWithLabel
+                      id="edu-all"
+                      value="all"
+                      htmlFor="edu-all"
+                    >
+                      All
+                    </RadioGroupItemWithLabel>
+                    <RadioGroupItemWithLabel
+                      id="Under Graduate"
+                      value="Under Graduate"
+                      htmlFor="edu-undergrad"
+                    >
+                      Under Graduate
+                    </RadioGroupItemWithLabel>
+                    <RadioGroupItemWithLabel
+                      id="Bachelor"
+                      value="Bachelor"
+                      htmlFor="edu-bachelor"
+                    >
+                      Bachelor
+                    </RadioGroupItemWithLabel>
+                    <RadioGroupItemWithLabel
+                      id="Master"
+                      value="Master"
+                      htmlFor="edu-master"
+                    >
+                      Master
+                    </RadioGroupItemWithLabel>
+                    <RadioGroupItemWithLabel
+                      id="PHD"
+                      value="PHD"
+                      htmlFor="edu-phd"
+                    >
+                      PhD
+                    </RadioGroupItemWithLabel>
+                  </RadioGroup>
+                );
+              }}
             />
           </div>
           <div className="flex flex-col items-start gap-3">
@@ -449,42 +485,54 @@ export default function SearchPage() {
               name="experienceLevel"
               control={control}
               render={({ field }) => {
+                const { min, max } = field.value ?? {};
                 const selectedValue =
-                  field.value?.min === 0 && field.value?.max === 1
+                  min === 0 && max === 1
                     ? "<1"
-                    : field.value?.min === 1 && field.value?.max === 2
+                    : min === 1 && max === 2
                     ? "1-2"
-                    : field.value?.min === 2 && field.value?.max === 3
+                    : min === 2 && max === 3
                     ? "2-3"
-                    : field.value?.min === 3 && !field.value?.max
+                    : min === 3 && max === undefined
                     ? ">3"
-                    : undefined;
+                    : "all";
 
                 return (
                   <RadioGroup
-                  value={selectedValue}
-                  onValueChange={(val) => {
-                    let min = 0, max: number | undefined = undefined;
-                    if (val === "0-300") {
-                      min = 0;
-                      max = 300;
-                    } else if (val === "300-600") {
-                      min = 300;
-                      max = 600;
-                    } else if (val === "600-1000") {
-                      min = 600;
-                      max = 1000;
-                    } else if (val === "1000+") {
-                      min = 1000;
-                      max = undefined;
-                    }
-                    const updated = { min, max };
-                    field.onChange(updated);
-                    setValue("salaryRange", updated);
-                    handleSubmit(onSubmit)();
-                  }}
+                    value={selectedValue}
+                    onValueChange={(val) => {
+                      let updated;
+                      switch (val) {
+                        case "<1":
+                          updated = { min: 0, max: 1 };
+                          break;
+                        case "1-2":
+                          updated = { min: 1, max: 2 };
+                          break;
+                        case "2-3":
+                          updated = { min: 2, max: 3 };
+                          break;
+                        case ">3":
+                          updated = { min: 3, max: undefined };
+                          break;
+                        case "all":
+                        default:
+                          updated = { min: undefined, max: undefined };
+                      }
+
+                      field.onChange(updated);
+                      setValue("experienceLevel", updated);
+                      handleSubmit(onSubmit)();
+                    }}
                     className="ml-3"
                   >
+                    <RadioGroupItemWithLabel
+                      id="exp-all"
+                      value="all"
+                      htmlFor="exp-all"
+                    >
+                      All
+                    </RadioGroupItemWithLabel>
                     <RadioGroupItemWithLabel
                       id="exp-less-1"
                       value="<1"
@@ -540,7 +588,7 @@ export default function SearchPage() {
           <div className="w-full flex flex-col items-start gap-2">
             {loading ? (
               <div className="w-full mb-3">
-                <SearchEmployeeCardSkeleton />
+                {[1, 2, 3].map((item) => <SearchEmployeeCardSkeleton key={item}/>)}
               </div>
             ) : error ? (
               <div className="w-full mb-3">
@@ -574,7 +622,7 @@ export default function SearchPage() {
               ))
             ) : (
               <div className="w-full mb-3">
-                <SearchEmployeeCardSkeleton />
+                {[1, 2, 3].map((item) => <SearchEmployeeCardSkeleton key={item}/>)}
               </div>
             )}
           </div>
