@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { LucideCheck, LucideInfo, LucidePhone } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import LogoComponent from "@/components/utils/logo";
 import phoneNumberWhiteSvg from "@/assets/svg/phone-number-white.svg";
 import Image from "next/image";
@@ -23,6 +23,7 @@ import { ToastAction } from "@/components/ui/toast";
 
 export default function PhoneNumberPage() {
   const router = useRouter();
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const { toast } = useToast();
   const { setBasicPhoneSignupData } = useBasicPhoneSignupDataStore();
   const { loading, error, message, isSuccess, loginOtp } = useLoginOTPStore();
@@ -38,6 +39,7 @@ export default function PhoneNumberPage() {
   });
 
   const onSubmit = async (data: TPhoneLoginForm) => {
+    setIsSubmitted(true);
     setBasicPhoneSignupData({
       phone: data.phone,
       rememberMe: data.rememberMe,
@@ -47,6 +49,8 @@ export default function PhoneNumberPage() {
   };
 
   useEffect(() => {
+    if(!isSubmitted) return;
+    
     if (isSuccess) {
       toast({
         description: (
@@ -59,7 +63,7 @@ export default function PhoneNumberPage() {
         ),
         duration: 1000,
       });
-      router.replace("/login/phone-number/phone-otp");
+      setTimeout(() => router.replace("/login/phone-number/phone-otp"), 1000);
     }
 
     if (loading)

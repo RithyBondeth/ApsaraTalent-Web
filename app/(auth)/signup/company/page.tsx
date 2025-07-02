@@ -235,7 +235,7 @@ export default function CompanySignup() {
         ),
         duration: 1000,
       });
-      router.replace("/login");
+      setTimeout(() => router.replace("/login"), 1000);
     }
 
     if (cmpSignup.loading || uploadAvatar.loading || uploadCover.loading) {

@@ -27,6 +27,7 @@ import { useRouter } from "next/navigation";
 export default function ResetPasswordPage() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [confirmPassVisibility, setConfirmPassVisibility] = useState<boolean>(false);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const router = useRouter();
   const { toast } = useToast();
 
@@ -42,6 +43,7 @@ export default function ResetPasswordPage() {
   });
 
   const onSubmit = async (data: TResetPasswordForm) => {
+    setIsSubmitted(true);
     await resetPassword(data.token, data.password, data.confirmPassword);
     console.log({
       token: data.token,
@@ -51,6 +53,8 @@ export default function ResetPasswordPage() {
   };
 
   useEffect(() => {
+    if(!isSubmitted) return;
+
     if (loading)
       toast({
         description: (
@@ -91,7 +95,7 @@ export default function ResetPasswordPage() {
         ),
         duration: 1500,
       });
-      router.push("/login");
+      setTimeout(() => router.push("/login"), 1000);
     }
 
   }, [error, loading, message]);

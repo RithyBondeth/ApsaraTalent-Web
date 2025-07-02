@@ -9,7 +9,7 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { Button } from "@/components/ui/button";
 import { LucideCheck, LucideInfo, LucideMail } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useVerifyEmailStore } from "@/stores/apis/auth/verify-email.store";
 import { ClipLoader } from "react-spinners";
@@ -17,6 +17,7 @@ import { TypographySmall } from "@/components/utils/typography/typography-small"
 
 export default function EmailVerificationPage() {
   const { resolvedTheme } = useTheme();
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const params = useParams();
   const token = params?.id;
 
@@ -31,10 +32,13 @@ export default function EmailVerificationPage() {
       : emailVerificationBlackSvg;
 
   const handleVerifyEmail = async () => {
+    setIsSubmitted(true);
     await verifyEmail(token as string);
   }
 
   useEffect(() => {
+    if(!isSubmitted) return;
+
     if (loading)
       toast({
         description: (
@@ -70,7 +74,7 @@ export default function EmailVerificationPage() {
         ),
         duration: 1500,
       });
-      router.push("/login");
+      setTimeout(() => router.push("/login"), 1000);
     }
   }, [error, loading, message]);
 

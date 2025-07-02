@@ -268,7 +268,7 @@ export default function EmployeeSignup() {
         ),
         duration: 1000,
       });
-      router.replace("/login");
+      setTimeout(() => router.replace("/login"), 1000);
     }
 
     if (empSignup.loading || uploadAvatar.loading || uploadCoverLetter.loading)

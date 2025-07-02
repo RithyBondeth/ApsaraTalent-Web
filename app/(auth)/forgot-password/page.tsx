@@ -29,6 +29,7 @@ import { isNumberPhoneInput } from "@/utils/extensions/check-phone-input";
 export default function ForgotPasswordPage() {
   const router = useRouter();
   const [inputValue, setInputValue] = useState<string>("");
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const { toast } = useToast();
   const { loading, error, message, forgotPassword } = useForgotPasswordStore();
 
@@ -42,13 +43,14 @@ export default function ForgotPasswordPage() {
   });
 
   const onSubmit = async (data: TForgotPasswordForm) => {
+    setIsSubmitted(true);
     const phone = data.forgotPassword.replace('0', '+855');
-    console.log(phone);
     await forgotPassword(phone);
-    
   };
 
   useEffect(() => {
+    if(!isSubmitted) return;
+
     if (loading) {
       toast({
         description: (
@@ -91,9 +93,9 @@ export default function ForgotPasswordPage() {
             </TypographySmall>
           </div>
         ),
-        duration: 1500,
+        duration: 1000,
       });
-      router.push("/reset-password");
+      setTimeout(() => router.push("/reset-password"), 1000);
     }
   }, [error, message, loading]);
 

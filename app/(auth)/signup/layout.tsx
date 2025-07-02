@@ -11,9 +11,7 @@ export default function SignupLayout({ children }: { children: ReactNode }) {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => setMounted(true), []);
 
   // Determine which image to display (avoid SSR issues)
   const currentTheme = mounted ? resolvedTheme : "light";

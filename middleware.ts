@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const protectedRoutes = ['/feed', '/profile', '/search/employee', '/search/company', '/matching', '/message', '/notification'];
-const authRoutes = ['/login', '/signup', '/forgot-password', '/reset-password', '/login/phone-number', '/login/phone-number/phone-otp'];
+const authRoutes = ['/login', '/signup', '/forgot-password', '/reset-password', '/login/phone-number', '/login/phone-number/phone-otp', '/login/email-verification'];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;

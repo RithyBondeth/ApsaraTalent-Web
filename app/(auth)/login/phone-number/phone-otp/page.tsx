@@ -22,13 +22,14 @@ import {
   useSessionVerifyOTPStore,
   useVerifyOTPStore,
 } from "@/stores/apis/auth/verify-otp.store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { LucideCheck, LucideInfo } from "lucide-react";
 import { ClipLoader } from "react-spinners";
 import { ToastAction } from "@/components/ui/toast";
 
 export default function PhoneOTPPage() {
   const router = useRouter();
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const { toast } = useToast();
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
   const { loading, error, message, accessToken, refreshToken, verifyOtp } =
@@ -41,6 +42,7 @@ export default function PhoneOTPPage() {
     reset,
   } = useForm<{ otp: string }>();
   const onSubmit = async (data: { otp: string }) => {
+    setIsSubmitted(true);
     const phone =  basicPhoneSignupData?.phone?.replace('0', '+855')!;
     const user = await verifyOtp(phone, data.otp, basicPhoneSignupData?.rememberMe!);
     
@@ -52,6 +54,8 @@ export default function PhoneOTPPage() {
   };
 
   useEffect(() => {
+    if(!isSubmitted) return;
+
     if (accessToken && refreshToken) {
       toast({
         description: (
@@ -64,7 +68,7 @@ export default function PhoneOTPPage() {
         ),
         duration: 1000,
       });
-      router.replace("/feed");
+      setTimeout(() => router.replace("/feed"), 1000);
     }
 
     if (loading)
