@@ -45,6 +45,7 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 
 function LoginPage() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const router = useRouter();
   const { resolvedTheme } = useTheme();
   const { toast } = useToast();
@@ -59,15 +60,19 @@ function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-  const { accessToken, refreshToken, message, login, error, loading } =
-    useLoginStore();
+  const { accessToken, refreshToken, message, login, error, loading } = useLoginStore();
   const currentUserStore = useGetCurrentUserStore();
 
   const onSubmit = async (data: TLoginForm) => {
+    setIsLoggedIn(true);
     await login(data.email, data.password, data.rememberMe!);
   };
 
+  useEffect(() => useLoginStore.getState().initialize(), []);
+
   useEffect(() => {
+    if (!isLoggedIn) return;
+
     if (accessToken && refreshToken && currentUserStore.user) {
       toast({
         description: (
@@ -80,10 +85,10 @@ function LoginPage() {
         ),
         duration: 1000,
       });
-      router.push("/feed");
+      setTimeout(() => router.push("/feed"), 1000);
     }
 
-    if (loading || currentUserStore.loading)
+    if (loading)
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -95,7 +100,7 @@ function LoginPage() {
         ),
       });
 
-    if (error || currentUserStore.error)
+    if (error)
       toast({
         variant: "destructive",
         description: (
@@ -118,8 +123,6 @@ function LoginPage() {
     error,
     message,
     loading,
-    currentUserStore.loading,
-    currentUserStore.error,
     currentUserStore.user,
   ]);
 

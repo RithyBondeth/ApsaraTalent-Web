@@ -50,7 +50,7 @@ export const useLoginStore = create<TLoginState>((set) => ({
         refreshToken: source.refreshToken,
         message: source.message,
         rememberMe: source === local,
-        isInitialized: true
+      isInitialized: true
       });
     } else {
       set({ isInitialized: true });
@@ -115,7 +115,7 @@ export const useLoginStore = create<TLoginState>((set) => ({
       refreshToken: null,
       message: null,
       rememberMe: false,
-      isInitialized: true
+     isInitialized: true
     });
   },
 }));

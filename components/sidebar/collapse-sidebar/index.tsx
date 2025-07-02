@@ -58,12 +58,11 @@ export default function CollapseSidebar({
                   } else {
                     router.push(`${item.url}`)
                   }
-                    
                 }}
               >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuButton tooltip={item.title} className="text-sm">
+                    <SidebarMenuButton tooltip={item.title} className="font-medium">
                       {item.icon && <item.icon />}
                       <span>{item.title}</span>
                     </SidebarMenuButton>

@@ -14,16 +14,21 @@ import { useThemeStore } from "@/stores/themes/theme-store";
 import { useLoginStore } from "@/stores/apis/auth/login.store";
 import { useEffect } from "react";
 import { ClipLoader } from "react-spinners";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const sidebarData = sidebarList.filter((item) => item.url === pathname);
   const { theme } = useThemeStore();
-  const { isInitialized, initialize } = useLoginStore();
+  const { isInitialized, accessToken, initialize } = useLoginStore();
+  const { getCurrentUser } = useGetCurrentUserStore();
 
+  useEffect(() => initialize(), [])
+  
   useEffect(() => {
-    initialize();
-  }, [initialize]);
+    if (!isInitialized) return;
+    if (accessToken) getCurrentUser(accessToken);
+  }, [isInitialized, accessToken]);
 
   if (!isInitialized) {
     return (
