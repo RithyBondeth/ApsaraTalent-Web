@@ -35,17 +35,22 @@ import {
 import { useThemeStore } from '@/stores/themes/theme-store'
 import { useTheme } from 'next-themes'
 import { setCookie } from 'cookies-next/client'
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ISidebarDropdownFooterProps } from "./props";
 import { useRouter } from "next/navigation";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useLoginStore } from "@/stores/apis/auth/login.store";
+import { useVerifyOTPStore } from "@/stores/apis/auth/verify-otp.store";
+import { Dialog, DialogContent, DialogFooter, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
 
 export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
   const { isMobile } = useSidebar()
   const { theme, toggleTheme } = useThemeStore();
   const { resolvedTheme, setTheme } = useTheme();
   const router = useRouter();
+  const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
 
   useEffect(() => {
       setTheme(theme)
@@ -53,11 +58,19 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
   }, [theme, setTheme]);
 
   const currentUser = useGetCurrentUserStore((state) => state.user);
-  const logout = useLoginStore((state) => state.clearToken);
+  const normalLogout = useLoginStore((state) => state.clearToken);
+  const normalAccessToken = useLoginStore((state) => state.accessToken);
+  
+  const otpLogout = useVerifyOTPStore((state) => state.clearToken);
+  const otpAccessToken = useVerifyOTPStore((state) => state.accessToken);
 
   const handleLogout = async () => {
-    logout();
-    router.push("/");
+    setOpenLogoutDialog(false);
+    
+    if(normalAccessToken) normalLogout();
+    if(otpAccessToken) otpLogout();    
+
+    router.push("/")
   }
   
   return (
@@ -125,13 +138,23 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>
+            <DropdownMenuItem onClick={() => setOpenLogoutDialog(true)}>
               <LogOut />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
+      <Dialog open={openLogoutDialog} onOpenChange={setOpenLogoutDialog}>
+        <DialogContent>
+          <DialogTitle>Confirm Logout</DialogTitle>
+          <TypographySmall>Are you sure you want to logout?</TypographySmall>
+          <DialogFooter>
+            <Button variant={'outline'} onClick={() => setOpenLogoutDialog(false)}>Cancel</Button>
+            <Button variant={'destructive'} onClick={handleLogout}>Logout</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </SidebarMenu>
   )
 }

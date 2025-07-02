@@ -88,7 +88,7 @@ function LoginPage() {
       setTimeout(() => router.push("/feed"), 1000);
     }
 
-    if (loading)
+    if (loading || currentUserStore.loading)
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -100,7 +100,7 @@ function LoginPage() {
         ),
       });
 
-    if (error)
+    if (error || currentUserStore.error)
       toast({
         variant: "destructive",
         description: (
@@ -124,6 +124,8 @@ function LoginPage() {
     message,
     loading,
     currentUserStore.user,
+    currentUserStore.loading,
+    currentUserStore.error
   ]);
 
   useEffect(() => {

@@ -50,7 +50,7 @@ export const useLoginStore = create<TLoginState>((set) => ({
         refreshToken: source.refreshToken,
         message: source.message,
         rememberMe: source === local,
-      isInitialized: true
+        isInitialized: true
       });
     } else {
       set({ isInitialized: true });
@@ -79,7 +79,7 @@ export const useLoginStore = create<TLoginState>((set) => ({
         loading: false,
         error: null,
         rememberMe: rememberMe,
-        isInitialized: true
+          isInitialized: true
       });
       setCookie('auth-token', accessToken, {
         maxAge: rememberMe ? 30 * 24 * 60 * 60 : undefined, // 30 days for "remember me"
@@ -115,7 +115,7 @@ export const useLoginStore = create<TLoginState>((set) => ({
       refreshToken: null,
       message: null,
       rememberMe: false,
-     isInitialized: true
+      isInitialized: true
     });
   },
 }));

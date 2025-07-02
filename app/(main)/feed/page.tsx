@@ -21,6 +21,7 @@ import { useLoginStore } from "@/stores/apis/auth/login.store";
 import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 import CompanyCardSkeleton from "@/components/company/company-card/skeleton";
 import { BannerSkeleton } from "./banner-skeleton";
+import { useVerifyOTPStore } from "@/stores/apis/auth/verify-otp.store";
 
 export default function FeedPage() {
   // Utils
@@ -62,6 +63,7 @@ export default function FeedPage() {
   const getCurrentUserStore = useGetCurrentUserStore();
   const getAllUsersStore = useGetAllUsersStore();
   const accessToken = useLoginStore((state) => state.accessToken);
+  const otpAccessToken = useVerifyOTPStore((state) => state.accessToken);
 
   const currentUserRole = getCurrentUserStore.user?.role;
   let allUsers: IUser[] = [];
@@ -78,6 +80,13 @@ export default function FeedPage() {
       getAllUsersStore.getAllUsers(accessToken);
     }
   }, [accessToken]);
+
+  useEffect(() => {
+    if(otpAccessToken) {
+      getCurrentUserStore.getCurrentUser(otpAccessToken);
+      getAllUsersStore.getAllUsers(otpAccessToken);
+    }
+  }, [otpAccessToken]);
 
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const isEmployee = currentUser?.role === 'employee';
