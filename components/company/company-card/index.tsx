@@ -58,7 +58,11 @@ export default function CompanyCard(props: ICompanyCardProps) {
       {/* Profile Section */}
       <div className="w-full flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <Avatar className="size-24" rounded="md" onClick={props.onProfileImageClick}>
+          <Avatar
+            className="size-24"
+            rounded="md"
+            onClick={props.onProfileImageClick}
+          >
             <AvatarImage src={props.avatar!} />
             <AvatarFallback className="uppercase">
               {!props.avatar && props.name.slice(0, 3)}
@@ -68,7 +72,11 @@ export default function CompanyCard(props: ICompanyCardProps) {
             <TypographyP className="font-semibold">{props.name}</TypographyP>
             <TypographySmall className="text-xs flex items-center gap-1 text-muted-foreground">
               <LucideUsers className="size-3 " />
-              <span>{props.companySize} employees</span>
+              <span>
+                {props.companySize <= 1
+                  ? `${props.companySize} employee`
+                  : `${props.companySize} employees`}
+              </span>
             </TypographySmall>
             <TypographySmall className="text-xs flex items-center gap-1 text-muted-foreground">
               <LucideMapPin className="size-3 " />
@@ -105,7 +113,11 @@ export default function CompanyCard(props: ICompanyCardProps) {
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-3">
           <IconLabel
-            text={`${props.openPositions.length} Open Positions`}
+            text={`${
+              props.openPositions.length <= 1
+                ? `${props.openPositions.length} Open Position`
+                : `${props.openPositions.length} Open Positions`
+            }`}
             icon={<LucideBriefcaseBusiness strokeWidth={"1.5px"} />}
             className="[&>p]:text-primary [&>p]:font-medium"
           />
@@ -126,7 +138,11 @@ export default function CompanyCard(props: ICompanyCardProps) {
               {props.availableTimes.map((item, index) => (
                 <Tag
                   key={index}
-                  label={availabilityConstant.find((avail) => avail.value === item)?.label?.toString() || "Unknown"}
+                  label={
+                    availabilityConstant
+                      .find((avail) => avail.value === item)
+                      ?.label?.toString() || "Unknown"
+                  }
                 />
               ))}
             </div>

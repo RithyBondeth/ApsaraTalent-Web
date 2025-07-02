@@ -145,7 +145,7 @@ export default function FeedPage() {
 
       {/* Feed Card Section */}
       <div className="w-full grid grid-cols-2 gap-5 tablet-lg:grid-cols-1">
-        {(getAllUsersStore.loading || !getAllUsersStore.users) ? (
+        {(getAllUsersStore.loading || !getAllUsersStore.users || !getCurrentUserStore.user) ? (
           Array.from({ length: 6 }).map((_, index) => (
             currentUserRole === "company" ? (
               <EmployeeCardSkeleton key={`user-skeleton-${index}`} />
@@ -160,7 +160,7 @@ export default function FeedPage() {
                 key={user.id}
                 {...user.company}
                 id={user.id}
-                onViewClick={() => router.push(`feed/company/${user.id}`)}
+                onViewClick={() => router.push(`/feed/company/${user.id}`)}
                 onSaveClick={() => {}}
                 onProfileImageClick={(e: React.MouseEvent) => {
                   handleClickProfilePopup(e);

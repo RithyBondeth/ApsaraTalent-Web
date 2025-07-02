@@ -48,6 +48,7 @@ import { useGetOneUserStore } from "@/stores/apis/users/get-one-user.store";
 import { useLocalLoginStore, useLoginStore, useSessionLoginStore } from "@/stores/apis/auth/login.store";
 import { CompanyDetailPageSkeleton } from "./skeleton";
 import { dateFormatterv2 } from "@/utils/functions/dateformatter-v2";
+import { availabilityConstant } from "@/utils/constants/app.constant";
 
 export default function CompanyDetailPage() {
   const param = useParams();
@@ -231,7 +232,10 @@ export default function CompanyDetailPage() {
                             </TypographyP>
                           </div>
                           <div className="flex items-center gap-3">
-                            <Tag icon={<LucideAlarmClock strokeWidth={'1.5px'}/>} label={item.type} />
+                            <Tag 
+                              icon={<LucideAlarmClock strokeWidth={'1.5px'}/>} 
+                              label={availabilityConstant.find((type) => type.value == item.type)?.label!} 
+                            />
                             <Tag icon={<LucideUser strokeWidth={'1.5px'}/>} label={item.experience} />
                           </div>
                         </div>
