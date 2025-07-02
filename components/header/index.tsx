@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import LogoComponent from "../utils/logo";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { LucideMoon, LucideSun } from "lucide-react";
+import { LucideLogIn, LucideMoon, LucideSun } from "lucide-react";
 import { useThemeStore } from "@/stores/themes/theme-store";
 import { useTheme } from "next-themes";
 import { useEffect } from "react";
@@ -36,7 +36,10 @@ export default function Header({ className }: { className?: string }) {
                     {resolvedTheme === 'dark' ? <LucideSun/> : <LucideMoon/> }
                 </Button>
                 <Link href="/login">
-                    <Button className="tablet-sm:text-xs">Login</Button>
+                    <Button className="tablet-sm:text-xs">
+                        Login
+                        <LucideLogIn/>
+                    </Button>
                 </Link>
             </div>
         </nav>

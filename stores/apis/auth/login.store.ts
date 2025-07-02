@@ -79,7 +79,7 @@ export const useLoginStore = create<TLoginState>((set) => ({
         loading: false,
         error: null,
         rememberMe: rememberMe,
-          isInitialized: true
+        isInitialized: true
       });
       setCookie('auth-token', accessToken, {
         maxAge: rememberMe ? 30 * 24 * 60 * 60 : undefined, // 30 days for "remember me"

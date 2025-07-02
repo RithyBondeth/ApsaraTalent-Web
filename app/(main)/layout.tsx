@@ -3,7 +3,11 @@ import CollapseSidebar from "@/components/sidebar/collapse-sidebar";
 import RightSidebar from "@/components/sidebar/right-sidebar";
 import { Button } from "@/components/ui/button";
 import { LucideArrowLeft } from "lucide-react";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
@@ -15,22 +19,38 @@ import { useLoginStore } from "@/stores/apis/auth/login.store";
 import { useEffect } from "react";
 import { ClipLoader } from "react-spinners";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { useVerifyOTPStore } from "@/stores/apis/auth/verify-otp.store";
 
-export default function MainLayout({ children }: { children: React.ReactNode }) {
+export default function MainLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
   const sidebarData = sidebarList.filter((item) => item.url === pathname);
   const { theme } = useThemeStore();
   const { isInitialized, accessToken, initialize } = useLoginStore();
+  const useVerifyOtpStore = useVerifyOTPStore();
   const { getCurrentUser } = useGetCurrentUserStore();
 
-  useEffect(() => initialize(), [])
-  
   useEffect(() => {
-    if (!isInitialized) return;
-    if (accessToken) getCurrentUser(accessToken);
-  }, [isInitialized, accessToken]);
+    initialize();
+    useVerifyOtpStore.initialize();
+  }, []);
 
-  if (!isInitialized) {
+  useEffect(() => {
+    if (!isInitialized || !useVerifyOtpStore.isInitialized) return;
+    if (accessToken) getCurrentUser(accessToken);
+    if (useVerifyOtpStore.accessToken)
+      getCurrentUser(useVerifyOtpStore.accessToken);
+  }, [
+    isInitialized,
+    accessToken,
+    useVerifyOtpStore.isInitialized,
+    useVerifyOtpStore.accessToken,
+  ]);
+
+  if (!isInitialized || !useVerifyOtpStore.isInitialized) {
     return (
       <div className="h-screen w-screen flex justify-center items-center">
         <ClipLoader color="#000" />
@@ -46,7 +66,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   ) {
     return (
       <div className="relative">
-        <Link href="/feed"  className="absolute top-5 left-5 z-20">
+        <Link href="/feed" className="absolute top-5 left-5 z-20">
           <Button variant={"outline"} size="icon">
             <LucideArrowLeft />
           </Button>
@@ -60,14 +80,16 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   if (pathname === "/message" || pathname.startsWith("/message/")) {
     return (
       <SidebarProvider>
-        <CollapseSidebar/>
+        <CollapseSidebar />
         <div className="w-full h-screen message-xs:h-full flex flex-col">
           <SidebarInset>
             <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
               <div className="flex items-center gap-2 px-4">
-                <SidebarTrigger/>
+                <SidebarTrigger />
                 <Separator orientation="vertical" className="mr-2 h-4" />
-                <TypographyP className="!m-0">{sidebarData[0].description}</TypographyP>
+                <TypographyP className="!m-0">
+                  {sidebarData[0].description}
+                </TypographyP>
               </div>
             </header>
           </SidebarInset>
@@ -77,15 +99,15 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     );
   }
 
-  if(pathname.startsWith('/search')) {
+  if (pathname.startsWith("/search")) {
     return (
       <SidebarProvider>
-        <CollapseSidebar/>
+        <CollapseSidebar />
         <div className="w-full h-screen message-xs:h-full flex flex-col">
           <SidebarInset>
             <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
               <div className="flex items-center gap-2 px-4">
-                <SidebarTrigger/>
+                <SidebarTrigger />
                 <Separator orientation="vertical" className="mr-2 h-4" />
                 <TypographyP className="!m-0">Search your favorite</TypographyP>
               </div>
@@ -94,27 +116,29 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           <div className="h-full">{children}</div>
         </div>
       </SidebarProvider>
-    )
+    );
   }
-  
+
   // Default layout with both sidebars
   return (
     <ThemeProviderClient defaultTheme={theme}>
       <SidebarProvider>
-        <CollapseSidebar/>
+        <CollapseSidebar />
         <div className="w-ful">
           <SidebarInset>
             <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
               <div className="flex items-center gap-2 px-4">
-                <SidebarTrigger/>
+                <SidebarTrigger />
                 <Separator orientation="vertical" className="mr-2 h-4" />
-                <TypographyP className="!m-0">{sidebarData[0].description}</TypographyP>
+                <TypographyP className="!m-0">
+                  {sidebarData[0].description}
+                </TypographyP>
               </div>
             </header>
           </SidebarInset>
           <div className="!m-5">{children}</div>
         </div>
-        <RightSidebar className="!min-w-[25%] laptop-sm:hidden"/>
+        <RightSidebar className="!min-w-[25%] laptop-sm:hidden" />
       </SidebarProvider>
     </ThemeProviderClient>
   );
