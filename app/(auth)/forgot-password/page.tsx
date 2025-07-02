@@ -42,8 +42,10 @@ export default function ForgotPasswordPage() {
   });
 
   const onSubmit = async (data: TForgotPasswordForm) => {
-    await forgotPassword(data.forgotPassword);
-    console.log("Message: ", message);
+    const phone = data.forgotPassword.replace('0', '+855');
+    console.log(phone);
+    await forgotPassword(phone);
+    
   };
 
   useEffect(() => {
