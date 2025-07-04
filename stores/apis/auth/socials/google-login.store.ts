@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { useGetCurrentUserStore } from "../../users/get-current-user.store";
 import { API_AUTH_SOCIAL_FACEBOOK_URL } from "@/utils/constants/apis/auth_url";
+import { TUserRole } from "@/utils/types/role.type";
 
 export type TGoogleLoginResponse = {
   newUser: boolean | null;
@@ -14,6 +15,7 @@ export type TGoogleLoginResponse = {
   lastname: string | null;
   picture: string | null;
   provider: string | null;
+  role: string | null;
 };
 
 export type TGoogleLoginState = TGoogleLoginResponse & {
@@ -21,6 +23,7 @@ export type TGoogleLoginState = TGoogleLoginResponse & {
   error: string | null;
   isInitialized: boolean;
   rememberMe: boolean;
+  setRole: (role: TUserRole) => void;
   googleLogin: (rememberMe: boolean, usePopup?: boolean) => void;
   initialize: () => void;
   clearToken: () => void;
@@ -67,10 +70,12 @@ export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
   lastname: null,
   picture: null,
   provider: null,
+  role: null,
   loading: false,
   error: null,
   isInitialized: false,
   rememberMe: false,
+  setRole: (role: TUserRole) => set({ role: role }),
   initialize: () => {
     const local = useLocalGoogleLoginStore.getState();
     const session = useSessionGoogleLoginStore.getState();
@@ -144,6 +149,7 @@ export const useLocalGoogleLoginStore = create(
       lastname: null,
       picture: null,
       provider: null,
+      role: null,
     }),
     {
       name: "GoogleLoginStore-local",
@@ -164,6 +170,7 @@ export const useSessionGoogleLoginStore = create(
       lastname: null,
       picture: null,
       provider: null,
+      role: null,
     }),
     {
       name: "GoogleLoginStore-session",

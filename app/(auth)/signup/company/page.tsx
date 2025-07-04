@@ -29,6 +29,7 @@ import { TypographySmall } from "@/components/utils/typography/typography-small"
 import { ClipLoader } from "react-spinners";
 import { ToastAction } from "@/components/ui/toast";
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
+import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
 
 export default function CompanySignup() {
   const router = useRouter();
@@ -36,6 +37,7 @@ export default function CompanySignup() {
   const totalSteps = 6;
   const { basicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
+  const googleUserData = useGoogleLoginStore();
   const { toast } = useToast();
 
   const cmpSignup = useCompanySignupStore();
@@ -294,7 +296,14 @@ export default function CompanySignup() {
   useEffect(() => {
     console.log("Basic Signup Data: ", basicSignupData);
     console.log("Basic Phone Signup Data: ", basicPhoneSignupData);
-  }, [basicSignupData, basicPhoneSignupData]);
+    console.log("Basic Google Signup Data: ", {
+      firstname: googleUserData.firstname,
+      lastname: googleUserData.lastname,
+      email: googleUserData.email,
+      picture: googleUserData.picture,
+      role: googleUserData.role,
+    });
+  }, [basicSignupData, basicPhoneSignupData, googleUserData]);
 
   return (
     <div className="h-[80%] w-[85%] flex flex-col items-start gap-3 tablet-lg:w-full tablet-lg:p-5 tablet-xl:mb-5">

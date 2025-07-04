@@ -14,12 +14,14 @@ import { signupOptionSchema, TSignupOptionSchema } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ErrorMessage from "@/components/utils/error-message";
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
+import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
 
 export default function SingUpOption() {
     const [selectedRole, setSelectedRole] = useState<TUserRole | null>(null);
     const router = useRouter();
-    const { setBasicSignupData } = useBasicSignupDataStore();
+    const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
     const { basicPhoneSignupData, setBasicPhoneSignupData } = useBasicPhoneSignupDataStore();
+    const googleUserData = useGoogleLoginStore();
     const { handleSubmit, setValue, trigger, register, formState: { errors } } = useForm<TSignupOptionSchema>({
         resolver: zodResolver(signupOptionSchema)
     });
@@ -28,11 +30,17 @@ export default function SingUpOption() {
             console.log("Basic Phone Signup Data: ", { ...basicPhoneSignupData, role: data.selectedRole });
             setBasicPhoneSignupData({ ...basicPhoneSignupData, role: data.selectedRole });
             router.push(`/signup/${data.selectedRole}`);
-        } else {
+        } 
+        if(basicSignupData) {
             console.log("Basic Signup Data: ", { selectedRole: data.selectedRole });
             setBasicSignupData({ selectedRole: data.selectedRole });
             router.push('/signup');
         }
+        if(googleUserData.newUser && !googleUserData.accessToken) {
+            console.log("Basic Google Data: ", { selectedRole: data.selectedRole });
+            googleUserData.setRole(data.selectedRole as TUserRole);
+            router.push(`/signup`);
+        }   
     }
 
     return (

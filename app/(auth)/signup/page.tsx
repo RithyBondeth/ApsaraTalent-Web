@@ -11,7 +11,7 @@ import {
   LucideLockKeyhole,
   LucideMail,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -39,6 +39,7 @@ import {
   TBasicSignupEmployeeSchema,
   TBasicSignupCompanySchema,
 } from "./validation";
+import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
 
 export default function SignupPage() {
   const [selectedLocation, setSelectionLocation] = useState<TLocations | null>(null);
@@ -49,7 +50,8 @@ export default function SignupPage() {
   const { theme } = useThemeStore();
 
   const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
-  const isEmployeeForm = basicSignupData?.selectedRole === "employee";
+  const googleUserData = useGoogleLoginStore();
+  const isEmployeeForm = (basicSignupData?.selectedRole || googleUserData.role) === "employee";
 
   const cmpForm = useForm<TBasicSignupCompanySchema>({
     resolver: zodResolver(basicSignupCompanySchema),
@@ -74,6 +76,17 @@ export default function SignupPage() {
     setBasicSignupData(data);
     router.push("signup/company");
   };
+
+  useEffect(() => {
+    if(googleUserData) {
+      cmpForm.setValue('email', googleUserData.email!);
+     
+      empForm.setValue('email', googleUserData.email!);
+      empForm.setValue('firstName', googleUserData.firstname!);
+      empForm.setValue('lastName', googleUserData.lastname!);
+      empForm.setValue('username', googleUserData.firstname! + " " + googleUserData.lastname!);
+    }
+  }, [googleUserData]);
 
   return (
     <div className="size-[70%] flex flex-col items-start justify-center gap-3 tablet-sm:w-[90%]">

@@ -30,6 +30,7 @@ import { useUploadEmployeeAvatarStore } from "@/stores/apis/employee/upload-emp-
 import { useUploadEmployeeResumeStore } from "@/stores/apis/employee/upload-emp-resume.store";
 import { useUploadEmployeeCoverLetter } from "@/stores/apis/employee/upload-emp-coverletter.store";
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
+import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
 
 export default function EmployeeSignup() {
   const router = useRouter();
@@ -37,8 +38,8 @@ export default function EmployeeSignup() {
   const totalSteps = 6;
   const { basicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
+  const googleUserData = useGoogleLoginStore();
   const { toast } = useToast();
-
   const empSignup = useEmployeeSignupStore();
   const uploadAvatar = useUploadEmployeeAvatarStore();
   const uploadResume = useUploadEmployeeResumeStore();
@@ -328,7 +329,14 @@ export default function EmployeeSignup() {
   useEffect(() => {
     console.log("Basic Signup Data: ", basicSignupData);
     console.log("Basic Phone Signup Data: ", basicPhoneSignupData);
-  }, [basicSignupData, basicPhoneSignupData]);
+    console.log("Basic Google Signup Data: ", {
+      firstname: googleUserData.firstname,
+      lastname: googleUserData.lastname,
+      email: googleUserData.email,
+      picture: googleUserData.picture,
+      role: googleUserData.role,
+    });
+  }, [basicSignupData, basicPhoneSignupData, googleUserData]);
 
   return (
     <div className="h-[80%] w-[85%] flex flex-col items-start gap-3 tablet-lg:w-full tablet-lg:p-5">
