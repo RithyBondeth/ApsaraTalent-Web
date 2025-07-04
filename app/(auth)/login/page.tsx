@@ -42,6 +42,7 @@ import { ToastAction } from "@/components/ui/toast";
 import { ClipLoader } from "react-spinners";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { useGoogleLoginStore, useLocalGoogleLoginStore, useSessionGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
 
 function LoginPage() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
@@ -62,6 +63,7 @@ function LoginPage() {
 
   const { accessToken, refreshToken, message, login, error, loading } = useLoginStore();
   const currentUserStore = useGetCurrentUserStore();
+  const googleLoginStore = useGoogleLoginStore();
 
   const onSubmit = async (data: TLoginForm) => {
     setIsLoggedIn(true);
@@ -69,6 +71,7 @@ function LoginPage() {
   };
 
   useEffect(() => useLoginStore.getState().initialize(), []);
+  useEffect(() => useGoogleLoginStore.getState().initialize(), []);
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -125,7 +128,8 @@ function LoginPage() {
     loading,
     currentUserStore.user,
     currentUserStore.loading,
-    currentUserStore.error
+    currentUserStore.error,
+    isLoggedIn,
   ]);
 
   useEffect(() => {
@@ -141,13 +145,63 @@ function LoginPage() {
         rememberMe: source === local,
       });
     }
+
+    const googleLocal = useLocalGoogleLoginStore.getState();
+    const googleSession = useSessionGoogleLoginStore.getState();
+    const googleSource = googleLocal.accessToken ? googleLocal : googleSession;
+
+    if(googleSource.accessToken) {
+      useGoogleLoginStore.setState({
+        accessToken: googleSource.accessToken,
+        refreshToken: googleSource.refreshToken,
+        message: source.message,
+        rememberMe: source === local,
+      }) 
+    }
   }, []);
 
+  // Email Login
   useEffect(() => {
     if (accessToken) {
       currentUserStore.getCurrentUser(accessToken);
     }
   }, [accessToken]);
+
+  // Social Login Google
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    
+    if(googleLoginStore.accessToken) {
+      currentUserStore.getCurrentUser(googleLoginStore.accessToken); 
+      toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <LucideCheck />
+            <TypographySmall className="font-medium leading-relaxed">
+              Logged in successfully
+            </TypographySmall>
+          </div>
+        ),
+        duration: 1000,
+      });
+      setTimeout(() => router.push("/feed"), 1000);
+    }
+    
+    if(googleLoginStore.newUser && !googleLoginStore.accessToken) {
+      toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <LucideCheck />
+            <TypographySmall className="font-medium leading-relaxed">
+              Please register first
+            </TypographySmall>
+          </div>
+        ),
+        duration: 1000,
+      });
+      setTimeout(() => router.push("/signup/option"), 1000);
+    }
+  }, [googleLoginStore.accessToken, googleLoginStore.newUser, isLoggedIn]);
 
   const currentTheme = resolvedTheme || "light";
   const loginImage = currentTheme === "dark" ? loginWhiteSvg : loginBlackSvg;
@@ -175,12 +229,17 @@ function LoginPage() {
                 label="Google"
                 variant="outline"
                 className="w-1/2"
+                onClick={() => {
+                  setIsLoggedIn(true);
+                  googleLoginStore.googleLogin(true);
+                }}
               />
               <SocialButton
                 image={facebookIcon}
                 label="Google"
                 variant="outline"
                 className="w-1/2"
+                onClick={() => {}}
               />
             </div>
             <div className="flex justify-between items-center gap-3">
@@ -189,12 +248,14 @@ function LoginPage() {
                 label="LinkedIn"
                 variant="outline"
                 className="w-1/2"
+                onClick={() => {}}
               />
               <SocialButton
                 image={githubIcon}
                 label="Github"
                 variant="outline"
                 className="w-1/2"
+                onClick={() => {}}
               />
             </div>
             <Button

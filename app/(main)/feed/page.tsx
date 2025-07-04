@@ -22,6 +22,7 @@ import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 import CompanyCardSkeleton from "@/components/company/company-card/skeleton";
 import { BannerSkeleton } from "./banner-skeleton";
 import { useVerifyOTPStore } from "@/stores/apis/auth/verify-otp.store";
+import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
 
 export default function FeedPage() {
   // Utils
@@ -64,6 +65,7 @@ export default function FeedPage() {
   const getAllUsersStore = useGetAllUsersStore();
   const accessToken = useLoginStore((state) => state.accessToken);
   const otpAccessToken = useVerifyOTPStore((state) => state.accessToken);
+  const googleAccessToken = useGoogleLoginStore((state) => state.accessToken);
 
   const currentUserRole = getCurrentUserStore.user?.role;
   let allUsers: IUser[] = [];
@@ -74,6 +76,7 @@ export default function FeedPage() {
     allUsers = getAllUsersStore.users?.filter((user) => user.role === "employee") || [];
   }
 
+  // Email Login
   useEffect(() => {
     if (accessToken) {
       getCurrentUserStore.getCurrentUser(accessToken); 
@@ -81,12 +84,21 @@ export default function FeedPage() {
     }
   }, [accessToken]);
 
+  // Phone OTP Login
   useEffect(() => {
     if(otpAccessToken) {
       getCurrentUserStore.getCurrentUser(otpAccessToken);
       getAllUsersStore.getAllUsers(otpAccessToken);
     }
   }, [otpAccessToken]);
+
+  // Social Google Login
+  useEffect(() => {
+    if(googleAccessToken) {
+      getCurrentUserStore.getCurrentUser(googleAccessToken);
+      getAllUsersStore.getAllUsers(googleAccessToken); 
+    }
+  }, [googleAccessToken]);
 
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const isEmployee = currentUser?.role === 'employee';

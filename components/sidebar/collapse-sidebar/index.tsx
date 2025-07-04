@@ -20,6 +20,7 @@ import { sidebarList } from "@/utils/constants/sidebar.constant";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { SidebarDropdownFooterSkeleton } from "./sidebar-dropdown-footer/skeleton";
+import { LucideBot } from "lucide-react";
 
 export default function CollapseSidebar({
   ...props
@@ -53,16 +54,19 @@ export default function CollapseSidebar({
                 className="group/collapsible"
                 onClick={() => {
                   const searchUserRole = user?.role;
-                  if(item.url === '/search') {
-                    router.push(`${item.url}/${searchUserRole}`)
+                  if (item.url === "/search") {
+                    router.push(`${item.url}/${searchUserRole}`);
                   } else {
-                    router.push(`${item.url}`)
+                    router.push(`${item.url}`);
                   }
                 }}
               >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuButton tooltip={item.title} className="font-medium">
+                    <SidebarMenuButton
+                      tooltip={item.title}
+                      className="font-medium"
+                    >
                       {item.icon && <item.icon />}
                       <span>{item.title}</span>
                     </SidebarMenuButton>
@@ -70,6 +74,24 @@ export default function CollapseSidebar({
                 </SidebarMenuItem>
               </Collapsible>
             ))}
+            <Collapsible
+              asChild
+              defaultOpen={true}
+              className="group/collapsible"
+              onClick={() => router.push('/resume-builder')}
+            >
+              <SidebarMenuItem>
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuButton
+                    tooltip={"AI Resume"}
+                    className="font-medium"
+                  >
+                    <LucideBot />
+                    <span>AI Resume Builder</span>
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+              </SidebarMenuItem>
+            </Collapsible>
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
@@ -82,11 +104,15 @@ export default function CollapseSidebar({
             user={{
               name: isEmployee
                 ? `${user.employee?.username}`
-                : isCompany ? user?.company?.name! : '',
+                : isCompany
+                ? user?.company?.name!
+                : "",
               email: user?.email! || user?.phone!,
               avatar: isEmployee
                 ? user.employee?.avatar!
-                : isCompany ? user?.company?.avatar! : '',
+                : isCompany
+                ? user?.company?.avatar!
+                : "",
             }}
           />
         )}

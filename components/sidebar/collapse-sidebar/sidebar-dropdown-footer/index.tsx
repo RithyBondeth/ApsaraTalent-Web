@@ -44,6 +44,7 @@ import { useVerifyOTPStore } from "@/stores/apis/auth/verify-otp.store";
 import { Dialog, DialogContent, DialogFooter, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
 
 export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
   const { isMobile } = useSidebar()
@@ -64,11 +65,15 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
   const otpLogout = useVerifyOTPStore((state) => state.clearToken);
   const otpAccessToken = useVerifyOTPStore((state) => state.accessToken);
 
+  const googleLogout = useGoogleLoginStore((state) => state.clearToken);
+  const googleAccessToken = useGoogleLoginStore((state) => state.accessToken);
+
   const handleLogout = async () => {
     setOpenLogoutDialog(false);
-    
+   
     if(normalAccessToken) normalLogout();
     if(otpAccessToken) otpLogout();    
+    if(googleAccessToken) googleLogout();
 
     router.push("/")
   }

@@ -20,6 +20,7 @@ import { useEffect } from "react";
 import { ClipLoader } from "react-spinners";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useVerifyOTPStore } from "@/stores/apis/auth/verify-otp.store";
+import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
 
 export default function MainLayout({
   children,
@@ -30,27 +31,40 @@ export default function MainLayout({
   const sidebarData = sidebarList.filter((item) => item.url === pathname);
   const { theme } = useThemeStore();
   const { isInitialized, accessToken, initialize } = useLoginStore();
-  const useVerifyOtpStore = useVerifyOTPStore();
+  const verifyOTPStore = useVerifyOTPStore();
+  const googleLoginStore = useGoogleLoginStore();
   const { getCurrentUser } = useGetCurrentUserStore();
 
   useEffect(() => {
     initialize();
-    useVerifyOtpStore.initialize();
+    verifyOTPStore.initialize();
+    googleLoginStore.initialize();
   }, []);
 
   useEffect(() => {
-    if (!isInitialized || !useVerifyOtpStore.isInitialized) return;
+    if (
+      !isInitialized ||
+      !verifyOTPStore.isInitialized ||
+      !googleLoginStore.isInitialized
+    )
+      return;
+
     if (accessToken) getCurrentUser(accessToken);
-    if (useVerifyOtpStore.accessToken)
-      getCurrentUser(useVerifyOtpStore.accessToken);
+
+    if (verifyOTPStore.accessToken) getCurrentUser(verifyOTPStore.accessToken);
+
+    if (googleLoginStore.accessToken)
+      getCurrentUser(googleLoginStore.accessToken);
   }, [
     isInitialized,
     accessToken,
-    useVerifyOtpStore.isInitialized,
-    useVerifyOtpStore.accessToken,
+    verifyOTPStore.isInitialized,
+    verifyOTPStore.accessToken,
+    googleLoginStore.isInitialized,
+    googleLoginStore.accessToken,
   ]);
 
-  if (!isInitialized || !useVerifyOtpStore.isInitialized) {
+  if (!isInitialized || !verifyOTPStore.isInitialized) {
     return (
       <div className="h-screen w-screen flex justify-center items-center">
         <ClipLoader color="#000" />
@@ -90,6 +104,26 @@ export default function MainLayout({
                 <TypographyP className="!m-0">
                   {sidebarData[0].description}
                 </TypographyP>
+              </div>
+            </header>
+          </SidebarInset>
+          <div className="h-full">{children}</div>
+        </div>
+      </SidebarProvider>
+    );
+  }
+
+  if (pathname === "/resume-builder") {
+    return (
+      <SidebarProvider>
+        <CollapseSidebar />
+        <div className="w-full h-screen message-xs:h-full flex flex-col">
+          <SidebarInset>
+            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+              <div className="flex items-center gap-2 px-4">
+                <SidebarTrigger />
+                <Separator orientation="vertical" className="mr-2 h-4" />
+                <TypographyP className="!m-0">AI Resume Builder</TypographyP>
               </div>
             </header>
           </SidebarInset>

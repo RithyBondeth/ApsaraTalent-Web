@@ -11,7 +11,6 @@ import {
   LucideEye,
   LucideHeartHandshake,
   LucideMapPin,
-  LucideUser,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { IEmployeeCardProps } from "./props";
@@ -123,7 +122,6 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
         </Button>
         <Button
           className="text-sm"
-          variant="secondary"
           onClick={props.onViewClick}
         >
           View

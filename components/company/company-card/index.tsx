@@ -162,7 +162,6 @@ export default function CompanyCard(props: ICompanyCardProps) {
         </Button>
         <Button
           className="text-xs"
-          variant="secondary"
           onClick={props.onViewClick}
         >
           View
