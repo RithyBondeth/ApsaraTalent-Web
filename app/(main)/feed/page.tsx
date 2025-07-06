@@ -23,6 +23,7 @@ import CompanyCardSkeleton from "@/components/company/company-card/skeleton";
 import { BannerSkeleton } from "./banner-skeleton";
 import { useVerifyOTPStore } from "@/stores/apis/auth/verify-otp.store";
 import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
+import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
 
 export default function FeedPage() {
   // Utils
@@ -66,6 +67,7 @@ export default function FeedPage() {
   const accessToken = useLoginStore((state) => state.accessToken);
   const otpAccessToken = useVerifyOTPStore((state) => state.accessToken);
   const googleAccessToken = useGoogleLoginStore((state) => state.accessToken);
+  const githubAccessToken = useGithubLoginStore((state) => state.accessToken);
 
   const currentUserRole = getCurrentUserStore.user?.role;
   let allUsers: IUser[] = [];
@@ -98,7 +100,12 @@ export default function FeedPage() {
       getCurrentUserStore.getCurrentUser(googleAccessToken);
       getAllUsersStore.getAllUsers(googleAccessToken); 
     }
-  }, [googleAccessToken]);
+
+    if(githubAccessToken) {
+      getCurrentUserStore.getCurrentUser(githubAccessToken);
+      getAllUsersStore.getAllUsers(githubAccessToken); 
+    }
+  }, [googleAccessToken, githubAccessToken]);
 
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const isEmployee = currentUser?.role === 'employee';

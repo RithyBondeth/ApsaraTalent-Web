@@ -40,18 +40,33 @@ import {
   TBasicSignupCompanySchema,
 } from "./validation";
 import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
+import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
+import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
+import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 
 export default function SignupPage() {
-  const [selectedLocation, setSelectionLocation] = useState<TLocations | null>(null);
+  const [selectedLocation, setSelectionLocation] = useState<TLocations | null>(
+    null
+  );
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
-  const [confirmPassVisibility, setConfirmPassVisibility] = useState<boolean>(false);
+  const [confirmPassVisibility, setConfirmPassVisibility] =
+    useState<boolean>(false);
   const router = useRouter();
   const [selectedGender, setSelectedGender] = useState<TGender | null>(null);
   const { theme } = useThemeStore();
 
   const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
   const googleUserData = useGoogleLoginStore();
-  const isEmployeeForm = (basicSignupData?.selectedRole || googleUserData.role) === "employee";
+  const githubUserData = useGithubLoginStore();
+  const linkedInUserData = useLinkedInLoginStore();
+  const facebookUserData = useFacebookLoginStore();
+
+  const isEmployeeForm =
+    (basicSignupData?.selectedRole ||
+      googleUserData.role ||
+      githubUserData.role ||
+      linkedInUserData.role ||
+      facebookUserData.role) === "employee";
 
   const cmpForm = useForm<TBasicSignupCompanySchema>({
     resolver: zodResolver(basicSignupCompanySchema),
@@ -78,15 +93,49 @@ export default function SignupPage() {
   };
 
   useEffect(() => {
-    if(googleUserData) {
-      cmpForm.setValue('email', googleUserData.email!);
-     
-      empForm.setValue('email', googleUserData.email!);
-      empForm.setValue('firstName', googleUserData.firstname!);
-      empForm.setValue('lastName', googleUserData.lastname!);
-      empForm.setValue('username', googleUserData.firstname! + " " + googleUserData.lastname!);
+    if (googleUserData) {
+      cmpForm.setValue("email", googleUserData.email!);
+
+      empForm.setValue("email", googleUserData.email!);
+      empForm.setValue("firstName", googleUserData.firstname!);
+      empForm.setValue("lastName", googleUserData.lastname!);
+      empForm.setValue(
+        "username",
+        googleUserData.firstname! + " " + googleUserData.lastname!
+      );
     }
-  }, [googleUserData]);
+
+    if (linkedInUserData) {
+      cmpForm.setValue("email", linkedInUserData.email!);
+
+      empForm.setValue("email", linkedInUserData.email!);
+      empForm.setValue("firstName", linkedInUserData.firstname!);
+      empForm.setValue("lastName", linkedInUserData.lastname!);
+      empForm.setValue(
+        "username",
+        linkedInUserData.firstname! + " " + linkedInUserData.lastname!
+      );
+    }
+
+    if (githubUserData) {
+      cmpForm.setValue("email", githubUserData.email!);
+
+      empForm.setValue("email", githubUserData.email!);
+      empForm.setValue("username", githubUserData.username!);
+    }
+
+    if (facebookUserData) {
+      cmpForm.setValue("email", facebookUserData.email!);
+
+      empForm.setValue("email", facebookUserData.email!);
+      empForm.setValue("firstName", facebookUserData.firstname!);
+      empForm.setValue("lastName", facebookUserData.lastname!);
+      empForm.setValue(
+        "username",
+        facebookUserData.firstname! + " " + facebookUserData.lastname!
+      );
+    }
+  }, [googleUserData, githubUserData, linkedInUserData, facebookUserData]);
 
   return (
     <div className="size-[70%] flex flex-col items-start justify-center gap-3 tablet-sm:w-[90%]">
@@ -134,30 +183,34 @@ export default function SignupPage() {
               validationMessage={employeeErrors.username?.message}
             />
           )}
-          {isEmployeeForm && <div className="w-full flex flex-col items-start gap-1">
-            <Select
-              onValueChange={(value: TLocations) => {
-                setSelectionLocation(value);
-                empForm.setValue("selectedLocation", value, {
-                  shouldValidate: true,
-                });
-                empForm.trigger("selectedLocation");
-              }}
-              value={selectedLocation || ""}
-            >
-              <SelectTrigger className="h-12 text-muted-foreground">
-                <SelectValue placeholder="Location" />
-              </SelectTrigger>
-              <SelectContent>
-                {locationConstant.map((location, index) => (
-                  <SelectItem key={index} value={location}>
-                    {location}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <ErrorMessage>{employeeErrors.selectedLocation?.message}</ErrorMessage>
-          </div>}
+          {isEmployeeForm && (
+            <div className="w-full flex flex-col items-start gap-1">
+              <Select
+                onValueChange={(value: TLocations) => {
+                  setSelectionLocation(value);
+                  empForm.setValue("selectedLocation", value, {
+                    shouldValidate: true,
+                  });
+                  empForm.trigger("selectedLocation");
+                }}
+                value={selectedLocation || ""}
+              >
+                <SelectTrigger className="h-12 text-muted-foreground">
+                  <SelectValue placeholder="Location" />
+                </SelectTrigger>
+                <SelectContent>
+                  {locationConstant.map((location, index) => (
+                    <SelectItem key={index} value={location}>
+                      {location}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <ErrorMessage>
+                {employeeErrors.selectedLocation?.message}
+              </ErrorMessage>
+            </div>
+          )}
         </div>
         <div className="flex flex-col items-stretch gap-5">
           <div className="flex gap-3 [&>select]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">

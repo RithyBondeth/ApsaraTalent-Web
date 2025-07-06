@@ -21,6 +21,9 @@ import { ClipLoader } from "react-spinners";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useVerifyOTPStore } from "@/stores/apis/auth/verify-otp.store";
 import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
+import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
+import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
+import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 
 export default function MainLayout({
   children,
@@ -33,19 +36,28 @@ export default function MainLayout({
   const { isInitialized, accessToken, initialize } = useLoginStore();
   const verifyOTPStore = useVerifyOTPStore();
   const googleLoginStore = useGoogleLoginStore();
+  const githubLoginStore = useGithubLoginStore();
+  const linkedInLoginStore = useLinkedInLoginStore();
+  const facebookLoginStore = useFacebookLoginStore();
   const { getCurrentUser } = useGetCurrentUserStore();
 
   useEffect(() => {
     initialize();
     verifyOTPStore.initialize();
     googleLoginStore.initialize();
+    linkedInLoginStore.initialize();
+    githubLoginStore.initialize();
+    facebookLoginStore.initialize();
   }, []);
 
   useEffect(() => {
     if (
       !isInitialized ||
       !verifyOTPStore.isInitialized ||
-      !googleLoginStore.isInitialized
+      !googleLoginStore.isInitialized ||
+      !githubLoginStore.isInitialized ||
+      !linkedInLoginStore.isInitialized || 
+      !facebookLoginStore.isInitialized
     )
       return;
 
@@ -55,6 +67,15 @@ export default function MainLayout({
 
     if (googleLoginStore.accessToken)
       getCurrentUser(googleLoginStore.accessToken);
+
+    if (linkedInLoginStore.accessToken)
+      getCurrentUser(linkedInLoginStore.accessToken);
+
+    if (githubLoginStore.accessToken)
+      getCurrentUser(githubLoginStore.accessToken);
+
+    if(facebookLoginStore.accessToken)
+      getCurrentUser(facebookLoginStore.accessToken);
   }, [
     isInitialized,
     accessToken,
@@ -62,9 +83,22 @@ export default function MainLayout({
     verifyOTPStore.accessToken,
     googleLoginStore.isInitialized,
     googleLoginStore.accessToken,
+    linkedInLoginStore.accessToken,
+    linkedInLoginStore.isInitialized,
+    githubLoginStore.accessToken,
+    githubLoginStore.isInitialized,
+    facebookLoginStore.accessToken,
+    facebookLoginStore.isInitialized,
   ]);
 
-  if (!isInitialized || !verifyOTPStore.isInitialized) {
+  if (
+    !isInitialized ||
+    !verifyOTPStore.isInitialized ||
+    !googleLoginStore.isInitialized ||
+    !linkedInLoginStore.isInitialized ||
+    !githubLoginStore.isInitialized || 
+    !facebookLoginStore.isInitialized
+  ) {
     return (
       <div className="h-screen w-screen flex justify-center items-center">
         <ClipLoader color="#000" />

@@ -2,53 +2,52 @@ import { setCookie, deleteCookie } from "cookies-next";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { useGetCurrentUserStore } from "../../users/get-current-user.store";
-import { API_AUTH_SOCIAL_GOOGLE_URL } from "@/utils/constants/apis/auth_url";
+import { API_AUTH_SOCIAL_GITHUB_URL } from "@/utils/constants/apis/auth_url";
 import { TUserRole } from "@/utils/types/role.type";
 
-export type TGoogleLoginResponse = {
+// --- Types ---
+export type TGithubLoginResponse = {
   newUser: boolean | null;
   message: string | null;
   accessToken: string | null;
   refreshToken: string | null;
   email: string | null;
-  firstname: string | null;
-  lastname: string | null;
+  username: string | null;
   picture: string | null;
   provider: string | null;
   role: string | null;
 };
 
-export type TGoogleLoginState = TGoogleLoginResponse & {
+export type TGithubLoginState = TGithubLoginResponse & {
   loading: boolean;
   error: string | null;
   isInitialized: boolean;
   rememberMe: boolean;
   setRole: (role: TUserRole) => void;
-  googleLogin: (rememberMe: boolean, usePopup?: boolean) => void;
+  githubLogin: (rememberMe: boolean, usePopup?: boolean) => void;
   initialize: () => void;
   clearToken: () => void;
 };
 
+// --- Constants ---
 const FRONTEND_ORIGIN = typeof window !== "undefined" ? window.location.origin : "";
-const BACKEND_ORIGIN = API_AUTH_SOCIAL_GOOGLE_URL.split("/social")[0];
+const BACKEND_ORIGIN = API_AUTH_SOCIAL_GITHUB_URL.split("/social")[0];
 
-// ✅ PATCHED: Always update store, only persist/token if accessToken exists
-const FINISH_LOGIN = (data: TGoogleLoginResponse, rememberMe: boolean) => {
+// --- Shared Logic ---
+const FINISH_LOGIN = (data: TGithubLoginResponse, rememberMe: boolean) => {
   if (!data) return;
 
-  // Always update Zustand in-memory store
-  useGoogleLoginStore.setState({
+  useGithubLoginStore.setState({
     ...data,
     loading: false,
     isInitialized: true,
     rememberMe,
   });
 
-  // Only persist & set cookie if accessToken exists
   if (data.accessToken) {
     const setter = rememberMe
-      ? useLocalGoogleLoginStore.setState
-      : useSessionGoogleLoginStore.setState;
+      ? useLocalGithubLoginStore.setState
+      : useSessionGithubLoginStore.setState;
 
     setter({ ...data });
 
@@ -60,14 +59,14 @@ const FINISH_LOGIN = (data: TGoogleLoginResponse, rememberMe: boolean) => {
   }
 };
 
-export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
+// --- Main Store ---
+export const useGithubLoginStore = create<TGithubLoginState>((set) => ({
   newUser: null,
   message: null,
   accessToken: null,
   refreshToken: null,
   email: null,
-  firstname: null,
-  lastname: null,
+  username: null,
   picture: null,
   provider: null,
   role: null,
@@ -75,10 +74,12 @@ export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
   error: null,
   isInitialized: false,
   rememberMe: false,
-  setRole: (role: TUserRole) => set({ role: role }),
+
+  setRole: (role: TUserRole) => set({ role }),
+
   initialize: () => {
-    const local = useLocalGoogleLoginStore.getState();
-    const session = useSessionGoogleLoginStore.getState();
+    const local = useLocalGithubLoginStore.getState();
+    const session = useSessionGithubLoginStore.getState();
     const src = local.accessToken ? local : session;
     if (src.accessToken) {
       set({ ...src, rememberMe: src === local, isInitialized: true });
@@ -87,27 +88,27 @@ export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
     }
   },
 
-  googleLogin: (rememberMe: boolean, usePopup: boolean = true) => {
+  githubLogin: (rememberMe: boolean, usePopup = true) => {
     set({ loading: true, error: null, rememberMe });
 
-    const url = API_AUTH_SOCIAL_GOOGLE_URL;
+    const url = API_AUTH_SOCIAL_GITHUB_URL;
 
     if (!usePopup) {
       window.location.href = url;
       return;
     }
 
-    const popup = window.open(url, "google-oauth", "width=500,height=600");
+    const popup = window.open(url, "github-oauth", "width=500,height=600");
     if (!popup) {
       set({ loading: false, error: "Popup blocked by browser" });
       return;
     }
 
-    const handler = (ev: MessageEvent<TGoogleLoginResponse>) => {
+    const handler = (ev: MessageEvent<TGithubLoginResponse>) => {
       if (ev.origin !== BACKEND_ORIGIN) return;
       window.removeEventListener("message", handler);
       popup.close();
-      console.log("Google Data Response: ", ev.data);
+      console.log("GitHub Data Response: ", ev.data);
       FINISH_LOGIN(ev.data, rememberMe);
     };
 
@@ -115,8 +116,8 @@ export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
   },
 
   clearToken: () => {
-    localStorage.removeItem("GoogleLoginStore-local");
-    sessionStorage.removeItem("GoogleLoginStore-session");
+    localStorage.removeItem("GithubLoginStore-local");
+    sessionStorage.removeItem("GithubLoginStore-session");
     deleteCookie("auth-token");
     useGetCurrentUserStore.getState().clearUser();
     set({
@@ -125,8 +126,7 @@ export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
       accessToken: null,
       refreshToken: null,
       email: null,
-      firstname: null,
-      lastname: null,
+      username: null,
       picture: null,
       provider: null,
       loading: false,
@@ -137,43 +137,43 @@ export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
   },
 }));
 
-export const useLocalGoogleLoginStore = create(
-  persist<TGoogleLoginResponse>(
+// --- Persistent Local Store ---
+export const useLocalGithubLoginStore = create(
+  persist<TGithubLoginResponse>(
     () => ({
       newUser: null,
       message: null,
       accessToken: null,
       refreshToken: null,
       email: null,
-      firstname: null,
-      lastname: null,
+      username: null,
       picture: null,
       provider: null,
       role: null,
     }),
     {
-      name: "GoogleLoginStore-local",
+      name: "GithubLoginStore-local",
       storage: createJSONStorage(() => localStorage),
     },
   ),
 );
 
-export const useSessionGoogleLoginStore = create(
-  persist<TGoogleLoginResponse>(
+// --- Persistent Session Store ---
+export const useSessionGithubLoginStore = create(
+  persist<TGithubLoginResponse>(
     () => ({
       newUser: null,
       message: null,
       accessToken: null,
       refreshToken: null,
       email: null,
-      firstname: null,
-      lastname: null,
+      username: null,
       picture: null,
       provider: null,
       role: null,
     }),
     {
-      name: "GoogleLoginStore-session",
+      name: "GithubLoginStore-session",
       storage: createJSONStorage(() => sessionStorage),
     },
   ),

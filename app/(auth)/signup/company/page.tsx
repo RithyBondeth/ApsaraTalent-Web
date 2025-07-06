@@ -30,6 +30,9 @@ import { ClipLoader } from "react-spinners";
 import { ToastAction } from "@/components/ui/toast";
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
+import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
+import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
+import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 
 export default function CompanySignup() {
   const router = useRouter();
@@ -38,8 +41,11 @@ export default function CompanySignup() {
   const { basicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
   const googleUserData = useGoogleLoginStore();
-  const { toast } = useToast();
+  const githubUserData = useGithubLoginStore();
+  const linkedInUserData = useLinkedInLoginStore();
+  const facebookUserData = useFacebookLoginStore();
 
+  const { toast } = useToast();
   const cmpSignup = useCompanySignupStore();
   const uploadAvatar = useUploadCompanyAvatarStore();
   const uploadCover = useUploadCompanyCoverStore();
@@ -303,7 +309,34 @@ export default function CompanySignup() {
       picture: googleUserData.picture,
       role: googleUserData.role,
     });
-  }, [basicSignupData, basicPhoneSignupData, googleUserData]);
+    console.log("Basic Github Signup Data: ", {
+      username: githubUserData.username,
+      email: githubUserData.email,
+      picture: githubUserData.picture,
+      role: githubUserData.role,
+    });
+    console.log("Basic LinkedIn Signup Data: ", {
+      firstname: linkedInUserData.firstname,
+      lastname: linkedInUserData.lastname,
+      email: linkedInUserData.email,
+      picture: linkedInUserData.picture,
+      role: linkedInUserData.role,
+    });
+    console.log("Basic Facebook Signup Data: ", {
+      firstname: facebookUserData.firstname,
+      lastname: facebookUserData.lastname,
+      email: facebookUserData.email,
+      picture: facebookUserData.picture,
+      role: facebookUserData.role,
+    });
+  }, [
+    basicSignupData,
+    basicPhoneSignupData,
+    googleUserData,
+    linkedInUserData,
+    githubUserData,
+    facebookUserData,
+  ]);
 
   return (
     <div className="h-[80%] w-[85%] flex flex-col items-start gap-3 tablet-lg:w-full tablet-lg:p-5 tablet-xl:mb-5">

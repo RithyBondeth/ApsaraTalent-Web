@@ -15,6 +15,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import ErrorMessage from "@/components/utils/error-message";
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
+import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
+import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
+import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 
 export default function SingUpOption() {
     const [selectedRole, setSelectedRole] = useState<TUserRole | null>(null);
@@ -22,6 +25,10 @@ export default function SingUpOption() {
     const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
     const { basicPhoneSignupData, setBasicPhoneSignupData } = useBasicPhoneSignupDataStore();
     const googleUserData = useGoogleLoginStore();
+    const githubUserData = useGithubLoginStore();
+    const linkedInUserData = useLinkedInLoginStore();
+    const facebookUserData = useFacebookLoginStore();
+
     const { handleSubmit, setValue, trigger, register, formState: { errors } } = useForm<TSignupOptionSchema>({
         resolver: zodResolver(signupOptionSchema)
     });
@@ -41,6 +48,21 @@ export default function SingUpOption() {
             googleUserData.setRole(data.selectedRole as TUserRole);
             router.push(`/signup`);
         }   
+        if(linkedInUserData.newUser && !linkedInUserData.accessToken) {
+            console.log("Basic LinkedIn Data: ", { selectedRole: data.selectedRole });
+            linkedInUserData.setRole(data.selectedRole as TUserRole);
+            router.push(`/signup`);
+        }
+        if(githubUserData.newUser && !githubUserData.accessToken) {
+            console.log("Basic Github Data: ", { selectedRole: data.selectedRole });
+            githubUserData.setRole(data.selectedRole as TUserRole);
+            router.push(`/signup`);
+        }
+        if(facebookUserData.newUser && !facebookUserData.accessToken) {
+            console.log("Basic Facebook Data: ", { selectedRole: data.selectedRole });
+            facebookUserData.setRole(data.selectedRole as TUserRole);
+            router.push(`/signup`);
+        }
     }
 
     return (

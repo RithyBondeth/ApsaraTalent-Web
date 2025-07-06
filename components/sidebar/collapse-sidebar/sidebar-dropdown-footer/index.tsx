@@ -45,6 +45,9 @@ import { Dialog, DialogContent, DialogFooter, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
+import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
+import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
+import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 
 export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
   const { isMobile } = useSidebar()
@@ -68,12 +71,24 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
   const googleLogout = useGoogleLoginStore((state) => state.clearToken);
   const googleAccessToken = useGoogleLoginStore((state) => state.accessToken);
 
+  const githubLogout = useGithubLoginStore((state) => state.clearToken); 
+  const githubAccessToken = useGithubLoginStore((state) => state.accessToken);
+
+  const linkedInLogout = useLinkedInLoginStore((state) => state.clearToken);
+  const linkedInAccessToken = useLinkedInLoginStore((state) => state.accessToken);
+
+  const facebookLogout = useFacebookLoginStore((state) => state.clearToken);
+  const facebookAccessToken = useFacebookLoginStore((state) => state.accessToken);
+
   const handleLogout = async () => {
     setOpenLogoutDialog(false);
    
     if(normalAccessToken) normalLogout();
     if(otpAccessToken) otpLogout();    
     if(googleAccessToken) googleLogout();
+    if(githubAccessToken) githubLogout();
+    if(linkedInAccessToken) linkedInLogout();
+    if(facebookAccessToken) facebookLogout();
 
     router.push("/")
   }

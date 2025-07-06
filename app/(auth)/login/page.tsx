@@ -42,7 +42,17 @@ import { ToastAction } from "@/components/ui/toast";
 import { ClipLoader } from "react-spinners";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useGoogleLoginStore, useLocalGoogleLoginStore, useSessionGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
+import {
+  useGoogleLoginStore,
+  useLocalGoogleLoginStore,
+  useSessionGoogleLoginStore,
+} from "@/stores/apis/auth/socials/google-login.store";
+import {
+  useLinkedInLoginStore,
+  useLocalLinkedInLoginStore,
+} from "@/stores/apis/auth/socials/linkedin-login.store";
+import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
+import { useFacebookLoginStore, useLocalFacebookLoginStore, useSessionFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 
 function LoginPage() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
@@ -61,9 +71,13 @@ function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-  const { accessToken, refreshToken, message, login, error, loading } = useLoginStore();
+  const { accessToken, refreshToken, message, login, error, loading } =
+    useLoginStore();
   const currentUserStore = useGetCurrentUserStore();
   const googleLoginStore = useGoogleLoginStore();
+  const linkedInLoginStore = useLinkedInLoginStore();
+  const githubLoginStore = useGithubLoginStore();
+  const facebookLoginStore = useFacebookLoginStore();
 
   const onSubmit = async (data: TLoginForm) => {
     setIsLoggedIn(true);
@@ -72,6 +86,9 @@ function LoginPage() {
 
   useEffect(() => useLoginStore.getState().initialize(), []);
   useEffect(() => useGoogleLoginStore.getState().initialize(), []);
+  useEffect(() => useLinkedInLoginStore.getState().initialize(),[]);
+  useEffect(() => useGithubLoginStore.getState().initialize(), []);
+  useEffect(() => useFacebookLoginStore.getState().initialize(), []);
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -150,14 +167,56 @@ function LoginPage() {
     const googleSession = useSessionGoogleLoginStore.getState();
     const googleSource = googleLocal.accessToken ? googleLocal : googleSession;
 
-    if(googleSource.accessToken) {
+    if (googleSource.accessToken) {
       useGoogleLoginStore.setState({
         accessToken: googleSource.accessToken,
         refreshToken: googleSource.refreshToken,
-        message: source.message,
-        rememberMe: source === local,
-      }) 
+        message: googleSource.message,
+        rememberMe: googleSource === googleLocal,
+      });
     }
+
+    const linkedInLocal = useLocalLinkedInLoginStore.getState();
+    const linkedInSession = useSessionGoogleLoginStore.getState();
+    const linkedInSource = linkedInLocal.accessToken
+      ? linkedInLocal
+      : linkedInSession;
+
+    if (linkedInSource.accessToken) {
+      useLinkedInLoginStore.setState({
+        accessToken: linkedInSource.accessToken,
+        refreshToken: linkedInSource.refreshToken,
+        message: linkedInSource.message,
+        rememberMe: linkedInSource === linkedInLocal,
+      });
+    }
+
+    const githubLocal = useGithubLoginStore.getState();
+    const githubSession = useGithubLoginStore.getState();
+    const githubSource = githubLocal.accessToken ? githubLocal : githubSession;
+    
+    if(githubSource.accessToken) {
+        useGithubLoginStore.setState({
+          accessToken: githubSource.accessToken,
+          refreshToken: githubSession.refreshToken,
+          message: githubSource.message,
+          rememberMe: githubSource === githubLocal,
+        });
+    }
+
+    const facebookLocal = useLocalFacebookLoginStore.getState();
+    const facebookSession = useSessionFacebookLoginStore.getState();
+    const facebookSource = facebookLocal.accessToken ? facebookLocal : facebookSession;
+
+    if(facebookSource.accessToken) {
+      useFacebookLoginStore.setState({
+        accessToken: facebookSource.accessToken,
+        refreshToken: facebookSource.refreshToken,
+        message: facebookSource.message,
+        rememberMe: facebookSource === facebookLocal,
+      });
+    }
+
   }, []);
 
   // Email Login
@@ -170,9 +229,22 @@ function LoginPage() {
   // Social Login Google
   useEffect(() => {
     if (!isLoggedIn) return;
-    
-    if(googleLoginStore.accessToken) {
-      currentUserStore.getCurrentUser(googleLoginStore.accessToken); 
+
+    if (
+      googleLoginStore.accessToken ||
+      linkedInLoginStore.accessToken ||
+      githubLoginStore.accessToken || 
+      facebookLoginStore.accessToken
+    ) {
+      if (googleLoginStore.accessToken)
+        currentUserStore.getCurrentUser(googleLoginStore.accessToken);
+      if (linkedInLoginStore.accessToken)
+        currentUserStore.getCurrentUser(linkedInLoginStore.accessToken);
+      if (githubLoginStore.accessToken)
+        currentUserStore.getCurrentUser(githubLoginStore.accessToken);
+      if(facebookLoginStore.accessToken)
+        currentUserStore.getCurrentUser(facebookLoginStore.accessToken);
+
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -186,8 +258,13 @@ function LoginPage() {
       });
       setTimeout(() => router.push("/feed"), 1000);
     }
-    
-    if(googleLoginStore.newUser && !googleLoginStore.accessToken) {
+
+    if (
+      (googleLoginStore.newUser && !googleLoginStore.accessToken) ||
+      (linkedInLoginStore.newUser && !linkedInLoginStore.accessToken) ||
+      (githubLoginStore.newUser && !githubLoginStore.accessToken) || 
+      (facebookLoginStore.newUser && !facebookLoginStore.accessToken)
+    ) {
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -201,7 +278,17 @@ function LoginPage() {
       });
       setTimeout(() => router.push("/signup/option"), 1000);
     }
-  }, [googleLoginStore.accessToken, googleLoginStore.newUser, isLoggedIn]);
+  }, [
+    googleLoginStore.accessToken,
+    googleLoginStore.newUser,
+    linkedInLoginStore.accessToken,
+    linkedInLoginStore.newUser,
+    githubLoginStore.accessToken,
+    githubLoginStore.newUser,
+    facebookLoginStore.accessToken,
+    facebookLoginStore.newUser,
+    isLoggedIn,
+  ]);
 
   const currentTheme = resolvedTheme || "light";
   const loginImage = currentTheme === "dark" ? loginWhiteSvg : loginBlackSvg;
@@ -239,7 +326,10 @@ function LoginPage() {
                 label="Google"
                 variant="outline"
                 className="w-1/2"
-                onClick={() => {}}
+                onClick={() => {
+                  setIsLoggedIn(true);
+                  facebookLoginStore.facebookLogin(true);
+                }}
               />
             </div>
             <div className="flex justify-between items-center gap-3">
@@ -248,14 +338,20 @@ function LoginPage() {
                 label="LinkedIn"
                 variant="outline"
                 className="w-1/2"
-                onClick={() => {}}
+                onClick={() => {
+                  setIsLoggedIn(true);
+                  linkedInLoginStore.linkedinLogin(true);
+                }}
               />
               <SocialButton
                 image={githubIcon}
                 label="Github"
                 variant="outline"
                 className="w-1/2"
-                onClick={() => {}}
+                onClick={() => {
+                  setIsLoggedIn(true);
+                  githubLoginStore.githubLogin(true);
+                }}
               />
             </div>
             <Button
