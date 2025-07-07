@@ -20,7 +20,7 @@ import { sidebarList } from "@/utils/constants/sidebar.constant";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { SidebarDropdownFooterSkeleton } from "./sidebar-dropdown-footer/skeleton";
-import { LucideBot } from "lucide-react";
+import { LucideFileUser } from "lucide-react";
 
 export default function CollapseSidebar({
   ...props
@@ -45,7 +45,7 @@ export default function CollapseSidebar({
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarMenu className="space-y-3">
+          <SidebarMenu className="space-y-5">
             {sidebarList.map((item) => (
               <Collapsible
                 key={item.title}
@@ -67,7 +67,7 @@ export default function CollapseSidebar({
                       tooltip={item.title}
                       className="font-medium"
                     >
-                      {item.icon && <item.icon />}
+                      {item.icon && <item.icon className="!size-6"/>}
                       <span>{item.title}</span>
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
@@ -86,7 +86,7 @@ export default function CollapseSidebar({
                     tooltip={"AI Resume"}
                     className="font-medium"
                   >
-                    <LucideBot />
+                    <LucideFileUser className="!size-6"/>
                     <span>AI Resume Builder</span>
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
