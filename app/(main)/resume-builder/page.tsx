@@ -4,6 +4,7 @@ import ResumeBuilderGenerate from "@/components/resume-builder/generate";
 import TemplateCard from "@/components/resume-builder/template";
 import { Button } from "@/components/ui/button";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { resumeData } from "@/data/resume-data";
 
 export default function ResumeBuilder() {
   return (
@@ -19,14 +20,14 @@ export default function ResumeBuilder() {
           </div>
         </div>
         <div className="grid grid-cols-3 gap-3 my-3">
-          {[1, 2, 3].map((template) => (
+          {resumeData.map((resume) => (
             <TemplateCard
-              key={template}
-              isPremium={true}
-              price={1.99}
-              image="https://resumesector.com/wp-content/uploads/2024/12/Modern-Resume-728x1024.jpg"
-              title="Modern Professional"
-              description="Clean and minimalist design perfect for tech professionals"
+              key={resume.id}
+              isPremium={resume.isPremium}
+              price={resume.price!}
+              image={resume.resumeImage}
+              title={resume.title}
+              description={resume.description}
               onUseTemplate={() => {}}
             />
           ))}
