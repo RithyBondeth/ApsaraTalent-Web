@@ -1,4 +1,4 @@
-export interface IResume {
+export interface IResumeTemplate {
     id: string;
     resumeImage: string;
     title: string;

@@ -1,6 +1,6 @@
-import { IResume } from "@/utils/interfaces/resume.interface";
+import { IResumeTemplate } from "@/utils/interfaces/resume.interface";
 
-export const resumeData: IResume[] = [
+export const resumeData: IResumeTemplate[] = [
     {
         id: '1c244a89-8f79-4440-b9a1-c59aee6a3b7c',
         resumeImage: 'https://jofibo.com/images/templates/creative_cv_template_thumbnail.png',
