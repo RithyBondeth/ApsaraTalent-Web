@@ -53,6 +53,7 @@ import {
 } from "@/stores/apis/auth/socials/linkedin-login.store";
 import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
 import { useFacebookLoginStore, useLocalFacebookLoginStore, useSessionFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
+import { useInitializeAuth } from "@/hooks/use-initialize-auth";
 
 function LoginPage() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
@@ -84,16 +85,12 @@ function LoginPage() {
     await login(data.email, data.password, data.rememberMe!);
   };
 
-  useEffect(() => useLoginStore.getState().initialize(), []);
-  useEffect(() => useGoogleLoginStore.getState().initialize(), []);
-  useEffect(() => useLinkedInLoginStore.getState().initialize(),[]);
-  useEffect(() => useGithubLoginStore.getState().initialize(), []);
-  useEffect(() => useFacebookLoginStore.getState().initialize(), []);
+  useInitializeAuth();
 
   useEffect(() => {
     if (!isLoggedIn) return;
 
-    if (accessToken && refreshToken && currentUserStore.user) {
+    if (accessToken && currentUserStore.user) {
       toast({
         description: (
           <div className="flex items-center gap-2">

@@ -15,15 +15,11 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { sidebarList } from "@/utils/constants/sidebar.constant";
 import { ThemeProviderClient } from "@/components/utils/themes/theme-provider-client";
 import { useThemeStore } from "@/stores/themes/theme-store";
-import { useLoginStore } from "@/stores/apis/auth/login.store";
 import { useEffect } from "react";
 import { ClipLoader } from "react-spinners";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useVerifyOTPStore } from "@/stores/apis/auth/verify-otp.store";
-import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
-import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
-import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
-import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
+import { useInitializeAuth } from "@/hooks/use-initialize-auth";
+import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
 
 export default function MainLayout({
   children,
@@ -33,72 +29,18 @@ export default function MainLayout({
   const pathname = usePathname();
   const sidebarData = sidebarList.filter((item) => item.url === pathname);
   const { theme } = useThemeStore();
-  const { isInitialized, accessToken, initialize } = useLoginStore();
-  const verifyOTPStore = useVerifyOTPStore();
-  const googleLoginStore = useGoogleLoginStore();
-  const githubLoginStore = useGithubLoginStore();
-  const linkedInLoginStore = useLinkedInLoginStore();
-  const facebookLoginStore = useFacebookLoginStore();
   const { getCurrentUser } = useGetCurrentUserStore();
+  const accessToken = getUnifiedAccessToken();
+
+  useInitializeAuth();
 
   useEffect(() => {
-    initialize();
-    verifyOTPStore.initialize();
-    googleLoginStore.initialize();
-    linkedInLoginStore.initialize();
-    githubLoginStore.initialize();
-    facebookLoginStore.initialize();
-  }, []);
+    if(accessToken) {
+      getCurrentUser(accessToken);
+    }
+  }, [accessToken])
 
-  useEffect(() => {
-    if (
-      !isInitialized ||
-      !verifyOTPStore.isInitialized ||
-      !googleLoginStore.isInitialized ||
-      !githubLoginStore.isInitialized ||
-      !linkedInLoginStore.isInitialized || 
-      !facebookLoginStore.isInitialized
-    )
-      return;
-
-    if (accessToken) getCurrentUser(accessToken);
-
-    if (verifyOTPStore.accessToken) getCurrentUser(verifyOTPStore.accessToken);
-
-    if (googleLoginStore.accessToken)
-      getCurrentUser(googleLoginStore.accessToken);
-
-    if (linkedInLoginStore.accessToken)
-      getCurrentUser(linkedInLoginStore.accessToken);
-
-    if (githubLoginStore.accessToken)
-      getCurrentUser(githubLoginStore.accessToken);
-
-    if(facebookLoginStore.accessToken)
-      getCurrentUser(facebookLoginStore.accessToken);
-  }, [
-    isInitialized,
-    accessToken,
-    verifyOTPStore.isInitialized,
-    verifyOTPStore.accessToken,
-    googleLoginStore.isInitialized,
-    googleLoginStore.accessToken,
-    linkedInLoginStore.accessToken,
-    linkedInLoginStore.isInitialized,
-    githubLoginStore.accessToken,
-    githubLoginStore.isInitialized,
-    facebookLoginStore.accessToken,
-    facebookLoginStore.isInitialized,
-  ]);
-
-  if (
-    !isInitialized ||
-    !verifyOTPStore.isInitialized ||
-    !googleLoginStore.isInitialized ||
-    !linkedInLoginStore.isInitialized ||
-    !githubLoginStore.isInitialized || 
-    !facebookLoginStore.isInitialized
-  ) {
+  if (!accessToken) {
     return (
       <div className="h-screen w-screen flex justify-center items-center">
         <ClipLoader color="#000" />

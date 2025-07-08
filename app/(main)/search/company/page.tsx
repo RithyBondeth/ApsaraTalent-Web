@@ -17,17 +17,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { SearchErrorCard } from "@/components/search/search-error-card";
 import SearchEmployeeCard from "@/components/search/search-employee-card";
 import { useSearchEmployeeStore } from "@/stores/apis/employee/search-emp.store";
-import { useLoginStore } from "@/stores/apis/auth/login.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useEffect, useMemo, useState } from "react";
 import { TLocations } from "@/utils/types/location.type";
 import { TAvailability } from "@/utils/types/availability.type";
 import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
 import { debounce } from "lodash";
+import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
 
 export default function CompanySearchPage() {
   const { error, loading, employees, querySearchEmployee } = useSearchEmployeeStore();
-  const accessToken = useLoginStore((state) => state.accessToken);
+  const accessToken = getUnifiedAccessToken();
   const getCurrentUser = useGetCurrentUserStore((state) => state.getCurrentUser);
   const user = useGetCurrentUserStore((state) => state.user);
 

@@ -11,7 +11,6 @@ import { RadioGroup } from "@/components/ui/radio-group";
 import RadioGroupItemWithLabel from "@/components/ui/radio-group-item";
 import { useSearchJobStore } from "@/stores/apis/job/search-job.store";
 import { useEffect, useMemo, useState } from "react";
-import { useLoginStore } from "@/stores/apis/auth/login.store";
 import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -30,10 +29,11 @@ import { TLocations } from "@/utils/types/location.type";
 import { SearchErrorCard } from "@/components/search/search-error-card";
 import { TAvailability } from "@/utils/types/availability.type";
 import { debounce } from "lodash";
+import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
 
 export default function SearchPage() {
   const { error, loading, jobs, querySearchJobs } = useSearchJobStore();
-  const accessToken = useLoginStore((state) => state.accessToken);
+  const accessToken = getUnifiedAccessToken();
   const getCurrentUser = useGetCurrentUserStore(
     (state) => state.getCurrentUser
   );

@@ -17,13 +17,10 @@ import ImagePopup from "@/components/utils/image-popup";
 import { useGetAllUsersStore } from "@/stores/apis/users/get-all-user.store";
 import EmployeeCardSkeleton from "@/components/employee/employee-card/skeleton";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useLoginStore } from "@/stores/apis/auth/login.store";
 import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 import CompanyCardSkeleton from "@/components/company/company-card/skeleton";
 import { BannerSkeleton } from "./banner-skeleton";
-import { useVerifyOTPStore } from "@/stores/apis/auth/verify-otp.store";
-import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
-import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
+import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
 
 export default function FeedPage() {
   // Utils
@@ -64,10 +61,9 @@ export default function FeedPage() {
   // API Integration
   const getCurrentUserStore = useGetCurrentUserStore();
   const getAllUsersStore = useGetAllUsersStore();
-  const accessToken = useLoginStore((state) => state.accessToken);
-  const otpAccessToken = useVerifyOTPStore((state) => state.accessToken);
-  const googleAccessToken = useGoogleLoginStore((state) => state.accessToken);
-  const githubAccessToken = useGithubLoginStore((state) => state.accessToken);
+
+  // AccessToken from possible store
+  const accessToken = getUnifiedAccessToken();
 
   const currentUserRole = getCurrentUserStore.user?.role;
   let allUsers: IUser[] = [];
@@ -78,34 +74,12 @@ export default function FeedPage() {
     allUsers = getAllUsersStore.users?.filter((user) => user.role === "employee") || [];
   }
 
-  // Email Login
   useEffect(() => {
     if (accessToken) {
       getCurrentUserStore.getCurrentUser(accessToken); 
       getAllUsersStore.getAllUsers(accessToken);
     }
   }, [accessToken]);
-
-  // Phone OTP Login
-  useEffect(() => {
-    if(otpAccessToken) {
-      getCurrentUserStore.getCurrentUser(otpAccessToken);
-      getAllUsersStore.getAllUsers(otpAccessToken);
-    }
-  }, [otpAccessToken]);
-
-  // Social Google Login
-  useEffect(() => {
-    if(googleAccessToken) {
-      getCurrentUserStore.getCurrentUser(googleAccessToken);
-      getAllUsersStore.getAllUsers(googleAccessToken); 
-    }
-
-    if(githubAccessToken) {
-      getCurrentUserStore.getCurrentUser(githubAccessToken);
-      getAllUsersStore.getAllUsers(githubAccessToken); 
-    }
-  }, [googleAccessToken, githubAccessToken]);
 
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const isEmployee = currentUser?.role === 'employee';

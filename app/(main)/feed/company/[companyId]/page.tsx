@@ -45,10 +45,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { TPlatform } from "@/utils/types/platform.type";
 import { useGetOneUserStore } from "@/stores/apis/users/get-one-user.store";
-import { useLocalLoginStore, useLoginStore, useSessionLoginStore } from "@/stores/apis/auth/login.store";
 import { CompanyDetailPageSkeleton } from "./skeleton";
 import { dateFormatterv2 } from "@/utils/functions/dateformatter-v2";
 import { availabilityConstant } from "@/utils/constants/app.constant";
+import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
 
 export default function CompanyDetailPage() {
   const param = useParams();
@@ -65,11 +65,8 @@ export default function CompanyDetailPage() {
   // Get data and loading state
   const { loading, user, getOneUerByID } = useGetOneUserStore();
 
-  // Get tokens from all possible stores
-  const persistentToken = useLocalLoginStore(state => state.accessToken);
-  const sessionToken = useSessionLoginStore(state => state.accessToken);
-  const memoryToken = useLoginStore(state => state.accessToken);
-  const accessToken = memoryToken || sessionToken || persistentToken;
+  // Get Access tokens from all possible stores
+  const accessToken = getUnifiedAccessToken();
 
   // Initialize component (client-side only)
   useEffect(() => {

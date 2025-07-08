@@ -47,8 +47,8 @@ import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { useGetOneUserStore } from "@/stores/apis/users/get-one-user.store";
 import EmployeeDetailPageSkeleton from "./skeleton";
 import { dateFormatter } from "@/utils/functions/dateformatter";
-import { useLocalLoginStore, useLoginStore, useSessionLoginStore } from "@/stores/apis/auth/login.store";
 import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
+import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
 
 export default function EmployeeDetailPage() {
   const params = useParams();
@@ -64,10 +64,7 @@ export default function EmployeeDetailPage() {
   const { loading, user, getOneUerByID } = useGetOneUserStore();
   
   // Get tokens from all possible stores
-  const persistentToken = useLocalLoginStore(state => state.accessToken);
-  const sessionToken = useSessionLoginStore(state => state.accessToken);
-  const memoryToken = useLoginStore(state => state.accessToken);
-  const accessToken = memoryToken || sessionToken || persistentToken;
+  const accessToken = getUnifiedAccessToken();
 
   // Initialize component (client-side only)
   useEffect(() => {

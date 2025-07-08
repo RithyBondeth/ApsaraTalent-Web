@@ -1,3 +1,5 @@
+"use client"
+
 import ResumeBuilderBanner from "@/components/resume-builder/banner";
 import ResumeBuilderFeature from "@/components/resume-builder/feature";
 import ResumeBuilderGenerate from "@/components/resume-builder/generate";
@@ -5,8 +7,12 @@ import TemplateCard from "@/components/resume-builder/template";
 import { Button } from "@/components/ui/button";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { resumeData } from "@/data/resume-data";
+import { useGetAllTemplateStore } from "@/stores/apis/resume/get-all-template.store";
+import { useEffect } from "react";
 
 export default function ResumeBuilder() {
+  const { loading, error, queryAllTemplates } = useGetAllTemplateStore();
+
   return (
     <div className="w-full flex flex-col items-start gap-5 px-10">
       <ResumeBuilderBanner />
