@@ -1,6 +1,6 @@
 export interface IResumeTemplate {
     id: string;
-    resumeImage: string;
+    image: string;
     title: string;
     description: string;
     price: number | null;

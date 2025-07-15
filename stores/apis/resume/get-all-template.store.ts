@@ -7,20 +7,22 @@ type TGetAllTemplateState = {
   templateData: IResumeTemplate[] | null;
   error: string | null;
   loading: boolean;
-  queryAllTemplates: () => Promise<void>;
+  queryAllTemplates: (accessToken: string) => Promise<void>;
 };
 
 export const useGetAllTemplateStore = create<TGetAllTemplateState>((set) => ({
   templateData: null,
   loading: false,
   error: null,
-  queryAllTemplates: async () => {
+  queryAllTemplates: async (accessToken: string) => {
     set({ loading: true, error: null });
 
     try {
       const response = await axios.get<IResumeTemplate[]>(
-        API_GET_ALL_TEMPLATE_URL
+        API_GET_ALL_TEMPLATE_URL,
+        { headers: { Authorization: `Bearer ${accessToken}` } }
       );
+      console.log("Template Response: ", response.data);
       set({ loading: false, error: null, templateData: response.data });
     } catch (error) {
       if (axios.isAxiosError(error))

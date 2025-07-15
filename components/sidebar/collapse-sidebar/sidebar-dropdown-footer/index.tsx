@@ -62,6 +62,7 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
   }, [theme, setTheme]);
 
   const currentUser = useGetCurrentUserStore((state) => state.user);
+  
   const normalLogout = useLoginStore((state) => state.clearToken);
   const normalAccessToken = useLoginStore((state) => state.accessToken);
   

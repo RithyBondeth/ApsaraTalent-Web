@@ -4,8 +4,11 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { LucideEye } from "lucide-react";
 import Image from "next/image";
 import { TTemplateCardProps } from "./props";
+import ImagePopup from "@/components/utils/image-popup";
+import { useState } from "react";
 
 export default function TemplateCard(props: TTemplateCardProps) {
+  const [popupResume, setPopupResume] = useState<boolean>(false);
   return (
     <div className="h-fit w-full flex flex-col items-center rounded-lg shadow-sm border border-muted cursor-pointer">
       <div className="w-full h-60 flex items-center justify-center bg-primary-foreground rounded-tr-lg rounded-tl-lg relative group">
@@ -28,6 +31,7 @@ export default function TemplateCard(props: TTemplateCardProps) {
             <LucideEye
               className="text-secondary size-8"
               strokeWidth={"1.3px"}
+              onClick={() => setPopupResume(true)}
             />
           </div>
         </div>
@@ -45,6 +49,11 @@ export default function TemplateCard(props: TTemplateCardProps) {
           </Button>
         </div>
       </div>
+      <ImagePopup
+        image={props.image}
+        open={popupResume}
+        setOpen={setPopupResume}
+      />
     </div>
   );
 }

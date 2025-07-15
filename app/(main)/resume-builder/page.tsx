@@ -1,17 +1,23 @@
-"use client"
+"use client";
 
 import ResumeBuilderBanner from "@/components/resume-builder/banner";
 import ResumeBuilderFeature from "@/components/resume-builder/feature";
 import ResumeBuilderGenerate from "@/components/resume-builder/generate";
 import TemplateCard from "@/components/resume-builder/template";
+import TemplateCardSkeleton from "@/components/resume-builder/template/skeleton";
 import { Button } from "@/components/ui/button";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { resumeData } from "@/data/resume-data";
 import { useGetAllTemplateStore } from "@/stores/apis/resume/get-all-template.store";
-import { useEffect } from "react";
+import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
+import { useEffect, useState } from "react";
 
 export default function ResumeBuilder() {
-  const { loading, error, queryAllTemplates } = useGetAllTemplateStore();
+  const { loading, error, templateData, queryAllTemplates } = useGetAllTemplateStore();
+  const accessToken = getUnifiedAccessToken();
+
+  useEffect(() => {
+    if (accessToken) queryAllTemplates(accessToken);
+  }, [accessToken]);
 
   return (
     <div className="w-full flex flex-col items-start gap-5 px-10">
@@ -26,17 +32,21 @@ export default function ResumeBuilder() {
           </div>
         </div>
         <div className="grid grid-cols-3 gap-3 my-3">
-          {resumeData.map((resume) => (
-            <TemplateCard
-              key={resume.id}
-              isPremium={resume.isPremium}
-              price={resume.price!}
-              image={resume.resumeImage}
-              title={resume.title}
-              description={resume.description}
-              onUseTemplate={() => {}}
-            />
-          ))}
+          {templateData && templateData.length > 0 ? (
+            templateData.map((resume) => (
+              <TemplateCard
+                key={resume.id}
+                isPremium={resume.isPremium}
+                price={resume.price!}
+                image={resume.image}
+                title={resume.title}
+                description={resume.description}
+                onUseTemplate={() => {}}
+              />
+            ))
+          ) : (
+            <TemplateCardSkeleton />
+          )}
         </div>
       </div>
       <ResumeBuilderFeature />

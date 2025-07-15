@@ -54,9 +54,12 @@ import {
 import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
 import { useFacebookLoginStore, useLocalFacebookLoginStore, useSessionFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 import { useInitializeAuth } from "@/hooks/use-initialize-auth";
+import { Dialog, DialogContent, DialogFooter, DialogTitle } from "@/components/ui/dialog";
 
 function LoginPage() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
+  const [openRmbDialog, setOpenRmbDialog] = useState<boolean>(false);
+  const [socialTypeIdentifier, setSocialTypeIdentifier] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const router = useRouter();
   const { resolvedTheme } = useTheme();
@@ -90,7 +93,7 @@ function LoginPage() {
   useEffect(() => {
     if (!isLoggedIn) return;
 
-    if (accessToken && currentUserStore.user) {
+    if (accessToken) {
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -105,7 +108,7 @@ function LoginPage() {
       setTimeout(() => router.push("/feed"), 1000);
     }
 
-    if (loading || currentUserStore.loading)
+    if (loading)
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -117,7 +120,7 @@ function LoginPage() {
         ),
       });
 
-    if (error || currentUserStore.error)
+    if (error)
       toast({
         variant: "destructive",
         description: (
@@ -140,9 +143,6 @@ function LoginPage() {
     error,
     message,
     loading,
-    currentUserStore.user,
-    currentUserStore.loading,
-    currentUserStore.error,
     isLoggedIn,
   ]);
 
@@ -213,7 +213,6 @@ function LoginPage() {
         rememberMe: facebookSource === facebookLocal,
       });
     }
-
   }, []);
 
   // Email Login
@@ -287,6 +286,23 @@ function LoginPage() {
     isLoggedIn,
   ]);
 
+  const handleSocialLogin = (rememberMe: boolean) => {
+    switch(socialTypeIdentifier) {
+      case 'facebook': 
+        facebookLoginStore.facebookLogin(rememberMe);
+        break;
+      case 'google':
+        googleLoginStore.googleLogin(rememberMe);
+        break;
+      case 'github':
+        githubLoginStore.githubLogin(rememberMe);
+        break;
+      case 'linkedIn':
+        linkedInLoginStore.linkedinLogin(rememberMe);
+        break;
+    }
+  }
+
   const currentTheme = resolvedTheme || "light";
   const loginImage = currentTheme === "dark" ? loginWhiteSvg : loginBlackSvg;
 
@@ -314,18 +330,18 @@ function LoginPage() {
                 variant="outline"
                 className="w-1/2"
                 onClick={() => {
-                  setIsLoggedIn(true);
-                  googleLoginStore.googleLogin(true);
+                  setOpenRmbDialog(true);
+                  setSocialTypeIdentifier('google');
                 }}
               />
               <SocialButton
                 image={facebookIcon}
-                label="Google"
+                label="Facebook"
                 variant="outline"
                 className="w-1/2"
                 onClick={() => {
-                  setIsLoggedIn(true);
-                  facebookLoginStore.facebookLogin(true);
+                  setOpenRmbDialog(true);
+                  setSocialTypeIdentifier('facebook');
                 }}
               />
             </div>
@@ -336,8 +352,8 @@ function LoginPage() {
                 variant="outline"
                 className="w-1/2"
                 onClick={() => {
-                  setIsLoggedIn(true);
-                  linkedInLoginStore.linkedinLogin(true);
+                  setOpenRmbDialog(true);
+                  setSocialTypeIdentifier('linkedIn');
                 }}
               />
               <SocialButton
@@ -346,8 +362,8 @@ function LoginPage() {
                 variant="outline"
                 className="w-1/2"
                 onClick={() => {
-                  setIsLoggedIn(true);
-                  githubLoginStore.githubLogin(true);
+                  setOpenRmbDialog(true);
+                  setSocialTypeIdentifier('github');
                 }}
               />
             </div>
@@ -442,6 +458,24 @@ function LoginPage() {
       <div className="w-1/2 flex justify-center items-center bg-primary tablet-lg:p-10">
         <Image src={loginImage} alt="login" height={undefined} width={600} />
       </div>
+      <Dialog open={openRmbDialog} onOpenChange={setOpenRmbDialog}>
+        <DialogContent>
+          <DialogTitle>Remember Me</DialogTitle>
+          <TypographySmall>Do you want to remember this login for 7 days?</TypographySmall>
+          <DialogFooter>
+            <Button variant={'outline'} onClick={() => {
+              setIsLoggedIn(true);
+              handleSocialLogin(false);
+              setOpenRmbDialog(false);
+            }}>No</Button>
+            <Button onClick={() => {
+              setIsLoggedIn(true);
+              handleSocialLogin(true);
+              setOpenRmbDialog(false);
+            }}>Yes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
