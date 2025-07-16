@@ -43,18 +43,22 @@ export default function PhoneOTPPage() {
   } = useForm<{ otp: string }>();
   const onSubmit = async (data: { otp: string }) => {
     setIsSubmitted(true);
-    const phone =  basicPhoneSignupData?.phone?.replace('0', '+855')!;
-    const user = await verifyOtp(phone, data.otp, basicPhoneSignupData?.rememberMe!);
-    
-    if(user.role === 'none' && !user.profileCompleted) {
-      router.push('/signup/option')
+    const phone = basicPhoneSignupData?.phone?.replace("0", "+855") ?? '';
+    const user = await verifyOtp(
+      phone,
+      data.otp,
+      basicPhoneSignupData?.rememberMe ?? true
+    );
+
+    if (user.role === "none" && !user.profileCompleted) {
+      router.push("/signup/option");
     } else {
-      router.push('/feed');   
+      router.push("/feed");
     }
   };
 
   useEffect(() => {
-    if(!isSubmitted) return;
+    if (!isSubmitted) return;
 
     if (accessToken && refreshToken) {
       toast({
@@ -100,7 +104,14 @@ export default function PhoneOTPPage() {
           </ToastAction>
         ),
       });
-  }, [loading, error, message, accessToken, refreshToken]);
+  }, [
+    loading,
+    error,
+    message,
+    accessToken,
+    refreshToken,
+    isSubmitted,
+  ]);
 
   useEffect(() => {
     const local = useLocalVerifyOTPStore.getState();

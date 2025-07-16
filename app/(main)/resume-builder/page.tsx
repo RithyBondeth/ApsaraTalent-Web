@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { useGetAllTemplateStore } from "@/stores/apis/resume/get-all-template.store";
 import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function ResumeBuilder() {
   const { loading, error, templateData, queryAllTemplates } = useGetAllTemplateStore();
@@ -45,7 +45,7 @@ export default function ResumeBuilder() {
               />
             ))
           ) : (
-            <TemplateCardSkeleton />
+            [1, 2, 3].map((item) => <TemplateCardSkeleton key={item}/>)
           )}
         </div>
       </div>

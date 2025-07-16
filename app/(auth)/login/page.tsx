@@ -50,11 +50,13 @@ import {
 import {
   useLinkedInLoginStore,
   useLocalLinkedInLoginStore,
+  useSessionLinkedInLoginStore,
 } from "@/stores/apis/auth/socials/linkedin-login.store";
 import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
 import { useFacebookLoginStore, useLocalFacebookLoginStore, useSessionFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 import { useInitializeAuth } from "@/hooks/use-initialize-auth";
 import { Dialog, DialogContent, DialogFooter, DialogTitle } from "@/components/ui/dialog";
+import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
 
 function LoginPage() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
@@ -174,7 +176,7 @@ function LoginPage() {
     }
 
     const linkedInLocal = useLocalLinkedInLoginStore.getState();
-    const linkedInSession = useSessionGoogleLoginStore.getState();
+    const linkedInSession = useSessionLinkedInLoginStore.getState();
     const linkedInSource = linkedInLocal.accessToken
       ? linkedInLocal
       : linkedInSession;

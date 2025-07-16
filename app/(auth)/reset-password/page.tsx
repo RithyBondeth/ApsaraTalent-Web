@@ -98,7 +98,7 @@ export default function ResetPasswordPage() {
       setTimeout(() => router.push("/login"), 1000);
     }
 
-  }, [error, loading, message]);
+  }, [error, loading, message, isSubmitted]);
 
   return (
     <div className="h-screen w-screen flex justify-between items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">

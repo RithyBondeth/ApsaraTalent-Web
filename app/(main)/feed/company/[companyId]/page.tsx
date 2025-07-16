@@ -89,10 +89,10 @@ export default function CompanyDetailPage() {
     };
 
     fetchData();
-  }, [id, accessToken, isInitialized]);
+  }, [id, accessToken, isInitialized, getOneUerByID]);
 
   // Handle popup clicks
-  const handleClickImagePopup = (e: React.MouseEvent) => {
+  const handleClickImagePopup = () => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
       return;
@@ -100,7 +100,7 @@ export default function CompanyDetailPage() {
     setOpenImagePopup(true);
   };
 
-  const handleClickProfilePopup = (e: React.MouseEvent) => {
+  const handleClickProfilePopup = () => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
       return;
@@ -153,7 +153,7 @@ export default function CompanyDetailPage() {
             rounded="md"
             onClick={handleClickProfilePopup}
           >
-            <AvatarImage src={user?.company?.avatar!} />
+            <AvatarImage src={user?.company?.avatar ?? ''} />
             <AvatarFallback className="uppercase">
               {user?.company?.name.slice(0, 3)}
             </AvatarFallback>
@@ -231,7 +231,7 @@ export default function CompanyDetailPage() {
                           <div className="flex items-center gap-3">
                             <Tag 
                               icon={<LucideAlarmClock strokeWidth={'1.5px'}/>} 
-                              label={availabilityConstant.find((type) => type.value == item.type)?.label!} 
+                              label={availabilityConstant.find((type) => type.value == item.type)?.label ?? ''} 
                             />
                             <Tag icon={<LucideUser strokeWidth={'1.5px'}/>} label={item.experience} />
                           </div>
@@ -333,8 +333,8 @@ export default function CompanyDetailPage() {
                     {user.company.images.map((item: IImage) => (
                       <CarouselItem key={item.id} className="max-w-[280px]">
                         <div
-                          onClick={(e) => {
-                            handleClickImagePopup(e);
+                          onClick={() => {
+                            handleClickImagePopup();
                             setCurrentCompanyImage(item.image);
                           }}
                           className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center"
@@ -361,14 +361,14 @@ export default function CompanyDetailPage() {
                 <TypographyMuted>Industry</TypographyMuted>
                 <IconLabel
                   icon={<LucideBuilding className="text-muted-foreground" strokeWidth={"1.5px"}/>}
-                  text={user?.company?.industry!}
+                  text={user?.company?.industry ?? ''}
                 />
               </div>
               <div className="flex flex-col items-start gap-2">
                 <TypographyMuted>Location</TypographyMuted>
                 <IconLabel
                   icon={<LucideMapPinned className="text-muted-foreground" strokeWidth={"1.5px"}/>}
-                  text={user?.company?.location!}
+                  text={user?.company?.location ?? ''}
                 />
               </div>
               <div className="flex flex-col items-start gap-2">
@@ -390,7 +390,7 @@ export default function CompanyDetailPage() {
                   <TypographyMuted>Phone</TypographyMuted>
                   <IconLabel 
                     icon={<LucidePhone className="text-muted-foreground" strokeWidth={"1.5px"}/>} 
-                    text={user?.company?.phone!} 
+                    text={user?.company?.phone ?? ''} 
                   />
                 </div>
               )}
@@ -398,7 +398,7 @@ export default function CompanyDetailPage() {
                 <TypographyMuted>Email</TypographyMuted>
                 <IconLabel
                   icon={<LucideMail className="text-muted-foreground" strokeWidth={"1.5px"}/>}
-                  text={user?.email!}
+                  text={user?.email ?? ''}
                 />
               </div>
             </div>
@@ -478,7 +478,7 @@ export default function CompanyDetailPage() {
       <ImagePopup
         open={openProfilePopup}
         setOpen={setOpenProfilePopup}
-        image={user?.company?.avatar!}
+        image={user?.company?.avatar ?? ''}
       />
     </div>
   );

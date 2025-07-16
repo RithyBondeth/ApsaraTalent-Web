@@ -135,7 +135,14 @@ export default function SignupPage() {
         facebookUserData.firstname! + " " + facebookUserData.lastname!
       );
     }
-  }, [googleUserData, githubUserData, linkedInUserData, facebookUserData]);
+  }, [
+    googleUserData,
+    githubUserData,
+    linkedInUserData,
+    facebookUserData,
+    cmpForm,
+    empForm,
+  ]);
 
   return (
     <div className="size-[70%] flex flex-col items-start justify-center gap-3 tablet-sm:w-[90%]">

@@ -15,7 +15,6 @@ import {
   LucideClock,
   LucideDownload,
   LucideEye,
-  LucideFacebook,
   LucideFileText,
   LucideGraduationCap,
   LucideHeartHandshake,
@@ -89,7 +88,7 @@ export default function EmployeeDetailPage() {
     };
 
     fetchData();
-  }, [id, accessToken, isInitialized]);
+  }, [id, accessToken, isInitialized, getOneUerByID]);
 
   // Handle popup clicks
   const handleClickProfilePopup = (e: React.MouseEvent) => {
@@ -164,7 +163,7 @@ export default function EmployeeDetailPage() {
             rounded="md"
             onClick={handleClickProfilePopup}
           >
-            <AvatarImage src={user?.employee?.avatar!} />
+            <AvatarImage src={user?.employee?.avatar ?? ''} />
             <AvatarFallback className="uppercase">
               {!user?.employee?.avatar ? (
                 <LucideUser />
@@ -185,21 +184,21 @@ export default function EmployeeDetailPage() {
             <TypographyMuted>Firstname</TypographyMuted>
             <IconLabel
               icon={<LucideUser strokeWidth={"1.5px"} />}
-              text={user?.employee?.firstname!}
+              text={user?.employee?.firstname ?? ''}
             />
           </div>
           <div className="flex flex-col items-start gap-2">
             <TypographyMuted>Lastname</TypographyMuted>
             <IconLabel
               icon={<LucideUser strokeWidth={"1.5px"} />}
-              text={user?.employee?.lastname!}
+              text={user?.employee?.lastname ?? ''}
             />
           </div>
           <div className="flex flex-col items-start gap-2">
             <TypographyMuted>Username</TypographyMuted>
             <IconLabel
               icon={<LucideAtSign strokeWidth={"1.5px"} />}
-              text={user?.employee?.username!}
+              text={user?.employee?.username ?? ''}
             />
           </div>
         </div>
@@ -208,7 +207,7 @@ export default function EmployeeDetailPage() {
             <TypographyMuted>Gender</TypographyMuted>
             <IconLabel
               icon={<LucideTransgender strokeWidth={"1.5px"} />}
-              text={user?.employee?.gender.toUpperCase()!}
+              text={user?.employee?.gender.toUpperCase() ?? 'Other'.toUpperCase()}
             />
           </div>
           <div className="flex flex-col items-start gap-2">
@@ -411,7 +410,7 @@ export default function EmployeeDetailPage() {
                 <TypographyMuted>Email</TypographyMuted>
                 <IconLabel
                   icon={<LucideMail strokeWidth={"1.5px"} />}
-                  text={user?.email!}
+                  text={user?.email ?? ''}
                 />
               </div>
               {user?.employee?.location && (
@@ -468,7 +467,7 @@ export default function EmployeeDetailPage() {
       <ImagePopup
         open={openProfilePopup}
         setOpen={setOpenProfilePopup}
-        image={user?.employee?.avatar!}
+        image={user?.employee?.avatar ?? ''}
       />
     </div>
   );

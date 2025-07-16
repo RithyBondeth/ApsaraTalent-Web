@@ -97,7 +97,7 @@ export default function ForgotPasswordPage() {
       });
       setTimeout(() => router.push("/reset-password"), 1000);
     }
-  }, [error, message, loading]);
+  }, [error, message, loading, isSubmitted]);
 
   return (
     <div className="h-screen w-screen flex items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">

@@ -331,6 +331,9 @@ export default function EmployeeSignup() {
     uploadAvatar.uploadAvatar,
     uploadResume.uploadResume,
     uploadCoverLetter.uploadCoverLetter,
+    uploadAvatar.message,
+    uploadResume.error,
+    uploadResume.loading,
   ]);
 
   useEffect(() => {

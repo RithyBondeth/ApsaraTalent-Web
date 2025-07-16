@@ -157,7 +157,7 @@ export default function FeedPage() {
                 onSaveClick={() => {}}
                 onProfileImageClick={(e: React.MouseEvent) => {
                   handleClickProfilePopup(e);
-                  setCurrentProfileImage(user.company?.avatar!);
+                  setCurrentProfileImage(user.company?.avatar ?? '');
                 }}
               />
             ) : user.employee ? (
@@ -169,7 +169,7 @@ export default function FeedPage() {
                 onViewClick={() => router.push(`/feed/employee/${user.id}`)}
                 onProfileImageClick={(e: React.MouseEvent) => {
                   handleClickProfilePopup(e);
-                  setCurrentProfileImage(user.employee?.avatar!);
+                  setCurrentProfileImage(user.employee?.avatar ?? '');
                 }}
               />
             ) : null

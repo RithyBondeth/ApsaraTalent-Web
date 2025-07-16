@@ -34,10 +34,10 @@ export default function EmailVerificationPage() {
   const handleVerifyEmail = async () => {
     setIsSubmitted(true);
     await verifyEmail(token as string);
-  }
+  };
 
   useEffect(() => {
-    if(!isSubmitted) return;
+    if (!isSubmitted) return;
 
     if (loading)
       toast({
@@ -61,7 +61,7 @@ export default function EmailVerificationPage() {
               {message}
             </TypographySmall>
           </div>
-        )
+        ),
       });
 
     if (!loading && !error && message) {
@@ -69,14 +69,16 @@ export default function EmailVerificationPage() {
         description: (
           <div className="flex items-center gap-2">
             <LucideCheck />
-            <TypographySmall className="font-medium leading-relaxed">{message}</TypographySmall>
+            <TypographySmall className="font-medium leading-relaxed">
+              {message}
+            </TypographySmall>
           </div>
         ),
         duration: 1500,
       });
       setTimeout(() => router.push("/login"), 1000);
     }
-  }, [error, loading, message]);
+  }, [error, loading, message, isSubmitted]);
 
   return (
     <div className="h-screen w-screen flex items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
@@ -84,12 +86,16 @@ export default function EmailVerificationPage() {
         <div className="size-[65%] flex flex-col items-stretch gap-3 tablet-md:justify-center tablet-md:size-full tablet-md:pb-10 tablet-md:p-5">
           {/* Title Section */}
           <div className="mb-5">
-            <TypographyH2 className="tablet-sm:text-2xl">Email Verification</TypographyH2>
-            <TypographyMuted className="text-md tablet-sm:text-sm">Please verify you email by clicking the verify button below.</TypographyMuted>
+            <TypographyH2 className="tablet-sm:text-2xl">
+              Email Verification
+            </TypographyH2>
+            <TypographyMuted className="text-md tablet-sm:text-sm">
+              Please verify you email by clicking the verify button below.
+            </TypographyMuted>
           </div>
           {/* Button Section */}
           <Button onClick={() => handleVerifyEmail()}>
-            <LucideMail/>
+            <LucideMail />
             Verify
           </Button>
         </div>

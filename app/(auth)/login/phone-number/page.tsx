@@ -95,7 +95,7 @@ export default function PhoneNumberPage() {
           </ToastAction>
         ),
       });
-  }, [error, loading, isSuccess, message]);
+  }, [error, loading, isSuccess, message, isSubmitted]);
 
   return (
     <div className="h-screen w-screen flex justify-between items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
