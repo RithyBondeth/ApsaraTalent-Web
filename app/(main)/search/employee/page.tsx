@@ -191,7 +191,7 @@ export default function SearchPage() {
                       } = { from: undefined, to: undefined };
                       if (val !== "all") {
                         const now = new Date();
-                        let from = new Date();
+                        const from = new Date();
                         switch (val) {
                           case "last 24 hours":
                             from.setHours(now.getHours() - 2);

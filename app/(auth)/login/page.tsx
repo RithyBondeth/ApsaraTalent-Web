@@ -56,7 +56,6 @@ import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.sto
 import { useFacebookLoginStore, useLocalFacebookLoginStore, useSessionFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 import { useInitializeAuth } from "@/hooks/use-initialize-auth";
 import { Dialog, DialogContent, DialogFooter, DialogTitle } from "@/components/ui/dialog";
-import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
 
 function LoginPage() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);

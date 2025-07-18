@@ -516,37 +516,8 @@ export default function ProfilePage() {
   };
 
   const onSubmit = (data: TCompanyProfileForm) => {
-    // Make sure any local state is synced with form data
-    const updatedData = {
-      ...data,
-      benefitsAndValues: {
-        benefits: benefits,
-        values: values,
-      },
-      careerScopes: careers,
-      socials: socials,
-      openPositions: openPositions?.map((position, index) => ({
-        id: position?.id,
-        title: data.openPositions?.[index]?.title || position.title,
-        description:
-          data.openPositions?.[index]?.description || position.description,
-        experience:
-          data.openPositions?.[index]?.experienceRequirement ||
-          position.experience,
-        education:
-          data.openPositions?.[index]?.educationRequirement ||
-          position.education,
-        salary: data.openPositions?.[index]?.salary || position.salary,
-        skills: data.openPositions?.[index]?.skills || position.skills,
-        postedDate: position.postedDate,
-        deadlineDate:
-          selectedDates[
-            position?.id?.toString() ?? ""
-          ]?.deadline?.toISOString() || position.deadlineDate,
-      })),
-    };
-
     // Show success message
+    console.log("Company data: ", data);
     toast({
       title: "Success!",
       description: "Company profile updated successfully.",

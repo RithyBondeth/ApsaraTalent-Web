@@ -13,7 +13,7 @@ import { TLocations } from "@/utils/types/location.type";
 import { SelectValue } from "@radix-ui/react-select";
 import { availabilityConstant, locationConstant } from "@/utils/constants/app.constant";
 import { TAvailability } from "@/utils/types/availability.type";
-import { FieldValues } from "react-hook-form";
+import { FieldValues, Path } from "react-hook-form";
 
 export default function SearchBar<T extends FieldValues>(
   props: TSearchBarProps<T>
@@ -36,13 +36,13 @@ export default function SearchBar<T extends FieldValues>(
     <div className="w-full flex flex-col items-start gap-2 p-3 shadow-md rounded-md">
       <Input
         placeholder={props.isEmployee ? "Job title, keywords" : "Position title, keywords"}
-        {...props.register("keyword" as any)}
+        {...props.register("keyword" as Path<T>)}
       />
       <div className="w-full flex items-center gap-3 [&>div]:w-1/2">
         <Select
           onValueChange={(value: TLocations) => {
             setSelectionLocation(value);
-            props.setValue("location" as any, value as any);
+            props.setValue("location" as Path<T>, value as T[keyof T]);
           }}
           value={selectedLocation === 'All' ? 'All' : selectedLocation}
         >
@@ -63,7 +63,7 @@ export default function SearchBar<T extends FieldValues>(
         <Select
           onValueChange={(value: TAvailability) => {
             setSelectionJobType(value);
-            props.setValue("jobType" as any, value as any);
+            props.setValue("jobType" as Path<T>, value as T[keyof T]);
           }}
           value={selectedJobType === 'All' ? 'All' : selectedJobType} 
         >

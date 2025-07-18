@@ -884,7 +884,7 @@ export default function EmployeeProfilePage() {
                           <Controller
                             control={form.control}
                             name={`experiences.${index}.startDate`}
-                            render={({ field, fieldState }) => (
+                            render={({ field }) => (
                               <DatePicker
                                 placeholder="Start Date"
                                 date={field.value}
@@ -901,7 +901,7 @@ export default function EmployeeProfilePage() {
                           <Controller
                             control={form.control}
                             name={`experiences.${index}.endDate`}
-                            render={({ field, fieldState }) => (
+                            render={({ field }) => (
                               <DatePicker
                                 placeholder="End Date"
                                 date={field.value}

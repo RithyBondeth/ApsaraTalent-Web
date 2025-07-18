@@ -12,7 +12,7 @@ import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
 import { useEffect } from "react";
 
 export default function ResumeBuilder() {
-  const { loading, error, templateData, queryAllTemplates } = useGetAllTemplateStore();
+  const { templateData, queryAllTemplates } = useGetAllTemplateStore();
   const accessToken = getUnifiedAccessToken();
 
   useEffect(() => {

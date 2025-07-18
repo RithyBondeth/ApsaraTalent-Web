@@ -105,13 +105,13 @@ export default function CollapseSidebar({
               name: isEmployee
                 ? `${user.employee?.username}`
                 : isCompany
-                ? user?.company?.name!
+                ? user?.company?.name ?? ''
                 : "",
-              email: user?.email! || user?.phone!,
+              email: (user?.email ?? '') || (user?.phone ?? ''),
               avatar: isEmployee
-                ? user.employee?.avatar!
+                ? user.employee?.avatar ?? ''
                 : isCompany
-                ? user?.company?.avatar!
+                ? user?.company?.avatar ?? ''
                 : "",
             }}
           />
