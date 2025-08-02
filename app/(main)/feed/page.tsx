@@ -21,6 +21,14 @@ import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 import CompanyCardSkeleton from "@/components/company/company-card/skeleton";
 import { BannerSkeleton } from "./banner-skeleton";
 import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
+import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export default function FeedPage() {
   // Utils
@@ -58,6 +66,9 @@ export default function FeedPage() {
     }
   }, [openProfilePopup]);
 
+  // Dialog state for like success
+  const [openLikeSuccessDialog, setOpenLikeSuccessDialog] = useState<boolean>(false);
+
   // API Integration
   const getCurrentUserStore = useGetCurrentUserStore();
   const getAllUsersStore = useGetAllUsersStore();
@@ -69,26 +80,32 @@ export default function FeedPage() {
   let allUsers: IUser[] = [];
 
   if (currentUserRole === "employee") {
-    allUsers = getAllUsersStore.users?.filter((user) => user.role === "company") || [];
+    allUsers =
+      getAllUsersStore.users?.filter((user) => user.role === "company") || [];
   } else {
-    allUsers = getAllUsersStore.users?.filter((user) => user.role === "employee") || [];
+    allUsers =
+      getAllUsersStore.users?.filter((user) => user.role === "employee") || [];
   }
 
   useEffect(() => {
     if (accessToken) {
-      getCurrentUserStore.getCurrentUser(accessToken); 
+      getCurrentUserStore.getCurrentUser(accessToken);
       getAllUsersStore.getAllUsers(accessToken);
     }
   }, [accessToken]);
 
+  const employeeLikeStore = useEmployeeLikeStore();
+
   const currentUser = useGetCurrentUserStore((state) => state.user);
-  const isEmployee = currentUser?.role === 'employee';
+  const isEmployee = currentUser?.role === "employee";
+
+  const [likingId, setLikingId] = useState<string | null>(null);
 
   return (
     <div className="w-full flex flex-col items-start gap-5">
       {/* Header Section */}
       {getCurrentUserStore.loading ? (
-        <BannerSkeleton/>
+        <BannerSkeleton />
       ) : isEmployee ? (
         <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
           <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
@@ -138,14 +155,16 @@ export default function FeedPage() {
 
       {/* Feed Card Section */}
       <div className="w-full grid grid-cols-2 gap-5 tablet-lg:grid-cols-1">
-        {(getAllUsersStore.loading || !getAllUsersStore.users || !getCurrentUserStore.user) ? (
-          Array.from({ length: 6 }).map((_, index) => (
+        {getAllUsersStore.loading ||
+        !getAllUsersStore.users ||
+        !getCurrentUserStore.user ? (
+          Array.from({ length: 6 }).map((_, index) =>
             currentUserRole === "company" ? (
               <EmployeeCardSkeleton key={`user-skeleton-${index}`} />
             ) : (
               <CompanyCardSkeleton key={`company-skeleton-${index}`} />
             )
-          ))
+          )
         ) : allUsers.length > 0 ? (
           allUsers.map((user) =>
             currentUserRole === "employee" && user.company ? (
@@ -155,9 +174,17 @@ export default function FeedPage() {
                 id={user.id}
                 onViewClick={() => router.push(`/feed/company/${user.id}`)}
                 onSaveClick={() => {}}
+                onLikeClick={async () => {
+                  const empID = currentUser?.company?.id ?? currentUser?.employee?.id;
+                  const cmpID = user.company?.id ?? user.employee?.id;
+                  setLikingId(user.id); // set the current card as loading
+                  await employeeLikeStore.employeeLike(empID ?? "", cmpID ?? "");
+                  setOpenLikeSuccessDialog(true);
+                }}
+                onLikeClickDisable={user.id === likingId && employeeLikeStore.loading}
                 onProfileImageClick={(e: React.MouseEvent) => {
                   handleClickProfilePopup(e);
-                  setCurrentProfileImage(user.company?.avatar ?? '');
+                  setCurrentProfileImage(user.company?.avatar ?? "");
                 }}
               />
             ) : user.employee ? (
@@ -169,7 +196,7 @@ export default function FeedPage() {
                 onViewClick={() => router.push(`/feed/employee/${user.id}`)}
                 onProfileImageClick={(e: React.MouseEvent) => {
                   handleClickProfilePopup(e);
-                  setCurrentProfileImage(user.employee?.avatar ?? '');
+                  setCurrentProfileImage(user.employee?.avatar ?? "");
                 }}
               />
             ) : null
@@ -186,6 +213,15 @@ export default function FeedPage() {
         setOpen={setOpenProfilePopup}
         image={currentProfileImage!}
       />
+      {/* Like Success Dialog */}
+      <Dialog open={openLikeSuccessDialog} onOpenChange={setOpenLikeSuccessDialog}>
+        <DialogContent>
+          <DialogTitle>You liked this successfully!</DialogTitle>
+          <DialogFooter>
+            <Button onClick={() => setOpenLikeSuccessDialog(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

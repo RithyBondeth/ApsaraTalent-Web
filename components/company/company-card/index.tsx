@@ -91,7 +91,11 @@ export default function CompanyCard(props: ICompanyCardProps) {
           >
             <LucideEye className="!size-6 transition-all duration-300 ease-in-out" />
           </Button>
-          <Button className="size-12 rounded-full transition-all duration-300 ease-in-out hover:scale-105">
+          <Button
+            className="size-12 rounded-full transition-all duration-300 ease-in-out hover:scale-105"
+            onClick={props.onLikeClick}
+            disabled={props.onLikeClickDisable}
+          >
             <LucideHeartHandshake className="!size-6 transition-all duration-300 ease-in-out" />
           </Button>
         </div>
@@ -160,10 +164,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
           Save
           <LucideBookmark />
         </Button>
-        <Button
-          className="text-xs"
-          onClick={props.onViewClick}
-        >
+        <Button className="text-xs" onClick={props.onViewClick}>
           View
           <LucideCircleArrowRight />
         </Button>
