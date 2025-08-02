@@ -29,6 +29,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
+import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 
 export default function FeedPage() {
   // Utils
@@ -72,19 +74,41 @@ export default function FeedPage() {
   // API Integration
   const getCurrentUserStore = useGetCurrentUserStore();
   const getAllUsersStore = useGetAllUsersStore();
+  const employeeLikeStore = useEmployeeLikeStore();
+  const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore();
+  const getCurrentCompanyLikedStore = useGetCurrentCompanyLikedStore();
 
   // AccessToken from possible store
   const accessToken = getUnifiedAccessToken();
+
+  const currentUser = useGetCurrentUserStore((state) => state.user);
+  const isEmployee = currentUser?.role === "employee";
+
+  const [likingId, setLikingId] = useState<string | null>(null);
 
   const currentUserRole = getCurrentUserStore.user?.role;
   let allUsers: IUser[] = [];
 
   if (currentUserRole === "employee") {
-    allUsers =
-      getAllUsersStore.users?.filter((user) => user.role === "company") || [];
+    allUsers = getAllUsersStore.users?.filter((user) => user.role === "company") || [];
+    // Filter out already liked companies
+    const currentEmployeeLikedStore = getCurrentEmployeeLikedStore.currentEmployeeLiked;
+    if (currentEmployeeLikedStore) {
+      allUsers = allUsers.filter((user) => {
+        const companyId = user.company?.id;
+        return companyId && !currentEmployeeLikedStore.some(liked => liked.id === companyId);
+      });
+    }
   } else {
-    allUsers =
-      getAllUsersStore.users?.filter((user) => user.role === "employee") || [];
+    allUsers = getAllUsersStore.users?.filter((user) => user.role === "employee") || [];
+    // Filter out already liked employees
+    const currentCompanyLikedStore = getCurrentCompanyLikedStore.currentCompanyLiked;
+    if (currentCompanyLikedStore) {
+      allUsers = allUsers.filter((user) => {
+        const employeeId = user.employee?.id;
+        return employeeId && !currentCompanyLikedStore.some(liked => liked.id === employeeId);
+      });
+    }
   }
 
   useEffect(() => {
@@ -94,12 +118,14 @@ export default function FeedPage() {
     }
   }, [accessToken]);
 
-  const employeeLikeStore = useEmployeeLikeStore();
-
-  const currentUser = useGetCurrentUserStore((state) => state.user);
-  const isEmployee = currentUser?.role === "employee";
-
-  const [likingId, setLikingId] = useState<string | null>(null);
+  useEffect(() => {
+    if (currentUser && currentUser.employee && isEmployee) {
+      getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(currentUser.employee.id);
+    } 
+    if (currentUser && currentUser.company && !isEmployee) {
+      getCurrentCompanyLikedStore.queryCurrentCompanyLiked(currentUser.company.id);
+    }
+  }, [currentUser]);
 
   return (
     <div className="w-full flex flex-col items-start gap-5">
