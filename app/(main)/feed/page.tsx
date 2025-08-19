@@ -31,6 +31,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
+import { useCompanyLikeStore } from "@/stores/apis/matching/company-like.store";
 
 export default function FeedPage() {
   // Utils
@@ -75,9 +76,10 @@ export default function FeedPage() {
   const getCurrentUserStore = useGetCurrentUserStore();
   const getAllUsersStore = useGetAllUsersStore();
   const employeeLikeStore = useEmployeeLikeStore();
+  const companyLikeStore = useCompanyLikeStore();
   const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore();
   const getCurrentCompanyLikedStore = useGetCurrentCompanyLikedStore();
-
+  
   // AccessToken from possible store
   const accessToken = getUnifiedAccessToken();
 
@@ -201,11 +203,18 @@ export default function FeedPage() {
                 onViewClick={() => router.push(`/feed/company/${user.id}`)}
                 onSaveClick={() => {}}
                 onLikeClick={async () => {
-                  const empID = currentUser?.company?.id ?? currentUser?.employee?.id;
-                  const cmpID = user.company?.id ?? user.employee?.id;
-                  setLikingId(user.id); // set the current card as loading
-                  await employeeLikeStore.employeeLike(empID ?? "", cmpID ?? "");
-                  setOpenLikeSuccessDialog(true);
+                  const empID = currentUser?.employee?.id;
+                  const cmpID = user.company?.id;
+                  setLikingId(user.id);
+                  try {
+                    await employeeLikeStore.employeeLike(empID ?? "", cmpID ?? "");
+                    setOpenLikeSuccessDialog(true);
+                    if (empID) {
+                      await getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(empID);
+                    }
+                  } finally {
+                    setLikingId(null);
+                  }
                 }}
                 onLikeClickDisable={user.id === likingId && employeeLikeStore.loading}
                 onProfileImageClick={(e: React.MouseEvent) => {
@@ -220,6 +229,21 @@ export default function FeedPage() {
                 id={user.id}
                 onSaveClick={() => {}}
                 onViewClick={() => router.push(`/feed/employee/${user.id}`)}
+                onLikeClick={async () => {
+                  const cmpID = currentUser?.company?.id;
+                  const empID = user.employee?.id;
+                  setLikingId(user.id);
+                  try {
+                    await companyLikeStore.companyLike(cmpID ?? "", empID ?? "");
+                    setOpenLikeSuccessDialog(true);
+                    if (cmpID) {
+                      await getCurrentCompanyLikedStore.queryCurrentCompanyLiked(cmpID);
+                    }
+                  } finally {
+                    setLikingId(null);
+                  }
+                }}
+                onLikeClickDisable={user.id === likingId && companyLikeStore.loading}
                 onProfileImageClick={(e: React.MouseEvent) => {
                   handleClickProfilePopup(e);
                   setCurrentProfileImage(user.employee?.avatar ?? "");

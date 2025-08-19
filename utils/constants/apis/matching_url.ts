@@ -11,3 +11,9 @@ export const API_GET_CURRENT_EMPLOYEE_LIKED_URL = (empID: string) =>
 
 export const API_GET_CURRENT_COMPANY_LIKED_URL = (cmpID: string) =>
   `${API_MATCHING_BASE_URL}/current-company-liked/${cmpID}`;
+
+export const API_GET_CURRENT_EMPLOYEE_MATCHING_URL = (empID: string) =>
+  `${API_MATCHING_BASE_URL}/current-employee-matching/${empID}`;
+
+export const API_GET_CURRENT_COMPANY_MATCHING_URL = (cmpID: string) =>
+  `${API_MATCHING_BASE_URL}/current-company-matching/${cmpID}`;

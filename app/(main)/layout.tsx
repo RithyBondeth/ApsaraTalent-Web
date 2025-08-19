@@ -109,7 +109,7 @@ export default function MainLayout({
     );
   }
 
-  if (pathname.startsWith("/search")) {
+  if (pathname.startsWith("/search") || pathname.startsWith("/matching")) {
     return (
       <SidebarProvider>
         <CollapseSidebar />
