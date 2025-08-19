@@ -21,6 +21,10 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { SidebarDropdownFooterSkeleton } from "./sidebar-dropdown-footer/skeleton";
 import { LucideFileUser } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { useEffect, useMemo } from "react";
+import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
+import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-current-company-matching.store";
 
 export default function CollapseSidebar({
   ...props
@@ -31,6 +35,29 @@ export default function CollapseSidebar({
   const { user, loading } = useGetCurrentUserStore();
   const isEmployee = user?.role === "employee" && user.employee;
   const isCompany = user?.role === "company" && user.company;
+
+  const {
+    currentEmployeeMatching,
+    queryCurrentEmployeeMatching,
+  } = useGetCurrentEmployeeMatchingStore();
+  const {
+    currentCompanyMatching,
+    queryCurrentCompanyMatching,
+  } = useGetCurrentCompanyMatchingStore();
+
+  useEffect(() => {
+    if (isEmployee && user?.employee?.id) {
+      queryCurrentEmployeeMatching(user.employee.id);
+    } else if (isCompany && user?.company?.id) {
+      queryCurrentCompanyMatching(user.company.id);
+    }
+  }, [isEmployee, isCompany, user?.employee?.id, user?.company?.id, queryCurrentEmployeeMatching, queryCurrentCompanyMatching]);
+
+  const matchingCount = useMemo(() => {
+    if (isEmployee) return currentEmployeeMatching?.length ?? 0;
+    if (isCompany) return currentCompanyMatching?.length ?? 0;
+    return 0;
+  }, [isEmployee, isCompany, currentEmployeeMatching, currentCompanyMatching]);
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -69,6 +96,9 @@ export default function CollapseSidebar({
                     >
                       {item.icon && <item.icon className="!size-6"/>}
                       <span>{item.title}</span>
+                      {item.url === "/matching" && matchingCount > 0 && (
+                        <Badge className="ml-auto">{matchingCount}</Badge>
+                      )}
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                 </SidebarMenuItem>
