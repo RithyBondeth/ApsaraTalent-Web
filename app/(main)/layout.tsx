@@ -15,7 +15,7 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { sidebarList } from "@/utils/constants/sidebar.constant";
 import { ThemeProviderClient } from "@/components/utils/themes/theme-provider-client";
 import { useThemeStore } from "@/stores/themes/theme-store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useInitializeAuth } from "@/hooks/use-initialize-auth";
@@ -30,15 +30,28 @@ export default function MainLayout({
   const sidebarData = sidebarList.filter((item) => item.url === pathname);
   const { theme } = useThemeStore();
   const { getCurrentUser } = useGetCurrentUserStore();
-  const accessToken = getUnifiedAccessToken();
+  const [mounted, setMounted] = useState(false);
+  const accessToken = mounted ? getUnifiedAccessToken() : null;
 
   useInitializeAuth();
 
   useEffect(() => {
-    if(accessToken) {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (accessToken) {
       getCurrentUser(accessToken);
     }
   }, [accessToken])
+
+  if (!mounted) {
+    return (
+      <div className="h-screen w-screen flex justify-center items-center">
+        <ClipLoader color="#000" />
+      </div>
+    );
+  }
 
   if (!accessToken) {
     return (
@@ -109,7 +122,7 @@ export default function MainLayout({
     );
   }
 
-  if (pathname.startsWith("/search") || pathname.startsWith("/matching")) {
+  if (pathname.startsWith("/search")) {
     return (
       <SidebarProvider>
         <CollapseSidebar />
@@ -120,6 +133,26 @@ export default function MainLayout({
                 <SidebarTrigger />
                 <Separator orientation="vertical" className="mr-2 h-4" />
                 <TypographyP className="!m-0">Search your favorite</TypographyP>
+              </div>
+            </header>
+          </SidebarInset>
+          <div className="h-full">{children}</div>
+        </div>
+      </SidebarProvider>
+    );
+  }
+
+  if(pathname === "/matching") {
+      return (
+      <SidebarProvider>
+        <CollapseSidebar />
+        <div className="w-full h-screen message-xs:h-full flex flex-col">
+          <SidebarInset>
+            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+              <div className="flex items-center gap-2 px-4">
+                <SidebarTrigger />
+                <Separator orientation="vertical" className="mr-2 h-4" />
+                <TypographyP className="!m-0">Matching</TypographyP>
               </div>
             </header>
           </SidebarInset>

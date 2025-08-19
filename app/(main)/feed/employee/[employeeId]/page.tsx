@@ -48,10 +48,13 @@ import EmployeeDetailPageSkeleton from "./skeleton";
 import { dateFormatter } from "@/utils/functions/dateformatter";
 import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
 import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
+import { useCompanyLikeStore } from "@/stores/apis/matching/company-like.store";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { toast } from "@/hooks/use-toast";
 
 export default function EmployeeDetailPage() {
-  const params = useParams();
-  const id = params?.employeeId;
+  const params = useParams<{ employeeId: string }>();
+  const id = params.employeeId;
   const [isInitialized, setIsInitialized] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
@@ -61,6 +64,8 @@ export default function EmployeeDetailPage() {
   
   // Get data and loading state
   const { loading, user, getOneUerByID } = useGetOneUserStore();
+  const currentUser = useGetCurrentUserStore((state) => state.user);
+  const companyLikeStore = useCompanyLikeStore();
   
   // Get tokens from all possible stores
   const accessToken = getUnifiedAccessToken();
@@ -152,6 +157,28 @@ export default function EmployeeDetailPage() {
       </div>
     );
   }
+
+  const handleLike = async () => {
+    const companyId = currentUser?.company?.id;
+    const employeeId = user?.employee?.id;
+    if (!companyId) {
+      toast({ title: "Sign in required", description: "Please sign in as a company to like an employee.", variant: "destructive" });
+      return;
+    }
+    if (!employeeId) return;
+    try {
+      await companyLikeStore.companyLike(companyId, employeeId);
+      const data = useCompanyLikeStore.getState().data;
+      if (data?.isMatched) {
+        toast({ title: "It's a match!", description: `${data.employee.firstname} and your company like each other.` });
+      } else {
+        toast({ title: "Liked", description: `You liked ${user?.employee?.firstname} ${user?.employee?.lastname}.` });
+      }
+    } catch (e) {
+      const err = useCompanyLikeStore.getState().error || "Failed to like employee";
+      toast({ title: "Error", description: err, variant: "destructive" });
+    }
+  };
 
   return (
     <div className="flex flex-col gap-5">
@@ -457,7 +484,7 @@ export default function EmployeeDetailPage() {
           <LucideBookmark />
           Save to favorite
         </Button>
-        <Button>
+        <Button onClick={handleLike} disabled={companyLikeStore.loading || !currentUser?.company?.id}>
           <LucideHeartHandshake />
           Like
         </Button>

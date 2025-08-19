@@ -49,10 +49,13 @@ import { CompanyDetailPageSkeleton } from "./skeleton";
 import { dateFormatterv2 } from "@/utils/functions/dateformatter-v2";
 import { availabilityConstant } from "@/utils/constants/app.constant";
 import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
+import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { toast } from "@/hooks/use-toast";
 
 export default function CompanyDetailPage() {
-  const param = useParams();
-  const id = param?.companyId;
+  const param = useParams<{ companyId: string }>();
+  const id = param.companyId;
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
@@ -64,6 +67,8 @@ export default function CompanyDetailPage() {
 
   // Get data and loading state
   const { loading, user, getOneUerByID } = useGetOneUserStore();
+  const currentUser = useGetCurrentUserStore((state) => state.user);
+  const employeeLikeStore = useEmployeeLikeStore();
 
   // Get Access tokens from all possible stores
   const accessToken = getUnifiedAccessToken();
@@ -138,6 +143,30 @@ export default function CompanyDetailPage() {
       </div>
     );
   }
+
+  
+
+  const handleLike = async () => {
+    const employeeId = currentUser?.employee?.id;
+    if (!employeeId) {
+      toast({ title: "Sign in required", description: "Please sign in as an employee to like a company.", variant: "destructive" });
+      return;
+    }
+    try {
+      if(user && user.company) {
+        await employeeLikeStore.employeeLike(employeeId, user.company.id);
+      }
+      const data = useEmployeeLikeStore.getState().data;
+      if (data?.isMatched) {
+        toast({ title: "It's a match!", description: `You and ${data.company.name} like each other.` });
+      } else {
+        toast({ title: "Liked", description: `You liked ${user?.company?.name}.` });
+      }
+    } catch (e) {
+      const err = useEmployeeLikeStore.getState().error || "Failed to like company";
+      toast({ title: "Error", description: err, variant: "destructive" });
+    }
+  };
   
   return (
     <div className="flex flex-col gap-5">
@@ -184,7 +213,7 @@ export default function CompanyDetailPage() {
             <LucideBookmark />
             Save to Favorite
           </Button>
-          <Button>
+          <Button onClick={handleLike} disabled={employeeLikeStore.loading || !currentUser?.employee?.id}>
             <LucideHeartHandshake />
             Like
           </Button>

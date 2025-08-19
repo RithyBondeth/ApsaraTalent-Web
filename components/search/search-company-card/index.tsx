@@ -12,7 +12,6 @@ import {
   LucideCircleDollarSign,
   LucideClock2,
   LucideGraduationCap,
-  LucideHeartHandshake,
   LucideMapPin,
   LucideUsers,
 } from "lucide-react";
@@ -80,13 +79,9 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
           />
         </div>
         <div className="w-full flex justify-end items-center gap-2 [&>button]:text-xs">
-          <Button>
-            <LucideHeartHandshake/>
-            Like
-          </Button>
           <Button className="text-xs" onClick={() => {router.replace(`/feed/company/${props.company.userId}`)}}>
             <LucideBuilding/>
-            View
+            View Company Profile
           </Button>
         </div>
       </div>

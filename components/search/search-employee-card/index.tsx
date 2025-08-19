@@ -8,7 +8,6 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import {
   LucideClock,
   LucideGraduationCap,
-  LucideHeartHandshake,
   LucideMapPin,
   LucideUser,
 } from "lucide-react";
@@ -82,13 +81,9 @@ export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
         )}
       </div>
       <div className="w-full flex justify-end items-center gap-2 [&>button]:text-xs">
-        <Button>
-          <LucideHeartHandshake />
-          Like
-        </Button>
         <Button onClick={() => {router.replace(`/feed/employee/${props.id}`)}}>
           <LucideUser />
-          View
+          View Employee Profile
         </Button>
       </div>
     </div>
