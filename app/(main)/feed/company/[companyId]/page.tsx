@@ -32,7 +32,7 @@ import BlurBackGroundOverlay from "@/components/utils/bur-background-overlay";
 import { Button } from "@/components/ui/button";
 import Tag from "@/components/utils/tag";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { IBenefits, IImage, ISocial } from "@/utils/interfaces/user-interface/company.interface";
 import Link from "next/link";
 import {
@@ -56,6 +56,7 @@ import { toast } from "@/hooks/use-toast";
 export default function CompanyDetailPage() {
   const param = useParams<{ companyId: string }>();
   const id = param.companyId;
+  const router = useRouter();
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
@@ -148,19 +149,22 @@ export default function CompanyDetailPage() {
 
   const handleLike = async () => {
     const employeeId = currentUser?.employee?.id;
+    const companyId = user?.company?.id;
+
     if (!employeeId) {
       toast({ title: "Sign in required", description: "Please sign in as an employee to like a company.", variant: "destructive" });
       return;
     }
+    if(!companyId) return;
     try {
-      if(user && user.company) {
-        await employeeLikeStore.employeeLike(employeeId, user.company.id);
-      }
+      await employeeLikeStore.employeeLike(employeeId, companyId);
       const data = useEmployeeLikeStore.getState().data;
       if (data?.isMatched) {
         toast({ title: "It's a match!", description: `You and ${data.company.name} like each other.` });
+        setTimeout(() => router.push("/matching"), 800);
       } else {
         toast({ title: "Liked", description: `You liked ${user?.company?.name}.` });
+        setTimeout(() => router.push("/feed"), 800);
       }
     } catch (e) {
       const err = useEmployeeLikeStore.getState().error || "Failed to like company";
