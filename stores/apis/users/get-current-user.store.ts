@@ -1,6 +1,6 @@
 import { API_GET_CURRENT_USER_URL } from "@/utils/constants/apis/user_url";
 import { IUser } from "@/utils/interfaces/user-interface/user.interface";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { create } from "zustand";
 
 type TGetCurrentUserState = {
@@ -8,7 +8,7 @@ type TGetCurrentUserState = {
   error: string | null;
   user: IUser | null;
   isInitialized: boolean;
-  getCurrentUser: (accessToken: string) => Promise<void>;
+  getCurrentUser: () => Promise<void>;
   clearUser: () => void;
 };
 
@@ -17,33 +17,30 @@ export const useGetCurrentUserStore = create<TGetCurrentUserState>((set) => ({
   error: null,
   user: null,
   isInitialized: false,
-  getCurrentUser: async (accessToken: string) => {
+  getCurrentUser: async () => {
     set({ loading: true, error: null });
 
     try {
-      const response = await axios.get<IUser>(
-        API_GET_CURRENT_USER_URL,
-        { headers: { Authorization: `Bearer ${accessToken}` } }
-      );
-    
-      set({ 
-        loading: false, 
-        user: response.data, 
+      const response = await axios.get<IUser>(API_GET_CURRENT_USER_URL);
+
+      set({
+        loading: false,
+        user: response.data,
         error: null,
-        isInitialized: true 
+        isInitialized: true,
       });
     } catch (error) {
       if (axios.isAxiosError(error))
         set({
           loading: false,
           error: error.response?.data?.message || error.message,
-          isInitialized: true
+          isInitialized: true,
         });
       else
         set({
           loading: false,
           error: "An error occurred while fetching current user.",
-          isInitialized: true
+          isInitialized: true,
         });
     }
   },
@@ -52,7 +49,7 @@ export const useGetCurrentUserStore = create<TGetCurrentUserState>((set) => ({
       user: null,
       loading: false,
       error: null,
-      isInitialized: false
+      isInitialized: false,
     });
-  }
+  },
 }));

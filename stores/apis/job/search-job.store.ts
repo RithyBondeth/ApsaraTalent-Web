@@ -1,6 +1,6 @@
 import { API_SEARCH_JOB_URL } from "@/utils/constants/apis/job_url";
 import { TLocations } from "@/utils/types/location.type";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { create } from "zustand";
 
 export type TSearchJobQuery = {
@@ -47,7 +47,7 @@ type TSearchJobState = {
   jobs: TSearchJob[] | null;
   error: string | null;
   loading: boolean;
-  querySearchJobs: (query: TSearchJobQuery, token: string) => Promise<void>;
+  querySearchJobs: (query: TSearchJobQuery) => Promise<void>;
 };
 
 export const useSearchJobStore = create<TSearchJobState>((set) => ({
@@ -55,7 +55,7 @@ export const useSearchJobStore = create<TSearchJobState>((set) => ({
   error: null,
   message: null,
   jobs: null,
-  querySearchJobs: async (query: TSearchJobQuery, token: string) => {
+  querySearchJobs: async (query: TSearchJobQuery) => {
     set({ loading: true, error: null });
     
     try {
@@ -72,8 +72,7 @@ export const useSearchJobStore = create<TSearchJobState>((set) => ({
       });
 
       const response = await axios.get(
-        `${API_SEARCH_JOB_URL}?${queryParams.toString()}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        `${API_SEARCH_JOB_URL}?${queryParams.toString()}`
       );
 
       console.log("Search Job Res: ", response.data);

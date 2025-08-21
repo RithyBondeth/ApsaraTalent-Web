@@ -17,7 +17,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import MatchingBannerSkeleton from "./banner-skeleton";
 import { useGetOneEmployeeStore } from "@/stores/apis/employee/get-one-emp.store";
-import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
+
 import { createOrGetChat } from "@/utils/firebase/services/chat-service";
 
 export default function MatchingPage() {
@@ -30,7 +30,7 @@ export default function MatchingPage() {
   const getCurrentEmployeeMatchingStore = useGetCurrentEmployeeMatchingStore();
   const getCurrentCompanyMatchingStore = useGetCurrentCompanyMatchingStore();
   const { employeeData, queryOneEmployee } = useGetOneEmployeeStore();
-  const accessToken = getUnifiedAccessToken();
+  
 
   useEffect(() => {
     if (currentUser && currentUser.employee && isEmployee) {
@@ -43,7 +43,7 @@ export default function MatchingPage() {
         currentUser.company.id
       );
     }
-  }, [currentUser]);
+  }, [currentUser, isEmployee]);
 
   // Compute loading state to avoid flicker of empty state before first fetch resolves
   const isLoadingForEmployee =
@@ -80,13 +80,13 @@ export default function MatchingPage() {
   }
 
   const handleChatNow = async (otherUserId: string) => {
-    await queryOneEmployee(otherUserId, accessToken);
+    await queryOneEmployee(otherUserId);
 
     if(currentUser) {
         const chatId = await createOrGetChat({
-            id: currentUser.employee?.id || currentUser.company?.id!,
-            name: currentUser.employee?.username || currentUser.company?.name!,
-            profile: currentUser.employee?.avatar || currentUser.company?.avatar!,
+            id: (currentUser.employee?.id || currentUser.company?.id) ?? '',
+            name: (currentUser.employee?.username || currentUser.company?.name) ?? '',
+            profile: (currentUser.employee?.avatar || currentUser.company?.avatar) ?? '',
           },
           {
             id: employeeData?.id ?? "",
@@ -170,7 +170,7 @@ export default function MatchingPage() {
               width={200}
               className="tablet-xl:!w-full"
             />
-            <TypographyH4>There's no matched.</TypographyH4>
+            <TypographyH4>There&apos;s no matched.</TypographyH4>
           </div>
         )}
       </div>

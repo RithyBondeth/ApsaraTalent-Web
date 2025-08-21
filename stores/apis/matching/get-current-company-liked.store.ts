@@ -1,6 +1,6 @@
 import { API_GET_CURRENT_COMPANY_LIKED_URL } from "@/utils/constants/apis/matching_url";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { create } from "zustand";
 
 type TGetCurrentCompanyLikedResponse = IEmployee[];

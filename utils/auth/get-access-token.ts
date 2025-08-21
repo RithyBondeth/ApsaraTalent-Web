@@ -1,57 +1,18 @@
-import {
-  useLocalLoginStore,
-  useLoginStore,
-  useSessionLoginStore,
-} from "@/stores/apis/auth/login.store";
-import {
-  useFacebookLoginStore,
-  useLocalFacebookLoginStore,
-  useSessionFacebookLoginStore,
-} from "@/stores/apis/auth/socials/facebook-login.store";
-import {
-  useGithubLoginStore,
-  useLocalGithubLoginStore,
-  useSessionGithubLoginStore,
-} from "@/stores/apis/auth/socials/github-login.store";
-import {
-  useGoogleLoginStore,
-  useLocalGoogleLoginStore,
-  useSessionGoogleLoginStore,
-} from "@/stores/apis/auth/socials/google-login.store";
-import {
-  useLinkedInLoginStore,
-  useLocalLinkedInLoginStore,
-  useSessionLinkedInLoginStore,
-} from "@/stores/apis/auth/socials/linkedin-login.store";
-import {
-  useLocalVerifyOTPStore,
-  useSessionVerifyOTPStore,
-  useVerifyOTPStore,
-} from "@/stores/apis/auth/verify-otp.store";
+import { getCookie } from "cookies-next";
 
-const extractToken = (store: any) => store.getState().accessToken;
-
+// Get access token from HTTP-only cookie
+// Note: This will return undefined in client-side code since HTTP-only cookies
+// are not accessible via JavaScript. Use this only for server-side operations.
 export const getUnifiedAccessToken = () => {
-  const tokens = [
-    extractToken(useLoginStore),
-    extractToken(useLocalLoginStore),
-    extractToken(useSessionLoginStore),
-    extractToken(useVerifyOTPStore),
-    extractToken(useLocalVerifyOTPStore),
-    extractToken(useSessionVerifyOTPStore),
-    extractToken(useGoogleLoginStore),
-    extractToken(useLocalGoogleLoginStore),
-    extractToken(useSessionGoogleLoginStore),
-    extractToken(useFacebookLoginStore),
-    extractToken(useLocalFacebookLoginStore),
-    extractToken(useSessionFacebookLoginStore),
-    extractToken(useGithubLoginStore),
-    extractToken(useLocalGithubLoginStore),
-    extractToken(useSessionGithubLoginStore),
-    extractToken(useLinkedInLoginStore),
-    extractToken(useLocalLinkedInLoginStore),
-    extractToken(useSessionLinkedInLoginStore),
-  ];
+  return getCookie('auth-token');
+};
 
-  return tokens.find((token) => !!token);
+// Get refresh token from HTTP-only cookie (server-side only)
+export const getRefreshToken = () => {
+  return getCookie('refresh-token');
+};
+
+// Check if user is authenticated by checking cookie existence
+export const isAuthenticated = () => {
+  return !!getCookie('auth-token');
 };

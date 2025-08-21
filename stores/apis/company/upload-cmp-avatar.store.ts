@@ -1,5 +1,5 @@
 import { API_UPLOAD_CMP_AVATAR_URL } from "@/utils/constants/apis/company_url";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { create } from "zustand";
 
 type TUploadCompanyAvatarResponse = {

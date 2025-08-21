@@ -1,6 +1,6 @@
 import { API_UPDATE_EMP_INFO_URL } from "@/utils/constants/apis/employee_url";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { create } from "zustand";
 
 type TUpdateOneEmployeeResponse = {
@@ -31,8 +31,7 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
     loading: false,
     updateOneEmployee: async (
       employeeID: string,
-      body: TUpdateOneEmployeeUpdateBody,
-      token: string
+      body: TUpdateOneEmployeeUpdateBody
     ) => {
       set({ loading: true, error: null });
       try {
@@ -74,8 +73,7 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
               platform: social.platform,
               url: social.url,
             })),
-          },
-          { headers: { Authorization: `Bearer ${token}` } }
+          }
         );
         set({
           message: response.data.message,

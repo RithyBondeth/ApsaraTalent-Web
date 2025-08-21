@@ -47,7 +47,7 @@ import { useGetOneUserStore } from "@/stores/apis/users/get-one-user.store";
 import EmployeeDetailPageSkeleton from "./skeleton";
 import { dateFormatter } from "@/utils/functions/dateformatter";
 import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
-import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
+
 import { useCompanyLikeStore } from "@/stores/apis/matching/company-like.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { toast } from "@/hooks/use-toast";
@@ -71,9 +71,6 @@ export default function EmployeeDetailPage() {
   const companyFavEmployeeStore = useCompanyFavEmployeeStore();
   const [isSavedFavorite, setIsSavedFavorite] = useState(false);
 
-  // Get tokens from all possible stores
-  const accessToken = getUnifiedAccessToken();
-
   // Initialize component (client-side only)
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -84,12 +81,12 @@ export default function EmployeeDetailPage() {
   // Fetch data
   useEffect(() => {
     const fetchData = async () => {
-      if (!isInitialized || !id || !accessToken) return;
+      if (!isInitialized || !id) return;
 
       try {
         setFetchError(null);
         useGetOneUserStore.setState({ user: null, loading: true });
-        await getOneUerByID(id as string, accessToken);
+        await getOneUerByID(id as string);
       } catch (error) {
         console.error("Failed to fetch employee data:", error);
         setFetchError("Failed to load employee data. Please try again.");
@@ -97,7 +94,7 @@ export default function EmployeeDetailPage() {
     };
 
     fetchData();
-  }, [id, accessToken, isInitialized, getOneUerByID]);
+  }, [id, isInitialized, getOneUerByID]);
 
   // Handle popup clicks
   const handleClickProfilePopup = (e: React.MouseEvent) => {
@@ -132,7 +129,7 @@ export default function EmployeeDetailPage() {
   };
 
   // Loading or error states
-  if (!isInitialized || loading || !accessToken) {
+  if (!isInitialized || loading) {
     return <EmployeeDetailPageSkeleton />;
   }
 
@@ -193,7 +190,7 @@ export default function EmployeeDetailPage() {
         });
         setTimeout(() => router.push("/feed"), 800);
       }
-    } catch (e) {
+    } catch {
       const err =
         useCompanyLikeStore.getState().error || "Failed to like employee";
       toast({ title: "Error", description: err, variant: "destructive" });
@@ -207,12 +204,12 @@ export default function EmployeeDetailPage() {
       toast({ title: "Sign in required", description: "Please sign in as a company to save an employee.", variant: "destructive" });
       return;
     }
-    if (!employeeId || !accessToken) return;
+    if (!employeeId) return;
     try {
-      await companyFavEmployeeStore.addEmployeeToFavorite(companyId, employeeId, accessToken);
+      await companyFavEmployeeStore.addEmployeeToFavorite(companyId, employeeId);
       toast({ title: "Saved", description: "Employee added to favorites." });
       setIsSavedFavorite(true);
-    } catch (e) {
+    } catch {
       const err = companyFavEmployeeStore.error || "Failed to save employee";
       toast({ title: "Error", description: err, variant: "destructive" });
     }

@@ -236,7 +236,7 @@
 //   const searchParams = useSearchParams();
 //   const chatId = searchParams.get('chatId');
 //   const currentUser = useGetCurrentUserStore((state) => state.user);
-//   const accessToken = getUnifiedAccessToken();
+//   
 //   const { employeeData, queryOneEmployee } = useGetOneEmployeeStore();
 //   const { companyData, queryOneCompany } = useGetOneCompanyStore();
 
@@ -392,7 +392,6 @@ import {
   orderBy,
   onSnapshot,
   addDoc,
-  serverTimestamp,
   getDoc,
   where,
   getDocs,
@@ -417,8 +416,8 @@ const MessagePage = () => {
   const getCurrentUserId = (): string => {
     if (!currentUser) return '';
     return currentUser.role === 'employee'
-      ? currentUser.employee?.id!
-      : currentUser.company?.id!;
+      ? (currentUser.employee?.id ?? '')
+      : (currentUser.company?.id ?? '');
   };
 
   // Load chat sidebar
@@ -456,7 +455,7 @@ const MessagePage = () => {
     });
 
     return () => unsubscribe();
-  }, [currentUser]);
+  }, [currentUser, getCurrentUserId]);
 
   // Load messages for selected chat
   useEffect(() => {
@@ -496,7 +495,7 @@ const MessagePage = () => {
     });
 
     return () => unsubscribe();
-  }, [chatId, currentUser]);
+  }, [chatId, getCurrentUserId]);
 
   const handleSendMessage = async (text: string) => {
     const uid = getCurrentUserId();
@@ -505,7 +504,7 @@ const MessagePage = () => {
     const message: Omit<IMessage, 'id'> = {
       senderId: uid,
       content: text.trim(),
-      timestamp: serverTimestamp() as any,
+      timestamp: new Date(),
       isRead: false,
     };
 

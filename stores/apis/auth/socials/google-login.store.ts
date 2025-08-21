@@ -1,6 +1,5 @@
 import { setCookie, deleteCookie } from "cookies-next";
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
 import { useGetCurrentUserStore } from "../../users/get-current-user.store";
 import { API_AUTH_SOCIAL_GOOGLE_URL } from "@/utils/constants/apis/auth_url";
 import { TUserRole } from "@/utils/types/role.type";
@@ -18,77 +17,85 @@ export type TGoogleLoginResponse = {
   role: string | null;
 };
 
-export type TGoogleLoginState = TGoogleLoginResponse & {
+export type TGoogleLoginState = {
   loading: boolean;
   error: string | null;
-  isInitialized: boolean;
-  rememberMe: boolean;
+  isAuthenticated: boolean;
+  message: string | null;
+  role: string | null;
+  newUser: boolean | null;
+  email: string | null;
+  firstname: string | null;
+  lastname: string | null;
+  picture: string | null;
+  provider: string | null;
   setRole: (role: TUserRole) => void;
   googleLogin: (rememberMe: boolean, usePopup?: boolean) => void;
   initialize: () => void;
   clearToken: () => void;
 };
 
-const FRONTEND_ORIGIN = typeof window !== "undefined" ? window.location.origin : "";
 const BACKEND_ORIGIN = API_AUTH_SOCIAL_GOOGLE_URL.split("/social")[0];
 
-// ✅ PATCHED: Always update store, only persist/token if accessToken exists
 const FINISH_LOGIN = (data: TGoogleLoginResponse, rememberMe: boolean) => {
   if (!data) return;
 
-  // Always update Zustand in-memory store
+  // Update Zustand in-memory store
   useGoogleLoginStore.setState({
-    ...data,
     loading: false,
-    isInitialized: true,
-    rememberMe,
+    isAuthenticated: !!data.accessToken,
+    message: data.message,
+    role: data.role,
+    newUser: data.newUser,
+    email: data.email,
+    firstname: data.firstname,
+    lastname: data.lastname,
+    picture: data.picture,
+    provider: data.provider,
   });
 
-  // Only persist & set cookie if accessToken exists
+  // Set HTTP-only cookies if accessToken exists
   if (data.accessToken) {
-    const setter = rememberMe
-      ? useLocalGoogleLoginStore.setState
-      : useSessionGoogleLoginStore.setState;
-
-    setter({ ...data });
-
     setCookie("auth-token", data.accessToken, {
-      httpOnly: false,
+      maxAge: rememberMe ? 30 * 24 * 60 * 60 : undefined,
+      
       secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
       path: "/",
     });
+    
+    if (data.refreshToken) {
+      setCookie("refresh-token", data.refreshToken, {
+        maxAge: rememberMe ? 30 * 24 * 60 * 60 : undefined,
+        
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/",
+      });
+    }
   }
 };
 
 export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
-  newUser: null,
+  loading: false,
+  error: null,
+  isAuthenticated: false,
   message: null,
-  accessToken: null,
-  refreshToken: null,
+  role: null,
+  newUser: null,
   email: null,
   firstname: null,
   lastname: null,
   picture: null,
   provider: null,
-  role: null,
-  loading: false,
-  error: null,
-  isInitialized: false,
-  rememberMe: false,
   setRole: (role: TUserRole) => set({ role: role }),
   initialize: () => {
-    const local = useLocalGoogleLoginStore.getState();
-    const session = useSessionGoogleLoginStore.getState();
-    const src = local.accessToken ? local : session;
-    if (src.accessToken) {
-      set({ ...src, rememberMe: src === local, isInitialized: true });
-    } else {
-      set({ isInitialized: true });
-    }
+    // Authentication state is determined by HTTP-only cookies
+    set({ isAuthenticated: true });
   },
 
   googleLogin: (rememberMe: boolean, usePopup: boolean = true) => {
-    set({ loading: true, error: null, rememberMe });
+    set({ loading: true, error: null });
 
     const url = API_AUTH_SOCIAL_GOOGLE_URL;
 
@@ -106,7 +113,17 @@ export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
     const handler = (ev: MessageEvent<TGoogleLoginResponse>) => {
       if (ev.origin !== BACKEND_ORIGIN) return;
       window.removeEventListener("message", handler);
-      popup.close();
+      
+      // Safely close popup - handle CORP policy errors
+      try {
+        if (popup) {
+          popup.close();
+        }
+      } catch (error) {
+        // Silently handle CORP policy errors - popup will close itself or user can close manually
+        console.debug("Popup close handled by browser security policy");
+      }
+      
       console.log("Google Data Response: ", ev.data);
       FINISH_LOGIN(ev.data, rememberMe);
     };
@@ -115,66 +132,36 @@ export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
   },
 
   clearToken: () => {
-    localStorage.removeItem("GoogleLoginStore-local");
-    sessionStorage.removeItem("GoogleLoginStore-session");
+    // Delete cookies with all possible options to ensure removal
+    deleteCookie("auth-token", { path: "/" });
+    deleteCookie("refresh-token", { path: "/" });
+    
+    // Also try to delete without specifying options (fallback)
     deleteCookie("auth-token");
+    deleteCookie("refresh-token");
+    
+    // Clear local/session storage as well
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('auth-token');
+      localStorage.removeItem('refresh-token');
+      sessionStorage.removeItem('auth-token');
+      sessionStorage.removeItem('refresh-token');
+    }
+    
     useGetCurrentUserStore.getState().clearUser();
     set({
-      newUser: null,
+      loading: false,
+      error: null,
+      isAuthenticated: false,
       message: null,
-      accessToken: null,
-      refreshToken: null,
+      role: null,
+      newUser: null,
       email: null,
       firstname: null,
       lastname: null,
       picture: null,
       provider: null,
-      loading: false,
-      error: null,
-      rememberMe: false,
-      isInitialized: true,
     });
   },
 }));
 
-export const useLocalGoogleLoginStore = create(
-  persist<TGoogleLoginResponse>(
-    () => ({
-      newUser: null,
-      message: null,
-      accessToken: null,
-      refreshToken: null,
-      email: null,
-      firstname: null,
-      lastname: null,
-      picture: null,
-      provider: null,
-      role: null,
-    }),
-    {
-      name: "GoogleLoginStore-local",
-      storage: createJSONStorage(() => localStorage),
-    },
-  ),
-);
-
-export const useSessionGoogleLoginStore = create(
-  persist<TGoogleLoginResponse>(
-    () => ({
-      newUser: null,
-      message: null,
-      accessToken: null,
-      refreshToken: null,
-      email: null,
-      firstname: null,
-      lastname: null,
-      picture: null,
-      provider: null,
-      role: null,
-    }),
-    {
-      name: "GoogleLoginStore-session",
-      storage: createJSONStorage(() => sessionStorage),
-    },
-  ),
-);

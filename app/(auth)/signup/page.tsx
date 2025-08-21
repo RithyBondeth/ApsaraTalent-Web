@@ -92,48 +92,76 @@ export default function SignupPage() {
     router.push("signup/company");
   };
 
+
   useEffect(() => {
-    if (googleUserData) {
-      cmpForm.setValue("email", googleUserData.email!);
+    // Handle Google login data
+    if (
+      googleUserData.email &&
+      googleUserData.firstname &&
+      googleUserData.lastname
+    ) {
+      cmpForm.setValue("email", googleUserData.email);
 
-      empForm.setValue("email", googleUserData.email!);
-      empForm.setValue("firstName", googleUserData.firstname!);
-      empForm.setValue("lastName", googleUserData.lastname!);
+      empForm.setValue("email", googleUserData.email);
+      empForm.setValue("firstName", googleUserData.firstname);
+      empForm.setValue("lastName", googleUserData.lastname);
       empForm.setValue(
         "username",
-        googleUserData.firstname! + " " + googleUserData.lastname!
+        googleUserData.firstname + " " + googleUserData.lastname
       );
     }
 
-    if (linkedInUserData) {
-      cmpForm.setValue("email", linkedInUserData.email!);
+    // Handle LinkedIn login data
+    if (
+      linkedInUserData.email &&
+      linkedInUserData.firstname &&
+      linkedInUserData.lastname
+    ) {
+      cmpForm.setValue("email", linkedInUserData.email);
 
-      empForm.setValue("email", linkedInUserData.email!);
-      empForm.setValue("firstName", linkedInUserData.firstname!);
-      empForm.setValue("lastName", linkedInUserData.lastname!);
+      empForm.setValue("email", linkedInUserData.email);
+      empForm.setValue("firstName", linkedInUserData.firstname);
+      empForm.setValue("lastName", linkedInUserData.lastname);
       empForm.setValue(
         "username",
-        linkedInUserData.firstname! + " " + linkedInUserData.lastname!
+        linkedInUserData.firstname + " " + linkedInUserData.lastname
       );
     }
 
-    if (githubUserData) {
-      cmpForm.setValue("email", githubUserData.email!);
+    // Handle GitHub login data
+    if (githubUserData.email && githubUserData.username) {
+      cmpForm.setValue("email", githubUserData.email);
 
-      empForm.setValue("email", githubUserData.email!);
-      empForm.setValue("username", githubUserData.username!);
+      empForm.setValue("email", githubUserData.email);
+      empForm.setValue("username", githubUserData.username);
     }
 
-    if (facebookUserData) {
-      cmpForm.setValue("email", facebookUserData.email!);
+    // Handle Facebook login data
+    if (
+      facebookUserData.email &&
+      facebookUserData.firstname &&
+      facebookUserData.lastname
+    ) {
+      cmpForm.setValue("email", facebookUserData.email);
 
-      empForm.setValue("email", facebookUserData.email!);
-      empForm.setValue("firstName", facebookUserData.firstname!);
-      empForm.setValue("lastName", facebookUserData.lastname!);
+      empForm.setValue("email", facebookUserData.email);
+      empForm.setValue("firstName", facebookUserData.firstname);
+      empForm.setValue("lastName", facebookUserData.lastname);
       empForm.setValue(
         "username",
-        facebookUserData.firstname! + " " + facebookUserData.lastname!
+        facebookUserData.firstname + " " + facebookUserData.lastname
       );
+    }
+
+    // Clear username field if no social login data is available (default signup flow)
+    const hasSocialData =
+      googleUserData.email ||
+      linkedInUserData.email ||
+      githubUserData.email ||
+      facebookUserData.email;
+
+    if (!hasSocialData) {
+      empForm.setValue("username", "");
     }
   }, [
     googleUserData,

@@ -23,12 +23,10 @@ import { TLocations } from "@/utils/types/location.type";
 import { TAvailability } from "@/utils/types/availability.type";
 import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
 import { debounce } from "lodash";
-import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
+
 
 export default function CompanySearchPage() {
   const { error, loading, employees, querySearchEmployee } = useSearchEmployeeStore();
-  const accessToken = getUnifiedAccessToken();
-  const getCurrentUser = useGetCurrentUserStore((state) => state.getCurrentUser);
   const user = useGetCurrentUserStore((state) => state.user);
 
   const [scopeNames, setScopeNames] = useState<string[]>();
@@ -48,7 +46,6 @@ export default function CompanySearchPage() {
     });
 
   const onSubmit = (data: TCompanySearchSchema) => {
-    if (!accessToken) return;
 
     const normalizedJobType = data.jobType === "all" ? undefined : data.jobType;
     const normalizedLocation = data.location === "all" ? undefined : data.location;
@@ -58,28 +55,23 @@ export default function CompanySearchPage() {
         ? { min: undefined, max: undefined }
         : data.experienceLevel;
 
-    querySearchEmployee(
-      {
-        careerScopes: scopeNames,
-        keyword: data.keyword,
-        location: normalizedLocation as TLocations,
-        jobType: normalizedJobType as TAvailability,
-        experienceMin: normalizedExperience.min,
-        experienceMax: normalizedExperience.max,
-        education: normalizedEducation,
-        sortBy: data.sortBy,
-        sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
-      },
-      accessToken
-    );
+    querySearchEmployee({
+      careerScopes: scopeNames,
+      keyword: data.keyword,
+      location: normalizedLocation as TLocations,
+      jobType: normalizedJobType as TAvailability,
+      experienceMin: normalizedExperience.min,
+      experienceMax: normalizedExperience.max,
+      education: normalizedEducation,
+      sortBy: data.sortBy,
+      sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
+    });
   };
 
   const debouncedSubmit = useMemo(() => debounce(handleSubmit(onSubmit), 300), [handleSubmit]);
 
   useEffect(() => {
-    if (!accessToken) return;
     (async () => {
-      await getCurrentUser(accessToken);
       const scopes = user?.role === "company" ? user?.company?.careerScopes : user?.employee?.careerScopes;
       const names = scopes?.map((cs) => cs.name) ?? [];
       setScopeNames(names);
@@ -92,11 +84,10 @@ export default function CompanySearchPage() {
           careerScopes: names,
           sortBy: "firstname",
           sortOrder: "DESC",
-        },
-        accessToken
+        }
       );
     })();
-  }, [accessToken]);
+  }, [user?.role]);
 
   useEffect(() => {
     return () => {

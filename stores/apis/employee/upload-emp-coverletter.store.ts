@@ -1,5 +1,5 @@
 import { API_UPLOAD_EMP_COVER_LETTER_URL } from "@/utils/constants/apis/employee_url";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { create } from "zustand";
 
 type TUploadEmployeeCoverLetterResponse = {

@@ -2,6 +2,7 @@ import { API_BASE_URL } from "./base_url";
 
 export const API_AUTH_URL = API_BASE_URL + "/auth";
 export const API_AUTH_LOGIN_URL = API_AUTH_URL + "/login";
+export const API_AUTH_LOGOUT_URL = API_AUTH_URL + "/logout";
 export const API_AUTH_SIGNUP_URL = {
     COMPANY: API_AUTH_URL + "/register-company",
     EMPLOYEE: API_AUTH_URL + "/register-employee"

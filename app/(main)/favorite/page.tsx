@@ -10,7 +10,7 @@ import Image from "next/image";
 import favoriteSvgImage from "@/assets/svg/favorite.svg";
 import emptySvgImage from "@/assets/svg/empty.svg";
 import { useEffect } from "react";
-import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
+
 import FavoriteEmployeeCardSkeleton from "@/components/favorite/employee-favorite-card/skeleton";
 import FavoriteCompanyCardSkeleton from "@/components/favorite/company-favorite-card/skeleton";
 import FavoriteCompanyCard from "@/components/favorite/company-favorite-card";
@@ -25,23 +25,21 @@ export default function FavoritePage() {
 
   const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
   const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
-  const accessToken = getUnifiedAccessToken();
+  
 
   useEffect(() => {
-    if (!accessToken || !currentUser) return;
+    if (!currentUser) return;
     if (isEmployee && currentUser.employee) {
       getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
-        currentUser.employee.id,
-        accessToken
+        currentUser.employee.id
       );
     }
     if (!isEmployee && currentUser.company) {
       getAllCompanyFavoritesStore.queryAllCompanyFavorites(
-        currentUser.company.id,
-        accessToken
+        currentUser.company.id
       );
     }
-  }, [accessToken, currentUser, isEmployee]);
+  }, [currentUser, isEmployee]);
 
   // Unified loading handling to avoid flicker before first fetch resolves
   const isLoadingForEmployee =
@@ -144,7 +142,7 @@ export default function FavoritePage() {
               width={200}
               className="tablet-xl:!w-full"
             />
-            <TypographyH4>There's no favorite.</TypographyH4>
+            <TypographyH4>There&apos;s no favorite.</TypographyH4>
           </div>
         )}
       </div>

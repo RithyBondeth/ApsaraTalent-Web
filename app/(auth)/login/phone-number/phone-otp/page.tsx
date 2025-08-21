@@ -17,11 +17,7 @@ import ErrorMessage from "@/components/utils/error-message";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
-import {
-  useLocalVerifyOTPStore,
-  useSessionVerifyOTPStore,
-  useVerifyOTPStore,
-} from "@/stores/apis/auth/verify-otp.store";
+import { useVerifyOTPStore } from "@/stores/apis/auth/verify-otp.store";
 import { useEffect, useState } from "react";
 import { LucideCheck, LucideInfo } from "lucide-react";
 import { ClipLoader } from "react-spinners";
@@ -113,20 +109,6 @@ export default function PhoneOTPPage() {
     isSubmitted,
   ]);
 
-  useEffect(() => {
-    const local = useLocalVerifyOTPStore.getState();
-    const session = useSessionVerifyOTPStore.getState();
-    const source = local.accessToken ? local : session;
-
-    if (source.accessToken) {
-      useVerifyOTPStore.setState({
-        accessToken: source.accessToken,
-        refreshToken: source.refreshToken,
-        message: source.message,
-        rememberMe: source === local,
-      });
-    }
-  }, []);
 
   return (
     <div className="h-screen w-screen flex items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">

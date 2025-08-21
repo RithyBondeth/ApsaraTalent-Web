@@ -48,7 +48,7 @@ import { useGetOneUserStore } from "@/stores/apis/users/get-one-user.store";
 import { CompanyDetailPageSkeleton } from "./skeleton";
 import { dateFormatterv2 } from "@/utils/functions/dateformatter-v2";
 import { availabilityConstant } from "@/utils/constants/app.constant";
-import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
+
 import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { toast } from "@/hooks/use-toast";
@@ -74,9 +74,6 @@ export default function CompanyDetailPage() {
   const employeeFavCompanyStore = useEmployeeFavCompanyStore();
   const [isSavedFavorite, setIsSavedFavorite] = useState(false);
 
-  // Get Access tokens from all possible stores
-  const accessToken = getUnifiedAccessToken();
-
   // Initialize component (client-side only)
   useEffect(() => {
     if (typeof window !== 'undefined') setIsInitialized(true);
@@ -85,12 +82,12 @@ export default function CompanyDetailPage() {
   // Fetch data
   useEffect(() => {
     const fetchData = async () => {
-      if (!isInitialized || !id || !accessToken) return;
+      if (!isInitialized || !id) return;
       
       try {
         setFetchError(null);
         useGetOneUserStore.setState({ user: null, loading: true });
-        await getOneUerByID(id as string, accessToken);
+        await getOneUerByID(id as string);
       } catch (error) {
         console.error("Failed to fetch company data:", error);
         setFetchError("Failed to load company data. Please try again.");
@@ -98,7 +95,7 @@ export default function CompanyDetailPage() {
     };
 
     fetchData();
-  }, [id, accessToken, isInitialized, getOneUerByID]);
+  }, [id, isInitialized, getOneUerByID]);
 
   // Handle popup clicks
   const handleClickImagePopup = () => {
@@ -118,7 +115,7 @@ export default function CompanyDetailPage() {
   };
 
   // Loading or error states
-  if (!isInitialized || loading || !accessToken) {
+  if (!isInitialized || loading) {
     return <CompanyDetailPageSkeleton />;
   }
 
@@ -169,7 +166,7 @@ export default function CompanyDetailPage() {
         toast({ title: "Liked", description: `You liked ${user?.company?.name}.` });
         setTimeout(() => router.push("/feed"), 800);
       }
-    } catch (e) {
+    } catch {
       const err = useEmployeeLikeStore.getState().error || "Failed to like company";
       toast({ title: "Error", description: err, variant: "destructive" });
     }
@@ -182,12 +179,12 @@ export default function CompanyDetailPage() {
       toast({ title: "Sign in required", description: "Please sign in as an employee to save a company.", variant: "destructive" });
       return;
     }
-    if (!companyId || !accessToken) return;
+    if (!companyId) return;
     try {
-      await employeeFavCompanyStore.addCompanyToFavorite(employeeId, companyId, accessToken);
+      await employeeFavCompanyStore.addCompanyToFavorite(employeeId, companyId);
       toast({ title: "Saved", description: "Company added to favorites." });
       setIsSavedFavorite(true);
-    } catch (e) {
+    } catch {
       const err = employeeFavCompanyStore.error || "Failed to save company";
       toast({ title: "Error", description: err, variant: "destructive" });
     }

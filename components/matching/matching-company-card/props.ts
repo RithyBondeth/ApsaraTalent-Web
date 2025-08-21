@@ -4,7 +4,7 @@ export interface IMatchingCompanyCardProps {
     avatar: string;
     name: string;
     industry: string;
-    founded: number;
+    foundedYear: number;
     description: string;
     openPosition: IJobPosition[];
     companySize: number;

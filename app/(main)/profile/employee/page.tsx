@@ -77,14 +77,9 @@ import { ToastAction } from "@/components/ui/toast";
 import ImagePopup from "@/components/utils/image-popup";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import EmployeeProfilePageSkeleton from "./skeleton";
-import {
-  useLocalLoginStore,
-  useLoginStore,
-  useSessionLoginStore,
-} from "@/stores/apis/auth/login.store";
 import { dateFormatter } from "@/utils/functions/dateformatter";
 import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
-import { getRandomBadgeColor } from "@/utils/extensions/get-random-badge-color";
+import Tag from "@/components/utils/tag";
 
 export default function EmployeeProfilePage() {
   const { user, loading, getCurrentUser } = useGetCurrentUserStore();
@@ -237,20 +232,9 @@ export default function EmployeeProfilePage() {
   }, [user, employee, form]);
 
   useEffect(() => {
-    const local = useLocalLoginStore.getState();
-    const session = useSessionLoginStore.getState();
-    const source = local.accessToken ? local : session;
-
-    if (source.accessToken) {
-      useLoginStore.setState({
-        accessToken: source.accessToken,
-        refreshToken: source.refreshToken,
-        message: source.message,
-        rememberMe: source === local,
-      });
-      getCurrentUser(source.accessToken);
-    }
-  }, [getCurrentUser]);
+    // Get current user with HTTP-only cookies
+    getCurrentUser();
+  }, []);
 
   useEffect(() => {
     if (resumeFile) {
@@ -858,6 +842,7 @@ export default function EmployeeProfilePage() {
                             placeholder="Title"
                             id="title"
                             {...form.register(`experiences.${index}.title`)}
+                            className="placeholder:!text-red-500"
                             prefix={
                               <LucideBriefcaseBusiness strokeWidth={"1.3px"} />
                             }
@@ -1044,19 +1029,11 @@ export default function EmployeeProfilePage() {
                 {skills.map((skill, index) => (
                   <HoverCard key={index}>
                     <HoverCardTrigger>
-                      <div
-                        className={`flex items-center gap-2 px-3 py-2 rounded-2xl cursor-pointer [&>div>p]:text-xs ${getRandomBadgeColor(
-                          skill.name
-                        )}`}
-                      >
-                        <IconLabel
-                          icon={null}
-                          text={skill.name}
-                          className={`${getRandomBadgeColor(skill.name)}`}
-                        />
+                      <div className="flex items-center gap-1">
+                        <Tag label={skill.name} />
                         {isEdit && (
                           <LucideXCircle
-                            className="cursor-pointer"
+                            className="cursor-pointer text-red-500"
                             width={"18px"}
                             onClick={() => removeSkill(skill.name)}
                           />
@@ -1110,16 +1087,8 @@ export default function EmployeeProfilePage() {
               {careerScopes.map((career, index) => (
                 <HoverCard key={index}>
                   <HoverCardTrigger>
-                    <div
-                      className={`flex items-center gap-2 px-3 py-2 rounded-2xl cursor-pointer [&>div>p]:text-xs ${getRandomBadgeColor(
-                        career.name
-                      )}`}
-                    >
-                      <IconLabel
-                        icon={null}
-                        text={career.name}
-                        className={`${getRandomBadgeColor(career.name)}`}
-                      />
+                    <div className="flex items-center gap-1">
+                      <Tag label={career.name} />
                       {isEdit && (
                         <LucideXCircle
                           className="text-muted-foreground cursor-pointer text-red-500"

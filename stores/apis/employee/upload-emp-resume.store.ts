@@ -1,5 +1,5 @@
 import { API_UPLOAD_EMP_RESUME_URL } from "@/utils/constants/apis/employee_url";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { create } from "zustand";
 
 type TUploadEmployeeResumeResponse = {
@@ -22,7 +22,7 @@ export const useUploadEmployeeResumeStore = create<TUploadEmployeeAvatarState>(
 
       try {
         const formData = new FormData();
-        formData.append("resume", _resume);       
+        formData.append("resume", _resume);
 
         const response = await axios.post<TUploadEmployeeResumeResponse>(
           API_UPLOAD_EMP_RESUME_URL(_employeeID),

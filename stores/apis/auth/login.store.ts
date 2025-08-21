@@ -1,21 +1,14 @@
 import { API_AUTH_LOGIN_URL } from "@/utils/constants/apis/auth_url";
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { deleteCookie, setCookie } from "cookies-next";
 import { useGetCurrentUserStore } from "../users/get-current-user.store";
 
-type TLoginResponse = {
-  accessToken: string | null;
-  refreshToken: string | null;
-  message: string | null;
-};
-
-type TLoginState = TLoginResponse & {
+type TLoginState = {
   loading: boolean;
   error: string | null;
-  rememberMe: boolean;
-  isInitialized: boolean;
+  isAuthenticated: boolean;
+  message: string | null;
   login: (
     email: string,
     password: string,
@@ -25,36 +18,15 @@ type TLoginState = TLoginResponse & {
   initialize: () => void;
 };
 
-type TLoginStoreState = {
-  accessToken: string | null;
-  refreshToken: string | null;
-  message: string | null;
-};
-
 export const useLoginStore = create<TLoginState>((set) => ({
-  accessToken: null,
-  refreshToken: null,
-  message: null,
   loading: false,
   error: null,
-  rememberMe: false,
-  isInitialized: false,
+  isAuthenticated: false,
+  message: null,
   initialize: () => {
-    const local = useLocalLoginStore.getState();
-    const session = useSessionLoginStore.getState();
-    const source = local.accessToken ? local : session;
-
-    if (source.accessToken) {
-      set({
-        accessToken: source.accessToken,
-        refreshToken: source.refreshToken,
-        message: source.message,
-        rememberMe: source === local,
-        isInitialized: true
-      });
-    } else {
-      set({ isInitialized: true });
-    }
+    // Authentication state is now determined by HTTP-only cookies
+    // which are handled by the server/middleware
+    set({ isAuthenticated: true });
   },
   login: async (identifier: string, password: string, rememberMe: boolean) => {
     set({ loading: true, error: null });
@@ -67,83 +39,96 @@ export const useLoginStore = create<TLoginState>((set) => ({
       console.log("Login Response: ", response);
       const { accessToken, refreshToken, message } = response.data;
 
-      if (rememberMe) 
-        useLocalLoginStore.setState({ accessToken, refreshToken, message });
-      else 
-        useSessionLoginStore.setState({ accessToken, refreshToken, message });
-      
+      // Set cookies for secure token storage
+      console.log("Setting auth cookies...", {
+        accessToken: !!accessToken,
+        refreshToken: !!refreshToken,
+        rememberMe,
+      });
+
+      setCookie("auth-token", accessToken, {
+        maxAge: rememberMe ? 30 * 24 * 60 * 60 : undefined, // 30 days for "remember me"
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/",
+      });
+
+      setCookie("refresh-token", refreshToken, {
+        maxAge: rememberMe ? 30 * 24 * 60 * 60 : undefined,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/",
+      });
+
+      console.log(
+        "Cookies set, checking document.cookie:",
+        typeof document !== "undefined" ? document.cookie : "N/A"
+      );
+
       set({
-        accessToken,
-        refreshToken,
-        message,
         loading: false,
         error: null,
-        rememberMe: rememberMe,
-        isInitialized: true
+        isAuthenticated: true,
+        message,
       });
-      setCookie('auth-token', accessToken, {
-        maxAge: rememberMe ? 30 * 24 * 60 * 60 : undefined, // 30 days for "remember me"
-        httpOnly: false,
-        secure: process.env.NODE_ENV === 'production',
-        path: '/'
-      })
     } catch (error) {
       if (axios.isAxiosError(error)) {
         set({
           loading: false,
           error: error.response?.data?.message || error.message,
           message: error.response?.data?.message || "Something went wrong",
-          isInitialized: true
+          isAuthenticated: false,
         });
       } else {
         set({
           loading: false,
           error: "An error occurred while login",
           message: "An error occurred while login",
-          isInitialized: true
+          isAuthenticated: false,
         });
       }
     }
   },
   clearToken: () => {
-    localStorage.removeItem("LoginStore-local");
-    sessionStorage.removeItem("LoginStore-session");
-    deleteCookie('auth-token');
+    console.log("Clearing tokens from login store...");
+
+    // Method 1: Use cookies-next library
+    deleteCookie("auth-token", { path: "/" });
+    deleteCookie("refresh-token", { path: "/" });
+    deleteCookie("auth-token");
+    deleteCookie("refresh-token");
+
+    // Method 2: Native browser cookie clearing
+    if (typeof document !== "undefined") {
+      // Clear cookies by setting them to expire in the past
+      document.cookie =
+        "auth-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie =
+        "refresh-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+      // Also try with different domains
+      const hostname = window.location.hostname;
+      document.cookie = `auth-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${hostname};`;
+      document.cookie = `refresh-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${hostname};`;
+      document.cookie = `auth-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${hostname};`;
+      document.cookie = `refresh-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${hostname};`;
+    }
+
+    // Clear local/session storage as well
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("auth-token");
+      localStorage.removeItem("refresh-token");
+      sessionStorage.removeItem("auth-token");
+      sessionStorage.removeItem("refresh-token");
+    }
+
     useGetCurrentUserStore.getState().clearUser();
     set({
-      accessToken: null,
-      refreshToken: null,
+      isAuthenticated: false,
       message: null,
-      rememberMe: false,
-      isInitialized: true
+      error: null,
     });
+
+    console.log("Tokens cleared from login store");
   },
 }));
-
-export const useLocalLoginStore = create<TLoginStoreState>()(
-  persist(
-    (set) => ({
-      accessToken: null,
-      refreshToken: null,
-      message: null,
-    }),
-    {
-      name: "LoginStore-local",
-      storage: createJSONStorage(() => localStorage),
-    }
-  )
-);
-
-export const useSessionLoginStore = create<TLoginStoreState>()(
-  persist(
-    (set) => ({
-      accessToken: null,
-      refreshToken: null,
-      message: null,
-    }),
-    {
-      name: "LoginStore-session",
-      storage: createJSONStorage(() => sessionStorage),
-    }
-  )
-);

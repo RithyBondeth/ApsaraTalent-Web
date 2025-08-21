@@ -3,7 +3,6 @@ import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 import axios from "axios";
 import { deleteCookie, setCookie } from "cookies-next";
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
 import { useGetCurrentUserStore } from "../users/get-current-user.store";
 
 type TVerifyOTPResponse = {
@@ -13,11 +12,11 @@ type TVerifyOTPResponse = {
   
 };
 
-type TVerifyOTPStoreState = TVerifyOTPResponse & {
+type TVerifyOTPStoreState = {
   loading: boolean;
   error: string | null;
-  rememberMe: boolean;
-  isInitialized: boolean;
+  isAuthenticated: boolean;
+  message: string | null;
   verifyOtp: (phone: string, otpCode: string, rememberMe: boolean) => Promise<IUser>;
   clearToken: () => void;
   initialize: () => void;
@@ -26,27 +25,11 @@ type TVerifyOTPStoreState = TVerifyOTPResponse & {
 export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
   loading: false,
   error: null,
+  isAuthenticated: false,
   message: null,
-  accessToken: null,
-  refreshToken: null,
-  rememberMe: false,
-  isInitialized: false,
   initialize: () => {
-    const local = useLocalVerifyOTPStore.getState();
-    const session = useSessionVerifyOTPStore.getState();
-    const source = local.accessToken ? local : session;
-
-    if(source.accessToken) {
-      set({
-        accessToken: source.accessToken,
-        refreshToken: source.refreshToken,
-        message: source.message,
-        rememberMe: source === local,
-        isInitialized: true
-      });
-    } else {
-      set({ isInitialized: true });
-    }
+    // Authentication state is determined by HTTP-only cookies
+    set({ isAuthenticated: true });
   },
   verifyOtp: async (phone: string, otpCode: string, rememberMe: boolean) => {
     set({ loading: true, error: null });
@@ -60,34 +43,27 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
         }
       );
 
-      if(rememberMe) 
-        useLocalVerifyOTPStore.setState({
-          accessToken: response.data.accessToken,
-          refreshToken: response.data.refreshToken,
-          message: response.data.message,
-        });
-      else 
-        useSessionVerifyOTPStore.setState({
-          accessToken: response.data.accessToken,
-          refreshToken: response.data.refreshToken,
-          message: response.data.message,
-        });
-
       set({
         loading: false,
-        accessToken: response.data.accessToken,
-        refreshToken: response.data.refreshToken,
+        isAuthenticated: !!response.data.accessToken,
         message: response.data.message,
-        error: null,
-        rememberMe: rememberMe,
-        isInitialized: true
+        error: null
       });
       setCookie('auth-token', response.data.accessToken, {
         maxAge: rememberMe ? 30 * 24 * 60 * 60 : undefined, // 30 days for "remember me"
-        httpOnly: false,
         secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
         path: '/'
-      })
+      });
+      
+      if (response.data.refreshToken) {
+        setCookie('refresh-token', response.data.refreshToken, {
+          maxAge: rememberMe ? 30 * 24 * 60 * 60 : undefined,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          path: '/'
+        });
+      }
       return response.data.user;
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -96,58 +72,42 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
             ? error.response.data.message.join(", ")
             : error.response?.data?.message || error.message;
 
-        set({ loading: false, error: errorMessage, isInitialized: true });
+        set({ loading: false, error: errorMessage, isAuthenticated: false });
         throw new Error(errorMessage);
       } else {
         set({
           loading: false,
           error: "An error occurred while verifying otp.",
           message: "An error occurred while verifying otp.",
-          isInitialized: true,
+          isAuthenticated: false,
         });
         throw new Error("An error occurred while verifying otp.");
       }
     }
   },
   clearToken: () => {
-    localStorage.removeItem("VerifyOTPStore-local");
-    sessionStorage.removeItem("VerifyOTPStore-session");
+    // Delete cookies with all possible options to ensure removal
+    deleteCookie('auth-token', { path: '/' });
+    deleteCookie('refresh-token', { path: '/' });
+    
+    // Also try to delete without specifying options (fallback)
     deleteCookie('auth-token');
+    deleteCookie('refresh-token');
+    
+    // Clear local/session storage as well
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('auth-token');
+      localStorage.removeItem('refresh-token');
+      sessionStorage.removeItem('auth-token');
+      sessionStorage.removeItem('refresh-token');
+    }
+    
     useGetCurrentUserStore.getState().clearUser();
     set({
-      accessToken: null,
-      refreshToken: null,
+      loading: false,
+      error: null,
+      isAuthenticated: false,
       message: null,
-      rememberMe: false,
-      isInitialized: true,
     });
   },
 }));
-
-export const useLocalVerifyOTPStore = create<TVerifyOTPResponse>()(
-  persist(
-    (set) => ({
-      accessToken: null,
-      refreshToken: null,
-      message: null,
-    }),
-    {
-      name: "VerifyOTPStore-local",
-      storage: createJSONStorage(() => localStorage),
-    }
-  )
-);
-
-export const useSessionVerifyOTPStore = create<TVerifyOTPResponse>()(
-  persist(
-    (set) => ({
-      accessToken: null,
-      refreshToken: null,
-      message: null,
-    }),
-    {
-      name: "VerifyOTPStore-session",
-      storage: createJSONStorage(() => sessionStorage),
-    }
-  )
-);

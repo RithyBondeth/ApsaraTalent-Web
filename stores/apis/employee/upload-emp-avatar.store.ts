@@ -1,5 +1,5 @@
 import { API_UPLOAD_EMP_AVATAR_URL } from "@/utils/constants/apis/employee_url";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { create } from "zustand";
 
 type TUploadEmployeeAvatarResponse = {
@@ -19,7 +19,7 @@ export const useUploadEmployeeAvatarStore = create<TUploadEmployeeAvatarState>(
     error: null,
     uploadAvatar: async (_employeeID: string, _avatar: File) => {
       set({ loading: true, error: null });
-      
+
       try {
         const formData = new FormData();
         formData.append("avatar", _avatar);

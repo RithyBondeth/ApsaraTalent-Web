@@ -20,7 +20,6 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 import CompanyCardSkeleton from "@/components/company/company-card/skeleton";
 import { BannerSkeleton } from "./banner-skeleton";
-import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
 import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store";
 import {
   Dialog,
@@ -40,14 +39,15 @@ import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-c
 
 export default function FeedPage() {
   // Utils
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState<boolean>(false);
   const router = useRouter();
   useEffect(() => setMounted(true), []);
 
   // Theme
   const { resolvedTheme } = useTheme();
-  const currentTheme = mounted ? resolvedTheme : "light";
-  const feedImage = currentTheme === "dark" ? feedBlackSvg : feedWhiteSvg;
+  
+  // Always use light theme initially to prevent hydration mismatch
+  const feedImage = mounted && resolvedTheme === "dark" ? feedBlackSvg : feedWhiteSvg;
   const feedCompanyImage = feedCompanySvg;
 
   // Pop up Dialog
@@ -89,9 +89,6 @@ export default function FeedPage() {
   const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore();
   const getCurrentCompanyLikedStore = useGetCurrentCompanyLikedStore();
   
-  // AccessToken from possible store
-  const accessToken = getUnifiedAccessToken();
-
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const isEmployee = currentUser?.role === "employee";
 
@@ -125,26 +122,35 @@ export default function FeedPage() {
   }
 
   useEffect(() => {
-    if (accessToken) {
-      getCurrentUserStore.getCurrentUser(accessToken);
-      getAllUsersStore.getAllUsers(accessToken);
+    // Only fetch if data is not already loaded (from login page preload)
+    if (!getCurrentUserStore.user) {
+      getCurrentUserStore.getCurrentUser();
     }
-  }, [accessToken]);
+    if (!getAllUsersStore.users || getAllUsersStore.users.length === 0) {
+      getAllUsersStore.getAllUsers();
+    }
+  }, []);
 
   useEffect(() => {
     if (currentUser && currentUser.employee && isEmployee) {
-      getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(currentUser.employee.id);
-      if (accessToken) {
-        getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(currentUser.employee.id, accessToken);
+      // Only fetch if not already loaded from login preload
+      if (!getCurrentEmployeeLikedStore.currentEmployeeLiked) {
+        getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(currentUser.employee.id);
+      }
+      if (!getAllEmployeeFavoritesStore.companyData || getAllEmployeeFavoritesStore.companyData.length === 0) {
+        getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(currentUser.employee.id);
       }
     } 
     if (currentUser && currentUser.company && !isEmployee) {
-      getCurrentCompanyLikedStore.queryCurrentCompanyLiked(currentUser.company.id);
-      if (accessToken) {
-        getAllCompanyFavoritesStore.queryAllCompanyFavorites(currentUser.company.id, accessToken);
+      // Only fetch if not already loaded from login preload
+      if (!getCurrentCompanyLikedStore.currentCompanyLiked) {
+        getCurrentCompanyLikedStore.queryCurrentCompanyLiked(currentUser.company.id);
+      }
+      if (!getAllCompanyFavoritesStore.employeeData || getAllCompanyFavoritesStore.employeeData.length === 0) {
+        getAllCompanyFavoritesStore.queryAllCompanyFavorites(currentUser.company.id);
       }
     }
-  }, [currentUser]);
+  }, [currentUser, isEmployee]);
 
   const favoritedCompanyIds = useMemo(() => {
     const ids = getAllEmployeeFavoritesStore.companyData?.map((fav) => fav.company.id) ?? [];
@@ -156,10 +162,18 @@ export default function FeedPage() {
     return new Set(ids);
   }, [getAllCompanyFavoritesStore.employeeData]);
 
+  // Show loading state during hydration and initial data loading
+  const showLoadingState = !mounted || 
+    getCurrentUserStore.loading || 
+    !getAllUsersStore.users || 
+    !getCurrentUserStore.user ||
+    (isEmployee && getCurrentEmployeeLikedStore.loading) ||
+    (!isEmployee && getCurrentCompanyLikedStore.loading);
+
   return (
     <div className="w-full flex flex-col items-start gap-5">
       {/* Header Section */}
-      {getCurrentUserStore.loading ? (
+      {showLoadingState ? (
         <BannerSkeleton />
       ) : isEmployee ? (
         <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
@@ -198,21 +212,29 @@ export default function FeedPage() {
               Post jobs, review profiles, and hire faster — all in one place
             </TypographyMuted>
           </div>
-          <Image
-            src={feedImage}
-            alt="feed"
-            height={300}
-            width={400}
-            className="tablet-xl:!w-full"
-          />
+          {mounted ? (
+            <Image
+              src={feedImage}
+              alt="feed"
+              height={300}
+              width={400}
+              className="tablet-xl:!w-full"
+            />
+          ) : (
+            <Image
+              src={feedWhiteSvg}
+              alt="feed"
+              height={300}
+              width={400}
+              className="tablet-xl:!w-full"
+            />
+          )}
         </div>
       )}
 
       {/* Feed Card Section */}
       <div className="w-full grid grid-cols-3 gap-5 tablet-lg:grid-cols-1">
-        {getAllUsersStore.loading ||
-        !getAllUsersStore.users ||
-        !getCurrentUserStore.user ? (
+        {showLoadingState ? (
           Array.from({ length: 6 }).map((_, index) =>
             currentUserRole === "company" ? (
               <EmployeeCardSkeleton key={`user-skeleton-${index}`} />
@@ -231,18 +253,17 @@ export default function FeedPage() {
                 onSaveClick={async () => {
                   const employeeId = currentUser?.employee?.id;
                   const companyId = user.company?.id;
-                  if (!employeeId || !companyId || !accessToken) return;
+                  if (!employeeId || !companyId) return;
                   try {
                     await employeeFavCompanyStore.addCompanyToFavorite(
                       employeeId,
-                      companyId,
-                      accessToken
+                      companyId
                     );
                     toast({ title: "Saved", description: "Company added to favorites." });
                     setSavedCompanyIds((prev) => new Set(prev).add(user.id));
                     // Refresh favorites to persist hidden state across reloads
-                    await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(employeeId, accessToken);
-                  } catch (e) {
+                    await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(employeeId);
+                  } catch {
                     const err = employeeFavCompanyStore.error || "Failed to save company";
                     toast({ title: "Error", description: err, variant: "destructive" });
                   }
@@ -279,18 +300,17 @@ export default function FeedPage() {
                 onSaveClick={async () => {
                   const companyId = currentUser?.company?.id;
                   const employeeId = user.employee?.id;
-                  if (!companyId || !employeeId || !accessToken) return;
+                  if (!companyId || !employeeId) return;
                   try {
                     await companyFavEmployeeStore.addEmployeeToFavorite(
                       companyId,
-                      employeeId,
-                      accessToken
+                      employeeId
                     );
                     toast({ title: "Saved", description: "Employee added to favorites." });
                     setSavedEmployeeIds((prev) => new Set(prev).add(user.id));
                     // Refresh favorites to persist hidden state across reloads
-                    await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyId, accessToken);
-                  } catch (e) {
+                    await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyId);
+                  } catch {
                     const err = companyFavEmployeeStore.error || "Failed to save employee";
                     toast({ title: "Error", description: err, variant: "destructive" });
                   }
@@ -323,7 +343,7 @@ export default function FeedPage() {
             ) : null
           )
         ) : (
-          <div className="col-span-2 flex justify-center items-center py-10">
+          <div className="col-span-3 tablet-lg:col-span-1 flex justify-center items-center py-10">
             <TypographyMuted>No users found</TypographyMuted>
           </div>
         )}

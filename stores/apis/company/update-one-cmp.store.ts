@@ -1,7 +1,6 @@
 import { API_UPDATE_CMP_INFO_URL } from "@/utils/constants/apis/company_url";
 import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
-import { IUser } from "@/utils/interfaces/user-interface/user.interface";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { create } from "zustand";
 
 type TUpdateOneCompanyResponse = {
@@ -19,8 +18,7 @@ type TUpdateOneCompanyState = TUpdateOneCompanyResponse & {
   error: string | null;
   updateOneCompany: (
     companyID: string,
-    body: TCompanyUpdateBody,
-    token: string
+    body: TCompanyUpdateBody
   ) => Promise<void>;
 };
 
@@ -30,11 +28,7 @@ export const useUploadOneCompanyStore = create<TUpdateOneCompanyState>(
     company: null,
     error: null,
     loading: false,
-    updateOneCompany: async (
-      companyID: string,
-      body: TCompanyUpdateBody,
-      token: string
-    ) => {
+    updateOneCompany: async (companyID: string, body: TCompanyUpdateBody) => {
       set({ loading: true, error: null });
       try {
         const response = await axios.post<TUpdateOneCompanyResponse>(
@@ -49,40 +43,42 @@ export const useUploadOneCompanyStore = create<TUpdateOneCompanyState>(
             location: body.location,
             companySize: body.companySize,
             foundedYear: body.foundedYear,
-            jobs: body.openPositions.map((job) => ({
-              title: job.title,
-              description: job.description,
-              type: job.type,
-              experienceRequired: job.experience,
-              educationRequired: job.education,
-              salary: job.salary,
-              expireDate: job.deadlineDate,
-              skillsRequired: job.skills,
-            })) ?? [],
-            benefits: body.benefits.map((benefit) => ({
-              label: benefit.label,
-            })) ?? [],
-            values: body.values.map((value) => ({
-              label: value,
-            })) ?? [],
-            careerScopes: body.careerScopes.map((cs) => ({
-              name: cs.name,
-              description: cs.description,
-            })) ?? [],
-            socials: body.socials.map((social) => ({
-              platform: social.platform,
-              url: social.url,
-            })) ?? [],
-          },
-          {
-            headers: { Authorization: `Bearer ${token}` },
+            jobs:
+              body.openPositions.map((job) => ({
+                title: job.title,
+                description: job.description,
+                type: job.type,
+                experienceRequired: job.experience,
+                educationRequired: job.education,
+                salary: job.salary,
+                expireDate: job.deadlineDate,
+                skillsRequired: job.skills,
+              })) ?? [],
+            benefits:
+              body.benefits.map((benefit) => ({
+                label: benefit.label,
+              })) ?? [],
+            values:
+              body.values.map((value) => ({
+                label: value,
+              })) ?? [],
+            careerScopes:
+              body.careerScopes.map((cs) => ({
+                name: cs.name,
+                description: cs.description,
+              })) ?? [],
+            socials:
+              body.socials.map((social) => ({
+                platform: social.platform,
+                url: social.url,
+              })) ?? [],
           }
         );
         set({
-            message: response.data.message,
-            company: response.data.company,
-            loading: false,
-            error: null
+          message: response.data.message,
+          company: response.data.company,
+          loading: false,
+          error: null,
         });
       } catch (error) {
         if (axios.isAxiosError(error)) {

@@ -9,7 +9,7 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { useGetAllTemplateStore } from "@/stores/apis/resume/get-all-template.store";
 import { useTemplateSelectionStore } from "@/stores/apis/resume/template-selection.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
+
 import { useEffect, useState } from "react";
 import { buildResumePayloadFromUser } from "./_utils/build-payload";
 import { generateResumeAPI } from "./_apis/generate-resume.api";
@@ -19,13 +19,13 @@ import { ClipLoader } from "react-spinners";
 
 export default function ResumeBuilder() {
   const { templateData, queryAllTemplates } = useGetAllTemplateStore();
-  const accessToken = getUnifiedAccessToken();
+  
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
-    if (accessToken) queryAllTemplates(accessToken);
-  }, [accessToken]);
+    queryAllTemplates();
+  }, [queryAllTemplates]);
 
   const { setSelectedTemplate, selectedTemplate } = useTemplateSelectionStore();
 

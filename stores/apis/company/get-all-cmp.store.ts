@@ -1,6 +1,6 @@
 import { API_GET_ALL_CMP_URL } from "@/utils/constants/apis/company_url";
 import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { create } from "zustand";
 
 type TGetAllCompanyState = {

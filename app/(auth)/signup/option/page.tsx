@@ -33,36 +33,54 @@ export default function SingUpOption() {
         resolver: zodResolver(signupOptionSchema)
     });
     const onSubmit = (data: TSignupOptionSchema) => {
+        console.log("Form submitted with role:", data.selectedRole);
+        console.log("Store states:", {
+            basicPhoneSignupData: !!basicPhoneSignupData,
+            basicSignupData: !!basicSignupData,
+            googleNewUser: googleUserData.newUser && !googleUserData.isAuthenticated,
+            linkedInNewUser: linkedInUserData.newUser && !linkedInUserData.isAuthenticated,
+            githubNewUser: githubUserData.newUser && !githubUserData.isAuthenticated,
+            facebookNewUser: facebookUserData.newUser && !facebookUserData.isAuthenticated
+        });
+
+        // Check different signup flows and navigate accordingly
         if(basicPhoneSignupData) {
             console.log("Basic Phone Signup Data: ", { ...basicPhoneSignupData, role: data.selectedRole });
             setBasicPhoneSignupData({ ...basicPhoneSignupData, role: data.selectedRole });
             router.push(`/signup/${data.selectedRole}`);
+            return;
         } 
-        if(basicSignupData) {
-            console.log("Basic Signup Data: ", { selectedRole: data.selectedRole });
-            setBasicSignupData({ selectedRole: data.selectedRole });
-            router.push('/signup');
-        }
-        if(googleUserData.newUser && !googleUserData.accessToken) {
+        
+        if(googleUserData.newUser && !googleUserData.isAuthenticated) {
             console.log("Basic Google Data: ", { selectedRole: data.selectedRole });
             googleUserData.setRole(data.selectedRole as TUserRole);
             router.push(`/signup`);
+            return;
         }   
-        if(linkedInUserData.newUser && !linkedInUserData.accessToken) {
+        
+        if(linkedInUserData.newUser && !linkedInUserData.isAuthenticated) {
             console.log("Basic LinkedIn Data: ", { selectedRole: data.selectedRole });
             linkedInUserData.setRole(data.selectedRole as TUserRole);
             router.push(`/signup`);
+            return;
         }
-        if(githubUserData.newUser && !githubUserData.accessToken) {
+        
+        if(githubUserData.newUser && !githubUserData.isAuthenticated) {
             console.log("Basic Github Data: ", { selectedRole: data.selectedRole });
             githubUserData.setRole(data.selectedRole as TUserRole);
             router.push(`/signup`);
+            return;
         }
-        if(facebookUserData.newUser && !facebookUserData.accessToken) {
+        
+        if(facebookUserData.newUser && !facebookUserData.isAuthenticated) {
             console.log("Basic Facebook Data: ", { selectedRole: data.selectedRole });
             facebookUserData.setRole(data.selectedRole as TUserRole);
             router.push(`/signup`);
+            return;
         }
+
+        setBasicSignupData({ selectedRole: data.selectedRole });
+        router.push('/signup');
     }
 
     return (

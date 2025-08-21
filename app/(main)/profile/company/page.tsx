@@ -86,11 +86,6 @@ import {
   ISocial,
 } from "@/utils/interfaces/user-interface/company.interface";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import {
-  useLocalLoginStore,
-  useLoginStore,
-  useSessionLoginStore,
-} from "@/stores/apis/auth/login.store";
 import { CompanyProfilePageSkeleton } from "./skeleton";
 
 export default function ProfilePage() {
@@ -141,9 +136,13 @@ export default function ProfilePage() {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
-  const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(null);
+  const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(
+    null
+  );
   const [openPositions, setOpenPositions] = useState<IJobPosition[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>("");
+  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
+    ""
+  );
   const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
   const [benefitInput, setBenefitInput] = useState<string>("");
   const [benefits, setBenefits] = useState<{ label: string }[]>([]);
@@ -153,7 +152,10 @@ export default function ProfilePage() {
   const [openCareersPopOver, setOpenCareersPopOver] = useState<boolean>(false);
   const [careersInput, setCareersInput] = useState<string>("");
   const [careers, setCareers] = useState<ICareerScopes[]>([]);
-  const [socialInput, setSocialInput] = useState<{ social: string; link: string; }>({ social: "", link: "" });
+  const [socialInput, setSocialInput] = useState<{
+    social: string;
+    link: string;
+  }>({ social: "", link: "" });
   const [socials, setSocials] = useState<ISocial[]>([]);
   const [selectedDates, setSelectedDates] = useState<
     Record<string, { posted?: Date; deadline?: Date }>
@@ -168,29 +170,9 @@ export default function ProfilePage() {
 
   // All useEffect hooks
   useEffect(() => {
-    const local = useLocalLoginStore.getState();
-    const session = useSessionLoginStore.getState();
-    const source = local.accessToken ? local : session;
-
-    if (source.accessToken) {
-      useLoginStore.setState({
-        accessToken: source.accessToken,
-        refreshToken: source.refreshToken,
-        message: source.message,
-        rememberMe: source === local,
-      });
-      getCurrentUser(source.accessToken);
-    }
-
-    // Subscribe to accessToken changes
-    const unsub = useLoginStore.subscribe((state) => {
-      if (state.accessToken) {
-        getCurrentUser(state.accessToken);
-      }
-    });
-
-    return () => unsub();
-  }, [getCurrentUser]);
+    // Get current user with HTTP-only cookies
+    getCurrentUser();
+  }, []);
 
   useEffect(() => {
     if (user && company) {
@@ -858,84 +840,89 @@ export default function ProfilePage() {
             </div>
           </div>
           {/* Company Multiple Images Section */}
-          {((company.images && company.images?.length > 0) || isEdit) && (<div className="w-full p-5 border-[1px] border-muted rounded-md">
-            <div className="flex flex-col gap-1">
-              <TypographyH4>Company Images Information</TypographyH4>
-              <Divider />
-            </div>
-            <Carousel className="w-full">
-              <CarouselContent className="w-full">
-                {form.watch("images")?.map((img, index) => {
-                  let imageUrl = "";
+          {((company.images && company.images?.length > 0) || isEdit) && (
+            <div className="w-full p-5 border-[1px] border-muted rounded-md">
+              <div className="flex flex-col gap-1">
+                <TypographyH4>Company Images Information</TypographyH4>
+                <Divider />
+              </div>
+              <Carousel className="w-full">
+                <CarouselContent className="w-full">
+                  {form.watch("images")?.map((img, index) => {
+                    let imageUrl = "";
 
-                  if (typeof img === "string") {
-                    imageUrl = img;
-                  } else if (img instanceof File) {
-                    imageUrl = URL.createObjectURL(img);
-                  }
+                    if (typeof img === "string") {
+                      imageUrl = img;
+                    } else if (img instanceof File) {
+                      imageUrl = URL.createObjectURL(img);
+                    }
 
-                  return (
-                    <CarouselItem
-                      key={index}
-                      className="max-w-[280px] relative"
-                    >
-                      <div
-                        onClick={(e) => {
-                          if (!isEdit) {
-                            handleClickImagePopup(e);
-                            setCurrentCompanyImage(img!.toString());
-                          }
-                        }}
-                        className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center"
-                        style={{ backgroundImage: `url(${imageUrl})` }}
-                      />
-                      {isEdit && (
-                        <LucideXCircle
-                          className="absolute top-3 right-1 cursor-pointer text-red-500"
-                          onClick={() => {
-                            const updated = form
-                              .watch("images")
-                              ?.filter((_, i) => i !== index);
-                            form.setValue("images", updated);
+                    return (
+                      <CarouselItem
+                        key={index}
+                        className="max-w-[280px] relative"
+                      >
+                        <div
+                          onClick={(e) => {
+                            if (!isEdit) {
+                              handleClickImagePopup(e);
+                              setCurrentCompanyImage(img!.toString());
+                            }
+                          }}
+                          className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center"
+                          style={{ backgroundImage: `url(${imageUrl})` }}
+                        />
+                        {isEdit && (
+                          <LucideXCircle
+                            className="absolute top-3 right-1 cursor-pointer text-red-500"
+                            onClick={() => {
+                              const updated = form
+                                .watch("images")
+                                ?.filter((_, i) => i !== index);
+                              form.setValue("images", updated);
+                            }}
+                          />
+                        )}
+                      </CarouselItem>
+                    );
+                  })}
+                  {isEdit && (
+                    <CarouselItem className="max-w-[280px]">
+                      <label
+                        htmlFor="image-upload"
+                        className="h-[180px] bg-muted rounded-md my-2 ml-2 flex justify-center items-center cursor-pointer"
+                      >
+                        <input
+                          id="image-upload"
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const files = e.target.files;
+                            if (!files) return;
+
+                            const currentImages = form.watch("images") || [];
+                            form.setValue("images", [
+                              ...currentImages,
+                              files[0],
+                            ]);
                           }}
                         />
-                      )}
+                        <div className="flex flex-col items-center gap-2">
+                          <LucidePlus className="text-muted-foreground" />
+                          <TypographyMuted className="text-xs">
+                            Add Company Image
+                          </TypographyMuted>
+                        </div>
+                      </label>
                     </CarouselItem>
-                  );
-                })}
-                {isEdit && (
-                  <CarouselItem className="max-w-[280px]">
-                    <label
-                      htmlFor="image-upload"
-                      className="h-[180px] bg-muted rounded-md my-2 ml-2 flex justify-center items-center cursor-pointer"
-                    >
-                      <input
-                        id="image-upload"
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => {
-                          const files = e.target.files;
-                          if (!files) return;
-
-                          const currentImages = form.watch("images") || [];
-                          form.setValue("images", [...currentImages, files[0]]);
-                        }}
-                      />
-                      <div className="flex flex-col items-center gap-2">
-                        <LucidePlus className="text-muted-foreground" />
-                        <TypographyMuted className="text-xs">
-                          Add Company Image
-                        </TypographyMuted>
-                      </div>
-                    </label>
-                  </CarouselItem>
-                )}
-              </CarouselContent>
-              <CarouselPrevious className="ml-8" />
-              <CarouselNext className="mr-8" />
-            </Carousel>
-          </div>)}
+                  )}
+                </CarouselContent>
+                <CarouselPrevious className="ml-8" />
+                <CarouselNext className="mr-8" />
+              </Carousel>
+            </div>
+          )}
         </div>
         <div className="w-[40%] flex flex-col gap-5">
           <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
@@ -1054,13 +1041,14 @@ export default function ProfilePage() {
                 {benefits &&
                   benefits.map((benefit) => (
                     <div
-                      className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted [&>div>p]:text-xs"
+                      className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs"
                       key={benefit.label}
                     >
                       <IconLabel
                         icon={
                           <LucideCircleCheck stroke="white" fill="#0073E6" />
                         }
+                        className="[&>p]:text-[#0073E6] font-medium"
                         text={benefit.label}
                       />
                       {isEdit && (
@@ -1123,6 +1111,7 @@ export default function ProfilePage() {
                         icon={
                           <LucideCircleCheck stroke="white" fill="#69B41E" />
                         }
+                        className="[&>p]:text-[#69B41E] font-medium"
                         text={value.label}
                       />
                       {isEdit && (
@@ -1303,7 +1292,10 @@ export default function ProfilePage() {
                             </TypographyMuted>
                             <Select
                               onValueChange={(value: string) =>
-                                setSocialInput({ ...socialInput, social: value })
+                                setSocialInput({
+                                  ...socialInput,
+                                  social: value,
+                                })
                               }
                               value={socialInput.social}
                             >

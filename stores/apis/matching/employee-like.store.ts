@@ -1,7 +1,7 @@
 import { API_MATCHING_EMP_LIKE_URL } from "@/utils/constants/apis/matching_url";
 import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { create } from "zustand";
 
 type TEmployeeLikeResponse = {

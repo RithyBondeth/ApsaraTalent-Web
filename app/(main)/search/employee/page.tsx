@@ -29,14 +29,10 @@ import { TLocations } from "@/utils/types/location.type";
 import { SearchErrorCard } from "@/components/search/search-error-card";
 import { TAvailability } from "@/utils/types/availability.type";
 import { debounce } from "lodash";
-import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
+
 
 export default function SearchPage() {
   const { error, loading, jobs, querySearchJobs } = useSearchJobStore();
-  const accessToken = getUnifiedAccessToken();
-  const getCurrentUser = useGetCurrentUserStore(
-    (state) => state.getCurrentUser
-  );
   const [scopeNames, setScopeNames] = useState<string[]>([]);
 
   const { register, control, setValue, handleSubmit } =
@@ -57,7 +53,6 @@ export default function SearchPage() {
     });
 
   const onSubmit = (data: TEmployeeSearchSchema) => {
-    if (!accessToken) return;
 
     const normalizedJobType = data.jobType === "all" ? undefined : data.jobType;
     const normalizedLocation = data.location === "all" ? undefined : data.location;
@@ -67,26 +62,23 @@ export default function SearchPage() {
         ? { min: undefined, max: undefined }
         : data.experienceLevel;
 
-    querySearchJobs(
-      {
-        careerScopes: scopeNames,
-        keyword: data.keyword,
-        location: normalizedLocation,
-        jobType: normalizedJobType,
-        companySizeMin: data.companySize?.min,
-        companySizeMax: data.companySize?.max,
-        postedDateFrom: data.date?.from?.toISOString(),
-        postedDateTo: data.date?.to?.toISOString(),
-        salaryMin: data.salaryRange?.min,
-        salaryMax: data.salaryRange?.max,
-        educationRequired: normalizedEducation,
-        experienceRequiredMin: normalizedExperience.min,
-        experienceRequiredMax: normalizedExperience.max,
-        sortBy: data.sortBy,
-        sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
-      },
-      accessToken
-    );
+    querySearchJobs({
+      careerScopes: scopeNames,
+      keyword: data.keyword,
+      location: normalizedLocation,
+      jobType: normalizedJobType,
+      companySizeMin: data.companySize?.min,
+      companySizeMax: data.companySize?.max,
+      postedDateFrom: data.date?.from?.toISOString(),
+      postedDateTo: data.date?.to?.toISOString(),
+      salaryMin: data.salaryRange?.min,
+      salaryMax: data.salaryRange?.max,
+      educationRequired: normalizedEducation,
+      experienceRequiredMin: normalizedExperience.min,
+      experienceRequiredMax: normalizedExperience.max,
+      sortBy: data.sortBy,
+      sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
+    });
   };
 
   const debouncedSubmit = useMemo(
@@ -96,8 +88,6 @@ export default function SearchPage() {
 
   useEffect(() => {
     const fetchUserAndJobs = async () => {
-      if (!accessToken) return;
-      await getCurrentUser(accessToken);
       const user = useGetCurrentUserStore.getState().user;
       const scopes =
         user?.role === "company"
@@ -105,17 +95,14 @@ export default function SearchPage() {
           : user?.employee?.careerScopes;
       const names = scopes?.map((cs) => cs.name) ?? [];
       setScopeNames(names);
-      querySearchJobs(
-        {
-          careerScopes: names,
-          sortBy: "title",
-          sortOrder: "DESC",
-        },
-        accessToken
-      );
+      querySearchJobs({
+        careerScopes: names,
+        sortBy: "title",
+        sortOrder: "DESC",
+      });
     };
     fetchUserAndJobs();
-  }, [accessToken]);
+  }, []);
 
   useEffect(() => {
     return () => {

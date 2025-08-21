@@ -19,11 +19,18 @@ export type TLinkedInLoginResponse = {
   role: string | null;
 };
 
-export type TLinkedInLoginState = TLinkedInLoginResponse & {
+export type TLinkedInLoginState = {
   loading: boolean;
   error: string | null;
-  isInitialized: boolean;
-  rememberMe: boolean;
+  isAuthenticated: boolean;
+  message: string | null;
+  role: string | null;
+  newUser: boolean | null;
+  email: string | null;
+  firstname: string | null;
+  lastname: string | null;
+  picture: string | null;
+  provider: string | null;
   setRole: (role: TUserRole) => void;
   linkedinLogin: (rememberMe: boolean, usePopup?: boolean) => void;
   initialize: () => void;
@@ -31,67 +38,71 @@ export type TLinkedInLoginState = TLinkedInLoginResponse & {
 };
 
 // --- Constants ---
-const FRONTEND_ORIGIN = typeof window !== "undefined" ? window.location.origin : "";
 const BACKEND_ORIGIN = API_AUTH_SOCIAL_LINKEDIN_URL.split("/social")[0];
 
 // --- Shared Logic ---
 const FINISH_LOGIN = (data: TLinkedInLoginResponse, rememberMe: boolean) => {
   if (!data) return;
 
+  // Update Zustand in-memory store
   useLinkedInLoginStore.setState({
-    ...data,
     loading: false,
-    isInitialized: true,
-    rememberMe,
+    isAuthenticated: !!data.accessToken,
+    message: data.message,
+    role: data.role,
+    newUser: data.newUser,
+    email: data.email,
+    firstname: data.firstname,
+    lastname: data.lastname,
+    picture: data.picture,
+    provider: data.provider,
   });
 
+  // Set HTTP-only cookies if accessToken exists
   if (data.accessToken) {
-    const setter = rememberMe
-      ? useLocalLinkedInLoginStore.setState
-      : useSessionLinkedInLoginStore.setState;
-
-    setter({ ...data });
-
     setCookie("auth-token", data.accessToken, {
-      httpOnly: false,
+      maxAge: rememberMe ? 30 * 24 * 60 * 60 : undefined,
+
       secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
       path: "/",
     });
+
+    if (data.refreshToken) {
+      setCookie("refresh-token", data.refreshToken, {
+        maxAge: rememberMe ? 30 * 24 * 60 * 60 : undefined,
+
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/",
+      });
+    }
   }
 };
 
 // --- Main Store ---
 export const useLinkedInLoginStore = create<TLinkedInLoginState>((set) => ({
-  newUser: null,
+  loading: false,
+  error: null,
+  isAuthenticated: false,
   message: null,
-  accessToken: null,
-  refreshToken: null,
+  role: null,
+  newUser: null,
   email: null,
   firstname: null,
   lastname: null,
   picture: null,
   provider: null,
-  role: null,
-  loading: false,
-  error: null,
-  isInitialized: false,
-  rememberMe: false,
 
   setRole: (role: TUserRole) => set({ role }),
 
   initialize: () => {
-    const local = useLocalLinkedInLoginStore.getState();
-    const session = useSessionLinkedInLoginStore.getState();
-    const src = local.accessToken ? local : session;
-    if (src.accessToken) {
-      set({ ...src, rememberMe: src === local, isInitialized: true });
-    } else {
-      set({ isInitialized: true });
-    }
+    // Authentication state is determined by HTTP-only cookies
+    set({ isAuthenticated: true });
   },
 
   linkedinLogin: (rememberMe: boolean, usePopup = true) => {
-    set({ loading: true, error: null, rememberMe });
+    set({ loading: true, error: null });
 
     const url = API_AUTH_SOCIAL_LINKEDIN_URL;
 
@@ -109,7 +120,13 @@ export const useLinkedInLoginStore = create<TLinkedInLoginState>((set) => ({
     const handler = (ev: MessageEvent<TLinkedInLoginResponse>) => {
       if (ev.origin !== BACKEND_ORIGIN) return;
       window.removeEventListener("message", handler);
-      popup.close();
+      try {
+        if (popup) {
+          popup.close();
+        }
+      } catch (error) {
+        console.debug("Popup close handled by browser security policy");
+      }
       console.log("LinkedIn Data Response: ", ev.data);
       FINISH_LOGIN(ev.data, rememberMe);
     };
@@ -118,68 +135,35 @@ export const useLinkedInLoginStore = create<TLinkedInLoginState>((set) => ({
   },
 
   clearToken: () => {
-    localStorage.removeItem("LinkedInLoginStore-local");
-    sessionStorage.removeItem("LinkedInLoginStore-session");
+    // Delete cookies with all possible options to ensure removal
+    deleteCookie("auth-token", { path: "/" });
+    deleteCookie("refresh-token", { path: "/" });
+
+    // Also try to delete without specifying options (fallback)
     deleteCookie("auth-token");
+    deleteCookie("refresh-token");
+
+    // Clear local/session storage as well
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("auth-token");
+      localStorage.removeItem("refresh-token");
+      sessionStorage.removeItem("auth-token");
+      sessionStorage.removeItem("refresh-token");
+    }
+
     useGetCurrentUserStore.getState().clearUser();
     set({
-      newUser: null,
+      loading: false,
+      error: null,
+      isAuthenticated: false,
       message: null,
-      accessToken: null,
-      refreshToken: null,
+      role: null,
+      newUser: null,
       email: null,
       firstname: null,
       lastname: null,
       picture: null,
       provider: null,
-      loading: false,
-      error: null,
-      rememberMe: false,
-      isInitialized: true,
     });
   },
 }));
-
-// --- Persistent Local Store ---
-export const useLocalLinkedInLoginStore = create(
-  persist<TLinkedInLoginResponse>(
-    () => ({
-      newUser: null,
-      message: null,
-      accessToken: null,
-      refreshToken: null,
-      email: null,
-      firstname: null,
-      lastname: null,
-      picture: null,
-      provider: null,
-      role: null,
-    }),
-    {
-      name: "LinkedInLoginStore-local",
-      storage: createJSONStorage(() => localStorage),
-    },
-  ),
-);
-
-// --- Persistent Session Store ---
-export const useSessionLinkedInLoginStore = create(
-  persist<TLinkedInLoginResponse>(
-    () => ({
-      newUser: null,
-      message: null,
-      accessToken: null,
-      refreshToken: null,
-      email: null,
-      firstname: null,
-      lastname: null,
-      picture: null,
-      provider: null,
-      role: null,
-    }),
-    {
-      name: "LinkedInLoginStore-session",
-      storage: createJSONStorage(() => sessionStorage),
-    },
-  ),
-);

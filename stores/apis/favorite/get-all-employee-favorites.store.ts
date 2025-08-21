@@ -1,6 +1,6 @@
 import { API_FIND_ALL_EMPLOYEE_FAVORITES } from "@/utils/constants/apis/favorite_url";
 import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { create } from "zustand";
 
 export type TGetAllEmployeeFavoritesResponse = {
@@ -13,10 +13,7 @@ export type TGetAllEmployeeFavoritesState = {
   companyData: TGetAllEmployeeFavoritesResponse[] | null;
   loading: boolean;
   error: string | null;
-  queryAllEmployeeFavorites: (
-    employeeID: string,
-    accessToken: string
-  ) => Promise<void>;
+  queryAllEmployeeFavorites: (employeeID: string) => Promise<void>;
 };
 
 export const useGetAllEmployeeFavoritesStore =
@@ -24,16 +21,12 @@ export const useGetAllEmployeeFavoritesStore =
     companyData: null,
     loading: false,
     error: null,
-    queryAllEmployeeFavorites: async (
-      employeeID: string,
-      accessToken: string
-    ) => {
+    queryAllEmployeeFavorites: async (employeeID: string) => {
       set({ loading: true, error: null });
 
       try {
         const response = await axios.get<TGetAllEmployeeFavoritesResponse[]>(
-          API_FIND_ALL_EMPLOYEE_FAVORITES(employeeID),
-          { headers: { Authorization: `Bearer ${accessToken}` } }
+          API_FIND_ALL_EMPLOYEE_FAVORITES(employeeID)
         );
         set({ loading: false, error: null, companyData: response.data });
       } catch (error) {

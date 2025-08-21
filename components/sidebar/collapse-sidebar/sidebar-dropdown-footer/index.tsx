@@ -48,13 +48,14 @@ import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.sto
 import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
 import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
 import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
+import { clearAuthCookies, clearAuthCookiesServerSide } from "@/utils/auth/cookie-manager";
 
 export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
   const { isMobile } = useSidebar()
   const { theme, toggleTheme } = useThemeStore();
   const { resolvedTheme, setTheme } = useTheme();
   const router = useRouter();
-  const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
+  const [openLogoutDialog, setOpenLogoutDialog] = useState<boolean>(false);
 
   useEffect(() => {
       setTheme(theme)
@@ -64,33 +65,28 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
   const currentUser = useGetCurrentUserStore((state) => state.user);
   
   const normalLogout = useLoginStore((state) => state.clearToken);
-  const normalAccessToken = useLoginStore((state) => state.accessToken);
-  
   const otpLogout = useVerifyOTPStore((state) => state.clearToken);
-  const otpAccessToken = useVerifyOTPStore((state) => state.accessToken);
-
   const googleLogout = useGoogleLoginStore((state) => state.clearToken);
-  const googleAccessToken = useGoogleLoginStore((state) => state.accessToken);
-
-  const githubLogout = useGithubLoginStore((state) => state.clearToken); 
-  const githubAccessToken = useGithubLoginStore((state) => state.accessToken);
-
+  const githubLogout = useGithubLoginStore((state) => state.clearToken);
   const linkedInLogout = useLinkedInLoginStore((state) => state.clearToken);
-  const linkedInAccessToken = useLinkedInLoginStore((state) => state.accessToken);
-
   const facebookLogout = useFacebookLoginStore((state) => state.clearToken);
-  const facebookAccessToken = useFacebookLoginStore((state) => state.accessToken);
 
   const handleLogout = async () => {
     setOpenLogoutDialog(false);
-   
-    if(normalAccessToken) normalLogout();
-    if(otpAccessToken) otpLogout();    
-    if(googleAccessToken) googleLogout();
-    if(githubAccessToken) githubLogout();
-    if(linkedInAccessToken) linkedInLogout();
-    if(facebookAccessToken) facebookLogout();
+         
+    // Clear all potential authentication tokens from stores
+    normalLogout();
+    otpLogout();    
+    googleLogout();
+    githubLogout();
+    linkedInLogout();
+    facebookLogout();
 
+    // Try server-side cookie clearing first (for httpOnly cookies)
+    await clearAuthCookiesServerSide();
+    
+    // Also try client-side clearing as backup
+    clearAuthCookies();
     router.push("/")
   }
   

@@ -1,4 +1,5 @@
 "use client";
+
 import CollapseSidebar from "@/components/sidebar/collapse-sidebar";
 import RightSidebar from "@/components/sidebar/right-sidebar";
 import { Button } from "@/components/ui/button";
@@ -19,7 +20,6 @@ import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useInitializeAuth } from "@/hooks/use-initialize-auth";
-import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
 
 export default function MainLayout({
   children,
@@ -31,8 +31,8 @@ export default function MainLayout({
   const { theme } = useThemeStore();
   const { getCurrentUser } = useGetCurrentUserStore();
   const currentUser = useGetCurrentUserStore((s) => s.user);
-  const [mounted, setMounted] = useState(false);
-  const accessToken = mounted ? getUnifiedAccessToken() : null;
+
+  const [mounted, setMounted] = useState<boolean>(false);
 
   useInitializeAuth();
 
@@ -41,10 +41,10 @@ export default function MainLayout({
   }, []);
 
   useEffect(() => {
-    if (accessToken) {
-      getCurrentUser(accessToken);
+    if (mounted && !currentUser) {
+      getCurrentUser();
     }
-  }, [accessToken])
+  }, [mounted, currentUser]);
 
   if (!mounted) {
     return (
@@ -54,15 +54,6 @@ export default function MainLayout({
     );
   }
 
-  if (!accessToken) {
-    return (
-      <div className="h-screen w-screen flex justify-center items-center">
-        <ClipLoader color="#000" />
-      </div>
-    );
-  }
-
-  // Exclude dynamic feed pages but include /feed
   if (
     (pathname.startsWith("/feed/") && pathname !== "/feed") ||
     pathname === "/profile/employee" ||
@@ -77,10 +68,9 @@ export default function MainLayout({
         </Link>
         <div className="container mx-auto p-5">{children}</div>
       </div>
-    ); // No layout for /feed/[userId]
+    );
   }
 
-  // Special layout for message page - no right sidebar
   if (pathname === "/message" || pathname.startsWith("/message/")) {
     return (
       <SidebarProvider>
@@ -92,7 +82,7 @@ export default function MainLayout({
                 <SidebarTrigger />
                 <Separator orientation="vertical" className="mr-2 h-4" />
                 <TypographyP className="!m-0">
-                  {sidebarData[0].description}
+                  {sidebarData[0]?.description ?? "Messaging"}
                 </TypographyP>
               </div>
             </header>
@@ -143,8 +133,8 @@ export default function MainLayout({
     );
   }
 
-  if(pathname === "/matching") {
-      return (
+  if (pathname === "/matching") {
+    return (
       <SidebarProvider>
         <CollapseSidebar key={currentUser?.id || "nouser"} />
         <div className="w-full h-screen message-xs:h-full flex flex-col">
@@ -163,27 +153,26 @@ export default function MainLayout({
     );
   }
 
-  if(pathname === "/favorite") {
+  if (pathname === "/favorite") {
     return (
-    <SidebarProvider>
-      <CollapseSidebar />
-      <div className="w-full h-screen message-xs:h-full flex flex-col">
-        <SidebarInset>
-          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-            <div className="flex items-center gap-2 px-4">
-              <SidebarTrigger />
-              <Separator orientation="vertical" className="mr-2 h-4" />
-              <TypographyP className="!m-0">Favorites</TypographyP>
-            </div>
-          </header>
-        </SidebarInset>
-        <div className="h-full">{children}</div>
-      </div>
-    </SidebarProvider>
-  );
-}
+      <SidebarProvider>
+        <CollapseSidebar />
+        <div className="w-full h-screen message-xs:h-full flex flex-col">
+          <SidebarInset>
+            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+              <div className="flex items-center gap-2 px-4">
+                <SidebarTrigger />
+                <Separator orientation="vertical" className="mr-2 h-4" />
+                <TypographyP className="!m-0">Favorites</TypographyP>
+              </div>
+            </header>
+          </SidebarInset>
+          <div className="h-full">{children}</div>
+        </div>
+      </SidebarProvider>
+    );
+  }
 
-  // Default layout with both sidebars
   return (
     <ThemeProviderClient defaultTheme={theme}>
       <SidebarProvider>
@@ -195,14 +184,13 @@ export default function MainLayout({
                 <SidebarTrigger />
                 <Separator orientation="vertical" className="mr-2 h-4" />
                 <TypographyP className="!m-0">
-                  {sidebarData[0].description}
+                  {sidebarData[0]?.description ?? "Page"}
                 </TypographyP>
               </div>
             </header>
           </SidebarInset>
           <div className="!m-5">{children}</div>
         </div>
-        {/* <RightSidebar className="!min-w-[25%] laptop-sm:hidden" /> */}
       </SidebarProvider>
     </ThemeProviderClient>
   );

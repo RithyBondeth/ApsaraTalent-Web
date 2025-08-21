@@ -2,7 +2,7 @@ import { API_SEARCH_EMP_URL } from "@/utils/constants/apis/employee_url";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
 import { TAvailability } from "@/utils/types/availability.type";
 import { TLocations } from "@/utils/types/location.type";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { create } from "zustand";
 
 export type TSearchEmpQuery = {
@@ -23,7 +23,7 @@ type TSearchEmployeeState = {
   employees: TSearchEmployee[] | null;
   error: string | null;
   loading: boolean;
-  querySearchEmployee: (query: TSearchEmpQuery, token: string) => Promise<void>;
+  querySearchEmployee: (query: TSearchEmpQuery) => Promise<void>;
 };
 
 export const useSearchEmployeeStore = create<TSearchEmployeeState>((set) => ({
@@ -31,9 +31,9 @@ export const useSearchEmployeeStore = create<TSearchEmployeeState>((set) => ({
   loading: false,
   message: null,
   error: null,
-  querySearchEmployee: async (query: TSearchEmpQuery, token: string) => {
+  querySearchEmployee: async (query: TSearchEmpQuery) => {
     set({ loading: true, error: null });
-    
+
     try {
       const queryParams = new URLSearchParams();
 
@@ -48,8 +48,7 @@ export const useSearchEmployeeStore = create<TSearchEmployeeState>((set) => ({
       });
 
       const response = await axios.get(
-        `${API_SEARCH_EMP_URL}?${queryParams.toString()}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        `${API_SEARCH_EMP_URL}?${queryParams.toString()}`
       );
 
       console.log(`${API_SEARCH_EMP_URL}?${queryParams.toString()}`);

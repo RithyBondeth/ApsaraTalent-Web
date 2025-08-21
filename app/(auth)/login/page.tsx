@@ -32,30 +32,23 @@ import { useTheme } from "next-themes";
 import { Controller, useForm } from "react-hook-form";
 import { loginSchema, TLoginForm } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  useLocalLoginStore,
-  useLoginStore,
-  useSessionLoginStore,
-} from "@/stores/apis/auth/login.store";
+import { useLoginStore } from "@/stores/apis/auth/login.store";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { ClipLoader } from "react-spinners";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import {
-  useGoogleLoginStore,
-  useLocalGoogleLoginStore,
-  useSessionGoogleLoginStore,
-} from "@/stores/apis/auth/socials/google-login.store";
-import {
-  useLinkedInLoginStore,
-  useLocalLinkedInLoginStore,
-  useSessionLinkedInLoginStore,
-} from "@/stores/apis/auth/socials/linkedin-login.store";
+import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
+import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
 import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
-import { useFacebookLoginStore, useLocalFacebookLoginStore, useSessionFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
+import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 import { useInitializeAuth } from "@/hooks/use-initialize-auth";
 import { Dialog, DialogContent, DialogFooter, DialogTitle } from "@/components/ui/dialog";
+import { useGetAllUsersStore } from "@/stores/apis/users/get-all-user.store";
+import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
+import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
+import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
+import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 
 function LoginPage() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
@@ -76,13 +69,44 @@ function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-  const { accessToken, refreshToken, message, login, error, loading } =
-    useLoginStore();
-  const currentUserStore = useGetCurrentUserStore();
+  const { isAuthenticated, message, login, error, loading } = useLoginStore();
+  const { getCurrentUser, user: currentUser } = useGetCurrentUserStore();
+  const { getAllUsers } = useGetAllUsersStore();
+  const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore();
+  const getCurrentCompanyLikedStore = useGetCurrentCompanyLikedStore();
+  const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
+  const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
   const googleLoginStore = useGoogleLoginStore();
   const linkedInLoginStore = useLinkedInLoginStore();
   const githubLoginStore = useGithubLoginStore();
   const facebookLoginStore = useFacebookLoginStore();
+
+  const preloadUserData = async () => {
+    try {
+      // First get current user data
+      await getCurrentUser();
+      
+      // Get all users in parallel
+      getAllUsers();
+      
+      // Wait a bit for getCurrentUser to complete and update the store
+      setTimeout(async () => {
+        const userData = useGetCurrentUserStore.getState().user;
+        
+        if (userData?.role === "employee" && userData.employee?.id) {
+          // Preload employee-specific data
+          getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(userData.employee.id);
+          getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(userData.employee.id);
+        } else if (userData?.role === "company" && userData.company?.id) {
+          // Preload company-specific data
+          getCurrentCompanyLikedStore.queryCurrentCompanyLiked(userData.company.id);
+          getAllCompanyFavoritesStore.queryAllCompanyFavorites(userData.company.id);
+        }
+      }, 100);
+    } catch (error) {
+      console.error("Error preloading user data:", error);
+    }
+  };
 
   const onSubmit = async (data: TLoginForm) => {
     setIsLoggedIn(true);
@@ -94,7 +118,10 @@ function LoginPage() {
   useEffect(() => {
     if (!isLoggedIn) return;
 
-    if (accessToken) {
+    if (isAuthenticated) {
+      // Preload all user data while showing success message
+      preloadUserData();
+      
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -139,109 +166,26 @@ function LoginPage() {
         ),
       });
   }, [
-    accessToken,
-    refreshToken,
+    isAuthenticated,
     error,
     message,
     loading,
     isLoggedIn,
   ]);
 
-  useEffect(() => {
-    const local = useLocalLoginStore.getState();
-    const session = useSessionLoginStore.getState();
-    const source = local.accessToken ? local : session;
-
-    if (source.accessToken) {
-      useLoginStore.setState({
-        accessToken: source.accessToken,
-        refreshToken: source.refreshToken,
-        message: source.message,
-        rememberMe: source === local,
-      });
-    }
-
-    const googleLocal = useLocalGoogleLoginStore.getState();
-    const googleSession = useSessionGoogleLoginStore.getState();
-    const googleSource = googleLocal.accessToken ? googleLocal : googleSession;
-
-    if (googleSource.accessToken) {
-      useGoogleLoginStore.setState({
-        accessToken: googleSource.accessToken,
-        refreshToken: googleSource.refreshToken,
-        message: googleSource.message,
-        rememberMe: googleSource === googleLocal,
-      });
-    }
-
-    const linkedInLocal = useLocalLinkedInLoginStore.getState();
-    const linkedInSession = useSessionLinkedInLoginStore.getState();
-    const linkedInSource = linkedInLocal.accessToken
-      ? linkedInLocal
-      : linkedInSession;
-
-    if (linkedInSource.accessToken) {
-      useLinkedInLoginStore.setState({
-        accessToken: linkedInSource.accessToken,
-        refreshToken: linkedInSource.refreshToken,
-        message: linkedInSource.message,
-        rememberMe: linkedInSource === linkedInLocal,
-      });
-    }
-
-    const githubLocal = useGithubLoginStore.getState();
-    const githubSession = useGithubLoginStore.getState();
-    const githubSource = githubLocal.accessToken ? githubLocal : githubSession;
-    
-    if(githubSource.accessToken) {
-        useGithubLoginStore.setState({
-          accessToken: githubSource.accessToken,
-          refreshToken: githubSession.refreshToken,
-          message: githubSource.message,
-          rememberMe: githubSource === githubLocal,
-        });
-    }
-
-    const facebookLocal = useLocalFacebookLoginStore.getState();
-    const facebookSession = useSessionFacebookLoginStore.getState();
-    const facebookSource = facebookLocal.accessToken ? facebookLocal : facebookSession;
-
-    if(facebookSource.accessToken) {
-      useFacebookLoginStore.setState({
-        accessToken: facebookSource.accessToken,
-        refreshToken: facebookSource.refreshToken,
-        message: facebookSource.message,
-        rememberMe: facebookSource === facebookLocal,
-      });
-    }
-  }, []);
-
-  // Email Login
-  useEffect(() => {
-    if (accessToken) {
-      currentUserStore.getCurrentUser(accessToken);
-    }
-  }, [accessToken]);
-
   // Social Login Google
   useEffect(() => {
     if (!isLoggedIn) return;
 
     if (
-      googleLoginStore.accessToken ||
-      linkedInLoginStore.accessToken ||
-      githubLoginStore.accessToken || 
-      facebookLoginStore.accessToken
+      googleLoginStore.isAuthenticated ||
+      linkedInLoginStore.isAuthenticated ||
+      githubLoginStore.isAuthenticated || 
+      facebookLoginStore.isAuthenticated
     ) {
-      if (googleLoginStore.accessToken)
-        currentUserStore.getCurrentUser(googleLoginStore.accessToken);
-      if (linkedInLoginStore.accessToken)
-        currentUserStore.getCurrentUser(linkedInLoginStore.accessToken);
-      if (githubLoginStore.accessToken)
-        currentUserStore.getCurrentUser(githubLoginStore.accessToken);
-      if(facebookLoginStore.accessToken)
-        currentUserStore.getCurrentUser(facebookLoginStore.accessToken);
-
+      // Preload all user data while showing success message
+      preloadUserData();
+      
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -257,10 +201,10 @@ function LoginPage() {
     }
 
     if (
-      (googleLoginStore.newUser && !googleLoginStore.accessToken) ||
-      (linkedInLoginStore.newUser && !linkedInLoginStore.accessToken) ||
-      (githubLoginStore.newUser && !githubLoginStore.accessToken) || 
-      (facebookLoginStore.newUser && !facebookLoginStore.accessToken)
+      (googleLoginStore.newUser && !googleLoginStore.isAuthenticated) ||
+      (linkedInLoginStore.newUser && !linkedInLoginStore.isAuthenticated) ||
+      (githubLoginStore.newUser && !githubLoginStore.isAuthenticated) || 
+      (facebookLoginStore.newUser && !facebookLoginStore.isAuthenticated)
     ) {
       toast({
         description: (
@@ -276,13 +220,13 @@ function LoginPage() {
       setTimeout(() => router.push("/signup/option"), 1000);
     }
   }, [
-    googleLoginStore.accessToken,
+    googleLoginStore.isAuthenticated,
     googleLoginStore.newUser,
-    linkedInLoginStore.accessToken,
+    linkedInLoginStore.isAuthenticated,
     linkedInLoginStore.newUser,
-    githubLoginStore.accessToken,
+    githubLoginStore.isAuthenticated,
     githubLoginStore.newUser,
-    facebookLoginStore.accessToken,
+    facebookLoginStore.isAuthenticated,
     facebookLoginStore.newUser,
     isLoggedIn,
   ]);

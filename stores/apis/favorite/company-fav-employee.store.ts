@@ -1,5 +1,5 @@
 import { API_COMPANY_FAVORITE_EMPLOYEE_URL } from "@/utils/constants/apis/favorite_url";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { create } from "zustand";
 
 export type TCompanyFavEmployeeState = {
@@ -8,8 +8,7 @@ export type TCompanyFavEmployeeState = {
   error: string | null;
   addEmployeeToFavorite: (
     companyID: string,
-    employeeID: string,
-    accessToken: string
+    employeeID: string
   ) => Promise<void>;
 };
 
@@ -20,16 +19,13 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>(
     error: null,
     addEmployeeToFavorite: async (
       companyID: string,
-      employeeID: string,
-      accessToken: string
+      employeeID: string
     ) => {
       set({ loading: true, error: null });
 
       try {
         const response = await axios.post<{ message: string }>(
-          API_COMPANY_FAVORITE_EMPLOYEE_URL(companyID, employeeID),
-          undefined,
-          { headers: { Authorization: `Bearer ${accessToken}` } }
+          API_COMPANY_FAVORITE_EMPLOYEE_URL(companyID, employeeID)
         );
 
         set({ loading: false, error: null, message: response.data.message });

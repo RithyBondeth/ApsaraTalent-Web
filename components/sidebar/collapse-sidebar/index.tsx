@@ -27,7 +27,6 @@ import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-c
 import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-current-company-matching.store";
 import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
-import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
 
 export default function CollapseSidebar({
   ...props
@@ -53,8 +52,6 @@ export default function CollapseSidebar({
   const { companyData, queryAllEmployeeFavorites } = useGetAllEmployeeFavoritesStore();
   const { employeeData, queryAllCompanyFavorites } = useGetAllCompanyFavoritesStore();
 
-  const accessToken = getUnifiedAccessToken();
-
   useEffect(() => {
     if (isEmployee && user?.employee?.id) {
       queryCurrentEmployeeMatching(user.employee.id);
@@ -65,13 +62,12 @@ export default function CollapseSidebar({
 
   // Ensure favorites counts are populated even if user hasn't visited the Favorites page
   useEffect(() => {
-    if (!accessToken) return;
     if (isEmployee && user?.employee?.id) {
-      queryAllEmployeeFavorites(user.employee.id, accessToken);
+      queryAllEmployeeFavorites(user.employee.id);
     } else if (isCompany && user?.company?.id) {
-      queryAllCompanyFavorites(user.company.id, accessToken);
+      queryAllCompanyFavorites(user.company.id);
     }
-  }, [isEmployee, isCompany, user?.employee?.id, user?.company?.id, accessToken, queryAllEmployeeFavorites, queryAllCompanyFavorites]);
+  }, [isEmployee, isCompany, user?.employee?.id, user?.company?.id, queryAllEmployeeFavorites, queryAllCompanyFavorites]);
 
   const matchingCount = useMemo(() => {
     if (isEmployee) return currentEmployeeMatching?.length ?? 0;
