@@ -11,7 +11,7 @@ import {
   LucideUsers,
 } from "lucide-react";
 import { LucideHeartHandshake } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
+import CachedAvatar from "../../ui/cached-avatar";
 import { TypographyMuted } from "../../utils/typography/typography-muted";
 import { TypographyP } from "../../utils/typography/typography-p";
 import { TypographySmall } from "../../utils/typography/typography-small";
@@ -58,16 +58,17 @@ export default function CompanyCard(props: ICompanyCardProps) {
       {/* Profile Section */}
       <div className="w-full flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <Avatar
+          <CachedAvatar
+            src={props.avatar}
+            alt={props.name}
             className="size-24"
             rounded="md"
             onClick={props.onProfileImageClick}
+            preload={true}
+            showLoadingState={true}
           >
-            <AvatarImage src={props.avatar!} />
-            <AvatarFallback className="uppercase">
-              {!props.avatar && props.name.slice(0, 3)}
-            </AvatarFallback>
-          </Avatar>
+            {props.name.slice(0, 3)}
+          </CachedAvatar>
           <div className="flex flex-col items-start gap-1">
             <TypographyP className="font-semibold">{props.name}</TypographyP>
             <TypographySmall className="text-xs flex items-center gap-1 text-muted-foreground">

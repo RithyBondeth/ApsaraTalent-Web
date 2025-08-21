@@ -1,5 +1,5 @@
 "use client";
-import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
+import CachedAvatar from "../../ui/cached-avatar";
 import { Button } from "../../ui/button";
 import Tag from "../../utils/tag";
 import { TypographyMuted } from "../../utils/typography/typography-muted";
@@ -50,12 +50,17 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
       {/* Profile Section */}
       <div className="w-full flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <Avatar className="size-24" rounded="md" onClick={props.onProfileImageClick}>
-            <AvatarImage src={props.avatar!} />
-            <AvatarFallback className="uppercase">
-              {!props.avatar && props.username?.slice(0, 3)}
-            </AvatarFallback>
-          </Avatar>
+          <CachedAvatar
+            src={props.avatar}
+            alt={props.username ?? "Profile"}
+            className="size-24"
+            rounded="md"
+            onClick={props.onProfileImageClick}
+            preload={true}
+            showLoadingState={true}
+          >
+            {props.username?.slice(0, 3)}
+          </CachedAvatar>
           <div className="flex flex-col items-start gap-1">
             <TypographyP className="font-semibold">
               {props.username}

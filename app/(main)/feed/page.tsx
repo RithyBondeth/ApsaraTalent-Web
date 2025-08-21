@@ -36,6 +36,7 @@ import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-e
 import { toast } from "@/hooks/use-toast";
 import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
+import { usePreloadImages } from "@/hooks/use-cached-image";
 
 export default function FeedPage() {
   // Utils
@@ -161,6 +162,15 @@ export default function FeedPage() {
     const ids = getAllCompanyFavoritesStore.employeeData?.map((fav) => fav.employee.id) ?? [];
     return new Set(ids);
   }, [getAllCompanyFavoritesStore.employeeData]);
+
+  // Preload profile images for better performance
+  const profileImageUrls = useMemo(() => {
+    return allUsers.map(user => 
+      currentUserRole === "employee" ? user.company?.avatar : user.employee?.avatar
+    ).filter(Boolean);
+  }, [allUsers, currentUserRole]);
+
+  usePreloadImages(profileImageUrls);
 
   // Show loading state during hydration and initial data loading
   const showLoadingState = !mounted || 
