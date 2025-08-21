@@ -9,10 +9,9 @@ type TVerifyOTPResponse = {
   message: string | null;
   accessToken: string | null;
   refreshToken: string | null;
-  
 };
 
-type TVerifyOTPStoreState = {
+type TVerifyOTPStoreState = TVerifyOTPResponse & {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
@@ -26,6 +25,8 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
   loading: false,
   error: null,
   isAuthenticated: false,
+  accessToken: null,
+  refreshToken: null,
   message: null,
   initialize: () => {
     // Authentication state is determined by HTTP-only cookies

@@ -1,7 +1,7 @@
 "use client";
 
 import CollapseSidebar from "@/components/sidebar/collapse-sidebar";
-import RightSidebar from "@/components/sidebar/right-sidebar";
+//import RightSidebar from "@/components/sidebar/right-sidebar";
 import { Button } from "@/components/ui/button";
 import { LucideArrowLeft } from "lucide-react";
 import {

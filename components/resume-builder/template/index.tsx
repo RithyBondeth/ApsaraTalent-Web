@@ -1,8 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { LucideEye } from "lucide-react";
-import Image from "next/image";
 import { TTemplateCardProps } from "./props";
 import ImagePopup from "@/components/utils/image-popup";
 import { useState } from "react";

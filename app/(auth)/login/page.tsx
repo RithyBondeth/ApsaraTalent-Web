@@ -70,7 +70,7 @@ function LoginPage() {
   });
 
   const { isAuthenticated, message, login, error, loading } = useLoginStore();
-  const { getCurrentUser, user: currentUser } = useGetCurrentUserStore();
+  const { getCurrentUser } = useGetCurrentUserStore();
   const { getAllUsers } = useGetAllUsersStore();
   const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore();
   const getCurrentCompanyLikedStore = useGetCurrentCompanyLikedStore();

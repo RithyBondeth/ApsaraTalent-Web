@@ -55,7 +55,7 @@ const MessageBubble = ({ message, activeChat }: MessageBubbleProps) => (
         <Avatar className="h-6 w-6 mr-2">
           {activeChat.isGroup ? (
             <AvatarFallback>
-              {message.sender.split(' ').map((n)=> n[0]).join('')}
+              {message.senderId.split(' ').map((n)=> n[0]).join('')}
             </AvatarFallback>
           ) : (
             <>
@@ -67,7 +67,7 @@ const MessageBubble = ({ message, activeChat }: MessageBubbleProps) => (
           )}
         </Avatar>
         {activeChat.isGroup && (
-          <span className="text-xs font-medium text-foreground">{message.sender}</span>
+          <span className="text-xs font-medium text-foreground">{message.senderId}</span>
         )}
       </div>
     )}
@@ -81,7 +81,7 @@ const MessageBubble = ({ message, activeChat }: MessageBubbleProps) => (
       {message.content}
     </div>
     <div className={`text-xs text-muted-foreground mt-1 ${message.isMe ? 'text-right' : ''}`}>
-      {message.time}
+      {message.timestamp.toDateString()}
     </div>
   </div>
 );
