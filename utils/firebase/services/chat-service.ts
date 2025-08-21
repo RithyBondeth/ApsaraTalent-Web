@@ -1,4 +1,4 @@
-import { chatDatabase } from "@/firebase/firebase";
+import { chatDatabase } from "@/utils/firebase/firebase";
 import {
   collection,
   addDoc,

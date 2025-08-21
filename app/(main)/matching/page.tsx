@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 import MatchingBannerSkeleton from "./banner-skeleton";
 import { useGetOneEmployeeStore } from "@/stores/apis/employee/get-one-emp.store";
 import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
-import { createOrGetChat } from "@/firebase/services/chat-service";
+import { createOrGetChat } from "@/utils/firebase/services/chat-service";
 
 export default function MatchingPage() {
   const router = useRouter();

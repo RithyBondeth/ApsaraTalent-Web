@@ -397,7 +397,7 @@ import {
   where,
   getDocs,
 } from 'firebase/firestore';
-import { chatDatabase } from '@/firebase/firebase';
+import { chatDatabase } from '@/utils/firebase/firebase';
 import { useGetCurrentUserStore } from '@/stores/apis/users/get-current-user.store';
 
 const MessagePage = () => {
