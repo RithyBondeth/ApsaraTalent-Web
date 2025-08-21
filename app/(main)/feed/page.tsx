@@ -175,6 +175,7 @@ export default function FeedPage() {
   // Show loading state during hydration and initial data loading
   const showLoadingState = !mounted || 
     getCurrentUserStore.loading || 
+    getAllUsersStore.loading ||
     !getAllUsersStore.users || 
     !getCurrentUserStore.user ||
     (isEmployee && getCurrentEmployeeLikedStore.loading) ||
@@ -243,13 +244,25 @@ export default function FeedPage() {
       )}
 
       {/* Feed Card Section */}
-      <div className="w-full grid grid-cols-3 gap-5 tablet-lg:grid-cols-1">
+      <div className="w-full grid grid-cols-3 gap-5 laptop-sm:grid-cols-2 tablet-lg:!grid-cols-1 phone-xl:gap-3">
         {showLoadingState ? (
-          Array.from({ length: 6 }).map((_, index) =>
+          Array.from({ length: 9 }).map((_, index) =>
             currentUserRole === "company" ? (
-              <EmployeeCardSkeleton key={`user-skeleton-${index}`} />
+              <div 
+                key={`user-skeleton-${index}`}
+                className="animate-pulse"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <EmployeeCardSkeleton />
+              </div>
             ) : (
-              <CompanyCardSkeleton key={`company-skeleton-${index}`} />
+              <div 
+                key={`company-skeleton-${index}`}
+                className="animate-pulse"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <CompanyCardSkeleton />
+              </div>
             )
           )
         ) : allUsers.length > 0 ? (

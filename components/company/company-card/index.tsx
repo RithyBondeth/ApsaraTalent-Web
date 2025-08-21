@@ -85,15 +85,15 @@ export default function CompanyCard(props: ICompanyCardProps) {
             </TypographySmall>
           </div>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 tablet-xl:flex-col tablet-lg:!flex-row">
           <Button
-            className="size-12 rounded-full transition-all duration-300 ease-in-out hover:scale-105"
+            className="size-12 rounded-md transition-all duration-300 ease-in-out hover:scale-105"
             onClick={handleClickDialog}
           >
             <LucideEye className="!size-6 transition-all duration-300 ease-in-out" />
           </Button>
           <Button
-            className="size-12 rounded-full transition-all duration-300 ease-in-out hover:scale-105"
+            className="size-12 rounded-md transition-all duration-300 ease-in-out hover:scale-105"
             onClick={props.onLikeClick}
             disabled={props.onLikeClickDisable}
           >

@@ -3,7 +3,7 @@
 import {
 ChevronsUpDown,
   LogOut,
-  LucideBookmark,
+  LucideBookMarked,
   LucideBuilding,
   LucideInfo,
   LucideMoon,
@@ -145,9 +145,9 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
               {resolvedTheme === 'dark' ? <LucideSun/> : <LucideMoon/>}
                 Appearance
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <LucideBookmark />
-                Saved
+              <DropdownMenuItem onClick={() => router.push('/favorite')}>
+                <LucideBookMarked />
+                Favorite
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <LucideInfo />
