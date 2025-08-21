@@ -16,9 +16,9 @@ import emptySvgImage from "@/assets/svg/empty.svg";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import MatchingBannerSkeleton from "./banner-skeleton";
-import { createOrGetChat } from "../message/_service/chatService";
 import { useGetOneEmployeeStore } from "@/stores/apis/employee/get-one-emp.store";
 import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
+import { createOrGetChat } from "@/firebase/services/chat-service";
 
 export default function MatchingPage() {
   const router = useRouter();

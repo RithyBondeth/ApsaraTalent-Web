@@ -397,7 +397,7 @@ import {
   where,
   getDocs,
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { chatDatabase } from '@/firebase/firebase';
 import { useGetCurrentUserStore } from '@/stores/apis/users/get-current-user.store';
 
 const MessagePage = () => {
@@ -427,7 +427,7 @@ const MessagePage = () => {
     if (!uid) return;
 
     const q = query(
-      collection(db, 'chats'),
+      collection(chatDatabase, 'chats'),
       where('participants', 'array-contains', uid)
     );
 
@@ -438,7 +438,7 @@ const MessagePage = () => {
           const otherUserId = data.participants.find((id: string) => id !== uid);
           const profile = data.participantProfiles?.[otherUserId];
 
-          const messagesRef = collection(db, 'chats', docSnap.id, 'messages');
+          const messagesRef = collection(chatDatabase, 'chats', docSnap.id, 'messages');
           const messagesSnap = await getDocs(query(messagesRef, orderBy('timestamp', 'desc')));
           const lastMessage = messagesSnap.docs[0]?.data();
 
@@ -463,7 +463,7 @@ const MessagePage = () => {
     const uid = getCurrentUserId();
     if (!chatId || !uid) return;
 
-    const chatRef = doc(db, 'chats', chatId);
+    const chatRef = doc(chatDatabase, 'chats', chatId);
     getDoc(chatRef).then((snapshot) => {
       const data = snapshot.data();
       if (data) {
@@ -480,7 +480,7 @@ const MessagePage = () => {
       }
     });
 
-    const messagesRef = collection(db, 'chats', chatId, 'messages');
+    const messagesRef = collection(chatDatabase, 'chats', chatId, 'messages');
     const q = query(messagesRef, orderBy('timestamp'));
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -509,7 +509,7 @@ const MessagePage = () => {
       isRead: false,
     };
 
-    await addDoc(collection(db, 'chats', chatId, 'messages'), message);
+    await addDoc(collection(chatDatabase, 'chats', chatId, 'messages'), message);
   };
 
   if (isLoading) {
