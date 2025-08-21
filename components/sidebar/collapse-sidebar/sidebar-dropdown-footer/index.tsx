@@ -137,7 +137,7 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/setting')}>
                 <LucideSettings />
                 Settings
               </DropdownMenuItem>
