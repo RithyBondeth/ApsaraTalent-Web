@@ -1,5 +1,6 @@
 import {
     BellRing,
+    BookMarked,
     Handshake,
     Home,
     MessageCircle,
@@ -23,6 +24,13 @@ export const sidebarList = [
       badge: 0,
     },
     {
+      title: "Favorite",
+      description: 'All of the favorite users',
+      url: "/favorite",
+      icon: BookMarked,
+      badge: 0,
+    },
+    {
       title: "Matching",
       description: 'All of the matching users',
       url: "/matching",
@@ -36,11 +44,11 @@ export const sidebarList = [
       icon: MessageCircle,
       badge: 0,
     },
-    {
-      title: "Notification",
-      description: 'Check for your notifications',
-      url: "/notification",
-      icon: BellRing,
-      badge: 0,
-    },
+    // {
+    //   title: "Notification",
+    //   description: 'Check for your notifications',
+    //   url: "/notification",
+    //   icon: BellRing,
+    //   badge: 0,
+    // },
   ];

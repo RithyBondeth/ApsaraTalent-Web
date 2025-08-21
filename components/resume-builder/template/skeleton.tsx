@@ -4,7 +4,7 @@ export default function TemplateCardSkeleton() {
   return (
     <div className="h-fit w-full flex flex-col items-center rounded-lg shadow-sm border border-muted">
       {/* Image & Badge Placeholder */}
-      <div className="w-full h-60 flex items-center justify-center bg-primary-foreground rounded-tr-lg rounded-tl-lg relative">
+      {/* <div className="w-full h-60 flex items-center justify-center bg-primary-foreground rounded-tr-lg rounded-tl-lg relative">
         <div className="absolute top-2 right-2">
           <Skeleton className="h-6 w-16 rounded-xl" />
         </div>
@@ -14,7 +14,7 @@ export default function TemplateCardSkeleton() {
             <Skeleton className="size-8 rounded-full" />
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Text and Button Placeholder */}
       <div className="w-full p-3">

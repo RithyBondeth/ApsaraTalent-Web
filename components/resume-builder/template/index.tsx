@@ -10,8 +10,14 @@ import { useState } from "react";
 export default function TemplateCard(props: TTemplateCardProps) {
   const [popupResume, setPopupResume] = useState<boolean>(false);
   return (
-    <div className="h-fit w-full flex flex-col items-center rounded-lg shadow-sm border border-muted cursor-pointer">
-      <div className="w-full h-60 flex items-center justify-center bg-primary-foreground rounded-tr-lg rounded-tl-lg relative group">
+    <div
+      className={`h-fit w-full flex flex-col items-center rounded-lg cursor-pointer transition shadow-sm border ${
+        props.selected
+          ? "border-primary ring-2 ring-primary/30"
+          : "border-muted"
+      }`}
+    >
+      {/* <div className="w-full h-60 flex items-center justify-center bg-primary-foreground rounded-tr-lg rounded-tl-lg relative group">
         <div
           className={`absolute top-2 right-2 rounded-xl px-3 py-1 font-medium text-sm text-primary-foreground ${
             props.isPremium ? "bg-amber-500" : "bg-green-500"
@@ -35,7 +41,7 @@ export default function TemplateCard(props: TTemplateCardProps) {
             />
           </div>
         </div>
-      </div>
+      </div> */}
       <div className="w-full p-3">
         <div>
           <TypographyH4 className="text-md">{props.title}</TypographyH4>
@@ -43,8 +49,8 @@ export default function TemplateCard(props: TTemplateCardProps) {
             {props.description}
           </TypographyMuted>
         </div>
-        <div className="w-full flex justify-end mt-3">
-          <Button className="text-sm">
+        <div className="w-full flex justify-between items-center mt-3">
+          <Button className="text-xs" onClick={props.onUseTemplate}>
             {props.isPremium ? `$${props.price}` : "Use Template"}
           </Button>
         </div>

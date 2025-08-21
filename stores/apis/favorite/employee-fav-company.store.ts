@@ -25,13 +25,14 @@ export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>(
     ) => {
       set({ loading: true, error: null });
 
-      const response = await axios.post<{ message: string }>(
-        API_EMPLOYEE_FAVORITE_COMPANY_URL(employeeID, companyID),
-        { headers: { Authorization: `Bearer ${accessToken}` } }
-      );
-
-      set({ loading: false, error: null, message: response.data.message });
       try {
+        const response = await axios.post<{ message: string }>(
+          API_EMPLOYEE_FAVORITE_COMPANY_URL(employeeID, companyID),
+          undefined,
+          { headers: { Authorization: `Bearer ${accessToken}` } }
+        );
+
+        set({ loading: false, error: null, message: response.data.message });
       } catch (error) {
         if (axios.isAxiosError(error)) {
           const errorMessage =

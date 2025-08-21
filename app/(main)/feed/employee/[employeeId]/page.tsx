@@ -51,6 +51,7 @@ import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
 import { useCompanyLikeStore } from "@/stores/apis/matching/company-like.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { toast } from "@/hooks/use-toast";
+import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
 
 export default function EmployeeDetailPage() {
   const params = useParams<{ employeeId: string }>();
@@ -67,6 +68,8 @@ export default function EmployeeDetailPage() {
   const { loading, user, getOneUerByID } = useGetOneUserStore();
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const companyLikeStore = useCompanyLikeStore();
+  const companyFavEmployeeStore = useCompanyFavEmployeeStore();
+  const [isSavedFavorite, setIsSavedFavorite] = useState(false);
 
   // Get tokens from all possible stores
   const accessToken = getUnifiedAccessToken();
@@ -193,6 +196,24 @@ export default function EmployeeDetailPage() {
     } catch (e) {
       const err =
         useCompanyLikeStore.getState().error || "Failed to like employee";
+      toast({ title: "Error", description: err, variant: "destructive" });
+    }
+  };
+
+  const handleSaveFavorite = async () => {
+    const companyId = currentUser?.company?.id;
+    const employeeId = user?.employee?.id;
+    if (!companyId) {
+      toast({ title: "Sign in required", description: "Please sign in as a company to save an employee.", variant: "destructive" });
+      return;
+    }
+    if (!employeeId || !accessToken) return;
+    try {
+      await companyFavEmployeeStore.addEmployeeToFavorite(companyId, employeeId, accessToken);
+      toast({ title: "Saved", description: "Employee added to favorites." });
+      setIsSavedFavorite(true);
+    } catch (e) {
+      const err = companyFavEmployeeStore.error || "Failed to save employee";
       toast({ title: "Error", description: err, variant: "destructive" });
     }
   };
@@ -522,10 +543,12 @@ export default function EmployeeDetailPage() {
 
       {/* Action Buttons Section */}
       <div className="flex items-center gap-2">
-        <Button variant={"outline"}>
+        {!isSavedFavorite && (
+        <Button variant={"outline"} onClick={handleSaveFavorite} disabled={companyFavEmployeeStore.loading || !currentUser?.company?.id}>
           <LucideBookmark />
           Save to favorite
         </Button>
+        )}
         <Button
           onClick={handleLike}
           disabled={companyLikeStore.loading || !currentUser?.company?.id}

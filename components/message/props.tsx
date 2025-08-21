@@ -1,18 +1,20 @@
 export interface IMessage {
-    id: number;
-    sender: string;
-    content: string;
-    time: string;
-    isMe: boolean;
-  }
-  
-  export interface IChatPreview {
-    id: number;
-    name: string;
-    avatar: string;
-    preview: string;
-    time: string;
-    unread?: number;
-    isGroup?: boolean;
-    tag?: string;
-  }
+  id: string;
+  senderId: string;
+  senderName?: string;
+  content: string;
+  timestamp: Date;
+  isMe?: boolean; // frontend only
+  isRead?: boolean; // 🔥 Add this
+}
+export interface IChatPreview {
+  id: string; // chatId
+  name: string; // Chat display name (user or group)
+  avatar: string;
+  preview: string; // Last message
+  time: string; // Last message time
+  unread?: number;
+  isGroup?: boolean;
+  tag?: string; // "Applicant" or any custom label
+  isRead?: boolean;
+}

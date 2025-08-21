@@ -12,9 +12,16 @@ import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-c
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import Image from "next/image";
 import matchingSvgImage from "@/assets/svg/matching.svg";
+import emptySvgImage from "@/assets/svg/empty.svg";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import MatchingBannerSkeleton from "./banner-skeleton";
+import { createOrGetChat } from "../message/_service/chatService";
+import { useGetOneEmployeeStore } from "@/stores/apis/employee/get-one-emp.store";
+import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
 
 export default function MatchingPage() {
+  const router = useRouter();
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const userLoading = useGetCurrentUserStore((state) => state.loading);
   const isInitialized = useGetCurrentUserStore((state) => state.isInitialized);
@@ -22,6 +29,8 @@ export default function MatchingPage() {
 
   const getCurrentEmployeeMatchingStore = useGetCurrentEmployeeMatchingStore();
   const getCurrentCompanyMatchingStore = useGetCurrentCompanyMatchingStore();
+  const { employeeData, queryOneEmployee } = useGetOneEmployeeStore();
+  const accessToken = getUnifiedAccessToken();
 
   useEffect(() => {
     if (currentUser && currentUser.employee && isEmployee) {
@@ -36,62 +45,88 @@ export default function MatchingPage() {
     }
   }, [currentUser]);
 
-  // Immediate skeleton while resolving current user
-  if (!isInitialized || userLoading) {
+  // Compute loading state to avoid flicker of empty state before first fetch resolves
+  const isLoadingForEmployee =
+    isEmployee &&
+    (getCurrentEmployeeMatchingStore.loading ||
+      getCurrentEmployeeMatchingStore.currentEmployeeMatching === null);
+
+  const isLoadingForCompany =
+    !isEmployee &&
+    (getCurrentCompanyMatchingStore.loading ||
+      getCurrentCompanyMatchingStore.currentCompanyMatching === null);
+
+  const shouldShowLoading =
+    !isInitialized ||
+    userLoading ||
+    isLoadingForEmployee ||
+    isLoadingForCompany;
+
+  if (shouldShowLoading) {
     return (
-      <div className="flex flex-col items-start gap-3 p-3">
-        {[...Array(3)].map((_, index) => (
-          <MatchingEmployeeCardSkeleton key={index} />
-        ))}
+      <div className="w-full flex flex-col px-5 mt-3">
+        <MatchingBannerSkeleton />
+        <div className="flex flex-col items-start gap-3 p-3">
+          {[...Array(3)].map((_, index) =>
+            isEmployee ? (
+              <MatchingCompanyCardSkeleton key={index} />
+            ) : (
+              <MatchingEmployeeCardSkeleton key={index} />
+            )
+          )}
+        </div>
       </div>
     );
   }
 
-  if (!isEmployee && getCurrentCompanyMatchingStore.loading) {
-    return (
-      <div className="flex flex-col items-start gap-3 p-3">
-        {[...Array(3)].map((_, index) => (
-          <MatchingCompanyCardSkeleton key={index} />
-        ))}
-      </div>
-    );
-  }
+  const handleChatNow = async (otherUserId: string) => {
+    await queryOneEmployee(otherUserId, accessToken);
 
-  if (isEmployee && getCurrentEmployeeMatchingStore.loading) {
-    return (
-      <div className="flex flex-col items-start gap-3 p-3">
-        {[...Array(3)].map((_, index) => (
-          <MatchingEmployeeCardSkeleton key={index} />
-        ))}
-      </div>
-    );
-  }
+    if(currentUser) {
+        const chatId = await createOrGetChat({
+            id: currentUser.employee?.id || currentUser.company?.id!,
+            name: currentUser.employee?.username || currentUser.company?.name!,
+            profile: currentUser.employee?.avatar || currentUser.company?.avatar!,
+          },
+          {
+            id: employeeData?.id ?? "",
+            name: employeeData?.username ?? "",
+            profile: employeeData?.avatar ?? "",
+          });
+        router.push(`/message?chatId=${chatId}`);
+    }
+  };
 
   return (
     <div className="w-full flex flex-col px-5">
-      <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
-        <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center px-5">
-          <TypographyH2 className="leading-relaxed tablet-xl:text-center">
-            Ready to find your match? Let’s make it happen.
-          </TypographyH2>
-          <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-            Find Your Perfect Match & Start a Conversation
-          </TypographyH4>
-          <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-            Start chatting, connect instantly, and build your future together.
-          </TypographyH4>
-          <TypographyMuted className="leading-relaxed tablet-xl:text-center">
-            When companies and talents like each other — it’s a match.
-          </TypographyMuted>
+      {getCurrentCompanyMatchingStore.loading ||
+      getCurrentEmployeeMatchingStore.loading ? (
+        <MatchingBannerSkeleton />
+      ) : (
+        <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
+          <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center px-5">
+            <TypographyH2 className="leading-relaxed tablet-xl:text-center">
+              Ready to find your match? Let’s make it happen.
+            </TypographyH2>
+            <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+              Find Your Perfect Match & Start a Conversation
+            </TypographyH4>
+            <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+              Start chatting, connect instantly, and build your future together.
+            </TypographyH4>
+            <TypographyMuted className="leading-relaxed tablet-xl:text-center">
+              When companies and talents like each other — it’s a match.
+            </TypographyMuted>
+          </div>
+          <Image
+            src={matchingSvgImage}
+            alt="matching"
+            height={250}
+            width={350}
+            className="tablet-xl:!w-full"
+          />
         </div>
-        <Image
-          src={matchingSvgImage}
-          alt="matching"
-          height={300}
-          width={400}
-          className="tablet-xl:!w-full"
-        />
-      </div>
+      )}
       <div className="flex flex-col items-start gap-3">
         {getCurrentEmployeeMatchingStore.currentEmployeeMatching &&
         getCurrentEmployeeMatchingStore.currentEmployeeMatching.length > 0 ? (
@@ -106,7 +141,7 @@ export default function MatchingPage() {
               foundedYear={cmp.foundedYear}
               openPosition={cmp.openPositions}
               location={cmp.location}
-              onChatNowClick={() => {}}
+              onChatNowClick={() => handleChatNow(cmp.id)}
             />
           ))
         ) : getCurrentCompanyMatchingStore.currentCompanyMatching &&
@@ -123,11 +158,20 @@ export default function MatchingPage() {
               availability={emp.availability}
               location={emp.location ?? ""}
               skills={emp.skills.map((skill) => skill.name)}
-              onChatNowClick={() => {}}
+              onChatNowClick={() => handleChatNow(emp.id)}
             />
           ))
         ) : (
-          <div></div>
+          <div className="w-full flex flex-col items-center justify-center mt-14">
+            <Image
+              src={emptySvgImage}
+              alt="empty"
+              height={200}
+              width={200}
+              className="tablet-xl:!w-full"
+            />
+            <TypographyH4>There's no matched.</TypographyH4>
+          </div>
         )}
       </div>
     </div>

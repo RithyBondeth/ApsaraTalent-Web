@@ -6,4 +6,5 @@ export interface IEmployeeCardProps extends IEmployee {
     onLikeClick: () => void | Promise<void>;
     onLikeClickDisable: boolean;
     onProfileImageClick: (e: React.MouseEvent) => void;
+    hideSaveButton?: boolean;
 }

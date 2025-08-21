@@ -52,6 +52,7 @@ import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
 import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { toast } from "@/hooks/use-toast";
+import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
 
 export default function CompanyDetailPage() {
   const param = useParams<{ companyId: string }>();
@@ -70,6 +71,8 @@ export default function CompanyDetailPage() {
   const { loading, user, getOneUerByID } = useGetOneUserStore();
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const employeeLikeStore = useEmployeeLikeStore();
+  const employeeFavCompanyStore = useEmployeeFavCompanyStore();
+  const [isSavedFavorite, setIsSavedFavorite] = useState(false);
 
   // Get Access tokens from all possible stores
   const accessToken = getUnifiedAccessToken();
@@ -171,6 +174,24 @@ export default function CompanyDetailPage() {
       toast({ title: "Error", description: err, variant: "destructive" });
     }
   };
+
+  const handleSaveFavorite = async () => {
+    const employeeId = currentUser?.employee?.id;
+    const companyId = user?.company?.id;
+    if (!employeeId) {
+      toast({ title: "Sign in required", description: "Please sign in as an employee to save a company.", variant: "destructive" });
+      return;
+    }
+    if (!companyId || !accessToken) return;
+    try {
+      await employeeFavCompanyStore.addCompanyToFavorite(employeeId, companyId, accessToken);
+      toast({ title: "Saved", description: "Company added to favorites." });
+      setIsSavedFavorite(true);
+    } catch (e) {
+      const err = employeeFavCompanyStore.error || "Failed to save company";
+      toast({ title: "Error", description: err, variant: "destructive" });
+    }
+  };
   
   return (
     <div className="flex flex-col gap-5">
@@ -213,10 +234,12 @@ export default function CompanyDetailPage() {
           </div>
         </div>
         <div className="z-10 absolute right-3 bottom-3 flex items-center gap-3">
-          <Button variant="outline">
+          {!isSavedFavorite && (
+          <Button variant="outline" onClick={handleSaveFavorite} disabled={employeeFavCompanyStore.loading || !currentUser?.employee?.id}>
             <LucideBookmark />
             Save to Favorite
           </Button>
+          )}
           <Button onClick={handleLike} disabled={employeeLikeStore.loading || !currentUser?.employee?.id}>
             <LucideHeartHandshake />
             Like

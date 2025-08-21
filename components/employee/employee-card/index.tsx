@@ -116,14 +116,16 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
 
       {/* button Section */}
       <div className="w-full flex items-center justify-end gap-3">
-        <Button
-          className="text-sm"
-          variant="outline"
-          onClick={props.onSaveClick}
-        >
-          Save
-          <LucideBookmark />
-        </Button>
+        {!props.hideSaveButton && (
+          <Button
+            className="text-sm"
+            variant="outline"
+            onClick={props.onSaveClick}
+          >
+            Save
+            <LucideBookmark />
+          </Button>
+        )}
         <Button
           className="text-sm"
           onClick={props.onViewClick}

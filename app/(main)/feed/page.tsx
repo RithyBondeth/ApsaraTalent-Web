@@ -7,7 +7,7 @@ import feedBlackSvg from "@/assets/svg/feed-black.svg";
 import feedWhiteSvg from "@/assets/svg/feed-white.svg";
 import feedCompanySvg from "@/assets/svg/feed-company.svg";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { useEffect } from "react";
 import { useTheme } from "next-themes";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
@@ -32,6 +32,11 @@ import { Button } from "@/components/ui/button";
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useCompanyLikeStore } from "@/stores/apis/matching/company-like.store";
+import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
+import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
+import { toast } from "@/hooks/use-toast";
+import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
+import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 
 export default function FeedPage() {
   // Utils
@@ -77,6 +82,10 @@ export default function FeedPage() {
   const getAllUsersStore = useGetAllUsersStore();
   const employeeLikeStore = useEmployeeLikeStore();
   const companyLikeStore = useCompanyLikeStore();
+  const employeeFavCompanyStore = useEmployeeFavCompanyStore();
+  const companyFavEmployeeStore = useCompanyFavEmployeeStore();
+  const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
+  const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
   const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore();
   const getCurrentCompanyLikedStore = useGetCurrentCompanyLikedStore();
   
@@ -87,6 +96,8 @@ export default function FeedPage() {
   const isEmployee = currentUser?.role === "employee";
 
   const [likingId, setLikingId] = useState<string | null>(null);
+  const [savedCompanyIds, setSavedCompanyIds] = useState<Set<string>>(new Set());
+  const [savedEmployeeIds, setSavedEmployeeIds] = useState<Set<string>>(new Set());
 
   const currentUserRole = getCurrentUserStore.user?.role;
   let allUsers: IUser[] = [];
@@ -123,11 +134,27 @@ export default function FeedPage() {
   useEffect(() => {
     if (currentUser && currentUser.employee && isEmployee) {
       getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(currentUser.employee.id);
+      if (accessToken) {
+        getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(currentUser.employee.id, accessToken);
+      }
     } 
     if (currentUser && currentUser.company && !isEmployee) {
       getCurrentCompanyLikedStore.queryCurrentCompanyLiked(currentUser.company.id);
+      if (accessToken) {
+        getAllCompanyFavoritesStore.queryAllCompanyFavorites(currentUser.company.id, accessToken);
+      }
     }
   }, [currentUser]);
+
+  const favoritedCompanyIds = useMemo(() => {
+    const ids = getAllEmployeeFavoritesStore.companyData?.map((fav) => fav.company.id) ?? [];
+    return new Set(ids);
+  }, [getAllEmployeeFavoritesStore.companyData]);
+
+  const favoritedEmployeeIds = useMemo(() => {
+    const ids = getAllCompanyFavoritesStore.employeeData?.map((fav) => fav.employee.id) ?? [];
+    return new Set(ids);
+  }, [getAllCompanyFavoritesStore.employeeData]);
 
   return (
     <div className="w-full flex flex-col items-start gap-5">
@@ -182,7 +209,7 @@ export default function FeedPage() {
       )}
 
       {/* Feed Card Section */}
-      <div className="w-full grid grid-cols-2 gap-5 tablet-lg:grid-cols-1">
+      <div className="w-full grid grid-cols-3 gap-5 tablet-lg:grid-cols-1">
         {getAllUsersStore.loading ||
         !getAllUsersStore.users ||
         !getCurrentUserStore.user ? (
@@ -201,7 +228,29 @@ export default function FeedPage() {
                 {...user.company}
                 id={user.id}
                 onViewClick={() => router.push(`/feed/company/${user.id}`)}
-                onSaveClick={() => {}}
+                onSaveClick={async () => {
+                  const employeeId = currentUser?.employee?.id;
+                  const companyId = user.company?.id;
+                  if (!employeeId || !companyId || !accessToken) return;
+                  try {
+                    await employeeFavCompanyStore.addCompanyToFavorite(
+                      employeeId,
+                      companyId,
+                      accessToken
+                    );
+                    toast({ title: "Saved", description: "Company added to favorites." });
+                    setSavedCompanyIds((prev) => new Set(prev).add(user.id));
+                    // Refresh favorites to persist hidden state across reloads
+                    await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(employeeId, accessToken);
+                  } catch (e) {
+                    const err = employeeFavCompanyStore.error || "Failed to save company";
+                    toast({ title: "Error", description: err, variant: "destructive" });
+                  }
+                }}
+                hideSaveButton={
+                  savedCompanyIds.has(user.id) ||
+                  (!!user.company?.id && favoritedCompanyIds.has(user.company.id))
+                }
                 onLikeClick={async () => {
                   const empID = currentUser?.employee?.id;
                   const cmpID = user.company?.id;
@@ -227,7 +276,29 @@ export default function FeedPage() {
                 key={user.id}
                 {...user.employee}
                 id={user.id}
-                onSaveClick={() => {}}
+                onSaveClick={async () => {
+                  const companyId = currentUser?.company?.id;
+                  const employeeId = user.employee?.id;
+                  if (!companyId || !employeeId || !accessToken) return;
+                  try {
+                    await companyFavEmployeeStore.addEmployeeToFavorite(
+                      companyId,
+                      employeeId,
+                      accessToken
+                    );
+                    toast({ title: "Saved", description: "Employee added to favorites." });
+                    setSavedEmployeeIds((prev) => new Set(prev).add(user.id));
+                    // Refresh favorites to persist hidden state across reloads
+                    await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyId, accessToken);
+                  } catch (e) {
+                    const err = companyFavEmployeeStore.error || "Failed to save employee";
+                    toast({ title: "Error", description: err, variant: "destructive" });
+                  }
+                }}
+                hideSaveButton={
+                  savedEmployeeIds.has(user.id) ||
+                  (!!user.employee?.id && favoritedEmployeeIds.has(user.employee.id))
+                }
                 onViewClick={() => router.push(`/feed/employee/${user.id}`)}
                 onLikeClick={async () => {
                   const cmpID = currentUser?.company?.id;

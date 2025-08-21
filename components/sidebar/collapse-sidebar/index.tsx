@@ -13,7 +13,7 @@ import {
 } from "../../ui/sidebar";
 import LogoComponent from "../../utils/logo";
 import { Collapsible, CollapsibleTrigger } from "../../ui/collapsible";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { SidebarDropdownFooter } from "./sidebar-dropdown-footer";
 import { Separator } from "@/components/ui/separator";
 import { sidebarList } from "@/utils/constants/sidebar.constant";
@@ -25,11 +25,15 @@ import { Badge } from "@/components/ui/badge";
 import { useEffect, useMemo } from "react";
 import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
 import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-current-company-matching.store";
+import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
+import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
+import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
 
 export default function CollapseSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter();
+  const pathname = usePathname();
   const { open } = useSidebar();
 
   const { user, loading } = useGetCurrentUserStore();
@@ -45,6 +49,12 @@ export default function CollapseSidebar({
     queryCurrentCompanyMatching,
   } = useGetCurrentCompanyMatchingStore();
 
+  // Favorite stores (counts only; fetching occurs in pages)
+  const { companyData, queryAllEmployeeFavorites } = useGetAllEmployeeFavoritesStore();
+  const { employeeData, queryAllCompanyFavorites } = useGetAllCompanyFavoritesStore();
+
+  const accessToken = getUnifiedAccessToken();
+
   useEffect(() => {
     if (isEmployee && user?.employee?.id) {
       queryCurrentEmployeeMatching(user.employee.id);
@@ -53,11 +63,27 @@ export default function CollapseSidebar({
     }
   }, [isEmployee, isCompany, user?.employee?.id, user?.company?.id, queryCurrentEmployeeMatching, queryCurrentCompanyMatching]);
 
+  // Ensure favorites counts are populated even if user hasn't visited the Favorites page
+  useEffect(() => {
+    if (!accessToken) return;
+    if (isEmployee && user?.employee?.id) {
+      queryAllEmployeeFavorites(user.employee.id, accessToken);
+    } else if (isCompany && user?.company?.id) {
+      queryAllCompanyFavorites(user.company.id, accessToken);
+    }
+  }, [isEmployee, isCompany, user?.employee?.id, user?.company?.id, accessToken, queryAllEmployeeFavorites, queryAllCompanyFavorites]);
+
   const matchingCount = useMemo(() => {
     if (isEmployee) return currentEmployeeMatching?.length ?? 0;
     if (isCompany) return currentCompanyMatching?.length ?? 0;
     return 0;
   }, [isEmployee, isCompany, currentEmployeeMatching, currentCompanyMatching]);
+
+  const favoriteCount = useMemo(() => {
+    if (isEmployee) return companyData?.length ?? 0;
+    if (isCompany) return employeeData?.length ?? 0;
+    return 0;
+  }, [isEmployee, isCompany, companyData, employeeData]);
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -92,12 +118,19 @@ export default function CollapseSidebar({
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton
                       tooltip={item.title}
-                      className="font-medium"
+                      className={`font-medium py-3 ${
+                        pathname === item.url || pathname.startsWith(`${item.url}/`)
+                          ? "bg-muted"
+                          : ""
+                      }`}
                     >
                       {item.icon && <item.icon className="!size-6"/>}
                       <span>{item.title}</span>
                       {item.url === "/matching" && matchingCount > 0 && (
-                        <Badge className="ml-auto">{matchingCount}</Badge>
+                        <Badge className="ml-auto bg-red-500">{matchingCount}</Badge>
+                      )}
+                      {item.url === "/favorite" && favoriteCount > 0 && (
+                        <Badge className="ml-auto bg-red-500">{favoriteCount}</Badge>
                       )}
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
@@ -107,14 +140,14 @@ export default function CollapseSidebar({
             <Collapsible
               asChild
               defaultOpen={true}
-              className="group/collapsible"
+              className={`group/collapsible ${isCompany && 'hidden'}`}
               onClick={() => router.push('/resume-builder')}
             >
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton
                     tooltip={"AI Resume"}
-                    className="font-medium"
+                    className="font-medium py-3"
                   >
                     <LucideFileUser className="!size-6"/>
                     <span>AI Resume Builder</span>

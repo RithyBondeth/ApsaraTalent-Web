@@ -30,6 +30,7 @@ export default function MainLayout({
   const sidebarData = sidebarList.filter((item) => item.url === pathname);
   const { theme } = useThemeStore();
   const { getCurrentUser } = useGetCurrentUserStore();
+  const currentUser = useGetCurrentUserStore((s) => s.user);
   const [mounted, setMounted] = useState(false);
   const accessToken = mounted ? getUnifiedAccessToken() : null;
 
@@ -83,7 +84,7 @@ export default function MainLayout({
   if (pathname === "/message" || pathname.startsWith("/message/")) {
     return (
       <SidebarProvider>
-        <CollapseSidebar />
+        <CollapseSidebar key={currentUser?.id || "nouser"} />
         <div className="w-full h-screen message-xs:h-full flex flex-col">
           <SidebarInset>
             <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
@@ -105,7 +106,7 @@ export default function MainLayout({
   if (pathname === "/resume-builder") {
     return (
       <SidebarProvider>
-        <CollapseSidebar />
+        <CollapseSidebar key={currentUser?.id || "nouser"} />
         <div className="w-full h-screen message-xs:h-full flex flex-col">
           <SidebarInset>
             <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
@@ -125,7 +126,7 @@ export default function MainLayout({
   if (pathname.startsWith("/search")) {
     return (
       <SidebarProvider>
-        <CollapseSidebar />
+        <CollapseSidebar key={currentUser?.id || "nouser"} />
         <div className="w-full h-screen message-xs:h-full flex flex-col">
           <SidebarInset>
             <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
@@ -145,7 +146,7 @@ export default function MainLayout({
   if(pathname === "/matching") {
       return (
       <SidebarProvider>
-        <CollapseSidebar />
+        <CollapseSidebar key={currentUser?.id || "nouser"} />
         <div className="w-full h-screen message-xs:h-full flex flex-col">
           <SidebarInset>
             <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
@@ -162,11 +163,31 @@ export default function MainLayout({
     );
   }
 
+  if(pathname === "/favorite") {
+    return (
+    <SidebarProvider>
+      <CollapseSidebar />
+      <div className="w-full h-screen message-xs:h-full flex flex-col">
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <div className="flex items-center gap-2 px-4">
+              <SidebarTrigger />
+              <Separator orientation="vertical" className="mr-2 h-4" />
+              <TypographyP className="!m-0">Favorites</TypographyP>
+            </div>
+          </header>
+        </SidebarInset>
+        <div className="h-full">{children}</div>
+      </div>
+    </SidebarProvider>
+  );
+}
+
   // Default layout with both sidebars
   return (
     <ThemeProviderClient defaultTheme={theme}>
       <SidebarProvider>
-        <CollapseSidebar />
+        <CollapseSidebar key={currentUser?.id || "nouser"} />
         <div className="w-ful">
           <SidebarInset>
             <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
@@ -181,7 +202,7 @@ export default function MainLayout({
           </SidebarInset>
           <div className="!m-5">{children}</div>
         </div>
-        <RightSidebar className="!min-w-[25%] laptop-sm:hidden" />
+        {/* <RightSidebar className="!min-w-[25%] laptop-sm:hidden" /> */}
       </SidebarProvider>
     </ThemeProviderClient>
   );

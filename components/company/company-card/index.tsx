@@ -156,14 +156,16 @@ export default function CompanyCard(props: ICompanyCardProps) {
 
       {/* button Section */}
       <div className="w-full flex items-center justify-end gap-3">
-        <Button
-          className="text-xs"
-          variant="outline"
-          onClick={props.onSaveClick}
-        >
-          Save
-          <LucideBookmark />
-        </Button>
+        {!props.hideSaveButton && (
+          <Button
+            className="text-xs"
+            variant="outline"
+            onClick={props.onSaveClick}
+          >
+            Save
+            <LucideBookmark />
+          </Button>
+        )}
         <Button className="text-xs" onClick={props.onViewClick}>
           View
           <LucideCircleArrowRight />

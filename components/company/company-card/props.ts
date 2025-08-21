@@ -7,4 +7,5 @@ export interface ICompanyCardProps extends ICompany {
     onLikeClick: () => void | Promise<void>;
     onLikeClickDisable: boolean;
     onProfileImageClick: (e: React.MouseEvent) => void;
+    hideSaveButton?: boolean;
 }

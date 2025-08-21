@@ -5,4 +5,5 @@ export type TTemplateCardProps = {
     description: string;
     price?: number;
     onUseTemplate: () => void;
+    selected?: boolean;
 }
