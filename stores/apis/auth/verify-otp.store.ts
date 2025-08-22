@@ -1,9 +1,9 @@
 import { API_AUTH_VERIFY_OTP_URL } from "@/utils/constants/apis/auth_url";
 import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 import axios from "axios";
-import { deleteCookie, setCookie } from "cookies-next";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../users/get-current-user.store";
+import { setAuthCookies, clearAuthCookies, hasAuthToken } from "@/utils/auth/cookie-manager";
 
 type TVerifyOTPResponse = {
   message: string | null;
@@ -29,8 +29,27 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
   refreshToken: null,
   message: null,
   initialize: () => {
-    // Authentication state is determined by HTTP-only cookies
-    set({ isAuthenticated: true });
+    try {
+      const hasValidAuth = hasAuthToken();
+      
+      console.log("Verify OTP store initialization:", {
+        hasAuthToken: hasValidAuth,
+        isAuthenticated: hasValidAuth
+      });
+      
+      set({ 
+        isAuthenticated: hasValidAuth,
+        error: null,
+        loading: false
+      });
+    } catch (error) {
+      console.error("Error during Verify OTP store initialization:", error);
+      set({ 
+        isAuthenticated: false,
+        error: null,
+        loading: false
+      });
+    }
   },
   verifyOtp: async (phone: string, otpCode: string, rememberMe: boolean) => {
     set({ loading: true, error: null });
@@ -50,20 +69,10 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
         message: response.data.message,
         error: null
       });
-      setCookie('auth-token', response.data.accessToken, {
-        maxAge: rememberMe ? 30 * 24 * 60 * 60 : undefined, // 30 days for "remember me"
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        path: '/'
-      });
       
-      if (response.data.refreshToken) {
-        setCookie('refresh-token', response.data.refreshToken, {
-          maxAge: rememberMe ? 30 * 24 * 60 * 60 : undefined,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'strict',
-          path: '/'
-        });
+      // Use centralized cookie management
+      if (response.data.accessToken && response.data.refreshToken) {
+        setAuthCookies(response.data.accessToken, response.data.refreshToken, rememberMe);
       }
       return response.data.user;
     } catch (error) {
@@ -87,28 +96,34 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
     }
   },
   clearToken: () => {
-    // Delete cookies with all possible options to ensure removal
-    deleteCookie('auth-token', { path: '/' });
-    deleteCookie('refresh-token', { path: '/' });
-    
-    // Also try to delete without specifying options (fallback)
-    deleteCookie('auth-token');
-    deleteCookie('refresh-token');
-    
-    // Clear local/session storage as well
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('auth-token');
-      localStorage.removeItem('refresh-token');
-      sessionStorage.removeItem('auth-token');
-      sessionStorage.removeItem('refresh-token');
+    try {
+      // Use centralized cookie clearing
+      clearAuthCookies();
+      
+      // Clear user data from store
+      useGetCurrentUserStore.getState().clearUser();
+      
+      // Reset verify OTP state
+      set({
+        loading: false,
+        error: null,
+        isAuthenticated: false,
+        accessToken: null,
+        refreshToken: null,
+        message: null,
+      });
+      
+    } catch (error) {
+      console.error("Error clearing verify OTP tokens:", error);
+      // Still update state even if clearing failed
+      set({
+        loading: false,
+        error: null,
+        isAuthenticated: false,
+        accessToken: null,
+        refreshToken: null,
+        message: null,
+      });
     }
-    
-    useGetCurrentUserStore.getState().clearUser();
-    set({
-      loading: false,
-      error: null,
-      isAuthenticated: false,
-      message: null,
-    });
   },
 }));

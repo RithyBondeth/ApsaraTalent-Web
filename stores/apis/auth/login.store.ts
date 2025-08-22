@@ -1,8 +1,8 @@
 import { API_AUTH_LOGIN_URL } from "@/utils/constants/apis/auth_url";
 import { create } from "zustand";
 import axios from "@/lib/axios";
-import { deleteCookie, setCookie } from "cookies-next";
 import { useGetCurrentUserStore } from "../users/get-current-user.store";
+import { setAuthCookies, clearAuthCookies, hasAuthToken } from "@/utils/auth/cookie-manager";
 
 type TLoginState = {
   loading: boolean;
@@ -24,9 +24,27 @@ export const useLoginStore = create<TLoginState>((set) => ({
   isAuthenticated: false,
   message: null,
   initialize: () => {
-    // Authentication state is now determined by HTTP-only cookies
-    // which are handled by the server/middleware
-    set({ isAuthenticated: true });
+    try {
+      const hasValidAuth = hasAuthToken();
+      
+      console.log("Login store initialization:", {
+        hasAuthToken: hasValidAuth,
+        isAuthenticated: hasValidAuth
+      });
+      
+      set({ 
+        isAuthenticated: hasValidAuth,
+        error: null,
+        loading: false
+      });
+    } catch (error) {
+      console.error("Error during login store initialization:", error);
+      set({ 
+        isAuthenticated: false,
+        error: null,
+        loading: false
+      });
+    }
   },
   login: async (identifier: string, password: string, rememberMe: boolean) => {
     set({ loading: true, error: null });
@@ -46,19 +64,8 @@ export const useLoginStore = create<TLoginState>((set) => ({
         rememberMe,
       });
 
-      setCookie("auth-token", accessToken, {
-        maxAge: rememberMe ? 30 * 24 * 60 * 60 : undefined, // 30 days for "remember me"
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        path: "/",
-      });
-
-      setCookie("refresh-token", refreshToken, {
-        maxAge: rememberMe ? 30 * 24 * 60 * 60 : undefined,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        path: "/",
-      });
+      // Use centralized cookie management
+      setAuthCookies(accessToken, refreshToken, rememberMe);
 
       console.log(
         "Cookies set, checking document.cookie:",
@@ -90,45 +97,30 @@ export const useLoginStore = create<TLoginState>((set) => ({
     }
   },
   clearToken: () => {
-    console.log("Clearing tokens from login store...");
-
-    // Method 1: Use cookies-next library
-    deleteCookie("auth-token", { path: "/" });
-    deleteCookie("refresh-token", { path: "/" });
-    deleteCookie("auth-token");
-    deleteCookie("refresh-token");
-
-    // Method 2: Native browser cookie clearing
-    if (typeof document !== "undefined") {
-      // Clear cookies by setting them to expire in the past
-      document.cookie =
-        "auth-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      document.cookie =
-        "refresh-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-
-      // Also try with different domains
-      const hostname = window.location.hostname;
-      document.cookie = `auth-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${hostname};`;
-      document.cookie = `refresh-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${hostname};`;
-      document.cookie = `auth-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${hostname};`;
-      document.cookie = `refresh-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${hostname};`;
+    try {
+      // Use centralized cookie clearing
+      clearAuthCookies();
+      
+      // Clear user data from store
+      useGetCurrentUserStore.getState().clearUser();
+      
+      // Update authentication state
+      set({
+        isAuthenticated: false,
+        message: null,
+        error: null,
+        loading: false,
+      });
+      
+    } catch (error) {
+      console.error("Error clearing tokens:", error);
+      // Still update state even if clearing failed
+      set({
+        isAuthenticated: false,
+        message: null,
+        error: null,
+        loading: false,
+      });
     }
-
-    // Clear local/session storage as well
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("auth-token");
-      localStorage.removeItem("refresh-token");
-      sessionStorage.removeItem("auth-token");
-      sessionStorage.removeItem("refresh-token");
-    }
-
-    useGetCurrentUserStore.getState().clearUser();
-    set({
-      isAuthenticated: false,
-      message: null,
-      error: null,
-    });
-
-    console.log("Tokens cleared from login store");
   },
 }));

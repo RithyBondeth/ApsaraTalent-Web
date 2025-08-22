@@ -9,17 +9,26 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export default function LogoComponent(props: ILogoProps) {
-  const { height = 80, width = 160, className } = props; // Removed `isBlackLogo` from destructuring
-  const { resolvedTheme } = useTheme(); // Get system-aware theme resolution
+  const { height = 100, width = 200, className, priority = false } = props; 
+  const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  // Determine which logo to display (avoid SSR issues)
+  
   const currentTheme = mounted ? resolvedTheme : "light";
-  const isBlackLogo = currentTheme === "light"; // Dynamically set logo color
+  const isBlackLogo = currentTheme === "light";
 
-  return <Image src={isBlackLogo ? BlackLogo : WhiteLogo} alt="logo" height={height} width={width} className={cn(className)} />;
+  return (
+    <Image
+      src={isBlackLogo ? BlackLogo : WhiteLogo}
+      alt="logo"
+      height={height}
+      width={width}
+      className={cn(className)}
+      style={{ width: "auto", height: "auto" }}
+      priority={priority}
+    />
+  );
 }

@@ -24,7 +24,7 @@ export default function IndexPage() {
       </div>
       <div className="w-1/2 h-full flex flex-col justify-center items-center tablet-md:w-full">
           <div className="w-[85%] h-full relative tablet-md:w-full">
-            <Image src={landingSvg} alt="landing" fill className="object-contain"/>
+            <Image src={landingSvg} alt="landing" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-contain"/>
           </div>
       </div>
    </div>

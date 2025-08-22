@@ -1,9 +1,8 @@
-import { setCookie, deleteCookie } from "cookies-next";
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
 import { useGetCurrentUserStore } from "../../users/get-current-user.store";
 import { API_AUTH_SOCIAL_LINKEDIN_URL } from "@/utils/constants/apis/auth_url";
 import { TUserRole } from "@/utils/types/role.type";
+import { setAuthCookies, clearAuthCookies, hasAuthToken } from "@/utils/auth/cookie-manager";
 
 // --- Types ---
 export type TLinkedInLoginResponse = {
@@ -58,25 +57,9 @@ const FINISH_LOGIN = (data: TLinkedInLoginResponse, rememberMe: boolean) => {
     provider: data.provider,
   });
 
-  // Set HTTP-only cookies if accessToken exists
-  if (data.accessToken) {
-    setCookie("auth-token", data.accessToken, {
-      maxAge: rememberMe ? 30 * 24 * 60 * 60 : undefined,
-
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-    });
-
-    if (data.refreshToken) {
-      setCookie("refresh-token", data.refreshToken, {
-        maxAge: rememberMe ? 30 * 24 * 60 * 60 : undefined,
-
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        path: "/",
-      });
-    }
+  // Set secure cookies if accessToken exists
+  if (data.accessToken && data.refreshToken) {
+    setAuthCookies(data.accessToken, data.refreshToken, rememberMe);
   }
 };
 
@@ -97,8 +80,27 @@ export const useLinkedInLoginStore = create<TLinkedInLoginState>((set) => ({
   setRole: (role: TUserRole) => set({ role }),
 
   initialize: () => {
-    // Authentication state is determined by HTTP-only cookies
-    set({ isAuthenticated: true });
+    try {
+      const hasValidAuth = hasAuthToken();
+      
+      console.log("LinkedIn login store initialization:", {
+        hasAuthToken: hasValidAuth,
+        isAuthenticated: hasValidAuth
+      });
+      
+      set({ 
+        isAuthenticated: hasValidAuth,
+        error: null,
+        loading: false
+      });
+    } catch (error) {
+      console.error("Error during LinkedIn login store initialization:", error);
+      set({ 
+        isAuthenticated: false,
+        error: null,
+        loading: false
+      });
+    }
   },
 
   linkedinLogin: (rememberMe: boolean, usePopup = true) => {
@@ -135,35 +137,44 @@ export const useLinkedInLoginStore = create<TLinkedInLoginState>((set) => ({
   },
 
   clearToken: () => {
-    // Delete cookies with all possible options to ensure removal
-    deleteCookie("auth-token", { path: "/" });
-    deleteCookie("refresh-token", { path: "/" });
-
-    // Also try to delete without specifying options (fallback)
-    deleteCookie("auth-token");
-    deleteCookie("refresh-token");
-
-    // Clear local/session storage as well
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("auth-token");
-      localStorage.removeItem("refresh-token");
-      sessionStorage.removeItem("auth-token");
-      sessionStorage.removeItem("refresh-token");
+    try {
+      // Use centralized cookie clearing
+      clearAuthCookies();
+      
+      // Clear user data from store
+      useGetCurrentUserStore.getState().clearUser();
+      
+      // Reset LinkedIn login state
+      set({
+        loading: false,
+        error: null,
+        isAuthenticated: false,
+        message: null,
+        role: null,
+        newUser: null,
+        email: null,
+        firstname: null,
+        lastname: null,
+        picture: null,
+        provider: null,
+      });
+      
+    } catch (error) {
+      console.error("Error clearing LinkedIn tokens:", error);
+      // Still update state even if clearing failed
+      set({
+        loading: false,
+        error: null,
+        isAuthenticated: false,
+        message: null,
+        role: null,
+        newUser: null,
+        email: null,
+        firstname: null,
+        lastname: null,
+        picture: null,
+        provider: null,
+      });
     }
-
-    useGetCurrentUserStore.getState().clearUser();
-    set({
-      loading: false,
-      error: null,
-      isAuthenticated: false,
-      message: null,
-      role: null,
-      newUser: null,
-      email: null,
-      firstname: null,
-      lastname: null,
-      picture: null,
-      provider: null,
-    });
   },
 }));

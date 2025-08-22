@@ -43,12 +43,19 @@ import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login
 import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
 import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 import { useInitializeAuth } from "@/hooks/use-initialize-auth";
-import { Dialog, DialogContent, DialogFooter, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useGetAllUsersStore } from "@/stores/apis/users/get-all-user.store";
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
+import { getRememberPreference } from "@/utils/auth/get-access-token";
 
 function LoginPage() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
@@ -65,9 +72,23 @@ function LoginPage() {
     formState: { errors },
     reset,
     control,
+    setValue,
   } = useForm<TLoginForm>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      rememberMe: false,
+    },
   });
+
+  // Load remember preference on mount
+  useEffect(() => {
+    try {
+      const savedRememberPreference = getRememberPreference();
+      setValue("rememberMe", savedRememberPreference);
+    } catch (error) {
+      console.error("Error loading remember preference:", error);
+    }
+  }, [setValue]);
 
   const { isAuthenticated, message, login, error, loading } = useLoginStore();
   const { getCurrentUser } = useGetCurrentUserStore();
@@ -85,22 +106,30 @@ function LoginPage() {
     try {
       // First get current user data
       await getCurrentUser();
-      
+
       // Get all users in parallel
       getAllUsers();
-      
+
       // Wait a bit for getCurrentUser to complete and update the store
       setTimeout(async () => {
         const userData = useGetCurrentUserStore.getState().user;
-        
+
         if (userData?.role === "employee" && userData.employee?.id) {
           // Preload employee-specific data
-          getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(userData.employee.id);
-          getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(userData.employee.id);
+          getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(
+            userData.employee.id
+          );
+          getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
+            userData.employee.id
+          );
         } else if (userData?.role === "company" && userData.company?.id) {
           // Preload company-specific data
-          getCurrentCompanyLikedStore.queryCurrentCompanyLiked(userData.company.id);
-          getAllCompanyFavoritesStore.queryAllCompanyFavorites(userData.company.id);
+          getCurrentCompanyLikedStore.queryCurrentCompanyLiked(
+            userData.company.id
+          );
+          getAllCompanyFavoritesStore.queryAllCompanyFavorites(
+            userData.company.id
+          );
         }
       }, 100);
     } catch (error) {
@@ -121,7 +150,7 @@ function LoginPage() {
     if (isAuthenticated) {
       // Preload all user data while showing success message
       preloadUserData();
-      
+
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -165,27 +194,21 @@ function LoginPage() {
           </ToastAction>
         ),
       });
-  }, [
-    isAuthenticated,
-    error,
-    message,
-    loading,
-    isLoggedIn,
-  ]);
+  }, [isAuthenticated, error, message, loading, isLoggedIn]);
 
-  // Social Login Google
+  // Social Login Google, LinkedIn, Github, Facebook
   useEffect(() => {
     if (!isLoggedIn) return;
 
     if (
       googleLoginStore.isAuthenticated ||
       linkedInLoginStore.isAuthenticated ||
-      githubLoginStore.isAuthenticated || 
+      githubLoginStore.isAuthenticated ||
       facebookLoginStore.isAuthenticated
     ) {
       // Preload all user data while showing success message
       preloadUserData();
-      
+
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -203,7 +226,7 @@ function LoginPage() {
     if (
       (googleLoginStore.newUser && !googleLoginStore.isAuthenticated) ||
       (linkedInLoginStore.newUser && !linkedInLoginStore.isAuthenticated) ||
-      (githubLoginStore.newUser && !githubLoginStore.isAuthenticated) || 
+      (githubLoginStore.newUser && !githubLoginStore.isAuthenticated) ||
       (facebookLoginStore.newUser && !facebookLoginStore.isAuthenticated)
     ) {
       toast({
@@ -232,21 +255,21 @@ function LoginPage() {
   ]);
 
   const handleSocialLogin = (rememberMe: boolean) => {
-    switch(socialTypeIdentifier) {
-      case 'facebook': 
+    switch (socialTypeIdentifier) {
+      case "facebook":
         facebookLoginStore.facebookLogin(rememberMe);
         break;
-      case 'google':
+      case "google":
         googleLoginStore.googleLogin(rememberMe);
         break;
-      case 'github':
+      case "github":
         githubLoginStore.githubLogin(rememberMe);
         break;
-      case 'linkedIn':
+      case "linkedIn":
         linkedInLoginStore.linkedinLogin(rememberMe);
         break;
     }
-  }
+  };
 
   const currentTheme = resolvedTheme || "light";
   const loginImage = currentTheme === "dark" ? loginWhiteSvg : loginBlackSvg;
@@ -257,7 +280,7 @@ function LoginPage() {
         <div className="size-[70%] flex flex-col items-start justify-center gap-3 tablet-md:w-[85%] tablet-md:py-10">
           {/* Title Section */}
           <div>
-            <LogoComponent />
+            <LogoComponent className="!h-12 w-auto" />
             <TypographyH2 className="phone-xl:text-2xl">
               Log in to your Account
             </TypographyH2>
@@ -276,7 +299,7 @@ function LoginPage() {
                 className="w-1/2"
                 onClick={() => {
                   setOpenRmbDialog(true);
-                  setSocialTypeIdentifier('google');
+                  setSocialTypeIdentifier("google");
                 }}
               />
               <SocialButton
@@ -286,7 +309,7 @@ function LoginPage() {
                 className="w-1/2"
                 onClick={() => {
                   setOpenRmbDialog(true);
-                  setSocialTypeIdentifier('facebook');
+                  setSocialTypeIdentifier("facebook");
                 }}
               />
             </div>
@@ -298,7 +321,7 @@ function LoginPage() {
                 className="w-1/2"
                 onClick={() => {
                   setOpenRmbDialog(true);
-                  setSocialTypeIdentifier('linkedIn');
+                  setSocialTypeIdentifier("linkedIn");
                 }}
               />
               <SocialButton
@@ -308,7 +331,7 @@ function LoginPage() {
                 className="w-1/2"
                 onClick={() => {
                   setOpenRmbDialog(true);
-                  setSocialTypeIdentifier('github');
+                  setSocialTypeIdentifier("github");
                 }}
               />
             </div>
@@ -406,18 +429,30 @@ function LoginPage() {
       <Dialog open={openRmbDialog} onOpenChange={setOpenRmbDialog}>
         <DialogContent>
           <DialogTitle>Remember Me</DialogTitle>
-          <TypographySmall>Do you want to remember this login for 7 days?</TypographySmall>
+          <DialogDescription>
+            Do you want to remember this login? (30 days for "Yes", 1 day for
+            "No")
+          </DialogDescription>
           <DialogFooter>
-            <Button variant={'outline'} onClick={() => {
-              setIsLoggedIn(true);
-              handleSocialLogin(false);
-              setOpenRmbDialog(false);
-            }}>No</Button>
-            <Button onClick={() => {
-              setIsLoggedIn(true);
-              handleSocialLogin(true);
-              setOpenRmbDialog(false);
-            }}>Yes</Button>
+            <Button
+              variant={"outline"}
+              onClick={() => {
+                setIsLoggedIn(true);
+                handleSocialLogin(false);
+                setOpenRmbDialog(false);
+              }}
+            >
+              No
+            </Button>
+            <Button
+              onClick={() => {
+                setIsLoggedIn(true);
+                handleSocialLogin(true);
+                setOpenRmbDialog(false);
+              }}
+            >
+              Yes
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
