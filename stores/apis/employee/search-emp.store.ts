@@ -51,10 +51,6 @@ export const useSearchEmployeeStore = create<TSearchEmployeeState>((set) => ({
         `${API_SEARCH_EMP_URL}?${queryParams.toString()}`
       );
 
-      console.log(`${API_SEARCH_EMP_URL}?${queryParams.toString()}`);
-
-      console.log("Search Employee Res: ", response.data);
-
       set({
         employees: response.data,
         loading: false,

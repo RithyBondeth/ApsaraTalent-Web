@@ -37,6 +37,7 @@ import { toast } from "@/hooks/use-toast";
 import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 import { usePreloadImages } from "@/hooks/use-cached-image";
+import { useLoginMethod } from "@/hooks/use-login-method";
 
 export default function FeedPage() {
   // Utils
@@ -148,6 +149,8 @@ export default function FeedPage() {
     }
   }, []);
 
+  const loginMethod = useLoginMethod();
+
   useEffect(() => {
     if (currentUser && currentUser.employee && isEmployee) {
       // Only fetch if not already loaded from login preload
@@ -180,6 +183,9 @@ export default function FeedPage() {
           currentUser.company.id
         );
       }
+    }
+    if(currentUser) {
+      console.log("Login Method: ", loginMethod);
     }
   }, [currentUser, isEmployee]);
 

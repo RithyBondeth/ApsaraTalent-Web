@@ -22,26 +22,26 @@ export type TSearchJobQuery = {
 };
 
 type TSearchJob = {
+  id?: string;
+  title: string;
+  description: string;
+  type: string;
+  salary: string;
+  experience: string;
+  education: string;
+  skills: string[];
+  deadlineDate?: string;
+  postedDate: string;
+  company: {
     id?: string;
-    title: string;
-    description: string;
-    type: string;
-    salary: string;
-    experience: string;
-    education: string;
-    skills: string[];
-    deadlineDate?: string;
-    postedDate: string;
-    company: {
-        id?: string;
-        name: string;
-        avatar?: string;
-        companySize: number;
-        industry: string;
-        location: TLocations;
-        user: { id: string };
-    }
-}
+    name: string;
+    avatar?: string;
+    companySize: number;
+    industry: string;
+    location: TLocations;
+    user: { id: string };
+  };
+};
 
 type TSearchJobState = {
   jobs: TSearchJob[] | null;
@@ -57,7 +57,7 @@ export const useSearchJobStore = create<TSearchJobState>((set) => ({
   jobs: null,
   querySearchJobs: async (query: TSearchJobQuery) => {
     set({ loading: true, error: null });
-    
+
     try {
       const queryParams = new URLSearchParams();
 
@@ -74,8 +74,6 @@ export const useSearchJobStore = create<TSearchJobState>((set) => ({
       const response = await axios.get(
         `${API_SEARCH_JOB_URL}?${queryParams.toString()}`
       );
-
-      console.log("Search Job Res: ", response.data);
 
       set({
         jobs: response.data,

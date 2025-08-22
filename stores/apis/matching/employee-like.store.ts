@@ -30,7 +30,6 @@ export const useEmployeeLikeStore = create<TEmployeeLikeState>((set) => ({
       const response = await axios.post<TEmployeeLikeResponse>(
         API_MATCHING_EMP_LIKE_URL(employeeID, companyID)
       );
-      console.log(`Employee Like Response: ${response.data}`);
 
       set({ loading: false, error: null, data: response.data });
     } catch (error) {
