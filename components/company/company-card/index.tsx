@@ -56,7 +56,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
   return (
     <div className="h-fit w-full flex flex-col items-start gap-6 p-3 rounded-lg shadow-sm border border-muted cursor-pointer">
       {/* Profile Section */}
-      <div className="w-full flex items-start justify-between">
+      <div className="w-full flex items-start justify-between phone-xl:flex-col phone-xl:gap-5">
         <div className="flex items-center gap-3">
           <CachedAvatar
             src={props.avatar}

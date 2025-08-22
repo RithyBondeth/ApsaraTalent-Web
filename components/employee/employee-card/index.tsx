@@ -48,7 +48,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
   return (
     <div className="h-fit w-full flex flex-col items-start gap-5 p-3 rounded-lg shadow-sm border border-muted cursor-pointer">
       {/* Profile Section */}
-      <div className="w-full flex items-start justify-between">
+      <div className="w-full flex items-start justify-between phone-xl:flex-col phone-xl:gap-5">
         <div className="flex items-center gap-3">
           <CachedAvatar
             src={props.avatar}
@@ -74,13 +74,13 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
         </div>
         <div className="flex items-center gap-1">
           <Button
-            className="size-12 rounded-full transition-all duration-300 ease-in-out hover:scale-105"
+            className="size-12 rounded-md transition-all duration-300 ease-in-out hover:scale-105"
             onClick={handleClickDialog}
           >
             <LucideEye className="!size-6 transition-all duration-300 ease-in-out" />
           </Button>
           <Button 
-            className="size-12 rounded-full transition-all duration-300 ease-in-out hover:scale-105"
+            className="size-12 rounded-md transition-all duration-300 ease-in-out hover:scale-105"
             onClick={props.onLikeClick}
             disabled={props.onLikeClickDisable}
           >

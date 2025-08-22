@@ -177,7 +177,7 @@ export default function MainLayout({
     <ThemeProviderClient defaultTheme={theme}>
       <SidebarProvider>
         <CollapseSidebar key={currentUser?.id || "nouser"} />
-        <div className="w-ful">
+        <div className="w-full">
           <SidebarInset>
             <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
               <div className="flex items-center gap-2 px-4">
