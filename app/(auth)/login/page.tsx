@@ -347,7 +347,7 @@ function LoginPage() {
           {/* Divider Section */}
           <div className="w-full flex justify-between items-center">
             <Separator className="w-1/3" />
-            <TypographyMuted className="text-xs">
+            <TypographyMuted className="text-xs text-center">
               or continue with email
             </TypographyMuted>
             <Separator className="w-1/3" />

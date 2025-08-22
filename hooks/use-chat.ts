@@ -1,37 +1,27 @@
-'use client';
-
-import ChatMessages from '@/components/message/message-bubble';
-import ChatHeader from '@/components/message/message-header';
-import ChatInput from '@/components/message/message-input';
-import ChatSidebar from '@/components/message/message-sidebar';
+import { useState, useEffect, useCallback } from 'react';
+import { useToast } from '@/hooks/use-toast';
+import { useGetCurrentUserStore } from '@/stores/apis/users/get-current-user.store';
 import { IMessage, IChatPreview } from '@/components/message/props';
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import {
-  doc,
   collection,
   query,
-  orderBy,
+  where,
   onSnapshot,
+  orderBy,
   addDoc,
   serverTimestamp,
-  getDoc,
-  where,
-  getDocs,
   updateDoc,
+  doc,
+  getDoc,
+  getDocs,
 } from 'firebase/firestore';
 import { chatDatabase } from '@/utils/firebase/firebase';
-import { useGetCurrentUserStore } from '@/stores/apis/users/get-current-user.store';
-import { useToast } from '@/hooks/use-toast';
-import { ClipLoader } from 'react-spinners';
+import { createOrGetChat, UserProfile } from '@/utils/firebase/services/chat-service';
 
-const MessagePage = () => {
-  const searchParams = useSearchParams();
-  const chatId = searchParams.get('chatId');
-  const currentUser = useGetCurrentUserStore((state) => state.user);
+export const useChat = (chatId?: string | null) => {
   const { toast } = useToast();
+  const currentUser = useGetCurrentUserStore((state) => state.user);
 
-  const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [chats, setChats] = useState<IChatPreview[]>([]);
   const [activeChat, setActiveChat] = useState<IChatPreview | null>(null);
@@ -39,17 +29,33 @@ const MessagePage = () => {
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
-  const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
-
-  // Get current user's chat ID (employee or company ID)
-  const getCurrentUserId = (): string => {
+  // Get current user's chat ID
+  const getCurrentUserId = useCallback((): string => {
     if (!currentUser) return '';
     return currentUser.role === 'employee'
       ? (currentUser.employee?.id ?? '')
       : (currentUser.company?.id ?? '');
-  };
+  }, [currentUser]);
 
-  // Load chat sidebar with error handling
+  // Create or get chat between two users
+  const createChat = useCallback(async (otherUser: UserProfile): Promise<string> => {
+    if (!currentUser) throw new Error('User not authenticated');
+
+    const currentUserProfile: UserProfile = {
+      id: getCurrentUserId(),
+      name: currentUser.role === 'employee' 
+        ? (currentUser.employee?.username ?? 'Employee')
+        : (currentUser.company?.name ?? 'Company'),
+      profile: currentUser.role === 'employee'
+        ? (currentUser.employee?.avatar ?? '/avatars/default.png')
+        : (currentUser.company?.logo ?? '/avatars/default.png'),
+      role: currentUser.role,
+    };
+
+    return await createOrGetChat(currentUserProfile, otherUser);
+  }, [currentUser, getCurrentUserId]);
+
+  // Load all chats for current user
   useEffect(() => {
     const uid = getCurrentUserId();
     if (!uid) {
@@ -119,9 +125,9 @@ const MessagePage = () => {
       console.error('Error setting up chat listener:', error);
       setIsLoading(false);
     }
-  }, [currentUser, toast]);
+  }, [getCurrentUserId, toast]);
 
-  // Load messages for selected chat with error handling
+  // Load messages for specific chat
   useEffect(() => {
     const uid = getCurrentUserId();
     if (!chatId || !uid) {
@@ -132,7 +138,7 @@ const MessagePage = () => {
     setIsLoadingMessages(true);
 
     try {
-      // Load chat info and set active chat
+      // Load chat info
       const chatRef = doc(chatDatabase, 'chats', chatId);
       getDoc(chatRef)
         .then((snapshot) => {
@@ -200,12 +206,14 @@ const MessagePage = () => {
       console.error('Error setting up message listener:', error);
       setIsLoadingMessages(false);
     }
-  }, [chatId, toast]);
+  }, [chatId, getCurrentUserId, toast]);
 
-  // Send message with error handling and loading state
-  const handleSendMessage = async (text: string) => {
+  // Send message
+  const sendMessage = useCallback(async (text: string, targetChatId?: string) => {
     const uid = getCurrentUserId();
-    if (!text.trim() || !chatId || !uid) return;
+    const finalChatId = targetChatId || chatId;
+    
+    if (!text.trim() || !finalChatId || !uid) return;
 
     setIsSending(true);
 
@@ -217,10 +225,10 @@ const MessagePage = () => {
         isRead: false,
       };
 
-      await addDoc(collection(chatDatabase, 'chats', chatId, 'messages'), message);
+      await addDoc(collection(chatDatabase, 'chats', finalChatId, 'messages'), message);
 
       // Update last message in chat document
-      const chatRef = doc(chatDatabase, 'chats', chatId);
+      const chatRef = doc(chatDatabase, 'chats', finalChatId);
       await updateDoc(chatRef, {
         lastMessage: text.trim(),
         lastMessageAt: serverTimestamp(),
@@ -235,66 +243,23 @@ const MessagePage = () => {
     } finally {
       setIsSending(false);
     }
+  }, [chatId, getCurrentUserId, toast]);
+
+  return {
+    // State
+    messages,
+    chats,
+    activeChat,
+    isLoading,
+    isLoadingMessages,
+    isSending,
+    
+    // Actions
+    sendMessage,
+    createChat,
+    setActiveChat,
+    
+    // Utilities
+    getCurrentUserId,
   };
-
-  if (isLoading) {
-    return (
-      <div className="h-full flex items-center justify-center">
-        <div className="flex flex-col items-center gap-2">
-          <ClipLoader size={32} />
-          <p className="text-muted-foreground">Loading chats...</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="w-full h-full flex bg-background border-border message-xs:flex-col message-xs:[&>div]:w-full">
-      <ChatSidebar
-        chats={chats}
-        activeChat={activeChat}
-        isOpen={isSidebarOpen}
-        onChatSelect={(chat) => {
-          window.location.href = `/message?chatId=${chat.id}`;
-        }}
-      />
-
-      {activeChat ? (
-        <div className="flex-1 flex flex-col">
-          <ChatHeader
-            chat={activeChat}
-            isSidebarOpen={isSidebarOpen}
-            onToggleSidebar={toggleSidebar}
-          />
-          
-          {isLoadingMessages ? (
-            <div className="flex-1 flex items-center justify-center">
-              <div className="flex flex-col items-center gap-2">
-                <ClipLoader size={24} />
-                <p className="text-muted-foreground text-sm">Loading messages...</p>
-              </div>
-            </div>
-          ) : (
-            <ChatMessages messages={messages} activeChat={activeChat} />
-          )}
-          
-          <ChatInput 
-            onSendMessage={handleSendMessage} 
-            isDisabled={isSending || isLoadingMessages}
-          />
-        </div>
-      ) : (
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-xl font-medium">No conversation selected</h2>
-            <p className="text-muted-foreground mt-2">
-              Select a chat from the sidebar to start messaging.
-            </p>
-          </div>
-        </div>
-      )}
-    </div>
-  );
 };
-
-export default MessagePage;

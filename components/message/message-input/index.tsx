@@ -6,14 +6,15 @@ import { Input } from "@/components/ui/input";
 
 interface ChatInputProps {
   onSendMessage: (content: string) => void;
+  isDisabled?: boolean;
 }
 
-const ChatInput = ({ onSendMessage }: ChatInputProps) => {
+const ChatInput = ({ onSendMessage, isDisabled = false }: ChatInputProps) => {
   const [newMessage, setNewMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
 
   const handleSend = async () => {
-    if (newMessage.trim() === '' || isSending) return;
+    if (newMessage.trim() === '' || isSending || isDisabled) return;
     
     setIsSending(true);
     
@@ -25,16 +26,19 @@ const ChatInput = ({ onSendMessage }: ChatInputProps) => {
     }
   };
 
+  const inputDisabled = isSending || isDisabled;
+  const sendDisabled = inputDisabled || !newMessage.trim();
+
   return (
     <div className="p-4 border-t flex items-center gap-2">
-      <Button variant="ghost" size="icon">
+      <Button variant="ghost" size="icon" disabled={inputDisabled}>
         <Paperclip className="h-5 w-5" />
       </Button>
       
       <div className="flex-1 relative flex items-center">
         <Input
           type="text"
-          placeholder="Type your message..."
+          placeholder={isDisabled ? "Loading..." : "Type your message..."}
           className="pr-10"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
@@ -44,9 +48,9 @@ const ChatInput = ({ onSendMessage }: ChatInputProps) => {
               handleSend();
             }
           }}
-          disabled={isSending}
+          disabled={inputDisabled}
         />
-        <Button variant="ghost" size="icon" className="absolute right-2">
+        <Button variant="ghost" size="icon" className="absolute right-2" disabled={inputDisabled}>
           <SmilePlus className="h-5 w-5" />
         </Button>
       </div>
@@ -54,7 +58,7 @@ const ChatInput = ({ onSendMessage }: ChatInputProps) => {
       <Button 
         size="icon" 
         onClick={handleSend}
-        disabled={isSending || !newMessage.trim()}
+        disabled={sendDisabled}
       >
         <Send className="h-5 w-5" />
       </Button>
