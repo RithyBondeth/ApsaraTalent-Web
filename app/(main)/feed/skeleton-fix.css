@@ -1,6 +1,0 @@
-/* Ensure skeleton components take full width in grid */
-.grid > * {
-  min-width: 0;
-  width: 100%;
-  box-sizing: border-box;
-}

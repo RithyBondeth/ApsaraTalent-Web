@@ -1,6 +1,5 @@
 "use client";
 
-import "./skeleton-fix.css";
 import EmployeeCard from "@/components/employee/employee-card";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import Image from "next/image";
@@ -20,7 +19,7 @@ import EmployeeCardSkeleton from "@/components/employee/employee-card/skeleton";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 import CompanyCardSkeleton from "@/components/company/company-card/skeleton";
-import { BannerSkeleton } from "./banner-skeleton";
+import BannerSkeleton from "./banner-skeleton";
 import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store";
 import {
   Dialog,
