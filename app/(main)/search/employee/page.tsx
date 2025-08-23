@@ -573,11 +573,7 @@ export default function SearchPage() {
             </TypographyH4>
           </div>
           <div className="w-full flex flex-col items-start gap-2">
-            {loading ? (
-              <div className="w-full mb-3">
-                {[1, 2, 3].map((item) => <SearchEmployeeCardSkeleton key={item}/>)}
-              </div>
-            ) : error ? (
+            {error ? (
               <div className="w-full mb-3">
                 <SearchErrorCard
                   error={error}
@@ -603,13 +599,13 @@ export default function SearchPage() {
                     companySize: item.company.companySize,
                     industry: item.company.industry,
                     location: item.company.location,
-                    userId: item.company.user.id,
+                    userId: item.company.user?.id,
                   }}
                 />
               ))
             ) : (
               <div className="w-full mb-3">
-                {[1, 2, 3].map((item) => <SearchEmployeeCardSkeleton key={item}/>)}
+                {Array(3).fill(0).map((_, index) => <SearchEmployeeCardSkeleton key={index}/>)}
               </div>
             )}
           </div>

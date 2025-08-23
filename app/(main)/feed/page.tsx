@@ -37,6 +37,7 @@ import { toast } from "@/hooks/use-toast";
 import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 import { usePreloadImages } from "@/hooks/use-cached-image";
+import emptySvgImage from "@/assets/svg/empty.svg";
 import { useLoginMethod } from "@/hooks/use-login-method";
 
 export default function FeedPage() {
@@ -183,9 +184,6 @@ export default function FeedPage() {
           currentUser.company.id
         );
       }
-    }
-    if(currentUser) {
-      console.log("Login Method: ", loginMethod);
     }
   }, [currentUser, isEmployee]);
 
@@ -436,8 +434,9 @@ export default function FeedPage() {
             ) : null
           )
         ) : (
-          <div className="col-span-3 tablet-lg:col-span-1 flex justify-center items-center py-10">
-            <TypographyMuted>No users found</TypographyMuted>
+          <div className="col-span-3 laptop-sm:col-span-2 tablet-lg:col-span-1 flex flex-col items-center justify-center my-16">
+            <Image src={emptySvgImage} alt="empty" height={200} width={200} />
+            <TypographyH4>There&apos;s no users.</TypographyH4>
           </div>
         )}
       </div>

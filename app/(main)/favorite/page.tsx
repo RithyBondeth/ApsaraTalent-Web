@@ -39,7 +39,7 @@ export default function FavoritePage() {
         currentUser.company.id
       );
     }
-  }, [currentUser, isEmployee]);
+  }, [currentUser, isEmployee, getAllEmployeeFavoritesStore, getAllCompanyFavoritesStore]);
 
   // Unified loading handling to avoid flicker before first fetch resolves
   const isLoadingForEmployee =
@@ -134,13 +134,12 @@ export default function FavoritePage() {
             />
           ))
         ) : (
-          <div className="w-full flex flex-col items-center justify-center mt-14">
+          <div className="w-full flex flex-col items-center justify-center my-16">
             <Image
               src={emptySvgImage}
               alt="empty"
               height={200}
               width={200}
-              className="tablet-xl:!w-full"
             />
             <TypographyH4>There&apos;s no favorite.</TypographyH4>
           </div>

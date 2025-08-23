@@ -261,7 +261,7 @@ export default function CompanySearchPage() {
           <div className="w-full flex flex-col items-start gap-2">
             {loading ? (
               <div className="w-full mb-3">
-                {[1, 2, 3].map((item) => <SearchEmployeeCardSkeleton key={item}/>)}
+                {Array(3).fill(0).map((_, index) => <SearchEmployeeCardSkeleton key={index}/>)}
               </div>
             ) : error ? (
               <div className="w-full mb-3">
@@ -274,7 +274,7 @@ export default function CompanySearchPage() {
               employees.map((item, index) => (
                 <SearchEmployeeCard
                   key={index}
-                  id={item.id}
+                  id={item.userId}
                   firstname={item.firstname ?? ""}
                   lastname={item.lastname ?? ""}
                   username={item.username ?? ""}
@@ -294,7 +294,7 @@ export default function CompanySearchPage() {
               ))
             ) : (
               <div className="w-full mb-3">
-                {[1, 2, 3].map((item) => <SearchEmployeeCardSkeleton key={item}/>)}
+                {Array(3).fill(0).map((_, index) => <SearchEmployeeCardSkeleton key={index}/>)}
               </div>
             )}
           </div>
