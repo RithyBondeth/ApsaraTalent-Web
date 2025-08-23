@@ -1,4 +1,5 @@
 export interface IFavoriteEmployeeCardProps {
+    id: string;
     avatar: string;
     name: string;
     username: string;
@@ -8,5 +9,4 @@ export interface IFavoriteEmployeeCardProps {
     availability: string;
     location: string;
     skills: string[];
-    onViewClick: () => void; 
   }

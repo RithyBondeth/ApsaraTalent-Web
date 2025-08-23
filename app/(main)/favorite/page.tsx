@@ -39,7 +39,7 @@ export default function FavoritePage() {
         currentUser.company.id
       );
     }
-  }, [currentUser, isEmployee, getAllEmployeeFavoritesStore, getAllCompanyFavoritesStore]);
+  }, [currentUser, isEmployee]);
 
   // Unified loading handling to avoid flicker before first fetch resolves
   const isLoadingForEmployee =
@@ -104,6 +104,7 @@ export default function FavoritePage() {
           getAllEmployeeFavoritesStore.companyData.map((fav) => (
             <FavoriteCompanyCard
               key={fav.id}
+              id={fav.userId}
               name={fav.company.name}
               avatar={fav.company.avatar ?? ""}
               industry={fav.company.industry}
@@ -112,7 +113,6 @@ export default function FavoritePage() {
               foundedYear={fav.company.foundedYear}
               openPosition={fav.company.openPositions ?? []}
               location={fav.company.location}
-              onViewClick={() => {}}
             />
           ))
         ) : !isEmployee &&
@@ -121,6 +121,7 @@ export default function FavoritePage() {
           getAllCompanyFavoritesStore.employeeData.map((fav) => (
             <FavoriteEmployeeCard
               key={fav.id}
+              id={fav.userId}
               name={`${fav.employee.firstname} ${fav.employee.lastname}`}
               username={fav.employee.username ?? ""}
               avatar={fav.employee.avatar ?? ""}
@@ -130,7 +131,6 @@ export default function FavoritePage() {
               availability={fav.employee.availability}
               location={fav.employee.location ?? ""}
               skills={(fav.employee.skills ?? []).map((skill) => skill.name)}
-              onViewClick={() => {}}
             />
           ))
         ) : (

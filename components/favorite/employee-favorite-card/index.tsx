@@ -10,11 +10,14 @@ import {
   import { TypographyP } from "../../utils/typography/typography-p";
   import { Button } from "../../ui/button";
 import { IFavoriteEmployeeCardProps } from "./props";
+import { useRouter } from "next/navigation";
 
   
   export default function FavoriteEmployeeCard(
     props: IFavoriteEmployeeCardProps
   ) {
+    const router = useRouter();
+    
     return (
       <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-md">
         <Avatar rounded="md" className="size-56 phone-md:!hidden">
@@ -80,7 +83,9 @@ import { IFavoriteEmployeeCardProps } from "./props";
                 </div>
               </div>
             </div>
-            <Button className="text-xs" onClick={props.onViewClick}>
+            <Button className="text-xs" onClick={() => {
+              router.replace(`/feed/employee/${props.id}`)
+            }}>
               View Detail
               <LucideArrowRight />
             </Button>

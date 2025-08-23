@@ -13,8 +13,11 @@ import {
   import { Button } from "../../ui/button";
   import IconLabel from "@/components/utils/icon-label";
 import { IFavoriteCompanyCardProps } from "./props";
+import { useRouter } from "next/navigation";
   
   export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
+    const router = useRouter();
+
     return (
       <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-md">
         <Avatar rounded="md" className="size-56 phone-md:!hidden">
@@ -90,7 +93,9 @@ import { IFavoriteCompanyCardProps } from "./props";
                 </div>
               </div>
             </div>
-            <Button className="text-xs" onClick={props.onViewClick}>
+            <Button className="text-xs" onClick={() => {
+              router.replace(`/feed/company/${props.id}`)
+            }}>
               View Detail
               <LucideArrowRight />
             </Button>

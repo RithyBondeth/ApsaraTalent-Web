@@ -1,6 +1,7 @@
 import { IJobPosition } from "@/utils/interfaces/user-interface/company.interface";
 
 export interface IFavoriteCompanyCardProps {
+    id: string;
     avatar: string;
     name: string;
     industry: string;
@@ -9,5 +10,4 @@ export interface IFavoriteCompanyCardProps {
     openPosition: IJobPosition[];
     companySize: number;
     location: string;
-    onViewClick: () => void;
 }

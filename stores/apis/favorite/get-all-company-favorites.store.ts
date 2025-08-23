@@ -6,6 +6,7 @@ import { create } from "zustand";
 export type TGetAllCompanyFavoritesResponse = {
   id: string;
   createdAt: string;
+  userId: string;
   employee: IEmployee;
 };
 
