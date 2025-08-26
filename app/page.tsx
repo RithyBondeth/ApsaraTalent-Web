@@ -11,7 +11,7 @@ export default function IndexPage() {
       <ParticlesBackground />
       <Header className="absolute top-0 left-0 right-0 z-20" />
       <div className="w-1/2 z-10 h-full flex justify-center items-center tablet-md:w-full tablet-md:h-1/3 tablet-md:pt-16 tablet-md:mt-10 phone-xl:!mt-16 phone-340:!mt-24">
-        <div className="size-[70%] tablet-md:w-full tablet-md:h-full tablet-md:px-6 tablet-md:flex tablet-md:flex-col tablet-md:justify-center">
+        <div className="px-20 tablet-md:w-full tablet-md:h-full tablet-md:px-6 tablet-md:flex tablet-md:flex-col tablet-md:justify-center">
           <div className="flex flex-col items-start gap-5 mb-10 tablet-md:gap-3 tablet-md:mb-0 tablet-md:text-left tablet-md:items-center h-fit">
             <TypographyH1 className="!leading-tight tablet-sm:text-2xl tablet-md:!leading-tight">
               Empowering Connections Between Talent and Opportunity
@@ -29,7 +29,7 @@ export default function IndexPage() {
         </div>
       </div>
       <div className="w-1/2 h-full flex flex-col justify-center items-center tablet-md:w-full tablet-md:h-1/2 phone-340:hidden">
-        <div className="w-[85%] h-full relative tablet-md:!w-full tablet-md:h-full tablet-md:max-h-full bg-red-400">
+        <div className="w-[85%] h-full relative tablet-md:min-w-full tablet-md:h-full tablet-md:max-h-full">
           <Image
             src={landingSvg}
             alt="landing"
