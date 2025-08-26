@@ -85,10 +85,11 @@ export default function CollapseSidebar({
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader onClick={() => router.push("/feed")}>
         {open ? (
-          <LogoComponent className="!h-12 w-auto" priority={true} />
+          <LogoComponent className="!h-20 w-auto" priority={true} />
         ) : (
           <SidebarMenuButton tooltip="Apsara Talent" className="text-sm">
-            <TypographyP className="!m-0 text-md font-bold">AP</TypographyP>
+            {/* <TypographyP className="!m-0 text-md font-bold">AP</TypographyP> */}
+            <LogoComponent withoutTitle/>
           </SidebarMenuButton>
         )}
       </SidebarHeader>

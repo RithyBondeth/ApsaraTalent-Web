@@ -280,7 +280,7 @@ function LoginPage() {
         <div className="size-[70%] flex flex-col items-start justify-center gap-3 tablet-md:w-[85%] tablet-md:py-10">
           {/* Title Section */}
           <div>
-            <LogoComponent className="!h-12 w-auto" />
+            <LogoComponent className="!h-24 w-auto" withoutTitle/>
             <TypographyH2 className="phone-xl:text-2xl">
               Log in to your Account
             </TypographyH2>

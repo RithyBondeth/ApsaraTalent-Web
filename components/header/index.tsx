@@ -25,7 +25,7 @@ export default function Header({ className }: { className?: string }) {
     >
       {/* Left Menu Section */}
       <div className="flex items-center tablet-lg:[&>button]:hidden">
-        <LogoComponent className="mr-5 !h-12 w-auto" />
+        <LogoComponent className="mr-3 !h-20 w-auto" />
         <Button variant="ghost">Products</Button>
         <Button variant="ghost">Learn</Button>
         <Button variant="ghost">Safety</Button>

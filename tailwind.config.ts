@@ -30,6 +30,9 @@ export default {
   			'phone-lg': {
   				max: '360px'
   			},
+			'phone-340': {
+				max: '340px'
+			},
   			'phone-md': {
   				max: '300px'
   			},

@@ -103,7 +103,7 @@ export default function PhoneNumberPage() {
         <div className="h-fit w-[70%] flex flex-col items-stretch gap-3 tablet-lg:w-[85%] tablet-md:w-[95%] tablet-md:py-10">
           {/* Title Section */}
           <div className="mb-5">
-            <LogoComponent className="!h-12 w-auto" />
+            <LogoComponent className="!h-24 w-auto" withoutTitle/>
             <TypographyH2 className="phone-xl:text-xl">
               Sign in with Your Phone Number
             </TypographyH2>

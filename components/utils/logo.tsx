@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import BlackLogo from "@/assets/svg/logo-black.svg";
-import WhiteLogo from "@/assets/svg/logo-white.svg";
+import BlackLogo from "@/assets/svg/logo-version2-black.svg";
+import WhiteLogo from "@/assets/svg/logo-version2-white.svg";
+import LogoWithoutTitle from "@/assets/svg/logo-without-title.svg";
 import { useTheme } from "next-themes";
 import { ILogoProps } from "@/utils/interfaces/logo.interface";
 import { useEffect, useState } from "react";
@@ -20,9 +21,16 @@ export default function LogoComponent(props: ILogoProps) {
   const currentTheme = mounted ? resolvedTheme : "light";
   const isBlackLogo = currentTheme === "light";
 
+  const getLogoSource = () => {
+    if (props.withoutTitle) {
+      return LogoWithoutTitle;
+    }
+    return isBlackLogo ? BlackLogo : WhiteLogo;
+  };
+
   return (
     <Image
-      src={isBlackLogo ? BlackLogo : WhiteLogo}
+      src={getLogoSource()}
       alt="logo"
       height={height}
       width={width}
