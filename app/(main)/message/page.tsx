@@ -213,7 +213,7 @@ const MessagePage = () => {
       const message: Omit<IMessage, 'id'> = {
         senderId: uid,
         content: text.trim(),
-        timestamp: serverTimestamp() as any,
+        timestamp: serverTimestamp(),
         isRead: false,
       };
 

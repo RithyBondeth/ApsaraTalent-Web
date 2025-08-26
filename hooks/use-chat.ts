@@ -48,7 +48,7 @@ export const useChat = (chatId?: string | null) => {
         : (currentUser.company?.name ?? 'Company'),
       profile: currentUser.role === 'employee'
         ? (currentUser.employee?.avatar ?? '/avatars/default.png')
-        : (currentUser.company?.logo ?? '/avatars/default.png'),
+        : (currentUser.company?.avatar ?? '/avatars/default.png'),
       role: currentUser.role,
     };
 

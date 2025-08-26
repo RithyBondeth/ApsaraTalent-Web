@@ -81,7 +81,7 @@ const MessageBubble = ({ message, activeChat }: MessageBubbleProps) => (
       {message.content}
     </div>
     <div className={`text-xs text-muted-foreground mt-1 ${message.isMe ? 'text-right' : ''}`}>
-      {message.timestamp.toDateString()}
+      {message.timestamp instanceof Date ? message.timestamp.toDateString() : 'Sending...'}
     </div>
   </div>
 );

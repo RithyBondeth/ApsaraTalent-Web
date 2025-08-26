@@ -1,9 +1,11 @@
+import { FieldValue } from "firebase/firestore";
+
 export interface IMessage {
   id: string;
   senderId: string;
   senderName?: string;
   content: string;
-  timestamp: Date;
+  timestamp: Date | FieldValue;
   isMe?: boolean; // frontend only
   isRead?: boolean; // 🔥 Add this
 }

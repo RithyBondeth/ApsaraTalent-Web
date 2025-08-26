@@ -17,7 +17,7 @@ export default function IndexPage() {
               Empowering Connections Between Talent and Opportunity
             </TypographyH1>
             <TypographyMuted className="!leading-relaxed tablet-md:text-md">
-              Whether you're a freelancer seeking new opportunities or a
+              Whether you&apos;re a freelancer seeking new opportunities or a
               professional advancing your career, our platform connects you with
               the right opportunities.
               <span className="tablet-md:hidden">

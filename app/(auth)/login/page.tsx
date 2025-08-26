@@ -430,8 +430,8 @@ function LoginPage() {
         <DialogContent>
           <DialogTitle>Remember Me</DialogTitle>
           <DialogDescription>
-            Do you want to remember this login? (30 days for "Yes", 1 day for
-            "No")
+            Do you want to remember this login? (30 days for &quot;Yes&quot;, 1 day for
+            &quot;No&quot;)
           </DialogDescription>
           <DialogFooter>
             <Button

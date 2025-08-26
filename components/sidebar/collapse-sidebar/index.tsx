@@ -17,7 +17,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { SidebarDropdownFooter } from "./sidebar-dropdown-footer";
 import { Separator } from "@/components/ui/separator";
 import { sidebarList } from "@/utils/constants/sidebar.constant";
-import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { SidebarDropdownFooterSkeleton } from "./sidebar-dropdown-footer/skeleton";
 import { LucideFileUser } from "lucide-react";

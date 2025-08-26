@@ -38,7 +38,6 @@ import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 import { usePreloadImages } from "@/hooks/use-cached-image";
 import emptySvgImage from "@/assets/svg/empty.svg";
-import { useLoginMethod } from "@/hooks/use-login-method";
 
 export default function FeedPage() {
   // Utils
@@ -150,7 +149,6 @@ export default function FeedPage() {
     }
   }, []);
 
-  const loginMethod = useLoginMethod();
 
   useEffect(() => {
     if (currentUser && currentUser.employee && isEmployee) {
