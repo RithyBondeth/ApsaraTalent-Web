@@ -29,12 +29,12 @@ export default function IndexPage() {
         </div>
       </div>
       <div className="w-1/2 h-full flex flex-col justify-center items-center tablet-md:w-full tablet-md:h-1/2 phone-340:hidden">
-        <div className="w-[85%] h-full relative tablet-md:w-full tablet-md:h-full tablet-md:max-h-full">
+        <div className="w-[85%] h-full relative tablet-md:!w-full tablet-md:h-full tablet-md:max-h-full">
           <Image
             src={landingSvg}
             alt="landing"
             fill
-            sizes="(max-width: 768px) 100vw, 50vw"
+            //sizes="(max-width: 768px) 100vw, 50vw"
             className="object-contain tablet-md:object-scale-down"
           />
         </div>
