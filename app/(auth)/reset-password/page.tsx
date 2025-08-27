@@ -19,10 +19,10 @@ import { resetPasswordSchema, TResetPasswordForm } from "./validate";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
 import { useResetPasswordStore } from "@/stores/apis/auth/reset-password.store";
-import { ClipLoader } from "react-spinners";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { ToastAction } from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function ResetPasswordPage() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
@@ -59,7 +59,7 @@ export default function ResetPasswordPage() {
       toast({
         description: (
           <div className="flex items-center gap-2">
-            <ClipLoader />
+            <ApsaraLoadingSpinner size={50} loop/>
             <TypographySmall className="font-medium">
               Loading...
             </TypographySmall>

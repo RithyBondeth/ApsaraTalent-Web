@@ -17,9 +17,9 @@ import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-sign
 import { useLoginOTPStore } from "@/stores/apis/auth/login-otp.store";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { ClipLoader } from "react-spinners";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { ToastAction } from "@/components/ui/toast";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function PhoneNumberPage() {
   const router = useRouter();
@@ -70,7 +70,7 @@ export default function PhoneNumberPage() {
       toast({
         description: (
           <div className="flex items-center gap-2">
-            <ClipLoader />
+            <ApsaraLoadingSpinner size={40} loop/>
             <TypographySmall className="font-medium">
               Logging in...
             </TypographySmall>

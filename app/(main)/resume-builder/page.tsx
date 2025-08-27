@@ -15,7 +15,7 @@ import { buildResumePayloadFromUser } from "./_utils/build-payload";
 import { generateResumeAPI } from "./_apis/generate-resume.api";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { ClipLoader } from "react-spinners";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function ResumeBuilder() {
   const { templateData, queryAllTemplates } = useGetAllTemplateStore();
@@ -106,7 +106,7 @@ export default function ResumeBuilder() {
       <Dialog open={generating}>
         <DialogContent>
           <div className="w-full flex flex-col items-center justify-center gap-3 py-4">
-            <ClipLoader size={28} />
+            <ApsaraLoadingSpinner size={80} loop/>
             <DialogTitle>Generating your resume…</DialogTitle>
             <TypographyMuted className="text-center">
               This may take a few seconds. Please don’t close the tab.

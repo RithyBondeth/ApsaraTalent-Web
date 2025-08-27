@@ -1,7 +1,6 @@
 "use client";
 
 import CollapseSidebar from "@/components/sidebar/collapse-sidebar";
-//import RightSidebar from "@/components/sidebar/right-sidebar";
 import { Button } from "@/components/ui/button";
 import { LucideArrowLeft } from "lucide-react";
 import {
@@ -17,9 +16,9 @@ import { sidebarList } from "@/utils/constants/sidebar.constant";
 import { ThemeProviderClient } from "@/components/utils/themes/theme-provider-client";
 import { useThemeStore } from "@/stores/themes/theme-store";
 import { useEffect, useState } from "react";
-import { ClipLoader } from "react-spinners";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useInitializeAuth } from "@/hooks/use-initialize-auth";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function MainLayout({
   children,
@@ -49,16 +48,12 @@ export default function MainLayout({
   if (!mounted) {
     return (
       <div className="h-screen w-screen flex justify-center items-center">
-        <ClipLoader color="#000" />
+        <ApsaraLoadingSpinner size={80} loop/>
       </div>
     );
   }
 
-  if (
-    (pathname.startsWith("/feed/") && pathname !== "/feed") ||
-    pathname === "/profile/employee" ||
-    pathname === "/profile/company"
-  ) {
+  if (pathname.startsWith("/feed/")) {
     return (
       <div className="relative">
         <Link href="/feed" className="absolute top-5 left-5 z-20">
@@ -71,7 +66,7 @@ export default function MainLayout({
     );
   }
 
-  if (pathname === "/message" || pathname.startsWith("/message/")) {
+  if (pathname.startsWith("/message")) {
     return (
       <SidebarProvider>
         <CollapseSidebar key={currentUser?.id || "nouser"} />
@@ -81,9 +76,7 @@ export default function MainLayout({
               <div className="flex items-center gap-2 px-4">
                 <SidebarTrigger />
                 <Separator orientation="vertical" className="mr-2 h-4" />
-                <TypographyP className="!m-0">
-                  {sidebarData[0]?.description ?? "Messaging"}
-                </TypographyP>
+                <TypographyP className="!m-0">Chat</TypographyP>
               </div>
             </header>
           </SidebarInset>
@@ -93,7 +86,7 @@ export default function MainLayout({
     );
   }
 
-  if (pathname === "/resume-builder") {
+  if (pathname.startsWith("/resume-builder")) {
     return (
       <SidebarProvider>
         <CollapseSidebar key={currentUser?.id || "nouser"} />
@@ -133,7 +126,7 @@ export default function MainLayout({
     );
   }
 
-  if (pathname === "/matching") {
+  if (pathname.startsWith("/matching")) {
     return (
       <SidebarProvider>
         <CollapseSidebar key={currentUser?.id || "nouser"} />
@@ -153,7 +146,7 @@ export default function MainLayout({
     );
   }
 
-  if (pathname === "/favorite") {
+  if (pathname.startsWith("/favorite")) {
     return (
       <SidebarProvider>
         <CollapseSidebar />
@@ -184,7 +177,7 @@ export default function MainLayout({
                 <SidebarTrigger />
                 <Separator orientation="vertical" className="mr-2 h-4" />
                 <TypographyP className="!m-0">
-                  {sidebarData[0]?.description ?? "Page"}
+                  {sidebarData[0]?.description}
                 </TypographyP>
               </div>
             </header>

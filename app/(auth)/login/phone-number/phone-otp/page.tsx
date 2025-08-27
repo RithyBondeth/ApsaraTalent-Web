@@ -20,8 +20,8 @@ import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-sign
 import { useVerifyOTPStore } from "@/stores/apis/auth/verify-otp.store";
 import { useEffect, useState } from "react";
 import { LucideCheck, LucideInfo } from "lucide-react";
-import { ClipLoader } from "react-spinners";
 import { ToastAction } from "@/components/ui/toast";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function PhoneOTPPage() {
   const router = useRouter();
@@ -75,7 +75,7 @@ export default function PhoneOTPPage() {
       toast({
         description: (
           <div className="flex items-center gap-2">
-            <ClipLoader />
+            <ApsaraLoadingSpinner size={40} loop/>
             <TypographySmall className="font-medium">
               Verifying your otp code...
             </TypographySmall>
