@@ -23,7 +23,6 @@ import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.sto
 import { useEmployeeSignupStore } from "@/stores/apis/auth/employee-signup.store";
 import { TGender } from "@/utils/types/gender.type";
 import { useToast } from "@/hooks/use-toast";
-import { ClipLoader } from "react-spinners";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { ToastAction } from "@/components/ui/toast";
 import { useUploadEmployeeAvatarStore } from "@/stores/apis/employee/upload-emp-avatar.store";
@@ -34,6 +33,7 @@ import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.sto
 import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
 import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
 import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function EmployeeSignup() {
   const router = useRouter();
@@ -283,7 +283,7 @@ export default function EmployeeSignup() {
       toast({
         description: (
           <div className="flex items-center gap-2">
-            <ClipLoader />
+            <ApsaraLoadingSpinner size={40} loop/>
             <TypographySmall className="font-medium">
               Loading...
             </TypographySmall>

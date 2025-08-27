@@ -26,13 +26,13 @@ import { useCompanySignupStore } from "@/stores/apis/auth/company-signup.store";
 import { useUploadCompanyAvatarStore } from "@/stores/apis/company/upload-cmp-avatar.store";
 import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cover.store";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { ClipLoader } from "react-spinners";
 import { ToastAction } from "@/components/ui/toast";
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
 import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
 import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
 import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function CompanySignup() {
   const router = useRouter();
@@ -250,7 +250,7 @@ export default function CompanySignup() {
       toast({
         description: (
           <div className="flex items-center gap-2">
-            <ClipLoader />
+            <ApsaraLoadingSpinner size={40} loop/>
             <TypographySmall className="font-medium">
               Loading...
             </TypographySmall>

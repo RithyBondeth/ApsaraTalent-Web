@@ -12,8 +12,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useVerifyEmailStore } from "@/stores/apis/auth/verify-email.store";
-import { ClipLoader } from "react-spinners";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function EmailVerificationPage() {
   const { resolvedTheme } = useTheme();
@@ -43,7 +43,7 @@ export default function EmailVerificationPage() {
       toast({
         description: (
           <div className="flex items-center gap-2">
-            <ClipLoader />
+            <ApsaraLoadingSpinner size={40} loop/>
             <TypographySmall className="font-medium">
               Loading...
             </TypographySmall>

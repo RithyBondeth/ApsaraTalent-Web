@@ -19,12 +19,12 @@ import { useForm } from "react-hook-form";
 import { forgotPasswordSchema, TForgotPasswordForm } from "./validate";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForgotPasswordStore } from "@/stores/apis/auth/forgot-password.store";
-import { ClipLoader } from "react-spinners";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { isEmailInput } from "@/utils/extensions/check-email-input";
 import { isNumberPhoneInput } from "@/utils/extensions/check-phone-input";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -55,7 +55,7 @@ export default function ForgotPasswordPage() {
       toast({
         description: (
           <div className="flex items-center gap-2">
-            <ClipLoader />
+            <ApsaraLoadingSpinner size={50} loop/>
             <TypographySmall className="font-medium">
               Loading...
             </TypographySmall>

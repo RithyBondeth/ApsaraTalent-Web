@@ -23,7 +23,7 @@ import {
 import { chatDatabase } from '@/utils/firebase/firebase';
 import { useGetCurrentUserStore } from '@/stores/apis/users/get-current-user.store';
 import { useToast } from '@/hooks/use-toast';
-import { ClipLoader } from 'react-spinners';
+import ApsaraLoadingSpinner from '@/components/utils/apsara-loading-spinner';
 
 const MessagePage = () => {
   const searchParams = useSearchParams();
@@ -240,10 +240,7 @@ const MessagePage = () => {
   if (isLoading) {
     return (
       <div className="h-full flex items-center justify-center">
-        <div className="flex flex-col items-center gap-2">
-          <ClipLoader size={32} />
-          <p className="text-muted-foreground">Loading chats...</p>
-        </div>
+        <ApsaraLoadingSpinner size={80} loop/>
       </div>
     );
   }
@@ -270,7 +267,7 @@ const MessagePage = () => {
           {isLoadingMessages ? (
             <div className="flex-1 flex items-center justify-center">
               <div className="flex flex-col items-center gap-2">
-                <ClipLoader size={24} />
+                <ApsaraLoadingSpinner size={40} loop/>
                 <p className="text-muted-foreground text-sm">Loading messages...</p>
               </div>
             </div>

@@ -35,7 +35,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoginStore } from "@/stores/apis/auth/login.store";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
-import { ClipLoader } from "react-spinners";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
@@ -56,6 +55,7 @@ import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-curre
 import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 import { getRememberPreference } from "@/utils/auth/get-access-token";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 function LoginPage() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
@@ -169,7 +169,7 @@ function LoginPage() {
       toast({
         description: (
           <div className="flex items-center gap-2">
-            <ClipLoader />
+            <ApsaraLoadingSpinner size={50} loop/>
             <TypographySmall className="font-medium">
               Logging in...
             </TypographySmall>
