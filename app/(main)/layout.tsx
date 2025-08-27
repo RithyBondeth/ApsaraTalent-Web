@@ -165,6 +165,46 @@ export default function MainLayout({
       </SidebarProvider>
     );
   }
+  
+  if (pathname.startsWith("/profile")) {
+    return (
+      <SidebarProvider>
+        <CollapseSidebar key={currentUser?.id || "nouser"} />
+        <div className="w-full h-screen message-xs:h-full flex flex-col">
+          <SidebarInset>
+            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+              <div className="flex items-center gap-2 px-4">
+                <SidebarTrigger />
+                <Separator orientation="vertical" className="mr-2 h-4" />
+                <TypographyP className="!m-0">Profile Page</TypographyP>
+              </div>
+            </header>
+          </SidebarInset>
+          <div className="h-full">{children}</div>
+        </div>
+      </SidebarProvider>
+    );
+  }
+
+  if (pathname.startsWith("/setting")) {
+    return (
+      <SidebarProvider>
+        <CollapseSidebar key={currentUser?.id || "nouser"} />
+        <div className="w-full h-screen message-xs:h-full flex flex-col">
+          <SidebarInset>
+            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+              <div className="flex items-center gap-2 px-4">
+                <SidebarTrigger />
+                <Separator orientation="vertical" className="mr-2 h-4" />
+                <TypographyP className="!m-0">Setting Page</TypographyP>
+              </div>
+            </header>
+          </SidebarInset>
+          <div className="h-full">{children}</div>
+        </div>
+      </SidebarProvider>
+    );
+  }
 
   return (
     <ThemeProviderClient defaultTheme={theme}>

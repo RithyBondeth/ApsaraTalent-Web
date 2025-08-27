@@ -55,7 +55,7 @@ export default function ResumeBuilder() {
         <div className="w-full flex justify-between items-center">
           <TypographyH4>Choose your template</TypographyH4>
         </div>
-        <div className="grid grid-cols-3 gap-3 my-3">
+        <div className="grid grid-cols-3 gap-3 my-3 tablet-lg:grid-cols-1">
           {templateData && templateData.length > 0
             ? templateData.map((resume) => {
                 const mapped = templateMap[resume.title];

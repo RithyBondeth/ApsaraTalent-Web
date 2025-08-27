@@ -38,6 +38,7 @@ import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 import { usePreloadImages } from "@/hooks/use-cached-image";
 import emptySvgImage from "@/assets/svg/empty.svg";
+import { TypographyP } from "@/components/utils/typography/typography-p";
 
 export default function FeedPage() {
   // Utils
@@ -228,18 +229,18 @@ export default function FeedPage() {
       {showLoadingState ? (
         <BannerSkeleton />
       ) : isEmployee ? (
-        <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
+        <div className="w-full flex items-center justify-between gap-10 tablet-xl:flex-col tablet-xl:items-center">
           <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
-            <TypographyH2 className="leading-relaxed tablet-xl:text-center">
+            <TypographyH2 className="!leading-relaxed text-4xl tablet-xl:text-3xl tablet-xl:text-center">
               Connect with global professionals and grow your network
             </TypographyH2>
-            <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+            <TypographyH4 className="!leading-relaxed tablet-xl:text-center">
               Start your journey toward a career you love.
             </TypographyH4>
-            <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+            <TypographyH4 className="!leading-relaxed tablet-xl:text-center">
               Build meaningful connections that open doors to new opportunities.
             </TypographyH4>
-            <TypographyMuted className="leading-relaxed tablet-xl:text-center">
+            <TypographyMuted className="!leading-relaxed tablet-xl:text-center">
               Land your dream job with ease — no matter where you are.
             </TypographyMuted>
           </div>
@@ -268,16 +269,16 @@ export default function FeedPage() {
             <Image
               src={feedImage}
               alt="feed"
-              height={300}
-              width={400}
+              height={250}
+              width={350}
               className="tablet-xl:!w-full"
             />
           ) : (
             <Image
               src={feedWhiteSvg}
               alt="feed"
-              height={300}
-              width={400}
+              height={250}
+              width={350}
               className="tablet-xl:!w-full"
             />
           )}
@@ -434,7 +435,7 @@ export default function FeedPage() {
         ) : (
           <div className="col-span-3 laptop-sm:col-span-2 tablet-lg:col-span-1 flex flex-col items-center justify-center my-16">
             <Image src={emptySvgImage} alt="empty" height={200} width={200} />
-            <TypographyH4>There&apos;s no users.</TypographyH4>
+            <TypographyP className="!m-0">No user available</TypographyP>
           </div>
         )}
       </div>

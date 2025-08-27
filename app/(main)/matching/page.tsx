@@ -17,8 +17,8 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import MatchingBannerSkeleton from "./banner-skeleton";
 import { useGetOneEmployeeStore } from "@/stores/apis/employee/get-one-emp.store";
-
 import { createOrGetChat } from "@/utils/firebase/services/chat-service";
+import { TypographyP } from "@/components/utils/typography/typography-p";
 
 export default function MatchingPage() {
   const router = useRouter();
@@ -104,7 +104,7 @@ export default function MatchingPage() {
         <MatchingBannerSkeleton />
       ) : (
         <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
-          <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center px-5">
+          <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center tablet-xl:mt-5 px-5">
             <TypographyH2 className="leading-relaxed tablet-xl:text-center">
               Ready to find your match? Let’s make it happen.
             </TypographyH2>
@@ -169,7 +169,7 @@ export default function MatchingPage() {
               height={200}
               width={200}
             />
-            <TypographyH4>There&apos;s no matched.</TypographyH4>
+            <TypographyP className="!m-0">No matched available</TypographyP>
           </div>
         )}
       </div>

@@ -7,7 +7,7 @@ import resumeBuilderImageSvg from "@/assets/svg/resume-builder-banner.svg";
 export default function ResumeBuilderBanner() {
   return (
     <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
-      <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
+      <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center tablet-xl:mt-5">
         <TypographyH2 className="leading-relaxed tablet-xl:text-center">
           AI-Powered Resume Builder
         </TypographyH2>

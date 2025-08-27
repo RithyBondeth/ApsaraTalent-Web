@@ -20,7 +20,7 @@ export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
 
   return (
     <div className="w-full flex flex-col items-start gap-4 px-4 py-3 shadow-md rounded-md">
-      <div className="flex items-center gap-3">
+      <div className="w-full flex items-center gap-5 tablet-md:flex-col tablet-md:items-start">
         <Avatar rounded="md" className="size-28 phone-md:!hidden">
           <AvatarImage src={props.avatar} />
           <AvatarFallback>{props.username?.slice(0, 2)}</AvatarFallback>
@@ -34,7 +34,7 @@ export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
               {props.job}
             </TypographyMuted>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="w-full flex items-center gap-3">
             <IconLabel
               icon={
                 <LucideUser
@@ -60,7 +60,7 @@ export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
           </div>
         </div>
       </div>
-      <div className="w-full flex items-center gap-3">
+      <div className="w-full flex items-center gap-3 phone-340:flex-col phone-340:items-start">
         <IconLabel
           icon={<LucideClock />}
           text={availabilityConstant.find((item) => item.value === props.availability)?.label ?? "Unknown"}

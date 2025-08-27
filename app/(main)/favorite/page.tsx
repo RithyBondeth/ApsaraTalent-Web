@@ -16,6 +16,7 @@ import FavoriteCompanyCardSkeleton from "@/components/favorite/company-favorite-
 import FavoriteCompanyCard from "@/components/favorite/company-favorite-card";
 import FavoriteEmployeeCard from "@/components/favorite/employee-favorite-card";
 import FavoriteBannerSkeleton from "./banner-skeleton";
+import { TypographyP } from "@/components/utils/typography/typography-p";
 
 export default function FavoritePage() {
   const currentUser = useGetCurrentUserStore((state) => state.user);
@@ -75,9 +76,9 @@ export default function FavoritePage() {
   return (
     <div className="w-full flex flex-col px-5">
       <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
-        <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center px-5">
+        <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center tablet-xl:mt-5 px-5">
           <TypographyH2 className="leading-relaxed tablet-xl:text-center">
-            Your Favorites at a Glance
+            Find your favorites at a Glance
           </TypographyH2>
           <TypographyH4 className="leading-relaxed tablet-xl:text-center">
             Quick access to the companies and talents you’ve saved
@@ -141,7 +142,7 @@ export default function FavoritePage() {
               height={200}
               width={200}
             />
-            <TypographyH4>There&apos;s no favorite.</TypographyH4>
+            <TypographyP className="!m-0">No favorited available</TypographyP>
           </div>
         )}
       </div>

@@ -24,18 +24,18 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
 
   return (
     <div className="w-full flex flex-col items-start gap-4 px-4 py-3 shadow-md rounded-md">
-      <div className="flex items-center gap-3">
+      <div className="w-full flex items-center gap-5 tablet-md:flex-col tablet-md:items-start">
         <Avatar rounded="md" className="size-28 phone-md:!hidden">
           <AvatarFallback>{props.company.name.slice(0, 3).toUpperCase()}</AvatarFallback>
           <AvatarImage src={props.company.avatar} alt={props.company.name}/>
         </Avatar>
-        <div className="flex flex-col items-start gap-3">
+        <div className="flex flex-col items-start gap-3 phone-340:gap-5">
           <div>
             <TypographyH4 className="text-lg">{props.title}</TypographyH4>
             <TypographyMuted className="text-sm font-medium">{props.company.name}</TypographyMuted>
             <TypographyMuted className="text-xs font-medium mt-1 text-blue-500">{props.company.industry}</TypographyMuted>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 phone-340:flex-col phone-340:items-start">
             <IconLabel
               icon={<LucideUsers className="text-muted-foreground" strokeWidth={"1.5px"}/>}
               text={`${props.company.companySize} employees`}

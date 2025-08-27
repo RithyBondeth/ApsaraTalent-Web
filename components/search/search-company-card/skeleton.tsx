@@ -4,7 +4,7 @@ export default function SearchEmployeeCardSkeleton() {
   return (
     <div className="w-full flex flex-col items-start gap-4 px-4 py-3 shadow-md rounded-md">
       {/* Top section with avatar and name */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-5 tablet-md:flex-col tablet-md:items-start">
         <Skeleton className="size-28 rounded-md phone-md:!hidden" />
         <div className="flex flex-col items-start gap-3">
           <div>
