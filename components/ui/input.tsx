@@ -18,7 +18,12 @@ const Input = React.forwardRef<HTMLInputElement, IInputProps>(
           )}
           <input
             type={type}
-            className="flex-1 bg-transparent outline-none placeholder:text-muted-foreground placeholder:text-sm"
+            className={cn(
+              "flex-1 bg-transparent outline-none placeholder:text-sm",
+              props.disabled 
+                ? "text-muted-foreground" 
+                : "text-foreground"
+            )}
             ref={ref}
             {...props}
           />
