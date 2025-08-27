@@ -229,18 +229,18 @@ export default function FeedPage() {
       {showLoadingState ? (
         <BannerSkeleton />
       ) : isEmployee ? (
-        <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
+        <div className="w-full flex items-center justify-between gap-10 tablet-xl:flex-col tablet-xl:items-center">
           <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
-            <TypographyH2 className="leading-relaxed tablet-xl:text-center">
+            <TypographyH2 className="!leading-relaxed text-4xl tablet-xl:text-3xl tablet-xl:text-center">
               Connect with global professionals and grow your network
             </TypographyH2>
-            <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+            <TypographyH4 className="!leading-relaxed tablet-xl:text-center">
               Start your journey toward a career you love.
             </TypographyH4>
-            <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+            <TypographyH4 className="!leading-relaxed tablet-xl:text-center">
               Build meaningful connections that open doors to new opportunities.
             </TypographyH4>
-            <TypographyMuted className="leading-relaxed tablet-xl:text-center">
+            <TypographyMuted className="!leading-relaxed tablet-xl:text-center">
               Land your dream job with ease — no matter where you are.
             </TypographyMuted>
           </div>
@@ -269,16 +269,16 @@ export default function FeedPage() {
             <Image
               src={feedImage}
               alt="feed"
-              height={300}
-              width={400}
+              height={250}
+              width={350}
               className="tablet-xl:!w-full"
             />
           ) : (
             <Image
               src={feedWhiteSvg}
               alt="feed"
-              height={300}
-              width={400}
+              height={250}
+              width={350}
               className="tablet-xl:!w-full"
             />
           )}

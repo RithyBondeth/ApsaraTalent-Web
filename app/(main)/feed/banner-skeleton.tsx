@@ -11,7 +11,7 @@ export default function BannerSkeleton() {
 
         {/* First Subheading Skeleton */}
         <div className="tablet-xl:text-center w-full tablet-xl:flex tablet-xl:justify-center">
-          <Skeleton className="h-6 w-72 tablet-xl:w-64" />
+          <Skeleton className="h-8 w-72 tablet-xl:w-64" />
         </div>
 
         {/* Second Subheading Skeleton */}
@@ -26,7 +26,7 @@ export default function BannerSkeleton() {
       </div>
 
       {/* Image Skeleton */}
-      <Skeleton className="h-[300px] w-[400px] tablet-xl:!w-full rounded-lg" />
+      <Skeleton className="h-[250px] w-[350] tablet-xl:!w-full rounded-lg" />
     </div>
   );
 }

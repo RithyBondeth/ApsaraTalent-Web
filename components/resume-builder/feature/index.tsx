@@ -6,7 +6,7 @@ export default function ResumeBuilderFeature() {
   return (
     <div className="flex flex-col items-center gap-10 p-5 rounded-md shadow-md">
       <TypographyH4>AI-Powdered Features</TypographyH4>
-      <div className="flex justify-between items-start gap-5">
+      <div className="flex justify-between items-start gap-5 tablet-lg:flex-col">
         <div className="flex flex-col items-center gap-2">
           <div className="p-5 rounded-full bg-blue-100">
             <LucidePencilRuler className="text-blue-500 size-10" strokeWidth={'1.3px'}/>

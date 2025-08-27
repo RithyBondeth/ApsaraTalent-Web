@@ -104,7 +104,7 @@ export default function MatchingPage() {
         <MatchingBannerSkeleton />
       ) : (
         <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
-          <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center px-5">
+          <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center tablet-xl:mt-5 px-5">
             <TypographyH2 className="leading-relaxed tablet-xl:text-center">
               Ready to find your match? Let’s make it happen.
             </TypographyH2>
