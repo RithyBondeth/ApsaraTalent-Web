@@ -38,6 +38,7 @@ import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 import { usePreloadImages } from "@/hooks/use-cached-image";
 import emptySvgImage from "@/assets/svg/empty.svg";
+import { TypographyP } from "@/components/utils/typography/typography-p";
 
 export default function FeedPage() {
   // Utils
@@ -434,7 +435,7 @@ export default function FeedPage() {
         ) : (
           <div className="col-span-3 laptop-sm:col-span-2 tablet-lg:col-span-1 flex flex-col items-center justify-center my-16">
             <Image src={emptySvgImage} alt="empty" height={200} width={200} />
-            <TypographyH4>There&apos;s no users.</TypographyH4>
+            <TypographyP className="!m-0">No user available</TypographyP>
           </div>
         )}
       </div>

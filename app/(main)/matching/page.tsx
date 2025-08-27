@@ -17,8 +17,8 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import MatchingBannerSkeleton from "./banner-skeleton";
 import { useGetOneEmployeeStore } from "@/stores/apis/employee/get-one-emp.store";
-
 import { createOrGetChat } from "@/utils/firebase/services/chat-service";
+import { TypographyP } from "@/components/utils/typography/typography-p";
 
 export default function MatchingPage() {
   const router = useRouter();
@@ -169,7 +169,7 @@ export default function MatchingPage() {
               height={200}
               width={200}
             />
-            <TypographyH4>There&apos;s no matched.</TypographyH4>
+            <TypographyP className="!m-0">No matched available</TypographyP>
           </div>
         )}
       </div>

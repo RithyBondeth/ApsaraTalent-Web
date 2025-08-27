@@ -16,6 +16,7 @@ import FavoriteCompanyCardSkeleton from "@/components/favorite/company-favorite-
 import FavoriteCompanyCard from "@/components/favorite/company-favorite-card";
 import FavoriteEmployeeCard from "@/components/favorite/employee-favorite-card";
 import FavoriteBannerSkeleton from "./banner-skeleton";
+import { TypographyP } from "@/components/utils/typography/typography-p";
 
 export default function FavoritePage() {
   const currentUser = useGetCurrentUserStore((state) => state.user);
@@ -141,7 +142,7 @@ export default function FavoritePage() {
               height={200}
               width={200}
             />
-            <TypographyH4>There&apos;s no favorite.</TypographyH4>
+            <TypographyP className="!m-0">No favorited available</TypographyP>
           </div>
         )}
       </div>
