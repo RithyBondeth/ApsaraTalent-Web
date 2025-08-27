@@ -116,7 +116,7 @@ export default function MatchingPage() {
             </TypographyH4>
             <TypographyMuted className="leading-relaxed tablet-xl:text-center">
               When companies and talents like each other — it’s a match.
-            </TypographyMuted>
+            </TypographyMuted> 
           </div>
           <Image
             src={matchingSvgImage}

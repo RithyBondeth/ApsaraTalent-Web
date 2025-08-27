@@ -173,7 +173,7 @@ export default function EmployeeProfilePage() {
         accountSetting: {
           email: user.email ?? "",
           phone: employee.phone,
-          currentPassword: user.password ?? "",
+          currentPassword: "",
           newPassword: "",
           confirmPassword: "",
         },
@@ -694,6 +694,7 @@ export default function EmployeeProfilePage() {
                   Description
                 </TypographyMuted>
                 <Textarea
+                  autoResize
                   placeholder="Description"
                   id="description"
                   {...form.register("profession.description")}
@@ -855,6 +856,7 @@ export default function EmployeeProfilePage() {
                           Description
                         </TypographyMuted>
                         <Textarea
+                          autoResize
                           placeholder="Description"
                           id="description"
                           {...form.register(`experiences.${index}.description`)}

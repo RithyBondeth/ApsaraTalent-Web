@@ -191,7 +191,7 @@ export default function ProfilePage() {
         accountSetting: {
           email: user.email ?? "",
           phone: company.phone,
-          currentPassword: user.password ?? "",
+          currentPassword: "",
           newPassword: "",
           confirmPassword: "",
         },
@@ -661,12 +661,12 @@ export default function ProfilePage() {
                   Company Description
                 </TypographyMuted>
                 <Textarea
+                  autoResize
                   placeholder={
                     isEdit ? "Company Description" : company.description
                   }
                   id="company-description"
                   {...form.register("basicInfo.description")}
-                  className="placeholder:text-sm"
                   disabled={!isEdit}
                 />
               </div>
