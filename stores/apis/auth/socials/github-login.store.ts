@@ -3,6 +3,7 @@ import { useGetCurrentUserStore } from "../../users/get-current-user.store";
 import { API_AUTH_SOCIAL_GITHUB_URL } from "@/utils/constants/apis/auth_url";
 import { TUserRole } from "@/utils/types/role.type";
 import { setAuthCookies, clearAuthCookies, hasAuthToken } from "@/utils/auth/cookie-manager";
+import { EAuthLoginMethod } from "@/utils/constants/auth.constant";
 
 // --- Types ---
 export type TGithubLoginResponse = {
@@ -15,6 +16,8 @@ export type TGithubLoginResponse = {
   picture: string | null;
   provider: string | null;
   role: string | null;
+  lastLoginMethod: EAuthLoginMethod | null;
+  lastLoginAt: string | null;
 };
 
 export type TGithubLoginState = {
@@ -28,6 +31,8 @@ export type TGithubLoginState = {
   username: string | null;
   picture: string | null;
   provider: string | null;
+  lastLoginMethod: EAuthLoginMethod | null;
+  lastLoginAt: string | null;
   setRole: (role: TUserRole) => void;
   githubLogin: (rememberMe: boolean, usePopup?: boolean) => void;
   initialize: () => void;
@@ -52,6 +57,8 @@ const FINISH_LOGIN = (data: TGithubLoginResponse, rememberMe: boolean) => {
     username: data.username,
     picture: data.picture,
     provider: data.provider,
+    lastLoginMethod: data.lastLoginMethod,
+    lastLoginAt: data.lastLoginAt,
   });
 
   // Set secure cookies if accessToken exists
@@ -72,7 +79,8 @@ export const useGithubLoginStore = create<TGithubLoginState>((set) => ({
   username: null,
   picture: null,
   provider: null,
-
+  lastLoginMethod: null,
+  lastLoginAt: null,
   setRole: (role: TUserRole) => set({ role }),
 
   initialize: () => {

@@ -41,6 +41,7 @@ import { TLocations } from "@/utils/types/location.type";
 import {
   genderConstant,
   locationConstant,
+  loginMethodConstant,
   platformConstant,
 } from "@/utils/constants/app.constant";
 import { Textarea } from "@/components/ui/textarea";
@@ -80,6 +81,7 @@ import EmployeeProfilePageSkeleton from "./skeleton";
 import { dateFormatter } from "@/utils/functions/dateformatter";
 import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
 import Tag from "@/components/utils/tag";
+import Image from "next/image";
 
 export default function EmployeeProfilePage() {
   const { user, loading, getCurrentUser } = useGetCurrentUserStore();
@@ -1017,6 +1019,51 @@ export default function EmployeeProfilePage() {
                   />
                 }
               />
+            </div>
+          </div>
+
+          {/* Connected Accounts Section */}
+          <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
+            <div className="flex flex-col gap-1">
+              <TypographyH4>Connected Accounts</TypographyH4>
+              <Divider />
+            </div>
+            <div className="w-full flex flex-col items-start gap-3">
+              {loginMethodConstant.map((item) => (
+                <div
+                  className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer"
+                  key={item.id}
+                >
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src={item.icon}
+                      alt={item.label}
+                      width={30}
+                      height={30}
+                      className="rounded-full"
+                    />
+                    <TypographySmall>{item.label}</TypographySmall>
+                  </div>
+                  {/* <div
+                    className={`py-1 px-2 rounded-md cursor-pointer ${
+                      socialConnected === item.label
+                        ? "bg-green-200 text-green-600"
+                        : "bg-primary text-primary-foreground"
+                    }`}
+                  >
+                    <TypographySmall>{socialConnected === item.label ? "Connected" : "Connect"}</TypographySmall>
+                  </div> */}
+                  {/* {loginMethod.label === item.label ? (
+                    <Button className="text-xs">
+                      Connected
+                    </Button>
+                  ) : (
+                    <Button variant={"outline"} className="text-xs">
+                      Connect
+                    </Button>
+                  )} */}
+                </div>
+              ))}
             </div>
           </div>
 

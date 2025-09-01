@@ -3,12 +3,14 @@ import { create } from "zustand";
 import axios from "@/lib/axios";
 import { useGetCurrentUserStore } from "../users/get-current-user.store";
 import { setAuthCookies, clearAuthCookies, hasAuthToken } from "@/utils/auth/cookie-manager";
+import { TUserAuthResponse } from "@/utils/constants/auth.constant";
 
 type TLoginState = {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
   message: string | null;
+  user: TUserAuthResponse | null;
   login: (
     email: string,
     password: string,
@@ -23,6 +25,7 @@ export const useLoginStore = create<TLoginState>((set) => ({
   error: null,
   isAuthenticated: false,
   message: null,
+  user: null,
   initialize: () => {
     try {
       const hasValidAuth = hasAuthToken();
@@ -77,6 +80,7 @@ export const useLoginStore = create<TLoginState>((set) => ({
         error: null,
         isAuthenticated: true,
         message,
+        user: response.data.user,
       });
     } catch (error) {
       if (axios.isAxiosError(error)) {
