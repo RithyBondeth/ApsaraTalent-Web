@@ -1,3 +1,8 @@
+import GoogleIcon from "@/assets/socials/google.png";
+import FacebookIcon from "@/assets/socials/facebook.webp";
+import LinkedInIcon from "@/assets/socials/linkedin.png";
+import GithubIcon from "@/assets/socials/github.png";
+
 export const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 export const DOCUMENT_SIZE = 5 * 1024 * 1024;
 
@@ -24,6 +29,13 @@ export const platformConstant = [
   { id: 4, label: "LinkedIn", value: "linkedin" },
   { id: 5, label: "Github", value: "github" },
   { id: 6, label: "Website", value: "website" },
+];
+
+export const loginMethodConstant = [
+  { id: 1, label: "Google", icon: GoogleIcon },
+  { id: 2, label: "Facebook", icon: FacebookIcon },
+  { id: 3, label: "LinkedIn", icon: LinkedInIcon },
+  { id: 4, label: "Github", icon: GithubIcon }
 ];
 
 export const availabilityConstant = [
@@ -63,18 +75,6 @@ export const locationConstant = [
 ];
 
 export const badgeRandomColorsClass = [
-  // "bg-blue-100 [&>div>p]:text-blue-800 [&>div>div>p]:text-blue-800 [&>svg]:text-blue-800",
-  // "bg-green-100 [&>div>p]:text-green-800 [&>div>div>p]:text-green-800 [&>svg]:text-green-800",
-  // "bg-purple-100 [&>div>p]:text-purple-800 [&>div>div>p]:text-purple-800 [&>svg]:text-purple-800",
-  // "bg-yellow-100 [&>div>p]:text-yellow-800 [&>div>div>p]:text-yellow-800 [&>svg]:text-yellow-800",
-  // "bg-pink-100 [&>div>p]:text-pink-800 [&>div>div>p]:text-pink-800 [&>svg]:text-pink-800",
-  // "bg-indigo-100 [&>div>p]:text-indigo-800 [&>div>div>p]:text-indigo-800 [&>svg]:text-indigo-800",
-  // "bg-red-100 [&>div>p]:text-red-800 [&>div>div>p]:text-red-800 [&>svg]:text-red-800",
-  // "bg-teal-100 [&>div>p]:text-teal-800 [&>div>div>p]:text-teal-800 [&>svg]:text-teal-800",
-  // "bg-orange-100 [&>div>p]:text-orange-800 [&>div>div>p]:text-orange-800 [&>svg]:text-orange-800",
-  // "bg-emerald-100 [&>div>p]:text-emerald-800 [&>div>div>p]:text-emerald-800 [&>svg]:text-emerald-800",
-  // "bg-cyan-100 [&>div>p]:text-cyan-800 [&>div>div>p]:text-cyan-800 [&>svg]:text-cyan-800",
-  // "bg-rose-100 [&>div>p]:text-rose-800 [&>div>div>p]:text-rose-800 [&>svg]:text-rose-800",
   {
     bg: "bg-blue-100",
     text: "text-blue-800",
@@ -124,4 +124,3 @@ export const badgeRandomColorsClass = [
     text: "text-rose-800",
   },
 ];
-

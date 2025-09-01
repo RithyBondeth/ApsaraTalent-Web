@@ -4,11 +4,15 @@ import axios from "axios";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../users/get-current-user.store";
 import { setAuthCookies, clearAuthCookies, hasAuthToken } from "@/utils/auth/cookie-manager";
+import { TUserRole } from "@/utils/types/role.type";
+import { TLoginMethod } from "@/utils/types/login-method.type";
+import { TUserAuthResponse } from "@/utils/constants/auth.constant";
 
 type TVerifyOTPResponse = {
   message: string | null;
   accessToken: string | null;
   refreshToken: string | null;
+  user: TUserAuthResponse | null;
 };
 
 type TVerifyOTPStoreState = TVerifyOTPResponse & {
@@ -27,6 +31,7 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
   isAuthenticated: false,
   accessToken: null,
   refreshToken: null,
+  user: null,
   message: null,
   initialize: () => {
     try {

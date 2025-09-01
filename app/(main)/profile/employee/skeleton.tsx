@@ -101,7 +101,10 @@ export default function EmployeeProfilePageSkeleton() {
             </div>
             <div className="flex flex-col items-start gap-5">
               {[1, 2].map((index) => (
-                <div className="w-full flex flex-col items-start gap-3" key={index}>
+                <div
+                  className="w-full flex flex-col items-start gap-3"
+                  key={index}
+                >
                   <div className="w-full flex items-center justify-between">
                     <Skeleton className="h-4 w-20" />
                     <Skeleton className="h-4 w-4" />
@@ -136,7 +139,10 @@ export default function EmployeeProfilePageSkeleton() {
             </div>
             <div className="flex flex-col items-start gap-5">
               {[1, 2].map((index) => (
-                <div className="w-full flex flex-col items-start gap-3" key={index}>
+                <div
+                  className="w-full flex flex-col items-start gap-3"
+                  key={index}
+                >
                   <div className="w-full flex items-center justify-between">
                     <Skeleton className="h-4 w-24" />
                     <Skeleton className="h-4 w-4" />
@@ -185,6 +191,35 @@ export default function EmployeeProfilePageSkeleton() {
             </div>
           </div>
 
+          {/* Connected Accounts Section */}
+          <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
+            <div className="flex flex-col gap-1">
+              {/* Header Skeleton */}
+              <Skeleton className="h-6 w-40" />
+              {/* Divider Skeleton */}
+              <Skeleton className="h-px w-full mt-2" />
+            </div>
+
+            <div className="w-full flex flex-col items-start gap-3">
+              {/* Account Items Skeleton */}
+              {[1, 2, 3, 4].map((index) => (
+                <div
+                  className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2"
+                  key={index}
+                >
+                  <div className="flex items-center gap-2">
+                    {/* Account Icon Skeleton */}
+                    <Skeleton className="size-[30px] rounded-full" />
+                    {/* Account Label Skeleton */}
+                    <Skeleton className="h-4 w-16" />
+                  </div>
+                  {/* Connection Status Skeleton */}
+                  <Skeleton className="h-6 w-20 rounded-md" />
+                </div>
+              ))}
+            </div>
+          </div>
+          
           {/* Skills Section */}
           <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
             <div className="w-full flex flex-col gap-1">
@@ -218,7 +253,10 @@ export default function EmployeeProfilePageSkeleton() {
             <Skeleton className="h-6 w-44" />
             <div className="w-full flex flex-col items-start gap-5 [&>div]:w-full">
               {[1, 2].map((index) => (
-                <div key={index} className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
+                <div
+                  key={index}
+                  className="flex justify-between items-center px-3 py-2 bg-muted rounded-md"
+                >
                   <div className="flex items-center gap-1">
                     <Skeleton className="h-4 w-4" />
                     <Skeleton className="h-4 w-32" />
