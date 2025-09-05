@@ -22,7 +22,7 @@ export const useGetCurrentUserStore = create<TGetCurrentUserState>((set) => ({
 
     try {
       const response = await axios.get<IUser>(API_GET_CURRENT_USER_URL);
-
+      console.log("Current User Response: ", response.data);
       set({
         loading: false,
         user: response.data,
