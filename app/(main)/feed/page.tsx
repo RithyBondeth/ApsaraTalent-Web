@@ -302,7 +302,10 @@ export default function FeedPage() {
                 key={user.id}
                 {...user.company}
                 id={user.id}
-                onViewClick={() => router.push(`/feed/company/${user.id}`)}
+                onViewClick={() => {
+                  console.log("Company -> User ID: ", user.id);
+                  router.push(`/feed/company/${user.id}`)
+                }}
                 onSaveClick={async () => {
                   const employeeId = currentUser?.employee?.id;
                   const companyId = user.company?.id;

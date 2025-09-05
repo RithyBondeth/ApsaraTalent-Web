@@ -197,9 +197,18 @@ export default function ProfilePage() {
         },
         openPositions:
           company.openPositions.map((op) => {
-            // Manually parse DD/MM/YYYY string
-            const [day, month, year] = op.deadlineDate.split("/").map(Number);
-            const deadlineDate = new Date(year, month - 1, day);
+            // Handle deadlineDate parsing with null check
+            let deadlineDate = new Date();
+            if (op.deadlineDate && typeof op.deadlineDate === 'string') {
+              if (op.deadlineDate.includes('/')) {
+                // Parse DD/MM/YYYY string
+                const [day, month, year] = op.deadlineDate.split("/").map(Number);
+                deadlineDate = new Date(year, month - 1, day);
+              } else {
+                // Parse as ISO string or other format
+                deadlineDate = new Date(op.deadlineDate);
+              }
+            }
             return {
               title: op.title,
               description: op.description,
