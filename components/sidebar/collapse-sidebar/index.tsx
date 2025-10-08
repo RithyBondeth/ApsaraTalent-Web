@@ -38,18 +38,16 @@ export default function CollapseSidebar({
   const isEmployee = user?.role === "employee" && user.employee;
   const isCompany = user?.role === "company" && user.company;
 
-  const {
-    currentEmployeeMatching,
-    queryCurrentEmployeeMatching,
-  } = useGetCurrentEmployeeMatchingStore();
-  const {
-    currentCompanyMatching,
-    queryCurrentCompanyMatching,
-  } = useGetCurrentCompanyMatchingStore();
+  const { currentEmployeeMatching, queryCurrentEmployeeMatching } =
+    useGetCurrentEmployeeMatchingStore();
+  const { currentCompanyMatching, queryCurrentCompanyMatching } =
+    useGetCurrentCompanyMatchingStore();
 
   // Favorite stores (counts only; fetching occurs in pages)
-  const { companyData, queryAllEmployeeFavorites } = useGetAllEmployeeFavoritesStore();
-  const { employeeData, queryAllCompanyFavorites } = useGetAllCompanyFavoritesStore();
+  const { companyData, queryAllEmployeeFavorites } =
+    useGetAllEmployeeFavoritesStore();
+  const { employeeData, queryAllCompanyFavorites } =
+    useGetAllCompanyFavoritesStore();
 
   useEffect(() => {
     if (isEmployee && user?.employee?.id) {
@@ -57,7 +55,14 @@ export default function CollapseSidebar({
     } else if (isCompany && user?.company?.id) {
       queryCurrentCompanyMatching(user.company.id);
     }
-  }, [isEmployee, isCompany, user?.employee?.id, user?.company?.id, queryCurrentEmployeeMatching, queryCurrentCompanyMatching]);
+  }, [
+    isEmployee,
+    isCompany,
+    user?.employee?.id,
+    user?.company?.id,
+    queryCurrentEmployeeMatching,
+    queryCurrentCompanyMatching,
+  ]);
 
   // Ensure favorites counts are populated even if user hasn't visited the Favorites page
   useEffect(() => {
@@ -66,7 +71,14 @@ export default function CollapseSidebar({
     } else if (isCompany && user?.company?.id) {
       queryAllCompanyFavorites(user.company.id);
     }
-  }, [isEmployee, isCompany, user?.employee?.id, user?.company?.id, queryAllEmployeeFavorites, queryAllCompanyFavorites]);
+  }, [
+    isEmployee,
+    isCompany,
+    user?.employee?.id,
+    user?.company?.id,
+    queryAllEmployeeFavorites,
+    queryAllCompanyFavorites,
+  ]);
 
   const matchingCount = useMemo(() => {
     if (isEmployee) return currentEmployeeMatching?.length ?? 0;
@@ -87,7 +99,7 @@ export default function CollapseSidebar({
           <LogoComponent priority={true} />
         ) : (
           <SidebarMenuButton tooltip="Apsara Talent" className="text-sm">
-            <LogoComponent withoutTitle/>
+            <LogoComponent withoutTitle />
           </SidebarMenuButton>
         )}
       </SidebarHeader>
@@ -114,18 +126,28 @@ export default function CollapseSidebar({
                     <SidebarMenuButton
                       tooltip={item.title}
                       className={`font-medium py-3 ${
-                        pathname === item.url || pathname.startsWith(`${item.url}/`)
-                          ? "bg-muted"
+                        pathname === item.url ||
+                        pathname.startsWith(`${item.url}/`)
+                          ? "bg-primary text-primary-foreground"
                           : ""
                       }`}
                     >
-                      {item.icon && <item.icon className="!size-6"/>}
+                      {item.icon && (
+                        <item.icon
+                          className="!size-6 group-data-[collapsible=icon]:pr-1"
+                          strokeWidth={1.5}
+                        />
+                      )}
                       <span>{item.title}</span>
                       {item.url === "/matching" && matchingCount > 0 && (
-                        <Badge className="ml-auto bg-red-500">{matchingCount}</Badge>
+                        <Badge className="ml-auto bg-red-500">
+                          {matchingCount}
+                        </Badge>
                       )}
                       {item.url === "/favorite" && favoriteCount > 0 && (
-                        <Badge className="ml-auto bg-red-500">{favoriteCount}</Badge>
+                        <Badge className="ml-auto bg-red-500">
+                          {favoriteCount}
+                        </Badge>
                       )}
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
@@ -135,16 +157,21 @@ export default function CollapseSidebar({
             <Collapsible
               asChild
               defaultOpen={true}
-              className={`group/collapsible ${isCompany && 'hidden'}`}
-              onClick={() => router.push('/resume-builder')}
+              className={`group/collapsible ${isCompany && "hidden"}`}
+              onClick={() => router.push("/resume-builder")}
             >
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton
                     tooltip={"AI Resume"}
-                    className="font-medium py-3"
+                    className={`font-medium py-3 ${
+                      pathname === "/resume-builder" ||
+                      pathname.startsWith("/resume-builder")
+                        ? "bg-primary text-primary-foreground"
+                        : ""
+                    }`}
                   >
-                    <LucideFileUser className="!size-6"/>
+                    <LucideFileUser className="!size-6" strokeWidth={1.5} />
                     <span>AI Resume Builder</span>
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
@@ -163,13 +190,13 @@ export default function CollapseSidebar({
               name: isEmployee
                 ? `${user.employee?.username}`
                 : isCompany
-                ? user?.company?.name ?? ''
+                ? user?.company?.name ?? ""
                 : "",
-              email: (user?.email ?? '') || (user?.phone ?? ''),
+              email: (user?.email ?? "") || (user?.phone ?? ""),
               avatar: isEmployee
-                ? user.employee?.avatar ?? ''
+                ? user.employee?.avatar ?? ""
                 : isCompany
-                ? user?.company?.avatar ?? ''
+                ? user?.company?.avatar ?? ""
                 : "",
             }}
           />
