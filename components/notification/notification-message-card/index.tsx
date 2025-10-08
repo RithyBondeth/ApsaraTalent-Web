@@ -8,7 +8,7 @@ import { LucideMail } from "lucide-react";
 export default function NotificationMessageCard() {
   return (
     <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-lg">
-      <div className="rounded-full p-3 text-green-500 bg-green-100">
+      <div className="rounded-md p-3 text-green-500 bg-green-100">
         <LucideMail className="size-8" />
       </div>
       <div className="w-full flex flex-col items-start gap-2">
@@ -18,7 +18,7 @@ export default function NotificationMessageCard() {
           </TypographyLead>
           <div className="flex items-center gap-1">
             <TypographySmall>2 minutes ago</TypographySmall>
-            <div className="size-2 rounded-full bg-blue-500" />
+            <div className="size-2 rounded-full bg-green-500" />
           </div>
         </div>
         <TypographyMuted>
@@ -27,8 +27,8 @@ export default function NotificationMessageCard() {
         </TypographyMuted>
         <div className="w-full flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1">
-              <Avatar rounded="full">
+            <div className="flex items-center gap-2">
+              <Avatar rounded="md" className="bg-secondary size-8">
                 <AvatarFallback>BN</AvatarFallback>
               </Avatar>
               <TypographySmall>Rithy Bondeth</TypographySmall>

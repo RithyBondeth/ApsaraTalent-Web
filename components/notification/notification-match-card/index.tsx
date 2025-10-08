@@ -1,14 +1,17 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { TypographyLead } from "@/components/utils/typography/typography-lead";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { LucideHeartHandshake } from "lucide-react";
+import { INotificationMatchCardProps } from "./props";
 
-export default function NotificationMatchCard() {
+export default function NotificationMatchCard(
+  props: INotificationMatchCardProps
+) {
   return (
     <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-lg">
-      <div className="rounded-full p-3 text-blue-500 bg-blue-100">
+      <div className="rounded-md p-3 text-blue-500 bg-blue-100">
         <LucideHeartHandshake className="size-8" />
       </div>
       <div className="w-full flex flex-col items-start gap-2">
@@ -22,16 +25,21 @@ export default function NotificationMatchCard() {
           </div>
         </div>
         <TypographyMuted>
-          Sarah Johnson from TechCorp matches with your Software Engineer
-          position.
+          You matched with {props.user.name}
+          {props.role === "employee"
+            ? `, A ${props.user.position}.`
+            : `, ${props.user.industry} Company.`}
         </TypographyMuted>
         <div className="w-full flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1">
-              <Avatar rounded="full">
-                <AvatarFallback>BN</AvatarFallback>
+            <div className="flex items-center gap-2">
+              <Avatar rounded="md" className="bg-secondary size-8">
+                <AvatarFallback>
+                  {props.user.name.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+                <AvatarImage src={props.user.avatar} />
               </Avatar>
-              <TypographySmall>Rithy Bondeth</TypographySmall>
+              <TypographySmall>{props.user.name}</TypographySmall>
             </div>
             <div className="px-3 py-1 rounded-xl text-xs font-medium text-blue-500 bg-blue-100">
               match
