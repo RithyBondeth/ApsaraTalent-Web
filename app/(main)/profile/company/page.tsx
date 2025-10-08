@@ -199,10 +199,12 @@ export default function ProfilePage() {
           company.openPositions.map((op) => {
             // Handle deadlineDate parsing with null check
             let deadlineDate = new Date();
-            if (op.deadlineDate && typeof op.deadlineDate === 'string') {
-              if (op.deadlineDate.includes('/')) {
+            if (op.deadlineDate && typeof op.deadlineDate === "string") {
+              if (op.deadlineDate.includes("/")) {
                 // Parse DD/MM/YYYY string
-                const [day, month, year] = op.deadlineDate.split("/").map(Number);
+                const [day, month, year] = op.deadlineDate
+                  .split("/")
+                  .map(Number);
                 deadlineDate = new Date(year, month - 1, day);
               } else {
                 // Parse as ISO string or other format
@@ -628,13 +630,16 @@ export default function ProfilePage() {
           </div>
         </div>
         {isEdit ? (
-          <Button
-            className="text-xs absolute top-5 right-5 phone-xl:top-2 phone-xl:right-2"
-            onClick={() => setIsEdit(false)}
-          >
-            Cancel
-            <LucideCircleX />
-          </Button>
+          <div className="flex items-center gap-3 absolute top-5 right-5 phone-xl:top-2 phone-xl:right-2">
+            <Button className="text-xs" onClick={() => {}}>
+              Save
+              <LucideCircleCheck />
+            </Button>
+            <Button className="text-xs" onClick={() => setIsEdit(false)}>
+              Cancel
+              <LucideCircleX />
+            </Button>
+          </div>
         ) : (
           <Button
             className="text-xs absolute top-5 right-5 phone-xl:top-2 phone-xl:right-2"
