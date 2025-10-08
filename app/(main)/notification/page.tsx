@@ -6,30 +6,69 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LucideCheckCheck } from "lucide-react";
+import { useState } from "react";
 
 export default function NotificationPage() {
+  type TNotificationFilterType = "all" | "match" | "message" | "unread";
+  const [notificationFilter, setNotificationFilter] =
+    useState<TNotificationFilterType>("all");
+  const notificationButtonVariant = (currentFilter: TNotificationFilterType) =>
+    notificationFilter === currentFilter ? "default" : "secondary";
+
   return (
     <div className="w-full flex flex-col gap-5 px-5">
       <div className="w-full flex items-center justify-between">
         <div className="flex items-center gap-3 [&>button]:text-xs tablet-sm:hidden">
-          <Button>All</Button>
-          <Button variant={"secondary"}>Matches</Button>
-          <Button variant={"secondary"}>Messages</Button>
-          <Button variant={"secondary"}>Unread</Button>
+          <Button
+            variant={notificationButtonVariant("all")}
+            onClick={() => setNotificationFilter("all")}
+          >
+            All
+          </Button>
+          <Button
+            variant={notificationButtonVariant("match")}
+            onClick={() => setNotificationFilter("match")}
+          >
+            Matches
+          </Button>
+          <Button
+            variant={notificationButtonVariant("message")}
+            onClick={() => setNotificationFilter("message")}
+          >
+            Messages
+          </Button>
+          <Button
+            variant={notificationButtonVariant("unread")}
+            onClick={() => setNotificationFilter("unread")}
+          >
+            Unread
+          </Button>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild className="hidden tablet-sm:flex">
-            <Button>Filter</Button>
+            <Button>
+              Filter:{" "}
+              {notificationFilter.charAt(0).toUpperCase() +
+                notificationFilter.slice(1).toLowerCase()}
+            </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem>All</DropdownMenuItem>
-            <DropdownMenuItem>Matches</DropdownMenuItem>
-            <DropdownMenuItem>Messages</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setNotificationFilter("all")}>
+              All
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setNotificationFilter("match")}>
+              Matches
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setNotificationFilter("message")}>
+              Messages
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setNotificationFilter("unread")}>
+              Unread
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
         <Button className="text-xs" variant={"outline"}>

@@ -18,7 +18,7 @@ export default function NotificationMatchCard(
   return (
     <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-lg">
       <div className="rounded-md p-3 text-blue-500 bg-blue-100">
-        <LucideHeartHandshake className="size-8" />
+        <LucideHeartHandshake className="size-8" strokeWidth={1.5}/>
       </div>
       <div className="w-full flex flex-col items-start gap-2">
         <div className="w-full flex items-center justify-between phone-xl:flex-col phone-xl:items-start">
