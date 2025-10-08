@@ -13,7 +13,7 @@ export default function NotificationMatchCard() {
       </div>
       <div className="w-full flex flex-col items-start gap-2">
         <div className="w-full flex items-center justify-between">
-          <TypographyLead className="text-lg font-semibold text-primary">
+          <TypographyLead className="text-md font-semibold text-primary">
             New Match Found!
           </TypographyLead>
           <div className="flex items-center gap-1">
