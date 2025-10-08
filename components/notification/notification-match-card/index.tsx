@@ -21,12 +21,14 @@ export default function NotificationMatchCard(
         <LucideHeartHandshake className="size-8" />
       </div>
       <div className="w-full flex flex-col items-start gap-2">
-        <div className="w-full flex items-center justify-between">
+        <div className="w-full flex items-center justify-between phone-xl:flex-col phone-xl:items-start">
           <TypographyLead className="text-md font-semibold text-primary">
             New Match Found!
           </TypographyLead>
           <div className="flex items-center gap-1">
-            <TypographySmall>{timeAgo(props.timestamp)}</TypographySmall>
+            <TypographySmall className="text-muted-foreground phone-xl:text-xs">
+              {timeAgo(props.timestamp)}
+            </TypographySmall>
             {!props.seen && <div className="size-2 rounded-full bg-blue-500" />}
           </div>
         </div>
@@ -36,8 +38,8 @@ export default function NotificationMatchCard(
             ? `, A ${props.user.position}.`
             : `, ${props.user.industry} Company.`}
         </TypographyMuted>
-        <div className="w-full flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="w-full flex items-center justify-between tablet-sm:mt-1 tablet-sm:justify-end">
+          <div className="flex items-center gap-3 tablet-sm:hidden">
             <div className="flex items-center gap-2">
               <Avatar rounded="md" className="bg-secondary size-8">
                 <AvatarFallback className="text-sm">
@@ -52,7 +54,7 @@ export default function NotificationMatchCard(
             </div>
           </div>
           <Button
-            className="text-xs"
+            className="text-xs tablet-sm:text-[10px]"
             onClick={() => router.push(`/feed/${props.role}/${props.user.id}`)}
           >
             View Profile

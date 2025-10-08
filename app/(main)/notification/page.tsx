@@ -3,18 +3,35 @@
 import NotificationMatchCard from "@/components/notification/notification-match-card";
 import NotificationMessageCard from "@/components/notification/notification-message-card";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { LucideCheckCheck } from "lucide-react";
 
 export default function NotificationPage() {
   return (
     <div className="w-full flex flex-col gap-5 px-5">
       <div className="w-full flex items-center justify-between">
-        <div className="flex items-center gap-3 [&>button]:text-xs">
+        <div className="flex items-center gap-3 [&>button]:text-xs tablet-sm:hidden">
           <Button>All</Button>
           <Button variant={"secondary"}>Matches</Button>
           <Button variant={"secondary"}>Messages</Button>
           <Button variant={"secondary"}>Unread</Button>
         </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild className="hidden tablet-sm:flex">
+            <Button>Filter</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem>All</DropdownMenuItem>
+            <DropdownMenuItem>Matches</DropdownMenuItem>
+            <DropdownMenuItem>Messages</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         <Button className="text-xs" variant={"outline"}>
           <LucideCheckCheck />
           Mark All As Read

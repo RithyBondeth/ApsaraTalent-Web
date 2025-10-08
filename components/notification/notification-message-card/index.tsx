@@ -16,13 +16,17 @@ export default function NotificationMessageCard(
         <LucideMail className="size-8" />
       </div>
       <div className="w-full flex flex-col items-start gap-2">
-        <div className="w-full flex items-center justify-between">
+        <div className="w-full flex items-center justify-between phone-xl:flex-col phone-xl:items-start">
           <TypographyLead className="text-md font-semibold text-primary">
             New Message!
           </TypographyLead>
           <div className="flex items-center gap-1">
-            <TypographySmall>{timeAgo(props.timestamp)}</TypographySmall>
-            {!props.seen && <div className="size-2 rounded-full bg-green-500" />}
+            <TypographySmall className="text-muted-foreground phone-xl:text-xs">
+              {timeAgo(props.timestamp)}
+            </TypographySmall>
+            {!props.seen && (
+              <div className="size-2 rounded-full bg-green-500" />
+            )}
           </div>
         </div>
         <TypographyMuted>
@@ -31,12 +35,14 @@ export default function NotificationMessageCard(
             : `${props.user.name}, ${props.user.industry} `}
           sent you a message.
         </TypographyMuted>
-        <div className="w-full flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="w-full flex items-center justify-between tablet-sm:mt-1 tablet-sm:justify-end">
+          <div className="flex items-center gap-3 tablet-sm:hidden">
             <div className="flex items-center gap-2">
               <Avatar rounded="md" className="bg-secondary size-8">
-                <AvatarFallback className="text-sm">{props.user.name.slice(0,2).toUpperCase()}</AvatarFallback>
-                <AvatarImage src={props.user.avatar}/>
+                <AvatarFallback className="text-sm">
+                  {props.user.name.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+                <AvatarImage src={props.user.avatar} />
               </Avatar>
               <TypographySmall>{props.user.name}</TypographySmall>
             </div>
@@ -44,7 +50,7 @@ export default function NotificationMessageCard(
               message
             </div>
           </div>
-          <Button className="text-xs">Reply</Button>
+          <Button className="text-xs tablet-sm:text-[10px]">Reply</Button>
         </div>
       </div>
     </div>
