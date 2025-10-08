@@ -12,6 +12,7 @@ import {
   LucideAlarmCheck,
   LucideBriefcaseBusiness,
   LucideCamera,
+  LucideCircleCheck,
   LucideDownload,
   LucideEdit,
   LucideEye,
@@ -494,14 +495,24 @@ export default function EmployeeProfilePage() {
           </div>
         </div>
         {isEdit ? (
-          <Button
-            type="button"
-            className="text-xs"
-            onClick={() => setIsEdit(false)}
-          >
-            Cancel
-            <LucideXCircle />
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button
+              type="button"
+              className="text-xs"
+              onClick={() => {}}
+            >
+              Save
+              <LucideCircleCheck />
+            </Button>
+            <Button
+              type="button"
+              className="text-xs"
+              onClick={() => setIsEdit(false)}
+            >
+              Cancel
+              <LucideXCircle />
+            </Button>
+          </div>
         ) : (
           <Button
             type="button"
