@@ -1,11 +1,15 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { TypographyLead } from "@/components/utils/typography/typography-lead";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { LucideMail } from "lucide-react";
+import { INotificationMessageCardProps } from "./props";
+import { timeAgo } from "@/utils/functions/timeago-formatter";
 
-export default function NotificationMessageCard() {
+export default function NotificationMessageCard(
+  props: INotificationMessageCardProps
+) {
   return (
     <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-lg">
       <div className="rounded-md p-3 text-green-500 bg-green-100">
@@ -17,21 +21,24 @@ export default function NotificationMessageCard() {
             New Message!
           </TypographyLead>
           <div className="flex items-center gap-1">
-            <TypographySmall>2 minutes ago</TypographySmall>
-            <div className="size-2 rounded-full bg-green-500" />
+            <TypographySmall>{timeAgo(props.timestamp)}</TypographySmall>
+            {!props.seen && <div className="size-2 rounded-full bg-green-500" />}
           </div>
         </div>
         <TypographyMuted>
-          Sarah Johnson from TechCorp sent you a message about the Data Analyst
-          position.
+          {props.role === "employee"
+            ? `${props.user.name}, A ${props.user.position} `
+            : `${props.user.name}, ${props.user.industry} `}
+          sent you a message.
         </TypographyMuted>
         <div className="w-full flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               <Avatar rounded="md" className="bg-secondary size-8">
-                <AvatarFallback>BN</AvatarFallback>
+                <AvatarFallback className="text-sm">{props.user.name.slice(0,2).toUpperCase()}</AvatarFallback>
+                <AvatarImage src={props.user.avatar}/>
               </Avatar>
-              <TypographySmall>Rithy Bondeth</TypographySmall>
+              <TypographySmall>{props.user.name}</TypographySmall>
             </div>
             <div className="px-3 py-1 rounded-xl text-xs font-medium text-green-500 bg-green-100">
               message

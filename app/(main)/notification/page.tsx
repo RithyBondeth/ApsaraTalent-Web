@@ -22,16 +22,44 @@ export default function NotificationPage() {
       </div>
       <div className="flex flex-col gap-5">
         <NotificationMatchCard
-          role={'company'}
+          seen={true}
+          role={"company"}
           user={{
             id: "uuid1",
             name: "Neural Horizon",
-            industry: "Artificial Intelligence", 
-            avatar: "http://localhost:3000/storage/company-avatars/neuralarc-avatar-1748940621736-895400190.jpg",
+            industry: "Artificial Intelligence",
+            position: null,
+            avatar:
+              "http://localhost:3000/storage/company-avatars/neuralarc-avatar-1748940621736-895400190.jpg",
           }}
           timestamp={"2025-06-02 07:02:13.864662"}
         />
-        <NotificationMessageCard />
+        <NotificationMatchCard
+          seen={false}
+          role={"employee"}
+          user={{
+            id: "uuid2",
+            name: "Rithy Bondeth",
+            position: "Full Stack Developer",
+            industry: null,
+            avatar:
+              "http://localhost:3000/storage/employee-avatars/bondeth-avatar-1748847738561-216110095.jpg",
+          }}
+          timestamp={"2025-10-02 07:02:13.864662"}
+        />
+        <NotificationMessageCard
+          seen={false}
+          role={"employee"}
+          user={{
+            id: "uuid2",
+            name: "Rithy Bondeth",
+            position: "Full Stack Developer",
+            industry: null,
+            avatar:
+              "http://localhost:3000/storage/employee-avatars/bondeth-avatar-1748847738561-216110095.jpg",
+          }}
+          timestamp={"2025-10-02 07:02:13.864662"}
+        />
       </div>
     </div>
   );
