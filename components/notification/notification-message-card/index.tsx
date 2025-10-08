@@ -3,39 +3,41 @@ import { Button } from "@/components/ui/button";
 import { TypographyLead } from "@/components/utils/typography/typography-lead";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { LucideHeartHandshake } from "lucide-react";
+import { LucideMail } from "lucide-react";
 
-export default function NotificationCard() {
+export default function NotificationMessageCard() {
   return (
     <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-lg">
-      <div className="rounded-full p-3 text-blue-400 bg-blue-100">
-        <LucideHeartHandshake className="size-8"/>
+      <div className="rounded-full p-3 text-green-500 bg-green-100">
+        <LucideMail className="size-8" />
       </div>
       <div className="w-full flex flex-col items-start gap-2">
         <div className="w-full flex items-center justify-between">
           <TypographyLead className="text-lg font-semibold text-primary">
-            New Match Found!
+            New Message!
           </TypographyLead>
           <div className="flex items-center gap-1">
             <TypographySmall>2 minutes ago</TypographySmall>
-            <div className="bg-blue-500 size-2 rounded-full" />
+            <div className="size-2 rounded-full bg-blue-500" />
           </div>
         </div>
         <TypographyMuted>
-          Sarah Johnson from TechCorp matches with your Software Engineer
+          Sarah Johnson from TechCorp sent you a message about the Data Analyst
           position.
         </TypographyMuted>
         <div className="w-full flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
-                <Avatar rounded="full">
+              <Avatar rounded="full">
                 <AvatarFallback>BN</AvatarFallback>
-                </Avatar>
-                <TypographySmall>Rithy Bondeth</TypographySmall>
+              </Avatar>
+              <TypographySmall>Rithy Bondeth</TypographySmall>
             </div>
-            <div className="px-3 py-1 rounded-xl bg-blue-100 text-blue-500 text-xs">employee</div>
+            <div className="px-3 py-1 rounded-xl text-xs font-medium text-green-500 bg-green-100">
+              message
+            </div>
           </div>
-          <Button className="text-xs">View Profile</Button>
+          <Button className="text-xs">Reply</Button>
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
-import NotificationCard from "@/components/notification/notification-card";
+import NotificationMatchCard from "@/components/notification/notification-match-card";
+import NotificationMessageCard from "@/components/notification/notification-message-card";
 import { Button } from "@/components/ui/button";
 import { LucideCheckCheck } from "lucide-react";
 
@@ -19,8 +20,9 @@ export default function NotificationPage() {
             Mark All As Read
           </Button>
       </div>
-      <div className="flex flex-col">
-        <NotificationCard/>
+      <div className="flex flex-col gap-5">
+        <NotificationMatchCard/>
+        <NotificationMessageCard/>
       </div>
     </div>
   );
