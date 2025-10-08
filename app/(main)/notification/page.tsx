@@ -1,5 +1,6 @@
 "use client";
 
+import { NotificationCardSkeleton } from "@/components/notification/notification-card-skeleton";
 import NotificationMatchCard from "@/components/notification/notification-match-card";
 import NotificationMessageCard from "@/components/notification/notification-message-card";
 import { Button } from "@/components/ui/button";
@@ -50,7 +51,7 @@ export default function NotificationPage() {
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild className="hidden tablet-sm:flex">
-            <Button>
+            <Button className="text-xs">
               Filter:{" "}
               {notificationFilter.charAt(0).toUpperCase() +
                 notificationFilter.slice(1).toLowerCase()}
@@ -116,6 +117,7 @@ export default function NotificationPage() {
           }}
           timestamp={"2025-10-02 07:02:13.864662"}
         />
+        <NotificationCardSkeleton/>
       </div>
     </div>
   );
