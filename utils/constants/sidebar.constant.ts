@@ -44,11 +44,11 @@ export const sidebarList = [
       icon: MessageCircle,
       badge: 0,
     },
-    // {
-    //   title: "Notification",
-    //   description: 'Check for your notifications',
-    //   url: "/notification",
-    //   icon: BellRing,
-    //   badge: 0,
-    // },
+    {
+      title: "Notification",
+      description: 'Stay updated with matches and messages',
+      url: "/notification",
+      icon: BellRing,
+      badge: 0,
+    },
   ];
