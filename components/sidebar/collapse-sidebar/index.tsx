@@ -133,7 +133,10 @@ export default function CollapseSidebar({
                       }`}
                     >
                       {item.icon && (
-                        <item.icon className="!size-6" strokeWidth={1.5} />
+                        <item.icon
+                          className="!size-6 group-data-[collapsible=icon]:pr-1"
+                          strokeWidth={1.5}
+                        />
                       )}
                       <span>{item.title}</span>
                       {item.url === "/matching" && matchingCount > 0 && (
@@ -168,7 +171,7 @@ export default function CollapseSidebar({
                         : ""
                     }`}
                   >
-                    <LucideFileUser className="!size-6" strokeWidth={1.5}/>
+                    <LucideFileUser className="!size-6" strokeWidth={1.5} />
                     <span>AI Resume Builder</span>
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
