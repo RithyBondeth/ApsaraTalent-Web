@@ -1,7 +1,7 @@
 import { TUserRole } from "@/utils/types/role.type";
 
 export interface INotificationMatchCardProps {
-  time: string;
+  timestamp: string;
   role: TUserRole;
   user: {
     id: string;

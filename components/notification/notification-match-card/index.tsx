@@ -5,6 +5,7 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { LucideHeartHandshake } from "lucide-react";
 import { INotificationMatchCardProps } from "./props";
+import { timeAgo } from "@/utils/functions/timeago-formatter";
 
 export default function NotificationMatchCard(
   props: INotificationMatchCardProps
@@ -20,7 +21,7 @@ export default function NotificationMatchCard(
             New Match Found!
           </TypographyLead>
           <div className="flex items-center gap-1">
-            <TypographySmall>2 minutes ago</TypographySmall>
+            <TypographySmall>{timeAgo(props.timestamp)}</TypographySmall>
             <div className="size-2 rounded-full bg-blue-500" />
           </div>
         </div>

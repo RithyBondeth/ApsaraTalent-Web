@@ -29,7 +29,7 @@ export default function NotificationPage() {
             industry: "Artificial Intelligence", 
             avatar: "http://localhost:3000/storage/company-avatars/neuralarc-avatar-1748940621736-895400190.jpg",
           }}
-          time={'5 minutes ago'}
+          timestamp={"2025-06-02 07:02:13.864662"}
         />
         <NotificationMessageCard />
       </div>
