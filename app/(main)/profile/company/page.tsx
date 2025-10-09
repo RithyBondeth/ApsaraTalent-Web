@@ -949,6 +949,7 @@ export default function ProfilePage() {
                 label="Current Password"
                 input={
                   <Input
+                    autoComplete="off"
                     placeholder="Current Password"
                     id="current-password"
                     {...form.register("accountSetting.currentPassword")}
@@ -987,6 +988,7 @@ export default function ProfilePage() {
                 label="New Password"
                 input={
                   <Input
+                    autoComplete="off"
                     placeholder="New Password"
                     id="new-password"
                     {...form.register("accountSetting.newPassword")}
@@ -1025,6 +1027,7 @@ export default function ProfilePage() {
                 label="Confirm Password"
                 input={
                   <Input
+                    autoComplete="off"
                     placeholder="Confirm Password"
                     id="confirm-password"
                     {...form.register("accountSetting.confirmPassword")}
@@ -1378,13 +1381,6 @@ export default function ProfilePage() {
                   )}
                 </div>
               </div>
-            </div>
-          )}
-          {isEdit && (
-            <div className="w-full flex justify-end">
-              <Button type="submit" className="text-xs w-full">
-                Submit
-              </Button>
             </div>
           )}
         </div>
