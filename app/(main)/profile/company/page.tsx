@@ -539,7 +539,7 @@ export default function ProfilePage() {
     }
 
     // Now submit the form
-    form.handleSubmit(onSubmit)(e);
+    form.handleSubmit(onSubmit, console.error)();
   };
 
   // Profile, Cover and Image Popup handlers
@@ -631,7 +631,7 @@ export default function ProfilePage() {
         </div>
         {isEdit ? (
           <div className="flex items-center gap-3 absolute top-5 right-5 phone-xl:top-2 phone-xl:right-2">
-            <Button className="text-xs" onClick={() => {}}>
+            <Button className="text-xs" type="submit">
               Save
               <LucideCircleCheck />
             </Button>
@@ -959,19 +959,23 @@ export default function ProfilePage() {
                       isShowPassword.current ? (
                         <LucideEyeClosed
                           onClick={() =>
-                            setIsShowPassword({
-                              ...isShowPassword,
-                              current: false,
-                            })
+                            !isEdit
+                              ? undefined
+                              : setIsShowPassword({
+                                  ...isShowPassword,
+                                  current: false,
+                                })
                           }
                         />
                       ) : (
                         <LucideEye
                           onClick={() =>
-                            setIsShowPassword({
-                              ...isShowPassword,
-                              current: true,
-                            })
+                            !isEdit
+                              ? undefined
+                              : setIsShowPassword({
+                                  ...isShowPassword,
+                                  current: true,
+                                })
                           }
                         />
                       )
@@ -993,13 +997,23 @@ export default function ProfilePage() {
                       isShowPassword.new ? (
                         <LucideEyeClosed
                           onClick={() =>
-                            setIsShowPassword({ ...isShowPassword, new: false })
+                            !isEdit
+                              ? undefined
+                              : setIsShowPassword({
+                                  ...isShowPassword,
+                                  new: false,
+                                })
                           }
                         />
                       ) : (
                         <LucideEye
                           onClick={() =>
-                            setIsShowPassword({ ...isShowPassword, new: true })
+                            !isEdit
+                              ? undefined
+                              : setIsShowPassword({
+                                  ...isShowPassword,
+                                  new: true,
+                                })
                           }
                         />
                       )
@@ -1021,19 +1035,23 @@ export default function ProfilePage() {
                       isShowPassword.confirm ? (
                         <LucideEyeClosed
                           onClick={() =>
-                            setIsShowPassword({
-                              ...isShowPassword,
-                              confirm: false,
-                            })
+                            !isEdit
+                              ? undefined
+                              : setIsShowPassword({
+                                  ...isShowPassword,
+                                  confirm: false,
+                                })
                           }
                         />
                       ) : (
                         <LucideEye
                           onClick={() =>
-                            setIsShowPassword({
-                              ...isShowPassword,
-                              confirm: true,
-                            })
+                            !isEdit
+                              ? undefined
+                              : setIsShowPassword({
+                                  ...isShowPassword,
+                                  confirm: true,
+                                })
                           }
                         />
                       )

@@ -458,8 +458,13 @@ export default function EmployeeProfilePage() {
     URL.revokeObjectURL(url); // clean up
   };
 
+  const onSubmit = async (data: TEmployeeProfileForm) => {
+    console.log("test");
+    console.log("Employee Profile Data: ", data);
+  }
+
   return user ? (
-    <form className="!min-w-full flex flex-col gap-5">
+    <form className="!min-w-full flex flex-col gap-5" onSubmit={form.handleSubmit(onSubmit)}>
       <div className="flex items-center justify-between border border-muted rounded-md p-5 tablet-sm:flex-col tablet-sm:[&>div]:w-full tablet-sm:gap-5">
         <div className="flex items-center justify-start gap-5 tablet-sm:flex-col">
           <div className="relative" onClick={() => setOpenProfilePopup(true)}>
@@ -497,9 +502,8 @@ export default function EmployeeProfilePage() {
         {isEdit ? (
           <div className="flex items-center gap-3">
             <Button
-              type="button"
+              type="submit"
               className="text-xs"
-              onClick={() => {}}
             >
               Save
               <LucideCircleCheck />

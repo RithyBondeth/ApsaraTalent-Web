@@ -3,20 +3,11 @@ import {
   dateValidation,
   emailValidation,
   imageValidation,
-  textValidation,
 } from "@/utils/functions/validations";
 import * as z from "zod";
 
 export const basicInfoSchema = z.object({
   basicInfo: z.object({
-      // name: textValidation("Name", 20).optional(),
-      // description: textValidation("Description", 100).optional(),
-      // industry: textValidation("Industry", 100).optional(),
-      // companySize: z.number().positive().optional(),
-      // foundedYear: z.number().positive().optional(),
-      // location: selectedValidation("location").optional(),
-      // avatar: imageValidation('Avatar').optional(),
-      // cover: imageValidation('Cover').optional(),
       name: z.string().optional(),
       description: z.string().optional(),
       industry: z.string().optional(),
@@ -102,12 +93,12 @@ export const openPositionSchema = z.object({
   openPositions: z
     .array(
       z.object({
-        title: textValidation("Title", 100).optional(),
-        description: textValidation("Description", 100).optional(),
-        experienceRequirement: textValidation("Experience requirement",100).optional(),
-        educationRequirement: textValidation("Education requirement",100).optional(),
+        title: z.string().optional(),
+        description: z.string().optional(),
+        experienceRequirement: z.string().optional(),
+        educationRequirement: z.string().optional(),
         skills: z.array(z.string()).optional(),
-        salary: textValidation("Salary", 100).optional(),
+        salary: z.string().optional(),
         deadlineDate: dateValidation("Deadline").optional(),
       })
     ).optional(),
