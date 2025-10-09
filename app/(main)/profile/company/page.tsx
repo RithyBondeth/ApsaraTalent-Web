@@ -1120,7 +1120,9 @@ export default function ProfilePage() {
                       >
                         Cancel
                       </Button>
-                      <Button onClick={addBenefits}>Save</Button>
+                      <Button onClick={addBenefits} type="button">
+                        Save
+                      </Button>
                     </div>
                   </PopoverContent>
                 </Popover>
@@ -1183,7 +1185,9 @@ export default function ProfilePage() {
                       >
                         Cancel
                       </Button>
-                      <Button onClick={addValue}>Save</Button>
+                      <Button onClick={addValue} type="button">
+                        Save
+                      </Button>
                     </div>
                   </PopoverContent>
                 </Popover>
@@ -1281,6 +1285,7 @@ export default function ProfilePage() {
               <Button
                 variant="secondary"
                 className="w-full text-xs"
+                type="button"
                 onClick={addCareers}
               >
                 <LucidePlus />
@@ -1372,6 +1377,7 @@ export default function ProfilePage() {
                       <Button
                         variant="secondary"
                         className="text-xs w-full"
+                        type="button"
                         onClick={addSocial}
                       >
                         <LucidePlus />
