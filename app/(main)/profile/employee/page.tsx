@@ -16,11 +16,9 @@ import {
   LucideDownload,
   LucideEdit,
   LucideEye,
-  LucideEyeClosed,
   LucideFileText,
   LucideGraduationCap,
   LucideLink2,
-  LucideLock,
   LucideMail,
   LucidePhone,
   LucidePlus,
@@ -103,9 +101,9 @@ export default function EmployeeProfilePage() {
       accountSetting: {
         email: "",
         phone: "",
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
+        // currentPassword: "",
+        // newPassword: "",
+        // confirmPassword: "",
       },
       profession: {
         job: "",
@@ -176,9 +174,9 @@ export default function EmployeeProfilePage() {
         accountSetting: {
           email: user.email ?? "",
           phone: employee.phone,
-          currentPassword: "",
-          newPassword: "",
-          confirmPassword: "",
+          // currentPassword: "",
+          // newPassword: "",
+          // confirmPassword: "",
         },
         profession: {
           job: employee.job ?? "",
@@ -924,7 +922,7 @@ export default function EmployeeProfilePage() {
           )}
         </div>
         <div className="w-[40%] flex flex-col gap-5">
-          <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
+          {/* <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
             <div className="flex flex-col gap-1">
               <TypographyH4>Account Settings</TypographyH4>
               <Divider />
@@ -1035,7 +1033,7 @@ export default function EmployeeProfilePage() {
                 }
               />
             </div>
-          </div>
+          </div> */}
 
           {/* Connected Accounts Section */}
           <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
