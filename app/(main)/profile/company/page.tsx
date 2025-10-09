@@ -536,7 +536,7 @@ export default function ProfilePage() {
     }
 
     // Now submit the form
-    form.handleSubmit(onSubmit, console.error)();
+    form.handleSubmit(onSubmit, console.error)(e);
   };
 
   // Profile, Cover and Image Popup handlers

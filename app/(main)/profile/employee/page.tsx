@@ -457,12 +457,36 @@ export default function EmployeeProfilePage() {
   };
 
   const onSubmit = async (data: TEmployeeProfileForm) => {
-    console.log("test");
+    // Show success message
     console.log("Employee Profile Data: ", data);
+
+    setIsEdit(false);
+  }
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    form.setValue("skills", skills);
+    form.setValue("careerScopes", careerScopes);
+    form.setValue("socials", socials);
+
+    if(avatarFile) {
+      form.setValue("basicInfo.avatar", avatarFile);
+    }
+
+    if(resumeFile) {
+      form.setValue("references.resume", resumeFile);
+    }
+
+    if(coverLetterFile) {
+      form.setValue("references.coverLetter", coverLetterFile);
+    }
+
+    form.handleSubmit(onSubmit, console.error)(e);
   }
 
   return user ? (
-    <form className="!min-w-full flex flex-col gap-5" onSubmit={form.handleSubmit(onSubmit)}>
+    <form className="!min-w-full flex flex-col gap-5" onSubmit={handleSubmit}>
       <div className="flex items-center justify-between border border-muted rounded-md p-5 tablet-sm:flex-col tablet-sm:[&>div]:w-full tablet-sm:gap-5">
         <div className="flex items-center justify-start gap-5 tablet-sm:flex-col">
           <div className="relative" onClick={() => setOpenProfilePopup(true)}>
@@ -1131,7 +1155,7 @@ export default function EmployeeProfilePage() {
                       >
                         Cancel
                       </Button>
-                      <Button onClick={addSkills}>Save</Button>
+                      <Button onClick={addSkills} type="button">Save</Button>
                     </div>
                   </PopoverContent>
                 </Popover>
@@ -1191,7 +1215,7 @@ export default function EmployeeProfilePage() {
                     >
                       Cancel
                     </Button>
-                    <Button onClick={addCareerScope}>Save</Button>
+                    <Button onClick={addCareerScope} type="button">Save</Button>
                   </div>
                 </PopoverContent>
               </Popover>

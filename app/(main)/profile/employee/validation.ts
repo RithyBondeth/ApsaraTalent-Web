@@ -15,23 +15,29 @@ export const basicInfoSchema = z.object({
             (file) => {
               if (!(file instanceof File)) return false;
               const validTypes = ["image/jpeg", "image/png", "image/webp"];
-              return validTypes.includes(file.type) && file.size <= MAX_IMAGE_SIZE;
+              return (
+                validTypes.includes(file.type) && file.size <= MAX_IMAGE_SIZE
+              );
             },
             {
               message: `Invalid file: avatar must be an image (jpeg, png, webp) and < 5MB`,
             }
           ),
-          z.string(),
+          z.string(), // for existing image URLs
           z.null(),
-          z.undefined(),
+          z.undefined(), // Adding undefined to make it optional
         ])
         .refine(
           (file) =>
-            file === null || file === undefined || file instanceof File || typeof file === "string",
+            file === null ||
+            file === undefined ||
+            file instanceof File ||
+            typeof file === "string",
           {
             message: `Please upload a valid file, URL, or leave it empty.`,
           }
-        ).optional(),
+        )
+        .optional(),
     }).optional(),
 });
 
