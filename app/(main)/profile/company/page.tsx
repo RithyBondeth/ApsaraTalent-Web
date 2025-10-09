@@ -111,9 +111,9 @@ export default function ProfilePage() {
       accountSetting: {
         email: "",
         phone: "",
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
+        // currentPassword: "",
+        // newPassword: "",
+        // confirmPassword: "",
       },
       openPositions: [],
       images: [],
@@ -191,9 +191,9 @@ export default function ProfilePage() {
         accountSetting: {
           email: user.email ?? "",
           phone: company.phone,
-          currentPassword: "",
-          newPassword: "",
-          confirmPassword: "",
+          // currentPassword: "",
+          // newPassword: "",
+          // confirmPassword: "",
         },
         openPositions:
           company.openPositions.map((op) => {
@@ -939,7 +939,7 @@ export default function ProfilePage() {
           )}
         </div>
         <div className="w-[40%] flex flex-col gap-5">
-          <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
+          {/* <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
             <div className="flex flex-col gap-1">
               <TypographyH4>Account Settings</TypographyH4>
               <Divider />
@@ -1063,7 +1063,7 @@ export default function ProfilePage() {
                 }
               />
             </div>
-          </div>
+          </div> */}
 
           {/* Benefits Section */}
           <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">

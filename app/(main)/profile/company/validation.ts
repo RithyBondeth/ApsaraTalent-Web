@@ -86,21 +86,21 @@ export const accountSettingSchema = z.object({
     .object({
       email: emailValidation.optional(),
       phone: khmerPhoneNumberValidation.optional(),
-      currentPassword: z.string().optional(),
-      newPassword: z.string().optional(),
-      confirmPassword: z.string().optional(),
-    })
-    .optional()
-    .superRefine((data, ctx) => {
-      // Access password and confirmPassword from the object schema
-      if (data?.confirmPassword !== data?.newPassword) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "New password and Confirm password don't match",
-          path: ["confirmPassword"],
-        });
-      }
-    }),
+      // currentPassword: z.string().optional(),
+      // newPassword: z.string().optional(),
+      // confirmPassword: z.string().optional(),
+    }).optional()
+    // .optional()
+    // .superRefine((data, ctx) => {
+    //   // Access password and confirmPassword from the object schema
+    //   if (data?.confirmPassword !== data?.newPassword) {
+    //     ctx.addIssue({
+    //       code: z.ZodIssueCode.custom,
+    //       message: "New password and Confirm password don't match",
+    //       path: ["confirmPassword"],
+    //     });
+    //   }
+    //}),
 });
 
 export const openPositionSchema = z.object({
