@@ -1,14 +1,14 @@
 import { MAX_IMAGE_SIZE, ACCEPTED_FILE_TYPES, DOCUMENT_SIZE } from "@/utils/constants/app.constant";
-import { dateValidation, emailValidation, selectedValidation } from "@/utils/functions/validations";
+import { dateValidation, emailValidation, khmerPhoneNumberValidation, selectedValidation, textValidation } from "@/utils/functions/validations";
 import * as z from "zod";
 
 export const basicInfoSchema = z.object({
     basicInfo: z.object({
-        firstname: z.string().optional(),
-        lastname: z.string().optional(),
-        username: z.string().optional(),
-        gender: selectedValidation('Gender').optional(),
-        location: selectedValidation('Location').optional(),
+        firstname: textValidation().optional(),
+        lastname: textValidation().optional(),
+        username: textValidation().optional(),
+        gender: selectedValidation().optional(),
+        location: selectedValidation().optional(),
         avatar: z
         .union([
           z.custom<File>(
@@ -38,28 +38,28 @@ export const basicInfoSchema = z.object({
 export const accountSettingSchema = z.object({
     accountSetting: z.object({
         email: emailValidation.optional(),
-        phone: z.string().optional(),
-        currentPassword: z.string().optional(),
-        newPassword: z.string().optional(),
-        confirmPassword: z.string().optional(),
+        phone: khmerPhoneNumberValidation.optional(),
+        // currentPassword: z.string().optional(),
+        // newPassword: z.string().optional(),
+        // confirmPassword: z.string().optional(),
     }).optional()
 });
 
 export const professionInfoSchema = z.object({
     profession: z.object({
-        job: z.string().optional(),
-        yearOfExperience: z.string().optional(),
-        availability: z.string().optional(),
-        description: z.string().optional(),
+        job: textValidation().optional(),
+        yearOfExperience: textValidation().optional(),
+        availability: textValidation().optional(),
+        description: textValidation().optional(),
     }).optional()
 });
 
 export const educationSchema = z.object({
     educations: z.array(
         z.object({
-            school: z.string().optional(),
-            degree: z.string().optional(), 
-            year: z.string().optional(),   
+            school: textValidation().optional(),
+            degree: textValidation().optional(), 
+            year: textValidation().optional(),   
         }).optional()
     ).optional()
 });
@@ -67,10 +67,10 @@ export const educationSchema = z.object({
 export const experienceSchema = z.object({
     experiences: z.array(
         z.object({
-            title: z.string().optional(),
-            description: z.string().optional(),
-            startDate: dateValidation("Start Date").optional(),
-            endDate: dateValidation("End Date").optional()
+            title: textValidation().optional(),
+            description: textValidation().optional(),
+            startDate: dateValidation().optional(),
+            endDate: dateValidation().optional()
         }).optional()
     ).optional()  
 });
@@ -78,8 +78,8 @@ export const experienceSchema = z.object({
 export const skillSchema = z.object({
    skills: z.array(
     z.object({
-        name: z.string().optional(),
-        description: z.string().optional()      
+        name: textValidation().optional(),
+        description: textValidation().optional()      
     }).optional()
    ).optional()
 });
@@ -109,16 +109,16 @@ export const referenceSchema = z.object({
 
 export const careerScopesSchema = z.object({
     careerScopes: z.array(z.object({
-      name: z.string(),
-      description: z.string().optional(),
+      name: textValidation().optional(),
+      description: textValidation().optional(),
     })).min(1, { message: "Please select at least one career option" }).optional(), 
 });
 
 export const socialSchema = z.object({
     socials: z.array(
      z.object({
-        platform: z.string().optional(),
-        url: z.string().optional(),
+        platform: textValidation().optional(),
+        url: textValidation().optional(),
      }).optional()
     ).optional(),
 });

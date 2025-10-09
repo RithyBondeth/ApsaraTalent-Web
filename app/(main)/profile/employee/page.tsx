@@ -16,11 +16,9 @@ import {
   LucideDownload,
   LucideEdit,
   LucideEye,
-  LucideEyeClosed,
   LucideFileText,
   LucideGraduationCap,
   LucideLink2,
-  LucideLock,
   LucideMail,
   LucidePhone,
   LucidePlus,
@@ -103,9 +101,9 @@ export default function EmployeeProfilePage() {
       accountSetting: {
         email: "",
         phone: "",
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
+        // currentPassword: "",
+        // newPassword: "",
+        // confirmPassword: "",
       },
       profession: {
         job: "",
@@ -176,9 +174,9 @@ export default function EmployeeProfilePage() {
         accountSetting: {
           email: user.email ?? "",
           phone: employee.phone,
-          currentPassword: "",
-          newPassword: "",
-          confirmPassword: "",
+          // currentPassword: "",
+          // newPassword: "",
+          // confirmPassword: "",
         },
         profession: {
           job: employee.job ?? "",
@@ -458,8 +456,13 @@ export default function EmployeeProfilePage() {
     URL.revokeObjectURL(url); // clean up
   };
 
+  const onSubmit = async (data: TEmployeeProfileForm) => {
+    console.log("test");
+    console.log("Employee Profile Data: ", data);
+  }
+
   return user ? (
-    <form className="!min-w-full flex flex-col gap-5">
+    <form className="!min-w-full flex flex-col gap-5" onSubmit={form.handleSubmit(onSubmit)}>
       <div className="flex items-center justify-between border border-muted rounded-md p-5 tablet-sm:flex-col tablet-sm:[&>div]:w-full tablet-sm:gap-5">
         <div className="flex items-center justify-start gap-5 tablet-sm:flex-col">
           <div className="relative" onClick={() => setOpenProfilePopup(true)}>
@@ -497,9 +500,8 @@ export default function EmployeeProfilePage() {
         {isEdit ? (
           <div className="flex items-center gap-3">
             <Button
-              type="button"
+              type="submit"
               className="text-xs"
-              onClick={() => {}}
             >
               Save
               <LucideCircleCheck />
@@ -920,7 +922,7 @@ export default function EmployeeProfilePage() {
           )}
         </div>
         <div className="w-[40%] flex flex-col gap-5">
-          <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
+          {/* <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
             <div className="flex flex-col gap-1">
               <TypographyH4>Account Settings</TypographyH4>
               <Divider />
@@ -1031,7 +1033,7 @@ export default function EmployeeProfilePage() {
                 }
               />
             </div>
-          </div>
+          </div> */}
 
           {/* Connected Accounts Section */}
           <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
