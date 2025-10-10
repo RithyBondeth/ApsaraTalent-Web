@@ -450,7 +450,7 @@ export default function EmployeeProfilePage() {
     console.log("Employee Profile Data: ", data);
 
     setIsEdit(false);
-  }
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -459,26 +459,29 @@ export default function EmployeeProfilePage() {
     form.setValue("careerScopes", careerScopes);
     form.setValue("socials", socials);
 
-    if(avatarFile) {
+    if (avatarFile) {
       form.setValue("basicInfo.avatar", avatarFile);
     }
 
-    if(resumeFile) {
+    if (resumeFile) {
       form.setValue("references.resume", resumeFile);
     }
 
-    if(coverLetterFile) {
+    if (coverLetterFile) {
       form.setValue("references.coverLetter", coverLetterFile);
     }
 
     form.handleSubmit(onSubmit, console.error)(e);
-  }
+  };
 
   return user ? (
     <form className="!min-w-full flex flex-col gap-5" onSubmit={handleSubmit}>
       <div className="flex items-center justify-between border border-muted rounded-md p-5 tablet-sm:flex-col tablet-sm:[&>div]:w-full tablet-sm:gap-5">
         <div className="flex items-center justify-start gap-5 tablet-sm:flex-col">
-          <div className="relative" onClick={() => setOpenProfilePopup(true)}>
+          <div
+            className="relative"
+            onClick={() => (!isEdit ? setOpenProfilePopup(true) : undefined)}
+          >
             <Avatar className="size-36" rounded="md">
               <AvatarImage
                 src={
@@ -492,6 +495,7 @@ export default function EmployeeProfilePage() {
             {isEdit && (
               <Button
                 className="size-8 flex justify-center items-center cursor-pointer absolute bottom-1 right-1 p-1 rounded-full bg-foreground text-primary-foreground"
+                type="button"
                 onClick={() => avatarInputRef.current?.click()}
               >
                 <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
@@ -512,10 +516,7 @@ export default function EmployeeProfilePage() {
         </div>
         {isEdit ? (
           <div className="flex items-center gap-3">
-            <Button
-              type="submit"
-              className="text-xs"
-            >
+            <Button type="submit" className="text-xs">
               Save
               <LucideCircleCheck />
             </Button>
@@ -1031,7 +1032,9 @@ export default function EmployeeProfilePage() {
                       >
                         Cancel
                       </Button>
-                      <Button onClick={addSkills} type="button">Save</Button>
+                      <Button onClick={addSkills} type="button">
+                        Save
+                      </Button>
                     </div>
                   </PopoverContent>
                 </Popover>
@@ -1091,7 +1094,9 @@ export default function EmployeeProfilePage() {
                     >
                       Cancel
                     </Button>
-                    <Button onClick={addCareerScope} type="button">Save</Button>
+                    <Button onClick={addCareerScope} type="button">
+                      Save
+                    </Button>
                   </div>
                 </PopoverContent>
               </Popover>
