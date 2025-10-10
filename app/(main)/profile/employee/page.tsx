@@ -101,9 +101,6 @@ export default function EmployeeProfilePage() {
       accountSetting: {
         email: "",
         phone: "",
-        // currentPassword: "",
-        // newPassword: "",
-        // confirmPassword: "",
       },
       profession: {
         job: "",
@@ -125,11 +122,6 @@ export default function EmployeeProfilePage() {
 
   // All useState hooks
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [isShowPassword, setIsShowPassword] = useState({
-    current: false,
-    new: false,
-    confirm: false,
-  });
   const [selectedGender, setSelectedGender] = useState<TGender | string>("");
   const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
     ""
@@ -169,14 +161,11 @@ export default function EmployeeProfilePage() {
           username: employee.username ?? "",
           gender: employee.gender ?? "",
           location: employee.location ?? "",
-          avatar: employee.avatar ? new File([], "avatar.png") : null,
+          avatar: employee.avatar ?? null,
         },
         accountSetting: {
           email: user.email ?? "",
           phone: employee.phone,
-          // currentPassword: "",
-          // newPassword: "",
-          // confirmPassword: "",
         },
         profession: {
           job: employee.job ?? "",
@@ -946,119 +935,6 @@ export default function EmployeeProfilePage() {
           )}
         </div>
         <div className="w-[40%] flex flex-col gap-5">
-          {/* <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
-            <div className="flex flex-col gap-1">
-              <TypographyH4>Account Settings</TypographyH4>
-              <Divider />
-            </div>
-            <div className="flex flex-col items-start gap-5">
-              <LabelInput
-                label="Current Password"
-                input={
-                  <Input
-                    placeholder="Current Password"
-                    id="currentPassword"
-                    {...form.register("accountSetting.currentPassword")}
-                    type={isShowPassword.current ? "text" : "password"}
-                    disabled={!isEdit}
-                    prefix={<LucideLock strokeWidth={"1.3px"} />}
-                    suffix={
-                      isEdit &&
-                      (isShowPassword.current ? (
-                        <LucideEyeClosed
-                          strokeWidth={"1.3px"}
-                          onClick={() =>
-                            setIsShowPassword({
-                              ...isShowPassword,
-                              current: false,
-                            })
-                          }
-                        />
-                      ) : (
-                        <LucideEye
-                          strokeWidth={"1.3px"}
-                          onClick={() =>
-                            setIsShowPassword({
-                              ...isShowPassword,
-                              current: true,
-                            })
-                          }
-                        />
-                      ))
-                    }
-                  />
-                }
-              />
-              <LabelInput
-                label="New Password"
-                input={
-                  <Input
-                    placeholder="New Password"
-                    id="newPassword"
-                    {...form.register("accountSetting.newPassword")}
-                    type={isShowPassword.new ? "text" : "password"}
-                    disabled={!isEdit}
-                    prefix={<LucideLock strokeWidth={"1.3px"} />}
-                    suffix={
-                      isEdit &&
-                      (isShowPassword.new ? (
-                        <LucideEyeClosed
-                          strokeWidth={"1.3px"}
-                          onClick={() =>
-                            setIsShowPassword({ ...isShowPassword, new: false })
-                          }
-                        />
-                      ) : (
-                        <LucideEye
-                          strokeWidth={"1.3px"}
-                          onClick={() =>
-                            setIsShowPassword({ ...isShowPassword, new: true })
-                          }
-                        />
-                      ))
-                    }
-                  />
-                }
-              />
-              <LabelInput
-                label="Confirm Password"
-                input={
-                  <Input
-                    placeholder="Confirm Password"
-                    id="confirmPassword"
-                    {...form.register("accountSetting.confirmPassword")}
-                    type={isShowPassword.confirm ? "text" : "password"}
-                    prefix={<LucideLock strokeWidth={"1.3px"} />}
-                    suffix={
-                      isEdit &&
-                      (isShowPassword.confirm ? (
-                        <LucideEyeClosed
-                          strokeWidth={"1.3px"}
-                          onClick={() =>
-                            setIsShowPassword({
-                              ...isShowPassword,
-                              confirm: false,
-                            })
-                          }
-                        />
-                      ) : (
-                        <LucideEye
-                          strokeWidth={"1.3px"}
-                          onClick={() =>
-                            setIsShowPassword({
-                              ...isShowPassword,
-                              confirm: true,
-                            })
-                          }
-                        />
-                      ))
-                    }
-                  />
-                }
-              />
-            </div>
-          </div> */}
-
           {/* Connected Accounts Section */}
           <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
             <div className="flex flex-col gap-1">
