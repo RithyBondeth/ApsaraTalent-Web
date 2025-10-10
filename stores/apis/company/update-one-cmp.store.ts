@@ -10,7 +10,6 @@ type TUpdateOneCompanyResponse = {
 
 export type TCompanyUpdateBody = Partial<Omit<ICompany, "id">> & {
   email?: string;
-  password?: string;
 };
 
 type TUpdateOneCompanyState = TUpdateOneCompanyResponse & {

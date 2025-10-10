@@ -511,6 +511,8 @@ export default function ProfilePage() {
   };
 
   const onSubmit = async (data: TCompanyProfileForm) => {
+    console.log("Company Profile Data: ", data);
+
     try {
       const dirtyFields = form.formState.dirtyFields;
       const updateBody: Partial<TCompanyUpdateBody> = {};
@@ -990,6 +992,7 @@ export default function ProfilePage() {
                         {isEdit && (
                           <LucideXCircle
                             className="absolute top-3 right-1 cursor-pointer text-red-500"
+                            type="button"
                             onClick={() => {
                               const updated = form
                                 .watch("images")
@@ -1033,8 +1036,8 @@ export default function ProfilePage() {
                     </CarouselItem>
                   )}
                 </CarouselContent>
-                <CarouselPrevious className="ml-8" />
-                <CarouselNext className="mr-8" />
+                <CarouselPrevious type="button" className="ml-8" />
+                <CarouselNext type="button" className="mr-8" />
               </Carousel>
             </div>
           )}
