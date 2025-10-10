@@ -571,6 +571,11 @@ export default function ProfilePage() {
         return;
       }
 
+      // Refetch current user to get updated data
+      await getCurrentUser();
+      // Reset form with new data to clear dirty fields
+      form.reset(data);
+
       toast({
         title: "Success!",
         description:
@@ -700,8 +705,12 @@ export default function ProfilePage() {
         </div>
         {isEdit ? (
           <div className="flex items-center gap-3 absolute top-5 right-5 phone-xl:top-2 phone-xl:right-2">
-            <Button className="text-xs" type="submit">
-              Save
+            <Button
+              className="text-xs"
+              type="submit"
+              disabled={updateOneCmpStore.loading}
+            >
+              {updateOneCmpStore.loading ? 'Updating...' : 'Save'}
               <LucideCircleCheck />
             </Button>
             <Button className="text-xs" onClick={() => setIsEdit(false)}>
