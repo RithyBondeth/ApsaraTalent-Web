@@ -480,7 +480,9 @@ export default function EmployeeProfilePage() {
         <div className="flex items-center justify-start gap-5 tablet-sm:flex-col">
           <div
             className="relative"
-            onClick={() => (!isEdit ? setOpenProfilePopup(true) : undefined)}
+            onClick={() => {
+              if(!isEdit) setOpenProfilePopup(true)
+            }}
           >
             <Avatar className="size-36" rounded="md">
               <AvatarImage

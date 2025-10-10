@@ -108,9 +108,6 @@ export default function ProfilePage() {
       accountSetting: {
         email: "",
         phone: "",
-        // currentPassword: "",
-        // newPassword: "",
-        // confirmPassword: "",
       },
       openPositions: [],
       images: [],
@@ -125,11 +122,6 @@ export default function ProfilePage() {
   });
 
   // All useState hooks
-  const [isShowPassword, setIsShowPassword] = useState({
-    current: false,
-    new: false,
-    confirm: false,
-  });
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
@@ -182,15 +174,12 @@ export default function ProfilePage() {
           companySize: company.companySize ?? null,
           foundedYear: company.foundedYear ?? null,
           location: company.location ?? "",
-          avatar: company.avatar ? new File([], "avatar.png") : null,
-          cover: company.cover ? new File([], "cover.png") : null,
+          avatar: company.avatar ?? null,
+          cover: company.cover ?? null,
         },
         accountSetting: {
           email: user.email ?? "",
           phone: company.phone,
-          // currentPassword: "",
-          // newPassword: "",
-          // confirmPassword: "",
         },
         openPositions:
           company.openPositions.map((op) => {
@@ -358,9 +347,6 @@ export default function ProfilePage() {
   const removeBenefit = async (benefitToRemove: string) => {
     const updated = benefits.filter((bf) => bf.label !== benefitToRemove);
     setBenefits(updated);
-    // setValue?.("benefitsAndValues.benefits", updated);
-
-    // await trigger?.("benefitsAndValues.benefits");
   };
 
   const addValue = () => {
@@ -570,13 +556,14 @@ export default function ProfilePage() {
       >
         <BlurBackGroundOverlay />
         {isEdit && (
-          <div
+          <Button
             className="flex items-center gap-2 cursor-pointer absolute bottom-5 right-5 py-1 px-3 rounded-full bg-foreground text-primary-foreground"
             onClick={() => coverInputRef.current?.click()}
+            type="button"
           >
             <LucideCamera strokeWidth={"1.2px"} width={"18px"} />
             <TypographySmall className="text-xs">Change Cover</TypographySmall>
-          </div>
+          </Button>
         )}
         <input
           ref={coverInputRef}
@@ -602,12 +589,13 @@ export default function ProfilePage() {
               {company.name.slice(0, 3)}
             </AvatarFallback>
             {isEdit && (
-              <div
+              <Button
                 className="size-8 flex justify-center items-center cursor-pointer absolute bottom-1 right-1 p-1 rounded-full bg-foreground text-primary-foreground"
                 onClick={() => avatarInputRef.current?.click()}
+                type="button"
               >
                 <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
-              </div>
+              </Button>
             )}
             <input
               ref={avatarInputRef}

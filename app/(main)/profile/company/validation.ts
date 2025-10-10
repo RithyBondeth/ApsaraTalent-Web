@@ -21,9 +21,8 @@ export const basicInfoSchema = z.object({
       location: selectedValidation().optional(),
       avatar: z
         .union([
-          z.custom<File>(
+          z.instanceof(File).refine(
             (file) => {
-              if (!(file instanceof File)) return false;
               const validTypes = ["image/jpeg", "image/png", "image/webp"];
               return (
                 validTypes.includes(file.type) && file.size <= MAX_IMAGE_SIZE
@@ -35,47 +34,24 @@ export const basicInfoSchema = z.object({
           ),
           z.string(), // for existing image URLs
           z.null(),
-          z.undefined(), // Adding undefined to make it optional
         ])
-        .refine(
-          (file) =>
-            file === null ||
-            file === undefined ||
-            file instanceof File ||
-            typeof file === "string",
-          {
-            message: `Please upload a valid file, URL, or leave it empty.`,
-          }
-        )
         .optional(),
       cover: z
         .union([
-          z.custom<File>(
+          z.instanceof(File).refine(
             (file) => {
-              if (!(file instanceof File)) return false;
               const validTypes = ["image/jpeg", "image/png", "image/webp"];
               return (
                 validTypes.includes(file.type) && file.size <= MAX_IMAGE_SIZE
               );
             },
             {
-              message: `Invalid file: cover must be an image (jpeg, png, webp) and < 5MB`,
+              message: `Invalid file: avatar must be an image (jpeg, png, webp) and < 5MB`,
             }
           ),
           z.string(), // for existing image URLs
           z.null(),
-          z.undefined(), // Adding undefined to make it optional
         ])
-        .refine(
-          (file) =>
-            file === null ||
-            file === undefined ||
-            file instanceof File ||
-            typeof file === "string",
-          {
-            message: `Please upload a valid file, URL, or leave it empty.`,
-          }
-        )
         .optional(),
     })
     .optional(),
@@ -86,21 +62,8 @@ export const accountSettingSchema = z.object({
     .object({
       email: emailValidation.optional(),
       phone: khmerPhoneNumberValidation.optional(),
-      // currentPassword: z.string().optional(),
-      // newPassword: z.string().optional(),
-      // confirmPassword: z.string().optional(),
-    }).optional()
-    // .optional()
-    // .superRefine((data, ctx) => {
-    //   // Access password and confirmPassword from the object schema
-    //   if (data?.confirmPassword !== data?.newPassword) {
-    //     ctx.addIssue({
-    //       code: z.ZodIssueCode.custom,
-    //       message: "New password and Confirm password don't match",
-    //       path: ["confirmPassword"],
-    //     });
-    //   }
-    //}),
+    })
+    .optional(),
 });
 
 export const openPositionSchema = z.object({
