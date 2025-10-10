@@ -91,6 +91,7 @@ import {
 import { useUploadCompanyAvatarStore } from "@/stores/apis/company/upload-cmp-avatar.store";
 import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cover.store";
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
+import { useUploadCompanyImagesStore } from "@/stores/apis/company/upload-cmp-images.store";
 
 export default function ProfilePage() {
   // Store hooks
@@ -99,14 +100,17 @@ export default function ProfilePage() {
   const updateOneCmpStore = useUpdateOneCompanyStore();
   const uploadAvatarCmpStore = useUploadCompanyAvatarStore();
   const uploadCoverCmpStore = useUploadCompanyCoverStore();
+  const uploadCmpImagesStore = useUploadCompanyImagesStore();
   const updateProfileErrorState =
     updateOneCmpStore.error ||
     uploadAvatarCmpStore.error ||
-    uploadCoverCmpStore.error;
+    uploadCoverCmpStore.error ||
+    uploadCmpImagesStore.error;
   const updateProfileLoadingState =
     updateOneCmpStore.loading ||
     uploadAvatarCmpStore.loading ||
-    uploadCoverCmpStore.loading;
+    uploadCoverCmpStore.loading ||
+    uploadCmpImagesStore.loading;
 
   const { toast } = useToast();
 
@@ -583,6 +587,15 @@ export default function ProfilePage() {
 
       if (data.basicInfo?.cover instanceof File) {
         await uploadCoverCmpStore.uploadCover(company.id, data.basicInfo.cover);
+      }
+
+      if (data.images) {
+        const imageFiles = (data.images || []).filter(
+          (img): img is File => img instanceof File
+        );
+        if (imageFiles.length > 0) {
+          await uploadCmpImagesStore.uploadImages(company.id, imageFiles);
+        }
       }
 
       await updateOneCmpStore.updateOneCompany(company.id, updateBody);
