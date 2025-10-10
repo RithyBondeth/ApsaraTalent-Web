@@ -88,12 +88,26 @@ import {
   TCompanyUpdateBody,
   useUpdateOneCompanyStore,
 } from "@/stores/apis/company/update-one-cmp.store";
+import { useUploadCompanyAvatarStore } from "@/stores/apis/company/upload-cmp-avatar.store";
+import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cover.store";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function ProfilePage() {
   // Store hooks
   const { user, loading, getCurrentUser } = useGetCurrentUserStore();
   const company = user?.company;
   const updateOneCmpStore = useUpdateOneCompanyStore();
+  const uploadAvatarCmpStore = useUploadCompanyAvatarStore();
+  const uploadCoverCmpStore = useUploadCompanyCoverStore();
+  const updateProfileErrorState =
+    updateOneCmpStore.error ||
+    uploadAvatarCmpStore.error ||
+    uploadCoverCmpStore.error;
+  const updateProfileLoadingState =
+    updateOneCmpStore.loading ||
+    uploadAvatarCmpStore.loading ||
+    uploadCoverCmpStore.loading;
+
   const { toast } = useToast();
 
   // Form hook
@@ -558,11 +572,20 @@ export default function ProfilePage() {
           }));
       }
 
-      console.log("Update payload:", updateBody);
+      if (data.basicInfo?.avatar instanceof File) {
+        await uploadAvatarCmpStore.uploadAvatar(
+          company.id,
+          data.basicInfo.avatar
+        );
+      }
+
+      if (data.basicInfo?.cover instanceof File) {
+        await uploadCoverCmpStore.uploadCover(company.id, data.basicInfo.cover);
+      }
 
       await updateOneCmpStore.updateOneCompany(company.id, updateBody);
 
-      if (updateOneCmpStore.error) {
+      if (updateProfileErrorState) {
         toast({
           variant: "destructive",
           title: "Error!",
@@ -708,9 +731,9 @@ export default function ProfilePage() {
             <Button
               className="text-xs"
               type="submit"
-              disabled={updateOneCmpStore.loading}
+              disabled={updateProfileLoadingState}
             >
-              {updateOneCmpStore.loading ? 'Updating...' : 'Save'}
+              {updateProfileLoadingState ? "Updating..." : "Save"}
               <LucideCircleCheck />
             </Button>
             <Button className="text-xs" onClick={() => setIsEdit(false)}>
