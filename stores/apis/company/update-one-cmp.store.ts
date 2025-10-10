@@ -8,9 +8,9 @@ type TUpdateOneCompanyResponse = {
   company: ICompany | null;
 };
 
-type TCompanyUpdateBody = Omit<ICompany, "id"> & {
-  email: string;
-  password: string;
+type TCompanyUpdateBody = Partial<Omit<ICompany, "id">> & {
+  email?: string;
+  password?: string;
 };
 
 type TUpdateOneCompanyState = TUpdateOneCompanyResponse & {
@@ -22,7 +22,7 @@ type TUpdateOneCompanyState = TUpdateOneCompanyResponse & {
   ) => Promise<void>;
 };
 
-export const useUploadOneCompanyStore = create<TUpdateOneCompanyState>(
+export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
   (set) => ({
     message: null,
     company: null,
@@ -31,20 +31,19 @@ export const useUploadOneCompanyStore = create<TUpdateOneCompanyState>(
     updateOneCompany: async (companyID: string, body: TCompanyUpdateBody) => {
       set({ loading: true, error: null });
       try {
-        const response = await axios.post<TUpdateOneCompanyResponse>(
+        const response = await axios.patch<TUpdateOneCompanyResponse>(
           API_UPDATE_CMP_INFO_URL(companyID),
           {
-            email: body.email,
-            password: body.password,
-            name: body.name,
-            description: body.description,
-            phone: body.phone,
-            industry: body.industry,
-            location: body.location,
-            companySize: body.companySize,
-            foundedYear: body.foundedYear,
-            jobs:
-              body.openPositions.map((job) => ({
+            ...(body.email && { email: body.email }),
+            ...(body.name && { name: body.name }),
+            ...(body.description && { description: body.description }),
+            ...(body.phone && { phone: body.phone }),
+            ...(body.industry && { industry: body.industry }),
+            ...(body.location && { location: body.location }),
+            ...(body.companySize && { companySize: body.companySize }),
+            ...(body.foundedYear && { foundedYear: body.foundedYear }),
+            ...(body.openPositions && {
+              jobs: body.openPositions.map((job) => ({
                 title: job.title,
                 description: job.description,
                 type: job.type,
@@ -53,25 +52,30 @@ export const useUploadOneCompanyStore = create<TUpdateOneCompanyState>(
                 salary: job.salary,
                 expireDate: job.deadlineDate,
                 skillsRequired: job.skills,
-              })) ?? [],
-            benefits:
-              body.benefits.map((benefit) => ({
+              })),
+            }),
+            ...(body.benefits && {
+              benefits: body.benefits.map((benefit) => ({
                 label: benefit.label,
-              })) ?? [],
-            values:
-              body.values.map((value) => ({
+              })),
+            }),
+            ...(body.values && {
+              values: body.values.map((value) => ({
                 label: value,
-              })) ?? [],
-            careerScopes:
-              body.careerScopes.map((cs) => ({
+              })),
+            }),
+            ...(body.careerScopes && {
+              careerScopes: body.careerScopes.map((cs) => ({
                 name: cs.name,
                 description: cs.description,
-              })) ?? [],
-            socials:
-              body.socials.map((social) => ({
+              })),
+            }),
+            ...(body.socials && {
+              socials: body.socials.map((social) => ({
                 platform: social.platform,
                 url: social.url,
-              })) ?? [],
+              })),
+            }),
           }
         );
         set({
@@ -86,7 +90,6 @@ export const useUploadOneCompanyStore = create<TUpdateOneCompanyState>(
             error.response?.data?.message instanceof Array
               ? error.response.data.message.join(", ")
               : error.response?.data?.message || error.message;
-
           set({ loading: false, error: errorMessage });
         } else {
           set({

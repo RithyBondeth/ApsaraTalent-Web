@@ -84,11 +84,16 @@ import {
 } from "@/utils/interfaces/user-interface/company.interface";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { CompanyProfilePageSkeleton } from "./skeleton";
+import {
+  TCompanyUpdateBody,
+  useUpdateOneCompanyStore,
+} from "@/stores/apis/company/update-one-cmp.store";
 
 export default function ProfilePage() {
   // Store hooks
   const { user, loading, getCurrentUser } = useGetCurrentUserStore();
   const company = user?.company;
+  const updateOneCmpStore = useUpdateOneCompanyStore();
   const { toast } = useToast();
 
   // Form hook
@@ -491,16 +496,95 @@ export default function ProfilePage() {
     }
   };
 
-  const onSubmit = (data: TCompanyProfileForm) => {
-    // Show success message
-    console.log("Company data: ", data);
-    toast({
-      title: "Success!",
-      description: "Company profile updated successfully.",
-    });
+  const onSubmit = async (data: TCompanyProfileForm) => {
+    try {
+      const dirtyFields = form.formState.dirtyFields;
+      const updateBody: Partial<TCompanyUpdateBody> = {};
 
-    // Exit edit mode
-    setIsEdit(false);
+      // Only include fields that were actually changed
+      if (dirtyFields.basicInfo?.name) {
+        updateBody.name = data.basicInfo?.name;
+      }
+      if (dirtyFields.basicInfo?.description) {
+        updateBody.description = data.basicInfo?.description;
+      }
+      if (dirtyFields.basicInfo?.industry) {
+        updateBody.industry = data.basicInfo?.industry;
+      }
+      if (dirtyFields.basicInfo?.location) {
+        updateBody.location = data.basicInfo?.location;
+      }
+      if (dirtyFields.basicInfo?.companySize) {
+        updateBody.companySize = data.basicInfo?.companySize;
+      }
+      if (dirtyFields.basicInfo?.foundedYear) {
+        updateBody.foundedYear = data.basicInfo?.foundedYear;
+      }
+      if (dirtyFields.accountSetting?.email) {
+        updateBody.email = data.accountSetting?.email;
+      }
+
+      if (dirtyFields.accountSetting?.phone) {
+        updateBody.phone = data.accountSetting?.phone;
+      }
+      if (dirtyFields.openPositions) {
+        updateBody.openPositions = data.openPositions?.map((pos) => ({
+          title: pos.title || "",
+          description: pos.description || "",
+          type: "Full Time",
+          experience: pos.experienceRequirement || "",
+          education: pos.educationRequirement || "",
+          skills: pos.skills || [],
+          salary: pos.salary || "",
+          deadlineDate:
+            pos.deadlineDate?.toISOString() || new Date().toISOString(),
+        }));
+      }
+      if (dirtyFields.benefitsAndValues?.benefits) {
+        updateBody.benefits = data.benefitsAndValues?.benefits;
+      }
+      if (dirtyFields.benefitsAndValues?.values) {
+        updateBody.values = data.benefitsAndValues?.values;
+      }
+      if (dirtyFields.careerScopes) {
+        updateBody.careerScopes = data.careerScopes;
+      }
+      if (dirtyFields.socials) {
+        updateBody.socials = data.socials
+          ?.filter((s) => s && s.platform && s.url)
+          .map((s) => ({
+            platform: s?.platform!,
+            url: s?.url!,
+          }));
+      }
+
+      console.log("Update payload:", updateBody);
+
+      await updateOneCmpStore.updateOneCompany(company.id, updateBody);
+
+      if (updateOneCmpStore.error) {
+        toast({
+          variant: "destructive",
+          title: "Error!",
+          description: updateOneCmpStore.error,
+        });
+        return;
+      }
+
+      toast({
+        title: "Success!",
+        description:
+          updateOneCmpStore.message || "Company profile updated successfully.",
+      });
+
+      setIsEdit(false);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error!",
+        description: "Failed to update company profile.",
+      });
+    }
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
