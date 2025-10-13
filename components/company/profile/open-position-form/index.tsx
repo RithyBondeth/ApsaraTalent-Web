@@ -168,6 +168,17 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             />
           }
         />
+        <LabelInput
+          label="Open Position ID"
+          input={
+            <Input
+              placeholder={props.isEdit ? "ID" : props.positionUUID}
+              id="uuid"
+              {...register(`openPositions.${props.index}.uuid`)}
+              disabled={!props.isEdit}
+            />
+          }
+        />
        <div className="w-full flex flex-col items-start gap-1">
             <TypographyMuted className="text-xs">Deadline Date</TypographyMuted>
             <Controller

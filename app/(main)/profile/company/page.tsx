@@ -92,6 +92,7 @@ import { useUploadCompanyAvatarStore } from "@/stores/apis/company/upload-cmp-av
 import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cover.store";
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import { useUploadCompanyImagesStore } from "@/stores/apis/company/upload-cmp-images.store";
+import { getRandomBadgeColor } from "@/utils/extensions/get-random-badge-color";
 
 export default function ProfilePage() {
   // Store hooks
@@ -221,6 +222,7 @@ export default function ProfilePage() {
               }
             }
             return {
+              uuid: op.id,
               title: op.title,
               description: op.description,
               educationRequirement: op.education,
@@ -942,6 +944,7 @@ export default function ProfilePage() {
                     index={index}
                     form={form}
                     positionId={Number(position.id)}
+                    positionUUID={position.id?.toString() ?? ""}
                     positionLabel={`Position ${index + 1}`}
                     isEdit={isEdit}
                     title={position.title}
@@ -1194,32 +1197,34 @@ export default function ProfilePage() {
             </div>
             <div className="w-full flex flex-col items-stretch gap-3">
               <div className="flex flex-wrap gap-3">
-                {careers.map((career, index) => (
-                  <div
-                    key={index}
-                    className="rounded-3xl border-2 border-muted duration-300 ease-linear hover:border-muted-foreground"
-                  >
-                    <HoverCard>
-                      <HoverCardTrigger className="flex items-center bg-muted rounded-3xl">
-                        <Tag label={career.name} />
-                        {isEdit && (
-                          <LucideCircleX
-                            className="text-muted-foreground cursor-pointer mr-2 text-red-500"
-                            width={"18px"}
-                            onClick={() => removeCareer(career.name)}
-                          />
-                        )}
-                      </HoverCardTrigger>
-                      <HoverCardContent>
-                        <TypographySmall>
-                          {career.description
-                            ? career.description
-                            : career.name}
-                        </TypographySmall>
-                      </HoverCardContent>
-                    </HoverCard>
-                  </div>
-                ))}
+                {careers.map((career, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className={`rounded-3xl border-2 border-muted duration-300 ease-linear hover:border-muted-foreground`}
+                    >
+                      <HoverCard>
+                        <HoverCardTrigger className="flex items-center bg-muted rounded-3xl">
+                          <Tag label={career.name} />
+                          {isEdit && (
+                            <LucideCircleX
+                              className="text-muted-foreground cursor-pointer mr-2 text-red-500"
+                              width={"18px"}
+                              onClick={() => removeCareer(career.name)}
+                            />
+                          )}
+                        </HoverCardTrigger>
+                        <HoverCardContent>
+                          <TypographySmall>
+                            {career.description
+                              ? career.description
+                              : career.name}
+                          </TypographySmall>
+                        </HoverCardContent>
+                      </HoverCard>
+                    </div>
+                  );
+                })}
               </div>
             </div>
             {isEdit && (
