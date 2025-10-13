@@ -43,6 +43,7 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
             ...(body.foundedYear && { foundedYear: body.foundedYear }),
             ...(body.openPositions && {
               jobs: body.openPositions.map((job) => ({
+                id: job.id,
                 title: job.title,
                 description: job.description,
                 type: job.type,

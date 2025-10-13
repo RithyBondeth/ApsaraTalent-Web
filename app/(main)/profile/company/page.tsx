@@ -551,6 +551,7 @@ export default function ProfilePage() {
       }
       if (dirtyFields.openPositions) {
         updateBody.openPositions = data.openPositions?.map((pos) => ({
+          id: pos.uuid,
           title: pos.title || "",
           description: pos.description || "",
           type: "Full Time",
@@ -600,6 +601,7 @@ export default function ProfilePage() {
         }
       }
 
+      console.log("Updated Body: ", updateBody);
       await updateOneCmpStore.updateOneCompany(company.id, updateBody);
 
       if (updateProfileErrorState) {
