@@ -27,7 +27,7 @@ export const useRemoveOneOpenPositionStore =
       set({ loading: true, error: null });
 
       try {
-        const response = await axios.post<TRemoveOneOpenPositionResponse>(
+        const response = await axios.delete<TRemoveOneOpenPositionResponse>(
           API_REMOVE_ONE_OPEN_POSITION(_companyID, _openPositionID)
         );
         set({ message: response.data.message, error: null, loading: false });

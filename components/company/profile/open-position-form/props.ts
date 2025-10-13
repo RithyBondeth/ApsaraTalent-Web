@@ -15,7 +15,7 @@ export interface IOpenPositionFormProps {
    isEdit: boolean;
    form: UseFormReturn<TCompanyProfileForm>;
    index: number;
-   onRemove: (positionId: number) => void;
+   onRemove: () => void;
 }
 interface IDatePickerItemProps {
    defaultValue: Date;

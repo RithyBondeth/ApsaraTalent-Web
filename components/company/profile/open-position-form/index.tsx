@@ -66,7 +66,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
         <TypographyMuted>{props.positionLabel}</TypographyMuted>
         {props.isEdit && (
           <LucideTrash2 
-            onClick={() => props.onRemove(props.positionId)} 
+            onClick={props.onRemove} 
             className="cursor-pointer text-red-500"
             width={'18px'}
           />

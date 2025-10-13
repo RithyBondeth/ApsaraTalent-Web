@@ -35,6 +35,7 @@ import {
   ChevronDown,
   LucideBuilding,
   LucideCamera,
+  LucideCheck,
   LucideCircleCheck,
   LucideCircleX,
   LucideEdit,
@@ -90,9 +91,9 @@ import {
 } from "@/stores/apis/company/update-one-cmp.store";
 import { useUploadCompanyAvatarStore } from "@/stores/apis/company/upload-cmp-avatar.store";
 import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cover.store";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import { useUploadCompanyImagesStore } from "@/stores/apis/company/upload-cmp-images.store";
-import { getRandomBadgeColor } from "@/utils/extensions/get-random-badge-color";
+import { useRemoveOneOpenPositionStore } from "@/stores/apis/company/remove-one-open-position.store";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function ProfilePage() {
   // Store hooks
@@ -102,11 +103,14 @@ export default function ProfilePage() {
   const uploadAvatarCmpStore = useUploadCompanyAvatarStore();
   const uploadCoverCmpStore = useUploadCompanyCoverStore();
   const uploadCmpImagesStore = useUploadCompanyImagesStore();
+  const removeOneOpenPosition = useRemoveOneOpenPositionStore();
+
   const updateProfileErrorState =
     updateOneCmpStore.error ||
     uploadAvatarCmpStore.error ||
     uploadCoverCmpStore.error ||
     uploadCmpImagesStore.error;
+
   const updateProfileLoadingState =
     updateOneCmpStore.loading ||
     uploadAvatarCmpStore.loading ||
@@ -312,9 +316,6 @@ export default function ProfilePage() {
     }
   }, [openImagePopup, openProfilePopup]);
 
-  if (loading) return <CompanyProfilePageSkeleton />;
-  if (!user || !company) return null;
-
   // Add an open position
   const addOpenPosition = () => {
     const newPosition = {
@@ -336,10 +337,27 @@ export default function ProfilePage() {
   };
 
   // Remove an open position
-  const removeOpenPosition = (positionId: number) => {
-    setOpenPositions((prevPositions) =>
-      prevPositions!.filter((position) => position.id !== positionId.toString())
+  const removeOpenPosition = async (openPositionID: string) => {
+    await removeOneOpenPosition.removeOneOpenPosition(
+      company!.id,
+      openPositionID
     );
+
+    // Refetch current user to get updated data
+    await getCurrentUser();
+
+    toast({
+      description: (
+        <div className="flex items-center gap-2">
+          <LucideCheck />
+          <TypographySmall className="font-medium leading-relaxed">
+            Remove Open Position Successfully!
+          </TypographySmall>
+        </div>
+      ),
+    });
+
+    setIsEdit(false);
   };
 
   const addBenefits = () => {
@@ -583,13 +601,16 @@ export default function ProfilePage() {
 
       if (data.basicInfo?.avatar instanceof File) {
         await uploadAvatarCmpStore.uploadAvatar(
-          company.id,
+          company!.id,
           data.basicInfo.avatar
         );
       }
 
       if (data.basicInfo?.cover instanceof File) {
-        await uploadCoverCmpStore.uploadCover(company.id, data.basicInfo.cover);
+        await uploadCoverCmpStore.uploadCover(
+          company!.id,
+          data.basicInfo.cover
+        );
       }
 
       if (data.images) {
@@ -597,21 +618,12 @@ export default function ProfilePage() {
           (img): img is File => img instanceof File
         );
         if (imageFiles.length > 0) {
-          await uploadCmpImagesStore.uploadImages(company.id, imageFiles);
+          await uploadCmpImagesStore.uploadImages(company!.id, imageFiles);
         }
       }
 
       console.log("Updated Body: ", updateBody);
-      await updateOneCmpStore.updateOneCompany(company.id, updateBody);
-
-      if (updateProfileErrorState) {
-        toast({
-          variant: "destructive",
-          title: "Error!",
-          description: updateOneCmpStore.error,
-        });
-        return;
-      }
+      await updateOneCmpStore.updateOneCompany(company!.id, updateBody);
 
       // Refetch current user to get updated data
       await getCurrentUser();
@@ -619,9 +631,14 @@ export default function ProfilePage() {
       form.reset(data);
 
       toast({
-        title: "Success!",
-        description:
-          updateOneCmpStore.message || "Company profile updated successfully.",
+        description: (
+          <div className="flex items-center gap-2">
+            <LucideCheck />
+            <TypographySmall className="font-medium leading-relaxed">
+              Updated Company Profile Successfully!
+            </TypographySmall>
+          </div>
+        ),
       });
 
       setIsEdit(false);
@@ -674,6 +691,37 @@ export default function ProfilePage() {
     if ((e.target as HTMLElement).closest(".dialog-content")) return;
     setOpenProfilePopup(true);
   };
+
+  useEffect(() => {
+    if (removeOneOpenPosition.loading) {
+      toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <ApsaraLoadingSpinner size={50} loop />
+            <TypographySmall className="font-medium leading-relaxed">
+              Removing Open Position...
+            </TypographySmall>
+          </div>
+        ),
+      });
+    }
+
+    if (updateProfileLoadingState) {
+      toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <ApsaraLoadingSpinner size={50} loop />
+            <TypographySmall className="font-medium leading-relaxed">
+              Updating Company Profile...
+            </TypographySmall>
+          </div>
+        ),
+      });
+    }
+  }, [removeOneOpenPosition.loading, updateProfileLoadingState]);
+
+  if (loading) return <CompanyProfilePageSkeleton />;
+  if (!user || !company) return null;
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
@@ -912,68 +960,76 @@ export default function ProfilePage() {
           </div>
 
           {/* OpenPosition Information Form Section */}
-          <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
-            <div className="flex flex-col gap-1">
-              <div className="flex justify-between items-center">
-                <TypographyH4>Open Position Information</TypographyH4>
-                {isEdit && (
-                  <div
-                    className="flex items-center gap-1 cursor-pointer"
-                    onClick={addOpenPosition}
-                  >
-                    <LucidePlus
-                      className="text-muted-foreground"
-                      width={"18px"}
-                    />
-                    <TypographyMuted>Add New</TypographyMuted>
-                  </div>
-                )}
+          {openPositions && openPositions.length > 0 && (
+            <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
+              <div className="flex flex-col gap-1">
+                <div className="flex justify-between items-center">
+                  <TypographyH4>Open Position Information</TypographyH4>
+                  {isEdit && (
+                    <div
+                      className="flex items-center gap-1 cursor-pointer"
+                      onClick={addOpenPosition}
+                    >
+                      <LucidePlus
+                        className="text-muted-foreground"
+                        width={"18px"}
+                      />
+                      <TypographyMuted>Add New</TypographyMuted>
+                    </div>
+                  )}
+                </div>
+                <Divider />
               </div>
-              <Divider />
+              <div
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="flex flex-col items-start gap-5"
+              >
+                {openPositions.map((position, index) => {
+                  const positionId = position.id?.toString();
+                  const deadlineDate =
+                    selectedDates[positionId ?? ""]?.deadline ||
+                    new Date(position.deadlineDate);
+                  return (
+                    <OpenPositionForm
+                      key={index}
+                      index={index}
+                      form={form}
+                      positionId={Number(position.id)}
+                      positionUUID={position.id?.toString() ?? ""}
+                      positionLabel={`Position ${index + 1}`}
+                      isEdit={isEdit}
+                      title={position.title}
+                      description={position.description}
+                      experience={position.experience}
+                      education={position.education}
+                      skills={position.skills}
+                      salary={position.salary}
+                      deadlineDate={{
+                        defaultValue: deadlineDate,
+                        data: deadlineDate,
+                        onDataChange: (date: Date | undefined) => {
+                          if (date) {
+                            handleDateChange(
+                              positionId ?? "",
+                              "deadline",
+                              date
+                            );
+                            form.setValue(
+                              `openPositions.${index}.deadlineDate`,
+                              date
+                            );
+                          }
+                        },
+                      }}
+                      onRemove={() =>
+                        removeOpenPosition(position.id?.toString() ?? "")
+                      }
+                    />
+                  );
+                })}
+              </div>
             </div>
-            <div
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="flex flex-col items-start gap-5"
-            >
-              {openPositions?.map((position, index) => {
-                const positionId = position.id?.toString();
-                const deadlineDate =
-                  selectedDates[positionId ?? ""]?.deadline ||
-                  new Date(position.deadlineDate);
-                return (
-                  <OpenPositionForm
-                    key={index}
-                    index={index}
-                    form={form}
-                    positionId={Number(position.id)}
-                    positionUUID={position.id?.toString() ?? ""}
-                    positionLabel={`Position ${index + 1}`}
-                    isEdit={isEdit}
-                    title={position.title}
-                    description={position.description}
-                    experience={position.experience}
-                    education={position.education}
-                    skills={position.skills}
-                    salary={position.salary}
-                    deadlineDate={{
-                      defaultValue: deadlineDate,
-                      data: deadlineDate,
-                      onDataChange: (date: Date | undefined) => {
-                        if (date) {
-                          handleDateChange(positionId ?? "", "deadline", date);
-                          form.setValue(
-                            `openPositions.${index}.deadlineDate`,
-                            date
-                          );
-                        }
-                      },
-                    }}
-                    onRemove={removeOpenPosition}
-                  />
-                );
-              })}
-            </div>
-          </div>
+          )}
           {/* Company Multiple Images Section */}
           {((company.images && company.images?.length > 0) || isEdit) && (
             <div className="w-full p-5 border-[1px] border-muted rounded-md">
