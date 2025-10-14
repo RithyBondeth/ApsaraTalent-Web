@@ -94,6 +94,7 @@ import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cov
 import { useUploadCompanyImagesStore } from "@/stores/apis/company/upload-cmp-images.store";
 import { useRemoveOneOpenPositionStore } from "@/stores/apis/company/remove-one-open-position.store";
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
+import RemoveOpenPositionDialog from "./_dialogs/remove-open-position-dialog";
 
 export default function ProfilePage() {
   // Store hooks
@@ -179,6 +180,11 @@ export default function ProfilePage() {
   >({});
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [openRemoveOpenPositionDialog, setOpenRemoveOpenPositionDialog] =
+    useState<boolean>(false);
+  const [currentOpenPositionID, setCurrentOpenPositionID] = useState<
+    string | null
+  >(null);
 
   // All useRef hooks
   const ignoreNextClick = useRef<boolean>(false);
@@ -1021,13 +1027,24 @@ export default function ProfilePage() {
                           }
                         },
                       }}
-                      onRemove={() =>
-                        removeOpenPosition(position.id?.toString() ?? "")
-                      }
+                      onRemove={() => {
+                        setOpenRemoveOpenPositionDialog(true);
+                        setCurrentOpenPositionID(position.id?.toString() ?? "");
+                      }}
                     />
                   );
                 })}
               </div>
+              <RemoveOpenPositionDialog
+                onRemoveOpDialog={openRemoveOpenPositionDialog}
+                setOnRemoveOpDialog={setOpenRemoveOpenPositionDialog}
+                onNoClick={() => setOpenRemoveOpenPositionDialog(false)}
+                onYesClick={() => {
+                  removeOpenPosition(currentOpenPositionID ?? "");
+                  setOpenRemoveOpenPositionDialog(false);
+                }}
+              />
+              ;
             </div>
           )}
           {/* Company Multiple Images Section */}
