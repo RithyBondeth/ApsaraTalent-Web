@@ -95,6 +95,8 @@ import { useUploadCompanyImagesStore } from "@/stores/apis/company/upload-cmp-im
 import { useRemoveOneOpenPositionStore } from "@/stores/apis/company/remove-one-open-position.store";
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import RemoveOpenPositionDialog from "./_dialogs/remove-open-position-dialog";
+import { isUuid } from "@/utils/functions/check-uuid";
+import { update } from "lodash";
 
 export default function ProfilePage() {
   // Store hooks
@@ -1028,8 +1030,17 @@ export default function ProfilePage() {
                         },
                       }}
                       onRemove={() => {
-                        setOpenRemoveOpenPositionDialog(true);
-                        setCurrentOpenPositionID(position.id?.toString() ?? "");
+                        if (isUuid(position.id?.toString() ?? "")) {
+                          setOpenRemoveOpenPositionDialog(true);
+                          setCurrentOpenPositionID(
+                            position.id?.toString() ?? ""
+                          );
+                        } else {
+                          const updated = openPositions.filter(
+                            (op) => op.id !== positionId
+                          );
+                          setOpenPositions(updated);
+                        }
                       }}
                     />
                   );
@@ -1044,7 +1055,6 @@ export default function ProfilePage() {
                   setOpenRemoveOpenPositionDialog(false);
                 }}
               />
-              ;
             </div>
           )}
           {/* Company Multiple Images Section */}
