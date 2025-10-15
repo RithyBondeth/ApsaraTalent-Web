@@ -545,118 +545,123 @@ export default function ProfilePage() {
 
   const onSubmit = async (data: TCompanyProfileForm) => {
     console.log("Company Profile Data: ", data);
+    const updateBody: Partial<TCompanyUpdateBody> = {};
+    const hasChanges = Object.keys(updateBody).length > 0;
+    if (hasChanges) {
+      try {
+        const dirtyFields = form.formState.dirtyFields;
 
-    try {
-      const dirtyFields = form.formState.dirtyFields;
-      const updateBody: Partial<TCompanyUpdateBody> = {};
-
-      // Only include fields that were actually changed
-      if (dirtyFields.basicInfo?.name) {
-        updateBody.name = data.basicInfo?.name;
-      }
-      if (dirtyFields.basicInfo?.description) {
-        updateBody.description = data.basicInfo?.description;
-      }
-      if (dirtyFields.basicInfo?.industry) {
-        updateBody.industry = data.basicInfo?.industry;
-      }
-      if (dirtyFields.basicInfo?.location) {
-        updateBody.location = data.basicInfo?.location;
-      }
-      if (dirtyFields.basicInfo?.companySize) {
-        updateBody.companySize = data.basicInfo?.companySize;
-      }
-      if (dirtyFields.basicInfo?.foundedYear) {
-        updateBody.foundedYear = data.basicInfo?.foundedYear;
-      }
-      if (dirtyFields.accountSetting?.email) {
-        updateBody.email = data.accountSetting?.email;
-      }
-
-      if (dirtyFields.accountSetting?.phone) {
-        updateBody.phone = data.accountSetting?.phone;
-      }
-      if (dirtyFields.openPositions) {
-        updateBody.openPositions = data.openPositions?.map((pos) => ({
-          id: pos.uuid,
-          title: pos.title || "",
-          description: pos.description || "",
-          type: pos.type || "",
-          experience: pos.experienceRequirement || "",
-          education: pos.educationRequirement || "",
-          skills: pos.skills || [],
-          salary: pos.salary || "",
-          deadlineDate:
-            pos.deadlineDate?.toISOString() || new Date().toISOString(),
-        }));
-      }
-      if (dirtyFields.benefitsAndValues?.benefits) {
-        updateBody.benefits = data.benefitsAndValues?.benefits;
-      }
-      if (dirtyFields.benefitsAndValues?.values) {
-        updateBody.values = data.benefitsAndValues?.values;
-      }
-      if (dirtyFields.careerScopes) {
-        updateBody.careerScopes = data.careerScopes;
-      }
-      if (dirtyFields.socials) {
-        updateBody.socials = data.socials
-          ?.filter((s) => s && s.platform && s.url)
-          .map((s) => ({
-            platform: s?.platform!,
-            url: s?.url!,
-          }));
-      }
-
-      if (data.basicInfo?.avatar instanceof File) {
-        await uploadAvatarCmpStore.uploadAvatar(
-          company!.id,
-          data.basicInfo.avatar
-        );
-      }
-
-      if (data.basicInfo?.cover instanceof File) {
-        await uploadCoverCmpStore.uploadCover(
-          company!.id,
-          data.basicInfo.cover
-        );
-      }
-
-      if (data.images) {
-        const imageFiles = (data.images || []).filter(
-          (img): img is File => img instanceof File
-        );
-        if (imageFiles.length > 0) {
-          await uploadCmpImagesStore.uploadImages(company!.id, imageFiles);
+        // Only include fields that were actually changed
+        if (dirtyFields.basicInfo?.name) {
+          updateBody.name = data.basicInfo?.name;
         }
+        if (dirtyFields.basicInfo?.description) {
+          updateBody.description = data.basicInfo?.description;
+        }
+        if (dirtyFields.basicInfo?.industry) {
+          updateBody.industry = data.basicInfo?.industry;
+        }
+        if (dirtyFields.basicInfo?.location) {
+          updateBody.location = data.basicInfo?.location;
+        }
+        if (dirtyFields.basicInfo?.companySize) {
+          updateBody.companySize = data.basicInfo?.companySize;
+        }
+        if (dirtyFields.basicInfo?.foundedYear) {
+          updateBody.foundedYear = data.basicInfo?.foundedYear;
+        }
+        if (dirtyFields.accountSetting?.email) {
+          updateBody.email = data.accountSetting?.email;
+        }
+
+        if (dirtyFields.accountSetting?.phone) {
+          updateBody.phone = data.accountSetting?.phone;
+        }
+        if (dirtyFields.openPositions) {
+          updateBody.openPositions = data.openPositions?.map((pos) => ({
+            id: pos.uuid,
+            title: pos.title || "",
+            description: pos.description || "",
+            type: pos.type || "",
+            experience: pos.experienceRequirement || "",
+            education: pos.educationRequirement || "",
+            skills: pos.skills || [],
+            salary: pos.salary || "",
+            deadlineDate:
+              pos.deadlineDate?.toISOString() || new Date().toISOString(),
+          }));
+        }
+        if (dirtyFields.benefitsAndValues?.benefits) {
+          updateBody.benefits = data.benefitsAndValues?.benefits;
+        }
+        if (dirtyFields.benefitsAndValues?.values) {
+          updateBody.values = data.benefitsAndValues?.values;
+        }
+        if (dirtyFields.careerScopes) {
+          updateBody.careerScopes = data.careerScopes;
+        }
+        if (dirtyFields.socials) {
+          updateBody.socials = data.socials
+            ?.filter((s) => s && s.platform && s.url)
+            .map((s) => ({
+              platform: s?.platform!,
+              url: s?.url!,
+            }));
+        }
+
+        if (data.basicInfo?.avatar instanceof File) {
+          await uploadAvatarCmpStore.uploadAvatar(
+            company!.id,
+            data.basicInfo.avatar
+          );
+        }
+
+        if (data.basicInfo?.cover instanceof File) {
+          await uploadCoverCmpStore.uploadCover(
+            company!.id,
+            data.basicInfo.cover
+          );
+        }
+
+        if (data.images) {
+          const imageFiles = (data.images || []).filter(
+            (img): img is File => img instanceof File
+          );
+          if (imageFiles.length > 0) {
+            await uploadCmpImagesStore.uploadImages(company!.id, imageFiles);
+          }
+        }
+        console.log("Updated Body: ", updateBody);
+
+        await updateOneCmpStore.updateOneCompany(company!.id, updateBody);
+
+        // Refetch current user to get updated data
+        await getCurrentUser();
+        // Reset form with new data to clear dirty fields
+        form.reset(data);
+
+        toast({
+          description: (
+            <div className="flex items-center gap-2">
+              <LucideCheck />
+              <TypographySmall className="font-medium leading-relaxed">
+                Updated Company Profile Successfully!
+              </TypographySmall>
+            </div>
+          ),
+        });
+
+        setIsEdit(false);
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Error!",
+          description: "Failed to update company profile.",
+        });
       }
-
-      console.log("Updated Body: ", updateBody);
-      // await updateOneCmpStore.updateOneCompany(company!.id, updateBody);
-
-      // Refetch current user to get updated data
-      // await getCurrentUser();
-      // Reset form with new data to clear dirty fields
-      form.reset(data);
-
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <LucideCheck />
-            <TypographySmall className="font-medium leading-relaxed">
-              Updated Company Profile Successfully!
-            </TypographySmall>
-          </div>
-        ),
-      });
-
+    } else {
       setIsEdit(false);
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error!",
-        description: "Failed to update company profile.",
-      });
+      form.reset(data);
     }
   };
 
@@ -812,10 +817,13 @@ export default function ProfilePage() {
               {updateProfileLoadingState ? "Updating..." : "Save"}
               <LucideCircleCheck />
             </Button>
-            <Button className="text-xs" onClick={() => {
-              setIsEdit(false);
-              form.reset();
-            }}>
+            <Button
+              className="text-xs"
+              onClick={() => {
+                setIsEdit(false);
+                form.reset();
+              }}
+            >
               Cancel
               <LucideCircleX />
             </Button>
