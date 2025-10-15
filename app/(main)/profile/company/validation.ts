@@ -73,6 +73,7 @@ export const openPositionSchema = z.object({
         uuid: textValidation().optional(),
         title: textValidation().optional(),
         description: textValidation().optional(),
+        type: textValidation().optional(),
         experienceRequirement: textValidation().optional(),
         educationRequirement: textValidation().optional(),
         skills: z.array(textValidation()).optional(),

@@ -7,6 +7,7 @@ export interface IOpenPositionFormProps {
    positionLabel: string | undefined;
    title: string | undefined;
    description: string | undefined;
+   type: string | undefined;
    experience: string | undefined;
    education: string | undefined;
    skills: string[];

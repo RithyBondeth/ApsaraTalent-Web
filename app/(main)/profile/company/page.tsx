@@ -237,6 +237,7 @@ export default function ProfilePage() {
               uuid: op.id,
               title: op.title,
               description: op.description,
+              type: op.type,
               educationRequirement: op.education,
               experienceRequirement: op.experience,
               salary: op.salary || "0",
@@ -580,7 +581,7 @@ export default function ProfilePage() {
           id: pos.uuid,
           title: pos.title || "",
           description: pos.description || "",
-          type: "Full Time",
+          type: pos.type || "",
           experience: pos.experienceRequirement || "",
           education: pos.educationRequirement || "",
           skills: pos.skills || [],
@@ -631,10 +632,10 @@ export default function ProfilePage() {
       }
 
       console.log("Updated Body: ", updateBody);
-      await updateOneCmpStore.updateOneCompany(company!.id, updateBody);
+      // await updateOneCmpStore.updateOneCompany(company!.id, updateBody);
 
       // Refetch current user to get updated data
-      await getCurrentUser();
+      // await getCurrentUser();
       // Reset form with new data to clear dirty fields
       form.reset(data);
 
@@ -811,7 +812,10 @@ export default function ProfilePage() {
               {updateProfileLoadingState ? "Updating..." : "Save"}
               <LucideCircleCheck />
             </Button>
-            <Button className="text-xs" onClick={() => setIsEdit(false)}>
+            <Button className="text-xs" onClick={() => {
+              setIsEdit(false);
+              form.reset();
+            }}>
               Cancel
               <LucideCircleX />
             </Button>
@@ -1008,6 +1012,7 @@ export default function ProfilePage() {
                       isEdit={isEdit}
                       title={position.title}
                       description={position.description}
+                      type={position.type}
                       experience={position.experience}
                       education={position.education}
                       skills={position.skills}
