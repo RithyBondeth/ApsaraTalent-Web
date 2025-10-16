@@ -542,126 +542,150 @@ export default function ProfilePage() {
       }
     }
   };
-
+  
   const onSubmit = async (data: TCompanyProfileForm) => {
     console.log("Company Profile Data: ", data);
     const updateBody: Partial<TCompanyUpdateBody> = {};
-    const hasChanges = Object.keys(updateBody).length > 0;
-    if (hasChanges) {
-      try {
-        const dirtyFields = form.formState.dirtyFields;
-
-        // Only include fields that were actually changed
-        if (dirtyFields.basicInfo?.name) {
-          updateBody.name = data.basicInfo?.name;
+  
+    try {
+      const dirtyFields = form.formState.dirtyFields;
+  
+      /* ------------------------ BASIC INFO ------------------------ */
+      const basicInfoKeys: (keyof NonNullable<typeof data.basicInfo>)[] = [
+        "name",
+        "description",
+        "industry",
+        "location",
+        "companySize",
+        "foundedYear",
+      ];
+  
+      basicInfoKeys.forEach((key) => {
+        if (dirtyFields?.basicInfo?.[key]) {
+          (updateBody as any)[key] = data.basicInfo?.[key];
         }
-        if (dirtyFields.basicInfo?.description) {
-          updateBody.description = data.basicInfo?.description;
+      });
+  
+      /* ------------------------ ACCOUNT SETTINGS ------------------------ */
+      const accountKeys: (keyof NonNullable<typeof data.accountSetting>)[] = [
+        "email",
+        "phone",
+      ];
+  
+      accountKeys.forEach((key) => {
+        if (dirtyFields?.accountSetting?.[key]) {
+          (updateBody as any)[key] = data.accountSetting?.[key];
         }
-        if (dirtyFields.basicInfo?.industry) {
-          updateBody.industry = data.basicInfo?.industry;
-        }
-        if (dirtyFields.basicInfo?.location) {
-          updateBody.location = data.basicInfo?.location;
-        }
-        if (dirtyFields.basicInfo?.companySize) {
-          updateBody.companySize = data.basicInfo?.companySize;
-        }
-        if (dirtyFields.basicInfo?.foundedYear) {
-          updateBody.foundedYear = data.basicInfo?.foundedYear;
-        }
-        if (dirtyFields.accountSetting?.email) {
-          updateBody.email = data.accountSetting?.email;
-        }
-
-        if (dirtyFields.accountSetting?.phone) {
-          updateBody.phone = data.accountSetting?.phone;
-        }
-        if (dirtyFields.openPositions) {
-          updateBody.openPositions = data.openPositions?.map((pos) => ({
-            id: pos.uuid,
-            title: pos.title || "",
-            description: pos.description || "",
-            type: pos.type || "",
-            experience: pos.experienceRequirement || "",
-            education: pos.educationRequirement || "",
-            skills: pos.skills || [],
-            salary: pos.salary || "",
-            deadlineDate:
-              pos.deadlineDate?.toISOString() || new Date().toISOString(),
-          }));
-        }
-        if (dirtyFields.benefitsAndValues?.benefits) {
-          updateBody.benefits = data.benefitsAndValues?.benefits;
-        }
-        if (dirtyFields.benefitsAndValues?.values) {
-          updateBody.values = data.benefitsAndValues?.values;
-        }
-        if (dirtyFields.careerScopes) {
-          updateBody.careerScopes = data.careerScopes;
-        }
-        if (dirtyFields.socials) {
-          updateBody.socials = data.socials
-            ?.filter((s) => s && s.platform && s.url)
-            .map((s) => ({
-              platform: s?.platform!,
-              url: s?.url!,
-            }));
-        }
-
-        if (data.basicInfo?.avatar instanceof File) {
-          await uploadAvatarCmpStore.uploadAvatar(
-            company!.id,
-            data.basicInfo.avatar
-          );
-        }
-
-        if (data.basicInfo?.cover instanceof File) {
-          await uploadCoverCmpStore.uploadCover(
-            company!.id,
-            data.basicInfo.cover
-          );
-        }
-
-        if (data.images) {
-          const imageFiles = (data.images || []).filter(
-            (img): img is File => img instanceof File
-          );
-          if (imageFiles.length > 0) {
-            await uploadCmpImagesStore.uploadImages(company!.id, imageFiles);
-          }
-        }
-        console.log("Updated Body: ", updateBody);
-
-        await updateOneCmpStore.updateOneCompany(company!.id, updateBody);
-
-        // Refetch current user to get updated data
-        await getCurrentUser();
-        // Reset form with new data to clear dirty fields
-        form.reset(data);
-
-        toast({
-          description: (
-            <div className="flex items-center gap-2">
-              <LucideCheck />
-              <TypographySmall className="font-medium leading-relaxed">
-                Updated Company Profile Successfully!
-              </TypographySmall>
-            </div>
-          ),
+      });
+  
+      /* ------------------------ OPEN POSITIONS ------------------------ */
+      if (Array.isArray(dirtyFields.openPositions) && Array.isArray(data.openPositions)) {
+        const updatedPositions = data.openPositions.map((pos, index) => {
+          const dirtyPos = dirtyFields.openPositions?.[index];
+          if (!dirtyPos) return null; // No changes in this position
+  
+          const updatedPos: Record<string, any> = { id: pos.uuid }; // Always include ID
+  
+          if (dirtyPos.title) updatedPos.title = pos.title;
+          if (dirtyPos.description) updatedPos.description = pos.description;
+          if (dirtyPos.type) updatedPos.type = pos.type;
+          if (dirtyPos.experienceRequirement)
+            updatedPos.experience = pos.experienceRequirement;
+          if (dirtyPos.educationRequirement)
+            updatedPos.education = pos.educationRequirement;
+          if (dirtyPos.skills) updatedPos.skills = pos.skills;
+          if (dirtyPos.salary) updatedPos.salary = pos.salary;
+          if (dirtyPos.deadlineDate)
+            updatedPos.deadlineDate =
+              pos.deadlineDate?.toISOString() || new Date().toISOString();
+  
+          return Object.keys(updatedPos).length > 1 ? updatedPos : null;
         });
-
-        setIsEdit(false);
-      } catch (error) {
-        toast({
-          variant: "destructive",
-          title: "Error!",
-          description: "Failed to update company profile.",
-        });
+  
+        const filteredPositions = updatedPositions.filter((pos): pos is Record<string, any> => pos !== null);
+        if (filteredPositions.length > 0) {
+          updateBody.openPositions = filteredPositions as any;
+        }
       }
-    } else {
-      setIsEdit(false);
+  
+      /* ------------------------ BENEFITS & VALUES ------------------------ */
+      if (dirtyFields?.benefitsAndValues?.benefits) {
+        updateBody.benefits = data.benefitsAndValues?.benefits;
+      }
+      if (dirtyFields?.benefitsAndValues?.values) {
+        updateBody.values = data.benefitsAndValues?.values;
+      }
+  
+      /* ------------------------ CAREER SCOPES ------------------------ */
+      if (dirtyFields?.careerScopes) {
+        updateBody.careerScopes = data.careerScopes;
+      }
+  
+      /* ------------------------ SOCIALS ------------------------ */
+      if (dirtyFields?.socials) {
+        updateBody.socials = data.socials
+          ?.filter((s): s is { platform: string; url: string } => Boolean(s && s.platform && s.url))
+          .map((s) => ({
+            platform: s.platform,
+            url: s.url,
+          }));
+      }
+  
+      /* ------------------------ IMAGE UPLOADS ------------------------ */
+      const uploadTasks: Promise<any>[] = [];
+  
+      if (data.basicInfo?.avatar instanceof File) {
+        uploadTasks.push(
+          uploadAvatarCmpStore.uploadAvatar(company!.id, data.basicInfo.avatar)
+        );
+      }
+  
+      if (data.basicInfo?.cover instanceof File) {
+        uploadTasks.push(
+          uploadCoverCmpStore.uploadCover(company!.id, data.basicInfo.cover)
+        );
+      }
+  
+      const imageFiles = (data.images || []).filter(
+        (img): img is File => img instanceof File
+      );
+      if (imageFiles.length > 0) {
+        uploadTasks.push(uploadCmpImagesStore.uploadImages(company!.id, imageFiles));
+      }
+  
+      // Upload all images concurrently
+      await Promise.all(uploadTasks);
+  
+      console.log("Updated Body: ", updateBody);
+  
+      /* ------------------------ API UPDATE ------------------------ */
+      if (Object.keys(updateBody).length > 0) {
+        await updateOneCmpStore.updateOneCompany(company!.id, updateBody);
+      }
+  
+      // Refetch current user and reset form
+      await getCurrentUser();
       form.reset(data);
+  
+      toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <LucideCheck />
+            <TypographySmall className="font-medium leading-relaxed">
+              Updated Company Profile Successfully!
+            </TypographySmall>
+          </div>
+        ),
+      });
+  
+      setIsEdit(false);
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Error!",
+        description: "Failed to update company profile.",
+      });
     }
   };
 

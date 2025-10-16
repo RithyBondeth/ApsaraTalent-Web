@@ -98,7 +98,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
           <TypographyMuted className="text-xs">Type</TypographyMuted>
           <Controller
             name={`openPositions.${props.index}.type`}
-            control={props.form.control}
+            control={control}
             defaultValue={selectedType ?? props.type} 
             render={({ field }) => (
               <Select
