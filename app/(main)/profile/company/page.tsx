@@ -528,8 +528,8 @@ export default function ProfilePage() {
   };
 
   // Handle the career selection from the dropdown or input
-  const handleCareerSelect = (selectedCareer: string) => {
-    setCareersInput({ name: selectedCareer }); // Set the selected career to input
+  const handleCareerSelect = (selectedCareerName: string, selectedCareerId?: string) => {
+    setCareersInput({ id: selectedCareerId, name: selectedCareerName }); // Set the selected career to input
     setOpenCareersPopOver(false); // Close popover after selecting
   };
 
@@ -703,8 +703,14 @@ export default function ProfilePage() {
       }
 
       /* ------------------------ CAREER SCOPES ------------------------ */
-      if (dirtyFields?.careerScopes || deletedValueIds.length > 0) {
-        updateBody.careerScopes = data.careerScopes;
+      if (dirtyFields?.careerScopes || deleteCareerScopeIds.length > 0) {
+        // Send all current careerScopes (with or without IDs)
+        updateBody.careerScopes = data.careerScopes || [];
+
+        // Send IDs to delete
+        if(deleteCareerScopeIds.length > 0) {
+          updateBody.careerScopeIdsToDelete = deleteCareerScopeIds; 
+        }
       }
 
       /* ------------------------ SOCIALS ------------------------ */
