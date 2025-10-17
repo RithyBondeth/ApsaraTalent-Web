@@ -164,14 +164,17 @@ export default function ProfilePage() {
     ""
   );
   const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
-  const [benefitInput, setBenefitInput] = useState<string>("");
-  const [benefits, setBenefits] = useState<{ label: string }[]>([]);
+  const [benefitInput, setBenefitInput] = useState<{ id?: number, label: string } | null>(null);
+  const [benefits, setBenefits] = useState<{ id?: number, label: string }[]>([]);
+  const [deletedBenefitIds, setDeletedBenefitIds] = useState<number[]>([]);
   const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
-  const [valueInput, setValueInput] = useState<string>("");
-  const [values, setValues] = useState<{ label: string }[]>([]);
+  const [valueInput, setValueInput] = useState<{ id?: number, label: string } | null>(null);
+  const [values, setValues] = useState<{ id?: number, label: string }[]>([]);
+  const [deletedValueIds, setDeletedValueIds] = useState<number[]>([]);
   const [openCareersPopOver, setOpenCareersPopOver] = useState<boolean>(false);
-  const [careersInput, setCareersInput] = useState<string>("");
+  const [careersInput, setCareersInput] = useState<{ id?: string, name: string} | null>(null);
   const [careers, setCareers] = useState<ICareerScopes[]>([]);
+  const [deleteCareerScopeIds, setDeleteCareerScopeIds] = useState<string[]>([]);
   const [socialInput, setSocialInput] = useState<{
     social: string;
     link: string;
@@ -249,10 +252,12 @@ export default function ProfilePage() {
         benefitsAndValues: {
           benefits:
             company.benefits.map((bf) => ({
+              id: bf.id,
               label: bf.label,
             })) || [],
           values:
             company.values.map((vl) => ({
+              id: vl.id,
               label: vl.label,
             })) || [],
         },
@@ -304,6 +309,7 @@ export default function ProfilePage() {
     const initialBenefit = form.getValues("benefitsAndValues.benefits") || [];
     setBenefits(
       initialBenefit.map((bf) => ({
+        id: bf.id,
         label: bf.label,
       }))
     );
@@ -313,6 +319,7 @@ export default function ProfilePage() {
     const initialValue = form.getValues("benefitsAndValues.values") || [];
     setBenefits(
       initialValue.map((vl) => ({
+        id: vl.id,
         label: vl.label,
       }))
     );
@@ -370,10 +377,13 @@ export default function ProfilePage() {
   };
 
   const addBenefits = () => {
-    const trimmed = benefitInput.trim();
+    const trimmed = benefitInput?.label.trim();
     if (!trimmed) return;
 
-    const alreadyExists = benefits.some(
+    // Get current benefits from form
+    const currentBenefits = form.getValues("benefitsAndValues.benefits") || [];
+
+    const alreadyExists = currentBenefits.some(
       (bf) => bf.label.toLowerCase() === trimmed.toLowerCase()
     );
 
@@ -384,29 +394,57 @@ export default function ProfilePage() {
         description: "Please input another benefit.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
-      setBenefitInput("");
+      setBenefitInput(null);
       setOpenBenefitPopOver(false);
       return;
     }
 
-    const updated = [...benefits, { label: trimmed }];
-    setBenefits(updated);
+    // Add new benefit WITHOUT id (will be created in backend)
+    const updated = [...currentBenefits, { label: trimmed }];
 
-    setBenefitInput("");
+    // Update form state
+    form.setValue("benefitsAndValues.benefits", updated, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+
+    setBenefits(updated); // Update local state for UI
+    setBenefitInput(null);
     setOpenBenefitPopOver(false);
   };
 
   const removeBenefit = async (benefitToRemove: string) => {
-    const updated = benefits.filter((bf) => bf.label !== benefitToRemove);
-    setBenefits(updated);
+    const currentBenefits = form.getValues("benefitsAndValues.benefits") || [];
+
+    // Find the benefit to remove
+    const benefitToDelete = currentBenefits.find(
+      (bf) => bf.label === benefitToRemove
+    );
+
+    // If it has an ID, track it for deletion
+    if ("id" in benefitToDelete! && benefitToDelete.id) {
+      setDeletedBenefitIds((prev) => [...prev, benefitToDelete.id as number]);
+    }
+
+    // Remove from form
+    const updated = currentBenefits.filter(
+      (bf) => bf.label !== benefitToRemove
+    );
+    form.setValue("benefitsAndValues.benefits", updated, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+
+    setBenefits(updated); // Update local state for UI
   };
 
   const addValue = () => {
-    const trimmed = valueInput.trim();
+    const trimmed = valueInput?.label.trim();
     if (!trimmed) return;
 
-    // Check for duplicate value
-    const alreadyExists = values.some(
+    const currentValues = form.getValues("benefitsAndValues.values") || [];
+
+    const alreadyExists = currentValues.some(
       (value) => value.label.toLowerCase() === trimmed.toLowerCase()
     );
 
@@ -417,26 +455,50 @@ export default function ProfilePage() {
         description: "Please input another value.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
-      setValueInput("");
+      setValueInput(null);
       setOpenValuePopOver(false);
       return;
     }
 
-    // Update new value
-    const updated = [...values, { label: trimmed }];
-    setValues(updated);
+    // Add new value WITHOUT id
+    const updated = [...currentValues, { label: trimmed }];
+    form.setValue("benefitsAndValues.values", updated, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
 
-    setValueInput("");
+    setValues(updated);
+    setValueInput(null);
     setOpenValuePopOver(false);
   };
 
   const removeValue = async (valueToRemove: string) => {
-    const updated = values.filter((value) => value.label !== valueToRemove);
+    const currentValues = form.getValues("benefitsAndValues.values") || [];
+
+    // Find the value to remove
+    const valueToDelete = currentValues.find(
+      (value) => value.label === valueToRemove
+    );
+
+    // If it has an ID, track it for deletion
+    if ("id" in valueToDelete! && valueToDelete.id) {
+      setDeletedValueIds((prev) => [...prev, valueToDelete.id as number]);
+    }
+
+    // Remove from form
+    const updated = currentValues.filter(
+      (value) => value.label !== valueToRemove
+    );
+    form.setValue("benefitsAndValues.values", updated, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+
     setValues(updated);
   };
 
   const addCareers = () => {
-    const trimmed = careersInput.trim();
+    const trimmed = careersInput?.name.trim();
     if (!trimmed) return;
 
     // Check for duplicate careers
@@ -451,7 +513,7 @@ export default function ProfilePage() {
         description: "Please input another career.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
-      setCareersInput("");
+      setCareersInput(null);
       setOpenCareersPopOver(false);
       return;
     }
@@ -461,13 +523,13 @@ export default function ProfilePage() {
     setCareers(updatedCareers);
 
     // Clear input field
-    setCareersInput("");
+    setCareersInput(null);
     setOpenCareersPopOver(false); // Close popover after adding career
   };
 
   // Handle the career selection from the dropdown or input
   const handleCareerSelect = (selectedCareer: string) => {
-    setCareersInput(selectedCareer); // Set the selected career to input
+    setCareersInput({ name: selectedCareer }); // Set the selected career to input
     setOpenCareersPopOver(false); // Close popover after selecting
   };
 
@@ -542,14 +604,14 @@ export default function ProfilePage() {
       }
     }
   };
-  
+
   const onSubmit = async (data: TCompanyProfileForm) => {
     console.log("Company Profile Data: ", data);
     const updateBody: Partial<TCompanyUpdateBody> = {};
-  
+
     try {
       const dirtyFields = form.formState.dirtyFields;
-  
+
       /* ------------------------ BASIC INFO ------------------------ */
       const basicInfoKeys: (keyof NonNullable<typeof data.basicInfo>)[] = [
         "name",
@@ -559,33 +621,36 @@ export default function ProfilePage() {
         "companySize",
         "foundedYear",
       ];
-  
+
       basicInfoKeys.forEach((key) => {
         if (dirtyFields?.basicInfo?.[key]) {
           (updateBody as any)[key] = data.basicInfo?.[key];
         }
       });
-  
+
       /* ------------------------ ACCOUNT SETTINGS ------------------------ */
       const accountKeys: (keyof NonNullable<typeof data.accountSetting>)[] = [
         "email",
         "phone",
       ];
-  
+
       accountKeys.forEach((key) => {
         if (dirtyFields?.accountSetting?.[key]) {
           (updateBody as any)[key] = data.accountSetting?.[key];
         }
       });
-  
+
       /* ------------------------ OPEN POSITIONS ------------------------ */
-      if (Array.isArray(dirtyFields.openPositions) && Array.isArray(data.openPositions)) {
+      if (
+        Array.isArray(dirtyFields.openPositions) &&
+        Array.isArray(data.openPositions)
+      ) {
         const updatedPositions = data.openPositions.map((pos, index) => {
           const dirtyPos = dirtyFields.openPositions?.[index];
           if (!dirtyPos) return null; // No changes in this position
-  
+
           const updatedPos: Record<string, any> = { id: pos.uuid }; // Always include ID
-  
+
           if (dirtyPos.title) updatedPos.title = pos.title;
           if (dirtyPos.description) updatedPos.description = pos.description;
           if (dirtyPos.type) updatedPos.type = pos.type;
@@ -598,75 +663,100 @@ export default function ProfilePage() {
           if (dirtyPos.deadlineDate)
             updatedPos.deadlineDate =
               pos.deadlineDate?.toISOString() || new Date().toISOString();
-  
+
           return Object.keys(updatedPos).length > 1 ? updatedPos : null;
         });
-  
-        const filteredPositions = updatedPositions.filter((pos): pos is Record<string, any> => pos !== null);
+
+        const filteredPositions = updatedPositions.filter(
+          (pos): pos is Record<string, any> => pos !== null
+        );
         if (filteredPositions.length > 0) {
           updateBody.openPositions = filteredPositions as any;
         }
       }
-  
+
       /* ------------------------ BENEFITS & VALUES ------------------------ */
-      if (dirtyFields?.benefitsAndValues?.benefits) {
-        updateBody.benefits = data.benefitsAndValues?.benefits;
+      if (
+        dirtyFields?.benefitsAndValues?.benefits ||
+        deletedBenefitIds.length > 0
+      ) {
+        // Send all current benefits (with or without IDs)
+        updateBody.benefits = data.benefitsAndValues?.benefits || [];
+
+        // Send IDs to delete
+        if (deletedBenefitIds.length > 0) {
+          updateBody.benefitIdsToDelete = deletedBenefitIds;
+        }
       }
-      if (dirtyFields?.benefitsAndValues?.values) {
-        updateBody.values = data.benefitsAndValues?.values;
+
+      if (
+        dirtyFields?.benefitsAndValues?.values ||
+        deletedValueIds.length > 0
+      ) {
+        // Send all current values (with or without IDs)
+        updateBody.values = data.benefitsAndValues?.values || [];
+
+        // Send IDs to delete
+        if (deletedValueIds.length > 0) {
+          updateBody.valueIdsToDelete = deletedValueIds;
+        }
       }
-  
+
       /* ------------------------ CAREER SCOPES ------------------------ */
-      if (dirtyFields?.careerScopes) {
+      if (dirtyFields?.careerScopes || deletedValueIds.length > 0) {
         updateBody.careerScopes = data.careerScopes;
       }
-  
+
       /* ------------------------ SOCIALS ------------------------ */
       if (dirtyFields?.socials) {
         updateBody.socials = data.socials
-          ?.filter((s): s is { platform: string; url: string } => Boolean(s && s.platform && s.url))
+          ?.filter((s): s is { platform: string; url: string } =>
+            Boolean(s && s.platform && s.url)
+          )
           .map((s) => ({
             platform: s.platform,
             url: s.url,
           }));
       }
-  
+
       /* ------------------------ IMAGE UPLOADS ------------------------ */
       const uploadTasks: Promise<any>[] = [];
-  
+
       if (data.basicInfo?.avatar instanceof File) {
         uploadTasks.push(
           uploadAvatarCmpStore.uploadAvatar(company!.id, data.basicInfo.avatar)
         );
       }
-  
+
       if (data.basicInfo?.cover instanceof File) {
         uploadTasks.push(
           uploadCoverCmpStore.uploadCover(company!.id, data.basicInfo.cover)
         );
       }
-  
+
       const imageFiles = (data.images || []).filter(
         (img): img is File => img instanceof File
       );
       if (imageFiles.length > 0) {
-        uploadTasks.push(uploadCmpImagesStore.uploadImages(company!.id, imageFiles));
+        uploadTasks.push(
+          uploadCmpImagesStore.uploadImages(company!.id, imageFiles)
+        );
       }
-  
+
       // Upload all images concurrently
       await Promise.all(uploadTasks);
-  
+
       console.log("Updated Body: ", updateBody);
-  
+
       /* ------------------------ API UPDATE ------------------------ */
-      if (Object.keys(updateBody).length > 0) {
-        await updateOneCmpStore.updateOneCompany(company!.id, updateBody);
-      }
-  
-      // Refetch current user and reset form
-      await getCurrentUser();
-      form.reset(data);
-  
+      // if (Object.keys(updateBody).length > 0) {
+      //   await updateOneCmpStore.updateOneCompany(company!.id, updateBody);
+      // }
+
+      // // Refetch current user and reset form
+      // await getCurrentUser();
+      // form.reset(data);
+
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -677,7 +767,7 @@ export default function ProfilePage() {
           </div>
         ),
       });
-  
+
       setIsEdit(false);
     } catch (error) {
       console.error(error);
@@ -1226,8 +1316,8 @@ export default function ProfilePage() {
                   <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
                     <Input
                       placeholder="Enter your benefit (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
-                      value={benefitInput}
-                      onChange={(e) => setBenefitInput(e.target.value)}
+                      value={benefitInput?.label}
+                      onChange={(e) => setBenefitInput({ label: e.target.value })}
                     />
                     <div className="flex items-center gap-1 [&>button]:text-xs">
                       <Button
@@ -1291,8 +1381,8 @@ export default function ProfilePage() {
                   <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
                     <Input
                       placeholder="Enter your value (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
-                      value={valueInput}
-                      onChange={(e) => setValueInput(e.target.value)}
+                      value={valueInput?.label}
+                      onChange={(e) => setValueInput({ label: e.target.value })}
                     />
                     <div className="flex items-center gap-1 [&>button]:text-xs">
                       <Button
@@ -1362,7 +1452,7 @@ export default function ProfilePage() {
                   >
                     {careersInput
                       ? careerScopesList.find(
-                          (career) => career.value === careersInput
+                          (career) => career.value === careersInput.name
                         )?.label
                       : "Select careers..."}
                     <ChevronDown className="opacity-50" />
@@ -1386,7 +1476,7 @@ export default function ProfilePage() {
                             {career.label}
                             <LucideCircleCheck
                               className={
-                                careersInput === career.value
+                                careersInput?.name === career.value
                                   ? "opacity-100"
                                   : "opacity-0"
                               }

@@ -94,6 +94,7 @@ export const benefitAndValueSchema = z.object({
       benefits: z
         .array(
           z.object({
+            id: z.number().optional(),
             label: z.string(),
           })
         )
@@ -101,6 +102,7 @@ export const benefitAndValueSchema = z.object({
       values: z
         .array(
           z.object({
+            id: z.number().optional(),
             label: z.string(),
           })
         )
