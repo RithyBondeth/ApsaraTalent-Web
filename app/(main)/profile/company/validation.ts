@@ -115,6 +115,7 @@ export const careerScopesSchema = z.object({
   careerScopes: z
     .array(
       z.object({
+        id: z.string(),
         name: z.string(),
         description: z.string().optional(),
       })

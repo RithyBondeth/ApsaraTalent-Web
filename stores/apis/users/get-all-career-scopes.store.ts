@@ -1,7 +1,7 @@
-import { ICareerScopes } from "@/utils/interfaces/career-option.interface";
 import axios from "@/lib/axios";
 import { create } from "zustand";
 import { API_GET_ALL_CAREER_SCOPES_URL } from "@/utils/constants/apis/user_url";
+import { ICareerScopes } from "@/utils/interfaces/user-interface/company.interface";
 
 type TGetAllCareerScopesStoreState = {
   error: string | null;
@@ -19,7 +19,7 @@ export const useGetAllCareerScopesStore = create<TGetAllCareerScopesStoreState>(
       set({ loading: true, error: null });
 
       try {
-        const response = await axios.get<ICareerScopes[]>(
+        const response = await axios.get<[]>(
           API_GET_ALL_CAREER_SCOPES_URL
         );
         set({ careerScopes: response.data, loading: false, error: null });

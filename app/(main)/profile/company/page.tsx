@@ -64,7 +64,6 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
-import { careerScopesList } from "@/data/career-data";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
@@ -96,11 +95,12 @@ import { useRemoveOneOpenPositionStore } from "@/stores/apis/company/remove-one-
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import RemoveOpenPositionDialog from "./_dialogs/remove-open-position-dialog";
 import { isUuid } from "@/utils/functions/check-uuid";
-import { update } from "lodash";
+import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-scopes.store";
 
 export default function ProfilePage() {
   // Store hooks
   const { user, loading, getCurrentUser } = useGetCurrentUserStore();
+  const getAllCareerScopeStore = useGetAllCareerScopesStore();
   const company = user?.company;
   const updateOneCmpStore = useUpdateOneCompanyStore();
   const uploadAvatarCmpStore = useUploadCompanyAvatarStore();
@@ -164,17 +164,31 @@ export default function ProfilePage() {
     ""
   );
   const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
-  const [benefitInput, setBenefitInput] = useState<{ id?: number, label: string } | null>(null);
-  const [benefits, setBenefits] = useState<{ id?: number, label: string }[]>([]);
+  const [benefitInput, setBenefitInput] = useState<{
+    id?: number;
+    label: string;
+  } | null>(null);
+  const [benefits, setBenefits] = useState<{ id?: number; label: string }[]>(
+    []
+  );
   const [deletedBenefitIds, setDeletedBenefitIds] = useState<number[]>([]);
   const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
-  const [valueInput, setValueInput] = useState<{ id?: number, label: string } | null>(null);
-  const [values, setValues] = useState<{ id?: number, label: string }[]>([]);
+  const [valueInput, setValueInput] = useState<{
+    id?: number;
+    label: string;
+  } | null>(null);
+  const [values, setValues] = useState<{ id?: number; label: string }[]>([]);
   const [deletedValueIds, setDeletedValueIds] = useState<number[]>([]);
   const [openCareersPopOver, setOpenCareersPopOver] = useState<boolean>(false);
-  const [careersInput, setCareersInput] = useState<{ id?: string, name: string} | null>(null);
+  const [careersInput, setCareersInput] = useState<{
+    id: string;
+    name: string;
+    description?: string;
+  } | null>(null);
   const [careers, setCareers] = useState<ICareerScopes[]>([]);
-  const [deleteCareerScopeIds, setDeleteCareerScopeIds] = useState<string[]>([]);
+  const [deleteCareerScopeIds, setDeleteCareerScopeIds] = useState<string[]>(
+    []
+  );
   const [socialInput, setSocialInput] = useState<{
     social: string;
     link: string;
@@ -200,6 +214,7 @@ export default function ProfilePage() {
   useEffect(() => {
     // Get current user with HTTP-only cookies
     getCurrentUser();
+    getAllCareerScopeStore.getAllCareerScopes();
   }, []);
 
   useEffect(() => {
@@ -299,6 +314,7 @@ export default function ProfilePage() {
     const initialCareerScope = form.getValues("careerScopes") || [];
     setCareers(
       initialCareerScope.map((cp) => ({
+        id: cp?.id ?? "",
         name: cp?.name ?? "",
         description: cp?.description ?? "",
       }))
@@ -499,6 +515,8 @@ export default function ProfilePage() {
 
   const addCareers = () => {
     const trimmed = careersInput?.name.trim();
+    const id = careersInput?.id;
+    const description = careersInput?.description;
     if (!trimmed) return;
 
     // Check for duplicate careers
@@ -519,7 +537,10 @@ export default function ProfilePage() {
     }
 
     // Add new career
-    const updatedCareers = [...careers, { name: trimmed, description: "" }];
+    const updatedCareers = [
+      ...careers,
+      { id: id ?? "", name: trimmed, description: description ?? "" },
+    ];
     setCareers(updatedCareers);
 
     // Clear input field
@@ -528,8 +549,16 @@ export default function ProfilePage() {
   };
 
   // Handle the career selection from the dropdown or input
-  const handleCareerSelect = (selectedCareerName: string, selectedCareerId?: string) => {
-    setCareersInput({ id: selectedCareerId, name: selectedCareerName }); // Set the selected career to input
+  const handleCareerSelect = (
+    selectedCareerId: string,
+    selectedCareerName: string,
+    selectedCareerDescription: string
+  ) => {
+    setCareersInput({
+      id: selectedCareerId,
+      name: selectedCareerName,
+      description: selectedCareerDescription,
+    }); // Set the selected career to input
     setOpenCareersPopOver(false); // Close popover after selecting
   };
 
@@ -708,8 +737,8 @@ export default function ProfilePage() {
         updateBody.careerScopes = data.careerScopes || [];
 
         // Send IDs to delete
-        if(deleteCareerScopeIds.length > 0) {
-          updateBody.careerScopeIdsToDelete = deleteCareerScopeIds; 
+        if (deleteCareerScopeIds.length > 0) {
+          updateBody.careerScopeIdsToDelete = deleteCareerScopeIds;
         }
       }
 
@@ -1323,7 +1352,9 @@ export default function ProfilePage() {
                     <Input
                       placeholder="Enter your benefit (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
                       value={benefitInput?.label}
-                      onChange={(e) => setBenefitInput({ label: e.target.value })}
+                      onChange={(e) =>
+                        setBenefitInput({ label: e.target.value })
+                      }
                     />
                     <div className="flex items-center gap-1 [&>button]:text-xs">
                       <Button
@@ -1457,9 +1488,9 @@ export default function ProfilePage() {
                     className="w-full justify-between"
                   >
                     {careersInput
-                      ? careerScopesList.find(
-                          (career) => career.value === careersInput.name
-                        )?.label
+                      ? getAllCareerScopeStore.careerScopes?.find(
+                          (career) => career.name === careersInput.name
+                        )?.name
                       : "Select careers..."}
                     <ChevronDown className="opacity-50" />
                   </Button>
@@ -1473,22 +1504,30 @@ export default function ProfilePage() {
                     <CommandList>
                       <CommandEmpty>No career found.</CommandEmpty>
                       <CommandGroup>
-                        {careerScopesList.map((career, index) => (
-                          <CommandItem
-                            key={index}
-                            value={career.value}
-                            onSelect={() => handleCareerSelect(career.value)} // Handle career selection
-                          >
-                            {career.label}
-                            <LucideCircleCheck
-                              className={
-                                careersInput?.name === career.value
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              }
-                            />
-                          </CommandItem>
-                        ))}
+                        {getAllCareerScopeStore.careerScopes?.map(
+                          (career, index) => (
+                            <CommandItem
+                              key={index}
+                              value={career.name}
+                              onSelect={() =>
+                                handleCareerSelect(
+                                  career.id,
+                                  career.name,
+                                  career.description ?? ""
+                                )
+                              } // Handle career selection
+                            >
+                              {career.name}
+                              <LucideCircleCheck
+                                className={
+                                  careersInput?.name === career.name
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                }
+                              />
+                            </CommandItem>
+                          )
+                        )}
                       </CommandGroup>
                     </CommandList>
                   </Command>
