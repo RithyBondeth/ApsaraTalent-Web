@@ -214,7 +214,6 @@ export default function ProfilePage() {
   useEffect(() => {
     // Get current user with HTTP-only cookies
     getCurrentUser();
-    getAllCareerScopeStore.getAllCareerScopes();
   }, []);
 
   useEffect(() => {
@@ -416,15 +415,15 @@ export default function ProfilePage() {
     }
 
     // Add new benefit WITHOUT id (will be created in backend)
-    const updated = [...currentBenefits, { label: trimmed }];
+    const updatedBenefits = [...currentBenefits, { label: trimmed }];
 
     // Update form state
-    form.setValue("benefitsAndValues.benefits", updated, {
+    form.setValue("benefitsAndValues.benefits", updatedBenefits, {
       shouldDirty: true,
       shouldTouch: true,
     });
 
-    setBenefits(updated); // Update local state for UI
+    setBenefits(updatedBenefits); // Update local state for UI
     setBenefitInput(null);
     setOpenBenefitPopOver(false);
   };
@@ -477,13 +476,13 @@ export default function ProfilePage() {
     }
 
     // Add new value WITHOUT id
-    const updated = [...currentValues, { label: trimmed }];
-    form.setValue("benefitsAndValues.values", updated, {
+    const updatedValues = [...currentValues, { label: trimmed }];
+    form.setValue("benefitsAndValues.values", updatedValues, {
       shouldDirty: true,
       shouldTouch: true,
     });
 
-    setValues(updated);
+    setValues(updatedValues);
     setValueInput(null);
     setOpenValuePopOver(false);
   };
@@ -502,15 +501,15 @@ export default function ProfilePage() {
     }
 
     // Remove from form
-    const updated = currentValues.filter(
+    const updatedValues = currentValues.filter(
       (value) => value.label !== valueToRemove
     );
-    form.setValue("benefitsAndValues.values", updated, {
+    form.setValue("benefitsAndValues.values", updatedValues, {
       shouldDirty: true,
       shouldTouch: true,
     });
 
-    setValues(updated);
+    setValues(updatedValues);
   };
 
   const addCareers = () => {
@@ -519,8 +518,10 @@ export default function ProfilePage() {
     const description = careersInput?.description;
     if (!trimmed) return;
 
+    const currentCareerScopes = form.getValues("careerScopes") || [];
+
     // Check for duplicate careers
-    const alreadyExists = careers.some(
+    const alreadyExists = currentCareerScopes.some(
       (career) => career.name.toLowerCase() === trimmed.toLowerCase()
     );
 
@@ -541,9 +542,12 @@ export default function ProfilePage() {
       ...careers,
       { id: id ?? "", name: trimmed, description: description ?? "" },
     ];
-    setCareers(updatedCareers);
+    form.setValue("careerScopes", updatedCareers, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
 
-    // Clear input field
+    setCareers(updatedCareers);
     setCareersInput(null);
     setOpenCareersPopOver(false); // Close popover after adding career
   };
@@ -564,9 +568,27 @@ export default function ProfilePage() {
 
   // Handle delete career
   const removeCareer = (careerToRemove: string) => {
-    const updatedCareers = careers.filter(
+    const currentCareers = form.getValues("careerScopes") || [];
+
+    // Find the career to delete
+    const careerToDelete = currentCareers.find(
+      (career) => career.name === careerToRemove
+    );
+
+    // If it has an ID, track it for deletion
+    if("id" in careerToDelete! && careerToDelete.id) {
+      setDeleteCareerScopeIds((prev) => [...prev, careerToDelete.id]); 
+    }
+
+    // Remove from form
+    const updatedCareers = currentCareers.filter(
       (career) => career.name !== careerToRemove
     );
+    form.setValue("careerScopes", updatedCareers, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+    
     setCareers(updatedCareers);
   };
 
@@ -784,13 +806,13 @@ export default function ProfilePage() {
       console.log("Updated Body: ", updateBody);
 
       /* ------------------------ API UPDATE ------------------------ */
-      // if (Object.keys(updateBody).length > 0) {
-      //   await updateOneCmpStore.updateOneCompany(company!.id, updateBody);
-      // }
+      if (Object.keys(updateBody).length > 0) {
+        await updateOneCmpStore.updateOneCompany(company!.id, updateBody);
+      }
 
-      // // Refetch current user and reset form
-      // await getCurrentUser();
-      // form.reset(data);
+      // Refetch current user and reset form
+      await getCurrentUser();
+      form.reset(data);
 
       toast({
         description: (
@@ -980,7 +1002,10 @@ export default function ProfilePage() {
         ) : (
           <Button
             className="text-xs absolute top-5 right-5 phone-xl:top-2 phone-xl:right-2"
-            onClick={() => setIsEdit(true)}
+            onClick={() => {
+              getAllCareerScopeStore.getAllCareerScopes();
+              setIsEdit(true);
+            }}
           >
             Edit Profile
             <LucideEdit />
