@@ -96,6 +96,7 @@ import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import RemoveOpenPositionDialog from "./_dialogs/remove-open-position-dialog";
 import { isUuid } from "@/utils/functions/check-uuid";
 import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-scopes.store";
+import { useRemoveOneCmpImageStore } from "@/stores/apis/company/remove-one-cmp-image.store";
 
 export default function ProfilePage() {
   // Store hooks
@@ -107,6 +108,7 @@ export default function ProfilePage() {
   const uploadCoverCmpStore = useUploadCompanyCoverStore();
   const uploadCmpImagesStore = useUploadCompanyImagesStore();
   const removeOneOpenPosition = useRemoveOneOpenPositionStore();
+  const removeOneCompImage = useRemoveOneCmpImageStore();
 
   const updateProfileErrorState =
     updateOneCmpStore.error ||
@@ -218,6 +220,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (user && company) {
+      console.log("Company: ", company);
       // Initialize form data
       form.reset({
         basicInfo: {
@@ -262,7 +265,9 @@ export default function ProfilePage() {
               skills: op.skills || [],
             };
           }) || [],
-        images: company.images?.map((img) => img.image) || [],
+        images:
+          company.images?.map((img) => ({ id: img.id, image: img.image })) ||
+          [],
         benefitsAndValues: {
           benefits:
             company.benefits.map((bf) => ({
@@ -576,8 +581,8 @@ export default function ProfilePage() {
     );
 
     // If it has an ID, track it for deletion
-    if("id" in careerToDelete! && careerToDelete.id) {
-      setDeleteCareerScopeIds((prev) => [...prev, careerToDelete.id]); 
+    if ("id" in careerToDelete! && careerToDelete.id) {
+      setDeleteCareerScopeIds((prev) => [...prev, careerToDelete.id]);
     }
 
     // Remove from form
@@ -588,7 +593,7 @@ export default function ProfilePage() {
       shouldDirty: true,
       shouldTouch: true,
     });
-    
+
     setCareers(updatedCareers);
   };
 
@@ -791,14 +796,15 @@ export default function ProfilePage() {
         );
       }
 
-      const imageFiles = (data.images || []).filter(
-        (img): img is File => img instanceof File
-      );
-      if (imageFiles.length > 0) {
-        uploadTasks.push(
-          uploadCmpImagesStore.uploadImages(company!.id, imageFiles)
-        );
-      }
+      // const imageFiles: File[] = (data.images || [])
+      //   .map((img) => img?.image)
+      //   .filter((image): image is File => image instanceof File);
+
+      // if (imageFiles.length > 0) {
+      //   uploadTasks.push(
+      //     uploadCmpImagesStore.uploadImages(company!.id, imageFiles)
+      //   );
+      // }
 
       // Upload all images concurrently
       await Promise.all(uploadTasks);
@@ -856,6 +862,18 @@ export default function ProfilePage() {
 
     // Now submit the form
     form.handleSubmit(onSubmit, console.error)(e);
+  };
+
+  const handleRemoveOneCmpImage = async (imageId: string, index: number) => {
+    const updated = form.watch("images")?.filter((_, i) => i !== index);
+    form.setValue("images", updated);
+
+    if (company) {
+      removeOneCompImage.removeOneCmpImage(company.id ?? "", imageId);
+    }
+
+    // Refetch current user
+    await getCurrentUser();
   };
 
   // Profile, Cover and Image Popup handlers
@@ -1254,14 +1272,6 @@ export default function ProfilePage() {
               <Carousel className="w-full">
                 <CarouselContent className="w-full">
                   {form.watch("images")?.map((img, index) => {
-                    let imageUrl = "";
-
-                    if (typeof img === "string") {
-                      imageUrl = img;
-                    } else if (img instanceof File) {
-                      imageUrl = URL.createObjectURL(img);
-                    }
-
                     return (
                       <CarouselItem
                         key={index}
@@ -1271,21 +1281,27 @@ export default function ProfilePage() {
                           onClick={(e) => {
                             if (!isEdit) {
                               handleClickImagePopup(e);
-                              setCurrentCompanyImage(img!.toString());
+                              setCurrentCompanyImage(
+                                img?.image?.toString() ?? ""
+                              );
                             }
                           }}
                           className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center"
-                          style={{ backgroundImage: `url(${imageUrl})` }}
+                          style={{ backgroundImage: `url(${img?.image})` }}
                         />
                         {isEdit && (
                           <LucideXCircle
                             className="absolute top-3 right-1 cursor-pointer text-red-500"
                             type="button"
                             onClick={() => {
-                              const updated = form
-                                .watch("images")
-                                ?.filter((_, i) => i !== index);
-                              form.setValue("images", updated);
+                              if (img?.id === "" || img?.id === undefined) {
+                                const updated = form
+                                  .watch("images")
+                                  ?.filter((_, i) => i !== index);
+                                form.setValue("images", updated);
+                              } else {
+                                handleRemoveOneCmpImage(img.id, index);
+                              }
                             }}
                           />
                         )}
@@ -1310,7 +1326,7 @@ export default function ProfilePage() {
                             const currentImages = form.watch("images") || [];
                             form.setValue("images", [
                               ...currentImages,
-                              files[0],
+                              { image: URL.createObjectURL(files[0]) },
                             ]);
                           }}
                         />

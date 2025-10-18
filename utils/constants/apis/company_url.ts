@@ -26,3 +26,8 @@ export const API_REMOVE_ONE_OPEN_POSITION = (
   companyID: string,
   openPositionID: string
 ) => `${API_CMP_BASE_URL}/remove-open-position/${companyID}/${openPositionID}`;
+
+export const API_REMOVE_ONE_CMP_IMAGE_URL = (
+  companyID: string,
+  imageID: string
+) => `${API_CMP_BASE_URL}/remove-images/${companyID}/${imageID}`;
