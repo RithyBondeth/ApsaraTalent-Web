@@ -37,7 +37,6 @@ import {
   LucideCamera,
   LucideCheck,
   LucideCircleCheck,
-  LucideCircleX,
   LucideEdit,
   LucideLink2,
   LucideMail,
@@ -98,6 +97,8 @@ import { isUuid } from "@/utils/functions/check-uuid";
 import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-scopes.store";
 import { useRemoveOneCmpImageStore } from "@/stores/apis/company/remove-one-cmp-image.store";
 import RemoveImageDialog from "./_dialogs/remove-image-dialog";
+import { useRemoveCmpAvatarStore } from "@/stores/apis/company/remove-cmp-avatar.store";
+import { useRemoveCmpCoverStore } from "@/stores/apis/company/remove-cmp-cover.store";
 
 export default function ProfilePage() {
   // Store hooks
@@ -110,6 +111,8 @@ export default function ProfilePage() {
   const uploadCmpImagesStore = useUploadCompanyImagesStore();
   const removeOneOpenPosition = useRemoveOneOpenPositionStore();
   const removeOneCompImage = useRemoveOneCmpImageStore();
+  const removeCmpAvatar = useRemoveCmpAvatarStore();
+  const removeCmpCover = useRemoveCmpCoverStore();
 
   const updateProfileLoadingState =
     updateOneCmpStore.loading ||
@@ -117,7 +120,9 @@ export default function ProfilePage() {
     uploadCoverCmpStore.loading ||
     uploadCmpImagesStore.loading ||
     removeOneOpenPosition.loading ||
-    removeOneCompImage.loading;
+    removeOneCompImage.loading ||
+    removeCmpAvatar.loading ||
+    removeCmpCover.loading;
 
   const { toast } = useToast();
 
@@ -958,14 +963,28 @@ export default function ProfilePage() {
       >
         <BlurBackGroundOverlay />
         {isEdit && (
-          <Button
-            className="flex items-center gap-2 cursor-pointer absolute bottom-5 right-5 py-1 px-3 rounded-full bg-foreground text-primary-foreground"
-            onClick={() => coverInputRef.current?.click()}
-            type="button"
-          >
-            <LucideCamera strokeWidth={"1.2px"} width={"18px"} />
-            <TypographySmall className="text-xs">Change Cover</TypographySmall>
-          </Button>
+          <div className="absolute bottom-5 right-5 flex flex-col items-start gap-2">
+            <Button
+              className="flex items-center gap-2 cursor-pointer py-1 px-3 rounded-full bg-foreground text-primary-foreground"
+              onClick={() => coverInputRef.current?.click()}
+              type="button"
+            >
+              <LucideCamera strokeWidth={"1.2px"} width={"18px"} />
+              <TypographySmall className="text-xs">
+                Change Cover
+              </TypographySmall>
+            </Button>
+            <Button
+              className="flex items-center gap-2 cursor-pointer py-1 px-3 rounded-full bg-red-500 text-red-100"
+              onClick={() => {}}
+              type="button"
+            >
+              <LucideXCircle strokeWidth={"1.2px"} width={"18px"} />
+              <TypographySmall className="text-xs">
+                Remove Cover
+              </TypographySmall>
+            </Button>
+          </div>
         )}
         <input
           ref={coverInputRef}
@@ -991,13 +1010,21 @@ export default function ProfilePage() {
               {company.name.slice(0, 3)}
             </AvatarFallback>
             {isEdit && (
-              <Button
-                className="size-8 flex justify-center items-center cursor-pointer absolute bottom-1 right-1 p-1 rounded-full bg-foreground text-primary-foreground"
-                onClick={() => avatarInputRef.current?.click()}
-                type="button"
-              >
-                <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
-              </Button>
+              <div className="absolute bottom-1 right-1 flex items-center gap-2">
+                <Button
+                  className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-foreground text-primary-foreground"
+                  onClick={() => avatarInputRef.current?.click()}
+                  type="button"
+                >
+                  <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
+                </Button>
+                <Button
+                  className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-red-500 text-red-100"
+                  type="button"
+                >
+                  <LucideXCircle width={"18px"} strokeWidth={"1.2px"} />
+                </Button>
+              </div>
             )}
             <input
               ref={avatarInputRef}
@@ -1034,7 +1061,7 @@ export default function ProfilePage() {
               }}
             >
               Cancel
-              <LucideCircleX />
+              <LucideXCircle />
             </Button>
           </div>
         ) : (
@@ -1365,7 +1392,7 @@ export default function ProfilePage() {
                             const files = e.target.files;
                             if (!files) return;
                             const currentImages = form.watch("images");
-                            if(currentImages) {
+                            if (currentImages) {
                               form.setValue("images", [
                                 ...currentImages,
                                 { image: files[0] },
@@ -1540,7 +1567,7 @@ export default function ProfilePage() {
                         <HoverCardTrigger className="flex items-center bg-muted rounded-3xl">
                           <Tag label={career.name} />
                           {isEdit && (
-                            <LucideCircleX
+                            <LucideXCircle
                               className="text-muted-foreground cursor-pointer mr-2 text-red-500"
                               width={"18px"}
                               onClick={() => removeCareer(career.name)}
