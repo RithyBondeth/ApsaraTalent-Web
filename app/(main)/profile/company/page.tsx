@@ -220,7 +220,6 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (user && company) {
-      console.log("Company: ", company);
       // Initialize form data
       form.reset({
         basicInfo: {
@@ -647,7 +646,7 @@ export default function ProfilePage() {
 
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
-    type: "avatar" | "cover"
+    type: "avatar" | "cover" | "images"
   ) => {
     const file = event.target.files ? event.target.files[0] : null;
     if (file) {
@@ -796,17 +795,18 @@ export default function ProfilePage() {
         );
       }
 
-      // const imageFiles: File[] = (data.images || [])
-      //   .map((img) => img?.image)
-      //   .filter((image): image is File => image instanceof File);
+      if (data.images instanceof File) {
+        const imageFiles: File[] = data.images
+          .map((img) => img?.image)
+          .filter((image): image is File => image instanceof File);
 
-      // if (imageFiles.length > 0) {
-      //   uploadTasks.push(
-      //     uploadCmpImagesStore.uploadImages(company!.id, imageFiles)
-      //   );
-      // }
+        if (imageFiles.length > 0) {
+          uploadTasks.push(
+            uploadCmpImagesStore.uploadImages(company!.id, imageFiles)
+          );
+        }
+      }
 
-      // Upload all images concurrently
       await Promise.all(uploadTasks);
 
       console.log("Updated Body: ", updateBody);
@@ -1272,6 +1272,11 @@ export default function ProfilePage() {
               <Carousel className="w-full">
                 <CarouselContent className="w-full">
                   {form.watch("images")?.map((img, index) => {
+                    let imageUrl = img?.image;
+                    if(img?.image instanceof File) {
+                      imageUrl = URL.createObjectURL(img.image);
+                    }
+
                     return (
                       <CarouselItem
                         key={index}
@@ -1281,13 +1286,13 @@ export default function ProfilePage() {
                           onClick={(e) => {
                             if (!isEdit) {
                               handleClickImagePopup(e);
-                              setCurrentCompanyImage(
-                                img?.image?.toString() ?? ""
-                              );
+                              if (img?.image) {
+                                setCurrentCompanyImage(img.image.toString());
+                              }
                             }
                           }}
                           className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center"
-                          style={{ backgroundImage: `url(${img?.image})` }}
+                          style={{ backgroundImage: `url(${imageUrl})` }}
                         />
                         {isEdit && (
                           <LucideXCircle
@@ -1322,11 +1327,10 @@ export default function ProfilePage() {
                           onChange={(e) => {
                             const files = e.target.files;
                             if (!files) return;
-
                             const currentImages = form.watch("images") || [];
                             form.setValue("images", [
                               ...currentImages,
-                              { image: URL.createObjectURL(files[0]) },
+                              { image: files[0] },
                             ]);
                           }}
                         />
@@ -1687,11 +1691,13 @@ export default function ProfilePage() {
       </div>
 
       {/* Image Popup Section */}
-      <ImagePopup
-        open={openImagePopup}
-        setOpen={setOpenImagePopup}
-        image={currentCompanyImage!}
-      />
+      {currentCompanyImage && (
+        <ImagePopup
+          open={openImagePopup}
+          setOpen={setOpenImagePopup}
+          image={currentCompanyImage}
+        />
+      )}
 
       {/* Profile Popup Section */}
       <ImagePopup

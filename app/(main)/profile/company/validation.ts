@@ -90,7 +90,23 @@ export const imagesSchema = z.object({
       z
         .object({
           id: z.string().optional(),
-          image: z.string().optional(),
+          image: z
+            .union([
+              z.instanceof(File).refine(
+                (file) => {
+                  const validTypes = ["image/jpeg", "image/png", "image/webp"];
+                  return (
+                    validTypes.includes(file.type) &&
+                    file.size <= MAX_IMAGE_SIZE
+                  );
+                },
+                {
+                  message: "Invalid file: must be jpeg, png, or webp and < 5MB",
+                }
+              ),
+              z.string(), // existing image URLs
+            ])
+            .optional(),
         })
         .optional()
     )
