@@ -97,6 +97,7 @@ import RemoveOpenPositionDialog from "./_dialogs/remove-open-position-dialog";
 import { isUuid } from "@/utils/functions/check-uuid";
 import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-scopes.store";
 import { useRemoveOneCmpImageStore } from "@/stores/apis/company/remove-one-cmp-image.store";
+import RemoveImageDialog from "./_dialogs/remove-image-dialog";
 
 export default function ProfilePage() {
   // Store hooks
@@ -110,17 +111,13 @@ export default function ProfilePage() {
   const removeOneOpenPosition = useRemoveOneOpenPositionStore();
   const removeOneCompImage = useRemoveOneCmpImageStore();
 
-  const updateProfileErrorState =
-    updateOneCmpStore.error ||
-    uploadAvatarCmpStore.error ||
-    uploadCoverCmpStore.error ||
-    uploadCmpImagesStore.error;
-
   const updateProfileLoadingState =
     updateOneCmpStore.loading ||
     uploadAvatarCmpStore.loading ||
     uploadCoverCmpStore.loading ||
-    uploadCmpImagesStore.loading;
+    uploadCmpImagesStore.loading ||
+    removeOneOpenPosition.loading ||
+    removeOneCompImage.loading;
 
   const { toast } = useToast();
 
@@ -161,6 +158,12 @@ export default function ProfilePage() {
   const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(
     null
   );
+  const [openRemoveImageDialog, setOpenRemoveImageDialog] =
+    useState<boolean>(false);
+  const [removedImage, setRemoveImage] = useState<{
+    id: string;
+    index: number;
+  } | null>(null);
   const [openPositions, setOpenPositions] = useState<IJobPosition[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
     ""
@@ -795,7 +798,7 @@ export default function ProfilePage() {
         );
       }
 
-      if (data.images instanceof File) {
+      if (data.images) {
         const imageFiles: File[] = data.images
           .map((img) => img?.image)
           .filter((image): image is File => image instanceof File);
@@ -869,7 +872,7 @@ export default function ProfilePage() {
     form.setValue("images", updated);
 
     if (company) {
-      removeOneCompImage.removeOneCmpImage(company.id ?? "", imageId);
+      await removeOneCompImage.removeOneCmpImage(company.id ?? "", imageId);
     }
 
     // Refetch current user
@@ -909,6 +912,19 @@ export default function ProfilePage() {
       });
     }
 
+    if (removeOneCompImage.loading) {
+      toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <ApsaraLoadingSpinner size={50} loop />
+            <TypographySmall className="font-medium leading-relaxed">
+              Removing Image...
+            </TypographySmall>
+          </div>
+        ),
+      });
+    }
+
     if (updateProfileLoadingState) {
       toast({
         description: (
@@ -921,7 +937,11 @@ export default function ProfilePage() {
         ),
       });
     }
-  }, [removeOneOpenPosition.loading, updateProfileLoadingState]);
+  }, [
+    removeOneOpenPosition.loading,
+    removeOneCompImage.loading,
+    updateProfileLoadingState,
+  ]);
 
   if (loading) return <CompanyProfilePageSkeleton />;
   if (!user || !company) return null;
@@ -1256,8 +1276,10 @@ export default function ProfilePage() {
                 setOnRemoveOpDialog={setOpenRemoveOpenPositionDialog}
                 onNoClick={() => setOpenRemoveOpenPositionDialog(false)}
                 onYesClick={() => {
-                  removeOpenPosition(currentOpenPositionID ?? "");
-                  setOpenRemoveOpenPositionDialog(false);
+                  if (currentOpenPositionID) {
+                    removeOpenPosition(currentOpenPositionID ?? "");
+                    setOpenRemoveOpenPositionDialog(false);
+                  }
                 }}
               />
             </div>
@@ -1273,7 +1295,7 @@ export default function ProfilePage() {
                 <CarouselContent className="w-full">
                   {form.watch("images")?.map((img, index) => {
                     let imageUrl = img?.image;
-                    if(img?.image instanceof File) {
+                    if (img?.image instanceof File) {
                       imageUrl = URL.createObjectURL(img.image);
                     }
 
@@ -1305,7 +1327,8 @@ export default function ProfilePage() {
                                   ?.filter((_, i) => i !== index);
                                 form.setValue("images", updated);
                               } else {
-                                handleRemoveOneCmpImage(img.id, index);
+                                setOpenRemoveImageDialog(true);
+                                setRemoveImage({ id: img.id, index: index });
                               }
                             }}
                           />
@@ -1313,6 +1336,20 @@ export default function ProfilePage() {
                       </CarouselItem>
                     );
                   })}
+                  <RemoveImageDialog
+                    onRemoveImageDialog={openRemoveImageDialog}
+                    setOnRemoveImageDialog={setOpenRemoveImageDialog}
+                    onNoClick={() => setOpenRemoveImageDialog(false)}
+                    onYesClick={() => {
+                      if (removedImage) {
+                        handleRemoveOneCmpImage(
+                          removedImage.id,
+                          removedImage.index
+                        );
+                        setOpenRemoveImageDialog(false);
+                      }
+                    }}
+                  />
                   {isEdit && (
                     <CarouselItem className="max-w-[280px]">
                       <label
@@ -1327,11 +1364,13 @@ export default function ProfilePage() {
                           onChange={(e) => {
                             const files = e.target.files;
                             if (!files) return;
-                            const currentImages = form.watch("images") || [];
-                            form.setValue("images", [
-                              ...currentImages,
-                              { image: files[0] },
-                            ]);
+                            const currentImages = form.watch("images");
+                            if(currentImages) {
+                              form.setValue("images", [
+                                ...currentImages,
+                                { image: files[0] },
+                              ]);
+                            }
                           }}
                         />
                         <div className="flex flex-col items-center gap-2">
