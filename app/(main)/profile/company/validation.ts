@@ -76,7 +76,7 @@ export const openPositionSchema = z.object({
         type: textValidation().optional(),
         experienceRequirement: textValidation().optional(),
         educationRequirement: textValidation().optional(),
-        skills: z.array(textValidation()).optional(),
+        skills: textValidation().optional(),
         salary: textValidation().optional(),
         deadlineDate: dateValidation().optional(),
       })

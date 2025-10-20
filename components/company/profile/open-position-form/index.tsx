@@ -24,40 +24,59 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
 
   const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
   const [skillInput, setSkillInput] = useState<string>("");
-  const initialSkill = getValues(`openPositions.${props.index}.skills`) || [];
-  const [skills, setSkills] = useState<string[]>(initialSkill);
+  const initialSkill = getValues(`openPositions.${props.index}.skills`) || "";
+  const [skills, setSkills] = useState<string>(initialSkill);
   const [selectedType, setSelectedType] = useState<TAvailability | null>(null);
 
   const addSkills = () => {
     const trimmed = skillInput.trim();
     if (!trimmed) return;
-
-    const alreadyExists = skills.some(
+  
+    const currentSkillsArray = skills
+      ? skills.split(", ").filter((s) => s.trim() !== "")
+      : [];
+  
+    const alreadyExists = currentSkillsArray.some(
       (skill) => skill.toLowerCase() === trimmed.toLowerCase()
     );
-
+  
     if (alreadyExists) {
       toast({
         variant: "destructive",
-        title: "Duplicated Benefit",
-        description: "Please input another benefit.",
+        title: "Duplicated Skill",
+        description: "This skill already exists.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
       setSkillInput("");
       setOpenSkillPopOver(false);
       return;
     }
-
-    const updated = [...skills, trimmed];
-    setSkills(updated);
-
+  
+    // Append new skill to string
+    const updatedSkills = [...currentSkillsArray, trimmed].join(", ");
+    setSkills(updatedSkills);
+  
+    // Sync with react-hook-form
+    props.form.setValue(`openPositions.${props.index}.skills`, updatedSkills, {
+      shouldDirty: true,
+    });
+  
     setSkillInput("");
     setOpenSkillPopOver(false);
   };
-
+  
   const removeSkills = (skillToRemove: string) => {
-    const updatedSkills = skills.filter((skill) => skill !== skillToRemove);
+    const updatedSkillsArray = skills
+      .split(", ")
+      .filter((skill) => skill !== skillToRemove);
+    const updatedSkills = updatedSkillsArray.join(", ");
+  
     setSkills(updatedSkills);
+  
+    // Sync with react-hook-form
+    props.form.setValue(`openPositions.${props.index}.skills`, updatedSkills, {
+      shouldDirty: true,
+    });
   };
 
   return (
@@ -149,7 +168,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             Skill Requirements
           </TypographyMuted>
           <div className="flex flex-wrap gap-2">
-            {skills?.map((item, index) => (
+            {skills.split(", ").map((item, index) => (
               <div
                 key={index}
                 className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted"

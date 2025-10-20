@@ -59,7 +59,9 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
             educationRequired: job.education,
             salary: job.salary,
             expireDate: job.deadlineDate,
-            skillsRequired: job.skills,
+            skillsRequired: Array.isArray(job.skills)
+            ? job.skills.join(", ")
+            : job.skills || "",
           }));
         }
 

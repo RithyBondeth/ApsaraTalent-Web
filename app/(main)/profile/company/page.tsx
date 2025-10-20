@@ -269,7 +269,7 @@ export default function ProfilePage() {
               experienceRequirement: op.experience,
               salary: op.salary || "0",
               deadlineDate: deadlineDate,
-              skills: op.skills || [],
+              skills: Array.isArray(op.skills) ? op.skills.join(", ") : op.skills || "",
             };
           }) || [],
         images:
@@ -709,6 +709,7 @@ export default function ProfilePage() {
         Array.isArray(data.openPositions)
       ) {
         const updatedPositions = data.openPositions.map((pos, index) => {
+          console.log("Position: ", pos);
           const dirtyPos = dirtyFields.openPositions?.[index];
           if (!dirtyPos) return null; // No changes in this position
 
@@ -721,7 +722,9 @@ export default function ProfilePage() {
             updatedPos.experience = pos.experienceRequirement;
           if (dirtyPos.educationRequirement)
             updatedPos.education = pos.educationRequirement;
-          if (dirtyPos.skills) updatedPos.skills = pos.skills;
+          if (dirtyPos.skills) {
+            updatedPos.skills = pos.skills;
+          }
           if (dirtyPos.salary) updatedPos.salary = pos.salary;
           if (dirtyPos.deadlineDate)
             updatedPos.deadlineDate =
@@ -996,7 +999,7 @@ export default function ProfilePage() {
               <Button
                 className="flex items-center gap-2 cursor-pointer py-1 px-3 rounded-full bg-red-500 text-red-100"
                 onClick={() => {
-                  handleRemoveCmpCover()
+                  handleRemoveCmpCover();
                   setIsEdit(false);
                 }}
                 type="button"
@@ -1045,7 +1048,7 @@ export default function ProfilePage() {
                   <Button
                     className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-red-500 text-red-100"
                     onClick={() => {
-                      handleRemoveCmpAvatar()
+                      handleRemoveCmpAvatar();
                       setIsEdit(false);
                     }}
                     type="button"
