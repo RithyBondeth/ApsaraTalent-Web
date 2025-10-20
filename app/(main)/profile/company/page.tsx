@@ -877,7 +877,25 @@ export default function ProfilePage() {
     form.setValue("images", updated);
 
     if (company) {
-      await removeOneCompImage.removeOneCmpImage(company.id ?? "", imageId);
+      await removeOneCompImage.removeOneCmpImage(company.id, imageId);
+    }
+
+    // Refetch current user
+    await getCurrentUser();
+  };
+
+  const handleRemoveCmpCover = async () => {
+    if (company) {
+      await removeCmpCover.removeCmpCover(company.id);
+    }
+
+    // Refetch current user
+    await getCurrentUser();
+  };
+
+  const handleRemoveCmpAvatar = async () => {
+    if (company) {
+      await removeCmpAvatar.removeCmpAvatar(company.id);
     }
 
     // Refetch current user
@@ -974,16 +992,21 @@ export default function ProfilePage() {
                 Change Cover
               </TypographySmall>
             </Button>
-            <Button
-              className="flex items-center gap-2 cursor-pointer py-1 px-3 rounded-full bg-red-500 text-red-100"
-              onClick={() => {}}
-              type="button"
-            >
-              <LucideXCircle strokeWidth={"1.2px"} width={"18px"} />
-              <TypographySmall className="text-xs">
-                Remove Cover
-              </TypographySmall>
-            </Button>
+            {company.cover && (
+              <Button
+                className="flex items-center gap-2 cursor-pointer py-1 px-3 rounded-full bg-red-500 text-red-100"
+                onClick={() => {
+                  handleRemoveCmpCover()
+                  setIsEdit(false);
+                }}
+                type="button"
+              >
+                <LucideXCircle strokeWidth={"1.2px"} width={"18px"} />
+                <TypographySmall className="text-xs">
+                  Remove Cover
+                </TypographySmall>
+              </Button>
+            )}
           </div>
         )}
         <input
@@ -1018,12 +1041,18 @@ export default function ProfilePage() {
                 >
                   <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
                 </Button>
-                <Button
-                  className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-red-500 text-red-100"
-                  type="button"
-                >
-                  <LucideXCircle width={"18px"} strokeWidth={"1.2px"} />
-                </Button>
+                {company.avatar && (
+                  <Button
+                    className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-red-500 text-red-100"
+                    onClick={() => {
+                      handleRemoveCmpAvatar()
+                      setIsEdit(false);
+                    }}
+                    type="button"
+                  >
+                    <LucideXCircle width={"18px"} strokeWidth={"1.2px"} />
+                  </Button>
+                )}
               </div>
             )}
             <input
