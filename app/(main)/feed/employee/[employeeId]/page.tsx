@@ -52,6 +52,7 @@ import { useCompanyLikeStore } from "@/stores/apis/matching/company-like.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { toast } from "@/hooks/use-toast";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
+import { capitalizeWords } from "@/utils/functions/capitalize-words";
 
 export default function EmployeeDetailPage() {
   const params = useParams<{ employeeId: string }>();
@@ -201,12 +202,19 @@ export default function EmployeeDetailPage() {
     const companyId = currentUser?.company?.id;
     const employeeId = user?.employee?.id;
     if (!companyId) {
-      toast({ title: "Sign in required", description: "Please sign in as a company to save an employee.", variant: "destructive" });
+      toast({
+        title: "Sign in required",
+        description: "Please sign in as a company to save an employee.",
+        variant: "destructive",
+      });
       return;
     }
     if (!employeeId) return;
     try {
-      await companyFavEmployeeStore.addEmployeeToFavorite(companyId, employeeId);
+      await companyFavEmployeeStore.addEmployeeToFavorite(
+        companyId,
+        employeeId
+      );
       toast({ title: "Saved", description: "Employee added to favorites." });
       setIsSavedFavorite(true);
     } catch {
@@ -289,9 +297,11 @@ export default function EmployeeDetailPage() {
             <TypographyMuted>Status</TypographyMuted>
             <IconLabel
               icon={<LucideClock strokeWidth={"1.5px"} />}
-              text={`${user?.employee?.availability!.split("_")[0]} ${
-                user?.employee?.availability!.split("_")[1]
-              }`}
+              text={`${capitalizeWords(
+                user?.employee?.availability!.split("_")[0]!
+              )} ${capitalizeWords(
+                user?.employee?.availability!.split("_")[1]!
+              )}`}
             />
           </div>
         </div>
@@ -541,10 +551,16 @@ export default function EmployeeDetailPage() {
       {/* Action Buttons Section */}
       <div className="flex items-center gap-2">
         {!isSavedFavorite && (
-        <Button variant={"outline"} onClick={handleSaveFavorite} disabled={companyFavEmployeeStore.loading || !currentUser?.company?.id}>
-          <LucideBookmark />
-          Save to favorite
-        </Button>
+          <Button
+            variant={"outline"}
+            onClick={handleSaveFavorite}
+            disabled={
+              companyFavEmployeeStore.loading || !currentUser?.company?.id
+            }
+          >
+            <LucideBookmark />
+            Save to favorite
+          </Button>
         )}
         <Button
           onClick={handleLike}

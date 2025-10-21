@@ -14,7 +14,7 @@ export type TCompanyUpdateBody = Partial<Omit<ICompany, "id">> & {
   valueIdsToDelete?: number[];
   jobIdsToDelete?: string[];
   careerScopeIdsToDelete?: string[];
-  socialIdsToDelete?: number[];
+  socialIdsToDelete?: string[];
 };
 
 type TUpdateOneCompanyState = TUpdateOneCompanyResponse & {

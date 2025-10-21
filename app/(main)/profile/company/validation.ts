@@ -154,6 +154,7 @@ export const socialSchema = z.object({
     .array(
       z
         .object({
+          id: z.string().optional(),
           platform: z.string().optional(),
           url: z.string().optional(),
         })

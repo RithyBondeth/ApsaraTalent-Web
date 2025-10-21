@@ -68,7 +68,10 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                 <TypographyP className="font-medium">Benefits</TypographyP>
                 <div className="flex flex-wrap gap-2">
                   {props.benefits.map((benefit, index) => (
-                    <div key={index} className="px-3 py-2 rounded-2xl bg-muted">
+                    <div
+                      key={index}
+                      className="px-3 py-2 rounded-2xl font-medium bg-muted [&>div>p]:text-xs [&>div>p]:text-[#0073E6]"
+                    >
                       <IconLabel
                         icon={
                           <LucideCircleCheck stroke="white" fill="#0073E6" />
@@ -83,7 +86,10 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                 <TypographyP className="font-medium">Values</TypographyP>
                 <div className="flex flex-wrap gap-2">
                   {props.values.map((value, index) => (
-                    <div key={index} className="px-3 py-2 rounded-2xl bg-muted">
+                    <div
+                      key={index}
+                      className="px-3 py-2 rounded-2xl font-medium bg-muted [&>div>p]:text-xs [&>div>p]:text-[#69B41E]"
+                    >
                       <IconLabel
                         icon={
                           <LucideCircleCheck stroke="white" fill="#69B41E" />

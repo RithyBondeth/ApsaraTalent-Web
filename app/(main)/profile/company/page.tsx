@@ -77,9 +77,11 @@ import ImagePopup from "@/components/utils/image-popup";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { TPlatform } from "@/utils/types/platform.type";
 import {
+  IBenefits,
   ICareerScopes,
   IJobPosition,
   ISocial,
+  IValues,
 } from "@/utils/interfaces/user-interface/company.interface";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { CompanyProfilePageSkeleton } from "./skeleton";
@@ -101,6 +103,8 @@ import { useRemoveCmpAvatarStore } from "@/stores/apis/company/remove-cmp-avatar
 import { useRemoveCmpCoverStore } from "@/stores/apis/company/remove-cmp-cover.store";
 import emptySvgImage from "@/assets/svg/empty.svg";
 import Image from "next/image";
+import { trim, update } from "lodash";
+import { capitalizeWords } from "@/utils/functions/capitalize-words";
 
 export default function ProfilePage() {
   // Store hooks
@@ -177,37 +181,22 @@ export default function ProfilePage() {
     ""
   );
   const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
-  const [benefitInput, setBenefitInput] = useState<{
-    id?: number;
-    label: string;
-  } | null>(null);
-  const [benefits, setBenefits] = useState<{ id?: number; label: string }[]>(
-    []
-  );
+  const [benefitInput, setBenefitInput] = useState<IBenefits | null>(null);
+  const [benefits, setBenefits] = useState<IBenefits[]>([]);
   const [deletedBenefitIds, setDeletedBenefitIds] = useState<number[]>([]);
   const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
-  const [valueInput, setValueInput] = useState<{
-    id?: number;
-    label: string;
-  } | null>(null);
-  const [values, setValues] = useState<{ id?: number; label: string }[]>([]);
+  const [valueInput, setValueInput] = useState<IValues | null>(null);
+  const [values, setValues] = useState<IValues[]>([]);
   const [deletedValueIds, setDeletedValueIds] = useState<number[]>([]);
   const [openCareersPopOver, setOpenCareersPopOver] = useState<boolean>(false);
-  const [careersInput, setCareersInput] = useState<{
-    id: string;
-    name: string;
-    description?: string;
-  } | null>(null);
+  const [careersInput, setCareersInput] = useState<ICareerScopes | null>(null);
   const [careers, setCareers] = useState<ICareerScopes[]>([]);
   const [deleteCareerScopeIds, setDeleteCareerScopeIds] = useState<string[]>(
     []
   );
-  const [socialInput, setSocialInput] = useState<{
-    id: string;
-    social: string;
-    link: string;
-  }>({ id: "", social: "", link: "" });
+  const [socialInput, setSocialInput] = useState<ISocial | null>(null);
   const [socials, setSocials] = useState<ISocial[]>([]);
+  const [deleteSocialIds, setDeleteSocialIds] = useState<string[]>([]);
   const [selectedDates, setSelectedDates] = useState<
     Record<string, { posted?: Date; deadline?: Date }>
   >({});
@@ -308,6 +297,7 @@ export default function ProfilePage() {
           description: cs.description,
         })),
         socials: company.socials.map((sc) => ({
+          id: sc.id,
           platform: sc.platform,
           url: sc.url,
         })),
@@ -621,14 +611,15 @@ export default function ProfilePage() {
   };
 
   const addSocial = () => {
-    const trimmedSocial = socialInput.social.trim();
-    const trimmedLink = socialInput.link.trim();
+    const trimmedPlatform = socialInput?.platform.trim();
+    const trimmedUrl = socialInput?.url.trim();
+    if (!trimmedPlatform || !trimmedUrl) return;
 
-    if (!trimmedSocial || !trimmedLink) return;
+    const currentSocials = form.getValues("socials") || [];
 
     // Check for duplicate social entries
-    const alreadyExists = socials.some(
-      (s) => s.platform.toLowerCase() === trimmedSocial.toLowerCase()
+    const alreadyExists = currentSocials.some(
+      (s) => s?.platform?.toLowerCase() === trimmedPlatform.toLowerCase()
     );
 
     if (alreadyExists) {
@@ -638,19 +629,42 @@ export default function ProfilePage() {
         description: "This social platform already exists.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
+      setSocialInput(null);
       return;
     }
 
     const updatedSocials = [
       ...socials,
-      { platform: trimmedSocial, url: trimmedLink },
+      { id: "", platform: capitalizeWords(trimmedPlatform), url: trimmedUrl },
     ];
+    form.setValue("socials", updatedSocials, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+
     setSocials(updatedSocials); // Update the state
-    setSocialInput({ id: "", social: "", link: "" }); // Reset the input
+    setSocialInput(null); // Reset the input
   };
 
-  const removeSocial = (index: number) => {
-    const updatedSocials = socials.filter((_, i) => i !== index);
+  const removeSocial = (platform: TPlatform) => {
+    const currentSocials = form.getValues("socials") || [];
+
+    const socialToDelete = currentSocials.find(
+      (sc) => sc?.platform === platform
+    );
+
+    if ("id" in socialToDelete! && socialToDelete.id) {
+      setDeleteSocialIds((prev) => [...prev, socialToDelete.id as string]);
+    }
+
+    const updatedSocials = socials.filter(
+      (sc) => sc.platform !== socialToDelete?.platform
+    );
+    form.setValue("socials", updatedSocials, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+
     setSocials(updatedSocials); // Update the state
   };
 
@@ -725,20 +739,19 @@ export default function ProfilePage() {
         Array.isArray(data.openPositions)
       ) {
         const updatedPositions = data.openPositions.map((pos, index) => {
-          const dirtyPos = dirtyFields?.openPositions?.[index];
           const updatedPos: Record<string, any> = {};
 
-          // ✅ Include existing positions by UUID
+          // Include existing positions by UUID
           if (pos.uuid) {
             updatedPos.id = pos.uuid;
           }
 
-          // ✅ For new positions (uuid === "" or null)
+          // For new positions (uuid === "" or null)
           if (!pos.uuid) {
             updatedPos.isNew = true; // optional flag if your backend needs it
           }
 
-          // ✅ Always include existing positions (even if not dirty)
+          // Always include existing positions (even if not dirty)
           updatedPos.title = pos.title;
           updatedPos.description = pos.description;
           updatedPos.type = pos.type;
@@ -754,7 +767,7 @@ export default function ProfilePage() {
           return updatedPos;
         });
 
-        // ✅ Always keep all open positions (existing + new)
+        // Always keep all open positions (existing + new)
         if (updatedPositions.length > 0) {
           updateBody.openPositions = updatedPositions as any;
         }
@@ -762,7 +775,7 @@ export default function ProfilePage() {
 
       /* ------------------------ BENEFITS & VALUES ------------------------ */
       if (
-        dirtyFields?.benefitsAndValues?.benefits ||
+        dirtyFields.benefitsAndValues?.benefits ||
         deletedBenefitIds.length > 0
       ) {
         // Send all current benefits (with or without IDs)
@@ -774,10 +787,7 @@ export default function ProfilePage() {
         }
       }
 
-      if (
-        dirtyFields?.benefitsAndValues?.values ||
-        deletedValueIds.length > 0
-      ) {
+      if (dirtyFields.benefitsAndValues?.values || deletedValueIds.length > 0) {
         // Send all current values (with or without IDs)
         updateBody.values = data.benefitsAndValues?.values || [];
 
@@ -788,7 +798,7 @@ export default function ProfilePage() {
       }
 
       /* ------------------------ CAREER SCOPES ------------------------ */
-      if (dirtyFields?.careerScopes || deleteCareerScopeIds.length > 0) {
+      if (dirtyFields.careerScopes || deleteCareerScopeIds.length > 0) {
         // Send all current careerScopes (with or without IDs)
         updateBody.careerScopes = data.careerScopes || [];
 
@@ -799,15 +809,22 @@ export default function ProfilePage() {
       }
 
       /* ------------------------ SOCIALS ------------------------ */
-      if (dirtyFields?.socials) {
-        updateBody.socials = data.socials
-          ?.filter((s): s is { platform: string; url: string } =>
-            Boolean(s && s.platform && s.url)
-          )
-          .map((s) => ({
-            platform: s.platform,
-            url: s.url,
-          }));
+      if (dirtyFields.socials || deleteSocialIds.length > 0) {
+        console.log("Social Data: ", data.socials);
+        updateBody.socials =
+          data.socials
+            ?.filter((s): s is { id: string; platform: string; url: string } =>
+              Boolean(s && s.platform && s.url)
+            )
+            .map((s) => ({
+              id: s.id,
+              platform: s.platform,
+              url: s.url,
+            })) || [];
+
+        if (deleteSocialIds.length > 0) {
+          updateBody.socialIdsToDelete = deleteSocialIds;
+        }
       }
 
       /* ------------------------ IMAGE UPLOADS ------------------------ */
@@ -1604,16 +1621,13 @@ export default function ProfilePage() {
                   careers.length > 0 &&
                   careers.map((career, index) => {
                     return (
-                      <div
-                        key={index}
-                        className={`rounded-3xl border-2 border-muted duration-300 ease-linear hover:border-muted-foreground`}
-                      >
+                      <div key={index}>
                         <HoverCard>
-                          <HoverCardTrigger className="flex items-center bg-muted rounded-3xl">
+                          <HoverCardTrigger className="flex items-center rounded-3xl">
                             <Tag label={career.name} />
                             {isEdit && (
                               <LucideXCircle
-                                className="text-muted-foreground cursor-pointer mr-2 text-red-500"
+                                className="text-muted-foreground cursor-pointer ml-1 text-red-500"
                                 width={"18px"}
                                 onClick={() => removeCareer(career.name)}
                               />
@@ -1714,23 +1728,27 @@ export default function ProfilePage() {
                     {socials &&
                       socials.length > 0 &&
                       socials.map((item: ISocial, index) => (
-                        <Link
-                          key={index}
-                          href={item.url}
-                          className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
-                        >
-                          {getSocialPlatformTypeIcon(
-                            item.platform as TPlatform
-                          )}
-                          <TypographySmall>{item.platform}</TypographySmall>
+                        <div className="flex items-center gap-1">
+                          <Link
+                            key={index}
+                            href={item.url}
+                            className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
+                          >
+                            {getSocialPlatformTypeIcon(
+                              item.platform as TPlatform
+                            )}
+                            <TypographySmall>{item.platform}</TypographySmall>
+                          </Link>
                           {isEdit && (
                             <LucideXCircle
                               className="text-muted-foreground cursor-pointer text-red-500"
                               width={"18px"}
-                              onClick={() => removeSocial(index)}
+                              onClick={() =>
+                                removeSocial(item.platform as TPlatform)
+                              }
                             />
                           )}
-                        </Link>
+                        </div>
                       ))}
                   </div>
                   {isEdit && (
@@ -1744,11 +1762,11 @@ export default function ProfilePage() {
                             <Select
                               onValueChange={(value: string) =>
                                 setSocialInput({
-                                  ...socialInput,
-                                  social: value,
+                                  ...socialInput!,
+                                  platform: value,
                                 })
                               }
-                              value={socialInput.social}
+                              value={socialInput?.platform}
                             >
                               <SelectTrigger className="h-12 text-muted-foreground">
                                 <SelectValue placeholder="Platform" />
@@ -1772,11 +1790,11 @@ export default function ProfilePage() {
                                 placeholder="Link"
                                 id="link"
                                 name="link"
-                                value={socialInput.link}
+                                value={socialInput?.url}
                                 onChange={(e) =>
                                   setSocialInput({
-                                    ...socialInput,
-                                    link: e.target.value,
+                                    ...socialInput!,
+                                    url: e.target.value,
                                   })
                                 }
                                 prefix={<LucideLink2 />}
