@@ -727,17 +727,17 @@ export default function ProfilePage() {
         const updatedPositions = data.openPositions.map((pos, index) => {
           const dirtyPos = dirtyFields?.openPositions?.[index];
           const updatedPos: Record<string, any> = {};
-      
+
           // ✅ Include existing positions by UUID
           if (pos.uuid) {
             updatedPos.id = pos.uuid;
           }
-      
+
           // ✅ For new positions (uuid === "" or null)
           if (!pos.uuid) {
             updatedPos.isNew = true; // optional flag if your backend needs it
           }
-      
+
           // ✅ Always include existing positions (even if not dirty)
           updatedPos.title = pos.title;
           updatedPos.description = pos.description;
@@ -750,10 +750,10 @@ export default function ProfilePage() {
           updatedPos.salary = pos.salary;
           updatedPos.deadlineDate =
             pos.deadlineDate?.toISOString() || new Date().toISOString();
-      
+
           return updatedPos;
         });
-      
+
         // ✅ Always keep all open positions (existing + new)
         if (updatedPositions.length > 0) {
           updateBody.openPositions = updatedPositions as any;
@@ -1282,10 +1282,9 @@ export default function ProfilePage() {
               onSubmit={form.handleSubmit(onSubmit)}
               className="flex flex-col items-start gap-5"
             >
-              {(openPositions &&
-                openPositions.length > 0 ) ?
+              {openPositions && openPositions.length > 0 ? (
                 openPositions.map((position, index) => {
-                  const positionId = position.id
+                  const positionId = position.id;
                   const deadlineDate =
                     selectedDates[positionId]?.deadline ||
                     new Date(position.deadlineDate);
@@ -1330,12 +1329,15 @@ export default function ProfilePage() {
                       }}
                     />
                   );
-                }) : (
-                  <div className="w-full flex flex-col items-center justify-center p-5">
-                    <Image alt="empty" src={emptySvgImage} className="size-44"/>
-                    <TypographyMuted className="text-sm">No Open Position Available.</TypographyMuted>
-                  </div>
-                )}
+                })
+              ) : (
+                <div className="w-full flex flex-col items-center justify-center p-5">
+                  <Image alt="empty" src={emptySvgImage} className="size-44" />
+                  <TypographyMuted className="text-sm">
+                    No Open Position Available.
+                  </TypographyMuted>
+                </div>
+              )}
             </div>
             <RemoveOpenPositionDialog
               onRemoveOpDialog={openRemoveOpenPositionDialog}
