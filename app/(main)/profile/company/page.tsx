@@ -1285,9 +1285,9 @@ export default function ProfilePage() {
               {(openPositions &&
                 openPositions.length > 0 ) ?
                 openPositions.map((position, index) => {
-                  const positionId = position.id;
+                  const positionId = position.id
                   const deadlineDate =
-                    selectedDates[positionId].deadline ||
+                    selectedDates[positionId]?.deadline ||
                     new Date(position.deadlineDate);
                   return (
                     <OpenPositionForm
