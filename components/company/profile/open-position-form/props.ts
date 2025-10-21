@@ -2,9 +2,8 @@ import { TCompanyProfileForm } from "@/app/(main)/profile/company/validation";
 import { UseFormReturn } from "react-hook-form";
 
 export interface IOpenPositionFormProps {
-   positionId: number;
+   positionIndex: number;
    positionUUID: string;
-   positionLabel: string | undefined;
    title: string | undefined;
    description: string | undefined;
    type: string | undefined;

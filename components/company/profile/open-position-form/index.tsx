@@ -15,7 +15,13 @@ import { useState } from "react";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { TAvailability } from "@/utils/types/availability.type";
 
 export default function OpenPositionForm(props: IOpenPositionFormProps) {
@@ -31,15 +37,15 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
   const addSkills = () => {
     const trimmed = skillInput.trim();
     if (!trimmed) return;
-  
+
     const currentSkillsArray = skills
       ? skills.split(", ").filter((s) => s.trim() !== "")
       : [];
-  
+
     const alreadyExists = currentSkillsArray.some(
       (skill) => skill.toLowerCase() === trimmed.toLowerCase()
     );
-  
+
     if (alreadyExists) {
       toast({
         variant: "destructive",
@@ -51,28 +57,28 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
       setOpenSkillPopOver(false);
       return;
     }
-  
+
     // Append new skill to string
     const updatedSkills = [...currentSkillsArray, trimmed].join(", ");
     setSkills(updatedSkills);
-  
+
     // Sync with react-hook-form
     props.form.setValue(`openPositions.${props.index}.skills`, updatedSkills, {
       shouldDirty: true,
     });
-  
+
     setSkillInput("");
     setOpenSkillPopOver(false);
   };
-  
+
   const removeSkills = (skillToRemove: string) => {
     const updatedSkillsArray = skills
       .split(", ")
       .filter((skill) => skill !== skillToRemove);
     const updatedSkills = updatedSkillsArray.join(", ");
-  
+
     setSkills(updatedSkills);
-  
+
     // Sync with react-hook-form
     props.form.setValue(`openPositions.${props.index}.skills`, updatedSkills, {
       shouldDirty: true,
@@ -82,7 +88,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
   return (
     <div className="w-full flex flex-col items-start gap-3">
       <div className="w-full flex items-center justify-between">
-        <TypographyMuted>{props.positionLabel}</TypographyMuted>
+        <TypographyMuted>Position {Number(props.index) + 1}</TypographyMuted>
         {props.isEdit && (
           <LucideTrash2
             onClick={props.onRemove}
@@ -118,7 +124,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
           <Controller
             name={`openPositions.${props.index}.type`}
             control={control}
-            defaultValue={selectedType ?? props.type} 
+            defaultValue={selectedType ?? props.type}
             render={({ field }) => (
               <Select
                 value={selectedType ?? props.type}
@@ -129,11 +135,29 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
                 disabled={!props.isEdit}
               >
                 <SelectTrigger className="h-12 text-muted-foreground">
-                  <SelectValue placeholder={props.isEdit ? "Select Type" : selectedType}/>
+                  <SelectValue
+                    placeholder={props.isEdit ? "Select Type" : selectedType}
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                 <SelectItem key={'full_time'} value={'Full Time'}>Full Time</SelectItem>
-                 <SelectItem key={'part_time'} value={'Part Time'}>Part Time</SelectItem>
+                  <SelectItem key={"full_time"} value={"full_time"}>
+                    Full Time
+                  </SelectItem>
+                  <SelectItem key={"part_time"} value={"part_time"}>
+                    Part Time
+                  </SelectItem>
+                  <SelectItem key={"contract"} value={"contract"}>
+                    Contract
+                  </SelectItem>
+                  <SelectItem key={"internship"} value={"internship"}>
+                    Internship
+                  </SelectItem>
+                  <SelectItem key={"remote"} value={"remote"}>
+                    Remote
+                  </SelectItem>
+                  <SelectItem key={"freelance"} value={"freelance"}>
+                    Freelance
+                  </SelectItem>
                 </SelectContent>
               </Select>
             )}

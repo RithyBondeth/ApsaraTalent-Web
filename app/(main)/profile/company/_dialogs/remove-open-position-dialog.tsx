@@ -27,7 +27,11 @@ export default function RemoveOpenPositionDialog(props: {
           <Button variant={"outline"} type="button" onClick={props.onNoClick}>
             No
           </Button>
-          <Button type="button" onClick={props.onYesClick}>
+          <Button
+            type="button"
+            variant={"destructive"}
+            onClick={props.onYesClick}
+          >
             Yes
           </Button>
         </DialogFooter>

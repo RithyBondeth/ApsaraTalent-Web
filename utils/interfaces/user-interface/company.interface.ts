@@ -37,7 +37,7 @@ export interface ICareerScopes {
 }
 
 export interface IJobPosition {
-    id?: string;
+    id: string;
     title: string;
     description: string;
     salary: string;
