@@ -247,6 +247,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
           }
         />
         <LabelInput
+          className="hidden"
           label="Open Position ID"
           input={
             <Input
