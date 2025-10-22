@@ -1728,9 +1728,8 @@ export default function ProfilePage() {
                     {socials &&
                       socials.length > 0 &&
                       socials.map((item: ISocial, index) => (
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1"  key={index}>
                           <Link
-                            key={index}
                             href={item.url}
                             className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
                           >
