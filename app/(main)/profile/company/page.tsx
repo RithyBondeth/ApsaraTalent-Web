@@ -863,8 +863,9 @@ export default function ProfilePage() {
         await updateOneCmpStore.updateOneCompany(company!.id, updateBody);
       }
 
-      // Refetch current user and reset form
-      await getCurrentUser();
+      // Refresh page for refetch current user and reset form 
+      window.location.reload();
+
       form.reset(data);
 
       toast({
@@ -1728,7 +1729,7 @@ export default function ProfilePage() {
                     {socials &&
                       socials.length > 0 &&
                       socials.map((item: ISocial, index) => (
-                        <div className="flex items-center gap-1"  key={index}>
+                        <div className="flex items-center gap-1" key={index}>
                           <Link
                             href={item.url}
                             className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
