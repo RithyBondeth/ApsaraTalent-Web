@@ -105,6 +105,7 @@ import emptySvgImage from "@/assets/svg/empty.svg";
 import Image from "next/image";
 import { trim, update } from "lodash";
 import { capitalizeWords } from "@/utils/functions/capitalize-words";
+import RemoveAvatarOrCoverDialog from "./_dialogs/remove-avatar-cover-dialog";
 
 export default function ProfilePage() {
   // Store hooks
@@ -175,6 +176,10 @@ export default function ProfilePage() {
     id: string;
     index: number;
   } | null>(null);
+  const [openRemoveAvatarDialog, setOpenRemoveAvatarDialog] =
+    useState<boolean>(false);
+  const [openRemoveCoverDialog, setOpenRemoveCoverDialog] =
+    useState<boolean>(false);
 
   const [openPositions, setOpenPositions] = useState<IJobPosition[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
@@ -863,7 +868,7 @@ export default function ProfilePage() {
         await updateOneCmpStore.updateOneCompany(company!.id, updateBody);
       }
 
-      // Refresh page for refetch current user and reset form 
+      // Refresh page for refetch current user and reset form
       window.location.reload();
 
       form.reset(data);
@@ -933,6 +938,9 @@ export default function ProfilePage() {
     // Refetch current user
     await getCurrentUser();
     setIsEdit(false);
+
+    // Close dialog
+    setOpenRemoveCoverDialog(false);
   };
 
   const handleRemoveCmpAvatar = async () => {
@@ -943,6 +951,9 @@ export default function ProfilePage() {
     // Refetch current user
     await getCurrentUser();
     setIsEdit(false);
+
+    // Close dialog
+    setOpenRemoveAvatarDialog(false);
   };
 
   // Profile, Cover and Image Popup handlers
@@ -1038,7 +1049,7 @@ export default function ProfilePage() {
             {company.cover && (
               <Button
                 className="flex items-center gap-2 cursor-pointer py-1 px-3 rounded-full bg-red-500 text-red-100"
-                onClick={handleRemoveCmpCover}
+                onClick={() => setOpenRemoveCoverDialog(true)}
                 type="button"
               >
                 <LucideXCircle strokeWidth={"1.2px"} width={"18px"} />
@@ -1047,6 +1058,13 @@ export default function ProfilePage() {
                 </TypographySmall>
               </Button>
             )}
+            <RemoveAvatarOrCoverDialog
+              type="cover"
+              setOnRemoveAvatarOrCoverDialog={setOpenRemoveCoverDialog}
+              onRemoveAvatarOrCoverDialog={openRemoveCoverDialog}
+              onNoClick={() => setOpenRemoveCoverDialog(false)}
+              onYesClick={handleRemoveCmpCover}
+            />
           </div>
         )}
         <input
@@ -1069,7 +1087,7 @@ export default function ProfilePage() {
                 avatarFile ? URL.createObjectURL(avatarFile) : company.avatar!
               }
             />
-            <AvatarFallback className="uppercase">
+            <AvatarFallback className="uppercase text-lg">
               {company.name.slice(0, 3)}
             </AvatarFallback>
             {isEdit && (
@@ -1084,12 +1102,19 @@ export default function ProfilePage() {
                 {company.avatar && (
                   <Button
                     className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-red-500 text-red-100"
-                    onClick={handleRemoveCmpAvatar}
+                    onClick={() => setOpenRemoveAvatarDialog(true)}
                     type="button"
                   >
                     <LucideXCircle width={"18px"} strokeWidth={"1.2px"} />
                   </Button>
                 )}
+                <RemoveAvatarOrCoverDialog
+                  type="avatar"
+                  setOnRemoveAvatarOrCoverDialog={setOpenRemoveAvatarDialog}
+                  onRemoveAvatarOrCoverDialog={openRemoveAvatarDialog}
+                  onNoClick={() => setOpenRemoveAvatarDialog(false)}
+                  onYesClick={handleRemoveCmpAvatar}
+                />
               </div>
             )}
             <input

@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 
 export default function RemoveAvatarOrCoverDialog(props: {
-  type: 'Avatar' | 'Cover';  
+  type: 'avatar' | 'cover';  
   onRemoveAvatarOrCoverDialog: boolean;
   setOnRemoveAvatarOrCoverDialog: (onRemoveAvatarOrCoverDialog: boolean) => void;
   onNoClick: () => void;
