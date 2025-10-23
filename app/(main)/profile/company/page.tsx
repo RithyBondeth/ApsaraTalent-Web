@@ -1087,7 +1087,7 @@ export default function ProfilePage() {
                 avatarFile ? URL.createObjectURL(avatarFile) : company.avatar!
               }
             />
-            <AvatarFallback className="uppercase text-lg">
+            <AvatarFallback className="uppercase text-lg font-medium">
               {company.name.slice(0, 3)}
             </AvatarFallback>
             {isEdit && (
