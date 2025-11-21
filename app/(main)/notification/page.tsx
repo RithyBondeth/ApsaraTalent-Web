@@ -117,7 +117,7 @@ export default function NotificationPage() {
           }}
           timestamp={"2025-10-02 07:02:13.864662"}
         />
-        <NotificationCardSkeleton/>
+        <NotificationCardSkeleton />
       </div>
     </div>
   );

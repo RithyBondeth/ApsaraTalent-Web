@@ -64,7 +64,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                   {props.description}
                 </TypographyMuted>
               </div>
-              <div className="flex flex-col items-start gap-2 tablet-sm:hidden">
+              {props.benefits.length > 0 && <div className="flex flex-col items-start gap-2 tablet-sm:hidden">
                 <TypographyP className="font-medium">Benefits</TypographyP>
                 <div className="flex flex-wrap gap-2">
                   {props.benefits.map((benefit, index) => (
@@ -81,8 +81,8 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                     </div>
                   ))}
                 </div>
-              </div>
-              <div className="flex flex-col items-start gap-2 tablet-sm:hidden">
+              </div>}
+              {props.values.length > 0 && <div className="flex flex-col items-start gap-2 tablet-sm:hidden">
                 <TypographyP className="font-medium">Values</TypographyP>
                 <div className="flex flex-wrap gap-2">
                   {props.values.map((value, index) => (
@@ -99,7 +99,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                     </div>
                   ))}
                 </div>
-              </div>
+              </div>}
               <div className="w-full flex justify-end">
                 <Link href={`/feed/company/${props.id}`}>
                   <Button className="text-xs">View Company</Button>
