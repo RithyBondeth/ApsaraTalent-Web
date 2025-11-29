@@ -117,7 +117,7 @@ export default function CompanyDetailPage() {
       ignoreNextClick.current = false;
       return;
     }
-    setOpenProfilePopup(true);
+    if(user?.company?.avatar) setOpenProfilePopup(true);
   };
 
   // Loading or error states

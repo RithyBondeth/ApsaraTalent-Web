@@ -54,11 +54,9 @@ import {
   IEducation,
   IExperience,
   ISkill,
-} from "@/utils/interfaces/user-interface/employee.interface";
-import {
   ICareerScopes,
   ISocial,
-} from "@/utils/interfaces/user-interface/company.interface";
+} from "@/utils/interfaces/user-interface/employee.interface";
 import {
   HoverCard,
   HoverCardContent,
@@ -130,7 +128,7 @@ export default function EmployeeProfilePage() {
   const [experience, setExperience] = useState<IExperience[]>([]);
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
   const [socialInput, setSocialInput] = useState<{
-    platform: string;
+    platform: TPlatform | "";
     url: string;
   }>({ platform: "", url: "" });
   const [socials, setSocials] = useState<ISocial[]>([]);
@@ -244,7 +242,7 @@ export default function EmployeeProfilePage() {
 
   useEffect(() => {
     const initialSocial = (form.getValues?.("socials") || []).filter(
-      (s): s is { platform: string; url: string } => s !== undefined
+      (s): s is ISocial => s !== undefined
     );
     setSocials(initialSocial);
   }, [form]);
@@ -311,7 +309,7 @@ export default function EmployeeProfilePage() {
 
   //Socials
   const addSocial = () => {
-    const trimmedPlatform = socialInput.platform.trim();
+    const trimmedPlatform = socialInput.platform;
     const trimmedUrl = socialInput.url.trim();
 
     if (!trimmedPlatform || !trimmedUrl) return;
@@ -331,7 +329,7 @@ export default function EmployeeProfilePage() {
       return;
     }
 
-    setSocials([...socials, { platform: trimmedPlatform, url: trimmedUrl }]);
+    setSocials([...socials, { platform: trimmedPlatform as TPlatform, url: trimmedUrl }]);
     setSocialInput({ platform: "", url: "" });
   };
 
@@ -1271,7 +1269,7 @@ export default function EmployeeProfilePage() {
                           Platform
                         </TypographyMuted>
                         <Select
-                          onValueChange={(value: string) =>
+                          onValueChange={(value: TPlatform) =>
                             setSocialInput({ ...socialInput, platform: value })
                           }
                           value={socialInput.platform}

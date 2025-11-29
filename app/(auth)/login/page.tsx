@@ -61,7 +61,7 @@ function LoginPage() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [openRmbDialog, setOpenRmbDialog] = useState<boolean>(false);
   const [socialTypeIdentifier, setSocialTypeIdentifier] = useState<string | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  //const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const router = useRouter();
   const { resolvedTheme } = useTheme();
   const { toast } = useToast();
@@ -138,14 +138,14 @@ function LoginPage() {
   };
 
   const onSubmit = async (data: TLoginForm) => {
-    setIsLoggedIn(true);
+    //setIsLoggedIn(true);
     await login(data.email, data.password, data.rememberMe!);
   };
 
   useInitializeAuth();
 
   useEffect(() => {
-    if (!isLoggedIn) return;
+//    if (!isLoggedIn) return;
 
     if (isAuthenticated) {
       // Preload all user data while showing success message
@@ -194,11 +194,11 @@ function LoginPage() {
           </ToastAction>
         ),
       });
-  }, [isAuthenticated, error, message, loading, isLoggedIn]);
+  }, [isAuthenticated, error, message, loading]);
 
   // Social Login Google, LinkedIn, Github, Facebook
   useEffect(() => {
-    if (!isLoggedIn) return;
+   // if (!isLoggedIn) return;
 
     if (
       googleLoginStore.isAuthenticated ||
@@ -251,7 +251,7 @@ function LoginPage() {
     githubLoginStore.newUser,
     facebookLoginStore.isAuthenticated,
     facebookLoginStore.newUser,
-    isLoggedIn,
+    //isLoggedIn,
   ]);
 
   const handleSocialLogin = (rememberMe: boolean) => {
@@ -437,7 +437,7 @@ function LoginPage() {
             <Button
               variant={"outline"}
               onClick={() => {
-                setIsLoggedIn(true);
+                //setIsLoggedIn(true);
                 handleSocialLogin(false);
                 setOpenRmbDialog(false);
               }}
@@ -446,7 +446,7 @@ function LoginPage() {
             </Button>
             <Button
               onClick={() => {
-                setIsLoggedIn(true);
+                //setIsLoggedIn(true);
                 handleSocialLogin(true);
                 setOpenRmbDialog(false);
               }}

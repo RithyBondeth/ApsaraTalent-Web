@@ -73,7 +73,7 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
 
   const handleLogout = async () => {
     setOpenLogoutDialog(false);
-         
+        
     // Clear all potential authentication tokens from stores
     normalLogout();
     otpLogout();    
@@ -87,7 +87,8 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
     
     // Also try client-side clearing as backup
     clearAuthCookies();
-    router.push("/")
+    router.push("/");
+    window.location.reload();
   }
   
   return (
