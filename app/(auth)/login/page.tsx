@@ -60,8 +60,12 @@ import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 function LoginPage() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [openRmbDialog, setOpenRmbDialog] = useState<boolean>(false);
-  const [socialTypeIdentifier, setSocialTypeIdentifier] = useState<string | null>(null);
-  //const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [socialTypeIdentifier, setSocialTypeIdentifier] = useState<
+    string | null
+  >(null);
+  const [loginInitiated, setLoginInitiated] = useState<boolean>(false);
+  const [socialLoginInitiated, setSocialLoginInitiated] =
+    useState<boolean>(false);
   const router = useRouter();
   const { resolvedTheme } = useTheme();
   const { toast } = useToast();
@@ -138,16 +142,16 @@ function LoginPage() {
   };
 
   const onSubmit = async (data: TLoginForm) => {
-    //setIsLoggedIn(true);
+    setLoginInitiated(true);
     await login(data.email, data.password, data.rememberMe!);
   };
 
   useInitializeAuth();
 
   useEffect(() => {
-//    if (!isLoggedIn) return;
+    if (!loginInitiated) return;
 
-    if (isAuthenticated) {
+    if (isAuthenticated && loginInitiated) {
       // Preload all user data while showing success message
       preloadUserData();
 
@@ -162,14 +166,17 @@ function LoginPage() {
         ),
         duration: 1000,
       });
-      setTimeout(() => router.push("/feed"), 1000);
+      setTimeout(() => {
+        setLoginInitiated(false);
+        router.push("/feed");
+      }, 1000);
     }
 
-    if (loading)
+    if (loading && loginInitiated)
       toast({
         description: (
           <div className="flex items-center gap-2">
-            <ApsaraLoadingSpinner size={50} loop/>
+            <ApsaraLoadingSpinner size={50} loop />
             <TypographySmall className="font-medium">
               Logging in...
             </TypographySmall>
@@ -177,7 +184,7 @@ function LoginPage() {
         ),
       });
 
-    if (error)
+    if (error && loginInitiated)
       toast({
         variant: "destructive",
         description: (
@@ -189,46 +196,61 @@ function LoginPage() {
           </div>
         ),
         action: (
-          <ToastAction altText="Try again" onClick={() => reset()}>
+          <ToastAction
+            altText="Try again"
+            onClick={() => {
+              reset();
+              setLoginInitiated(false);
+            }}
+          >
             Retry
           </ToastAction>
         ),
       });
-  }, [isAuthenticated, error, message, loading]);
+  }, [isAuthenticated, error, message, loading, loginInitiated]);
 
   // Social Login Google, LinkedIn, Github, Facebook
   useEffect(() => {
-   // if (!isLoggedIn) return;
-
-    if (
-      googleLoginStore.isAuthenticated ||
-      linkedInLoginStore.isAuthenticated ||
-      githubLoginStore.isAuthenticated ||
-      facebookLoginStore.isAuthenticated
-    ) {
+    if (!socialLoginInitiated) return;
+  
+    const socialStores = [
+      googleLoginStore,
+      linkedInLoginStore,
+      githubLoginStore,
+      facebookLoginStore
+    ];
+  
+    const isAnySocialAuthenticated = socialStores.some(
+      store => store.isAuthenticated && socialLoginInitiated
+    );
+  
+    const isAnySocialNewUser = socialStores.some(
+      store => store.newUser && !store.isAuthenticated && socialLoginInitiated
+    );
+  
+    if (isAnySocialAuthenticated) {
       // Preload all user data while showing success message
-      preloadUserData();
-
+      // preloadUserData();
+  
       toast({
         description: (
           <div className="flex items-center gap-2">
             <LucideCheck />
             <TypographySmall className="font-medium leading-relaxed">
-              Logged in successfully
+              Logged in with social successfully
             </TypographySmall>
           </div>
         ),
         duration: 1000,
       });
-      setTimeout(() => router.push("/feed"), 1000);
+      
+      setTimeout(() => {
+        setSocialLoginInitiated(false);
+        router.push("/feed");
+      }, 1000);
     }
-
-    if (
-      (googleLoginStore.newUser && !googleLoginStore.isAuthenticated) ||
-      (linkedInLoginStore.newUser && !linkedInLoginStore.isAuthenticated) ||
-      (githubLoginStore.newUser && !githubLoginStore.isAuthenticated) ||
-      (facebookLoginStore.newUser && !facebookLoginStore.isAuthenticated)
-    ) {
+  
+    if (isAnySocialNewUser) {
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -240,7 +262,11 @@ function LoginPage() {
         ),
         duration: 1000,
       });
-      setTimeout(() => router.push("/signup/option"), 1000);
+      
+      setTimeout(() => {
+        setSocialLoginInitiated(false);
+        router.push("/signup/option");
+      }, 1000);
     }
   }, [
     googleLoginStore.isAuthenticated,
@@ -251,10 +277,11 @@ function LoginPage() {
     githubLoginStore.newUser,
     facebookLoginStore.isAuthenticated,
     facebookLoginStore.newUser,
-    //isLoggedIn,
+    socialLoginInitiated,
   ]);
 
   const handleSocialLogin = (rememberMe: boolean) => {
+    setSocialLoginInitiated(true);
     switch (socialTypeIdentifier) {
       case "facebook":
         facebookLoginStore.facebookLogin(rememberMe);
@@ -280,7 +307,7 @@ function LoginPage() {
         <div className="size-[70%] flex flex-col items-start justify-center gap-3 tablet-md:w-[85%] tablet-md:py-10">
           {/* Title Section */}
           <div>
-            <LogoComponent className="!h-24 w-auto" withoutTitle/>
+            <LogoComponent className="!h-24 w-auto" withoutTitle />
             <TypographyH2 className="phone-xl:text-2xl">
               Log in to your Account
             </TypographyH2>
@@ -430,14 +457,13 @@ function LoginPage() {
         <DialogContent>
           <DialogTitle>Remember Me</DialogTitle>
           <DialogDescription>
-            Do you want to remember this login? (30 days for &quot;Yes&quot;, 1 day for
-            &quot;No&quot;)
+            Do you want to remember this login? (30 days for &quot;Yes&quot;, 1
+            day for &quot;No&quot;)
           </DialogDescription>
           <DialogFooter>
             <Button
               variant={"outline"}
               onClick={() => {
-                //setIsLoggedIn(true);
                 handleSocialLogin(false);
                 setOpenRmbDialog(false);
               }}
@@ -446,7 +472,6 @@ function LoginPage() {
             </Button>
             <Button
               onClick={() => {
-                //setIsLoggedIn(true);
                 handleSocialLogin(true);
                 setOpenRmbDialog(false);
               }}

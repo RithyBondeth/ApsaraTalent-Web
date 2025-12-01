@@ -105,39 +105,72 @@ export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
 
   googleLogin: (rememberMe: boolean, usePopup: boolean = true) => {
     set({ loading: true, error: null });
-
-    const url = API_AUTH_SOCIAL_GOOGLE_URL;
-
+  
+    const oauthURL = API_AUTH_SOCIAL_GOOGLE_URL;
+  
+    // Redirect mode (full page)
     if (!usePopup) {
-      window.location.href = url;
+      window.location.href = oauthURL;
       return;
     }
-
-    const popup = window.open(url, "google-oauth", "width=500,height=600");
+  
+    // Open popup
+    const popup = window.open(
+      oauthURL,
+      "google-oauth",
+      "width=500,height=600,noopener,noreferrer"
+    );
+  
     if (!popup) {
       set({ loading: false, error: "Popup blocked by browser" });
       return;
     }
-
-    const handler = (ev: MessageEvent<TGoogleLoginResponse>) => {
-      if (ev.origin !== BACKEND_ORIGIN) return;
-      window.removeEventListener("message", handler);
-
-      // Safely close popup - handle CORP policy errors
+  
+    let messageListenerAttached = false;
+  
+    const handleMessage = (ev: MessageEvent<TGoogleLoginResponse>) => {
+      if (ev.origin !== BACKEND_ORIGIN) return; // Security check
+  
+      window.removeEventListener("message", handleMessage);
+      messageListenerAttached = false;
+  
+      // Try closing popup (may fail due to COOP — harmless)
       try {
-        if (popup) {
-          popup.close();
-        }
-      } catch (error) {
-        // Silently handle CORP policy errors - popup will close itself or user can close manually
-        console.debug("Popup close handled by browser security policy");
+        popup.close();
+      } catch (_) {
+        console.debug("Popup close blocked by browser security policy");
       }
-
-      console.log("Google Data Response: ", ev.data);
+  
       FINISH_LOGIN(ev.data, rememberMe);
     };
-
-    window.addEventListener("message", handler);
+  
+    /**
+     * 🔒 Prevent message firing too early
+     * Wait until popup is fully loaded before listening.
+     */
+    const waitForPopup = setInterval(() => {
+      if (popup.closed) {
+        clearInterval(waitForPopup);
+        if (messageListenerAttached) {
+          window.removeEventListener("message", handleMessage);
+        }
+        set({ loading: false, error: "Popup closed before login" });
+        return;
+      }
+  
+      // When popup leaves about:blank, the redirect page loaded
+      try {
+        if (popup.location.href !== "about:blank") {
+          if (!messageListenerAttached) {
+            window.addEventListener("message", handleMessage);
+            messageListenerAttached = true;
+          }
+          clearInterval(waitForPopup);
+        }
+      } catch {
+        // Popup still navigating (cross-origin), safe to ignore
+      }
+    }, 200);
   },
 
   clearToken: () => {
