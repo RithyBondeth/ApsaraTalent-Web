@@ -230,8 +230,8 @@ function LoginPage() {
   
     if (isAnySocialAuthenticated) {
       // Preload all user data while showing success message
-      // preloadUserData();
-  
+      preloadUserData();
+
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -243,6 +243,8 @@ function LoginPage() {
         ),
         duration: 1000,
       });
+      console.log("Social Logged In");
+      window.location.reload();
       
       setTimeout(() => {
         setSocialLoginInitiated(false);

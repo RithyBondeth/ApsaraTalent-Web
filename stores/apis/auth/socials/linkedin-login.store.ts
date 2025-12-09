@@ -141,6 +141,7 @@ export const useLinkedInLoginStore = create<TLinkedInLoginState>((set) => ({
     };
 
     window.addEventListener("message", handler);
+    
   },
 
   // Clear Token

@@ -8,21 +8,33 @@ export async function POST() {
       success: true 
     });
 
-    // Clear the auth cookies by setting them to expire
+    const isProduction = process.env.NODE_ENV === 'production';
+    
+    // Clear the auth-token cookie
     response.cookies.set('auth-token', '', {
       expires: new Date(0),
       path: '/',
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isProduction,
       sameSite: 'strict'
     });
 
+    // Clear the refresh-token cookie
     response.cookies.set('refresh-token', '', {
       expires: new Date(0),
       path: '/',
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isProduction,
       sameSite: 'strict'
+    });
+
+    // Clear the auth-remember cookie
+    response.cookies.set('auth-remember', '', {
+      expires: new Date(0),
+      path: '/',
+      httpOnly: false, // Same as when it was set
+      secure: isProduction,
+      sameSite: 'lax' // Match the sameSite used when setting
     });
 
     return response;

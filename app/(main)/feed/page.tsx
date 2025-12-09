@@ -61,6 +61,7 @@ export default function FeedPage() {
     null
   );
 
+  // Profile Pop up Dialog
   const handleClickProfilePopup = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
