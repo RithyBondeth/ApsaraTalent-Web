@@ -37,7 +37,7 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
     try {
       const hasValidAuth = hasAuthToken();
       
-      console.log("Verify OTP store initialization:", {
+      console.log("Phone OTP Login Store Initialization:", {
         hasAuthToken: hasValidAuth,
         isAuthenticated: hasValidAuth
       });

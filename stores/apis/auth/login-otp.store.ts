@@ -4,7 +4,7 @@ import { create } from "zustand";
 
 type TLoginOTPResponse = {
   message: string | null;
-  
+
   isSuccess: boolean;
 };
 
@@ -27,7 +27,7 @@ export const useLoginOTPStore = create<TLoginOTPState>((set) => ({
         API_AUTH_LOGIN_OTP_URL,
         { phone: phone }
       );
-  
+
       set({
         loading: false,
         error: null,

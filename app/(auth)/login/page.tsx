@@ -96,13 +96,18 @@ function LoginPage() {
     }
   }, [setValue]);
 
-  const { isAuthenticated, message, login, error, loading } = useLoginStore();
+  // User Stores
   const { getCurrentUser } = useGetCurrentUserStore();
   const { getAllUsers } = useGetAllUsersStore();
-  const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore();
-  const getCurrentCompanyLikedStore = useGetCurrentCompanyLikedStore();
-  const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
-  const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
+  const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore(); // Companies liked by current employee
+  const getCurrentCompanyLikedStore = useGetCurrentCompanyLikedStore(); // Employees liked by current company
+  const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore(); // Companies favorited by current employee
+  const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore(); // Employees favorited by current company
+
+  // Email/Password Authentication Store
+  const { isAuthenticated, message, login, error, loading } = useLoginStore();
+
+  // Social Authentication Stores
   const googleLoginStore = useGoogleLoginStore();
   const linkedInLoginStore = useLinkedInLoginStore();
   const githubLoginStore = useGithubLoginStore();
@@ -172,7 +177,7 @@ function LoginPage() {
           <div className="flex items-center gap-2">
             <ApsaraLoadingSpinner size={50} loop />
             <TypographySmall className="font-medium">
-              Please wait...
+              Authenticating...
             </TypographySmall>
           </div>
         ),
@@ -204,7 +209,7 @@ function LoginPage() {
               <div className="flex items-center gap-2">
                 <LucideCheck />
                 <TypographySmall className="font-medium leading-relaxed">
-                  Logged in successfully
+                  {error}
                 </TypographySmall>
               </div>
             ),
@@ -213,6 +218,7 @@ function LoginPage() {
         })
         .finally(() => {
           setTimeout(() => {
+            dismiss();
             setLoginInitiated(false);
             router.push("/feed");
           }, 1000);
@@ -272,7 +278,7 @@ function LoginPage() {
     ];
 
     const isAnySocialLoading = socialStores.some((s) => s.store.loading);
-    const authenticatedStore = socialStores.find(
+    const isAnySocialAuthenticated = socialStores.find(
       (s) => s.store.isAuthenticated
     );
     const newUserStore = socialStores.find(
@@ -299,7 +305,7 @@ function LoginPage() {
     }
 
     // Handle successful authentication - show loading while preloading data
-    if (authenticatedStore && !isAnySocialLoading && !isProcessingSocialLogin.current) {
+    if (isAnySocialAuthenticated && !isAnySocialLoading && !isProcessingSocialLogin.current) {
       isProcessingSocialLogin.current = true; // Prevent duplicate execution
       dismiss(); // Dismiss authentication toast
 
@@ -309,7 +315,7 @@ function LoginPage() {
           <div className="flex items-center gap-2">
             <ApsaraLoadingSpinner size={50} loop />
             <TypographySmall className="font-medium">
-              Please wait...
+              Authenticating...
             </TypographySmall>
           </div>
         ),
@@ -322,7 +328,7 @@ function LoginPage() {
       preloadUserData()
         .then(() => {
           console.log("User data preloaded successfully");
-          dismiss(); // Dismiss loading toast
+          dismiss(); 
           toast({
             description: (
               <div className="flex items-center gap-2">
@@ -343,15 +349,17 @@ function LoginPage() {
               <div className="flex items-center gap-2">
                 <LucideCheck />
                 <TypographySmall className="font-medium leading-relaxed">
-                  Logged in successfully
+                  {error}
                 </TypographySmall>
               </div>
             ),
             duration: 1000,
           });
+
         })
         .finally(() => {
           setTimeout(() => {
+            dismiss();
             setIsPreloadingData(false);
             setSocialLoginInitiated(false);
             isProcessingSocialLogin.current = false;
@@ -379,6 +387,7 @@ function LoginPage() {
       });
 
       setTimeout(() => {
+        dismiss();
         setSocialLoginInitiated(false);
         router.push("/signup/option");
       }, 1500);

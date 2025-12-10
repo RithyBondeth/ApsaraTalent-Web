@@ -10,9 +10,9 @@ type TCompanySignupResponse = {
   message: string | null;
 };
 
-type TCompanySignupBody = Omit<ICompany, 'id'> & {
+type TCompanySignupBody = Omit<ICompany, "id"> & {
   email: string | null;
-  password: string | null;  
+  password: string | null;
   authEmail: boolean;
 };
 
@@ -31,43 +31,42 @@ export const useCompanySignupStore = create<TCompanySignupState>()((set) => ({
   signup: async (body: TCompanySignupBody) => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.post<TCompanySignupResponse & { user: IUser }>(
-        API_AUTH_SIGNUP_URL.COMPANY,
-        {
-          authEmail: body.authEmail,
-          email: body.email,
-          password: body.password,
-          name: body?.name,
-          description: body?.description,
-          phone: body?.phone,
-          industry: body?.industry,
-          location: body?.location,
-          companySize: body?.companySize,
-          foundedYear: body?.foundedYear,
-          jobs: body?.openPositions.map((job) => ({
-            title: job.title,
-            description: job.description,
-            type: job.type,
-            experienceRequired: job.experience,
-            educationRequired: job.education,
-            salary: job.salary,
-            expireDate: job.deadlineDate,
-            skillsRequired: job.skills.join(", "),
-          })),
-          benefits: body?.benefits.map((benefit) => ({
-            label: benefit.label,
-          })),
-          values: body?.values,
-          careerScopes: body?.careerScopes.map((cs) => ({
-            name: cs.name,
-            description: cs.description ?? "",
-          })),
-          socials: body?.socials.map((social) => ({
-            platform: social.platform,
-            url: social.url,
-          })),
-        }
-      );
+      const response = await axios.post<
+        TCompanySignupResponse & { user: IUser }
+      >(API_AUTH_SIGNUP_URL.COMPANY, {
+        authEmail: body.authEmail,
+        email: body.email,
+        password: body.password,
+        name: body?.name,
+        description: body?.description,
+        phone: body?.phone,
+        industry: body?.industry,
+        location: body?.location,
+        companySize: body?.companySize,
+        foundedYear: body?.foundedYear,
+        jobs: body?.openPositions.map((job) => ({
+          title: job.title,
+          description: job.description,
+          type: job.type,
+          experienceRequired: job.experience,
+          educationRequired: job.education,
+          salary: job.salary,
+          expireDate: job.deadlineDate,
+          skillsRequired: job.skills.join(", "),
+        })),
+        benefits: body?.benefits.map((benefit) => ({
+          label: benefit.label,
+        })),
+        values: body?.values,
+        careerScopes: body?.careerScopes.map((cs) => ({
+          name: cs.name,
+          description: cs.description ?? "",
+        })),
+        socials: body?.socials.map((social) => ({
+          platform: social.platform,
+          url: social.url,
+        })),
+      });
 
       const company = response.data.user.company;
       const companyID = company?.id;

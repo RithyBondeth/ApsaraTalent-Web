@@ -4,6 +4,7 @@ import { API_AUTH_SOCIAL_FACEBOOK_URL } from "@/utils/constants/apis/auth_url";
 import { TUserRole } from "@/utils/types/role.type";
 import { getCookie } from "cookies-next";
 import { EAuthLoginMethod } from "@/utils/constants/auth.constant";
+import { clearAuthCookies, hasAuthToken } from "@/utils/auth/cookie-manager";
 
 // Updated response type - NO TOKENS
 export type TFacebookLoginResponse = {
@@ -114,7 +115,6 @@ export const useFacebookLoginStore = create<TFacebookLoginState>((set) => ({
 
   // Facebook Login
   facebookLogin: (rememberMe: boolean, usePopup = true) => {
-    console.log("Initiating Facebook Login");
     set({ loading: true, error: null });
 
     // Add remember parameter to URL
@@ -192,18 +192,11 @@ export const useFacebookLoginStore = create<TFacebookLoginState>((set) => ({
 
   // Clear Token
   clearToken: () => {
-    try {
-      // Call backend logout endpoint to clear httpOnly cookies
-      fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include', // Important: send cookies
-      }).catch(console.error);
+     // Use centralized cookie clearing
+     clearAuthCookies();
 
-      // Clear user store
-      useGetCurrentUserStore.getState().clearUser();
-    } catch (error) {
-      console.error('Error during logout:', error);
-    }
+     // Clear user data from store
+     useGetCurrentUserStore.getState().clearUser();
 
     set({
       loading: false,

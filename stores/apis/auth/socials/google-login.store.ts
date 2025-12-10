@@ -4,10 +4,11 @@ import { API_AUTH_SOCIAL_GOOGLE_URL } from "@/utils/constants/apis/auth_url";
 import { TUserRole } from "@/utils/types/role.type";
 import { EAuthLoginMethod } from "@/utils/constants/auth.constant";
 import { getCookie } from "cookies-next";
+import { clearAuthCookies } from "@/utils/auth/cookie-manager";
 
 // Updated response type - NO TOKENS
 export type TGoogleLoginResponse = {
-  type: 'GOOGLE_AUTH_SUCCESS' | 'GOOGLE_AUTH_ERROR';
+  type: "GOOGLE_AUTH_SUCCESS" | "GOOGLE_AUTH_ERROR";
   error?: string;
   newUser?: boolean;
   user?: {
@@ -45,10 +46,10 @@ export type TGoogleLoginState = {
 const BACKEND_ORIGIN = API_AUTH_SOCIAL_GOOGLE_URL.split("/social")[0];
 
 const FINISH_LOGIN = (data: TGoogleLoginResponse) => {
-  if (!data || data.type !== 'GOOGLE_AUTH_SUCCESS') {
+  if (!data || data.type !== "GOOGLE_AUTH_SUCCESS") {
     useGoogleLoginStore.setState({
       loading: false,
-      error: data?.error || 'Authentication failed',
+      error: data?.error || "Authentication failed",
       isAuthenticated: false,
     });
     return;
@@ -59,7 +60,7 @@ const FINISH_LOGIN = (data: TGoogleLoginResponse) => {
   useGoogleLoginStore.setState({
     loading: false,
     isAuthenticated: true,
-    message: 'Login successful',
+    message: "Login successful",
     role: data.user?.role || null,
     newUser: data.newUser || false,
     email: data.user?.email || null,
@@ -87,61 +88,60 @@ export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
   provider: null,
   lastLoginMethod: null,
   lastLoginAt: null,
-  
+
   setRole: (role: TUserRole) => set({ role: role }),
-  
+
   initialize: () => {
     // Check if auth cookie exists (not httpOnly check)
-    const rememberCookie = getCookie('auth-remember');
+    const rememberCookie = getCookie("auth-remember");
     set({ isAuthenticated: !!rememberCookie });
   },
 
   googleLogin: (rememberMe: boolean, usePopup: boolean = true) => {
-    console.log("Initiating Google Login");
     set({ loading: true, error: null });
-  
+
     // Add remember parameter to URL
     const oauthURL = `${API_AUTH_SOCIAL_GOOGLE_URL}?remember=${rememberMe}`;
-  
+
     // Redirect mode (full page)
     if (!usePopup) {
       window.location.href = oauthURL;
       return;
     }
-  
+
     // Open popup
     const popup = window.open(
       oauthURL,
       "google-oauth",
       "width=500,height=600,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes"
     );
-  
+
     if (!popup) {
-      set({ 
-        loading: false, 
-        error: "Popup blocked. Please allow popups for this site." 
+      set({
+        loading: false,
+        error: "Popup blocked. Please allow popups for this site.",
       });
       return;
     }
-  
+
     let messageReceived = false;
-  
+
     const handleMessage = (ev: MessageEvent<TGoogleLoginResponse>) => {
       // Strict origin check
       if (ev.origin !== BACKEND_ORIGIN) {
-        console.warn('Ignored message from unexpected origin:', ev.origin);
+        console.warn("Ignored message from unexpected origin:", ev.origin);
         return;
       }
 
       // Check message type
-      if (!ev.data || !ev.data.type?.startsWith('GOOGLE_AUTH_')) {
+      if (!ev.data || !ev.data.type?.startsWith("GOOGLE_AUTH_")) {
         return;
       }
-  
+
       messageReceived = true;
       window.removeEventListener("message", handleMessage);
       clearInterval(popupChecker);
-  
+
       // Try closing popup
       try {
         if (popup && !popup.closed) {
@@ -150,23 +150,23 @@ export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
       } catch (e) {
         console.debug("Popup close blocked:", e);
       }
-  
+
       FINISH_LOGIN(ev.data);
     };
-  
+
     // Listen for postMessage
     window.addEventListener("message", handleMessage);
-  
+
     // Check if popup was closed manually
     const popupChecker = setInterval(() => {
       if (!popup || popup.closed) {
         clearInterval(popupChecker);
         window.removeEventListener("message", handleMessage);
-        
+
         if (!messageReceived) {
-          set({ 
-            loading: false, 
-            error: "Login cancelled or popup closed" 
+          set({
+            loading: false,
+            error: "Login cancelled or popup closed",
           });
         }
       }
@@ -174,15 +174,12 @@ export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
   },
 
   clearToken: () => {
-    // Call backend logout endpoint to clear httpOnly cookies
-    fetch(`${BACKEND_ORIGIN}/auth/logout`, {
-      method: 'POST',
-      credentials: 'include', // Important: send cookies
-    }).catch(console.error);
+    // Use centralized cookie clearing
+    clearAuthCookies();
 
-    // Clear any client-side data
+    // Clear user data from store
     useGetCurrentUserStore.getState().clearUser();
-    
+
     set({
       loading: false,
       error: null,

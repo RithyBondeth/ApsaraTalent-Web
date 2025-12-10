@@ -20,7 +20,9 @@ export const useVerifyEmailStore = create<TVerifyEmailState>((set) => ({
     set({ loading: true, error: null });
 
     try {
-      const response = await axios.post<TVerifyEmailResponse>(API_AUTH_VERIFY_EMAIL_URL(emailVerificationToken));
+      const response = await axios.post<TVerifyEmailResponse>(
+        API_AUTH_VERIFY_EMAIL_URL(emailVerificationToken)
+      );
       set({ message: response.data.message, loading: false, error: null });
     } catch (error) {
       if (axios.isAxiosError(error)) {
