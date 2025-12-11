@@ -10,7 +10,7 @@ export const COOKIE_CONFIG = {
   // Cookie names
   AUTH_TOKEN: "auth-token",
   REFRESH_TOKEN: "refresh-token",
-  REMEMBER_PREFERENCE: "remember-preference",
+  REMEMBER_PREFERENCE: "remember-me",
 
   // Security settings
   SECURE: process.env.NODE_ENV === "production",

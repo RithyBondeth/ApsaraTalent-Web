@@ -37,9 +37,7 @@ export type TLinkedInLoginState = {
   provider: string | null;
   lastLoginMethod: EAuthLoginMethod | null;
   lastLoginAt: string | null;
-  setRole: (role: TUserRole) => void;
-  linkedinLogin: (rememberMe: boolean, usePopup?: boolean) => void;
-  initialize: () => void;
+  linkedinLogin: (rememberMe: 'true' | 'false', usePopup?: boolean) => void;
   clearToken: () => void;
 };
 
@@ -91,30 +89,8 @@ export const useLinkedInLoginStore = create<TLinkedInLoginState>((set) => ({
   provider: null,
   lastLoginMethod: null,
   lastLoginAt: null,
-
-  setRole: (role: TUserRole) => set({ role }),
-
-  // Initialize: check cookies
-  initialize: () => {
-    try {
-      // Check if auth-remember cookie exists (not httpOnly, so we can read it)
-      const rememberCookie = getCookie('auth-remember');
-      set({
-        isAuthenticated: !!rememberCookie,
-        loading: false,
-        error: null,
-      });
-    } catch {
-      set({
-        isAuthenticated: false,
-        loading: false,
-        error: null,
-      });
-    }
-  },
-
   // LinkedIn Login
-  linkedinLogin: (rememberMe: boolean, usePopup = true) => {
+  linkedinLogin: (rememberMe: 'true' | 'false', usePopup = true) => {
     set({ loading: true, error: null });
 
     // Add remember parameter to URL

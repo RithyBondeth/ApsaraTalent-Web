@@ -41,7 +41,6 @@ import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.sto
 import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
 import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
 import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
-import { useInitializeAuth } from "@/hooks/use-initialize-auth";
 import {
   Dialog,
   DialogContent,
@@ -162,8 +161,6 @@ function LoginPage() {
     setLoginInitiated(true);
     await login(data.email, data.password, data.rememberMe!);
   };
-
-  useInitializeAuth();
 
   // Regular Email/Password Login Effect
   useEffect(() => {
@@ -442,7 +439,7 @@ function LoginPage() {
     isPreloadingData,
   ]);
 
-  const handleSocialLogin = (rememberMe: boolean) => {
+  const handleSocialLogin = (rememberMe: 'true' | 'false') => {
     setSocialLoginInitiated(true);
     isProcessingSocialLogin.current = false; // Reset flag
     switch (socialTypeIdentifier) {
@@ -627,7 +624,7 @@ function LoginPage() {
             <Button
               variant={"outline"}
               onClick={() => {
-                handleSocialLogin(false);
+                handleSocialLogin('false');
                 setOpenRmbDialog(false);
               }}
             >
@@ -635,7 +632,7 @@ function LoginPage() {
             </Button>
             <Button
               onClick={() => {
-                handleSocialLogin(true);
+                handleSocialLogin('true');
                 setOpenRmbDialog(false);
               }}
             >

@@ -2,7 +2,6 @@ import { create } from "zustand";
 import { useGetCurrentUserStore } from "../../users/get-current-user.store";
 import { API_AUTH_SOCIAL_FACEBOOK_URL } from "@/utils/constants/apis/auth_url";
 import { TUserRole } from "@/utils/types/role.type";
-import { getCookie } from "cookies-next";
 import { EAuthLoginMethod } from "@/utils/constants/auth.constant";
 import { clearAuthCookies, hasAuthToken } from "@/utils/auth/cookie-manager";
 
@@ -37,9 +36,7 @@ export type TFacebookLoginState = {
   provider: string | null;
   lastLoginMethod: EAuthLoginMethod | null;
   lastLoginAt: string | null;
-  setRole: (role: TUserRole) => void;
-  facebookLogin: (rememberMe: boolean, usePopup?: boolean) => void;
-  initialize: () => void;
+  facebookLogin: (rememberMe: 'true' | 'false', usePopup?: boolean) => void;
   clearToken: () => void;
 };
 
@@ -94,27 +91,8 @@ export const useFacebookLoginStore = create<TFacebookLoginState>((set) => ({
 
   setRole: (role: TUserRole) => set({ role }),
 
-  // Initialize: check cookies
-  initialize: () => {
-    try {
-      // Check if auth-remember cookie exists (not httpOnly, so we can read it)
-      const rememberCookie = getCookie('auth-remember');
-      set({
-        isAuthenticated: !!rememberCookie,
-        loading: false,
-        error: null,
-      });
-    } catch {
-      set({
-        isAuthenticated: false,
-        loading: false,
-        error: null,
-      });
-    }
-  },
-
   // Facebook Login
-  facebookLogin: (rememberMe: boolean, usePopup = true) => {
+  facebookLogin: (rememberMe: 'true' | 'false', usePopup = true) => {
     set({ loading: true, error: null });
 
     // Add remember parameter to URL

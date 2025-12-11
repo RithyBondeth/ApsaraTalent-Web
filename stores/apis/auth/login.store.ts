@@ -21,7 +21,6 @@ type TLoginState = {
     rememberMe: boolean
   ) => Promise<void>;
   clearToken: () => void;
-  initialize: () => void;
 };
 
 export const useLoginStore = create<TLoginState>((set) => ({
@@ -30,29 +29,6 @@ export const useLoginStore = create<TLoginState>((set) => ({
   isAuthenticated: false,
   message: null,
   user: null,
-  initialize: () => {
-    try {
-      const hasValidAuth = hasAuthToken();
-
-      console.log("Email Password Login Store Initialization:", {
-        hasAuthToken: hasValidAuth,
-        isAuthenticated: hasValidAuth,
-      });
-
-      set({
-        isAuthenticated: hasValidAuth,
-        error: null,
-        loading: false,
-      });
-    } catch (error) {
-      console.error("Error during login store initialization:", error);
-      set({
-        isAuthenticated: false,
-        error: null,
-        loading: false,
-      });
-    }
-  },
   login: async (identifier: string, password: string, rememberMe: boolean) => {
     set({ loading: true, error: null });
 

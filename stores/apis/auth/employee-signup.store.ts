@@ -10,7 +10,7 @@ type TEmployeeSignupResponse = {
   message: string | null;
 };
 
-type TEmployeeSignupBody = Omit<IEmployee, 'id'> & {
+type TEmployeeSignupBody = Omit<IEmployee, "id"> & {
   email: string | null;
   password: string | null;
   authEmail: boolean;
@@ -31,47 +31,47 @@ export const useEmployeeSignupStore = create<TEmployeeSignupState>()((set) => ({
   signup: async (body: TEmployeeSignupBody) => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.post<TEmployeeSignupResponse & { user: IUser }>(
-        API_AUTH_SIGNUP_URL.EMPLOYEE,
-        {
-          authEmail: body.authEmail,
-          email: body.email,
-          password: body.password,
-          firstname: body.firstname,
-          lastname: body.lastname,
-          username: body.username,
-          gender: body.gender,
-          job: body.job,
-          yearsOfExperience: body.yearsOfExperience,
-          availability: body.availability,
-          description: body.description,
-          location: body.location,
-          phone: body.phone,
-          educations: body.educations.map((edu) => ({
-            school: edu.school,
-            degree: edu.degree,
-            year: edu.year,
-          })),
-          experiences: body.experiences.map((exp) => ({
-            title: exp.title,
-            description: exp.description,
-            startDate: exp.startDate,
-            endDate: exp.endDate,
-          })),
-          skills: body.skills.map((skill) => ({
-            name: skill.name,
-            description: skill.description,
-          })),
-          careerScopes: body.careerScopes.map((cs) => ({
-            name: cs.name,
-            description: cs.description,
-          })),
-          socials: body.socials?.map((social) => ({
+      const response = await axios.post<
+        TEmployeeSignupResponse & { user: IUser }
+      >(API_AUTH_SIGNUP_URL.EMPLOYEE, {
+        authEmail: body.authEmail,
+        email: body.email,
+        password: body.password,
+        firstname: body.firstname,
+        lastname: body.lastname,
+        username: body.username,
+        gender: body.gender,
+        job: body.job,
+        yearsOfExperience: body.yearsOfExperience,
+        availability: body.availability,
+        description: body.description,
+        location: body.location,
+        phone: body.phone,
+        educations: body.educations.map((edu) => ({
+          school: edu.school,
+          degree: edu.degree,
+          year: edu.year,
+        })),
+        experiences: body.experiences.map((exp) => ({
+          title: exp.title,
+          description: exp.description,
+          startDate: exp.startDate,
+          endDate: exp.endDate,
+        })),
+        skills: body.skills.map((skill) => ({
+          name: skill.name,
+          description: skill.description,
+        })),
+        careerScopes: body.careerScopes.map((cs) => ({
+          name: cs.name,
+          description: cs.description,
+        })),
+        socials:
+          body.socials?.map((social) => ({
             platform: social.platform,
             url: social.url,
           })) ?? [],
-        }
-      );
+      });
 
       const employee = response.data.user.employee;
       const employeeID = employee?.id;

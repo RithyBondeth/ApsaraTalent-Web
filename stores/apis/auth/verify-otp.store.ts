@@ -4,8 +4,6 @@ import axios from "axios";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../users/get-current-user.store";
 import { setAuthCookies, clearAuthCookies, hasAuthToken } from "@/utils/auth/cookie-manager";
-import { TUserRole } from "@/utils/types/role.type";
-import { TLoginMethod } from "@/utils/types/login-method.type";
 import { TUserAuthResponse } from "@/utils/constants/auth.constant";
 
 type TVerifyOTPResponse = {
@@ -22,7 +20,6 @@ type TVerifyOTPStoreState = TVerifyOTPResponse & {
   message: string | null;
   verifyOtp: (phone: string, otpCode: string, rememberMe: boolean) => Promise<IUser>;
   clearToken: () => void;
-  initialize: () => void;
 };
 
 export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
@@ -33,29 +30,6 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
   refreshToken: null,
   user: null,
   message: null,
-  initialize: () => {
-    try {
-      const hasValidAuth = hasAuthToken();
-      
-      console.log("Phone OTP Login Store Initialization:", {
-        hasAuthToken: hasValidAuth,
-        isAuthenticated: hasValidAuth
-      });
-      
-      set({ 
-        isAuthenticated: hasValidAuth,
-        error: null,
-        loading: false
-      });
-    } catch (error) {
-      console.error("Error during Verify OTP store initialization:", error);
-      set({ 
-        isAuthenticated: false,
-        error: null,
-        loading: false
-      });
-    }
-  },
   verifyOtp: async (phone: string, otpCode: string, rememberMe: boolean) => {
     set({ loading: true, error: null });
 

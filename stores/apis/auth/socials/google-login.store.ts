@@ -37,9 +37,7 @@ export type TGoogleLoginState = {
   lastLoginAt: string | null;
   picture: string | null;
   provider: string | null;
-  setRole: (role: TUserRole) => void;
-  googleLogin: (rememberMe: boolean, usePopup?: boolean) => void;
-  initialize: () => void;
+  googleLogin: (rememberMe: 'true' | 'false', usePopup?: boolean) => void;
   clearToken: () => void;
 };
 
@@ -89,19 +87,12 @@ export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
   lastLoginMethod: null,
   lastLoginAt: null,
 
-  setRole: (role: TUserRole) => set({ role: role }),
-
-  initialize: () => {
-    // Check if auth cookie exists (not httpOnly check)
-    const rememberCookie = getCookie("auth-remember");
-    set({ isAuthenticated: !!rememberCookie });
-  },
-
-  googleLogin: (rememberMe: boolean, usePopup: boolean = true) => {
+  googleLogin: (rememberMe: 'true' | 'false', usePopup: boolean = true) => {
     set({ loading: true, error: null });
 
     // Add remember parameter to URL
     const oauthURL = `${API_AUTH_SOCIAL_GOOGLE_URL}?remember=${rememberMe}`;
+    console.log("oauthURL: ", oauthURL);
 
     // Redirect mode (full page)
     if (!usePopup) {
