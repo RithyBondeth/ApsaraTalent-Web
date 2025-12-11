@@ -2,6 +2,7 @@ export interface ICompany {
     id: string;
     name: string;
     industry: string;
+    email: string;
     description: string;
     avatar?: string | null;
     cover?: string;

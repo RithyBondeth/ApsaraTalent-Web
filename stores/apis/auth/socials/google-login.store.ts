@@ -92,7 +92,6 @@ export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
 
     // Add remember parameter to URL
     const oauthURL = `${API_AUTH_SOCIAL_GOOGLE_URL}?remember=${rememberMe}`;
-    console.log("oauthURL: ", oauthURL);
 
     // Redirect mode (full page)
     if (!usePopup) {

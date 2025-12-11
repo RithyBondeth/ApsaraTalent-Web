@@ -14,10 +14,8 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { useRouter } from "next/navigation";
 import CompanyCard from "@/components/company/company-card";
 import ImagePopup from "@/components/utils/image-popup";
-import { useGetAllUsersStore } from "@/stores/apis/users/get-all-user.store";
 import EmployeeCardSkeleton from "@/components/employee/employee-card/skeleton";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 import CompanyCardSkeleton from "@/components/company/company-card/skeleton";
 import BannerSkeleton from "./banner-skeleton";
 import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store";
@@ -39,10 +37,15 @@ import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-c
 import { usePreloadImages } from "@/hooks/use-cached-image";
 import emptySvgImage from "@/assets/svg/empty.svg";
 import { TypographyP } from "@/components/utils/typography/typography-p";
+import { useGetAllCompanyStore } from "@/stores/apis/company/get-all-cmp.store";
+import { useGetAllEmployeeStore } from "@/stores/apis/employee/get-all-emp.store";
+import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
+import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
 
 export default function FeedPage() {
   // Utils
   const [mounted, setMounted] = useState<boolean>(false);
+  const [currentUserLoaded, setCurrentUserLoaded] = useState<boolean>(false);
   const router = useRouter();
   useEffect(() => setMounted(true), []);
 
@@ -85,7 +88,6 @@ export default function FeedPage() {
 
   // API Integration
   const getCurrentUserStore = useGetCurrentUserStore();
-  const getAllUsersStore = useGetAllUsersStore();
   const employeeLikeStore = useEmployeeLikeStore();
   const companyLikeStore = useCompanyLikeStore();
   const employeeFavCompanyStore = useEmployeeFavCompanyStore();
@@ -94,6 +96,8 @@ export default function FeedPage() {
   const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
   const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore();
   const getCurrentCompanyLikedStore = useGetCurrentCompanyLikedStore();
+  const getAllCompanyStore = useGetAllCompanyStore();
+  const getAllEmployeeStore = useGetAllEmployeeStore();
 
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const isEmployee = currentUser?.role === "employee";
@@ -106,86 +110,129 @@ export default function FeedPage() {
     new Set()
   );
 
-  const currentUserRole = getCurrentUserStore.user?.role;
-  let allUsers: IUser[] = [];
-
-  if (currentUserRole === "employee") {
-    allUsers =
-      getAllUsersStore.users?.filter((user) => user.role === "company") || [];
-    // Filter out already liked companies
-    const currentEmployeeLikedStore =
-      getCurrentEmployeeLikedStore.currentEmployeeLiked;
-    if (currentEmployeeLikedStore) {
-      allUsers = allUsers.filter((user) => {
-        const companyId = user.company?.id;
-        return (
-          companyId &&
-          !currentEmployeeLikedStore.some((liked) => liked.id === companyId)
-        );
-      });
-    }
-  } else {
-    allUsers =
-      getAllUsersStore.users?.filter((user) => user.role === "employee") || [];
-    // Filter out already liked employees
-    const currentCompanyLikedStore =
-      getCurrentCompanyLikedStore.currentCompanyLiked;
-    if (currentCompanyLikedStore) {
-      allUsers = allUsers.filter((user) => {
-        const employeeId = user.employee?.id;
-        return (
-          employeeId &&
-          !currentCompanyLikedStore.some((liked) => liked.id === employeeId)
-        );
-      });
-    }
-  }
-
+  // STEP 1: Load current user first
   useEffect(() => {
-    // Only fetch if data is not already loaded (from login page preload)
-    if (!getCurrentUserStore.user) {
-      getCurrentUserStore.getCurrentUser();
-    }
-    if (!getAllUsersStore.users || getAllUsersStore.users.length === 0) {
-      getAllUsersStore.getAllUsers();
-    }
-  }, []);
+    const loadCurrentUser = async () => {
+      if (!currentUser && !getCurrentUserStore.loading) {
+        await getCurrentUserStore.getCurrentUser();
+        setCurrentUserLoaded(true);
+      } else if (currentUser) {
+        setCurrentUserLoaded(true);
+      }
+    };
 
+    loadCurrentUser();
+  }, [currentUser, getCurrentUserStore]);
 
+  // STEP 2: Load other data only after current user is loaded
   useEffect(() => {
-    if (currentUser && currentUser.employee && isEmployee) {
-      // Only fetch if not already loaded from login preload
-      if (!getCurrentEmployeeLikedStore.currentEmployeeLiked) {
-        getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(
-          currentUser.employee.id
-        );
+    if (!currentUserLoaded || !currentUser) return;
+
+    const loadUserSpecificData = async () => {
+      if (isEmployee) {
+        // Load company data and employee's liked/favorites
+        if (
+          !getAllCompanyStore.companyData ||
+          getAllCompanyStore.companyData.length === 0
+        ) {
+          console.log("Querying all companies inside Feed Page!!!");
+          getAllCompanyStore.queryCompany();
+        }
+
+        if (currentUser.employee?.id) {
+          if (!getCurrentEmployeeLikedStore.currentEmployeeLiked) {
+            console.log("Querying employee liked inside Feed Page!!!");
+            getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(
+              currentUser.employee.id
+            );
+          }
+          if (
+            !getAllEmployeeFavoritesStore.companyData ||
+            getAllEmployeeFavoritesStore.companyData.length === 0
+          ) {
+            console.log("Querying employee favorite inside Feed Page!!!");
+            getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
+              currentUser.employee.id
+            );
+          }
+        }
+      } else {
+        // Load employee data and company's liked/favorites
+        if (
+          !getAllEmployeeStore.employeesData ||
+          getAllEmployeeStore.employeesData.length === 0
+        ) {
+          console.log("Querying all employees inside Feed Page!!!");
+          getAllEmployeeStore.queryEmployee();
+        }
+
+        if (currentUser.company?.id) {
+          if (!getCurrentCompanyLikedStore.currentCompanyLiked) {
+            console.log("Querying company liked inside Feed Page!!!");
+            getCurrentCompanyLikedStore.queryCurrentCompanyLiked(
+              currentUser.company.id
+            );
+          }
+          if (
+            !getAllCompanyFavoritesStore.employeeData ||
+            getAllCompanyFavoritesStore.employeeData.length === 0
+          ) {
+            console.log("Querying company favorite inside Feed Page!!!");
+            getAllCompanyFavoritesStore.queryAllCompanyFavorites(
+              currentUser.company.id
+            );
+          }
+        }
       }
-      if (
-        !getAllEmployeeFavoritesStore.companyData ||
-        getAllEmployeeFavoritesStore.companyData.length === 0
-      ) {
-        getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
-          currentUser.employee.id
-        );
+    };
+
+    loadUserSpecificData();
+  }, [currentUserLoaded, currentUser, isEmployee]);
+
+  // Filter users based on role
+  const allUsers: ICompany[] | IEmployee[] = useMemo(() => {
+    if (!currentUserLoaded || !currentUser) return [];
+
+    let users: ICompany[] | IEmployee[] = [];
+
+    if (isEmployee) {
+      users = getAllCompanyStore.companyData ?? [];
+      const currentEmployeeLiked =
+        getCurrentEmployeeLikedStore.currentEmployeeLiked;
+      if (currentEmployeeLiked) {
+        users = users.filter((company) => {
+          const companyId = company.id;
+          return (
+            companyId &&
+            !currentEmployeeLiked.some((liked) => liked.id === companyId)
+          );
+        });
+      }
+    } else {
+      users = getAllEmployeeStore.employeesData ?? [];
+      const currentCompanyLiked =
+        getCurrentCompanyLikedStore.currentCompanyLiked;
+      if (currentCompanyLiked) {
+        users = users.filter((employee) => {
+          const employeeId = employee.id;
+          return (
+            employeeId &&
+            !currentCompanyLiked.some((liked) => liked.id === employeeId)
+          );
+        });
       }
     }
-    if (currentUser && currentUser.company && !isEmployee) {
-      // Only fetch if not already loaded from login preload
-      if (!getCurrentCompanyLikedStore.currentCompanyLiked) {
-        getCurrentCompanyLikedStore.queryCurrentCompanyLiked(
-          currentUser.company.id
-        );
-      }
-      if (
-        !getAllCompanyFavoritesStore.employeeData ||
-        getAllCompanyFavoritesStore.employeeData.length === 0
-      ) {
-        getAllCompanyFavoritesStore.queryAllCompanyFavorites(
-          currentUser.company.id
-        );
-      }
-    }
-  }, [currentUser, isEmployee]);
+
+    return users;
+  }, [
+    currentUserLoaded,
+    currentUser,
+    isEmployee,
+    getAllCompanyStore.companyData,
+    getAllEmployeeStore.employeesData,
+    getCurrentEmployeeLikedStore.currentEmployeeLiked,
+    getCurrentCompanyLikedStore.currentCompanyLiked,
+  ]);
 
   const favoritedCompanyIds = useMemo(() => {
     const ids =
@@ -203,26 +250,21 @@ export default function FeedPage() {
 
   // Preload profile images for better performance
   const profileImageUrls = useMemo(() => {
-    return allUsers
-      .map((user) =>
-        currentUserRole === "employee"
-          ? user.company?.avatar
-          : user.employee?.avatar
-      )
-      .filter(Boolean);
-  }, [allUsers, currentUserRole]);
+    return allUsers.map((user) => user.avatar).filter(Boolean);
+  }, [allUsers]);
 
   usePreloadImages(profileImageUrls);
 
   // Show loading state during hydration and initial data loading
   const showLoadingState =
     !mounted ||
+    !currentUserLoaded ||
     getCurrentUserStore.loading ||
-    getAllUsersStore.loading ||
-    !getAllUsersStore.users ||
-    !getCurrentUserStore.user ||
-    (isEmployee && getCurrentEmployeeLikedStore.loading) ||
-    (!isEmployee && getCurrentCompanyLikedStore.loading);
+    !currentUser ||
+    (isEmployee &&
+      (getAllCompanyStore.loading || getCurrentEmployeeLikedStore.loading)) ||
+    (!isEmployee &&
+      (getAllEmployeeStore.loading || getCurrentCompanyLikedStore.loading));
 
   return (
     <div className="w-full flex flex-col items-start gap-5">
@@ -290,26 +332,25 @@ export default function FeedPage() {
       <div className="w-full grid grid-cols-3 gap-5 laptop-sm:grid-cols-2 tablet-lg:!grid-cols-1 phone-xl:gap-3">
         {showLoadingState ? (
           Array.from({ length: 9 }).map((_, index) =>
-            currentUserRole === "company" ? (
-              <EmployeeCardSkeleton key={`user-skeleton-${index}`} />
-            ) : (
+            isEmployee ? (
               <CompanyCardSkeleton key={`company-skeleton-${index}`} />
+            ) : (
+              <EmployeeCardSkeleton key={`employee-skeleton-${index}`} />
             )
           )
         ) : allUsers.length > 0 ? (
           allUsers.map((user) =>
-            currentUserRole === "employee" && user.company ? (
+            isEmployee ? (
               <CompanyCard
                 key={user.id}
-                {...user.company}
+                {...(user as ICompany)}
                 id={user.id}
                 onViewClick={() => {
-                  console.log("Company -> User ID: ", user.id);
-                  router.push(`/feed/company/${user.id}`)
+                  router.push(`/feed/company/${user.id}`);
                 }}
                 onSaveClick={async () => {
                   const employeeId = currentUser?.employee?.id;
-                  const companyId = user.company?.id;
+                  const companyId = user.id;
                   if (!employeeId || !companyId) return;
                   try {
                     await employeeFavCompanyStore.addCompanyToFavorite(
@@ -321,7 +362,6 @@ export default function FeedPage() {
                       description: "Company added to favorites.",
                     });
                     setSavedCompanyIds((prev) => new Set(prev).add(user.id));
-                    // Refresh favorites to persist hidden state across reloads
                     await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
                       employeeId
                     );
@@ -337,24 +377,19 @@ export default function FeedPage() {
                 }}
                 hideSaveButton={
                   savedCompanyIds.has(user.id) ||
-                  (!!user.company?.id &&
-                    favoritedCompanyIds.has(user.company.id))
+                  (!!user.id && favoritedCompanyIds.has(user.id))
                 }
                 onLikeClick={async () => {
                   const empID = currentUser?.employee?.id;
-                  const cmpID = user.company?.id;
+                  const cmpID = user.id;
+                  if (!empID || !cmpID) return;
                   setLikingId(user.id);
                   try {
-                    await employeeLikeStore.employeeLike(
-                      empID ?? "",
-                      cmpID ?? ""
-                    );
+                    await employeeLikeStore.employeeLike(empID, cmpID);
                     setOpenLikeSuccessDialog(true);
-                    if (empID) {
-                      await getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(
-                        empID
-                      );
-                    }
+                    await getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(
+                      empID
+                    );
                   } finally {
                     setLikingId(null);
                   }
@@ -364,17 +399,17 @@ export default function FeedPage() {
                 }
                 onProfileImageClick={(e: React.MouseEvent) => {
                   handleClickProfilePopup(e);
-                  setCurrentProfileImage(user.company?.avatar ?? "");
+                  setCurrentProfileImage(user.avatar ?? "");
                 }}
               />
-            ) : user.employee ? (
+            ) : (
               <EmployeeCard
                 key={user.id}
-                {...user.employee}
+                {...(user as IEmployee)}
                 id={user.id}
                 onSaveClick={async () => {
                   const companyId = currentUser?.company?.id;
-                  const employeeId = user.employee?.id;
+                  const employeeId = user.id;
                   if (!companyId || !employeeId) return;
                   try {
                     await companyFavEmployeeStore.addEmployeeToFavorite(
@@ -386,7 +421,6 @@ export default function FeedPage() {
                       description: "Employee added to favorites.",
                     });
                     setSavedEmployeeIds((prev) => new Set(prev).add(user.id));
-                    // Refresh favorites to persist hidden state across reloads
                     await getAllCompanyFavoritesStore.queryAllCompanyFavorites(
                       companyId
                     );
@@ -403,25 +437,20 @@ export default function FeedPage() {
                 }}
                 hideSaveButton={
                   savedEmployeeIds.has(user.id) ||
-                  (!!user.employee?.id &&
-                    favoritedEmployeeIds.has(user.employee.id))
+                  (!!user.id && favoritedEmployeeIds.has(user.id))
                 }
                 onViewClick={() => router.push(`/feed/employee/${user.id}`)}
                 onLikeClick={async () => {
                   const cmpID = currentUser?.company?.id;
-                  const empID = user.employee?.id;
+                  const empID = user.id;
+                  if (!cmpID || !empID) return;
                   setLikingId(user.id);
                   try {
-                    await companyLikeStore.companyLike(
-                      cmpID ?? "",
-                      empID ?? ""
-                    );
+                    await companyLikeStore.companyLike(cmpID, empID);
                     setOpenLikeSuccessDialog(true);
-                    if (cmpID) {
-                      await getCurrentCompanyLikedStore.queryCurrentCompanyLiked(
-                        cmpID
-                      );
-                    }
+                    await getCurrentCompanyLikedStore.queryCurrentCompanyLiked(
+                      cmpID
+                    );
                   } finally {
                     setLikingId(null);
                   }
@@ -431,10 +460,10 @@ export default function FeedPage() {
                 }
                 onProfileImageClick={(e: React.MouseEvent) => {
                   handleClickProfilePopup(e);
-                  setCurrentProfileImage(user.employee?.avatar ?? "");
+                  setCurrentProfileImage(user.avatar ?? "");
                 }}
               />
-            ) : null
+            )
           )
         ) : (
           <div className="col-span-3 laptop-sm:col-span-2 tablet-lg:col-span-1 flex flex-col items-center justify-center my-16">

@@ -19,6 +19,7 @@ export const useGetAllCompanyStore = create<TGetAllCompanyState>((set) => ({
 
     try {
       const response = await axios.get<ICompany[]>(API_GET_ALL_CMP_URL);
+      console.log("Querying all companies: ", response.data);
       set({ loading: false, error: null, companyData: response.data });
     } catch (error) {
       if (axios.isAxiosError(error))

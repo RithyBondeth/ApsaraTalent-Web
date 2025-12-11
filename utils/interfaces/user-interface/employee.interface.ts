@@ -9,6 +9,7 @@ export interface IEmployee {
   gender: TGender;
   avatar?: string;
   phone: string;
+  email: string;
   job: string;
   yearsOfExperience: number;
   availability: string;
