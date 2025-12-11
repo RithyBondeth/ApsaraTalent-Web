@@ -21,6 +21,7 @@ import { TypographyH4 } from "../../utils/typography/typography-h4";
 import { Button } from "../../ui/button";
 import { IEmployeeDialogProps } from "./props";
 import Link from "next/link";
+import { capitalizeWords } from "@/utils/functions/capitalize-words";
 
 export default function EmployeeDialog(props: IEmployeeDialogProps) {
   return (
@@ -57,11 +58,9 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
                   />
                   <IconLabel
                     icon={<LucideClock strokeWidth={"1.5px"} />}
-                    text={
-                      props.availability.split("_")[0].toUpperCase() +
-                      " " +
-                      props.availability.split("_")[1].toUpperCase()
-                    }
+                    text={`${capitalizeWords(
+                      props.availability.split("_")[0]
+                    )} ${capitalizeWords(props.availability.split("_")[1])}`}
                   />
                 </div>
               </div>

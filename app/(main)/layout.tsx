@@ -17,7 +17,6 @@ import { ThemeProviderClient } from "@/components/utils/themes/theme-provider-cl
 import { useThemeStore } from "@/stores/themes/theme-store";
 import { useEffect, useState } from "react";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useInitializeAuth } from "@/hooks/use-initialize-auth";
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function MainLayout({
@@ -33,7 +32,6 @@ export default function MainLayout({
 
   const [mounted, setMounted] = useState<boolean>(false);
 
-  useInitializeAuth();
 
   useEffect(() => {
     setMounted(true);

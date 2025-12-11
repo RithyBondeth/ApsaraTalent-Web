@@ -30,14 +30,14 @@ export interface IValues {
 }
 
 export interface ICareerScopes {
-    id?: string;
+    id: string;
     name: string;
     description?: string;
    
 }
 
 export interface IJobPosition {
-    id?: string;
+    id: string;
     title: string;
     description: string;
     salary: string;

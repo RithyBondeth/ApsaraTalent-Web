@@ -35,8 +35,8 @@ import {
   ChevronDown,
   LucideBuilding,
   LucideCamera,
+  LucideCheck,
   LucideCircleCheck,
-  LucideCircleX,
   LucideEdit,
   LucideLink2,
   LucideMail,
@@ -63,7 +63,6 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
-import { careerScopesList } from "@/data/career-data";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
@@ -78,17 +77,60 @@ import ImagePopup from "@/components/utils/image-popup";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { TPlatform } from "@/utils/types/platform.type";
 import {
+  IBenefits,
   ICareerScopes,
   IJobPosition,
   ISocial,
+  IValues,
 } from "@/utils/interfaces/user-interface/company.interface";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { CompanyProfilePageSkeleton } from "./skeleton";
+import {
+  TCompanyUpdateBody,
+  useUpdateOneCompanyStore,
+} from "@/stores/apis/company/update-one-cmp.store";
+import { useUploadCompanyAvatarStore } from "@/stores/apis/company/upload-cmp-avatar.store";
+import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cover.store";
+import { useUploadCompanyImagesStore } from "@/stores/apis/company/upload-cmp-images.store";
+import { useRemoveOneOpenPositionStore } from "@/stores/apis/company/remove-one-open-position.store";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
+import RemoveOpenPositionDialog from "./_dialogs/remove-open-position-dialog";
+import { isUuid } from "@/utils/functions/check-uuid";
+import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-scopes.store";
+import { useRemoveOneCmpImageStore } from "@/stores/apis/company/remove-one-cmp-image.store";
+import RemoveImageDialog from "./_dialogs/remove-image-dialog";
+import { useRemoveCmpAvatarStore } from "@/stores/apis/company/remove-cmp-avatar.store";
+import { useRemoveCmpCoverStore } from "@/stores/apis/company/remove-cmp-cover.store";
+import emptySvgImage from "@/assets/svg/empty.svg";
+import Image from "next/image";
+import { trim, update } from "lodash";
+import { capitalizeWords } from "@/utils/functions/capitalize-words";
+import RemoveAvatarOrCoverDialog from "./_dialogs/remove-avatar-cover-dialog";
 
 export default function ProfilePage() {
   // Store hooks
   const { user, loading, getCurrentUser } = useGetCurrentUserStore();
+  const getAllCareerScopeStore = useGetAllCareerScopesStore();
   const company = user?.company;
+  const updateOneCmpStore = useUpdateOneCompanyStore();
+  const uploadAvatarCmpStore = useUploadCompanyAvatarStore();
+  const uploadCoverCmpStore = useUploadCompanyCoverStore();
+  const uploadCmpImagesStore = useUploadCompanyImagesStore();
+  const removeOneOpenPosition = useRemoveOneOpenPositionStore();
+  const removeOneCompImage = useRemoveOneCmpImageStore();
+  const removeCmpAvatar = useRemoveCmpAvatarStore();
+  const removeCmpCover = useRemoveCmpCoverStore();
+
+  const updateProfileLoadingState =
+    updateOneCmpStore.loading ||
+    uploadAvatarCmpStore.loading ||
+    uploadCoverCmpStore.loading ||
+    uploadCmpImagesStore.loading ||
+    removeOneOpenPosition.loading ||
+    removeOneCompImage.loading ||
+    removeCmpAvatar.loading ||
+    removeCmpCover.loading;
+
   const { toast } = useToast();
 
   // Form hook
@@ -108,9 +150,6 @@ export default function ProfilePage() {
       accountSetting: {
         email: "",
         phone: "",
-        // currentPassword: "",
-        // newPassword: "",
-        // confirmPassword: "",
       },
       openPositions: [],
       images: [],
@@ -125,40 +164,54 @@ export default function ProfilePage() {
   });
 
   // All useState hooks
-  const [isShowPassword, setIsShowPassword] = useState({
-    current: false,
-    new: false,
-    confirm: false,
-  });
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
   const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(
     null
   );
+  const [openRemoveImageDialog, setOpenRemoveImageDialog] =
+    useState<boolean>(false);
+  const [removedImage, setRemoveImage] = useState<{
+    id: string;
+    index: number;
+  } | null>(null);
+  const [openRemoveAvatarDialog, setOpenRemoveAvatarDialog] =
+    useState<boolean>(false);
+  const [openRemoveCoverDialog, setOpenRemoveCoverDialog] =
+    useState<boolean>(false);
+
   const [openPositions, setOpenPositions] = useState<IJobPosition[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
     ""
   );
   const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
-  const [benefitInput, setBenefitInput] = useState<string>("");
-  const [benefits, setBenefits] = useState<{ label: string }[]>([]);
+  const [benefitInput, setBenefitInput] = useState<IBenefits | null>(null);
+  const [benefits, setBenefits] = useState<IBenefits[]>([]);
+  const [deletedBenefitIds, setDeletedBenefitIds] = useState<number[]>([]);
   const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
-  const [valueInput, setValueInput] = useState<string>("");
-  const [values, setValues] = useState<{ label: string }[]>([]);
+  const [valueInput, setValueInput] = useState<IValues | null>(null);
+  const [values, setValues] = useState<IValues[]>([]);
+  const [deletedValueIds, setDeletedValueIds] = useState<number[]>([]);
   const [openCareersPopOver, setOpenCareersPopOver] = useState<boolean>(false);
-  const [careersInput, setCareersInput] = useState<string>("");
+  const [careersInput, setCareersInput] = useState<ICareerScopes | null>(null);
   const [careers, setCareers] = useState<ICareerScopes[]>([]);
-  const [socialInput, setSocialInput] = useState<{
-    social: string;
-    link: string;
-  }>({ social: "", link: "" });
+  const [deleteCareerScopeIds, setDeleteCareerScopeIds] = useState<string[]>(
+    []
+  );
+  const [socialInput, setSocialInput] = useState<ISocial | null>(null);
   const [socials, setSocials] = useState<ISocial[]>([]);
+  const [deleteSocialIds, setDeleteSocialIds] = useState<string[]>([]);
   const [selectedDates, setSelectedDates] = useState<
     Record<string, { posted?: Date; deadline?: Date }>
   >({});
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [openRemoveOpenPositionDialog, setOpenRemoveOpenPositionDialog] =
+    useState<boolean>(false);
+  const [currentOpenPositionID, setCurrentOpenPositionID] = useState<
+    string | null
+  >(null);
 
   // All useRef hooks
   const ignoreNextClick = useRef<boolean>(false);
@@ -171,6 +224,16 @@ export default function ProfilePage() {
     getCurrentUser();
   }, []);
 
+  const enableEditMode = () => {
+    getAllCareerScopeStore.getAllCareerScopes();
+    setIsEdit(true);
+  };
+
+  const disableEditMode = () => {
+    setIsEdit(false);
+    form.reset();
+  };
+
   useEffect(() => {
     if (user && company) {
       // Initialize form data
@@ -182,15 +245,12 @@ export default function ProfilePage() {
           companySize: company.companySize ?? null,
           foundedYear: company.foundedYear ?? null,
           location: company.location ?? "",
-          avatar: company.avatar ? new File([], "avatar.png") : null,
-          cover: company.cover ? new File([], "cover.png") : null,
+          avatar: company.avatar ?? null,
+          cover: company.cover ?? null,
         },
         accountSetting: {
           email: user.email ?? "",
           phone: company.phone,
-          // currentPassword: "",
-          // newPassword: "",
-          // confirmPassword: "",
         },
         openPositions:
           company.openPositions.map((op) => {
@@ -209,23 +269,31 @@ export default function ProfilePage() {
               }
             }
             return {
+              uuid: op.id,
               title: op.title,
               description: op.description,
+              type: op.type,
               educationRequirement: op.education,
               experienceRequirement: op.experience,
-              salary: op.salary,
+              salary: op.salary || "0",
               deadlineDate: deadlineDate,
-              skills: op.skills || [],
+              skills: Array.isArray(op.skills)
+                ? op.skills.join(", ")
+                : op.skills || "",
             };
           }) || [],
-        images: company.images?.map((img) => img.image) || [],
+        images:
+          company.images?.map((img) => ({ id: img.id, image: img.image })) ||
+          [],
         benefitsAndValues: {
           benefits:
             company.benefits.map((bf) => ({
+              id: bf.id,
               label: bf.label,
             })) || [],
           values:
             company.values.map((vl) => ({
+              id: vl.id,
               label: vl.label,
             })) || [],
         },
@@ -234,6 +302,7 @@ export default function ProfilePage() {
           description: cs.description,
         })),
         socials: company.socials.map((sc) => ({
+          id: sc.id,
           platform: sc.platform,
           url: sc.url,
         })),
@@ -267,6 +336,7 @@ export default function ProfilePage() {
     const initialCareerScope = form.getValues("careerScopes") || [];
     setCareers(
       initialCareerScope.map((cp) => ({
+        id: cp?.id ?? "",
         name: cp?.name ?? "",
         description: cp?.description ?? "",
       }))
@@ -277,6 +347,7 @@ export default function ProfilePage() {
     const initialBenefit = form.getValues("benefitsAndValues.benefits") || [];
     setBenefits(
       initialBenefit.map((bf) => ({
+        id: bf.id,
         label: bf.label,
       }))
     );
@@ -286,6 +357,7 @@ export default function ProfilePage() {
     const initialValue = form.getValues("benefitsAndValues.values") || [];
     setBenefits(
       initialValue.map((vl) => ({
+        id: vl.id,
         label: vl.label,
       }))
     );
@@ -297,9 +369,6 @@ export default function ProfilePage() {
       setTimeout(() => (ignoreNextClick.current = false), 200);
     }
   }, [openImagePopup, openProfilePopup]);
-
-  if (loading) return <CompanyProfilePageSkeleton />;
-  if (!user || !company) return null;
 
   // Add an open position
   const addOpenPosition = () => {
@@ -322,17 +391,37 @@ export default function ProfilePage() {
   };
 
   // Remove an open position
-  const removeOpenPosition = (positionId: number) => {
-    setOpenPositions((prevPositions) =>
-      prevPositions!.filter((position) => position.id !== positionId.toString())
+  const removeOpenPosition = async (openPositionID: string) => {
+    await removeOneOpenPosition.removeOneOpenPosition(
+      company!.id,
+      openPositionID
     );
+
+    // Refetch current user to get updated data
+    await getCurrentUser();
+
+    toast({
+      description: (
+        <div className="flex items-center gap-2">
+          <LucideCheck />
+          <TypographySmall className="font-medium leading-relaxed">
+            Remove Open Position Successfully!
+          </TypographySmall>
+        </div>
+      ),
+    });
+
+    setIsEdit(false);
   };
 
   const addBenefits = () => {
-    const trimmed = benefitInput.trim();
+    const trimmed = benefitInput?.label.trim();
     if (!trimmed) return;
 
-    const alreadyExists = benefits.some(
+    // Get current benefits from form
+    const currentBenefits = form.getValues("benefitsAndValues.benefits") || [];
+
+    const alreadyExists = currentBenefits.some(
       (bf) => bf.label.toLowerCase() === trimmed.toLowerCase()
     );
 
@@ -343,32 +432,57 @@ export default function ProfilePage() {
         description: "Please input another benefit.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
-      setBenefitInput("");
+      setBenefitInput(null);
       setOpenBenefitPopOver(false);
       return;
     }
 
-    const updated = [...benefits, { label: trimmed }];
-    setBenefits(updated);
+    // Add new benefit WITHOUT id (will be created in backend)
+    const updatedBenefits = [...currentBenefits, { label: trimmed }];
 
-    setBenefitInput("");
+    // Update form state
+    form.setValue("benefitsAndValues.benefits", updatedBenefits, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+
+    setBenefits(updatedBenefits); // Update local state for UI
+    setBenefitInput(null);
     setOpenBenefitPopOver(false);
   };
 
   const removeBenefit = async (benefitToRemove: string) => {
-    const updated = benefits.filter((bf) => bf.label !== benefitToRemove);
-    setBenefits(updated);
-    // setValue?.("benefitsAndValues.benefits", updated);
+    const currentBenefits = form.getValues("benefitsAndValues.benefits") || [];
 
-    // await trigger?.("benefitsAndValues.benefits");
+    // Find the benefit to remove
+    const benefitToDelete = currentBenefits.find(
+      (bf) => bf.label === benefitToRemove
+    );
+
+    // If it has an ID, track it for deletion
+    if ("id" in benefitToDelete! && benefitToDelete.id) {
+      setDeletedBenefitIds((prev) => [...prev, benefitToDelete.id as number]);
+    }
+
+    // Remove from form
+    const updated = currentBenefits.filter(
+      (bf) => bf.label !== benefitToRemove
+    );
+    form.setValue("benefitsAndValues.benefits", updated, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+
+    setBenefits(updated); // Update local state for UI
   };
 
   const addValue = () => {
-    const trimmed = valueInput.trim();
+    const trimmed = valueInput?.label.trim();
     if (!trimmed) return;
 
-    // Check for duplicate value
-    const alreadyExists = values.some(
+    const currentValues = form.getValues("benefitsAndValues.values") || [];
+
+    const alreadyExists = currentValues.some(
       (value) => value.label.toLowerCase() === trimmed.toLowerCase()
     );
 
@@ -379,30 +493,58 @@ export default function ProfilePage() {
         description: "Please input another value.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
-      setValueInput("");
+      setValueInput(null);
       setOpenValuePopOver(false);
       return;
     }
 
-    // Update new value
-    const updated = [...values, { label: trimmed }];
-    setValues(updated);
+    // Add new value WITHOUT id
+    const updatedValues = [...currentValues, { label: trimmed }];
+    form.setValue("benefitsAndValues.values", updatedValues, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
 
-    setValueInput("");
+    setValues(updatedValues);
+    setValueInput(null);
     setOpenValuePopOver(false);
   };
 
   const removeValue = async (valueToRemove: string) => {
-    const updated = values.filter((value) => value.label !== valueToRemove);
-    setValues(updated);
+    const currentValues = form.getValues("benefitsAndValues.values") || [];
+
+    // Find the value to remove
+    const valueToDelete = currentValues.find(
+      (value) => value.label === valueToRemove
+    );
+
+    // If it has an ID, track it for deletion
+    if ("id" in valueToDelete! && valueToDelete.id) {
+      setDeletedValueIds((prev) => [...prev, valueToDelete.id as number]);
+    }
+
+    // Remove from form
+    const updatedValues = currentValues.filter(
+      (value) => value.label !== valueToRemove
+    );
+    form.setValue("benefitsAndValues.values", updatedValues, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+
+    setValues(updatedValues);
   };
 
   const addCareers = () => {
-    const trimmed = careersInput.trim();
+    const trimmed = careersInput?.name.trim();
+    const id = careersInput?.id;
+    const description = careersInput?.description;
     if (!trimmed) return;
 
+    const currentCareerScopes = form.getValues("careerScopes") || [];
+
     // Check for duplicate careers
-    const alreadyExists = careers.some(
+    const alreadyExists = currentCareerScopes.some(
       (career) => career.name.toLowerCase() === trimmed.toLowerCase()
     );
 
@@ -413,43 +555,76 @@ export default function ProfilePage() {
         description: "Please input another career.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
-      setCareersInput("");
+      setCareersInput(null);
       setOpenCareersPopOver(false);
       return;
     }
 
     // Add new career
-    const updatedCareers = [...careers, { name: trimmed, description: "" }];
-    setCareers(updatedCareers);
+    const updatedCareers = [
+      ...careers,
+      { id: id ?? "", name: trimmed, description: description ?? "" },
+    ];
+    form.setValue("careerScopes", updatedCareers, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
 
-    // Clear input field
-    setCareersInput("");
+    setCareers(updatedCareers);
+    setCareersInput(null);
     setOpenCareersPopOver(false); // Close popover after adding career
   };
 
   // Handle the career selection from the dropdown or input
-  const handleCareerSelect = (selectedCareer: string) => {
-    setCareersInput(selectedCareer); // Set the selected career to input
+  const handleCareerSelect = (
+    selectedCareerId: string,
+    selectedCareerName: string,
+    selectedCareerDescription: string
+  ) => {
+    setCareersInput({
+      id: selectedCareerId,
+      name: selectedCareerName,
+      description: selectedCareerDescription,
+    }); // Set the selected career to input
     setOpenCareersPopOver(false); // Close popover after selecting
   };
 
   // Handle delete career
   const removeCareer = (careerToRemove: string) => {
-    const updatedCareers = careers.filter(
+    const currentCareers = form.getValues("careerScopes") || [];
+
+    // Find the career to delete
+    const careerToDelete = currentCareers.find(
+      (career) => career.name === careerToRemove
+    );
+
+    // If it has an ID, track it for deletion
+    if ("id" in careerToDelete! && careerToDelete.id) {
+      setDeleteCareerScopeIds((prev) => [...prev, careerToDelete.id]);
+    }
+
+    // Remove from form
+    const updatedCareers = currentCareers.filter(
       (career) => career.name !== careerToRemove
     );
+    form.setValue("careerScopes", updatedCareers, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+
     setCareers(updatedCareers);
   };
 
   const addSocial = () => {
-    const trimmedSocial = socialInput.social.trim();
-    const trimmedLink = socialInput.link.trim();
+    const trimmedPlatform = socialInput?.platform.trim();
+    const trimmedUrl = socialInput?.url.trim();
+    if (!trimmedPlatform || !trimmedUrl) return;
 
-    if (!trimmedSocial || !trimmedLink) return;
+    const currentSocials = form.getValues("socials") || [];
 
     // Check for duplicate social entries
-    const alreadyExists = socials.some(
-      (s) => s.platform.toLowerCase() === trimmedSocial.toLowerCase()
+    const alreadyExists = currentSocials.some(
+      (s) => s?.platform?.toLowerCase() === trimmedPlatform.toLowerCase()
     );
 
     if (alreadyExists) {
@@ -459,19 +634,42 @@ export default function ProfilePage() {
         description: "This social platform already exists.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
+      setSocialInput(null);
       return;
     }
 
     const updatedSocials = [
       ...socials,
-      { platform: trimmedSocial, url: trimmedLink },
+      { id: "", platform: capitalizeWords(trimmedPlatform), url: trimmedUrl },
     ];
+    form.setValue("socials", updatedSocials, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+
     setSocials(updatedSocials); // Update the state
-    setSocialInput({ social: "", link: "" }); // Reset the input
+    setSocialInput(null); // Reset the input
   };
 
-  const removeSocial = (index: number) => {
-    const updatedSocials = socials.filter((_, i) => i !== index);
+  const removeSocial = (platform: TPlatform) => {
+    const currentSocials = form.getValues("socials") || [];
+
+    const socialToDelete = currentSocials.find(
+      (sc) => sc?.platform === platform
+    );
+
+    if ("id" in socialToDelete! && socialToDelete.id) {
+      setDeleteSocialIds((prev) => [...prev, socialToDelete.id as string]);
+    }
+
+    const updatedSocials = socials.filter(
+      (sc) => sc.platform !== socialToDelete?.platform
+    );
+    form.setValue("socials", updatedSocials, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+
     setSocials(updatedSocials); // Update the state
   };
 
@@ -505,16 +703,196 @@ export default function ProfilePage() {
     }
   };
 
-  const onSubmit = (data: TCompanyProfileForm) => {
-    // Show success message
-    console.log("Company data: ", data);
-    toast({
-      title: "Success!",
-      description: "Company profile updated successfully.",
-    });
+  const onSubmit = async (data: TCompanyProfileForm) => {
+    console.log("Company Profile Data: ", data);
+    const updateBody: Partial<TCompanyUpdateBody> = {};
 
-    // Exit edit mode
-    setIsEdit(false);
+    try {
+      const dirtyFields = form.formState.dirtyFields;
+
+      /* ------------------------ BASIC INFO ------------------------ */
+      const basicInfoKeys: (keyof NonNullable<typeof data.basicInfo>)[] = [
+        "name",
+        "description",
+        "industry",
+        "location",
+        "companySize",
+        "foundedYear",
+      ];
+
+      basicInfoKeys.forEach((key) => {
+        if (dirtyFields?.basicInfo?.[key]) {
+          (updateBody as any)[key] = data.basicInfo?.[key];
+        }
+      });
+
+      /* ------------------------ ACCOUNT SETTINGS ------------------------ */
+      const accountKeys: (keyof NonNullable<typeof data.accountSetting>)[] = [
+        "email",
+        "phone",
+      ];
+
+      accountKeys.forEach((key) => {
+        if (dirtyFields?.accountSetting?.[key]) {
+          (updateBody as any)[key] = data.accountSetting?.[key];
+        }
+      });
+
+      /* ------------------------ OPEN POSITIONS ------------------------ */
+      if (
+        Array.isArray(dirtyFields.openPositions) &&
+        Array.isArray(data.openPositions)
+      ) {
+        const updatedPositions = data.openPositions.map((pos, index) => {
+          const updatedPos: Record<string, any> = {};
+
+          // Include existing positions by UUID
+          if (pos.uuid) {
+            updatedPos.id = pos.uuid;
+          }
+
+          // For new positions (uuid === "" or null)
+          if (!pos.uuid) {
+            updatedPos.isNew = true; // optional flag if your backend needs it
+          }
+
+          // Always include existing positions (even if not dirty)
+          updatedPos.title = pos.title;
+          updatedPos.description = pos.description;
+          updatedPos.type = pos.type;
+          updatedPos.experience = pos.experienceRequirement;
+          updatedPos.education = pos.educationRequirement;
+          updatedPos.skills = Array.isArray(pos.skills)
+            ? pos.skills.join(", ")
+            : pos.skills;
+          updatedPos.salary = pos.salary;
+          updatedPos.deadlineDate =
+            pos.deadlineDate?.toISOString() || new Date().toISOString();
+
+          return updatedPos;
+        });
+
+        // Always keep all open positions (existing + new)
+        if (updatedPositions.length > 0) {
+          updateBody.openPositions = updatedPositions as any;
+        }
+      }
+
+      /* ------------------------ BENEFITS & VALUES ------------------------ */
+      if (
+        dirtyFields.benefitsAndValues?.benefits ||
+        deletedBenefitIds.length > 0
+      ) {
+        // Send all current benefits (with or without IDs)
+        updateBody.benefits = data.benefitsAndValues?.benefits || [];
+
+        // Send IDs to delete
+        if (deletedBenefitIds.length > 0) {
+          updateBody.benefitIdsToDelete = deletedBenefitIds;
+        }
+      }
+
+      if (dirtyFields.benefitsAndValues?.values || deletedValueIds.length > 0) {
+        // Send all current values (with or without IDs)
+        updateBody.values = data.benefitsAndValues?.values || [];
+
+        // Send IDs to delete
+        if (deletedValueIds.length > 0) {
+          updateBody.valueIdsToDelete = deletedValueIds;
+        }
+      }
+
+      /* ------------------------ CAREER SCOPES ------------------------ */
+      if (dirtyFields.careerScopes || deleteCareerScopeIds.length > 0) {
+        // Send all current careerScopes (with or without IDs)
+        updateBody.careerScopes = data.careerScopes || [];
+
+        // Send IDs to delete
+        if (deleteCareerScopeIds.length > 0) {
+          updateBody.careerScopeIdsToDelete = deleteCareerScopeIds;
+        }
+      }
+
+      /* ------------------------ SOCIALS ------------------------ */
+      if (dirtyFields.socials || deleteSocialIds.length > 0) {
+        console.log("Social Data: ", data.socials);
+        updateBody.socials =
+          data.socials
+            ?.filter((s): s is { id: string; platform: string; url: string } =>
+              Boolean(s && s.platform && s.url)
+            )
+            .map((s) => ({
+              id: s.id,
+              platform: s.platform,
+              url: s.url,
+            })) || [];
+
+        if (deleteSocialIds.length > 0) {
+          updateBody.socialIdsToDelete = deleteSocialIds;
+        }
+      }
+
+      /* ------------------------ IMAGE UPLOADS ------------------------ */
+      const uploadTasks: Promise<any>[] = [];
+
+      if (data.basicInfo?.avatar instanceof File) {
+        uploadTasks.push(
+          uploadAvatarCmpStore.uploadAvatar(company!.id, data.basicInfo.avatar)
+        );
+      }
+
+      if (data.basicInfo?.cover instanceof File) {
+        uploadTasks.push(
+          uploadCoverCmpStore.uploadCover(company!.id, data.basicInfo.cover)
+        );
+      }
+
+      if (data.images) {
+        const imageFiles: File[] = data.images
+          .map((img) => img?.image)
+          .filter((image): image is File => image instanceof File);
+
+        if (imageFiles.length > 0) {
+          uploadTasks.push(
+            uploadCmpImagesStore.uploadImages(company!.id, imageFiles)
+          );
+        }
+      }
+
+      await Promise.all(uploadTasks);
+
+      console.log("Updated Body: ", updateBody);
+
+      /* ------------------------ API UPDATE ------------------------ */
+      if (Object.keys(updateBody).length > 0) {
+        await updateOneCmpStore.updateOneCompany(company!.id, updateBody);
+      }
+
+      // Refresh page for refetch current user and reset form
+      window.location.reload();
+
+      form.reset(data);
+
+      toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <LucideCheck />
+            <TypographySmall className="font-medium leading-relaxed">
+              Updated Company Profile Successfully!
+            </TypographySmall>
+          </div>
+        ),
+      });
+
+      setIsEdit(false);
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Error!",
+        description: "Failed to update company profile.",
+      });
+    }
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -536,7 +914,46 @@ export default function ProfilePage() {
     }
 
     // Now submit the form
-    form.handleSubmit(onSubmit, console.error)();
+    form.handleSubmit(onSubmit, console.error)(e);
+  };
+
+  const handleRemoveOneCmpImage = async (imageId: string, index: number) => {
+    const updated = form.watch("images")?.filter((_, i) => i !== index);
+    form.setValue("images", updated);
+
+    if (company) {
+      await removeOneCompImage.removeOneCmpImage(company.id, imageId);
+    }
+
+    // Refetch current user
+    await getCurrentUser();
+    setIsEdit(false);
+  };
+
+  const handleRemoveCmpCover = async () => {
+    if (company) {
+      await removeCmpCover.removeCmpCover(company.id);
+    }
+
+    // Refetch current user
+    await getCurrentUser();
+    setIsEdit(false);
+
+    // Close dialog
+    setOpenRemoveCoverDialog(false);
+  };
+
+  const handleRemoveCmpAvatar = async () => {
+    if (company) {
+      await removeCmpAvatar.removeCmpAvatar(company.id);
+    }
+
+    // Refetch current user
+    await getCurrentUser();
+    setIsEdit(false);
+
+    // Close dialog
+    setOpenRemoveAvatarDialog(false);
   };
 
   // Profile, Cover and Image Popup handlers
@@ -558,6 +975,54 @@ export default function ProfilePage() {
     setOpenProfilePopup(true);
   };
 
+  useEffect(() => {
+    if (removeOneOpenPosition.loading) {
+      toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <ApsaraLoadingSpinner size={50} loop />
+            <TypographySmall className="font-medium leading-relaxed">
+              Removing Open Position...
+            </TypographySmall>
+          </div>
+        ),
+      });
+    }
+
+    if (removeOneCompImage.loading) {
+      toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <ApsaraLoadingSpinner size={50} loop />
+            <TypographySmall className="font-medium leading-relaxed">
+              Removing Image...
+            </TypographySmall>
+          </div>
+        ),
+      });
+    }
+
+    if (updateProfileLoadingState) {
+      toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <ApsaraLoadingSpinner size={50} loop />
+            <TypographySmall className="font-medium leading-relaxed">
+              Updating Company Profile...
+            </TypographySmall>
+          </div>
+        ),
+      });
+    }
+  }, [
+    removeOneOpenPosition.loading,
+    removeOneCompImage.loading,
+    updateProfileLoadingState,
+  ]);
+
+  if (loading) return <CompanyProfilePageSkeleton />;
+  if (!user || !company) return null;
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <div
@@ -570,12 +1035,36 @@ export default function ProfilePage() {
       >
         <BlurBackGroundOverlay />
         {isEdit && (
-          <div
-            className="flex items-center gap-2 cursor-pointer absolute bottom-5 right-5 py-1 px-3 rounded-full bg-foreground text-primary-foreground"
-            onClick={() => coverInputRef.current?.click()}
-          >
-            <LucideCamera strokeWidth={"1.2px"} width={"18px"} />
-            <TypographySmall className="text-xs">Change Cover</TypographySmall>
+          <div className="absolute bottom-5 right-5 flex flex-col items-start gap-2">
+            <Button
+              className="flex items-center gap-2 cursor-pointer py-1 px-3 rounded-full bg-foreground text-primary-foreground"
+              onClick={() => coverInputRef.current?.click()}
+              type="button"
+            >
+              <LucideCamera strokeWidth={"1.2px"} width={"18px"} />
+              <TypographySmall className="text-xs">
+                Change Cover
+              </TypographySmall>
+            </Button>
+            {company.cover && (
+              <Button
+                className="flex items-center gap-2 cursor-pointer py-1 px-3 rounded-full bg-red-500 text-red-100"
+                onClick={() => setOpenRemoveCoverDialog(true)}
+                type="button"
+              >
+                <LucideXCircle strokeWidth={"1.2px"} width={"18px"} />
+                <TypographySmall className="text-xs">
+                  Remove Cover
+                </TypographySmall>
+              </Button>
+            )}
+            <RemoveAvatarOrCoverDialog
+              type="cover"
+              setOnRemoveAvatarOrCoverDialog={setOpenRemoveCoverDialog}
+              onRemoveAvatarOrCoverDialog={openRemoveCoverDialog}
+              onNoClick={() => setOpenRemoveCoverDialog(false)}
+              onYesClick={handleRemoveCmpCover}
+            />
           </div>
         )}
         <input
@@ -598,15 +1087,34 @@ export default function ProfilePage() {
                 avatarFile ? URL.createObjectURL(avatarFile) : company.avatar!
               }
             />
-            <AvatarFallback className="uppercase">
+            <AvatarFallback className="uppercase text-lg font-medium">
               {company.name.slice(0, 3)}
             </AvatarFallback>
             {isEdit && (
-              <div
-                className="size-8 flex justify-center items-center cursor-pointer absolute bottom-1 right-1 p-1 rounded-full bg-foreground text-primary-foreground"
-                onClick={() => avatarInputRef.current?.click()}
-              >
-                <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
+              <div className="absolute bottom-1 right-1 flex items-center gap-2">
+                <Button
+                  className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-foreground text-primary-foreground"
+                  onClick={() => avatarInputRef.current?.click()}
+                  type="button"
+                >
+                  <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
+                </Button>
+                {company.avatar && (
+                  <Button
+                    className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-red-500 text-red-100"
+                    onClick={() => setOpenRemoveAvatarDialog(true)}
+                    type="button"
+                  >
+                    <LucideXCircle width={"18px"} strokeWidth={"1.2px"} />
+                  </Button>
+                )}
+                <RemoveAvatarOrCoverDialog
+                  type="avatar"
+                  setOnRemoveAvatarOrCoverDialog={setOpenRemoveAvatarDialog}
+                  onRemoveAvatarOrCoverDialog={openRemoveAvatarDialog}
+                  onNoClick={() => setOpenRemoveAvatarDialog(false)}
+                  onYesClick={handleRemoveCmpAvatar}
+                />
               </div>
             )}
             <input
@@ -628,19 +1136,24 @@ export default function ProfilePage() {
         </div>
         {isEdit ? (
           <div className="flex items-center gap-3 absolute top-5 right-5 phone-xl:top-2 phone-xl:right-2">
-            <Button className="text-xs" type="submit">
-              Save
+            <Button
+              className="text-xs"
+              type="submit"
+              disabled={updateProfileLoadingState}
+            >
+              {updateProfileLoadingState ? "Updating..." : "Save"}
               <LucideCircleCheck />
             </Button>
-            <Button className="text-xs" onClick={() => setIsEdit(false)}>
+            <Button className="text-xs" type="button" onClick={disableEditMode}>
               Cancel
-              <LucideCircleX />
+              <LucideXCircle />
             </Button>
           </div>
         ) : (
           <Button
             className="text-xs absolute top-5 right-5 phone-xl:top-2 phone-xl:right-2"
-            onClick={() => setIsEdit(true)}
+            type="button"
+            onClick={enableEditMode}
           >
             Edit Profile
             <LucideEdit />
@@ -736,7 +1249,7 @@ export default function ProfilePage() {
                     <Input
                       type="number"
                       placeholder={
-                        isEdit ? "Company Size" : company.companySize.toString()
+                        isEdit ? "Company Size" : `${company.companySize}`
                       }
                       id="company-size"
                       {...form.register("basicInfo.companySize")}
@@ -751,7 +1264,7 @@ export default function ProfilePage() {
                     <Input
                       type="number"
                       placeholder={
-                        isEdit ? "Founded Year" : company.foundedYear.toString()
+                        isEdit ? "Founded Year" : `${company.foundedYear}`
                       }
                       id="company-founded-year"
                       {...form.register("basicInfo.foundedYear")}
@@ -812,46 +1325,78 @@ export default function ProfilePage() {
               onSubmit={form.handleSubmit(onSubmit)}
               className="flex flex-col items-start gap-5"
             >
-              {openPositions?.map((position, index) => {
-                const positionId = position.id?.toString();
-                const deadlineDate =
-                  selectedDates[positionId ?? ""]?.deadline ||
-                  new Date(position.deadlineDate);
-                return (
-                  <OpenPositionForm
-                    key={index}
-                    index={index}
-                    form={form}
-                    positionId={Number(position.id)}
-                    positionLabel={`Position ${index + 1}`}
-                    isEdit={isEdit}
-                    title={position.title}
-                    description={position.description}
-                    experience={position.experience}
-                    education={position.education}
-                    skills={position.skills}
-                    salary={position.salary}
-                    deadlineDate={{
-                      defaultValue: deadlineDate,
-                      data: deadlineDate,
-                      onDataChange: (date: Date | undefined) => {
-                        if (date) {
-                          handleDateChange(positionId ?? "", "deadline", date);
-                          form.setValue(
-                            `openPositions.${index}.deadlineDate`,
-                            date
+              {openPositions && openPositions.length > 0 ? (
+                openPositions.map((position, index) => {
+                  const positionId = position.id;
+                  const deadlineDate =
+                    selectedDates[positionId]?.deadline ||
+                    new Date(position.deadlineDate);
+                  return (
+                    <OpenPositionForm
+                      key={index}
+                      index={index}
+                      form={form}
+                      positionIndex={Number(position.id)}
+                      positionUUID={position.id}
+                      isEdit={isEdit}
+                      title={position.title}
+                      description={position.description}
+                      type={position.type}
+                      experience={position.experience}
+                      education={position.education}
+                      skills={position.skills}
+                      salary={position.salary}
+                      deadlineDate={{
+                        defaultValue: deadlineDate,
+                        data: deadlineDate,
+                        onDataChange: (date: Date | undefined) => {
+                          if (date) {
+                            handleDateChange(positionId, "deadline", date);
+                            form.setValue(
+                              `openPositions.${index}.deadlineDate`,
+                              date
+                            );
+                          }
+                        },
+                      }}
+                      onRemove={() => {
+                        if (isUuid(position.id)) {
+                          setOpenRemoveOpenPositionDialog(true);
+                          setCurrentOpenPositionID(position.id);
+                        } else {
+                          const updated = openPositions.filter(
+                            (op) => op.id !== positionId
                           );
+                          setOpenPositions(updated);
                         }
-                      },
-                    }}
-                    onRemove={removeOpenPosition}
-                  />
-                );
-              })}
+                      }}
+                    />
+                  );
+                })
+              ) : (
+                <div className="w-full flex flex-col items-center justify-center p-5">
+                  <Image alt="empty" src={emptySvgImage} className="size-44" />
+                  <TypographyMuted className="text-sm">
+                    No Open Position Available.
+                  </TypographyMuted>
+                </div>
+              )}
             </div>
+            <RemoveOpenPositionDialog
+              onRemoveOpDialog={openRemoveOpenPositionDialog}
+              setOnRemoveOpDialog={setOpenRemoveOpenPositionDialog}
+              onNoClick={() => setOpenRemoveOpenPositionDialog(false)}
+              onYesClick={() => {
+                if (currentOpenPositionID) {
+                  removeOpenPosition(currentOpenPositionID);
+                  setOpenRemoveOpenPositionDialog(false);
+                }
+              }}
+            />
           </div>
+
           {/* Company Multiple Images Section */}
-          {((company.images && company.images?.length > 0) || isEdit) && (
+          {((company.images && company.images.length > 0) || isEdit) && (
             <div className="w-full p-5 border-[1px] border-muted rounded-md">
               <div className="flex flex-col gap-1">
                 <TypographyH4>Company Images Information</TypographyH4>
@@ -860,12 +1405,9 @@ export default function ProfilePage() {
               <Carousel className="w-full">
                 <CarouselContent className="w-full">
                   {form.watch("images")?.map((img, index) => {
-                    let imageUrl = "";
-
-                    if (typeof img === "string") {
-                      imageUrl = img;
-                    } else if (img instanceof File) {
-                      imageUrl = URL.createObjectURL(img);
+                    let imageUrl = img?.image;
+                    if (img?.image instanceof File) {
+                      imageUrl = URL.createObjectURL(img.image);
                     }
 
                     return (
@@ -877,7 +1419,9 @@ export default function ProfilePage() {
                           onClick={(e) => {
                             if (!isEdit) {
                               handleClickImagePopup(e);
-                              setCurrentCompanyImage(img!.toString());
+                              if (img?.image) {
+                                setCurrentCompanyImage(img.image.toString());
+                              }
                             }
                           }}
                           className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center"
@@ -886,17 +1430,37 @@ export default function ProfilePage() {
                         {isEdit && (
                           <LucideXCircle
                             className="absolute top-3 right-1 cursor-pointer text-red-500"
+                            type="button"
                             onClick={() => {
-                              const updated = form
-                                .watch("images")
-                                ?.filter((_, i) => i !== index);
-                              form.setValue("images", updated);
+                              if (img?.id === "" || img?.id === undefined) {
+                                const updated = form
+                                  .watch("images")
+                                  ?.filter((_, i) => i !== index);
+                                form.setValue("images", updated);
+                              } else {
+                                setOpenRemoveImageDialog(true);
+                                setRemoveImage({ id: img.id, index: index });
+                              }
                             }}
                           />
                         )}
                       </CarouselItem>
                     );
                   })}
+                  <RemoveImageDialog
+                    onRemoveImageDialog={openRemoveImageDialog}
+                    setOnRemoveImageDialog={setOpenRemoveImageDialog}
+                    onNoClick={() => setOpenRemoveImageDialog(false)}
+                    onYesClick={() => {
+                      if (removedImage) {
+                        handleRemoveOneCmpImage(
+                          removedImage.id,
+                          removedImage.index
+                        );
+                        setOpenRemoveImageDialog(false);
+                      }
+                    }}
+                  />
                   {isEdit && (
                     <CarouselItem className="max-w-[280px]">
                       <label
@@ -911,12 +1475,13 @@ export default function ProfilePage() {
                           onChange={(e) => {
                             const files = e.target.files;
                             if (!files) return;
-
-                            const currentImages = form.watch("images") || [];
-                            form.setValue("images", [
-                              ...currentImages,
-                              files[0],
-                            ]);
+                            const currentImages = form.watch("images");
+                            if (currentImages) {
+                              form.setValue("images", [
+                                ...currentImages,
+                                { image: files[0] },
+                              ]);
+                            }
                           }}
                         />
                         <div className="flex flex-col items-center gap-2">
@@ -929,139 +1494,13 @@ export default function ProfilePage() {
                     </CarouselItem>
                   )}
                 </CarouselContent>
-                <CarouselPrevious className="ml-8" />
-                <CarouselNext className="mr-8" />
+                <CarouselPrevious type="button" className="ml-8" />
+                <CarouselNext type="button" className="mr-8" />
               </Carousel>
             </div>
           )}
         </div>
         <div className="w-[40%] flex flex-col gap-5">
-          {/* <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
-            <div className="flex flex-col gap-1">
-              <TypographyH4>Account Settings</TypographyH4>
-              <Divider />
-            </div>
-            <div className="flex flex-col items-start gap-5">
-              <LabelInput
-                label="Current Password"
-                input={
-                  <Input
-                    autoComplete="off"
-                    placeholder="Current Password"
-                    id="current-password"
-                    {...form.register("accountSetting.currentPassword")}
-                    disabled={!isEdit}
-                    type={isShowPassword.current ? "text" : "password"}
-                    prefix={<LucideLock />}
-                    suffix={
-                      isShowPassword.current ? (
-                        <LucideEyeClosed
-                          onClick={() =>
-                            !isEdit
-                              ? undefined
-                              : setIsShowPassword({
-                                  ...isShowPassword,
-                                  current: false,
-                                })
-                          }
-                        />
-                      ) : (
-                        <LucideEye
-                          onClick={() =>
-                            !isEdit
-                              ? undefined
-                              : setIsShowPassword({
-                                  ...isShowPassword,
-                                  current: true,
-                                })
-                          }
-                        />
-                      )
-                    }
-                  />
-                }
-              />
-              <LabelInput
-                label="New Password"
-                input={
-                  <Input
-                    autoComplete="off"
-                    placeholder="New Password"
-                    id="new-password"
-                    {...form.register("accountSetting.newPassword")}
-                    disabled={!isEdit}
-                    type={isShowPassword.new ? "text" : "password"}
-                    prefix={<LucideLock />}
-                    suffix={
-                      isShowPassword.new ? (
-                        <LucideEyeClosed
-                          onClick={() =>
-                            !isEdit
-                              ? undefined
-                              : setIsShowPassword({
-                                  ...isShowPassword,
-                                  new: false,
-                                })
-                          }
-                        />
-                      ) : (
-                        <LucideEye
-                          onClick={() =>
-                            !isEdit
-                              ? undefined
-                              : setIsShowPassword({
-                                  ...isShowPassword,
-                                  new: true,
-                                })
-                          }
-                        />
-                      )
-                    }
-                  />
-                }
-              />
-              <LabelInput
-                label="Confirm Password"
-                input={
-                  <Input
-                    autoComplete="off"
-                    placeholder="Confirm Password"
-                    id="confirm-password"
-                    {...form.register("accountSetting.confirmPassword")}
-                    disabled={!isEdit}
-                    type={isShowPassword.confirm ? "text" : "password"}
-                    prefix={<LucideLock />}
-                    suffix={
-                      isShowPassword.confirm ? (
-                        <LucideEyeClosed
-                          onClick={() =>
-                            !isEdit
-                              ? undefined
-                              : setIsShowPassword({
-                                  ...isShowPassword,
-                                  confirm: false,
-                                })
-                          }
-                        />
-                      ) : (
-                        <LucideEye
-                          onClick={() =>
-                            !isEdit
-                              ? undefined
-                              : setIsShowPassword({
-                                  ...isShowPassword,
-                                  confirm: true,
-                                })
-                          }
-                        />
-                      )
-                    }
-                  />
-                }
-              />
-            </div>
-          </div> */}
-
           {/* Benefits Section */}
           <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
             <div className="w-full flex flex-col gap-1">
@@ -1071,6 +1510,7 @@ export default function ProfilePage() {
             <div className="w-full flex flex-col items-stretch gap-3">
               <div className="w-full flex flex-wrap gap-3">
                 {benefits &&
+                  benefits.length > 0 &&
                   benefits.map((benefit) => (
                     <div
                       className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs"
@@ -1107,8 +1547,10 @@ export default function ProfilePage() {
                   <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
                     <Input
                       placeholder="Enter your benefit (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
-                      value={benefitInput}
-                      onChange={(e) => setBenefitInput(e.target.value)}
+                      value={benefitInput?.label}
+                      onChange={(e) =>
+                        setBenefitInput({ label: e.target.value })
+                      }
                     />
                     <div className="flex items-center gap-1 [&>button]:text-xs">
                       <Button
@@ -1136,6 +1578,7 @@ export default function ProfilePage() {
             <div className="w-full flex flex-col items-stretch gap-3">
               <div className="w-full flex flex-wrap gap-3">
                 {values &&
+                  values.length > 0 &&
                   values.map((value, index) => (
                     <div
                       className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs"
@@ -1172,8 +1615,8 @@ export default function ProfilePage() {
                   <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
                     <Input
                       placeholder="Enter your value (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
-                      value={valueInput}
-                      onChange={(e) => setValueInput(e.target.value)}
+                      value={valueInput?.label}
+                      onChange={(e) => setValueInput({ label: e.target.value })}
                     />
                     <div className="flex items-center gap-1 [&>button]:text-xs">
                       <Button
@@ -1200,32 +1643,31 @@ export default function ProfilePage() {
             </div>
             <div className="w-full flex flex-col items-stretch gap-3">
               <div className="flex flex-wrap gap-3">
-                {careers.map((career, index) => (
-                  <div
-                    key={index}
-                    className="rounded-3xl border-2 border-muted duration-300 ease-linear hover:border-muted-foreground"
-                  >
-                    <HoverCard>
-                      <HoverCardTrigger className="flex items-center bg-muted rounded-3xl">
-                        <Tag label={career.name} />
-                        {isEdit && (
-                          <LucideCircleX
-                            className="text-muted-foreground cursor-pointer mr-2 text-red-500"
-                            width={"18px"}
-                            onClick={() => removeCareer(career.name)}
-                          />
-                        )}
-                      </HoverCardTrigger>
-                      <HoverCardContent>
-                        <TypographySmall>
-                          {career.description
-                            ? career.description
-                            : career.name}
-                        </TypographySmall>
-                      </HoverCardContent>
-                    </HoverCard>
-                  </div>
-                ))}
+                {careers &&
+                  careers.length > 0 &&
+                  careers.map((career, index) => {
+                    return (
+                      <div key={index}>
+                        <HoverCard>
+                          <HoverCardTrigger className="flex items-center rounded-3xl">
+                            <Tag label={career.name} />
+                            {isEdit && (
+                              <LucideXCircle
+                                className="text-muted-foreground cursor-pointer ml-1 text-red-500"
+                                width={"18px"}
+                                onClick={() => removeCareer(career.name)}
+                              />
+                            )}
+                          </HoverCardTrigger>
+                          <HoverCardContent>
+                            <TypographySmall>
+                              {career.description ?? career.name}
+                            </TypographySmall>
+                          </HoverCardContent>
+                        </HoverCard>
+                      </div>
+                    );
+                  })}
               </div>
             </div>
             {isEdit && (
@@ -1240,9 +1682,9 @@ export default function ProfilePage() {
                     className="w-full justify-between"
                   >
                     {careersInput
-                      ? careerScopesList.find(
-                          (career) => career.value === careersInput
-                        )?.label
+                      ? getAllCareerScopeStore.careerScopes?.find(
+                          (career) => career.name === careersInput.name
+                        )?.name
                       : "Select careers..."}
                     <ChevronDown className="opacity-50" />
                   </Button>
@@ -1256,22 +1698,30 @@ export default function ProfilePage() {
                     <CommandList>
                       <CommandEmpty>No career found.</CommandEmpty>
                       <CommandGroup>
-                        {careerScopesList.map((career, index) => (
-                          <CommandItem
-                            key={index}
-                            value={career.value}
-                            onSelect={() => handleCareerSelect(career.value)} // Handle career selection
-                          >
-                            {career.label}
-                            <LucideCircleCheck
-                              className={
-                                careersInput === career.value
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              }
-                            />
-                          </CommandItem>
-                        ))}
+                        {getAllCareerScopeStore.careerScopes?.map(
+                          (career, index) => (
+                            <CommandItem
+                              key={index}
+                              value={career.name}
+                              onSelect={() =>
+                                handleCareerSelect(
+                                  career.id,
+                                  career.name,
+                                  career.description ?? ""
+                                )
+                              } // Handle career selection
+                            >
+                              {career.name}
+                              <LucideCircleCheck
+                                className={
+                                  careersInput?.name === career.name
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                }
+                              />
+                            </CommandItem>
+                          )
+                        )}
                       </CommandGroup>
                     </CommandList>
                   </Command>
@@ -1301,23 +1751,30 @@ export default function ProfilePage() {
               <div className="w-full flex flex-col items-start gap-5">
                 <div className="w-full flex flex-col items-stretch gap-3">
                   <div className="flex flex-wrap gap-3">
-                    {socials.map((item: ISocial, index) => (
-                      <Link
-                        key={index}
-                        href={item.url}
-                        className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
-                      >
-                        {getSocialPlatformTypeIcon(item.platform as TPlatform)}
-                        <TypographySmall>{item.platform}</TypographySmall>
-                        {isEdit && (
-                          <LucideXCircle
-                            className="text-muted-foreground cursor-pointer text-red-500"
-                            width={"18px"}
-                            onClick={() => removeSocial(index)}
-                          />
-                        )}
-                      </Link>
-                    ))}
+                    {socials &&
+                      socials.length > 0 &&
+                      socials.map((item: ISocial, index) => (
+                        <div className="flex items-center gap-1" key={index}>
+                          <Link
+                            href={item.url}
+                            className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
+                          >
+                            {getSocialPlatformTypeIcon(
+                              item.platform as TPlatform
+                            )}
+                            <TypographySmall>{item.platform}</TypographySmall>
+                          </Link>
+                          {isEdit && (
+                            <LucideXCircle
+                              className="text-muted-foreground cursor-pointer text-red-500"
+                              width={"18px"}
+                              onClick={() =>
+                                removeSocial(item.platform as TPlatform)
+                              }
+                            />
+                          )}
+                        </div>
+                      ))}
                   </div>
                   {isEdit && (
                     <div>
@@ -1330,11 +1787,11 @@ export default function ProfilePage() {
                             <Select
                               onValueChange={(value: string) =>
                                 setSocialInput({
-                                  ...socialInput,
-                                  social: value,
+                                  ...socialInput!,
+                                  platform: value,
                                 })
                               }
-                              value={socialInput.social}
+                              value={socialInput?.platform}
                             >
                               <SelectTrigger className="h-12 text-muted-foreground">
                                 <SelectValue placeholder="Platform" />
@@ -1358,11 +1815,11 @@ export default function ProfilePage() {
                                 placeholder="Link"
                                 id="link"
                                 name="link"
-                                value={socialInput.link}
+                                value={socialInput?.url}
                                 onChange={(e) =>
                                   setSocialInput({
-                                    ...socialInput,
-                                    link: e.target.value,
+                                    ...socialInput!,
+                                    url: e.target.value,
                                   })
                                 }
                                 prefix={<LucideLink2 />}
@@ -1390,11 +1847,13 @@ export default function ProfilePage() {
       </div>
 
       {/* Image Popup Section */}
-      <ImagePopup
-        open={openImagePopup}
-        setOpen={setOpenImagePopup}
-        image={currentCompanyImage!}
-      />
+      {currentCompanyImage && (
+        <ImagePopup
+          open={openImagePopup}
+          setOpen={setOpenImagePopup}
+          image={currentCompanyImage}
+        />
+      )}
 
       {/* Profile Popup Section */}
       <ImagePopup

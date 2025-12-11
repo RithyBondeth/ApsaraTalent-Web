@@ -54,11 +54,9 @@ import {
   IEducation,
   IExperience,
   ISkill,
-} from "@/utils/interfaces/user-interface/employee.interface";
-import {
   ICareerScopes,
   ISocial,
-} from "@/utils/interfaces/user-interface/company.interface";
+} from "@/utils/interfaces/user-interface/employee.interface";
 import {
   HoverCard,
   HoverCardContent,
@@ -101,9 +99,6 @@ export default function EmployeeProfilePage() {
       accountSetting: {
         email: "",
         phone: "",
-        // currentPassword: "",
-        // newPassword: "",
-        // confirmPassword: "",
       },
       profession: {
         job: "",
@@ -125,11 +120,6 @@ export default function EmployeeProfilePage() {
 
   // All useState hooks
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [isShowPassword, setIsShowPassword] = useState({
-    current: false,
-    new: false,
-    confirm: false,
-  });
   const [selectedGender, setSelectedGender] = useState<TGender | string>("");
   const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
     ""
@@ -138,7 +128,7 @@ export default function EmployeeProfilePage() {
   const [experience, setExperience] = useState<IExperience[]>([]);
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
   const [socialInput, setSocialInput] = useState<{
-    platform: string;
+    platform: TPlatform | "";
     url: string;
   }>({ platform: "", url: "" });
   const [socials, setSocials] = useState<ISocial[]>([]);
@@ -169,14 +159,11 @@ export default function EmployeeProfilePage() {
           username: employee.username ?? "",
           gender: employee.gender ?? "",
           location: employee.location ?? "",
-          avatar: employee.avatar ? new File([], "avatar.png") : null,
+          avatar: employee.avatar ?? null,
         },
         accountSetting: {
           email: user.email ?? "",
           phone: employee.phone,
-          // currentPassword: "",
-          // newPassword: "",
-          // confirmPassword: "",
         },
         profession: {
           job: employee.job ?? "",
@@ -255,7 +242,7 @@ export default function EmployeeProfilePage() {
 
   useEffect(() => {
     const initialSocial = (form.getValues?.("socials") || []).filter(
-      (s): s is { platform: string; url: string } => s !== undefined
+      (s): s is ISocial => s !== undefined
     );
     setSocials(initialSocial);
   }, [form]);
@@ -322,7 +309,7 @@ export default function EmployeeProfilePage() {
 
   //Socials
   const addSocial = () => {
-    const trimmedPlatform = socialInput.platform.trim();
+    const trimmedPlatform = socialInput.platform;
     const trimmedUrl = socialInput.url.trim();
 
     if (!trimmedPlatform || !trimmedUrl) return;
@@ -342,7 +329,7 @@ export default function EmployeeProfilePage() {
       return;
     }
 
-    setSocials([...socials, { platform: trimmedPlatform, url: trimmedUrl }]);
+    setSocials([...socials, { platform: trimmedPlatform as TPlatform, url: trimmedUrl }]);
     setSocialInput({ platform: "", url: "" });
   };
 
@@ -457,15 +444,44 @@ export default function EmployeeProfilePage() {
   };
 
   const onSubmit = async (data: TEmployeeProfileForm) => {
-    console.log("test");
+    // Show success message
     console.log("Employee Profile Data: ", data);
-  }
+
+    setIsEdit(false);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    form.setValue("skills", skills);
+    form.setValue("careerScopes", careerScopes);
+    form.setValue("socials", socials);
+
+    if (avatarFile) {
+      form.setValue("basicInfo.avatar", avatarFile);
+    }
+
+    if (resumeFile) {
+      form.setValue("references.resume", resumeFile);
+    }
+
+    if (coverLetterFile) {
+      form.setValue("references.coverLetter", coverLetterFile);
+    }
+
+    form.handleSubmit(onSubmit, console.error)(e);
+  };
 
   return user ? (
-    <form className="!min-w-full flex flex-col gap-5" onSubmit={form.handleSubmit(onSubmit)}>
+    <form className="!min-w-full flex flex-col gap-5" onSubmit={handleSubmit}>
       <div className="flex items-center justify-between border border-muted rounded-md p-5 tablet-sm:flex-col tablet-sm:[&>div]:w-full tablet-sm:gap-5">
         <div className="flex items-center justify-start gap-5 tablet-sm:flex-col">
-          <div className="relative" onClick={() => setOpenProfilePopup(true)}>
+          <div
+            className="relative"
+            onClick={() => {
+              if(!isEdit) setOpenProfilePopup(true)
+            }}
+          >
             <Avatar className="size-36" rounded="md">
               <AvatarImage
                 src={
@@ -479,6 +495,7 @@ export default function EmployeeProfilePage() {
             {isEdit && (
               <Button
                 className="size-8 flex justify-center items-center cursor-pointer absolute bottom-1 right-1 p-1 rounded-full bg-foreground text-primary-foreground"
+                type="button"
                 onClick={() => avatarInputRef.current?.click()}
               >
                 <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
@@ -499,10 +516,7 @@ export default function EmployeeProfilePage() {
         </div>
         {isEdit ? (
           <div className="flex items-center gap-3">
-            <Button
-              type="submit"
-              className="text-xs"
-            >
+            <Button type="submit" className="text-xs">
               Save
               <LucideCircleCheck />
             </Button>
@@ -922,119 +936,6 @@ export default function EmployeeProfilePage() {
           )}
         </div>
         <div className="w-[40%] flex flex-col gap-5">
-          {/* <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
-            <div className="flex flex-col gap-1">
-              <TypographyH4>Account Settings</TypographyH4>
-              <Divider />
-            </div>
-            <div className="flex flex-col items-start gap-5">
-              <LabelInput
-                label="Current Password"
-                input={
-                  <Input
-                    placeholder="Current Password"
-                    id="currentPassword"
-                    {...form.register("accountSetting.currentPassword")}
-                    type={isShowPassword.current ? "text" : "password"}
-                    disabled={!isEdit}
-                    prefix={<LucideLock strokeWidth={"1.3px"} />}
-                    suffix={
-                      isEdit &&
-                      (isShowPassword.current ? (
-                        <LucideEyeClosed
-                          strokeWidth={"1.3px"}
-                          onClick={() =>
-                            setIsShowPassword({
-                              ...isShowPassword,
-                              current: false,
-                            })
-                          }
-                        />
-                      ) : (
-                        <LucideEye
-                          strokeWidth={"1.3px"}
-                          onClick={() =>
-                            setIsShowPassword({
-                              ...isShowPassword,
-                              current: true,
-                            })
-                          }
-                        />
-                      ))
-                    }
-                  />
-                }
-              />
-              <LabelInput
-                label="New Password"
-                input={
-                  <Input
-                    placeholder="New Password"
-                    id="newPassword"
-                    {...form.register("accountSetting.newPassword")}
-                    type={isShowPassword.new ? "text" : "password"}
-                    disabled={!isEdit}
-                    prefix={<LucideLock strokeWidth={"1.3px"} />}
-                    suffix={
-                      isEdit &&
-                      (isShowPassword.new ? (
-                        <LucideEyeClosed
-                          strokeWidth={"1.3px"}
-                          onClick={() =>
-                            setIsShowPassword({ ...isShowPassword, new: false })
-                          }
-                        />
-                      ) : (
-                        <LucideEye
-                          strokeWidth={"1.3px"}
-                          onClick={() =>
-                            setIsShowPassword({ ...isShowPassword, new: true })
-                          }
-                        />
-                      ))
-                    }
-                  />
-                }
-              />
-              <LabelInput
-                label="Confirm Password"
-                input={
-                  <Input
-                    placeholder="Confirm Password"
-                    id="confirmPassword"
-                    {...form.register("accountSetting.confirmPassword")}
-                    type={isShowPassword.confirm ? "text" : "password"}
-                    prefix={<LucideLock strokeWidth={"1.3px"} />}
-                    suffix={
-                      isEdit &&
-                      (isShowPassword.confirm ? (
-                        <LucideEyeClosed
-                          strokeWidth={"1.3px"}
-                          onClick={() =>
-                            setIsShowPassword({
-                              ...isShowPassword,
-                              confirm: false,
-                            })
-                          }
-                        />
-                      ) : (
-                        <LucideEye
-                          strokeWidth={"1.3px"}
-                          onClick={() =>
-                            setIsShowPassword({
-                              ...isShowPassword,
-                              confirm: true,
-                            })
-                          }
-                        />
-                      ))
-                    }
-                  />
-                }
-              />
-            </div>
-          </div> */}
-
           {/* Connected Accounts Section */}
           <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
             <div className="flex flex-col gap-1">
@@ -1131,7 +1032,9 @@ export default function EmployeeProfilePage() {
                       >
                         Cancel
                       </Button>
-                      <Button onClick={addSkills}>Save</Button>
+                      <Button onClick={addSkills} type="button">
+                        Save
+                      </Button>
                     </div>
                   </PopoverContent>
                 </Popover>
@@ -1191,7 +1094,9 @@ export default function EmployeeProfilePage() {
                     >
                       Cancel
                     </Button>
-                    <Button onClick={addCareerScope}>Save</Button>
+                    <Button onClick={addCareerScope} type="button">
+                      Save
+                    </Button>
                   </div>
                 </PopoverContent>
               </Popover>
@@ -1364,7 +1269,7 @@ export default function EmployeeProfilePage() {
                           Platform
                         </TypographyMuted>
                         <Select
-                          onValueChange={(value: string) =>
+                          onValueChange={(value: TPlatform) =>
                             setSocialInput({ ...socialInput, platform: value })
                           }
                           value={socialInput.platform}

@@ -135,7 +135,11 @@ export default function CompanyCard(props: ICompanyCardProps) {
         {props.availableTimes && (
           <div className="flex flex-col gap-3">
             <IconLabel
-              text="Available times"
+              text={
+                props.availableTimes.length > 1
+                  ? "Available times"
+                  : "Available time"
+              }
               icon={<LucideClock strokeWidth={"1.5px"} />}
               className="[&>p]:text-primary [&>p]:font-medium"
             />

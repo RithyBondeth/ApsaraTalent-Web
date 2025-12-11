@@ -15,6 +15,7 @@ import {
 import { useState, useRef, useEffect } from "react";
 import { IEmployeeCardProps } from "./props";
 import EmployeeDialog from "../employee-dialog";
+import { capitalizeWords } from "@/utils/functions/capitalize-words";
 
 export default function EmployeeCard(props: IEmployeeCardProps) {
   const [openProfileDialog, setOpenProfileDialog] = useState<boolean>(false);
@@ -79,7 +80,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
           >
             <LucideEye className="!size-6 transition-all duration-300 ease-in-out" />
           </Button>
-          <Button 
+          <Button
             className="size-12 rounded-md transition-all duration-300 ease-in-out hover:scale-105"
             onClick={props.onLikeClick}
             disabled={props.onLikeClickDisable}
@@ -111,11 +112,9 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
           }
         />
         <Tag
-          label={
-            props.availability.split("_")[0].toUpperCase() +
-            " " +
-            props.availability.split("_")[1].toUpperCase()
-          }
+          label={`${capitalizeWords(props.availability.split("_")[0])} ${
+            capitalizeWords(props.availability.split("_")[1])
+          }`}
         />
       </div>
 
@@ -131,10 +130,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
             <LucideBookmark />
           </Button>
         )}
-        <Button
-          className="text-sm"
-          onClick={props.onViewClick}
-        >
+        <Button className="text-sm" onClick={props.onViewClick}>
           View
           <LucideCircleArrowRight />
         </Button>

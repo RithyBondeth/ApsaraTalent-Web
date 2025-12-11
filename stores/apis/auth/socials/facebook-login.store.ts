@@ -2,23 +2,24 @@ import { create } from "zustand";
 import { useGetCurrentUserStore } from "../../users/get-current-user.store";
 import { API_AUTH_SOCIAL_FACEBOOK_URL } from "@/utils/constants/apis/auth_url";
 import { TUserRole } from "@/utils/types/role.type";
-import { setAuthCookies, clearAuthCookies, hasAuthToken } from "@/utils/auth/cookie-manager";
 import { EAuthLoginMethod } from "@/utils/constants/auth.constant";
+import { clearAuthCookies, hasAuthToken } from "@/utils/auth/cookie-manager";
 
-// --- Types ---
+// Updated response type - NO TOKENS
 export type TFacebookLoginResponse = {
-  newUser: boolean | null;
-  message: string | null;
-  accessToken: string | null;
-  refreshToken: string | null;
-  email: string | null;
-  firstname: string | null;
-  lastname: string | null;
-  picture: string | null;
-  provider: string | null;
-  role: string | null;
-  lastLoginMethod: EAuthLoginMethod | null;
-  lastLoginAt: string | null;
+  type: 'FACEBOOK_AUTH_SUCCESS' | 'FACEBOOK_AUTH_ERROR';
+  error?: string;
+  newUser?: boolean;
+  user?: {
+    email: string | null;
+    firstname: string | null;
+    lastname: string | null;
+    picture: string | null;
+    provider: string | null;
+    role: string | null;
+    lastLoginMethod: EAuthLoginMethod | null;
+    lastLoginAt: string | null;
+  };
 };
 
 export type TFacebookLoginState = {
@@ -35,42 +36,44 @@ export type TFacebookLoginState = {
   provider: string | null;
   lastLoginMethod: EAuthLoginMethod | null;
   lastLoginAt: string | null;
-  setRole: (role: TUserRole) => void;
-  facebookLogin: (rememberMe: boolean, usePopup?: boolean) => void;
-  initialize: () => void;
+  facebookLogin: (rememberMe: 'true' | 'false', usePopup?: boolean) => void;
   clearToken: () => void;
 };
 
-// --- Constants ---
-const BACKEND_ORIGIN = API_AUTH_SOCIAL_FACEBOOK_URL.split("/social")[0];
+// Backend origin (SAFE)
+const BACKEND_ORIGIN = new URL(API_AUTH_SOCIAL_FACEBOOK_URL).origin;
 
-// --- Shared Logic ---
-const FINISH_LOGIN = (data: TFacebookLoginResponse, rememberMe: boolean) => {
-  if (!data) return;
+// Shared Finish Logic
+const FINISH_LOGIN = (data: TFacebookLoginResponse) => {
+  if (!data || data.type !== 'FACEBOOK_AUTH_SUCCESS') {
+    useFacebookLoginStore.setState({
+      loading: false,
+      error: data?.error || 'Authentication failed',
+      isAuthenticated: false,
+    });
+    return;
+  }
 
-  // Update Zustand in-memory store
+  // Cookies are already set by backend (httpOnly)
+  // Just update the Zustand store with user info
   useFacebookLoginStore.setState({
     loading: false,
-    isAuthenticated: !!data.accessToken,
-    message: data.message,
-    role: data.role,
-    newUser: data.newUser,
-    email: data.email,
-    firstname: data.firstname,
-    lastname: data.lastname,
-    picture: data.picture,
-    provider: data.provider,
-    lastLoginMethod: data.lastLoginMethod,
-    lastLoginAt: data.lastLoginAt,
+    isAuthenticated: true,
+    message: 'Login successful',
+    role: data.user?.role || null,
+    newUser: data.newUser || false,
+    email: data.user?.email || null,
+    firstname: data.user?.firstname || null,
+    lastname: data.user?.lastname || null,
+    picture: data.user?.picture || null,
+    provider: data.user?.provider || null,
+    lastLoginMethod: data.user?.lastLoginMethod || null,
+    lastLoginAt: data.user?.lastLoginAt || null,
+    error: null,
   });
-
-  // Set secure cookies if accessToken exists
-  if (data.accessToken && data.refreshToken) {
-    setAuthCookies(data.accessToken, data.refreshToken, rememberMe);
-  }
 };
 
-// --- Main Store ---
+// Zustand Store
 export const useFacebookLoginStore = create<TFacebookLoginState>((set) => ({
   loading: false,
   error: null,
@@ -88,102 +91,105 @@ export const useFacebookLoginStore = create<TFacebookLoginState>((set) => ({
 
   setRole: (role: TUserRole) => set({ role }),
 
-  initialize: () => {
-    try {
-      const hasValidAuth = hasAuthToken();
-      
-      console.log("Facebook login store initialization:", {
-        hasAuthToken: hasValidAuth,
-        isAuthenticated: hasValidAuth
-      });
-      
-      set({ 
-        isAuthenticated: hasValidAuth,
-        error: null,
-        loading: false
-      });
-    } catch (error) {
-      console.error("Error during Facebook login store initialization:", error);
-      set({ 
-        isAuthenticated: false,
-        error: null,
-        loading: false
-      });
-    }
-  },
-
-  facebookLogin: (rememberMe: boolean, usePopup = true) => {
+  // Facebook Login
+  facebookLogin: (rememberMe: 'true' | 'false', usePopup = true) => {
     set({ loading: true, error: null });
 
-    const url = API_AUTH_SOCIAL_FACEBOOK_URL;
+    // Add remember parameter to URL
+    const url = `${API_AUTH_SOCIAL_FACEBOOK_URL}?remember=${rememberMe}`;
 
+    // Redirect (no popup)
     if (!usePopup) {
       window.location.href = url;
       return;
     }
 
-    const popup = window.open(url, "facebook-oauth", "width=500,height=600");
+    // Popup
+    const popup = window.open(
+      url,
+      "facebook-oauth",
+      "width=500,height=600,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes"
+    );
+
     if (!popup) {
-      set({ loading: false, error: "Popup blocked by browser" });
+      set({
+        loading: false,
+        error: "Popup blocked. Please allow popups for this site.",
+      });
       return;
     }
 
-    const handler = (ev: MessageEvent<TFacebookLoginResponse>) => {
-      if (ev.origin !== BACKEND_ORIGIN) return;
-      window.removeEventListener("message", handler);
+    let messageReceived = false;
+
+    const handleMessage = (ev: MessageEvent<TFacebookLoginResponse>) => {
+      // Strict origin check
+      if (ev.origin !== BACKEND_ORIGIN) {
+        console.warn('Ignored message from unexpected origin:', ev.origin);
+        return;
+      }
+
+      // Check message type
+      if (!ev.data || !ev.data.type?.startsWith('FACEBOOK_AUTH_')) {
+        return;
+      }
+
+      messageReceived = true;
+      window.removeEventListener("message", handleMessage);
+      clearInterval(popupChecker);
+
+      // Try closing popup
       try {
-        if (popup) {
+        if (popup && !popup.closed) {
           popup.close();
         }
-      } catch (error) {
-        console.debug("Popup close handled by browser security policy");
+      } catch (e) {
+        console.debug("Popup close blocked:", e);
       }
-      console.log("Facebook Data Response: ", ev.data);
-      FINISH_LOGIN(ev.data, rememberMe);
+
+      FINISH_LOGIN(ev.data);
     };
 
-    window.addEventListener("message", handler);
+    // Listen for postMessage
+    window.addEventListener("message", handleMessage);
+
+    // Check if popup was closed manually
+    const popupChecker = setInterval(() => {
+      if (!popup || popup.closed) {
+        clearInterval(popupChecker);
+        window.removeEventListener("message", handleMessage);
+
+        if (!messageReceived) {
+          set({
+            loading: false,
+            error: "Login cancelled or popup closed",
+          });
+        }
+      }
+    }, 500);
   },
 
+  // Clear Token
   clearToken: () => {
-    try {
-      // Use centralized cookie clearing
-      clearAuthCookies();
-      
-      // Clear user data from store
-      useGetCurrentUserStore.getState().clearUser();
-      
-      // Reset Facebook login state
-      set({
-        loading: false,
-        error: null,
-        isAuthenticated: false,
-        message: null,
-        role: null,
-        newUser: null,
-        email: null,
-        firstname: null,
-        lastname: null,
-        picture: null,
-        provider: null,
-      });
-      
-    } catch (error) {
-      console.error("Error clearing Facebook tokens:", error);
-      // Still update state even if clearing failed
-      set({
-        loading: false,
-        error: null,
-        isAuthenticated: false,
-        message: null,
-        role: null,
-        newUser: null,
-        email: null,
-        firstname: null,
-        lastname: null,
-        picture: null,
-        provider: null,
-      });
-    }
+     // Use centralized cookie clearing
+     clearAuthCookies();
+
+     // Clear user data from store
+     useGetCurrentUserStore.getState().clearUser();
+
+    set({
+      loading: false,
+      error: null,
+      isAuthenticated: false,
+      message: null,
+      role: null,
+      newUser: null,
+      email: null,
+      firstname: null,
+      lastname: null,
+      picture: null,
+      provider: null,
+      lastLoginMethod: null,
+      lastLoginAt: null,
+    });
   },
 }));

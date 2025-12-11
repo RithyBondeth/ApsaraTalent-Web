@@ -27,9 +27,9 @@ export const useForgotPasswordStore = create<TForgotPasswordState>()((set) => ({
     } catch (error) {
       if (axios.isAxiosError(error)) {
         set({
-            loading: false,
-            error: error.response?.data?.message || error.message,
-            message: error.response?.data?.message || "Something went wrong",
+          loading: false,
+          error: error.response?.data?.message || error.message,
+          message: error.response?.data?.message || "Something went wrong",
         });
       } else {
         set({

@@ -38,18 +38,24 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                   <TypographyMuted>{props.industry}</TypographyMuted>
                 </div>
                 <div className="space-y-2">
-                  <IconLabel
-                    icon={<LucideMapPin strokeWidth={"1.5px"} />}
-                    text={props.location}
-                  />
-                  <IconLabel
-                    icon={<LucideUsers strokeWidth={"1.5px"} />}
-                    text={`${props.companySize}+ Employees`}
-                  />
-                  <IconLabel
-                    icon={<LucideBuilding strokeWidth={"1.5px"} />}
-                    text={`Founded in ${props.foundedYear}`}
-                  />
+                  {props.location && (
+                    <IconLabel
+                      icon={<LucideMapPin strokeWidth={"1.5px"} />}
+                      text={props.location}
+                    />
+                  )}
+                  {props.companySize && (
+                    <IconLabel
+                      icon={<LucideUsers strokeWidth={"1.5px"} />}
+                      text={`${props.companySize}+ Employees`}
+                    />
+                  )}
+                  {props.foundedYear && (
+                    <IconLabel
+                      icon={<LucideBuilding strokeWidth={"1.5px"} />}
+                      text={`Founded in ${props.foundedYear}`}
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -64,36 +70,46 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                   {props.description}
                 </TypographyMuted>
               </div>
-              <div className="flex flex-col items-start gap-2 tablet-sm:hidden">
-                <TypographyP className="font-medium">Benefits</TypographyP>
-                <div className="flex flex-wrap gap-2">
-                  {props.benefits.map((benefit, index) => (
-                    <div key={index} className="px-3 py-2 rounded-2xl bg-muted">
-                      <IconLabel
-                        icon={
-                          <LucideCircleCheck stroke="white" fill="#0073E6" />
-                        }
-                        text={benefit.label}
-                      />
-                    </div>
-                  ))}
+              {(props.benefits && props.benefits.length) > 0 && (
+                <div className="flex flex-col items-start gap-2 tablet-sm:hidden">
+                  <TypographyP className="font-medium">Benefits</TypographyP>
+                  <div className="flex flex-wrap gap-2">
+                    {props.benefits.map((benefit, index) => (
+                      <div
+                        key={index}
+                        className="px-3 py-2 rounded-2xl font-medium bg-muted [&>div>p]:text-xs [&>div>p]:text-[#0073E6]"
+                      >
+                        <IconLabel
+                          icon={
+                            <LucideCircleCheck stroke="white" fill="#0073E6" />
+                          }
+                          text={benefit.label}
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-col items-start gap-2 tablet-sm:hidden">
-                <TypographyP className="font-medium">Values</TypographyP>
-                <div className="flex flex-wrap gap-2">
-                  {props.values.map((value, index) => (
-                    <div key={index} className="px-3 py-2 rounded-2xl bg-muted">
-                      <IconLabel
-                        icon={
-                          <LucideCircleCheck stroke="white" fill="#69B41E" />
-                        }
-                        text={value.label}
-                      />
-                    </div>
-                  ))}
+              )}
+              {(props.values && props.values.length) > 0 && (
+                <div className="flex flex-col items-start gap-2 tablet-sm:hidden">
+                  <TypographyP className="font-medium">Values</TypographyP>
+                  <div className="flex flex-wrap gap-2">
+                    {props.values.map((value, index) => (
+                      <div
+                        key={index}
+                        className="px-3 py-2 rounded-2xl font-medium bg-muted [&>div>p]:text-xs [&>div>p]:text-[#69B41E]"
+                      >
+                        <IconLabel
+                          icon={
+                            <LucideCircleCheck stroke="white" fill="#69B41E" />
+                          }
+                          text={value.label}
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
               <div className="w-full flex justify-end">
                 <Link href={`/feed/company/${props.id}`}>
                   <Button className="text-xs">View Company</Button>
