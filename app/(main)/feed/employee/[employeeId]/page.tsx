@@ -43,7 +43,6 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import ImagePopup from "@/components/utils/image-popup";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
-import { useGetOneUserStore } from "@/stores/apis/users/get-one-user.store";
 import EmployeeDetailPageSkeleton from "./skeleton";
 import { dateFormatter } from "@/utils/functions/dateformatter";
 import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
@@ -59,19 +58,19 @@ export default function EmployeeDetailPage() {
   const params = useParams<{ employeeId: string }>();
   const id = params.employeeId;
   const router = useRouter();
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
   // Popup state
-  const [openProfilePopup, setOpenProfilePopup] = useState(false);
-  const ignoreNextClick = useRef(false);
+  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
+  const ignoreNextClick = useRef<boolean>(false);
 
   // Get data and loading state
   const { loading, employeeData, queryOneEmployee } = useGetOneEmployeeStore();
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const companyLikeStore = useCompanyLikeStore();
   const companyFavEmployeeStore = useCompanyFavEmployeeStore();
-  const [isSavedFavorite, setIsSavedFavorite] = useState(false);
+  //const [isSavedFavorite, setIsSavedFavorite] = useState<boolean>(false);
 
   // Initialize component (client-side only)
   useEffect(() => {
@@ -217,7 +216,6 @@ export default function EmployeeDetailPage() {
         employeeId
       );
       toast({ title: "Saved", description: "Employee added to favorites." });
-      setIsSavedFavorite(true);
     } catch {
       const err = companyFavEmployeeStore.error || "Failed to save employee";
       toast({ title: "Error", description: err, variant: "destructive" });
@@ -551,7 +549,7 @@ export default function EmployeeDetailPage() {
 
       {/* Action Buttons Section */}
       <div className="flex items-center gap-2">
-        {!isSavedFavorite && (
+        {!companyFavEmployeeStore.isFavorite(id) && (
           <Button
             variant={"outline"}
             onClick={handleSaveFavorite}

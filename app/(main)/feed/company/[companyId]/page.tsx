@@ -57,7 +57,6 @@ import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { toast } from "@/hooks/use-toast";
 import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
-import { useGetOneEmployeeStore } from "@/stores/apis/employee/get-one-emp.store";
 import { useGetOneCompanyStore } from "@/stores/apis/company/get-one-cmp.store";
 
 export default function CompanyDetailPage() {

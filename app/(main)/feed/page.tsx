@@ -105,9 +105,9 @@ export default function FeedPage() {
   const [savedCompanyIds, setSavedCompanyIds] = useState<Set<string>>(
     new Set()
   );
-  const [savedEmployeeIds, setSavedEmployeeIds] = useState<Set<string>>(
-    new Set()
-  );
+  // const [savedEmployeeIds, setSavedEmployeeIds] = useState<Set<string>>(
+  //   new Set()
+  // );
 
   // Load data only after current user is available (loaded by layout)
   useEffect(() => {
@@ -219,18 +219,25 @@ export default function FeedPage() {
   ]);
 
   const favoritedCompanyIds = useMemo(() => {
-    const ids =
-      getAllEmployeeFavoritesStore.companyData?.map((fav) => fav.company.id) ??
-      [];
-    return new Set(ids);
+    if (getAllEmployeeFavoritesStore.companyData) {
+      console.log("All Employee Favorite Data: ", getAllEmployeeFavoritesStore.companyData);
+      const ids =
+        getAllEmployeeFavoritesStore.companyData.map((fav) => fav.company.id) ??
+        [];
+      return new Set(ids);
+    }
   }, [getAllEmployeeFavoritesStore.companyData]);
 
-  const favoritedEmployeeIds = useMemo(() => {
-    const ids =
-      getAllCompanyFavoritesStore.employeeData?.map((fav) => fav.employee.id) ??
-      [];
-    return new Set(ids);
-  }, [getAllCompanyFavoritesStore.employeeData]);
+  // const favoritedEmployeeIds = useMemo(() => {
+  //   if (getAllCompanyFavoritesStore.employeeData) {
+  //     console.log("All Company Favorite Data: ", getAllCompanyFavoritesStore.employeeData);
+  //     const ids =
+  //       getAllCompanyFavoritesStore.employeeData.map(
+  //         (fav) => fav.employee.id
+  //       ) ?? [];
+  //     return new Set(ids);
+  //   }
+  // }, [getAllCompanyFavoritesStore.employeeData]);
 
   // Preload profile images for better performance
   const profileImageUrls = useMemo(() => {
@@ -359,7 +366,9 @@ export default function FeedPage() {
                 }}
                 hideSaveButton={
                   savedCompanyIds.has(user.id) ||
-                  (!!user.id && favoritedCompanyIds.has(user.id))
+                  (!!user.id &&
+                    favoritedCompanyIds &&
+                    favoritedCompanyIds.has(user.id))
                 }
                 onLikeClick={async () => {
                   const empID = currentUser?.employee?.id;
@@ -402,7 +411,6 @@ export default function FeedPage() {
                       title: "Saved",
                       description: "Employee added to favorites.",
                     });
-                    setSavedEmployeeIds((prev) => new Set(prev).add(user.id));
                     await getAllCompanyFavoritesStore.queryAllCompanyFavorites(
                       companyId
                     );
@@ -418,8 +426,11 @@ export default function FeedPage() {
                   }
                 }}
                 hideSaveButton={
-                  savedEmployeeIds.has(user.id) ||
-                  (!!user.id && favoritedEmployeeIds.has(user.id))
+                  // savedEmployeeIds.has(user.id) ||
+                  // (!!user.id &&
+                  //   favoritedEmployeeIds &&
+                  //   favoritedEmployeeIds.has(user.id))
+                  companyFavEmployeeStore.isFavorite(user.id)
                 }
                 onViewClick={() => router.push(`/feed/employee/${user.id}`)}
                 onLikeClick={async () => {
