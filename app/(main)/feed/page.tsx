@@ -45,7 +45,6 @@ import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface"
 export default function FeedPage() {
   // Utils
   const [mounted, setMounted] = useState<boolean>(false);
-  const [currentUserLoaded, setCurrentUserLoaded] = useState<boolean>(false);
   const router = useRouter();
   useEffect(() => setMounted(true), []);
 
@@ -87,7 +86,6 @@ export default function FeedPage() {
     useState<boolean>(false);
 
   // API Integration
-  const getCurrentUserStore = useGetCurrentUserStore();
   const employeeLikeStore = useEmployeeLikeStore();
   const companyLikeStore = useCompanyLikeStore();
   const employeeFavCompanyStore = useEmployeeFavCompanyStore();
@@ -99,6 +97,7 @@ export default function FeedPage() {
   const getAllCompanyStore = useGetAllCompanyStore();
   const getAllEmployeeStore = useGetAllEmployeeStore();
 
+  // Get current user from store (already loaded by layout)
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const isEmployee = currentUser?.role === "employee";
 
@@ -110,23 +109,9 @@ export default function FeedPage() {
     new Set()
   );
 
-  // STEP 1: Load current user first
+  // Load data only after current user is available (loaded by layout)
   useEffect(() => {
-    const loadCurrentUser = async () => {
-      if (!currentUser && !getCurrentUserStore.loading) {
-        await getCurrentUserStore.getCurrentUser();
-        setCurrentUserLoaded(true);
-      } else if (currentUser) {
-        setCurrentUserLoaded(true);
-      }
-    };
-
-    loadCurrentUser();
-  }, [currentUser, getCurrentUserStore]);
-
-  // STEP 2: Load other data only after current user is loaded
-  useEffect(() => {
-    if (!currentUserLoaded || !currentUser) return;
+    if (!currentUser) return;
 
     const loadUserSpecificData = async () => {
       if (isEmployee) {
@@ -187,11 +172,11 @@ export default function FeedPage() {
     };
 
     loadUserSpecificData();
-  }, [currentUserLoaded, currentUser, isEmployee]);
+  }, [currentUser, isEmployee]);
 
   // Filter users based on role
   const allUsers: ICompany[] | IEmployee[] = useMemo(() => {
-    if (!currentUserLoaded || !currentUser) return [];
+    if (!currentUser) return [];
 
     let users: ICompany[] | IEmployee[] = [];
 
@@ -225,7 +210,6 @@ export default function FeedPage() {
 
     return users;
   }, [
-    currentUserLoaded,
     currentUser,
     isEmployee,
     getAllCompanyStore.companyData,
@@ -258,8 +242,6 @@ export default function FeedPage() {
   // Show loading state during hydration and initial data loading
   const showLoadingState =
     !mounted ||
-    !currentUserLoaded ||
-    getCurrentUserStore.loading ||
     !currentUser ||
     (isEmployee &&
       (getAllCompanyStore.loading || getCurrentEmployeeLikedStore.loading)) ||

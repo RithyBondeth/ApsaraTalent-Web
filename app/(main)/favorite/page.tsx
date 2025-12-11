@@ -19,23 +19,21 @@ import FavoriteBannerSkeleton from "./banner-skeleton";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 
 export default function FavoritePage() {
+  // API calls
   const currentUser = useGetCurrentUserStore((state) => state.user);
-  const userLoading = useGetCurrentUserStore((state) => state.loading);
-  const isInitialized = useGetCurrentUserStore((state) => state.isInitialized);
   const isEmployee = currentUser?.role === "employee";
-
   const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
   const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
-  
 
   useEffect(() => {
     if (!currentUser) return;
     if (isEmployee && currentUser.employee) {
+      console.log("Querying all employee favorites inside Favorite Page!!!");
       getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
         currentUser.employee.id
       );
-    }
-    if (!isEmployee && currentUser.company) {
+    } else if (!isEmployee && currentUser.company) {
+      console.log("Querying all company favorites inside Favorite Page!!!");
       getAllCompanyFavoritesStore.queryAllCompanyFavorites(
         currentUser.company.id
       );
@@ -53,8 +51,7 @@ export default function FavoritePage() {
     (getAllCompanyFavoritesStore.loading ||
       getAllCompanyFavoritesStore.employeeData === null);
 
-  const shouldShowLoading =
-    !isInitialized || userLoading || isLoadingForEmployee || isLoadingForCompany;
+  const shouldShowLoading = isLoadingForEmployee || isLoadingForCompany;
 
   if (shouldShowLoading) {
     return (
@@ -105,7 +102,7 @@ export default function FavoritePage() {
           getAllEmployeeFavoritesStore.companyData.map((fav) => (
             <FavoriteCompanyCard
               key={fav.id}
-              id={fav.userId}
+              id={fav.company.id}
               name={fav.company.name}
               avatar={fav.company.avatar ?? ""}
               industry={fav.company.industry}
@@ -122,7 +119,7 @@ export default function FavoritePage() {
           getAllCompanyFavoritesStore.employeeData.map((fav) => (
             <FavoriteEmployeeCard
               key={fav.id}
-              id={fav.userId}
+              id={fav.employee.id}
               name={`${fav.employee.firstname} ${fav.employee.lastname}`}
               username={fav.employee.username ?? ""}
               avatar={fav.employee.avatar ?? ""}
@@ -136,12 +133,7 @@ export default function FavoritePage() {
           ))
         ) : (
           <div className="w-full flex flex-col items-center justify-center my-16">
-            <Image
-              src={emptySvgImage}
-              alt="empty"
-              height={200}
-              width={200}
-            />
+            <Image src={emptySvgImage} alt="empty" height={200} width={200} />
             <TypographyP className="!m-0">No favorited available</TypographyP>
           </div>
         )}
