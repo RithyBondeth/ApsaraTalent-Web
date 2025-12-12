@@ -19,7 +19,6 @@ export const useGetAllEmployeeStore = create<TGetAllEmployeeState>((set) => ({
 
     try {
       const response = await axios.get<IEmployee[]>(API_GET_ALL_EMP_URL);
-      console.log("Querying all employees: ", response.data);
       set({ loading: false, error: null, employeesData: response.data });
     } catch (error) {
       if (axios.isAxiosError(error))

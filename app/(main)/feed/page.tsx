@@ -124,15 +124,6 @@ export default function FeedPage() {
               currentUser.employee.id
             );
           }
-          if (
-            !getAllEmployeeFavoritesStore.companyData ||
-            getAllEmployeeFavoritesStore.companyData.length === 0
-          ) {
-            console.log("Querying employee favorite inside Feed Page!!!");
-            getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
-              currentUser.employee.id
-            );
-          }
         }
       } else {
         // Load employee data and company's liked/favorites
@@ -148,15 +139,6 @@ export default function FeedPage() {
           if (!getCurrentCompanyLikedStore.currentCompanyLiked) {
             console.log("Querying company liked inside Feed Page!!!");
             getCurrentCompanyLikedStore.queryCurrentCompanyLiked(
-              currentUser.company.id
-            );
-          }
-          if (
-            !getAllCompanyFavoritesStore.employeeData ||
-            getAllCompanyFavoritesStore.employeeData.length === 0
-          ) {
-            console.log("Querying company favorite inside Feed Page!!!");
-            getAllCompanyFavoritesStore.queryAllCompanyFavorites(
               currentUser.company.id
             );
           }
@@ -210,28 +192,7 @@ export default function FeedPage() {
     getCurrentEmployeeLikedStore.currentEmployeeLiked,
     getCurrentCompanyLikedStore.currentCompanyLiked,
   ]);
-
-  const favoritedCompanyIds = useMemo(() => {
-    if (getAllEmployeeFavoritesStore.companyData) {
-      console.log("All Employee Favorite Data: ", getAllEmployeeFavoritesStore.companyData);
-      const ids =
-        getAllEmployeeFavoritesStore.companyData.map((fav) => fav.company.id) ??
-        [];
-      return new Set(ids);
-    }
-  }, [getAllEmployeeFavoritesStore.companyData]);
-
-  // const favoritedEmployeeIds = useMemo(() => {
-  //   if (getAllCompanyFavoritesStore.employeeData) {
-  //     console.log("All Company Favorite Data: ", getAllCompanyFavoritesStore.employeeData);
-  //     const ids =
-  //       getAllCompanyFavoritesStore.employeeData.map(
-  //         (fav) => fav.employee.id
-  //       ) ?? [];
-  //     return new Set(ids);
-  //   }
-  // }, [getAllCompanyFavoritesStore.employeeData]);
-
+  
   // Preload profile images for better performance
   const profileImageUrls = useMemo(() => {
     return allUsers.map((user) => user.avatar).filter(Boolean);
