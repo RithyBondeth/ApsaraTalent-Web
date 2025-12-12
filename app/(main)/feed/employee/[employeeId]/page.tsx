@@ -70,7 +70,6 @@ export default function EmployeeDetailPage() {
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const companyLikeStore = useCompanyLikeStore();
   const companyFavEmployeeStore = useCompanyFavEmployeeStore();
-  //const [isSavedFavorite, setIsSavedFavorite] = useState<boolean>(false);
 
   // Initialize component (client-side only)
   useEffect(() => {

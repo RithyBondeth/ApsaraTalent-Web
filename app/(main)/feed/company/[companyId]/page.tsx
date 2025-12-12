@@ -48,7 +48,6 @@ import ImagePopup from "@/components/utils/image-popup";
 import React, { useEffect, useRef, useState } from "react";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { TPlatform } from "@/utils/types/platform.type";
-import { useGetOneUserStore } from "@/stores/apis/users/get-one-user.store";
 import { CompanyDetailPageSkeleton } from "./skeleton";
 import { dateFormatterv2 } from "@/utils/functions/dateformatter-v2";
 import { availabilityConstant } from "@/utils/constants/app.constant";
@@ -80,7 +79,6 @@ export default function CompanyDetailPage() {
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const employeeLikeStore = useEmployeeLikeStore();
   const employeeFavCompanyStore = useEmployeeFavCompanyStore();
-  const [isSavedFavorite, setIsSavedFavorite] = useState(false);
 
   // Initialize component (client-side only)
   useEffect(() => {
@@ -207,7 +205,6 @@ export default function CompanyDetailPage() {
     try {
       await employeeFavCompanyStore.addCompanyToFavorite(employeeId, companyId);
       toast({ title: "Saved", description: "Company added to favorites." });
-      setIsSavedFavorite(true);
     } catch {
       const err = employeeFavCompanyStore.error || "Failed to save company";
       toast({ title: "Error", description: err, variant: "destructive" });
@@ -256,7 +253,7 @@ export default function CompanyDetailPage() {
             </div>
           </div>
           <div className="z-10 absolute right-3 bottom-3 flex items-center gap-3">
-            {!isSavedFavorite && (
+            {!employeeFavCompanyStore.isFavorite(id) && (
               <Button
                 variant="outline"
                 onClick={handleSaveFavorite}
