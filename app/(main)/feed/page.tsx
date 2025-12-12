@@ -100,14 +100,7 @@ export default function FeedPage() {
   // Get current user from store (already loaded by layout)
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const isEmployee = currentUser?.role === "employee";
-
   const [likingId, setLikingId] = useState<string | null>(null);
-  const [savedCompanyIds, setSavedCompanyIds] = useState<Set<string>>(
-    new Set()
-  );
-  // const [savedEmployeeIds, setSavedEmployeeIds] = useState<Set<string>>(
-  //   new Set()
-  // );
 
   // Load data only after current user is available (loaded by layout)
   useEffect(() => {
@@ -350,7 +343,6 @@ export default function FeedPage() {
                       title: "Saved",
                       description: "Company added to favorites.",
                     });
-                    setSavedCompanyIds((prev) => new Set(prev).add(user.id));
                     await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
                       employeeId
                     );
@@ -365,10 +357,7 @@ export default function FeedPage() {
                   }
                 }}
                 hideSaveButton={
-                  savedCompanyIds.has(user.id) ||
-                  (!!user.id &&
-                    favoritedCompanyIds &&
-                    favoritedCompanyIds.has(user.id))
+                  employeeFavCompanyStore.isFavorite(user.id)
                 }
                 onLikeClick={async () => {
                   const empID = currentUser?.employee?.id;
@@ -426,10 +415,6 @@ export default function FeedPage() {
                   }
                 }}
                 hideSaveButton={
-                  // savedEmployeeIds.has(user.id) ||
-                  // (!!user.id &&
-                  //   favoritedEmployeeIds &&
-                  //   favoritedEmployeeIds.has(user.id))
                   companyFavEmployeeStore.isFavorite(user.id)
                 }
                 onViewClick={() => router.push(`/feed/employee/${user.id}`)}

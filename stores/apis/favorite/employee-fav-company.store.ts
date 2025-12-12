@@ -31,8 +31,13 @@ export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>()(
           const response = await axios.post<{ message: string }>(
             API_EMPLOYEE_FAVORITE_COMPANY_URL(employeeID, companyID)
           );
-
-          set({ loading: false, error: null, message: response.data.message });
+          set((state) => ({
+            favoriteCompanyIds: new Set(state.favoriteCompanyIds).add(
+              employeeID
+            ),
+            loading: false,
+            message: response.data.message,
+          }));
         } catch (error) {
           if (axios.isAxiosError(error)) {
             const errorMessage =
