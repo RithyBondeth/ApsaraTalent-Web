@@ -33,7 +33,7 @@ export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>()(
           );
           set((state) => ({
             favoriteCompanyIds: new Set(state.favoriteCompanyIds).add(
-              employeeID
+              companyID
             ),
             loading: false,
             message: response.data.message,
