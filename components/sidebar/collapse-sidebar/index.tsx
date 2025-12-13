@@ -22,10 +22,10 @@ import { SidebarDropdownFooterSkeleton } from "./sidebar-dropdown-footer/skeleto
 import { LucideFileUser } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useMemo } from "react";
-import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
-import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-current-company-matching.store";
-import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
-import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
+import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
+import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
+import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
+import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
 
 export default function CollapseSidebar({
   ...props
@@ -38,59 +38,56 @@ export default function CollapseSidebar({
   const isEmployee = user?.role === "employee" && user.employee;
   const isCompany = user?.role === "company" && user.company;
 
-  const { currentEmployeeMatching, queryCurrentEmployeeMatching } =
-    useGetCurrentEmployeeMatchingStore();
-  const { currentCompanyMatching, queryCurrentCompanyMatching } =
-    useGetCurrentCompanyMatchingStore();
+  const { countCurrentEmployeeMatching, totalEmpMatching } =
+    useCountCurrentEmployeeMatchingStore();
+  const { countCurrentCompanyMatching, totalCmpMatching } =
+    useCountCurrentCompanyMatchingStore();
+  const { totalAllEmployeeFavorites, countAllEmployeeFavorites } =
+    useCountAllEmployeeFavoritesStore();
+  const { totalAllCompanyFavorites, countAllCompanyFavorites } =
+    useCountAllCompanyFavoritesStore();
 
-  // Favorite stores (counts only; fetching occurs in pages)
-  const { companyData, queryAllEmployeeFavorites } =
-    useGetAllEmployeeFavoritesStore();
-  const { employeeData, queryAllCompanyFavorites } =
-    useGetAllCompanyFavoritesStore();
-
+  // Ensure matching counts are populated even if user hasn't visited the Matching page
   useEffect(() => {
     if (isEmployee && user?.employee?.id) {
-      queryCurrentEmployeeMatching(user.employee.id);
+      countCurrentEmployeeMatching(user.employee.id);
     } else if (isCompany && user?.company?.id) {
-      queryCurrentCompanyMatching(user.company.id);
+      countCurrentCompanyMatching(user.company.id);
     }
-  }, [
-    isEmployee,
-    isCompany,
-    user?.employee?.id,
-    user?.company?.id,
-    queryCurrentEmployeeMatching,
-    queryCurrentCompanyMatching,
-  ]);
+  }, [isEmployee, isCompany, totalEmpMatching, totalCmpMatching]);
 
   // Ensure favorites counts are populated even if user hasn't visited the Favorites page
   useEffect(() => {
-    if (isEmployee && user?.employee?.id) {
-      queryAllEmployeeFavorites(user.employee.id);
-    } else if (isCompany && user?.company?.id) {
-      queryAllCompanyFavorites(user.company.id);
+    if (user) {
+      if (isEmployee && user.employee) {
+        countAllEmployeeFavorites(user.employee.id);
+      } else if (isCompany && user.company) {
+        countAllCompanyFavorites(user.company.id);
+      }
     }
   }, [
     isEmployee,
     isCompany,
-    user?.employee?.id,
-    user?.company?.id,
-    queryAllEmployeeFavorites,
-    queryAllCompanyFavorites,
+    totalAllEmployeeFavorites,
+    totalAllCompanyFavorites,
   ]);
 
   const matchingCount = useMemo(() => {
-    if (isEmployee) return currentEmployeeMatching?.length ?? 0;
-    if (isCompany) return currentCompanyMatching?.length ?? 0;
+    if (isEmployee) return totalEmpMatching ?? 0;
+    if (isCompany) return totalCmpMatching ?? 0;
     return 0;
-  }, [isEmployee, isCompany, currentEmployeeMatching, currentCompanyMatching]);
+  }, [isEmployee, isCompany, totalEmpMatching, totalCmpMatching]);
 
   const favoriteCount = useMemo(() => {
-    if (isEmployee) return companyData?.length ?? 0;
-    if (isCompany) return employeeData?.length ?? 0;
+    if (isEmployee) return totalAllEmployeeFavorites ?? 0;
+    if (isCompany) return totalAllEmployeeFavorites ?? 0;
     return 0;
-  }, [isEmployee, isCompany, companyData, employeeData]);
+  }, [
+    isEmployee,
+    isCompany,
+    totalAllEmployeeFavorites,
+    totalAllEmployeeFavorites,
+  ]);
 
   return (
     <Sidebar collapsible="icon" {...props}>

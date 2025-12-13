@@ -3,18 +3,18 @@ import axios from "axios";
 import { create } from "zustand";
 
 type TCountCurrentEmployeeMatchingResponse = {
-  totalMatching: number | null;
+  totalMatching: number;
 };
-type TCountCurrentEmployeeMatchingState =
-  TCountCurrentEmployeeMatchingResponse & {
-    loading: boolean;
-    error: string | null;
-    countCurrentEmployeeMatching: (employeeId: string) => Promise<void>;
-  };
+type TCountCurrentEmployeeMatchingState = {
+  totalEmpMatching: number | null;
+  loading: boolean;
+  error: string | null;
+  countCurrentEmployeeMatching: (employeeId: string) => Promise<void>;
+};
 
 export const useCountCurrentEmployeeMatchingStore =
   create<TCountCurrentEmployeeMatchingState>((set) => ({
-    totalMatching: null,
+    totalEmpMatching: null,
     loading: false,
     error: null,
     countCurrentEmployeeMatching: async (employeeId: string) => {
@@ -26,7 +26,7 @@ export const useCountCurrentEmployeeMatchingStore =
         );
 
         set({
-          totalMatching: response.data.totalMatching,
+          totalEmpMatching: response.data.totalMatching,
           loading: false,
           error: null,
         });
@@ -35,13 +35,13 @@ export const useCountCurrentEmployeeMatchingStore =
           set({
             error: error.response?.data.message,
             loading: false,
-            totalMatching: null,
+            totalEmpMatching: null,
           });
         else
           set({
             error: "Failed to count current employee matching",
             loading: false,
-            totalMatching: null,
+            totalEmpMatching: null,
           });
       }
     },

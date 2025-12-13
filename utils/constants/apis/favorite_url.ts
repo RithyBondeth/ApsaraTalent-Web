@@ -15,3 +15,9 @@ export const API_FIND_ALL_EMPLOYEE_FAVORITES = (empId: string) =>
 
 export const API_FIND_ALL_COMPANY_FAVORITES = (cmpId: string) =>
   `${API_BASE_URL}/user/company/all-favorites/${cmpId}`;
+
+export const API_COUNT_ALL_COMPANY_FAVORITES = (cmpId: string) =>
+  `${API_BASE_URL}/user/company/count-favorite/${cmpId}`;
+
+export const API_COUNT_ALL_EMPLOYEE_FAVORITES = (empId: string) =>
+  `${API_BASE_URL}/user/employee/count-favorite/${empId}`;

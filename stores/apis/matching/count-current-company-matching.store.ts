@@ -3,18 +3,18 @@ import axios from "axios";
 import { create } from "zustand";
 
 type TCountCurrentCompanyMatchingResponse = {
-  totalMatching: number | null;
+  totalMatching: number;
 };
-type TCountCurrentCompanyMatchingState =
-  TCountCurrentCompanyMatchingResponse & {
-    loading: boolean;
-    error: string | null;
-    countCurrentCompanyMatching: (companyId: string) => Promise<void>;
-  };
+type TCountCurrentCompanyMatchingState = {
+  totalCmpMatching: number | null;
+  loading: boolean;
+  error: string | null;
+  countCurrentCompanyMatching: (companyId: string) => Promise<void>;
+};
 
 export const useCountCurrentCompanyMatchingStore =
   create<TCountCurrentCompanyMatchingState>((set) => ({
-    totalMatching: null,
+    totalCmpMatching: null,
     loading: false,
     error: null,
     countCurrentCompanyMatching: async (companyId: string) => {
@@ -26,7 +26,7 @@ export const useCountCurrentCompanyMatchingStore =
         );
 
         set({
-          totalMatching: response.data.totalMatching,
+          totalCmpMatching: response.data.totalMatching,
           loading: false,
           error: null,
         });
@@ -35,13 +35,13 @@ export const useCountCurrentCompanyMatchingStore =
           set({
             error: error.response?.data.message,
             loading: false,
-            totalMatching: null,
+            totalCmpMatching: null,
           });
         else
           set({
             error: "Failed to count current company matching",
             loading: false,
-            totalMatching: null,
+            totalCmpMatching: null,
           });
       }
     },
