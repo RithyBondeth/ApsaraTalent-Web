@@ -24,7 +24,7 @@ export default function MatchingPage() {
   const router = useRouter();
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const userLoading = useGetCurrentUserStore((state) => state.loading);
-  const isInitialized = useGetCurrentUserStore((state) => state.isInitialized);
+
   const isEmployee = currentUser?.role === "employee";
 
   const getCurrentEmployeeMatchingStore = useGetCurrentEmployeeMatchingStore();
@@ -57,7 +57,6 @@ export default function MatchingPage() {
       getCurrentCompanyMatchingStore.currentCompanyMatching === null);
 
   const shouldShowLoading =
-    !isInitialized ||
     userLoading ||
     isLoadingForEmployee ||
     isLoadingForCompany;

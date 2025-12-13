@@ -41,6 +41,7 @@ import { useGetAllCompanyStore } from "@/stores/apis/company/get-all-cmp.store";
 import { useGetAllEmployeeStore } from "@/stores/apis/employee/get-all-emp.store";
 import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
+import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
 
 export default function FeedPage() {
   // Utils
@@ -94,6 +95,8 @@ export default function FeedPage() {
   const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
   const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore();
   const getCurrentCompanyLikedStore = useGetCurrentCompanyLikedStore();
+  const getCurrentEmployeeMatchingStore = useGetCurrentEmployeeMatchingStore();
+  const getCurrentCompanyMatchingStore = useGetCurrentCompanyLikedStore();
   const getAllCompanyStore = useGetAllCompanyStore();
   const getAllEmployeeStore = useGetAllEmployeeStore();
 
@@ -192,12 +195,94 @@ export default function FeedPage() {
     getCurrentEmployeeLikedStore.currentEmployeeLiked,
     getCurrentCompanyLikedStore.currentCompanyLiked,
   ]);
-  
+
+  // Handle Employee Like Company
+  const handleEmployeeLikeCompany = async (
+    employeeID: string,
+    companyID: string
+  ) => {
+    if (!employeeID || !companyID) return;
+    setLikingId(companyID);
+    try {
+      await employeeLikeStore.employeeLike(employeeID, companyID);
+      setOpenLikeSuccessDialog(true);
+      await getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(employeeID);
+    } finally {
+      setLikingId(null);
+      getCurrentCompanyMatchingStore.queryCurrentCompanyLiked(companyID);
+    }
+  };
+
+  // Handle Company Like Employee
+  const handleCompanyLikeEmployee = async (
+    companyID: string,
+    employeeID: string
+  ) => {
+    if (!companyID || !employeeID) return;
+    setLikingId(employeeID);
+    try {
+      await companyLikeStore.companyLike(companyID, employeeID);
+      setOpenLikeSuccessDialog(true);
+      await getCurrentCompanyLikedStore.queryCurrentCompanyLiked(companyID);
+    } finally {
+      setLikingId(null);
+      getCurrentEmployeeMatchingStore.queryCurrentEmployeeMatching(employeeID);
+    }
+  };
+
+  // Handle Employee Favorite Company
+  const handleEmployeeFavoriteCompany = async (
+    employeeID: string,
+    companyID: string
+  ) => {
+    if (!employeeID || !companyID) return;
+    try {
+      await employeeFavCompanyStore.addCompanyToFavorite(employeeID, companyID);
+      toast({
+        title: "Saved",
+        description: "Company added to favorites.",
+      });
+      await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(employeeID);
+    } catch (error) {
+      const err = employeeFavCompanyStore.error || "Failed to save company";
+      toast({
+        title: "Error",
+        description: err,
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Handle Company Favorite Employee
+  const handleCompanyFavoriteEmployee = async (
+    companyID: string,
+    employeeID: string
+  ) => {
+    if (!companyID || !employeeID) return;
+    try {
+      await companyFavEmployeeStore.addEmployeeToFavorite(
+        companyID,
+        employeeID
+      );
+      toast({
+        title: "Saved",
+        description: "Employee added to favorites.",
+      });
+      await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyID);
+    } catch (error) {
+      const err = companyFavEmployeeStore.error || "Failed to save employee";
+      toast({
+        title: "Error",
+        description: err,
+        variant: "destructive",
+      });
+    }
+  };
+
   // Preload profile images for better performance
   const profileImageUrls = useMemo(() => {
     return allUsers.map((user) => user.avatar).filter(Boolean);
   }, [allUsers]);
-
   usePreloadImages(profileImageUrls);
 
   // Show loading state during hydration and initial data loading
@@ -291,48 +376,19 @@ export default function FeedPage() {
                 onViewClick={() => {
                   router.push(`/feed/company/${user.id}`);
                 }}
-                onSaveClick={async () => {
-                  const employeeId = currentUser?.employee?.id;
-                  const companyId = user.id;
-                  if (!employeeId || !companyId) return;
-                  try {
-                    await employeeFavCompanyStore.addCompanyToFavorite(
-                      employeeId,
-                      companyId
-                    );
-                    toast({
-                      title: "Saved",
-                      description: "Company added to favorites.",
-                    });
-                    await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
-                      employeeId
-                    );
-                  } catch {
-                    const err =
-                      employeeFavCompanyStore.error || "Failed to save company";
-                    toast({
-                      title: "Error",
-                      description: err,
-                      variant: "destructive",
-                    });
+                onSaveClick={() => {
+                  if (currentUser && currentUser.employee) {
+                    const employeeID = currentUser.employee.id;
+                    const companyID = user.id;
+                    handleEmployeeFavoriteCompany(employeeID, companyID);
                   }
                 }}
-                hideSaveButton={
-                  employeeFavCompanyStore.isFavorite(user.id)
-                }
-                onLikeClick={async () => {
-                  const empID = currentUser?.employee?.id;
-                  const cmpID = user.id;
-                  if (!empID || !cmpID) return;
-                  setLikingId(user.id);
-                  try {
-                    await employeeLikeStore.employeeLike(empID, cmpID);
-                    setOpenLikeSuccessDialog(true);
-                    await getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(
-                      empID
-                    );
-                  } finally {
-                    setLikingId(null);
+                hideSaveButton={employeeFavCompanyStore.isFavorite(user.id)}
+                onLikeClick={() => {
+                  if (currentUser && currentUser.employee) {
+                    const employeeID = currentUser.employee.id;
+                    const companyID = user.id;
+                    handleEmployeeLikeCompany(employeeID, companyID);
                   }
                 }}
                 onLikeClickDisable={
@@ -349,49 +405,19 @@ export default function FeedPage() {
                 {...(user as IEmployee)}
                 id={user.id}
                 onSaveClick={async () => {
-                  const companyId = currentUser?.company?.id;
-                  const employeeId = user.id;
-                  if (!companyId || !employeeId) return;
-                  try {
-                    await companyFavEmployeeStore.addEmployeeToFavorite(
-                      companyId,
-                      employeeId
-                    );
-                    toast({
-                      title: "Saved",
-                      description: "Employee added to favorites.",
-                    });
-                    await getAllCompanyFavoritesStore.queryAllCompanyFavorites(
-                      companyId
-                    );
-                  } catch {
-                    const err =
-                      companyFavEmployeeStore.error ||
-                      "Failed to save employee";
-                    toast({
-                      title: "Error",
-                      description: err,
-                      variant: "destructive",
-                    });
+                  if (currentUser && currentUser.company) {
+                    const companyID = currentUser.company.id;
+                    const employeeID = user.id;
+                    handleCompanyFavoriteEmployee(companyID, employeeID);
                   }
                 }}
-                hideSaveButton={
-                  companyFavEmployeeStore.isFavorite(user.id)
-                }
+                hideSaveButton={companyFavEmployeeStore.isFavorite(user.id)}
                 onViewClick={() => router.push(`/feed/employee/${user.id}`)}
-                onLikeClick={async () => {
-                  const cmpID = currentUser?.company?.id;
-                  const empID = user.id;
-                  if (!cmpID || !empID) return;
-                  setLikingId(user.id);
-                  try {
-                    await companyLikeStore.companyLike(cmpID, empID);
-                    setOpenLikeSuccessDialog(true);
-                    await getCurrentCompanyLikedStore.queryCurrentCompanyLiked(
-                      cmpID
-                    );
-                  } finally {
-                    setLikingId(null);
+                onLikeClick={() => {
+                  if (currentUser && currentUser.company) {
+                    const companyID = currentUser.company.id;
+                    const employeeID = user.id;
+                    handleCompanyLikeEmployee(companyID, employeeID);
                   }
                 }}
                 onLikeClickDisable={
