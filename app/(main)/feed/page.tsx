@@ -43,6 +43,12 @@ import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface"
 import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
 import { useFetchOnce } from "@/hooks/use-fetch-once";
 
+// Module-level cache for global data (survives Strict Mode)
+const globalFetchCache = {
+  companies: false,
+  employees: false,
+};
+
 export default function FeedPage() {
   // Utils
   const [mounted, setMounted] = useState<boolean>(false);
@@ -104,11 +110,9 @@ export default function FeedPage() {
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const [likingId, setLikingId] = useState<string | null>(null);
 
-  // Refs to track if global data has been fetched (only once ever)
-  const hasFetchedGlobalDataRef = useRef(false);
-
-  // Fetch current user employee or company - liked user-specific data (resets when user changes)
+  // Fetch current employee or company liked - user specific data (resets when user changes)
   const { isEmployee } = useFetchOnce({
+    cacheKey: 'feed-page',
     onEmployeeFetch: (employeeId) => {
       console.log("Querying employee liked inside Feed Page!!!");
       getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(employeeId);
@@ -119,19 +123,24 @@ export default function FeedPage() {
     },
   });
 
-  // Fetch all employees or companies - global data (only once, never resets)
+  // Fetch all companies or employees - global data (only once, never resets) 
+  // Strict Mode safe
   useEffect(() => {
-    if (hasFetchedGlobalDataRef.current || !currentUser) return;
+    if (!currentUser) return;
 
     if (isEmployee) {
-      console.log("Querying all companies inside Feed Page!!!");
-      getAllCompanyStore.queryCompany();
+      if (!globalFetchCache.companies) {
+        console.log("Querying all companies inside Feed Page!!!");
+        getAllCompanyStore.queryCompany();
+        globalFetchCache.companies = true;
+      }
     } else {
-      console.log("Querying all employees inside Feed Page!!!");
-      getAllEmployeeStore.queryEmployee();
+      if (!globalFetchCache.employees) {
+        console.log("Querying all employees inside Feed Page!!!");
+        getAllEmployeeStore.queryEmployee();
+        globalFetchCache.employees = true;
+      }
     }
-
-    hasFetchedGlobalDataRef.current = true;
   }, [isEmployee, currentUser, getAllCompanyStore, getAllEmployeeStore]);
 
   // Filter users based on role

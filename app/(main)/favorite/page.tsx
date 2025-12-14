@@ -21,15 +21,17 @@ export default function FavoritePage() {
   // API calls
   const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
   const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
-  
+
+  // ✅ Fetch user-specific favorites data
   const { isEmployee } = useFetchOnce({
+    cacheKey: 'favorite-page',
     onEmployeeFetch: (employeeId) => {
       getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(employeeId);
     },
     onCompanyFetch: (companyId) => {
       getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyId);
-    }
-  })
+    },
+  });
 
   // Unified loading handling to avoid flicker before first fetch resolves
   const isLoadingForEmployee =
@@ -69,10 +71,10 @@ export default function FavoritePage() {
             Find your favorites at a Glance
           </TypographyH2>
           <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-            Quick access to the companies and talents you’ve saved
+            Quick access to the companies and talents you've saved
           </TypographyH4>
           <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-            Review, connect, and take the next step whenever you’re ready
+            Review, connect, and take the next step whenever you're ready
           </TypographyH4>
           <TypographyMuted className="leading-relaxed tablet-xl:text-center">
             Your personal shortlist — organized in one place.

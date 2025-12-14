@@ -60,6 +60,7 @@ export default function CollapseSidebar({
 
   // ✅ Use custom hook - handles all ref logic and duplicate prevention!
   const { isEmployee, isCompany } = useFetchOnce({
+    cacheKey: 'sidebar-component',
     onEmployeeFetch: (employeeId) => {
       countCurrentEmployeeMatching(employeeId);
       countAllEmployeeFavorites(employeeId);

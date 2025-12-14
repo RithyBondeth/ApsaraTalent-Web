@@ -30,6 +30,7 @@ export default function MatchingPage() {
 
   // ✅ Use custom hook - handles all ref logic and duplicate prevention!
   const { isEmployee, currentUser } = useFetchOnce({
+    cacheKey: 'matching-page',
     onEmployeeFetch: (employeeId) => {
       getCurrentEmployeeMatchingStore.queryCurrentEmployeeMatching(employeeId);
     },
