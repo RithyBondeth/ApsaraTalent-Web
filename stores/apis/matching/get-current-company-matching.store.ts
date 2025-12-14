@@ -23,7 +23,7 @@ export const useGetCurrentCompanyMatchingStore =
         const response = await axios.get<TGetCurrentCompanyMatchingResponse>(
           API_GET_CURRENT_COMPANY_MATCHING_URL(companyId)
         );
-        
+
         set({
           currentCompanyMatching: response.data,
           loading: false,

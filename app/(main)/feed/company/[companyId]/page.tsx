@@ -557,7 +557,7 @@ export default function CompanyDetailPage() {
                       strokeWidth={"1.5px"}
                     />
                   }
-                  text={companyData.email}
+                  text={companyData.email ?? ""}
                 />
               </div>
             </div>

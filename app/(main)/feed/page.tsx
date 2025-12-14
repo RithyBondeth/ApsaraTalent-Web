@@ -112,7 +112,7 @@ export default function FeedPage() {
 
   // Fetch current employee or company liked - user specific data (resets when user changes)
   const { isEmployee } = useFetchOnce({
-    cacheKey: 'feed-page',
+    cacheKey: "feed-page",
     onEmployeeFetch: (employeeId) => {
       console.log("Querying employee liked inside Feed Page!!!");
       getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(employeeId);
@@ -123,7 +123,7 @@ export default function FeedPage() {
     },
   });
 
-  // Fetch all companies or employees - global data (only once, never resets) 
+  // Fetch all companies or employees - global data (only once, never resets)
   // Strict Mode safe
   useEffect(() => {
     if (!currentUser) return;

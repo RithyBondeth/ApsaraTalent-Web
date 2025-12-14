@@ -63,7 +63,11 @@ export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
       <div className="w-full flex items-center gap-3 phone-340:flex-col phone-340:items-start">
         <IconLabel
           icon={<LucideClock />}
-          text={availabilityConstant.find((item) => item.value === props.availability)?.label ?? "Unknown"}
+          text={
+            availabilityConstant.find(
+              (item) => item.value === props.availability
+            )?.label ?? "Unknown"
+          }
           className="text-muted-foreground"
         />
         <IconLabel
@@ -72,16 +76,20 @@ export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
           className="text-muted-foreground"
         />
       </div>
-      <TypographyP className="!m-0 text-sm leading-loose">{props.description}</TypographyP>
+      <TypographyP className="!m-0 text-sm leading-loose">
+        {props.description}
+      </TypographyP>
       <div className="flex flex-wrap items-center gap-3">
-        {props.skills.map(
-          (item, index) => (
-            <Tag label={item} key={index} />
-          )
-        )}
+        {props.skills.map((item, index) => (
+          <Tag label={item} key={index} />
+        ))}
       </div>
       <div className="w-full flex justify-end items-center gap-2 [&>button]:text-xs">
-        <Button onClick={() => {router.replace(`/feed/employee/${props.id}`)}}>
+        <Button
+          onClick={() => {
+            router.replace(`/feed/employee/${props.id}`);
+          }}
+        >
           <LucideUser />
           View Employee Profile
         </Button>

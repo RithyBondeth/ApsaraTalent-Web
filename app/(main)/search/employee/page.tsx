@@ -32,7 +32,7 @@ import { debounce } from "lodash";
 
 export default function SearchPage() {
   const { error, loading, jobs, querySearchJobs } = useSearchJobStore();
-  const { user } = useGetCurrentUserStore(); 
+  const { user } = useGetCurrentUserStore();
   const [scopeNames, setScopeNames] = useState<string[]>([]);
 
   const { register, control, setValue, handleSubmit, watch } =
@@ -55,41 +55,45 @@ export default function SearchPage() {
   // Watch form values for debounced submission
   const watchAllFields = watch();
 
-  const onSubmit = useCallback((data: TEmployeeSearchSchema) => {  
-    const normalizedJobType = data.jobType === "all" ? undefined : data.jobType;
-    const normalizedLocation = data.location === "all" ? undefined : data.location;
-    const normalizedEducation = data.educationLevel === "all" ? undefined : data.educationLevel;
-    const normalizedExperience =
-      data.experienceLevel?.min === undefined && data.experienceLevel?.max === undefined
-        ? undefined
-        : data.experienceLevel;
-  
-    const queryParams = {
-      careerScopes: scopeNames,
-      keyword: data.keyword,
-      location: normalizedLocation,
-      jobType: normalizedJobType,
-      companySizeMin: data.companySize?.min,
-      companySizeMax: data.companySize?.max,
-      postedDateFrom: data.date?.from?.toISOString(),
-      postedDateTo: data.date?.to?.toISOString(),
-      salaryMin: data.salaryRange?.min,
-      salaryMax: data.salaryRange?.max,
-      educationRequired: normalizedEducation,
-      experienceRequiredMin: normalizedExperience?.min,
-      experienceRequiredMax: normalizedExperience?.max,
-      sortBy: data.sortBy,
-      sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
-    };
-  
-    querySearchJobs(queryParams);
-  }, [querySearchJobs, scopeNames]);
+  const onSubmit = useCallback(
+    (data: TEmployeeSearchSchema) => {
+      const normalizedJobType =
+        data.jobType === "all" ? undefined : data.jobType;
+      const normalizedLocation =
+        data.location === "all" ? undefined : data.location;
+      const normalizedEducation =
+        data.educationLevel === "all" ? undefined : data.educationLevel;
+      const normalizedExperience =
+        data.experienceLevel?.min === undefined &&
+        data.experienceLevel?.max === undefined
+          ? undefined
+          : data.experienceLevel;
+
+      const queryParams = {
+        careerScopes: scopeNames,
+        keyword: data.keyword,
+        location: normalizedLocation,
+        jobType: normalizedJobType,
+        companySizeMin: data.companySize?.min,
+        companySizeMax: data.companySize?.max,
+        postedDateFrom: data.date?.from?.toISOString(),
+        postedDateTo: data.date?.to?.toISOString(),
+        salaryMin: data.salaryRange?.min,
+        salaryMax: data.salaryRange?.max,
+        educationRequired: normalizedEducation,
+        experienceRequiredMin: normalizedExperience?.min,
+        experienceRequiredMax: normalizedExperience?.max,
+        sortBy: data.sortBy,
+        sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
+      };
+
+      querySearchJobs(queryParams);
+    },
+    [querySearchJobs, scopeNames]
+  );
 
   // Debounced form submission
-  const debouncedSubmit = useMemo(
-    () => debounce(onSubmit, 400),
-    [onSubmit]
-  );
+  const debouncedSubmit = useMemo(() => debounce(onSubmit, 400), [onSubmit]);
 
   // Initial data fetch
   useEffect(() => {
@@ -100,7 +104,7 @@ export default function SearchPage() {
           : user?.employee?.careerScopes;
       const names = scopes?.map((cs) => cs.name) ?? [];
       setScopeNames(names);
-      
+
       // Initial search with user's career scopes
       querySearchJobs({
         careerScopes: names,
@@ -126,7 +130,10 @@ export default function SearchPage() {
   }, [debouncedSubmit]);
 
   // Handler for radio group changes
-  const handleRadioChange = (fieldName: keyof TEmployeeSearchSchema, value: any) => {
+  const handleRadioChange = (
+    fieldName: keyof TEmployeeSearchSchema,
+    value: any
+  ) => {
     setValue(fieldName, value, { shouldDirty: true });
     // No need to call handleSubmit here - the watch effect will handle it
   };
@@ -169,7 +176,7 @@ export default function SearchPage() {
       <div className="w-full flex items-start gap-5 tablet-xl:!flex-col tablet-xl:[&>div]:w-full">
         <div className="w-1/4 flex flex-col items-start gap-8 p-5 shadow-md rounded-md">
           <TypographyH4 className="text-lg">Refine Result</TypographyH4>
-          
+
           {/* Date Posted */}
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
@@ -582,7 +589,7 @@ export default function SearchPage() {
               ) : error ? (
                 <span className="text-destructive">0 Job is listing</span>
               ) : jobs && jobs.length > 0 ? (
-                `${jobs.length} Job${jobs.length === 1 ? '' : 's'} listed`
+                `${jobs.length} Job${jobs.length === 1 ? "" : "s"} listed`
               ) : (
                 <Skeleton className="h-6 w-40 bg-muted" />
               )}
@@ -621,7 +628,11 @@ export default function SearchPage() {
               ))
             ) : (
               <div className="w-full mb-3">
-                {Array(3).fill(0).map((_, index) => <SearchEmployeeCardSkeleton key={index}/>)}
+                {Array(3)
+                  .fill(0)
+                  .map((_, index) => (
+                    <SearchEmployeeCardSkeleton key={index} />
+                  ))}
               </div>
             )}
           </div>

@@ -15,14 +15,13 @@ type TBasicSignupData = {
 
 type TBasicSignupDataState = {
   basicSignupData: TBasicSignupData | null;
-  setBasicSignupData: (data: TBasicSignupData) => void;    
-  clearSignupData: () => void;  
+  setBasicSignupData: (data: TBasicSignupData) => void;
+  clearSignupData: () => void;
 };
 
 export const useBasicSignupDataStore = create<TBasicSignupDataState>((set) => ({
-    basicSignupData: null,
-    setBasicSignupData: (data: TBasicSignupData) => set({ basicSignupData: data }),
-    clearSignupData: () => set({ basicSignupData: null }),
+  basicSignupData: null,
+  setBasicSignupData: (data: TBasicSignupData) =>
+    set({ basicSignupData: data }),
+  clearSignupData: () => set({ basicSignupData: null }),
 }));
-
-

@@ -1,7 +1,3 @@
 export default function SettingPage() {
-    return (
-        <div>
-            Setting Page
-        </div>
-    )
+  return <div>Setting Page</div>;
 }

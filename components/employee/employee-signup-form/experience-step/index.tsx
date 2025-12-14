@@ -111,7 +111,9 @@ export default function ExperienceStepForm({
                   />
                 )}
               />
-              <ErrorMessage>{errors?.experience?.[index]?.startDate?.message}</ErrorMessage>
+              <ErrorMessage>
+                {errors?.experience?.[index]?.startDate?.message}
+              </ErrorMessage>
             </div>
 
             {/* End Date */}
@@ -130,7 +132,9 @@ export default function ExperienceStepForm({
                   />
                 )}
               />
-              <ErrorMessage>{errors?.experience?.[index]?.endDate?.message}</ErrorMessage>
+              <ErrorMessage>
+                {errors?.experience?.[index]?.endDate?.message}
+              </ErrorMessage>
             </div>
           </div>
         </div>

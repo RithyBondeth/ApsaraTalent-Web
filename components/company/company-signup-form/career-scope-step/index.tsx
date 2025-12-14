@@ -172,7 +172,9 @@ export default function CompanyCareerScopeStepForm({
           <PaginationItem>
             <PaginationPrevious
               onClick={() => goToPage(Math.max(currentPage - 1, 1))}
-              className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+              className={
+                currentPage === 1 ? "pointer-events-none opacity-50" : ""
+              }
             />
           </PaginationItem>
 

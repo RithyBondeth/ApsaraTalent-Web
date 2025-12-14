@@ -9,7 +9,7 @@ export interface IEmployee {
   gender: TGender;
   avatar?: string;
   phone: string;
-  email: string;
+  email: string | null;
   job: string;
   yearsOfExperience: number;
   availability: string;
@@ -34,9 +34,9 @@ export interface ICareerScopes {
 export interface ISkill {
   id?: string;
   name: string;
-  description?: string; 
+  description?: string;
 }
-  
+
 export interface IExperience {
   id?: string;
   title: string;
@@ -44,7 +44,7 @@ export interface IExperience {
   startDate: string;
   endDate: string;
 }
- 
+
 export interface IEducation {
   id?: string;
   school: string;
@@ -56,4 +56,3 @@ export interface ISocial {
   platform: TPlatform;
   url: string;
 }
-

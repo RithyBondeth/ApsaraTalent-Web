@@ -39,7 +39,7 @@ export default function PhoneOTPPage() {
   } = useForm<{ otp: string }>();
   const onSubmit = async (data: { otp: string }) => {
     setIsSubmitted(true);
-    const phone = basicPhoneSignupData?.phone?.replace("0", "+855") ?? '';
+    const phone = basicPhoneSignupData?.phone?.replace("0", "+855") ?? "";
     const user = await verifyOtp(
       phone,
       data.otp,
@@ -75,7 +75,7 @@ export default function PhoneOTPPage() {
       toast({
         description: (
           <div className="flex items-center gap-2">
-            <ApsaraLoadingSpinner size={40} loop/>
+            <ApsaraLoadingSpinner size={40} loop />
             <TypographySmall className="font-medium">
               Verifying your otp code...
             </TypographySmall>
@@ -100,15 +100,7 @@ export default function PhoneOTPPage() {
           </ToastAction>
         ),
       });
-  }, [
-    loading,
-    error,
-    message,
-    accessToken,
-    refreshToken,
-    isSubmitted,
-  ]);
-
+  }, [loading, error, message, accessToken, refreshToken, isSubmitted]);
 
   return (
     <div className="h-screen w-screen flex items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">

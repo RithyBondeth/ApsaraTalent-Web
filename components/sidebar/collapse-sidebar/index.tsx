@@ -60,7 +60,7 @@ export default function CollapseSidebar({
 
   // ✅ Use custom hook - handles all ref logic and duplicate prevention!
   const { isEmployee, isCompany } = useFetchOnce({
-    cacheKey: 'sidebar-component',
+    cacheKey: "sidebar-component",
     onEmployeeFetch: (employeeId) => {
       countCurrentEmployeeMatching(employeeId);
       countAllEmployeeFavorites(employeeId);
@@ -82,7 +82,12 @@ export default function CollapseSidebar({
     if (isEmployee) return totalAllEmployeeFavorites ?? 0;
     if (isCompany) return totalAllCompanyFavorites ?? 0;
     return 0;
-  }, [isEmployee, isCompany, totalAllEmployeeFavorites, totalAllCompanyFavorites]);
+  }, [
+    isEmployee,
+    isCompany,
+    totalAllEmployeeFavorites,
+    totalAllCompanyFavorites,
+  ]);
 
   // Memoized user data
   const userData = useMemo((): UserData => {
@@ -93,7 +98,7 @@ export default function CollapseSidebar({
         avatar: user.employee.avatar ?? "",
       };
     }
-    
+
     if (isCompany && user?.company) {
       return {
         name: user.company.name ?? "",
@@ -101,7 +106,7 @@ export default function CollapseSidebar({
         avatar: user.company.avatar ?? "",
       };
     }
-    
+
     return { name: "", email: "", avatar: "" };
   }, [isEmployee, isCompany, user]);
 
@@ -136,7 +141,7 @@ export default function CollapseSidebar({
           </SidebarMenuButton>
         )}
       </SidebarHeader>
-      
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu className="space-y-5">
@@ -176,7 +181,7 @@ export default function CollapseSidebar({
                 </SidebarMenuItem>
               </Collapsible>
             ))}
-            
+
             {/* AI Resume Builder - Only for employees */}
             {!isCompany && (
               <Collapsible
@@ -205,9 +210,9 @@ export default function CollapseSidebar({
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      
+
       <Separator />
-      
+
       <SidebarFooter>
         {loading || !user ? (
           <SidebarDropdownFooterSkeleton />

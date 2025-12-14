@@ -1,3 +1,3 @@
 export interface IDividerProps {
-    className?: string;
+  className?: string;
 }

@@ -36,7 +36,10 @@ export default function EmployeeDetailPageSkeleton() {
       <div className="flex gap-5 tablet-xl:flex-col tablet-xl:[&>div]:w-full">
         <div className="w-2/3 flex flex-col gap-5">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="flex flex-col gap-5 border border-muted p-5">
+            <div
+              key={i}
+              className="flex flex-col gap-5 border border-muted p-5"
+            >
               <Skeleton className="h-6 w-32" />
               <div className="flex flex-col gap-4">
                 {Array.from({ length: 2 }).map((_, idx) => (

@@ -10,13 +10,13 @@ export const setAuthCookies = (
   rememberMe: boolean
 ): void => {
   try {
-    const accessTokenMaxAge = rememberMe ? 
-      COOKIE_CONFIG.REMEMBER_ACCESS_TOKEN : 
-      COOKIE_CONFIG.SESSION_ACCESS_TOKEN;
-    
-    const refreshTokenMaxAge = rememberMe ? 
-      COOKIE_CONFIG.REMEMBER_REFRESH_TOKEN : 
-      COOKIE_CONFIG.SESSION_REFRESH_TOKEN;
+    const accessTokenMaxAge = rememberMe
+      ? COOKIE_CONFIG.REMEMBER_ACCESS_TOKEN
+      : COOKIE_CONFIG.SESSION_ACCESS_TOKEN;
+
+    const refreshTokenMaxAge = rememberMe
+      ? COOKIE_CONFIG.REMEMBER_REFRESH_TOKEN
+      : COOKIE_CONFIG.SESSION_REFRESH_TOKEN;
 
     // Set access token
     setCookie(COOKIE_CONFIG.AUTH_TOKEN, accessToken, {
@@ -46,8 +46,12 @@ export const setAuthCookies = (
 
     console.log("Authentication cookies set successfully", {
       rememberMe,
-      accessTokenExpiry: new Date(Date.now() + accessTokenMaxAge * 1000).toISOString(),
-      refreshTokenExpiry: new Date(Date.now() + refreshTokenMaxAge * 1000).toISOString(),
+      accessTokenExpiry: new Date(
+        Date.now() + accessTokenMaxAge * 1000
+      ).toISOString(),
+      refreshTokenExpiry: new Date(
+        Date.now() + refreshTokenMaxAge * 1000
+      ).toISOString(),
     });
   } catch (error) {
     console.error("Error setting authentication cookies:", error);
@@ -69,7 +73,7 @@ export const clearAuthCookies = (): void => {
     ];
 
     // Method 1: Use cookies-next library (primary method)
-    cookieNames.forEach(cookieName => {
+    cookieNames.forEach((cookieName) => {
       deleteCookie(cookieName, { path: COOKIE_CONFIG.PATH });
       deleteCookie(cookieName); // Fallback without path
     });
@@ -77,18 +81,21 @@ export const clearAuthCookies = (): void => {
     // Method 2: Browser-native cookie clearing (fallback method)
     if (typeof document !== "undefined") {
       const expiredDate = "Thu, 01 Jan 1970 00:00:00 UTC";
-      
-      cookieNames.forEach(cookieName => {
+
+      cookieNames.forEach((cookieName) => {
         // Clear with path
         document.cookie = `${cookieName}=; expires=${expiredDate}; path=${COOKIE_CONFIG.PATH};`;
-        
+
         // Clear with domain variants (handle subdomain scenarios)
         try {
           const hostname = window.location.hostname;
           document.cookie = `${cookieName}=; expires=${expiredDate}; path=${COOKIE_CONFIG.PATH}; domain=${hostname};`;
           document.cookie = `${cookieName}=; expires=${expiredDate}; path=${COOKIE_CONFIG.PATH}; domain=.${hostname};`;
         } catch (domainError) {
-          console.debug("Domain-specific cookie clearing skipped:", domainError);
+          console.debug(
+            "Domain-specific cookie clearing skipped:",
+            domainError
+          );
         }
       });
     }
@@ -100,8 +107,8 @@ export const clearAuthCookies = (): void => {
         COOKIE_CONFIG.REFRESH_TOKEN,
         COOKIE_CONFIG.REMEMBER_PREFERENCE,
       ];
-      
-      storageKeys.forEach(key => {
+
+      storageKeys.forEach((key) => {
         try {
           localStorage.removeItem(key);
           sessionStorage.removeItem(key);
@@ -123,22 +130,22 @@ export const clearAuthCookies = (): void => {
  */
 export const clearAuthCookiesServerSide = async () => {
   try {
-    console.log('Calling server-side logout API...');
-    const response = await fetch('/api/auth/logout', {
-      method: 'POST',
-      credentials: 'include', // Include cookies in request
+    console.log("Calling server-side logout API...");
+    const response = await fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "include", // Include cookies in request
     });
-    
+
     const data = await response.json();
-    console.log('Server-side logout response:', data);
-    
+    console.log("Server-side logout response:", data);
+
     if (!response.ok) {
-      throw new Error(data.message || 'Logout failed');
+      throw new Error(data.message || "Logout failed");
     }
-    
+
     return true;
   } catch (error) {
-    console.error('Server-side logout error:', error);
+    console.error("Server-side logout error:", error);
     return false;
   }
 };
@@ -147,16 +154,16 @@ export const clearAuthCookiesServerSide = async () => {
  * Check if authentication token exists in cookies
  */
 export const hasAuthToken = (): boolean => {
-  if (typeof document === 'undefined') {
+  if (typeof document === "undefined") {
     return false;
   }
 
   try {
     const cookie = document.cookie
-      .split('; ')
-      .find(row => row.startsWith(`${COOKIE_CONFIG.AUTH_TOKEN}=`));
-    
-    return !!cookie && cookie.split('=')[1]?.length > 0;
+      .split("; ")
+      .find((row) => row.startsWith(`${COOKIE_CONFIG.AUTH_TOKEN}=`));
+
+    return !!cookie && cookie.split("=")[1]?.length > 0;
   } catch (error) {
     console.error("Error checking auth token:", error);
     return false;
@@ -167,16 +174,16 @@ export const hasAuthToken = (): boolean => {
  * Get authentication token from document.cookie (client-side only)
  */
 export const getAuthTokenFromCookie = (): string | null => {
-  if (typeof document === 'undefined') {
+  if (typeof document === "undefined") {
     return null;
   }
 
   try {
     const cookie = document.cookie
-      .split('; ')
-      .find(row => row.startsWith(`${COOKIE_CONFIG.AUTH_TOKEN}=`));
-    
-    return cookie ? cookie.split('=')[1] : null;
+      .split("; ")
+      .find((row) => row.startsWith(`${COOKIE_CONFIG.AUTH_TOKEN}=`));
+
+    return cookie ? cookie.split("=")[1] : null;
   } catch (error) {
     console.error("Error getting auth token from cookie:", error);
     return null;

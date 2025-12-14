@@ -31,11 +31,17 @@ export const employeeSearchSchema = z.object({
 
   experienceLevel: z
     .object({
-      min: z.number().min(0, 'Minimum experience level must be 0 or greater').optional(),
-      max: z.number().min(0, 'Maximum experience level must be 0 or greater').optional(),
+      min: z
+        .number()
+        .min(0, "Minimum experience level must be 0 or greater")
+        .optional(),
+      max: z
+        .number()
+        .min(0, "Maximum experience level must be 0 or greater")
+        .optional(),
     })
     .optional(),
-  educationLevel: selectedValidation('Education Level').optional(),
+  educationLevel: selectedValidation("Education Level").optional(),
   sortBy: textValidation("Sort By", 100),
   orderBy: textValidation("Sort Order", 100),
 });

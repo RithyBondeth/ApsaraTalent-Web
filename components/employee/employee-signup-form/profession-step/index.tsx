@@ -24,7 +24,8 @@ export default function ProfessionStepForm({
   trigger,
   errors,
 }: IStepFormProps<TEmployeeSignUp>) {
-  const [selectedAvailability, setSelectedAvailability] = useState<TAvailability | null>(null);
+  const [selectedAvailability, setSelectedAvailability] =
+    useState<TAvailability | null>(null);
 
   return (
     <div className="flex flex-col items-start gap-5">
@@ -57,11 +58,12 @@ export default function ProfessionStepForm({
             <TypographyMuted className="text-xs">Availability</TypographyMuted>
             <Select
               onValueChange={(value: TAvailability) => {
-                  setSelectedAvailability(value)
-                  setValue?.("profession.availability", value, { shouldValidate: true });  
-                  trigger?.("profession.availability");      
-                } 
-              }
+                setSelectedAvailability(value);
+                setValue?.("profession.availability", value, {
+                  shouldValidate: true,
+                });
+                trigger?.("profession.availability");
+              }}
               value={selectedAvailability || ""}
             >
               <SelectTrigger className="h-12 text-muted-foreground">
@@ -76,7 +78,9 @@ export default function ProfessionStepForm({
               </SelectContent>
             </Select>
           </div>
-         <ErrorMessage>{errors!.profession?.availability?.message}</ErrorMessage>
+          <ErrorMessage>
+            {errors!.profession?.availability?.message}
+          </ErrorMessage>
         </div>
       </div>
       <div className="w-full flex flex-col items-start gap-1">
@@ -87,7 +91,9 @@ export default function ProfessionStepForm({
             {...register("profession.description")}
             className="placeholder:text-sm"
           />
-          <ErrorMessage>{errors!.profession?.description?.message}</ErrorMessage>
+          <ErrorMessage>
+            {errors!.profession?.description?.message}
+          </ErrorMessage>
         </div>
       </div>
     </div>

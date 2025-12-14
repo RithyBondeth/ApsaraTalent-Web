@@ -112,9 +112,9 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
           }
         />
         <Tag
-          label={`${capitalizeWords(props.availability.split("_")[0])} ${
-            capitalizeWords(props.availability.split("_")[1])
-          }`}
+          label={`${capitalizeWords(
+            props.availability.split("_")[0]
+          )} ${capitalizeWords(props.availability.split("_")[1])}`}
         />
       </div>
 

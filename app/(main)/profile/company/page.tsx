@@ -562,7 +562,11 @@ export default function ProfilePage() {
 
     // Add new career
     const updatedCareers = [
-      ...careers,
+      ...careers.map((career) => ({
+        id: career.id ?? "",
+        name: career.name,
+        description: career.description ?? "",
+      })),
       { id: id ?? "", name: trimmed, description: description ?? "" },
     ];
     form.setValue("careerScopes", updatedCareers, {
@@ -600,7 +604,7 @@ export default function ProfilePage() {
 
     // If it has an ID, track it for deletion
     if ("id" in careerToDelete! && careerToDelete.id) {
-      setDeleteCareerScopeIds((prev) => [...prev, careerToDelete.id]);
+      setDeleteCareerScopeIds((prev) => [...prev, careerToDelete.id!]);
     }
 
     // Remove from form
@@ -1329,7 +1333,7 @@ export default function ProfilePage() {
                 openPositions.map((position, index) => {
                   const positionId = position.id;
                   const deadlineDate =
-                    selectedDates[positionId]?.deadline ||
+                    selectedDates[positionId!]?.deadline ||
                     new Date(position.deadlineDate);
                   return (
                     <OpenPositionForm
@@ -1337,7 +1341,7 @@ export default function ProfilePage() {
                       index={index}
                       form={form}
                       positionIndex={Number(position.id)}
-                      positionUUID={position.id}
+                      positionUUID={position.id ?? ""}
                       isEdit={isEdit}
                       title={position.title}
                       description={position.description}
@@ -1351,7 +1355,8 @@ export default function ProfilePage() {
                         data: deadlineDate,
                         onDataChange: (date: Date | undefined) => {
                           if (date) {
-                            handleDateChange(positionId, "deadline", date);
+                            if (positionId)
+                              handleDateChange(positionId, "deadline", date);
                             form.setValue(
                               `openPositions.${index}.deadlineDate`,
                               date
@@ -1360,14 +1365,16 @@ export default function ProfilePage() {
                         },
                       }}
                       onRemove={() => {
-                        if (isUuid(position.id)) {
-                          setOpenRemoveOpenPositionDialog(true);
-                          setCurrentOpenPositionID(position.id);
-                        } else {
-                          const updated = openPositions.filter(
-                            (op) => op.id !== positionId
-                          );
-                          setOpenPositions(updated);
+                        if (position.id) {
+                          if (isUuid(position.id)) {
+                            setOpenRemoveOpenPositionDialog(true);
+                            setCurrentOpenPositionID(position.id);
+                          } else {
+                            const updated = openPositions.filter(
+                              (op) => op.id !== positionId
+                            );
+                            setOpenPositions(updated);
+                          }
                         }
                       }}
                     />
@@ -1703,13 +1710,14 @@ export default function ProfilePage() {
                             <CommandItem
                               key={index}
                               value={career.name}
-                              onSelect={() =>
-                                handleCareerSelect(
-                                  career.id,
-                                  career.name,
-                                  career.description ?? ""
-                                )
-                              } // Handle career selection
+                              onSelect={() => {
+                                if (career.id)
+                                  handleCareerSelect(
+                                    career.id,
+                                    career.name,
+                                    career.description ?? ""
+                                  );
+                              }} // Handle career selection
                             >
                               {career.name}
                               <LucideCircleCheck

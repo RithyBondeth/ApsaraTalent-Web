@@ -505,7 +505,7 @@ export default function EmployeeDetailPage() {
                 <TypographyMuted>Email</TypographyMuted>
                 <IconLabel
                   icon={<LucideMail strokeWidth={"1.5px"} />}
-                  text={employeeData.email}
+                  text={employeeData.email ?? ""}
                 />
               </div>
               {employeeData.location && (

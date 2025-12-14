@@ -1,20 +1,30 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { TypographySmall } from '@/components/utils/typography/typography-small';
-import { useImageCache } from '@/hooks/use-cached-image';
-import { LucideTrash2, LucideRefreshCw } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { useImageCache } from "@/hooks/use-cached-image";
+import { LucideTrash2, LucideRefreshCw } from "lucide-react";
 
 export function ImageCacheManager() {
   const { clearCache, getStats } = useImageCache();
-  const [stats, setStats] = useState({ count: 0, totalSize: '0 MB', maxSize: 100 });
+  const [stats, setStats] = useState({
+    count: 0,
+    totalSize: "0 MB",
+    maxSize: 100,
+  });
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     // Only show in development
-    setIsVisible(process.env.NODE_ENV === 'development');
+    setIsVisible(process.env.NODE_ENV === "development");
     updateStats();
   }, []);
 
@@ -51,7 +61,9 @@ export function ImageCacheManager() {
       <CardContent className="space-y-3">
         <div className="space-y-2">
           <div className="flex justify-between">
-            <TypographySmall className="text-xs">Cached Images:</TypographySmall>
+            <TypographySmall className="text-xs">
+              Cached Images:
+            </TypographySmall>
             <TypographySmall className="text-xs font-mono">
               {stats.count} / {stats.maxSize}
             </TypographySmall>
@@ -63,7 +75,7 @@ export function ImageCacheManager() {
             </TypographySmall>
           </div>
         </div>
-        
+
         <Button
           variant="destructive"
           size="sm"

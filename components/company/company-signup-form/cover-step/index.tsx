@@ -51,7 +51,7 @@ export default function CoverCompanyStepForm({
             boxText="Drop your company cover picture here"
             boxSubText="JPG, PNG or GIF files up to 5MB"
             className="max-w-md"
-            preview={preview} 
+            preview={preview}
             icon={LucideBuilding}
             fileName="cover"
             setValue={setValue}

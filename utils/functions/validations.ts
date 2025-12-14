@@ -19,27 +19,31 @@ export const fileValidation = (label: string) =>
     });
 
 export const textValidation = (label?: string, max?: number) => {
-  if(max && label) {
+  if (max && label) {
     return z
       .string()
       .min(1, `${label} is required`)
       .max(max, `${label} must be less than ${max} characters.`);
-  } return z.string();
-   
-}
+  }
+  return z.string();
+};
 
 export const positiveNumberValidation = (label?: string) => {
-  if(label) return z.coerce.number().min(1, { message: `${label} must be a positive number` });
+  if (label)
+    return z.coerce
+      .number()
+      .min(1, { message: `${label} must be a positive number` });
   return z.coerce.number();
-}
+};
 
 export const selectedValidation = (label?: string) => {
-  if(label) 
-    return z.string({ required_error: `Please select your ${label}` })
-    .min(1, { message: `Please select your ${label}` });
+  if (label)
+    return z
+      .string({ required_error: `Please select your ${label}` })
+      .min(1, { message: `Please select your ${label}` });
 
   return z.string();
-}
+};
 
 export const emailValidation = z
   .string()
@@ -78,31 +82,29 @@ export const phoneOrEmailValidation = z
   }, "Invalid email or Khmer phone number");
 
 export const dateValidation = (label?: string) => {
-  if(label) return z.preprocess(
-    (arg) => {
-      if (typeof arg === "string" && arg.trim() === "") return undefined;
-      if (arg instanceof Date) return arg;
-      if (typeof arg === "string" || typeof arg === "number")
-        return new Date(arg);
-      return arg;
-    },
-    z.date({
-      required_error: `${label} is required`,
-      invalid_type_error: `${label} must be a valid date`,
-    })
-  );
+  if (label)
+    return z.preprocess(
+      (arg) => {
+        if (typeof arg === "string" && arg.trim() === "") return undefined;
+        if (arg instanceof Date) return arg;
+        if (typeof arg === "string" || typeof arg === "number")
+          return new Date(arg);
+        return arg;
+      },
+      z.date({
+        required_error: `${label} is required`,
+        invalid_type_error: `${label} must be a valid date`,
+      })
+    );
 
-  return z.preprocess(
-    (arg) => {
-      if (typeof arg === "string" && arg.trim() === "") return undefined;
-      if (arg instanceof Date) return arg;
-      if (typeof arg === "string" || typeof arg === "number")
-        return new Date(arg);
-      return arg;
-    },
-    z.date()
-  );
-}
+  return z.preprocess((arg) => {
+    if (typeof arg === "string" && arg.trim() === "") return undefined;
+    if (arg instanceof Date) return arg;
+    if (typeof arg === "string" || typeof arg === "number")
+      return new Date(arg);
+    return arg;
+  }, z.date());
+};
 
 export const imageValidation = (label: string) =>
   z

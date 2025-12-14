@@ -24,7 +24,7 @@ export default function FavoritePage() {
 
   // ✅ Fetch user-specific favorites data
   const { isEmployee } = useFetchOnce({
-    cacheKey: 'favorite-page',
+    cacheKey: "favorite-page",
     onEmployeeFetch: (employeeId) => {
       getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(employeeId);
     },

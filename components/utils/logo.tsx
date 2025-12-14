@@ -10,14 +10,14 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export default function LogoComponent(props: ILogoProps) {
-  const { height = 100, width = 200, className, priority = false } = props; 
+  const { height = 100, width = 200, className, priority = false } = props;
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
-  
+
   const currentTheme = mounted ? resolvedTheme : "light";
   const isBlackLogo = currentTheme === "light";
 

@@ -3,7 +3,11 @@ import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 import axios from "axios";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../users/get-current-user.store";
-import { setAuthCookies, clearAuthCookies, hasAuthToken } from "@/utils/auth/cookie-manager";
+import {
+  setAuthCookies,
+  clearAuthCookies,
+  hasAuthToken,
+} from "@/utils/auth/cookie-manager";
 import { TUserAuthResponse } from "@/utils/constants/auth.constant";
 
 type TVerifyOTPResponse = {
@@ -18,7 +22,11 @@ type TVerifyOTPStoreState = TVerifyOTPResponse & {
   error: string | null;
   isAuthenticated: boolean;
   message: string | null;
-  verifyOtp: (phone: string, otpCode: string, rememberMe: boolean) => Promise<IUser>;
+  verifyOtp: (
+    phone: string,
+    otpCode: string,
+    rememberMe: boolean
+  ) => Promise<IUser>;
   clearToken: () => void;
 };
 
@@ -46,12 +54,16 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
         loading: false,
         isAuthenticated: !!response.data.accessToken,
         message: response.data.message,
-        error: null
+        error: null,
       });
-      
+
       // Use centralized cookie management
       if (response.data.accessToken && response.data.refreshToken) {
-        setAuthCookies(response.data.accessToken, response.data.refreshToken, rememberMe);
+        setAuthCookies(
+          response.data.accessToken,
+          response.data.refreshToken,
+          rememberMe
+        );
       }
       return response.data.user;
     } catch (error) {
@@ -78,10 +90,10 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
     try {
       // Use centralized cookie clearing
       clearAuthCookies();
-      
+
       // Clear user data from store
       useGetCurrentUserStore.getState().clearUser();
-      
+
       // Reset verify OTP state
       set({
         loading: false,
@@ -91,7 +103,6 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
         refreshToken: null,
         message: null,
       });
-      
     } catch (error) {
       console.error("Error clearing verify OTP tokens:", error);
       // Still update state even if clearing failed

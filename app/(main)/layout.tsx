@@ -70,10 +70,8 @@ export default function MainLayout({
     return renderSidebarLayout("AI Resume Builder");
   if (pathname.startsWith("/search"))
     return renderSidebarLayout("Search your favorite");
-  if (pathname.startsWith("/matching"))
-    return renderSidebarLayout("Matching");
-  if (pathname.startsWith("/favorite"))
-    return renderSidebarLayout("Favorites");
+  if (pathname.startsWith("/matching")) return renderSidebarLayout("Matching");
+  if (pathname.startsWith("/favorite")) return renderSidebarLayout("Favorites");
   if (pathname.startsWith("/profile"))
     return renderSidebarLayout("Profile Page");
   if (pathname.startsWith("/setting"))

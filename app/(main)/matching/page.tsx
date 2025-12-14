@@ -30,7 +30,7 @@ export default function MatchingPage() {
 
   // ✅ Use custom hook - handles all ref logic and duplicate prevention!
   const { isEmployee, currentUser } = useFetchOnce({
-    cacheKey: 'matching-page',
+    cacheKey: "matching-page",
     onEmployeeFetch: (employeeId) => {
       getCurrentEmployeeMatchingStore.queryCurrentEmployeeMatching(employeeId);
     },
@@ -123,7 +123,7 @@ export default function MatchingPage() {
           className="tablet-xl:!w-full"
         />
       </div>
-      
+
       <div className="flex flex-col items-start gap-3">
         {getCurrentEmployeeMatchingStore.currentEmployeeMatching &&
         getCurrentEmployeeMatchingStore.currentEmployeeMatching.length > 0 ? (
