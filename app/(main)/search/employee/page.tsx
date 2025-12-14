@@ -10,7 +10,7 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { RadioGroup } from "@/components/ui/radio-group";
 import RadioGroupItemWithLabel from "@/components/ui/radio-group-item";
 import { useSearchJobStore } from "@/stores/apis/job/search-job.store";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -30,12 +30,12 @@ import { SearchErrorCard } from "@/components/search/search-error-card";
 import { TAvailability } from "@/utils/types/availability.type";
 import { debounce } from "lodash";
 
-
 export default function SearchPage() {
   const { error, loading, jobs, querySearchJobs } = useSearchJobStore();
+  const { user } = useGetCurrentUserStore(); 
   const [scopeNames, setScopeNames] = useState<string[]>([]);
 
-  const { register, control, setValue, handleSubmit } =
+  const { register, control, setValue, handleSubmit, watch } =
     useForm<TEmployeeSearchSchema>({
       resolver: zodResolver(employeeSearchSchema),
       defaultValues: {
@@ -52,17 +52,19 @@ export default function SearchPage() {
       },
     });
 
-  const onSubmit = (data: TEmployeeSearchSchema) => {
+  // Watch form values for debounced submission
+  const watchAllFields = watch();
 
+  const onSubmit = useCallback((data: TEmployeeSearchSchema) => {  
     const normalizedJobType = data.jobType === "all" ? undefined : data.jobType;
     const normalizedLocation = data.location === "all" ? undefined : data.location;
     const normalizedEducation = data.educationLevel === "all" ? undefined : data.educationLevel;
     const normalizedExperience =
       data.experienceLevel?.min === undefined && data.experienceLevel?.max === undefined
-        ? { min: undefined, max: undefined }
+        ? undefined
         : data.experienceLevel;
-
-    querySearchJobs({
+  
+    const queryParams = {
       careerScopes: scopeNames,
       keyword: data.keyword,
       location: normalizedLocation,
@@ -74,41 +76,60 @@ export default function SearchPage() {
       salaryMin: data.salaryRange?.min,
       salaryMax: data.salaryRange?.max,
       educationRequired: normalizedEducation,
-      experienceRequiredMin: normalizedExperience.min,
-      experienceRequiredMax: normalizedExperience.max,
+      experienceRequiredMin: normalizedExperience?.min,
+      experienceRequiredMax: normalizedExperience?.max,
       sortBy: data.sortBy,
       sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
-    });
-  };
+    };
+  
+    querySearchJobs(queryParams);
+  }, [querySearchJobs, scopeNames]);
 
+  // Debounced form submission
   const debouncedSubmit = useMemo(
-    () => debounce(() => handleSubmit(onSubmit)(), 400),
-    [handleSubmit]
+    () => debounce(onSubmit, 400),
+    [onSubmit]
   );
 
+  // Initial data fetch
   useEffect(() => {
-    const fetchUserAndJobs = async () => {
-      const user = useGetCurrentUserStore.getState().user;
+    if (user) {
       const scopes =
         user?.role === "company"
           ? user?.company?.careerScopes
           : user?.employee?.careerScopes;
       const names = scopes?.map((cs) => cs.name) ?? [];
       setScopeNames(names);
+      
+      // Initial search with user's career scopes
       querySearchJobs({
         careerScopes: names,
         sortBy: "title",
         sortOrder: "DESC",
       });
-    };
-    fetchUserAndJobs();
-  }, []);
+    }
+  }, [user, querySearchJobs]);
 
+  // Trigger search when filters change
+  useEffect(() => {
+    const subscription = watch((value) => {
+      debouncedSubmit(value as TEmployeeSearchSchema);
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, debouncedSubmit]);
+
+  // Cleanup debounce on unmount
   useEffect(() => {
     return () => {
       debouncedSubmit.cancel();
     };
   }, [debouncedSubmit]);
+
+  // Handler for radio group changes
+  const handleRadioChange = (fieldName: keyof TEmployeeSearchSchema, value: any) => {
+    setValue(fieldName, value, { shouldDirty: true });
+    // No need to call handleSubmit here - the watch effect will handle it
+  };
 
   return (
     <form
@@ -133,8 +154,8 @@ export default function SearchPage() {
             isEmployee={true}
             register={register}
             setValue={setValue}
-            initialLocation={control._formValues.location as TLocations}
-            initialJobType={control._formValues.jobType as TAvailability}
+            initialLocation={watchAllFields.location as TLocations}
+            initialJobType={watchAllFields.jobType as TAvailability}
           />
         </div>
         <Image
@@ -148,6 +169,8 @@ export default function SearchPage() {
       <div className="w-full flex items-start gap-5 tablet-xl:!flex-col tablet-xl:[&>div]:w-full">
         <div className="w-1/4 flex flex-col items-start gap-8 p-5 shadow-md rounded-md">
           <TypographyH4 className="text-lg">Refine Result</TypographyH4>
+          
+          {/* Date Posted */}
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideCalendarDays strokeWidth={"1.5px"} />
@@ -192,9 +215,7 @@ export default function SearchPage() {
                         }
                         updated = { from, to: new Date() };
                       }
-                      field.onChange(updated);
-                      setValue("date", updated);
-                      handleSubmit(onSubmit)();
+                      handleRadioChange("date", updated);
                     }}
                     className="ml-3"
                   >
@@ -231,6 +252,8 @@ export default function SearchPage() {
               }}
             />
           </div>
+
+          {/* Company Size */}
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideUsers strokeWidth={"1.5px"} />
@@ -255,7 +278,6 @@ export default function SearchPage() {
                     value={selectedValue}
                     onValueChange={(val) => {
                       let updated;
-
                       switch (val) {
                         case "startup":
                           updated = { min: 1, max: 50 };
@@ -270,10 +292,7 @@ export default function SearchPage() {
                         default:
                           updated = { min: undefined, max: undefined };
                       }
-
-                      field.onChange(updated);
-                      setValue("companySize", updated);
-                      handleSubmit(onSubmit)();
+                      handleRadioChange("companySize", updated);
                     }}
                     className="ml-3"
                   >
@@ -310,6 +329,8 @@ export default function SearchPage() {
               }}
             />
           </div>
+
+          {/* Salary Range */}
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideCircleDollarSign strokeWidth={"1.5px"} />
@@ -356,9 +377,7 @@ export default function SearchPage() {
                           updated = { min: undefined, max: undefined };
                           break;
                       }
-                      field.onChange(updated);
-                      setValue("salaryRange", updated);
-                      handleSubmit(onSubmit)();
+                      handleRadioChange("salaryRange", updated);
                     }}
                     className="ml-3"
                   >
@@ -402,6 +421,8 @@ export default function SearchPage() {
               }}
             />
           </div>
+
+          {/* Education Level */}
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideGraduationCap strokeWidth={"1.5px"} />
@@ -417,9 +438,7 @@ export default function SearchPage() {
                     value={education}
                     onValueChange={(val) => {
                       const value = val === "all" ? undefined : val;
-                      field.onChange(value);
-                      setValue("educationLevel", value);
-                      handleSubmit(onSubmit)();
+                      handleRadioChange("educationLevel", value);
                     }}
                     className="ml-3"
                   >
@@ -463,6 +482,8 @@ export default function SearchPage() {
               }}
             />
           </div>
+
+          {/* Experience Level */}
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideBriefcaseBusiness strokeWidth={"1.5px"} />
@@ -506,10 +527,7 @@ export default function SearchPage() {
                         default:
                           updated = { min: undefined, max: undefined };
                       }
-
-                      field.onChange(updated);
-                      setValue("experienceLevel", updated);
-                      handleSubmit(onSubmit)();
+                      handleRadioChange("experienceLevel", updated);
                     }}
                     className="ml-3"
                   >
@@ -554,6 +572,8 @@ export default function SearchPage() {
             />
           </div>
         </div>
+
+        {/* Results Section */}
         <div className="w-3/4 flex flex-col items-start gap-3">
           <div className="w-full flex justify-between items-center">
             <TypographyH4 className="text-lg">
@@ -562,11 +582,7 @@ export default function SearchPage() {
               ) : error ? (
                 <span className="text-destructive">0 Job is listing</span>
               ) : jobs && jobs.length > 0 ? (
-                jobs.length === 1 ? (
-                  `${jobs.length} Jobs are listing`
-                ) : (
-                  `${jobs.length} Jobs are listing`
-                )
+                `${jobs.length} Job${jobs.length === 1 ? '' : 's'} listed`
               ) : (
                 <Skeleton className="h-6 w-40 bg-muted" />
               )}
@@ -583,7 +599,7 @@ export default function SearchPage() {
             ) : jobs && jobs.length > 0 ? (
               jobs.map((item, index) => (
                 <SearchCompanyCard
-                  key={index}
+                  key={item.id || index}
                   title={item.title}
                   description={item.description}
                   type={item.type}

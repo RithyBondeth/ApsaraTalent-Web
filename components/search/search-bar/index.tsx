@@ -82,14 +82,6 @@ export default function SearchBar<T extends FieldValues>(
           </SelectContent>
         </Select>
       </div>
-      <Button
-        variant={"secondary"}
-        className="w-full text-xs tablet-xl:w-full"
-        type="submit"
-      >
-        <LucideSearch />
-        Search
-      </Button>
     </div>
   );
 }

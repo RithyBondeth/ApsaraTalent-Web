@@ -46,10 +46,10 @@ export const useSearchEmployeeStore = create<TSearchEmployeeState>((set) => ({
           }
         }
       });
+      const queryString = queryParams.toString();
+      const url = `${API_SEARCH_EMP_URL}?${queryString}`;
 
-      const response = await axios.get(
-        `${API_SEARCH_EMP_URL}?${queryParams.toString()}`
-      );
+      const response = await axios.get(url);
 
       set({
         employees: response.data,
@@ -65,7 +65,7 @@ export const useSearchEmployeeStore = create<TSearchEmployeeState>((set) => ({
         });
       else
         set({
-          error: "Failed to fetch employees",
+          error: "Failed to search employee",
           loading: false,
           employees: null,
         });
