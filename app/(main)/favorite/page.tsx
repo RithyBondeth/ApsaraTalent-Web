@@ -5,11 +5,9 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
-import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import Image from "next/image";
 import favoriteSvgImage from "@/assets/svg/favorite.svg";
 import emptySvgImage from "@/assets/svg/empty.svg";
-import { useEffect } from "react";
 
 import FavoriteEmployeeCardSkeleton from "@/components/favorite/employee-favorite-card/skeleton";
 import FavoriteCompanyCardSkeleton from "@/components/favorite/company-favorite-card/skeleton";
@@ -17,28 +15,21 @@ import FavoriteCompanyCard from "@/components/favorite/company-favorite-card";
 import FavoriteEmployeeCard from "@/components/favorite/employee-favorite-card";
 import FavoriteBannerSkeleton from "./banner-skeleton";
 import { TypographyP } from "@/components/utils/typography/typography-p";
+import { useFetchOnce } from "@/hooks/use-fetch-once";
 
 export default function FavoritePage() {
   // API calls
-  const currentUser = useGetCurrentUserStore((state) => state.user);
-  const isEmployee = currentUser?.role === "employee";
   const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
   const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
-
-  useEffect(() => {
-    if (!currentUser) return;
-    if (isEmployee && currentUser.employee) {
-      console.log("Querying all employee favorites inside Favorite Page!!!");
-      getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
-        currentUser.employee.id
-      );
-    } else if (!isEmployee && currentUser.company) {
-      console.log("Querying all company favorites inside Favorite Page!!!");
-      getAllCompanyFavoritesStore.queryAllCompanyFavorites(
-        currentUser.company.id
-      );
+  
+  const { isEmployee } = useFetchOnce({
+    onEmployeeFetch: (employeeId) => {
+      getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(employeeId);
+    },
+    onCompanyFetch: (companyId) => {
+      getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyId);
     }
-  }, [currentUser, isEmployee]);
+  })
 
   // Unified loading handling to avoid flicker before first fetch resolves
   const isLoadingForEmployee =

@@ -15,9 +15,7 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { sidebarList } from "@/utils/constants/sidebar.constant";
 import { ThemeProviderClient } from "@/components/utils/themes/theme-provider-client";
 import { useThemeStore } from "@/stores/themes/theme-store";
-import { useEffect, useState } from "react";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function MainLayout({
   children,
@@ -26,36 +24,18 @@ export default function MainLayout({
 }) {
   const pathname = usePathname();
   const sidebarData = sidebarList.filter((item) => item.url === pathname);
+
   const { theme } = useThemeStore();
-  const { getCurrentUser } = useGetCurrentUserStore();
-  const currentUser = useGetCurrentUserStore((s) => s.user);
+  const user = useGetCurrentUserStore((s) => s.user);
 
-  const [mounted, setMounted] = useState<boolean>(false);
-
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (mounted && !currentUser) {
-      getCurrentUser();
-    }
-  }, [mounted, currentUser]);
-
-  if (!mounted) {
-    return (
-      <div className="h-screen w-screen flex justify-center items-center">
-        <ApsaraLoadingSpinner size={80} loop/>
-      </div>
-    );
-  }
-
+  /**
+   * Feed detail page
+   */
   if (pathname.startsWith("/feed/")) {
     return (
       <div className="relative">
         <Link href="/feed" className="absolute top-5 left-5 z-20">
-          <Button variant={"outline"} size="icon">
+          <Button variant="outline" size="icon">
             <LucideArrowLeft />
           </Button>
         </Link>
@@ -64,150 +44,48 @@ export default function MainLayout({
     );
   }
 
-  if (pathname.startsWith("/message")) {
-    return (
-      <SidebarProvider>
-        <CollapseSidebar key={currentUser?.id || "nouser"} />
-        <div className="w-full h-screen message-xs:h-full flex flex-col">
-          <SidebarInset>
-            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-              <div className="flex items-center gap-2 px-4">
-                <SidebarTrigger />
-                <Separator orientation="vertical" className="mr-2 h-4" />
-                <TypographyP className="!m-0">Chat</TypographyP>
-              </div>
-            </header>
-          </SidebarInset>
-          <div className="h-full">{children}</div>
-        </div>
-      </SidebarProvider>
-    );
-  }
+  /**
+   * Reusable sidebar layout
+   */
+  const renderSidebarLayout = (title: string) => (
+    <SidebarProvider>
+      <CollapseSidebar key={user?.id || "nouser"} />
+      <div className="w-full h-screen message-xs:h-full flex flex-col">
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <div className="flex items-center gap-2 px-4">
+              <SidebarTrigger />
+              <Separator orientation="vertical" className="mr-2 h-4" />
+              <TypographyP className="!m-0">{title}</TypographyP>
+            </div>
+          </header>
+        </SidebarInset>
+        <div className="h-full">{children}</div>
+      </div>
+    </SidebarProvider>
+  );
 
-  if (pathname.startsWith("/resume-builder")) {
-    return (
-      <SidebarProvider>
-        <CollapseSidebar key={currentUser?.id || "nouser"} />
-        <div className="w-full h-screen message-xs:h-full flex flex-col">
-          <SidebarInset>
-            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-              <div className="flex items-center gap-2 px-4">
-                <SidebarTrigger />
-                <Separator orientation="vertical" className="mr-2 h-4" />
-                <TypographyP className="!m-0">AI Resume Builder</TypographyP>
-              </div>
-            </header>
-          </SidebarInset>
-          <div className="h-full">{children}</div>
-        </div>
-      </SidebarProvider>
-    );
-  }
+  if (pathname.startsWith("/message")) return renderSidebarLayout("Chat");
+  if (pathname.startsWith("/resume-builder"))
+    return renderSidebarLayout("AI Resume Builder");
+  if (pathname.startsWith("/search"))
+    return renderSidebarLayout("Search your favorite");
+  if (pathname.startsWith("/matching"))
+    return renderSidebarLayout("Matching");
+  if (pathname.startsWith("/favorite"))
+    return renderSidebarLayout("Favorites");
+  if (pathname.startsWith("/profile"))
+    return renderSidebarLayout("Profile Page");
+  if (pathname.startsWith("/setting"))
+    return renderSidebarLayout("Setting Page");
 
-  if (pathname.startsWith("/search")) {
-    return (
-      <SidebarProvider>
-        <CollapseSidebar key={currentUser?.id || "nouser"} />
-        <div className="w-full h-screen message-xs:h-full flex flex-col">
-          <SidebarInset>
-            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-              <div className="flex items-center gap-2 px-4">
-                <SidebarTrigger />
-                <Separator orientation="vertical" className="mr-2 h-4" />
-                <TypographyP className="!m-0">Search your favorite</TypographyP>
-              </div>
-            </header>
-          </SidebarInset>
-          <div className="h-full">{children}</div>
-        </div>
-      </SidebarProvider>
-    );
-  }
-
-  if (pathname.startsWith("/matching")) {
-    return (
-      <SidebarProvider>
-        <CollapseSidebar key={currentUser?.id || "nouser"} />
-        <div className="w-full h-screen message-xs:h-full flex flex-col">
-          <SidebarInset>
-            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-              <div className="flex items-center gap-2 px-4">
-                <SidebarTrigger />
-                <Separator orientation="vertical" className="mr-2 h-4" />
-                <TypographyP className="!m-0">Matching</TypographyP>
-              </div>
-            </header>
-          </SidebarInset>
-          <div className="h-full">{children}</div>
-        </div>
-      </SidebarProvider>
-    );
-  }
-
-  if (pathname.startsWith("/favorite")) {
-    return (
-      <SidebarProvider>
-        <CollapseSidebar />
-        <div className="w-full h-screen message-xs:h-full flex flex-col">
-          <SidebarInset>
-            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-              <div className="flex items-center gap-2 px-4">
-                <SidebarTrigger />
-                <Separator orientation="vertical" className="mr-2 h-4" />
-                <TypographyP className="!m-0">Favorites</TypographyP>
-              </div>
-            </header>
-          </SidebarInset>
-          <div className="h-full">{children}</div>
-        </div>
-      </SidebarProvider>
-    );
-  }
-  
-  if (pathname.startsWith("/profile")) {
-    return (
-      <SidebarProvider>
-        <CollapseSidebar key={currentUser?.id || "nouser"} />
-        <div className="w-full h-screen message-xs:h-full flex flex-col">
-          <SidebarInset>
-            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-              <div className="flex items-center gap-2 px-4">
-                <SidebarTrigger />
-                <Separator orientation="vertical" className="mr-2 h-4" />
-                <TypographyP className="!m-0">Profile Page</TypographyP>
-              </div>
-            </header>
-          </SidebarInset>
-          <div className="h-full">{children}</div>
-        </div>
-      </SidebarProvider>
-    );
-  }
-
-  if (pathname.startsWith("/setting")) {
-    return (
-      <SidebarProvider>
-        <CollapseSidebar key={currentUser?.id || "nouser"} />
-        <div className="w-full h-screen message-xs:h-full flex flex-col">
-          <SidebarInset>
-            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-              <div className="flex items-center gap-2 px-4">
-                <SidebarTrigger />
-                <Separator orientation="vertical" className="mr-2 h-4" />
-                <TypographyP className="!m-0">Setting Page</TypographyP>
-              </div>
-            </header>
-          </SidebarInset>
-          <div className="h-full">{children}</div>
-        </div>
-      </SidebarProvider>
-    );
-  }
-
+  /**
+   * Default layout
+   */
   return (
     <ThemeProviderClient defaultTheme={theme}>
       <SidebarProvider>
-        <CollapseSidebar key={currentUser?.id || "nouser"} />
+        <CollapseSidebar key={user?.id || "nouser"} />
         <div className="w-full">
           <SidebarInset>
             <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
@@ -220,7 +98,7 @@ export default function MainLayout({
               </div>
             </header>
           </SidebarInset>
-          <div className="!m-5">{children}</div>
+          <div className="m-5">{children}</div>
         </div>
       </SidebarProvider>
     </ThemeProviderClient>

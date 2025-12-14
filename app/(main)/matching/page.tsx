@@ -13,37 +13,30 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 import Image from "next/image";
 import matchingSvgImage from "@/assets/svg/matching.svg";
 import emptySvgImage from "@/assets/svg/empty.svg";
-import { useEffect } from "react";
+import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import MatchingBannerSkeleton from "./banner-skeleton";
 import { useGetOneEmployeeStore } from "@/stores/apis/employee/get-one-emp.store";
-import { createOrGetChat } from "@/utils/firebase/services/chat-service";
 import { TypographyP } from "@/components/utils/typography/typography-p";
+import { useFetchOnce } from "@/hooks/use-fetch-once";
 
 export default function MatchingPage() {
   const router = useRouter();
-  const currentUser = useGetCurrentUserStore((state) => state.user);
   const userLoading = useGetCurrentUserStore((state) => state.loading);
-
-  const isEmployee = currentUser?.role === "employee";
 
   const getCurrentEmployeeMatchingStore = useGetCurrentEmployeeMatchingStore();
   const getCurrentCompanyMatchingStore = useGetCurrentCompanyMatchingStore();
   const { employeeData, queryOneEmployee } = useGetOneEmployeeStore();
-  
 
-  useEffect(() => {
-    if (currentUser && currentUser.employee && isEmployee) {
-      getCurrentEmployeeMatchingStore.queryCurrentEmployeeMatching(
-        currentUser.employee.id
-      );
-    }
-    if (currentUser && currentUser.company && !isEmployee) {
-      getCurrentCompanyMatchingStore.queryCurrentCompanyMatching(
-        currentUser.company.id
-      );
-    }
-  }, [currentUser, isEmployee]);
+  // ✅ Use custom hook - handles all ref logic and duplicate prevention!
+  const { isEmployee, currentUser } = useFetchOnce({
+    onEmployeeFetch: (employeeId) => {
+      getCurrentEmployeeMatchingStore.queryCurrentEmployeeMatching(employeeId);
+    },
+    onCompanyFetch: (companyId) => {
+      getCurrentCompanyMatchingStore.queryCurrentCompanyMatching(companyId);
+    },
+  });
 
   // Compute loading state to avoid flicker of empty state before first fetch resolves
   const isLoadingForEmployee =
@@ -57,9 +50,35 @@ export default function MatchingPage() {
       getCurrentCompanyMatchingStore.currentCompanyMatching === null);
 
   const shouldShowLoading =
-    userLoading ||
-    isLoadingForEmployee ||
-    isLoadingForCompany;
+    userLoading || isLoadingForEmployee || isLoadingForCompany;
+
+  // Memoized chat handler
+  const handleChatNow = useCallback(
+    async (otherUserId: string) => {
+      await queryOneEmployee(otherUserId);
+
+      // if (currentUser) {
+      //   const chatId = await createOrGetChat(
+      //     {
+      //       id: (currentUser.employee?.id || currentUser.company?.id) ?? "",
+      //       name:
+      //         (currentUser.employee?.username || currentUser.company?.name) ??
+      //         "",
+      //       profile:
+      //         (currentUser.employee?.avatar || currentUser.company?.avatar) ??
+      //         "",
+      //     },
+      //     {
+      //       id: employeeData?.id ?? "",
+      //       name: employeeData?.username ?? "",
+      //       profile: employeeData?.avatar ?? "",
+      //     }
+      //   );
+      //   router.push(`/message?chatId=${chatId}`);
+      // }
+    },
+    [currentUser, employeeData, queryOneEmployee, router]
+  );
 
   if (shouldShowLoading) {
     return (
@@ -78,54 +97,32 @@ export default function MatchingPage() {
     );
   }
 
-  const handleChatNow = async (otherUserId: string) => {
-    await queryOneEmployee(otherUserId);
-
-    if(currentUser) {
-        const chatId = await createOrGetChat({
-            id: (currentUser.employee?.id || currentUser.company?.id) ?? '',
-            name: (currentUser.employee?.username || currentUser.company?.name) ?? '',
-            profile: (currentUser.employee?.avatar || currentUser.company?.avatar) ?? '',
-          },
-          {
-            id: employeeData?.id ?? "",
-            name: employeeData?.username ?? "",
-            profile: employeeData?.avatar ?? "",
-          });
-        router.push(`/message?chatId=${chatId}`);
-    }
-  };
-
   return (
     <div className="w-full flex flex-col px-5">
-      {getCurrentCompanyMatchingStore.loading ||
-      getCurrentEmployeeMatchingStore.loading ? (
-        <MatchingBannerSkeleton />
-      ) : (
-        <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
-          <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center tablet-xl:mt-5 px-5">
-            <TypographyH2 className="leading-relaxed tablet-xl:text-center">
-              Ready to find your match? Let’s make it happen.
-            </TypographyH2>
-            <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-              Find Your Perfect Match & Start a Conversation
-            </TypographyH4>
-            <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-              Start chatting, connect instantly, and build your future together.
-            </TypographyH4>
-            <TypographyMuted className="leading-relaxed tablet-xl:text-center">
-              When companies and talents like each other — it’s a match.
-            </TypographyMuted> 
-          </div>
-          <Image
-            src={matchingSvgImage}
-            alt="matching"
-            height={250}
-            width={350}
-            className="tablet-xl:!w-full"
-          />
+      <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
+        <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center tablet-xl:mt-5 px-5">
+          <TypographyH2 className="leading-relaxed tablet-xl:text-center">
+            Ready to find your match? Let's make it happen.
+          </TypographyH2>
+          <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+            Find Your Perfect Match & Start a Conversation
+          </TypographyH4>
+          <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+            Start chatting, connect instantly, and build your future together.
+          </TypographyH4>
+          <TypographyMuted className="leading-relaxed tablet-xl:text-center">
+            When companies and talents like each other — it's a match.
+          </TypographyMuted>
         </div>
-      )}
+        <Image
+          src={matchingSvgImage}
+          alt="matching"
+          height={250}
+          width={350}
+          className="tablet-xl:!w-full"
+        />
+      </div>
+      
       <div className="flex flex-col items-start gap-3">
         {getCurrentEmployeeMatchingStore.currentEmployeeMatching &&
         getCurrentEmployeeMatchingStore.currentEmployeeMatching.length > 0 ? (
@@ -162,12 +159,7 @@ export default function MatchingPage() {
           ))
         ) : (
           <div className="w-full flex flex-col items-center justify-center my-16">
-            <Image
-              src={emptySvgImage}
-              alt="empty"
-              height={200}
-              width={200}
-            />
+            <Image src={emptySvgImage} alt="empty" height={200} width={200} />
             <TypographyP className="!m-0">No matched available</TypographyP>
           </div>
         )}

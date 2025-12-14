@@ -70,6 +70,7 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
   const githubLogout = useGithubLoginStore((state) => state.clearToken);
   const linkedInLogout = useLinkedInLoginStore((state) => state.clearToken);
   const facebookLogout = useFacebookLoginStore((state) => state.clearToken);
+  const clearCurrentUser = useGetCurrentUserStore((state) => state.clearUser);
 
   const handleLogout = async () => {
     setOpenLogoutDialog(false);
@@ -81,6 +82,9 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
     githubLogout();
     linkedInLogout();
     facebookLogout();
+
+    // Clear current user persist
+    clearCurrentUser();
 
     // Try server-side cookie clearing first (for httpOnly cookies)
     await clearAuthCookiesServerSide();

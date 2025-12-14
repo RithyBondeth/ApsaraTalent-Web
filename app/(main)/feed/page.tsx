@@ -7,8 +7,7 @@ import feedBlackSvg from "@/assets/svg/feed-black.svg";
 import feedWhiteSvg from "@/assets/svg/feed-white.svg";
 import feedCompanySvg from "@/assets/svg/feed-company.svg";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import React, { useMemo, useRef, useState } from "react";
-import { useEffect } from "react";
+import React, { useMemo, useRef, useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { useRouter } from "next/navigation";
@@ -42,6 +41,7 @@ import { useGetAllEmployeeStore } from "@/stores/apis/employee/get-all-emp.store
 import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
 import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
+import { useFetchOnce } from "@/hooks/use-fetch-once";
 
 export default function FeedPage() {
   // Utils
@@ -100,57 +100,39 @@ export default function FeedPage() {
   const getAllCompanyStore = useGetAllCompanyStore();
   const getAllEmployeeStore = useGetAllEmployeeStore();
 
-  // Get current user from store (already loaded by layout)
+  // Get current user from store
   const currentUser = useGetCurrentUserStore((state) => state.user);
-  const isEmployee = currentUser?.role === "employee";
   const [likingId, setLikingId] = useState<string | null>(null);
 
-  // Load data only after current user is available (loaded by layout)
+  // Refs to track if global data has been fetched (only once ever)
+  const hasFetchedGlobalDataRef = useRef(false);
+
+  // Fetch current user employee or company - liked user-specific data (resets when user changes)
+  const { isEmployee } = useFetchOnce({
+    onEmployeeFetch: (employeeId) => {
+      console.log("Querying employee liked inside Feed Page!!!");
+      getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(employeeId);
+    },
+    onCompanyFetch: (companyId) => {
+      console.log("Querying company liked inside Feed Page!!!");
+      getCurrentCompanyLikedStore.queryCurrentCompanyLiked(companyId);
+    },
+  });
+
+  // Fetch all employees or companies - global data (only once, never resets)
   useEffect(() => {
-    if (!currentUser) return;
+    if (hasFetchedGlobalDataRef.current || !currentUser) return;
 
-    const loadUserSpecificData = async () => {
-      if (isEmployee) {
-        // Load company data and employee's liked/favorites
-        if (
-          !getAllCompanyStore.companyData ||
-          getAllCompanyStore.companyData.length === 0
-        ) {
-          console.log("Querying all companies inside Feed Page!!!");
-          getAllCompanyStore.queryCompany();
-        }
+    if (isEmployee) {
+      console.log("Querying all companies inside Feed Page!!!");
+      getAllCompanyStore.queryCompany();
+    } else {
+      console.log("Querying all employees inside Feed Page!!!");
+      getAllEmployeeStore.queryEmployee();
+    }
 
-        if (currentUser.employee?.id) {
-          if (!getCurrentEmployeeLikedStore.currentEmployeeLiked) {
-            console.log("Querying employee liked inside Feed Page!!!");
-            getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(
-              currentUser.employee.id
-            );
-          }
-        }
-      } else {
-        // Load employee data and company's liked/favorites
-        if (
-          !getAllEmployeeStore.employeesData ||
-          getAllEmployeeStore.employeesData.length === 0
-        ) {
-          console.log("Querying all employees inside Feed Page!!!");
-          getAllEmployeeStore.queryEmployee();
-        }
-
-        if (currentUser.company?.id) {
-          if (!getCurrentCompanyLikedStore.currentCompanyLiked) {
-            console.log("Querying company liked inside Feed Page!!!");
-            getCurrentCompanyLikedStore.queryCurrentCompanyLiked(
-              currentUser.company.id
-            );
-          }
-        }
-      }
-    };
-
-    loadUserSpecificData();
-  }, [currentUser, isEmployee]);
+    hasFetchedGlobalDataRef.current = true;
+  }, [isEmployee, currentUser, getAllCompanyStore, getAllEmployeeStore]);
 
   // Filter users based on role
   const allUsers: ICompany[] | IEmployee[] = useMemo(() => {
