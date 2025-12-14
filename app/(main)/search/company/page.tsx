@@ -380,8 +380,8 @@ export default function CompanySearchPage() {
             ) : employees && employees.length > 0 ? (
               employees.map((item, index) => (
                 <SearchEmployeeCard
-                  key={item.userId || index}
-                  id={item.userId}
+                  key={item.id || index}
+                  id={item.id}
                   firstname={item.firstname ?? ""}
                   lastname={item.lastname ?? ""}
                   username={item.username ?? ""}

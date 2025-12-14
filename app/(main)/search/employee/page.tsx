@@ -600,6 +600,7 @@ export default function SearchPage() {
               jobs.map((item, index) => (
                 <SearchCompanyCard
                   key={item.id || index}
+                  id={item.company.id}
                   title={item.title}
                   description={item.description}
                   type={item.type}
@@ -615,7 +616,6 @@ export default function SearchPage() {
                     companySize: item.company.companySize,
                     industry: item.company.industry,
                     location: item.company.location,
-                    userId: item.company.user?.id,
                   }}
                 />
               ))

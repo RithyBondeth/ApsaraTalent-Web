@@ -79,7 +79,7 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
           />
         </div>
         <div className="w-full flex justify-end items-center gap-2 [&>button]:text-xs">
-          <Button className="text-xs" onClick={() => {router.replace(`/feed/company/${props.company.userId}`)}}>
+          <Button className="text-xs" onClick={() => {router.replace(`/feed/company/${props.id}`)}}>
             <LucideBuilding/>
             View Company Profile
           </Button>

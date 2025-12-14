@@ -18,6 +18,5 @@ export type TSearchCompanyCardProps = {
         companySize: number;
         industry: string;
         location: TLocations;
-        userId: string;
     }
 }

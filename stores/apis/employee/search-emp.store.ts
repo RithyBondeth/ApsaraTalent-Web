@@ -17,7 +17,7 @@ export type TSearchEmpQuery = {
   sortOrder?: "ASC" | "DESC";
 };
 
-type TSearchEmployee = IEmployee & { userId: string };
+type TSearchEmployee = IEmployee;
 
 type TSearchEmployeeState = {
   employees: TSearchEmployee[] | null;
