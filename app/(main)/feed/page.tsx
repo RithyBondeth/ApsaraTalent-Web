@@ -42,6 +42,8 @@ import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
 import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
 import { useFetchOnce } from "@/hooks/use-fetch-once";
+import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
+import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
 
 // Module-level cache for global data (survives Strict Mode)
 const globalFetchCache = {
@@ -105,6 +107,8 @@ export default function FeedPage() {
   const getCurrentCompanyMatchingStore = useGetCurrentCompanyLikedStore();
   const getAllCompanyStore = useGetAllCompanyStore();
   const getAllEmployeeStore = useGetAllEmployeeStore();
+  const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
+  const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
 
   // Get current user from store
   const currentUser = useGetCurrentUserStore((state) => state.user);
@@ -229,6 +233,7 @@ export default function FeedPage() {
     if (!employeeID || !companyID) return;
     try {
       await employeeFavCompanyStore.addCompanyToFavorite(employeeID, companyID);
+      countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeID);
       toast({
         title: "Saved",
         description: "Company added to favorites.",
@@ -255,6 +260,7 @@ export default function FeedPage() {
         companyID,
         employeeID
       );
+      countAllCompanyFavoritesStore.countAllCompanyFavorites(companyID);
       toast({
         title: "Saved",
         description: "Employee added to favorites.",

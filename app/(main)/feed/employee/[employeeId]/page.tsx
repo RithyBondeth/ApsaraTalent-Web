@@ -53,6 +53,7 @@ import { toast } from "@/hooks/use-toast";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
 import { capitalizeWords } from "@/utils/functions/capitalize-words";
 import { useGetOneEmployeeStore } from "@/stores/apis/employee/get-one-emp.store";
+import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
 
 export default function EmployeeDetailPage() {
   const params = useParams<{ employeeId: string }>();
@@ -70,6 +71,7 @@ export default function EmployeeDetailPage() {
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const companyLikeStore = useCompanyLikeStore();
   const companyFavEmployeeStore = useCompanyFavEmployeeStore();
+  const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
 
   // Initialize component (client-side only)
   useEffect(() => {
@@ -214,6 +216,7 @@ export default function EmployeeDetailPage() {
         companyId,
         employeeId
       );
+      countAllCompanyFavoritesStore.countAllCompanyFavorites(companyId);
       toast({ title: "Saved", description: "Employee added to favorites." });
     } catch {
       const err = companyFavEmployeeStore.error || "Failed to save employee";
@@ -275,9 +278,7 @@ export default function EmployeeDetailPage() {
             <TypographyMuted>Gender</TypographyMuted>
             <IconLabel
               icon={<LucideTransgender strokeWidth={"1.5px"} />}
-              text={
-                employeeData.gender.toUpperCase() ?? "Other".toUpperCase()
-              }
+              text={employeeData.gender.toUpperCase() ?? "Other".toUpperCase()}
             />
           </div>
           <div className="flex flex-col items-start gap-2">
@@ -297,9 +298,7 @@ export default function EmployeeDetailPage() {
               icon={<LucideClock strokeWidth={"1.5px"} />}
               text={`${capitalizeWords(
                 employeeData.availability!.split("_")[0]!
-              )} ${capitalizeWords(
-                employeeData.availability!.split("_")[1]!
-              )}`}
+              )} ${capitalizeWords(employeeData.availability!.split("_")[1]!)}`}
             />
           </div>
         </div>
@@ -322,66 +321,64 @@ export default function EmployeeDetailPage() {
           </div>
 
           {/* Education Section */}
-          {employeeData.educations &&
-            employeeData.educations.length > 0 && (
-              <div className="flex flex-col gap-5 border border-muted p-5">
-                <div className="flex flex-col gap-2">
-                  <TypographyH4>Education</TypographyH4>
-                  <Divider />
+          {employeeData.educations && employeeData.educations.length > 0 && (
+            <div className="flex flex-col gap-5 border border-muted p-5">
+              <div className="flex flex-col gap-2">
+                <TypographyH4>Education</TypographyH4>
+                <Divider />
+              </div>
+              {employeeData.educations.map((item: IEducation) => (
+                <div
+                  className="flex flex-col gap-2 border-l-4 border-primary pl-4"
+                  key={item.id}
+                >
+                  <IconLabel
+                    icon={<LucideSchool strokeWidth={"1.5px"} />}
+                    text={item.school}
+                  />
+                  <IconLabel
+                    icon={<LucideGraduationCap strokeWidth={"1.5px"} />}
+                    text={item.degree}
+                  />
+                  <IconLabel
+                    icon={<LucideCalendar strokeWidth={"1.5px"} />}
+                    text={dateFormatter(item.year)}
+                  />
                 </div>
-                {employeeData.educations.map((item: IEducation) => (
+              ))}
+            </div>
+          )}
+
+          {/* Experience Section */}
+          {employeeData.experiences && employeeData.experiences.length > 0 && (
+            <div className="flex flex-col gap-5 border border-muted p-5">
+              <div className="flex flex-col gap-2">
+                <TypographyH4>Experience</TypographyH4>
+                <Divider />
+              </div>
+              <div className="flex flex-col gap-5">
+                {employeeData.experiences.map((item: IExperience) => (
                   <div
-                    className="flex flex-col gap-2 border-l-4 border-primary pl-4"
+                    className="border-l-4 border-primary pl-4 space-y-2"
                     key={item.id}
                   >
-                    <IconLabel
-                      icon={<LucideSchool strokeWidth={"1.5px"} />}
-                      text={item.school}
-                    />
-                    <IconLabel
-                      icon={<LucideGraduationCap strokeWidth={"1.5px"} />}
-                      text={item.degree}
-                    />
-                    <IconLabel
-                      icon={<LucideCalendar strokeWidth={"1.5px"} />}
-                      text={dateFormatter(item.year)}
-                    />
+                    <div className="flex flex-col gap-1">
+                      <TypographyP className="text-lg font-semibold">
+                        {item.title}
+                      </TypographyP>
+                      <TypographyMuted>
+                        {dateFormatter(item.startDate)} -{" "}
+                        {dateFormatter(item.endDate)}
+                      </TypographyMuted>
+                    </div>
+                    <TypographyMuted className="text-primary leading-relaxed">
+                      {item.description}
+                    </TypographyMuted>
                   </div>
                 ))}
               </div>
-            )}
-
-          {/* Experience Section */}
-          {employeeData.experiences &&
-            employeeData.experiences.length > 0 && (
-              <div className="flex flex-col gap-5 border border-muted p-5">
-                <div className="flex flex-col gap-2">
-                  <TypographyH4>Experience</TypographyH4>
-                  <Divider />
-                </div>
-                <div className="flex flex-col gap-5">
-                  {employeeData.experiences.map((item: IExperience) => (
-                    <div
-                      className="border-l-4 border-primary pl-4 space-y-2"
-                      key={item.id}
-                    >
-                      <div className="flex flex-col gap-1">
-                        <TypographyP className="text-lg font-semibold">
-                          {item.title}
-                        </TypographyP>
-                        <TypographyMuted>
-                          {dateFormatter(item.startDate)} -{" "}
-                          {dateFormatter(item.endDate)}
-                        </TypographyMuted>
-                      </div>
-                      <TypographyMuted className="text-primary leading-relaxed">
-                        {item.description}
-                      </TypographyMuted>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            </div>
+          )}
 
           {/* Skills Section */}
           {employeeData.skills && employeeData.skills.length > 0 && (

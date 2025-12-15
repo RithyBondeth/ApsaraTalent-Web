@@ -20,7 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { ToastAction } from "@/components/ui/toast";
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
-
+0
 export default function PhoneNumberPage() {
   const router = useRouter();
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
@@ -41,10 +41,10 @@ export default function PhoneNumberPage() {
   const onSubmit = async (data: TPhoneLoginForm) => {
     setIsSubmitted(true);
     setBasicPhoneSignupData({
-      phone: data.phone,
+      phone: data.phone ?? "",
       rememberMe: data.rememberMe,
     });
-    const phone = data.phone.replace("0", "+855");
+    const phone = data.phone ? data.phone.replace("0", "+855") : "";
     await loginOtp(phone);
   };
 

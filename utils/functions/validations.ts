@@ -60,13 +60,23 @@ export const passwordValidation = z
     "Password must contain at least one special character"
   );
 
-export const khmerPhoneNumberValidation = z
-  .string()
-  .min(1, "Phone number is required")
-  .regex(
-    /^(?:\+855|0)(?:1\d{8}|[2-9]\d{7,8})$/,
-    "Invalid Khmer phone number (must start with +855 or 855 and a valid prefix)"
-  );
+// export const khmerPhoneNumberValidation = z
+//   .string()
+//   .min(1, "Phone number is required")
+//   .regex(
+//     /^(?:\+855|0)(?:1\d{8}|[2-9]\d{7,8})$/,
+//     "Invalid Khmer phone number (must start with +855 or 855 and a valid prefix)"
+//   );
+
+export const khmerPhoneNumberValidation = () => {
+  return z
+    .string()
+    .regex(/^(\+855|0)[0-9]{8,9}$/, {
+      message: "Invalid Khmer phone number format (e.g., +85512345678 or 012345678)",
+    })
+    .optional()
+    .nullable();
+};
 
 export const phoneOrEmailValidation = z
   .string()

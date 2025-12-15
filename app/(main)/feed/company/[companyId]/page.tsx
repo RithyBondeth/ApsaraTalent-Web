@@ -57,6 +57,7 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 import { toast } from "@/hooks/use-toast";
 import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
 import { useGetOneCompanyStore } from "@/stores/apis/company/get-one-cmp.store";
+import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
 
 export default function CompanyDetailPage() {
   const param = useParams<{ companyId: string }>();
@@ -79,6 +80,7 @@ export default function CompanyDetailPage() {
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const employeeLikeStore = useEmployeeLikeStore();
   const employeeFavCompanyStore = useEmployeeFavCompanyStore();
+  const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
 
   // Initialize component (client-side only)
   useEffect(() => {
@@ -204,6 +206,7 @@ export default function CompanyDetailPage() {
     if (!companyId) return;
     try {
       await employeeFavCompanyStore.addCompanyToFavorite(employeeId, companyId);
+      countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeId);
       toast({ title: "Saved", description: "Company added to favorites." });
     } catch {
       const err = employeeFavCompanyStore.error || "Failed to save company";
@@ -292,7 +295,6 @@ export default function CompanyDetailPage() {
               </div>
             </div>
           )}
-
           {/* Open Positions Section */}
           {companyData &&
             companyData.openPositions &&
@@ -564,8 +566,8 @@ export default function CompanyDetailPage() {
           </div>
 
           {/* Culture and Benefit Section */}
-          {(companyData.values.length < 0 ||
-            companyData.benefits.length < 0) && (
+          {(companyData.values.length > 0 ||
+            companyData.benefits.length > 0) && (
             <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
               <div className="w-full flex flex-col gap-2">
                 <TypographyH4>Company Culture</TypographyH4>
