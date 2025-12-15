@@ -10,7 +10,7 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { RadioGroup } from "@/components/ui/radio-group";
 import RadioGroupItemWithLabel from "@/components/ui/radio-group-item";
 import { useSearchJobStore } from "@/stores/apis/job/search-job.store";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -30,10 +30,15 @@ import { SearchErrorCard } from "@/components/search/search-error-card";
 import { TAvailability } from "@/utils/types/availability.type";
 import { debounce } from "lodash";
 
+// Module-level flag to prevent duplicate initial search (Strict Mode safe)
+let hasInitialSearchJobRun = false;
+
 export default function SearchPage() {
   const { error, loading, jobs, querySearchJobs } = useSearchJobStore();
   const { user } = useGetCurrentUserStore();
+
   const [scopeNames, setScopeNames] = useState<string[]>([]);
+  const isFirstWatchRenderRef = useRef<boolean>(true);
 
   const { register, control, setValue, handleSubmit, watch } =
     useForm<TEmployeeSearchSchema>({
@@ -51,7 +56,7 @@ export default function SearchPage() {
         orderBy: "desc",
       },
     });
-
+ 
   // Watch form values for debounced submission
   const watchAllFields = watch();
 
@@ -92,41 +97,48 @@ export default function SearchPage() {
     [querySearchJobs, scopeNames]
   );
 
-  // Debounced form submission
   const debouncedSubmit = useMemo(() => debounce(onSubmit, 400), [onSubmit]);
 
-  // Initial data fetch
+  // Initial search with module-level guard
   useEffect(() => {
-    if (user) {
-      const scopes =
-        user?.role === "company"
-          ? user?.company?.careerScopes
-          : user?.employee?.careerScopes;
-      const names = scopes?.map((cs) => cs.name) ?? [];
-      setScopeNames(names);
+    if (!user) return;
 
-      // Initial search with user's career scopes
-      querySearchJobs({
-        careerScopes: names,
-        sortBy: "title",
-        sortOrder: "DESC",
-      });
-    }
+    // Check module-level flag (survives Strict Mode remounts)
+    if (hasInitialSearchJobRun) return;
+
+    const scopes =
+      user?.role === "company"
+        ? user?.company?.careerScopes
+        : user?.employee?.careerScopes;
+    const names = scopes?.map((cs) => cs.name) ?? [];
+    setScopeNames(names);
+
+    querySearchJobs({
+      careerScopes: names,
+      sortBy: "title",
+      sortOrder: "DESC",
+    });
+
+    hasInitialSearchJobRun = true;
   }, [user, querySearchJobs]);
 
-  // Trigger search when filters change
+  // Watch for form changes (skip first render)
   useEffect(() => {
-    const subscription = watch((value) => {
-      debouncedSubmit(value as TEmployeeSearchSchema);
-    });
+    if (isFirstWatchRenderRef.current) {
+      isFirstWatchRenderRef.current = false;
+      return;
+    }
+
+    const subscription = watch((value) =>
+      debouncedSubmit(value as TEmployeeSearchSchema)
+    );
+
     return () => subscription.unsubscribe();
   }, [watch, debouncedSubmit]);
 
   // Cleanup debounce on unmount
   useEffect(() => {
-    return () => {
-      debouncedSubmit.cancel();
-    };
+    return () => debouncedSubmit.cancel();
   }, [debouncedSubmit]);
 
   // Handler for radio group changes
@@ -135,7 +147,6 @@ export default function SearchPage() {
     value: any
   ) => {
     setValue(fieldName, value, { shouldDirty: true });
-    // No need to call handleSubmit here - the watch effect will handle it
   };
 
   return (
@@ -444,7 +455,7 @@ export default function SearchPage() {
                   <RadioGroup
                     value={education}
                     onValueChange={(val) => {
-                      const value = val === "all" ? undefined : val;
+                      const value = val === "all" ? "all" : val;
                       handleRadioChange("educationLevel", value);
                     }}
                     className="ml-3"

@@ -18,19 +18,23 @@ import { SearchErrorCard } from "@/components/search/search-error-card";
 import SearchEmployeeCard from "@/components/search/search-employee-card";
 import { useSearchEmployeeStore } from "@/stores/apis/employee/search-emp.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TLocations } from "@/utils/types/location.type";
 import { TAvailability } from "@/utils/types/availability.type";
 import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
 import { debounce } from "lodash";
 
+// Module-level flags to prevent duplicate initial search (Strict Mode safe)
+let hasInitialSearchEmployeeRun = false;
+let isInitializing = false;
+
 export default function CompanySearchPage() {
   const { error, loading, employees, querySearchEmployee } =
     useSearchEmployeeStore();
-  const user = useGetCurrentUserStore((state) => state.user);
+  const { user } = useGetCurrentUserStore();
 
   const [scopeNames, setScopeNames] = useState<string[]>([]);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const isFirstWatchRenderRef = useRef<boolean>(true);
 
   const { register, setValue, control, handleSubmit, watch } =
     useForm<TCompanySearchSchema>({
@@ -76,7 +80,6 @@ export default function CompanySearchPage() {
       };
 
       querySearchEmployee(queryParams);
-      setIsInitialLoad(false);
     },
     [querySearchEmployee, scopeNames]
   );
@@ -84,54 +87,62 @@ export default function CompanySearchPage() {
   // Debounced form submission
   const debouncedSubmit = useMemo(() => debounce(onSubmit, 400), [onSubmit]);
 
-  // Initial data fetch
+  // Initial search with module-level guard (Strict Mode safe)
   useEffect(() => {
-    if (user) {
-      const scopes =
-        user?.role === "company"
-          ? user?.company?.careerScopes
-          : user?.employee?.careerScopes;
-      const names = scopes?.map((cs) => cs.name) ?? [];
-      setScopeNames(names);
+    if (!user) return;
 
-      // Set user's location as default if available
-      const userLocation =
-        user?.role === "company"
-          ? user?.company?.location
-          : user?.employee?.location;
-      if (userLocation && userLocation !== "all") {
-        setValue("location", userLocation);
-      }
+    // Check module-level flag (survives Strict Mode remounts)
+    if (hasInitialSearchEmployeeRun) return;
 
-      // Initial search
-      console.log("🎯 Making initial search with career scopes:", names);
-      querySearchEmployee({
-        careerScopes: names,
-        sortBy: "firstname",
-        sortOrder: "DESC",
-      });
-      setIsInitialLoad(false);
+    isInitializing = true; // Set flag before setValue
+
+    const scopes =
+      user?.role === "company"
+        ? user?.company?.careerScopes
+        : user?.employee?.careerScopes;
+    const names = scopes?.map((cs) => cs.name) ?? [];
+    setScopeNames(names);
+
+    // Set user's location as default if available
+    const userLocation =
+      user?.role === "company"
+        ? user?.company?.location
+        : user?.employee?.location;
+    if (userLocation && userLocation !== "all") {
+      setValue("location", userLocation);
     }
-  }, [user, querySearchEmployee, setValue]);
 
-  // Trigger search when filters change (debounced)
+    // Initial search
+    querySearchEmployee({
+      careerScopes: names,
+      sortBy: "firstname",
+      sortOrder: "DESC",
+    });
+
+    hasInitialSearchEmployeeRun = true;
+    // Reset initialization flag after a brief delay
+    setTimeout(() => {
+      isInitializing = false;
+    }, 100);
+  }, [user, querySearchEmployee]);
+
+  // Watch for form changes (skip first render)
   useEffect(() => {
-    // Don't trigger on initial load
-    if (isInitialLoad) return;
+    if (isFirstWatchRenderRef.current) {
+      isFirstWatchRenderRef.current = false;
+      return;
+    }
 
     const subscription = watch((value) => {
+      if (isInitializing) return;
       debouncedSubmit(value as TCompanySearchSchema);
     });
 
     return () => subscription.unsubscribe();
-  }, [watch, debouncedSubmit, isInitialLoad]);
+  }, [watch, debouncedSubmit]);
 
   // Cleanup debounce on unmount
-  useEffect(() => {
-    return () => {
-      debouncedSubmit.cancel();
-    };
-  }, [debouncedSubmit]);
+  useEffect(() => debouncedSubmit.cancel(), [debouncedSubmit]);
 
   // Handler for radio group changes
   const handleRadioChange = (
@@ -192,7 +203,7 @@ export default function CompanySearchPage() {
                   <RadioGroup
                     value={education}
                     onValueChange={(val) => {
-                      const value = val === "all" ? undefined : val;
+                      const value = val === "all" ? "all" : val;
                       handleRadioChange("educationLevel", value);
                     }}
                     className="ml-3"
