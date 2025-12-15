@@ -33,7 +33,7 @@ import { debounce } from "lodash";
 // Module-level flag to prevent duplicate initial search (Strict Mode safe)
 let hasInitialSearchJobRun = false;
 
-export default function SearchPage() {
+export default function EmployeeSearchPage() {
   const { error, loading, jobs, querySearchJobs } = useSearchJobStore();
   const { user } = useGetCurrentUserStore();
 
@@ -56,7 +56,7 @@ export default function SearchPage() {
         orderBy: "desc",
       },
     });
- 
+
   // Watch form values for debounced submission
   const watchAllFields = watch();
 
@@ -120,6 +120,11 @@ export default function SearchPage() {
     });
 
     hasInitialSearchJobRun = true;
+
+    // Reset flag on component unmount (when navigating away)
+    return () => {
+      hasInitialSearchJobRun = false;
+    };
   }, [user, querySearchJobs]);
 
   // Watch for form changes (skip first render)
@@ -154,6 +159,7 @@ export default function SearchPage() {
       className="w-full flex flex-col items-start gap-5 px-10"
       onSubmit={handleSubmit(onSubmit)}
     >
+      {/* Banner Section */}
       <div className="w-full flex items-center justify-between gap-10 laptop-sm:flex-col laptop-sm:items-center">
         <div className="w-full flex flex-col items-start gap-3 laptop-sm:py-5">
           <TypographyH2 className="leading-relaxed">
@@ -185,6 +191,7 @@ export default function SearchPage() {
         />
       </div>
       <div className="w-full flex items-start gap-5 tablet-xl:!flex-col tablet-xl:[&>div]:w-full">
+        {/* Left Side: Filter Section */}
         <div className="w-1/4 flex flex-col items-start gap-8 p-5 shadow-md rounded-md">
           <TypographyH4 className="text-lg">Refine Result</TypographyH4>
 
@@ -591,7 +598,7 @@ export default function SearchPage() {
           </div>
         </div>
 
-        {/* Results Section */}
+        {/* Right Side: Results Section */}
         <div className="w-3/4 flex flex-col items-start gap-3">
           <div className="w-full flex justify-between items-center">
             <TypographyH4 className="text-lg">
@@ -602,12 +609,20 @@ export default function SearchPage() {
               ) : jobs && jobs.length > 0 ? (
                 `${jobs.length} Job${jobs.length === 1 ? "" : "s"} listed`
               ) : (
-                <Skeleton className="h-6 w-40 bg-muted" />
+                "No jobs found"
               )}
             </TypographyH4>
           </div>
           <div className="w-full flex flex-col items-start gap-2">
-            {error ? (
+            {loading ? (
+              <div className="w-full mb-3">
+                {Array(3)
+                  .fill(0)
+                  .map((_, index) => (
+                    <SearchEmployeeCardSkeleton key={index} />
+                  ))}
+              </div>
+            ) : error ? (
               <div className="w-full mb-3">
                 <SearchErrorCard
                   error={error}
@@ -638,12 +653,11 @@ export default function SearchPage() {
                 />
               ))
             ) : (
-              <div className="w-full mb-3">
-                {Array(3)
-                  .fill(0)
-                  .map((_, index) => (
-                    <SearchEmployeeCardSkeleton key={index} />
-                  ))}
+              <div className="w-full text-center py-10">
+                <TypographyP className="text-muted-foreground">
+                  No jobs match your search criteria. Try adjusting your
+                  filters.
+                </TypographyP>
               </div>
             )}
           </div>

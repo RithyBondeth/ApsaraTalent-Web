@@ -157,6 +157,7 @@ export default function CompanySearchPage() {
       className="w-full flex flex-col items-start gap-5 px-10"
       onSubmit={handleSubmit(onSubmit)}
     >
+      {/* Banner Section */}
       <div className="w-full flex items-center justify-between gap-10 laptop-sm:flex-col laptop-sm:items-center">
         <div className="w-full flex flex-col items-start gap-3 laptop-sm:py-5">
           <TypographyH2>Hire Smarter, Anywhere.</TypographyH2>
@@ -185,6 +186,7 @@ export default function CompanySearchPage() {
       </div>
 
       <div className="w-full flex items-start gap-5 tablet-xl:!flex-col tablet-xl:[&>div]:w-full">
+        {/* Left Side: Filter Section */}
         <div className="w-1/4 flex flex-col items-start gap-8 p-5 shadow-md rounded-md">
           <TypographyH4 className="text-lg">Refine Result</TypographyH4>
 
@@ -353,11 +355,11 @@ export default function CompanySearchPage() {
           </div>
         </div>
 
-        {/* Right side: Results */}
+        {/* Right side: Results Section */}
         <div className="w-3/4 flex flex-col items-start gap-3">
           <div className="w-full flex justify-between items-center">
             <TypographyH4 className="text-lg">
-              {loading && employees?.length === 0 ? (
+              {loading ? (
                 <Skeleton className="h-6 w-40 bg-muted" />
               ) : error ? (
                 <span className="text-destructive">0 Employee Found</span>
@@ -373,7 +375,7 @@ export default function CompanySearchPage() {
             </TypographyH4>
           </div>
           <div className="w-full flex flex-col items-start gap-2">
-            {loading && employees?.length === 0 ? (
+            {loading ? (
               <div className="w-full mb-3">
                 {Array(3)
                   .fill(0)
@@ -414,20 +416,12 @@ export default function CompanySearchPage() {
                   }
                 />
               ))
-            ) : !loading && employees?.length === 0 ? (
+            ) : (
               <div className="w-full text-center py-10">
                 <TypographyP className="text-muted-foreground">
                   No employees match your search criteria. Try adjusting your
                   filters.
                 </TypographyP>
-              </div>
-            ) : (
-              <div className="w-full mb-3">
-                {Array(3)
-                  .fill(0)
-                  .map((_, index) => (
-                    <SearchEmployeeCardSkeleton key={index} />
-                  ))}
               </div>
             )}
           </div>
