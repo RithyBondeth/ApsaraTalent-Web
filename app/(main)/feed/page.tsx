@@ -392,8 +392,10 @@ export default function FeedPage() {
                   user.id === likingId && employeeLikeStore.loading
                 }
                 onProfileImageClick={(e: React.MouseEvent) => {
-                  handleClickProfilePopup(e);
-                  setCurrentProfileImage(user.avatar ?? "");
+                  if (user.avatar) {
+                    handleClickProfilePopup(e);
+                    setCurrentProfileImage(user.avatar);
+                  }
                 }}
               />
             ) : (
@@ -421,8 +423,10 @@ export default function FeedPage() {
                   user.id === likingId && companyLikeStore.loading
                 }
                 onProfileImageClick={(e: React.MouseEvent) => {
-                  handleClickProfilePopup(e);
-                  setCurrentProfileImage(user.avatar ?? "");
+                  if (user.avatar) {
+                    handleClickProfilePopup(e);
+                    setCurrentProfileImage(user.avatar);
+                  }
                 }}
               />
             )
