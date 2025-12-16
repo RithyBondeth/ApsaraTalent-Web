@@ -1,4 +1,7 @@
-import { API_EMPLOYEE_FAVORITE_COMPANY_URL } from "@/utils/constants/apis/favorite_url";
+import {
+  API_EMPLOYEE_FAVORITE_COMPANY_URL,
+  API_EMPLOYEE_UNFAVORITE_COMPANY_URL,
+} from "@/utils/constants/apis/favorite_url";
 import axios from "@/lib/axios";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -8,11 +11,17 @@ export type TEmployeeFavCompanyState = {
   message: string | null;
   loading: boolean;
   error: string | null;
+  isFavorite: (companyID: string) => boolean;
   addCompanyToFavorite: (
     employeeID: string,
     companyID: string
   ) => Promise<void>;
-  isFavorite: (companyID: string) => boolean;
+  removeCompanyFromFavorite: (
+    employeeID: string,
+    companyID: string,
+    favoriteID: string
+  ) => Promise<void>;
+  clearFavorites: () => void;
 };
 
 export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>()(
@@ -22,15 +31,20 @@ export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>()(
       message: null,
       loading: false,
       error: null,
-      isFavorite: (companyID: string) =>
-        get().favoriteCompanyIds.has(companyID),
-      addCompanyToFavorite: async (employeeID: string, companyID: string) => {
+
+      isFavorite: (companyID: string) => {
+        const isFavorite = get().favoriteCompanyIds.has(companyID);
+        return isFavorite;
+      },
+
+      addCompanyToFavorite: async (employeeID, companyID) => {
         set({ loading: true, error: null });
 
         try {
           const response = await axios.post<{ message: string }>(
             API_EMPLOYEE_FAVORITE_COMPANY_URL(employeeID, companyID)
           );
+
           set((state) => ({
             favoriteCompanyIds: new Set(state.favoriteCompanyIds).add(
               companyID
@@ -39,20 +53,54 @@ export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>()(
             message: response.data.message,
           }));
         } catch (error) {
-          if (axios.isAxiosError(error)) {
-            const errorMessage =
-              error.response?.data?.message instanceof Array
-                ? error.response.data.message.join(", ")
-                : error.response?.data?.message || error.message;
-
-            set({ loading: false, error: errorMessage });
-          } else {
-            set({
-              loading: false,
-              error: "An error occurred while adding company to favorite",
-            });
-          }
+          set({
+            loading: false,
+            error: axios.isAxiosError(error)
+              ? error.response?.data?.message || error.message
+              : "Failed to add favorite",
+          });
         }
+      },
+
+      removeCompanyFromFavorite: async (employeeID, companyID, favoriteID) => {
+        set({ loading: true, error: null });
+
+        try {
+          const response = await axios.post<{ message: string }>(
+            API_EMPLOYEE_UNFAVORITE_COMPANY_URL(
+              employeeID,
+              companyID,
+              favoriteID
+            )
+          );
+
+          set((state) => {
+            const updated = new Set(state.favoriteCompanyIds);
+            updated.delete(companyID);
+
+            return {
+              favoriteCompanyIds: updated,
+              loading: false,
+              message: response.data.message,
+              error: null,
+            };
+          });
+        } catch (error) {
+          set({
+            loading: false,
+            error: axios.isAxiosError(error)
+              ? error.response?.data?.message || error.message
+              : "Failed to remove company from favorite",
+          });
+        }
+      },
+
+      clearFavorites: () => {
+        set({
+          favoriteCompanyIds: new Set(),
+          message: null,
+          error: null,
+        });
       },
     }),
     {
@@ -64,7 +112,7 @@ export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>()(
         ...currentState,
         favoriteCompanyIds: new Set(
           (persistedState as { favoriteCompanyIds?: string[] })
-            ?.favoriteCompanyIds || []
+            ?.favoriteCompanyIds ?? []
         ),
       }),
     }

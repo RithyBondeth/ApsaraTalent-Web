@@ -1,4 +1,7 @@
-import { API_COMPANY_FAVORITE_EMPLOYEE_URL } from "@/utils/constants/apis/favorite_url";
+import {
+  API_COMPANY_FAVORITE_EMPLOYEE_URL,
+  API_COMPANY_UNFAVORITE_EMPLOYEE_URL,
+} from "@/utils/constants/apis/favorite_url";
 import axios from "@/lib/axios";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -8,11 +11,17 @@ export type TCompanyFavEmployeeState = {
   message: string | null;
   loading: boolean;
   error: string | null;
+  isFavorite: (employeeID: string) => boolean;
   addEmployeeToFavorite: (
     companyID: string,
     employeeID: string
   ) => Promise<void>;
-  isFavorite: (employeeID: string) => boolean;
+  removeEmployeeFromFavorite: (
+    companyID: string,
+    employeeID: string,
+    favoriteID: string
+  ) => Promise<void>;
+  clearFavorite: () => void;
 };
 
 export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
@@ -22,8 +31,11 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
       loading: false,
       error: null,
       message: null,
-      isFavorite: (employeeID: string) =>
-        get().favoriteEmployeeIds.has(employeeID),
+      isFavorite: (employeeID: string) => {
+        const isFavorite = get().favoriteEmployeeIds.has(employeeID);
+        return isFavorite;
+      },
+
       addEmployeeToFavorite: async (companyID: string, employeeID: string) => {
         set({ loading: true, error: null });
 
@@ -37,6 +49,7 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
             ),
             loading: false,
             message: response.data.message,
+            error: null,
           }));
         } catch (error) {
           if (axios.isAxiosError(error)) {
@@ -53,6 +66,51 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
             });
           }
         }
+      },
+
+      removeEmployeeFromFavorite: async (
+        companyID: string,
+        employeeID: string,
+        favoriteID: string
+      ) => {
+        set({ loading: true, error: null });
+
+        try {
+          const response = await axios.post<{ message: string }>(
+            API_COMPANY_UNFAVORITE_EMPLOYEE_URL(
+              companyID,
+              employeeID,
+              favoriteID
+            )
+          );
+
+          set((state) => {
+            const updated = new Set(state.favoriteEmployeeIds);
+            updated.delete(employeeID);
+
+            return {
+              favoriteEmployeeIds: updated,
+              loading: false,
+              message: response.data.message,
+              error: null,
+            };
+          });
+        } catch (error) {
+          set({
+            loading: false,
+            error: axios.isAxiosError(error)
+              ? error.response?.data?.message || error.message
+              : "Failed to remove employee from favorite",
+          });
+        }
+      },
+
+      clearFavorite: () => {
+        set({
+          favoriteEmployeeIds: new Set(),
+          message: null,
+          error: null,
+        });
       },
     }),
 
