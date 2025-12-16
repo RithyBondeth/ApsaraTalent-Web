@@ -195,6 +195,7 @@ function LoginPage() {
           console.log("User data preloaded successfully");
           dismiss();
           toast({
+            variant: 'success',
             description: (
               <div className="flex items-center gap-2">
                 <LucideCheck />
@@ -210,6 +211,7 @@ function LoginPage() {
           console.error("Error preloading user data:", error);
           dismiss();
           toast({
+            variant: 'destructive',
             description: (
               <div className="flex items-center gap-2">
                 <LucideCheck />
@@ -339,11 +341,12 @@ function LoginPage() {
           console.log("User data preloaded successfully");
           dismiss();
           toast({
+            variant: 'success',
             description: (
               <div className="flex items-center gap-2">
                 <LucideCheck />
                 <TypographySmall className="font-medium leading-relaxed">
-                  Logged in successfully
+                  Logged In Successfully
                 </TypographySmall>
               </div>
             ),
@@ -354,6 +357,7 @@ function LoginPage() {
           console.error("Error preloading user data:", error);
           dismiss();
           toast({
+            variant: 'destructive',
             description: (
               <div className="flex items-center gap-2">
                 <LucideCheck />

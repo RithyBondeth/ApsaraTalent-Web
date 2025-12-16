@@ -1,5 +1,6 @@
 import {
   LucideArrowRight,
+  LucideBookmarkX,
   LucideBriefcaseBusiness,
   LucideBuilding,
   LucideClock,
@@ -93,15 +94,25 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
               </div>
             </div>
           </div>
-          <Button
-            className="text-xs"
-            onClick={() => {
-              router.replace(`/feed/company/${props.id}`);
-            }}
-          >
-            View Detail
-            <LucideArrowRight />
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button
+              className="text-xs"
+              variant={'destructive'}
+              onClick={() => {}}
+            >
+              Remove
+              <LucideBookmarkX />
+            </Button>
+            <Button
+              className="text-xs"
+              onClick={() => {
+                router.replace(`/feed/company/${props.id}`);
+              }}
+            >
+              View Detail
+              <LucideArrowRight />
+            </Button>
+          </div>
         </div>
       </div>
     </div>

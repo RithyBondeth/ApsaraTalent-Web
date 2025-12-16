@@ -240,7 +240,39 @@ export default function FeedPage() {
       });
       await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(employeeID);
     } catch (error) {
-      const err = employeeFavCompanyStore.error || "Failed to save company";
+      const err =
+        employeeFavCompanyStore.error || "Failed to save company to favorites.";
+      toast({
+        title: "Error",
+        description: err,
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Handle Employee Remove Company From Favorite
+  const handleEmployeeRemoveCompanyFromFavorite = async (
+    employeeID: string,
+    companyID: string,
+    favoriteID: string
+  ) => {
+    if (!employeeID || !companyID || !favoriteID) return;
+    try {
+      await employeeFavCompanyStore.removeCompanyFromFavorite(
+        employeeID,
+        companyID,
+        favoriteID
+      );
+      countAllCompanyFavoritesStore.countAllCompanyFavorites(employeeID);
+      toast({
+        title: "Removed",
+        description: "Company removed from favorites.",
+      });
+      await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(employeeID);
+    } catch (error) {
+      const err =
+        employeeFavCompanyStore.error ||
+        "Failed to remove company from favorites.";
       toast({
         title: "Error",
         description: err,
@@ -268,6 +300,37 @@ export default function FeedPage() {
       await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyID);
     } catch (error) {
       const err = companyFavEmployeeStore.error || "Failed to save employee";
+      toast({
+        title: "Error",
+        description: err,
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Handle Company Remove Employee From Favorite
+  const handleCompanyRemoveEmployeeFromFavorite = async (
+    companyID: string,
+    employeeID: string,
+    favoriteID: string
+  ) => {
+    if (!companyID || !employeeID || !favoriteID) return;
+    try {
+      await companyFavEmployeeStore.removeEmployeeFromFavorite(
+        companyID,
+        employeeID,
+        favoriteID
+      );
+      countAllCompanyFavoritesStore.countAllCompanyFavorites(companyID);
+      toast({
+        title: "Saved",
+        description: "Company removed from favorites.",
+      });
+      await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyID);
+    } catch (error) {
+      const err =
+        companyFavEmployeeStore.error ||
+        "Failed to remove employee from favorites.";
       toast({
         title: "Error",
         description: err,
