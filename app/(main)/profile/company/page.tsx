@@ -1509,138 +1509,144 @@ export default function ProfilePage() {
         </div>
         <div className="w-[40%] flex flex-col gap-5">
           {/* Benefits Section */}
-          <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
-            <div className="w-full flex flex-col gap-1">
-              <TypographyH4>Benefits</TypographyH4>
-              <Divider />
-            </div>
-            <div className="w-full flex flex-col items-stretch gap-3">
-              <div className="w-full flex flex-wrap gap-3">
-                {benefits &&
-                  benefits.length > 0 &&
-                  benefits.map((benefit) => (
-                    <div
-                      className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs"
-                      key={benefit.label}
-                    >
-                      <IconLabel
-                        icon={
-                          <LucideCircleCheck stroke="white" fill="#0073E6" />
-                        }
-                        className="[&>p]:text-[#0073E6] font-medium"
-                        text={benefit.label}
-                      />
-                      {isEdit && (
-                        <LucideXCircle
-                          className="text-muted-foreground cursor-pointer text-red-500"
-                          width={"18px"}
-                          onClick={() => removeBenefit(benefit.label)}
-                        />
-                      )}
-                    </div>
-                  ))}
+          {benefits && benefits.length > 0 && (
+            <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
+              <div className="w-full flex flex-col gap-1">
+                <TypographyH4>Benefits</TypographyH4>
+                <Divider />
               </div>
-              {isEdit && (
-                <Popover
-                  open={openBenefitPopOver}
-                  onOpenChange={setOpenBenefitPopOver}
-                >
-                  <PopoverTrigger asChild>
-                    <Button className="w-full text-xs" variant="secondary">
-                      Add benefit
-                      <LucidePlus />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
-                    <Input
-                      placeholder="Enter your benefit (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
-                      value={benefitInput?.label}
-                      onChange={(e) =>
-                        setBenefitInput({ label: e.target.value })
-                      }
-                    />
-                    <div className="flex items-center gap-1 [&>button]:text-xs">
-                      <Button
-                        variant="outline"
-                        onClick={() => setOpenBenefitPopOver(false)}
+              <div className="w-full flex flex-col items-stretch gap-3">
+                <div className="w-full flex flex-wrap gap-3">
+                  {benefits &&
+                    benefits.length > 0 &&
+                    benefits.map((benefit) => (
+                      <div
+                        className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs"
+                        key={benefit.label}
                       >
-                        Cancel
+                        <IconLabel
+                          icon={
+                            <LucideCircleCheck stroke="white" fill="#0073E6" />
+                          }
+                          className="[&>p]:text-[#0073E6] font-medium"
+                          text={benefit.label}
+                        />
+                        {isEdit && (
+                          <LucideXCircle
+                            className="text-muted-foreground cursor-pointer text-red-500"
+                            width={"18px"}
+                            onClick={() => removeBenefit(benefit.label)}
+                          />
+                        )}
+                      </div>
+                    ))}
+                </div>
+                {isEdit && (
+                  <Popover
+                    open={openBenefitPopOver}
+                    onOpenChange={setOpenBenefitPopOver}
+                  >
+                    <PopoverTrigger asChild>
+                      <Button className="w-full text-xs" variant="secondary">
+                        Add benefit
+                        <LucidePlus />
                       </Button>
-                      <Button onClick={addBenefits} type="button">
-                        Save
-                      </Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              )}
+                    </PopoverTrigger>
+                    <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
+                      <Input
+                        placeholder="Enter your benefit (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
+                        value={benefitInput?.label}
+                        onChange={(e) =>
+                          setBenefitInput({ label: e.target.value })
+                        }
+                      />
+                      <div className="flex items-center gap-1 [&>button]:text-xs">
+                        <Button
+                          variant="outline"
+                          onClick={() => setOpenBenefitPopOver(false)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button onClick={addBenefits} type="button">
+                          Save
+                        </Button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Values Section */}
-          <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
-            <div className="w-full flex flex-col gap-1">
-              <TypographyH4>Values</TypographyH4>
-              <Divider />
-            </div>
-            <div className="w-full flex flex-col items-stretch gap-3">
-              <div className="w-full flex flex-wrap gap-3">
-                {values &&
-                  values.length > 0 &&
-                  values.map((value, index) => (
-                    <div
-                      className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs"
-                      key={index}
-                    >
-                      <IconLabel
-                        icon={
-                          <LucideCircleCheck stroke="white" fill="#69B41E" />
-                        }
-                        className="[&>p]:text-[#69B41E] font-medium"
-                        text={value.label}
-                      />
-                      {isEdit && (
-                        <LucideXCircle
-                          className="text-muted-foreground cursor-pointer text-red-500"
-                          width={"18px"}
-                          onClick={() => removeValue(value.label)}
-                        />
-                      )}
-                    </div>
-                  ))}
+          {values && values.length > 0 && (
+            <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
+              <div className="w-full flex flex-col gap-1">
+                <TypographyH4>Values</TypographyH4>
+                <Divider />
               </div>
-              {isEdit && (
-                <Popover
-                  open={openValuePopOver}
-                  onOpenChange={setOpenValuePopOver}
-                >
-                  <PopoverTrigger asChild>
-                    <Button className="w-full text-xs" variant="secondary">
-                      Add value
-                      <LucidePlus />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
-                    <Input
-                      placeholder="Enter your value (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
-                      value={valueInput?.label}
-                      onChange={(e) => setValueInput({ label: e.target.value })}
-                    />
-                    <div className="flex items-center gap-1 [&>button]:text-xs">
-                      <Button
-                        variant="outline"
-                        onClick={() => setOpenValuePopOver(false)}
+              <div className="w-full flex flex-col items-stretch gap-3">
+                <div className="w-full flex flex-wrap gap-3">
+                  {values &&
+                    values.length > 0 &&
+                    values.map((value, index) => (
+                      <div
+                        className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs"
+                        key={index}
                       >
-                        Cancel
+                        <IconLabel
+                          icon={
+                            <LucideCircleCheck stroke="white" fill="#69B41E" />
+                          }
+                          className="[&>p]:text-[#69B41E] font-medium"
+                          text={value.label}
+                        />
+                        {isEdit && (
+                          <LucideXCircle
+                            className="text-muted-foreground cursor-pointer text-red-500"
+                            width={"18px"}
+                            onClick={() => removeValue(value.label)}
+                          />
+                        )}
+                      </div>
+                    ))}
+                </div>
+                {isEdit && (
+                  <Popover
+                    open={openValuePopOver}
+                    onOpenChange={setOpenValuePopOver}
+                  >
+                    <PopoverTrigger asChild>
+                      <Button className="w-full text-xs" variant="secondary">
+                        Add value
+                        <LucidePlus />
                       </Button>
-                      <Button onClick={addValue} type="button">
-                        Save
-                      </Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              )}
+                    </PopoverTrigger>
+                    <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
+                      <Input
+                        placeholder="Enter your value (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
+                        value={valueInput?.label}
+                        onChange={(e) =>
+                          setValueInput({ label: e.target.value })
+                        }
+                      />
+                      <div className="flex items-center gap-1 [&>button]:text-xs">
+                        <Button
+                          variant="outline"
+                          onClick={() => setOpenValuePopOver(false)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button onClick={addValue} type="button">
+                          Save
+                        </Button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* CareersScopes Section */}
           <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">

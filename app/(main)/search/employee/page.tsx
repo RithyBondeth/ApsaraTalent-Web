@@ -30,7 +30,7 @@ import { SearchErrorCard } from "@/components/search/search-error-card";
 import { TAvailability } from "@/utils/types/availability.type";
 import { debounce } from "lodash";
 
-// Module-level flag to prevent duplicate initial search (Strict Mode safe)
+// Module-level guard (Strict Mode safe)
 let hasInitialSearchJobRun = false;
 
 export default function EmployeeSearchPage() {
@@ -38,7 +38,7 @@ export default function EmployeeSearchPage() {
   const { user } = useGetCurrentUserStore();
 
   const [scopeNames, setScopeNames] = useState<string[]>([]);
-  const isFirstWatchRenderRef = useRef<boolean>(true);
+  const isFirstWatchRenderRef = useRef(true);
 
   const { register, control, setValue, handleSubmit, watch } =
     useForm<TEmployeeSearchSchema>({
@@ -47,69 +47,54 @@ export default function EmployeeSearchPage() {
         keyword: "",
         location: "all",
         jobType: "all",
-        companySize: { min: undefined, max: undefined },
-        date: { from: undefined, to: undefined },
-        salaryRange: { min: undefined, max: undefined },
+        companySize: {},
+        date: {},
+        salaryRange: {},
         educationLevel: "all",
-        experienceLevel: { min: undefined, max: undefined },
+        experienceLevel: {},
         sortBy: "title",
         orderBy: "desc",
       },
     });
 
-  // Watch form values for debounced submission
   const watchAllFields = watch();
 
   const onSubmit = useCallback(
     (data: TEmployeeSearchSchema) => {
-      const normalizedJobType =
-        data.jobType === "all" ? undefined : data.jobType;
-      const normalizedLocation =
-        data.location === "all" ? undefined : data.location;
-      const normalizedEducation =
-        data.educationLevel === "all" ? undefined : data.educationLevel;
-      const normalizedExperience =
-        data.experienceLevel?.min === undefined &&
-        data.experienceLevel?.max === undefined
-          ? undefined
-          : data.experienceLevel;
-
-      const queryParams = {
+      querySearchJobs({
         careerScopes: scopeNames,
-        keyword: data.keyword,
-        location: normalizedLocation,
-        jobType: normalizedJobType,
+        keyword: data.keyword || undefined,
+        location: data.location === "all" ? undefined : data.location,
+        jobType: data.jobType === "all" ? undefined : data.jobType,
         companySizeMin: data.companySize?.min,
         companySizeMax: data.companySize?.max,
         postedDateFrom: data.date?.from?.toISOString(),
         postedDateTo: data.date?.to?.toISOString(),
         salaryMin: data.salaryRange?.min,
         salaryMax: data.salaryRange?.max,
-        educationRequired: normalizedEducation,
-        experienceRequiredMin: normalizedExperience?.min,
-        experienceRequiredMax: normalizedExperience?.max,
+        educationRequired:
+          data.educationLevel === "all" ? undefined : data.educationLevel,
+        experienceRequiredMin: data.experienceLevel?.min,
+        experienceRequiredMax: data.experienceLevel?.max,
         sortBy: data.sortBy,
         sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
-      };
-
-      querySearchJobs(queryParams);
+      });
     },
     [querySearchJobs, scopeNames]
   );
 
   const debouncedSubmit = useMemo(() => debounce(onSubmit, 400), [onSubmit]);
 
-  // Initial search with module-level guard
+  // INITIAL SEARCH (RUNS ONLY ONCE)
   useEffect(() => {
     if (!user) return;
-
-    // Check module-level flag (survives Strict Mode remounts)
     if (hasInitialSearchJobRun) return;
 
     const scopes =
-      user?.role === "company"
-        ? user?.company?.careerScopes
-        : user?.employee?.careerScopes;
+      user.role === "company"
+        ? user.company?.careerScopes
+        : user.employee?.careerScopes;
+
     const names = scopes?.map((cs) => cs.name) ?? [];
     setScopeNames(names);
 
@@ -120,14 +105,9 @@ export default function EmployeeSearchPage() {
     });
 
     hasInitialSearchJobRun = true;
-
-    // Reset flag on component unmount (when navigating away)
-    return () => {
-      hasInitialSearchJobRun = false;
-    };
   }, [user, querySearchJobs]);
 
-  // Watch for form changes (skip first render)
+  // Watch filters (skip first render)
   useEffect(() => {
     if (isFirstWatchRenderRef.current) {
       isFirstWatchRenderRef.current = false;
@@ -141,12 +121,11 @@ export default function EmployeeSearchPage() {
     return () => subscription.unsubscribe();
   }, [watch, debouncedSubmit]);
 
-  // Cleanup debounce on unmount
+  // Cleanup debounce only
   useEffect(() => {
     return () => debouncedSubmit.cancel();
   }, [debouncedSubmit]);
 
-  // Handler for radio group changes
   const handleRadioChange = (
     fieldName: keyof TEmployeeSearchSchema,
     value: any
