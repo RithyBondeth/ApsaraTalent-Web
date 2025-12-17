@@ -7,6 +7,7 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import {
   LucideAlarmClock,
   LucideBookmark,
+  LucideBookMarked,
   LucideBriefcaseBusiness,
   LucideBuilding,
   LucideCalendarDays,
@@ -54,7 +55,7 @@ import { availabilityConstant } from "@/utils/constants/app.constant";
 
 import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { toast, useToast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
 import { useGetOneCompanyStore } from "@/stores/apis/company/get-one-cmp.store";
 import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
@@ -215,25 +216,35 @@ export default function CompanyDetailPage() {
     }
   };
 
-  const handleSaveFavorite = async () => {
-    const employeeId = currentUser?.employee?.id;
-    const companyId = companyData.id;
-    if (!employeeId) {
-      toast({
-        title: "Sign in required",
-        description: "Please sign in as an employee to save a company.",
-        variant: "destructive",
-      });
-      return;
-    }
-    if (!companyId) return;
-    try {
-      await employeeFavCompanyStore.addCompanyToFavorite(employeeId, companyId);
-      countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeId);
-      toast({ title: "Saved", description: "Company added to favorites." });
-    } catch {
-      const err = employeeFavCompanyStore.error || "Failed to save company";
-      toast({ title: "Error", description: err, variant: "destructive" });
+  const handleAddToFavorite = async () => {
+    if (currentUser && currentUser.employee) {
+      const employeeId = currentUser.employee.id;
+      const companyId = companyData.id;
+      const companyName = companyData.name;
+
+      if (!employeeId || !companyId) return;
+
+      try {
+        await employeeFavCompanyStore.addCompanyToFavorite(
+          employeeId,
+          companyId
+        );
+        countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeId);
+        toast({
+          variant: "success",
+          description: (
+            <div className="flex items-center gap-2">
+              <LucideBookMarked />
+              <TypographySmall className="font-medium">
+                {companyName} added to favorites.
+              </TypographySmall>
+            </div>
+          ),
+        });
+      } catch (error) {
+        const err = employeeFavCompanyStore.error || "Failed to save company";
+        toast({ title: "Error", description: err, variant: "destructive" });
+      }
     }
   };
 
@@ -282,7 +293,7 @@ export default function CompanyDetailPage() {
             {!employeeFavCompanyStore.isFavorite(id) && (
               <Button
                 variant="outline"
-                onClick={handleSaveFavorite}
+                onClick={handleAddToFavorite}
                 disabled={
                   employeeFavCompanyStore.loading || !currentUser?.employee?.id
                 }

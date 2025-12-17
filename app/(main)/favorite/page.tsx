@@ -92,7 +92,8 @@ export default function FavoritePage() {
   const handleCompanyRemoveEmployeeFromFavorite = async (
     companyID: string,
     employeeID: string,
-    favoriteID: string
+    favoriteID: string,
+    employeeName: string
   ) => {
     if (!companyID || !employeeID || !favoriteID) return;
     try {
@@ -103,8 +104,15 @@ export default function FavoritePage() {
       );
       countAllCompanyFavoritesStore.countAllCompanyFavorites(companyID);
       toast({
-        title: "Saved",
-        description: "Company removed from favorites.",
+        variant: "success",
+        description: (
+          <div className="flex items-center gap-2">
+            <LucideBookmarkX />
+            <TypographySmall className="font-medium leading-relaxed">
+              {employeeName} removed from favorites.
+            </TypographySmall>
+          </div>
+        ),
       });
       await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyID);
     } catch (error) {
@@ -223,6 +231,23 @@ export default function FavoritePage() {
               availability={fav.employee.availability}
               location={fav.employee.location ?? ""}
               skills={(fav.employee.skills ?? []).map((skill) => skill.name)}
+              onRemoveFromFavorite={() => {
+                if (currentUser && currentUser.company) {
+                  const companyID = currentUser.company.id;
+                  const employeeID = fav.employee.id;
+                  const favoriteID = fav.id;
+                  const employeeName =
+                    fav.employee.username ??
+                    `${fav.employee.firstname} ${fav.employee.lastname}`;
+
+                  handleCompanyRemoveEmployeeFromFavorite(
+                    companyID,
+                    employeeID,
+                    favoriteID,
+                    employeeName
+                  );
+                }
+              }}
             />
           ))
         ) : (

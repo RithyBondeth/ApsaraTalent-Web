@@ -22,4 +22,4 @@ export const API_COUNT_CURRENT_EMPLOYEE_MATCHING_URL = (empID: string) =>
   `${API_MATCHING_BASE_URL}/current-employee-matching-count/${empID}`;
 
 export const API_COUNT_CURRENT_COMPANY_MATCHING_URL = (cmpID: string) =>
-  `${API_MATCHING_BASE_URL}/current-employee-matching-count/${cmpID}`;
+  `${API_MATCHING_BASE_URL}/current-company-matching-count/${cmpID}`;

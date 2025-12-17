@@ -44,7 +44,7 @@ import { useFetchOnce } from "@/hooks/use-fetch-once";
 import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
 import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
 import { useToast } from "@/hooks/use-toast";
-import { LucideBookmarkCheck, LucideX } from "lucide-react";
+import { LucideBookMarked, LucideX } from "lucide-react";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
 import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
@@ -249,7 +249,7 @@ export default function FeedPage() {
         variant: "success",
         description: (
           <div className="flex items-center gap-2">
-            <LucideBookmarkCheck />
+            <LucideBookMarked />
             <TypographySmall className="font-medium leading-relaxed">
               {companyName} added to favorites.
             </TypographySmall>
@@ -291,7 +291,7 @@ export default function FeedPage() {
         variant: "success",
         description: (
           <div className="flex items-center gap-2">
-            <LucideBookmarkCheck />
+            <LucideBookMarked />
             <TypographySmall className="font-medium leading-relaxed">
               {employeeName} added to favorites.
             </TypographySmall>
@@ -305,7 +305,7 @@ export default function FeedPage() {
         variant: "destructive",
         description: (
           <div className="flex items-center gap-2">
-            <LucideBookmarkCheck />
+            <LucideBookMarked />
             <TypographySmall className="font-medium leading-relaxed">
               {err}
             </TypographySmall>

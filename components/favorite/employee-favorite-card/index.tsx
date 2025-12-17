@@ -1,5 +1,6 @@
 import {
   LucideArrowRight,
+  LucideBookmarkX,
   LucideBriefcaseBusiness,
   LucideClock,
   LucideMapPin,
@@ -82,15 +83,25 @@ export default function FavoriteEmployeeCard(
               </div>
             </div>
           </div>
-          <Button
-            className="text-xs"
-            onClick={() => {
-              router.replace(`/feed/employee/${props.id}`);
-            }}
-          >
-            View Detail
-            <LucideArrowRight />
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button
+              className="text-xs"
+              variant={"destructive"}
+              onClick={props.onRemoveFromFavorite}
+            >
+              Remove
+              <LucideBookmarkX />
+            </Button>
+            <Button
+              className="text-xs"
+              onClick={() => {
+                router.replace(`/feed/employee/${props.id}`);
+              }}
+            >
+              View Detail
+              <LucideArrowRight />
+            </Button>
+          </div>
         </div>
       </div>
     </div>
