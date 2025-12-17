@@ -49,11 +49,13 @@ import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
 
 import { useCompanyLikeStore } from "@/stores/apis/matching/company-like.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { toast } from "@/hooks/use-toast";
+import { toast, useToast } from "@/hooks/use-toast";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
 import { capitalizeWords } from "@/utils/functions/capitalize-words";
 import { useGetOneEmployeeStore } from "@/stores/apis/employee/get-one-emp.store";
 import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
+import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
+import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 
 export default function EmployeeDetailPage() {
   const params = useParams<{ employeeId: string }>();
@@ -61,15 +63,18 @@ export default function EmployeeDetailPage() {
   const router = useRouter();
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const { toast, dismiss } = useToast();
 
   // Popup state
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
   const ignoreNextClick = useRef<boolean>(false);
 
-  // Get data and loading state
+  // API Calls
   const { loading, employeeData, queryOneEmployee } = useGetOneEmployeeStore();
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const companyLikeStore = useCompanyLikeStore();
+  const { countCurrentCompanyMatching } = useCountCurrentCompanyMatchingStore();
+  const { queryCurrentCompanyLiked } = useGetCurrentCompanyLikedStore();
   const companyFavEmployeeStore = useCompanyFavEmployeeStore();
   const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
 
@@ -165,37 +170,57 @@ export default function EmployeeDetailPage() {
   }
 
   const handleLike = async () => {
-    const companyId = currentUser?.company?.id;
-    const employeeId = employeeData.id;
-    if (!companyId) {
-      toast({
-        title: "Sign in required",
-        description: "Please sign in as a company to like an employee.",
-        variant: "destructive",
-      });
-      return;
-    }
-    if (!employeeId) return;
-    try {
-      await companyLikeStore.companyLike(companyId, employeeId);
-      const data = useCompanyLikeStore.getState().data;
-      if (data?.isMatched) {
-        toast({
-          title: "It's a match!",
-          description: `${data.employee.firstname} and your company like each other.`,
-        });
-        setTimeout(() => router.push("/matching"), 800);
-      } else {
-        toast({
-          title: "Liked",
-          description: `You liked ${employeeData.firstname} ${employeeData.lastname}.`,
-        });
-        setTimeout(() => router.push("/feed"), 800);
+    if (currentUser && currentUser.company) {
+      const companyId = currentUser.company.id;
+      const employeeId = employeeData.id;
+
+      if (!companyId || !employeeId) return;
+
+      try {
+        dismiss();
+        await companyLikeStore.companyLike(companyId, employeeId);
+        const companyData = useCompanyLikeStore.getState().data;
+        if (companyData) {
+          const isMatching = companyData.isMatched;
+          const employeeName =
+            companyData.employee.username ??
+            `${companyData.employee.lastname} ${companyData.employee.lastname}`;
+          if (isMatching) {
+            toast({
+              variant: "success",
+              title: "It's a match!",
+              description: (
+                <div className="flex items-center gap-2">
+                  <LucideHeartHandshake />
+                  <TypographySmall className="font-medium">
+                    {employeeName} and your company like each other.
+                  </TypographySmall>
+                </div>
+              ),
+            });
+            countCurrentCompanyMatching(companyId);
+            setTimeout(() => router.push("/matching"), 800);
+          } else {
+            toast({
+              variant: "success",
+              description: (
+                <div className="flex items-center gap-2">
+                  <LucideHeartHandshake />
+                  <TypographySmall className="font-medium">
+                    You liked {employeeName}.
+                  </TypographySmall>
+                </div>
+              ),
+            });
+            setTimeout(() => router.push("/feed"), 800);
+          }
+        }
+      } catch (error) {
+        const err = companyLikeStore.error || "Failed to like employee";
+        toast({ variant: "destructive", title: "Error", description: err });
+      } finally {
+        await queryCurrentCompanyLiked(companyId);
       }
-    } catch {
-      const err =
-        useCompanyLikeStore.getState().error || "Failed to like employee";
-      toast({ title: "Error", description: err, variant: "destructive" });
     }
   };
 

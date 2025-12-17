@@ -98,7 +98,7 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
             <Button
               className="text-xs"
               variant={'destructive'}
-              onClick={() => {}}
+              onClick={props.onRemoveFromFavorite}
             >
               Remove
               <LucideBookmarkX />

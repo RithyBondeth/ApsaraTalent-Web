@@ -54,10 +54,12 @@ import { availabilityConstant } from "@/utils/constants/app.constant";
 
 import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { toast } from "@/hooks/use-toast";
+import { toast, useToast } from "@/hooks/use-toast";
 import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
 import { useGetOneCompanyStore } from "@/stores/apis/company/get-one-cmp.store";
 import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
+import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
+import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 
 export default function CompanyDetailPage() {
   const param = useParams<{ companyId: string }>();
@@ -65,6 +67,7 @@ export default function CompanyDetailPage() {
   const router = useRouter();
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const { toast, dismiss } = useToast();
 
   // State for popups
   const [openImagePopup, setOpenImagePopup] = useState(false);
@@ -75,10 +78,12 @@ export default function CompanyDetailPage() {
   const ignoreNextClick = useRef(false);
 
   // Get data and loading state
-  //const { loading, user, getOneUerByID } = useGetOneUserStore();
   const { loading, companyData, queryOneCompany } = useGetOneCompanyStore();
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const employeeLikeStore = useEmployeeLikeStore();
+  const { countCurrentEmployeeMatching } =
+    useCountCurrentEmployeeMatchingStore();
+  const { queryCurrentEmployeeLiked } = useGetCurrentEmployeeLikedStore();
   const employeeFavCompanyStore = useEmployeeFavCompanyStore();
   const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
 
@@ -157,38 +162,56 @@ export default function CompanyDetailPage() {
   }
 
   const handleLike = async () => {
-    const employeeId = currentUser?.employee?.id;
-    const companyId = companyData.id;
+    if (currentUser && currentUser.employee) {
+      const employeeId = currentUser.employee.id;
+      const companyId = companyData.id;
 
-    if (!employeeId) {
-      toast({
-        title: "Sign in required",
-        description: "Please sign in as an employee to like a company.",
-        variant: "destructive",
-      });
-      return;
-    }
-    if (!companyId) return;
-    try {
-      await employeeLikeStore.employeeLike(employeeId, companyId);
-      const data = useEmployeeLikeStore.getState().data;
-      if (data?.isMatched) {
-        toast({
-          title: "It's a match!",
-          description: `You and ${data.company.name} like each other.`,
-        });
-        setTimeout(() => router.push("/matching"), 800);
-      } else {
-        toast({
-          title: "Liked",
-          description: `You liked ${companyData.name}.`,
-        });
-        setTimeout(() => router.push("/feed"), 800);
+      if (!employeeId || !companyId) return;
+
+      try {
+        dismiss();
+        await employeeLikeStore.employeeLike(employeeId, companyId);
+        const employeeData = useEmployeeLikeStore.getState().data;
+        if (employeeData) {
+          const isMatching = employeeData.isMatched;
+          const companyName = employeeData.company.name;
+          if (isMatching) {
+            toast({
+              variant: "success",
+              title: "It's a match!",
+              description: (
+                <div className="flex items-center gap-2">
+                  <LucideHeartHandshake />
+                  <TypographySmall className="font-medium">
+                    {companyName} and you like each other.
+                  </TypographySmall>
+                </div>
+              ),
+            });
+            countCurrentEmployeeMatching(employeeId);
+            setTimeout(() => router.push("/matching"), 800);
+          } else {
+            console.log("Wait for this user to like you back....");
+            toast({
+              variant: "success",
+              description: (
+                <div className="flex items-center gap-2">
+                  <LucideHeartHandshake />
+                  <TypographySmall className="font-medium">
+                    You liked {companyName} company.
+                  </TypographySmall>
+                </div>
+              ),
+            });
+            setTimeout(() => router.push("/feed"), 800);
+          }
+        }
+      } catch (error) {
+        const err = employeeLikeStore.error || "Failed to like company";
+        toast({ variant: "destructive", title: "Error", description: err });
+      } finally {
+        await queryCurrentEmployeeLiked(employeeId);
       }
-    } catch {
-      const err =
-        useEmployeeLikeStore.getState().error || "Failed to like company";
-      toast({ title: "Error", description: err, variant: "destructive" });
     }
   };
 

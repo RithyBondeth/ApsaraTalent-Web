@@ -30,7 +30,6 @@ import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-curre
 import { useCompanyLikeStore } from "@/stores/apis/matching/company-like.store";
 import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
-import { toast } from "@/hooks/use-toast";
 import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 import { usePreloadImages } from "@/hooks/use-cached-image";
@@ -44,6 +43,11 @@ import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-c
 import { useFetchOnce } from "@/hooks/use-fetch-once";
 import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
 import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
+import { useToast } from "@/hooks/use-toast";
+import { LucideBookmarkCheck, LucideX } from "lucide-react";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
+import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
 
 // Module-level cache for global data (survives Strict Mode)
 const globalFetchCache = {
@@ -56,6 +60,7 @@ export default function FeedPage() {
   const [mounted, setMounted] = useState<boolean>(false);
   const router = useRouter();
   useEffect(() => setMounted(true), []);
+  const { toast } = useToast();
 
   // Theme
   const { resolvedTheme } = useTheme();
@@ -109,6 +114,9 @@ export default function FeedPage() {
   const getAllEmployeeStore = useGetAllEmployeeStore();
   const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
   const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
+  const { countCurrentEmployeeMatching } =
+    useCountCurrentEmployeeMatchingStore();
+  const { countCurrentCompanyMatching } = useCountCurrentCompanyMatchingStore();
 
   // Get current user from store
   const currentUser = useGetCurrentUserStore((state) => state.user);
@@ -200,6 +208,7 @@ export default function FeedPage() {
     setLikingId(companyID);
     try {
       await employeeLikeStore.employeeLike(employeeID, companyID);
+      countCurrentEmployeeMatching(employeeID);
       setOpenLikeSuccessDialog(true);
       await getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(employeeID);
     } finally {
@@ -217,6 +226,7 @@ export default function FeedPage() {
     setLikingId(employeeID);
     try {
       await companyLikeStore.companyLike(companyID, employeeID);
+      countCurrentCompanyMatching(companyID);
       setOpenLikeSuccessDialog(true);
       await getCurrentCompanyLikedStore.queryCurrentCompanyLiked(companyID);
     } finally {
@@ -228,55 +238,38 @@ export default function FeedPage() {
   // Handle Employee Favorite Company
   const handleEmployeeFavoriteCompany = async (
     employeeID: string,
-    companyID: string
+    companyID: string,
+    companyName: string
   ) => {
     if (!employeeID || !companyID) return;
     try {
       await employeeFavCompanyStore.addCompanyToFavorite(employeeID, companyID);
       countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeID);
       toast({
-        title: "Saved",
-        description: "Company added to favorites.",
+        variant: "success",
+        description: (
+          <div className="flex items-center gap-2">
+            <LucideBookmarkCheck />
+            <TypographySmall className="font-medium leading-relaxed">
+              {companyName} added to favorites.
+            </TypographySmall>
+          </div>
+        ),
       });
       await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(employeeID);
     } catch (error) {
       const err =
         employeeFavCompanyStore.error || "Failed to save company to favorites.";
       toast({
-        title: "Error",
-        description: err,
         variant: "destructive",
-      });
-    }
-  };
-
-  // Handle Employee Remove Company From Favorite
-  const handleEmployeeRemoveCompanyFromFavorite = async (
-    employeeID: string,
-    companyID: string,
-    favoriteID: string
-  ) => {
-    if (!employeeID || !companyID || !favoriteID) return;
-    try {
-      await employeeFavCompanyStore.removeCompanyFromFavorite(
-        employeeID,
-        companyID,
-        favoriteID
-      );
-      countAllCompanyFavoritesStore.countAllCompanyFavorites(employeeID);
-      toast({
-        title: "Removed",
-        description: "Company removed from favorites.",
-      });
-      await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(employeeID);
-    } catch (error) {
-      const err =
-        employeeFavCompanyStore.error ||
-        "Failed to remove company from favorites.";
-      toast({
-        title: "Error",
-        description: err,
-        variant: "destructive",
+        description: (
+          <div className="flex items-center gap-2">
+            <LucideX />
+            <TypographySmall className="font-medium leading-relaxed">
+              {err}
+            </TypographySmall>
+          </div>
+        ),
       });
     }
   };
@@ -284,7 +277,8 @@ export default function FeedPage() {
   // Handle Company Favorite Employee
   const handleCompanyFavoriteEmployee = async (
     companyID: string,
-    employeeID: string
+    employeeID: string,
+    employeeName: string
   ) => {
     if (!companyID || !employeeID) return;
     try {
@@ -294,47 +288,29 @@ export default function FeedPage() {
       );
       countAllCompanyFavoritesStore.countAllCompanyFavorites(companyID);
       toast({
-        title: "Saved",
-        description: "Employee added to favorites.",
+        variant: "success",
+        description: (
+          <div className="flex items-center gap-2">
+            <LucideBookmarkCheck />
+            <TypographySmall className="font-medium leading-relaxed">
+              {employeeName} added to favorites.
+            </TypographySmall>
+          </div>
+        ),
       });
       await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyID);
     } catch (error) {
       const err = companyFavEmployeeStore.error || "Failed to save employee";
       toast({
-        title: "Error",
-        description: err,
         variant: "destructive",
-      });
-    }
-  };
-
-  // Handle Company Remove Employee From Favorite
-  const handleCompanyRemoveEmployeeFromFavorite = async (
-    companyID: string,
-    employeeID: string,
-    favoriteID: string
-  ) => {
-    if (!companyID || !employeeID || !favoriteID) return;
-    try {
-      await companyFavEmployeeStore.removeEmployeeFromFavorite(
-        companyID,
-        employeeID,
-        favoriteID
-      );
-      countAllCompanyFavoritesStore.countAllCompanyFavorites(companyID);
-      toast({
-        title: "Saved",
-        description: "Company removed from favorites.",
-      });
-      await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyID);
-    } catch (error) {
-      const err =
-        companyFavEmployeeStore.error ||
-        "Failed to remove employee from favorites.";
-      toast({
-        title: "Error",
-        description: err,
-        variant: "destructive",
+        description: (
+          <div className="flex items-center gap-2">
+            <LucideBookmarkCheck />
+            <TypographySmall className="font-medium leading-relaxed">
+              {err}
+            </TypographySmall>
+          </div>
+        ),
       });
     }
   };
@@ -438,9 +414,16 @@ export default function FeedPage() {
                 }}
                 onSaveClick={() => {
                   if (currentUser && currentUser.employee) {
+                    const company = user as ICompany;
+
                     const employeeID = currentUser.employee.id;
-                    const companyID = user.id;
-                    handleEmployeeFavoriteCompany(employeeID, companyID);
+                    const companyID = company.id;
+                    const companyName = company.name;
+                    handleEmployeeFavoriteCompany(
+                      employeeID,
+                      companyID,
+                      companyName ?? "Company"
+                    );
                   }
                 }}
                 hideSaveButton={employeeFavCompanyStore.isFavorite(user.id)}
@@ -468,9 +451,16 @@ export default function FeedPage() {
                 id={user.id}
                 onSaveClick={async () => {
                   if (currentUser && currentUser.company) {
+                    const employee = user as IEmployee;
+
                     const companyID = currentUser.company.id;
-                    const employeeID = user.id;
-                    handleCompanyFavoriteEmployee(companyID, employeeID);
+                    const employeeID = employee.id;
+                    const employeeName = employee.username;
+                    handleCompanyFavoriteEmployee(
+                      companyID,
+                      employeeID,
+                      employeeName ?? "Employee"
+                    );
                   }
                 }}
                 hideSaveButton={companyFavEmployeeStore.isFavorite(user.id)}

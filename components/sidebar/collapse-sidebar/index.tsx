@@ -26,13 +26,8 @@ import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/coun
 import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
 import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
 import { useFetchOnce } from "@/hooks/use-fetch-once";
-
-// Types
-interface UserData {
-  name: string;
-  email: string;
-  avatar: string;
-}
+import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
+import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-current-company-matching.store";
 
 // Badge Component
 const CountBadge = ({ count }: { count: number }) => {
@@ -43,11 +38,12 @@ const CountBadge = ({ count }: { count: number }) => {
 export default function CollapseSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
+  // Utils
   const router = useRouter();
   const pathname = usePathname();
   const { open } = useSidebar();
 
-  // Store hooks
+  // API Calls
   const { user, loading } = useGetCurrentUserStore();
   const { countCurrentEmployeeMatching, totalEmpMatching } =
     useCountCurrentEmployeeMatchingStore();
@@ -58,7 +54,7 @@ export default function CollapseSidebar({
   const { totalAllCompanyFavorites, countAllCompanyFavorites } =
     useCountAllCompanyFavoritesStore();
 
-  // ✅ Use custom hook - handles all ref logic and duplicate prevention!
+  // Handles all ref logic and duplicate prevention
   const { isEmployee, isCompany } = useFetchOnce({
     cacheKey: "sidebar-component",
     onEmployeeFetch: (employeeId) => {
@@ -90,7 +86,11 @@ export default function CollapseSidebar({
   ]);
 
   // Memoized user data
-  const userData = useMemo((): UserData => {
+  const userData = useMemo((): {
+    name: string;
+    email: string;
+    avatar: string;
+  } => {
     if (isEmployee && user?.employee) {
       return {
         name: user.employee.username ?? "",

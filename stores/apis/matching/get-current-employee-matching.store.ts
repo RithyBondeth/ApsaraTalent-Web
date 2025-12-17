@@ -6,6 +6,7 @@ import { create } from "zustand";
 type TGetCurrentEmployeeMatchingResponse = ICompany[];
 type TGetCurrentEmployeeMatchingState = {
   currentEmployeeMatching: TGetCurrentEmployeeMatchingResponse | null;
+  countCurrentEmployeeMatching: number;
   loading: boolean;
   error: string | null;
   queryCurrentEmployeeMatching: (employeeId: string) => Promise<void>;
@@ -14,6 +15,7 @@ type TGetCurrentEmployeeMatchingState = {
 export const useGetCurrentEmployeeMatchingStore =
   create<TGetCurrentEmployeeMatchingState>((set) => ({
     currentEmployeeMatching: null,
+    countCurrentEmployeeMatching: 0,
     loading: false,
     error: null,
     queryCurrentEmployeeMatching: async (employeeId: string) => {
@@ -26,6 +28,7 @@ export const useGetCurrentEmployeeMatchingStore =
 
         set({
           currentEmployeeMatching: response.data,
+          countCurrentEmployeeMatching: response.data.length,
           loading: false,
           error: null,
         });
