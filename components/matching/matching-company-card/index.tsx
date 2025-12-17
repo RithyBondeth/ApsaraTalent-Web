@@ -16,8 +16,8 @@ import IconLabel from "@/components/utils/icon-label";
 
 export default function MatchingCompanyCard(props: IMatchingCompanyCardProps) {
   return (
-    <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-md">
-      <Avatar rounded="md" className="size-56 phone-md:!hidden">
+    <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-md tablet-xl:flex-col">
+      <Avatar rounded="md" className="size-56 tablet-xl:size-36">
         <AvatarFallback>{props.name.slice(0, 2).toUpperCase()}</AvatarFallback>
         <AvatarImage src={props.avatar} />
       </Avatar>
@@ -45,8 +45,8 @@ export default function MatchingCompanyCard(props: IMatchingCompanyCardProps) {
             <Tag label={op.title} key={op.id} />
           ))}
         </div>
-        <div className="w-full flex items-center justify-between mt-1">
-          <div className="flex items-center gap-5">
+        <div className="w-full flex items-center justify-between mt-1 tablet-md:flex-col tablet-md:items-start tablet-md:gap-5">
+          <div className="flex items-center gap-5 tablet-md:flex-col">
             <div className="flex items-center gap-2">
               <div className="p-3 rounded-md bg-blue-100">
                 <LucideUsers size={"15px"} className="text-blue-500" />

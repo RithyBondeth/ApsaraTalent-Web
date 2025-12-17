@@ -20,7 +20,7 @@ export default function FavoriteEmployeeCard(
 
   return (
     <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-md tablet-xl:flex-col tablet-xl:items-start">
-      <Avatar rounded="md" className="size-56">
+      <Avatar rounded="md" className="size-56 tablet-xl:size-36">
         <AvatarFallback>{props.name.slice(0, 2).toUpperCase()}</AvatarFallback>
         <AvatarImage src={props.avatar} />
       </Avatar>

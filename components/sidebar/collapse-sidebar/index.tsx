@@ -26,13 +26,11 @@ import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/coun
 import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
 import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
 import { useFetchOnce } from "@/hooks/use-fetch-once";
-import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
-import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-current-company-matching.store";
 
 // Badge Component
 const CountBadge = ({ count }: { count: number }) => {
   if (count === 0) return null;
-  return <Badge className="ml-auto bg-red-500">{count}</Badge>;
+  return <Badge className="ml-auto bg-red-500 dark:text-primary">{count}</Badge>;
 };
 
 export default function CollapseSidebar({

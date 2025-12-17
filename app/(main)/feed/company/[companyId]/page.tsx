@@ -211,7 +211,7 @@ export default function CompanyDetailPage() {
         const err = employeeLikeStore.error || "Failed to like company";
         toast({ variant: "destructive", title: "Error", description: err });
       } finally {
-        await queryCurrentEmployeeLiked(employeeId);
+        queryCurrentEmployeeLiked(employeeId);
       }
     }
   };

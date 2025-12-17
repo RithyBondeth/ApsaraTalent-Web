@@ -10,25 +10,26 @@ import { TypographyH4 } from "../../utils/typography/typography-h4";
 import { TypographyP } from "../../utils/typography/typography-p";
 import { Button } from "../../ui/button";
 import { IMatchingEmployeeCardProps } from "./props";
+import { availabilityWordsFormat } from "@/utils/functions/availability-word-format";
 
 export default function MatchingEmployeeCard(
   props: IMatchingEmployeeCardProps
 ) {
   return (
-    <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-md">
-      <Avatar rounded="md" className="size-56 phone-md:!hidden">
+    <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-md tablet-xl:flex-col">
+      <Avatar rounded="md" className="size-56 tablet-xl:size-36">
         <AvatarFallback>{props.name.slice(0, 2).toUpperCase()}</AvatarFallback>
         <AvatarImage src={props.avatar} />
       </Avatar>
       <div className="w-full flex flex-col items-start gap-3">
-        <div className="w-full flex items-start justify-between">
+        <div className="w-full flex items-start justify-between tablet-xl:justify-start tablet-xl:gap-3">
           <div className="flex flex-col items-start gap-1">
             <TypographyH4 className="text-lg">{props.name}</TypographyH4>
             <TypographyP className="text-sm font-medium !m-0">
               @{props.username}
             </TypographyP>
           </div>
-          <Tag label={"Full Time Available"} />
+          <Tag label={availabilityWordsFormat(props.availability)} />
         </div>
         <TypographyP className="text-sm leading-relaxed !m-0">
           {props.description}
@@ -38,8 +39,8 @@ export default function MatchingEmployeeCard(
             <Tag label={skill} key={index} />
           ))}
         </div>
-        <div className="w-full flex items-center justify-between mt-2">
-          <div className="flex items-center gap-5">
+        <div className="w-full flex items-center justify-between mt-2 tablet-xl:flex-col tablet-xl:items-start tablet-xl:gap-5">
+          <div className="flex items-center gap-5 tablet-lg:flex-col tablet-lg:items-start">
             <div className="flex items-center gap-2">
               <div className="p-3 rounded-md bg-blue-100">
                 <LucideBriefcaseBusiness

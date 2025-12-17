@@ -219,7 +219,7 @@ export default function EmployeeDetailPage() {
         const err = companyLikeStore.error || "Failed to like employee";
         toast({ variant: "destructive", title: "Error", description: err });
       } finally {
-        await queryCurrentCompanyLiked(companyId);
+        queryCurrentCompanyLiked(companyId);
       }
     }
   };
