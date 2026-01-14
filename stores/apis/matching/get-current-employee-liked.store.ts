@@ -23,7 +23,7 @@ export const useGetCurrentEmployeeLikedStore =
         const response = await axios.get<TGetCurrentEmployeeLikedResponse>(
           API_GET_CURRENT_EMPLOYEE_LIKED_URL(employeeId)
         );
-       
+
         set({
           currentEmployeeLiked: response.data,
           loading: false,

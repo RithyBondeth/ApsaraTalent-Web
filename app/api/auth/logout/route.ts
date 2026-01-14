@@ -36,7 +36,6 @@ export async function POST() {
       secure: isProduction,
       sameSite: "lax", // Match the sameSite used when setting
     });
-
     return response;
   } catch (error) {
     console.error("Logout error:", error);

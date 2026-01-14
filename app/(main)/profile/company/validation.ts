@@ -2,7 +2,6 @@ import { MAX_IMAGE_SIZE } from "@/utils/constants/app.constant";
 import {
   dateValidation,
   emailValidation,
-  imageValidation,
   khmerPhoneNumberValidation,
   positiveNumberValidation,
   selectedValidation,
@@ -61,7 +60,7 @@ export const accountSettingSchema = z.object({
   accountSetting: z
     .object({
       email: emailValidation.optional(),
-      phone: khmerPhoneNumberValidation.optional(),
+      phone: khmerPhoneNumberValidation(),
     })
     .optional(),
 });
@@ -140,7 +139,7 @@ export const careerScopesSchema = z.object({
   careerScopes: z
     .array(
       z.object({
-        id: z.string(),
+        id: z.string().optional(),
         name: z.string(),
         description: z.string().optional(),
       })

@@ -18,20 +18,25 @@ import { SearchErrorCard } from "@/components/search/search-error-card";
 import SearchEmployeeCard from "@/components/search/search-employee-card";
 import { useSearchEmployeeStore } from "@/stores/apis/employee/search-emp.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TLocations } from "@/utils/types/location.type";
 import { TAvailability } from "@/utils/types/availability.type";
 import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
 import { debounce } from "lodash";
 
+// Module-level flags to prevent duplicate initial search (Strict Mode safe)
+let hasInitialSearchEmployeeRun = false;
+let isInitializing = false;
 
 export default function CompanySearchPage() {
-  const { error, loading, employees, querySearchEmployee } = useSearchEmployeeStore();
-  const user = useGetCurrentUserStore((state) => state.user);
+  const { error, loading, employees, querySearchEmployee } =
+    useSearchEmployeeStore();
+  const { user } = useGetCurrentUserStore();
 
-  const [scopeNames, setScopeNames] = useState<string[]>();
+  const [scopeNames, setScopeNames] = useState<string[]>([]);
+  const isFirstWatchRenderRef = useRef<boolean>(true);
 
-  const { register, setValue, control, handleSubmit } =
+  const { register, setValue, control, handleSubmit, watch } =
     useForm<TCompanySearchSchema>({
       resolver: zodResolver(companySearchSchema),
       defaultValues: {
@@ -45,76 +50,143 @@ export default function CompanySearchPage() {
       },
     });
 
-  const onSubmit = (data: TCompanySearchSchema) => {
+  // Watch form values for debounced submission
+  const watchAllFields = watch();
 
-    const normalizedJobType = data.jobType === "all" ? undefined : data.jobType;
-    const normalizedLocation = data.location === "all" ? undefined : data.location;
-    const normalizedEducation = data.educationLevel === "all" ? undefined : data.educationLevel;
-    const normalizedExperience =
-      data.experienceLevel?.min === undefined && data.experienceLevel?.max === undefined
-        ? { min: undefined, max: undefined }
-        : data.experienceLevel;
+  const onSubmit = useCallback(
+    (data: TCompanySearchSchema) => {
+      const normalizedJobType =
+        data.jobType === "all" ? undefined : data.jobType;
+      const normalizedLocation =
+        data.location === "all" ? undefined : data.location;
+      const normalizedEducation =
+        data.educationLevel === "all" ? undefined : data.educationLevel;
+      const normalizedExperience =
+        data.experienceLevel?.min === undefined &&
+        data.experienceLevel?.max === undefined
+          ? undefined
+          : data.experienceLevel;
 
+      const queryParams = {
+        careerScopes: scopeNames,
+        keyword: data.keyword,
+        location: normalizedLocation as TLocations,
+        jobType: normalizedJobType as TAvailability,
+        experienceMin: normalizedExperience?.min,
+        experienceMax: normalizedExperience?.max,
+        education: normalizedEducation,
+        sortBy: data.sortBy,
+        sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
+      };
+
+      querySearchEmployee(queryParams);
+    },
+    [querySearchEmployee, scopeNames]
+  );
+
+  // Debounced form submission
+  const debouncedSubmit = useMemo(() => debounce(onSubmit, 400), [onSubmit]);
+
+  // Initial search with module-level guard (Strict Mode safe)
+  useEffect(() => {
+    if (!user) return;
+
+    // Check module-level flag (survives Strict Mode remounts)
+    if (hasInitialSearchEmployeeRun) return;
+
+    isInitializing = true; // Set flag before setValue
+
+    const scopes =
+      user?.role === "company"
+        ? user?.company?.careerScopes
+        : user?.employee?.careerScopes;
+    const names = scopes?.map((cs) => cs.name) ?? [];
+    setScopeNames(names);
+
+    // Set user's location as default if available
+    const userLocation =
+      user?.role === "company"
+        ? user?.company?.location
+        : user?.employee?.location;
+    if (userLocation && userLocation !== "all") {
+      setValue("location", userLocation);
+    }
+
+    // Initial search
     querySearchEmployee({
-      careerScopes: scopeNames,
-      keyword: data.keyword,
-      location: normalizedLocation as TLocations,
-      jobType: normalizedJobType as TAvailability,
-      experienceMin: normalizedExperience.min,
-      experienceMax: normalizedExperience.max,
-      education: normalizedEducation,
-      sortBy: data.sortBy,
-      sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
+      careerScopes: names,
+      sortBy: "firstname",
+      sortOrder: "DESC",
     });
+
+    hasInitialSearchEmployeeRun = true;
+    // Reset initialization flag after a brief delay
+    setTimeout(() => {
+      isInitializing = false;
+    }, 100);
+  }, [user, querySearchEmployee]);
+
+  // Watch for form changes (skip first render)
+  useEffect(() => {
+    if (isFirstWatchRenderRef.current) {
+      isFirstWatchRenderRef.current = false;
+      return;
+    }
+
+    const subscription = watch((value) => {
+      if (isInitializing) return;
+      debouncedSubmit(value as TCompanySearchSchema);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch, debouncedSubmit]);
+
+  // Cleanup debounce on unmount
+  useEffect(() => debouncedSubmit.cancel(), [debouncedSubmit]);
+
+  // Handler for radio group changes
+  const handleRadioChange = (
+    fieldName: keyof TCompanySearchSchema,
+    value: any
+  ) => {
+    setValue(fieldName, value, { shouldDirty: true });
   };
 
-  const debouncedSubmit = useMemo(() => debounce(handleSubmit(onSubmit), 300), [handleSubmit]);
-
-  useEffect(() => {
-    (async () => {
-      const scopes = user?.role === "company" ? user?.company?.careerScopes : user?.employee?.careerScopes;
-      const names = scopes?.map((cs) => cs.name) ?? [];
-      setScopeNames(names);
-
-      const userLocation = user?.role === "company" ? user?.company?.location : user?.employee?.location;
-      if (userLocation) setValue("location", userLocation);
-
-      querySearchEmployee(
-        {
-          careerScopes: names,
-          sortBy: "firstname",
-          sortOrder: "DESC",
-        }
-      );
-    })();
-  }, [user?.role]);
-
-  useEffect(() => {
-    return () => {
-      debouncedSubmit.cancel();
-    };
-  }, [debouncedSubmit]);
-
   return (
-    <form className="w-full flex flex-col items-start gap-5 px-10" onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className="w-full flex flex-col items-start gap-5 px-10"
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      {/* Banner Section */}
       <div className="w-full flex items-center justify-between gap-10 laptop-sm:flex-col laptop-sm:items-center">
         <div className="w-full flex flex-col items-start gap-3 laptop-sm:py-5">
           <TypographyH2>Hire Smarter, Anywhere.</TypographyH2>
           <TypographyH4>Search top talent and connect instantly.</TypographyH4>
-          <TypographyH4>Search profiles, review resumes, and reach out directly — instantly.</TypographyH4>
-          <TypographyMuted>Your next great hire is just a click away.</TypographyMuted>
+          <TypographyH4>
+            Search profiles, review resumes, and reach out directly — instantly.
+          </TypographyH4>
+          <TypographyMuted>
+            Your next great hire is just a click away.
+          </TypographyMuted>
           <SearchBar
             isEmployee={false}
             register={register}
             setValue={setValue}
-            initialLocation={control._formValues.location as TLocations}
-            initialJobType={control._formValues.jobType as TAvailability}
+            initialLocation={watchAllFields.location as TLocations}
+            initialJobType={watchAllFields.jobType as TAvailability}
           />
         </div>
-        <Image src={CompanySearchSvg} alt="company-search" height={300} width={400} className="laptop-sm:hidden" />
+        <Image
+          src={CompanySearchSvg}
+          alt="company-search"
+          height={300}
+          width={400}
+          className="laptop-sm:hidden"
+        />
       </div>
 
       <div className="w-full flex items-start gap-5 tablet-xl:!flex-col tablet-xl:[&>div]:w-full">
+        {/* Left Side: Filter Section */}
         <div className="w-1/4 flex flex-col items-start gap-8 p-5 shadow-md rounded-md">
           <TypographyH4 className="text-lg">Refine Result</TypographyH4>
 
@@ -133,26 +205,44 @@ export default function CompanySearchPage() {
                   <RadioGroup
                     value={education}
                     onValueChange={(val) => {
-                      const value = val === "all" ? undefined : val;
-                      field.onChange(value);
-                      setValue("educationLevel", value);
-                      handleSubmit(onSubmit)();
+                      const value = val === "all" ? "all" : val;
+                      handleRadioChange("educationLevel", value);
                     }}
                     className="ml-3"
                   >
-                    <RadioGroupItemWithLabel id="edu-all" value="all" htmlFor="edu-all">
+                    <RadioGroupItemWithLabel
+                      id="edu-all"
+                      value="all"
+                      htmlFor="edu-all"
+                    >
                       All
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="edu-undergrad" value="Under Graduate" htmlFor="edu-undergrad">
+                    <RadioGroupItemWithLabel
+                      id="edu-undergrad"
+                      value="Under Graduate"
+                      htmlFor="edu-undergrad"
+                    >
                       Under Graduate
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="edu-bachelor" value="Bachelor" htmlFor="edu-bachelor">
+                    <RadioGroupItemWithLabel
+                      id="edu-bachelor"
+                      value="Bachelor"
+                      htmlFor="edu-bachelor"
+                    >
                       Bachelor
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="edu-master" value="Master" htmlFor="edu-master">
+                    <RadioGroupItemWithLabel
+                      id="edu-master"
+                      value="Master"
+                      htmlFor="edu-master"
+                    >
                       Master
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="edu-phd" value="PHD" htmlFor="edu-phd">
+                    <RadioGroupItemWithLabel
+                      id="edu-phd"
+                      value="PHD"
+                      htmlFor="edu-phd"
+                    >
                       PhD
                     </RadioGroupItemWithLabel>
                   </RadioGroup>
@@ -211,29 +301,51 @@ export default function CompanySearchPage() {
                         default:
                           updated = { min: undefined, max: undefined };
                       }
-                    
-                      field.onChange(updated);
-                      setValue("experienceLevel", updated);
-                      handleSubmit(onSubmit)();
+
+                      handleRadioChange("experienceLevel", updated);
                     }}
                     className="ml-3"
                   >
-                    <RadioGroupItemWithLabel id="exp-all" value="all" htmlFor="exp-all">
+                    <RadioGroupItemWithLabel
+                      id="exp-all"
+                      value="all"
+                      htmlFor="exp-all"
+                    >
                       All
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="exp-less-1" value="0-1" htmlFor="exp-less-1">
+                    <RadioGroupItemWithLabel
+                      id="exp-less-1"
+                      value="0-1"
+                      htmlFor="exp-less-1"
+                    >
                       Less than 1 year
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="exp-1-2" value="1-2" htmlFor="exp-1-2">
+                    <RadioGroupItemWithLabel
+                      id="exp-1-2"
+                      value="1-2"
+                      htmlFor="exp-1-2"
+                    >
                       1 - 2 years
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="exp-2-3" value="2-3" htmlFor="exp-2-3">
+                    <RadioGroupItemWithLabel
+                      id="exp-2-3"
+                      value="2-3"
+                      htmlFor="exp-2-3"
+                    >
                       2 - 3 years
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="exp-3-4" value="3-4" htmlFor="exp-3-4">
+                    <RadioGroupItemWithLabel
+                      id="exp-3-4"
+                      value="3-4"
+                      htmlFor="exp-3-4"
+                    >
                       3 - 4 years
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="exp-more-4" value=">4" htmlFor="exp-more-4">
+                    <RadioGroupItemWithLabel
+                      id="exp-more-4"
+                      value=">4"
+                      htmlFor="exp-more-4"
+                    >
                       More than 4 years
                     </RadioGroupItemWithLabel>
                   </RadioGroup>
@@ -243,7 +355,7 @@ export default function CompanySearchPage() {
           </div>
         </div>
 
-        {/* Right side: Results */}
+        {/* Right side: Results Section */}
         <div className="w-3/4 flex flex-col items-start gap-3">
           <div className="w-full flex justify-between items-center">
             <TypographyH4 className="text-lg">
@@ -252,7 +364,11 @@ export default function CompanySearchPage() {
               ) : error ? (
                 <span className="text-destructive">0 Employee Found</span>
               ) : employees && employees.length > 0 ? (
-                `${employees.length} Employee${employees.length > 1 ? "s" : ""} Found`
+                `${employees.length} Employee${
+                  employees.length > 1 ? "s" : ""
+                } Found`
+              ) : !loading && employees?.length === 0 ? (
+                "No employees found"
               ) : (
                 <Skeleton className="h-6 w-40 bg-muted" />
               )}
@@ -261,7 +377,11 @@ export default function CompanySearchPage() {
           <div className="w-full flex flex-col items-start gap-2">
             {loading ? (
               <div className="w-full mb-3">
-                {Array(3).fill(0).map((_, index) => <SearchEmployeeCardSkeleton key={index}/>)}
+                {Array(3)
+                  .fill(0)
+                  .map((_, index) => (
+                    <SearchEmployeeCardSkeleton key={index} />
+                  ))}
               </div>
             ) : error ? (
               <div className="w-full mb-3">
@@ -273,8 +393,8 @@ export default function CompanySearchPage() {
             ) : employees && employees.length > 0 ? (
               employees.map((item, index) => (
                 <SearchEmployeeCard
-                  key={index}
-                  id={item.userId}
+                  key={item.id || index}
+                  id={item.id}
                   firstname={item.firstname ?? ""}
                   lastname={item.lastname ?? ""}
                   username={item.username ?? ""}
@@ -284,7 +404,11 @@ export default function CompanySearchPage() {
                   availability={item.availability as TAvailability}
                   description={item.description}
                   location={item.location as TLocations}
-                  skills={Array.isArray(item.skills) ? item.skills.map((s) => s.name) : []}
+                  skills={
+                    Array.isArray(item.skills)
+                      ? item.skills.map((s) => s.name)
+                      : []
+                  }
                   education={
                     Array.isArray(item.educations)
                       ? item.educations.map((edu) => edu.degree).join(", ")
@@ -293,8 +417,11 @@ export default function CompanySearchPage() {
                 />
               ))
             ) : (
-              <div className="w-full mb-3">
-                {Array(3).fill(0).map((_, index) => <SearchEmployeeCardSkeleton key={index}/>)}
+              <div className="w-full text-center py-10">
+                <TypographyP className="text-muted-foreground">
+                  No employees match your search criteria. Try adjusting your
+                  filters.
+                </TypographyP>
               </div>
             )}
           </div>

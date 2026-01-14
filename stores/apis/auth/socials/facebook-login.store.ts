@@ -7,7 +7,7 @@ import { clearAuthCookies, hasAuthToken } from "@/utils/auth/cookie-manager";
 
 // Updated response type - NO TOKENS
 export type TFacebookLoginResponse = {
-  type: 'FACEBOOK_AUTH_SUCCESS' | 'FACEBOOK_AUTH_ERROR';
+  type: "FACEBOOK_AUTH_SUCCESS" | "FACEBOOK_AUTH_ERROR";
   error?: string;
   newUser?: boolean;
   user?: {
@@ -36,7 +36,8 @@ export type TFacebookLoginState = {
   provider: string | null;
   lastLoginMethod: EAuthLoginMethod | null;
   lastLoginAt: string | null;
-  facebookLogin: (rememberMe: 'true' | 'false', usePopup?: boolean) => void;
+  setRole: (role: TUserRole) => void;
+  facebookLogin: (rememberMe: "true" | "false", usePopup?: boolean) => void;
   clearToken: () => void;
 };
 
@@ -45,10 +46,10 @@ const BACKEND_ORIGIN = new URL(API_AUTH_SOCIAL_FACEBOOK_URL).origin;
 
 // Shared Finish Logic
 const FINISH_LOGIN = (data: TFacebookLoginResponse) => {
-  if (!data || data.type !== 'FACEBOOK_AUTH_SUCCESS') {
+  if (!data || data.type !== "FACEBOOK_AUTH_SUCCESS") {
     useFacebookLoginStore.setState({
       loading: false,
-      error: data?.error || 'Authentication failed',
+      error: data?.error || "Authentication failed",
       isAuthenticated: false,
     });
     return;
@@ -59,7 +60,7 @@ const FINISH_LOGIN = (data: TFacebookLoginResponse) => {
   useFacebookLoginStore.setState({
     loading: false,
     isAuthenticated: true,
-    message: 'Login successful',
+    message: "Login successful",
     role: data.user?.role || null,
     newUser: data.newUser || false,
     email: data.user?.email || null,
@@ -88,11 +89,9 @@ export const useFacebookLoginStore = create<TFacebookLoginState>((set) => ({
   provider: null,
   lastLoginMethod: null,
   lastLoginAt: null,
-
   setRole: (role: TUserRole) => set({ role }),
-
   // Facebook Login
-  facebookLogin: (rememberMe: 'true' | 'false', usePopup = true) => {
+  facebookLogin: (rememberMe: "true" | "false", usePopup = true) => {
     set({ loading: true, error: null });
 
     // Add remember parameter to URL
@@ -124,12 +123,12 @@ export const useFacebookLoginStore = create<TFacebookLoginState>((set) => ({
     const handleMessage = (ev: MessageEvent<TFacebookLoginResponse>) => {
       // Strict origin check
       if (ev.origin !== BACKEND_ORIGIN) {
-        console.warn('Ignored message from unexpected origin:', ev.origin);
+        console.warn("Ignored message from unexpected origin:", ev.origin);
         return;
       }
 
       // Check message type
-      if (!ev.data || !ev.data.type?.startsWith('FACEBOOK_AUTH_')) {
+      if (!ev.data || !ev.data.type?.startsWith("FACEBOOK_AUTH_")) {
         return;
       }
 
@@ -170,11 +169,11 @@ export const useFacebookLoginStore = create<TFacebookLoginState>((set) => ({
 
   // Clear Token
   clearToken: () => {
-     // Use centralized cookie clearing
-     clearAuthCookies();
+    // Use centralized cookie clearing
+    clearAuthCookies();
 
-     // Clear user data from store
-     useGetCurrentUserStore.getState().clearUser();
+    // Clear user data from store
+    useGetCurrentUserStore.getState().clearUser();
 
     set({
       loading: false,

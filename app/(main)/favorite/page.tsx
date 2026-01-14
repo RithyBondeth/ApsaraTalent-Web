@@ -5,11 +5,9 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
-import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import Image from "next/image";
 import favoriteSvgImage from "@/assets/svg/favorite.svg";
 import emptySvgImage from "@/assets/svg/empty.svg";
-import { useEffect } from "react";
 
 import FavoriteEmployeeCardSkeleton from "@/components/favorite/employee-favorite-card/skeleton";
 import FavoriteCompanyCardSkeleton from "@/components/favorite/company-favorite-card/skeleton";
@@ -17,30 +15,117 @@ import FavoriteCompanyCard from "@/components/favorite/company-favorite-card";
 import FavoriteEmployeeCard from "@/components/favorite/employee-favorite-card";
 import FavoriteBannerSkeleton from "./banner-skeleton";
 import { TypographyP } from "@/components/utils/typography/typography-p";
+import { useFetchOnce } from "@/hooks/use-fetch-once";
+import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
+import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
+import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
+import { useToast } from "@/hooks/use-toast";
+import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
+import { LucideBookmarkX } from "lucide-react";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 
 export default function FavoritePage() {
-  const currentUser = useGetCurrentUserStore((state) => state.user);
-  const userLoading = useGetCurrentUserStore((state) => state.loading);
-  const isInitialized = useGetCurrentUserStore((state) => state.isInitialized);
-  const isEmployee = currentUser?.role === "employee";
+  // Utils
+  const { toast } = useToast();
 
+  // API calls
+  const currentUser = useGetCurrentUserStore((state) => state.user);
   const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
   const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
-  
+  const employeeFavCompanyStore = useEmployeeFavCompanyStore();
+  const companyFavEmployeeStore = useCompanyFavEmployeeStore();
+  const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
+  const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
 
-  useEffect(() => {
-    if (!currentUser) return;
-    if (isEmployee && currentUser.employee) {
-      getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
-        currentUser.employee.id
+  // Fetch user-specific favorites data
+  const { isEmployee } = useFetchOnce({
+    cacheKey: "favorite-page",
+    onEmployeeFetch: (employeeId) => {
+      getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(employeeId);
+    },
+    onCompanyFetch: (companyId) => {
+      getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyId);
+    },
+  });
+
+  // Handle Employee Remove Company From Favorite
+  const handleEmployeeRemoveCompanyFromFavorite = async (
+    employeeID: string,
+    companyID: string,
+    favoriteID: string,
+    companyName: string
+  ) => {
+    if (!employeeID || !companyID || !favoriteID) return;
+    try {
+      await employeeFavCompanyStore.removeCompanyFromFavorite(
+        employeeID,
+        companyID,
+        favoriteID
       );
+      countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeID);
+      toast({
+        variant: "success",
+        description: (
+          <div className="flex items-center gap-2">
+            <LucideBookmarkX />
+            <TypographySmall className="font-medium leading-relaxed">
+              {companyName} removed from favorites.
+            </TypographySmall>
+          </div>
+        ),
+      });
+      await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(employeeID);
+    } catch (error) {
+      const err =
+        employeeFavCompanyStore.error ||
+        "Failed to remove company from favorites.";
+      toast({
+        title: "Error",
+        description: err,
+        variant: "destructive",
+      });
     }
-    if (!isEmployee && currentUser.company) {
-      getAllCompanyFavoritesStore.queryAllCompanyFavorites(
-        currentUser.company.id
+  };
+
+  // Handle Company Remove Employee From Favorite
+  const handleCompanyRemoveEmployeeFromFavorite = async (
+    companyID: string,
+    employeeID: string,
+    favoriteID: string,
+    employeeName: string
+  ) => {
+    if (!companyID || !employeeID || !favoriteID) return;
+    try {
+      await companyFavEmployeeStore.removeEmployeeFromFavorite(
+        companyID,
+        employeeID,
+        favoriteID
       );
+      countAllCompanyFavoritesStore.countAllCompanyFavorites(companyID);
+      toast({
+        variant: "success",
+        description: (
+          <div className="flex items-center gap-2">
+            <LucideBookmarkX />
+            <TypographySmall className="font-medium leading-relaxed">
+              {employeeName} removed from favorites.
+            </TypographySmall>
+          </div>
+        ),
+      });
+      await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyID);
+    } catch (error) {
+      const err =
+        companyFavEmployeeStore.error ||
+        "Failed to remove employee from favorites.";
+      toast({
+        title: "Error",
+        description: err,
+        variant: "destructive",
+      });
     }
-  }, [currentUser, isEmployee]);
+  };
 
   // Unified loading handling to avoid flicker before first fetch resolves
   const isLoadingForEmployee =
@@ -53,8 +138,7 @@ export default function FavoritePage() {
     (getAllCompanyFavoritesStore.loading ||
       getAllCompanyFavoritesStore.employeeData === null);
 
-  const shouldShowLoading =
-    !isInitialized || userLoading || isLoadingForEmployee || isLoadingForCompany;
+  const shouldShowLoading = isLoadingForEmployee || isLoadingForCompany;
 
   if (shouldShowLoading) {
     return (
@@ -81,10 +165,10 @@ export default function FavoritePage() {
             Find your favorites at a Glance
           </TypographyH2>
           <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-            Quick access to the companies and talents you’ve saved
+            Quick access to the companies and talents you've saved
           </TypographyH4>
           <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-            Review, connect, and take the next step whenever you’re ready
+            Review, connect, and take the next step whenever you're ready
           </TypographyH4>
           <TypographyMuted className="leading-relaxed tablet-xl:text-center">
             Your personal shortlist — organized in one place.
@@ -105,7 +189,7 @@ export default function FavoritePage() {
           getAllEmployeeFavoritesStore.companyData.map((fav) => (
             <FavoriteCompanyCard
               key={fav.id}
-              id={fav.userId}
+              id={fav.company.id}
               name={fav.company.name}
               avatar={fav.company.avatar ?? ""}
               industry={fav.company.industry}
@@ -114,6 +198,21 @@ export default function FavoritePage() {
               foundedYear={fav.company.foundedYear}
               openPosition={fav.company.openPositions ?? []}
               location={fav.company.location}
+              onRemoveFromFavorite={() => {
+                if (currentUser && currentUser.employee) {
+                  const employeeID = currentUser.employee.id;
+                  const companyID = fav.company.id;
+                  const favoriteID = fav.id;
+                  const companyName = fav.company.name;
+
+                  handleEmployeeRemoveCompanyFromFavorite(
+                    employeeID,
+                    companyID,
+                    favoriteID,
+                    companyName
+                  );
+                }
+              }}
             />
           ))
         ) : !isEmployee &&
@@ -122,7 +221,7 @@ export default function FavoritePage() {
           getAllCompanyFavoritesStore.employeeData.map((fav) => (
             <FavoriteEmployeeCard
               key={fav.id}
-              id={fav.userId}
+              id={fav.employee.id}
               name={`${fav.employee.firstname} ${fav.employee.lastname}`}
               username={fav.employee.username ?? ""}
               avatar={fav.employee.avatar ?? ""}
@@ -132,16 +231,28 @@ export default function FavoritePage() {
               availability={fav.employee.availability}
               location={fav.employee.location ?? ""}
               skills={(fav.employee.skills ?? []).map((skill) => skill.name)}
+              onRemoveFromFavorite={() => {
+                if (currentUser && currentUser.company) {
+                  const companyID = currentUser.company.id;
+                  const employeeID = fav.employee.id;
+                  const favoriteID = fav.id;
+                  const employeeName =
+                    fav.employee.username ??
+                    `${fav.employee.firstname} ${fav.employee.lastname}`;
+
+                  handleCompanyRemoveEmployeeFromFavorite(
+                    companyID,
+                    employeeID,
+                    favoriteID,
+                    employeeName
+                  );
+                }
+              }}
             />
           ))
         ) : (
           <div className="w-full flex flex-col items-center justify-center my-16">
-            <Image
-              src={emptySvgImage}
-              alt="empty"
-              height={200}
-              width={200}
-            />
+            <Image src={emptySvgImage} alt="empty" height={200} width={200} />
             <TypographyP className="!m-0">No favorited available</TypographyP>
           </div>
         )}

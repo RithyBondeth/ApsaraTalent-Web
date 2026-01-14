@@ -10,7 +10,7 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { RadioGroup } from "@/components/ui/radio-group";
 import RadioGroupItemWithLabel from "@/components/ui/radio-group-item";
 import { useSearchJobStore } from "@/stores/apis/job/search-job.store";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -30,91 +30,115 @@ import { SearchErrorCard } from "@/components/search/search-error-card";
 import { TAvailability } from "@/utils/types/availability.type";
 import { debounce } from "lodash";
 
+// Module-level guard (Strict Mode safe)
+let hasInitialSearchJobRun = false;
 
-export default function SearchPage() {
+export default function EmployeeSearchPage() {
   const { error, loading, jobs, querySearchJobs } = useSearchJobStore();
-  const [scopeNames, setScopeNames] = useState<string[]>([]);
+  const { user } = useGetCurrentUserStore();
 
-  const { register, control, setValue, handleSubmit } =
+  const [scopeNames, setScopeNames] = useState<string[]>([]);
+  const isFirstWatchRenderRef = useRef(true);
+
+  const { register, control, setValue, handleSubmit, watch } =
     useForm<TEmployeeSearchSchema>({
       resolver: zodResolver(employeeSearchSchema),
       defaultValues: {
         keyword: "",
         location: "all",
         jobType: "all",
-        companySize: { min: undefined, max: undefined },
-        date: { from: undefined, to: undefined },
-        salaryRange: { min: undefined, max: undefined },
+        companySize: {},
+        date: {},
+        salaryRange: {},
         educationLevel: "all",
-        experienceLevel: { min: undefined, max: undefined },
+        experienceLevel: {},
         sortBy: "title",
         orderBy: "desc",
       },
     });
 
-  const onSubmit = (data: TEmployeeSearchSchema) => {
+  const watchAllFields = watch();
 
-    const normalizedJobType = data.jobType === "all" ? undefined : data.jobType;
-    const normalizedLocation = data.location === "all" ? undefined : data.location;
-    const normalizedEducation = data.educationLevel === "all" ? undefined : data.educationLevel;
-    const normalizedExperience =
-      data.experienceLevel?.min === undefined && data.experienceLevel?.max === undefined
-        ? { min: undefined, max: undefined }
-        : data.experienceLevel;
-
-    querySearchJobs({
-      careerScopes: scopeNames,
-      keyword: data.keyword,
-      location: normalizedLocation,
-      jobType: normalizedJobType,
-      companySizeMin: data.companySize?.min,
-      companySizeMax: data.companySize?.max,
-      postedDateFrom: data.date?.from?.toISOString(),
-      postedDateTo: data.date?.to?.toISOString(),
-      salaryMin: data.salaryRange?.min,
-      salaryMax: data.salaryRange?.max,
-      educationRequired: normalizedEducation,
-      experienceRequiredMin: normalizedExperience.min,
-      experienceRequiredMax: normalizedExperience.max,
-      sortBy: data.sortBy,
-      sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
-    });
-  };
-
-  const debouncedSubmit = useMemo(
-    () => debounce(() => handleSubmit(onSubmit)(), 400),
-    [handleSubmit]
+  const onSubmit = useCallback(
+    (data: TEmployeeSearchSchema) => {
+      querySearchJobs({
+        careerScopes: scopeNames,
+        keyword: data.keyword || undefined,
+        location: data.location === "all" ? undefined : data.location,
+        jobType: data.jobType === "all" ? undefined : data.jobType,
+        companySizeMin: data.companySize?.min,
+        companySizeMax: data.companySize?.max,
+        postedDateFrom: data.date?.from?.toISOString(),
+        postedDateTo: data.date?.to?.toISOString(),
+        salaryMin: data.salaryRange?.min,
+        salaryMax: data.salaryRange?.max,
+        educationRequired:
+          data.educationLevel === "all" ? undefined : data.educationLevel,
+        experienceRequiredMin: data.experienceLevel?.min,
+        experienceRequiredMax: data.experienceLevel?.max,
+        sortBy: data.sortBy,
+        sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
+      });
+    },
+    [querySearchJobs, scopeNames]
   );
 
-  useEffect(() => {
-    const fetchUserAndJobs = async () => {
-      const user = useGetCurrentUserStore.getState().user;
-      const scopes =
-        user?.role === "company"
-          ? user?.company?.careerScopes
-          : user?.employee?.careerScopes;
-      const names = scopes?.map((cs) => cs.name) ?? [];
-      setScopeNames(names);
-      querySearchJobs({
-        careerScopes: names,
-        sortBy: "title",
-        sortOrder: "DESC",
-      });
-    };
-    fetchUserAndJobs();
-  }, []);
+  const debouncedSubmit = useMemo(() => debounce(onSubmit, 400), [onSubmit]);
 
+  // INITIAL SEARCH (RUNS ONLY ONCE)
   useEffect(() => {
-    return () => {
-      debouncedSubmit.cancel();
-    };
+    if (!user) return;
+    if (hasInitialSearchJobRun) return;
+
+    const scopes =
+      user.role === "company"
+        ? user.company?.careerScopes
+        : user.employee?.careerScopes;
+
+    const names = scopes?.map((cs) => cs.name) ?? [];
+    setScopeNames(names);
+
+    querySearchJobs({
+      careerScopes: names,
+      sortBy: "title",
+      sortOrder: "DESC",
+    });
+
+    hasInitialSearchJobRun = true;
+  }, [user, querySearchJobs]);
+
+  // Watch filters (skip first render)
+  useEffect(() => {
+    if (isFirstWatchRenderRef.current) {
+      isFirstWatchRenderRef.current = false;
+      return;
+    }
+
+    const subscription = watch((value) =>
+      debouncedSubmit(value as TEmployeeSearchSchema)
+    );
+
+    return () => subscription.unsubscribe();
+  }, [watch, debouncedSubmit]);
+
+  // Cleanup debounce only
+  useEffect(() => {
+    return () => debouncedSubmit.cancel();
   }, [debouncedSubmit]);
+
+  const handleRadioChange = (
+    fieldName: keyof TEmployeeSearchSchema,
+    value: any
+  ) => {
+    setValue(fieldName, value, { shouldDirty: true });
+  };
 
   return (
     <form
       className="w-full flex flex-col items-start gap-5 px-10"
       onSubmit={handleSubmit(onSubmit)}
     >
+      {/* Banner Section */}
       <div className="w-full flex items-center justify-between gap-10 laptop-sm:flex-col laptop-sm:items-center">
         <div className="w-full flex flex-col items-start gap-3 laptop-sm:py-5">
           <TypographyH2 className="leading-relaxed">
@@ -133,8 +157,8 @@ export default function SearchPage() {
             isEmployee={true}
             register={register}
             setValue={setValue}
-            initialLocation={control._formValues.location as TLocations}
-            initialJobType={control._formValues.jobType as TAvailability}
+            initialLocation={watchAllFields.location as TLocations}
+            initialJobType={watchAllFields.jobType as TAvailability}
           />
         </div>
         <Image
@@ -146,8 +170,11 @@ export default function SearchPage() {
         />
       </div>
       <div className="w-full flex items-start gap-5 tablet-xl:!flex-col tablet-xl:[&>div]:w-full">
+        {/* Left Side: Filter Section */}
         <div className="w-1/4 flex flex-col items-start gap-8 p-5 shadow-md rounded-md">
           <TypographyH4 className="text-lg">Refine Result</TypographyH4>
+
+          {/* Date Posted */}
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideCalendarDays strokeWidth={"1.5px"} />
@@ -192,9 +219,7 @@ export default function SearchPage() {
                         }
                         updated = { from, to: new Date() };
                       }
-                      field.onChange(updated);
-                      setValue("date", updated);
-                      handleSubmit(onSubmit)();
+                      handleRadioChange("date", updated);
                     }}
                     className="ml-3"
                   >
@@ -231,6 +256,8 @@ export default function SearchPage() {
               }}
             />
           </div>
+
+          {/* Company Size */}
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideUsers strokeWidth={"1.5px"} />
@@ -255,7 +282,6 @@ export default function SearchPage() {
                     value={selectedValue}
                     onValueChange={(val) => {
                       let updated;
-
                       switch (val) {
                         case "startup":
                           updated = { min: 1, max: 50 };
@@ -270,10 +296,7 @@ export default function SearchPage() {
                         default:
                           updated = { min: undefined, max: undefined };
                       }
-
-                      field.onChange(updated);
-                      setValue("companySize", updated);
-                      handleSubmit(onSubmit)();
+                      handleRadioChange("companySize", updated);
                     }}
                     className="ml-3"
                   >
@@ -310,6 +333,8 @@ export default function SearchPage() {
               }}
             />
           </div>
+
+          {/* Salary Range */}
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideCircleDollarSign strokeWidth={"1.5px"} />
@@ -356,9 +381,7 @@ export default function SearchPage() {
                           updated = { min: undefined, max: undefined };
                           break;
                       }
-                      field.onChange(updated);
-                      setValue("salaryRange", updated);
-                      handleSubmit(onSubmit)();
+                      handleRadioChange("salaryRange", updated);
                     }}
                     className="ml-3"
                   >
@@ -402,6 +425,8 @@ export default function SearchPage() {
               }}
             />
           </div>
+
+          {/* Education Level */}
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideGraduationCap strokeWidth={"1.5px"} />
@@ -416,10 +441,8 @@ export default function SearchPage() {
                   <RadioGroup
                     value={education}
                     onValueChange={(val) => {
-                      const value = val === "all" ? undefined : val;
-                      field.onChange(value);
-                      setValue("educationLevel", value);
-                      handleSubmit(onSubmit)();
+                      const value = val === "all" ? "all" : val;
+                      handleRadioChange("educationLevel", value);
                     }}
                     className="ml-3"
                   >
@@ -463,6 +486,8 @@ export default function SearchPage() {
               }}
             />
           </div>
+
+          {/* Experience Level */}
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideBriefcaseBusiness strokeWidth={"1.5px"} />
@@ -506,10 +531,7 @@ export default function SearchPage() {
                         default:
                           updated = { min: undefined, max: undefined };
                       }
-
-                      field.onChange(updated);
-                      setValue("experienceLevel", updated);
-                      handleSubmit(onSubmit)();
+                      handleRadioChange("experienceLevel", updated);
                     }}
                     className="ml-3"
                   >
@@ -554,6 +576,8 @@ export default function SearchPage() {
             />
           </div>
         </div>
+
+        {/* Right Side: Results Section */}
         <div className="w-3/4 flex flex-col items-start gap-3">
           <div className="w-full flex justify-between items-center">
             <TypographyH4 className="text-lg">
@@ -562,18 +586,22 @@ export default function SearchPage() {
               ) : error ? (
                 <span className="text-destructive">0 Job is listing</span>
               ) : jobs && jobs.length > 0 ? (
-                jobs.length === 1 ? (
-                  `${jobs.length} Jobs are listing`
-                ) : (
-                  `${jobs.length} Jobs are listing`
-                )
+                `${jobs.length} Job${jobs.length === 1 ? "" : "s"} listed`
               ) : (
-                <Skeleton className="h-6 w-40 bg-muted" />
+                "No jobs found"
               )}
             </TypographyH4>
           </div>
           <div className="w-full flex flex-col items-start gap-2">
-            {error ? (
+            {loading ? (
+              <div className="w-full mb-3">
+                {Array(3)
+                  .fill(0)
+                  .map((_, index) => (
+                    <SearchEmployeeCardSkeleton key={index} />
+                  ))}
+              </div>
+            ) : error ? (
               <div className="w-full mb-3">
                 <SearchErrorCard
                   error={error}
@@ -583,7 +611,8 @@ export default function SearchPage() {
             ) : jobs && jobs.length > 0 ? (
               jobs.map((item, index) => (
                 <SearchCompanyCard
-                  key={index}
+                  key={item.id || index}
+                  id={item.company.id}
                   title={item.title}
                   description={item.description}
                   type={item.type}
@@ -599,13 +628,15 @@ export default function SearchPage() {
                     companySize: item.company.companySize,
                     industry: item.company.industry,
                     location: item.company.location,
-                    userId: item.company.user?.id,
                   }}
                 />
               ))
             ) : (
-              <div className="w-full mb-3">
-                {Array(3).fill(0).map((_, index) => <SearchEmployeeCardSkeleton key={index}/>)}
+              <div className="w-full text-center py-10">
+                <TypographyP className="text-muted-foreground">
+                  No jobs match your search criteria. Try adjusting your
+                  filters.
+                </TypographyP>
               </div>
             )}
           </div>

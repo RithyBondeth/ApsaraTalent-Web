@@ -45,7 +45,7 @@ export const accountSettingSchema = z.object({
   accountSetting: z
     .object({
       email: emailValidation.optional(),
-      phone: khmerPhoneNumberValidation.optional(),
+      phone: khmerPhoneNumberValidation(),
     })
     .optional(),
 });

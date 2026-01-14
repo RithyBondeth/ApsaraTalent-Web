@@ -9,7 +9,7 @@ import * as z from "zod";
 
 export const basicSignupEmployeeSchema = z
   .object({
-    firstName: textValidation("First name",50),
+    firstName: textValidation("First name", 50),
     lastName: textValidation("Last name", 50),
     username: textValidation("Username", 50),
     phone: khmerPhoneNumberValidation,
@@ -30,7 +30,7 @@ export const basicSignupEmployeeSchema = z
     }
   });
 
- export const basicSignupCompanySchema = z
+export const basicSignupCompanySchema = z
   .object({
     phone: khmerPhoneNumberValidation,
     email: emailValidation,
@@ -48,5 +48,9 @@ export const basicSignupEmployeeSchema = z
     }
   });
 
-export type TBasicSignupCompanySchema = z.infer<typeof basicSignupCompanySchema>;
-export type TBasicSignupEmployeeSchema = z.infer<typeof basicSignupEmployeeSchema>;
+export type TBasicSignupCompanySchema = z.infer<
+  typeof basicSignupCompanySchema
+>;
+export type TBasicSignupEmployeeSchema = z.infer<
+  typeof basicSignupEmployeeSchema
+>;

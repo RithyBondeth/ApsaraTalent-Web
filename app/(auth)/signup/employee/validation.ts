@@ -44,20 +44,24 @@ export const educationStepSchema = z.object({
 // Define schema for step 4
 export const skillReferenceStepSchema = z.object({
   skillAndReference: z.object({
-    skills: z.array(z.string()).min(1, { message: "At least one skill is required" }),
-    resume: fileValidation('Resume'),
-    coverLetter: fileValidation('Cover letter'),
+    skills: z
+      .array(z.string())
+      .min(1, { message: "At least one skill is required" }),
+    resume: fileValidation("Resume"),
+    coverLetter: fileValidation("Cover letter"),
   }),
 });
 
 // Define schema for step 5
 export const avatarStepSchema = z.object({
-  avatar: imageValidation('Avatar')
+  avatar: imageValidation("Avatar"),
 });
 
 export const careerScopesStepSchema = z.object({
-  careerScopes: z.array(z.string()).min(1, { message: "Please select at least one career option" }),
-})
+  careerScopes: z
+    .array(z.string())
+    .min(1, { message: "Please select at least one career option" }),
+});
 
 // FormSchema
 export const employeeSignUpSchema = z.object({

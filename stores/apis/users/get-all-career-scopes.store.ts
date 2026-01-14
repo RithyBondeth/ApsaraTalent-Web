@@ -19,9 +19,7 @@ export const useGetAllCareerScopesStore = create<TGetAllCareerScopesStoreState>(
       set({ loading: true, error: null });
 
       try {
-        const response = await axios.get<[]>(
-          API_GET_ALL_CAREER_SCOPES_URL
-        );
+        const response = await axios.get<[]>(API_GET_ALL_CAREER_SCOPES_URL);
         set({ careerScopes: response.data, loading: false, error: null });
       } catch (error) {
         if (axios.isAxiosError(error))

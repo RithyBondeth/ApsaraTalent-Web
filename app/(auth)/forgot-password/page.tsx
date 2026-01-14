@@ -44,18 +44,18 @@ export default function ForgotPasswordPage() {
 
   const onSubmit = async (data: TForgotPasswordForm) => {
     setIsSubmitted(true);
-    const phone = data.forgotPassword.replace('0', '+855');
+    const phone = data.forgotPassword.replace("0", "+855");
     await forgotPassword(phone);
   };
 
   useEffect(() => {
-    if(!isSubmitted) return;
+    if (!isSubmitted) return;
 
     if (loading) {
       toast({
         description: (
           <div className="flex items-center gap-2">
-            <ApsaraLoadingSpinner size={50} loop/>
+            <ApsaraLoadingSpinner size={50} loop />
             <TypographySmall className="font-medium">
               Loading...
             </TypographySmall>
@@ -125,9 +125,9 @@ export default function ForgotPasswordPage() {
               value={inputValue}
               prefix={
                 isEmailInput(inputValue) ? (
-                  <LucideMail strokeWidth={"1.3px"}/>
+                  <LucideMail strokeWidth={"1.3px"} />
                 ) : isNumberPhoneInput(inputValue) ? (
-                  <LucidePhone strokeWidth={"1.3px"}/>
+                  <LucidePhone strokeWidth={"1.3px"} />
                 ) : null
               }
               {...register("forgotPassword")}

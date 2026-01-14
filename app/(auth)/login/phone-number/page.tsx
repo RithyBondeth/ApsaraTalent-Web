@@ -20,7 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { ToastAction } from "@/components/ui/toast";
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
-
+0
 export default function PhoneNumberPage() {
   const router = useRouter();
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
@@ -41,16 +41,16 @@ export default function PhoneNumberPage() {
   const onSubmit = async (data: TPhoneLoginForm) => {
     setIsSubmitted(true);
     setBasicPhoneSignupData({
-      phone: data.phone,
+      phone: data.phone ?? "",
       rememberMe: data.rememberMe,
     });
-    const phone = data.phone.replace("0", "+855");
+    const phone = data.phone ? data.phone.replace("0", "+855") : "";
     await loginOtp(phone);
   };
 
   useEffect(() => {
-    if(!isSubmitted) return;
-    
+    if (!isSubmitted) return;
+
     if (isSuccess) {
       toast({
         description: (
@@ -70,7 +70,7 @@ export default function PhoneNumberPage() {
       toast({
         description: (
           <div className="flex items-center gap-2">
-            <ApsaraLoadingSpinner size={40} loop/>
+            <ApsaraLoadingSpinner size={40} loop />
             <TypographySmall className="font-medium">
               Logging in...
             </TypographySmall>
@@ -103,7 +103,7 @@ export default function PhoneNumberPage() {
         <div className="h-fit w-[70%] flex flex-col items-stretch gap-3 tablet-lg:w-[85%] tablet-md:w-[95%] tablet-md:py-10">
           {/* Title Section */}
           <div className="mb-5">
-            <LogoComponent className="!h-24 w-auto" withoutTitle/>
+            <LogoComponent className="!h-24 w-auto" withoutTitle />
             <TypographyH2 className="phone-xl:text-xl">
               Sign in with Your Phone Number
             </TypographyH2>

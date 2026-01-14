@@ -8,5 +8,5 @@ export interface IMatchingEmployeeCardProps {
   availability: string;
   location: string;
   skills: string[];
-  onChatNowClick: () => void; 
+  onChatNowClick: () => void;
 }

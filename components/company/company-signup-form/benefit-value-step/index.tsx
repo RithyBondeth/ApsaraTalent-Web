@@ -153,7 +153,9 @@ export default function BenefitValueStepForm({
             </div>
           </PopoverContent>
         </Popover>
-        <ErrorMessage>{errors?.benefitsAndValues?.benefits?.message}</ErrorMessage>
+        <ErrorMessage>
+          {errors?.benefitsAndValues?.benefits?.message}
+        </ErrorMessage>
       </div>
       <div className="w-full flex flex-col items-start gap-3">
         <TypographyH4>Add company value information</TypographyH4>
@@ -199,7 +201,9 @@ export default function BenefitValueStepForm({
             </div>
           </PopoverContent>
         </Popover>
-        <ErrorMessage>{errors?.benefitsAndValues?.values?.message}</ErrorMessage>
+        <ErrorMessage>
+          {errors?.benefitsAndValues?.values?.message}
+        </ErrorMessage>
       </div>
     </div>
   );

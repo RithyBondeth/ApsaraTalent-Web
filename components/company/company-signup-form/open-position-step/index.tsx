@@ -148,7 +148,9 @@ export default function OpenPositionStepForm({
               <Input
                 placeholder="Type"
                 {...register(`openPositions.${index}.types`)}
-                validationMessage={errors?.openPositions?.[index]?.types?.message?.toString()}
+                validationMessage={errors?.openPositions?.[
+                  index
+                ]?.types?.message?.toString()}
               />
             }
           />

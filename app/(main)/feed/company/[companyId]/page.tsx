@@ -7,6 +7,7 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import {
   LucideAlarmClock,
   LucideBookmark,
+  LucideBookMarked,
   LucideBriefcaseBusiness,
   LucideBuilding,
   LucideCalendarDays,
@@ -48,15 +49,19 @@ import ImagePopup from "@/components/utils/image-popup";
 import React, { useEffect, useRef, useState } from "react";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { TPlatform } from "@/utils/types/platform.type";
-import { useGetOneUserStore } from "@/stores/apis/users/get-one-user.store";
 import { CompanyDetailPageSkeleton } from "./skeleton";
 import { dateFormatterv2 } from "@/utils/functions/dateformatter-v2";
 import { availabilityConstant } from "@/utils/constants/app.constant";
 
 import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
+import { useGetOneCompanyStore } from "@/stores/apis/company/get-one-cmp.store";
+import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
+import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
+import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
+import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
 
 export default function CompanyDetailPage() {
   const param = useParams<{ companyId: string }>();
@@ -64,6 +69,7 @@ export default function CompanyDetailPage() {
   const router = useRouter();
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const { toast, dismiss } = useToast();
 
   // State for popups
   const [openImagePopup, setOpenImagePopup] = useState(false);
@@ -74,11 +80,15 @@ export default function CompanyDetailPage() {
   const ignoreNextClick = useRef(false);
 
   // Get data and loading state
-  const { loading, user, getOneUerByID } = useGetOneUserStore();
+  const { loading, companyData, queryOneCompany } = useGetOneCompanyStore();
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const employeeLikeStore = useEmployeeLikeStore();
+  const { countCurrentEmployeeMatching } =
+    useCountCurrentEmployeeMatchingStore();
+  const { queryCurrentEmployeeLiked } = useGetCurrentEmployeeLikedStore();
   const employeeFavCompanyStore = useEmployeeFavCompanyStore();
-  const [isSavedFavorite, setIsSavedFavorite] = useState(false);
+  const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
+  const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
 
   // Initialize component (client-side only)
   useEffect(() => {
@@ -92,8 +102,8 @@ export default function CompanyDetailPage() {
 
       try {
         setFetchError(null);
-        useGetOneUserStore.setState({ user: null, loading: true });
-        await getOneUerByID(id as string);
+        useGetOneCompanyStore.setState({ companyData: null, loading: true });
+        await queryOneCompany(id as string);
       } catch (error) {
         console.error("Failed to fetch company data:", error);
         setFetchError("Failed to load company data. Please try again.");
@@ -101,7 +111,7 @@ export default function CompanyDetailPage() {
     };
 
     fetchData();
-  }, [id, isInitialized, getOneUerByID]);
+  }, [id, isInitialized, queryOneCompany]);
 
   // Handle popup clicks
   const handleClickImagePopup = () => {
@@ -117,7 +127,7 @@ export default function CompanyDetailPage() {
       ignoreNextClick.current = false;
       return;
     }
-    if(user?.company?.avatar) setOpenProfilePopup(true);
+    if (companyData?.avatar) setOpenProfilePopup(true);
   };
 
   // Loading or error states
@@ -141,7 +151,7 @@ export default function CompanyDetailPage() {
     );
   }
 
-  if (!user) {
+  if (!companyData) {
     return (
       <div className="h-screen w-screen flex justify-center items-center">
         <div className="flex flex-col items-center gap-3">
@@ -155,155 +165,186 @@ export default function CompanyDetailPage() {
   }
 
   const handleLike = async () => {
-    const employeeId = currentUser?.employee?.id;
-    const companyId = user?.company?.id;
+    if (currentUser && currentUser.employee) {
+      const employeeId = currentUser.employee.id;
+      const companyId = companyData.id;
 
-    if (!employeeId) {
-      toast({
-        title: "Sign in required",
-        description: "Please sign in as an employee to like a company.",
-        variant: "destructive",
-      });
-      return;
-    }
-    if (!companyId) return;
-    try {
-      await employeeLikeStore.employeeLike(employeeId, companyId);
-      const data = useEmployeeLikeStore.getState().data;
-      if (data?.isMatched) {
-        toast({
-          title: "It's a match!",
-          description: `You and ${data.company.name} like each other.`,
-        });
-        setTimeout(() => router.push("/matching"), 800);
-      } else {
-        toast({
-          title: "Liked",
-          description: `You liked ${user?.company?.name}.`,
-        });
-        setTimeout(() => router.push("/feed"), 800);
+      if (!employeeId || !companyId) return;
+
+      try {
+        dismiss();
+        await employeeLikeStore.employeeLike(employeeId, companyId);
+        const employeeData = useEmployeeLikeStore.getState().data;
+        if (employeeData) {
+          const isMatching = employeeData.isMatched;
+          const companyName = employeeData.company.name;
+          if (isMatching) {
+            toast({
+              variant: "success",
+              title: "It's a match!",
+              description: (
+                <div className="flex items-center gap-2">
+                  <LucideHeartHandshake />
+                  <TypographySmall className="font-medium">
+                    {companyName} and you like each other.
+                  </TypographySmall>
+                </div>
+              ),
+            });
+            countCurrentEmployeeMatching(employeeId);
+            setTimeout(() => router.push("/matching"), 800);
+          } else {
+            console.log("Wait for this user to like you back....");
+            toast({
+              variant: "success",
+              description: (
+                <div className="flex items-center gap-2">
+                  <LucideHeartHandshake />
+                  <TypographySmall className="font-medium">
+                    You liked {companyName} company.
+                  </TypographySmall>
+                </div>
+              ),
+            });
+            setTimeout(() => router.push("/feed"), 800);
+          }
+        }
+      } catch (error) {
+        const err = employeeLikeStore.error || "Failed to like company";
+        toast({ variant: "destructive", title: "Error", description: err });
+      } finally {
+        queryCurrentEmployeeLiked(employeeId);
       }
-    } catch {
-      const err =
-        useEmployeeLikeStore.getState().error || "Failed to like company";
-      toast({ title: "Error", description: err, variant: "destructive" });
     }
   };
 
-  const handleSaveFavorite = async () => {
-    const employeeId = currentUser?.employee?.id;
-    const companyId = user?.company?.id;
-    if (!employeeId) {
-      toast({
-        title: "Sign in required",
-        description: "Please sign in as an employee to save a company.",
-        variant: "destructive",
-      });
-      return;
-    }
-    if (!companyId) return;
-    try {
-      await employeeFavCompanyStore.addCompanyToFavorite(employeeId, companyId);
-      toast({ title: "Saved", description: "Company added to favorites." });
-      setIsSavedFavorite(true);
-    } catch {
-      const err = employeeFavCompanyStore.error || "Failed to save company";
-      toast({ title: "Error", description: err, variant: "destructive" });
+  const handleAddToFavorite = async () => {
+    if (currentUser && currentUser.employee) {
+      const employeeId = currentUser.employee.id;
+      const companyId = companyData.id;
+      const companyName = companyData.name;
+
+      if (!employeeId || !companyId) return;
+
+      try {
+        await employeeFavCompanyStore.addCompanyToFavorite(
+          employeeId,
+          companyId
+        );
+        countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeId);
+        toast({
+          variant: "success",
+          description: (
+            <div className="flex items-center gap-2">
+              <LucideBookMarked />
+              <TypographySmall className="font-medium">
+                {companyName} added to favorites.
+              </TypographySmall>
+            </div>
+          ),
+        });
+        await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
+          employeeId
+        );
+      } catch (error) {
+        const err = employeeFavCompanyStore.error || "Failed to save company";
+        toast({ title: "Error", description: err, variant: "destructive" });
+      }
     }
   };
 
   return (
     <div className="flex flex-col gap-5">
       {/* Header Section */}
-      {user.company && <div
-        className="relative h-80 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center tablet-sm:items-start"
-        style={{ backgroundImage: `url(${user.company.cover})` }}
-      >
-        <BlurBackGroundOverlay />
-        <div className="relative flex items-center gap-5 tablet-sm:flex-col">
-          <Avatar
-            className="size-32 tablet-sm:size-28"
-            rounded="md"
-            onClick={handleClickProfilePopup}
-          >
-            <AvatarImage src={user.company.avatar ?? ""} />
-            <AvatarFallback className="uppercase">
-              {user.company.name.slice(0, 3)}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col items-start gap-2 text-muted tablet-sm:items-center">
-            <TypographyH2 className="tablet-sm:text-center tablet-sm:text-xl">
-              {user.company.name}
-            </TypographyH2>
-            <TypographyP className="!m-0 tablet-sm:text-center tablet-sm:text-sm">
-              {user.company.industry}
-            </TypographyP>
-            <div className="flex items-center gap-5">
-              <IconLabel
-                icon={<LucideCalendarDays />}
-                text={`Founded in ${user.company.foundedYear}`}
-                className="[&>p]:text-primary-foreground"
-              />
-              <IconLabel
-                icon={<LucideUsers />}
-                text={`${user.company.companySize}+ Employees`}
-                className="[&>p]:text-primary-foreground"
-              />
+      {companyData && (
+        <div
+          className="relative h-80 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center tablet-sm:items-start"
+          style={{ backgroundImage: `url(${companyData.cover})` }}
+        >
+          <BlurBackGroundOverlay />
+          <div className="relative flex items-center gap-5 tablet-sm:flex-col">
+            <Avatar
+              className="size-32 tablet-sm:size-28"
+              rounded="md"
+              onClick={handleClickProfilePopup}
+            >
+              <AvatarImage src={companyData.avatar ?? ""} />
+              <AvatarFallback className="uppercase">
+                {companyData.name.slice(0, 3)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col items-start gap-2 text-muted tablet-sm:items-center">
+              <TypographyH2 className="tablet-sm:text-center tablet-sm:text-xl">
+                {companyData.name}
+              </TypographyH2>
+              <TypographyP className="!m-0 tablet-sm:text-center tablet-sm:text-sm">
+                {companyData.industry}
+              </TypographyP>
+              <div className="flex items-center gap-5">
+                <IconLabel
+                  icon={<LucideCalendarDays />}
+                  text={`Founded in ${companyData.foundedYear}`}
+                  className="[&>p]:text-primary-foreground"
+                />
+                <IconLabel
+                  icon={<LucideUsers />}
+                  text={`${companyData.companySize}+ Employees`}
+                  className="[&>p]:text-primary-foreground"
+                />
+              </div>
             </div>
           </div>
-        </div>
-        <div className="z-10 absolute right-3 bottom-3 flex items-center gap-3">
-          {!isSavedFavorite && (
+          <div className="z-10 absolute right-3 bottom-3 flex items-center gap-3">
+            {!employeeFavCompanyStore.isFavorite(id) && (
+              <Button
+                variant="outline"
+                onClick={handleAddToFavorite}
+                disabled={
+                  employeeFavCompanyStore.loading || !currentUser?.employee?.id
+                }
+              >
+                <LucideBookmark />
+                Save to Favorite
+              </Button>
+            )}
             <Button
-              variant="outline"
-              onClick={handleSaveFavorite}
-              disabled={
-                employeeFavCompanyStore.loading || !currentUser?.employee?.id
-              }
+              onClick={handleLike}
+              disabled={employeeLikeStore.loading || !currentUser?.employee?.id}
             >
-              <LucideBookmark />
-              Save to Favorite
+              <LucideHeartHandshake />
+              Like
             </Button>
-          )}
-          <Button
-            onClick={handleLike}
-            disabled={employeeLikeStore.loading || !currentUser?.employee?.id}
-          >
-            <LucideHeartHandshake />
-            Like
-          </Button>
+          </div>
         </div>
-      </div>}
+      )}
       <div className="w-full flex items-stretch gap-5 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
         <div className="w-2/3 flex flex-col items-stretch gap-5">
           {/* Description Section */}
-          {user.company && user.company.description && (
+          {companyData && companyData.description && (
             <div className="w-full flex flex-col items-start gap-3 border border-muted py-5 px-10">
               <div className="w-full flex flex-col gap-2">
-                <TypographyH4>About {user.company.name}</TypographyH4>
+                <TypographyH4>About {companyData.name}</TypographyH4>
                 <Divider />
               </div>
               <div className="flex items-start gap-3">
                 <div className="h-full w-2 bg-primary" />
                 <TypographyMuted className="leading-loose">
-                  {user.company.description}
+                  {companyData.description}
                 </TypographyMuted>
               </div>
             </div>
           )}
-
           {/* Open Positions Section */}
-          {user.company &&
-            user.company.openPositions &&
-            user.company.openPositions &&
-            user.company.openPositions.length > 0 && (
+          {companyData &&
+            companyData.openPositions &&
+            companyData.openPositions.length > 0 && (
               <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
                 <div className="w-full flex flex-col gap-2">
                   <TypographyH4>Open Positions</TypographyH4>
                   <Divider />
                 </div>
                 <div className="w-full flex flex-col gap-3">
-                  {user.company.openPositions?.map((item) => (
+                  {companyData.openPositions?.map((item) => (
                     <div
                       className="border border-muted px-5 py-3 rounded-md"
                       key={item.id}
@@ -318,20 +359,24 @@ export default function CompanyDetailPage() {
                               </TypographyP>
                             </div>
                             <div className="flex items-center gap-3">
-                              {item.type && <Tag
-                                icon={
-                                  <LucideAlarmClock strokeWidth={"1.5px"} />
-                                }
-                                label={
-                                  availabilityConstant.find(
-                                    (type) => type.value == item.type
-                                  )?.label ?? ""
-                                }
-                              />}
-                              {item.experience && <Tag
-                                icon={<LucideUser strokeWidth={"1.5px"} />}
-                                label={item.experience}
-                              />}
+                              {item.type && (
+                                <Tag
+                                  icon={
+                                    <LucideAlarmClock strokeWidth={"1.5px"} />
+                                  }
+                                  label={
+                                    availabilityConstant.find(
+                                      (type) => type.value == item.type
+                                    )?.label ?? ""
+                                  }
+                                />
+                              )}
+                              {item.experience && (
+                                <Tag
+                                  icon={<LucideUser strokeWidth={"1.5px"} />}
+                                  label={item.experience}
+                                />
+                              )}
                             </div>
                           </div>
                           <div className="flex flex-col items-start gap-2">
@@ -410,10 +455,10 @@ export default function CompanyDetailPage() {
             )}
 
           {/* Careers Section */}
-          {user.company &&
-            user.company.careerScopes.length > 0 &&
-            user.company.careerScopes &&
-            user.company.careerScopes.length > 0 && (
+          {companyData &&
+            companyData.careerScopes.length > 0 &&
+            companyData.careerScopes &&
+            companyData.careerScopes.length > 0 && (
               <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
                 <div className="w-full flex flex-col gap-1">
                   <TypographyH4>Company Careers</TypographyH4>
@@ -421,7 +466,7 @@ export default function CompanyDetailPage() {
                 </div>
                 <div className="w-full flex flex-col items-stretch gap-3">
                   <div className="flex flex-wrap gap-3">
-                    {user?.company?.careerScopes.map((career, index) => (
+                    {companyData.careerScopes.map((career, index) => (
                       <div
                         key={index}
                         className="rounded-3xl border-[1px] border-muted duration-300 ease-linear hover:border-muted-foreground"
@@ -446,16 +491,16 @@ export default function CompanyDetailPage() {
             )}
 
           {/* Life at Company Section */}
-          {user?.company?.images && user.company.images.length > 0 && (
+          {companyData.images && companyData.images.length > 0 && (
             <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
               <div className="w-full flex flex-col gap-2">
-                <TypographyH4>Life at {user.company.name}</TypographyH4>
+                <TypographyH4>Life at {companyData.name}</TypographyH4>
                 <Divider />
               </div>
               <div className="w-full">
                 <Carousel className="w-full">
                   <CarouselContent className="w-full">
-                    {user.company.images.map((item: IImage) => (
+                    {companyData.images.map((item: IImage) => (
                       <CarouselItem key={item.id} className="max-w-[280px]">
                         <div
                           onClick={() => {
@@ -491,7 +536,7 @@ export default function CompanyDetailPage() {
                       strokeWidth={"1.5px"}
                     />
                   }
-                  text={user?.company?.industry ?? ""}
+                  text={companyData.industry ?? ""}
                 />
               </div>
               <div className="flex flex-col items-start gap-2">
@@ -503,7 +548,7 @@ export default function CompanyDetailPage() {
                       strokeWidth={"1.5px"}
                     />
                   }
-                  text={user?.company?.location ?? ""}
+                  text={companyData.location ?? ""}
                 />
               </div>
               <div className="flex flex-col items-start gap-2">
@@ -515,7 +560,7 @@ export default function CompanyDetailPage() {
                       strokeWidth={"1.5px"}
                     />
                   }
-                  text={`Founded in ${user?.company?.foundedYear}`}
+                  text={`Founded in ${companyData.foundedYear}`}
                 />
               </div>
               <div className="flex flex-col items-start gap-2">
@@ -527,10 +572,10 @@ export default function CompanyDetailPage() {
                       strokeWidth={"1.5px"}
                     />
                   }
-                  text={`${user?.company?.companySize}+ Employees`}
+                  text={`${companyData.companySize}+ Employees`}
                 />
               </div>
-              {user?.company?.phone && (
+              {companyData.phone && (
                 <div className="flex flex-col items-start gap-2">
                   <TypographyMuted>Phone</TypographyMuted>
                   <IconLabel
@@ -540,7 +585,7 @@ export default function CompanyDetailPage() {
                         strokeWidth={"1.5px"}
                       />
                     }
-                    text={user?.company?.phone ?? ""}
+                    text={companyData.phone ?? ""}
                   />
                 </div>
               )}
@@ -553,28 +598,28 @@ export default function CompanyDetailPage() {
                       strokeWidth={"1.5px"}
                     />
                   }
-                  text={user?.email ?? ""}
+                  text={companyData.email ?? ""}
                 />
               </div>
             </div>
           </div>
 
           {/* Culture and Benefit Section */}
-          {(user?.company!.values.length < 0 ||
-            user?.company!.benefits.length < 0) && (
+          {(companyData.values.length > 0 ||
+            companyData.benefits.length > 0) && (
             <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
               <div className="w-full flex flex-col gap-2">
                 <TypographyH4>Company Culture</TypographyH4>
                 <Divider />
               </div>
               <div className="w-full flex flex-col items-stretch gap-3 [&>div]:w-full">
-                {user.company &&
-                  user.company.values &&
-                  user.company.values.length > 0 && (
+                {companyData &&
+                  companyData.values &&
+                  companyData.values.length > 0 && (
                     <div className="flex flex-col gap-3 border border-muted px-5 py-3 rounded-md">
                       <TypographyP className="font-medium">Values</TypographyP>
                       <div className="flex flex-col gap-2">
-                        {user.company.values.map((item) => (
+                        {companyData.values.map((item) => (
                           <IconLabel
                             key={item.id}
                             icon={
@@ -589,15 +634,15 @@ export default function CompanyDetailPage() {
                       </div>
                     </div>
                   )}
-                {user.company &&
-                  user.company.benefits &&
-                  user.company.benefits.length > 0 && (
+                {companyData &&
+                  companyData.benefits &&
+                  companyData.benefits.length > 0 && (
                     <div className="flex flex-col gap-3 border border-muted px-5 py-3 rounded-md">
                       <TypographyP className="font-medium">
                         Benefits
                       </TypographyP>
                       <div className="flex flex-col gap-2">
-                        {user.company.benefits.map((item: IBenefits) => (
+                        {companyData.benefits.map((item: IBenefits) => (
                           <IconLabel
                             key={item.id}
                             icon={
@@ -617,14 +662,14 @@ export default function CompanyDetailPage() {
           )}
 
           {/* Social Section */}
-          {user?.company?.socials && user.company.socials.length > 0 && (
+          {companyData.socials && companyData.socials.length > 0 && (
             <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
               <div className="w-full flex flex-col gap-2">
                 <TypographyH4>Company Socials</TypographyH4>
                 <Divider />
               </div>
               <div className="w-full flex flex-wrap gap-3">
-                {user.company.socials.map((item: ISocial) => (
+                {companyData.socials.map((item: ISocial) => (
                   <Link
                     key={item.id}
                     href={item.url}
@@ -652,7 +697,7 @@ export default function CompanyDetailPage() {
       <ImagePopup
         open={openProfilePopup}
         setOpen={setOpenProfilePopup}
-        image={user?.company?.avatar ?? ""}
+        image={companyData.avatar ?? ""}
       />
     </div>
   );

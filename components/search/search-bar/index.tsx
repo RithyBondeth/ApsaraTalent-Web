@@ -1,6 +1,4 @@
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { LucideSearch } from "lucide-react";
 import { TSearchBarProps } from "./props";
 import {
   Select,
@@ -11,20 +9,23 @@ import {
 import { useState, useEffect } from "react";
 import { TLocations } from "@/utils/types/location.type";
 import { SelectValue } from "@radix-ui/react-select";
-import { availabilityConstant, locationConstant } from "@/utils/constants/app.constant";
+import {
+  availabilityConstant,
+  locationConstant,
+} from "@/utils/constants/app.constant";
 import { TAvailability } from "@/utils/types/availability.type";
 import { FieldValues, Path } from "react-hook-form";
 
 export default function SearchBar<T extends FieldValues>(
   props: TSearchBarProps<T>
 ) {
-  const [selectedLocation, setSelectionLocation] = useState<TLocations | 'All'>(
-    props.initialLocation || 'All'
+  const [selectedLocation, setSelectionLocation] = useState<TLocations | "All">(
+    props.initialLocation || "All"
   );
 
-  const [selectedJobType, setSelectionJobType] = useState<TAvailability | 'All'>(
-    props.initialJobType || 'All'
-  );
+  const [selectedJobType, setSelectionJobType] = useState<
+    TAvailability | "All"
+  >(props.initialJobType || "All");
 
   useEffect(() => {
     if (props.initialLocation) {
@@ -35,7 +36,9 @@ export default function SearchBar<T extends FieldValues>(
   return (
     <div className="w-full flex flex-col items-start gap-2 p-3 shadow-md rounded-md">
       <Input
-        placeholder={props.isEmployee ? "Job title, keywords" : "Position title, keywords"}
+        placeholder={
+          props.isEmployee ? "Job title, keywords" : "Position title, keywords"
+        }
         {...props.register("keyword" as Path<T>)}
       />
       <div className="w-full flex items-center gap-3 [&>div]:w-1/2">
@@ -44,7 +47,7 @@ export default function SearchBar<T extends FieldValues>(
             setSelectionLocation(value);
             props.setValue("location" as Path<T>, value as T[keyof T]);
           }}
-          value={selectedLocation === 'All' ? 'All' : selectedLocation}
+          value={selectedLocation === "All" ? "All" : selectedLocation}
         >
           <SelectTrigger className="h-12 text-muted-foreground">
             <SelectValue placeholder="Location" />
@@ -65,7 +68,7 @@ export default function SearchBar<T extends FieldValues>(
             setSelectionJobType(value);
             props.setValue("jobType" as Path<T>, value as T[keyof T]);
           }}
-          value={selectedJobType === 'All' ? 'All' : selectedJobType} 
+          value={selectedJobType === "All" ? "All" : selectedJobType}
         >
           <SelectTrigger className="h-12 text-muted-foreground">
             <SelectValue placeholder="Job Type" />
@@ -82,14 +85,6 @@ export default function SearchBar<T extends FieldValues>(
           </SelectContent>
         </Select>
       </div>
-      <Button
-        variant={"secondary"}
-        className="w-full text-xs tablet-xl:w-full"
-        type="submit"
-      >
-        <LucideSearch />
-        Search
-      </Button>
     </div>
   );
 }

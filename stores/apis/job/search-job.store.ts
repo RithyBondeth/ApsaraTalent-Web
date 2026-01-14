@@ -71,9 +71,10 @@ export const useSearchJobStore = create<TSearchJobState>((set) => ({
         }
       });
 
-      const response = await axios.get(
-        `${API_SEARCH_JOB_URL}?${queryParams.toString()}`
-      );
+      const queryString = queryParams.toString();
+      const url = `${API_SEARCH_JOB_URL}?${queryString}`;
+
+      const response = await axios.get(url);
 
       set({
         jobs: response.data,
@@ -89,7 +90,7 @@ export const useSearchJobStore = create<TSearchJobState>((set) => ({
         });
       else
         set({
-          error: "Failed to fetch jobs",
+          error: "Failed to search jobs",
           loading: false,
           jobs: null,
         });

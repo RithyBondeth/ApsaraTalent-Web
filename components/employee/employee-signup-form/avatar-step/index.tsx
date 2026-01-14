@@ -50,7 +50,7 @@ export default function AvatarStepForm({
             multiple={false}
             boxText="Drop your company profile picture here"
             boxSubText="JPG, PNG or GIF files up to 5MB"
-            fileName='avatar'
+            fileName="avatar"
             setValue={setValue}
           />
         )}

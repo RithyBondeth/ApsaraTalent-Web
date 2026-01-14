@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useMemo, useCallback } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -21,76 +21,112 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 import { SidebarDropdownFooterSkeleton } from "./sidebar-dropdown-footer/skeleton";
 import { LucideFileUser } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useEffect, useMemo } from "react";
-import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
-import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-current-company-matching.store";
-import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
-import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
+import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
+import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
+import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
+import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
+import { useFetchOnce } from "@/hooks/use-fetch-once";
+
+// Badge Component
+const CountBadge = ({ count }: { count: number }) => {
+  if (count === 0) return null;
+  return <Badge className="ml-auto bg-red-500 dark:text-primary">{count}</Badge>;
+};
 
 export default function CollapseSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
+  // Utils
   const router = useRouter();
   const pathname = usePathname();
   const { open } = useSidebar();
 
+  // API Calls
   const { user, loading } = useGetCurrentUserStore();
-  const isEmployee = user?.role === "employee" && user.employee;
-  const isCompany = user?.role === "company" && user.company;
+  const { countCurrentEmployeeMatching, totalEmpMatching } =
+    useCountCurrentEmployeeMatchingStore();
+  const { countCurrentCompanyMatching, totalCmpMatching } =
+    useCountCurrentCompanyMatchingStore();
+  const { totalAllEmployeeFavorites, countAllEmployeeFavorites } =
+    useCountAllEmployeeFavoritesStore();
+  const { totalAllCompanyFavorites, countAllCompanyFavorites } =
+    useCountAllCompanyFavoritesStore();
 
-  const { currentEmployeeMatching, queryCurrentEmployeeMatching } =
-    useGetCurrentEmployeeMatchingStore();
-  const { currentCompanyMatching, queryCurrentCompanyMatching } =
-    useGetCurrentCompanyMatchingStore();
+  // Handles all ref logic and duplicate prevention
+  const { isEmployee, isCompany } = useFetchOnce({
+    cacheKey: "sidebar-component",
+    onEmployeeFetch: (employeeId) => {
+      countCurrentEmployeeMatching(employeeId);
+      countAllEmployeeFavorites(employeeId);
+    },
+    onCompanyFetch: (companyId) => {
+      countCurrentCompanyMatching(companyId);
+      countAllCompanyFavorites(companyId);
+    },
+  });
 
-  // Favorite stores (counts only; fetching occurs in pages)
-  const { companyData, queryAllEmployeeFavorites } =
-    useGetAllEmployeeFavoritesStore();
-  const { employeeData, queryAllCompanyFavorites } =
-    useGetAllCompanyFavoritesStore();
-
-  useEffect(() => {
-    if (isEmployee && user?.employee?.id) {
-      queryCurrentEmployeeMatching(user.employee.id);
-    } else if (isCompany && user?.company?.id) {
-      queryCurrentCompanyMatching(user.company.id);
-    }
-  }, [
-    isEmployee,
-    isCompany,
-    user?.employee?.id,
-    user?.company?.id,
-    queryCurrentEmployeeMatching,
-    queryCurrentCompanyMatching,
-  ]);
-
-  // Ensure favorites counts are populated even if user hasn't visited the Favorites page
-  useEffect(() => {
-    if (isEmployee && user?.employee?.id) {
-      queryAllEmployeeFavorites(user.employee.id);
-    } else if (isCompany && user?.company?.id) {
-      queryAllCompanyFavorites(user.company.id);
-    }
-  }, [
-    isEmployee,
-    isCompany,
-    user?.employee?.id,
-    user?.company?.id,
-    queryAllEmployeeFavorites,
-    queryAllCompanyFavorites,
-  ]);
-
+  // Memoized counts
   const matchingCount = useMemo(() => {
-    if (isEmployee) return currentEmployeeMatching?.length ?? 0;
-    if (isCompany) return currentCompanyMatching?.length ?? 0;
+    if (isEmployee) return totalEmpMatching ?? 0;
+    if (isCompany) return totalCmpMatching ?? 0;
     return 0;
-  }, [isEmployee, isCompany, currentEmployeeMatching, currentCompanyMatching]);
+  }, [isEmployee, isCompany, totalEmpMatching, totalCmpMatching]);
 
   const favoriteCount = useMemo(() => {
-    if (isEmployee) return companyData?.length ?? 0;
-    if (isCompany) return employeeData?.length ?? 0;
+    if (isEmployee) return totalAllEmployeeFavorites ?? 0;
+    if (isCompany) return totalAllCompanyFavorites ?? 0;
     return 0;
-  }, [isEmployee, isCompany, companyData, employeeData]);
+  }, [
+    isEmployee,
+    isCompany,
+    totalAllEmployeeFavorites,
+    totalAllCompanyFavorites,
+  ]);
+
+  // Memoized user data
+  const userData = useMemo((): {
+    name: string;
+    email: string;
+    avatar: string;
+  } => {
+    if (isEmployee && user?.employee) {
+      return {
+        name: user.employee.username ?? "",
+        email: user.email ?? user.phone ?? "",
+        avatar: user.employee.avatar ?? "",
+      };
+    }
+
+    if (isCompany && user?.company) {
+      return {
+        name: user.company.name ?? "",
+        email: user.email ?? user.phone ?? "",
+        avatar: user.company.avatar ?? "",
+      };
+    }
+
+    return { name: "", email: "", avatar: "" };
+  }, [isEmployee, isCompany, user]);
+
+  // Memoized navigation handler
+  const handleNavigation = useCallback(
+    (url: string) => {
+      if (url === "/search") {
+        router.push(`${url}/${user?.role}`);
+      } else {
+        router.push(url);
+      }
+    },
+    [router, user?.role]
+  );
+
+  // Check if a path is active
+  const isPathActive = useCallback(
+    (url: string) => {
+      return pathname === url || pathname.startsWith(`${url}/`);
+    },
+    [pathname]
+  );
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -103,6 +139,7 @@ export default function CollapseSidebar({
           </SidebarMenuButton>
         )}
       </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu className="space-y-5">
@@ -112,22 +149,14 @@ export default function CollapseSidebar({
                 asChild
                 defaultOpen={true}
                 className="group/collapsible"
-                onClick={() => {
-                  const searchUserRole = user?.role;
-                  if (item.url === "/search") {
-                    router.push(`${item.url}/${searchUserRole}`);
-                  } else {
-                    router.push(`${item.url}`);
-                  }
-                }}
+                onClick={() => handleNavigation(item.url)}
               >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton
                       tooltip={item.title}
                       className={`font-medium py-3 ${
-                        pathname === item.url ||
-                        pathname.startsWith(`${item.url}/`)
+                        isPathActive(item.url)
                           ? "bg-primary text-primary-foreground"
                           : ""
                       }`}
@@ -139,67 +168,54 @@ export default function CollapseSidebar({
                         />
                       )}
                       <span>{item.title}</span>
-                      {item.url === "/matching" && matchingCount > 0 && (
-                        <Badge className="ml-auto bg-red-500">
-                          {matchingCount}
-                        </Badge>
+                      {item.url === "/matching" && (
+                        <CountBadge count={matchingCount} />
                       )}
-                      {item.url === "/favorite" && favoriteCount > 0 && (
-                        <Badge className="ml-auto bg-red-500">
-                          {favoriteCount}
-                        </Badge>
+                      {item.url === "/favorite" && (
+                        <CountBadge count={favoriteCount} />
                       )}
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                 </SidebarMenuItem>
               </Collapsible>
             ))}
-            <Collapsible
-              asChild
-              defaultOpen={true}
-              className={`group/collapsible ${isCompany && "hidden"}`}
-              onClick={() => router.push("/resume-builder")}
-            >
-              <SidebarMenuItem>
-                <CollapsibleTrigger asChild>
-                  <SidebarMenuButton
-                    tooltip={"AI Resume"}
-                    className={`font-medium py-3 ${
-                      pathname === "/resume-builder" ||
-                      pathname.startsWith("/resume-builder")
-                        ? "bg-primary text-primary-foreground"
-                        : ""
-                    }`}
-                  >
-                    <LucideFileUser className="!size-6" strokeWidth={1.5} />
-                    <span>AI Resume Builder</span>
-                  </SidebarMenuButton>
-                </CollapsibleTrigger>
-              </SidebarMenuItem>
-            </Collapsible>
+
+            {/* AI Resume Builder - Only for employees */}
+            {!isCompany && (
+              <Collapsible
+                asChild
+                defaultOpen={true}
+                className="group/collapsible"
+                onClick={() => router.push("/resume-builder")}
+              >
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                      tooltip="AI Resume"
+                      className={`font-medium py-3 ${
+                        isPathActive("/resume-builder")
+                          ? "bg-primary text-primary-foreground"
+                          : ""
+                      }`}
+                    >
+                      <LucideFileUser className="!size-6" strokeWidth={1.5} />
+                      <span>AI Resume Builder</span>
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                </SidebarMenuItem>
+              </Collapsible>
+            )}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
+
       <Separator />
+
       <SidebarFooter>
         {loading || !user ? (
           <SidebarDropdownFooterSkeleton />
         ) : (
-          <SidebarDropdownFooter
-            user={{
-              name: isEmployee
-                ? `${user.employee?.username}`
-                : isCompany
-                ? user?.company?.name ?? ""
-                : "",
-              email: (user?.email ?? "") || (user?.phone ?? ""),
-              avatar: isEmployee
-                ? user.employee?.avatar ?? ""
-                : isCompany
-                ? user?.company?.avatar ?? ""
-                : "",
-            }}
-          />
+          <SidebarDropdownFooter user={userData} />
         )}
       </SidebarFooter>
     </Sidebar>

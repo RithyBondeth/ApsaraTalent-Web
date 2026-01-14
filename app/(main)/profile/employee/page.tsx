@@ -329,7 +329,10 @@ export default function EmployeeProfilePage() {
       return;
     }
 
-    setSocials([...socials, { platform: trimmedPlatform as TPlatform, url: trimmedUrl }]);
+    setSocials([
+      ...socials,
+      { platform: trimmedPlatform as TPlatform, url: trimmedUrl },
+    ]);
     setSocialInput({ platform: "", url: "" });
   };
 
@@ -479,7 +482,7 @@ export default function EmployeeProfilePage() {
           <div
             className="relative"
             onClick={() => {
-              if(!isEdit) setOpenProfilePopup(true)
+              if (!isEdit) setOpenProfilePopup(true);
             }}
           >
             <Avatar className="size-36" rounded="md">

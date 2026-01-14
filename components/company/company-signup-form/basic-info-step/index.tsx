@@ -99,9 +99,11 @@ export default function BasicInfoStepForm({
             <TypographyMuted className="text-xs">Locations</TypographyMuted>
             <Select
               onValueChange={(value: TLocations) => {
-                setSelectedLocation(value)
-                setValue?.("basicInfo.location", value, { shouldValidate: true })
-                trigger?.('basicInfo.location')
+                setSelectedLocation(value);
+                setValue?.("basicInfo.location", value, {
+                  shouldValidate: true,
+                });
+                trigger?.("basicInfo.location");
               }}
               value={selectedLocation || ""}
             >

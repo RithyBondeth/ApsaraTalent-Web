@@ -35,7 +35,7 @@ export const loginMethodConstant = [
   { id: 1, label: "Google", icon: GoogleIcon },
   { id: 2, label: "Facebook", icon: FacebookIcon },
   { id: 3, label: "LinkedIn", icon: LinkedInIcon },
-  { id: 4, label: "Github", icon: GithubIcon }
+  { id: 4, label: "Github", icon: GithubIcon },
 ];
 
 export const availabilityConstant = [

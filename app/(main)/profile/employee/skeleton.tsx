@@ -219,7 +219,7 @@ export default function EmployeeProfilePageSkeleton() {
               ))}
             </div>
           </div>
-          
+
           {/* Skills Section */}
           <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
             <div className="w-full flex flex-col gap-1">

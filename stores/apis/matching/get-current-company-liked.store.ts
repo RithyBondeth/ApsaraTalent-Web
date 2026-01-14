@@ -23,7 +23,7 @@ export const useGetCurrentCompanyLikedStore =
         const response = await axios.get<TGetCurrentCompanyLikedResponse>(
           API_GET_CURRENT_COMPANY_LIKED_URL(companyId)
         );
-      
+
         set({
           currentCompanyLiked: response.data,
           loading: false,
@@ -45,4 +45,4 @@ export const useGetCurrentCompanyLikedStore =
       }
     },
   }));
-2
+2;

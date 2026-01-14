@@ -250,7 +250,7 @@ export default function CompanySignup() {
       toast({
         description: (
           <div className="flex items-center gap-2">
-            <ApsaraLoadingSpinner size={40} loop/>
+            <ApsaraLoadingSpinner size={40} loop />
             <TypographySmall className="font-medium">
               Loading...
             </TypographySmall>

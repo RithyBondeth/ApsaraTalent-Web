@@ -28,7 +28,7 @@ export default function SkillReferenceStepForm({
 }: IStepFormProps<TEmployeeSignUp>) {
   const [openPopOver, setOpenPopOver] = useState(false);
   const [skillInput, setSkillInput] = useState("");
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   const initialSkills = getValues?.("skillAndReference.skills") || [];
   const [skills, setSkills] = useState<string[]>(initialSkills);
@@ -47,7 +47,7 @@ export default function SkillReferenceStepForm({
         title: "Duplicated Skill",
         description: "Please input another skill.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
-      })
+      });
       return;
     }
 
@@ -63,7 +63,7 @@ export default function SkillReferenceStepForm({
   };
 
   const removeSkill = async (skillToRemove: string) => {
-    const updated = skills.filter(skill => skill !== skillToRemove);
+    const updated = skills.filter((skill) => skill !== skillToRemove);
     setSkills(updated);
     setValue?.("skillAndReference.skills", updated);
     await trigger?.("skillAndReference.skills");
@@ -80,9 +80,16 @@ export default function SkillReferenceStepForm({
         <TypographyH4>Add your skills</TypographyH4>
         <div className="flex flex-wrap gap-3">
           {skills.map((skill, i) => (
-            <div key={i} className="flex items-center gap-3 py-2 px-3 rounded-3xl bg-muted">
+            <div
+              key={i}
+              className="flex items-center gap-3 py-2 px-3 rounded-3xl bg-muted"
+            >
               <TypographyMuted className="text-xs">{skill}</TypographyMuted>
-              <LucideXCircle className="text-muted-foreground cursor-pointer" width={'18px'} onClick={() => removeSkill(skill)}/>
+              <LucideXCircle
+                className="text-muted-foreground cursor-pointer"
+                width={"18px"}
+                onClick={() => removeSkill(skill)}
+              />
             </div>
           ))}
         </div>
@@ -108,26 +115,36 @@ export default function SkillReferenceStepForm({
           </PopoverContent>
         </Popover>
         {errors?.skillAndReference?.skills && (
-          <ErrorMessage>{getErrorMessage(errors.skillAndReference.skills)}</ErrorMessage>
+          <ErrorMessage>
+            {getErrorMessage(errors.skillAndReference.skills)}
+          </ErrorMessage>
         )}
-     </div>
+      </div>
       <div className="w-full flex flex-col items-start gap-3">
         <TypographyH4>Add your references</TypographyH4>
         <div className="w-full flex items-start gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
           {getValues?.("skillAndReference.resume") ? (
             <div className="flex flex-col items-start gap-2">
-            <TypographyMuted className="text-xs">Resume</TypographyMuted>
-            <div className="w-full flex justify-between items-center p-3 rounded-md bg-muted">
-              <TypographyMuted>{getValues('skillAndReference.resume').name.trim()}</TypographyMuted>
-              <LucideXCircle strokeWidth='1.3px' className="text-muted-foreground cursor-pointer"
-                onClick={() =>
-                  setValue?.("skillAndReference.resume", null as unknown as File, {
-                    shouldValidate: true,
-                  })
-                }
-              />
+              <TypographyMuted className="text-xs">Resume</TypographyMuted>
+              <div className="w-full flex justify-between items-center p-3 rounded-md bg-muted">
+                <TypographyMuted>
+                  {getValues("skillAndReference.resume").name.trim()}
+                </TypographyMuted>
+                <LucideXCircle
+                  strokeWidth="1.3px"
+                  className="text-muted-foreground cursor-pointer"
+                  onClick={() =>
+                    setValue?.(
+                      "skillAndReference.resume",
+                      null as unknown as File,
+                      {
+                        shouldValidate: true,
+                      }
+                    )
+                  }
+                />
+              </div>
             </div>
-          </div>
           ) : (
             <LabelInput
               label="Upload Resume"
@@ -143,21 +160,33 @@ export default function SkillReferenceStepForm({
                       });
                     }
                   }}
-                  validationMessage={getErrorMessage(errors?.skillAndReference?.resume)}
+                  validationMessage={getErrorMessage(
+                    errors?.skillAndReference?.resume
+                  )}
                 />
               }
             />
           )}
           {getValues?.("skillAndReference.coverLetter") ? (
             <div className="flex flex-col items-start gap-2">
-              <TypographyMuted className="text-xs">Cover Letter</TypographyMuted>
+              <TypographyMuted className="text-xs">
+                Cover Letter
+              </TypographyMuted>
               <div className="w-full flex justify-between items-center p-3 rounded-md bg-muted">
-              <TypographyMuted>{getValues('skillAndReference.coverLetter').name.trim()}</TypographyMuted>
-                <LucideXCircle strokeWidth='1.3px' className="text-muted-foreground cursor-pointer"
+                <TypographyMuted>
+                  {getValues("skillAndReference.coverLetter").name.trim()}
+                </TypographyMuted>
+                <LucideXCircle
+                  strokeWidth="1.3px"
+                  className="text-muted-foreground cursor-pointer"
                   onClick={() =>
-                    setValue?.("skillAndReference.coverLetter", null as unknown as File, {
-                      shouldValidate: true,
-                    })
+                    setValue?.(
+                      "skillAndReference.coverLetter",
+                      null as unknown as File,
+                      {
+                        shouldValidate: true,
+                      }
+                    )
                   }
                 />
               </div>
@@ -177,7 +206,9 @@ export default function SkillReferenceStepForm({
                       });
                     }
                   }}
-                  validationMessage={getErrorMessage(errors?.skillAndReference?.coverLetter)}
+                  validationMessage={getErrorMessage(
+                    errors?.skillAndReference?.coverLetter
+                  )}
                 />
               }
             />

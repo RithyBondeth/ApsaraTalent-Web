@@ -6,6 +6,7 @@ import { create } from "zustand";
 type TGetCurrentCompanyMatchingResponse = IEmployee[];
 type TGetCurrentCompanyMatchingState = {
   currentCompanyMatching: TGetCurrentCompanyMatchingResponse | null;
+  countCurrentCompanyMatching: number,
   loading: boolean;
   error: string | null;
   queryCurrentCompanyMatching: (companyId: string) => Promise<void>;
@@ -14,6 +15,7 @@ type TGetCurrentCompanyMatchingState = {
 export const useGetCurrentCompanyMatchingStore =
   create<TGetCurrentCompanyMatchingState>((set) => ({
     currentCompanyMatching: null,
+    countCurrentCompanyMatching: 0,
     loading: false,
     error: null,
     queryCurrentCompanyMatching: async (companyId: string) => {
@@ -23,9 +25,10 @@ export const useGetCurrentCompanyMatchingStore =
         const response = await axios.get<TGetCurrentCompanyMatchingResponse>(
           API_GET_CURRENT_COMPANY_MATCHING_URL(companyId)
         );
-        
+
         set({
           currentCompanyMatching: response.data,
+          countCurrentCompanyMatching: response.data.length,
           loading: false,
           error: null,
         });

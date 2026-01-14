@@ -90,7 +90,13 @@ const ParticlesBackground = () => {
 
   if (!clientTheme) return null; // Prevents flickering
 
-  return <Particles id="tsparticles" init={particlesInit} options={particleOptions as unknown as IOptions} />;
+  return (
+    <Particles
+      id="tsparticles"
+      init={particlesInit}
+      options={particleOptions as unknown as IOptions}
+    />
+  );
 };
 
 export default ParticlesBackground;

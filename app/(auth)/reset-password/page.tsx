@@ -26,7 +26,8 @@ import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function ResetPasswordPage() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
-  const [confirmPassVisibility, setConfirmPassVisibility] = useState<boolean>(false);
+  const [confirmPassVisibility, setConfirmPassVisibility] =
+    useState<boolean>(false);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const router = useRouter();
   const { toast } = useToast();
@@ -53,13 +54,13 @@ export default function ResetPasswordPage() {
   };
 
   useEffect(() => {
-    if(!isSubmitted) return;
+    if (!isSubmitted) return;
 
     if (loading)
       toast({
         description: (
           <div className="flex items-center gap-2">
-            <ApsaraLoadingSpinner size={50} loop/>
+            <ApsaraLoadingSpinner size={50} loop />
             <TypographySmall className="font-medium">
               Loading...
             </TypographySmall>
@@ -90,14 +91,15 @@ export default function ResetPasswordPage() {
         description: (
           <div className="flex items-center gap-2">
             <LucideCheck />
-            <TypographySmall className="font-medium leading-relaxed">{message}</TypographySmall>
+            <TypographySmall className="font-medium leading-relaxed">
+              {message}
+            </TypographySmall>
           </div>
         ),
         duration: 1500,
       });
       setTimeout(() => router.push("/login"), 1000);
     }
-
   }, [error, loading, message, isSubmitted]);
 
   return (

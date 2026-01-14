@@ -60,7 +60,7 @@ export default function CompanyCardSkeleton() {
           <Skeleton className="h-6 w-22 rounded-full" />
         </div>
       </div>
-        
+
       {/* Available Times Section Skeleton */}
       <div className="w-full flex flex-col gap-3">
         {/* Available Times Label Skeleton */}

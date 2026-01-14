@@ -8,13 +8,12 @@ import { clearAuthCookies } from "@/utils/auth/cookie-manager";
 
 // Updated response type - NO TOKENS
 export type TGithubLoginResponse = {
-  type: 'GITHUB_AUTH_SUCCESS' | 'GITHUB_AUTH_ERROR';
+  type: "GITHUB_AUTH_SUCCESS" | "GITHUB_AUTH_ERROR";
   error?: string;
   newUser?: boolean;
   user?: {
     email: string | null;
-    firstname: string | null;
-    lastname: string | null;
+    username: string | null;
     picture: string | null;
     provider: string | null;
     role: string | null;
@@ -31,13 +30,13 @@ export type TGithubLoginState = {
   role: string | null;
   newUser: boolean | null;
   email: string | null;
-  firstname: string | null;
-  lastname: string | null;
+  username: string | null;
   picture: string | null;
   provider: string | null;
   lastLoginMethod: EAuthLoginMethod | null;
   lastLoginAt: string | null;
-  githubLogin: (rememberMe: 'true' | 'false', usePopup?: boolean) => void;
+  setRole: (role: TUserRole) => void;
+  githubLogin: (rememberMe: "true" | "false", usePopup?: boolean) => void;
   clearToken: () => void;
 };
 
@@ -46,10 +45,10 @@ const BACKEND_ORIGIN = new URL(API_AUTH_SOCIAL_GITHUB_URL).origin;
 
 // Shared Finish Logic
 const FINISH_LOGIN = (data: TGithubLoginResponse) => {
-  if (!data || data.type !== 'GITHUB_AUTH_SUCCESS') {
+  if (!data || data.type !== "GITHUB_AUTH_SUCCESS") {
     useGithubLoginStore.setState({
       loading: false,
-      error: data?.error || 'Authentication failed',
+      error: data?.error || "Authentication failed",
       isAuthenticated: false,
     });
     return;
@@ -60,12 +59,11 @@ const FINISH_LOGIN = (data: TGithubLoginResponse) => {
   useGithubLoginStore.setState({
     loading: false,
     isAuthenticated: true,
-    message: 'Login successful',
+    message: "Login successful",
     role: data.user?.role || null,
     newUser: data.newUser || false,
     email: data.user?.email || null,
-    firstname: data.user?.firstname || null,
-    lastname: data.user?.lastname || null,
+    username: data.user?.username || null,
     picture: data.user?.picture || null,
     provider: data.user?.provider || null,
     lastLoginMethod: data.user?.lastLoginMethod || null,
@@ -83,14 +81,14 @@ export const useGithubLoginStore = create<TGithubLoginState>((set) => ({
   role: null,
   newUser: null,
   email: null,
-  firstname: null,
-  lastname: null,
+  username: null,
   picture: null,
   provider: null,
   lastLoginMethod: null,
   lastLoginAt: null,
+  setRole: (role: TUserRole) => set({ role: role }),
   // GitHub Login
-  githubLogin: (rememberMe: 'true' | 'false', usePopup = true) => {
+  githubLogin: (rememberMe: "true" | "false", usePopup = true) => {
     set({ loading: true, error: null });
 
     // Add remember parameter to URL
@@ -122,12 +120,12 @@ export const useGithubLoginStore = create<TGithubLoginState>((set) => ({
     const handleMessage = (ev: MessageEvent<TGithubLoginResponse>) => {
       // Strict origin check
       if (ev.origin !== BACKEND_ORIGIN) {
-        console.warn('Ignored message from unexpected origin:', ev.origin);
+        console.warn("Ignored message from unexpected origin:", ev.origin);
         return;
       }
 
       // Check message type
-      if (!ev.data || !ev.data.type?.startsWith('GITHUB_AUTH_')) {
+      if (!ev.data || !ev.data.type?.startsWith("GITHUB_AUTH_")) {
         return;
       }
 
@@ -168,11 +166,11 @@ export const useGithubLoginStore = create<TGithubLoginState>((set) => ({
 
   // Clear Token
   clearToken: () => {
-     // Use centralized cookie clearing
-     clearAuthCookies();
+    // Use centralized cookie clearing
+    clearAuthCookies();
 
-     // Clear user data from store
-     useGetCurrentUserStore.getState().clearUser();
+    // Clear user data from store
+    useGetCurrentUserStore.getState().clearUser();
 
     set({
       loading: false,
@@ -182,8 +180,7 @@ export const useGithubLoginStore = create<TGithubLoginState>((set) => ({
       role: null,
       newUser: null,
       email: null,
-      firstname: null,
-      lastname: null,
+      username: null,
       picture: null,
       provider: null,
       lastLoginMethod: null,

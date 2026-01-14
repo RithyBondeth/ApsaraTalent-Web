@@ -7,7 +7,9 @@ interface TemplateSelectionState {
   setSelectedTemplate: (template: ResumeTemplate) => void;
 }
 
-export const useTemplateSelectionStore = create<TemplateSelectionState>()((set) => ({
-  selectedTemplate: null,
-  setSelectedTemplate: (template) => set({ selectedTemplate: template }),
-}));
+export const useTemplateSelectionStore = create<TemplateSelectionState>()(
+  (set) => ({
+    selectedTemplate: null,
+    setSelectedTemplate: (template) => set({ selectedTemplate: template }),
+  })
+);

@@ -1,5 +1,5 @@
 // components/company-detail-skeleton.tsx
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function CompanyDetailPageSkeleton() {
   return (
@@ -9,7 +9,7 @@ export function CompanyDetailPageSkeleton() {
         <div className="relative flex items-center gap-5">
           {/* Company Logo */}
           <Skeleton className="size-32 rounded-md bg-muted" />
-          
+
           {/* Company Info */}
           <div className="flex flex-col gap-3">
             <Skeleton className="h-8 w-48 bg-muted" />
@@ -20,7 +20,7 @@ export function CompanyDetailPageSkeleton() {
             </div>
           </div>
         </div>
-        
+
         {/* Action Buttons */}
         <div className="absolute right-3 bottom-3 flex gap-3">
           <Skeleton className="h-10 w-32 bg-muted" />
@@ -53,7 +53,7 @@ export function CompanyDetailPageSkeleton() {
               <Skeleton className="h-6 w-40" />
               <Skeleton className="h-4 w-24" />
             </div>
-            
+
             {[...Array(2)].map((_, i) => (
               <div key={i} className="border border-muted p-4 rounded-md mb-4">
                 <Skeleton className="h-5 w-48 mb-3" />
@@ -91,7 +91,10 @@ export function CompanyDetailPageSkeleton() {
             <Skeleton className="h-6 w-40 mb-4" />
             <div className="flex gap-4 overflow-hidden">
               {[...Array(3)].map((_, i) => (
-                <Skeleton key={i} className="h-48 w-64 rounded-md flex-shrink-0" />
+                <Skeleton
+                  key={i}
+                  className="h-48 w-64 rounded-md flex-shrink-0"
+                />
               ))}
             </div>
           </div>
@@ -147,5 +150,5 @@ export function CompanyDetailPageSkeleton() {
         </div>
       </div>
     </div>
-  )
+  );
 }

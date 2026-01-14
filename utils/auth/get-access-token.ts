@@ -3,7 +3,7 @@ import { getCookie } from "cookies-next";
 // Get access token from cookie
 export const getUnifiedAccessToken = () => {
   try {
-    return getCookie('auth-token');
+    return getCookie("auth-token");
   } catch (error) {
     console.error("Error getting access token:", error);
     return null;
@@ -13,7 +13,7 @@ export const getUnifiedAccessToken = () => {
 // Get refresh token from cookie
 export const getRefreshToken = () => {
   try {
-    return getCookie('refresh-token');
+    return getCookie("refresh-token");
   } catch (error) {
     console.error("Error getting refresh token:", error);
     return null;
@@ -23,8 +23,8 @@ export const getRefreshToken = () => {
 // Get remember preference
 export const getRememberPreference = (): boolean => {
   try {
-    const preference = getCookie('remember-preference');
-    return preference === 'true';
+    const preference = getCookie("remember-preference");
+    return preference === "true";
   } catch (error) {
     console.error("Error getting remember preference:", error);
     return false;
@@ -34,14 +34,14 @@ export const getRememberPreference = (): boolean => {
 // Check if user is authenticated with enhanced validation
 export const isAuthenticated = (): boolean => {
   try {
-    const token = getCookie('auth-token');
-    
+    const token = getCookie("auth-token");
+
     if (!token) {
       return false;
     }
 
     // Basic token validation (you can enhance this with JWT decoding)
-    if (typeof token === 'string' && token.length > 0) {
+    if (typeof token === "string" && token.length > 0) {
       return true;
     }
 
@@ -93,16 +93,16 @@ export const validateAuthentication = async (): Promise<{
 
 // Client-side cookie helper for browser environments
 export const getClientSideToken = (): string | null => {
-  if (typeof document === 'undefined') {
+  if (typeof document === "undefined") {
     return null;
   }
 
   try {
     const cookie = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('auth-token='));
-    
-    return cookie ? cookie.split('=')[1] : null;
+      .split("; ")
+      .find((row) => row.startsWith("auth-token="));
+
+    return cookie ? cookie.split("=")[1] : null;
   } catch (error) {
     console.error("Error getting client-side token:", error);
     return null;

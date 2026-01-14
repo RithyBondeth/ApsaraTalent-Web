@@ -8,7 +8,7 @@ import { clearAuthCookies } from "@/utils/auth/cookie-manager";
 
 // Updated response type - NO TOKENS
 export type TLinkedInLoginResponse = {
-  type: 'LINKEDIN_AUTH_SUCCESS' | 'LINKEDIN_AUTH_ERROR';
+  type: "LINKEDIN_AUTH_SUCCESS" | "LINKEDIN_AUTH_ERROR";
   error?: string;
   newUser?: boolean;
   user?: {
@@ -37,7 +37,8 @@ export type TLinkedInLoginState = {
   provider: string | null;
   lastLoginMethod: EAuthLoginMethod | null;
   lastLoginAt: string | null;
-  linkedinLogin: (rememberMe: 'true' | 'false', usePopup?: boolean) => void;
+  setRole: (role: TUserRole) => void;
+  linkedinLogin: (rememberMe: "true" | "false", usePopup?: boolean) => void;
   clearToken: () => void;
 };
 
@@ -46,10 +47,10 @@ const BACKEND_ORIGIN = new URL(API_AUTH_SOCIAL_LINKEDIN_URL).origin;
 
 // Shared Finish Logic
 const FINISH_LOGIN = (data: TLinkedInLoginResponse) => {
-  if (!data || data.type !== 'LINKEDIN_AUTH_SUCCESS') {
+  if (!data || data.type !== "LINKEDIN_AUTH_SUCCESS") {
     useLinkedInLoginStore.setState({
       loading: false,
-      error: data?.error || 'Authentication failed',
+      error: data?.error || "Authentication failed",
       isAuthenticated: false,
     });
     return;
@@ -60,7 +61,7 @@ const FINISH_LOGIN = (data: TLinkedInLoginResponse) => {
   useLinkedInLoginStore.setState({
     loading: false,
     isAuthenticated: true,
-    message: 'Login successful',
+    message: "Login successful",
     role: data.user?.role || null,
     newUser: data.newUser || false,
     email: data.user?.email || null,
@@ -89,8 +90,9 @@ export const useLinkedInLoginStore = create<TLinkedInLoginState>((set) => ({
   provider: null,
   lastLoginMethod: null,
   lastLoginAt: null,
+  setRole: (role: TUserRole) => set({ role: role }),
   // LinkedIn Login
-  linkedinLogin: (rememberMe: 'true' | 'false', usePopup = true) => {
+  linkedinLogin: (rememberMe: "true" | "false", usePopup = true) => {
     set({ loading: true, error: null });
 
     // Add remember parameter to URL
@@ -122,12 +124,12 @@ export const useLinkedInLoginStore = create<TLinkedInLoginState>((set) => ({
     const handleMessage = (ev: MessageEvent<TLinkedInLoginResponse>) => {
       // Strict origin check
       if (ev.origin !== BACKEND_ORIGIN) {
-        console.warn('Ignored message from unexpected origin:', ev.origin);
+        console.warn("Ignored message from unexpected origin:", ev.origin);
         return;
       }
 
       // Check message type
-      if (!ev.data || !ev.data.type?.startsWith('LINKEDIN_AUTH_')) {
+      if (!ev.data || !ev.data.type?.startsWith("LINKEDIN_AUTH_")) {
         return;
       }
 
@@ -168,11 +170,11 @@ export const useLinkedInLoginStore = create<TLinkedInLoginState>((set) => ({
 
   // Clear Token
   clearToken: () => {
-     // Use centralized cookie clearing
-     clearAuthCookies();
+    // Use centralized cookie clearing
+    clearAuthCookies();
 
-     // Clear user data from store
-     useGetCurrentUserStore.getState().clearUser();
+    // Clear user data from store
+    useGetCurrentUserStore.getState().clearUser();
 
     set({
       loading: false,

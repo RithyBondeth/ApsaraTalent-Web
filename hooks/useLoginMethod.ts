@@ -27,7 +27,9 @@ export const useLoginMethod = () => {
 
   return {
     loginMethod: user?.lastLoginMethod || null,
-    loginMethodLabel: user?.lastLoginMethod ? getLoginMethodLabel(user.lastLoginMethod) : null,
+    loginMethodLabel: user?.lastLoginMethod
+      ? getLoginMethodLabel(user.lastLoginMethod)
+      : null,
     hasLoginMethod: !!user?.lastLoginMethod,
   };
 };

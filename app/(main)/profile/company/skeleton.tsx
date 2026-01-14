@@ -40,7 +40,10 @@ export function CompanyProfilePageSkeleton() {
               <Skeleton className="h-[1px] w-full" />
             </div>
             {[...Array(2)].map((_, i) => (
-              <div key={i} className="flex flex-col gap-4 p-4 border border-muted rounded-md">
+              <div
+                key={i}
+                className="flex flex-col gap-4 p-4 border border-muted rounded-md"
+              >
                 {[...Array(6)].map((_, j) => (
                   <div key={j} className="w-full">
                     <Skeleton className="h-4 w-24 mb-2" />

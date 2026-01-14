@@ -115,7 +115,9 @@ export default function EducationStepForm({
                 )}
               />
             </div>
-           <ErrorMessage>{errors!.educations?.[index]?.year?.message}</ErrorMessage>
+            <ErrorMessage>
+              {errors!.educations?.[index]?.year?.message}
+            </ErrorMessage>
           </div>
         </div>
       ))}

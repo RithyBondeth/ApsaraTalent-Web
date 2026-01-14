@@ -3,11 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 const protectedRoutes = [
   "/feed",
   "/profile",
-  "/search/employee",
-  "/search/company",
+  "/favorite",
+  "/search",
   "/matching",
   "/message",
   "/notification",
+  "/resume-builder",
 ];
 const authRoutes = [
   "/login",

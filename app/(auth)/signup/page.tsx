@@ -92,7 +92,6 @@ export default function SignupPage() {
     router.push("signup/company");
   };
 
-
   useEffect(() => {
     // Handle Google login data
     if (
@@ -176,7 +175,10 @@ export default function SignupPage() {
     <div className="size-[70%] flex flex-col items-start justify-center gap-3 tablet-sm:w-[90%]">
       {/* Title Section */}
       <div className="mb-5">
-        <LogoComponent isBlackLogo={theme === "light" ? false : true} className="!h-12 w-auto" />
+        <LogoComponent
+          isBlackLogo={theme === "light" ? false : true}
+          className="!h-12 w-auto"
+        />
         <TypographyH2>Welcome to Apsara Talent</TypographyH2>
         <TypographyMuted className="text-md">
           Connect with professional community around the world.

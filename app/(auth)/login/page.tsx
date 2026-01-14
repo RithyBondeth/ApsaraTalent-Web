@@ -48,13 +48,14 @@ import {
   DialogFooter,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useGetAllUsersStore } from "@/stores/apis/users/get-all-user.store";
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 import { getRememberPreference } from "@/utils/auth/get-access-token";
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
+import { useGetAllCompanyStore } from "@/stores/apis/company/get-all-cmp.store";
+import { useGetAllEmployeeStore } from "@/stores/apis/employee/get-all-emp.store";
 
 function LoginPage() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
@@ -63,10 +64,11 @@ function LoginPage() {
     string | null
   >(null);
   const [loginInitiated, setLoginInitiated] = useState<boolean>(false);
-  const [socialLoginInitiated, setSocialLoginInitiated] = useState<boolean>(false);
+  const [socialLoginInitiated, setSocialLoginInitiated] =
+    useState<boolean>(false);
   const [isPreloadingData, setIsPreloadingData] = useState<boolean>(false);
   const isProcessingSocialLogin = useRef<boolean>(false);
-  
+
   const router = useRouter();
   const { resolvedTheme } = useTheme();
   const { toast, dismiss } = useToast();
@@ -97,7 +99,8 @@ function LoginPage() {
 
   // User Stores
   const { getCurrentUser } = useGetCurrentUserStore();
-  const { getAllUsers } = useGetAllUsersStore();
+  const { queryCompany } = useGetAllCompanyStore();
+  const { queryEmployee } = useGetAllEmployeeStore();
   const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore(); // Companies liked by current employee
   const getCurrentCompanyLikedStore = useGetCurrentCompanyLikedStore(); // Employees liked by current company
   const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore(); // Companies favorited by current employee
@@ -117,9 +120,6 @@ function LoginPage() {
       // First get current user data
       await getCurrentUser();
 
-      // Get all users in parallel
-      getAllUsers();
-
       // Wait a bit for getCurrentUser to complete and update the store
       await new Promise<void>((resolve) => {
         setTimeout(async () => {
@@ -128,6 +128,9 @@ function LoginPage() {
           if (userData) {
             if (userData.role === "employee" && userData.employee?.id) {
               // Preload employee-specific data
+              console.log(
+                "Querying all companies, employee liked, and employee favorite inside Login Page!!!"
+              );
               await Promise.all([
                 getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(
                   userData.employee.id
@@ -135,9 +138,13 @@ function LoginPage() {
                 getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
                   userData.employee.id
                 ),
+                queryCompany(),
               ]);
             } else if (userData.role === "company" && userData.company?.id) {
               // Preload company-specific data
+              console.log(
+                "Querying all employees, company liked, and company favorite inside Login Page!!!"
+              );
               await Promise.all([
                 getCurrentCompanyLikedStore.queryCurrentCompanyLiked(
                   userData.company.id
@@ -145,6 +152,7 @@ function LoginPage() {
                 getAllCompanyFavoritesStore.queryAllCompanyFavorites(
                   userData.company.id
                 ),
+                queryEmployee(),
               ]);
             }
           }
@@ -187,6 +195,7 @@ function LoginPage() {
           console.log("User data preloaded successfully");
           dismiss();
           toast({
+            variant: 'success',
             description: (
               <div className="flex items-center gap-2">
                 <LucideCheck />
@@ -202,6 +211,7 @@ function LoginPage() {
           console.error("Error preloading user data:", error);
           dismiss();
           toast({
+            variant: 'destructive',
             description: (
               <div className="flex items-center gap-2">
                 <LucideCheck />
@@ -302,7 +312,11 @@ function LoginPage() {
     }
 
     // Handle successful authentication - show loading while preloading data
-    if (isAnySocialAuthenticated && !isAnySocialLoading && !isProcessingSocialLogin.current) {
+    if (
+      isAnySocialAuthenticated &&
+      !isAnySocialLoading &&
+      !isProcessingSocialLogin.current
+    ) {
       isProcessingSocialLogin.current = true; // Prevent duplicate execution
       dismiss(); // Dismiss authentication toast
 
@@ -325,13 +339,14 @@ function LoginPage() {
       preloadUserData()
         .then(() => {
           console.log("User data preloaded successfully");
-          dismiss(); 
+          dismiss();
           toast({
+            variant: 'success',
             description: (
               <div className="flex items-center gap-2">
                 <LucideCheck />
                 <TypographySmall className="font-medium leading-relaxed">
-                  Logged in successfully
+                  Logged In Successfully
                 </TypographySmall>
               </div>
             ),
@@ -342,6 +357,7 @@ function LoginPage() {
           console.error("Error preloading user data:", error);
           dismiss();
           toast({
+            variant: 'destructive',
             description: (
               <div className="flex items-center gap-2">
                 <LucideCheck />
@@ -352,7 +368,6 @@ function LoginPage() {
             ),
             duration: 1000,
           });
-
         })
         .finally(() => {
           setTimeout(() => {
@@ -439,7 +454,7 @@ function LoginPage() {
     isPreloadingData,
   ]);
 
-  const handleSocialLogin = (rememberMe: 'true' | 'false') => {
+  const handleSocialLogin = (rememberMe: "true" | "false") => {
     setSocialLoginInitiated(true);
     isProcessingSocialLogin.current = false; // Reset flag
     switch (socialTypeIdentifier) {
@@ -624,7 +639,7 @@ function LoginPage() {
             <Button
               variant={"outline"}
               onClick={() => {
-                handleSocialLogin('false');
+                handleSocialLogin("false");
                 setOpenRmbDialog(false);
               }}
             >
@@ -632,7 +647,7 @@ function LoginPage() {
             </Button>
             <Button
               onClick={() => {
-                handleSocialLogin('true');
+                handleSocialLogin("true");
                 setOpenRmbDialog(false);
               }}
             >

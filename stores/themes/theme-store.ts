@@ -15,15 +15,17 @@ export const useThemeStore = create<ThemeState>()(
       // Function to detect system dark mode (only on client-side)
       const getSystemTheme = () => {
         if (typeof window !== "undefined") {
-          return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          return window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light";
         }
         return "light"; // Default to light theme server-side
       };
 
       return {
         theme: "system", // Default theme
-        systemTheme: getSystemTheme(), 
-        
+        systemTheme: getSystemTheme(),
+
         setTheme: (theme) => set({ theme }),
 
         toggleTheme: () => {
@@ -48,7 +50,9 @@ export const useThemeStore = create<ThemeState>()(
 if (typeof window !== "undefined") {
   const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
   const updateSystemTheme = () => {
-    useThemeStore.setState({ systemTheme: mediaQuery.matches ? "dark" : "light" });
+    useThemeStore.setState({
+      systemTheme: mediaQuery.matches ? "dark" : "light",
+    });
   };
   mediaQuery.addEventListener("change", updateSystemTheme);
 }

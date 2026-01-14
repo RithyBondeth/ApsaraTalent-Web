@@ -562,7 +562,11 @@ export default function ProfilePage() {
 
     // Add new career
     const updatedCareers = [
-      ...careers,
+      ...careers.map((career) => ({
+        id: career.id ?? "",
+        name: career.name,
+        description: career.description ?? "",
+      })),
       { id: id ?? "", name: trimmed, description: description ?? "" },
     ];
     form.setValue("careerScopes", updatedCareers, {
@@ -600,7 +604,7 @@ export default function ProfilePage() {
 
     // If it has an ID, track it for deletion
     if ("id" in careerToDelete! && careerToDelete.id) {
-      setDeleteCareerScopeIds((prev) => [...prev, careerToDelete.id]);
+      setDeleteCareerScopeIds((prev) => [...prev, careerToDelete.id!]);
     }
 
     // Remove from form
@@ -1329,7 +1333,7 @@ export default function ProfilePage() {
                 openPositions.map((position, index) => {
                   const positionId = position.id;
                   const deadlineDate =
-                    selectedDates[positionId]?.deadline ||
+                    selectedDates[positionId!]?.deadline ||
                     new Date(position.deadlineDate);
                   return (
                     <OpenPositionForm
@@ -1337,7 +1341,7 @@ export default function ProfilePage() {
                       index={index}
                       form={form}
                       positionIndex={Number(position.id)}
-                      positionUUID={position.id}
+                      positionUUID={position.id ?? ""}
                       isEdit={isEdit}
                       title={position.title}
                       description={position.description}
@@ -1351,7 +1355,8 @@ export default function ProfilePage() {
                         data: deadlineDate,
                         onDataChange: (date: Date | undefined) => {
                           if (date) {
-                            handleDateChange(positionId, "deadline", date);
+                            if (positionId)
+                              handleDateChange(positionId, "deadline", date);
                             form.setValue(
                               `openPositions.${index}.deadlineDate`,
                               date
@@ -1360,14 +1365,16 @@ export default function ProfilePage() {
                         },
                       }}
                       onRemove={() => {
-                        if (isUuid(position.id)) {
-                          setOpenRemoveOpenPositionDialog(true);
-                          setCurrentOpenPositionID(position.id);
-                        } else {
-                          const updated = openPositions.filter(
-                            (op) => op.id !== positionId
-                          );
-                          setOpenPositions(updated);
+                        if (position.id) {
+                          if (isUuid(position.id)) {
+                            setOpenRemoveOpenPositionDialog(true);
+                            setCurrentOpenPositionID(position.id);
+                          } else {
+                            const updated = openPositions.filter(
+                              (op) => op.id !== positionId
+                            );
+                            setOpenPositions(updated);
+                          }
                         }
                       }}
                     />
@@ -1502,138 +1509,144 @@ export default function ProfilePage() {
         </div>
         <div className="w-[40%] flex flex-col gap-5">
           {/* Benefits Section */}
-          <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
-            <div className="w-full flex flex-col gap-1">
-              <TypographyH4>Benefits</TypographyH4>
-              <Divider />
-            </div>
-            <div className="w-full flex flex-col items-stretch gap-3">
-              <div className="w-full flex flex-wrap gap-3">
-                {benefits &&
-                  benefits.length > 0 &&
-                  benefits.map((benefit) => (
-                    <div
-                      className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs"
-                      key={benefit.label}
-                    >
-                      <IconLabel
-                        icon={
-                          <LucideCircleCheck stroke="white" fill="#0073E6" />
-                        }
-                        className="[&>p]:text-[#0073E6] font-medium"
-                        text={benefit.label}
-                      />
-                      {isEdit && (
-                        <LucideXCircle
-                          className="text-muted-foreground cursor-pointer text-red-500"
-                          width={"18px"}
-                          onClick={() => removeBenefit(benefit.label)}
-                        />
-                      )}
-                    </div>
-                  ))}
+          {benefits && benefits.length > 0 && (
+            <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
+              <div className="w-full flex flex-col gap-1">
+                <TypographyH4>Benefits</TypographyH4>
+                <Divider />
               </div>
-              {isEdit && (
-                <Popover
-                  open={openBenefitPopOver}
-                  onOpenChange={setOpenBenefitPopOver}
-                >
-                  <PopoverTrigger asChild>
-                    <Button className="w-full text-xs" variant="secondary">
-                      Add benefit
-                      <LucidePlus />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
-                    <Input
-                      placeholder="Enter your benefit (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
-                      value={benefitInput?.label}
-                      onChange={(e) =>
-                        setBenefitInput({ label: e.target.value })
-                      }
-                    />
-                    <div className="flex items-center gap-1 [&>button]:text-xs">
-                      <Button
-                        variant="outline"
-                        onClick={() => setOpenBenefitPopOver(false)}
+              <div className="w-full flex flex-col items-stretch gap-3">
+                <div className="w-full flex flex-wrap gap-3">
+                  {benefits &&
+                    benefits.length > 0 &&
+                    benefits.map((benefit) => (
+                      <div
+                        className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs"
+                        key={benefit.label}
                       >
-                        Cancel
+                        <IconLabel
+                          icon={
+                            <LucideCircleCheck stroke="white" fill="#0073E6" />
+                          }
+                          className="[&>p]:text-[#0073E6] font-medium"
+                          text={benefit.label}
+                        />
+                        {isEdit && (
+                          <LucideXCircle
+                            className="text-muted-foreground cursor-pointer text-red-500"
+                            width={"18px"}
+                            onClick={() => removeBenefit(benefit.label)}
+                          />
+                        )}
+                      </div>
+                    ))}
+                </div>
+                {isEdit && (
+                  <Popover
+                    open={openBenefitPopOver}
+                    onOpenChange={setOpenBenefitPopOver}
+                  >
+                    <PopoverTrigger asChild>
+                      <Button className="w-full text-xs" variant="secondary">
+                        Add benefit
+                        <LucidePlus />
                       </Button>
-                      <Button onClick={addBenefits} type="button">
-                        Save
-                      </Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              )}
+                    </PopoverTrigger>
+                    <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
+                      <Input
+                        placeholder="Enter your benefit (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
+                        value={benefitInput?.label}
+                        onChange={(e) =>
+                          setBenefitInput({ label: e.target.value })
+                        }
+                      />
+                      <div className="flex items-center gap-1 [&>button]:text-xs">
+                        <Button
+                          variant="outline"
+                          onClick={() => setOpenBenefitPopOver(false)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button onClick={addBenefits} type="button">
+                          Save
+                        </Button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Values Section */}
-          <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
-            <div className="w-full flex flex-col gap-1">
-              <TypographyH4>Values</TypographyH4>
-              <Divider />
-            </div>
-            <div className="w-full flex flex-col items-stretch gap-3">
-              <div className="w-full flex flex-wrap gap-3">
-                {values &&
-                  values.length > 0 &&
-                  values.map((value, index) => (
-                    <div
-                      className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs"
-                      key={index}
-                    >
-                      <IconLabel
-                        icon={
-                          <LucideCircleCheck stroke="white" fill="#69B41E" />
-                        }
-                        className="[&>p]:text-[#69B41E] font-medium"
-                        text={value.label}
-                      />
-                      {isEdit && (
-                        <LucideXCircle
-                          className="text-muted-foreground cursor-pointer text-red-500"
-                          width={"18px"}
-                          onClick={() => removeValue(value.label)}
-                        />
-                      )}
-                    </div>
-                  ))}
+          {values && values.length > 0 && (
+            <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
+              <div className="w-full flex flex-col gap-1">
+                <TypographyH4>Values</TypographyH4>
+                <Divider />
               </div>
-              {isEdit && (
-                <Popover
-                  open={openValuePopOver}
-                  onOpenChange={setOpenValuePopOver}
-                >
-                  <PopoverTrigger asChild>
-                    <Button className="w-full text-xs" variant="secondary">
-                      Add value
-                      <LucidePlus />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
-                    <Input
-                      placeholder="Enter your value (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
-                      value={valueInput?.label}
-                      onChange={(e) => setValueInput({ label: e.target.value })}
-                    />
-                    <div className="flex items-center gap-1 [&>button]:text-xs">
-                      <Button
-                        variant="outline"
-                        onClick={() => setOpenValuePopOver(false)}
+              <div className="w-full flex flex-col items-stretch gap-3">
+                <div className="w-full flex flex-wrap gap-3">
+                  {values &&
+                    values.length > 0 &&
+                    values.map((value, index) => (
+                      <div
+                        className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs"
+                        key={index}
                       >
-                        Cancel
+                        <IconLabel
+                          icon={
+                            <LucideCircleCheck stroke="white" fill="#69B41E" />
+                          }
+                          className="[&>p]:text-[#69B41E] font-medium"
+                          text={value.label}
+                        />
+                        {isEdit && (
+                          <LucideXCircle
+                            className="text-muted-foreground cursor-pointer text-red-500"
+                            width={"18px"}
+                            onClick={() => removeValue(value.label)}
+                          />
+                        )}
+                      </div>
+                    ))}
+                </div>
+                {isEdit && (
+                  <Popover
+                    open={openValuePopOver}
+                    onOpenChange={setOpenValuePopOver}
+                  >
+                    <PopoverTrigger asChild>
+                      <Button className="w-full text-xs" variant="secondary">
+                        Add value
+                        <LucidePlus />
                       </Button>
-                      <Button onClick={addValue} type="button">
-                        Save
-                      </Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              )}
+                    </PopoverTrigger>
+                    <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
+                      <Input
+                        placeholder="Enter your value (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
+                        value={valueInput?.label}
+                        onChange={(e) =>
+                          setValueInput({ label: e.target.value })
+                        }
+                      />
+                      <div className="flex items-center gap-1 [&>button]:text-xs">
+                        <Button
+                          variant="outline"
+                          onClick={() => setOpenValuePopOver(false)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button onClick={addValue} type="button">
+                          Save
+                        </Button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* CareersScopes Section */}
           <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
@@ -1703,13 +1716,14 @@ export default function ProfilePage() {
                             <CommandItem
                               key={index}
                               value={career.name}
-                              onSelect={() =>
-                                handleCareerSelect(
-                                  career.id,
-                                  career.name,
-                                  career.description ?? ""
-                                )
-                              } // Handle career selection
+                              onSelect={() => {
+                                if (career.id)
+                                  handleCareerSelect(
+                                    career.id,
+                                    career.name,
+                                    career.description ?? ""
+                                  );
+                              }} // Handle career selection
                             >
                               {career.name}
                               <LucideCircleCheck

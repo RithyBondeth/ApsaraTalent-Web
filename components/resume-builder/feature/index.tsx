@@ -1,6 +1,10 @@
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyLead } from "@/components/utils/typography/typography-lead";
-import { LucideChartSpline, LucidePencilRuler, LucideSearch } from "lucide-react";
+import {
+  LucideChartSpline,
+  LucidePencilRuler,
+  LucideSearch,
+} from "lucide-react";
 
 export default function ResumeBuilderFeature() {
   return (
@@ -9,7 +13,10 @@ export default function ResumeBuilderFeature() {
       <div className="flex justify-between items-start gap-5 tablet-lg:flex-col">
         <div className="flex flex-col items-center gap-2">
           <div className="p-5 rounded-full bg-blue-100">
-            <LucidePencilRuler className="text-blue-500 size-10" strokeWidth={'1.3px'}/>
+            <LucidePencilRuler
+              className="text-blue-500 size-10"
+              strokeWidth={"1.3px"}
+            />
           </div>
           <TypographyLead className="text-md text-center text-primary font-medium">
             Smart Content Optimization
@@ -21,7 +28,10 @@ export default function ResumeBuilderFeature() {
         </div>
         <div className="flex flex-col items-center gap-2">
           <div className="p-5 rounded-full bg-green-100">
-            <LucideSearch className="text-green-500 size-10" strokeWidth={'1.3px'}/>
+            <LucideSearch
+              className="text-green-500 size-10"
+              strokeWidth={"1.3px"}
+            />
           </div>
           <TypographyLead className="text-md text-center text-primary font-medium">
             Smart Content Optimization
@@ -33,7 +43,10 @@ export default function ResumeBuilderFeature() {
         </div>
         <div className="flex flex-col items-center gap-2">
           <div className="p-5 rounded-full bg-purple-100">
-            <LucideChartSpline className="text-purple-500 size-10" strokeWidth={'1.3px'}/>
+            <LucideChartSpline
+              className="text-purple-500 size-10"
+              strokeWidth={"1.3px"}
+            />
           </div>
           <TypographyLead className="text-md text-center text-primary font-medium">
             Smart Content Optimization

@@ -20,13 +20,13 @@ export class ImageCache {
   private constructor() {
     // Load cached images from localStorage on initialization
     this.loadFromStorage();
-    
+
     // Cleanup expired cache entries every 5 minutes
     setInterval(() => this.cleanup(), 5 * 60 * 1000);
-    
+
     // Save cache to localStorage before page unload
-    if (typeof window !== 'undefined') {
-      window.addEventListener('beforeunload', () => this.saveToStorage());
+    if (typeof window !== "undefined") {
+      window.addEventListener("beforeunload", () => this.saveToStorage());
     }
   }
 
@@ -41,7 +41,7 @@ export class ImageCache {
    * Get cached image or fetch and cache if not available
    */
   public async getCachedImage(url: string): Promise<string> {
-    if (!url || typeof window === 'undefined') return url;
+    if (!url || typeof window === "undefined") return url;
 
     // Check if image is already cached and not expired
     const cached = this.cache.get(url);
@@ -53,7 +53,7 @@ export class ImageCache {
       // Fetch image from network
       const response = await fetch(url, {
         headers: {
-          'Cache-Control': 'public, max-age=3600', // 1 hour cache
+          "Cache-Control": "public, max-age=3600", // 1 hour cache
         },
       });
 
@@ -61,14 +61,14 @@ export class ImageCache {
         throw new Error(`Failed to fetch image: ${response.status}`);
       }
 
-      const contentLength = response.headers.get('content-length');
+      const contentLength = response.headers.get("content-length");
       if (contentLength && parseInt(contentLength) > this.MAX_IMAGE_SIZE) {
         console.warn(`Image too large to cache: ${url}`);
         return url; // Return original URL for large images
       }
 
       const blob = await response.blob();
-      
+
       // Cache the image
       const now = Date.now();
       const cachedImage: CachedImage = {
@@ -79,7 +79,7 @@ export class ImageCache {
       };
 
       this.cache.set(url, cachedImage);
-      
+
       // Ensure cache doesn't exceed max size
       this.enforceMaxSize();
 
@@ -95,10 +95,10 @@ export class ImageCache {
    */
   public async preloadImages(urls: string[]): Promise<void> {
     const promises = urls
-      .filter(url => url && !this.cache.has(url))
+      .filter((url) => url && !this.cache.has(url))
       .slice(0, 10) // Limit concurrent preloads
-      .map(url => this.getCachedImage(url).catch(() => url));
-    
+      .map((url) => this.getCachedImage(url).catch(() => url));
+
     await Promise.allSettled(promises);
   }
 
@@ -117,7 +117,7 @@ export class ImageCache {
    * Clear all cached images
    */
   public clearAll(): void {
-    this.cache.forEach(cached => {
+    this.cache.forEach((cached) => {
       URL.revokeObjectURL(URL.createObjectURL(cached.blob));
     });
     this.cache.clear();
@@ -128,9 +128,11 @@ export class ImageCache {
    * Get cache statistics
    */
   public getStats() {
-    const totalSize = Array.from(this.cache.values())
-      .reduce((size, cached) => size + cached.blob.size, 0);
-    
+    const totalSize = Array.from(this.cache.values()).reduce(
+      (size, cached) => size + cached.blob.size,
+      0
+    );
+
     return {
       count: this.cache.size,
       totalSize: `${(totalSize / 1024 / 1024).toFixed(2)} MB`,
@@ -140,9 +142,10 @@ export class ImageCache {
 
   private cleanup(): void {
     const now = Date.now();
-    const expired = Array.from(this.cache.entries())
-      .filter(([, cached]) => cached.expiresAt <= now);
-    
+    const expired = Array.from(this.cache.entries()).filter(
+      ([, cached]) => cached.expiresAt <= now
+    );
+
     expired.forEach(([url, cached]) => {
       URL.revokeObjectURL(URL.createObjectURL(cached.blob));
       this.cache.delete(url);
@@ -153,9 +156,10 @@ export class ImageCache {
     if (this.cache.size <= this.MAX_CACHE_SIZE) return;
 
     // Remove oldest entries
-    const entries = Array.from(this.cache.entries())
-      .sort(([, a], [, b]) => a.timestamp - b.timestamp);
-    
+    const entries = Array.from(this.cache.entries()).sort(
+      ([, a], [, b]) => a.timestamp - b.timestamp
+    );
+
     const toRemove = entries.slice(0, entries.length - this.MAX_CACHE_SIZE);
     toRemove.forEach(([url, cached]) => {
       URL.revokeObjectURL(URL.createObjectURL(cached.blob));
@@ -165,37 +169,39 @@ export class ImageCache {
 
   private saveToStorage(): void {
     try {
-      const cacheData = Array.from(this.cache.entries()).map(([url, cached]) => ({
-        url,
-        timestamp: cached.timestamp,
-        expiresAt: cached.expiresAt,
-        // Note: We don't save the blob to localStorage due to size constraints
-      }));
-      
-      localStorage.setItem('image-cache-meta', JSON.stringify(cacheData));
+      const cacheData = Array.from(this.cache.entries()).map(
+        ([url, cached]) => ({
+          url,
+          timestamp: cached.timestamp,
+          expiresAt: cached.expiresAt,
+          // Note: We don't save the blob to localStorage due to size constraints
+        })
+      );
+
+      localStorage.setItem("image-cache-meta", JSON.stringify(cacheData));
     } catch (error) {
-      console.warn('Failed to save cache metadata to localStorage:', error);
+      console.warn("Failed to save cache metadata to localStorage:", error);
     }
   }
 
   private loadFromStorage(): void {
     try {
-      const metaData = localStorage.getItem('image-cache-meta');
+      const metaData = localStorage.getItem("image-cache-meta");
       if (!metaData) return;
-      
+
       // We only load metadata from localStorage
       // Actual images will be re-fetched as needed
       // This helps track which images were previously cached
     } catch (error) {
-      console.warn('Failed to load cache metadata from localStorage:', error);
+      console.warn("Failed to load cache metadata from localStorage:", error);
     }
   }
 
   private clearStorage(): void {
     try {
-      localStorage.removeItem('image-cache-meta');
+      localStorage.removeItem("image-cache-meta");
     } catch (error) {
-      console.warn('Failed to clear cache metadata from localStorage:', error);
+      console.warn("Failed to clear cache metadata from localStorage:", error);
     }
   }
 }
