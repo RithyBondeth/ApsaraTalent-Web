@@ -61,6 +61,7 @@ import { useGetOneCompanyStore } from "@/stores/apis/company/get-one-cmp.store";
 import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
 import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
+import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
 
 export default function CompanyDetailPage() {
   const param = useParams<{ companyId: string }>();
@@ -87,6 +88,7 @@ export default function CompanyDetailPage() {
   const { queryCurrentEmployeeLiked } = useGetCurrentEmployeeLikedStore();
   const employeeFavCompanyStore = useEmployeeFavCompanyStore();
   const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
+  const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
 
   // Initialize component (client-side only)
   useEffect(() => {
@@ -241,6 +243,9 @@ export default function CompanyDetailPage() {
             </div>
           ),
         });
+        await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
+          employeeId
+        );
       } catch (error) {
         const err = employeeFavCompanyStore.error || "Failed to save company";
         toast({ title: "Error", description: err, variant: "destructive" });
