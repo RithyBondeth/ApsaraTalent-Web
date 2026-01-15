@@ -506,10 +506,8 @@ export default function EmployeeProfilePage() {
             )}
           </div>
           <input
-            ref={avatarInputRef}
-            type="file"
-            className="hidden"
-            accept="image/*"
+            title="Upload Avatar"
+            placeholder="Upload Avatar"
             onChange={(e) => handleFileChange(e, "avatar")}
           />
           <div className="flex flex-col items-start gap-1 tablet-sm:items-center">
@@ -1125,6 +1123,7 @@ export default function EmployeeProfilePage() {
                       className="hidden"
                       ref={resumeInputRef}
                       onChange={(e) => handleFileChange(e, "resume")}
+                      aria-label="Upload resume file"
                     />
                   </div>
                   <div className="flex items-center gap-1">
@@ -1184,6 +1183,7 @@ export default function EmployeeProfilePage() {
                       className="hidden"
                       ref={coverLetterInputRef}
                       onChange={(e) => handleFileChange(e, "coverLetter")}
+                      aria-label="Upload cover letter file"
                     />
                   </div>
                   <div className="flex items-center gap-1">
