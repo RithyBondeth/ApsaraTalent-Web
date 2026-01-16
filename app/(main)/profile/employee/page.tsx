@@ -79,12 +79,16 @@ import { dateFormatter } from "@/utils/functions/dateformatter";
 import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
 import Tag from "@/components/utils/tag";
 import Image from "next/image";
+import RemoveAvatarOrCoverDialog from "../company/_dialogs/remove-avatar-cover-dialog";
 
 export default function EmployeeProfilePage() {
+  // Store hooks
   const { user, loading, getCurrentUser } = useGetCurrentUserStore();
   const employee = user?.employee;
 
   const { toast } = useToast();
+
+  // Form hooks
   const form = useForm<TEmployeeProfileForm>({
     resolver: zodResolver(employeeFormSchema),
     defaultValues: {
@@ -127,10 +131,9 @@ export default function EmployeeProfilePage() {
   const [education, setEducation] = useState<IEducation[]>([]);
   const [experience, setExperience] = useState<IExperience[]>([]);
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
-  const [socialInput, setSocialInput] = useState<{
-    platform: TPlatform | "";
-    url: string;
-  }>({ platform: "", url: "" });
+  const [openRemoveAvatarDialog, setOpenRemoveAvatarDialog] =
+    useState<boolean>(false);
+  const [socialInput, setSocialInput] = useState<ISocial | null>(null);
   const [socials, setSocials] = useState<ISocial[]>([]);
   const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
   const [skills, setSkills] = useState<ISkill[]>([]);
@@ -309,8 +312,8 @@ export default function EmployeeProfilePage() {
 
   //Socials
   const addSocial = () => {
-    const trimmedPlatform = socialInput.platform;
-    const trimmedUrl = socialInput.url.trim();
+    const trimmedPlatform = socialInput?.platform.trim();
+    const trimmedUrl = socialInput?.url.trim();
 
     if (!trimmedPlatform || !trimmedUrl) return;
 
@@ -325,7 +328,7 @@ export default function EmployeeProfilePage() {
         description: "This social platform already exists.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
-      setSocialInput({ platform: "", url: "" });
+      setSocialInput(null);
       return;
     }
 
@@ -333,7 +336,7 @@ export default function EmployeeProfilePage() {
       ...socials,
       { platform: trimmedPlatform as TPlatform, url: trimmedUrl },
     ]);
-    setSocialInput({ platform: "", url: "" });
+    setSocialInput(null);
   };
 
   const removeSocial = (index: number) => {
@@ -475,6 +478,19 @@ export default function EmployeeProfilePage() {
     form.handleSubmit(onSubmit, console.error)(e);
   };
 
+  const handleRemoveEmpAvatar = async () => {
+    if(employee) {
+    
+    }
+  
+    // Refetch current user
+    await getCurrentUser();
+    setIsEdit(false);
+
+    // Close dialog
+    setOpenRemoveAvatarDialog(false);
+  }
+
   return user ? (
     <form className="!min-w-full flex flex-col gap-5" onSubmit={handleSubmit}>
       <div className="flex items-center justify-between border border-muted rounded-md p-5 tablet-sm:flex-col tablet-sm:[&>div]:w-full tablet-sm:gap-5">
@@ -496,19 +512,40 @@ export default function EmployeeProfilePage() {
               </AvatarFallback>
             </Avatar>
             {isEdit && (
-              <Button
-                className="size-8 flex justify-center items-center cursor-pointer absolute bottom-1 right-1 p-1 rounded-full bg-foreground text-primary-foreground"
-                type="button"
-                onClick={() => avatarInputRef.current?.click()}
-              >
-                <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
-              </Button>
+              <div className="absolute bottom-1 right-1 flex items-center gap-1">
+                <Button
+                  className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-foreground text-primary-foreground"
+                  onClick={() => avatarInputRef.current?.click()}
+                  type="button"
+                >
+                  <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
+                </Button>
+                {employee.avatar && (
+                  <Button
+                    className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-red-500 text-red-100"
+                    onClick={() => setOpenRemoveAvatarDialog(true)}
+                    type="button"
+                  >
+                    <LucideXCircle width={"18px"} strokeWidth={"1.2px"} />
+                  </Button>
+                )}
+                <RemoveAvatarOrCoverDialog 
+                  type="avatar"
+                  setOnRemoveAvatarOrCoverDialog={setOpenRemoveAvatarDialog}
+                  onRemoveAvatarOrCoverDialog={openRemoveAvatarDialog}
+                  onNoClick={() => setOpenRemoveAvatarDialog(false)}
+                  onYesClick={handleRemoveEmpAvatar}
+                />
+              </div>
             )}
           </div>
           <input
-            title="Upload Avatar"
-            placeholder="Upload Avatar"
+            ref={avatarInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
             onChange={(e) => handleFileChange(e, "avatar")}
+            aria-label="Upload avatar image"
           />
           <div className="flex flex-col items-start gap-1 tablet-sm:items-center">
             <TypographyH3>{employee.username}</TypographyH3>
@@ -1273,9 +1310,9 @@ export default function EmployeeProfilePage() {
                         </TypographyMuted>
                         <Select
                           onValueChange={(value: TPlatform) =>
-                            setSocialInput({ ...socialInput, platform: value })
+                            setSocialInput({ ...socialInput!, platform: value })
                           }
-                          value={socialInput.platform}
+                          value={socialInput?.platform}
                         >
                           <SelectTrigger className="h-12 text-muted-foreground">
                             <SelectValue placeholder="Platform" />
@@ -1299,10 +1336,10 @@ export default function EmployeeProfilePage() {
                             placeholder="Link"
                             id="link"
                             name="link"
-                            value={socialInput.url}
+                            value={socialInput?.url}
                             onChange={(e) =>
                               setSocialInput({
-                                ...socialInput,
+                                ...socialInput!,
                                 url: e.target.value,
                               })
                             }

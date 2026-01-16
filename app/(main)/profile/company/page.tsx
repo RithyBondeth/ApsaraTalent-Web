@@ -103,7 +103,6 @@ import { useRemoveCmpAvatarStore } from "@/stores/apis/company/remove-cmp-avatar
 import { useRemoveCmpCoverStore } from "@/stores/apis/company/remove-cmp-cover.store";
 import emptySvgImage from "@/assets/svg/empty.svg";
 import Image from "next/image";
-import { trim, update } from "lodash";
 import { capitalizeWords } from "@/utils/functions/capitalize-words";
 import RemoveAvatarOrCoverDialog from "./_dialogs/remove-avatar-cover-dialog";
 
@@ -230,6 +229,7 @@ export default function ProfilePage() {
   };
 
   const disableEditMode = () => {
+    if(avatarFile) setAvatarFile(null);
     setIsEdit(false);
     form.reset();
   };
@@ -1077,6 +1077,7 @@ export default function ProfilePage() {
           className="hidden"
           accept="image/*"
           onChange={(e) => handleFileChange(e, "cover")}
+          aria-label="Upload cover image"
         />
         <div className="relative flex items-center gap-5 tablet-sm:flex-col">
           <Avatar
@@ -1127,6 +1128,7 @@ export default function ProfilePage() {
               className="hidden"
               accept="image/*"
               onChange={(e) => handleFileChange(e, "avatar")}
+              aria-label="Upload avatar image"
             />
           </Avatar>
           <div className="flex flex-col items-start gap-2 text-muted tablet-sm:items-center">
