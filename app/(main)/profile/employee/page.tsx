@@ -86,6 +86,7 @@ export default function EmployeeProfilePage() {
   const { user, loading, getCurrentUser } = useGetCurrentUserStore();
   const employee = user?.employee;
 
+
   const { toast } = useToast();
 
   // Form hooks
@@ -479,8 +480,8 @@ export default function EmployeeProfilePage() {
   };
 
   const handleRemoveEmpAvatar = async () => {
-    if(employee) {
-    
+    if(employee) {  
+     
     }
   
     // Refetch current user
