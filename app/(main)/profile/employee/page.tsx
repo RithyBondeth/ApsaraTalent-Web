@@ -80,11 +80,13 @@ import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
 import Tag from "@/components/utils/tag";
 import Image from "next/image";
 import RemoveAvatarOrCoverDialog from "../company/_dialogs/remove-avatar-cover-dialog";
+import { useRemoveEmpAvatarStore } from "@/stores/apis/employee/remove-emp-avatar.store";
 
 export default function EmployeeProfilePage() {
   // Store hooks
   const { user, loading, getCurrentUser } = useGetCurrentUserStore();
   const employee = user?.employee;
+  const removeEmpAvatar = useRemoveEmpAvatarStore();
 
 
   const { toast } = useToast();
@@ -481,7 +483,7 @@ export default function EmployeeProfilePage() {
 
   const handleRemoveEmpAvatar = async () => {
     if(employee) {  
-     
+     await removeEmpAvatar.removeEmpAvatar(employee.id);
     }
   
     // Refetch current user

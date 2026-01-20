@@ -35,8 +35,8 @@ export const useRemoveEmpAvatarStore = create<TRemoveEmpAvatarStoreState>(
         } else {
           set({
             loading: false,
-            error: "An error occurred while removing employee's avatar"
-          })
+            error: "An error occurred while removing employee's avatar",
+          });
         }
       }
     },

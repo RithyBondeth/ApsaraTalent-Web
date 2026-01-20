@@ -954,8 +954,9 @@ export default function ProfilePage() {
 
     // Refetch current user
     await getCurrentUser();
+    console.log("New Current User: ", user);
     setIsEdit(false);
-
+z
     // Close dialog
     setOpenRemoveAvatarDialog(false);
   };
