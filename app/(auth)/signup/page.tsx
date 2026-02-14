@@ -45,28 +45,30 @@ import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login
 import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 
 export default function SignupPage() {
-  const [selectedLocation, setSelectionLocation] = useState<TLocations | null>(
-    null,
-  );
-  const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
-  const [confirmPassVisibility, setConfirmPassVisibility] =
-    useState<boolean>(false);
+  // Utils
   const router = useRouter();
-  const [selectedGender, setSelectedGender] = useState<TGender | null>(null);
   const { theme } = useThemeStore();
 
+  // Signup Helpers
   const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
+  const [selectedLocation, setSelectionLocation] = useState<TLocations | null>(null);
+  const [selectedGender, setSelectedGender] = useState<TGender | null>(null);
+  const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
+  const [confirmPassVisibility, setConfirmPassVisibility] = useState<boolean>(false);
+
+  // API Integration
   const googleUserData = useGoogleLoginStore();
   const githubUserData = useGithubLoginStore();
   const linkedInUserData = useLinkedInLoginStore();
   const facebookUserData = useFacebookLoginStore();
-
+    
+  // Employee and Company Form
   const isEmployeeForm =
-    (basicSignupData?.selectedRole ||
-      googleUserData.role ||
-      githubUserData.role ||
-      linkedInUserData.role ||
-      facebookUserData.role) === "employee";
+  (basicSignupData?.selectedRole ||
+    googleUserData.role ||
+    githubUserData.role ||
+    linkedInUserData.role ||
+    facebookUserData.role) === "employee";
 
   const cmpForm = useForm<TBasicSignupCompanySchema>({
     resolver: zodResolver(basicSignupCompanySchema),
@@ -74,15 +76,16 @@ export default function SignupPage() {
   const empForm = useForm<TBasicSignupEmployeeSchema>({
     resolver: zodResolver(basicSignupEmployeeSchema),
   });
-
+ 
+  // Employee and Company Error
   const employeeErrors = empForm.formState
     .errors as FieldErrors<TBasicSignupEmployeeSchema>;
   const companyErrors = cmpForm.formState
     .errors as FieldErrors<TBasicSignupCompanySchema>;
 
+  // Set Basic Signup Data for Employee
   const onSubmitEmployee = (data: TBasicSignupEmployeeSchema) => {
-    console.log(data);
-    // Ensure phone is never null, convert null/undefined to undefined as type TBasicSignupData expects string | undefined
+    console.log("Basic Employee Data: ", data);
     const basicSignupData = {
       ...data,
       phone: data.phone ?? undefined,
@@ -91,9 +94,9 @@ export default function SignupPage() {
     router.push("signup/employee");
   };
 
+  // Set Basic Signup Data for Company
   const onSubmitCompany = (data: TBasicSignupCompanySchema) => {
-    console.log(data);
-    // Ensure phone is never null, convert null/undefined to undefined as type TBasicSignupData expects string | undefined
+    console.log("Basic Company Data: ", data);
     const basicSignupData = {
       ...data,
       phone: data.phone ?? undefined,
@@ -102,8 +105,9 @@ export default function SignupPage() {
     router.push("signup/company");
   };
 
+  // Social Signup Effect
   useEffect(() => {
-    // Handle Google login data
+    // Handle Google login data - Auto Fill Information in Form
     if (
       googleUserData.email &&
       googleUserData.firstname &&
@@ -120,7 +124,7 @@ export default function SignupPage() {
       );
     }
 
-    // Handle LinkedIn login data
+    // Handle LinkedIn login data - Auto Fill Information in Form
     if (
       linkedInUserData.email &&
       linkedInUserData.firstname &&
@@ -137,7 +141,7 @@ export default function SignupPage() {
       );
     }
 
-    // Handle GitHub login data
+    // Handle GitHub login data - Auto Fill Information in Form
     if (githubUserData.email && githubUserData.username) {
       cmpForm.setValue("email", githubUserData.email);
 
@@ -145,7 +149,7 @@ export default function SignupPage() {
       empForm.setValue("username", githubUserData.username);
     }
 
-    // Handle Facebook login data
+    // Handle Facebook login data - Auto Fill Information in Form
     if (
       facebookUserData.email &&
       facebookUserData.firstname &&
@@ -194,7 +198,7 @@ export default function SignupPage() {
           Connect with professional community around the world.
         </TypographyMuted>
       </div>
-      {/* End Title Section */}
+     
       {/* Form Section */}
       <form
         className="w-full flex flex-col items-stretch gap-5"
@@ -460,7 +464,6 @@ export default function SignupPage() {
           </Button>
         </div>
       </form>
-      {/* End Form Section */}
     </div>
   );
 }
