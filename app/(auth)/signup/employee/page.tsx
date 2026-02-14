@@ -57,7 +57,7 @@ export default function EmployeeSignup() {
   // API Integration - Employee Signup
   const empSignup = useEmployeeSignupStore();
 
-  // API Integration - Employee Avatar,Cover and Resume
+  // API Integration - Employee Avatar, Resume and CoverLetter
   const uploadAvatar = useUploadEmployeeAvatarStore();
   const uploadResume = useUploadEmployeeResumeStore();
   const uploadCoverLetter = useUploadEmployeeCoverLetter();
@@ -497,7 +497,8 @@ export default function EmployeeSignup() {
             />
           )}
 
-          {/* Navigation Buttons Button */}
+          {/* Next & Previous Step Section */}
+          {/* Navigation Buttons Section */}
           <div className="flex justify-between my-8">
             {step > 1 && (
               <Button type="button" onClick={prevStep}>
