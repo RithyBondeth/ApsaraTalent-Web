@@ -17,12 +17,13 @@ type TVerifyOTPStoreState = TVerifyOTPResponse & {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
+  role: string | null;
   message: string | null;
   verifyOtp: (
     phone: string,
     otpCode: string,
     rememberMe: boolean,
-  ) => Promise<IUser>;
+  ) => Promise<void>;
   clearToken: () => void;
 };
 
@@ -32,6 +33,7 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
   isAuthenticated: false,
   accessToken: null,
   refreshToken: null,
+  role: null,
   user: null,
   message: null,
   verifyOtp: async (phone: string, otpCode: string, rememberMe: boolean) => {
@@ -46,22 +48,29 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
         },
       );
 
+      const role = response.data.user.role;
+      const hasTokens =
+        !!response.data.accessToken && !!response.data.refreshToken;
+      const fullyAuthed = hasTokens && role !== "none";
+
       set({
         loading: false,
-        isAuthenticated: !!response.data.accessToken,
+        isAuthenticated: fullyAuthed,
         message: response.data.message,
+        role: response.data.user.role,
         error: null,
       });
 
       // Use centralized cookie management
-      if (response.data.accessToken && response.data.refreshToken) {
+      if (fullyAuthed) {
         setAuthCookies(
-          response.data.accessToken,
-          response.data.refreshToken,
+          response.data.accessToken!,
+          response.data.refreshToken!,
           rememberMe,
         );
+      } else {
+        clearAuthCookies();
       }
-      return response.data.user;
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const errorMessage =

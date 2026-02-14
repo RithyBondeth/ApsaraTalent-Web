@@ -192,7 +192,7 @@ function LoginPage() {
       // Preload all user data while showing loading message
       preloadUserData()
         .then(() => {
-          console.log("User data preloaded successfully");
+          console.log("User data preloaded successfully in loin page");
           dismiss();
           toast({
             variant: "success",
@@ -208,7 +208,7 @@ function LoginPage() {
           });
         })
         .catch((error) => {
-          console.error("Error preloading user data:", error);
+          console.error("Error preloading user data: ", error);
           dismiss();
           toast({
             variant: "destructive",
