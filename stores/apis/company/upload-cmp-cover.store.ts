@@ -41,11 +41,12 @@ export const useUploadCompanyCoverStore = create<TUploadCompanyCoverState>(
               ? error.response.data.message.join(", ")
               : error.response?.data?.message || error.message;
 
-          set({ loading: false, error: errorMessage });
+          set({ loading: false, error: errorMessage, message: errorMessage });
         } else {
           set({
             loading: false,
             error: "An error occurred while uploading company's cover",
+            message: "An error occurred while uploading company's cover",
           });
         }
       }

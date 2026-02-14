@@ -58,11 +58,12 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
                 ? error.response.data.message.join(", ")
                 : error.response?.data?.message || error.message;
 
-            set({ loading: false, error: errorMessage });
+            set({ loading: false, error: errorMessage, message: errorMessage });
           } else {
             set({
               loading: false,
               error: "An error occurred while adding employee to favorite",
+              message: "An error occurred while adding employee to favorite",
             });
           }
         }
@@ -96,11 +97,13 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
             };
           });
         } catch (error) {
+          const errorMessage =  axios.isAxiosError(error)
+          ? error.response?.data?.message || error.message
+          : "Failed to remove employee from favorite";
           set({
             loading: false,
-            error: axios.isAxiosError(error)
-              ? error.response?.data?.message || error.message
-              : "Failed to remove employee from favorite",
+            error: errorMessage,
+            message: errorMessage,
           });
         }
       },

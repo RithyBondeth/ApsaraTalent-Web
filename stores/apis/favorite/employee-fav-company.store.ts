@@ -53,11 +53,14 @@ export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>()(
             message: response.data.message,
           }));
         } catch (error) {
+          const errorMessage =  axios.isAxiosError(error)
+          ? error.response?.data?.message || error.message
+          : "Failed to add favorite";
+
           set({
             loading: false,
-            error: axios.isAxiosError(error)
-              ? error.response?.data?.message || error.message
-              : "Failed to add favorite",
+            error: errorMessage,
+            message: errorMessage,
           });
         }
       },
@@ -86,11 +89,14 @@ export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>()(
             };
           });
         } catch (error) {
+          const errorMessage =  axios.isAxiosError(error)
+          ? error.response?.data?.message || error.message
+          : "Failed to remove company from favorite";
+
           set({
             loading: false,
-            error: axios.isAxiosError(error)
-              ? error.response?.data?.message || error.message
-              : "Failed to remove company from favorite",
+            error: errorMessage,
+            message: errorMessage,
           });
         }
       },

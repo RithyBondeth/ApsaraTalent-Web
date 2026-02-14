@@ -21,7 +21,7 @@ export const useRemoveCmpAvatarStore = create<TRemoveCmpAvatarStoreState>(
       set({ loading: true, error: null });
       try {
         const response = await axios.post<TRemoveCmpAvatarResponse>(
-          API_REMOVE_CMP_AVATAR_URL(companyID)
+          API_REMOVE_CMP_AVATAR_URL(companyID),
         );
         set({ loading: false, error: null, message: response.data.message });
       } catch (error) {
@@ -31,14 +31,15 @@ export const useRemoveCmpAvatarStore = create<TRemoveCmpAvatarStoreState>(
               ? error.response.data.message.join(", ")
               : error.response?.data?.message || error.message;
 
-          set({ loading: false, error: errorMessage });
+          set({ loading: false, error: errorMessage, message: errorMessage });
         } else {
           set({
             loading: false,
             error: "An error occurred while removing company's avatar",
+            message: "An error occurred while removing company's avatar",
           });
         }
       }
     },
-  })
+  }),
 );
