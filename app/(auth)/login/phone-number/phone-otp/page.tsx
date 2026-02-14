@@ -34,27 +34,30 @@ export default function PhoneOTPPage() {
   // Utils
   const router = useRouter();
   const { toast, dismiss } = useToast();
+
+  // Verify OTP Helpers
+  const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
   const [loginInitiated, setLoginInitiated] = useState<boolean>(false);
 
-  // User signup data by phone
-  const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
-
-  // Get Current User
-  const { getCurrentUser } = useGetCurrentUserStore();
-
   // API Integration
-  const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore();
-  const getAllEmployeeFavoriteStore = useGetAllEmployeeFavoritesStore();
+  // Current User, Get All Employees and Get All Companies
+  const { getCurrentUser } = useGetCurrentUserStore();
+  const { queryEmployee } = useGetAllEmployeeStore();
   const { queryCompany } = useGetAllCompanyStore();
+  // Employee and Company Liked and Favorited 
   const getCurrentCompanyLikedStore = useGetCurrentCompanyLikedStore();
   const getAllCompanyFavoriteStore = useGetAllCompanyFavoritesStore();
-  const { queryEmployee } = useGetAllEmployeeStore();
+  const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore();
+  const getAllEmployeeFavoriteStore = useGetAllEmployeeFavoritesStore();
+  // Verify OTP Authentication
   const verifyOTPStore = useVerifyOTPStore();
 
   const preloadUserData = async () => {
     try {
+      // Fist load current user
       await getCurrentUser();
 
+      // Wait a bit for getCurrentUser to complete and update the store
       await new Promise<void>((resolve) => {
         setTimeout(async () => {
           const userData = useGetCurrentUserStore.getState().user;
@@ -99,6 +102,7 @@ export default function PhoneOTPPage() {
     }
   };
 
+  // React Hook Form: Verify OTP Form
   const {
     control,
     handleSubmit,
@@ -108,20 +112,18 @@ export default function PhoneOTPPage() {
   const onSubmit = async (data: { otp: string }) => {
     setLoginInitiated(true);
     const phone = basicPhoneSignupData?.phone?.replace("0", "+855") ?? "";
-    try {
-      await verifyOTPStore.verifyOtp(
-        phone,
-        data.otp,
-        basicPhoneSignupData?.rememberMe ?? true,
-      );
-    } catch (error) {
-      console.error(error);
-    }
+    await verifyOTPStore.verifyOtp(
+      phone,
+      data.otp,
+      basicPhoneSignupData?.rememberMe ?? true,
+    );
   };
 
+  // Verify OTP Effect
   useEffect(() => {
     if (!loginInitiated) return;
 
+    // If the role of user is none, navigate user to signup first
     if (verifyOTPStore.role === "none") {
       dismiss();
       setLoginInitiated(false);
@@ -129,6 +131,7 @@ export default function PhoneOTPPage() {
       return;
     }
 
+    // If user is authenticated, navigate user to feed page
     if (verifyOTPStore.isAuthenticated && loginInitiated) {
       (dismiss(),
         toast({
@@ -143,6 +146,7 @@ export default function PhoneOTPPage() {
           duration: Infinity,
         }));
 
+      // Prelaod all user data while showing loading message
       preloadUserData()
         .then(() => {
           console.log("User data preload successfully in otp page");

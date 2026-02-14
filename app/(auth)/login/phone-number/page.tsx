@@ -55,6 +55,7 @@ export default function PhoneNumberPage() {
     await loginOtp(phone);
   };
 
+  // Phone OTP Effect
   useEffect(() => {
     if (!isSubmitted) return;
 
