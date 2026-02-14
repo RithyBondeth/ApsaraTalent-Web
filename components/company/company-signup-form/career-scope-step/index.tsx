@@ -37,13 +37,16 @@ export default function CompanyCareerScopeStepForm({
   setValue,
   errors,
 }: IStepFormProps<TCompanySignup>) {
+  // Utils
   const router = useRouter();
+  const hasMounted = useRef<boolean>(false);
+
+  // CareerScope Helpers
   const [openSearchDialog, setOpenSearchDialog] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCareers, setSelectedCareers] = useState<string[]>([]);
   const itemsPerPage = 10;
   const totalPages = Math.ceil(careerScopesList.length / itemsPerPage);
-  const hasMounted = useRef(false); // To prevent re-initializing on every render
 
   // Register field and sync initial value ONCE
   useEffect(() => {
@@ -56,7 +59,8 @@ export default function CompanyCareerScopeStepForm({
       setSelectedCareers(initial);
     }
   }, []);
-
+  
+  // Handle Toggle Career
   const toggleCareer = (career: string) => {
     setSelectedCareers((prev) => {
       const updated = prev.includes(career)
@@ -67,6 +71,7 @@ export default function CompanyCareerScopeStepForm({
     });
   };
 
+  // Handle Pagination
   const paginatedCareers = careerScopesList.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -95,7 +100,7 @@ export default function CompanyCareerScopeStepForm({
 
   return (
     <div className="w-full flex flex-col items-stretch gap-8">
-      {/* Back Button */}
+      {/* Back Button Section */}
       <Button
         className="absolute top-5 left-5"
         onClick={() => router.push("/signup")}
@@ -104,7 +109,7 @@ export default function CompanyCareerScopeStepForm({
         Back
       </Button>
 
-      {/* Title */}
+      {/* Title Section */}
       <div className="phone-xl:mt-10">
         <TypographyH4>Choose Your Career Opportunity</TypographyH4>
         <TypographyMuted className="text-md">
@@ -112,13 +117,13 @@ export default function CompanyCareerScopeStepForm({
         </TypographyMuted>
       </div>
 
-      {/* Search */}
+      {/* Search Section */}
       <Button variant="outline" onClick={() => setOpenSearchDialog(true)}>
         <LucideSearch />
         Search your career
       </Button>
 
-      {/* Search Dialog */}
+      {/* Search Dialog Section */}
       <CommandDialog open={openSearchDialog} onOpenChange={setOpenSearchDialog}>
         <DialogTitle className="sr-only">Search Careers</DialogTitle>
         <CommandInput placeholder="Search for a career..." />
@@ -139,7 +144,7 @@ export default function CompanyCareerScopeStepForm({
         </CommandList>
       </CommandDialog>
 
-      {/* Career Options Grid */}
+      {/* Career Options Grid Section */}
       <div className="flex flex-wrap gap-3">
         {paginatedCareers.map((item, index) => {
           const isChecked = selectedCareers.includes(item.value);
@@ -161,12 +166,12 @@ export default function CompanyCareerScopeStepForm({
         })}
       </div>
 
-      {/* Validation Message */}
+      {/* Validation Message Section */}
       {errors?.careerScopes && (
         <p className="text-sm text-red-500">{errors.careerScopes.message}</p>
       )}
 
-      {/* Pagination */}
+      {/* Pagination Section */}
       <Pagination className="mt-5">
         <PaginationContent>
           <PaginationItem>

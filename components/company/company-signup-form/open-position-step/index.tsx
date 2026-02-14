@@ -28,10 +28,11 @@ export default function OpenPositionStepForm({
   getValues,
   trigger,
 }: IStepFormProps<TCompanySignup>) {
-  const [skillInput, setSkillInput] = useState<string>("");
+  // Utils
   const { toast } = useToast();
 
-  // Initialize an array to manage the visibility of the Popover for each form
+  // Open Position Helpers
+  const [skillInput, setSkillInput] = useState<string>("");
   const [openPopOvers, setOpenPopOvers] = useState<boolean[]>([]);
 
   const { fields, append, remove } = useFieldArray({
@@ -39,6 +40,7 @@ export default function OpenPositionStepForm({
     name: "openPositions",
   });
 
+  // Handle Add Skill
   const addSkill = async (index: number) => {
     const trimmed = skillInput.trim();
     if (!trimmed) return;
@@ -76,6 +78,7 @@ export default function OpenPositionStepForm({
     });
   };
 
+  // Handle Remove Skill 
   const removeSkill = async (skillToRemove: string, index: number) => {
     const currentSkills = getValues?.(`openPositions.${index}.skills`) || [];
     const updatedSkills = currentSkills.filter(
@@ -112,7 +115,7 @@ export default function OpenPositionStepForm({
           key={field.id}
           className="relative flex flex-col items-start gap-3 w-full p-5"
         >
-          {/* Header With Remove Button */}
+          {/* Header With Remove Button Section */}
           {fields.length > 1 && (
             <div className="w-full flex items-center justify-between mb-3">
               <TypographyMuted className="text-md">
@@ -129,7 +132,7 @@ export default function OpenPositionStepForm({
             </div>
           )}
 
-          {/* Title, Experience, Education */}
+          {/* Title, Experience, Education Section */}
           <LabelInput
             label="Title"
             input={
@@ -195,7 +198,7 @@ export default function OpenPositionStepForm({
             />
           </div>
 
-          {/* Description + Salary + Date */}
+          {/* Description + Salary + Date Section */}
           <div className="w-full flex gap-3 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
             <LabelInput
               label="Salary"
@@ -232,7 +235,7 @@ export default function OpenPositionStepForm({
             </div>
           </div>
 
-          {/* Skill Tags + Add Skill */}
+          {/* Skill Tags + Add Skill Section */}
           <div className="w-full flex flex-col gap-2">
             <TypographyMuted className="text-xs">
               Skills Required
@@ -307,7 +310,7 @@ export default function OpenPositionStepForm({
         </Card>
       ))}
 
-      {/* Add More Button */}
+      {/* Add More Button Section */}
       <div className="w-full flex justify-end">
         <Button
           variant="secondary"

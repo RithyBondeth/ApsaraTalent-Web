@@ -23,9 +23,12 @@ export default function BenefitValueStepForm({
   trigger,
   errors,
 }: IStepFormProps<TCompanySignup>) {
+  // Utils 
+  const { toast } = useToast();
+
+  // Benefit and Value Helpers
   const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
   const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
-  const { toast } = useToast();
 
   const [benefitInput, setBenefitInput] = useState<string>("");
   const initialBenefit = getValues?.("benefitsAndValues.benefits") || [];
@@ -35,6 +38,7 @@ export default function BenefitValueStepForm({
   const initialValue = getValues?.("benefitsAndValues.values") || [];
   const [values, setValues] = useState<string[]>(initialValue);
 
+  // Handle Add Benefit
   const addBenefits = async () => {
     const trimmed = benefitInput.trim();
     if (!trimmed) return;
@@ -63,6 +67,7 @@ export default function BenefitValueStepForm({
     setOpenBenefitPopOver(false);
   };
 
+  // Handle Add Value
   const addValues = async () => {
     const trimmed = valueInput.trim();
     if (!trimmed) return;
@@ -91,6 +96,7 @@ export default function BenefitValueStepForm({
     setOpenValuePopOver(false);
   };
 
+  // Handle Remove Benefit
   const removeBenefit = async (benefitToRemove: string) => {
     const updated = benefits.filter((bf) => bf !== benefitToRemove);
     setBenefits(updated);
@@ -99,6 +105,7 @@ export default function BenefitValueStepForm({
     await trigger?.("benefitsAndValues.benefits");
   };
 
+  // Handle Remove Value
   const removeValue = async (valueToRemove: string) => {
     const updated = values.filter((value) => value !== valueToRemove);
     setValues(updated);
@@ -110,6 +117,7 @@ export default function BenefitValueStepForm({
   return (
     <div className="w-full flex flex-col items-start gap-8">
       <div className="w-full flex flex-col items-start gap-3">
+        {/* Benefit Section */}
         <TypographyH4>Add company benefit information</TypographyH4>
         <div className="flex flex-wrap gap-2">
           {benefits.map((benefit) => (
@@ -129,6 +137,8 @@ export default function BenefitValueStepForm({
             </div>
           ))}
         </div>
+        
+        {/* Add Benefit Dialog Section */}
         <Popover open={openBenefitPopOver} onOpenChange={setOpenBenefitPopOver}>
           <PopoverTrigger asChild>
             <Button className="w-full text-xs" variant="secondary">
@@ -158,6 +168,7 @@ export default function BenefitValueStepForm({
         </ErrorMessage>
       </div>
       <div className="w-full flex flex-col items-start gap-3">
+        {/* Value Section */}
         <TypographyH4>Add company value information</TypographyH4>
         <div className="flex flex-wrap gap-2">
           {values.map((value) => (
@@ -177,6 +188,8 @@ export default function BenefitValueStepForm({
             </div>
           ))}
         </div>
+
+        {/* Add Value Section */}
         <Popover open={openValuePopOver} onOpenChange={setOpenValuePopOver}>
           <PopoverTrigger asChild>
             <Button className="w-full text-xs" variant="secondary">
