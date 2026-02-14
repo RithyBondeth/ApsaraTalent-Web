@@ -26,13 +26,16 @@ export default function SkillReferenceStepForm({
   register,
   trigger,
 }: IStepFormProps<TEmployeeSignUp>) {
-  const [openPopOver, setOpenPopOver] = useState(false);
-  const [skillInput, setSkillInput] = useState("");
+  // Utils
   const { toast } = useToast();
 
+  // Skill Helpers
+  const [openPopOver, setOpenPopOver] = useState<boolean>(false);
+  const [skillInput, setSkillInput] = useState<string>("");
   const initialSkills = getValues?.("skillAndReference.skills") || [];
   const [skills, setSkills] = useState<string[]>(initialSkills);
 
+  // Handle Add New Skill
   const addSkill = async () => {
     const trimmed = skillInput.trim();
     if (!trimmed) return;
@@ -62,13 +65,14 @@ export default function SkillReferenceStepForm({
     setOpenPopOver(false);
   };
 
+  // Handle Remove Skill
   const removeSkill = async (skillToRemove: string) => {
     const updated = skills.filter((skill) => skill !== skillToRemove);
     setSkills(updated);
     setValue?.("skillAndReference.skills", updated);
     await trigger?.("skillAndReference.skills");
   };
-
+  
   useEffect(() => {
     register("skillAndReference.resume", { required: true });
     register("skillAndReference.coverLetter", { required: true });
