@@ -26,16 +26,21 @@ import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login
 import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 
 export default function SingUpOption() {
-  const [selectedRole, setSelectedRole] = useState<TUserRole | null>(null);
+  // Utils
   const router = useRouter();
+
+  // Signup Option Helpers
+  const [selectedRole, setSelectedRole] = useState<TUserRole | null>(null);
   const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
-  const { basicPhoneSignupData, setBasicPhoneSignupData } =
-    useBasicPhoneSignupDataStore();
+  const { basicPhoneSignupData, setBasicPhoneSignupData } = useBasicPhoneSignupDataStore();
+
+  // API Integration: Social Data
   const googleUserData = useGoogleLoginStore();
   const githubUserData = useGithubLoginStore();
   const linkedInUserData = useLinkedInLoginStore();
   const facebookUserData = useFacebookLoginStore();
 
+  // React Hook Form: Signup Option Form
   const {
     handleSubmit,
     setValue,
@@ -45,9 +50,11 @@ export default function SingUpOption() {
   } = useForm<TSignupOptionSchema>({
     resolver: zodResolver(signupOptionSchema),
   });
+
+  // Set Role For Signup Option Function 
   const onSubmit = (data: TSignupOptionSchema) => {
-    console.log("Form submitted with role:", data.selectedRole);
-    console.log("Store states:", {
+    console.log("Form Submitted With role:", data.selectedRole);
+    console.log("Store States:", {
       basicPhoneSignupData: !!basicPhoneSignupData,
       basicSignupData: !!basicSignupData,
       googleNewUser: googleUserData.newUser && !googleUserData.isAuthenticated,
@@ -60,10 +67,6 @@ export default function SingUpOption() {
 
     // Check different signup flows and navigate accordingly
     if (basicPhoneSignupData) {
-      console.log("Basic Phone Signup Data: ", {
-        ...basicPhoneSignupData,
-        role: data.selectedRole,
-      });
       setBasicPhoneSignupData({
         ...basicPhoneSignupData,
         role: data.selectedRole,
@@ -73,28 +76,24 @@ export default function SingUpOption() {
     }
 
     if (googleUserData.newUser && !googleUserData.isAuthenticated) {
-      console.log("Basic Google Data: ", { selectedRole: data.selectedRole });
       googleUserData.setRole(data.selectedRole as TUserRole);
       router.push(`/signup`);
       return;
     }
 
     if (linkedInUserData.newUser && !linkedInUserData.isAuthenticated) {
-      console.log("Basic LinkedIn Data: ", { selectedRole: data.selectedRole });
       linkedInUserData.setRole(data.selectedRole as TUserRole);
       router.push(`/signup`);
       return;
     }
 
     if (githubUserData.newUser && !githubUserData.isAuthenticated) {
-      console.log("Basic Github Data: ", { selectedRole: data.selectedRole });
       githubUserData.setRole(data.selectedRole as TUserRole);
       router.push(`/signup`);
       return;
     }
 
     if (facebookUserData.newUser && !facebookUserData.isAuthenticated) {
-      console.log("Basic Facebook Data: ", { selectedRole: data.selectedRole });
       facebookUserData.setRole(data.selectedRole as TUserRole);
       router.push(`/signup`);
       return;
