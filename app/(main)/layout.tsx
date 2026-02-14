@@ -29,7 +29,7 @@ export default function MainLayout({
   const user = useGetCurrentUserStore((s) => s.user);
 
   /**
-   * Feed detail page
+   * Feed Detail Page
    */
   if (pathname.startsWith("/feed/")) {
     return (
@@ -45,7 +45,7 @@ export default function MainLayout({
   }
 
   /**
-   * Reusable sidebar layout
+   * Reusable Sidebar Layout
    */
   const renderSidebarLayout = (title: string) => (
     <SidebarProvider>
@@ -78,7 +78,7 @@ export default function MainLayout({
     return renderSidebarLayout("Setting Page");
 
   /**
-   * Default layout
+   * Default Layout
    */
   return (
     <ThemeProviderClient defaultTheme={theme}>
