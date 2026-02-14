@@ -27,12 +27,18 @@ import { isNumberPhoneInput } from "@/utils/extensions/check-phone-input";
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function ForgotPasswordPage() {
+  // Utils
   const router = useRouter();
+  const { toast, dismiss } = useToast();
+
+  // Forgot Password Helpers
   const [inputValue, setInputValue] = useState<string>("");
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
-  const { toast } = useToast();
+
+  // API Integration
   const { loading, error, message, forgotPassword } = useForgotPasswordStore();
 
+  // React Hook Form: Forgot Password Form
   const {
     handleSubmit,
     register,
@@ -42,12 +48,16 @@ export default function ForgotPasswordPage() {
     resolver: zodResolver(forgotPasswordSchema),
   });
 
+  // Forgot Password Function
   const onSubmit = async (data: TForgotPasswordForm) => {
     setIsSubmitted(true);
-    const phone = data.forgotPassword.replace("0", "+855");
-    await forgotPassword(phone);
+    const idenifier = data.forgotPassword;
+    if (isNumberPhoneInput(idenifier))
+      await forgotPassword(idenifier.replace("0", "+855"));
+    else await forgotPassword(idenifier);
   };
 
+  // Forgot Password Effect
   useEffect(() => {
     if (!isSubmitted) return;
 
@@ -65,6 +75,7 @@ export default function ForgotPasswordPage() {
     }
 
     if (error) {
+      dismiss();
       toast({
         variant: "destructive",
         description: (
@@ -84,6 +95,7 @@ export default function ForgotPasswordPage() {
     }
 
     if (!loading && !error && message) {
+      dismiss();
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -144,6 +156,8 @@ export default function ForgotPasswordPage() {
           </form>
         </div>
       </div>
+
+      {/* Image Poster Section */}
       <div className="w-1/2 flex justify-center items-center bg-primary tablet-md:h-[60%]">
         <Image
           src={forgotPasswordWhiteSvg}
