@@ -18,6 +18,7 @@ import {
   LucidePhone,
   LucideUser,
   LucideUsers,
+  User,
 } from "lucide-react";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyP } from "@/components/utils/typography/typography-p";
@@ -122,12 +123,15 @@ export default function CompanyDetailPage() {
     setOpenImagePopup(true);
   };
 
-  const handleClickProfilePopup = () => {
+  const handleClickProfilePopup = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
       return;
     }
-    if (companyData?.avatar) setOpenProfilePopup(true);
+
+    if ((e.target as HTMLElement).closest(".dialog-content")) return;
+
+    setOpenProfilePopup(true);
   };
 
   // Loading or error states
@@ -266,11 +270,15 @@ export default function CompanyDetailPage() {
             <Avatar
               className="size-32 tablet-sm:size-28"
               rounded="md"
-              onClick={handleClickProfilePopup}
+              onClick={(e) => {
+                if (companyData.avatar) {
+                  handleClickProfilePopup(e);
+                }
+              }}
             >
               <AvatarImage src={companyData.avatar ?? ""} />
               <AvatarFallback className="uppercase">
-                {companyData.name.slice(0, 3)}
+                {companyData.name ? companyData.name.slice(0, 3) : <User />}
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col items-start gap-2 text-muted tablet-sm:items-center">

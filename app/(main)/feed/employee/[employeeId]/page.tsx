@@ -25,6 +25,7 @@ import {
   LucideSchool,
   LucideTransgender,
   LucideUser,
+  User,
 } from "lucide-react";
 import Divider from "@/components/utils/divider";
 import {
@@ -269,14 +270,18 @@ export default function EmployeeDetailPage() {
           <Avatar
             className="size-40 tablet-xl:!size-52"
             rounded="md"
-            onClick={handleClickProfilePopup}
+            onClick={(e) => {
+              if (employeeData.avatar) {
+                handleClickProfilePopup(e);
+              }
+            }}
           >
             <AvatarImage src={employeeData.avatar ?? ""} />
-            <AvatarFallback className="uppercase">
-              {!employeeData.avatar ? (
-                <LucideUser />
+            <AvatarFallback className="uppercase font-bold">
+              {employeeData.username ? (
+                employeeData.username.slice(0, 3)
               ) : (
-                employeeData.avatar.slice(0, 3)
+                <User />
               )}
             </AvatarFallback>
           </Avatar>
