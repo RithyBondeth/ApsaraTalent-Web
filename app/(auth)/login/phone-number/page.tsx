@@ -20,14 +20,20 @@ import { useToast } from "@/hooks/use-toast";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { ToastAction } from "@/components/ui/toast";
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
-0;
+
 export default function PhoneNumberPage() {
+  // Utils
   const router = useRouter();
+  const { toast, dismiss } = useToast();
+
+  // Phone OTP Helpers
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
-  const { toast } = useToast();
   const { setBasicPhoneSignupData } = useBasicPhoneSignupDataStore();
+
+  // API Integration
   const { loading, error, message, isSuccess, loginOtp } = useLoginOTPStore();
 
+  // React Hook Form: Phone OTP Form
   const {
     handleSubmit,
     register,
@@ -38,6 +44,7 @@ export default function PhoneNumberPage() {
     resolver: zodResolver(phoneLoginSchema),
   });
 
+  // Phone OTP Function
   const onSubmit = async (data: TPhoneLoginForm) => {
     setIsSubmitted(true);
     setBasicPhoneSignupData({
@@ -52,6 +59,7 @@ export default function PhoneNumberPage() {
     if (!isSubmitted) return;
 
     if (isSuccess) {
+      dismiss();
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -78,7 +86,8 @@ export default function PhoneNumberPage() {
         ),
       });
 
-    if (error)
+    if (error) {
+      dismiss();
       toast({
         variant: "destructive",
         description: (
@@ -95,6 +104,7 @@ export default function PhoneNumberPage() {
           </ToastAction>
         ),
       });
+    }
   }, [error, loading, isSuccess, message, isSubmitted]);
 
   return (
@@ -143,6 +153,8 @@ export default function PhoneNumberPage() {
           </form>
         </div>
       </div>
+
+      {/* Image Poster Section */}
       <div className="w-1/2 flex justify-center items-center bg-primary tablet-sm:p-10">
         <Image
           src={phoneNumberWhiteSvg}

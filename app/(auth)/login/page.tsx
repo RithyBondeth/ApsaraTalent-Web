@@ -75,6 +75,7 @@ function LoginPage() {
   const [loginInitiated, setLoginInitiated] = useState<boolean>(false);
   const [isPreloadingData, setIsPreloadingData] = useState<boolean>(false);
 
+  // React Hook Form: Login Form 
   const {
     handleSubmit,
     register,
@@ -498,7 +499,7 @@ function LoginPage() {
               Welcome to Apsara Talent! Select method to log in
             </TypographyMuted>
           </div>
-          {/* End Title Section */}
+
           {/* Social Button Login Section */}
           <div className="w-full flex flex-col gap-3">
             <div className="flex justify-between items-center gap-3">
@@ -553,7 +554,7 @@ function LoginPage() {
               Phone Number
             </Button>
           </div>
-          {/* End Social Button Login Section */}
+
           {/* Divider Section */}
           <div className="w-full flex justify-between items-center">
             <Separator className="w-1/3" />
@@ -562,7 +563,7 @@ function LoginPage() {
             </TypographyMuted>
             <Separator className="w-1/3" />
           </div>
-          {/* End Divider Section */}
+
           {/* Login Form Section */}
           <form
             className="w-full flex flex-col items-stretch gap-5"
@@ -630,12 +631,15 @@ function LoginPage() {
               </Link>
             </div>
           </form>
-          {/* End Login Form Section */}
         </div>
       </div>
+
+      {/* Image Poster Section */}
       <div className="w-1/2 flex justify-center items-center bg-primary tablet-lg:p-10">
         <Image src={loginImage} alt="login" height={undefined} width={600} />
       </div>
+
+      {/* Remember Dialog Section */}
       <Dialog open={openRmbDialog} onOpenChange={setOpenRmbDialog}>
         <DialogContent>
           <DialogTitle>Remember Me</DialogTitle>
