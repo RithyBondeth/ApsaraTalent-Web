@@ -107,8 +107,11 @@ export default function PhoneOTPPage() {
   const onSubmit = async (data: { otp: string }) => {
     setLoginInitiated(true);
     const phone = basicPhoneSignupData?.phone?.replace("0", "+855") ?? "";
-    console.log("inside onSubmit");
-    await verifyOtp(phone, data.otp, basicPhoneSignupData?.rememberMe ?? true);
+    try {
+      await verifyOtp(phone, data.otp, basicPhoneSignupData?.rememberMe ?? true);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -161,7 +164,7 @@ export default function PhoneOTPPage() {
               <div className="flex items-center gap-2">
                 <LucideCheck />
                 <TypographySmall className="font-medium leading-relaxed">
-                  {error}
+                  {message}
                 </TypographySmall>
               </div>
             ),

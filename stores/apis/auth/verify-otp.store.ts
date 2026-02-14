@@ -78,7 +78,12 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
             ? error.response.data.message.join(", ")
             : error.response?.data?.message || error.message;
 
-        set({ loading: false, error: errorMessage, isAuthenticated: false });
+        set({
+          loading: false,
+          error: errorMessage,
+          message: errorMessage,
+          isAuthenticated: false,
+        });
         throw new Error(errorMessage);
       } else {
         set({
