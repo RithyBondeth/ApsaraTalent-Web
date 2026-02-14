@@ -31,7 +31,7 @@ export const useUploadEmployeeCoverLetter =
             headers: {
               "Content-Type": "multipart/form-data",
             },
-          }
+          },
         );
         set({ loading: false, error: null, message: response.data.message });
       } catch (error) {

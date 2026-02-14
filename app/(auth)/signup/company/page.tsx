@@ -147,7 +147,7 @@ export default function CompanySignup() {
 
             if (data.avatar instanceof File) {
               uploadTasks.push(
-                uploadAvatar.uploadAvatar(companyId, data.avatar)
+                uploadAvatar.uploadAvatar(companyId, data.avatar),
               );
             }
 
@@ -203,7 +203,7 @@ export default function CompanySignup() {
 
             if (data.avatar instanceof File) {
               uploadTasks.push(
-                uploadAvatar.uploadAvatar(companyId, data.avatar)
+                uploadAvatar.uploadAvatar(companyId, data.avatar),
               );
             }
 
@@ -380,7 +380,7 @@ export default function CompanySignup() {
                   </div>
                 )}
               </div>
-            )
+            ),
           )}
         </div>
 

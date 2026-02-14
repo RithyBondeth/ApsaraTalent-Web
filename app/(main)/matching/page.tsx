@@ -78,7 +78,7 @@ export default function MatchingPage() {
       //   router.push(`/message?chatId=${chatId}`);
       // }
     },
-    [currentUser, employeeData, queryOneEmployee, router]
+    [currentUser, employeeData, queryOneEmployee, router],
   );
 
   if (shouldShowLoading) {
@@ -91,7 +91,7 @@ export default function MatchingPage() {
               <MatchingCompanyCardSkeleton key={index} />
             ) : (
               <MatchingEmployeeCardSkeleton key={index} />
-            )
+            ),
           )}
         </div>
       </div>

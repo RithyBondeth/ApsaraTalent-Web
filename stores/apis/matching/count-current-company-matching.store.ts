@@ -22,7 +22,7 @@ export const useCountCurrentCompanyMatchingStore =
 
       try {
         const response = await axios.get<TCountCurrentCompanyMatchingResponse>(
-          API_COUNT_CURRENT_COMPANY_MATCHING_URL(companyId)
+          API_COUNT_CURRENT_COMPANY_MATCHING_URL(companyId),
         );
 
         set({

@@ -14,12 +14,12 @@ export type TCompanyFavEmployeeState = {
   isFavorite: (employeeID: string) => boolean;
   addEmployeeToFavorite: (
     companyID: string,
-    employeeID: string
+    employeeID: string,
   ) => Promise<void>;
   removeEmployeeFromFavorite: (
     companyID: string,
     employeeID: string,
-    favoriteID: string
+    favoriteID: string,
   ) => Promise<void>;
   clearFavorite: () => void;
 };
@@ -41,11 +41,11 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
 
         try {
           const response = await axios.post<{ message: string }>(
-            API_COMPANY_FAVORITE_EMPLOYEE_URL(companyID, employeeID)
+            API_COMPANY_FAVORITE_EMPLOYEE_URL(companyID, employeeID),
           );
           set((state) => ({
             favoriteEmployeeIds: new Set(state.favoriteEmployeeIds).add(
-              employeeID
+              employeeID,
             ),
             loading: false,
             message: response.data.message,
@@ -71,7 +71,7 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
       removeEmployeeFromFavorite: async (
         companyID: string,
         employeeID: string,
-        favoriteID: string
+        favoriteID: string,
       ) => {
         set({ loading: true, error: null });
 
@@ -80,8 +80,8 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
             API_COMPANY_UNFAVORITE_EMPLOYEE_URL(
               companyID,
               employeeID,
-              favoriteID
-            )
+              favoriteID,
+            ),
           );
 
           set((state) => {
@@ -123,9 +123,9 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
         ...currentState,
         favoriteEmployeeIds: new Set(
           (persistedState as { favoriteEmployeeIds?: string[] })
-            ?.favoriteEmployeeIds || []
+            ?.favoriteEmployeeIds || [],
         ),
       }),
-    }
-  )
+    },
+  ),
 );

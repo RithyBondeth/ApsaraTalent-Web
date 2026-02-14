@@ -19,7 +19,7 @@ type TUpdateOneEmployeeState = TUpdateOneEmployeeResponse & {
   updateOneEmployee: (
     employeeID: string,
     body: TUpdateOneEmployeeUpdateBody,
-    token: string
+    token: string,
   ) => Promise<void>;
 };
 
@@ -31,7 +31,7 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
     loading: false,
     updateOneEmployee: async (
       employeeID: string,
-      body: TUpdateOneEmployeeUpdateBody
+      body: TUpdateOneEmployeeUpdateBody,
     ) => {
       set({ loading: true, error: null });
       try {
@@ -73,7 +73,7 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
               platform: social.platform,
               url: social.url,
             })),
-          }
+          },
         );
         set({
           message: response.data.message,
@@ -97,5 +97,5 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
         }
       }
     },
-  })
+  }),
 );

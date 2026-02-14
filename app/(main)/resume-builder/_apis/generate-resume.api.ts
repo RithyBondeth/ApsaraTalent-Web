@@ -34,17 +34,13 @@ export type BuildResume = {
 export async function generateResumeAPI(payload: BuildResume) {
   const token = getUnifiedAccessToken();
 
-  const response = await axios.post(
-    API_RESUME_BUILDER_URL,
-    payload,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      responseType: "json",
-    }
-  );
+  const response = await axios.post(API_RESUME_BUILDER_URL, payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    responseType: "json",
+  });
 
   return response.data;
 }

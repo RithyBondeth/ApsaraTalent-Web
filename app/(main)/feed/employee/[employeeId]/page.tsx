@@ -239,7 +239,7 @@ export default function EmployeeDetailPage() {
       try {
         await companyFavEmployeeStore.addEmployeeToFavorite(
           companyId,
-          employeeId
+          employeeId,
         );
         countAllCompanyFavoritesStore.countAllCompanyFavorites(companyId);
         toast({
@@ -334,7 +334,7 @@ export default function EmployeeDetailPage() {
             <IconLabel
               icon={<LucideClock strokeWidth={"1.5px"} />}
               text={`${capitalizeWords(
-                employeeData.availability!.split("_")[0]!
+                employeeData.availability!.split("_")[0]!,
               )} ${capitalizeWords(employeeData.availability!.split("_")[1]!)}`}
             />
           </div>
@@ -476,7 +476,7 @@ export default function EmployeeDetailPage() {
                         employeeData?.resume &&
                         handleDownloadFile(
                           employeeData.resume,
-                          `${employeeData.username || "user"}-resume`
+                          `${employeeData.username || "user"}-resume`,
                         )
                       }
                     >
@@ -507,7 +507,7 @@ export default function EmployeeDetailPage() {
                         employeeData?.coverLetter &&
                         handleDownloadFile(
                           employeeData.coverLetter,
-                          `${employeeData.username || "user"}-coverletter`
+                          `${employeeData.username || "user"}-coverletter`,
                         )
                       }
                     >

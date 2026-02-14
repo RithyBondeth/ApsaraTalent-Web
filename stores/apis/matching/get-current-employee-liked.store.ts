@@ -21,7 +21,7 @@ export const useGetCurrentEmployeeLikedStore =
 
       try {
         const response = await axios.get<TGetCurrentEmployeeLikedResponse>(
-          API_GET_CURRENT_EMPLOYEE_LIKED_URL(employeeId)
+          API_GET_CURRENT_EMPLOYEE_LIKED_URL(employeeId),
         );
 
         set({

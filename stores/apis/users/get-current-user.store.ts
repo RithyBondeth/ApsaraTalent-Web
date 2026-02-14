@@ -51,6 +51,6 @@ export const useGetCurrentUserStore = create<TGetCurrentUserState>()(
     {
       name: "current-user-store",
       partialize: (state) => ({ user: state.user }),
-    }
-  )
+    },
+  ),
 );

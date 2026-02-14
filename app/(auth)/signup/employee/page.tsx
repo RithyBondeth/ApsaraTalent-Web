@@ -154,23 +154,23 @@ export default function EmployeeSignup() {
 
             if (data.avatar instanceof File)
               uploadTasks.push(
-                uploadAvatar.uploadAvatar(employeeId, data.avatar)
+                uploadAvatar.uploadAvatar(employeeId, data.avatar),
               );
 
             if (data.skillAndReference.resume instanceof File)
               uploadTasks.push(
                 uploadResume.uploadResume(
                   employeeId,
-                  data.skillAndReference.resume
-                )
+                  data.skillAndReference.resume,
+                ),
               );
 
             if (data.skillAndReference.coverLetter instanceof File)
               uploadTasks.push(
                 uploadCoverLetter.uploadCoverLetter(
                   employeeId,
-                  data.skillAndReference.coverLetter
-                )
+                  data.skillAndReference.coverLetter,
+                ),
               );
 
             await Promise.all(uploadTasks);
@@ -224,23 +224,23 @@ export default function EmployeeSignup() {
 
             if (data.avatar instanceof File)
               uploadTasks.push(
-                uploadAvatar.uploadAvatar(employeeId, data.avatar)
+                uploadAvatar.uploadAvatar(employeeId, data.avatar),
               );
 
             if (data.skillAndReference.resume instanceof File)
               uploadTasks.push(
                 uploadResume.uploadResume(
                   employeeId,
-                  data.skillAndReference.resume
-                )
+                  data.skillAndReference.resume,
+                ),
               );
 
             if (data.skillAndReference.coverLetter instanceof File)
               uploadTasks.push(
                 uploadCoverLetter.uploadCoverLetter(
                   employeeId,
-                  data.skillAndReference.coverLetter
-                )
+                  data.skillAndReference.coverLetter,
+                ),
               );
 
             await Promise.all(uploadTasks);
@@ -416,7 +416,7 @@ export default function EmployeeSignup() {
                 </div>
               )}
             </div>
-          )
+          ),
         )}
       </div>
 

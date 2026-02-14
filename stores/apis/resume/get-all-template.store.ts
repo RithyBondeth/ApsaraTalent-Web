@@ -19,7 +19,7 @@ export const useGetAllTemplateStore = create<TGetAllTemplateState>((set) => ({
 
     try {
       const response = await axios.get<IResumeTemplate[]>(
-        API_GET_ALL_TEMPLATE_URL
+        API_GET_ALL_TEMPLATE_URL,
       );
       set({ loading: false, error: null, templateData: response.data });
     } catch (error) {
