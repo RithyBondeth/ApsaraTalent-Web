@@ -74,7 +74,6 @@ const FINISH_LOGIN = (data: TFacebookLoginResponse) => {
   });
 };
 
-// Zustand Store
 export const useFacebookLoginStore = create<TFacebookLoginState>((set) => ({
   loading: false,
   error: null,

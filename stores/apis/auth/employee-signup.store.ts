@@ -92,11 +92,12 @@ export const useEmployeeSignupStore = create<TEmployeeSignupState>()((set) => ({
             ? error.response.data.message.join(", ")
             : error.response?.data?.message || error.message;
 
-        set({ loading: false, error: errorMessage });
+        set({ loading: false, error: errorMessage, message: errorMessage });
       } else {
         set({
           loading: false,
           error: "An error occurred while signing up as employee",
+          message: "An error occurred while signing up as employee",
         });
       }
     }
