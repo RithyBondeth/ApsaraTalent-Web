@@ -19,7 +19,7 @@ export const useGetOneEmployeeStore = create<TGetOneEmployeeState>((set) => ({
 
     try {
       const response = await axios.get<IEmployee>(
-        API_GET_ONE_EMP_URL(employeeID)
+        API_GET_ONE_EMP_URL(employeeID),
       );
       set({ loading: false, error: null, employeeData: response.data });
     } catch (error) {

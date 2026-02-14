@@ -33,7 +33,7 @@ export const useUploadCompanyImagesStore = create<TUploadCompanyImagesState>(
             headers: {
               "Content-Type": "multipart/form-data",
             },
-          }
+          },
         );
         set({ loading: false, error: null, message: response.data.message });
       } catch (error) {
@@ -52,5 +52,5 @@ export const useUploadCompanyImagesStore = create<TUploadCompanyImagesState>(
         }
       }
     },
-  })
+  }),
 );

@@ -22,7 +22,7 @@ type TUpdateOneCompanyState = TUpdateOneCompanyResponse & {
   error: string | null;
   updateOneCompany: (
     companyID: string,
-    body: TCompanyUpdateBody
+    body: TCompanyUpdateBody,
   ) => Promise<void>;
 };
 
@@ -131,7 +131,7 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
 
         const response = await axios.patch<TUpdateOneCompanyResponse>(
           API_UPDATE_CMP_INFO_URL(companyID),
-          requestBody
+          requestBody,
         );
 
         set({
@@ -155,5 +155,5 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
         }
       }
     },
-  })
+  }),
 );

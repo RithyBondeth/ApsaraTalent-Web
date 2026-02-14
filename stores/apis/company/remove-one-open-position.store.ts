@@ -11,7 +11,7 @@ type TRemoveOneOpenPositionState = TRemoveOneOpenPositionResponse & {
   error: string | null;
   removeOneOpenPosition: (
     companyID: string,
-    openPositionID: string
+    openPositionID: string,
   ) => Promise<void>;
 };
 
@@ -22,13 +22,13 @@ export const useRemoveOneOpenPositionStore =
     error: null,
     removeOneOpenPosition: async (
       _companyID: string,
-      _openPositionID: string
+      _openPositionID: string,
     ) => {
       set({ loading: true, error: null });
 
       try {
         const response = await axios.delete<TRemoveOneOpenPositionResponse>(
-          API_REMOVE_ONE_OPEN_POSITION(_companyID, _openPositionID)
+          API_REMOVE_ONE_OPEN_POSITION(_companyID, _openPositionID),
         );
         set({ message: response.data.message, error: null, loading: false });
       } catch (error) {

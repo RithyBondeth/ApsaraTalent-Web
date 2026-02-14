@@ -22,7 +22,7 @@ export const useCountAllEmployeeFavoritesStore =
 
       try {
         const response = await axios.get<TCountAllEmployeeFavoriteResponse>(
-          API_COUNT_ALL_EMPLOYEE_FAVORITES(employeeId)
+          API_COUNT_ALL_EMPLOYEE_FAVORITES(employeeId),
         );
 
         set({

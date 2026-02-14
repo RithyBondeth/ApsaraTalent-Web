@@ -80,7 +80,7 @@ export default function EmployeeSearchPage() {
         sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
       });
     },
-    [querySearchJobs, scopeNames]
+    [querySearchJobs, scopeNames],
   );
 
   const debouncedSubmit = useMemo(() => debounce(onSubmit, 400), [onSubmit]);
@@ -115,7 +115,7 @@ export default function EmployeeSearchPage() {
     }
 
     const subscription = watch((value) =>
-      debouncedSubmit(value as TEmployeeSearchSchema)
+      debouncedSubmit(value as TEmployeeSearchSchema),
     );
 
     return () => subscription.unsubscribe();
@@ -128,7 +128,7 @@ export default function EmployeeSearchPage() {
 
   const handleRadioChange = (
     fieldName: keyof TEmployeeSearchSchema,
-    value: any
+    value: any,
   ) => {
     setValue(fieldName, value, { shouldDirty: true });
   };
@@ -272,10 +272,10 @@ export default function EmployeeSearchPage() {
                   min === 1 && max === 50
                     ? "startup"
                     : min === 51 && max === 500
-                    ? "medium"
-                    : min === 501 && max === undefined
-                    ? "large"
-                    : "all";
+                      ? "medium"
+                      : min === 501 && max === undefined
+                        ? "large"
+                        : "all";
 
                 return (
                   <RadioGroup
@@ -349,14 +349,14 @@ export default function EmployeeSearchPage() {
                   min === undefined && max === undefined
                     ? "all"
                     : min === 0 && max === 300
-                    ? "0-300"
-                    : min === 300 && max === 600
-                    ? "300-600"
-                    : min === 600 && max === 1000
-                    ? "600-1000"
-                    : min === 1000 && max === undefined
-                    ? "1000+"
-                    : undefined;
+                      ? "0-300"
+                      : min === 300 && max === 600
+                        ? "300-600"
+                        : min === 600 && max === 1000
+                          ? "600-1000"
+                          : min === 1000 && max === undefined
+                            ? "1000+"
+                            : undefined;
 
                 return (
                   <RadioGroup
@@ -502,12 +502,12 @@ export default function EmployeeSearchPage() {
                   min === 0 && max === 1
                     ? "<1"
                     : min === 1 && max === 2
-                    ? "1-2"
-                    : min === 2 && max === 3
-                    ? "2-3"
-                    : min === 3 && max === undefined
-                    ? ">3"
-                    : "all";
+                      ? "1-2"
+                      : min === 2 && max === 3
+                        ? "2-3"
+                        : min === 3 && max === undefined
+                          ? ">3"
+                          : "all";
 
                 return (
                   <RadioGroup

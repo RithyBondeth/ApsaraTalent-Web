@@ -29,7 +29,7 @@ export const basicInfoSchema = z.object({
             },
             {
               message: `Invalid file: avatar must be an image (jpeg, png, webp) and < 5MB`,
-            }
+            },
           ),
           z.string(), // for existing image URLs
           z.null(),
@@ -46,7 +46,7 @@ export const basicInfoSchema = z.object({
             },
             {
               message: `Invalid file: avatar must be an image (jpeg, png, webp) and < 5MB`,
-            }
+            },
           ),
           z.string(), // for existing image URLs
           z.null(),
@@ -78,7 +78,7 @@ export const openPositionSchema = z.object({
         skills: textValidation().optional(),
         salary: textValidation().optional(),
         deadlineDate: dateValidation().optional(),
-      })
+      }),
     )
     .optional(),
 });
@@ -101,13 +101,13 @@ export const imagesSchema = z.object({
                 },
                 {
                   message: "Invalid file: must be jpeg, png, or webp and < 5MB",
-                }
+                },
               ),
               z.string(), // existing image URLs
             ])
             .optional(),
         })
-        .optional()
+        .optional(),
     )
     .optional(),
 });
@@ -120,7 +120,7 @@ export const benefitAndValueSchema = z.object({
           z.object({
             id: z.number().optional(),
             label: z.string(),
-          })
+          }),
         )
         .optional(),
       values: z
@@ -128,7 +128,7 @@ export const benefitAndValueSchema = z.object({
           z.object({
             id: z.number().optional(),
             label: z.string(),
-          })
+          }),
         )
         .optional(),
     })
@@ -142,7 +142,7 @@ export const careerScopesSchema = z.object({
         id: z.string().optional(),
         name: z.string(),
         description: z.string().optional(),
-      })
+      }),
     )
     .min(1, { message: "Please select at least one career option" })
     .optional(),
@@ -157,7 +157,7 @@ export const socialSchema = z.object({
           platform: z.string().optional(),
           url: z.string().optional(),
         })
-        .optional()
+        .optional(),
     )
     .optional(),
 });

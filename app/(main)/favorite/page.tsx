@@ -54,14 +54,14 @@ export default function FavoritePage() {
     employeeID: string,
     companyID: string,
     favoriteID: string,
-    companyName: string
+    companyName: string,
   ) => {
     if (!employeeID || !companyID || !favoriteID) return;
     try {
       await employeeFavCompanyStore.removeCompanyFromFavorite(
         employeeID,
         companyID,
-        favoriteID
+        favoriteID,
       );
       countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeID);
       toast({
@@ -93,14 +93,14 @@ export default function FavoritePage() {
     companyID: string,
     employeeID: string,
     favoriteID: string,
-    employeeName: string
+    employeeName: string,
   ) => {
     if (!companyID || !employeeID || !favoriteID) return;
     try {
       await companyFavEmployeeStore.removeEmployeeFromFavorite(
         companyID,
         employeeID,
-        favoriteID
+        favoriteID,
       );
       countAllCompanyFavoritesStore.countAllCompanyFavorites(companyID);
       toast({
@@ -150,7 +150,7 @@ export default function FavoritePage() {
               <FavoriteCompanyCardSkeleton key={index} />
             ) : (
               <FavoriteEmployeeCardSkeleton key={index} />
-            )
+            ),
           )}
         </div>
       </div>
@@ -209,7 +209,7 @@ export default function FavoritePage() {
                     employeeID,
                     companyID,
                     favoriteID,
-                    companyName
+                    companyName,
                   );
                 }
               }}
@@ -244,7 +244,7 @@ export default function FavoritePage() {
                     companyID,
                     employeeID,
                     favoriteID,
-                    employeeName
+                    employeeName,
                   );
                 }
               }}

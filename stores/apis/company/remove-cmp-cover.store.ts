@@ -1,8 +1,5 @@
 import axios from "@/lib/axios";
-import {
-  API_REMOVE_CMP_AVATAR_URL,
-  API_REMOVE_CMP_COVER_URL,
-} from "@/utils/constants/apis/company_url";
+import { API_REMOVE_CMP_COVER_URL } from "@/utils/constants/apis/company_url";
 import { create } from "zustand";
 
 type TRemoveCmpCoverResponse = {
@@ -24,7 +21,7 @@ export const useRemoveCmpCoverStore = create<TRemoveCmpCoverStoreState>(
       set({ loading: true, error: null });
       try {
         const response = await axios.post<TRemoveCmpCoverResponse>(
-          API_REMOVE_CMP_COVER_URL(companyID)
+          API_REMOVE_CMP_COVER_URL(companyID),
         );
         set({ loading: false, error: null, message: response.data.message });
       } catch (error) {
@@ -43,5 +40,5 @@ export const useRemoveCmpCoverStore = create<TRemoveCmpCoverStoreState>(
         }
       }
     },
-  })
+  }),
 );

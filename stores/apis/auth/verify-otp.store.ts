@@ -3,11 +3,7 @@ import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 import axios from "axios";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../users/get-current-user.store";
-import {
-  setAuthCookies,
-  clearAuthCookies,
-  hasAuthToken,
-} from "@/utils/auth/cookie-manager";
+import { setAuthCookies, clearAuthCookies } from "@/utils/auth/cookie-manager";
 import { TUserAuthResponse } from "@/utils/constants/auth.constant";
 
 type TVerifyOTPResponse = {
@@ -25,7 +21,7 @@ type TVerifyOTPStoreState = TVerifyOTPResponse & {
   verifyOtp: (
     phone: string,
     otpCode: string,
-    rememberMe: boolean
+    rememberMe: boolean,
   ) => Promise<IUser>;
   clearToken: () => void;
 };
@@ -47,7 +43,7 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
         {
           phone: phone,
           otp: otpCode,
-        }
+        },
       );
 
       set({
@@ -62,7 +58,7 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
         setAuthCookies(
           response.data.accessToken,
           response.data.refreshToken,
-          rememberMe
+          rememberMe,
         );
       }
       return response.data.user;

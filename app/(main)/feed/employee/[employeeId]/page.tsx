@@ -56,6 +56,7 @@ import { useGetOneEmployeeStore } from "@/stores/apis/employee/get-one-emp.store
 import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
 import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
+import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 
 export default function EmployeeDetailPage() {
   const params = useParams<{ employeeId: string }>();
@@ -77,6 +78,7 @@ export default function EmployeeDetailPage() {
   const { queryCurrentCompanyLiked } = useGetCurrentCompanyLikedStore();
   const companyFavEmployeeStore = useCompanyFavEmployeeStore();
   const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
+  const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
 
   // Initialize component (client-side only)
   useEffect(() => {
@@ -251,6 +253,7 @@ export default function EmployeeDetailPage() {
             </div>
           ),
         });
+        getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyId);
       } catch (error) {
         const err = companyFavEmployeeStore.error || "Failed to save employee.";
         toast({ title: "Error", description: err, variant: "destructive" });

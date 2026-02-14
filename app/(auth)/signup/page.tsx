@@ -46,7 +46,7 @@ import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login
 
 export default function SignupPage() {
   const [selectedLocation, setSelectionLocation] = useState<TLocations | null>(
-    null
+    null,
   );
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [confirmPassVisibility, setConfirmPassVisibility] =
@@ -82,13 +82,23 @@ export default function SignupPage() {
 
   const onSubmitEmployee = (data: TBasicSignupEmployeeSchema) => {
     console.log(data);
-    setBasicSignupData(data);
+    // Ensure phone is never null, convert null/undefined to undefined as type TBasicSignupData expects string | undefined
+    const basicSignupData = {
+      ...data,
+      phone: data.phone ?? undefined,
+    };
+    setBasicSignupData(basicSignupData);
     router.push("signup/employee");
   };
 
   const onSubmitCompany = (data: TBasicSignupCompanySchema) => {
     console.log(data);
-    setBasicSignupData(data);
+    // Ensure phone is never null, convert null/undefined to undefined as type TBasicSignupData expects string | undefined
+    const basicSignupData = {
+      ...data,
+      phone: data.phone ?? undefined,
+    };
+    setBasicSignupData(basicSignupData);
     router.push("signup/company");
   };
 
@@ -106,7 +116,7 @@ export default function SignupPage() {
       empForm.setValue("lastName", googleUserData.lastname);
       empForm.setValue(
         "username",
-        googleUserData.firstname + " " + googleUserData.lastname
+        googleUserData.firstname + " " + googleUserData.lastname,
       );
     }
 
@@ -123,7 +133,7 @@ export default function SignupPage() {
       empForm.setValue("lastName", linkedInUserData.lastname);
       empForm.setValue(
         "username",
-        linkedInUserData.firstname + " " + linkedInUserData.lastname
+        linkedInUserData.firstname + " " + linkedInUserData.lastname,
       );
     }
 
@@ -148,7 +158,7 @@ export default function SignupPage() {
       empForm.setValue("lastName", facebookUserData.lastname);
       empForm.setValue(
         "username",
-        facebookUserData.firstname + " " + facebookUserData.lastname
+        facebookUserData.firstname + " " + facebookUserData.lastname,
       );
     }
 
@@ -244,7 +254,9 @@ export default function SignupPage() {
                 </SelectContent>
               </Select>
               <ErrorMessage>
-                {employeeErrors.selectedLocation?.message}
+                {typeof employeeErrors.selectedLocation?.message === "string"
+                  ? employeeErrors.selectedLocation?.message
+                  : null}
               </ErrorMessage>
             </div>
           )}
@@ -272,7 +284,11 @@ export default function SignupPage() {
                     ))}
                   </SelectContent>
                 </Select>
-                <ErrorMessage>{employeeErrors.gender?.message}</ErrorMessage>
+                <ErrorMessage>
+                  {typeof employeeErrors.gender?.message === "string"
+                    ? employeeErrors.gender?.message
+                    : null}
+                </ErrorMessage>
               </div>
             )}
             {isEmployeeForm ? (

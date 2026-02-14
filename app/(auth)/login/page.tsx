@@ -129,28 +129,28 @@ function LoginPage() {
             if (userData.role === "employee" && userData.employee?.id) {
               // Preload employee-specific data
               console.log(
-                "Querying all companies, employee liked, and employee favorite inside Login Page!!!"
+                "Querying all companies, employee liked, and employee favorite inside Login Page!!!",
               );
               await Promise.all([
                 getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(
-                  userData.employee.id
+                  userData.employee.id,
                 ),
                 getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
-                  userData.employee.id
+                  userData.employee.id,
                 ),
                 queryCompany(),
               ]);
             } else if (userData.role === "company" && userData.company?.id) {
               // Preload company-specific data
               console.log(
-                "Querying all employees, company liked, and company favorite inside Login Page!!!"
+                "Querying all employees, company liked, and company favorite inside Login Page!!!",
               );
               await Promise.all([
                 getCurrentCompanyLikedStore.queryCurrentCompanyLiked(
-                  userData.company.id
+                  userData.company.id,
                 ),
                 getAllCompanyFavoritesStore.queryAllCompanyFavorites(
-                  userData.company.id
+                  userData.company.id,
                 ),
                 queryEmployee(),
               ]);
@@ -195,7 +195,7 @@ function LoginPage() {
           console.log("User data preloaded successfully");
           dismiss();
           toast({
-            variant: 'success',
+            variant: "success",
             description: (
               <div className="flex items-center gap-2">
                 <LucideCheck />
@@ -211,7 +211,7 @@ function LoginPage() {
           console.error("Error preloading user data:", error);
           dismiss();
           toast({
-            variant: 'destructive',
+            variant: "destructive",
             description: (
               <div className="flex items-center gap-2">
                 <LucideCheck />
@@ -286,13 +286,13 @@ function LoginPage() {
 
     const isAnySocialLoading = socialStores.some((s) => s.store.loading);
     const isAnySocialAuthenticated = socialStores.find(
-      (s) => s.store.isAuthenticated
+      (s) => s.store.isAuthenticated,
     );
     const newUserStore = socialStores.find(
-      (s) => s.store.newUser === true && !s.store.isAuthenticated
+      (s) => s.store.newUser === true && !s.store.isAuthenticated,
     );
     const errorStore = socialStores.find(
-      (s) => s.store.error && !s.store.isAuthenticated && !s.store.loading
+      (s) => s.store.error && !s.store.isAuthenticated && !s.store.loading,
     );
 
     // Show popup loading toast
@@ -341,7 +341,7 @@ function LoginPage() {
           console.log("User data preloaded successfully");
           dismiss();
           toast({
-            variant: 'success',
+            variant: "success",
             description: (
               <div className="flex items-center gap-2">
                 <LucideCheck />
@@ -357,7 +357,7 @@ function LoginPage() {
           console.error("Error preloading user data:", error);
           dismiss();
           toast({
-            variant: 'destructive',
+            variant: "destructive",
             description: (
               <div className="flex items-center gap-2">
                 <LucideCheck />

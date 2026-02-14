@@ -5,10 +5,8 @@ import {
   getDocs,
   query,
   where,
-  Timestamp,
   doc,
   getDoc,
-  setDoc,
   updateDoc,
   serverTimestamp,
 } from "firebase/firestore";
@@ -34,7 +32,7 @@ export interface ChatData {
  */
 export const createOrGetChat = async (
   user1: UserProfile,
-  user2: UserProfile
+  user2: UserProfile,
 ): Promise<string> => {
   try {
     const participants = [user1.id, user2.id].sort();
@@ -43,7 +41,7 @@ export const createOrGetChat = async (
     // Check if chat already exists
     const q = query(chatRef, where("participants", "==", participants));
     const existing = await getDocs(q);
-    
+
     if (!existing.empty) {
       return existing.docs[0].id;
     }
@@ -82,7 +80,7 @@ export const getChatById = async (chatId: string): Promise<ChatData | null> => {
   try {
     const chatRef = doc(chatDatabase, "chats", chatId);
     const chatSnap = await getDoc(chatRef);
-    
+
     if (!chatSnap.exists()) {
       return null;
     }
@@ -102,7 +100,7 @@ export const getChatById = async (chatId: string): Promise<ChatData | null> => {
  */
 export const updateUserProfileInChats = async (
   userId: string,
-  profile: Partial<UserProfile>
+  profile: Partial<UserProfile>,
 ): Promise<void> => {
   try {
     const chatsRef = collection(chatDatabase, "chats");
@@ -116,7 +114,7 @@ export const updateUserProfileInChats = async (
         ...chatDoc.data().participantProfiles[userId],
         ...profile,
       };
-      
+
       return updateDoc(chatRef, updateData);
     });
 
@@ -132,15 +130,25 @@ export const updateUserProfileInChats = async (
  */
 export const markMessagesAsRead = async (
   chatId: string,
-  userId: string
+  userId: string,
 ): Promise<void> => {
   try {
     const messagesRef = collection(chatDatabase, "chats", chatId, "messages");
-    const q = query(messagesRef, where("senderId", "!=", userId), where("isRead", "==", false));
+    const q = query(
+      messagesRef,
+      where("senderId", "!=", userId),
+      where("isRead", "==", false),
+    );
     const messagesSnap = await getDocs(q);
 
     const updatePromises = messagesSnap.docs.map(async (messageDoc) => {
-      const messageRef = doc(chatDatabase, "chats", chatId, "messages", messageDoc.id);
+      const messageRef = doc(
+        chatDatabase,
+        "chats",
+        chatId,
+        "messages",
+        messageDoc.id,
+      );
       return updateDoc(messageRef, { isRead: true });
     });
 

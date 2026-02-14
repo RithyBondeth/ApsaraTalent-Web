@@ -43,7 +43,7 @@ export default function PhoneOTPPage() {
     const user = await verifyOtp(
       phone,
       data.otp,
-      basicPhoneSignupData?.rememberMe ?? true
+      basicPhoneSignupData?.rememberMe ?? true,
     );
 
     if (user.role === "none" && !user.profileCompleted) {

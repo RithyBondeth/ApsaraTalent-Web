@@ -3,7 +3,6 @@ import { useGetCurrentUserStore } from "../../users/get-current-user.store";
 import { API_AUTH_SOCIAL_GOOGLE_URL } from "@/utils/constants/apis/auth_url";
 import { TUserRole } from "@/utils/types/role.type";
 import { EAuthLoginMethod } from "@/utils/constants/auth.constant";
-import { getCookie } from "cookies-next";
 import { clearAuthCookies } from "@/utils/auth/cookie-manager";
 
 // Updated response type - NO TOKENS

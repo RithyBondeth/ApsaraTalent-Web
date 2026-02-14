@@ -61,6 +61,7 @@ import { useGetOneCompanyStore } from "@/stores/apis/company/get-one-cmp.store";
 import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
 import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
+import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
 
 export default function CompanyDetailPage() {
   const param = useParams<{ companyId: string }>();
@@ -74,7 +75,7 @@ export default function CompanyDetailPage() {
   const [openImagePopup, setOpenImagePopup] = useState(false);
   const [openProfilePopup, setOpenProfilePopup] = useState(false);
   const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(
-    null
+    null,
   );
   const ignoreNextClick = useRef(false);
 
@@ -87,6 +88,7 @@ export default function CompanyDetailPage() {
   const { queryCurrentEmployeeLiked } = useGetCurrentEmployeeLikedStore();
   const employeeFavCompanyStore = useEmployeeFavCompanyStore();
   const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
+  const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
 
   // Initialize component (client-side only)
   useEffect(() => {
@@ -227,7 +229,7 @@ export default function CompanyDetailPage() {
       try {
         await employeeFavCompanyStore.addCompanyToFavorite(
           employeeId,
-          companyId
+          companyId,
         );
         countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeId);
         toast({
@@ -241,6 +243,9 @@ export default function CompanyDetailPage() {
             </div>
           ),
         });
+        await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
+          employeeId,
+        );
       } catch (error) {
         const err = employeeFavCompanyStore.error || "Failed to save company";
         toast({ title: "Error", description: err, variant: "destructive" });
@@ -361,7 +366,7 @@ export default function CompanyDetailPage() {
                                   }
                                   label={
                                     availabilityConstant.find(
-                                      (type) => type.value == item.type
+                                      (type) => type.value == item.type,
                                     )?.label ?? ""
                                   }
                                 />
@@ -383,7 +388,7 @@ export default function CompanyDetailPage() {
                                 />
                               }
                               text={`Post - ${dateFormatterv2(
-                                item.postedDate?.toString() ?? ""
+                                item.postedDate?.toString() ?? "",
                               )}`}
                             />
                             <IconLabel
@@ -394,7 +399,7 @@ export default function CompanyDetailPage() {
                                 />
                               }
                               text={`Deadline - ${dateFormatterv2(
-                                item.deadlineDate?.toString() ?? ""
+                                item.deadlineDate?.toString() ?? "",
                               )}`}
                             />
                           </div>

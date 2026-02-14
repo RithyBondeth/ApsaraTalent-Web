@@ -81,7 +81,7 @@ export default function CompanySearchPage() {
 
       querySearchEmployee(queryParams);
     },
-    [querySearchEmployee, scopeNames]
+    [querySearchEmployee, scopeNames],
   );
 
   // Debounced form submission
@@ -147,7 +147,7 @@ export default function CompanySearchPage() {
   // Handler for radio group changes
   const handleRadioChange = (
     fieldName: keyof TCompanySearchSchema,
-    value: any
+    value: any,
   ) => {
     setValue(fieldName, value, { shouldDirty: true });
   };
@@ -266,14 +266,14 @@ export default function CompanySearchPage() {
                   min === 0 && max === 1
                     ? "0-1"
                     : min === 1 && max === 2
-                    ? "1-2"
-                    : min === 2 && max === 3
-                    ? "2-3"
-                    : min === 3 && max === 4
-                    ? "3-4"
-                    : min === 4 && max === undefined
-                    ? ">4"
-                    : "all";
+                      ? "1-2"
+                      : min === 2 && max === 3
+                        ? "2-3"
+                        : min === 3 && max === 4
+                          ? "3-4"
+                          : min === 4 && max === undefined
+                            ? ">4"
+                            : "all";
 
                 return (
                   <RadioGroup

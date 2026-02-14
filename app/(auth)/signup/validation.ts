@@ -12,7 +12,7 @@ export const basicSignupEmployeeSchema = z
     firstName: textValidation("First name", 50),
     lastName: textValidation("Last name", 50),
     username: textValidation("Username", 50),
-    phone: khmerPhoneNumberValidation,
+    phone: khmerPhoneNumberValidation(),
     gender: selectedValidation("Gender"),
     selectedLocation: selectedValidation("Location"),
     email: emailValidation,
@@ -32,7 +32,7 @@ export const basicSignupEmployeeSchema = z
 
 export const basicSignupCompanySchema = z
   .object({
-    phone: khmerPhoneNumberValidation,
+    phone: khmerPhoneNumberValidation(),
     email: emailValidation,
     password: passwordValidation,
     confirmPassword: z.string().min(1, "Confirm password is required"),

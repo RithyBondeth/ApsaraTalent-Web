@@ -1,4 +1,5 @@
 import React from "react";
+import { FieldError, Message } from "react-hook-form";
 
 export interface IInputProps
   extends Omit<
@@ -7,5 +8,5 @@ export interface IInputProps
   > {
   prefix?: React.ReactNode;
   suffix?: React.ReactNode;
-  validationMessage?: string;
+  validationMessage?: Message
 }

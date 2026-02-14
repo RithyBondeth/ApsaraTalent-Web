@@ -18,7 +18,7 @@ type TLoginState = {
   login: (
     email: string,
     password: string,
-    rememberMe: boolean
+    rememberMe: boolean,
   ) => Promise<void>;
   clearToken: () => void;
 };

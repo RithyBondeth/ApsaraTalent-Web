@@ -20,7 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { ToastAction } from "@/components/ui/toast";
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
-0
+0;
 export default function PhoneNumberPage() {
   const router = useRouter();
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);

@@ -32,7 +32,7 @@ export const openPositionStepSchema = z.object({
       salary: textValidation("Salary", 100),
       types: textValidation("Type", 1000),
       deadlineDate: dateValidation("Deadline"),
-    })
+    }),
   ),
 });
 
