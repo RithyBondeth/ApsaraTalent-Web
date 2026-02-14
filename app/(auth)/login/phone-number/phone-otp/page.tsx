@@ -31,24 +31,25 @@ import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-c
 import { useGetAllEmployeeStore } from "@/stores/apis/employee/get-all-emp.store";
 
 export default function PhoneOTPPage() {
+  // Utils
   const router = useRouter();
-  const [loginInitiated, setLoginInitiated] = useState<boolean>(false);
   const { toast, dismiss } = useToast();
+  const [loginInitiated, setLoginInitiated] = useState<boolean>(false);
+
+  // User signup data by phone
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
 
-  // Store for employee user
+  // Get Current User
+  const { getCurrentUser } = useGetCurrentUserStore();
+
+  // API Integration
   const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore();
   const getAllEmployeeFavoriteStore = useGetAllEmployeeFavoritesStore();
   const { queryCompany } = useGetAllCompanyStore();
-
-  // Store for company user
   const getCurrentCompanyLikedStore = useGetCurrentCompanyLikedStore();
   const getAllCompanyFavoriteStore = useGetAllCompanyFavoritesStore();
   const { queryEmployee } = useGetAllEmployeeStore();
-
-  const { getCurrentUser } = useGetCurrentUserStore();
-  const { loading, error, message, isAuthenticated, role, verifyOtp } =
-    useVerifyOTPStore();
+  const verifyOTPStore = useVerifyOTPStore();
 
   const preloadUserData = async () => {
     try {
@@ -108,23 +109,27 @@ export default function PhoneOTPPage() {
     setLoginInitiated(true);
     const phone = basicPhoneSignupData?.phone?.replace("0", "+855") ?? "";
     try {
-      await verifyOtp(phone, data.otp, basicPhoneSignupData?.rememberMe ?? true);
+      await verifyOTPStore.verifyOtp(
+        phone,
+        data.otp,
+        basicPhoneSignupData?.rememberMe ?? true,
+      );
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
   useEffect(() => {
     if (!loginInitiated) return;
 
-    if (role === "none") {
+    if (verifyOTPStore.role === "none") {
       dismiss();
       setLoginInitiated(false);
       router.replace("/signup/option");
       return;
     }
 
-    if (isAuthenticated && loginInitiated) {
+    if (verifyOTPStore.isAuthenticated && loginInitiated) {
       (dismiss(),
         toast({
           description: (
@@ -148,7 +153,7 @@ export default function PhoneOTPPage() {
               <div className="flex items-center gap-2">
                 <LucideCheck />
                 <TypographySmall className="font-medium leading-relaxed">
-                  {message}
+                  {verifyOTPStore.message}
                 </TypographySmall>
               </div>
             ),
@@ -164,7 +169,7 @@ export default function PhoneOTPPage() {
               <div className="flex items-center gap-2">
                 <LucideCheck />
                 <TypographySmall className="font-medium leading-relaxed">
-                  {message}
+                  {verifyOTPStore.message}
                 </TypographySmall>
               </div>
             ),
@@ -181,7 +186,7 @@ export default function PhoneOTPPage() {
         });
     }
 
-    if (loading && loginInitiated) {
+    if (verifyOTPStore.loading && loginInitiated) {
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -194,7 +199,7 @@ export default function PhoneOTPPage() {
       });
     }
 
-    if (error && loginInitiated) {
+    if (verifyOTPStore.error && loginInitiated) {
       dismiss();
       toast({
         variant: "destructive",
@@ -202,7 +207,7 @@ export default function PhoneOTPPage() {
           <div className="flex flex-row items-center gap-2">
             <LucideInfo />
             <TypographySmall className="font-medium leading-relaxed">
-              {message}
+              {verifyOTPStore.error}
             </TypographySmall>
           </div>
         ),
@@ -219,7 +224,13 @@ export default function PhoneOTPPage() {
         ),
       });
     }
-  }, [loading, error, message, loginInitiated, isAuthenticated]);
+  }, [
+    verifyOTPStore.loading,
+    verifyOTPStore.error,
+    verifyOTPStore.message,
+    loginInitiated,
+    verifyOTPStore.isAuthenticated,
+  ]);
 
   return (
     <div className="h-screen w-screen flex items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">

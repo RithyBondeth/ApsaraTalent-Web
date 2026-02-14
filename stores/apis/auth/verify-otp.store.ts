@@ -84,7 +84,6 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
           message: errorMessage,
           isAuthenticated: false,
         });
-        throw new Error(errorMessage);
       } else {
         set({
           loading: false,
@@ -92,7 +91,6 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
           message: "An error occurred while verifying otp.",
           isAuthenticated: false,
         });
-        throw new Error("An error occurred while verifying otp.");
       }
     }
   },

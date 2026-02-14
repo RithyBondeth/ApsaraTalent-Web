@@ -21,7 +21,7 @@ export const useVerifyEmailStore = create<TVerifyEmailState>((set) => ({
 
     try {
       const response = await axios.post<TVerifyEmailResponse>(
-        API_AUTH_VERIFY_EMAIL_URL(emailVerificationToken)
+        API_AUTH_VERIFY_EMAIL_URL(emailVerificationToken),
       );
       set({ message: response.data.message, loading: false, error: null });
     } catch (error) {
@@ -31,14 +31,12 @@ export const useVerifyEmailStore = create<TVerifyEmailState>((set) => ({
             ? error.response.data.message.join(", ")
             : error.response?.data?.message || error.message;
 
-        set({ loading: false, error: errorMessage });
-        throw new Error(errorMessage);
+        set({ loading: false, error: errorMessage, message: errorMessage });
       } else {
         set({
           loading: false,
           error: "An error occurred while verifying email.",
         });
-        throw new Error("An error occurred while verifying email.");
       }
     }
   },
