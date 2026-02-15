@@ -65,7 +65,7 @@ function LoginPage() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [openRmbDialog, setOpenRmbDialog] = useState<boolean>(false);
 
-  // Login Helper
+  // Login Helpers
   const [socialTypeIdentifier, setSocialTypeIdentifier] = useState<
     string | null
   >(null);
