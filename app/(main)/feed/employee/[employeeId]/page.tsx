@@ -60,37 +60,43 @@ import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-curre
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 
 export default function EmployeeDetailPage() {
+  // Utils
+  const router = useRouter();
+  const { toast, dismiss } = useToast();
   const params = useParams<{ employeeId: string }>();
   const id = params.employeeId;
-  const router = useRouter();
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
-  const { toast, dismiss } = useToast();
 
-  // Popup state
+  // Popup State
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
   const ignoreNextClick = useRef<boolean>(false);
 
-  // API Calls
+  // API Integration
   const { loading, employeeData, queryOneEmployee } = useGetOneEmployeeStore();
   const currentUser = useGetCurrentUserStore((state) => state.user);
+  // Liked Stores
   const companyLikeStore = useCompanyLikeStore();
-  const { countCurrentCompanyMatching } = useCountCurrentCompanyMatchingStore();
-  const { queryCurrentCompanyLiked } = useGetCurrentCompanyLikedStore();
+  const queryCurrentCompanyLiked =
+    useGetCurrentCompanyLikedStore.getState().queryCurrentCompanyLiked;
+  // Matching Store
+  const countCurrentCompanyMatching =
+    useCountCurrentCompanyMatchingStore.getState().countCurrentCompanyMatching;
   const companyFavEmployeeStore = useCompanyFavEmployeeStore();
+  // Favorite Store
   const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
   const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
 
-  // Initialize component (client-side only)
+  // Initialize Component (Client-Side Only)
   useEffect(() => {
     if (typeof window !== "undefined") {
       setIsInitialized(true);
     }
   }, []);
 
-  // Fetch data
+  // Fetch One Employee Effect
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchOneEmployee = async () => {
       if (!isInitialized || !id) return;
 
       try {
@@ -103,10 +109,10 @@ export default function EmployeeDetailPage() {
       }
     };
 
-    fetchData();
+    fetchOneEmployee();
   }, [id, isInitialized, queryOneEmployee]);
 
-  // Handle popup clicks
+  // Handle Profile Popup Clicks
   const handleClickProfilePopup = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -125,24 +131,13 @@ export default function EmployeeDetailPage() {
     }
   }, [openProfilePopup]);
 
-  // Handle file downloads
-  const handleDownloadFile = (url: string, filename: string) => {
-    if (!url) return;
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", filename);
-    link.setAttribute("target", "_blank");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  // Loading or error states
+  // Loading State
   if (!isInitialized || loading) {
     return <EmployeeDetailPageSkeleton />;
   }
+  
 
+  // Error State
   if (fetchError) {
     return (
       <div className="h-screen w-screen flex justify-center items-center">
@@ -159,6 +154,7 @@ export default function EmployeeDetailPage() {
     );
   }
 
+  // No Data Available State
   if (!employeeData) {
     return (
       <div className="h-screen w-screen flex justify-center items-center">
@@ -172,6 +168,7 @@ export default function EmployeeDetailPage() {
     );
   }
 
+  // Handle Company Like Employee
   const handleLike = async () => {
     if (currentUser && currentUser.company) {
       const companyId = currentUser.company.id;
@@ -227,6 +224,7 @@ export default function EmployeeDetailPage() {
     }
   };
 
+  // Handle Company Add Employee To Favorite
   const handleAddToFavorite = async () => {
     if (currentUser && currentUser.company) {
       const companyId = currentUser.company.id;
@@ -260,6 +258,19 @@ export default function EmployeeDetailPage() {
         toast({ title: "Error", description: err, variant: "destructive" });
       }
     }
+  };
+
+  // Handle File Downloads - Resume and CoverLetter
+  const handleDownloadFile = (url: string, filename: string) => {
+    if (!url) return;
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", filename);
+    link.setAttribute("target", "_blank");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
