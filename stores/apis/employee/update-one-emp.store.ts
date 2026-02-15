@@ -22,7 +22,7 @@ type TUpdateOneEmployeeState = TUpdateOneEmployeeResponse & {
   updateOneEmployee: (
     employeeID: string,
     body: TUpdateOneEmployeeUpdateBody,
-    token: string
+    token: string,
   ) => Promise<void>;
 };
 
@@ -34,7 +34,7 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
     loading: false,
     updateOneEmployee: async (
       employeeID: string,
-      body: TUpdateOneEmployeeUpdateBody
+      body: TUpdateOneEmployeeUpdateBody,
     ) => {
       set({ loading: true, error: null });
       try {
@@ -98,7 +98,43 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
 
         const response = await axios.patch(
           API_UPDATE_EMP_INFO_URL(employeeID),
-          requestBody
+          {
+            email: body.email,
+            password: body.password,
+            firstname: body.firstname,
+            lastname: body.lastname,
+            username: body.username,
+            gender: body.gender,
+            job: body.job,
+            yearsOfExperience: body.yearsOfExperience,
+            availability: body.availability,
+            description: body.description,
+            location: body.location,
+            phone: body.phone,
+            education: body.educations.map((edu) => ({
+              school: edu.school,
+              degree: edu.degree,
+              year: edu.year,
+            })),
+            experiences: body.experiences.map((exp) => ({
+              title: exp.title,
+              description: exp.description,
+              startDate: exp.startDate,
+              endDate: exp.endDate,
+            })),
+            skills: body.skills.map((skill) => ({
+              name: skill.name,
+              description: skill.description,
+            })),
+            careerScopes: body.careerScopes.map((cs) => ({
+              name: cs.name,
+              description: cs.description,
+            })),
+            socials: body.socials.map((social) => ({
+              platform: social.platform,
+              url: social.url,
+            })),
+          },
         );
         set({
           message: response.data.message,
@@ -113,14 +149,15 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
               ? error.response.data.message.join(", ")
               : error.response?.data?.message || error.message;
 
-          set({ loading: false, error: errorMessage });
+          set({ loading: false, error: errorMessage, message: errorMessage });
         } else {
           set({
             loading: false,
             error: "An error occurred while updating employee's information",
+            message: "An error occurred while updating employee's information",
           });
         }
       }
     },
-  })
+  }),
 );

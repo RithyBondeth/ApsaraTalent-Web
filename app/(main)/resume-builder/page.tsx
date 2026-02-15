@@ -17,24 +17,30 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
+let hasFetchedTemplates = false;
 export default function ResumeBuilder() {
-  const { templateData, queryAllTemplates } = useGetAllTemplateStore();
-  
-  const currentUser = useGetCurrentUserStore((state) => state.user);
-  const [generating, setGenerating] = useState(false);
-
-  useEffect(() => {
-    queryAllTemplates();
-  }, [queryAllTemplates]);
-
+  // Template Helpers 
+  const [generating, setGenerating] = useState<boolean>(false);
   const { setSelectedTemplate, selectedTemplate } = useTemplateSelectionStore();
-
   const templateMap: Record<string, "modern" | "classic" | "creative"> = {
     "Minimalist Pro": "modern",
     "Modern Professional": "classic",
     "Corporate Standard": "creative",
   };
 
+  // API Integration
+  const { templateData, queryAllTemplates } = useGetAllTemplateStore();
+  const currentUser = useGetCurrentUserStore((state) => state.user);
+
+  // Query All Templates Effect
+  useEffect(() => {
+    if (hasFetchedTemplates) return;
+  
+    hasFetchedTemplates = true;
+    queryAllTemplates();
+  }, [queryAllTemplates]);
+
+  // Handle Select Template
   const handleSelectTemplate = (templateTitle: string) => {
     const template = templateMap[templateTitle];
     if (template) {
@@ -44,13 +50,12 @@ export default function ResumeBuilder() {
     }
   };
 
-  useEffect(() => {
-    console.log("Current User: ", currentUser?.employee);
-  })
-
   return (
     <div className="w-full flex flex-col items-start gap-5 px-10">
+      {/* Banner Section */}
       <ResumeBuilderBanner />
+
+      {/* Template Section */}
       <div className="w-full">
         <div className="w-full flex justify-between items-center">
           <TypographyH4>Choose your template</TypographyH4>
@@ -76,37 +81,45 @@ export default function ResumeBuilder() {
             : [1, 2, 3].map((item) => <TemplateCardSkeleton key={item} />)}
         </div>
       </div>
-      <ResumeBuilderFeature />
-      <ResumeBuilderGenerate disabled={!selectedTemplate} onGenerateClick={async () => {
-        if (!currentUser || !currentUser.employee) return;
-        if (!selectedTemplate) return;
-        const template = selectedTemplate ?? "creative";
-        const payload = buildResumePayloadFromUser(currentUser, template);
-        setGenerating(true);
-        try {
-          const result = await generateResumeAPI(payload);
-          // Decode base64 and create Blob
-          const byteCharacters = atob(result.data);
-          const byteNumbers = new Array(byteCharacters.length)
-            .fill(null)
-            .map((_, i) => byteCharacters.charCodeAt(i));
-          const byteArray = new Uint8Array(byteNumbers);
-          const blob = new Blob([byteArray], { type: result.mimeType });
-          const link = document.createElement("a");
-          link.href = window.URL.createObjectURL(blob);
-          link.download = result.filename || "resume.pdf";
-          link.click();
-        } catch (error) {
-          console.error("Failed to generate resume:", error);
-        } finally {
-          setGenerating(false);
-        }
-      }}/>
 
+      {/* Resume Feature Section */}
+      <ResumeBuilderFeature />
+      
+      {/* Resume Generator Section */}
+      <ResumeBuilderGenerate
+        disabled={!selectedTemplate}
+        onGenerateClick={async () => {
+          if (!currentUser || !currentUser.employee) return;
+          if (!selectedTemplate) return;
+          const template = selectedTemplate ?? "creative";
+          const payload = buildResumePayloadFromUser(currentUser, template);
+          setGenerating(true);
+          try {
+            const result = await generateResumeAPI(payload);
+            // Decode base64 and create Blob
+            const byteCharacters = atob(result.data);
+            const byteNumbers = new Array(byteCharacters.length)
+              .fill(null)
+              .map((_, i) => byteCharacters.charCodeAt(i));
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: result.mimeType });
+            const link = document.createElement("a");
+            link.href = window.URL.createObjectURL(blob);
+            link.download = result.filename || "resume.pdf";
+            link.click();
+          } catch (error) {
+            console.error("Failed to generate resume:", error);
+          } finally {
+            setGenerating(false);
+          }
+        }}
+      />
+
+      {/* Dialog Section */}
       <Dialog open={generating}>
         <DialogContent>
           <div className="w-full flex flex-col items-center justify-center gap-3 py-4">
-            <ApsaraLoadingSpinner size={80} loop/>
+            <ApsaraLoadingSpinner size={80} loop />
             <DialogTitle>Generating your resume…</DialogTitle>
             <TypographyMuted className="text-center">
               This may take a few seconds. Please don’t close the tab.

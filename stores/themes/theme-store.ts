@@ -42,8 +42,8 @@ export const useThemeStore = create<ThemeState>()(
     },
     {
       name: "theme-storage",
-    }
-  )
+    },
+  ),
 );
 
 // Listen for system theme changes (only in client-side)

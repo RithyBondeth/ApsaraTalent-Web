@@ -167,7 +167,7 @@ export default function ProfilePage() {
   const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
   const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(
-    null
+    null,
   );
   const [openRemoveImageDialog, setOpenRemoveImageDialog] =
     useState<boolean>(false);
@@ -182,7 +182,7 @@ export default function ProfilePage() {
 
   const [openPositions, setOpenPositions] = useState<IJobPosition[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
-    ""
+    "",
   );
   const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
   const [benefitInput, setBenefitInput] = useState<IBenefits | null>(null);
@@ -196,7 +196,7 @@ export default function ProfilePage() {
   const [careersInput, setCareersInput] = useState<ICareerScopes | null>(null);
   const [careers, setCareers] = useState<ICareerScopes[]>([]);
   const [deleteCareerScopeIds, setDeleteCareerScopeIds] = useState<string[]>(
-    []
+    [],
   );
   const [socialInput, setSocialInput] = useState<ISocial | null>(null);
   const [socials, setSocials] = useState<ISocial[]>([]);
@@ -319,15 +319,15 @@ export default function ProfilePage() {
           company.openPositions.map((op) => [
             op.id?.toString() ?? "",
             { deadline: new Date(op.deadlineDate) },
-          ])
-        )
+          ]),
+        ),
       );
     }
   }, [user, company, form]);
 
   useEffect(() => {
     const initialSocial = (form.getValues?.("socials") || []).filter(
-      (s): s is { platform: string; url: string } => s !== undefined
+      (s): s is { platform: string; url: string } => s !== undefined,
     );
     setSocials(initialSocial);
   }, [form]);
@@ -339,7 +339,7 @@ export default function ProfilePage() {
         id: cp?.id ?? "",
         name: cp?.name ?? "",
         description: cp?.description ?? "",
-      }))
+      })),
     );
   }, [form]);
 
@@ -349,7 +349,7 @@ export default function ProfilePage() {
       initialBenefit.map((bf) => ({
         id: bf.id,
         label: bf.label,
-      }))
+      })),
     );
   }, [form]);
 
@@ -359,7 +359,7 @@ export default function ProfilePage() {
       initialValue.map((vl) => ({
         id: vl.id,
         label: vl.label,
-      }))
+      })),
     );
   }, [form]);
 
@@ -394,7 +394,7 @@ export default function ProfilePage() {
   const removeOpenPosition = async (openPositionID: string) => {
     await removeOneOpenPosition.removeOneOpenPosition(
       company!.id,
-      openPositionID
+      openPositionID,
     );
 
     // Refetch current user to get updated data
@@ -422,7 +422,7 @@ export default function ProfilePage() {
     const currentBenefits = form.getValues("benefitsAndValues.benefits") || [];
 
     const alreadyExists = currentBenefits.some(
-      (bf) => bf.label.toLowerCase() === trimmed.toLowerCase()
+      (bf) => bf.label.toLowerCase() === trimmed.toLowerCase(),
     );
 
     if (alreadyExists) {
@@ -456,7 +456,7 @@ export default function ProfilePage() {
 
     // Find the benefit to remove
     const benefitToDelete = currentBenefits.find(
-      (bf) => bf.label === benefitToRemove
+      (bf) => bf.label === benefitToRemove,
     );
 
     // If it has an ID, track it for deletion
@@ -466,7 +466,7 @@ export default function ProfilePage() {
 
     // Remove from form
     const updated = currentBenefits.filter(
-      (bf) => bf.label !== benefitToRemove
+      (bf) => bf.label !== benefitToRemove,
     );
     form.setValue("benefitsAndValues.benefits", updated, {
       shouldDirty: true,
@@ -483,7 +483,7 @@ export default function ProfilePage() {
     const currentValues = form.getValues("benefitsAndValues.values") || [];
 
     const alreadyExists = currentValues.some(
-      (value) => value.label.toLowerCase() === trimmed.toLowerCase()
+      (value) => value.label.toLowerCase() === trimmed.toLowerCase(),
     );
 
     if (alreadyExists) {
@@ -515,7 +515,7 @@ export default function ProfilePage() {
 
     // Find the value to remove
     const valueToDelete = currentValues.find(
-      (value) => value.label === valueToRemove
+      (value) => value.label === valueToRemove,
     );
 
     // If it has an ID, track it for deletion
@@ -525,7 +525,7 @@ export default function ProfilePage() {
 
     // Remove from form
     const updatedValues = currentValues.filter(
-      (value) => value.label !== valueToRemove
+      (value) => value.label !== valueToRemove,
     );
     form.setValue("benefitsAndValues.values", updatedValues, {
       shouldDirty: true,
@@ -545,7 +545,7 @@ export default function ProfilePage() {
 
     // Check for duplicate careers
     const alreadyExists = currentCareerScopes.some(
-      (career) => career.name.toLowerCase() === trimmed.toLowerCase()
+      (career) => career.name.toLowerCase() === trimmed.toLowerCase(),
     );
 
     if (alreadyExists) {
@@ -583,7 +583,7 @@ export default function ProfilePage() {
   const handleCareerSelect = (
     selectedCareerId: string,
     selectedCareerName: string,
-    selectedCareerDescription: string
+    selectedCareerDescription: string,
   ) => {
     setCareersInput({
       id: selectedCareerId,
@@ -599,7 +599,7 @@ export default function ProfilePage() {
 
     // Find the career to delete
     const careerToDelete = currentCareers.find(
-      (career) => career.name === careerToRemove
+      (career) => career.name === careerToRemove,
     );
 
     // If it has an ID, track it for deletion
@@ -609,7 +609,7 @@ export default function ProfilePage() {
 
     // Remove from form
     const updatedCareers = currentCareers.filter(
-      (career) => career.name !== careerToRemove
+      (career) => career.name !== careerToRemove,
     );
     form.setValue("careerScopes", updatedCareers, {
       shouldDirty: true,
@@ -628,7 +628,7 @@ export default function ProfilePage() {
 
     // Check for duplicate social entries
     const alreadyExists = currentSocials.some(
-      (s) => s?.platform?.toLowerCase() === trimmedPlatform.toLowerCase()
+      (s) => s?.platform?.toLowerCase() === trimmedPlatform.toLowerCase(),
     );
 
     if (alreadyExists) {
@@ -659,7 +659,7 @@ export default function ProfilePage() {
     const currentSocials = form.getValues("socials") || [];
 
     const socialToDelete = currentSocials.find(
-      (sc) => sc?.platform === platform
+      (sc) => sc?.platform === platform,
     );
 
     if ("id" in socialToDelete! && socialToDelete.id) {
@@ -667,7 +667,7 @@ export default function ProfilePage() {
     }
 
     const updatedSocials = socials.filter(
-      (sc) => sc.platform !== socialToDelete?.platform
+      (sc) => sc.platform !== socialToDelete?.platform,
     );
     form.setValue("socials", updatedSocials, {
       shouldDirty: true,
@@ -680,7 +680,7 @@ export default function ProfilePage() {
   const handleDateChange = (
     positionId: string,
     type: "posted" | "deadline",
-    date: Date
+    date: Date,
   ) => {
     setSelectedDates((prev) => ({
       ...prev,
@@ -693,7 +693,7 @@ export default function ProfilePage() {
 
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
-    type: "avatar" | "cover"
+    type: "avatar" | "cover",
   ) => {
     const file = event.target.files ? event.target.files[0] : null;
     if (file) {
@@ -823,7 +823,7 @@ export default function ProfilePage() {
         updateBody.socials =
           data.socials
             ?.filter((s): s is { id: string; platform: string; url: string } =>
-              Boolean(s && s.platform && s.url)
+              Boolean(s && s.platform && s.url),
             )
             .map((s) => ({
               id: s.id,
@@ -841,13 +841,13 @@ export default function ProfilePage() {
 
       if (data.basicInfo?.avatar instanceof File) {
         uploadTasks.push(
-          uploadAvatarCmpStore.uploadAvatar(company!.id, data.basicInfo.avatar)
+          uploadAvatarCmpStore.uploadAvatar(company!.id, data.basicInfo.avatar),
         );
       }
 
       if (data.basicInfo?.cover instanceof File) {
         uploadTasks.push(
-          uploadCoverCmpStore.uploadCover(company!.id, data.basicInfo.cover)
+          uploadCoverCmpStore.uploadCover(company!.id, data.basicInfo.cover),
         );
       }
 
@@ -858,7 +858,7 @@ export default function ProfilePage() {
 
         if (imageFiles.length > 0) {
           uploadTasks.push(
-            uploadCmpImagesStore.uploadImages(company!.id, imageFiles)
+            uploadCmpImagesStore.uploadImages(company!.id, imageFiles),
           );
         }
       }
@@ -1362,7 +1362,7 @@ z
                               handleDateChange(positionId, "deadline", date);
                             form.setValue(
                               `openPositions.${index}.deadlineDate`,
-                              date
+                              date,
                             );
                           }
                         },
@@ -1374,7 +1374,7 @@ z
                             setCurrentOpenPositionID(position.id);
                           } else {
                             const updated = openPositions.filter(
-                              (op) => op.id !== positionId
+                              (op) => op.id !== positionId,
                             );
                             setOpenPositions(updated);
                           }
@@ -1465,7 +1465,7 @@ z
                       if (removedImage) {
                         handleRemoveOneCmpImage(
                           removedImage.id,
-                          removedImage.index
+                          removedImage.index,
                         );
                         setOpenRemoveImageDialog(false);
                       }
@@ -1699,7 +1699,7 @@ z
                   >
                     {careersInput
                       ? getAllCareerScopeStore.careerScopes?.find(
-                          (career) => career.name === careersInput.name
+                          (career) => career.name === careersInput.name,
                         )?.name
                       : "Select careers..."}
                     <ChevronDown className="opacity-50" />
@@ -1724,7 +1724,7 @@ z
                                   handleCareerSelect(
                                     career.id,
                                     career.name,
-                                    career.description ?? ""
+                                    career.description ?? "",
                                   );
                               }} // Handle career selection
                             >
@@ -1737,7 +1737,7 @@ z
                                 }
                               />
                             </CommandItem>
-                          )
+                          ),
                         )}
                       </CommandGroup>
                     </CommandList>
@@ -1777,7 +1777,7 @@ z
                             className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
                           >
                             {getSocialPlatformTypeIcon(
-                              item.platform as TPlatform
+                              item.platform as TPlatform,
                             )}
                             <TypographySmall>{item.platform}</TypographySmall>
                           </Link>

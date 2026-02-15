@@ -25,6 +25,7 @@ import {
   LucideSchool,
   LucideTransgender,
   LucideUser,
+  User,
 } from "lucide-react";
 import Divider from "@/components/utils/divider";
 import {
@@ -59,37 +60,43 @@ import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-curre
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 
 export default function EmployeeDetailPage() {
+  // Utils
+  const router = useRouter();
+  const { toast, dismiss } = useToast();
   const params = useParams<{ employeeId: string }>();
   const id = params.employeeId;
-  const router = useRouter();
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
-  const { toast, dismiss } = useToast();
 
-  // Popup state
+  // Popup States
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
   const ignoreNextClick = useRef<boolean>(false);
 
-  // API Calls
+  // API Integration
   const { loading, employeeData, queryOneEmployee } = useGetOneEmployeeStore();
   const currentUser = useGetCurrentUserStore((state) => state.user);
+  // Liked Stores
   const companyLikeStore = useCompanyLikeStore();
-  const { countCurrentCompanyMatching } = useCountCurrentCompanyMatchingStore();
-  const { queryCurrentCompanyLiked } = useGetCurrentCompanyLikedStore();
+  const queryCurrentCompanyLiked =
+    useGetCurrentCompanyLikedStore.getState().queryCurrentCompanyLiked;
+  // Matching Store
+  const countCurrentCompanyMatching =
+    useCountCurrentCompanyMatchingStore.getState().countCurrentCompanyMatching;
+  // Favorite Store
   const companyFavEmployeeStore = useCompanyFavEmployeeStore();
   const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
   const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
 
-  // Initialize component (client-side only)
+  // Initialize Component (Client-Side Only)
   useEffect(() => {
     if (typeof window !== "undefined") {
       setIsInitialized(true);
     }
   }, []);
 
-  // Fetch data
+  // Fetch One Employee Effect
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchOneEmployee = async () => {
       if (!isInitialized || !id) return;
 
       try {
@@ -102,10 +109,10 @@ export default function EmployeeDetailPage() {
       }
     };
 
-    fetchData();
+    fetchOneEmployee();
   }, [id, isInitialized, queryOneEmployee]);
 
-  // Handle popup clicks
+  // Handle Profile Popup Clicks
   const handleClickProfilePopup = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -124,24 +131,13 @@ export default function EmployeeDetailPage() {
     }
   }, [openProfilePopup]);
 
-  // Handle file downloads
-  const handleDownloadFile = (url: string, filename: string) => {
-    if (!url) return;
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", filename);
-    link.setAttribute("target", "_blank");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  // Loading or error states
+  // Loading State
   if (!isInitialized || loading) {
     return <EmployeeDetailPageSkeleton />;
   }
+  
 
+  // Error State
   if (fetchError) {
     return (
       <div className="h-screen w-screen flex justify-center items-center">
@@ -158,6 +154,7 @@ export default function EmployeeDetailPage() {
     );
   }
 
+  // No Data Available State
   if (!employeeData) {
     return (
       <div className="h-screen w-screen flex justify-center items-center">
@@ -171,6 +168,7 @@ export default function EmployeeDetailPage() {
     );
   }
 
+  // Handle Company Like Employee
   const handleLike = async () => {
     if (currentUser && currentUser.company) {
       const companyId = currentUser.company.id;
@@ -226,6 +224,7 @@ export default function EmployeeDetailPage() {
     }
   };
 
+  // Handle Company Add Employee To Favorite
   const handleAddToFavorite = async () => {
     if (currentUser && currentUser.company) {
       const companyId = currentUser.company.id;
@@ -239,7 +238,7 @@ export default function EmployeeDetailPage() {
       try {
         await companyFavEmployeeStore.addEmployeeToFavorite(
           companyId,
-          employeeId
+          employeeId,
         );
         countAllCompanyFavoritesStore.countAllCompanyFavorites(companyId);
         toast({
@@ -261,6 +260,19 @@ export default function EmployeeDetailPage() {
     }
   };
 
+  // Handle File Downloads - Resume and CoverLetter
+  const handleDownloadFile = (url: string, filename: string) => {
+    if (!url) return;
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", filename);
+    link.setAttribute("target", "_blank");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="flex flex-col gap-5">
       {/* Personal Information Section */}
@@ -269,14 +281,18 @@ export default function EmployeeDetailPage() {
           <Avatar
             className="size-40 tablet-xl:!size-52"
             rounded="md"
-            onClick={handleClickProfilePopup}
+            onClick={(e) => {
+              if (employeeData.avatar) {
+                handleClickProfilePopup(e);
+              }
+            }}
           >
             <AvatarImage src={employeeData.avatar ?? ""} />
-            <AvatarFallback className="uppercase">
-              {!employeeData.avatar ? (
-                <LucideUser />
+            <AvatarFallback className="uppercase font-bold">
+              {employeeData.username ? (
+                employeeData.username.slice(0, 3)
               ) : (
-                employeeData.avatar.slice(0, 3)
+                <User />
               )}
             </AvatarFallback>
           </Avatar>
@@ -334,7 +350,7 @@ export default function EmployeeDetailPage() {
             <IconLabel
               icon={<LucideClock strokeWidth={"1.5px"} />}
               text={`${capitalizeWords(
-                employeeData.availability!.split("_")[0]!
+                employeeData.availability!.split("_")[0]!,
               )} ${capitalizeWords(employeeData.availability!.split("_")[1]!)}`}
             />
           </div>
@@ -476,7 +492,7 @@ export default function EmployeeDetailPage() {
                         employeeData?.resume &&
                         handleDownloadFile(
                           employeeData.resume,
-                          `${employeeData.username || "user"}-resume`
+                          `${employeeData.username || "user"}-resume`,
                         )
                       }
                     >
@@ -507,7 +523,7 @@ export default function EmployeeDetailPage() {
                         employeeData?.coverLetter &&
                         handleDownloadFile(
                           employeeData.coverLetter,
-                          `${employeeData.username || "user"}-coverletter`
+                          `${employeeData.username || "user"}-coverletter`,
                         )
                       }
                     >

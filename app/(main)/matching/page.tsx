@@ -21,14 +21,15 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useFetchOnce } from "@/hooks/use-fetch-once";
 
 export default function MatchingPage() {
+  // Utils
   const router = useRouter();
-  const userLoading = useGetCurrentUserStore((state) => state.loading);
 
+  // API Integration
   const getCurrentEmployeeMatchingStore = useGetCurrentEmployeeMatchingStore();
   const getCurrentCompanyMatchingStore = useGetCurrentCompanyMatchingStore();
   const { employeeData, queryOneEmployee } = useGetOneEmployeeStore();
 
-  // ✅ Use custom hook - handles all ref logic and duplicate prevention!
+  // Use Custom Hook - Handles all ref logic and duplicate prevention
   const { isEmployee, currentUser } = useFetchOnce({
     cacheKey: "matching-page",
     onEmployeeFetch: (employeeId) => {
@@ -39,7 +40,7 @@ export default function MatchingPage() {
     },
   });
 
-  // Compute loading state to avoid flicker of empty state before first fetch resolves
+  // Compute All Loading States
   const isLoadingForEmployee =
     isEmployee &&
     (getCurrentEmployeeMatchingStore.loading ||
@@ -50,10 +51,9 @@ export default function MatchingPage() {
     (getCurrentCompanyMatchingStore.loading ||
       getCurrentCompanyMatchingStore.currentCompanyMatching === null);
 
-  const shouldShowLoading =
-    userLoading || isLoadingForEmployee || isLoadingForCompany;
+  const isLoading = isLoadingForEmployee || isLoadingForCompany;
 
-  // Memoized chat handler
+  // Memoized Chat Handler
   const handleChatNow = useCallback(
     async (otherUserId: string) => {
       await queryOneEmployee(otherUserId);
@@ -78,10 +78,10 @@ export default function MatchingPage() {
       //   router.push(`/message?chatId=${chatId}`);
       // }
     },
-    [currentUser, employeeData, queryOneEmployee, router]
+    [currentUser, employeeData, queryOneEmployee, router],
   );
 
-  if (shouldShowLoading) {
+  if (isLoading) {
     return (
       <div className="w-full flex flex-col px-5 mt-3">
         <MatchingBannerSkeleton />
@@ -91,7 +91,7 @@ export default function MatchingPage() {
               <MatchingCompanyCardSkeleton key={index} />
             ) : (
               <MatchingEmployeeCardSkeleton key={index} />
-            )
+            ),
           )}
         </div>
       </div>
@@ -100,7 +100,9 @@ export default function MatchingPage() {
 
   return (
     <div className="w-full flex flex-col px-5">
+      {/* Banner Section */}
       <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
+        {/* Content Section */}
         <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center tablet-xl:mt-5 px-5">
           <TypographyH2 className="leading-relaxed tablet-xl:text-center">
             Ready to find your match? Let's make it happen.
@@ -115,6 +117,8 @@ export default function MatchingPage() {
             When companies and talents like each other — it's a match.
           </TypographyMuted>
         </div>
+
+        {/* Image Poster Section */}
         <Image
           src={matchingSvgImage}
           alt="matching"
@@ -124,6 +128,7 @@ export default function MatchingPage() {
         />
       </div>
 
+      {/* Matching Card List Section */}
       <div className="flex flex-col items-start gap-3">
         {getCurrentEmployeeMatchingStore.currentEmployeeMatching &&
         getCurrentEmployeeMatchingStore.currentEmployeeMatching.length > 0 ? (

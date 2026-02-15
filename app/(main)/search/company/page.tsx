@@ -24,18 +24,20 @@ import { TAvailability } from "@/utils/types/availability.type";
 import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
 import { debounce } from "lodash";
 
-// Module-level flags to prevent duplicate initial search (Strict Mode safe)
-let hasInitialSearchEmployeeRun = false;
-let isInitializing = false;
-
 export default function CompanySearchPage() {
+  // Utils
+  const didInitRef = useRef<boolean>(false);
+  const skipFirstWatchRef = useRef<boolean>(true);
+
+  // API Integration
   const { error, loading, employees, querySearchEmployee } =
     useSearchEmployeeStore();
   const { user } = useGetCurrentUserStore();
 
+  // Company Search For Employee Helper
   const [scopeNames, setScopeNames] = useState<string[]>([]);
-  const isFirstWatchRenderRef = useRef<boolean>(true);
 
+  // React Hook Form: Company Search Form
   const { register, setValue, control, handleSubmit, watch } =
     useForm<TCompanySearchSchema>({
       resolver: zodResolver(companySearchSchema),
@@ -50,112 +52,106 @@ export default function CompanySearchPage() {
       },
     });
 
-  // Watch form values for debounced submission
-  const watchAllFields = watch();
+  // Watch Only What SearchBar Needs  (Prevent full page rerender on every key)
+  const location = watch("location"); 
+  const jobType = watch("jobType");
 
-  const onSubmit = useCallback(
+  // Real Searh Function
+  const runSearch = useCallback(
     (data: TCompanySearchSchema) => {
-      const normalizedJobType =
-        data.jobType === "all" ? undefined : data.jobType;
-      const normalizedLocation =
-        data.location === "all" ? undefined : data.location;
+      const normalizedJobType = data.jobType === "all" ? undefined : data.jobType;
+      const normalizedLocation = data.location === "all" ? undefined : data.location;
       const normalizedEducation =
         data.educationLevel === "all" ? undefined : data.educationLevel;
-      const normalizedExperience =
-        data.experienceLevel?.min === undefined &&
-        data.experienceLevel?.max === undefined
-          ? undefined
-          : data.experienceLevel;
 
-      const queryParams = {
+      const expMin = data.experienceLevel?.min;
+      const expMax = data.experienceLevel?.max;
+      const hasExp = expMin !== undefined || expMax !== undefined;
+
+      querySearchEmployee({
         careerScopes: scopeNames,
-        keyword: data.keyword,
-        location: normalizedLocation as TLocations,
-        jobType: normalizedJobType as TAvailability,
-        experienceMin: normalizedExperience?.min,
-        experienceMax: normalizedExperience?.max,
+        keyword: data.keyword || undefined,
+        location: normalizedLocation as TLocations | undefined,
+        jobType: normalizedJobType as TAvailability | undefined,
+        experienceMin: hasExp ? expMin : undefined,
+        experienceMax: hasExp ? expMax : undefined,
         education: normalizedEducation,
         sortBy: data.sortBy,
         sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
-      };
-
-      querySearchEmployee(queryParams);
+      });
     },
-    [querySearchEmployee, scopeNames]
+    [querySearchEmployee, scopeNames],
   );
 
-  // Debounced form submission
-  const debouncedSubmit = useMemo(() => debounce(onSubmit, 400), [onSubmit]);
+  // Stable Debounded Function
+  const debouncedRunSearch = useMemo(
+    () => debounce(runSearch, 400),
+    [runSearch],
+  );
 
-  // Initial search with module-level guard (Strict Mode safe)
+  // Initial Search Effect (Once per mount / Per user ready)
   useEffect(() => {
     if (!user) return;
-
-    // Check module-level flag (survives Strict Mode remounts)
-    if (hasInitialSearchEmployeeRun) return;
-
-    isInitializing = true; // Set flag before setValue
+    if (didInitRef.current) return;
 
     const scopes =
-      user?.role === "company"
-        ? user?.company?.careerScopes
-        : user?.employee?.careerScopes;
+      user.role === "company"
+        ? user.company?.careerScopes
+        : user.employee?.careerScopes;
+
     const names = scopes?.map((cs) => cs.name) ?? [];
     setScopeNames(names);
 
-    // Set user's location as default if available
     const userLocation =
-      user?.role === "company"
-        ? user?.company?.location
-        : user?.employee?.location;
+      user.role === "company"
+        ? user.company?.location
+        : user.employee?.location;
+
     if (userLocation && userLocation !== "all") {
       setValue("location", userLocation);
     }
-
-    // Initial search
+    
     querySearchEmployee({
       careerScopes: names,
       sortBy: "firstname",
       sortOrder: "DESC",
     });
 
-    hasInitialSearchEmployeeRun = true;
-    // Reset initialization flag after a brief delay
-    setTimeout(() => {
-      isInitializing = false;
-    }, 100);
-  }, [user, querySearchEmployee]);
+    didInitRef.current = true;
+  }, [user, querySearchEmployee, setValue]);
 
-  // Watch for form changes (skip first render)
+  // Auto-Search on any form change (Debounced)
   useEffect(() => {
-    if (isFirstWatchRenderRef.current) {
-      isFirstWatchRenderRef.current = false;
-      return;
-    }
-
     const subscription = watch((value) => {
-      if (isInitializing) return;
-      debouncedSubmit(value as TCompanySearchSchema);
+      if (!didInitRef.current) return;
+
+      // Skip first watch event (happens when form initializes / setValue runs)
+      if (skipFirstWatchRef.current) {
+        skipFirstWatchRef.current = false;
+        return;
+      }
+
+      debouncedRunSearch(value as TCompanySearchSchema);
     });
 
     return () => subscription.unsubscribe();
-  }, [watch, debouncedSubmit]);
+  }, [watch, debouncedRunSearch]);
 
-  // Cleanup debounce on unmount
-  useEffect(() => debouncedSubmit.cancel(), [debouncedSubmit]);
+  // Cleanup Debounce Timer Effect
+  useEffect(() => {
+    return () => debouncedRunSearch.cancel();
+  }, [debouncedRunSearch]);
 
-  // Handler for radio group changes
+  // Handle Radio Change
   const handleRadioChange = (
     fieldName: keyof TCompanySearchSchema,
-    value: any
-  ) => {
-    setValue(fieldName, value, { shouldDirty: true });
-  };
+    value: any,
+  ) => setValue(fieldName, value, { shouldDirty: true });
 
   return (
     <form
       className="w-full flex flex-col items-start gap-5 px-10"
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(runSearch)}
     >
       {/* Banner Section */}
       <div className="w-full flex items-center justify-between gap-10 laptop-sm:flex-col laptop-sm:items-center">
@@ -168,14 +164,17 @@ export default function CompanySearchPage() {
           <TypographyMuted>
             Your next great hire is just a click away.
           </TypographyMuted>
+
+          {/* Search Bar Section */}
           <SearchBar
             isEmployee={false}
             register={register}
             setValue={setValue}
-            initialLocation={watchAllFields.location as TLocations}
-            initialJobType={watchAllFields.jobType as TAvailability}
+            initialLocation={location as TLocations}
+            initialJobType={jobType as TAvailability}
           />
         </div>
+
         <Image
           src={CompanySearchSvg}
           alt="company-search"
@@ -185,78 +184,55 @@ export default function CompanySearchPage() {
         />
       </div>
 
+      {/* Left Side: Filter Section */}
       <div className="w-full flex items-start gap-5 tablet-xl:!flex-col tablet-xl:[&>div]:w-full">
-        {/* Left Side: Filter Section */}
+        {/* Filters Section */}
         <div className="w-1/4 flex flex-col items-start gap-8 p-5 shadow-md rounded-md">
           <TypographyH4 className="text-lg">Refine Result</TypographyH4>
 
-          {/* Education Level */}
+          {/* Education Section */}
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideGraduationCap strokeWidth={"1.5px"} />
               Education Level
             </TypographyP>
+
             <Controller
               name="educationLevel"
               control={control}
-              render={({ field }) => {
-                const education = field.value ?? "all";
-                return (
-                  <RadioGroup
-                    value={education}
-                    onValueChange={(val) => {
-                      const value = val === "all" ? "all" : val;
-                      handleRadioChange("educationLevel", value);
-                    }}
-                    className="ml-3"
-                  >
-                    <RadioGroupItemWithLabel
-                      id="edu-all"
-                      value="all"
-                      htmlFor="edu-all"
-                    >
-                      All
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="edu-undergrad"
-                      value="Under Graduate"
-                      htmlFor="edu-undergrad"
-                    >
-                      Under Graduate
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="edu-bachelor"
-                      value="Bachelor"
-                      htmlFor="edu-bachelor"
-                    >
-                      Bachelor
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="edu-master"
-                      value="Master"
-                      htmlFor="edu-master"
-                    >
-                      Master
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="edu-phd"
-                      value="PHD"
-                      htmlFor="edu-phd"
-                    >
-                      PhD
-                    </RadioGroupItemWithLabel>
-                  </RadioGroup>
-                );
-              }}
+              render={({ field }) => (
+                <RadioGroup
+                  value={field.value ?? "all"}
+                  onValueChange={(val) => handleRadioChange("educationLevel", val)}
+                  className="ml-3"
+                >
+                  <RadioGroupItemWithLabel id="edu-all" value="all" htmlFor="edu-all">
+                    All
+                  </RadioGroupItemWithLabel>
+                  <RadioGroupItemWithLabel id="edu-undergrad" value="Under Graduate" htmlFor="edu-undergrad">
+                    Under Graduate
+                  </RadioGroupItemWithLabel>
+                  <RadioGroupItemWithLabel id="edu-bachelor" value="Bachelor" htmlFor="edu-bachelor">
+                    Bachelor
+                  </RadioGroupItemWithLabel>
+                  <RadioGroupItemWithLabel id="edu-master" value="Master" htmlFor="edu-master">
+                    Master
+                  </RadioGroupItemWithLabel>
+                  <RadioGroupItemWithLabel id="edu-phd" value="PHD" htmlFor="edu-phd">
+                    PhD
+                  </RadioGroupItemWithLabel>
+                </RadioGroup>
+              )}
             />
           </div>
 
-          {/* Experience Level */}
+          {/* Experience Section */}
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideBriefcaseBusiness strokeWidth={"1.5px"} />
               Experience Level
             </TypographyP>
+
             <Controller
               name="experienceLevel"
               control={control}
@@ -266,21 +242,20 @@ export default function CompanySearchPage() {
                   min === 0 && max === 1
                     ? "0-1"
                     : min === 1 && max === 2
-                    ? "1-2"
-                    : min === 2 && max === 3
-                    ? "2-3"
-                    : min === 3 && max === 4
-                    ? "3-4"
-                    : min === 4 && max === undefined
-                    ? ">4"
-                    : "all";
+                      ? "1-2"
+                      : min === 2 && max === 3
+                        ? "2-3"
+                        : min === 3 && max === 4
+                          ? "3-4"
+                          : min === 4 && max === undefined
+                            ? ">4"
+                            : "all";
 
                 return (
                   <RadioGroup
                     value={selectedValue}
                     onValueChange={(val) => {
-                      console.log("Experience level changed to:", val);
-                      let updated;
+                      let updated: { min?: number; max?: number } = {};
                       switch (val) {
                         case "0-1":
                           updated = { min: 0, max: 1 };
@@ -297,55 +272,29 @@ export default function CompanySearchPage() {
                         case ">4":
                           updated = { min: 4, max: undefined };
                           break;
-                        case "all":
                         default:
                           updated = { min: undefined, max: undefined };
                       }
-
                       handleRadioChange("experienceLevel", updated);
                     }}
                     className="ml-3"
                   >
-                    <RadioGroupItemWithLabel
-                      id="exp-all"
-                      value="all"
-                      htmlFor="exp-all"
-                    >
+                    <RadioGroupItemWithLabel id="exp-all" value="all" htmlFor="exp-all">
                       All
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="exp-less-1"
-                      value="0-1"
-                      htmlFor="exp-less-1"
-                    >
+                    <RadioGroupItemWithLabel id="exp-0-1" value="0-1" htmlFor="exp-0-1">
                       Less than 1 year
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="exp-1-2"
-                      value="1-2"
-                      htmlFor="exp-1-2"
-                    >
+                    <RadioGroupItemWithLabel id="exp-1-2" value="1-2" htmlFor="exp-1-2">
                       1 - 2 years
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="exp-2-3"
-                      value="2-3"
-                      htmlFor="exp-2-3"
-                    >
+                    <RadioGroupItemWithLabel id="exp-2-3" value="2-3" htmlFor="exp-2-3">
                       2 - 3 years
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="exp-3-4"
-                      value="3-4"
-                      htmlFor="exp-3-4"
-                    >
+                    <RadioGroupItemWithLabel id="exp-3-4" value="3-4" htmlFor="exp-3-4">
                       3 - 4 years
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="exp-more-4"
-                      value=">4"
-                      htmlFor="exp-more-4"
-                    >
+                    <RadioGroupItemWithLabel id="exp-more-4" value=">4" htmlFor="exp-more-4">
                       More than 4 years
                     </RadioGroupItemWithLabel>
                   </RadioGroup>
@@ -355,7 +304,7 @@ export default function CompanySearchPage() {
           </div>
         </div>
 
-        {/* Right side: Results Section */}
+        {/* Results Section */}
         <div className="w-3/4 flex flex-col items-start gap-3">
           <div className="w-full flex justify-between items-center">
             <TypographyH4 className="text-lg">
@@ -364,23 +313,20 @@ export default function CompanySearchPage() {
               ) : error ? (
                 <span className="text-destructive">0 Employee Found</span>
               ) : employees && employees.length > 0 ? (
-                `${employees.length} Employee${
-                  employees.length > 1 ? "s" : ""
-                } Found`
-              ) : !loading && employees?.length === 0 ? (
-                "No employees found"
+                `${employees.length} Employee${employees.length > 1 ? "s" : ""} Found`
               ) : (
-                <Skeleton className="h-6 w-40 bg-muted" />
+                "No employees found"
               )}
             </TypographyH4>
           </div>
+
           <div className="w-full flex flex-col items-start gap-2">
             {loading ? (
               <div className="w-full mb-3">
                 {Array(3)
                   .fill(0)
-                  .map((_, index) => (
-                    <SearchEmployeeCardSkeleton key={index} />
+                  .map((_, i) => (
+                    <SearchEmployeeCardSkeleton key={i} />
                   ))}
               </div>
             ) : error ? (
@@ -391,9 +337,9 @@ export default function CompanySearchPage() {
                 />
               </div>
             ) : employees && employees.length > 0 ? (
-              employees.map((item, index) => (
+              employees.map((item) => (
                 <SearchEmployeeCard
-                  key={item.id || index}
+                  key={item.id}
                   id={item.id}
                   firstname={item.firstname ?? ""}
                   lastname={item.lastname ?? ""}
@@ -404,11 +350,7 @@ export default function CompanySearchPage() {
                   availability={item.availability as TAvailability}
                   description={item.description}
                   location={item.location as TLocations}
-                  skills={
-                    Array.isArray(item.skills)
-                      ? item.skills.map((s) => s.name)
-                      : []
-                  }
+                  skills={Array.isArray(item.skills) ? item.skills.map((s) => s.name) : []}
                   education={
                     Array.isArray(item.educations)
                       ? item.educations.map((edu) => edu.degree).join(", ")
@@ -419,8 +361,7 @@ export default function CompanySearchPage() {
             ) : (
               <div className="w-full text-center py-10">
                 <TypographyP className="text-muted-foreground">
-                  No employees match your search criteria. Try adjusting your
-                  filters.
+                  No employees match your search criteria. Try adjusting your filters.
                 </TypographyP>
               </div>
             )}

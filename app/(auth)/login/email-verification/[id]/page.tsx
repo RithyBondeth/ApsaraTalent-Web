@@ -16,26 +16,26 @@ import { TypographySmall } from "@/components/utils/typography/typography-small"
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function EmailVerificationPage() {
+  // Utils
   const { resolvedTheme } = useTheme();
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const params = useParams();
   const token = params?.id;
-
-  const { toast } = useToast();
+  const { toast, dismiss} = useToast();
   const router = useRouter();
+
+  // Verify Email Helper
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  
+  // API Integration
   const { loading, error, message, verifyEmail } = useVerifyEmailStore();
 
-  const currentTheme = resolvedTheme || "light";
-  const emailVerificationImage =
-    currentTheme === "dark"
-      ? emailVerificationWhiteSvg
-      : emailVerificationBlackSvg;
-
+  // Verify Email Function
   const handleVerifyEmail = async () => {
     setIsSubmitted(true);
     await verifyEmail(token as string);
   };
 
+  // Verify Email Effect
   useEffect(() => {
     if (!isSubmitted) return;
 
@@ -45,13 +45,14 @@ export default function EmailVerificationPage() {
           <div className="flex items-center gap-2">
             <ApsaraLoadingSpinner size={40} loop />
             <TypographySmall className="font-medium">
-              Loading...
+              Verifying...
             </TypographySmall>
           </div>
         ),
       });
 
-    if (error)
+    if (error) {
+      dismiss();
       toast({
         variant: "destructive",
         description: (
@@ -63,8 +64,10 @@ export default function EmailVerificationPage() {
           </div>
         ),
       });
+    }
 
     if (!loading && !error && message) {
+      dismiss();
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -80,6 +83,13 @@ export default function EmailVerificationPage() {
     }
   }, [error, loading, message, isSubmitted]);
 
+  // Get Current Image Based on Theme
+  const currentTheme = resolvedTheme || "light";
+  const emailVerificationImage =
+    currentTheme === "dark"
+      ? emailVerificationWhiteSvg
+      : emailVerificationBlackSvg;
+
   return (
     <div className="h-screen w-screen flex items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
       <div className="w-1/2 flex justify-center items-center bg-primary-foreground tablet-md:h-[40%]">
@@ -93,6 +103,7 @@ export default function EmailVerificationPage() {
               Please verify you email by clicking the verify button below.
             </TypographyMuted>
           </div>
+
           {/* Button Section */}
           <Button onClick={() => handleVerifyEmail()}>
             <LucideMail />
@@ -100,6 +111,8 @@ export default function EmailVerificationPage() {
           </Button>
         </div>
       </div>
+      
+      {/* Image Poster Section */}
       <div className="w-1/2 flex justify-center items-center bg-primary tablet-lg:p-10">
         <Image
           src={emailVerificationImage}

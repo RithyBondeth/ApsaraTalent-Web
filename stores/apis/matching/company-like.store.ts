@@ -28,7 +28,7 @@ export const useCompanyLikeStore = create<TCompanyLikeState>((set) => ({
       set({ loading: true, error: null, data: null });
 
       const response = await axios.post<TCompanyLikeResponse>(
-        API_MATCHING_CMP_LIKE_URL(companyID, employeeID)
+        API_MATCHING_CMP_LIKE_URL(companyID, employeeID),
       );
 
       set({ loading: false, error: null, data: response.data });

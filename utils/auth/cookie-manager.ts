@@ -7,7 +7,7 @@ import { COOKIE_CONFIG } from "../constants/cookie.constant";
 export const setAuthCookies = (
   accessToken: string,
   refreshToken: string,
-  rememberMe: boolean
+  rememberMe: boolean,
 ): void => {
   try {
     const accessTokenMaxAge = rememberMe
@@ -47,10 +47,10 @@ export const setAuthCookies = (
     console.log("Authentication cookies set successfully", {
       rememberMe,
       accessTokenExpiry: new Date(
-        Date.now() + accessTokenMaxAge * 1000
+        Date.now() + accessTokenMaxAge * 1000,
       ).toISOString(),
       refreshTokenExpiry: new Date(
-        Date.now() + refreshTokenMaxAge * 1000
+        Date.now() + refreshTokenMaxAge * 1000,
       ).toISOString(),
     });
   } catch (error) {
@@ -94,7 +94,7 @@ export const clearAuthCookies = (): void => {
         } catch (domainError) {
           console.debug(
             "Domain-specific cookie clearing skipped:",
-            domainError
+            domainError,
           );
         }
       });

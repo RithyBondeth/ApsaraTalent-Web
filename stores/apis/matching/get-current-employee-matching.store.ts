@@ -23,7 +23,7 @@ export const useGetCurrentEmployeeMatchingStore =
 
       try {
         const response = await axios.get<TGetCurrentEmployeeMatchingResponse>(
-          API_GET_CURRENT_EMPLOYEE_MATCHING_URL(employeeId)
+          API_GET_CURRENT_EMPLOYEE_MATCHING_URL(employeeId),
         );
 
         set({

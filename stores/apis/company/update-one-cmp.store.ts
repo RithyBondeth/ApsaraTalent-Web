@@ -22,7 +22,7 @@ type TUpdateOneCompanyState = TUpdateOneCompanyResponse & {
   error: string | null;
   updateOneCompany: (
     companyID: string,
-    body: TCompanyUpdateBody
+    body: TCompanyUpdateBody,
   ) => Promise<void>;
 };
 
@@ -131,7 +131,7 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
 
         const response = await axios.patch<TUpdateOneCompanyResponse>(
           API_UPDATE_CMP_INFO_URL(companyID),
-          requestBody
+          requestBody,
         );
 
         set({
@@ -146,14 +146,15 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
             error.response?.data?.message instanceof Array
               ? error.response.data.message.join(", ")
               : error.response?.data?.message || error.message;
-          set({ loading: false, error: errorMessage });
+          set({ loading: false, error: errorMessage, message: errorMessage });
         } else {
           set({
             loading: false,
             error: "An error occurred while updating company's information",
+            message: "An error occurred while updating company's information",
           });
         }
       }
     },
-  })
+  }),
 );

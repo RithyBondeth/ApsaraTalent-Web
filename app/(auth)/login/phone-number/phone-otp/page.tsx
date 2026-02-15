@@ -22,15 +22,87 @@ import { useEffect, useState } from "react";
 import { LucideCheck, LucideInfo } from "lucide-react";
 import { ToastAction } from "@/components/ui/toast";
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
+import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
+import { useGetAllCompanyStore } from "@/stores/apis/company/get-all-cmp.store";
+import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
+import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
+import { useGetAllEmployeeStore } from "@/stores/apis/employee/get-all-emp.store";
 
 export default function PhoneOTPPage() {
+  // Utils
   const router = useRouter();
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
-  const { toast } = useToast();
-  const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
-  const { loading, error, message, accessToken, refreshToken, verifyOtp } =
-    useVerifyOTPStore();
+  const { toast, dismiss } = useToast();
 
+  // Verify OTP Helpers
+  const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
+  const [loginInitiated, setLoginInitiated] = useState<boolean>(false);
+
+  // API Integration
+  // Current User, Get All Employees and Get All Companies
+  const { getCurrentUser } = useGetCurrentUserStore();
+  const { queryEmployee } = useGetAllEmployeeStore();
+  const { queryCompany } = useGetAllCompanyStore();
+  // Employee and Company Liked and Favorited 
+  const getCurrentCompanyLikedStore = useGetCurrentCompanyLikedStore();
+  const getAllCompanyFavoriteStore = useGetAllCompanyFavoritesStore();
+  const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore();
+  const getAllEmployeeFavoriteStore = useGetAllEmployeeFavoritesStore();
+  // Verify OTP Authentication
+  const verifyOTPStore = useVerifyOTPStore();
+
+  const preloadUserData = async () => {
+    try {
+      // Fist load current user
+      await getCurrentUser();
+
+      // Wait a bit for getCurrentUser to complete and update the store
+      await new Promise<void>((resolve) => {
+        setTimeout(async () => {
+          const userData = useGetCurrentUserStore.getState().user;
+
+          if (userData) {
+            if (userData.role === "employee" && userData.employee?.id) {
+              // Preload employee-specific data
+              console.log(
+                "Querying all companies, employee liked, and employee favorite inside Login OTP Page!!",
+              );
+              await Promise.all([
+                getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(
+                  userData.employee.id,
+                ),
+                getAllEmployeeFavoriteStore.queryAllEmployeeFavorites(
+                  userData.employee.id,
+                ),
+                queryCompany(),
+              ]);
+            } else if (userData.role === "company" && userData.company?.id) {
+              // Preload company-specific data
+              console.log(
+                "Querying all employees, companies liked, and company favorite inside Login OTP Page!!",
+              );
+              await Promise.all([
+                getCurrentCompanyLikedStore.queryCurrentCompanyLiked(
+                  userData.company.id,
+                ),
+                getAllCompanyFavoriteStore.queryAllCompanyFavorites(
+                  userData.company.id,
+                ),
+                queryEmployee(),
+              ]);
+            }
+          }
+          resolve();
+        }, 100);
+      });
+    } catch (error) {
+      console.error("Error preloading data: ", error);
+      throw error;
+    }
+  };
+
+  // React Hook Form: Verify OTP Form
   const {
     control,
     handleSubmit,
@@ -38,40 +110,87 @@ export default function PhoneOTPPage() {
     reset,
   } = useForm<{ otp: string }>();
   const onSubmit = async (data: { otp: string }) => {
-    setIsSubmitted(true);
+    setLoginInitiated(true);
     const phone = basicPhoneSignupData?.phone?.replace("0", "+855") ?? "";
-    const user = await verifyOtp(
+    await verifyOTPStore.verifyOtp(
       phone,
       data.otp,
-      basicPhoneSignupData?.rememberMe ?? true
+      basicPhoneSignupData?.rememberMe ?? true,
     );
-
-    if (user.role === "none" && !user.profileCompleted) {
-      router.push("/signup/option");
-    } else {
-      router.push("/feed");
-    }
   };
 
+  // Verify OTP Effect
   useEffect(() => {
-    if (!isSubmitted) return;
+    if (!loginInitiated) return;
 
-    if (accessToken && refreshToken) {
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <LucideCheck />
-            <TypographySmall className="font-medium leading-relaxed">
-              {message}
-            </TypographySmall>
-          </div>
-        ),
-        duration: 1000,
-      });
-      setTimeout(() => router.replace("/feed"), 1000);
+    // If the role of user is none, navigate user to signup first
+    if (verifyOTPStore.role === "none") {
+      dismiss();
+      setLoginInitiated(false);
+      router.replace("/signup/option");
+      return;
     }
 
-    if (loading)
+    // If user is authenticated, navigate user to feed page
+    if (verifyOTPStore.isAuthenticated && loginInitiated) {
+      (dismiss(),
+        toast({
+          description: (
+            <div className="flex items-center gap-2">
+              <ApsaraLoadingSpinner size={50} loop />
+              <TypographySmall className="font-medium leading-relaxed">
+                Authenticating...
+              </TypographySmall>
+            </div>
+          ),
+          duration: Infinity,
+        }));
+
+      // Prelaod all user data while showing loading message
+      preloadUserData()
+        .then(() => {
+          console.log("User data preload successfully in otp page");
+          dismiss();
+          toast({
+            variant: "success",
+            description: (
+              <div className="flex items-center gap-2">
+                <LucideCheck />
+                <TypographySmall className="font-medium leading-relaxed">
+                  {verifyOTPStore.message}
+                </TypographySmall>
+              </div>
+            ),
+            duration: 1000,
+          });
+        })
+        .catch((error) => {
+          console.error("Error preloading user data: ", error);
+          dismiss();
+          toast({
+            variant: "destructive",
+            description: (
+              <div className="flex items-center gap-2">
+                <LucideCheck />
+                <TypographySmall className="font-medium leading-relaxed">
+                  {verifyOTPStore.message}
+                </TypographySmall>
+              </div>
+            ),
+            duration: 1000,
+          });
+        })
+        .finally(() => {
+          console.log("inside route to feed finally");
+          setTimeout(() => {
+            dismiss();
+            setLoginInitiated(false);
+            router.push("/feed");
+          }, 1000);
+        });
+    }
+
+    if (verifyOTPStore.loading && loginInitiated) {
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -82,25 +201,40 @@ export default function PhoneOTPPage() {
           </div>
         ),
       });
+    }
 
-    if (error)
+    if (verifyOTPStore.error && loginInitiated) {
+      dismiss();
       toast({
         variant: "destructive",
         description: (
           <div className="flex flex-row items-center gap-2">
             <LucideInfo />
             <TypographySmall className="font-medium leading-relaxed">
-              {message}
+              {verifyOTPStore.error}
             </TypographySmall>
           </div>
         ),
         action: (
-          <ToastAction altText="Try again" onClick={() => reset()}>
+          <ToastAction
+            altText="Try again"
+            onClick={() => {
+              reset();
+              setLoginInitiated(false);
+            }}
+          >
             Retry
           </ToastAction>
         ),
       });
-  }, [loading, error, message, accessToken, refreshToken, isSubmitted]);
+    }
+  }, [
+    verifyOTPStore.loading,
+    verifyOTPStore.error,
+    verifyOTPStore.message,
+    loginInitiated,
+    verifyOTPStore.isAuthenticated,
+  ]);
 
   return (
     <div className="h-screen w-screen flex items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">

@@ -22,7 +22,7 @@ export const useCountCurrentEmployeeMatchingStore =
 
       try {
         const response = await axios.get<TCountCurrentEmployeeMatchingResponse>(
-          API_COUNT_CURRENT_EMPLOYEE_MATCHING_URL(employeeId)
+          API_COUNT_CURRENT_EMPLOYEE_MATCHING_URL(employeeId),
         );
 
         set({

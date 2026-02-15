@@ -11,5 +11,5 @@ export const useTemplateSelectionStore = create<TemplateSelectionState>()(
   (set) => ({
     selectedTemplate: null,
     setSelectedTemplate: (template) => set({ selectedTemplate: template }),
-  })
+  }),
 );

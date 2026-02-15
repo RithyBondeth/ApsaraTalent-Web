@@ -129,7 +129,7 @@ export default function EmployeeProfilePage() {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [selectedGender, setSelectedGender] = useState<TGender | string>("");
   const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
-    ""
+    "",
   );
   const [education, setEducation] = useState<IEducation[]>([]);
   const [experience, setExperience] = useState<IExperience[]>([]);
@@ -216,7 +216,7 @@ export default function EmployeeProfilePage() {
         employee.educations.map((edu) => ({
           ...edu,
           year: dateFormatter(edu.year),
-        })) ?? []
+        })) ?? [],
       );
       setExperience(employee.experiences ?? []);
       setSocials(employee.socials ?? []);
@@ -248,7 +248,7 @@ export default function EmployeeProfilePage() {
 
   useEffect(() => {
     const initialSocial = (form.getValues?.("socials") || []).filter(
-      (s): s is ISocial => s !== undefined
+      (s): s is ISocial => s !== undefined,
     );
     setSocials(initialSocial);
   }, [form]);
@@ -259,7 +259,7 @@ export default function EmployeeProfilePage() {
       initialSkill.map((skill) => ({
         name: skill?.name ?? "",
         description: skill?.description ?? "",
-      }))
+      })),
     );
   }, [form]);
 
@@ -269,7 +269,7 @@ export default function EmployeeProfilePage() {
       initialCareerScope.map((cp) => ({
         name: cp?.name ?? "",
         description: cp?.description ?? "",
-      }))
+      })),
     );
   }, [form]);
 
@@ -291,7 +291,7 @@ export default function EmployeeProfilePage() {
 
   const removeEducation = (educationId: string) => {
     setEducation((prevEducation) =>
-      prevEducation.filter((edu) => edu.id !== educationId)
+      prevEducation.filter((edu) => edu.id !== educationId),
     );
   };
 
@@ -309,7 +309,7 @@ export default function EmployeeProfilePage() {
 
   const removeExperience = (experienceId: string) => {
     setExperience((prevExperience) =>
-      prevExperience.filter((exp) => exp.id !== experienceId)
+      prevExperience.filter((exp) => exp.id !== experienceId),
     );
   };
 
@@ -321,7 +321,7 @@ export default function EmployeeProfilePage() {
     if (!trimmedPlatform || !trimmedUrl) return;
 
     const alreadyExists = socials.some(
-      (s) => s.platform.toLowerCase() === trimmedPlatform.toLowerCase()
+      (s) => s.platform.toLowerCase() === trimmedPlatform.toLowerCase(),
     );
 
     if (alreadyExists) {
@@ -350,7 +350,7 @@ export default function EmployeeProfilePage() {
   // Avatar and References
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
-    type: "avatar" | "resume" | "coverLetter"
+    type: "avatar" | "resume" | "coverLetter",
   ) => {
     const file = event.target.files ? event.target.files[0] : null;
 
@@ -374,7 +374,7 @@ export default function EmployeeProfilePage() {
     if (!trimmed) return;
 
     const alreadyExists = skills.some(
-      (skill) => skill.name.toLowerCase() === trimmed.toLowerCase()
+      (skill) => skill.name.toLowerCase() === trimmed.toLowerCase(),
     );
 
     if (alreadyExists) {
@@ -409,7 +409,7 @@ export default function EmployeeProfilePage() {
     if (!trimmed) return;
 
     const alreadyExists = careerScopes.some(
-      (cs) => cs.name.toLowerCase() === trimmed.toLowerCase()
+      (cs) => cs.name.toLowerCase() === trimmed.toLowerCase(),
     );
 
     if (alreadyExists) {

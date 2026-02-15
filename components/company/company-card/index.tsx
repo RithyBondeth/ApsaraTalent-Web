@@ -27,9 +27,11 @@ import { IJobPosition } from "@/utils/interfaces/user-interface/company.interfac
 import { availabilityConstant } from "@/utils/constants/app.constant";
 
 export default function CompanyCard(props: ICompanyCardProps) {
+  // Utils
   const [openCompanyDialog, setOpenCompanyDialog] = useState<boolean>(false);
   const ignoreNextClick = useRef<boolean>(false);
 
+  // Handle Click Dialog
   const handleClickDialog = (e: React.MouseEvent) => {
     // Prevent reopening immediately after closing
     if (ignoreNextClick.current) {
@@ -45,9 +47,9 @@ export default function CompanyCard(props: ICompanyCardProps) {
     setOpenCompanyDialog(true);
   };
 
+  // Prevent reopening immediately after closing
   useEffect(() => {
     if (!openCompanyDialog) {
-      // Prevent reopening immediately after closing
       ignoreNextClick.current = true;
       setTimeout(() => (ignoreNextClick.current = false), 200);
     }

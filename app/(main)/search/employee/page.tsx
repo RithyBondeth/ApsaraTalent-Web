@@ -10,7 +10,7 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { RadioGroup } from "@/components/ui/radio-group";
 import RadioGroupItemWithLabel from "@/components/ui/radio-group-item";
 import { useSearchJobStore } from "@/stores/apis/job/search-job.store";
-import { useCallback, useEffect, useMemo, useState, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -30,16 +30,19 @@ import { SearchErrorCard } from "@/components/search/search-error-card";
 import { TAvailability } from "@/utils/types/availability.type";
 import { debounce } from "lodash";
 
-// Module-level guard (Strict Mode safe)
-let hasInitialSearchJobRun = false;
-
 export default function EmployeeSearchPage() {
+  // Utils
+  const isFirstWatchRenderRef = useRef<boolean>(true);
+  const isInitialSearchDoneRef = useRef<boolean>(false);
+
+  // API Integration 
   const { error, loading, jobs, querySearchJobs } = useSearchJobStore();
   const { user } = useGetCurrentUserStore();
 
+  // Employee Search for Company Helper
   const [scopeNames, setScopeNames] = useState<string[]>([]);
-  const isFirstWatchRenderRef = useRef(true);
 
+  // React Hook Form: Employee Search Form
   const { register, control, setValue, handleSubmit, watch } =
     useForm<TEmployeeSearchSchema>({
       resolver: zodResolver(employeeSearchSchema),
@@ -57,9 +60,12 @@ export default function EmployeeSearchPage() {
       },
     });
 
-  const watchAllFields = watch();
+  // Watch Only What SearchBar Needs (prevents full page rerender on every key)
+  const location = watch("location");
+  const jobType = watch("jobType");
 
-  const onSubmit = useCallback(
+  // Real Search Function
+  const runSearch = useCallback(
     (data: TEmployeeSearchSchema) => {
       querySearchJobs({
         careerScopes: scopeNames,
@@ -80,15 +86,19 @@ export default function EmployeeSearchPage() {
         sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
       });
     },
-    [querySearchJobs, scopeNames]
+    [querySearchJobs, scopeNames],
   );
 
-  const debouncedSubmit = useMemo(() => debounce(onSubmit, 400), [onSubmit]);
+  // Stable Debounced Function
+  const debouncedRunSearch = useMemo(
+    () => debounce(runSearch, 400),
+    [runSearch],
+  );
 
-  // INITIAL SEARCH (RUNS ONLY ONCE)
+  // Initial Search Effect (Once per mount / Per user ready)
   useEffect(() => {
     if (!user) return;
-    if (hasInitialSearchJobRun) return;
+    if (isInitialSearchDoneRef.current) return;
 
     const scopes =
       user.role === "company"
@@ -104,31 +114,35 @@ export default function EmployeeSearchPage() {
       sortOrder: "DESC",
     });
 
-    hasInitialSearchJobRun = true;
+    isInitialSearchDoneRef.current = true;
   }, [user, querySearchJobs]);
 
-  // Watch filters (skip first render)
+  // Auto Search As User Types / Changes filters Effect
   useEffect(() => {
+    // Skip first render so it doesn’t duplicate initial search
     if (isFirstWatchRenderRef.current) {
       isFirstWatchRenderRef.current = false;
       return;
     }
 
-    const subscription = watch((value) =>
-      debouncedSubmit(value as TEmployeeSearchSchema)
-    );
+    const subscription = watch((value) => {
+      // Only run after scopes are ready (prevents empty search when page first loads)
+      if (!isInitialSearchDoneRef.current) return;
+      debouncedRunSearch(value as TEmployeeSearchSchema);
+    });
 
     return () => subscription.unsubscribe();
-  }, [watch, debouncedSubmit]);
+  }, [watch, debouncedRunSearch]);
 
-  // Cleanup debounce only
+  // Cleanup Debounce Timer Effect
   useEffect(() => {
-    return () => debouncedSubmit.cancel();
-  }, [debouncedSubmit]);
+    return () => debouncedRunSearch.cancel();
+  }, [debouncedRunSearch]);
 
+  // Hnadle Radio Change
   const handleRadioChange = (
     fieldName: keyof TEmployeeSearchSchema,
-    value: any
+    value: any,
   ) => {
     setValue(fieldName, value, { shouldDirty: true });
   };
@@ -136,7 +150,7 @@ export default function EmployeeSearchPage() {
   return (
     <form
       className="w-full flex flex-col items-start gap-5 px-10"
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(runSearch)}
     >
       {/* Banner Section */}
       <div className="w-full flex items-center justify-between gap-10 laptop-sm:flex-col laptop-sm:items-center">
@@ -153,14 +167,17 @@ export default function EmployeeSearchPage() {
           <TypographyMuted className="leading-relaxed">
             Your great opportunity is just a click away.
           </TypographyMuted>
+
+          {/* Search Bar Section */}
           <SearchBar
             isEmployee={true}
             register={register}
             setValue={setValue}
-            initialLocation={watchAllFields.location as TLocations}
-            initialJobType={watchAllFields.jobType as TAvailability}
+            initialLocation={location as TLocations}
+            initialJobType={jobType as TAvailability}
           />
         </div>
+
         <Image
           src={EmployeeSearchSvg}
           alt="employee-search"
@@ -169,86 +186,74 @@ export default function EmployeeSearchPage() {
           className="laptop-sm:hidden"
         />
       </div>
+
       <div className="w-full flex items-start gap-5 tablet-xl:!flex-col tablet-xl:[&>div]:w-full">
         {/* Left Side: Filter Section */}
         <div className="w-1/4 flex flex-col items-start gap-8 p-5 shadow-md rounded-md">
           <TypographyH4 className="text-lg">Refine Result</TypographyH4>
 
-          {/* Date Posted */}
+          {/* Date Posted Section */}
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideCalendarDays strokeWidth={"1.5px"} />
               Date Posted
             </TypographyP>
+
             <Controller
               name="date"
               control={control}
               render={({ field }) => {
                 const from = field.value?.from;
                 const to = field.value?.to;
-                let selectedValue: string | undefined;
+
+                let selectedValue: string = "all";
                 if (!from && !to) selectedValue = "all";
                 else if (from && to) {
-                  const diffHours =
-                    (to.getTime() - from.getTime()) / 1000 / 60 / 60;
-                  if (diffHours <= 2) selectedValue = "last 24 hours";
+                  const diffHours = (to.getTime() - from.getTime()) / 36e5;
+                  // NOTE: your original code used 2 hours for "last 24 hours"
+                  if (diffHours <= 24) selectedValue = "last 24 hours";
                   else if (diffHours <= 72) selectedValue = "last 3 days";
                   else if (diffHours <= 168) selectedValue = "last week";
                 }
+
                 return (
                   <RadioGroup
                     value={selectedValue}
                     onValueChange={(val) => {
-                      let updated: {
-                        from: Date | undefined;
-                        to: Date | undefined;
-                      } = { from: undefined, to: undefined };
+                      let updated: { from?: Date; to?: Date } = {};
                       if (val !== "all") {
                         const now = new Date();
-                        const from = new Date();
+                        const fromDate = new Date(now);
+
                         switch (val) {
                           case "last 24 hours":
-                            from.setHours(now.getHours() - 2);
+                            fromDate.setHours(now.getHours() - 24);
                             break;
                           case "last 3 days":
-                            from.setDate(now.getDate() - 3);
+                            fromDate.setDate(now.getDate() - 3);
                             break;
                           case "last week":
-                            from.setDate(now.getDate() - 7);
+                            fromDate.setDate(now.getDate() - 7);
                             break;
                         }
-                        updated = { from, to: new Date() };
+
+                        updated = { from: fromDate, to: new Date() };
                       }
+
                       handleRadioChange("date", updated);
                     }}
                     className="ml-3"
                   >
-                    <RadioGroupItemWithLabel
-                      id="date-all"
-                      value="all"
-                      htmlFor="date-all"
-                    >
+                    <RadioGroupItemWithLabel id="date-all" value="all" htmlFor="date-all">
                       All Dates Posted
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="last-24"
-                      value="last 24 hours"
-                      htmlFor="last-24"
-                    >
+                    <RadioGroupItemWithLabel id="last-24" value="last 24 hours" htmlFor="last-24">
                       Last 24 Hours
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="last-3-days"
-                      value="last 3 days"
-                      htmlFor="last-3-days"
-                    >
+                    <RadioGroupItemWithLabel id="last-3-days" value="last 3 days" htmlFor="last-3-days">
                       Last 3 Days
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="last-week"
-                      value="last week"
-                      htmlFor="last-week"
-                    >
+                    <RadioGroupItemWithLabel id="last-week" value="last week" htmlFor="last-week">
                       Last Week
                     </RadioGroupItemWithLabel>
                   </RadioGroup>
@@ -263,6 +268,7 @@ export default function EmployeeSearchPage() {
               <LucideUsers strokeWidth={"1.5px"} />
               Company Size
             </TypographyP>
+
             <Controller
               name="companySize"
               control={control}
@@ -272,16 +278,16 @@ export default function EmployeeSearchPage() {
                   min === 1 && max === 50
                     ? "startup"
                     : min === 51 && max === 500
-                    ? "medium"
-                    : min === 501 && max === undefined
-                    ? "large"
-                    : "all";
+                      ? "medium"
+                      : min === 501 && max === undefined
+                        ? "large"
+                        : "all";
 
                 return (
                   <RadioGroup
                     value={selectedValue}
                     onValueChange={(val) => {
-                      let updated;
+                      let updated: { min?: number; max?: number } = {};
                       switch (val) {
                         case "startup":
                           updated = { min: 1, max: 50 };
@@ -292,7 +298,6 @@ export default function EmployeeSearchPage() {
                         case "large":
                           updated = { min: 501, max: undefined };
                           break;
-                        case "all":
                         default:
                           updated = { min: undefined, max: undefined };
                       }
@@ -300,32 +305,16 @@ export default function EmployeeSearchPage() {
                     }}
                     className="ml-3"
                   >
-                    <RadioGroupItemWithLabel
-                      id="company-all"
-                      value="all"
-                      htmlFor="company-all"
-                    >
+                    <RadioGroupItemWithLabel id="company-all" value="all" htmlFor="company-all">
                       All Sizes
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="startup"
-                      value="startup"
-                      htmlFor="startup"
-                    >
+                    <RadioGroupItemWithLabel id="startup" value="startup" htmlFor="startup">
                       Start up (1–50)
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="medium"
-                      value="medium"
-                      htmlFor="medium"
-                    >
+                    <RadioGroupItemWithLabel id="medium" value="medium" htmlFor="medium">
                       Medium (51–500)
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="large"
-                      value="large"
-                      htmlFor="large"
-                    >
+                    <RadioGroupItemWithLabel id="large" value="large" htmlFor="large">
                       Large (500+)
                     </RadioGroupItemWithLabel>
                   </RadioGroup>
@@ -340,6 +329,7 @@ export default function EmployeeSearchPage() {
               <LucideCircleDollarSign strokeWidth={"1.5px"} />
               Salary Range
             </TypographyP>
+
             <Controller
               name="salaryRange"
               control={control}
@@ -349,20 +339,20 @@ export default function EmployeeSearchPage() {
                   min === undefined && max === undefined
                     ? "all"
                     : min === 0 && max === 300
-                    ? "0-300"
-                    : min === 300 && max === 600
-                    ? "300-600"
-                    : min === 600 && max === 1000
-                    ? "600-1000"
-                    : min === 1000 && max === undefined
-                    ? "1000+"
-                    : undefined;
+                      ? "0-300"
+                      : min === 300 && max === 600
+                        ? "300-600"
+                        : min === 600 && max === 1000
+                          ? "600-1000"
+                          : min === 1000 && max === undefined
+                            ? "1000+"
+                            : "all";
 
                 return (
                   <RadioGroup
                     value={selectedValue}
                     onValueChange={(val) => {
-                      let updated;
+                      let updated: { min?: number; max?: number } = {};
                       switch (val) {
                         case "0-300":
                           updated = { min: 0, max: 300 };
@@ -376,48 +366,26 @@ export default function EmployeeSearchPage() {
                         case "1000+":
                           updated = { min: 1000, max: undefined };
                           break;
-                        case "all":
                         default:
                           updated = { min: undefined, max: undefined };
-                          break;
                       }
                       handleRadioChange("salaryRange", updated);
                     }}
                     className="ml-3"
                   >
-                    <RadioGroupItemWithLabel
-                      id="salary-all"
-                      value="all"
-                      htmlFor="salary-all"
-                    >
+                    <RadioGroupItemWithLabel id="salary-all" value="all" htmlFor="salary-all">
                       All Salaries
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="salary-0-300"
-                      value="0-300"
-                      htmlFor="salary-0-300"
-                    >
+                    <RadioGroupItemWithLabel id="salary-0-300" value="0-300" htmlFor="salary-0-300">
                       0$ - 300$
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="salary-300-600"
-                      value="300-600"
-                      htmlFor="salary-300-600"
-                    >
+                    <RadioGroupItemWithLabel id="salary-300-600" value="300-600" htmlFor="salary-300-600">
                       300$ - 600$
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="salary-600-1000"
-                      value="600-1000"
-                      htmlFor="salary-600-1000"
-                    >
+                    <RadioGroupItemWithLabel id="salary-600-1000" value="600-1000" htmlFor="salary-600-1000">
                       600$ - 1000$
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="salary-1000-up"
-                      value="1000+"
-                      htmlFor="salary-1000-up"
-                    >
+                    <RadioGroupItemWithLabel id="salary-1000-up" value="1000+" htmlFor="salary-1000-up">
                       1000$+
                     </RadioGroupItemWithLabel>
                   </RadioGroup>
@@ -432,6 +400,7 @@ export default function EmployeeSearchPage() {
               <LucideGraduationCap strokeWidth={"1.5px"} />
               Education Level
             </TypographyP>
+
             <Controller
               name="educationLevel"
               control={control}
@@ -440,45 +409,22 @@ export default function EmployeeSearchPage() {
                 return (
                   <RadioGroup
                     value={education}
-                    onValueChange={(val) => {
-                      const value = val === "all" ? "all" : val;
-                      handleRadioChange("educationLevel", value);
-                    }}
+                    onValueChange={(val) => handleRadioChange("educationLevel", val)}
                     className="ml-3"
                   >
-                    <RadioGroupItemWithLabel
-                      id="edu-all"
-                      value="all"
-                      htmlFor="edu-all"
-                    >
+                    <RadioGroupItemWithLabel id="edu-all" value="all" htmlFor="edu-all">
                       All Levels
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="Under Graduate"
-                      value="Under Graduate"
-                      htmlFor="edu-undergrad"
-                    >
+                    <RadioGroupItemWithLabel id="edu-undergrad" value="Under Graduate" htmlFor="edu-undergrad">
                       Under Graduate
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="Bachelor"
-                      value="Bachelor"
-                      htmlFor="edu-bachelor"
-                    >
+                    <RadioGroupItemWithLabel id="edu-bachelor" value="Bachelor" htmlFor="edu-bachelor">
                       Bachelor
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="Master"
-                      value="Master"
-                      htmlFor="edu-master"
-                    >
+                    <RadioGroupItemWithLabel id="edu-master" value="Master" htmlFor="edu-master">
                       Master
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="PHD"
-                      value="PHD"
-                      htmlFor="edu-phd"
-                    >
+                    <RadioGroupItemWithLabel id="edu-phd" value="PHD" htmlFor="edu-phd">
                       PhD
                     </RadioGroupItemWithLabel>
                   </RadioGroup>
@@ -493,6 +439,7 @@ export default function EmployeeSearchPage() {
               <LucideBriefcaseBusiness strokeWidth={"1.5px"} />
               Experience Level
             </TypographyP>
+
             <Controller
               name="experienceLevel"
               control={control}
@@ -502,18 +449,18 @@ export default function EmployeeSearchPage() {
                   min === 0 && max === 1
                     ? "<1"
                     : min === 1 && max === 2
-                    ? "1-2"
-                    : min === 2 && max === 3
-                    ? "2-3"
-                    : min === 3 && max === undefined
-                    ? ">3"
-                    : "all";
+                      ? "1-2"
+                      : min === 2 && max === 3
+                        ? "2-3"
+                        : min === 3 && max === undefined
+                          ? ">3"
+                          : "all";
 
                 return (
                   <RadioGroup
                     value={selectedValue}
                     onValueChange={(val) => {
-                      let updated;
+                      let updated: { min?: number; max?: number } = {};
                       switch (val) {
                         case "<1":
                           updated = { min: 0, max: 1 };
@@ -527,7 +474,6 @@ export default function EmployeeSearchPage() {
                         case ">3":
                           updated = { min: 3, max: undefined };
                           break;
-                        case "all":
                         default:
                           updated = { min: undefined, max: undefined };
                       }
@@ -535,39 +481,19 @@ export default function EmployeeSearchPage() {
                     }}
                     className="ml-3"
                   >
-                    <RadioGroupItemWithLabel
-                      id="exp-all"
-                      value="all"
-                      htmlFor="exp-all"
-                    >
+                    <RadioGroupItemWithLabel id="exp-all" value="all" htmlFor="exp-all">
                       All Levels
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="exp-less-1"
-                      value="<1"
-                      htmlFor="exp-less-1"
-                    >
+                    <RadioGroupItemWithLabel id="exp-less-1" value="<1" htmlFor="exp-less-1">
                       Less than 1 year
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="exp-1-2"
-                      value="1-2"
-                      htmlFor="exp-1-2"
-                    >
+                    <RadioGroupItemWithLabel id="exp-1-2" value="1-2" htmlFor="exp-1-2">
                       1 - 2 years
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="exp-2-3"
-                      value="2-3"
-                      htmlFor="exp-2-3"
-                    >
+                    <RadioGroupItemWithLabel id="exp-2-3" value="2-3" htmlFor="exp-2-3">
                       2 - 3 years
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="exp-more-3"
-                      value=">3"
-                      htmlFor="exp-more-3"
-                    >
+                    <RadioGroupItemWithLabel id="exp-more-3" value=">3" htmlFor="exp-more-3">
                       More than 3 years
                     </RadioGroupItemWithLabel>
                   </RadioGroup>
@@ -577,7 +503,7 @@ export default function EmployeeSearchPage() {
           </div>
         </div>
 
-        {/* Right Side: Results Section */}
+        {/* Right Side: Results */}
         <div className="w-3/4 flex flex-col items-start gap-3">
           <div className="w-full flex justify-between items-center">
             <TypographyH4 className="text-lg">
@@ -592,6 +518,7 @@ export default function EmployeeSearchPage() {
               )}
             </TypographyH4>
           </div>
+
           <div className="w-full flex flex-col items-start gap-2">
             {loading ? (
               <div className="w-full mb-3">
@@ -634,8 +561,7 @@ export default function EmployeeSearchPage() {
             ) : (
               <div className="w-full text-center py-10">
                 <TypographyP className="text-muted-foreground">
-                  No jobs match your search criteria. Try adjusting your
-                  filters.
+                  No jobs match your search criteria. Try adjusting your filters.
                 </TypographyP>
               </div>
             )}

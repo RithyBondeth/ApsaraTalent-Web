@@ -49,7 +49,7 @@ import { TypographySmall } from "@/components/utils/typography/typography-small"
 import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
 import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
 
-// Module-level cache for global data (survives Strict Mode)
+// Module-level Cache For Global Data (survives Strict Mode)
 const globalFetchCache = {
   companies: false,
   employees: false,
@@ -57,27 +57,19 @@ const globalFetchCache = {
 
 export default function FeedPage() {
   // Utils
-  const [mounted, setMounted] = useState<boolean>(false);
-  const router = useRouter();
-  useEffect(() => setMounted(true), []);
   const { toast } = useToast();
-
-  // Theme
+  const router = useRouter();
+  const [mounted, setMounted] = useState<boolean>(false);
   const { resolvedTheme } = useTheme();
-
-  // Always use light theme initially to prevent hydration mismatch
-  const feedImage =
-    mounted && resolvedTheme === "dark" ? feedBlackSvg : feedWhiteSvg;
-  const feedCompanyImage = feedCompanySvg;
+  useEffect(() => setMounted(true), []);
 
   // Pop up Dialog
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
   const ignoreNextClick = useRef<boolean>(false);
-  const [currentProfileImage, setCurrentProfileImage] = useState<string | null>(
-    null
-  );
+  const [currentProfileImage, setCurrentProfileImage] = useState<string | null>(null);
+  const [openLikeSuccessDialog, setOpenLikeSuccessDialog] = useState<boolean>(false);
 
-  // Profile Pop up Dialog
+  // Handle Profile Pop up Dialog
   const handleClickProfilePopup = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -87,7 +79,8 @@ export default function FeedPage() {
     if ((e.target as HTMLElement).closest(".dialog-content")) return;
     setOpenProfilePopup(true);
   };
-
+ 
+  // Open Profile Pop up Dialog Effect
   useEffect(() => {
     if (openProfilePopup) {
       ignoreNextClick.current = true;
@@ -95,34 +88,37 @@ export default function FeedPage() {
     }
   }, [openProfilePopup]);
 
-  // Dialog state for like success
-  const [openLikeSuccessDialog, setOpenLikeSuccessDialog] =
-    useState<boolean>(false);
-
   // API Integration
+  // User Stores
+  const currentUser = useGetCurrentUserStore((state) => state.user);
+  const getAllCompanyStore = useGetAllCompanyStore();
+  const getAllEmployeeStore = useGetAllEmployeeStore();
+
+  // Liked Store
   const employeeLikeStore = useEmployeeLikeStore();
   const companyLikeStore = useCompanyLikeStore();
+  const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore();
+  const getCurrentCompanyLikedStore = useGetCurrentCompanyLikedStore();
+  // Liked Helper
+  const [likingId, setLikingId] = useState<string | null>(null);
+
+  // Favorite Stores
   const employeeFavCompanyStore = useEmployeeFavCompanyStore();
   const companyFavEmployeeStore = useCompanyFavEmployeeStore();
   const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
   const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
-  const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore();
-  const getCurrentCompanyLikedStore = useGetCurrentCompanyLikedStore();
-  const getCurrentEmployeeMatchingStore = useGetCurrentEmployeeMatchingStore();
-  const getCurrentCompanyMatchingStore = useGetCurrentCompanyLikedStore();
-  const getAllCompanyStore = useGetAllCompanyStore();
-  const getAllEmployeeStore = useGetAllEmployeeStore();
+  // Count All Employee and Company Favorites To Update Badge In Sidebar
   const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
   const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
-  const { countCurrentEmployeeMatching } =
-    useCountCurrentEmployeeMatchingStore();
+
+  // Matching Stores
+  const getCurrentEmployeeMatchingStore = useGetCurrentEmployeeMatchingStore();
+  const getCurrentCompanyMatchingStore = useGetCurrentCompanyLikedStore();
+  // Count All Employee and Company Matching To Update Badge In Sidebar
+  const { countCurrentEmployeeMatching } = useCountCurrentEmployeeMatchingStore();
   const { countCurrentCompanyMatching } = useCountCurrentCompanyMatchingStore();
 
-  // Get current user from store
-  const currentUser = useGetCurrentUserStore((state) => state.user);
-  const [likingId, setLikingId] = useState<string | null>(null);
-
-  // Fetch current employee or company liked - user specific data (resets when user changes)
+  // Step 1: Fetch All Current Employee or Company Liked - User Specific Data (Reset When User Change)
   const { isEmployee } = useFetchOnce({
     cacheKey: "feed-page",
     onEmployeeFetch: (employeeId) => {
@@ -135,8 +131,8 @@ export default function FeedPage() {
     },
   });
 
-  // Fetch all companies or employees - global data (only once, never resets)
-  // Strict Mode safe
+  // Step 2: Fetch All Companies or Employees - Global Data (Only Once, Never Resets)
+  // Safe Mode: Fetch Only 1 Time
   useEffect(() => {
     if (!currentUser) return;
 
@@ -155,7 +151,9 @@ export default function FeedPage() {
     }
   }, [isEmployee, currentUser, getAllCompanyStore, getAllEmployeeStore]);
 
-  // Filter users based on role
+  // Step 3: Filter Users Based on Role
+  // If User is Employee filter -> Companies (Filter Out Current Employee Liked)
+  // If User is Company filter -> Employees (Filter Out Current Company Liked)
   const allUsers: ICompany[] | IEmployee[] = useMemo(() => {
     if (!currentUser) return [];
 
@@ -202,17 +200,21 @@ export default function FeedPage() {
   // Handle Employee Like Company
   const handleEmployeeLikeCompany = async (
     employeeID: string,
-    companyID: string
+    companyID: string,
   ) => {
     if (!employeeID || !companyID) return;
     setLikingId(companyID);
     try {
+      // Employee Liked Company
       await employeeLikeStore.employeeLike(employeeID, companyID);
+      // Count Current Employee Matching -> Update Matching Badge in Sidebar
       countCurrentEmployeeMatching(employeeID);
       setOpenLikeSuccessDialog(true);
+      // Get Current Employee Liked -> Update All Users (Filter Out Current Employee Liked)
       await getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(employeeID);
     } finally {
       setLikingId(null);
+      // Get Current Company Matching -> Update In Matching Page (Incase There's a Matching)
       getCurrentCompanyMatchingStore.queryCurrentCompanyLiked(companyID);
     }
   };
@@ -220,17 +222,21 @@ export default function FeedPage() {
   // Handle Company Like Employee
   const handleCompanyLikeEmployee = async (
     companyID: string,
-    employeeID: string
+    employeeID: string,
   ) => {
     if (!companyID || !employeeID) return;
     setLikingId(employeeID);
     try {
+      // Company Liked Employee
       await companyLikeStore.companyLike(companyID, employeeID);
+      // Count Current Company Matching -> Update Matching Badge in Sidebar
       countCurrentCompanyMatching(companyID);
       setOpenLikeSuccessDialog(true);
+      // Get Current Company Liked -> Update All Users (Filter Out Current Company Liked)
       await getCurrentCompanyLikedStore.queryCurrentCompanyLiked(companyID);
     } finally {
       setLikingId(null);
+       // Get Current Company Matching -> Update In Matching Page (Incase There's a Matching)
       getCurrentEmployeeMatchingStore.queryCurrentEmployeeMatching(employeeID);
     }
   };
@@ -239,11 +245,13 @@ export default function FeedPage() {
   const handleEmployeeFavoriteCompany = async (
     employeeID: string,
     companyID: string,
-    companyName: string
+    companyName: string,
   ) => {
     if (!employeeID || !companyID) return;
     try {
+      // Employee Favorite Company
       await employeeFavCompanyStore.addCompanyToFavorite(employeeID, companyID);
+      // Count All Employee Favorite -> Update Favorite Badge In Sidebar
       countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeID);
       toast({
         variant: "success",
@@ -256,6 +264,7 @@ export default function FeedPage() {
           </div>
         ),
       });
+      // Get All Employee Favorites -> Upddate Favorite Page
       await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(employeeID);
     } catch (error) {
       const err =
@@ -278,14 +287,16 @@ export default function FeedPage() {
   const handleCompanyFavoriteEmployee = async (
     companyID: string,
     employeeID: string,
-    employeeName: string
+    employeeName: string,
   ) => {
     if (!companyID || !employeeID) return;
     try {
+      // Company Favorite Employee
       await companyFavEmployeeStore.addEmployeeToFavorite(
         companyID,
-        employeeID
+        employeeID,
       );
+      // Count All Company Favorite -> Update Favorite Badge In Sidebar
       countAllCompanyFavoritesStore.countAllCompanyFavorites(companyID);
       toast({
         variant: "success",
@@ -298,6 +309,7 @@ export default function FeedPage() {
           </div>
         ),
       });
+      // Get All Company Favorites -> Upddate Favorite Page
       await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyID);
     } catch (error) {
       const err = companyFavEmployeeStore.error || "Failed to save employee";
@@ -315,14 +327,14 @@ export default function FeedPage() {
     }
   };
 
-  // Preload profile images for better performance
+  // Preload Profile Avatar For Better Performance (useCachedImage Hook)
   const profileImageUrls = useMemo(() => {
     return allUsers.map((user) => user.avatar).filter(Boolean);
   }, [allUsers]);
   usePreloadImages(profileImageUrls);
 
-  // Show loading state during hydration and initial data loading
-  const showLoadingState =
+  // Compute All Loading States
+  const isLoading =
     !mounted ||
     !currentUser ||
     (isEmployee &&
@@ -330,13 +342,19 @@ export default function FeedPage() {
     (!isEmployee &&
       (getAllEmployeeStore.loading || getCurrentCompanyLikedStore.loading));
 
+  // Get Image Based On Theme
+  const feedImage =
+    mounted && resolvedTheme === "dark" ? feedBlackSvg : feedWhiteSvg;
+  const feedCompanyImage = feedCompanySvg;
+
   return (
     <div className="w-full flex flex-col items-start gap-5">
       {/* Header Section */}
-      {showLoadingState ? (
+      {isLoading ? (
         <BannerSkeleton />
       ) : isEmployee ? (
         <div className="w-full flex items-center justify-between gap-10 tablet-xl:flex-col tablet-xl:items-center">
+          {/* Employee Banner - Content Section */}
           <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
             <TypographyH2 className="!leading-relaxed text-4xl tablet-xl:text-3xl tablet-xl:text-center">
               Connect with global professionals and grow your network
@@ -351,6 +369,8 @@ export default function FeedPage() {
               Land your dream job with ease — no matter where you are.
             </TypographyMuted>
           </div>
+
+          {/* Employee Banner - Image Poster Section */}
           <Image
             src={feedCompanyImage}
             alt="feed"
@@ -361,6 +381,7 @@ export default function FeedPage() {
         </div>
       ) : (
         <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
+          {/* Company Banner - Content Section */}
           <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
             <TypographyH2 className="leading-relaxed tablet-xl:text-center">
               Find Top Talent from Anywhere
@@ -372,6 +393,7 @@ export default function FeedPage() {
               Post jobs, review profiles, and hire faster — all in one place
             </TypographyMuted>
           </div>
+          {/* Company Banner - Image Poster Section */}
           {mounted ? (
             <Image
               src={feedImage}
@@ -394,17 +416,20 @@ export default function FeedPage() {
 
       {/* Feed Card Section */}
       <div className="w-full grid grid-cols-3 gap-5 laptop-sm:grid-cols-2 tablet-lg:!grid-cols-1 phone-xl:gap-3">
-        {showLoadingState ? (
+        {/* Loading Skeleton Section */}
+        {isLoading ? (
           Array.from({ length: 9 }).map((_, index) =>
             isEmployee ? (
               <CompanyCardSkeleton key={`company-skeleton-${index}`} />
             ) : (
               <EmployeeCardSkeleton key={`employee-skeleton-${index}`} />
-            )
+            ),
           )
         ) : allUsers.length > 0 ? (
+          // Card List Section
           allUsers.map((user) =>
             isEmployee ? (
+              // Company Card Section
               <CompanyCard
                 key={user.id}
                 {...(user as ICompany)}
@@ -422,7 +447,7 @@ export default function FeedPage() {
                     handleEmployeeFavoriteCompany(
                       employeeID,
                       companyID,
-                      companyName ?? "Company"
+                      companyName ?? "Company",
                     );
                   }
                 }}
@@ -445,6 +470,7 @@ export default function FeedPage() {
                 }}
               />
             ) : (
+              // Employee Card Section
               <EmployeeCard
                 key={user.id}
                 {...(user as IEmployee)}
@@ -459,7 +485,7 @@ export default function FeedPage() {
                     handleCompanyFavoriteEmployee(
                       companyID,
                       employeeID,
-                      employeeName ?? "Employee"
+                      employeeName ?? "Employee",
                     );
                   }
                 }}
@@ -482,22 +508,23 @@ export default function FeedPage() {
                   }
                 }}
               />
-            )
+            ),
           )
         ) : (
+          // No User Available Section
           <div className="col-span-3 laptop-sm:col-span-2 tablet-lg:col-span-1 flex flex-col items-center justify-center my-16">
             <Image src={emptySvgImage} alt="empty" height={200} width={200} />
             <TypographyP className="!m-0">No user available</TypographyP>
           </div>
         )}
       </div>
-      {/* Image Popup */}
+      {/* Image Popup Section */}
       <ImagePopup
         open={openProfilePopup}
         setOpen={setOpenProfilePopup}
         image={currentProfileImage!}
       />
-      {/* Like Success Dialog */}
+      {/* Like Success Dialog Section */}
       <Dialog
         open={openLikeSuccessDialog}
         onOpenChange={setOpenLikeSuccessDialog}

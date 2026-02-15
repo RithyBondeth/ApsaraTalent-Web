@@ -34,5 +34,5 @@ export const useGetAllCareerScopesStore = create<TGetAllCareerScopesStoreState>(
           });
       }
     },
-  })
+  }),
 );

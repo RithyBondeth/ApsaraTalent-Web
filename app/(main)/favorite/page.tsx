@@ -29,7 +29,7 @@ export default function FavoritePage() {
   // Utils
   const { toast } = useToast();
 
-  // API calls
+  // API Integration
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
   const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
@@ -38,7 +38,7 @@ export default function FavoritePage() {
   const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
   const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
 
-  // Fetch user-specific favorites data
+  // Use Custom Hook - Handles all ref logic and duplicate prevention
   const { isEmployee } = useFetchOnce({
     cacheKey: "favorite-page",
     onEmployeeFetch: (employeeId) => {
@@ -54,15 +54,17 @@ export default function FavoritePage() {
     employeeID: string,
     companyID: string,
     favoriteID: string,
-    companyName: string
+    companyName: string,
   ) => {
     if (!employeeID || !companyID || !favoriteID) return;
     try {
+      // Employee Favorited Company Function
       await employeeFavCompanyStore.removeCompanyFromFavorite(
         employeeID,
         companyID,
-        favoriteID
+        favoriteID,
       );
+      // Count All Employee Favorites To See New Update
       countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeID);
       toast({
         variant: "success",
@@ -75,6 +77,7 @@ export default function FavoritePage() {
           </div>
         ),
       });
+      // Query All Employee Favorites To See New Update
       await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(employeeID);
     } catch (error) {
       const err =
@@ -93,15 +96,17 @@ export default function FavoritePage() {
     companyID: string,
     employeeID: string,
     favoriteID: string,
-    employeeName: string
+    employeeName: string,
   ) => {
     if (!companyID || !employeeID || !favoriteID) return;
     try {
+      // Company Favorited Employee Function
       await companyFavEmployeeStore.removeEmployeeFromFavorite(
         companyID,
         employeeID,
-        favoriteID
+        favoriteID,
       );
+      // Count All Company Favorites To See New Update
       countAllCompanyFavoritesStore.countAllCompanyFavorites(companyID);
       toast({
         variant: "success",
@@ -114,6 +119,7 @@ export default function FavoritePage() {
           </div>
         ),
       });
+      // Query All Company Favorites To See New Update
       await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyID);
     } catch (error) {
       const err =
@@ -127,7 +133,7 @@ export default function FavoritePage() {
     }
   };
 
-  // Unified loading handling to avoid flicker before first fetch resolves
+  // Compute All Loading State
   const isLoadingForEmployee =
     isEmployee &&
     (getAllEmployeeFavoritesStore.loading ||
@@ -138,9 +144,9 @@ export default function FavoritePage() {
     (getAllCompanyFavoritesStore.loading ||
       getAllCompanyFavoritesStore.employeeData === null);
 
-  const shouldShowLoading = isLoadingForEmployee || isLoadingForCompany;
+  const isLoading = isLoadingForEmployee || isLoadingForCompany;
 
-  if (shouldShowLoading) {
+  if (isLoading) {
     return (
       <div className="w-full flex flex-col px-5 mt-3">
         <FavoriteBannerSkeleton />
@@ -150,7 +156,7 @@ export default function FavoritePage() {
               <FavoriteCompanyCardSkeleton key={index} />
             ) : (
               <FavoriteEmployeeCardSkeleton key={index} />
-            )
+            ),
           )}
         </div>
       </div>
@@ -159,7 +165,9 @@ export default function FavoritePage() {
 
   return (
     <div className="w-full flex flex-col px-5">
+      {/* Banner Section */}
       <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
+        {/* Content Section */}
         <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center tablet-xl:mt-5 px-5">
           <TypographyH2 className="leading-relaxed tablet-xl:text-center">
             Find your favorites at a Glance
@@ -174,6 +182,8 @@ export default function FavoritePage() {
             Your personal shortlist — organized in one place.
           </TypographyMuted>
         </div>
+
+        {/* Image Poster Section */}
         <Image
           src={favoriteSvgImage}
           alt="favorites"
@@ -182,6 +192,8 @@ export default function FavoritePage() {
           className="tablet-xl:!w-full"
         />
       </div>
+
+      {/* Favorite Card List Section */}
       <div className="flex flex-col items-start gap-3">
         {isEmployee &&
         getAllEmployeeFavoritesStore.companyData &&
@@ -209,7 +221,7 @@ export default function FavoritePage() {
                     employeeID,
                     companyID,
                     favoriteID,
-                    companyName
+                    companyName,
                   );
                 }
               }}
@@ -244,7 +256,7 @@ export default function FavoritePage() {
                     companyID,
                     employeeID,
                     favoriteID,
-                    employeeName
+                    employeeName,
                   );
                 }
               }}

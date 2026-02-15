@@ -27,7 +27,7 @@ export const useGetAllCompanyFavoritesStore =
 
       try {
         const response = await axios.get<TGetAllCompanyFavoritesResponse[]>(
-          API_FIND_ALL_COMPANY_FAVORITES(companyID)
+          API_FIND_ALL_COMPANY_FAVORITES(companyID),
         );
         set({ loading: false, error: null, employeeData: response.data });
       } catch (error) {

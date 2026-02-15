@@ -130,7 +130,7 @@ export class ImageCache {
   public getStats() {
     const totalSize = Array.from(this.cache.values()).reduce(
       (size, cached) => size + cached.blob.size,
-      0
+      0,
     );
 
     return {
@@ -143,7 +143,7 @@ export class ImageCache {
   private cleanup(): void {
     const now = Date.now();
     const expired = Array.from(this.cache.entries()).filter(
-      ([, cached]) => cached.expiresAt <= now
+      ([, cached]) => cached.expiresAt <= now,
     );
 
     expired.forEach(([url, cached]) => {
@@ -157,7 +157,7 @@ export class ImageCache {
 
     // Remove oldest entries
     const entries = Array.from(this.cache.entries()).sort(
-      ([, a], [, b]) => a.timestamp - b.timestamp
+      ([, a], [, b]) => a.timestamp - b.timestamp,
     );
 
     const toRemove = entries.slice(0, entries.length - this.MAX_CACHE_SIZE);
@@ -175,7 +175,7 @@ export class ImageCache {
           timestamp: cached.timestamp,
           expiresAt: cached.expiresAt,
           // Note: We don't save the blob to localStorage due to size constraints
-        })
+        }),
       );
 
       localStorage.setItem("image-cache-meta", JSON.stringify(cacheData));

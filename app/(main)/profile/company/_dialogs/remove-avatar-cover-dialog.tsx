@@ -11,7 +11,7 @@ export default function RemoveAvatarOrCoverDialog(props: {
   type: "avatar" | "cover";
   onRemoveAvatarOrCoverDialog: boolean;
   setOnRemoveAvatarOrCoverDialog: (
-    onRemoveAvatarOrCoverDialog: boolean
+    onRemoveAvatarOrCoverDialog: boolean,
   ) => void;
   onNoClick: () => void;
   onYesClick: () => void;

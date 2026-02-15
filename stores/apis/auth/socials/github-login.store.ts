@@ -2,7 +2,6 @@ import { create } from "zustand";
 import { useGetCurrentUserStore } from "../../users/get-current-user.store";
 import { API_AUTH_SOCIAL_GITHUB_URL } from "@/utils/constants/apis/auth_url";
 import { TUserRole } from "@/utils/types/role.type";
-import { getCookie } from "cookies-next";
 import { EAuthLoginMethod } from "@/utils/constants/auth.constant";
 import { clearAuthCookies } from "@/utils/auth/cookie-manager";
 
@@ -104,7 +103,7 @@ export const useGithubLoginStore = create<TGithubLoginState>((set) => ({
     const popup = window.open(
       url,
       "github-oauth",
-      "width=500,height=600,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes"
+      "width=500,height=600,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes",
     );
 
     if (!popup) {

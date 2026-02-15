@@ -1,10 +1,24 @@
 import * as React from "react";
+import type { FieldError, FieldErrorsImpl, Merge } from "react-hook-form";
 import { cn } from "@/lib/utils";
-import { IInputProps } from "@/utils/interfaces/input.interface";
 import { TypographySmall } from "../utils/typography/typography-small";
+
+type RHFMessage = string | FieldError | Merge<FieldError, FieldErrorsImpl<any>>;
+
+export interface IInputProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "prefix" | "suffix"> {
+  prefix?: React.ReactNode;
+  suffix?: React.ReactNode;
+  validationMessage?: RHFMessage;
+}
 
 const Input = React.forwardRef<HTMLInputElement, IInputProps>(
   ({ className, type, prefix, suffix, validationMessage, ...props }, ref) => {
+    const message =
+      typeof validationMessage === "string"
+        ? validationMessage
+        : validationMessage?.message;
+
     return (
       <div className="w-full flex flex-col items-start gap-1">
         <div
@@ -13,29 +27,28 @@ const Input = React.forwardRef<HTMLInputElement, IInputProps>(
             className
           )}
         >
-          {prefix && (
-            <span className="mr-2 text-muted-foreground">{prefix}</span>
-          )}
+          {prefix && <span className="mr-2 text-muted-foreground">{prefix}</span>}
           <input
             type={type}
             className={cn(
               "flex-1 bg-transparent outline-none placeholder:text-sm",
-              props.disabled 
-                ? "text-muted-foreground" 
-                : "text-foreground"
+              props.disabled ? "text-muted-foreground" : "text-foreground"
             )}
             ref={ref}
             {...props}
           />
-          {suffix && (
-            <span className="ml-2 text-muted-foreground">{suffix}</span>
-          )}
+          {suffix && <span className="ml-2 text-muted-foreground">{suffix}</span>}
         </div>
-        {validationMessage && <TypographySmall className="text-xs text-red-500">{validationMessage}</TypographySmall>}
+
+        {Boolean(message) && (
+          <TypographySmall className="text-xs text-red-500">
+            {typeof message === "string" ? message : String(message)}
+          </TypographySmall>
+        )}
       </div>
     );
   }
 );
-Input.displayName = "Input";
 
+Input.displayName = "Input";
 export { Input };

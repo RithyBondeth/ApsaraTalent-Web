@@ -31,7 +31,7 @@ export const useUploadCompanyAvatarStore = create<TUploadCompanyAvatarState>(
             headers: {
               "Content-Type": "multipart/form-data",
             },
-          }
+          },
         );
         set({ loading: false, error: null, message: response.data.message });
       } catch (error) {
@@ -41,14 +41,15 @@ export const useUploadCompanyAvatarStore = create<TUploadCompanyAvatarState>(
               ? error.response.data.message.join(", ")
               : error.response?.data?.message || error.message;
 
-          set({ loading: false, error: errorMessage });
+          set({ loading: false, error: errorMessage, message: errorMessage });
         } else {
           set({
             loading: false,
             error: "An error occurred while uploading company's avatar",
+            message: "An error occurred while uploading company's avatar",
           });
         }
       }
     },
-  })
+  }),
 );

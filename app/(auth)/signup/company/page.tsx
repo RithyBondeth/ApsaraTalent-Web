@@ -35,22 +35,33 @@ import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function CompanySignup() {
+  // Utils
   const router = useRouter();
+  const { toast, dismiss } = useToast();
+
+  // Company Form Helpers
   const [step, setStep] = useState<number>(1);
   const totalSteps = 6;
+
+  // Company Data: Regular and Phone
   const { basicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
+
+  // API Integration - Company Socials Data
   const googleUserData = useGoogleLoginStore();
   const githubUserData = useGithubLoginStore();
   const linkedInUserData = useLinkedInLoginStore();
   const facebookUserData = useFacebookLoginStore();
 
-  const { toast } = useToast();
+  // API Integration - Company Signup
   const cmpSignup = useCompanySignupStore();
+ 
+  // API Integration - Company Avatar, Cover
   const uploadAvatar = useUploadCompanyAvatarStore();
   const uploadCover = useUploadCompanyCoverStore();
   const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
 
+  // React Hook Form: Company Signup Form
   const methods = useForm<TCompanySignup>({
     mode: "onChange",
     resolver: zodResolver(companySignupSchema),
@@ -94,7 +105,7 @@ export default function CompanySignup() {
     6: ["careerScopes"],
   };
 
-  // Handles next step or final submit
+  // Handle Next Step and Final Submit
   const nextStep = async () => {
     const fieldsToValidate = stepFieldMap[step];
 
@@ -104,6 +115,7 @@ export default function CompanySignup() {
       if (step === totalSteps) {
         handleSubmit(async (data) => {
           if (basicSignupData) {
+            // Signup company first to get companyID
             const companyId = await cmpSignup.signup({
               authEmail: true,
               email: basicSignupData.email!,
@@ -146,20 +158,24 @@ export default function CompanySignup() {
             const uploadTasks = [];
 
             if (data.avatar instanceof File) {
+              // If companyID exist then upload avatar
               uploadTasks.push(
-                uploadAvatar.uploadAvatar(companyId, data.avatar)
+                uploadAvatar.uploadAvatar(companyId, data.avatar),
               );
             }
 
             if (data.cover instanceof File) {
+              // If companyID exist then upload cover
               uploadTasks.push(uploadCover.uploadCover(companyId, data.cover));
             }
 
+            // Upload all avatar and cover together
             await Promise.all(uploadTasks);
             setUploadsComplete(true);
           }
 
           if (basicPhoneSignupData) {
+            // Signup company first to get companyID
             const companyId = await cmpSignup.signup({
               authEmail: false,
               email: null,
@@ -202,15 +218,18 @@ export default function CompanySignup() {
             const uploadTasks = [];
 
             if (data.avatar instanceof File) {
+              // If companyID exist then upload avatar
               uploadTasks.push(
-                uploadAvatar.uploadAvatar(companyId, data.avatar)
+                uploadAvatar.uploadAvatar(companyId, data.avatar),
               );
             }
 
             if (data.cover instanceof File) {
+              // If companyID exist then upload cover
               uploadTasks.push(uploadCover.uploadCover(companyId, data.cover));
             }
 
+            // Upload all avatar and cover together
             await Promise.all(uploadTasks);
             setUploadsComplete(true);
           }
@@ -221,8 +240,10 @@ export default function CompanySignup() {
     }
   };
 
+  // Handle Previous Step
   const prevStep = () => setStep((prev) => prev - 1);
 
+  // Company Signup Effect
   useEffect(() => {
     if (
       cmpSignup.accessToken &&
@@ -232,6 +253,7 @@ export default function CompanySignup() {
       !uploadAvatar.loading &&
       !uploadCover.loading
     ) {
+      dismiss();
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -267,6 +289,7 @@ export default function CompanySignup() {
 
     errors.forEach(({ error, message }) => {
       if (error) {
+        dismiss();
         toast({
           variant: "destructive",
           description: (
@@ -299,6 +322,7 @@ export default function CompanySignup() {
     uploadsComplete,
   ]);
 
+  // Log Basic Signup Data: Regular, Phone and Socials
   useEffect(() => {
     console.log("Basic Signup Data: ", basicSignupData);
     console.log("Basic Phone Signup Data: ", basicPhoneSignupData);
@@ -340,7 +364,7 @@ export default function CompanySignup() {
 
   return (
     <div className="h-[80%] w-[85%] flex flex-col items-start gap-3 tablet-lg:w-full tablet-lg:p-5 tablet-xl:mb-5">
-      {/* Back Button Section */}
+      {/* Navigate Back Button Section */}
       <Button
         className="absolute top-5 left-5"
         variant="outline"
@@ -380,7 +404,7 @@ export default function CompanySignup() {
                   </div>
                 )}
               </div>
-            )
+            ),
           )}
         </div>
 
@@ -439,8 +463,8 @@ export default function CompanySignup() {
               />
             )}
 
-            {/* Next & Previous Step */}
-            {/* Navigation Buttons */}
+            {/* Next & Previous Step Section */}
+            {/* Navigation Buttons Section */}
             <div className="flex justify-between my-8">
               {step > 1 && (
                 <Button type="button" onClick={prevStep}>

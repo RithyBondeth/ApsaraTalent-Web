@@ -28,7 +28,7 @@ export const useEmployeeLikeStore = create<TEmployeeLikeState>((set) => ({
       set({ loading: true, error: null, data: null });
 
       const response = await axios.post<TEmployeeLikeResponse>(
-        API_MATCHING_EMP_LIKE_URL(employeeID, companyID)
+        API_MATCHING_EMP_LIKE_URL(employeeID, companyID),
       );
 
       set({ loading: false, error: null, data: response.data });

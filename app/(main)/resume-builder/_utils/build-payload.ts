@@ -15,13 +15,15 @@ function formatDateToMMDDYYYY(dateString?: string | null): string | undefined {
 
 export function buildResumePayloadFromUser(
   user: IUser,
-  template: ResumeTemplate
+  template: ResumeTemplate,
 ): BuildResume {
   const employee = user.employee!;
 
-  const fullName = [employee.firstname || "", employee.lastname || ""]
-    .join(" ")
-    .trim() || employee.username || user.email?.split("@")[0] || "";
+  const fullName =
+    [employee.firstname || "", employee.lastname || ""].join(" ").trim() ||
+    employee.username ||
+    user.email?.split("@")[0] ||
+    "";
 
   const socials: Record<string, string> = {};
   (employee.socials || []).forEach((social) => {
@@ -66,5 +68,3 @@ export function buildResumePayloadFromUser(
 
   return payload;
 }
-
-

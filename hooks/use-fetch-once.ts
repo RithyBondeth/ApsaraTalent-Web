@@ -6,7 +6,7 @@ interface UseFetchOnceOptions {
   onEmployeeFetch?: (employeeId: string) => void;
   onCompanyFetch?: (companyId: string) => void;
   enabled?: boolean;
-  cacheKey?: string; // ✅ New: Unique key per usage
+  cacheKey?: string; // Unique key per usage
 }
 
 interface UseFetchOnceReturn {
@@ -18,7 +18,7 @@ interface UseFetchOnceReturn {
   currentUser: IUser | null;
 }
 
-// ✅ Module-level cache that tracks: cacheKey + userId
+// Module-level cache that tracks: cacheKey + userId
 const fetchCache = new Map<string, Set<string>>();
 
 export function useFetchOnce(
@@ -65,7 +65,7 @@ export function useFetchOnce(
   useEffect(() => {
     if (!enabled || !userData.currentUserId) return;
 
-    // ✅ Check if already fetched for THIS specific cache key + user
+    // Check if already fetched for THIS specific cache key + user
     if (cache.has(userData.currentUserId)) {
       return;
     }

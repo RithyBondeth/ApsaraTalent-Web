@@ -31,7 +31,7 @@ export const basicInfoSchema = z.object({
             },
             {
               message: `Invalid file: avatar must be an image (jpeg, png, webp) and < 5MB`,
-            }
+            },
           ),
           z.string(), // for existing image URLs
           z.null(),
@@ -70,7 +70,7 @@ export const educationSchema = z.object({
           degree: textValidation().optional(),
           year: textValidation().optional(),
         })
-        .optional()
+        .optional(),
     )
     .optional(),
 });
@@ -85,7 +85,7 @@ export const experienceSchema = z.object({
           startDate: dateValidation().optional(),
           endDate: dateValidation().optional(),
         })
-        .optional()
+        .optional(),
     )
     .optional(),
 });
@@ -98,7 +98,7 @@ export const skillSchema = z.object({
           name: textValidation().optional(),
           description: textValidation().optional(),
         })
-        .optional()
+        .optional(),
     )
     .optional(),
 });
@@ -134,7 +134,7 @@ export const careerScopesSchema = z.object({
       z.object({
         name: textValidation().optional(),
         description: textValidation().optional(),
-      })
+      }),
     )
     .min(1, { message: "Please select at least one career option" })
     .optional(),
@@ -148,7 +148,7 @@ export const socialSchema = z.object({
           platform: textValidation().optional(),
           url: textValidation().optional(),
         })
-        .optional()
+        .optional(),
     )
     .optional(),
 });

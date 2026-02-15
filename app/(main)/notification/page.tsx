@@ -10,18 +10,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { TNotificationFilterType } from "@/utils/types/notification.type";
 import { LucideCheckCheck } from "lucide-react";
 import { useState } from "react";
 
 export default function NotificationPage() {
-  type TNotificationFilterType = "all" | "match" | "message" | "unread";
-  const [notificationFilter, setNotificationFilter] =
-    useState<TNotificationFilterType>("all");
+  // Notification Helpers
+  const [notificationFilter, setNotificationFilter] = useState<TNotificationFilterType>("all");
   const notificationButtonVariant = (currentFilter: TNotificationFilterType) =>
     notificationFilter === currentFilter ? "default" : "secondary";
 
   return (
     <div className="w-full flex flex-col gap-5 px-5">
+      {/* Header Section */}
       <div className="w-full flex items-center justify-between">
         <div className="flex items-center gap-3 [&>button]:text-xs tablet-sm:hidden">
           <Button
@@ -49,6 +50,8 @@ export default function NotificationPage() {
             Unread
           </Button>
         </div>
+
+        {/* Responsive Dropdown Section */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild className="hidden tablet-sm:flex">
             <Button className="text-xs">
@@ -77,6 +80,8 @@ export default function NotificationPage() {
           Mark All As Read
         </Button>
       </div>
+
+      {/* Notification List Section */}
       <div className="flex flex-col gap-5">
         <NotificationMatchCard
           seen={true}

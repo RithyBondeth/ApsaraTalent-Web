@@ -22,7 +22,7 @@ export const useRemoveOneCmpImageStore = create<TRemoveOneCmpImageState>(
 
       try {
         const response = await axios.delete<TRemoveOneCmpImageResponse>(
-          API_REMOVE_ONE_CMP_IMAGE_URL(companyID, imageID)
+          API_REMOVE_ONE_CMP_IMAGE_URL(companyID, imageID),
         );
 
         set({ message: response.data.message, error: null, loading: false });
@@ -33,14 +33,15 @@ export const useRemoveOneCmpImageStore = create<TRemoveOneCmpImageState>(
               ? error.response.data.message.join(", ")
               : error.response?.data?.message || error.message;
 
-          set({ loading: false, error: errorMessage });
+          set({ loading: false, error: errorMessage, message: errorMessage });
         } else {
           set({
             loading: false,
             error: "An error occurred while removing company's image",
+            message: "An error occurred while removing company's image",
           });
         }
       }
     },
-  })
+  }),
 );

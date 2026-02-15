@@ -25,15 +25,20 @@ import { useRouter } from "next/navigation";
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function ResetPasswordPage() {
+  // Utils
+  const router = useRouter();
+  const { toast, dismiss } = useToast();
+
+  // Reset Password Helpers
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [confirmPassVisibility, setConfirmPassVisibility] =
     useState<boolean>(false);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
-  const router = useRouter();
-  const { toast } = useToast();
 
+  // API Integration
   const { loading, error, message, resetPassword } = useResetPasswordStore();
 
+  // React Hook Form: Reset Password Form
   const {
     handleSubmit,
     register,
@@ -43,16 +48,13 @@ export default function ResetPasswordPage() {
     resolver: zodResolver(resetPasswordSchema),
   });
 
+  // Reset Password Function
   const onSubmit = async (data: TResetPasswordForm) => {
     setIsSubmitted(true);
     await resetPassword(data.token, data.password, data.confirmPassword);
-    console.log({
-      token: data.token,
-      newPassword: data.password,
-      confirmPassword: data.confirmPassword,
-    });
   };
 
+  // Reset Password Effect
   useEffect(() => {
     if (!isSubmitted) return;
 
@@ -68,7 +70,8 @@ export default function ResetPasswordPage() {
         ),
       });
 
-    if (error)
+    if (error) {
+      dismiss();
       toast({
         variant: "destructive",
         description: (
@@ -85,8 +88,10 @@ export default function ResetPasswordPage() {
           </ToastAction>
         ),
       });
+    }
 
     if (!loading && !error && message) {
+      dismiss();
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -163,10 +168,12 @@ export default function ResetPasswordPage() {
           </form>
         </div>
       </div>
+
+      {/* Image Poster Section */}
       <div className="w-1/2 flex justify-center items-center bg-primary tablet-md:p-10">
         <Image
           src={resetPasswordWhiteSvg}
-          alt=""
+          alt="reset-password"
           height={undefined}
           width={600}
         />

@@ -12,7 +12,7 @@ type TResetPasswordState = TResetPasswordResponse & {
   resetPassword: (
     token: string,
     newPassword: string,
-    confirmPassword: string
+    confirmPassword: string,
   ) => Promise<void>;
 };
 
@@ -23,7 +23,7 @@ export const useResetPasswordStore = create<TResetPasswordState>()((set) => ({
   resetPassword: async (
     token: string,
     newPassword: string,
-    confirmPassword: string
+    confirmPassword: string,
   ) => {
     set({ loading: true, error: null });
 

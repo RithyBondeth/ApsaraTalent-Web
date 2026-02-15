@@ -58,21 +58,24 @@ import { useGetAllCompanyStore } from "@/stores/apis/company/get-all-cmp.store";
 import { useGetAllEmployeeStore } from "@/stores/apis/employee/get-all-emp.store";
 
 function LoginPage() {
-  const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
-  const [openRmbDialog, setOpenRmbDialog] = useState<boolean>(false);
-  const [socialTypeIdentifier, setSocialTypeIdentifier] = useState<
-    string | null
-  >(null);
-  const [loginInitiated, setLoginInitiated] = useState<boolean>(false);
-  const [socialLoginInitiated, setSocialLoginInitiated] =
-    useState<boolean>(false);
-  const [isPreloadingData, setIsPreloadingData] = useState<boolean>(false);
-  const isProcessingSocialLogin = useRef<boolean>(false);
-
+  // Utils: Dialog, Theme
   const router = useRouter();
   const { resolvedTheme } = useTheme();
   const { toast, dismiss } = useToast();
+  const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
+  const [openRmbDialog, setOpenRmbDialog] = useState<boolean>(false);
 
+  // Login Helpers
+  const [socialTypeIdentifier, setSocialTypeIdentifier] = useState<
+    string | null
+  >(null);
+  const [socialLoginInitiated, setSocialLoginInitiated] =
+    useState<boolean>(false);
+  const isProcessingSocialLogin = useRef<boolean>(false);
+  const [loginInitiated, setLoginInitiated] = useState<boolean>(false);
+  const [isPreloadingData, setIsPreloadingData] = useState<boolean>(false);
+
+  // React Hook Form: Login Form 
   const {
     handleSubmit,
     register,
@@ -97,16 +100,19 @@ function LoginPage() {
     }
   }, [setValue]);
 
-  // User Stores
+  // API Integration
+  // Current User, Get All Employees and Companies
   const { getCurrentUser } = useGetCurrentUserStore();
   const { queryCompany } = useGetAllCompanyStore();
   const { queryEmployee } = useGetAllEmployeeStore();
+  // User Liked Store
   const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore(); // Companies liked by current employee
   const getCurrentCompanyLikedStore = useGetCurrentCompanyLikedStore(); // Employees liked by current company
+  // User Favorited Store
   const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore(); // Companies favorited by current employee
   const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore(); // Employees favorited by current company
 
-  // Email/Password Authentication Store
+  //Regular Email-Password Authentication Store
   const { isAuthenticated, message, login, error, loading } = useLoginStore();
 
   // Social Authentication Stores
@@ -129,28 +135,28 @@ function LoginPage() {
             if (userData.role === "employee" && userData.employee?.id) {
               // Preload employee-specific data
               console.log(
-                "Querying all companies, employee liked, and employee favorite inside Login Page!!!"
+                "Querying all companies, employee liked, and employee favorite inside Login Page!!!",
               );
               await Promise.all([
                 getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(
-                  userData.employee.id
+                  userData.employee.id,
                 ),
                 getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
-                  userData.employee.id
+                  userData.employee.id,
                 ),
                 queryCompany(),
               ]);
             } else if (userData.role === "company" && userData.company?.id) {
               // Preload company-specific data
               console.log(
-                "Querying all employees, company liked, and company favorite inside Login Page!!!"
+                "Querying all employees, company liked, and company favorite inside Login Page!!!",
               );
               await Promise.all([
                 getCurrentCompanyLikedStore.queryCurrentCompanyLiked(
-                  userData.company.id
+                  userData.company.id,
                 ),
                 getAllCompanyFavoritesStore.queryAllCompanyFavorites(
-                  userData.company.id
+                  userData.company.id,
                 ),
                 queryEmployee(),
               ]);
@@ -165,18 +171,18 @@ function LoginPage() {
     }
   };
 
+  // Login Function
   const onSubmit = async (data: TLoginForm) => {
     setLoginInitiated(true);
     await login(data.email, data.password, data.rememberMe!);
   };
 
-  // Regular Email/Password Login Effect
+  // Regular Email-Password Login Effect
   useEffect(() => {
     if (!loginInitiated) return;
 
     if (isAuthenticated && loginInitiated) {
       dismiss(); // Dismiss any previous toasts
-
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -192,10 +198,10 @@ function LoginPage() {
       // Preload all user data while showing loading message
       preloadUserData()
         .then(() => {
-          console.log("User data preloaded successfully");
+          console.log("User data preloaded successfully in loin page");
           dismiss();
           toast({
-            variant: 'success',
+            variant: "success",
             description: (
               <div className="flex items-center gap-2">
                 <LucideCheck />
@@ -208,10 +214,10 @@ function LoginPage() {
           });
         })
         .catch((error) => {
-          console.error("Error preloading user data:", error);
+          console.error("Error preloading user data: ", error);
           dismiss();
           toast({
-            variant: 'destructive',
+            variant: "destructive",
             description: (
               <div className="flex items-center gap-2">
                 <LucideCheck />
@@ -273,6 +279,26 @@ function LoginPage() {
     }
   }, [isAuthenticated, error, message, loading, loginInitiated]);
 
+  // Social Login Function
+  const handleSocialLogin = (rememberMe: "true" | "false") => {
+    setSocialLoginInitiated(true);
+    isProcessingSocialLogin.current = false; // Reset flag
+    switch (socialTypeIdentifier) {
+      case "facebook":
+        facebookLoginStore.facebookLogin(rememberMe);
+        break;
+      case "google":
+        googleLoginStore.googleLogin(rememberMe);
+        break;
+      case "github":
+        githubLoginStore.githubLogin(rememberMe);
+        break;
+      case "linkedIn":
+        linkedInLoginStore.linkedinLogin(rememberMe);
+        break;
+    }
+  };
+
   // Social Login Effect
   useEffect(() => {
     if (!socialLoginInitiated) return;
@@ -284,18 +310,21 @@ function LoginPage() {
       { name: "Facebook", store: facebookLoginStore },
     ];
 
+    // One of social store is loading
     const isAnySocialLoading = socialStores.some((s) => s.store.loading);
+    // One of social store is authenticated
     const isAnySocialAuthenticated = socialStores.find(
-      (s) => s.store.isAuthenticated
+      (s) => s.store.isAuthenticated,
     );
-    const newUserStore = socialStores.find(
-      (s) => s.store.newUser === true && !s.store.isAuthenticated
-    );
+    // One of social store is error
     const errorStore = socialStores.find(
-      (s) => s.store.error && !s.store.isAuthenticated && !s.store.loading
+      (s) => s.store.error && !s.store.isAuthenticated && !s.store.loading,
+    );
+    // One of social store is a new user
+    const newUserStore = socialStores.find(
+      (s) => s.store.newUser === true && !s.store.isAuthenticated,
     );
 
-    // Show popup loading toast
     if (isAnySocialLoading) {
       toast({
         description: (
@@ -318,8 +347,7 @@ function LoginPage() {
       !isProcessingSocialLogin.current
     ) {
       isProcessingSocialLogin.current = true; // Prevent duplicate execution
-      dismiss(); // Dismiss authentication toast
-
+      dismiss();
       // Show data loading toast immediately
       toast({
         description: (
@@ -341,12 +369,12 @@ function LoginPage() {
           console.log("User data preloaded successfully");
           dismiss();
           toast({
-            variant: 'success',
+            variant: "success",
             description: (
               <div className="flex items-center gap-2">
                 <LucideCheck />
                 <TypographySmall className="font-medium leading-relaxed">
-                  Logged In Successfully
+                  Successfully Logged In
                 </TypographySmall>
               </div>
             ),
@@ -356,8 +384,9 @@ function LoginPage() {
         .catch((error) => {
           console.error("Error preloading user data:", error);
           dismiss();
+
           toast({
-            variant: 'destructive',
+            variant: "destructive",
             description: (
               <div className="flex items-center gap-2">
                 <LucideCheck />
@@ -382,10 +411,9 @@ function LoginPage() {
       return;
     }
 
-    // Handle new user (needs to register)
+    // Handle new user (needs to register first)
     if (newUserStore && !isAnySocialLoading) {
       dismiss();
-
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -410,7 +438,6 @@ function LoginPage() {
     // Handle errors
     if (errorStore && !isAnySocialLoading) {
       dismiss();
-
       toast({
         variant: "destructive",
         description: (
@@ -454,25 +481,7 @@ function LoginPage() {
     isPreloadingData,
   ]);
 
-  const handleSocialLogin = (rememberMe: "true" | "false") => {
-    setSocialLoginInitiated(true);
-    isProcessingSocialLogin.current = false; // Reset flag
-    switch (socialTypeIdentifier) {
-      case "facebook":
-        facebookLoginStore.facebookLogin(rememberMe);
-        break;
-      case "google":
-        googleLoginStore.googleLogin(rememberMe);
-        break;
-      case "github":
-        githubLoginStore.githubLogin(rememberMe);
-        break;
-      case "linkedIn":
-        linkedInLoginStore.linkedinLogin(rememberMe);
-        break;
-    }
-  };
-
+  // Get Current Image Based on Theme
   const currentTheme = resolvedTheme || "light";
   const loginImage = currentTheme === "dark" ? loginWhiteSvg : loginBlackSvg;
 
@@ -490,7 +499,7 @@ function LoginPage() {
               Welcome to Apsara Talent! Select method to log in
             </TypographyMuted>
           </div>
-          {/* End Title Section */}
+
           {/* Social Button Login Section */}
           <div className="w-full flex flex-col gap-3">
             <div className="flex justify-between items-center gap-3">
@@ -545,7 +554,7 @@ function LoginPage() {
               Phone Number
             </Button>
           </div>
-          {/* End Social Button Login Section */}
+
           {/* Divider Section */}
           <div className="w-full flex justify-between items-center">
             <Separator className="w-1/3" />
@@ -554,7 +563,7 @@ function LoginPage() {
             </TypographyMuted>
             <Separator className="w-1/3" />
           </div>
-          {/* End Divider Section */}
+
           {/* Login Form Section */}
           <form
             className="w-full flex flex-col items-stretch gap-5"
@@ -622,12 +631,15 @@ function LoginPage() {
               </Link>
             </div>
           </form>
-          {/* End Login Form Section */}
         </div>
       </div>
+
+      {/* Image Poster Section */}
       <div className="w-1/2 flex justify-center items-center bg-primary tablet-lg:p-10">
         <Image src={loginImage} alt="login" height={undefined} width={600} />
       </div>
+
+      {/* Remember Dialog Section */}
       <Dialog open={openRmbDialog} onOpenChange={setOpenRmbDialog}>
         <DialogContent>
           <DialogTitle>Remember Me</DialogTitle>

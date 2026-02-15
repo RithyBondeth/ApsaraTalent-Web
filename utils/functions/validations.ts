@@ -57,22 +57,15 @@ export const passwordValidation = z
   .regex(/[0-9]/, "Password must contain at least one number")
   .regex(
     /[!@#$%^&*(),.?":{}|<>]/,
-    "Password must contain at least one special character"
+    "Password must contain at least one special character",
   );
-
-// export const khmerPhoneNumberValidation = z
-//   .string()
-//   .min(1, "Phone number is required")
-//   .regex(
-//     /^(?:\+855|0)(?:1\d{8}|[2-9]\d{7,8})$/,
-//     "Invalid Khmer phone number (must start with +855 or 855 and a valid prefix)"
-//   );
 
 export const khmerPhoneNumberValidation = () => {
   return z
     .string()
     .regex(/^(\+855|0)[0-9]{8,9}$/, {
-      message: "Invalid Khmer phone number format (e.g., +85512345678 or 012345678)",
+      message:
+        "Invalid Khmer phone number format (e.g., +85512345678 or 012345678)",
     })
     .optional()
     .nullable();
@@ -104,7 +97,7 @@ export const dateValidation = (label?: string) => {
       z.date({
         required_error: `${label} is required`,
         invalid_type_error: `${label} must be a valid date`,
-      })
+      }),
     );
 
   return z.preprocess((arg) => {
@@ -127,7 +120,7 @@ export const imageValidation = (label: string) =>
         },
         {
           message: `Invalid file: ${label} must be an image (jpeg, png, webp) and < 5MB`,
-        }
+        },
       ),
       z.string(), // for existing image URLs
       z.null(),
@@ -137,5 +130,5 @@ export const imageValidation = (label: string) =>
         file === null || file instanceof File || typeof file === "string",
       {
         message: `Please upload a valid file, URL, or leave it empty.`,
-      }
+      },
     );

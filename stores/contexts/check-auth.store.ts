@@ -10,11 +10,13 @@ export const useCheckAuthStore = create<TCheckAuthState>()(
   persist(
     (set) => ({
       isAuth: false,
-      setIsAuth: async (_isAuth: boolean) => set({ isAuth: !_isAuth }),
+      setIsAuth: async (_isAuth: boolean) => {
+        set({ isAuth: !_isAuth });
+      },
     }),
     {
       name: "AuthCheckStore",
       partialize: (state) => ({ isAuth: state.isAuth }),
-    }
-  )
+    },
+  ),
 );

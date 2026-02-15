@@ -18,5 +18,5 @@ export const useBasicPhoneSignupDataStore = create<TBasicPhoneSignupDataState>(
     setBasicPhoneSignupData: (data: TBasicPhoneSignupData) =>
       set({ basicPhoneSignupData: data }),
     clearSetupBasicSignupData: () => set({ basicPhoneSignupData: null }),
-  })
+  }),
 );

@@ -3,7 +3,7 @@ import { useGetCurrentUserStore } from "../../users/get-current-user.store";
 import { API_AUTH_SOCIAL_FACEBOOK_URL } from "@/utils/constants/apis/auth_url";
 import { TUserRole } from "@/utils/types/role.type";
 import { EAuthLoginMethod } from "@/utils/constants/auth.constant";
-import { clearAuthCookies, hasAuthToken } from "@/utils/auth/cookie-manager";
+import { clearAuthCookies } from "@/utils/auth/cookie-manager";
 
 // Updated response type - NO TOKENS
 export type TFacebookLoginResponse = {
@@ -74,7 +74,6 @@ const FINISH_LOGIN = (data: TFacebookLoginResponse) => {
   });
 };
 
-// Zustand Store
 export const useFacebookLoginStore = create<TFacebookLoginState>((set) => ({
   loading: false,
   error: null,
@@ -107,7 +106,7 @@ export const useFacebookLoginStore = create<TFacebookLoginState>((set) => ({
     const popup = window.open(
       url,
       "facebook-oauth",
-      "width=500,height=600,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes"
+      "width=500,height=600,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes",
     );
 
     if (!popup) {

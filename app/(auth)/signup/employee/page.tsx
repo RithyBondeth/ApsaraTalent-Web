@@ -36,23 +36,34 @@ import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function EmployeeSignup() {
+  // Utils
   const router = useRouter();
+  const { toast, dismiss } = useToast();
+
+  // Employee Form Helpers
   const [step, setStep] = useState<number>(1);
   const totalSteps = 6;
+
+  // Employee Data: Regular and Phone
   const { basicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
+
+  // API Integration - Employee Socials Data 
   const googleUserData = useGoogleLoginStore();
   const githubUserData = useGithubLoginStore();
   const linkedInUserData = useLinkedInLoginStore();
   const facebookUserData = useFacebookLoginStore();
 
-  const { toast } = useToast();
+  // API Integration - Employee Signup
   const empSignup = useEmployeeSignupStore();
+
+  // API Integration - Employee Avatar, Resume and CoverLetter
   const uploadAvatar = useUploadEmployeeAvatarStore();
   const uploadResume = useUploadEmployeeResumeStore();
   const uploadCoverLetter = useUploadEmployeeCoverLetter();
   const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
 
+  // React Hook Form: Employee Signup Form 
   const methods = useForm<TEmployeeSignUp>({
     mode: "onChange",
     resolver: zodResolver(employeeSignUpSchema),
@@ -98,7 +109,7 @@ export default function EmployeeSignup() {
     6: ["careerScopes"],
   };
 
-  // Handles next step or final submit
+  // Handle Next Step and Final Submit
   const nextStep = async () => {
     const fieldsToValidate = stepFieldMap[step];
 
@@ -108,6 +119,7 @@ export default function EmployeeSignup() {
       if (step === totalSteps) {
         handleSubmit(async (data) => {
           if (basicSignupData) {
+            // Signup employee first to get employeeID
             const employeeId = await empSignup.signup({
               authEmail: true,
               email: basicSignupData.email!,
@@ -153,31 +165,36 @@ export default function EmployeeSignup() {
             const uploadTasks = [];
 
             if (data.avatar instanceof File)
+              // If employeeID exist then upload avatar
               uploadTasks.push(
-                uploadAvatar.uploadAvatar(employeeId, data.avatar)
+                uploadAvatar.uploadAvatar(employeeId, data.avatar),
               );
 
             if (data.skillAndReference.resume instanceof File)
+               // If employeeID exist then upload resume
               uploadTasks.push(
                 uploadResume.uploadResume(
                   employeeId,
-                  data.skillAndReference.resume
-                )
+                  data.skillAndReference.resume,
+                ),
               );
 
             if (data.skillAndReference.coverLetter instanceof File)
+               // If employeeID exist then upload coverLetter
               uploadTasks.push(
                 uploadCoverLetter.uploadCoverLetter(
                   employeeId,
-                  data.skillAndReference.coverLetter
-                )
+                  data.skillAndReference.coverLetter,
+                ),
               );
 
+            // Upload all avatar, resume and coverLetter together
             await Promise.all(uploadTasks);
             setUploadsComplete(true);
           }
-
+        
           if (basicPhoneSignupData) {
+            // Signup employee first to get employeeID
             const employeeId = await empSignup.signup({
               authEmail: false,
               email: null,
@@ -223,26 +240,30 @@ export default function EmployeeSignup() {
             const uploadTasks = [];
 
             if (data.avatar instanceof File)
+              // If employeeID exist then upload avatar
               uploadTasks.push(
-                uploadAvatar.uploadAvatar(employeeId, data.avatar)
+                uploadAvatar.uploadAvatar(employeeId, data.avatar),
               );
 
             if (data.skillAndReference.resume instanceof File)
+              // If employeeID exist then upload resume
               uploadTasks.push(
                 uploadResume.uploadResume(
                   employeeId,
-                  data.skillAndReference.resume
-                )
+                  data.skillAndReference.resume,
+                ),
               );
 
             if (data.skillAndReference.coverLetter instanceof File)
+              // If employeeID exist then upload coverLetter
               uploadTasks.push(
                 uploadCoverLetter.uploadCoverLetter(
                   employeeId,
-                  data.skillAndReference.coverLetter
-                )
+                  data.skillAndReference.coverLetter,
+                ),
               );
 
+            // Upload all avatar, resume and coverLetter together        
             await Promise.all(uploadTasks);
             setUploadsComplete(true);
           }
@@ -253,8 +274,10 @@ export default function EmployeeSignup() {
     }
   };
 
+  // Handle Previous Step
   const prevStep = () => setStep((prev) => prev - 1);
 
+  // Employee Singup Effect
   useEffect(() => {
     if (
       empSignup.accessToken &&
@@ -265,6 +288,7 @@ export default function EmployeeSignup() {
       !uploadCoverLetter.loading &&
       !uploadResume.loading
     ) {
+      dismiss();
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -300,6 +324,7 @@ export default function EmployeeSignup() {
 
     errors.forEach(({ error, message }) => {
       if (error) {
+        dismiss();
         toast({
           variant: "destructive",
           description: (
@@ -336,6 +361,7 @@ export default function EmployeeSignup() {
     uploadResume.loading,
   ]);
 
+  // Log Basic Signup Data: Regular, Phone and Socials
   useEffect(() => {
     console.log("Basic Signup Data: ", basicSignupData);
     console.log("Basic Phone Signup Data: ", basicPhoneSignupData);
@@ -377,7 +403,7 @@ export default function EmployeeSignup() {
 
   return (
     <div className="h-[80%] w-[85%] flex flex-col items-start gap-3 tablet-lg:w-full tablet-lg:p-5">
-      {/* Back to main signup page */}
+      {/* Navigate Back Button Section */}
       <Button
         className="absolute top-5 left-5"
         variant="outline"
@@ -386,7 +412,7 @@ export default function EmployeeSignup() {
         <LucideArrowLeft />
       </Button>
 
-      {/* Header */}
+      {/* Header Section */}
       <div className="mb-5">
         <TypographyH2>Sign up as employee</TypographyH2>
         <TypographyMuted className="text-md">
@@ -394,7 +420,7 @@ export default function EmployeeSignup() {
         </TypographyMuted>
       </div>
 
-      {/* Step progress indicator */}
+      {/* Step Progress Indicator Section */}
       <div className="w-full flex items-center mb-5">
         {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
           (st, index) => (
@@ -416,11 +442,11 @@ export default function EmployeeSignup() {
                 </div>
               )}
             </div>
-          )
+          ),
         )}
       </div>
 
-      {/* Form */}
+      {/* Form Section */}
       <FormProvider {...methods}>
         <form onSubmit={(e) => e.preventDefault()} className="w-full">
           {step === 1 && (
@@ -471,7 +497,8 @@ export default function EmployeeSignup() {
             />
           )}
 
-          {/* Navigation Buttons */}
+          {/* Next & Previous Step Section */}
+          {/* Navigation Buttons Section */}
           <div className="flex justify-between my-8">
             {step > 1 && (
               <Button type="button" onClick={prevStep}>

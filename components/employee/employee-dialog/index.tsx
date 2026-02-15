@@ -4,6 +4,7 @@ import {
   LucideMapPin,
   LucideUniversity,
   LucideUser,
+  User,
 } from "lucide-react";
 import {
   Dialog,
@@ -33,7 +34,9 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
               <Avatar className="!size-36" rounded="md">
                 <AvatarImage src={props.avatar!} />
                 <AvatarFallback className="uppercase">
-                  {!props.avatar ? <LucideUser /> : props.avatar.slice(0, 3)}
+                  {props.avatar
+                    ? props.avatar
+                    : (props.username?.slice(0, 3) ?? <User />)}
                 </AvatarFallback>
               </Avatar>
               <div className="flex flex-col items-start gap-5 font-normal">
@@ -59,7 +62,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
                   <IconLabel
                     icon={<LucideClock strokeWidth={"1.5px"} />}
                     text={`${capitalizeWords(
-                      props.availability.split("_")[0]
+                      props.availability.split("_")[0],
                     )} ${capitalizeWords(props.availability.split("_")[1])}`}
                   />
                 </div>

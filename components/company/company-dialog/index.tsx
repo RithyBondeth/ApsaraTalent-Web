@@ -3,6 +3,7 @@ import {
   LucideCircleCheck,
   LucideMapPin,
   LucideUsers,
+  User,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import {
@@ -29,7 +30,9 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
               <Avatar className="!size-36" rounded="md">
                 <AvatarImage src={props.avatar!} />
                 <AvatarFallback className="uppercase">
-                  {!props.avatar ? <LucideBuilding /> : props.name.slice(0, 3)}
+                  {props.avatar
+                    ? props.avatar
+                    : (props.name.slice(0, 3) ?? <User />)}
                 </AvatarFallback>
               </Avatar>
               <div className="flex flex-col items-start gap-5 font-normal">

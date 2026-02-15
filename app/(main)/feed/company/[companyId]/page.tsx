@@ -18,6 +18,7 @@ import {
   LucidePhone,
   LucideUser,
   LucideUsers,
+  User,
 } from "lucide-react";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyP } from "@/components/utils/typography/typography-p";
@@ -64,40 +65,43 @@ import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-curr
 import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
 
 export default function CompanyDetailPage() {
+  // Utils
+  const router = useRouter();
+  const { toast, dismiss } = useToast();
   const param = useParams<{ companyId: string }>();
   const id = param.companyId;
-  const router = useRouter();
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
-  const { toast, dismiss } = useToast();
 
-  // State for popups
-  const [openImagePopup, setOpenImagePopup] = useState(false);
-  const [openProfilePopup, setOpenProfilePopup] = useState(false);
+  // Popup States
+  const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
+  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
   const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(
-    null
+    null,
   );
-  const ignoreNextClick = useRef(false);
+  const ignoreNextClick = useRef<boolean>(false);
 
-  // Get data and loading state
+  // API Integration
   const { loading, companyData, queryOneCompany } = useGetOneCompanyStore();
   const currentUser = useGetCurrentUserStore((state) => state.user);
+  // Liked Stores
   const employeeLikeStore = useEmployeeLikeStore();
-  const { countCurrentEmployeeMatching } =
-    useCountCurrentEmployeeMatchingStore();
-  const { queryCurrentEmployeeLiked } = useGetCurrentEmployeeLikedStore();
+  const queryCurrentEmployeeLiked = useGetCurrentEmployeeLikedStore.getState().queryCurrentEmployeeLiked;
+  // Matching Store
+  const countCurrentEmployeeMatching = useCountCurrentEmployeeMatchingStore.getState().countCurrentEmployeeMatching;
+  // Favorite Stores
   const employeeFavCompanyStore = useEmployeeFavCompanyStore();
   const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
   const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
 
-  // Initialize component (client-side only)
+  // Initialize Component (Client-Side Only)
   useEffect(() => {
     if (typeof window !== "undefined") setIsInitialized(true);
   }, []);
 
-  // Fetch data
+  // Fetch One Company Effect
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchOneCompany = async () => {
       if (!isInitialized || !id) return;
 
       try {
@@ -110,10 +114,10 @@ export default function CompanyDetailPage() {
       }
     };
 
-    fetchData();
+    fetchOneCompany();
   }, [id, isInitialized, queryOneCompany]);
 
-  // Handle popup clicks
+  // Handle Profile Popup Clicks
   const handleClickImagePopup = () => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -122,19 +126,23 @@ export default function CompanyDetailPage() {
     setOpenImagePopup(true);
   };
 
-  const handleClickProfilePopup = () => {
+  const handleClickProfilePopup = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
       return;
     }
-    if (companyData?.avatar) setOpenProfilePopup(true);
+
+    if ((e.target as HTMLElement).closest(".dialog-content")) return;
+
+    setOpenProfilePopup(true);
   };
 
-  // Loading or error states
+  // Loading State
   if (!isInitialized || loading) {
     return <CompanyDetailPageSkeleton />;
   }
 
+  // Error State
   if (fetchError) {
     return (
       <div className="h-screen w-screen flex justify-center items-center">
@@ -151,6 +159,7 @@ export default function CompanyDetailPage() {
     );
   }
 
+  // No Data Available State
   if (!companyData) {
     return (
       <div className="h-screen w-screen flex justify-center items-center">
@@ -164,6 +173,7 @@ export default function CompanyDetailPage() {
     );
   }
 
+  // Handle Employee Like Company
   const handleLike = async () => {
     if (currentUser && currentUser.employee) {
       const employeeId = currentUser.employee.id;
@@ -218,6 +228,7 @@ export default function CompanyDetailPage() {
     }
   };
 
+  // Handle Employee Add Company To Favorite
   const handleAddToFavorite = async () => {
     if (currentUser && currentUser.employee) {
       const employeeId = currentUser.employee.id;
@@ -229,7 +240,7 @@ export default function CompanyDetailPage() {
       try {
         await employeeFavCompanyStore.addCompanyToFavorite(
           employeeId,
-          companyId
+          companyId,
         );
         countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeId);
         toast({
@@ -244,7 +255,7 @@ export default function CompanyDetailPage() {
           ),
         });
         await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
-          employeeId
+          employeeId,
         );
       } catch (error) {
         const err = employeeFavCompanyStore.error || "Failed to save company";
@@ -260,17 +271,23 @@ export default function CompanyDetailPage() {
         <div
           className="relative h-80 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center tablet-sm:items-start"
           style={{ backgroundImage: `url(${companyData.cover})` }}
-        >
+        > 
+
+          {/* Blur Background Overlay Section */}
           <BlurBackGroundOverlay />
           <div className="relative flex items-center gap-5 tablet-sm:flex-col">
             <Avatar
               className="size-32 tablet-sm:size-28"
               rounded="md"
-              onClick={handleClickProfilePopup}
+              onClick={(e) => {
+                if (companyData.avatar) {
+                  handleClickProfilePopup(e);
+                }
+              }}
             >
               <AvatarImage src={companyData.avatar ?? ""} />
               <AvatarFallback className="uppercase">
-                {companyData.name.slice(0, 3)}
+                {companyData.name ? companyData.name.slice(0, 3) : <User />}
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col items-start gap-2 text-muted tablet-sm:items-center">
@@ -366,7 +383,7 @@ export default function CompanyDetailPage() {
                                   }
                                   label={
                                     availabilityConstant.find(
-                                      (type) => type.value == item.type
+                                      (type) => type.value == item.type,
                                     )?.label ?? ""
                                   }
                                 />
@@ -388,7 +405,7 @@ export default function CompanyDetailPage() {
                                 />
                               }
                               text={`Post - ${dateFormatterv2(
-                                item.postedDate?.toString() ?? ""
+                                item.postedDate?.toString() ?? "",
                               )}`}
                             />
                             <IconLabel
@@ -399,7 +416,7 @@ export default function CompanyDetailPage() {
                                 />
                               }
                               text={`Deadline - ${dateFormatterv2(
-                                item.deadlineDate?.toString() ?? ""
+                                item.deadlineDate?.toString() ?? "",
                               )}`}
                             />
                           </div>

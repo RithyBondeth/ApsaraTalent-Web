@@ -3,11 +3,7 @@ import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 import axios from "axios";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../users/get-current-user.store";
-import {
-  setAuthCookies,
-  clearAuthCookies,
-  hasAuthToken,
-} from "@/utils/auth/cookie-manager";
+import { setAuthCookies, clearAuthCookies } from "@/utils/auth/cookie-manager";
 import { TUserAuthResponse } from "@/utils/constants/auth.constant";
 
 type TVerifyOTPResponse = {
@@ -21,12 +17,13 @@ type TVerifyOTPStoreState = TVerifyOTPResponse & {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
+  role: string | null;
   message: string | null;
   verifyOtp: (
     phone: string,
     otpCode: string,
-    rememberMe: boolean
-  ) => Promise<IUser>;
+    rememberMe: boolean,
+  ) => Promise<void>;
   clearToken: () => void;
 };
 
@@ -36,6 +33,7 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
   isAuthenticated: false,
   accessToken: null,
   refreshToken: null,
+  role: null,
   user: null,
   message: null,
   verifyOtp: async (phone: string, otpCode: string, rememberMe: boolean) => {
@@ -47,25 +45,32 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
         {
           phone: phone,
           otp: otpCode,
-        }
+        },
       );
+
+      const role = response.data.user.role;
+      const hasTokens =
+        !!response.data.accessToken && !!response.data.refreshToken;
+      const fullyAuthed = hasTokens && role !== "none";
 
       set({
         loading: false,
-        isAuthenticated: !!response.data.accessToken,
+        isAuthenticated: fullyAuthed,
         message: response.data.message,
+        role: response.data.user.role,
         error: null,
       });
 
       // Use centralized cookie management
-      if (response.data.accessToken && response.data.refreshToken) {
+      if (fullyAuthed) {
         setAuthCookies(
-          response.data.accessToken,
-          response.data.refreshToken,
-          rememberMe
+          response.data.accessToken!,
+          response.data.refreshToken!,
+          rememberMe,
         );
+      } else {
+        clearAuthCookies();
       }
-      return response.data.user;
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const errorMessage =
@@ -73,8 +78,12 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
             ? error.response.data.message.join(", ")
             : error.response?.data?.message || error.message;
 
-        set({ loading: false, error: errorMessage, isAuthenticated: false });
-        throw new Error(errorMessage);
+        set({
+          loading: false,
+          error: errorMessage,
+          message: errorMessage,
+          isAuthenticated: false,
+        });
       } else {
         set({
           loading: false,
@@ -82,7 +91,6 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
           message: "An error occurred while verifying otp.",
           isAuthenticated: false,
         });
-        throw new Error("An error occurred while verifying otp.");
       }
     }
   },
