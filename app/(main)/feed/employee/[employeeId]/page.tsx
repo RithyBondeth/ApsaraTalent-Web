@@ -68,7 +68,7 @@ export default function EmployeeDetailPage() {
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
-  // Popup State
+  // Popup States
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
   const ignoreNextClick = useRef<boolean>(false);
 
@@ -82,8 +82,8 @@ export default function EmployeeDetailPage() {
   // Matching Store
   const countCurrentCompanyMatching =
     useCountCurrentCompanyMatchingStore.getState().countCurrentCompanyMatching;
-  const companyFavEmployeeStore = useCompanyFavEmployeeStore();
   // Favorite Store
+  const companyFavEmployeeStore = useCompanyFavEmployeeStore();
   const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
   const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
 
