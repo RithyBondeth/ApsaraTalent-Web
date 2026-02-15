@@ -32,8 +32,8 @@ import { debounce } from "lodash";
 
 export default function EmployeeSearchPage() {
   // Utils
-  const isFirstWatchRenderRef = useRef(true);
-  const isInitialSearchDoneRef = useRef(false);
+  const isFirstWatchRenderRef = useRef<boolean>(true);
+  const isInitialSearchDoneRef = useRef<boolean>(false);
 
   // API Integration 
   const { error, loading, jobs, querySearchJobs } = useSearchJobStore();
@@ -60,7 +60,7 @@ export default function EmployeeSearchPage() {
       },
     });
 
-  // Watch only what you pass to SearchBar (prevents full page rerender on every key)
+  // Watch Only What SearchBar Needs (prevents full page rerender on every key)
   const location = watch("location");
   const jobType = watch("jobType");
 
@@ -119,7 +119,7 @@ export default function EmployeeSearchPage() {
 
   // Auto Search As User Types / Changes filters Effect
   useEffect(() => {
-    // Skip irst render so it doesn’t duplicate initial search
+    // Skip first render so it doesn’t duplicate initial search
     if (isFirstWatchRenderRef.current) {
       isFirstWatchRenderRef.current = false;
       return;
@@ -168,6 +168,7 @@ export default function EmployeeSearchPage() {
             Your great opportunity is just a click away.
           </TypographyMuted>
 
+          {/* Search Bar Section */}
           <SearchBar
             isEmployee={true}
             register={register}
