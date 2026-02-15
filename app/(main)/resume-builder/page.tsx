@@ -17,24 +17,30 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
+let hasFetchedTemplates = false;
 export default function ResumeBuilder() {
-  const { templateData, queryAllTemplates } = useGetAllTemplateStore();
-
-  const currentUser = useGetCurrentUserStore((state) => state.user);
-  const [generating, setGenerating] = useState(false);
-
-  useEffect(() => {
-    queryAllTemplates();
-  }, [queryAllTemplates]);
-
+  // Template Helpers 
+  const [generating, setGenerating] = useState<boolean>(false);
   const { setSelectedTemplate, selectedTemplate } = useTemplateSelectionStore();
-
   const templateMap: Record<string, "modern" | "classic" | "creative"> = {
     "Minimalist Pro": "modern",
     "Modern Professional": "classic",
     "Corporate Standard": "creative",
   };
 
+  // API Integration
+  const { templateData, queryAllTemplates } = useGetAllTemplateStore();
+  const currentUser = useGetCurrentUserStore((state) => state.user);
+
+  // Query All Templates Effect
+  useEffect(() => {
+    if (hasFetchedTemplates) return;
+  
+    hasFetchedTemplates = true;
+    queryAllTemplates();
+  }, [queryAllTemplates]);
+
+  // Handle Select Template
   const handleSelectTemplate = (templateTitle: string) => {
     const template = templateMap[templateTitle];
     if (template) {
@@ -44,13 +50,12 @@ export default function ResumeBuilder() {
     }
   };
 
-  useEffect(() => {
-    console.log("Current User: ", currentUser?.employee);
-  });
-
   return (
     <div className="w-full flex flex-col items-start gap-5 px-10">
+      {/* Banner Section */}
       <ResumeBuilderBanner />
+
+      {/* Template Section */}
       <div className="w-full">
         <div className="w-full flex justify-between items-center">
           <TypographyH4>Choose your template</TypographyH4>
@@ -76,7 +81,11 @@ export default function ResumeBuilder() {
             : [1, 2, 3].map((item) => <TemplateCardSkeleton key={item} />)}
         </div>
       </div>
+
+      {/* Resume Feature Section */}
       <ResumeBuilderFeature />
+      
+      {/* Resume Generator Section */}
       <ResumeBuilderGenerate
         disabled={!selectedTemplate}
         onGenerateClick={async () => {
@@ -106,6 +115,7 @@ export default function ResumeBuilder() {
         }}
       />
 
+      {/* Dialog Section */}
       <Dialog open={generating}>
         <DialogContent>
           <div className="w-full flex flex-col items-center justify-center gap-3 py-4">

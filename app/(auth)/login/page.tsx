@@ -374,7 +374,7 @@ function LoginPage() {
               <div className="flex items-center gap-2">
                 <LucideCheck />
                 <TypographySmall className="font-medium leading-relaxed">
-                  {message}
+                  Successfully Logged In
                 </TypographySmall>
               </div>
             ),
