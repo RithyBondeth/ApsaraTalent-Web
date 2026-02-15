@@ -25,7 +25,6 @@ export default function MatchingPage() {
   const router = useRouter();
 
   // API Integration
-  const isUserLoading = useGetCurrentUserStore((state) => state.loading);
   const getCurrentEmployeeMatchingStore = useGetCurrentEmployeeMatchingStore();
   const getCurrentCompanyMatchingStore = useGetCurrentCompanyMatchingStore();
   const { employeeData, queryOneEmployee } = useGetOneEmployeeStore();
@@ -52,8 +51,7 @@ export default function MatchingPage() {
     (getCurrentCompanyMatchingStore.loading ||
       getCurrentCompanyMatchingStore.currentCompanyMatching === null);
 
-  const isLoading =
-    isUserLoading || isLoadingForEmployee || isLoadingForCompany;
+  const isLoading = isLoadingForEmployee || isLoadingForCompany;
 
   // Memoized Chat Handler
   const handleChatNow = useCallback(
@@ -129,7 +127,7 @@ export default function MatchingPage() {
           className="tablet-xl:!w-full"
         />
       </div>
-      
+
       {/* Matching Card List Section */}
       <div className="flex flex-col items-start gap-3">
         {getCurrentEmployeeMatchingStore.currentEmployeeMatching &&
