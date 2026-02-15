@@ -18,9 +18,11 @@ import EmployeeDialog from "../employee-dialog";
 import { capitalizeWords } from "@/utils/functions/capitalize-words";
 
 export default function EmployeeCard(props: IEmployeeCardProps) {
+  // Utils
   const [openProfileDialog, setOpenProfileDialog] = useState<boolean>(false);
   const ignoreNextClick = useRef<boolean>(false);
 
+  // Handle Click Dialog
   const handleClickDialog = (e: React.MouseEvent) => {
     // Prevent reopening immediately after closing
     if (ignoreNextClick.current) {
@@ -36,9 +38,9 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
     setOpenProfileDialog(true);
   };
 
+  // Prevent reopening immediately after closing
   useEffect(() => {
     if (!openProfileDialog) {
-      // Prevent reopening immediately after closing
       ignoreNextClick.current = true;
       setTimeout(() => {
         ignoreNextClick.current = false;
@@ -113,7 +115,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
         />
         <Tag
           label={`${capitalizeWords(
-            props.availability.split("_")[0]
+            props.availability.split("_")[0],
           )} ${capitalizeWords(props.availability.split("_")[1])}`}
         />
       </div>
