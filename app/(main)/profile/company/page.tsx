@@ -1247,61 +1247,69 @@ export default function ProfilePage() {
                 </div>
               </div>
               <div className="w-full flex items-center justify-between gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
-                <LabelInput
-                  label="Company Size"
-                  input={
-                    <Input
-                      type="number"
-                      placeholder={
-                        isEdit ? "Company Size" : `${company.companySize}`
-                      }
-                      id="company-size"
-                      {...form.register("basicInfo.companySize")}
-                      prefix={<LucideUsers />}
-                      disabled={!isEdit}
-                    />
-                  }
-                />
-                <LabelInput
-                  label="Founded Year"
-                  input={
-                    <Input
-                      type="number"
-                      placeholder={
-                        isEdit ? "Founded Year" : `${company.foundedYear}`
-                      }
-                      id="company-founded-year"
-                      {...form.register("basicInfo.foundedYear")}
-                      prefix={<LucideBuilding />}
-                      disabled={!isEdit}
-                    />
-                  }
-                />
+                {company.companySize && (
+                  <LabelInput
+                    label="Company Size"
+                    input={
+                      <Input
+                        type="number"
+                        placeholder={
+                          isEdit ? "Company Size" : `${company.companySize}`
+                        }
+                        id="company-size"
+                        {...form.register("basicInfo.companySize")}
+                        prefix={<LucideUsers />}
+                        disabled={!isEdit}
+                      />
+                    }
+                  />
+                )}
+                {company.foundedYear && (
+                  <LabelInput
+                    label="Founded Year"
+                    input={
+                      <Input
+                        type="number"
+                        placeholder={
+                          isEdit ? "Founded Year" : `${company.foundedYear}`
+                        }
+                        id="company-founded-year"
+                        {...form.register("basicInfo.foundedYear")}
+                        prefix={<LucideBuilding />}
+                        disabled={!isEdit}
+                      />
+                    }
+                  />
+                )}
               </div>
-              <LabelInput
-                label="Email"
-                input={
-                  <Input
-                    placeholder={isEdit ? "Email" : user.email}
-                    id="email"
-                    {...form.register("accountSetting.email")}
-                    prefix={<LucideMail />}
-                    disabled={!isEdit}
-                  />
-                }
-              />
-              <LabelInput
-                label="Phone Number"
-                input={
-                  <Input
-                    placeholder={isEdit ? "Phone number" : company.phone}
-                    id="phone"
-                    {...form.register("accountSetting.phone")}
-                    prefix={<LucidePhone />}
-                    disabled={!isEdit}
-                  />
-                }
-              />
+              {user.email && (
+                <LabelInput
+                  label="Email"
+                  input={
+                    <Input
+                      placeholder={isEdit ? "Email" : user.email}
+                      id="email"
+                      {...form.register("accountSetting.email")}
+                      prefix={<LucideMail />}
+                      disabled={!isEdit}
+                    />
+                  }
+                />
+              )}
+              {company.phone && (
+                <LabelInput
+                  label="Phone Number"
+                  input={
+                    <Input
+                      placeholder={isEdit ? "Phone number" : company.phone}
+                      id="phone"
+                      {...form.register("accountSetting.phone")}
+                      prefix={<LucidePhone />}
+                      disabled={!isEdit}
+                    />
+                  }
+                />
+              )}
             </div>
           </div>
 
@@ -1649,111 +1657,113 @@ export default function ProfilePage() {
           )}
 
           {/* CareersScopes Section */}
-          <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
-            <div className="w-full flex flex-col gap-1">
-              <TypographyH4>Careers Scopes</TypographyH4>
-              <Divider />
-            </div>
-            <div className="w-full flex flex-col items-stretch gap-3">
-              <div className="flex flex-wrap gap-3">
-                {careers &&
-                  careers.length > 0 &&
-                  careers.map((career, index) => {
-                    return (
-                      <div key={index}>
-                        <HoverCard>
-                          <HoverCardTrigger className="flex items-center rounded-3xl">
-                            <Tag label={career.name} />
-                            {isEdit && (
-                              <LucideXCircle
-                                className="text-muted-foreground cursor-pointer ml-1 text-red-500"
-                                width={"18px"}
-                                onClick={() => removeCareer(career.name)}
-                              />
-                            )}
-                          </HoverCardTrigger>
-                          <HoverCardContent>
-                            <TypographySmall>
-                              {career.description ?? career.name}
-                            </TypographySmall>
-                          </HoverCardContent>
-                        </HoverCard>
-                      </div>
-                    );
-                  })}
+          {((careers && careers.length > 0) || isEdit) && (
+            <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
+              <div className="w-full flex flex-col gap-1">
+                <TypographyH4>Careers Scopes</TypographyH4>
+                <Divider />
               </div>
+              <div className="w-full flex flex-col items-stretch gap-3">
+                <div className="flex flex-wrap gap-3">
+                  {careers &&
+                    careers.length > 0 &&
+                    careers.map((career, index) => {
+                      return (
+                        <div key={index}>
+                          <HoverCard>
+                            <HoverCardTrigger className="flex items-center rounded-3xl">
+                              <Tag label={career.name} />
+                              {isEdit && (
+                                <LucideXCircle
+                                  className="text-muted-foreground cursor-pointer ml-1 text-red-500"
+                                  width={"18px"}
+                                  onClick={() => removeCareer(career.name)}
+                                />
+                              )}
+                            </HoverCardTrigger>
+                            <HoverCardContent>
+                              <TypographySmall>
+                                {career.description ? career.description : career.name}
+                              </TypographySmall>
+                            </HoverCardContent>
+                          </HoverCard>
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+              {isEdit && (
+                <Popover
+                  open={openCareersPopOver}
+                  onOpenChange={setOpenCareersPopOver}
+                >
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className="w-full justify-between"
+                    >
+                      {careersInput
+                        ? getAllCareerScopeStore.careerScopes?.find(
+                            (career) => career.name === careersInput.name,
+                          )?.name
+                        : "Select careers..."}
+                      <ChevronDown className="opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="p-0">
+                    <Command>
+                      <CommandInput
+                        placeholder="Select careers..."
+                        className="h-9"
+                      />
+                      <CommandList>
+                        <CommandEmpty>No career found.</CommandEmpty>
+                        <CommandGroup>
+                          {getAllCareerScopeStore.careerScopes?.map(
+                            (career, index) => (
+                              <CommandItem
+                                key={index}
+                                value={career.name}
+                                onSelect={() => {
+                                  if (career.id)
+                                    handleCareerSelect(
+                                      career.id,
+                                      career.name,
+                                      career.description ?? "",
+                                    );
+                                }} // Handle career selection
+                              >
+                                {career.name}
+                                <LucideCircleCheck
+                                  className={
+                                    careersInput?.name === career.name
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  }
+                                />
+                              </CommandItem>
+                            ),
+                          )}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              )}
+              {isEdit && (
+                <Button
+                  variant="secondary"
+                  className="w-full text-xs"
+                  type="button"
+                  onClick={addCareers}
+                >
+                  <LucidePlus />
+                  Add Career
+                </Button>
+              )}
             </div>
-            {isEdit && (
-              <Popover
-                open={openCareersPopOver}
-                onOpenChange={setOpenCareersPopOver}
-              >
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    className="w-full justify-between"
-                  >
-                    {careersInput
-                      ? getAllCareerScopeStore.careerScopes?.find(
-                          (career) => career.name === careersInput.name,
-                        )?.name
-                      : "Select careers..."}
-                    <ChevronDown className="opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="p-0">
-                  <Command>
-                    <CommandInput
-                      placeholder="Select careers..."
-                      className="h-9"
-                    />
-                    <CommandList>
-                      <CommandEmpty>No career found.</CommandEmpty>
-                      <CommandGroup>
-                        {getAllCareerScopeStore.careerScopes?.map(
-                          (career, index) => (
-                            <CommandItem
-                              key={index}
-                              value={career.name}
-                              onSelect={() => {
-                                if (career.id)
-                                  handleCareerSelect(
-                                    career.id,
-                                    career.name,
-                                    career.description ?? "",
-                                  );
-                              }} // Handle career selection
-                            >
-                              {career.name}
-                              <LucideCircleCheck
-                                className={
-                                  careersInput?.name === career.name
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                }
-                              />
-                            </CommandItem>
-                          ),
-                        )}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-            )}
-            {isEdit && (
-              <Button
-                variant="secondary"
-                className="w-full text-xs"
-                type="button"
-                onClick={addCareers}
-              >
-                <LucidePlus />
-                Add Career
-              </Button>
-            )}
-          </div>
+          )}
 
           {/* Social Information Form Section */}
           {((company.socials && company.socials?.length > 0) || isEdit) && (
