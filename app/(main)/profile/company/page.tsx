@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/carousel";
 import { Input } from "@/components/ui/input";
 import {
+  Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
@@ -30,7 +31,6 @@ import {
   platformConstant,
 } from "@/utils/constants/app.constant";
 import { TLocations } from "@/utils/types/location.type";
-import { Select } from "@radix-ui/react-select";
 import {
   ChevronDown,
   LucideBuilding,
@@ -103,7 +103,6 @@ import { useRemoveCmpAvatarStore } from "@/stores/apis/company/remove-cmp-avatar
 import { useRemoveCmpCoverStore } from "@/stores/apis/company/remove-cmp-cover.store";
 import emptySvgImage from "@/assets/svg/empty.svg";
 import Image from "next/image";
-import { trim, update } from "lodash";
 import { capitalizeWords } from "@/utils/functions/capitalize-words";
 import RemoveAvatarOrCoverDialog from "./_dialogs/remove-avatar-cover-dialog";
 
@@ -355,7 +354,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const initialValue = form.getValues("benefitsAndValues.values") || [];
-    setBenefits(
+    setValues(
       initialValue.map((vl) => ({
         id: vl.id,
         label: vl.label,
@@ -415,14 +414,15 @@ export default function ProfilePage() {
   };
 
   const addBenefits = () => {
-    const trimmed = benefitInput?.label.trim();
+    const trimmed = benefitInput?.label?.trim();
     if (!trimmed) return;
 
-    // Get current benefits from form
-    const currentBenefits = form.getValues("benefitsAndValues.benefits") || [];
+    const currentBenefits = (
+      form.getValues("benefitsAndValues.benefits") || []
+    ).filter(Boolean) as IBenefits[];
 
     const alreadyExists = currentBenefits.some(
-      (bf) => bf.label.toLowerCase() === trimmed.toLowerCase(),
+      (bf) => (bf.label ?? "").toLowerCase() === trimmed.toLowerCase(),
     );
 
     if (alreadyExists) {
@@ -437,16 +437,18 @@ export default function ProfilePage() {
       return;
     }
 
-    // Add new benefit WITHOUT id (will be created in backend)
-    const updatedBenefits = [...currentBenefits, { label: trimmed }];
+    const updatedBenefits: IBenefits[] = [
+      ...currentBenefits,
+      { label: trimmed },
+    ];
 
-    // Update form state
     form.setValue("benefitsAndValues.benefits", updatedBenefits, {
       shouldDirty: true,
       shouldTouch: true,
+      shouldValidate: true,
     });
 
-    setBenefits(updatedBenefits); // Update local state for UI
+    setBenefits(updatedBenefits);
     setBenefitInput(null);
     setOpenBenefitPopOver(false);
   };
@@ -454,36 +456,40 @@ export default function ProfilePage() {
   const removeBenefit = async (benefitToRemove: string) => {
     const currentBenefits = form.getValues("benefitsAndValues.benefits") || [];
 
-    // Find the benefit to remove
     const benefitToDelete = currentBenefits.find(
       (bf) => bf.label === benefitToRemove,
     );
+    if (!benefitToDelete) return;
 
-    // If it has an ID, track it for deletion
-    if ("id" in benefitToDelete! && benefitToDelete.id) {
+    if (
+      typeof benefitToDelete === "object" &&
+      "id" in benefitToDelete &&
+      benefitToDelete.id
+    ) {
       setDeletedBenefitIds((prev) => [...prev, benefitToDelete.id as number]);
     }
 
-    // Remove from form
     const updated = currentBenefits.filter(
       (bf) => bf.label !== benefitToRemove,
     );
     form.setValue("benefitsAndValues.benefits", updated, {
       shouldDirty: true,
       shouldTouch: true,
+      shouldValidate: true,
     });
-
-    setBenefits(updated); // Update local state for UI
+    setBenefits(updated);
   };
 
   const addValue = () => {
-    const trimmed = valueInput?.label.trim();
+    const trimmed = valueInput?.label?.trim();
     if (!trimmed) return;
 
-    const currentValues = form.getValues("benefitsAndValues.values") || [];
+    const currentValues = (
+      form.getValues("benefitsAndValues.values") || []
+    ).filter(Boolean) as IValues[];
 
     const alreadyExists = currentValues.some(
-      (value) => value.label.toLowerCase() === trimmed.toLowerCase(),
+      (v) => (v.label ?? "").toLowerCase() === trimmed.toLowerCase(),
     );
 
     if (alreadyExists) {
@@ -498,8 +504,8 @@ export default function ProfilePage() {
       return;
     }
 
-    // Add new value WITHOUT id
-    const updatedValues = [...currentValues, { label: trimmed }];
+    const updatedValues: IValues[] = [...currentValues, { label: trimmed }];
+
     form.setValue("benefitsAndValues.values", updatedValues, {
       shouldDirty: true,
       shouldTouch: true,
@@ -511,21 +517,23 @@ export default function ProfilePage() {
   };
 
   const removeValue = async (valueToRemove: string) => {
-    const currentValues = form.getValues("benefitsAndValues.values") || [];
+    const currentValues = (
+      form.getValues("benefitsAndValues.values") || []
+    ).filter(Boolean) as IValues[];
 
-    // Find the value to remove
-    const valueToDelete = currentValues.find(
-      (value) => value.label === valueToRemove,
-    );
+    const valueToDelete = currentValues.find((v) => v.label === valueToRemove);
+    if (!valueToDelete) return; // ✅ guard
 
-    // If it has an ID, track it for deletion
-    if ("id" in valueToDelete! && valueToDelete.id) {
+    if (
+      typeof valueToDelete === "object" &&
+      "id" in valueToDelete &&
+      valueToDelete.id
+    ) {
       setDeletedValueIds((prev) => [...prev, valueToDelete.id as number]);
     }
 
-    // Remove from form
     const updatedValues = currentValues.filter(
-      (value) => value.label !== valueToRemove,
+      (v) => v.label !== valueToRemove,
     );
     form.setValue("benefitsAndValues.values", updatedValues, {
       shouldDirty: true,
@@ -595,22 +603,27 @@ export default function ProfilePage() {
 
   // Handle delete career
   const removeCareer = (careerToRemove: string) => {
-    const currentCareers = form.getValues("careerScopes") || [];
+    const currentCareers = (form.getValues("careerScopes") || []).filter(
+      Boolean,
+    ) as ICareerScopes[];
 
-    // Find the career to delete
     const careerToDelete = currentCareers.find(
-      (career) => career.name === careerToRemove,
+      (c) => c.name === careerToRemove,
     );
+    if (!careerToDelete) return; // ✅ guard
 
-    // If it has an ID, track it for deletion
-    if ("id" in careerToDelete! && careerToDelete.id) {
-      setDeleteCareerScopeIds((prev) => [...prev, careerToDelete.id!]);
+    if (
+      typeof careerToDelete === "object" &&
+      "id" in careerToDelete &&
+      careerToDelete.id
+    ) {
+      setDeleteCareerScopeIds((prev) => [...prev, careerToDelete.id as string]);
     }
 
-    // Remove from form
     const updatedCareers = currentCareers.filter(
-      (career) => career.name !== careerToRemove,
+      (c) => c.name !== careerToRemove,
     );
+
     form.setValue("careerScopes", updatedCareers, {
       shouldDirty: true,
       shouldTouch: true,
@@ -656,25 +669,29 @@ export default function ProfilePage() {
   };
 
   const removeSocial = (platform: TPlatform) => {
-    const currentSocials = form.getValues("socials") || [];
+    const currentSocials = (form.getValues("socials") || []).filter(
+      Boolean,
+    ) as ISocial[];
 
-    const socialToDelete = currentSocials.find(
-      (sc) => sc?.platform === platform,
-    );
+    const socialToDelete = currentSocials.find((s) => s?.platform === platform);
+    if (!socialToDelete) return; // ✅ guard
 
-    if ("id" in socialToDelete! && socialToDelete.id) {
+    if (
+      typeof socialToDelete === "object" &&
+      "id" in socialToDelete &&
+      socialToDelete.id
+    ) {
       setDeleteSocialIds((prev) => [...prev, socialToDelete.id as string]);
     }
 
-    const updatedSocials = socials.filter(
-      (sc) => sc.platform !== socialToDelete?.platform,
-    );
+    const updatedSocials = socials.filter((s) => s.platform !== platform);
+
     form.setValue("socials", updatedSocials, {
       shouldDirty: true,
       shouldTouch: true,
     });
 
-    setSocials(updatedSocials); // Update the state
+    setSocials(updatedSocials);
   };
 
   const handleDateChange = (
@@ -1083,7 +1100,9 @@ export default function ProfilePage() {
             className="size-32 tablet-sm:size-28 relative bg-primary-foreground"
             rounded="md"
             onClick={(e) => {
-              if (!isEdit) handleClickProfilePopup(e);
+              if (!isEdit) {
+                if (user.company?.avatar) handleClickProfilePopup(e);
+              }
             }}
           >
             <AvatarImage
@@ -1517,7 +1536,7 @@ export default function ProfilePage() {
         </div>
         <div className="w-[40%] flex flex-col gap-5">
           {/* Benefits Section */}
-          {benefits && benefits.length > 0 && (
+          {((benefits && benefits.length > 0) || isEdit) && (
             <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
               <div className="w-full flex flex-col gap-1">
                 <TypographyH4>Benefits</TypographyH4>
@@ -1563,7 +1582,7 @@ export default function ProfilePage() {
                     <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
                       <Input
                         placeholder="Enter your benefit (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
-                        value={benefitInput?.label}
+                        value={benefitInput?.label ?? ""}
                         onChange={(e) =>
                           setBenefitInput({ label: e.target.value })
                         }
@@ -1587,7 +1606,7 @@ export default function ProfilePage() {
           )}
 
           {/* Values Section */}
-          {values && values.length > 0 && (
+          {((values && values.length > 0) || isEdit) && (
             <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
               <div className="w-full flex flex-col gap-1">
                 <TypographyH4>Values</TypographyH4>
@@ -1633,7 +1652,7 @@ export default function ProfilePage() {
                     <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
                       <Input
                         placeholder="Enter your value (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
-                        value={valueInput?.label}
+                        value={valueInput?.label ?? ""}
                         onChange={(e) =>
                           setValueInput({ label: e.target.value })
                         }
@@ -1683,7 +1702,9 @@ export default function ProfilePage() {
                             </HoverCardTrigger>
                             <HoverCardContent>
                               <TypographySmall>
-                                {career.description ? career.description : career.name}
+                                {career.description
+                                  ? career.description
+                                  : career.name}
                               </TypographySmall>
                             </HoverCardContent>
                           </HoverCard>
@@ -1810,10 +1831,10 @@ export default function ProfilePage() {
                             </TypographyMuted>
                             <Select
                               onValueChange={(value: string) =>
-                                setSocialInput({
-                                  ...socialInput!,
+                                setSocialInput((prev) => ({
+                                  ...(prev ?? { platform: "", url: "" }),
                                   platform: value,
-                                })
+                                }))
                               }
                               value={socialInput?.platform}
                             >
@@ -1841,10 +1862,10 @@ export default function ProfilePage() {
                                 name="link"
                                 value={socialInput?.url}
                                 onChange={(e) =>
-                                  setSocialInput({
-                                    ...socialInput!,
+                                  setSocialInput((prev) => ({
+                                    ...(prev ?? { platform: "", url: "" }),
                                     url: e.target.value,
-                                  })
+                                  }))
                                 }
                                 prefix={<LucideLink2 />}
                               />
