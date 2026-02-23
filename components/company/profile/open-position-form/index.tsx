@@ -43,7 +43,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
       : [];
 
     const alreadyExists = currentSkillsArray.some(
-      (skill) => skill.toLowerCase() === trimmed.toLowerCase()
+      (skill) => skill.toLowerCase() === trimmed.toLowerCase(),
     );
 
     if (alreadyExists) {
@@ -170,7 +170,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
               placeholder={props.isEdit ? "Experience" : props.experience}
               id="experience-requirement"
               {...register(
-                `openPositions.${props.index}.experienceRequirement`
+                `openPositions.${props.index}.experienceRequirement`,
               )}
               disabled={!props.isEdit}
             />
@@ -192,21 +192,23 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             Skill Requirements
           </TypographyMuted>
           <div className="flex flex-wrap gap-2">
-            {skills.split(", ").map((item, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted"
-              >
-                <TypographySmall>{item}</TypographySmall>
-                {props.isEdit && (
-                  <LucideXCircle
-                    className="text-muted-foreground cursor-pointer text-red-500"
-                    width={"18px"}
-                    onClick={() => removeSkills(item)}
-                  />
-                )}
-              </div>
-            ))}
+            {skills &&
+              skills.length > 0 &&
+              skills.split(", ").map((item, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted"
+                >
+                  <TypographySmall>{item}</TypographySmall>
+                  {props.isEdit && (
+                    <LucideXCircle
+                      className="text-muted-foreground cursor-pointer text-red-500"
+                      width={"18px"}
+                      onClick={() => removeSkills(item)}
+                    />
+                  )}
+                </div>
+              ))}
           </div>
           {props.isEdit && (
             <Popover open={openSkillPopOver} onOpenChange={setOpenSkillPopOver}>
