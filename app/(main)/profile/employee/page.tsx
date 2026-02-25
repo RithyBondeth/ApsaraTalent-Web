@@ -942,7 +942,9 @@ export default function EmployeeProfilePage() {
           {/* Connected Accounts Section */}
           <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
             <div className="flex flex-col gap-1">
-              <TypographyH4>Connected Accounts</TypographyH4>
+              <TypographyH4>
+                Connected Accounts: {user.lastLoginMethod}
+              </TypographyH4>
               <Divider />
             </div>
             <div className="w-full flex flex-col items-start gap-3">

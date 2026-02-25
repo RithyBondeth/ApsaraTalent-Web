@@ -28,6 +28,7 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import {
   locationConstant,
+  loginMethodConstant,
   platformConstant,
 } from "@/utils/constants/app.constant";
 import { TLocations } from "@/utils/types/location.type";
@@ -1888,6 +1889,48 @@ export default function ProfilePage() {
               </div>
             </div>
           )}
+
+          {/* Connected Accounts Section */}
+          <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
+            <div className="flex flex-col gap-1">
+              <TypographyH4>Connected Accounts</TypographyH4>
+              <Divider />
+            </div>
+            <div className="w-full flex flex-col items-start gap-3">
+              {loginMethodConstant.map((item) => (
+                <div
+                  className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer"
+                  key={item.id}
+                >
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src={item.icon}
+                      alt={item.label}
+                      width={30}
+                      height={30}
+                      className="rounded-full"
+                    />
+                    <TypographySmall>{item.label}</TypographySmall>
+                  </div>
+                  {user.lastLoginMethod &&
+                  user.lastLoginMethod.toUpperCase() ===
+                    item.label.toUpperCase() ? (
+                    <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl">
+                      <TypographySmall className="text-xs font-medium">
+                        Disconnect
+                      </TypographySmall>
+                    </div>
+                  ) : (
+                    <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl">
+                      <TypographySmall className="text-xs font-medium">
+                        Connect
+                      </TypographySmall>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
