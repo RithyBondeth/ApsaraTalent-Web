@@ -1890,7 +1890,7 @@ export default function ProfilePage() {
             </div>
           )}
 
-          {/* Connected Accounts Section */}
+          {/* Authentication Section */}
           <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
             <div className="flex flex-col gap-1">
               <TypographyH4>Authentication</TypographyH4>

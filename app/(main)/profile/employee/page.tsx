@@ -939,53 +939,6 @@ export default function EmployeeProfilePage() {
           )}
         </div>
         <div className="w-[40%] flex flex-col gap-5">
-          {/* Connected Accounts Section */}
-          <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
-            <div className="flex flex-col gap-1">
-              <TypographyH4>
-                Connected Accounts: {user.lastLoginMethod}
-              </TypographyH4>
-              <Divider />
-            </div>
-            <div className="w-full flex flex-col items-start gap-3">
-              {loginMethodConstant.map((item) => (
-                <div
-                  className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer"
-                  key={item.id}
-                >
-                  <div className="flex items-center gap-2">
-                    <Image
-                      src={item.icon}
-                      alt={item.label}
-                      width={30}
-                      height={30}
-                      className="rounded-full"
-                    />
-                    <TypographySmall>{item.label}</TypographySmall>
-                  </div>
-                  {/* <div
-                    className={`py-1 px-2 rounded-md cursor-pointer ${
-                      socialConnected === item.label
-                        ? "bg-green-200 text-green-600"
-                        : "bg-primary text-primary-foreground"
-                    }`}
-                  >
-                    <TypographySmall>{socialConnected === item.label ? "Connected" : "Connect"}</TypographySmall>
-                  </div> */}
-                  {/* {loginMethod.label === item.label ? (
-                    <Button className="text-xs">
-                      Connected
-                    </Button>
-                  ) : (
-                    <Button variant={"outline"} className="text-xs">
-                      Connect
-                    </Button>
-                  )} */}
-                </div>
-              ))}
-            </div>
-          </div>
-
           {/* Skill Section */}
           {employee.skills && employee.skills.length > 0 && (
             <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
@@ -1327,9 +1280,88 @@ export default function EmployeeProfilePage() {
               )}
             </div>
           )}
+
+          {/* Authentication Section */}
+          <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
+            <div className="flex flex-col gap-1">
+              <TypographyH4>Authentication</TypographyH4>
+              <Divider />
+            </div>
+            <div className="w-full flex flex-col items-start gap-3">
+              {loginMethodConstant.map((item) => (
+                <div
+                  className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer"
+                  key={item.id}
+                >
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src={item.icon}
+                      alt={item.label}
+                      width={30}
+                      height={30}
+                      className="rounded-full"
+                    />
+                    <TypographySmall>{item.label}</TypographySmall>
+                  </div>
+                  {user.lastLoginMethod &&
+                  user.lastLoginMethod.toUpperCase() ===
+                    item.label.toUpperCase() ? (
+                    <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
+                      <TypographySmall className="text-xs font-medium">
+                        Disconnect
+                      </TypographySmall>
+                    </div>
+                  ) : (
+                    <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
+                      <TypographySmall className="text-xs font-medium">
+                        Connect
+                      </TypographySmall>
+                    </div>
+                  )}
+                </div>
+              ))}
+              <div className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer">
+                <div className="flex items-center gap-2">
+                  <LucideMail className="mx-1" strokeWidth={1.5} />
+                  <TypographySmall>Email</TypographySmall>
+                </div>
+                {user.email ? (
+                  <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
+                    <TypographySmall className="text-xs font-medium">
+                      Disconnect
+                    </TypographySmall>
+                  </div>
+                ) : (
+                  <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
+                    <TypographySmall className="text-xs font-medium">
+                      Connect
+                    </TypographySmall>
+                  </div>
+                )}
+              </div>
+              <div className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer">
+                <div className="flex items-center gap-2">
+                  <LucidePhone className="mx-1" strokeWidth={1.5} />
+                  <TypographySmall>Phone OTP</TypographySmall>
+                </div>
+                {user.phone ? (
+                  <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
+                    <TypographySmall className="text-xs font-medium">
+                      Disconnect
+                    </TypographySmall>
+                  </div>
+                ) : (
+                  <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
+                    <TypographySmall className="text-xs font-medium">
+                      Connect
+                    </TypographySmall>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
       {/* Profile Popup Section */}
       <ImagePopup
         open={openProfilePopup}
