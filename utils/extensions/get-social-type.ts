@@ -12,7 +12,7 @@ import { TPlatform } from "../types/platform.type";
 import React from "react";
 
 export const getSocialPlatformTypeIcon = (
-  platform: TPlatform
+  platform: TPlatform,
 ): React.ReactNode => {
   const icons: Record<TPlatform, LucideIcon> = {
     Facebook: FacebookIcon,

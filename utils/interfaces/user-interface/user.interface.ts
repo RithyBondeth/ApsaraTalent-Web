@@ -25,6 +25,7 @@ export interface IUser {
   linkedinId?: string | null;
   githubId?: string | null;
   lastLoginMethod?: EAuthLoginMethod | null;
+  lastLoginAt?: string | null;
   employee: IEmployee | null;
   company: ICompany | null;
   createdAt: string;

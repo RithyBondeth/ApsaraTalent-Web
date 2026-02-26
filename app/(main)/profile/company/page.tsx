@@ -1893,7 +1893,7 @@ export default function ProfilePage() {
           {/* Connected Accounts Section */}
           <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
             <div className="flex flex-col gap-1">
-              <TypographyH4>Connected Accounts</TypographyH4>
+              <TypographyH4>Authentication</TypographyH4>
               <Divider />
             </div>
             <div className="w-full flex flex-col items-start gap-3">
@@ -1915,13 +1915,13 @@ export default function ProfilePage() {
                   {user.lastLoginMethod &&
                   user.lastLoginMethod.toUpperCase() ===
                     item.label.toUpperCase() ? (
-                    <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl">
+                    <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
                       <TypographySmall className="text-xs font-medium">
                         Disconnect
                       </TypographySmall>
                     </div>
                   ) : (
-                    <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl">
+                    <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
                       <TypographySmall className="text-xs font-medium">
                         Connect
                       </TypographySmall>
@@ -1929,6 +1929,44 @@ export default function ProfilePage() {
                   )}
                 </div>
               ))}
+              <div className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer">
+                <div className="flex items-center gap-2">
+                  <LucideMail className="mx-1" strokeWidth={1.5} />
+                  <TypographySmall>Email</TypographySmall>
+                </div>
+                {user.email ? (
+                  <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
+                    <TypographySmall className="text-xs font-medium">
+                      Disconnect
+                    </TypographySmall>
+                  </div>
+                ) : (
+                  <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
+                    <TypographySmall className="text-xs font-medium">
+                      Connect
+                    </TypographySmall>
+                  </div>
+                )}
+              </div>
+              <div className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer">
+                <div className="flex items-center gap-2">
+                  <LucidePhone className="mx-1" strokeWidth={1.5} />
+                  <TypographySmall>Phone OTP</TypographySmall>
+                </div>
+                {user.phone ? (
+                  <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
+                    <TypographySmall className="text-xs font-medium">
+                      Disconnect
+                    </TypographySmall>
+                  </div>
+                ) : (
+                  <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
+                    <TypographySmall className="text-xs font-medium">
+                      Connect
+                    </TypographySmall>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
