@@ -108,19 +108,27 @@ import { capitalizeWords } from "@/utils/functions/capitalize-words";
 import RemoveAvatarOrCoverDialog from "./_dialogs/remove-avatar-cover-dialog";
 
 export default function ProfilePage() {
-  // Store hooks
+  // API Integration
+  // Current User Infomation and Current User CareerScopes
   const { user, loading, getCurrentUser } = useGetCurrentUserStore();
-  const getAllCareerScopeStore = useGetAllCareerScopesStore();
   const company = user?.company;
+  const getAllCareerScopeStore = useGetAllCareerScopesStore();
+
+  // Update Company Information
   const updateOneCmpStore = useUpdateOneCompanyStore();
+
+  // Upload Avatar, Cover and Image
   const uploadAvatarCmpStore = useUploadCompanyAvatarStore();
   const uploadCoverCmpStore = useUploadCompanyCoverStore();
   const uploadCmpImagesStore = useUploadCompanyImagesStore();
-  const removeOneOpenPosition = useRemoveOneOpenPositionStore();
+
+  // Remove Avatar, Cover, Image and OpenPosition
   const removeOneCompImage = useRemoveOneCmpImageStore();
   const removeCmpAvatar = useRemoveCmpAvatarStore();
   const removeCmpCover = useRemoveCmpCoverStore();
+  const removeOneOpenPosition = useRemoveOneOpenPositionStore();
 
+  // Compute All Loading State
   const updateProfileLoadingState =
     updateOneCmpStore.loading ||
     uploadAvatarCmpStore.loading ||
@@ -131,9 +139,76 @@ export default function ProfilePage() {
     removeCmpAvatar.loading ||
     removeCmpCover.loading;
 
-  const { toast } = useToast();
+  // Utils
+  const { toast, dismiss } = useToast();
+  const [isEdit, setIsEdit] = useState<boolean>(false);
 
-  // Form hook
+  // Image and Profile Dialog States
+  const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
+  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
+  const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(
+    null,
+  );
+  const [openRemoveImageDialog, setOpenRemoveImageDialog] =
+    useState<boolean>(false);
+  const [removedImage, setRemoveImage] = useState<{
+    id: string;
+    index: number;
+  } | null>(null);
+  const [openRemoveAvatarDialog, setOpenRemoveAvatarDialog] =
+    useState<boolean>(false);
+  const [openRemoveCoverDialog, setOpenRemoveCoverDialog] =
+    useState<boolean>(false);
+
+  // OpenPosition States
+  const [openPositions, setOpenPositions] = useState<IJobPosition[]>([]);
+  const [openRemoveOpenPositionDialog, setOpenRemoveOpenPositionDialog] =
+    useState<boolean>(false);
+  const [currentOpenPositionID, setCurrentOpenPositionID] = useState<
+    string | null
+  >(null);
+
+  // Select Location and Date States
+  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
+    "",
+  );
+  const [selectedDates, setSelectedDates] = useState<
+    Record<string, { posted?: Date; deadline?: Date }>
+  >({});
+
+  // Benefit States
+  const [benefitInput, setBenefitInput] = useState<IBenefits | null>(null);
+  const [benefits, setBenefits] = useState<IBenefits[]>([]);
+  const [deletedBenefitIds, setDeletedBenefitIds] = useState<number[]>([]);
+  const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
+
+  // Value States
+  const [valueInput, setValueInput] = useState<IValues | null>(null);
+  const [values, setValues] = useState<IValues[]>([]);
+  const [deletedValueIds, setDeletedValueIds] = useState<number[]>([]);
+  const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
+
+  // CareerScope States
+  const [careersInput, setCareersInput] = useState<ICareerScopes | null>(null);
+  const [careers, setCareers] = useState<ICareerScopes[]>([]);
+  const [deleteCareerScopeIds, setDeleteCareerScopeIds] = useState<string[]>(
+    [],
+  );
+  const [openCareersPopOver, setOpenCareersPopOver] = useState<boolean>(false);
+
+  // Social States
+  const [socialInput, setSocialInput] = useState<ISocial | null>(null);
+  const [socials, setSocials] = useState<ISocial[]>([]);
+  const [deleteSocialIds, setDeleteSocialIds] = useState<string[]>([]);
+
+  // Avatar and Cover File States
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const avatarInputRef = useRef<HTMLInputElement | null>(null);
+  const coverInputRef = useRef<HTMLInputElement | null>(null);
+  const ignoreNextClick = useRef<boolean>(false);
+
+  // React Hook Form: Company Profile Schema
   const form = useForm<TCompanyProfileForm>({
     resolver: zodResolver(companyFormSchema),
     defaultValues: {
@@ -163,77 +238,12 @@ export default function ProfilePage() {
     shouldFocusError: false,
   });
 
-  // All useState hooks
-  const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
-  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
-  const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(
-    null,
-  );
-  const [openRemoveImageDialog, setOpenRemoveImageDialog] =
-    useState<boolean>(false);
-  const [removedImage, setRemoveImage] = useState<{
-    id: string;
-    index: number;
-  } | null>(null);
-  const [openRemoveAvatarDialog, setOpenRemoveAvatarDialog] =
-    useState<boolean>(false);
-  const [openRemoveCoverDialog, setOpenRemoveCoverDialog] =
-    useState<boolean>(false);
-
-  const [openPositions, setOpenPositions] = useState<IJobPosition[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
-    "",
-  );
-  const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
-  const [benefitInput, setBenefitInput] = useState<IBenefits | null>(null);
-  const [benefits, setBenefits] = useState<IBenefits[]>([]);
-  const [deletedBenefitIds, setDeletedBenefitIds] = useState<number[]>([]);
-  const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
-  const [valueInput, setValueInput] = useState<IValues | null>(null);
-  const [values, setValues] = useState<IValues[]>([]);
-  const [deletedValueIds, setDeletedValueIds] = useState<number[]>([]);
-  const [openCareersPopOver, setOpenCareersPopOver] = useState<boolean>(false);
-  const [careersInput, setCareersInput] = useState<ICareerScopes | null>(null);
-  const [careers, setCareers] = useState<ICareerScopes[]>([]);
-  const [deleteCareerScopeIds, setDeleteCareerScopeIds] = useState<string[]>(
-    [],
-  );
-  const [socialInput, setSocialInput] = useState<ISocial | null>(null);
-  const [socials, setSocials] = useState<ISocial[]>([]);
-  const [deleteSocialIds, setDeleteSocialIds] = useState<string[]>([]);
-  const [selectedDates, setSelectedDates] = useState<
-    Record<string, { posted?: Date; deadline?: Date }>
-  >({});
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [coverFile, setCoverFile] = useState<File | null>(null);
-  const [openRemoveOpenPositionDialog, setOpenRemoveOpenPositionDialog] =
-    useState<boolean>(false);
-  const [currentOpenPositionID, setCurrentOpenPositionID] = useState<
-    string | null
-  >(null);
-
-  // All useRef hooks
-  const ignoreNextClick = useRef<boolean>(false);
-  const avatarInputRef = useRef<HTMLInputElement | null>(null);
-  const coverInputRef = useRef<HTMLInputElement | null>(null);
-
   // All useEffect hooks
   useEffect(() => {
-    // Get current user with HTTP-only cookies
     getCurrentUser();
   }, []);
 
-  const enableEditMode = () => {
-    getAllCareerScopeStore.getAllCareerScopes();
-    setIsEdit(true);
-  };
-
-  const disableEditMode = () => {
-    setIsEdit(false);
-    form.reset();
-  };
-
+  // Query Current Company Profile Information Effect
   useEffect(() => {
     if (user && company) {
       // Initialize form data
@@ -325,6 +335,7 @@ export default function ProfilePage() {
     }
   }, [user, company, form]);
 
+  // Initial Social Effect
   useEffect(() => {
     const initialSocial = (form.getValues?.("socials") || []).filter(
       (s): s is { platform: string; url: string } => s !== undefined,
@@ -332,6 +343,7 @@ export default function ProfilePage() {
     setSocials(initialSocial);
   }, [form]);
 
+  // Initial CareerScope Effect
   useEffect(() => {
     const initialCareerScope = form.getValues("careerScopes") || [];
     setCareers(
@@ -343,6 +355,7 @@ export default function ProfilePage() {
     );
   }, [form]);
 
+  // Initial Benefit Effect
   useEffect(() => {
     const initialBenefit = form.getValues("benefitsAndValues.benefits") || [];
     setBenefits(
@@ -353,6 +366,7 @@ export default function ProfilePage() {
     );
   }, [form]);
 
+  // Initial Value Effect
   useEffect(() => {
     const initialValue = form.getValues("benefitsAndValues.values") || [];
     setValues(
@@ -363,6 +377,7 @@ export default function ProfilePage() {
     );
   }, [form]);
 
+  // Image and Profile Popup Ignore Click Effect
   useEffect(() => {
     if (openImagePopup || openProfilePopup) {
       ignoreNextClick.current = true;
@@ -370,7 +385,19 @@ export default function ProfilePage() {
     }
   }, [openImagePopup, openProfilePopup]);
 
-  // Add an open position
+  // Handle Enable and Disable Edit Mode
+  const enableEditMode = () => {
+    getAllCareerScopeStore.getAllCareerScopes();
+    setIsEdit(true);
+  };
+
+  const disableEditMode = () => {
+    setIsEdit(false);
+    form.reset();
+  };
+
+  // OpenPosition Bussiness Logics
+  // 1. Add New OpenPosition
   const addOpenPosition = () => {
     const newPosition = {
       id: Date.now().toString(),
@@ -390,7 +417,7 @@ export default function ProfilePage() {
     setOpenPositions((prevPositions) => [...prevPositions!, newPosition]);
   };
 
-  // Remove an open position
+  // 2. Remove OpenPosition with ID
   const removeOpenPosition = async (openPositionID: string) => {
     await removeOneOpenPosition.removeOneOpenPosition(
       company!.id,
@@ -414,6 +441,8 @@ export default function ProfilePage() {
     setIsEdit(false);
   };
 
+  // Benefit Bussiness Logics
+  // 1. Add New Benefit
   const addBenefits = () => {
     const trimmed = benefitInput?.label?.trim();
     if (!trimmed) return;
@@ -454,6 +483,7 @@ export default function ProfilePage() {
     setOpenBenefitPopOver(false);
   };
 
+  // 2. Remove Old Benefit with ID
   const removeBenefit = async (benefitToRemove: string) => {
     const currentBenefits = form.getValues("benefitsAndValues.benefits") || [];
 
@@ -481,6 +511,8 @@ export default function ProfilePage() {
     setBenefits(updated);
   };
 
+  // Value Bussiness Logics
+  // 1. Add New Value
   const addValue = () => {
     const trimmed = valueInput?.label?.trim();
     if (!trimmed) return;
@@ -517,6 +549,7 @@ export default function ProfilePage() {
     setOpenValuePopOver(false);
   };
 
+  // 2. Remove Value with ID
   const removeValue = async (valueToRemove: string) => {
     const currentValues = (
       form.getValues("benefitsAndValues.values") || []
@@ -544,6 +577,8 @@ export default function ProfilePage() {
     setValues(updatedValues);
   };
 
+  // CareerScope Bussiness Logics
+  // 1. Add New CareerScope
   const addCareers = () => {
     const trimmed = careersInput?.name.trim();
     const id = careersInput?.id;
@@ -585,10 +620,10 @@ export default function ProfilePage() {
 
     setCareers(updatedCareers);
     setCareersInput(null);
-    setOpenCareersPopOver(false); // Close popover after adding career
+    setOpenCareersPopOver(false);
   };
 
-  // Handle the career selection from the dropdown or input
+  // 2. CareerScope Selection from the Dropdown or Input
   const handleCareerSelect = (
     selectedCareerId: string,
     selectedCareerName: string,
@@ -598,11 +633,11 @@ export default function ProfilePage() {
       id: selectedCareerId,
       name: selectedCareerName,
       description: selectedCareerDescription,
-    }); // Set the selected career to input
-    setOpenCareersPopOver(false); // Close popover after selecting
+    });
+    setOpenCareersPopOver(false);
   };
 
-  // Handle delete career
+  // 3. Remove Old CareerScope with Career's name
   const removeCareer = (careerToRemove: string) => {
     const currentCareers = (form.getValues("careerScopes") || []).filter(
       Boolean,
@@ -611,7 +646,7 @@ export default function ProfilePage() {
     const careerToDelete = currentCareers.find(
       (c) => c.name === careerToRemove,
     );
-    if (!careerToDelete) return; // ✅ guard
+    if (!careerToDelete) return;
 
     if (
       typeof careerToDelete === "object" &&
@@ -633,6 +668,8 @@ export default function ProfilePage() {
     setCareers(updatedCareers);
   };
 
+  // Social Bussiness Logics
+  // 1. Add New Social
   const addSocial = () => {
     const trimmedPlatform = socialInput?.platform.trim();
     const trimmedUrl = socialInput?.url.trim();
@@ -665,10 +702,11 @@ export default function ProfilePage() {
       shouldTouch: true,
     });
 
-    setSocials(updatedSocials); // Update the state
-    setSocialInput(null); // Reset the input
+    setSocials(updatedSocials);
+    setSocialInput(null);
   };
 
+  // 2. Remove Old Social
   const removeSocial = (platform: TPlatform) => {
     const currentSocials = (form.getValues("socials") || []).filter(
       Boolean,
@@ -695,6 +733,7 @@ export default function ProfilePage() {
     setSocials(updatedSocials);
   };
 
+  // Handle Posted and Deadline Date
   const handleDateChange = (
     positionId: string,
     type: "posted" | "deadline",
@@ -709,6 +748,7 @@ export default function ProfilePage() {
     }));
   };
 
+  // Handle Avatar and Cover File Change
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     type: "avatar" | "cover",
@@ -725,6 +765,7 @@ export default function ProfilePage() {
     }
   };
 
+  // onSubmit: Update The Entire Company Profile (API's calling)
   const onSubmit = async (data: TCompanyProfileForm) => {
     console.log("Company Profile Data: ", data);
     const updateBody: Partial<TCompanyUpdateBody> = {};
@@ -883,8 +924,6 @@ export default function ProfilePage() {
 
       await Promise.all(uploadTasks);
 
-      console.log("Updated Body: ", updateBody);
-
       /* ------------------------ API UPDATE ------------------------ */
       if (Object.keys(updateBody).length > 0) {
         await updateOneCmpStore.updateOneCompany(company!.id, updateBody);
@@ -917,6 +956,7 @@ export default function ProfilePage() {
     }
   };
 
+  // handleSubmit: Submit Company Profile Form
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -939,46 +979,40 @@ export default function ProfilePage() {
     form.handleSubmit(onSubmit, console.error)(e);
   };
 
+  // API for Remove Company Images, Avatar and Cover
+  // 1. Remove One Company Image API
   const handleRemoveOneCmpImage = async (imageId: string, index: number) => {
     const updated = form.watch("images")?.filter((_, i) => i !== index);
     form.setValue("images", updated);
 
-    if (company) {
+    if (company)
       await removeOneCompImage.removeOneCmpImage(company.id, imageId);
-    }
 
-    // Refetch current user
     await getCurrentUser();
     setIsEdit(false);
   };
 
+  // 2. Remove Company Cover API
   const handleRemoveCmpCover = async () => {
-    if (company) {
-      await removeCmpCover.removeCmpCover(company.id);
-    }
+    if (company) await removeCmpCover.removeCmpCover(company.id);
 
-    // Refetch current user
     await getCurrentUser();
     setIsEdit(false);
 
-    // Close dialog
     setOpenRemoveCoverDialog(false);
   };
 
+  // 3. Remvove Company Avatar API
   const handleRemoveCmpAvatar = async () => {
-    if (company) {
-      await removeCmpAvatar.removeCmpAvatar(company.id);
-    }
+    if (company) await removeCmpAvatar.removeCmpAvatar(company.id);
 
-    // Refetch current user
     await getCurrentUser();
     setIsEdit(false);
 
-    // Close dialog
     setOpenRemoveAvatarDialog(false);
   };
 
-  // Profile, Cover and Image Popup handlers
+  // Company Profile, Cover and Image Popup Handlers
   const handleClickImagePopup = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -999,6 +1033,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (removeOneOpenPosition.loading) {
+      dismiss();
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -1012,6 +1047,7 @@ export default function ProfilePage() {
     }
 
     if (removeOneCompImage.loading) {
+      dismiss();
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -1024,7 +1060,36 @@ export default function ProfilePage() {
       });
     }
 
+    if (removeCmpAvatar.loading) {
+      dismiss();
+      toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <ApsaraLoadingSpinner size={50} loop />
+            <TypographySmall className="font-medium leading-relaxed">
+              Removing Avatar...
+            </TypographySmall>
+          </div>
+        ),
+      });
+    }
+
+    if (removeCmpCover.loading) {
+      dismiss();
+      toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <ApsaraLoadingSpinner size={50} loop />
+            <TypographySmall className="font-medium leading-relaxed">
+              Removing Cover...
+            </TypographySmall>
+          </div>
+        ),
+      });
+    }
+
     if (updateProfileLoadingState) {
+      dismiss();
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -1036,17 +1101,14 @@ export default function ProfilePage() {
         ),
       });
     }
-  }, [
-    removeOneOpenPosition.loading,
-    removeOneCompImage.loading,
-    updateProfileLoadingState,
-  ]);
+  }, [updateProfileLoadingState]);
 
   if (loading) return <CompanyProfilePageSkeleton />;
   if (!user || !company) return null;
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+      {/* Company Cover Section */}
       <div
         className="relative h-80 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center"
         style={{
@@ -1058,6 +1120,7 @@ export default function ProfilePage() {
         <BlurBackGroundOverlay />
         {isEdit && (
           <div className="absolute bottom-5 right-5 flex flex-col items-start gap-2">
+            // Change Cover Button Section
             <Button
               className="flex items-center gap-2 cursor-pointer py-1 px-3 rounded-full bg-foreground text-primary-foreground"
               onClick={() => coverInputRef.current?.click()}
@@ -1069,6 +1132,7 @@ export default function ProfilePage() {
               </TypographySmall>
             </Button>
             {company.cover && (
+              // Remove Cover Button Section
               <Button
                 className="flex items-center gap-2 cursor-pointer py-1 px-3 rounded-full bg-red-500 text-red-100"
                 onClick={() => setOpenRemoveCoverDialog(true)}
@@ -1080,6 +1144,7 @@ export default function ProfilePage() {
                 </TypographySmall>
               </Button>
             )}
+            {/* Remove Avatar Dialog Section */}
             <RemoveAvatarOrCoverDialog
               type="cover"
               setOnRemoveAvatarOrCoverDialog={setOpenRemoveCoverDialog}
@@ -1097,6 +1162,7 @@ export default function ProfilePage() {
           onChange={(e) => handleFileChange(e, "cover")}
         />
         <div className="relative flex items-center gap-5 tablet-sm:flex-col">
+          {/* Avatar Section */}
           <Avatar
             className="size-32 tablet-sm:size-28 relative bg-primary-foreground"
             rounded="md"
@@ -1124,6 +1190,7 @@ export default function ProfilePage() {
                   <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
                 </Button>
                 {company.avatar && (
+                  // Remove Avatar Button Section
                   <Button
                     className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-red-500 text-red-100"
                     onClick={() => setOpenRemoveAvatarDialog(true)}
@@ -1132,6 +1199,7 @@ export default function ProfilePage() {
                     <LucideXCircle width={"18px"} strokeWidth={"1.2px"} />
                   </Button>
                 )}
+                {/* Remove Avatar Dialog Section */}
                 <RemoveAvatarOrCoverDialog
                   type="avatar"
                   setOnRemoveAvatarOrCoverDialog={setOpenRemoveAvatarDialog}
@@ -1149,6 +1217,7 @@ export default function ProfilePage() {
               onChange={(e) => handleFileChange(e, "avatar")}
             />
           </Avatar>
+          {/* Name and Industry Section */}
           <div className="flex flex-col items-start gap-2 text-muted tablet-sm:items-center">
             <TypographyH2 className="tablet-sm:text-center tablet-sm:text-xl">
               {company.name}
@@ -1160,6 +1229,7 @@ export default function ProfilePage() {
         </div>
         {isEdit ? (
           <div className="flex items-center gap-3 absolute top-5 right-5 phone-xl:top-2 phone-xl:right-2">
+            // Cancel Edit Button Section
             <Button
               className="text-xs"
               type="submit"
@@ -1174,6 +1244,7 @@ export default function ProfilePage() {
             </Button>
           </div>
         ) : (
+          // Edit Profile Button Section
           <Button
             className="text-xs absolute top-5 right-5 phone-xl:top-2 phone-xl:right-2"
             type="button"
@@ -1184,6 +1255,7 @@ export default function ProfilePage() {
           </Button>
         )}
       </div>
+
       <div className="flex items-start gap-5 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
         <div className="w-[60%] flex flex-col gap-5">
           {/* Company Information Form Section */}
@@ -1204,6 +1276,8 @@ export default function ProfilePage() {
                   />
                 }
               />
+
+              {/* Description Section */}
               <div className="w-full flex flex-col items-start gap-2">
                 <TypographyMuted className="text-xs">
                   Company Description
@@ -1218,6 +1292,8 @@ export default function ProfilePage() {
                   disabled={!isEdit}
                 />
               </div>
+
+              {/* Industry Section */}
               <div className="w-full flex items-center justify-between gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
                 <LabelInput
                   label="Industry"
@@ -1230,6 +1306,8 @@ export default function ProfilePage() {
                     />
                   }
                 />
+
+                {/* Location Section */}
                 <div className="flex flex-col items-start gap-2">
                   <TypographyMuted className="text-xs">
                     Locations
@@ -1266,6 +1344,8 @@ export default function ProfilePage() {
                   />
                 </div>
               </div>
+
+              {/* CompanySize, FoundedYear, Email and PhoneNumber Section */}
               <div className="w-full flex items-center justify-between gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
                 {company.companySize && (
                   <LabelInput
@@ -1417,6 +1497,7 @@ export default function ProfilePage() {
                 </div>
               )}
             </div>
+            {/* Remove OpenPosition Dialog Section */}
             <RemoveOpenPositionDialog
               onRemoveOpDialog={openRemoveOpenPositionDialog}
               setOnRemoveOpDialog={setOpenRemoveOpenPositionDialog}
@@ -1482,6 +1563,7 @@ export default function ProfilePage() {
                       </CarouselItem>
                     );
                   })}
+                  {/* Remove Company Image Dialog Section */}
                   <RemoveImageDialog
                     onRemoveImageDialog={openRemoveImageDialog}
                     setOnRemoveImageDialog={setOpenRemoveImageDialog}
@@ -1497,6 +1579,7 @@ export default function ProfilePage() {
                     }}
                   />
                   {isEdit && (
+                    // Add New Company Image Section
                     <CarouselItem className="max-w-[280px]">
                       <label
                         htmlFor="image-upload"
@@ -1560,6 +1643,7 @@ export default function ProfilePage() {
                           text={benefit.label}
                         />
                         {isEdit && (
+                          // Remove Benefit Button Section
                           <LucideXCircle
                             className="text-muted-foreground cursor-pointer text-red-500"
                             width={"18px"}
@@ -1570,6 +1654,7 @@ export default function ProfilePage() {
                     ))}
                 </div>
                 {isEdit && (
+                  // Add New Benefit Section
                   <Popover
                     open={openBenefitPopOver}
                     onOpenChange={setOpenBenefitPopOver}
@@ -1630,6 +1715,7 @@ export default function ProfilePage() {
                           text={value.label}
                         />
                         {isEdit && (
+                          // Remove Value Button Section
                           <LucideXCircle
                             className="text-muted-foreground cursor-pointer text-red-500"
                             width={"18px"}
@@ -1640,6 +1726,7 @@ export default function ProfilePage() {
                     ))}
                 </div>
                 {isEdit && (
+                  // Add New Value Section
                   <Popover
                     open={openValuePopOver}
                     onOpenChange={setOpenValuePopOver}
@@ -1694,6 +1781,7 @@ export default function ProfilePage() {
                             <HoverCardTrigger className="flex items-center rounded-3xl">
                               <Tag label={career.name} />
                               {isEdit && (
+                                // Remove Career Section
                                 <LucideXCircle
                                   className="text-muted-foreground cursor-pointer ml-1 text-red-500"
                                   width={"18px"}
@@ -1774,6 +1862,7 @@ export default function ProfilePage() {
                 </Popover>
               )}
               {isEdit && (
+                // Add New Career Section
                 <Button
                   variant="secondary"
                   className="w-full text-xs"
@@ -1811,6 +1900,7 @@ export default function ProfilePage() {
                             <TypographySmall>{item.platform}</TypographySmall>
                           </Link>
                           {isEdit && (
+                            // Remove Social Section
                             <LucideXCircle
                               className="text-muted-foreground cursor-pointer text-red-500"
                               width={"18px"}
@@ -1874,6 +1964,7 @@ export default function ProfilePage() {
                           />
                         </div>
                       </div>
+                      {/* Add New Social Button Section */}
                       <Button
                         variant="secondary"
                         className="text-xs w-full"
@@ -1897,6 +1988,7 @@ export default function ProfilePage() {
               <Divider />
             </div>
             <div className="w-full flex flex-col items-start gap-3">
+              {/* All Socials Authentication Section */}
               {loginMethodConstant.map((item) => (
                 <div
                   className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer"
@@ -1929,6 +2021,8 @@ export default function ProfilePage() {
                   )}
                 </div>
               ))}
+
+              {/* Email Authentication Section */}
               <div className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer">
                 <div className="flex items-center gap-2">
                   <LucideMail className="mx-1" strokeWidth={1.5} />
@@ -1948,6 +2042,8 @@ export default function ProfilePage() {
                   </div>
                 )}
               </div>
+
+              {/* Phone OTP Authentication Section */}
               <div className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer">
                 <div className="flex items-center gap-2">
                   <LucidePhone className="mx-1" strokeWidth={1.5} />
