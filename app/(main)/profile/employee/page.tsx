@@ -79,10 +79,28 @@ import { dateFormatter } from "@/utils/functions/dateformatter";
 import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
 import Tag from "@/components/utils/tag";
 import Image from "next/image";
+import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-scopes.store";
+import { useUpdateOneEmployeeStore } from "@/stores/apis/employee/update-one-emp.store";
+import { useUploadEmployeeAvatarStore } from "@/stores/apis/employee/upload-emp-avatar.store";
+import { useUploadEmployeeResumeStore } from "@/stores/apis/employee/upload-emp-resume.store";
+import { useUploadEmployeeCoverLetter } from "@/stores/apis/employee/upload-emp-coverletter.store";
 
 export default function EmployeeProfilePage() {
+  // API Integration
+  // Current User Information and Current User CareerScopes
   const { user, loading, getCurrentUser } = useGetCurrentUserStore();
   const employee = user?.employee;
+  const getAllCareerScopes = useGetAllCareerScopesStore();
+
+  // Update Employee Information
+  const updateOneEmpStore = useUpdateOneEmployeeStore();
+
+  // Upload Avatar, Resume and CoverLetter
+  const uploadAvatarEmpStore = useUploadEmployeeAvatarStore();
+  const uploadResumeEmpStore = useUploadEmployeeResumeStore();
+  const uploadCoverLetterEmpStore = useUploadEmployeeCoverLetter();
+
+  // Remove Avatar, Resume and CoverLetter
 
   const { toast } = useToast();
   const form = useForm<TEmployeeProfileForm>({
