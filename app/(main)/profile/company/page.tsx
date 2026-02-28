@@ -556,7 +556,7 @@ export default function ProfilePage() {
     ).filter(Boolean) as IValues[];
 
     const valueToDelete = currentValues.find((v) => v.label === valueToRemove);
-    if (!valueToDelete) return; // ✅ guard
+    if (!valueToDelete) return;
 
     if (
       typeof valueToDelete === "object" &&
@@ -1120,7 +1120,6 @@ export default function ProfilePage() {
         <BlurBackGroundOverlay />
         {isEdit && (
           <div className="absolute bottom-5 right-5 flex flex-col items-start gap-2">
-            // Change Cover Button Section
             <Button
               className="flex items-center gap-2 cursor-pointer py-1 px-3 rounded-full bg-foreground text-primary-foreground"
               onClick={() => coverInputRef.current?.click()}
@@ -1132,7 +1131,6 @@ export default function ProfilePage() {
               </TypographySmall>
             </Button>
             {company.cover && (
-              // Remove Cover Button Section
               <Button
                 className="flex items-center gap-2 cursor-pointer py-1 px-3 rounded-full bg-red-500 text-red-100"
                 onClick={() => setOpenRemoveCoverDialog(true)}
@@ -1190,7 +1188,6 @@ export default function ProfilePage() {
                   <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
                 </Button>
                 {company.avatar && (
-                  // Remove Avatar Button Section
                   <Button
                     className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-red-500 text-red-100"
                     onClick={() => setOpenRemoveAvatarDialog(true)}
@@ -1229,7 +1226,6 @@ export default function ProfilePage() {
         </div>
         {isEdit ? (
           <div className="flex items-center gap-3 absolute top-5 right-5 phone-xl:top-2 phone-xl:right-2">
-            // Cancel Edit Button Section
             <Button
               className="text-xs"
               type="submit"
@@ -1244,7 +1240,6 @@ export default function ProfilePage() {
             </Button>
           </div>
         ) : (
-          // Edit Profile Button Section
           <Button
             className="text-xs absolute top-5 right-5 phone-xl:top-2 phone-xl:right-2"
             type="button"
@@ -1579,7 +1574,6 @@ export default function ProfilePage() {
                     }}
                   />
                   {isEdit && (
-                    // Add New Company Image Section
                     <CarouselItem className="max-w-[280px]">
                       <label
                         htmlFor="image-upload"
@@ -1643,7 +1637,6 @@ export default function ProfilePage() {
                           text={benefit.label}
                         />
                         {isEdit && (
-                          // Remove Benefit Button Section
                           <LucideXCircle
                             className="text-muted-foreground cursor-pointer text-red-500"
                             width={"18px"}
@@ -1654,7 +1647,6 @@ export default function ProfilePage() {
                     ))}
                 </div>
                 {isEdit && (
-                  // Add New Benefit Section
                   <Popover
                     open={openBenefitPopOver}
                     onOpenChange={setOpenBenefitPopOver}
@@ -1726,7 +1718,6 @@ export default function ProfilePage() {
                     ))}
                 </div>
                 {isEdit && (
-                  // Add New Value Section
                   <Popover
                     open={openValuePopOver}
                     onOpenChange={setOpenValuePopOver}
@@ -1900,7 +1891,6 @@ export default function ProfilePage() {
                             <TypographySmall>{item.platform}</TypographySmall>
                           </Link>
                           {isEdit && (
-                            // Remove Social Section
                             <LucideXCircle
                               className="text-muted-foreground cursor-pointer text-red-500"
                               width={"18px"}
