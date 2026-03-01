@@ -123,21 +123,21 @@ export default function ProfilePage() {
   const uploadCmpImagesStore = useUploadCompanyImagesStore();
 
   // Remove Avatar, Cover, Image and OpenPosition
-  const removeOneCompImage = useRemoveOneCmpImageStore();
-  const removeCmpAvatar = useRemoveCmpAvatarStore();
-  const removeCmpCover = useRemoveCmpCoverStore();
-  const removeOneOpenPosition = useRemoveOneOpenPositionStore();
+  const removeOneCompImageStore = useRemoveOneCmpImageStore();
+  const removeCmpAvatarStore = useRemoveCmpAvatarStore();
+  const removeCmpCoverStore = useRemoveCmpCoverStore();
+  const removeOneOpenPositionStore = useRemoveOneOpenPositionStore();
 
-  // Compute All Loading State
+  // Compute All Loading States
   const updateProfileLoadingState =
     updateOneCmpStore.loading ||
     uploadAvatarCmpStore.loading ||
     uploadCoverCmpStore.loading ||
     uploadCmpImagesStore.loading ||
-    removeOneOpenPosition.loading ||
-    removeOneCompImage.loading ||
-    removeCmpAvatar.loading ||
-    removeCmpCover.loading;
+    removeOneOpenPositionStore.loading ||
+    removeOneCompImageStore.loading ||
+    removeCmpAvatarStore.loading ||
+    removeCmpCoverStore.loading;
 
   // Utils
   const { toast, dismiss } = useToast();
@@ -419,7 +419,7 @@ export default function ProfilePage() {
 
   // 2. Remove OpenPosition with ID
   const removeOpenPosition = async (openPositionID: string) => {
-    await removeOneOpenPosition.removeOneOpenPosition(
+    await removeOneOpenPositionStore.removeOneOpenPosition(
       company!.id,
       openPositionID,
     );
@@ -986,7 +986,7 @@ export default function ProfilePage() {
     form.setValue("images", updated);
 
     if (company)
-      await removeOneCompImage.removeOneCmpImage(company.id, imageId);
+      await removeOneCompImageStore.removeOneCmpImage(company.id, imageId);
 
     await getCurrentUser();
     setIsEdit(false);
@@ -994,7 +994,7 @@ export default function ProfilePage() {
 
   // 2. Remove Company Cover API
   const handleRemoveCmpCover = async () => {
-    if (company) await removeCmpCover.removeCmpCover(company.id);
+    if (company) await removeCmpCoverStore.removeCmpCover(company.id);
 
     await getCurrentUser();
     setIsEdit(false);
@@ -1004,7 +1004,7 @@ export default function ProfilePage() {
 
   // 3. Remvove Company Avatar API
   const handleRemoveCmpAvatar = async () => {
-    if (company) await removeCmpAvatar.removeCmpAvatar(company.id);
+    if (company) await removeCmpAvatarStore.removeCmpAvatar(company.id);
 
     await getCurrentUser();
     setIsEdit(false);
@@ -1032,7 +1032,7 @@ export default function ProfilePage() {
   };
 
   useEffect(() => {
-    if (removeOneOpenPosition.loading) {
+    if (removeOneOpenPositionStore.loading) {
       dismiss();
       toast({
         description: (
@@ -1046,7 +1046,7 @@ export default function ProfilePage() {
       });
     }
 
-    if (removeOneCompImage.loading) {
+    if (removeOneCompImageStore.loading) {
       dismiss();
       toast({
         description: (
@@ -1060,7 +1060,7 @@ export default function ProfilePage() {
       });
     }
 
-    if (removeCmpAvatar.loading) {
+    if (removeCmpAvatarStore.loading) {
       dismiss();
       toast({
         description: (
@@ -1074,7 +1074,7 @@ export default function ProfilePage() {
       });
     }
 
-    if (removeCmpCover.loading) {
+    if (removeCmpCoverStore.loading) {
       dismiss();
       toast({
         description: (

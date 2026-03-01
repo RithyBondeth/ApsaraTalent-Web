@@ -68,7 +68,7 @@ export const educationSchema = z.object({
         .object({
           school: textValidation().optional(),
           degree: textValidation().optional(),
-          year: textValidation().optional(),
+          year: dateValidation().optional(),
         })
         .optional(),
     )
@@ -107,23 +107,34 @@ export const referenceSchema = z.object({
   references: z
     .object({
       resume: z
-        .any()
-        .optional()
-        .refine((file) => !file || file.size <= DOCUMENT_SIZE, {
-          message: "Max file size is 5MB",
-        })
-        .refine((file) => !file || ACCEPTED_FILE_TYPES.includes(file.type), {
-          message: "Only .pdf, .doc, .docx are supported",
-        }),
+        .union([
+          z
+            .instanceof(File)
+            .refine((file) => file.size <= DOCUMENT_SIZE, {
+              message: "Max file size is 5MB",
+            })
+            .refine((file) => ACCEPTED_FILE_TYPES.includes(file.type), {
+              message: "Only .pdf, .doc, .docx are supported",
+            }),
+          z.string(),
+          z.null(),
+        ])
+        .optional(),
+
       coverLetter: z
-        .any()
-        .optional()
-        .refine((file) => !file || file.size <= DOCUMENT_SIZE, {
-          message: "Max file size is 5MB",
-        })
-        .refine((file) => !file || ACCEPTED_FILE_TYPES.includes(file.type), {
-          message: "Only .pdf, .doc, .docx are supported",
-        }),
+        .union([
+          z
+            .instanceof(File)
+            .refine((file) => file.size <= DOCUMENT_SIZE, {
+              message: "Max file size is 5MB",
+            })
+            .refine((file) => ACCEPTED_FILE_TYPES.includes(file.type), {
+              message: "Only .pdf, .doc, .docx are supported",
+            }),
+          z.string(),
+          z.null(),
+        ])
+        .optional(),
     })
     .optional(),
 });

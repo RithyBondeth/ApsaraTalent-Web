@@ -1,7 +1,4 @@
-import {
-  API_REMOVE_EMP_AVATAR_URL,
-  API_REMOVE_EMP_RESUME_URL,
-} from "@/utils/constants/apis/employee_url";
+import { API_REMOVE_EMP_RESUME_URL } from "@/utils/constants/apis/employee_url";
 import axios from "axios";
 import { create } from "zustand";
 

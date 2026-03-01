@@ -84,6 +84,9 @@ import { useUpdateOneEmployeeStore } from "@/stores/apis/employee/update-one-emp
 import { useUploadEmployeeAvatarStore } from "@/stores/apis/employee/upload-emp-avatar.store";
 import { useUploadEmployeeResumeStore } from "@/stores/apis/employee/upload-emp-resume.store";
 import { useUploadEmployeeCoverLetter } from "@/stores/apis/employee/upload-emp-coverletter.store";
+import { useRemoveEmpAvatarStore } from "@/stores/apis/employee/remove-emp-avatar.store";
+import { useRemoveEmpResumeStore } from "@/stores/apis/employee/remove-emp-resume.store";
+import { useRemoveEmpCoverLetterStore } from "@/stores/apis/employee/remove-emp-coverletter.store";
 
 export default function EmployeeProfilePage() {
   // API Integration
@@ -101,8 +104,66 @@ export default function EmployeeProfilePage() {
   const uploadCoverLetterEmpStore = useUploadEmployeeCoverLetter();
 
   // Remove Avatar, Resume and CoverLetter
+  const removeEmpAvatarStore = useRemoveEmpAvatarStore();
+  const removeEmpResumeStore = useRemoveEmpResumeStore();
+  const removeEmpCoverLetterStore = useRemoveEmpCoverLetterStore();
 
-  const { toast } = useToast();
+  // Compute All Loading States
+  const updatedProfileLoadingState =
+    updateOneEmpStore.loading ||
+    uploadAvatarEmpStore.loading ||
+    uploadResumeEmpStore.loading ||
+    uploadCoverLetterEmpStore.loading ||
+    removeEmpAvatarStore.loading ||
+    removeEmpResumeStore.loading ||
+    removeEmpCoverLetterStore.loading;
+
+  // Utils
+  const { toast, dismiss } = useToast();
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+
+  // Avatar Hooks
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const avatarInputRef = useRef<HTMLInputElement | null>(null);
+  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
+
+  // Resume Hooks
+  const [resumeUrl, setResumeUrl] = useState<string | null>(null);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const resumeInputRef = useRef<HTMLInputElement | null>(null);
+
+  // CoverLetter Hooks
+  const [coverLetterUrl, setCoverLetterUrl] = useState<string | null>(null);
+  const [coverLetterFile, setCoverLetterFile] = useState<File | null>(null);
+  const coverLetterInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Select Gender and Location Hooks
+  const [selectedGender, setSelectedGender] = useState<TGender | string>("");
+  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
+    "",
+  );
+
+  // Education and Experience Hooks
+  const [education, setEducation] = useState<IEducation[]>([]);
+  const [experience, setExperience] = useState<IExperience[]>([]);
+
+  // Social Hools
+  const [socialInput, setSocialInput] = useState<{
+    platform: TPlatform | "";
+    url: string;
+  }>({ platform: "", url: "" });
+  const [socials, setSocials] = useState<ISocial[]>([]);
+
+  // Skill Hooks
+  const [skillInput, setSkillInput] = useState<string>("");
+  const [skills, setSkills] = useState<ISkill[]>([]);
+  const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
+
+  // CareerScope Hooks
+  const [careerScopeInput, setCareerScopeInput] = useState<string>("");
+  const [careerScopes, setCareerScopes] = useState<ICareerScopes[]>([]);
+  const [openCareerPopOver, setOpenCareerPopOver] = useState<boolean>(false);
+
   const form = useForm<TEmployeeProfileForm>({
     resolver: zodResolver(employeeFormSchema),
     defaultValues: {
@@ -136,37 +197,6 @@ export default function EmployeeProfilePage() {
     },
   });
 
-  // All useState hooks
-  const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [selectedGender, setSelectedGender] = useState<TGender | string>("");
-  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
-    "",
-  );
-  const [education, setEducation] = useState<IEducation[]>([]);
-  const [experience, setExperience] = useState<IExperience[]>([]);
-  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
-  const [socialInput, setSocialInput] = useState<{
-    platform: TPlatform | "";
-    url: string;
-  }>({ platform: "", url: "" });
-  const [socials, setSocials] = useState<ISocial[]>([]);
-  const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
-  const [skills, setSkills] = useState<ISkill[]>([]);
-  const [skillInput, setSkillInput] = useState<string>("");
-  const [openCareerPopOver, setOpenCareerPopOver] = useState<boolean>(false);
-  const [careerScopes, setCareerScopes] = useState<ICareerScopes[]>([]);
-  const [careerScopeInput, setCareerScopeInput] = useState<string>("");
-  const [resumeUrl, setResumeUrl] = useState<string | null>(null);
-  const [coverLetterUrl, setCoverLetterUrl] = useState<string | null>(null);
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [coverLetterFile, setCoverLetterFile] = useState<File | null>(null);
-
-  // All useRef hooks
-  const avatarInputRef = useRef<HTMLInputElement | null>(null);
-  const resumeInputRef = useRef<HTMLInputElement | null>(null);
-  const coverLetterInputRef = useRef<HTMLInputElement | null>(null);
-
   // Update form and states when user/employee data becomes available
   useEffect(() => {
     if (user && employee) {
@@ -190,18 +220,55 @@ export default function EmployeeProfilePage() {
           description: employee.description ?? "",
         },
         educations:
-          employee.educations.map((edu) => ({
-            school: edu.school,
-            degree: edu.degree,
-            year: edu.year,
-          })) || [],
+          employee.educations.map((edu) => {
+            let year = new Date();
+            if (edu.year && typeof edu.year === "string") {
+              if (edu.year.includes("/")) {
+                // Parse DD/MM/YYYY string
+                const [d, m, y] = edu.year.split("/").map(Number);
+                year = new Date(y, m - 1, d);
+              } else {
+                // Parse as ISO string or other format
+                year = new Date(edu.year);
+              }
+            }
+            return {
+              school: edu.school,
+              degree: edu.degree,
+              year: year,
+            };
+          }) || [],
         experiences:
-          employee.experiences.map((exp) => ({
-            title: exp.title,
-            description: exp.description,
-            startDate: new Date(exp.startDate),
-            endDate: new Date(exp.endDate),
-          })) || [],
+          employee.experiences.map((exp) => {
+            let startDate = new Date();
+            let endDate = new Date();
+
+            if (
+              (exp.startDate && typeof exp.startDate === "string") ||
+              (exp.endDate && typeof exp.endDate === "string")
+            ) {
+              if (exp.startDate.includes("/") || exp.endDate.includes("/")) {
+                const [dayS, monthS, yearS] = exp.startDate
+                  .split("/")
+                  .map(Number);
+                startDate = new Date(yearS, monthS - 1, dayS);
+
+                const [dayE, monthE, yearE] = exp.endDate
+                  .split("/")
+                  .map(Number);
+                endDate = new Date(yearE, monthE - 1, dayE);
+              } else {
+                startDate = new Date(exp.startDate);
+                endDate = new Date(exp.endDate);
+              }
+            }
+            return {
+              title: exp.title,
+              description: exp.description,
+              startDate: startDate,
+              endDate: endDate,
+            };
+          }) || [],
         skills:
           employee.skills.map((skill) => ({
             name: skill.name,
@@ -211,11 +278,10 @@ export default function EmployeeProfilePage() {
           resume: employee.resume ?? null,
           coverLetter: employee.coverLetter ?? null,
         },
-        careerScopes:
-          employee.careerScopes.map((cp) => ({
-            name: cp.name,
-            description: cp.description,
-          })) || [],
+        careerScopes: employee.careerScopes.map((cp) => ({
+          name: cp.name,
+          description: cp.description,
+        })),
         socials: employee.socials.map((social) => ({
           platform: social.platform,
           url: social.url,
