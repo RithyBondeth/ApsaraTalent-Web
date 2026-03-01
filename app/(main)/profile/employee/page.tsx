@@ -87,6 +87,7 @@ import { useUploadEmployeeCoverLetter } from "@/stores/apis/employee/upload-emp-
 import { useRemoveEmpAvatarStore } from "@/stores/apis/employee/remove-emp-avatar.store";
 import { useRemoveEmpResumeStore } from "@/stores/apis/employee/remove-emp-resume.store";
 import { useRemoveEmpCoverLetterStore } from "@/stores/apis/employee/remove-emp-coverletter.store";
+import { capitalizeWords } from "@/utils/functions/capitalize-words";
 
 export default function EmployeeProfilePage() {
   // API Integration
@@ -147,11 +148,8 @@ export default function EmployeeProfilePage() {
   const [education, setEducation] = useState<IEducation[]>([]);
   const [experience, setExperience] = useState<IExperience[]>([]);
 
-  // Social Hools
-  const [socialInput, setSocialInput] = useState<{
-    platform: TPlatform | "";
-    url: string;
-  }>({ platform: "", url: "" });
+  // Social Hooks
+  const [socialInput, setSocialInput] = useState<ISocial | null>(null);
   const [socials, setSocials] = useState<ISocial[]>([]);
 
   // Skill Hooks
@@ -195,11 +193,18 @@ export default function EmployeeProfilePage() {
       careerScopes: [],
       socials: [],
     },
+    shouldFocusError: false,
   });
 
-  // Update form and states when user/employee data becomes available
+  // All useEffect Hooks
+  useEffect(() => {
+    getCurrentUser();
+  }, []);
+
+  // Query Current Employee Profile Information Effect
   useEffect(() => {
     if (user && employee) {
+      // Initialize form data
       form.reset({
         basicInfo: {
           firstname: employee.firstname ?? "",
@@ -303,10 +308,15 @@ export default function EmployeeProfilePage() {
     }
   }, [user, employee, form]);
 
+  // Initial Social Effect
   useEffect(() => {
-    // Get current user with HTTP-only cookies
-    getCurrentUser();
-  }, []);
+    const initialSocial = (form.getValues("socials") || []).filter(
+      (s): s is ISocial =>
+        !!s && typeof s.platform === "string" && typeof s.url === "string",
+    );
+
+    setSocials(initialSocial);
+  }, [form]);
 
   useEffect(() => {
     if (resumeFile) {
@@ -323,13 +333,6 @@ export default function EmployeeProfilePage() {
       return () => URL.revokeObjectURL(objectUrl);
     }
   }, [coverLetterFile]);
-
-  useEffect(() => {
-    const initialSocial = (form.getValues?.("socials") || []).filter(
-      (s): s is ISocial => s !== undefined,
-    );
-    setSocials(initialSocial);
-  }, [form]);
 
   useEffect(() => {
     const initialSkill = form.getValues("skills") || [];
@@ -393,8 +396,8 @@ export default function EmployeeProfilePage() {
 
   //Socials
   const addSocial = () => {
-    const trimmedPlatform = socialInput.platform;
-    const trimmedUrl = socialInput.url.trim();
+    const trimmedPlatform = socialInput?.platform.trim();
+    const trimmedUrl = socialInput?.url.trim();
 
     if (!trimmedPlatform || !trimmedUrl) return;
 
@@ -409,15 +412,19 @@ export default function EmployeeProfilePage() {
         description: "This social platform already exists.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
-      setSocialInput({ platform: "", url: "" });
+      setSocialInput(null);
       return;
     }
 
     setSocials([
       ...socials,
-      { platform: trimmedPlatform as TPlatform, url: trimmedUrl },
+      {
+        id: "",
+        platform: capitalizeWords(trimmedPlatform) as TPlatform,
+        url: trimmedUrl,
+      },
     ]);
-    setSocialInput({ platform: "", url: "" });
+    setSocialInput(null);
   };
 
   const removeSocial = (index: number) => {
@@ -1311,10 +1318,13 @@ export default function EmployeeProfilePage() {
                           Platform
                         </TypographyMuted>
                         <Select
-                          onValueChange={(value: TPlatform) =>
-                            setSocialInput({ ...socialInput, platform: value })
+                          onValueChange={(value: string) =>
+                            setSocialInput((prev) => ({
+                              ...(prev ?? { platform: "", url: "" }),
+                              platform: value,
+                            }))
                           }
-                          value={socialInput.platform}
+                          value={socialInput?.platform}
                         >
                           <SelectTrigger className="h-12 text-muted-foreground">
                             <SelectValue placeholder="Platform" />
@@ -1338,12 +1348,12 @@ export default function EmployeeProfilePage() {
                             placeholder="Link"
                             id="link"
                             name="link"
-                            value={socialInput.url}
+                            value={socialInput?.url}
                             onChange={(e) =>
-                              setSocialInput({
-                                ...socialInput,
+                              setSocialInput((prev) => ({
+                                ...(prev ?? { platform: "", url: "" }),
                                 url: e.target.value,
-                              })
+                              }))
                             }
                             prefix={<LucideLink2 />}
                           />

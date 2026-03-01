@@ -238,7 +238,7 @@ export default function ProfilePage() {
     shouldFocusError: false,
   });
 
-  // All useEffect hooks
+  // All useEffect Hooks
   useEffect(() => {
     getCurrentUser();
   }, []);
@@ -337,9 +337,11 @@ export default function ProfilePage() {
 
   // Initial Social Effect
   useEffect(() => {
-    const initialSocial = (form.getValues?.("socials") || []).filter(
-      (s): s is { platform: string; url: string } => s !== undefined,
+    const initialSocial = (form.getValues("socials") || []).filter(
+      (s): s is ISocial =>
+        !!s && typeof s.platform === "string" && typeof s.url === "string",
     );
+
     setSocials(initialSocial);
   }, [form]);
 
