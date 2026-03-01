@@ -143,8 +143,9 @@ export const careerScopesSchema = z.object({
   careerScopes: z
     .array(
       z.object({
-        name: textValidation().optional(),
-        description: textValidation().optional(),
+        id: z.string().optional(),
+        name: z.string(),
+        description: z.string().optional(),
       }),
     )
     .min(1, { message: "Please select at least one career option" })

@@ -308,6 +308,19 @@ export default function EmployeeProfilePage() {
     }
   }, [user, employee, form]);
 
+  // Initial CareerScope Effect
+  useEffect(() => {
+    const initialCareerScopes = form.getValues("careerScopes") || [];
+
+    setCareerScopes(
+      initialCareerScopes.map((cs) => ({
+        id: cs.id ?? "",
+        name: cs.name,
+        description: cs.description ?? "",
+      })),
+    );
+  }, [form]);
+
   // Initial Social Effect
   useEffect(() => {
     const initialSocial = (form.getValues("socials") || []).filter(
@@ -317,6 +330,9 @@ export default function EmployeeProfilePage() {
 
     setSocials(initialSocial);
   }, [form]);
+
+  // Initial Skill
+  useEffect(() => {}, [form]);
 
   useEffect(() => {
     if (resumeFile) {
@@ -334,25 +350,15 @@ export default function EmployeeProfilePage() {
     }
   }, [coverLetterFile]);
 
-  useEffect(() => {
-    const initialSkill = form.getValues("skills") || [];
-    setSkills(
-      initialSkill.map((skill) => ({
-        name: skill?.name ?? "",
-        description: skill?.description ?? "",
-      })),
-    );
-  }, [form]);
-
-  useEffect(() => {
-    const initialCareerScope = form.getValues("careerScopes") || [];
-    setCareerScopes(
-      initialCareerScope.map((cp) => ({
-        name: cp?.name ?? "",
-        description: cp?.description ?? "",
-      })),
-    );
-  }, [form]);
+  // useEffect(() => {
+  //   const initialSkill = form.getValues("skills") || [];
+  //   setSkills(
+  //     initialSkill.map((skill) => ({
+  //       name: skill?.name ?? "",
+  //       description: skill?.description ?? "",
+  //     })),
+  //   );
+  // }, [form]);
 
   if (loading) return <EmployeeProfilePageSkeleton />;
   if (!user || !employee) return null;

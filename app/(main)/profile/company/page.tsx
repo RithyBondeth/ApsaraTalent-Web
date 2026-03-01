@@ -190,7 +190,7 @@ export default function ProfilePage() {
 
   // CareerScope States
   const [careersInput, setCareersInput] = useState<ICareerScopes | null>(null);
-  const [careers, setCareers] = useState<ICareerScopes[]>([]);
+  const [careerScopes, setCareerScopes] = useState<ICareerScopes[]>([]);
   const [deleteCareerScopeIds, setDeleteCareerScopeIds] = useState<string[]>(
     [],
   );
@@ -319,7 +319,7 @@ export default function ProfilePage() {
       });
 
       setSocials(company.socials ?? []);
-      setCareers(company.careerScopes ?? []);
+      setCareerScopes(company.careerScopes ?? []);
       setOpenPositions(company.openPositions ?? []);
       setBenefits(company.benefits ?? []);
       setValues(company.values ?? []);
@@ -335,6 +335,19 @@ export default function ProfilePage() {
     }
   }, [user, company, form]);
 
+  // Initial CareerScope Effect
+  useEffect(() => {
+    const initialCareerScope = form.getValues("careerScopes") || [];
+
+    setCareerScopes(
+      initialCareerScope.map((cs) => ({
+        id: cs.id ?? "",
+        name: cs.name,
+        description: cs.description ?? "",
+      })),
+    );
+  }, [form]);
+
   // Initial Social Effect
   useEffect(() => {
     const initialSocial = (form.getValues("socials") || []).filter(
@@ -343,18 +356,6 @@ export default function ProfilePage() {
     );
 
     setSocials(initialSocial);
-  }, [form]);
-
-  // Initial CareerScope Effect
-  useEffect(() => {
-    const initialCareerScope = form.getValues("careerScopes") || [];
-    setCareers(
-      initialCareerScope.map((cp) => ({
-        id: cp?.id ?? "",
-        name: cp?.name ?? "",
-        description: cp?.description ?? "",
-      })),
-    );
   }, [form]);
 
   // Initial Benefit Effect
@@ -608,7 +609,7 @@ export default function ProfilePage() {
 
     // Add new career
     const updatedCareers = [
-      ...careers.map((career) => ({
+      ...careerScopes.map((career) => ({
         id: career.id ?? "",
         name: career.name,
         description: career.description ?? "",
@@ -620,7 +621,7 @@ export default function ProfilePage() {
       shouldTouch: true,
     });
 
-    setCareers(updatedCareers);
+    setCareerScopes(updatedCareers);
     setCareersInput(null);
     setOpenCareersPopOver(false);
   };
@@ -667,7 +668,7 @@ export default function ProfilePage() {
       shouldTouch: true,
     });
 
-    setCareers(updatedCareers);
+    setCareerScopes(updatedCareers);
   };
 
   // Social Bussiness Logics
@@ -965,7 +966,7 @@ export default function ProfilePage() {
     // Explicitly sync all state variables with the form
     form.setValue("benefitsAndValues.benefits", benefits);
     form.setValue("benefitsAndValues.values", values);
-    form.setValue("careerScopes", careers);
+    form.setValue("careerScopes", careerScopes);
     form.setValue("socials", socials);
 
     // Also sync any file uploads that might be managed outside the form
@@ -1757,7 +1758,7 @@ export default function ProfilePage() {
           )}
 
           {/* CareersScopes Section */}
-          {((careers && careers.length > 0) || isEdit) && (
+          {((careerScopes && careerScopes.length > 0) || isEdit) && (
             <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
               <div className="w-full flex flex-col gap-1">
                 <TypographyH4>Careers Scopes</TypographyH4>
@@ -1765,9 +1766,9 @@ export default function ProfilePage() {
               </div>
               <div className="w-full flex flex-col items-stretch gap-3">
                 <div className="flex flex-wrap gap-3">
-                  {careers &&
-                    careers.length > 0 &&
-                    careers.map((career, index) => {
+                  {careerScopes &&
+                    careerScopes.length > 0 &&
+                    careerScopes.map((career, index) => {
                       return (
                         <div key={index}>
                           <HoverCard>
