@@ -9,6 +9,7 @@ import { TypographyH3 } from "@/components/utils/typography/typography-h3";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import {
+  ChevronDown,
   LucideAlarmCheck,
   LucideBriefcaseBusiness,
   LucideCamera,
@@ -88,13 +89,21 @@ import { useRemoveEmpAvatarStore } from "@/stores/apis/employee/remove-emp-avata
 import { useRemoveEmpResumeStore } from "@/stores/apis/employee/remove-emp-resume.store";
 import { useRemoveEmpCoverLetterStore } from "@/stores/apis/employee/remove-emp-coverletter.store";
 import { capitalizeWords } from "@/utils/functions/capitalize-words";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 
 export default function EmployeeProfilePage() {
   // API Integration
   // Current User Information and Current User CareerScopes
   const { user, loading, getCurrentUser } = useGetCurrentUserStore();
   const employee = user?.employee;
-  const getAllCareerScopes = useGetAllCareerScopesStore();
+  const getAllCareerScopesStore = useGetAllCareerScopesStore();
 
   // Update Employee Information
   const updateOneEmpStore = useUpdateOneEmployeeStore();
@@ -151,16 +160,23 @@ export default function EmployeeProfilePage() {
   // Social Hooks
   const [socialInput, setSocialInput] = useState<ISocial | null>(null);
   const [socials, setSocials] = useState<ISocial[]>([]);
+  const [deleteSocialIds, setDeleteSocialIds] = useState<string[]>([]);
 
   // Skill Hooks
-  const [skillInput, setSkillInput] = useState<string>("");
+  const [skillInput, setSkillInput] = useState<string | null>(null);
   const [skills, setSkills] = useState<ISkill[]>([]);
+  const [deleteSkillIds, setDeleteSkillIds] = useState<string[]>([]);
   const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
 
   // CareerScope Hooks
-  const [careerScopeInput, setCareerScopeInput] = useState<string>("");
+  const [careerScopeInput, setCareerScopeInput] =
+    useState<ICareerScopes | null>(null);
   const [careerScopes, setCareerScopes] = useState<ICareerScopes[]>([]);
-  const [openCareerPopOver, setOpenCareerPopOver] = useState<boolean>(false);
+  const [deleteCareerScopeIds, setDeleteCareerScopeIds] = useState<string[]>(
+    [],
+  );
+  const [openCareerScopePopOver, setOpenCareerScopePopOver] =
+    useState<boolean>(false);
 
   const form = useForm<TEmployeeProfileForm>({
     resolver: zodResolver(employeeFormSchema),
@@ -331,9 +347,20 @@ export default function EmployeeProfilePage() {
     setSocials(initialSocial);
   }, [form]);
 
-  // Initial Skill
-  useEffect(() => {}, [form]);
+  // Initial Skill Effect
+  useEffect(() => {
+    const initialSkills = form.getValues("skills") || [];
 
+    setSkills(
+      initialSkills.map((skill) => ({
+        id: skill?.id ?? "",
+        name: skill?.name ?? "",
+        description: skill?.description ?? "",
+      })),
+    );
+  }, [form]);
+
+  // Initial Resume File
   useEffect(() => {
     if (resumeFile) {
       const objectUrl = URL.createObjectURL(resumeFile);
@@ -342,6 +369,7 @@ export default function EmployeeProfilePage() {
     }
   }, [resumeFile]);
 
+  // Initial CoverLetter File
   useEffect(() => {
     if (coverLetterFile) {
       const objectUrl = URL.createObjectURL(coverLetterFile);
@@ -350,22 +378,19 @@ export default function EmployeeProfilePage() {
     }
   }, [coverLetterFile]);
 
-  // useEffect(() => {
-  //   const initialSkill = form.getValues("skills") || [];
-  //   setSkills(
-  //     initialSkill.map((skill) => ({
-  //       name: skill?.name ?? "",
-  //       description: skill?.description ?? "",
-  //     })),
-  //   );
-  // }, [form]);
+  // Handle Enable and Disable Edit Mode
+  const enableEditMode = () => {
+    getAllCareerScopesStore.getAllCareerScopes();
+    setIsEdit(true);
+  };
 
-  if (loading) return <EmployeeProfilePageSkeleton />;
-  if (!user || !employee) return null;
+  const disableEditMode = () => {
+    setIsEdit(false);
+    form.reset();
+  };
 
-  // Profile Popup
-
-  // Education
+  // Education Bussiness Logics
+  // 1. Add New Education
   const addEducation = () => {
     const newEducation = {
       id: Date.now().toString(),
@@ -373,16 +398,19 @@ export default function EmployeeProfilePage() {
       degree: "",
       year: "",
     };
+
     setEducation((prevEducation) => [...prevEducation, newEducation]);
   };
 
+  // 2. Remove Education with ID
   const removeEducation = (educationId: string) => {
     setEducation((prevEducation) =>
       prevEducation.filter((edu) => edu.id !== educationId),
     );
   };
 
-  // Experience
+  // Experience Bussiness Logics
+  // 1. Add New Experience
   const addExperience = () => {
     const newExperience = {
       id: Date.now().toString(),
@@ -391,24 +419,29 @@ export default function EmployeeProfilePage() {
       startDate: "",
       endDate: "",
     };
+
     setExperience((prevExperience) => [...prevExperience, newExperience]);
   };
 
+  // 2. Remove Experience with ID
   const removeExperience = (experienceId: string) => {
     setExperience((prevExperience) =>
       prevExperience.filter((exp) => exp.id !== experienceId),
     );
   };
 
-  //Socials
+  // Social Bussiness Logic
+  // 1. Add New Social
   const addSocial = () => {
     const trimmedPlatform = socialInput?.platform.trim();
     const trimmedUrl = socialInput?.url.trim();
-
     if (!trimmedPlatform || !trimmedUrl) return;
 
-    const alreadyExists = socials.some(
-      (s) => s.platform.toLowerCase() === trimmedPlatform.toLowerCase(),
+    const currentSocails = form.getValues("socials") || [];
+
+    // Check duplicate social entries
+    const alreadyExists = currentSocails.some(
+      (s) => s?.platform?.toLowerCase() === trimmedPlatform.toLowerCase(),
     );
 
     if (alreadyExists) {
@@ -422,20 +455,202 @@ export default function EmployeeProfilePage() {
       return;
     }
 
-    setSocials([
+    const updatedSocials = [
       ...socials,
-      {
-        id: "",
-        platform: capitalizeWords(trimmedPlatform) as TPlatform,
-        url: trimmedUrl,
-      },
-    ]);
+      { id: "", platform: capitalizeWords(trimmedPlatform), url: trimmedUrl },
+    ];
+    form.setValue("socials", updatedSocials, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+
+    setSocials(updatedSocials);
     setSocialInput(null);
   };
 
-  const removeSocial = (index: number) => {
-    const updatedSocials = socials.filter((_, i) => i !== index);
+  // 2. Remove Old Social
+  const removeSocial = (platform: TPlatform) => {
+    const currentSocial = (form.getValues("socials") || []).filter(
+      Boolean,
+    ) as ISocial[];
+
+    const socialToDelete = currentSocial.find((s) => s?.platform === platform);
+    if (!socialToDelete) return;
+
+    if (
+      typeof socialToDelete === "object" &&
+      "id" in socialToDelete &&
+      socialToDelete.id
+    ) {
+      setDeleteSocialIds((prev) => [...prev, socialToDelete.id as string]);
+    }
+
+    const updatedSocials = socials.filter((s) => s.platform !== platform);
+    form.setValue("socials", updatedSocials, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+
     setSocials(updatedSocials);
+  };
+
+  // Skill Bussiness Logics
+  // 1. Add New Skill
+  const addSkills = () => {
+    const trimmed = skillInput?.trim();
+    if (!trimmed) return;
+
+    const currentSkills = (form.getValues("skills") || []).filter(
+      Boolean,
+    ) as ISkill[];
+
+    const alreadyExists = currentSkills.some(
+      (skill) => skill.name.toLowerCase() === trimmed.toLowerCase(),
+    );
+
+    if (alreadyExists) {
+      toast({
+        variant: "destructive",
+        title: "Duplicated Skill",
+        description: "Please input another skill.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+      setSkillInput(null);
+      setOpenSkillPopOver(false);
+      return;
+    }
+
+    const updatedSkills: ISkill[] = [...skills, { name: trimmed }];
+
+    form.setValue("skills", updatedSkills, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+
+    setSkills(updatedSkills);
+    setSkillInput(null);
+    setOpenSkillPopOver(false);
+  };
+
+  // 2. Remove Old Skill
+  const removeSkill = async (skillToRemove: string) => {
+    const currentSkills = (form.getValues("skills") || []).filter(
+      Boolean,
+    ) as ISkill[];
+
+    const skillToDelete = currentSkills.find(
+      (skill) => skill.name === skillToRemove,
+    );
+    if (!skillToDelete) return;
+
+    if (
+      typeof skillToDelete === "object" &&
+      "id" in skillToDelete &&
+      skillToDelete.id
+    ) {
+      setDeleteSkillIds((prev) => [...prev, skillToDelete.id as string]);
+    }
+
+    const updatedSkills = currentSkills.filter(
+      (skill) => skill.name !== skillToRemove,
+    );
+    form.setValue("socials", updatedSkills, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+
+    setSkills(updatedSkills);
+  };
+
+  // CareerScope Bussiness Logic
+  // 1. Add New CareerScope
+  const addCareerScope = () => {
+    const trimmed = careerScopeInput?.name.trim();
+    const id = careerScopeInput?.id;
+    const description = careerScopeInput?.description;
+    if (!trimmed) return;
+
+    const currentCareerScopes = (form.getValues("careerScopes") || []).filter(
+      Boolean,
+    ) as ICareerScopes[];
+
+    const alreadyExists = currentCareerScopes.some(
+      (career) => career.name.toLowerCase() === trimmed.toLowerCase(),
+    );
+
+    if (alreadyExists) {
+      toast({
+        variant: "destructive",
+        title: "Duplicated Skill",
+        description: "Please input another skill.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+
+      setCareerScopeInput(null);
+      setOpenCareerScopePopOver(false);
+      return;
+    }
+
+    const updatedCareerScopes = [
+      ...careerScopes.map((career) => ({
+        id: career.id ?? "",
+        name: career.name,
+        description: career.description ?? "",
+      })),
+      { id: id ?? "", name: trimmed, description: description ?? "" },
+    ];
+
+    form.setValue("careerScopes", updatedCareerScopes, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+
+    setCareerScopes(updatedCareerScopes);
+    setCareerScopeInput(null);
+    setOpenCareerScopePopOver(false);
+  };
+
+  // 2. CareerScope Selection from the Dropdown or Input
+  const handleCareerScopeSelect = (
+    selectedCareerId: string,
+    selectedCareerName: string,
+    selectedCareerDescription: string,
+  ) => {
+    setCareerScopeInput({
+      id: selectedCareerId,
+      name: selectedCareerName,
+      description: selectedCareerDescription,
+    });
+  };
+
+  // 3. Remove Old CareerScope with Career's name
+  const removeCareerScope = (careerToRemove: string) => {
+    const currentCareerScopes = (form.getValues("careerScopes") || []).filter(
+      Boolean,
+    ) as ICareerScopes[];
+
+    const careerToDelete = currentCareerScopes.find(
+      (career) => career.name === careerToRemove,
+    );
+    if (!careerToDelete) return;
+
+    if (
+      typeof careerToDelete === "object" &&
+      "id" in careerToDelete &&
+      careerToDelete.id
+    ) {
+      setDeleteCareerScopeIds((prev) => [...prev, careerToDelete.id as string]);
+    }
+
+    const updatedCareerScopes = currentCareerScopes.filter(
+      (career) => career.name !== careerToRemove,
+    );
+    form.setValue("careerScopes", updatedCareerScopes, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+
+    setCareerScopes(updatedCareerScopes);
   };
 
   // Avatar and References
@@ -457,77 +672,6 @@ export default function EmployeeProfilePage() {
         form.setValue("references.coverLetter", file);
       }
     }
-  };
-
-  // Skill
-  const addSkills = () => {
-    const trimmed = skillInput.trim();
-    if (!trimmed) return;
-
-    const alreadyExists = skills.some(
-      (skill) => skill.name.toLowerCase() === trimmed.toLowerCase(),
-    );
-
-    if (alreadyExists) {
-      toast({
-        variant: "destructive",
-        title: "Duplicated Skill",
-        description: "Please input another skill.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
-      });
-      setSkillInput("");
-      setOpenSkillPopOver(false);
-      return;
-    }
-
-    const updated = [...skills, { name: trimmed }];
-    setSkills(updated);
-
-    setSkillInput("");
-    setOpenSkillPopOver(false);
-  };
-
-  const removeSkill = async (skillToRemove: string) => {
-    const updated = skills.filter((skill) => skill.name !== skillToRemove);
-    setSkills(updated);
-    form.setValue("skills", updated);
-    await form.trigger("skills");
-  };
-
-  // CareerScope
-  const addCareerScope = () => {
-    const trimmed = careerScopeInput.trim();
-    if (!trimmed) return;
-
-    const alreadyExists = careerScopes.some(
-      (cs) => cs.name.toLowerCase() === trimmed.toLowerCase(),
-    );
-
-    if (alreadyExists) {
-      toast({
-        variant: "destructive",
-        title: "Duplicated Skill",
-        description: "Please input another skill.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
-      });
-
-      setCareerScopeInput("");
-      setOpenCareerPopOver(false);
-      return;
-    }
-
-    const updated = [...careerScopes, { name: trimmed }];
-    setCareerScopes(updated);
-
-    setCareerScopeInput("");
-    setOpenCareerPopOver(false);
-  };
-
-  const removeCareerScope = async (careerToRemove: string) => {
-    const updated = careerScopes.filter((cs) => cs.name !== careerToRemove);
-    setCareerScopes(updated);
-    form.setValue("careerScopes", updated);
-    await form.trigger("careerScopes");
   };
 
   const handleDownloadfile = (file: File) => {
@@ -571,6 +715,9 @@ export default function EmployeeProfilePage() {
 
     form.handleSubmit(onSubmit, console.error)(e);
   };
+
+  if (loading) return <EmployeeProfilePageSkeleton />;
+  if (!user || !employee) return null;
 
   return user ? (
     <form className="!min-w-full flex flex-col gap-5" onSubmit={handleSubmit}>
@@ -1097,66 +1244,118 @@ export default function EmployeeProfilePage() {
             </div>
           )}
 
-          {/* CareerScopes Section */}
-          <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
-            <div className="w-full flex flex-col gap-1">
-              <TypographyH4>Career Scopes</TypographyH4>
-              <Divider />
-            </div>
-            <div className="flex flex-wrap gap-3">
-              {careerScopes.map((career, index) => (
-                <HoverCard key={index}>
-                  <HoverCardTrigger>
-                    <div className="flex items-center gap-1">
-                      <Tag label={career.name} />
-                      {isEdit && (
-                        <LucideXCircle
-                          className="text-muted-foreground cursor-pointer text-red-500"
-                          width={"18px"}
-                          onClick={() => removeCareerScope(career.name)}
-                        />
-                      )}
-                    </div>
-                  </HoverCardTrigger>
-                  <HoverCardContent>
-                    <TypographySmall>{career.description}</TypographySmall>
-                  </HoverCardContent>
-                </HoverCard>
-              ))}
-            </div>
-            {isEdit && (
-              <Popover
-                open={openCareerPopOver}
-                onOpenChange={setOpenCareerPopOver}
-              >
-                <PopoverTrigger asChild>
-                  <Button className="w-full text-xs" variant="secondary">
-                    Add Career
-                    <LucidePlus />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
-                  <Input
-                    placeholder="Enter your skill"
-                    onChange={(e) => {
-                      setCareerScopeInput(e.target.value);
-                    }}
-                  />
-                  <div className="flex items-center gap-1 [&>button]:text-xs">
+          {/* CareersScopes Section */}
+          {((careerScopes && careerScopes.length > 0) || isEdit) && (
+            <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
+              <div className="w-full flex flex-col gap-1">
+                <TypographyH4>Careers Scopes</TypographyH4>
+                <Divider />
+              </div>
+              <div className="w-full flex flex-col items-stretch gap-3">
+                <div className="flex flex-wrap gap-3">
+                  {careerScopes &&
+                    careerScopes.length > 0 &&
+                    careerScopes.map((career, index) => {
+                      return (
+                        <div key={index}>
+                          <HoverCard>
+                            <HoverCardTrigger className="flex items-center rounded-3xl">
+                              <Tag label={career.name} />
+                              {isEdit && (
+                                // Remove Career Section
+                                <LucideXCircle
+                                  className="text-muted-foreground cursor-pointer ml-1 text-red-500"
+                                  width={"18px"}
+                                  //onClick={() => removeCareer(career.name)}
+                                />
+                              )}
+                            </HoverCardTrigger>
+                            <HoverCardContent>
+                              <TypographySmall>
+                                {career.description
+                                  ? career.description
+                                  : career.name}
+                              </TypographySmall>
+                            </HoverCardContent>
+                          </HoverCard>
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+              {isEdit && (
+                <Popover
+                  open={openCareerScopePopOver}
+                  onOpenChange={setOpenCareerScopePopOver}
+                >
+                  <PopoverTrigger asChild>
                     <Button
                       variant="outline"
-                      onClick={() => setOpenCareerPopOver(false)}
+                      role="combobox"
+                      className="w-full justify-between"
                     >
-                      Cancel
+                      {careerScopeInput
+                        ? getAllCareerScopesStore.careerScopes?.find(
+                            (career) => career.name === careerScopeInput.name,
+                          )?.name
+                        : "Select careers..."}
+                      <ChevronDown className="opacity-50" />
                     </Button>
-                    <Button onClick={addCareerScope} type="button">
-                      Save
-                    </Button>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            )}
-          </div>
+                  </PopoverTrigger>
+                  <PopoverContent className="p-0">
+                    <Command>
+                      <CommandInput
+                        placeholder="Select careers..."
+                        className="h-9"
+                      />
+                      <CommandList>
+                        <CommandEmpty>No career found.</CommandEmpty>
+                        <CommandGroup>
+                          {getAllCareerScopesStore.careerScopes?.map(
+                            (career, index) => (
+                              <CommandItem
+                                key={index}
+                                value={career.name}
+                                onSelect={() => {
+                                  if (career.id)
+                                    handleCareerScopeSelect(
+                                      career.id,
+                                      career.name,
+                                      career.description ?? "",
+                                    );
+                                }}
+                              >
+                                {career.name}
+                                <LucideCircleCheck
+                                  className={
+                                    careerScopeInput?.name === career.name
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  }
+                                />
+                              </CommandItem>
+                            ),
+                          )}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              )}
+              {isEdit && (
+                // Add New Career Section
+                <Button
+                  variant="secondary"
+                  className="w-full text-xs"
+                  type="button"
+                  onClick={addCareerScope}
+                >
+                  <LucidePlus />
+                  Add Career
+                </Button>
+              )}
+            </div>
+          )}
 
           {/* Reference Section */}
           {(employee.resume || employee.coverLetter) && (
@@ -1307,7 +1506,9 @@ export default function EmployeeProfilePage() {
                           <LucideXCircle
                             className="text-muted-foreground cursor-pointer text-red-500"
                             width={"18px"}
-                            onClick={() => removeSocial(index)}
+                            onClick={() =>
+                              removeSocial(item.platform as TPlatform)
+                            }
                           />
                         )}
                       </Link>

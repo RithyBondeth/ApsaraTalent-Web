@@ -189,12 +189,14 @@ export default function ProfilePage() {
   const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
 
   // CareerScope States
-  const [careersInput, setCareersInput] = useState<ICareerScopes | null>(null);
+  const [careerScopeInput, setCareerScopeInput] =
+    useState<ICareerScopes | null>(null);
   const [careerScopes, setCareerScopes] = useState<ICareerScopes[]>([]);
   const [deleteCareerScopeIds, setDeleteCareerScopeIds] = useState<string[]>(
     [],
   );
-  const [openCareersPopOver, setOpenCareersPopOver] = useState<boolean>(false);
+  const [openCareerScopePopOver, setOpenCareerScopePopOver] =
+    useState<boolean>(false);
 
   // Social States
   const [socialInput, setSocialInput] = useState<ISocial | null>(null);
@@ -455,7 +457,7 @@ export default function ProfilePage() {
     ).filter(Boolean) as IBenefits[];
 
     const alreadyExists = currentBenefits.some(
-      (bf) => (bf.label ?? "").toLowerCase() === trimmed.toLowerCase(),
+      (bf) => bf.label.toLowerCase() === trimmed.toLowerCase(),
     );
 
     if (alreadyExists) {
@@ -478,7 +480,6 @@ export default function ProfilePage() {
     form.setValue("benefitsAndValues.benefits", updatedBenefits, {
       shouldDirty: true,
       shouldTouch: true,
-      shouldValidate: true,
     });
 
     setBenefits(updatedBenefits);
@@ -488,7 +489,9 @@ export default function ProfilePage() {
 
   // 2. Remove Old Benefit with ID
   const removeBenefit = async (benefitToRemove: string) => {
-    const currentBenefits = form.getValues("benefitsAndValues.benefits") || [];
+    const currentBenefits = (
+      form.getValues("benefitsAndValues.benefits") || []
+    ).filter(Boolean) as IBenefits[];
 
     const benefitToDelete = currentBenefits.find(
       (bf) => bf.label === benefitToRemove,
@@ -509,7 +512,6 @@ export default function ProfilePage() {
     form.setValue("benefitsAndValues.benefits", updated, {
       shouldDirty: true,
       shouldTouch: true,
-      shouldValidate: true,
     });
     setBenefits(updated);
   };
@@ -582,15 +584,16 @@ export default function ProfilePage() {
 
   // CareerScope Bussiness Logics
   // 1. Add New CareerScope
-  const addCareers = () => {
-    const trimmed = careersInput?.name.trim();
-    const id = careersInput?.id;
-    const description = careersInput?.description;
+  const addCareerScope = () => {
+    const trimmed = careerScopeInput?.name.trim();
+    const id = careerScopeInput?.id;
+    const description = careerScopeInput?.description;
     if (!trimmed) return;
 
-    const currentCareerScopes = form.getValues("careerScopes") || [];
+    const currentCareerScopes = (form.getValues("careerScopes") || []).filter(
+      Boolean,
+    ) as ICareerScopes[];
 
-    // Check for duplicate careers
     const alreadyExists = currentCareerScopes.some(
       (career) => career.name.toLowerCase() === trimmed.toLowerCase(),
     );
@@ -602,12 +605,12 @@ export default function ProfilePage() {
         description: "Please input another career.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
-      setCareersInput(null);
-      setOpenCareersPopOver(false);
+
+      setCareerScopeInput(null);
+      setOpenCareerScopePopOver(false);
       return;
     }
 
-    // Add new career
     const updatedCareers = [
       ...careerScopes.map((career) => ({
         id: career.id ?? "",
@@ -622,8 +625,8 @@ export default function ProfilePage() {
     });
 
     setCareerScopes(updatedCareers);
-    setCareersInput(null);
-    setOpenCareersPopOver(false);
+    setCareerScopeInput(null);
+    setOpenCareerScopePopOver(false);
   };
 
   // 2. CareerScope Selection from the Dropdown or Input
@@ -632,22 +635,22 @@ export default function ProfilePage() {
     selectedCareerName: string,
     selectedCareerDescription: string,
   ) => {
-    setCareersInput({
+    setCareerScopeInput({
       id: selectedCareerId,
       name: selectedCareerName,
       description: selectedCareerDescription,
     });
-    setOpenCareersPopOver(false);
+    setOpenCareerScopePopOver(false);
   };
 
   // 3. Remove Old CareerScope with Career's name
   const removeCareer = (careerToRemove: string) => {
-    const currentCareers = (form.getValues("careerScopes") || []).filter(
+    const currentCareerScopes = (form.getValues("careerScopes") || []).filter(
       Boolean,
     ) as ICareerScopes[];
 
-    const careerToDelete = currentCareers.find(
-      (c) => c.name === careerToRemove,
+    const careerToDelete = currentCareerScopes.find(
+      (career) => career.name === careerToRemove,
     );
     if (!careerToDelete) return;
 
@@ -659,16 +662,16 @@ export default function ProfilePage() {
       setDeleteCareerScopeIds((prev) => [...prev, careerToDelete.id as string]);
     }
 
-    const updatedCareers = currentCareers.filter(
-      (c) => c.name !== careerToRemove,
+    const updatedCareerScopes = currentCareerScopes.filter(
+      (career) => career.name !== careerToRemove,
     );
 
-    form.setValue("careerScopes", updatedCareers, {
+    form.setValue("careerScopes", updatedCareerScopes, {
       shouldDirty: true,
       shouldTouch: true,
     });
 
-    setCareerScopes(updatedCareers);
+    setCareerScopes(updatedCareerScopes);
   };
 
   // Social Bussiness Logics
@@ -716,7 +719,7 @@ export default function ProfilePage() {
     ) as ISocial[];
 
     const socialToDelete = currentSocials.find((s) => s?.platform === platform);
-    if (!socialToDelete) return; // ✅ guard
+    if (!socialToDelete) return;
 
     if (
       typeof socialToDelete === "object" &&
@@ -1798,8 +1801,8 @@ export default function ProfilePage() {
               </div>
               {isEdit && (
                 <Popover
-                  open={openCareersPopOver}
-                  onOpenChange={setOpenCareersPopOver}
+                  open={openCareerScopePopOver}
+                  onOpenChange={setOpenCareerScopePopOver}
                 >
                   <PopoverTrigger asChild>
                     <Button
@@ -1807,9 +1810,9 @@ export default function ProfilePage() {
                       role="combobox"
                       className="w-full justify-between"
                     >
-                      {careersInput
+                      {careerScopeInput
                         ? getAllCareerScopeStore.careerScopes?.find(
-                            (career) => career.name === careersInput.name,
+                            (career) => career.name === careerScopeInput.name,
                           )?.name
                         : "Select careers..."}
                       <ChevronDown className="opacity-50" />
@@ -1841,7 +1844,7 @@ export default function ProfilePage() {
                                 {career.name}
                                 <LucideCircleCheck
                                   className={
-                                    careersInput?.name === career.name
+                                    careerScopeInput?.name === career.name
                                       ? "opacity-100"
                                       : "opacity-0"
                                   }
@@ -1861,7 +1864,7 @@ export default function ProfilePage() {
                   variant="secondary"
                   className="w-full text-xs"
                   type="button"
-                  onClick={addCareers}
+                  onClick={addCareerScope}
                 >
                   <LucidePlus />
                   Add Career

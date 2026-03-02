@@ -95,8 +95,9 @@ export const skillSchema = z.object({
     .array(
       z
         .object({
-          name: textValidation().optional(),
-          description: textValidation().optional(),
+          id: z.string().optional(),
+          name: z.string().optional(),
+          description: z.string().optional(),
         })
         .optional(),
     )
