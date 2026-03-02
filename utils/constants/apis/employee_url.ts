@@ -22,3 +22,11 @@ export const API_REMOVE_EMP_RESUME_URL = (employeeID: string) =>
   `${API_EMP_BASE_URL}/remove-resume/${employeeID}`;
 export const API_REMOVE_EMP_COVER_LETTER_URL = (employeeID: string) =>
   `${API_EMP_BASE_URL}/remove-cover-letter/${employeeID}`;
+export const API_REMOVE_EMP_EXPERIENCE_URL = (
+  employeeID: string,
+  experienceID: string,
+) => `${API_EMP_BASE_URL}/remove-experience/${employeeID}/${experienceID}`;
+export const API_REMOVE_EMP_EDUCATION_URL = (
+  employeeID: string,
+  educationID: string,
+) => `${API_EMP_BASE_URL}/remove-education/${employeeID}/${educationID}`;

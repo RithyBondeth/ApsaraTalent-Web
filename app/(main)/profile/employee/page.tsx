@@ -132,43 +132,48 @@ export default function EmployeeProfilePage() {
   const { toast, dismiss } = useToast();
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
-  // Avatar Hooks
+  // Avatar States
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const avatarInputRef = useRef<HTMLInputElement | null>(null);
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
 
-  // Resume Hooks
+  // Resume States
   const [resumeUrl, setResumeUrl] = useState<string | null>(null);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const resumeInputRef = useRef<HTMLInputElement | null>(null);
 
-  // CoverLetter Hooks
+  // CoverLetter States
   const [coverLetterUrl, setCoverLetterUrl] = useState<string | null>(null);
   const [coverLetterFile, setCoverLetterFile] = useState<File | null>(null);
   const coverLetterInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Select Gender and Location Hooks
+  // Select Gender and Location States
   const [selectedGender, setSelectedGender] = useState<TGender | string>("");
   const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
     "",
   );
 
-  // Education and Experience Hooks
-  const [education, setEducation] = useState<IEducation[]>([]);
-  const [experience, setExperience] = useState<IExperience[]>([]);
+  // Education and Experience States
+  const [educations, setEducations] = useState<IEducation[]>([]);
+  const [experiences, setExperiences] = useState<IExperience[]>([]);
+  const [selectedGraduationDate, setSelectedGraduationDate] =
+    useState<Date | null>(null);
+  const [selectedExperienceDate, setSelectedExperienceDate] = useState<
+    Record<string, { startDate?: Date; endDate?: Date }>
+  >({});
 
-  // Social Hooks
+  // Social States
   const [socialInput, setSocialInput] = useState<ISocial | null>(null);
   const [socials, setSocials] = useState<ISocial[]>([]);
   const [deleteSocialIds, setDeleteSocialIds] = useState<string[]>([]);
 
-  // Skill Hooks
+  // Skill States
   const [skillInput, setSkillInput] = useState<string | null>(null);
   const [skills, setSkills] = useState<ISkill[]>([]);
   const [deleteSkillIds, setDeleteSkillIds] = useState<string[]>([]);
   const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
 
-  // CareerScope Hooks
+  // CareerScope States
   const [careerScopeInput, setCareerScopeInput] =
     useState<ICareerScopes | null>(null);
   const [careerScopes, setCareerScopes] = useState<ICareerScopes[]>([]);
@@ -311,13 +316,13 @@ export default function EmployeeProfilePage() {
 
       setSelectedGender(employee.gender ?? "");
       setSelectedLocation(employee.location ?? "");
-      setEducation(
+      setEducations(
         employee.educations.map((edu) => ({
           ...edu,
           year: dateFormatter(edu.year),
         })) ?? [],
       );
-      setExperience(employee.experiences ?? []);
+      setExperiences(employee.experiences ?? []);
       setSocials(employee.socials ?? []);
       setSkills(employee.skills ?? []);
       setCareerScopes(employee.careerScopes ?? []);
@@ -396,16 +401,16 @@ export default function EmployeeProfilePage() {
       id: Date.now().toString(),
       school: "",
       degree: "",
-      year: "",
+      year: new Date().toISOString(),
     };
 
-    setEducation((prevEducation) => [...prevEducation, newEducation]);
+    setEducations((prevEducation) => [...prevEducation, newEducation]);
   };
 
   // 2. Remove Education with ID
-  const removeEducation = (educationId: string) => {
-    setEducation((prevEducation) =>
-      prevEducation.filter((edu) => edu.id !== educationId),
+  const removeEducation = (educationToRemove: string) => {
+    setEducations((prevEducation) =>
+      prevEducation.filter((edu) => edu.id !== educationToRemove),
     );
   };
 
@@ -420,12 +425,12 @@ export default function EmployeeProfilePage() {
       endDate: "",
     };
 
-    setExperience((prevExperience) => [...prevExperience, newExperience]);
+    setExperiences((prevExperience) => [...prevExperience, newExperience]);
   };
 
   // 2. Remove Experience with ID
   const removeExperience = (experienceId: string) => {
-    setExperience((prevExperience) =>
+    setExperiences((prevExperience) =>
       prevExperience.filter((exp) => exp.id !== experienceId),
     );
   };
@@ -653,7 +658,7 @@ export default function EmployeeProfilePage() {
     setCareerScopes(updatedCareerScopes);
   };
 
-  // Avatar and References
+  // Handle Avatar and References File Change
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     type: "avatar" | "resume" | "coverLetter",
@@ -674,7 +679,8 @@ export default function EmployeeProfilePage() {
     }
   };
 
-  const handleDownloadfile = (file: File) => {
+  // Handle Download Resume and CoverLetter File
+  const handleDownloadResumeAndCoverLetterFile = (file: File) => {
     if (!file) return;
 
     const url = URL.createObjectURL(file);
@@ -684,16 +690,17 @@ export default function EmployeeProfilePage() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    URL.revokeObjectURL(url); // clean up
+    URL.revokeObjectURL(url);
   };
 
+  // onSubmit: Update The Entire Employee Profile (API's calling)
   const onSubmit = async (data: TEmployeeProfileForm) => {
-    // Show success message
     console.log("Employee Profile Data: ", data);
 
     setIsEdit(false);
   };
 
+  // handleSubmit: Submit Employee Profile Form
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -1001,7 +1008,7 @@ export default function EmployeeProfilePage() {
 
               {/* Education Information Section */}
               <div className="flex flex-col items-start gap-5">
-                {education.map((edu, index) => (
+                {educations.map((edu, index) => (
                   <div
                     className="w-full flex flex-col items-start gap-3"
                     key={edu.id}
@@ -1093,7 +1100,7 @@ export default function EmployeeProfilePage() {
                 <Divider />
               </div>
               <div className="flex flex-col items-start gap-5">
-                {experience.map((exp, index) => (
+                {experiences.map((exp, index) => (
                   <div
                     className="w-full flex flex-col items-start gap-3"
                     key={exp.id}
@@ -1414,7 +1421,9 @@ export default function EmployeeProfilePage() {
                         type="button"
                         variant="outline"
                         size="icon"
-                        onClick={() => handleDownloadfile(resumeFile!)}
+                        onClick={() =>
+                          handleDownloadResumeAndCoverLetterFile(resumeFile!)
+                        }
                       >
                         <LucideDownload />
                       </Button>
@@ -1473,7 +1482,11 @@ export default function EmployeeProfilePage() {
                         type="button"
                         variant="outline"
                         size="icon"
-                        onClick={() => handleDownloadfile(coverLetterFile!)}
+                        onClick={() =>
+                          handleDownloadResumeAndCoverLetterFile(
+                            coverLetterFile!,
+                          )
+                        }
                       >
                         <LucideDownload />
                       </Button>

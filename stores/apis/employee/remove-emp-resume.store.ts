@@ -35,8 +35,8 @@ export const useRemoveEmpResumeStore = create<TRemoveEmpResumeStoreState>(
         } else {
           set({
             loading: false,
-            error: "An error occurred while removing employee's resume",
-            message: "An error occurred while removing employee's resume",
+            error: "An error occurred while removing employee's resume.",
+            message: "An error occurred while removing employee's resume.",
           });
         }
       }

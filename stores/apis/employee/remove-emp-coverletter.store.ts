@@ -35,8 +35,8 @@ export const useRemoveEmpCoverLetterStore =
         } else {
           set({
             loading: false,
-            error: "An error occurred while removing employee's coverLetter",
-            message: "An error occurred while removing employee's coverLetter",
+            error: "An error occurred while removing employee's coverLetter.",
+            message: "An error occurred while removing employee's coverLetter.",
           });
         }
       }
