@@ -103,6 +103,7 @@ import {
 } from "@/components/ui/command";
 import { useRemoveEmpExperienceStore } from "@/stores/apis/employee/remove-emp-experience.store";
 import { useRemoveEmpEducationStore } from "@/stores/apis/employee/remove-emp-education.store";
+import RemoveAvatarOrCoverDialog from "../company/_dialogs/remove-avatar-cover-dialog";
 
 export default function EmployeeProfilePage() {
   // API Integration
@@ -1067,14 +1068,32 @@ export default function EmployeeProfilePage() {
               </AvatarFallback>
             </Avatar>
             {isEdit && (
-              <Button
-                className="size-8 flex justify-center items-center cursor-pointer absolute bottom-1 right-1 p-1 rounded-full bg-foreground text-primary-foreground"
-                type="button"
-                onClick={() => avatarInputRef.current?.click()}
-              >
-                <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
-              </Button>
+              <div className="flex items-center gap-1 absolute bottom-1 right-1">
+                <Button
+                  className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-foreground text-primary-foreground"
+                  type="button"
+                  onClick={() => avatarInputRef.current?.click()}
+                >
+                  <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
+                </Button>
+                <Button
+                  className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-red-500 text-primary-foreground"
+                  type="button"
+                  onClick={() => setOpenRemoveAvatarDialog(true)}
+                >
+                  <LucideXCircle width={"18px"} strokeWidth={"1.2px"} />
+                </Button>
+              </div>
             )}
+
+            {/* Renove Avatar Dialog Section */}
+            <RemoveAvatarOrCoverDialog
+              type="avatar"
+              setOnRemoveAvatarOrCoverDialog={setOpenRemoveAvatarDialog}
+              onRemoveAvatarOrCoverDialog={openRemoveAvatarDialog}
+              onNoClick={() => setOpenRemoveAvatarDialog(false)}
+              onYesClick={handleRemoveEmpAvatar}
+            />
           </div>
           <input
             ref={avatarInputRef}
@@ -1816,7 +1835,7 @@ export default function EmployeeProfilePage() {
             </div>
           )}
 
-          {/* Experience Information Form Section */}
+          {/* Social Information Form Section */}
           {employee.socials && employee.socials.length > 0 && (
             <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
               <div className="flex flex-col gap-1">
@@ -1826,25 +1845,30 @@ export default function EmployeeProfilePage() {
               <div className="w-full flex flex-col items-start gap-5">
                 <div className="w-full flex flex-col items-stretch gap-3">
                   <div className="flex flex-wrap gap-3">
-                    {socials.map((item: ISocial, index) => (
-                      <Link
-                        key={index}
-                        href={item.url}
-                        className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
-                      >
-                        {getSocialPlatformTypeIcon(item.platform as TPlatform)}
-                        <TypographySmall>{item.platform}</TypographySmall>
-                        {isEdit && (
-                          <LucideXCircle
-                            className="text-muted-foreground cursor-pointer text-red-500"
-                            width={"18px"}
-                            onClick={() =>
-                              removeSocial(item.platform as TPlatform)
-                            }
-                          />
-                        )}
-                      </Link>
-                    ))}
+                    {socials &&
+                      socials.length > 0 &&
+                      socials.map((item: ISocial, index) => (
+                        <div className="flex items-center gap-1" key={index}>
+                          <Link
+                            href={item.url}
+                            className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
+                          >
+                            {getSocialPlatformTypeIcon(
+                              item.platform as TPlatform,
+                            )}
+                            <TypographySmall>{item.platform}</TypographySmall>
+                          </Link>
+                          {isEdit && (
+                            <LucideXCircle
+                              className="text-muted-foreground cursor-pointer text-red-500"
+                              width={"18px"}
+                              onClick={() =>
+                                removeSocial(item.platform as TPlatform)
+                              }
+                            />
+                          )}
+                        </div>
+                      ))}
                   </div>
                 </div>
               </div>
@@ -1900,6 +1924,7 @@ export default function EmployeeProfilePage() {
                       />
                     </div>
                   </div>
+                  {/* Add New Social Button Section */}
                   <Button
                     type="button"
                     variant="secondary"
@@ -1995,11 +2020,12 @@ export default function EmployeeProfilePage() {
           </div>
         </div>
       </div>
+
       {/* Profile Popup Section */}
       <ImagePopup
         open={openProfilePopup}
         setOpen={setOpenProfilePopup}
-        image={employee.avatar!}
+        image={avatarFile ? URL.createObjectURL(avatarFile) : employee.avatar!}
       />
     </form>
   ) : null;

@@ -1203,6 +1203,7 @@ export default function ProfilePage() {
                     <LucideXCircle width={"18px"} strokeWidth={"1.2px"} />
                   </Button>
                 )}
+
                 {/* Remove Avatar Dialog Section */}
                 <RemoveAvatarOrCoverDialog
                   type="avatar"
@@ -1779,7 +1780,6 @@ export default function ProfilePage() {
                             <HoverCardTrigger className="flex items-center rounded-3xl">
                               <Tag label={career.name} />
                               {isEdit && (
-                                // Remove Career Section
                                 <LucideXCircle
                                   className="text-muted-foreground cursor-pointer ml-1 text-red-500"
                                   width={"18px"}
@@ -1840,7 +1840,7 @@ export default function ProfilePage() {
                                       career.name,
                                       career.description ?? "",
                                     );
-                                }} // Handle career selection
+                                }}
                               >
                                 {career.name}
                                 <LucideCircleCheck
