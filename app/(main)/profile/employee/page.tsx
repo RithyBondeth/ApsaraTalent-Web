@@ -13,6 +13,7 @@ import {
   LucideAlarmCheck,
   LucideBriefcaseBusiness,
   LucideCamera,
+  LucideCheck,
   LucideCircleCheck,
   LucideDownload,
   LucideEdit,
@@ -81,7 +82,10 @@ import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
 import Tag from "@/components/utils/tag";
 import Image from "next/image";
 import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-scopes.store";
-import { useUpdateOneEmployeeStore } from "@/stores/apis/employee/update-one-emp.store";
+import {
+  TEmployeeUpdateBody,
+  useUpdateOneEmployeeStore,
+} from "@/stores/apis/employee/update-one-emp.store";
 import { useUploadEmployeeAvatarStore } from "@/stores/apis/employee/upload-emp-avatar.store";
 import { useUploadEmployeeResumeStore } from "@/stores/apis/employee/upload-emp-resume.store";
 import { useUploadEmployeeCoverLetter } from "@/stores/apis/employee/upload-emp-coverletter.store";
@@ -97,6 +101,8 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { useRemoveEmpExperienceStore } from "@/stores/apis/employee/remove-emp-experience.store";
+import { useRemoveEmpEducationStore } from "@/stores/apis/employee/remove-emp-education.store";
 
 export default function EmployeeProfilePage() {
   // API Integration
@@ -117,6 +123,8 @@ export default function EmployeeProfilePage() {
   const removeEmpAvatarStore = useRemoveEmpAvatarStore();
   const removeEmpResumeStore = useRemoveEmpResumeStore();
   const removeEmpCoverLetterStore = useRemoveEmpCoverLetterStore();
+  const removeEmpExperieceStore = useRemoveEmpExperienceStore();
+  const removeEmpEducationStore = useRemoveEmpEducationStore();
 
   // Compute All Loading States
   const updatedProfileLoadingState =
@@ -136,6 +144,9 @@ export default function EmployeeProfilePage() {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const avatarInputRef = useRef<HTMLInputElement | null>(null);
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
+  const [openRemoveAvatarDialog, setOpenRemoveAvatarDialog] =
+    useState<boolean>(false);
+  const ignoreNextClick = useRef<boolean>(false);
 
   // Resume States
   const [resumeUrl, setResumeUrl] = useState<string | null>(null);
@@ -335,9 +346,9 @@ export default function EmployeeProfilePage() {
 
     setCareerScopes(
       initialCareerScopes.map((cs) => ({
-        id: cs.id ?? "",
-        name: cs.name,
-        description: cs.description ?? "",
+        id: cs?.id,
+        name: cs?.name ?? "",
+        description: cs?.description,
       })),
     );
   }, [form]);
@@ -408,10 +419,24 @@ export default function EmployeeProfilePage() {
   };
 
   // 2. Remove Education with ID
-  const removeEducation = (educationToRemove: string) => {
-    setEducations((prevEducation) =>
-      prevEducation.filter((edu) => edu.id !== educationToRemove),
-    );
+  const removeEducation = async (educationID: string) => {
+    await removeEmpEducationStore.removeEducation(employee!.id, educationID);
+
+    // Refetch current user to get updated data
+    await getCurrentUser();
+
+    toast({
+      description: (
+        <div className="flex items-center gap-2">
+          <LucideCheck />
+          <TypographySmall className="font-medium leading-relaxed">
+            Remove Experience Successfully!
+          </TypographySmall>
+        </div>
+      ),
+    });
+
+    setIsEdit(false);
   };
 
   // Experience Bussiness Logics
@@ -429,10 +454,24 @@ export default function EmployeeProfilePage() {
   };
 
   // 2. Remove Experience with ID
-  const removeExperience = (experienceId: string) => {
-    setExperiences((prevExperience) =>
-      prevExperience.filter((exp) => exp.id !== experienceId),
-    );
+  const removeExperience = async (experienceID: string) => {
+    await removeEmpExperieceStore.removeExperience(employee!.id, experienceID);
+
+    // Refetch current user to get updated data
+    await getCurrentUser();
+
+    toast({
+      description: (
+        <div className="flex items-center gap-2">
+          <LucideCheck />
+          <TypographySmall className="font-medium leading-relaxed">
+            Remove Education Successfully!
+          </TypographySmall>
+        </div>
+      ),
+    });
+
+    setIsEdit(false);
   };
 
   // Social Bussiness Logic
@@ -696,31 +735,310 @@ export default function EmployeeProfilePage() {
   // onSubmit: Update The Entire Employee Profile (API's calling)
   const onSubmit = async (data: TEmployeeProfileForm) => {
     console.log("Employee Profile Data: ", data);
+    const updateBody: Partial<TEmployeeUpdateBody> = {};
 
-    setIsEdit(false);
+    try {
+      const dirtyFields = form.formState.dirtyFields;
+
+      /* ------------------------ BASIC INFO ------------------------ */
+      const basicInfoKeys: (keyof NonNullable<typeof data.basicInfo>)[] = [
+        "firstname",
+        "lastname",
+        "username",
+        "gender",
+        "location",
+      ];
+
+      basicInfoKeys.forEach((key) => {
+        if (dirtyFields?.basicInfo?.[key]) {
+          // backend fields are top-level on UpdateEmployeeInfoDTO
+          (updateBody as any)[key] = data.basicInfo?.[key];
+        }
+      });
+
+      /* ------------------------ ACCOUNT SETTINGS ------------------------ */
+      const accountKeys: (keyof NonNullable<typeof data.accountSetting>)[] = [
+        "email",
+        "phone",
+      ];
+
+      accountKeys.forEach((key) => {
+        if (dirtyFields?.accountSetting?.[key]) {
+          // backend accepts email? + phone? at top-level
+          (updateBody as any)[key] = data.accountSetting?.[key];
+        }
+      });
+
+      /* ------------------------ PROFESSION ------------------------ */
+      const professionKeys: (keyof NonNullable<typeof data.profession>)[] = [
+        "job",
+        "yearOfExperience",
+        "availability",
+        "description",
+      ];
+
+      professionKeys.forEach((key) => {
+        if (dirtyFields?.profession?.[key]) {
+          if (key === "yearOfExperience") {
+            // backend expects yearsOfExperience as number
+            const raw = data.profession?.yearOfExperience;
+            const num =
+              raw !== undefined && raw !== null && raw !== ""
+                ? Number(raw)
+                : undefined;
+            if (num !== undefined && !Number.isNaN(num)) {
+              (updateBody as any).yearsOfExperience = num;
+            }
+          } else {
+            // job/availability/description
+            (updateBody as any)[key] = (data.profession as any)?.[key];
+          }
+        }
+      });
+
+      /* ------------------------ SKILLS (M2M) ------------------------ */
+      if (dirtyFields.skills || deleteSkillIds.length > 0) {
+        updateBody.skills = (data.skills ?? [])
+          .filter(
+            (s): s is ISkill =>
+              !!s && typeof s.name === "string" && s.name.trim().length > 0,
+          )
+          .map((s) => ({
+            id: s.id ?? "", // if your ISkill requires id, keep this; otherwise remove
+            name: s.name.trim(),
+            description: s.description ?? "", // ✅ never undefined
+          }));
+
+        if (deleteSkillIds.length > 0) {
+          updateBody.skillIdsToDelete = deleteSkillIds;
+        }
+      }
+
+      /* ------------------------ CAREER SCOPES (M2M) ------------------------ */
+      if (dirtyFields.careerScopes || deleteCareerScopeIds.length > 0) {
+        updateBody.careerScopes = (data.careerScopes ?? [])
+          .filter(
+            (cs): cs is ICareerScopes =>
+              !!cs && typeof cs.name === "string" && cs.name.trim().length > 0,
+          )
+          .map((cs) => ({
+            id: cs.id ?? "",
+            name: cs.name.trim(),
+            description: cs.description ?? "",
+          }));
+
+        if (deleteCareerScopeIds.length > 0) {
+          updateBody.careerScopeIdsToDelete = deleteCareerScopeIds;
+        }
+      }
+
+      /* ------------------------ SOCIALS (O2M) ------------------------ */
+      if (dirtyFields.socials || deleteSocialIds.length > 0) {
+        updateBody.socials = (data.socials ?? [])
+          .filter(
+            (s): s is ISocial =>
+              !!s &&
+              typeof s.platform === "string" &&
+              s.platform.trim().length > 0 &&
+              typeof s.url === "string" &&
+              s.url.trim().length > 0,
+          )
+          .map((s) => ({
+            id: s.id ?? "",
+            platform: s.platform.trim(),
+            url: s.url.trim(),
+          }));
+
+        if (deleteSocialIds.length > 0) {
+          updateBody.socialIdsToDelete = deleteSocialIds;
+        }
+      }
+
+      /* ------------------------ EDUCATIONS (O2M) ------------------------ */
+      if (dirtyFields.educations) {
+        updateBody.educations = (data.educations ?? [])
+          .filter(
+            (
+              edu,
+            ): edu is {
+              id?: string;
+              school: string;
+              degree: string;
+              year: Date;
+            } =>
+              !!edu &&
+              typeof edu.school === "string" &&
+              edu.school.trim().length > 0 &&
+              typeof edu.degree === "string" &&
+              edu.degree.trim().length > 0 &&
+              edu.year instanceof Date,
+          )
+          .map((edu) => ({
+            ...(edu.id ? { id: edu.id } : {}),
+            school: edu.school,
+            degree: edu.degree,
+            year: edu.year.toISOString(), // backend wants string
+          }));
+      }
+
+      /* ------------------------ EXPERIENCES (O2M) ------------------------ */
+      updateBody.experiences = (data.experiences ?? [])
+        .filter(
+          (
+            exp,
+          ): exp is {
+            id?: string;
+            title: string;
+            description: string;
+            startDate: Date;
+            endDate?: Date;
+          } =>
+            !!exp &&
+            typeof exp.title === "string" &&
+            exp.title.trim().length > 0 &&
+            typeof exp.description === "string" &&
+            exp.description.trim().length > 0 &&
+            exp.startDate instanceof Date &&
+            (exp.endDate == null || exp.endDate instanceof Date),
+        )
+        .map((exp) => ({
+          ...(exp.id ? { id: exp.id } : {}),
+          title: exp.title,
+          description: exp.description,
+          startDate: exp.startDate.toISOString(),
+          endDate: exp.endDate ? exp.endDate.toISOString() : "",
+        }));
+
+      /* ------------------------ FILE UPLOADS ------------------------ */
+      const uploadTasks: Promise<any>[] = [];
+
+      // Avatar upload
+      if (data.basicInfo?.avatar instanceof File) {
+        uploadTasks.push(
+          uploadAvatarEmpStore.uploadAvatar(
+            employee!.id,
+            data.basicInfo.avatar,
+          ),
+        );
+      }
+
+      // Resume upload
+      if (data.references?.resume instanceof File) {
+        uploadTasks.push(
+          uploadResumeEmpStore.uploadResume(
+            employee!.id,
+            data.references.resume,
+          ),
+        );
+      }
+
+      // Cover letter upload
+      if (data.references?.coverLetter instanceof File) {
+        uploadTasks.push(
+          uploadCoverLetterEmpStore.uploadCoverLetter(
+            employee!.id,
+            data.references.coverLetter,
+          ),
+        );
+      }
+
+      await Promise.all(uploadTasks);
+
+      /* ------------------------ API UPDATE ------------------------ */
+      if (Object.keys(updateBody).length > 0) {
+        await updateOneEmpStore.updateOneEmployee(employee!.id, updateBody);
+      }
+
+      // Refresh page for refetch current user and reset form
+      window.location.reload();
+
+      form.reset(data);
+
+      toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <LucideCheck />
+            <TypographySmall className="font-medium leading-relaxed">
+              Updated Employee Profile Successfully!
+            </TypographySmall>
+          </div>
+        ),
+      });
+
+      setIsEdit(false);
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Error!",
+        description: "Failed to update employee profile.",
+      });
+    }
   };
 
   // handleSubmit: Submit Employee Profile Form
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    form.setValue("skills", skills);
-    form.setValue("careerScopes", careerScopes);
-    form.setValue("socials", socials);
+    // Sync all state arrays into the form (important!)
+    form.setValue("skills", skills, { shouldDirty: true, shouldTouch: true });
+    form.setValue("careerScopes", careerScopes, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+    form.setValue("socials", socials, { shouldDirty: true, shouldTouch: true });
+    form.setValue("educations", educations as any, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+    form.setValue("experiences", experiences as any, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
 
+    // Sync file inputs managed outside the form
     if (avatarFile) {
-      form.setValue("basicInfo.avatar", avatarFile);
+      form.setValue("basicInfo.avatar", avatarFile, {
+        shouldDirty: true,
+        shouldTouch: true,
+      });
     }
 
     if (resumeFile) {
-      form.setValue("references.resume", resumeFile);
+      form.setValue("references.resume", resumeFile, {
+        shouldDirty: true,
+        shouldTouch: true,
+      });
     }
 
     if (coverLetterFile) {
-      form.setValue("references.coverLetter", coverLetterFile);
+      form.setValue("references.coverLetter", coverLetterFile, {
+        shouldDirty: true,
+        shouldTouch: true,
+      });
     }
 
+    // Submit
     form.handleSubmit(onSubmit, console.error)(e);
+  };
+
+  // API for Remove Employee Avatar
+  const handleRemoveEmpAvatar = async () => {
+    if (employee) await removeEmpAvatarStore.removeEmpAvatar(employee.id);
+
+    await getCurrentUser();
+    setIsEdit(false);
+    setOpenRemoveAvatarDialog(false);
+  };
+
+  // Employee Profile Popup Handler
+  const handleClickProfilePopup = (e: React.MouseEvent) => {
+    if (ignoreNextClick.current) {
+      ignoreNextClick.current = false;
+      return;
+    }
+    if ((e.target as HTMLElement).closest(".dialog-content")) return;
+    setOpenProfilePopup(true);
   };
 
   if (loading) return <EmployeeProfilePageSkeleton />;
@@ -732,8 +1050,10 @@ export default function EmployeeProfilePage() {
         <div className="flex items-center justify-start gap-5 tablet-sm:flex-col">
           <div
             className="relative"
-            onClick={() => {
-              if (!isEdit) setOpenProfilePopup(true);
+            onClick={(e) => {
+              if (!isEdit) {
+                if (employee.avatar) handleClickProfilePopup(e);
+              }
             }}
           >
             <Avatar className="size-36" rounded="md">
@@ -1269,11 +1589,10 @@ export default function EmployeeProfilePage() {
                             <HoverCardTrigger className="flex items-center rounded-3xl">
                               <Tag label={career.name} />
                               {isEdit && (
-                                // Remove Career Section
                                 <LucideXCircle
                                   className="text-muted-foreground cursor-pointer ml-1 text-red-500"
                                   width={"18px"}
-                                  //onClick={() => removeCareer(career.name)}
+                                  onClick={() => removeCareerScope(career.name)}
                                 />
                               )}
                             </HoverCardTrigger>

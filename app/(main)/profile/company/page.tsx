@@ -1037,6 +1037,7 @@ export default function ProfilePage() {
     setOpenProfilePopup(true);
   };
 
+  // API Effec
   useEffect(() => {
     if (removeOneOpenPositionStore.loading) {
       dismiss();
@@ -1172,7 +1173,7 @@ export default function ProfilePage() {
             rounded="md"
             onClick={(e) => {
               if (!isEdit) {
-                if (user.company?.avatar) handleClickProfilePopup(e);
+                if (company.avatar) handleClickProfilePopup(e);
               }
             }}
           >

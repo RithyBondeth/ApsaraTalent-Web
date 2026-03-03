@@ -30,10 +30,11 @@ export const basicInfoSchema = z.object({
               );
             },
             {
-              message: `Invalid file: avatar must be an image (jpeg, png, webp) and < 5MB`,
+              message:
+                "Invalid file: avatar must be an image (jpeg, png, webp) and < 5MB",
             },
           ),
-          z.string(), // for existing image URLs
+          z.string(), // existing image URL
           z.null(),
         ])
         .optional(),
@@ -45,7 +46,7 @@ export const accountSettingSchema = z.object({
   accountSetting: z
     .object({
       email: emailValidation.optional(),
-      phone: khmerPhoneNumberValidation(),
+      phone: khmerPhoneNumberValidation().optional(),
     })
     .optional(),
 });
@@ -66,6 +67,7 @@ export const educationSchema = z.object({
     .array(
       z
         .object({
+          id: z.string().optional(),
           school: textValidation().optional(),
           degree: textValidation().optional(),
           year: dateValidation().optional(),
@@ -80,6 +82,7 @@ export const experienceSchema = z.object({
     .array(
       z
         .object({
+          id: z.string().optional(),
           title: textValidation().optional(),
           description: textValidation().optional(),
           startDate: dateValidation().optional(),
@@ -121,7 +124,6 @@ export const referenceSchema = z.object({
           z.null(),
         ])
         .optional(),
-
       coverLetter: z
         .union([
           z
@@ -140,16 +142,18 @@ export const referenceSchema = z.object({
     .optional(),
 });
 
+// ✅ Solution 2: make all fields optional (so inferred type matches your ISkill/ISocial style)
 export const careerScopesSchema = z.object({
   careerScopes: z
     .array(
-      z.object({
-        id: z.string().optional(),
-        name: z.string(),
-        description: z.string().optional(),
-      }),
+      z
+        .object({
+          id: z.string().optional(),
+          name: z.string().optional(),
+          description: z.string().optional(),
+        })
+        .optional(),
     )
-    .min(1, { message: "Please select at least one career option" })
     .optional(),
 });
 
