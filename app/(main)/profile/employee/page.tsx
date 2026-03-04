@@ -103,6 +103,7 @@ import { useRemoveEmpEducationStore } from "@/stores/apis/employee/remove-emp-ed
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import RemoveAlertDialog from "@/components/utils/dialogs/remove-alert-dialog";
 import { parseMaybeDate } from "@/utils/functions/parse-maybe-date";
+import ReferencePreviewDialog from "@/components/utils/dialogs/reference-preview-dialog";
 
 export default function EmployeeProfilePage() {
   /* ------------------- APIs Integration ------------------- */
@@ -142,6 +143,12 @@ export default function EmployeeProfilePage() {
   // Utils
   const { toast, dismiss } = useToast();
   const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [openReferencePreview, setOpenReferencePreview] =
+    useState<boolean>(false);
+  const [previewReferenceType, setPreviewReferenceType] = useState<
+    "resume" | "coverletter"
+  >("resume");
+  const [previewReferenceUrl, setPreviewReferenceUrl] = useState<string>("");
 
   // Select Gender and Location
   const [selectedGender, setSelectedGender] = useState<TGender | string>("");
@@ -1556,11 +1563,20 @@ export default function EmployeeProfilePage() {
                       )}
 
                       {employee.resume && (
-                        <Link target="_blank" href={employee.resume}>
-                          <Button type="button" variant="outline" size="icon">
-                            <LucideEye />
-                          </Button>
-                        </Link>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => {
+                            if (employee.resume)
+                              setPreviewReferenceUrl(employee.resume);
+                            setPreviewReferenceType("resume");
+                            setOpenReferencePreview(true);
+                          }}
+                          disabled={!employee.resume}
+                        >
+                          <LucideEye />
+                        </Button>
                       )}
 
                       {isEdit ? (
@@ -1568,6 +1584,7 @@ export default function EmployeeProfilePage() {
                           type="button"
                           variant="outline"
                           size="icon"
+                          className="text-red-500 bg-red-100"
                           onClick={() => setOpenRemoveResumeDialog(true)}
                         >
                           <LucideTrash2 />
@@ -1592,6 +1609,7 @@ export default function EmployeeProfilePage() {
                       )}
                     </div>
 
+                    {/* Remove Resume Dialog Section */}
                     <RemoveAlertDialog
                       type="resume"
                       openDialog={openRemoveResumeDialog}
@@ -1636,11 +1654,20 @@ export default function EmployeeProfilePage() {
                       )}
 
                       {employee.coverLetter && (
-                        <Link target="_blank" href={employee.coverLetter}>
-                          <Button type="button" variant="outline" size="icon">
-                            <LucideEye />
-                          </Button>
-                        </Link>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => {
+                            if (employee.coverLetter)
+                              setPreviewReferenceUrl(employee.coverLetter);
+                            setPreviewReferenceType("coverletter");
+                            setOpenReferencePreview(true);
+                          }}
+                          disabled={!employee.coverLetter}
+                        >
+                          <LucideEye />
+                        </Button>
                       )}
 
                       {isEdit ? (
@@ -1648,7 +1675,8 @@ export default function EmployeeProfilePage() {
                           type="button"
                           variant="outline"
                           size="icon"
-                          onClick={() => setCoverLetterFile(null)}
+                          className="text-red-500 bg-red-100"
+                          onClick={() => setOpenRemoveCoverLetterDialog(true)}
                         >
                           <LucideTrash2 />
                         </Button>
@@ -1674,6 +1702,24 @@ export default function EmployeeProfilePage() {
                   </div>
                 )}
               </div>
+
+              {/* Reference Preview Dialog Section */}
+              <ReferencePreviewDialog
+                openRefPreview={openReferencePreview}
+                setOpenRefPreview={setOpenReferencePreview}
+                previewRefType={previewReferenceType}
+                referenceUrl={previewReferenceUrl}
+                employeeName={employee.username ?? ""}
+              />
+
+              {/* Remove CoverLetter Dialog Section */}
+              <RemoveAlertDialog
+                type="coverLetter"
+                openDialog={openRemoveCoverLetterDialog}
+                setOpenDialog={setOpenRemoveCoverLetterDialog}
+                onNoClick={disableEditMode}
+                onYesClick={removeCoverLetter}
+              />
             </div>
           )}
 

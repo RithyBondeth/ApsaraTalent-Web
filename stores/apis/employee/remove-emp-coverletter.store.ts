@@ -1,4 +1,4 @@
-import { API_REMOVE_EMP_RESUME_URL } from "@/utils/constants/apis/employee_url";
+import { API_REMOVE_EMP_COVER_LETTER_URL } from "@/utils/constants/apis/employee_url";
 import axios from "axios";
 import { create } from "zustand";
 
@@ -21,7 +21,7 @@ export const useRemoveEmpCoverLetterStore =
       set({ loading: true, error: null });
       try {
         const response = await axios.post<TRemoveEmpCoverLetterResponse>(
-          API_REMOVE_EMP_RESUME_URL(employeeID),
+          API_REMOVE_EMP_COVER_LETTER_URL(employeeID),
         );
         set({ loading: false, error: null, message: response.data.message });
       } catch (error) {
