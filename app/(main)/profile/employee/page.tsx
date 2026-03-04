@@ -1230,7 +1230,7 @@ export default function EmployeeProfilePage() {
             </div>
           </div>
 
-          {/* ✅ Experience (FIXED Option A) */}
+          {/* Experience Section */}
           {employee.experiences && (
             <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
               <div className="flex flex-col gap-1">
@@ -1524,7 +1524,7 @@ export default function EmployeeProfilePage() {
             </div>
           )}
 
-          {/* References */}
+          {/* References Section */}
           {(employee.resume || employee.coverLetter) && (
             <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
               <TypographyH4>References Information</TypographyH4>
@@ -1621,7 +1621,7 @@ export default function EmployeeProfilePage() {
                 )}
 
                 {/* Cover Letter */}
-                {employee.coverLetter && (
+                {employee.coverLetter && coverLetterFile && (
                   <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
                     <div className="flex items-center text-muted-foreground gap-1">
                       <LucideFileText strokeWidth={"1.3px"} />
@@ -1700,6 +1700,18 @@ export default function EmployeeProfilePage() {
                       )}
                     </div>
                   </div>
+                )}
+
+                {!employee.coverLetter && !coverLetterFile && isEdit && (
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="text-xs w-full"
+                    onClick={() => coverLetterInputRef.current?.click()}
+                  >
+                    <LucidePlus />
+                    Add New CoverLetter
+                  </Button>
                 )}
               </div>
 

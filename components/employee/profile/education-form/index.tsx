@@ -9,11 +9,10 @@ import { IEmployeeEducationFormProps } from "./props";
 export default function EmployeeEducationForm(
   props: IEmployeeEducationFormProps,
 ) {
+  const { register, control } = props.form;
+
   return (
-    <div
-      className="w-full flex flex-col items-start gap-3"
-      key={props.educationIndex}
-    >
+    <div className="w-full flex flex-col items-start gap-3">
       <div className="w-full flex items-center justify-between">
         <TypographyMuted>Education {props.index + 1}</TypographyMuted>
         {props.isEdit && (
@@ -32,7 +31,7 @@ export default function EmployeeEducationForm(
             <Input
               placeholder="School"
               id="school"
-              {...props.form.register(`educations.${props.index}.school`)}
+              {...register(`educations.${props.index}.school`)}
               prefix={<LucideSchool strokeWidth={"1.3px"} />}
               disabled={!props.isEdit}
             />
@@ -44,7 +43,7 @@ export default function EmployeeEducationForm(
             <Input
               placeholder="Degree"
               id="degree"
-              {...props.form.register(`educations.${props.index}.degree`)}
+              {...register(`educations.${props.index}.degree`)}
               prefix={<LucideGraduationCap strokeWidth={"1.3px"} />}
               disabled={!props.isEdit}
             />
@@ -54,7 +53,7 @@ export default function EmployeeEducationForm(
           label="Graduation Year"
           input={
             <Controller
-              control={props.form.control}
+              control={control}
               name={`educations.${props.index}.year`}
               render={({ field }) => (
                 <DatePicker
