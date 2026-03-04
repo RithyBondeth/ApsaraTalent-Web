@@ -43,7 +43,6 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-
 import {
   ChevronDown,
   LucideAlarmCheck,
@@ -103,23 +102,10 @@ import { useRemoveEmpCoverLetterStore } from "@/stores/apis/employee/remove-emp-
 import { useRemoveEmpEducationStore } from "@/stores/apis/employee/remove-emp-education.store";
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import RemoveAlertDialog from "@/components/utils/dialogs/remove-alert-dialog";
-
-function parseMaybeDate(input?: string | null): Date | undefined {
-  if (!input || typeof input !== "string") return undefined;
-
-  if (input.includes("/")) {
-    // DD/MM/YYYY
-    const [d, m, y] = input.split("/").map(Number);
-    if (!d || !m || !y) return undefined;
-    return new Date(y, m - 1, d);
-  }
-
-  const dt = new Date(input);
-  return Number.isNaN(dt.getTime()) ? undefined : dt;
-}
+import { parseMaybeDate } from "@/utils/functions/parse-maybe-date";
 
 export default function EmployeeProfilePage() {
-  // API Integration
+  /* ------------------- APIs Integration ------------------- */
   // Current User Information and Current User CareerScopes
   const { user, loading, getCurrentUser } = useGetCurrentUserStore();
   const employee = user?.employee;
@@ -152,6 +138,7 @@ export default function EmployeeProfilePage() {
     removeEmpEducationStore.loading ||
     removeEmpExperieceStore.loading;
 
+  /* ------------------------ All States ------------------------ */
   // Utils
   const { toast, dismiss } = useToast();
   const [isEdit, setIsEdit] = useState<boolean>(false);
@@ -167,17 +154,19 @@ export default function EmployeeProfilePage() {
   const avatarInputRef = useRef<HTMLInputElement | null>(null);
   const [openAvatarPopup, setOpenAvatarPopup] = useState<boolean>(false);
   const [openRemoveAvatarDialog, setOpenRemoveAvatarDialog] = useState(false);
-  const ignoreNextClick = useRef(false);
+  const ignoreNextClick = useRef<boolean>(false);
 
   // Resume
-  const [resumeUrl, setResumeUrl] = useState<string | null>(null);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const resumeInputRef = useRef<HTMLInputElement | null>(null);
+  const [openRemoveResumeDialog, setOpenRemoveResumeDialog] =
+    useState<boolean>(false);
 
-  // Cover
-  const [coverLetterUrl, setCoverLetterUrl] = useState<string | null>(null);
+  // CoverLetter
   const [coverLetterFile, setCoverLetterFile] = useState<File | null>(null);
   const coverLetterInputRef = useRef<HTMLInputElement | null>(null);
+  const [openRemoveCoverLetterDialog, setOpenRemoveCoverLetterDialog] =
+    useState<boolean>(false);
 
   // Social
   const [socialInput, setSocialInput] = useState<ISocial | null>(null);
@@ -208,12 +197,13 @@ export default function EmployeeProfilePage() {
   );
 
   // Education Remove Dialog States
-  const [openRemoveEducationDialog, setRemoveOpenEducationDialog] =
+  const [openRemoveEducationDialog, setOpenRemoveEducationDialog] =
     useState<boolean>(false);
   const [currentEducationID, setCurrentEducationID] = useState<string | null>(
     null,
   );
 
+  /* ------------------------ Employee Profile Form ------------------------ */
   // React Hook Form: Employee Profile Schema
   const form = useForm<TEmployeeProfileForm>({
     resolver: zodResolver(employeeFormSchema),
@@ -332,41 +322,31 @@ export default function EmployeeProfilePage() {
     setCareerScopes(employee.careerScopes ?? []);
   }, [user, employee, form]);
 
-  // Preview Resume and CoverLetter URLs
-  useEffect(() => {
-    if (!resumeFile) return;
-    const objectUrl = URL.createObjectURL(resumeFile);
-    setResumeUrl(objectUrl);
-    return () => URL.revokeObjectURL(objectUrl);
-  }, [resumeFile]);
-
-  useEffect(() => {
-    if (!coverLetterFile) return;
-    const objectUrl = URL.createObjectURL(coverLetterFile);
-    setCoverLetterUrl(objectUrl);
-    return () => URL.revokeObjectURL(objectUrl);
-  }, [coverLetterFile]);
-
-  // Edit Mode
+  /* ------------------------ Edit Mode ------------------------ */
+  // Enable Edit Mode
   const enableEditMode = () => {
     getAllCareerScopesStore.getAllCareerScopes();
     setIsEdit(true);
   };
 
+  // Disable Edit Mode
   const disableEditMode = () => {
     setOpenRemoveAvatarDialog(false);
     setOpenRemoveExperienceDialog(false);
+    setOpenRemoveEducationDialog(false);
+    setOpenRemoveResumeDialog(false);
+    setOpenRemoveCoverLetterDialog(false);
     setIsEdit(false);
     form.reset();
   };
 
-  /* ------------------- Reference Bussiness Logics ------------------- */
+  /* ------------------- Reference and Avatar Bussiness Logics ------------------- */
   // 1.API: Remove Resume
   const removeResume = async () => {
-    if (!employee) return;
+    if (employee) await removeEmpResumeStore.removeEmpResume(employee.id);
 
-    await removeEmpResumeStore.removeEmpResume(employee.id);
     await getCurrentUser();
+    disableEditMode();
 
     toast({
       variant: "success",
@@ -383,10 +363,11 @@ export default function EmployeeProfilePage() {
 
   // 2.API: Remove CoverLetter
   const removeCoverLetter = async () => {
-    if (!employee) return;
+    if (employee)
+      await removeEmpCoverLetterStore.removeEmpCoverLetter(employee.id);
 
-    await removeEmpCoverLetterStore.removeEmpCoverLetter(employee.id);
     await getCurrentUser();
+    disableEditMode();
 
     toast({
       variant: "success",
@@ -406,9 +387,7 @@ export default function EmployeeProfilePage() {
     if (employee) await removeEmpAvatarStore.removeEmpAvatar(employee.id);
 
     await getCurrentUser();
-
-    setIsEdit(false);
-    setOpenRemoveAvatarDialog(false);
+    disableEditMode();
 
     toast({
       variant: "success",
@@ -421,6 +400,16 @@ export default function EmployeeProfilePage() {
         </div>
       ),
     });
+  };
+
+  // 4.Handle Click Avatar Popup
+  const handleClickAvatarPopup = (e: React.MouseEvent) => {
+    if (ignoreNextClick.current) {
+      ignoreNextClick.current = false;
+      return;
+    }
+    if ((e.target as HTMLElement).closest(".dialog-content")) return;
+    setOpenAvatarPopup(true);
   };
 
   /* ------------------- Experience Bussiness Logics ------------------- */
@@ -437,12 +426,14 @@ export default function EmployeeProfilePage() {
 
   // 2.API: Remove Experience
   const removeExperience = async (experienceID: string) => {
-    if (!employee) return;
+    if (employee)
+      await removeEmpExperieceStore.removeExperience(employee.id, experienceID);
 
-    await removeEmpExperieceStore.removeExperience(employee.id, experienceID);
     await getCurrentUser();
+    disableEditMode();
 
     toast({
+      variant: "success",
       description: (
         <div className="flex items-center gap-2">
           <LucideCheck />
@@ -452,8 +443,6 @@ export default function EmployeeProfilePage() {
         </div>
       ),
     });
-
-    setIsEdit(false);
   };
 
   /* ------------------- Education Bussiness Logics ------------------- */
@@ -469,12 +458,14 @@ export default function EmployeeProfilePage() {
 
   // 2.API: Remove Education
   const removeEducation = async (experienceID: string) => {
-    if (!employee) return;
+    if (employee)
+      await removeEmpEducationStore.removeEducation(employee.id, experienceID);
 
-    await removeEmpEducationStore.removeEducation(employee.id, experienceID);
     await getCurrentUser();
+    disableEditMode();
 
     toast({
+      variant: "success",
       description: (
         <div className="flex items-center gap-2">
           <LucideCheck />
@@ -484,8 +475,6 @@ export default function EmployeeProfilePage() {
         </div>
       ),
     });
-
-    setIsEdit(false);
   };
 
   /* ------------------- Skill Bussiness Logics ------------------- */
@@ -667,6 +656,7 @@ export default function EmployeeProfilePage() {
     });
   };
 
+  /* ------------------- File Bussiness Logics ------------------- */
   // Handle File Change: Avatar, Resume and CoverLetter
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -700,28 +690,34 @@ export default function EmployeeProfilePage() {
   };
 
   // Handle File Download: Resume and CoverLetter
-  const handleDownloadFile = (file: File) => {
-    const url = URL.createObjectURL(file);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = file.name;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  };
+  const downloadFileFromUrl = async (url: string, filename?: string) => {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Failed to fetch file");
 
-  // Handle Click Avatar Popup
-  const handleClickAvatarPopup = (e: React.MouseEvent) => {
-    if (ignoreNextClick.current) {
-      ignoreNextClick.current = false;
-      return;
+      const blob = await res.blob();
+      const objectUrl = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = objectUrl;
+      a.download = filename ?? extractCleanFilename(url) ?? "download";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      URL.revokeObjectURL(objectUrl);
+    } catch (e) {
+      console.error(e);
+      toast({
+        variant: "destructive",
+        title: "Download failed",
+        description: "Unable to download the file. Please try again.",
+      });
     }
-    if ((e.target as HTMLElement).closest(".dialog-content")) return;
-    setOpenAvatarPopup(true);
   };
 
-  // Submit
+  /* ------------------- onSubmit Bussiness Logics ------------------- */
+  // 1.onSubmit
   const onSubmit = async (data: TEmployeeProfileForm) => {
     if (!employee) return;
 
@@ -898,6 +894,7 @@ export default function EmployeeProfilePage() {
     }
   };
 
+  // 2.Handle Submit
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -1524,145 +1521,158 @@ export default function EmployeeProfilePage() {
           {(employee.resume || employee.coverLetter) && (
             <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
               <TypographyH4>References Information</TypographyH4>
-
               <div className="w-full flex flex-col items-start gap-5 [&>div]:w-full">
                 {/* Resume */}
-                <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
-                  <div className="flex items-center text-muted-foreground gap-1">
-                    <LucideFileText strokeWidth={"1.3px"} />
-                    <TypographyMuted>
-                      {resumeFile
-                        ? resumeFile.name
-                        : employee.resume
-                          ? extractCleanFilename(employee.resume)
-                          : "Resume"}
-                    </TypographyMuted>
-                    <input
-                      type="file"
-                      accept="application/pdf,.doc,.docx"
-                      className="hidden"
-                      ref={resumeInputRef}
-                      onChange={(e) => handleFileChange(e, "resume")}
+                {employee.resume && (
+                  <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
+                    <div className="flex items-center text-muted-foreground gap-1">
+                      <LucideFileText strokeWidth={"1.3px"} />
+                      <TypographyMuted>
+                        {resumeFile
+                          ? resumeFile.name
+                          : employee.resume
+                            ? extractCleanFilename(employee.resume)
+                            : "Resume"}
+                      </TypographyMuted>
+                      <input
+                        type="file"
+                        accept="application/pdf,.doc,.docx"
+                        className="hidden"
+                        ref={resumeInputRef}
+                        onChange={(e) => handleFileChange(e, "resume")}
+                      />
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      {isEdit && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => resumeInputRef.current?.click()}
+                        >
+                          <LucideEdit />
+                        </Button>
+                      )}
+
+                      {employee.resume && (
+                        <Link target="_blank" href={employee.resume}>
+                          <Button type="button" variant="outline" size="icon">
+                            <LucideEye />
+                          </Button>
+                        </Link>
+                      )}
+
+                      {isEdit ? (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => setOpenRemoveResumeDialog(true)}
+                        >
+                          <LucideTrash2 />
+                        </Button>
+                      ) : (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => {
+                            if (employee.resume) {
+                              downloadFileFromUrl(
+                                employee.resume,
+                                extractCleanFilename(employee.resume),
+                              );
+                            }
+                          }}
+                          disabled={!employee.resume}
+                        >
+                          <LucideDownload />
+                        </Button>
+                      )}
+                    </div>
+
+                    <RemoveAlertDialog
+                      type="resume"
+                      openDialog={openRemoveResumeDialog}
+                      setOpenDialog={setOpenRemoveResumeDialog}
+                      onNoClick={disableEditMode}
+                      onYesClick={removeResume}
                     />
                   </div>
-
-                  <div className="flex items-center gap-1">
-                    {isEdit && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => resumeInputRef.current?.click()}
-                      >
-                        <LucideEdit />
-                      </Button>
-                    )}
-
-                    {resumeUrl ? (
-                      <Link target="_blank" href={resumeUrl}>
-                        <Button type="button" variant="outline" size="icon">
-                          <LucideEye />
-                        </Button>
-                      </Link>
-                    ) : (
-                      <Button type="button" variant="outline" size="icon">
-                        <LucideEye />
-                      </Button>
-                    )}
-
-                    {isEdit ? (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setResumeFile(null)}
-                      >
-                        <LucideTrash2 />
-                      </Button>
-                    ) : (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() =>
-                          resumeFile && handleDownloadFile(resumeFile)
-                        }
-                        disabled={!resumeFile}
-                      >
-                        <LucideDownload />
-                      </Button>
-                    )}
-                  </div>
-                </div>
+                )}
 
                 {/* Cover Letter */}
-                <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
-                  <div className="flex items-center text-muted-foreground gap-1">
-                    <LucideFileText strokeWidth={"1.3px"} />
-                    <TypographyMuted>
-                      {coverLetterFile
-                        ? coverLetterFile.name
-                        : employee.coverLetter
-                          ? extractCleanFilename(employee.coverLetter)
-                          : "Cover Letter"}
-                    </TypographyMuted>
-                    <input
-                      type="file"
-                      accept="application/pdf,.doc,.docx"
-                      className="hidden"
-                      ref={coverLetterInputRef}
-                      onChange={(e) => handleFileChange(e, "coverLetter")}
-                    />
-                  </div>
+                {employee.coverLetter && (
+                  <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
+                    <div className="flex items-center text-muted-foreground gap-1">
+                      <LucideFileText strokeWidth={"1.3px"} />
+                      <TypographyMuted>
+                        {coverLetterFile
+                          ? coverLetterFile.name
+                          : employee.coverLetter
+                            ? extractCleanFilename(employee.coverLetter)
+                            : "Cover Letter"}
+                      </TypographyMuted>
+                      <input
+                        type="file"
+                        accept="application/pdf,.doc,.docx"
+                        className="hidden"
+                        ref={coverLetterInputRef}
+                        onChange={(e) => handleFileChange(e, "coverLetter")}
+                      />
+                    </div>
 
-                  <div className="flex items-center gap-1">
-                    {isEdit && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => coverLetterInputRef.current?.click()}
-                      >
-                        <LucideEdit />
-                      </Button>
-                    )}
-
-                    {coverLetterUrl ? (
-                      <Link target="_blank" href={coverLetterUrl}>
-                        <Button type="button" variant="outline" size="icon">
-                          <LucideEye />
+                    <div className="flex items-center gap-1">
+                      {isEdit && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => coverLetterInputRef.current?.click()}
+                        >
+                          <LucideEdit />
                         </Button>
-                      </Link>
-                    ) : (
-                      <Button type="button" variant="outline" size="icon">
-                        <LucideEye />
-                      </Button>
-                    )}
+                      )}
 
-                    {isEdit ? (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setCoverLetterFile(null)}
-                      >
-                        <LucideTrash2 />
-                      </Button>
-                    ) : (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() =>
-                          coverLetterFile && handleDownloadFile(coverLetterFile)
-                        }
-                        disabled={!coverLetterFile}
-                      >
-                        <LucideDownload />
-                      </Button>
-                    )}
+                      {employee.coverLetter && (
+                        <Link target="_blank" href={employee.coverLetter}>
+                          <Button type="button" variant="outline" size="icon">
+                            <LucideEye />
+                          </Button>
+                        </Link>
+                      )}
+
+                      {isEdit ? (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => setCoverLetterFile(null)}
+                        >
+                          <LucideTrash2 />
+                        </Button>
+                      ) : (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => {
+                            if (employee.coverLetter) {
+                              downloadFileFromUrl(
+                                employee.coverLetter,
+                                extractCleanFilename(employee.coverLetter),
+                              );
+                            }
+                          }}
+                          disabled={!employee.coverLetter}
+                        >
+                          <LucideDownload />
+                        </Button>
+                      )}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           )}
