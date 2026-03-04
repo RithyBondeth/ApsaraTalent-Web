@@ -137,14 +137,14 @@ export const benefitAndValueSchema = z.object({
 
 export const careerScopesSchema = z.object({
   careerScopes: z
-  .array(
-    z.object({
-      id: z.string().optional(),
-      name: z.string(),
-      description: z.string().optional(),
-    }),
-  )
-  .default([]),
+    .array(
+      z.object({
+        id: z.string().optional(),
+        name: z.string(),
+        description: z.string().optional(),
+      }),
+    )
+    .default([]),
 });
 
 export const socialSchema = z.object({

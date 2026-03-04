@@ -20,7 +20,7 @@ export const useRemoveEmpExperienceStore =
     removeExperience: async (employeeID: string, experienceID: string) => {
       set({ loading: true, error: null });
       try {
-        const response = await axios.post<TRemoveEmpExperienceResponse>(
+        const response = await axios.delete<TRemoveEmpExperienceResponse>(
           API_REMOVE_EMP_EXPERIENCE_URL(employeeID, experienceID),
         );
         set({ loading: false, error: null, message: response.data.message });

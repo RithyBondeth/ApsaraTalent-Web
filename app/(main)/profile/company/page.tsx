@@ -95,17 +95,15 @@ import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cov
 import { useUploadCompanyImagesStore } from "@/stores/apis/company/upload-cmp-images.store";
 import { useRemoveOneOpenPositionStore } from "@/stores/apis/company/remove-one-open-position.store";
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
-import RemoveOpenPositionDialog from "./_dialogs/remove-open-position-dialog";
 import { isUuid } from "@/utils/functions/check-uuid";
 import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-scopes.store";
 import { useRemoveOneCmpImageStore } from "@/stores/apis/company/remove-one-cmp-image.store";
-import RemoveImageDialog from "./_dialogs/remove-image-dialog";
 import { useRemoveCmpAvatarStore } from "@/stores/apis/company/remove-cmp-avatar.store";
 import { useRemoveCmpCoverStore } from "@/stores/apis/company/remove-cmp-cover.store";
 import emptySvgImage from "@/assets/svg/empty.svg";
 import Image from "next/image";
 import { capitalizeWords } from "@/utils/functions/capitalize-words";
-import RemoveAvatarOrCoverDialog from "./_dialogs/remove-avatar-cover-dialog";
+import RemoveAlertDialog from "@/components/utils/dialogs/remove-alert-dialog";
 
 export default function ProfilePage() {
   // API Integration
@@ -1037,7 +1035,7 @@ export default function ProfilePage() {
     setOpenProfilePopup(true);
   };
 
-  // API Effec
+  // API Effect
   useEffect(() => {
     if (removeOneOpenPositionStore.loading) {
       dismiss();
@@ -1150,10 +1148,10 @@ export default function ProfilePage() {
               </Button>
             )}
             {/* Remove Avatar Dialog Section */}
-            <RemoveAvatarOrCoverDialog
+            <RemoveAlertDialog
               type="cover"
-              setOnRemoveAvatarOrCoverDialog={setOpenRemoveCoverDialog}
-              onRemoveAvatarOrCoverDialog={openRemoveCoverDialog}
+              setOpenDialog={setOpenRemoveCoverDialog}
+              openDialog={openRemoveCoverDialog}
               onNoClick={() => setOpenRemoveCoverDialog(false)}
               onYesClick={handleRemoveCmpCover}
             />
@@ -1205,10 +1203,10 @@ export default function ProfilePage() {
                 )}
 
                 {/* Remove Avatar Dialog Section */}
-                <RemoveAvatarOrCoverDialog
+                <RemoveAlertDialog
                   type="avatar"
-                  setOnRemoveAvatarOrCoverDialog={setOpenRemoveAvatarDialog}
-                  onRemoveAvatarOrCoverDialog={openRemoveAvatarDialog}
+                  setOpenDialog={setOpenRemoveAvatarDialog}
+                  openDialog={openRemoveAvatarDialog}
                   onNoClick={() => setOpenRemoveAvatarDialog(false)}
                   onYesClick={handleRemoveCmpAvatar}
                 />
@@ -1232,6 +1230,8 @@ export default function ProfilePage() {
             </TypographyP>
           </div>
         </div>
+
+        {/* Edit Button Section */}
         {isEdit ? (
           <div className="flex items-center gap-3 absolute top-5 right-5 phone-xl:top-2 phone-xl:right-2">
             <Button
@@ -1500,10 +1500,12 @@ export default function ProfilePage() {
                 </div>
               )}
             </div>
+
             {/* Remove OpenPosition Dialog Section */}
-            <RemoveOpenPositionDialog
-              onRemoveOpDialog={openRemoveOpenPositionDialog}
-              setOnRemoveOpDialog={setOpenRemoveOpenPositionDialog}
+            <RemoveAlertDialog
+              type="position"
+              openDialog={openRemoveOpenPositionDialog}
+              setOpenDialog={setOpenRemoveOpenPositionDialog}
               onNoClick={() => setOpenRemoveOpenPositionDialog(false)}
               onYesClick={() => {
                 if (currentOpenPositionID) {
@@ -1567,9 +1569,10 @@ export default function ProfilePage() {
                     );
                   })}
                   {/* Remove Company Image Dialog Section */}
-                  <RemoveImageDialog
-                    onRemoveImageDialog={openRemoveImageDialog}
-                    setOnRemoveImageDialog={setOpenRemoveImageDialog}
+                  <RemoveAlertDialog
+                    type="image"
+                    openDialog={openRemoveImageDialog}
+                    setOpenDialog={setOpenRemoveImageDialog}
                     onNoClick={() => setOpenRemoveImageDialog(false)}
                     onYesClick={() => {
                       if (removedImage) {

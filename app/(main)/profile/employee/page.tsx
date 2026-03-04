@@ -1,13 +1,49 @@
 "use client";
 
+import React, { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import Divider from "@/components/utils/divider";
 import LabelInput from "@/components/utils/label-input";
+import IconLabel from "@/components/utils/icon-label";
+import Tag from "@/components/utils/tag";
+import ImagePopup from "@/components/utils/image-popup";
 import { TypographyH3 } from "@/components/utils/typography/typography-h3";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+
 import {
   ChevronDown,
   LucideAlarmCheck,
@@ -19,68 +55,38 @@ import {
   LucideEdit,
   LucideEye,
   LucideFileText,
-  LucideGraduationCap,
   LucideLink2,
   LucideMail,
   LucidePhone,
   LucidePlus,
-  LucideSchool,
   LucideTrash2,
   LucideUser,
   LucideXCircle,
 } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import { TGender } from "@/utils/types/gender.type";
-import { TLocations } from "@/utils/types/location.type";
 import {
   genderConstant,
   locationConstant,
   loginMethodConstant,
   platformConstant,
 } from "@/utils/constants/app.constant";
-import { Textarea } from "@/components/ui/textarea";
-import IconLabel from "@/components/utils/icon-label";
-import { DatePicker } from "@/components/ui/date-picker";
+import { TGender } from "@/utils/types/gender.type";
+import { TLocations } from "@/utils/types/location.type";
 import { TPlatform } from "@/utils/types/platform.type";
-import { Controller, useForm } from "react-hook-form";
+import { capitalizeWords } from "@/utils/functions/capitalize-words";
+import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
+import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
+import { isUuid } from "@/utils/functions/check-uuid";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
+import EmployeeProfilePageSkeleton from "./skeleton";
+import EmployeeExperienceForm from "@/components/employee/profile/experience-form";
 import { employeeFormSchema, TEmployeeProfileForm } from "./validation";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  IEducation,
-  IExperience,
   ISkill,
   ICareerScopes,
   ISocial,
 } from "@/utils/interfaces/user-interface/employee.interface";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import Link from "next/link";
-import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
-import { useToast } from "@/hooks/use-toast";
-import { ToastAction } from "@/components/ui/toast";
-import ImagePopup from "@/components/utils/image-popup";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import EmployeeProfilePageSkeleton from "./skeleton";
-import { dateFormatter } from "@/utils/functions/dateformatter";
-import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
-import Tag from "@/components/utils/tag";
-import Image from "next/image";
 import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-scopes.store";
 import {
   TEmployeeUpdateBody,
@@ -90,20 +96,27 @@ import { useUploadEmployeeAvatarStore } from "@/stores/apis/employee/upload-emp-
 import { useUploadEmployeeResumeStore } from "@/stores/apis/employee/upload-emp-resume.store";
 import { useUploadEmployeeCoverLetter } from "@/stores/apis/employee/upload-emp-coverletter.store";
 import { useRemoveEmpAvatarStore } from "@/stores/apis/employee/remove-emp-avatar.store";
+import { useRemoveEmpExperienceStore } from "@/stores/apis/employee/remove-emp-experience.store";
+import emptySvgImage from "@/assets/svg/empty.svg";
 import { useRemoveEmpResumeStore } from "@/stores/apis/employee/remove-emp-resume.store";
 import { useRemoveEmpCoverLetterStore } from "@/stores/apis/employee/remove-emp-coverletter.store";
-import { capitalizeWords } from "@/utils/functions/capitalize-words";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import { useRemoveEmpExperienceStore } from "@/stores/apis/employee/remove-emp-experience.store";
 import { useRemoveEmpEducationStore } from "@/stores/apis/employee/remove-emp-education.store";
-import RemoveAvatarOrCoverDialog from "../company/_dialogs/remove-avatar-cover-dialog";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
+import RemoveAlertDialog from "@/components/utils/dialogs/remove-alert-dialog";
+
+function parseMaybeDate(input?: string | null): Date | undefined {
+  if (!input || typeof input !== "string") return undefined;
+
+  if (input.includes("/")) {
+    // DD/MM/YYYY
+    const [d, m, y] = input.split("/").map(Number);
+    if (!d || !m || !y) return undefined;
+    return new Date(y, m - 1, d);
+  }
+
+  const dt = new Date(input);
+  return Number.isNaN(dt.getTime()) ? undefined : dt;
+}
 
 export default function EmployeeProfilePage() {
   // API Integration
@@ -115,7 +128,7 @@ export default function EmployeeProfilePage() {
   // Update Employee Information
   const updateOneEmpStore = useUpdateOneEmployeeStore();
 
-  // Upload Avatar, Resume and CoverLetter
+  // Update Avatar, Resume and CoverLetter
   const uploadAvatarEmpStore = useUploadEmployeeAvatarStore();
   const uploadResumeEmpStore = useUploadEmployeeResumeStore();
   const uploadCoverLetterEmpStore = useUploadEmployeeCoverLetter();
@@ -128,64 +141,56 @@ export default function EmployeeProfilePage() {
   const removeEmpEducationStore = useRemoveEmpEducationStore();
 
   // Compute All Loading States
-  const updatedProfileLoadingState =
+  const updateProfileLoadingState =
     updateOneEmpStore.loading ||
     uploadAvatarEmpStore.loading ||
     uploadResumeEmpStore.loading ||
     uploadCoverLetterEmpStore.loading ||
     removeEmpAvatarStore.loading ||
     removeEmpResumeStore.loading ||
-    removeEmpCoverLetterStore.loading;
+    removeEmpCoverLetterStore.loading ||
+    removeEmpEducationStore.loading ||
+    removeEmpExperieceStore.loading;
 
   // Utils
   const { toast, dismiss } = useToast();
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
-  // Avatar States
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const avatarInputRef = useRef<HTMLInputElement | null>(null);
-  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
-  const [openRemoveAvatarDialog, setOpenRemoveAvatarDialog] =
-    useState<boolean>(false);
-  const ignoreNextClick = useRef<boolean>(false);
-
-  // Resume States
-  const [resumeUrl, setResumeUrl] = useState<string | null>(null);
-  const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const resumeInputRef = useRef<HTMLInputElement | null>(null);
-
-  // CoverLetter States
-  const [coverLetterUrl, setCoverLetterUrl] = useState<string | null>(null);
-  const [coverLetterFile, setCoverLetterFile] = useState<File | null>(null);
-  const coverLetterInputRef = useRef<HTMLInputElement | null>(null);
-
-  // Select Gender and Location States
+  // Select Gender and Location
   const [selectedGender, setSelectedGender] = useState<TGender | string>("");
   const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
     "",
   );
 
-  // Education and Experience States
-  const [educations, setEducations] = useState<IEducation[]>([]);
-  const [experiences, setExperiences] = useState<IExperience[]>([]);
-  const [selectedGraduationDate, setSelectedGraduationDate] =
-    useState<Date | null>(null);
-  const [selectedExperienceDate, setSelectedExperienceDate] = useState<
-    Record<string, { startDate?: Date; endDate?: Date }>
-  >({});
+  // Avatar
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const avatarInputRef = useRef<HTMLInputElement | null>(null);
+  const [openAvatarPopup, setOpenAvatarPopup] = useState<boolean>(false);
+  const [openRemoveAvatarDialog, setOpenRemoveAvatarDialog] = useState(false);
+  const ignoreNextClick = useRef(false);
 
-  // Social States
+  // Resume
+  const [resumeUrl, setResumeUrl] = useState<string | null>(null);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const resumeInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Cover
+  const [coverLetterUrl, setCoverLetterUrl] = useState<string | null>(null);
+  const [coverLetterFile, setCoverLetterFile] = useState<File | null>(null);
+  const coverLetterInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Social
   const [socialInput, setSocialInput] = useState<ISocial | null>(null);
   const [socials, setSocials] = useState<ISocial[]>([]);
   const [deleteSocialIds, setDeleteSocialIds] = useState<string[]>([]);
 
-  // Skill States
+  // Skill
   const [skillInput, setSkillInput] = useState<string | null>(null);
   const [skills, setSkills] = useState<ISkill[]>([]);
   const [deleteSkillIds, setDeleteSkillIds] = useState<string[]>([]);
   const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
 
-  // CareerScope States
+  // CareerScope
   const [careerScopeInput, setCareerScopeInput] =
     useState<ICareerScopes | null>(null);
   const [careerScopes, setCareerScopes] = useState<ICareerScopes[]>([]);
@@ -195,6 +200,21 @@ export default function EmployeeProfilePage() {
   const [openCareerScopePopOver, setOpenCareerScopePopOver] =
     useState<boolean>(false);
 
+  // Experience Remove Dialog States
+  const [openRemoveExperienceDialog, setOpenRemoveExperienceDialog] =
+    useState<boolean>(false);
+  const [currentExperienceID, setCurrentExperienceID] = useState<string | null>(
+    null,
+  );
+
+  // Education Remove Dialog States
+  const [openRemoveEducationDialog, setRemoveOpenEducationDialog] =
+    useState<boolean>(false);
+  const [currentEducationID, setCurrentEducationID] = useState<string | null>(
+    null,
+  );
+
+  // React Hook Form: Employee Profile Schema
   const form = useForm<TEmployeeProfileForm>({
     resolver: zodResolver(employeeFormSchema),
     defaultValues: {
@@ -219,211 +239,207 @@ export default function EmployeeProfilePage() {
       educations: [],
       experiences: [],
       skills: [],
-      references: {
-        resume: null,
-        coverLetter: null,
-      },
+      references: { resume: null, coverLetter: null },
       careerScopes: [],
       socials: [],
     },
     shouldFocusError: false,
   });
 
-  // All useEffect Hooks
+  // Get Current User Effect
   useEffect(() => {
     getCurrentUser();
-  }, []);
+  }, [getCurrentUser]);
 
-  // Query Current Employee Profile Information Effect
+  // FieldArray for Experiences
+  const experienceFA = useFieldArray({
+    control: form.control,
+    name: "experiences",
+  });
+
+  // FieldArray for Education
+  const educationFA = useFieldArray({
+    control: form.control,
+    name: "educations",
+  });
+
+  // Hydrate Current User Data from API
   useEffect(() => {
-    if (user && employee) {
-      // Initialize form data
-      form.reset({
-        basicInfo: {
-          firstname: employee.firstname ?? "",
-          lastname: employee.lastname ?? "",
-          username: employee.username ?? "",
-          gender: employee.gender ?? "",
-          location: employee.location ?? "",
-          avatar: employee.avatar ?? null,
-        },
-        accountSetting: {
-          email: user.email ?? "",
-          phone: employee.phone,
-        },
-        profession: {
-          job: employee.job ?? "",
-          yearOfExperience: employee.yearsOfExperience?.toString(),
-          availability: employee.availability ?? "",
-          description: employee.description ?? "",
-        },
-        educations:
-          employee.educations.map((edu) => {
-            let year = new Date();
-            if (edu.year && typeof edu.year === "string") {
-              if (edu.year.includes("/")) {
-                // Parse DD/MM/YYYY string
-                const [d, m, y] = edu.year.split("/").map(Number);
-                year = new Date(y, m - 1, d);
-              } else {
-                // Parse as ISO string or other format
-                year = new Date(edu.year);
-              }
-            }
-            return {
-              school: edu.school,
-              degree: edu.degree,
-              year: year,
-            };
-          }) || [],
-        experiences:
-          employee.experiences.map((exp) => {
-            let startDate = new Date();
-            let endDate = new Date();
+    if (!user || !employee) return;
 
-            if (
-              (exp.startDate && typeof exp.startDate === "string") ||
-              (exp.endDate && typeof exp.endDate === "string")
-            ) {
-              if (exp.startDate.includes("/") || exp.endDate.includes("/")) {
-                const [dayS, monthS, yearS] = exp.startDate
-                  .split("/")
-                  .map(Number);
-                startDate = new Date(yearS, monthS - 1, dayS);
-
-                const [dayE, monthE, yearE] = exp.endDate
-                  .split("/")
-                  .map(Number);
-                endDate = new Date(yearE, monthE - 1, dayE);
-              } else {
-                startDate = new Date(exp.startDate);
-                endDate = new Date(exp.endDate);
-              }
-            }
-            return {
-              title: exp.title,
-              description: exp.description,
-              startDate: startDate,
-              endDate: endDate,
-            };
-          }) || [],
-        skills:
-          employee.skills.map((skill) => ({
-            name: skill.name,
-            description: skill.description,
-          })) || [],
-        references: {
-          resume: employee.resume ?? null,
-          coverLetter: employee.coverLetter ?? null,
-        },
-        careerScopes: employee.careerScopes.map((cp) => ({
-          name: cp.name,
-          description: cp.description,
-        })),
-        socials: employee.socials.map((social) => ({
-          platform: social.platform,
-          url: social.url,
-        })),
-      });
-
-      setSelectedGender(employee.gender ?? "");
-      setSelectedLocation(employee.location ?? "");
-      setEducations(
-        employee.educations.map((edu) => ({
-          ...edu,
-          year: dateFormatter(edu.year),
+    form.reset({
+      basicInfo: {
+        firstname: employee.firstname ?? "",
+        lastname: employee.lastname ?? "",
+        username: employee.username ?? "",
+        gender: employee.gender ?? "",
+        location: employee.location ?? "",
+        avatar: employee.avatar ?? null,
+      },
+      accountSetting: {
+        email: user.email ?? "",
+        phone: employee.phone ?? "",
+      },
+      profession: {
+        job: employee.job ?? "",
+        yearOfExperience: employee.yearsOfExperience?.toString() ?? "",
+        availability: employee.availability ?? "",
+        description: employee.description ?? "",
+      },
+      experiences:
+        employee.experiences?.map((exp) => ({
+          id: exp.id,
+          title: exp.title ?? "",
+          description: exp.description ?? "",
+          startDate: parseMaybeDate(exp.startDate),
+          endDate: parseMaybeDate(exp.endDate),
         })) ?? [],
-      );
-      setExperiences(employee.experiences ?? []);
-      setSocials(employee.socials ?? []);
-      setSkills(employee.skills ?? []);
-      setCareerScopes(employee.careerScopes ?? []);
-    }
+      skills:
+        employee.skills?.map((s) => ({
+          id: s.id,
+          name: s.name,
+          description: s.description,
+        })) ?? [],
+      references: {
+        resume: employee.resume ?? null,
+        coverLetter: employee.coverLetter ?? null,
+      },
+      careerScopes:
+        employee.careerScopes?.map((cs) => ({
+          id: cs.id,
+          name: cs.name,
+          description: cs.description,
+        })) ?? [],
+      socials:
+        employee.socials?.map((s) => ({
+          id: s.id,
+          platform: s.platform,
+          url: s.url,
+        })) ?? [],
+      educations: employee.educations?.map((edu) => ({
+        id: edu.id,
+        school: edu.school ?? "",
+        degree: edu.degree ?? "",
+        year: parseMaybeDate(edu.year),
+      })),
+    });
+
+    setSelectedGender(employee.gender ?? "");
+    setSelectedLocation(employee.location ?? "");
+
+    setSocials(employee.socials ?? []);
+    setSkills(employee.skills ?? []);
+    setCareerScopes(employee.careerScopes ?? []);
   }, [user, employee, form]);
 
-  // Initial CareerScope Effect
+  // Preview Resume and CoverLetter URLs
   useEffect(() => {
-    const initialCareerScopes = form.getValues("careerScopes") || [];
-
-    setCareerScopes(
-      initialCareerScopes.map((cs) => ({
-        id: cs?.id,
-        name: cs?.name ?? "",
-        description: cs?.description,
-      })),
-    );
-  }, [form]);
-
-  // Initial Social Effect
-  useEffect(() => {
-    const initialSocial = (form.getValues("socials") || []).filter(
-      (s): s is ISocial =>
-        !!s && typeof s.platform === "string" && typeof s.url === "string",
-    );
-
-    setSocials(initialSocial);
-  }, [form]);
-
-  // Initial Skill Effect
-  useEffect(() => {
-    const initialSkills = form.getValues("skills") || [];
-
-    setSkills(
-      initialSkills.map((skill) => ({
-        id: skill?.id ?? "",
-        name: skill?.name ?? "",
-        description: skill?.description ?? "",
-      })),
-    );
-  }, [form]);
-
-  // Initial Resume File
-  useEffect(() => {
-    if (resumeFile) {
-      const objectUrl = URL.createObjectURL(resumeFile);
-      setResumeUrl(objectUrl);
-      return () => URL.revokeObjectURL(objectUrl);
-    }
+    if (!resumeFile) return;
+    const objectUrl = URL.createObjectURL(resumeFile);
+    setResumeUrl(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
   }, [resumeFile]);
 
-  // Initial CoverLetter File
   useEffect(() => {
-    if (coverLetterFile) {
-      const objectUrl = URL.createObjectURL(coverLetterFile);
-      setCoverLetterUrl(objectUrl);
-      return () => URL.revokeObjectURL(objectUrl);
-    }
+    if (!coverLetterFile) return;
+    const objectUrl = URL.createObjectURL(coverLetterFile);
+    setCoverLetterUrl(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
   }, [coverLetterFile]);
 
-  // Handle Enable and Disable Edit Mode
+  // Edit Mode
   const enableEditMode = () => {
     getAllCareerScopesStore.getAllCareerScopes();
     setIsEdit(true);
   };
 
   const disableEditMode = () => {
+    setOpenRemoveAvatarDialog(false);
+    setOpenRemoveExperienceDialog(false);
     setIsEdit(false);
     form.reset();
   };
 
-  // Education Bussiness Logics
-  // 1. Add New Education
-  const addEducation = () => {
-    const newEducation = {
-      id: Date.now().toString(),
-      school: "",
-      degree: "",
-      year: new Date().toISOString(),
-    };
+  /* ------------------- Reference Bussiness Logics ------------------- */
+  // 1.API: Remove Resume
+  const removeResume = async () => {
+    if (!employee) return;
 
-    setEducations((prevEducation) => [...prevEducation, newEducation]);
+    await removeEmpResumeStore.removeEmpResume(employee.id);
+    await getCurrentUser();
+
+    toast({
+      variant: "success",
+      description: (
+        <div className="flex items-center gap-2">
+          <LucideCheck />
+          <TypographySmall className="font-medium leading-relaxed">
+            Remove Resume Successfully!
+          </TypographySmall>
+        </div>
+      ),
+    });
   };
 
-  // 2. Remove Education with ID
-  const removeEducation = async (educationID: string) => {
-    await removeEmpEducationStore.removeEducation(employee!.id, educationID);
+  // 2.API: Remove CoverLetter
+  const removeCoverLetter = async () => {
+    if (!employee) return;
 
-    // Refetch current user to get updated data
+    await removeEmpCoverLetterStore.removeEmpCoverLetter(employee.id);
+    await getCurrentUser();
+
+    toast({
+      variant: "success",
+      description: (
+        <div className="flex items-center gap-2">
+          <LucideCheck />
+          <TypographySmall className="font-medium leading-relaxed">
+            Remove CoverLetter Successfully!
+          </TypographySmall>
+        </div>
+      ),
+    });
+  };
+
+  // 3.API: Remove Avatar
+  const removeAvatar = async () => {
+    if (employee) await removeEmpAvatarStore.removeEmpAvatar(employee.id);
+
+    await getCurrentUser();
+
+    setIsEdit(false);
+    setOpenRemoveAvatarDialog(false);
+
+    toast({
+      variant: "success",
+      description: (
+        <div className="flex items-center gap-2">
+          <LucideCheck />
+          <TypographySmall className="font-medium leading-relaxed">
+            Remove Avatar Successfully!
+          </TypographySmall>
+        </div>
+      ),
+    });
+  };
+
+  /* ------------------- Experience Bussiness Logics ------------------- */
+  // 1.Add New Experience
+  const addExperience = () => {
+    experienceFA.append({
+      id: "",
+      title: "",
+      description: "",
+      startDate: undefined,
+      endDate: undefined,
+    });
+  };
+
+  // 2.API: Remove Experience
+  const removeExperience = async (experienceID: string) => {
+    if (!employee) return;
+
+    await removeEmpExperieceStore.removeExperience(employee.id, experienceID);
     await getCurrentUser();
 
     toast({
@@ -440,25 +456,22 @@ export default function EmployeeProfilePage() {
     setIsEdit(false);
   };
 
-  // Experience Bussiness Logics
-  // 1. Add New Experience
-  const addExperience = () => {
-    const newExperience = {
-      id: Date.now().toString(),
-      title: "",
-      description: "",
-      startDate: "",
-      endDate: "",
-    };
-
-    setExperiences((prevExperience) => [...prevExperience, newExperience]);
+  /* ------------------- Education Bussiness Logics ------------------- */
+  // 1.Add New Education
+  const addNewEducation = () => {
+    educationFA.append({
+      id: "",
+      school: "",
+      degree: "",
+      year: undefined,
+    });
   };
 
-  // 2. Remove Experience with ID
-  const removeExperience = async (experienceID: string) => {
-    await removeEmpExperieceStore.removeExperience(employee!.id, experienceID);
+  // 2.API: Remove Education
+  const removeEducation = async (experienceID: string) => {
+    if (!employee) return;
 
-    // Refetch current user to get updated data
+    await removeEmpEducationStore.removeEducation(employee.id, experienceID);
     await getCurrentUser();
 
     toast({
@@ -475,72 +488,8 @@ export default function EmployeeProfilePage() {
     setIsEdit(false);
   };
 
-  // Social Bussiness Logic
-  // 1. Add New Social
-  const addSocial = () => {
-    const trimmedPlatform = socialInput?.platform.trim();
-    const trimmedUrl = socialInput?.url.trim();
-    if (!trimmedPlatform || !trimmedUrl) return;
-
-    const currentSocails = form.getValues("socials") || [];
-
-    // Check duplicate social entries
-    const alreadyExists = currentSocails.some(
-      (s) => s?.platform?.toLowerCase() === trimmedPlatform.toLowerCase(),
-    );
-
-    if (alreadyExists) {
-      toast({
-        variant: "destructive",
-        title: "Duplicate Social",
-        description: "This social platform already exists.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
-      });
-      setSocialInput(null);
-      return;
-    }
-
-    const updatedSocials = [
-      ...socials,
-      { id: "", platform: capitalizeWords(trimmedPlatform), url: trimmedUrl },
-    ];
-    form.setValue("socials", updatedSocials, {
-      shouldDirty: true,
-      shouldTouch: true,
-    });
-
-    setSocials(updatedSocials);
-    setSocialInput(null);
-  };
-
-  // 2. Remove Old Social
-  const removeSocial = (platform: TPlatform) => {
-    const currentSocial = (form.getValues("socials") || []).filter(
-      Boolean,
-    ) as ISocial[];
-
-    const socialToDelete = currentSocial.find((s) => s?.platform === platform);
-    if (!socialToDelete) return;
-
-    if (
-      typeof socialToDelete === "object" &&
-      "id" in socialToDelete &&
-      socialToDelete.id
-    ) {
-      setDeleteSocialIds((prev) => [...prev, socialToDelete.id as string]);
-    }
-
-    const updatedSocials = socials.filter((s) => s.platform !== platform);
-    form.setValue("socials", updatedSocials, {
-      shouldDirty: true,
-      shouldTouch: true,
-    });
-
-    setSocials(updatedSocials);
-  };
-
-  // Skill Bussiness Logics
-  // 1. Add New Skill
+  /* ------------------- Skill Bussiness Logics ------------------- */
+  // 1.Add New Skill
   const addSkills = () => {
     const trimmed = skillInput?.trim();
     if (!trimmed) return;
@@ -550,7 +499,7 @@ export default function EmployeeProfilePage() {
     ) as ISkill[];
 
     const alreadyExists = currentSkills.some(
-      (skill) => skill.name.toLowerCase() === trimmed.toLowerCase(),
+      (s) => (s.name ?? "").toLowerCase() === trimmed.toLowerCase(),
     );
 
     if (alreadyExists) {
@@ -565,97 +514,82 @@ export default function EmployeeProfilePage() {
       return;
     }
 
-    const updatedSkills: ISkill[] = [...skills, { name: trimmed }];
+    const updated = [...skills, { id: "", name: trimmed, description: "" }];
+    setSkills(updated);
 
-    form.setValue("skills", updatedSkills, {
-      shouldDirty: true,
-      shouldTouch: true,
-    });
+    form.setValue("skills", updated, { shouldDirty: true, shouldTouch: true });
 
-    setSkills(updatedSkills);
     setSkillInput(null);
     setOpenSkillPopOver(false);
   };
 
-  // 2. Remove Old Skill
-  const removeSkill = async (skillToRemove: string) => {
+  // 2.Remove Skill
+  const removeSkill = (skillToRemove: string) => {
     const currentSkills = (form.getValues("skills") || []).filter(
       Boolean,
     ) as ISkill[];
 
-    const skillToDelete = currentSkills.find(
-      (skill) => skill.name === skillToRemove,
-    );
-    if (!skillToDelete) return;
+    const skillToDelete = currentSkills.find((s) => s.name === skillToRemove);
+    if (skillToDelete?.id)
+      setDeleteSkillIds((prev) => [...prev, skillToDelete.id!]);
 
-    if (
-      typeof skillToDelete === "object" &&
-      "id" in skillToDelete &&
-      skillToDelete.id
-    ) {
-      setDeleteSkillIds((prev) => [...prev, skillToDelete.id as string]);
-    }
-
-    const updatedSkills = currentSkills.filter(
-      (skill) => skill.name !== skillToRemove,
-    );
-    form.setValue("socials", updatedSkills, {
-      shouldDirty: true,
-      shouldTouch: true,
-    });
-
-    setSkills(updatedSkills);
+    const updated = currentSkills.filter((s) => s.name !== skillToRemove);
+    setSkills(updated);
+    form.setValue("skills", updated, { shouldDirty: true, shouldTouch: true });
   };
 
-  // CareerScope Bussiness Logic
-  // 1. Add New CareerScope
-  const addCareerScope = () => {
-    const trimmed = careerScopeInput?.name.trim();
-    const id = careerScopeInput?.id;
-    const description = careerScopeInput?.description;
-    if (!trimmed) return;
+  /* ------------------- Social Bussiness Logics ------------------- */
+  // 1.Add New Social
+  const addSocial = () => {
+    const trimmedPlatform = socialInput?.platform?.trim();
+    const trimmedUrl = socialInput?.url?.trim();
+    if (!trimmedPlatform || !trimmedUrl) return;
 
-    const currentCareerScopes = (form.getValues("careerScopes") || []).filter(
+    const currentSocials = (form.getValues("socials") || []).filter(
       Boolean,
-    ) as ICareerScopes[];
+    ) as ISocial[];
 
-    const alreadyExists = currentCareerScopes.some(
-      (career) => career.name.toLowerCase() === trimmed.toLowerCase(),
+    const alreadyExists = currentSocials.some(
+      (s) => (s.platform ?? "").toLowerCase() === trimmedPlatform.toLowerCase(),
     );
 
     if (alreadyExists) {
       toast({
         variant: "destructive",
-        title: "Duplicated Skill",
-        description: "Please input another skill.",
+        title: "Duplicate Social",
+        description: "This social platform already exists.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
-
-      setCareerScopeInput(null);
-      setOpenCareerScopePopOver(false);
+      setSocialInput(null);
       return;
     }
 
-    const updatedCareerScopes = [
-      ...careerScopes.map((career) => ({
-        id: career.id ?? "",
-        name: career.name,
-        description: career.description ?? "",
-      })),
-      { id: id ?? "", name: trimmed, description: description ?? "" },
+    const updated = [
+      ...socials,
+      { id: "", platform: capitalizeWords(trimmedPlatform), url: trimmedUrl },
     ];
 
-    form.setValue("careerScopes", updatedCareerScopes, {
-      shouldDirty: true,
-      shouldTouch: true,
-    });
-
-    setCareerScopes(updatedCareerScopes);
-    setCareerScopeInput(null);
-    setOpenCareerScopePopOver(false);
+    setSocials(updated);
+    form.setValue("socials", updated, { shouldDirty: true, shouldTouch: true });
+    setSocialInput(null);
   };
 
-  // 2. CareerScope Selection from the Dropdown or Input
+  // 2.Remove Social
+  const removeSocial = (platform: TPlatform) => {
+    const currentSocials = (form.getValues("socials") || []).filter(
+      Boolean,
+    ) as ISocial[];
+
+    const toDelete = currentSocials.find((s) => s.platform === platform);
+    if (toDelete?.id) setDeleteSocialIds((prev) => [...prev, toDelete.id!]);
+
+    const updated = currentSocials.filter((s) => s.platform !== platform);
+    setSocials(updated);
+    form.setValue("socials", updated, { shouldDirty: true, shouldTouch: true });
+  };
+
+  /* ------------------- CareerScope Bussiness Logics ------------------- */
+  // 1.Handle CareerScope Select
   const handleCareerScopeSelect = (
     selectedCareerId: string,
     selectedCareerName: string,
@@ -668,61 +602,105 @@ export default function EmployeeProfilePage() {
     });
   };
 
-  // 3. Remove Old CareerScope with Career's name
-  const removeCareerScope = (careerToRemove: string) => {
-    const currentCareerScopes = (form.getValues("careerScopes") || []).filter(
+  // 2.Add New CareerScope
+  const addCareerScope = () => {
+    const name = careerScopeInput?.name?.trim();
+    if (!name) return;
+
+    const current = (form.getValues("careerScopes") || []).filter(
       Boolean,
     ) as ICareerScopes[];
 
-    const careerToDelete = currentCareerScopes.find(
-      (career) => career.name === careerToRemove,
+    const alreadyExists = current.some(
+      (c) => (c.name ?? "").toLowerCase() === name.toLowerCase(),
     );
-    if (!careerToDelete) return;
-
-    if (
-      typeof careerToDelete === "object" &&
-      "id" in careerToDelete &&
-      careerToDelete.id
-    ) {
-      setDeleteCareerScopeIds((prev) => [...prev, careerToDelete.id as string]);
+    if (alreadyExists) {
+      toast({
+        variant: "destructive",
+        title: "Duplicated Career",
+        description: "Please select another career.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+      setCareerScopeInput(null);
+      setOpenCareerScopePopOver(false);
+      return;
     }
 
-    const updatedCareerScopes = currentCareerScopes.filter(
-      (career) => career.name !== careerToRemove,
-    );
-    form.setValue("careerScopes", updatedCareerScopes, {
+    const updated = [
+      ...careerScopes.map((c) => ({
+        id: c.id ?? "",
+        name: c.name,
+        description: c.description ?? "",
+      })),
+      {
+        id: careerScopeInput?.id ?? "",
+        name,
+        description: careerScopeInput?.description ?? "",
+      },
+    ];
+
+    setCareerScopes(updated);
+    form.setValue("careerScopes", updated, {
       shouldDirty: true,
       shouldTouch: true,
     });
 
-    setCareerScopes(updatedCareerScopes);
+    setCareerScopeInput(null);
+    setOpenCareerScopePopOver(false);
   };
 
-  // Handle Avatar and References File Change
+  // 3.Remove CareerScope
+  const removeCareerScope = (careerToRemove: string) => {
+    const current = (form.getValues("careerScopes") || []).filter(
+      Boolean,
+    ) as ICareerScopes[];
+
+    const toDelete = current.find((c) => c.name === careerToRemove);
+    if (toDelete?.id)
+      setDeleteCareerScopeIds((prev) => [...prev, toDelete.id!]);
+
+    const updated = current.filter((c) => c.name !== careerToRemove);
+    setCareerScopes(updated);
+    form.setValue("careerScopes", updated, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+  };
+
+  // Handle File Change: Avatar, Resume and CoverLetter
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     type: "avatar" | "resume" | "coverLetter",
   ) => {
-    const file = event.target.files ? event.target.files[0] : null;
+    const file = event.target.files?.[0] ?? null;
 
-    if (file) {
-      if (type === "avatar") {
-        setAvatarFile(file);
-        form.setValue("basicInfo.avatar", file);
-      } else if (type === "resume") {
-        setResumeFile(file);
-        form.setValue("references.resume", file);
-      } else if (type === "coverLetter") {
-        setCoverLetterFile(file);
-        form.setValue("references.coverLetter", file);
-      }
+    if (!file) return;
+
+    if (type === "avatar") {
+      setAvatarFile(file);
+      form.setValue("basicInfo.avatar", file, {
+        shouldDirty: true,
+        shouldTouch: true,
+      });
+    }
+    if (type === "resume") {
+      setResumeFile(file);
+      form.setValue("references.resume", file, {
+        shouldDirty: true,
+        shouldTouch: true,
+      });
+    }
+    if (type === "coverLetter") {
+      setCoverLetterFile(file);
+      form.setValue("references.coverLetter", file, {
+        shouldDirty: true,
+        shouldTouch: true,
+      });
     }
   };
 
-  // Handle Download Resume and CoverLetter File
-  const handleDownloadResumeAndCoverLetterFile = (file: File) => {
-    if (!file) return;
-
+  // Handle File Download: Resume and CoverLetter
+  const handleDownloadFile = (file: File) => {
     const url = URL.createObjectURL(file);
     const link = document.createElement("a");
     link.href = url;
@@ -733,14 +711,24 @@ export default function EmployeeProfilePage() {
     URL.revokeObjectURL(url);
   };
 
-  // onSubmit: Update The Entire Employee Profile (API's calling)
+  // Handle Click Avatar Popup
+  const handleClickAvatarPopup = (e: React.MouseEvent) => {
+    if (ignoreNextClick.current) {
+      ignoreNextClick.current = false;
+      return;
+    }
+    if ((e.target as HTMLElement).closest(".dialog-content")) return;
+    setOpenAvatarPopup(true);
+  };
+
+  // Submit
   const onSubmit = async (data: TEmployeeProfileForm) => {
-    console.log("Employee Profile Data: ", data);
+    if (!employee) return;
+
     const updateBody: Partial<TEmployeeUpdateBody> = {};
+    const dirtyFields = form.formState.dirtyFields;
 
     try {
-      const dirtyFields = form.formState.dirtyFields;
-
       /* ------------------------ BASIC INFO ------------------------ */
       const basicInfoKeys: (keyof NonNullable<typeof data.basicInfo>)[] = [
         "firstname",
@@ -752,7 +740,6 @@ export default function EmployeeProfilePage() {
 
       basicInfoKeys.forEach((key) => {
         if (dirtyFields?.basicInfo?.[key]) {
-          // backend fields are top-level on UpdateEmployeeInfoDTO
           (updateBody as any)[key] = data.basicInfo?.[key];
         }
       });
@@ -765,7 +752,6 @@ export default function EmployeeProfilePage() {
 
       accountKeys.forEach((key) => {
         if (dirtyFields?.accountSetting?.[key]) {
-          // backend accepts email? + phone? at top-level
           (updateBody as any)[key] = data.accountSetting?.[key];
         }
       });
@@ -781,7 +767,6 @@ export default function EmployeeProfilePage() {
       professionKeys.forEach((key) => {
         if (dirtyFields?.profession?.[key]) {
           if (key === "yearOfExperience") {
-            // backend expects yearsOfExperience as number
             const raw = data.profession?.yearOfExperience;
             const num =
               raw !== undefined && raw !== null && raw !== ""
@@ -791,58 +776,44 @@ export default function EmployeeProfilePage() {
               (updateBody as any).yearsOfExperience = num;
             }
           } else {
-            // job/availability/description
             (updateBody as any)[key] = (data.profession as any)?.[key];
           }
         }
       });
 
-      /* ------------------------ SKILLS (M2M) ------------------------ */
+      /* ------------------------ SKILLS ------------------------ */
       if (dirtyFields.skills || deleteSkillIds.length > 0) {
         updateBody.skills = (data.skills ?? [])
-          .filter(
-            (s): s is ISkill =>
-              !!s && typeof s.name === "string" && s.name.trim().length > 0,
-          )
+          .filter((s): s is ISkill => !!s && !!s.name?.trim())
           .map((s) => ({
-            id: s.id ?? "", // if your ISkill requires id, keep this; otherwise remove
+            id: s.id ?? "",
             name: s.name.trim(),
-            description: s.description ?? "", // ✅ never undefined
+            description: s.description ?? "",
           }));
 
-        if (deleteSkillIds.length > 0) {
+        if (deleteSkillIds.length > 0)
           updateBody.skillIdsToDelete = deleteSkillIds;
-        }
       }
 
-      /* ------------------------ CAREER SCOPES (M2M) ------------------------ */
+      /* ------------------------ CAREER SCOPES ------------------------ */
       if (dirtyFields.careerScopes || deleteCareerScopeIds.length > 0) {
         updateBody.careerScopes = (data.careerScopes ?? [])
-          .filter(
-            (cs): cs is ICareerScopes =>
-              !!cs && typeof cs.name === "string" && cs.name.trim().length > 0,
-          )
+          .filter((cs): cs is ICareerScopes => !!cs && !!cs.name?.trim())
           .map((cs) => ({
             id: cs.id ?? "",
             name: cs.name.trim(),
             description: cs.description ?? "",
           }));
 
-        if (deleteCareerScopeIds.length > 0) {
+        if (deleteCareerScopeIds.length > 0)
           updateBody.careerScopeIdsToDelete = deleteCareerScopeIds;
-        }
       }
 
-      /* ------------------------ SOCIALS (O2M) ------------------------ */
+      /* ------------------------ SOCIALS ------------------------ */
       if (dirtyFields.socials || deleteSocialIds.length > 0) {
         updateBody.socials = (data.socials ?? [])
           .filter(
-            (s): s is ISocial =>
-              !!s &&
-              typeof s.platform === "string" &&
-              s.platform.trim().length > 0 &&
-              typeof s.url === "string" &&
-              s.url.trim().length > 0,
+            (s): s is ISocial => !!s && !!s.platform?.trim() && !!s.url?.trim(),
           )
           .map((s) => ({
             id: s.id ?? "",
@@ -850,94 +821,60 @@ export default function EmployeeProfilePage() {
             url: s.url.trim(),
           }));
 
-        if (deleteSocialIds.length > 0) {
+        if (deleteSocialIds.length > 0)
           updateBody.socialIdsToDelete = deleteSocialIds;
-        }
       }
 
-      /* ------------------------ EDUCATIONS (O2M) ------------------------ */
-      if (dirtyFields.educations) {
-        updateBody.educations = (data.educations ?? [])
+      /* ------------------------ EXPERIENCES ------------------------ */
+      if (dirtyFields.experiences) {
+        updateBody.experiences = (data.experiences ?? [])
           .filter(
             (
-              edu,
-            ): edu is {
+              exp,
+            ): exp is {
               id?: string;
-              school: string;
-              degree: string;
-              year: Date;
+              title: string;
+              description: string;
+              startDate: Date;
+              endDate?: Date;
             } =>
-              !!edu &&
-              typeof edu.school === "string" &&
-              edu.school.trim().length > 0 &&
-              typeof edu.degree === "string" &&
-              edu.degree.trim().length > 0 &&
-              edu.year instanceof Date,
+              !!exp &&
+              !!exp.title?.trim() &&
+              !!exp.description?.trim() &&
+              exp.startDate instanceof Date &&
+              (exp.endDate == null || exp.endDate instanceof Date),
           )
-          .map((edu) => ({
-            ...(edu.id ? { id: edu.id } : {}),
-            school: edu.school,
-            degree: edu.degree,
-            year: edu.year.toISOString(), // backend wants string
+          .map((exp) => ({
+            ...(exp.id ? { id: exp.id } : {}),
+            title: exp.title.trim(),
+            description: exp.description.trim(),
+            startDate: exp.startDate.toISOString(),
+            endDate: exp.endDate ? exp.endDate.toISOString() : "",
           }));
       }
-
-      /* ------------------------ EXPERIENCES (O2M) ------------------------ */
-      updateBody.experiences = (data.experiences ?? [])
-        .filter(
-          (
-            exp,
-          ): exp is {
-            id?: string;
-            title: string;
-            description: string;
-            startDate: Date;
-            endDate?: Date;
-          } =>
-            !!exp &&
-            typeof exp.title === "string" &&
-            exp.title.trim().length > 0 &&
-            typeof exp.description === "string" &&
-            exp.description.trim().length > 0 &&
-            exp.startDate instanceof Date &&
-            (exp.endDate == null || exp.endDate instanceof Date),
-        )
-        .map((exp) => ({
-          ...(exp.id ? { id: exp.id } : {}),
-          title: exp.title,
-          description: exp.description,
-          startDate: exp.startDate.toISOString(),
-          endDate: exp.endDate ? exp.endDate.toISOString() : "",
-        }));
 
       /* ------------------------ FILE UPLOADS ------------------------ */
       const uploadTasks: Promise<any>[] = [];
 
-      // Avatar upload
       if (data.basicInfo?.avatar instanceof File) {
         uploadTasks.push(
-          uploadAvatarEmpStore.uploadAvatar(
-            employee!.id,
-            data.basicInfo.avatar,
-          ),
+          uploadAvatarEmpStore.uploadAvatar(employee.id, data.basicInfo.avatar),
         );
       }
 
-      // Resume upload
       if (data.references?.resume instanceof File) {
         uploadTasks.push(
           uploadResumeEmpStore.uploadResume(
-            employee!.id,
+            employee.id,
             data.references.resume,
           ),
         );
       }
 
-      // Cover letter upload
       if (data.references?.coverLetter instanceof File) {
         uploadTasks.push(
           uploadCoverLetterEmpStore.uploadCoverLetter(
-            employee!.id,
+            employee.id,
             data.references.coverLetter,
           ),
         );
@@ -947,28 +884,12 @@ export default function EmployeeProfilePage() {
 
       /* ------------------------ API UPDATE ------------------------ */
       if (Object.keys(updateBody).length > 0) {
-        await updateOneEmpStore.updateOneEmployee(employee!.id, updateBody);
+        await updateOneEmpStore.updateOneEmployee(employee.id, updateBody);
       }
 
-      // Refresh page for refetch current user and reset form
       window.location.reload();
-
-      form.reset(data);
-
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <LucideCheck />
-            <TypographySmall className="font-medium leading-relaxed">
-              Updated Employee Profile Successfully!
-            </TypographySmall>
-          </div>
-        ),
-      });
-
-      setIsEdit(false);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       toast({
         variant: "destructive",
         title: "Error!",
@@ -977,84 +898,58 @@ export default function EmployeeProfilePage() {
     }
   };
 
-  // handleSubmit: Submit Employee Profile Form
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Sync all state arrays into the form (important!)
+    // keep your local arrays synced into RHF
     form.setValue("skills", skills, { shouldDirty: true, shouldTouch: true });
     form.setValue("careerScopes", careerScopes, {
       shouldDirty: true,
       shouldTouch: true,
     });
     form.setValue("socials", socials, { shouldDirty: true, shouldTouch: true });
-    form.setValue("educations", educations as any, {
-      shouldDirty: true,
-      shouldTouch: true,
-    });
-    form.setValue("experiences", experiences as any, {
-      shouldDirty: true,
-      shouldTouch: true,
-    });
 
-    // Sync file inputs managed outside the form
-    if (avatarFile) {
-      form.setValue("basicInfo.avatar", avatarFile, {
-        shouldDirty: true,
-        shouldTouch: true,
-      });
-    }
-
-    if (resumeFile) {
-      form.setValue("references.resume", resumeFile, {
-        shouldDirty: true,
-        shouldTouch: true,
-      });
-    }
-
-    if (coverLetterFile) {
+    if (avatarFile)
+      form.setValue("basicInfo.avatar", avatarFile, { shouldDirty: true });
+    if (resumeFile)
+      form.setValue("references.resume", resumeFile, { shouldDirty: true });
+    if (coverLetterFile)
       form.setValue("references.coverLetter", coverLetterFile, {
         shouldDirty: true,
-        shouldTouch: true,
       });
-    }
 
-    // Submit
     form.handleSubmit(onSubmit, console.error)(e);
   };
 
-  // API for Remove Employee Avatar
-  const handleRemoveEmpAvatar = async () => {
-    if (employee) await removeEmpAvatarStore.removeEmpAvatar(employee.id);
-
-    await getCurrentUser();
-    setIsEdit(false);
-    setOpenRemoveAvatarDialog(false);
-  };
-
-  // Employee Profile Popup Handler
-  const handleClickProfilePopup = (e: React.MouseEvent) => {
-    if (ignoreNextClick.current) {
-      ignoreNextClick.current = false;
-      return;
+  // Loading State Effect
+  useEffect(() => {
+    if (updateProfileLoadingState) {
+      dismiss();
+      toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <ApsaraLoadingSpinner size={50} loop />
+            <TypographySmall className="font-medium leading-relaxed">
+              Updating Employee Profile...
+            </TypographySmall>
+          </div>
+        ),
+      });
     }
-    if ((e.target as HTMLElement).closest(".dialog-content")) return;
-    setOpenProfilePopup(true);
-  };
+  }, [updateProfileLoadingState]);
 
   if (loading) return <EmployeeProfilePageSkeleton />;
   if (!user || !employee) return null;
 
-  return user ? (
+  return (
     <form className="!min-w-full flex flex-col gap-5" onSubmit={handleSubmit}>
+      {/* Header */}
       <div className="flex items-center justify-between border border-muted rounded-md p-5 tablet-sm:flex-col tablet-sm:[&>div]:w-full tablet-sm:gap-5">
         <div className="flex items-center justify-start gap-5 tablet-sm:flex-col">
           <div
             className="relative"
             onClick={(e) => {
-              if (!isEdit) {
-                if (employee.avatar) handleClickProfilePopup(e);
-              }
+              if (!isEdit && employee.avatar) handleClickAvatarPopup(e);
             }}
           >
             <Avatar className="size-36" rounded="md">
@@ -1067,6 +962,7 @@ export default function EmployeeProfilePage() {
                 {employee.username?.slice(0, 3)}
               </AvatarFallback>
             </Avatar>
+
             {isEdit && (
               <div className="flex items-center gap-1 absolute bottom-1 right-1">
                 <Button
@@ -1076,25 +972,27 @@ export default function EmployeeProfilePage() {
                 >
                   <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
                 </Button>
-                <Button
-                  className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-red-500 text-primary-foreground"
-                  type="button"
-                  onClick={() => setOpenRemoveAvatarDialog(true)}
-                >
-                  <LucideXCircle width={"18px"} strokeWidth={"1.2px"} />
-                </Button>
+                {employee.avatar && (
+                  <Button
+                    className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-red-500 text-primary-foreground"
+                    type="button"
+                    onClick={() => setOpenRemoveAvatarDialog(true)}
+                  >
+                    <LucideXCircle width={"18px"} strokeWidth={"1.2px"} />
+                  </Button>
+                )}
               </div>
             )}
 
-            {/* Renove Avatar Dialog Section */}
-            <RemoveAvatarOrCoverDialog
+            <RemoveAlertDialog
               type="avatar"
-              setOnRemoveAvatarOrCoverDialog={setOpenRemoveAvatarDialog}
-              onRemoveAvatarOrCoverDialog={openRemoveAvatarDialog}
-              onNoClick={() => setOpenRemoveAvatarDialog(false)}
-              onYesClick={handleRemoveEmpAvatar}
+              setOpenDialog={setOpenRemoveAvatarDialog}
+              openDialog={openRemoveAvatarDialog}
+              onNoClick={disableEditMode}
+              onYesClick={removeAvatar}
             />
           </div>
+
           <input
             ref={avatarInputRef}
             type="file"
@@ -1102,45 +1000,40 @@ export default function EmployeeProfilePage() {
             accept="image/*"
             onChange={(e) => handleFileChange(e, "avatar")}
           />
+
           <div className="flex flex-col items-start gap-1 tablet-sm:items-center">
             <TypographyH3>{employee.username}</TypographyH3>
             <TypographyMuted>{employee.job}</TypographyMuted>
           </div>
         </div>
+
         {isEdit ? (
           <div className="flex items-center gap-3">
             <Button type="submit" className="text-xs">
-              Save
-              <LucideCircleCheck />
+              Save <LucideCircleCheck />
             </Button>
-            <Button
-              type="button"
-              className="text-xs"
-              onClick={() => setIsEdit(false)}
-            >
-              Cancel
-              <LucideXCircle />
+            <Button type="button" className="text-xs" onClick={disableEditMode}>
+              Cancel <LucideXCircle />
             </Button>
           </div>
         ) : (
-          <Button
-            type="button"
-            className="text-xs"
-            onClick={() => setIsEdit(true)}
-          >
-            Edit Profile
-            <LucideEdit />
+          <Button type="button" className="text-xs" onClick={enableEditMode}>
+            Edit Profile <LucideEdit />
           </Button>
         )}
       </div>
+
+      {/* Content */}
       <div className="flex items-start gap-5 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
+        {/* LEFT */}
         <div className="w-[60%] flex flex-col gap-5">
-          {/* Personal Information Form Section */}
+          {/* Personal Info */}
           <div className="w-full flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
             <div className="flex flex-col gap-1">
               <TypographyH4>Personal Information</TypographyH4>
               <Divider />
             </div>
+
             <div className="flex flex-col items-start gap-5">
               <div className="w-full flex items-center justify-between gap-5 [&>div]:!w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
                 <LabelInput
@@ -1166,6 +1059,7 @@ export default function EmployeeProfilePage() {
                   }
                 />
               </div>
+
               <LabelInput
                 label="Username"
                 input={
@@ -1177,6 +1071,7 @@ export default function EmployeeProfilePage() {
                   />
                 }
               />
+
               <div className="w-full flex items-center justify-between gap-5 [&>div]:w-1/2">
                 <div className="flex flex-col items-start gap-1">
                   <TypographyMuted className="text-xs">
@@ -1209,6 +1104,7 @@ export default function EmployeeProfilePage() {
                     )}
                   />
                 </div>
+
                 <div className="flex flex-col items-start gap-1">
                   <TypographyMuted className="text-xs">Gender</TypographyMuted>
                   <Controller
@@ -1239,6 +1135,7 @@ export default function EmployeeProfilePage() {
                   />
                 </div>
               </div>
+
               <LabelInput
                 label="Email"
                 input={
@@ -1266,12 +1163,13 @@ export default function EmployeeProfilePage() {
             </div>
           </div>
 
-          {/* Professional Information Form Section */}
+          {/* Professional Info */}
           <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
             <div className="flex flex-col gap-1">
               <TypographyH4>Professional Information</TypographyH4>
               <Divider />
             </div>
+
             <div className="flex flex-col items-start gap-5">
               <LabelInput
                 label="Profession"
@@ -1285,6 +1183,7 @@ export default function EmployeeProfilePage() {
                   />
                 }
               />
+
               <div className="w-full flex justify-between items-center gap-5 [&>div]:w-1/2 tablet-md:flex-col tablet-md:[&>div]:w-full">
                 <LabelInput
                   label="Year of Experience"
@@ -1311,6 +1210,7 @@ export default function EmployeeProfilePage() {
                   }
                 />
               </div>
+
               <div className="w-full flex flex-col items-start gap-1">
                 <TypographyMuted className="text-xs">
                   Description
@@ -1326,102 +1226,8 @@ export default function EmployeeProfilePage() {
             </div>
           </div>
 
-          {/* Education Information Form Section */}
-          {employee.educations && employee.educations.length > 0 && (
-            <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
-              <div className="flex flex-col gap-1">
-                <div className="flex justify-between items-center">
-                  <TypographyH4>Education Information</TypographyH4>
-                  {isEdit && (
-                    <div onClick={addEducation}>
-                      <IconLabel
-                        text="Add Education"
-                        icon={<LucidePlus className="text-muted-foreground" />}
-                        className="cursor-pointer"
-                      />
-                    </div>
-                  )}
-                </div>
-                <Divider />
-              </div>
-
-              {/* Education Information Section */}
-              <div className="flex flex-col items-start gap-5">
-                {educations.map((edu, index) => (
-                  <div
-                    className="w-full flex flex-col items-start gap-3"
-                    key={edu.id}
-                  >
-                    <div className="w-full flex items-center justify-between">
-                      <TypographyMuted>Education {index + 1}</TypographyMuted>
-                      {isEdit && (
-                        <LucideTrash2
-                          className="cursor-pointer text-red-500"
-                          strokeWidth={"1.5px"}
-                          width={"18px"}
-                          onClick={() =>
-                            edu.id && removeEducation(edu.id.toString())
-                          }
-                        />
-                      )}
-                    </div>
-                    <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
-                      <LabelInput
-                        label="School"
-                        input={
-                          <Input
-                            placeholder="School"
-                            id="school"
-                            {...form.register(`educations.${index}.school`)}
-                            prefix={<LucideSchool strokeWidth={"1.3px"} />}
-                            disabled={!isEdit}
-                          />
-                        }
-                      />
-                      <LabelInput
-                        label="Degree"
-                        input={
-                          <Input
-                            placeholder="Degree"
-                            id="degree"
-                            {...form.register(`educations.${index}.degree`)}
-                            prefix={
-                              <LucideGraduationCap strokeWidth={"1.3px"} />
-                            }
-                            disabled={!isEdit}
-                          />
-                        }
-                      />
-                      <LabelInput
-                        label="Graduation Year"
-                        input={
-                          <Controller
-                            control={form.control}
-                            name={`educations.${index}.year`}
-                            render={({ field }) => (
-                              <DatePicker
-                                placeholder="Graduation Year"
-                                date={
-                                  field.value
-                                    ? new Date(field.value)
-                                    : undefined
-                                }
-                                onDateChange={field.onChange}
-                                disabled={!isEdit}
-                              />
-                            )}
-                          />
-                        }
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Experience Information Form Section */}
-          {employee.experiences && employee.experiences.length > 0 && (
+          {/* ✅ Experience (FIXED Option A) */}
+          {employee.experiences && (
             <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
               <div className="flex flex-col gap-1">
                 <div className="flex justify-between items-center">
@@ -1429,7 +1235,7 @@ export default function EmployeeProfilePage() {
                   {isEdit && (
                     <div onClick={addExperience}>
                       <IconLabel
-                        text="Add Education"
+                        text="Add Experience"
                         icon={<LucidePlus className="text-muted-foreground" />}
                         className="cursor-pointer"
                       />
@@ -1438,104 +1244,114 @@ export default function EmployeeProfilePage() {
                 </div>
                 <Divider />
               </div>
+
               <div className="flex flex-col items-start gap-5">
-                {experiences.map((exp, index) => (
-                  <div
-                    className="w-full flex flex-col items-start gap-3"
-                    key={exp.id}
-                  >
-                    <div className="w-full flex items-center justify-between">
-                      <TypographyMuted>Experience {index + 1}</TypographyMuted>
-                      {isEdit && (
-                        <LucideTrash2
-                          className="cursor-pointer text-red-500"
-                          strokeWidth={"1.5px"}
-                          width={"18px"}
-                          onClick={() =>
-                            exp.id && removeExperience(exp.id.toString())
+                {experienceFA.fields.length > 0 ? (
+                  experienceFA.fields.map((row, index) => {
+                    const experienceId = form.watch(
+                      `experiences.${index}.id`,
+                    ) as string | undefined;
+
+                    return (
+                      <EmployeeExperienceForm
+                        key={row.id}
+                        index={index}
+                        form={form}
+                        experienceIndex={index}
+                        experienceUUID={experienceId ?? ""}
+                        isEdit={isEdit}
+                        title={form.watch(`experiences.${index}.title`)}
+                        description={form.watch(
+                          `experiences.${index}.description`,
+                        )}
+                        startDate={{
+                          defaultValue:
+                            (form.getValues(
+                              `experiences.${index}.startDate`,
+                            ) as any) ?? new Date(),
+                          data:
+                            (form.watch(
+                              `experiences.${index}.startDate`,
+                            ) as any) ?? new Date(),
+                          onDataChange: (date) => {
+                            form.setValue(
+                              `experiences.${index}.startDate`,
+                              date as any,
+                              { shouldDirty: true, shouldTouch: true },
+                            );
+                          },
+                        }}
+                        endDate={{
+                          defaultValue:
+                            (form.getValues(
+                              `experiences.${index}.endDate`,
+                            ) as any) ?? new Date(),
+                          data:
+                            (form.watch(
+                              `experiences.${index}.endDate`,
+                            ) as any) ?? new Date(),
+                          onDataChange: (date) => {
+                            form.setValue(
+                              `experiences.${index}.endDate`,
+                              date as any,
+                              {
+                                shouldDirty: true,
+                                shouldTouch: true,
+                              },
+                            );
+                          },
+                        }}
+                        onRemove={() => {
+                          if (experienceId && isUuid(experienceId)) {
+                            setOpenRemoveExperienceDialog(true);
+                            setCurrentExperienceID(experienceId);
+                          } else {
+                            experienceFA.remove(index); // remove newly added row
                           }
-                        />
-                      )}
-                    </div>
-                    <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
-                      <LabelInput
-                        label="Title"
-                        input={
-                          <Input
-                            placeholder="Title"
-                            id="title"
-                            {...form.register(`experiences.${index}.title`)}
-                            className="placeholder:!text-red-500"
-                            prefix={
-                              <LucideBriefcaseBusiness strokeWidth={"1.3px"} />
-                            }
-                            disabled={!isEdit}
-                          />
-                        }
+                        }}
                       />
-                      <div className="w-full flex flex-col items-start gap-2">
-                        <TypographyMuted className="text-xs">
-                          Description
-                        </TypographyMuted>
-                        <Textarea
-                          autoResize
-                          placeholder="Description"
-                          id="description"
-                          {...form.register(`experiences.${index}.description`)}
-                          disabled={!isEdit}
-                        />
-                      </div>
-                      <div className="w-full flex justify-between items-center gap-5 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
-                        <div className="w-1/2 flex flex-col items-start gap-1">
-                          <TypographyMuted className="text-xs">
-                            Start Date
-                          </TypographyMuted>
-                          <Controller
-                            control={form.control}
-                            name={`experiences.${index}.startDate`}
-                            render={({ field }) => (
-                              <DatePicker
-                                placeholder="Start Date"
-                                date={field.value}
-                                onDateChange={field.onChange}
-                                disabled={!isEdit}
-                              />
-                            )}
-                          />
-                        </div>
-                        <div className="w-1/2 flex flex-col items-start gap-1">
-                          <TypographyMuted className="text-xs">
-                            End Date
-                          </TypographyMuted>
-                          <Controller
-                            control={form.control}
-                            name={`experiences.${index}.endDate`}
-                            render={({ field }) => (
-                              <DatePicker
-                                placeholder="End Date"
-                                date={field.value}
-                                onDateChange={field.onChange}
-                                disabled={!isEdit}
-                              />
-                            )}
-                          />
-                        </div>
-                      </div>
-                    </div>
+                    );
+                  })
+                ) : (
+                  <div className="w-full flex flex-col items-center justify-center p-5">
+                    <Image
+                      alt="empty"
+                      src={emptySvgImage}
+                      className="size-44"
+                    />
+                    <TypographyMuted className="text-sm">
+                      No Experience Available.
+                    </TypographyMuted>
                   </div>
-                ))}
+                )}
               </div>
+
+              <RemoveAlertDialog
+                type="experience"
+                openDialog={openRemoveExperienceDialog}
+                setOpenDialog={setOpenRemoveExperienceDialog}
+                onNoClick={disableEditMode}
+                onYesClick={() => {
+                  if (currentExperienceID) {
+                    removeExperience(currentExperienceID);
+                    setOpenRemoveExperienceDialog(false);
+                  }
+                }}
+              />
             </div>
           )}
         </div>
+
+        {/* RIGHT */}
         <div className="w-[40%] flex flex-col gap-5">
-          {/* Skill Section */}
+          {/* Skills */}
           {employee.skills && employee.skills.length > 0 && (
             <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
               <div className="w-full flex flex-col gap-1">
                 <TypographyH4>Skills</TypographyH4>
                 <Divider />
               </div>
+
               <div className="flex flex-wrap gap-3">
                 {skills.map((skill, index) => (
                   <HoverCard key={index}>
@@ -1557,15 +1373,19 @@ export default function EmployeeProfilePage() {
                   </HoverCard>
                 ))}
               </div>
+
               {isEdit && (
                 <Popover
                   open={openSkillPopOver}
                   onOpenChange={setOpenSkillPopOver}
                 >
                   <PopoverTrigger asChild>
-                    <Button className="w-full text-xs" variant="secondary">
-                      Add Skill
-                      <LucidePlus />
+                    <Button
+                      className="w-full text-xs"
+                      variant="secondary"
+                      type="button"
+                    >
+                      Add Skill <LucidePlus />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
@@ -1576,6 +1396,7 @@ export default function EmployeeProfilePage() {
                     <div className="flex items-center gap-1 [&>button]:text-xs">
                       <Button
                         variant="outline"
+                        type="button"
                         onClick={() => setOpenSkillPopOver(false)}
                       >
                         Cancel
@@ -1590,139 +1411,141 @@ export default function EmployeeProfilePage() {
             </div>
           )}
 
-          {/* CareersScopes Section */}
+          {/* Career Scopes */}
           {((careerScopes && careerScopes.length > 0) || isEdit) && (
             <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
               <div className="w-full flex flex-col gap-1">
                 <TypographyH4>Careers Scopes</TypographyH4>
                 <Divider />
               </div>
-              <div className="w-full flex flex-col items-stretch gap-3">
-                <div className="flex flex-wrap gap-3">
-                  {careerScopes &&
-                    careerScopes.length > 0 &&
-                    careerScopes.map((career, index) => {
-                      return (
-                        <div key={index}>
-                          <HoverCard>
-                            <HoverCardTrigger className="flex items-center rounded-3xl">
-                              <Tag label={career.name} />
-                              {isEdit && (
-                                <LucideXCircle
-                                  className="text-muted-foreground cursor-pointer ml-1 text-red-500"
-                                  width={"18px"}
-                                  onClick={() => removeCareerScope(career.name)}
-                                />
-                              )}
-                            </HoverCardTrigger>
-                            <HoverCardContent>
-                              <TypographySmall>
-                                {career.description
-                                  ? career.description
-                                  : career.name}
-                              </TypographySmall>
-                            </HoverCardContent>
-                          </HoverCard>
-                        </div>
-                      );
-                    })}
-                </div>
+
+              <div className="flex flex-wrap gap-3">
+                {careerScopes.map((career, index) => (
+                  <div key={index}>
+                    <HoverCard>
+                      <HoverCardTrigger className="flex items-center rounded-3xl">
+                        <Tag label={career.name} />
+                        {isEdit && (
+                          <LucideXCircle
+                            className="text-muted-foreground cursor-pointer ml-1 text-red-500"
+                            width={"18px"}
+                            onClick={() => removeCareerScope(career.name)}
+                          />
+                        )}
+                      </HoverCardTrigger>
+                      <HoverCardContent>
+                        <TypographySmall>
+                          {career.description
+                            ? career.description
+                            : career.name}
+                        </TypographySmall>
+                      </HoverCardContent>
+                    </HoverCard>
+                  </div>
+                ))}
               </div>
+
               {isEdit && (
-                <Popover
-                  open={openCareerScopePopOver}
-                  onOpenChange={setOpenCareerScopePopOver}
-                >
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className="w-full justify-between"
-                    >
-                      {careerScopeInput
-                        ? getAllCareerScopesStore.careerScopes?.find(
-                            (career) => career.name === careerScopeInput.name,
-                          )?.name
-                        : "Select careers..."}
-                      <ChevronDown className="opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="p-0">
-                    <Command>
-                      <CommandInput
-                        placeholder="Select careers..."
-                        className="h-9"
-                      />
-                      <CommandList>
-                        <CommandEmpty>No career found.</CommandEmpty>
-                        <CommandGroup>
-                          {getAllCareerScopesStore.careerScopes?.map(
-                            (career, index) => (
-                              <CommandItem
-                                key={index}
-                                value={career.name}
-                                onSelect={() => {
-                                  if (career.id)
-                                    handleCareerScopeSelect(
-                                      career.id,
-                                      career.name,
-                                      career.description ?? "",
-                                    );
-                                }}
-                              >
-                                {career.name}
-                                <LucideCircleCheck
-                                  className={
-                                    careerScopeInput?.name === career.name
-                                      ? "opacity-100"
-                                      : "opacity-0"
-                                  }
-                                />
-                              </CommandItem>
-                            ),
-                          )}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              )}
-              {isEdit && (
-                // Add New Career Section
-                <Button
-                  variant="secondary"
-                  className="w-full text-xs"
-                  type="button"
-                  onClick={addCareerScope}
-                >
-                  <LucidePlus />
-                  Add Career
-                </Button>
+                <>
+                  <Popover
+                    open={openCareerScopePopOver}
+                    onOpenChange={setOpenCareerScopePopOver}
+                  >
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className="w-full justify-between"
+                        type="button"
+                      >
+                        {careerScopeInput
+                          ? getAllCareerScopesStore.careerScopes?.find(
+                              (c) => c.name === careerScopeInput.name,
+                            )?.name
+                          : "Select careers..."}
+                        <ChevronDown className="opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="p-0">
+                      <Command>
+                        <CommandInput
+                          placeholder="Select careers..."
+                          className="h-9"
+                        />
+                        <CommandList>
+                          <CommandEmpty>No career found.</CommandEmpty>
+                          <CommandGroup>
+                            {getAllCareerScopesStore.careerScopes?.map(
+                              (career, idx) => (
+                                <CommandItem
+                                  key={idx}
+                                  value={career.name}
+                                  onSelect={() => {
+                                    if (career.id)
+                                      handleCareerScopeSelect(
+                                        career.id,
+                                        career.name,
+                                        career.description ?? "",
+                                      );
+                                  }}
+                                >
+                                  {career.name}
+                                  <LucideCircleCheck
+                                    className={
+                                      careerScopeInput?.name === career.name
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    }
+                                  />
+                                </CommandItem>
+                              ),
+                            )}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+
+                  <Button
+                    variant="secondary"
+                    className="w-full text-xs"
+                    type="button"
+                    onClick={addCareerScope}
+                  >
+                    <LucidePlus />
+                    Add Career
+                  </Button>
+                </>
               )}
             </div>
           )}
 
-          {/* Reference Section */}
+          {/* References */}
           {(employee.resume || employee.coverLetter) && (
             <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
               <TypographyH4>References Information</TypographyH4>
+
               <div className="w-full flex flex-col items-start gap-5 [&>div]:w-full">
+                {/* Resume */}
                 <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
                   <div className="flex items-center text-muted-foreground gap-1">
                     <LucideFileText strokeWidth={"1.3px"} />
                     <TypographyMuted>
                       {resumeFile
                         ? resumeFile.name
-                        : extractCleanFilename(employee.resume!)}
+                        : employee.resume
+                          ? extractCleanFilename(employee.resume)
+                          : "Resume"}
                     </TypographyMuted>
                     <input
                       type="file"
-                      accept="application/pdf"
+                      accept="application/pdf,.doc,.docx"
                       className="hidden"
                       ref={resumeInputRef}
                       onChange={(e) => handleFileChange(e, "resume")}
                     />
                   </div>
+
                   <div className="flex items-center gap-1">
                     {isEdit && (
                       <Button
@@ -1734,6 +1557,7 @@ export default function EmployeeProfilePage() {
                         <LucideEdit />
                       </Button>
                     )}
+
                     {resumeUrl ? (
                       <Link target="_blank" href={resumeUrl}>
                         <Button type="button" variant="outline" size="icon">
@@ -1745,6 +1569,7 @@ export default function EmployeeProfilePage() {
                         <LucideEye />
                       </Button>
                     )}
+
                     {isEdit ? (
                       <Button
                         type="button"
@@ -1760,30 +1585,36 @@ export default function EmployeeProfilePage() {
                         variant="outline"
                         size="icon"
                         onClick={() =>
-                          handleDownloadResumeAndCoverLetterFile(resumeFile!)
+                          resumeFile && handleDownloadFile(resumeFile)
                         }
+                        disabled={!resumeFile}
                       >
                         <LucideDownload />
                       </Button>
                     )}
                   </div>
                 </div>
+
+                {/* Cover Letter */}
                 <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
                   <div className="flex items-center text-muted-foreground gap-1">
                     <LucideFileText strokeWidth={"1.3px"} />
                     <TypographyMuted>
                       {coverLetterFile
                         ? coverLetterFile.name
-                        : extractCleanFilename(employee.coverLetter!)}
+                        : employee.coverLetter
+                          ? extractCleanFilename(employee.coverLetter)
+                          : "Cover Letter"}
                     </TypographyMuted>
                     <input
                       type="file"
-                      accept="application/pdf"
+                      accept="application/pdf,.doc,.docx"
                       className="hidden"
                       ref={coverLetterInputRef}
                       onChange={(e) => handleFileChange(e, "coverLetter")}
                     />
                   </div>
+
                   <div className="flex items-center gap-1">
                     {isEdit && (
                       <Button
@@ -1795,6 +1626,7 @@ export default function EmployeeProfilePage() {
                         <LucideEdit />
                       </Button>
                     )}
+
                     {coverLetterUrl ? (
                       <Link target="_blank" href={coverLetterUrl}>
                         <Button type="button" variant="outline" size="icon">
@@ -1806,6 +1638,7 @@ export default function EmployeeProfilePage() {
                         <LucideEye />
                       </Button>
                     )}
+
                     {isEdit ? (
                       <Button
                         type="button"
@@ -1821,10 +1654,9 @@ export default function EmployeeProfilePage() {
                         variant="outline"
                         size="icon"
                         onClick={() =>
-                          handleDownloadResumeAndCoverLetterFile(
-                            coverLetterFile!,
-                          )
+                          coverLetterFile && handleDownloadFile(coverLetterFile)
                         }
+                        disabled={!coverLetterFile}
                       >
                         <LucideDownload />
                       </Button>
@@ -1835,43 +1667,35 @@ export default function EmployeeProfilePage() {
             </div>
           )}
 
-          {/* Social Information Form Section */}
+          {/* Socials */}
           {employee.socials && employee.socials.length > 0 && (
             <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
               <div className="flex flex-col gap-1">
                 <TypographyH4>Social Information</TypographyH4>
                 <Divider />
               </div>
-              <div className="w-full flex flex-col items-start gap-5">
-                <div className="w-full flex flex-col items-stretch gap-3">
-                  <div className="flex flex-wrap gap-3">
-                    {socials &&
-                      socials.length > 0 &&
-                      socials.map((item: ISocial, index) => (
-                        <div className="flex items-center gap-1" key={index}>
-                          <Link
-                            href={item.url}
-                            className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
-                          >
-                            {getSocialPlatformTypeIcon(
-                              item.platform as TPlatform,
-                            )}
-                            <TypographySmall>{item.platform}</TypographySmall>
-                          </Link>
-                          {isEdit && (
-                            <LucideXCircle
-                              className="text-muted-foreground cursor-pointer text-red-500"
-                              width={"18px"}
-                              onClick={() =>
-                                removeSocial(item.platform as TPlatform)
-                              }
-                            />
-                          )}
-                        </div>
-                      ))}
+
+              <div className="flex flex-wrap gap-3">
+                {socials.map((item, index) => (
+                  <div className="flex items-center gap-1" key={index}>
+                    <Link
+                      href={item.url}
+                      className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
+                    >
+                      {getSocialPlatformTypeIcon(item.platform as TPlatform)}
+                      <TypographySmall>{item.platform}</TypographySmall>
+                    </Link>
+                    {isEdit && (
+                      <LucideXCircle
+                        className="text-muted-foreground cursor-pointer text-red-500"
+                        width={"18px"}
+                        onClick={() => removeSocial(item.platform as TPlatform)}
+                      />
+                    )}
                   </div>
-                </div>
+                ))}
               </div>
+
               {isEdit && (
                 <div>
                   <div className="w-full flex flex-col items-start gap-5 p-5 mt-3 border-[1px] border-muted rounded-md">
@@ -1904,6 +1728,7 @@ export default function EmployeeProfilePage() {
                           </SelectContent>
                         </Select>
                       </div>
+
                       <LabelInput
                         label="Link"
                         input={
@@ -1911,7 +1736,7 @@ export default function EmployeeProfilePage() {
                             placeholder="Link"
                             id="link"
                             name="link"
-                            value={socialInput?.url}
+                            value={socialInput?.url ?? ""}
                             onChange={(e) =>
                               setSocialInput((prev) => ({
                                 ...(prev ?? { platform: "", url: "" }),
@@ -1924,7 +1749,7 @@ export default function EmployeeProfilePage() {
                       />
                     </div>
                   </div>
-                  {/* Add New Social Button Section */}
+
                   <Button
                     type="button"
                     variant="secondary"
@@ -1939,12 +1764,13 @@ export default function EmployeeProfilePage() {
             </div>
           )}
 
-          {/* Authentication Section */}
+          {/* Authentication */}
           <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
             <div className="flex flex-col gap-1">
               <TypographyH4>Authentication</TypographyH4>
               <Divider />
             </div>
+
             <div className="w-full flex flex-col items-start gap-3">
               {loginMethodConstant.map((item) => (
                 <div
@@ -1961,6 +1787,7 @@ export default function EmployeeProfilePage() {
                     />
                     <TypographySmall>{item.label}</TypographySmall>
                   </div>
+
                   {user.lastLoginMethod &&
                   user.lastLoginMethod.toUpperCase() ===
                     item.label.toUpperCase() ? (
@@ -1978,6 +1805,7 @@ export default function EmployeeProfilePage() {
                   )}
                 </div>
               ))}
+
               <div className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer">
                 <div className="flex items-center gap-2">
                   <LucideMail className="mx-1" strokeWidth={1.5} />
@@ -1997,6 +1825,7 @@ export default function EmployeeProfilePage() {
                   </div>
                 )}
               </div>
+
               <div className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer">
                 <div className="flex items-center gap-2">
                   <LucidePhone className="mx-1" strokeWidth={1.5} />
@@ -2021,12 +1850,21 @@ export default function EmployeeProfilePage() {
         </div>
       </div>
 
-      {/* Profile Popup Section */}
+      {/* Profile Popup */}
       <ImagePopup
-        open={openProfilePopup}
-        setOpen={setOpenProfilePopup}
+        open={openAvatarPopup}
+        setOpen={setOpenAvatarPopup}
         image={avatarFile ? URL.createObjectURL(avatarFile) : employee.avatar!}
       />
+
+      {/* Dialogs */}
+      <input
+        ref={avatarInputRef}
+        type="file"
+        className="hidden"
+        accept="image/*"
+        onChange={(e) => handleFileChange(e, "avatar")}
+      />
     </form>
-  ) : null;
+  );
 }
