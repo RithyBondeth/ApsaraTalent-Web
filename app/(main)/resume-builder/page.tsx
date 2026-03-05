@@ -9,13 +9,9 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { useGetAllTemplateStore } from "@/stores/apis/resume/get-all-template.store";
 import { useTemplateSelectionStore } from "@/stores/apis/resume/template-selection.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-
 import { useEffect, useState } from "react";
 import { buildResumePayloadFromUser } from "./_utils/build-payload";
 import { generateResumeAPI } from "./_apis/generate-resume.api";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 
 let hasFetchedTemplates = false;
