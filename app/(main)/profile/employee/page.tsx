@@ -1710,71 +1710,77 @@ export default function EmployeeProfilePage() {
           </div>
 
           {/* References Section */}
-
           <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
             <TypographyH4>References Information</TypographyH4>
             <div className="w-full flex flex-col items-start gap-5 [&>div]:w-full">
-              {/* Resume */}
-              {employee.resume && (
-                <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
-                  <div className="flex items-center text-muted-foreground gap-1">
-                    <LucideFileText strokeWidth={"1.3px"} />
-                    <TypographyMuted>
-                      {resumeFile
-                        ? resumeFile.name
-                        : employee.resume
-                          ? extractCleanFilename(employee.resume)
-                          : "Resume"}
-                    </TypographyMuted>
-                    <input
-                      type="file"
-                      accept="application/pdf,.doc,.docx"
-                      className="hidden"
-                      ref={resumeInputRef}
-                      onChange={(e) => handleFileChange(e, "resume")}
-                    />
-                  </div>
+              {/* Resume Section */}
+              <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
+                <div className="flex items-center text-muted-foreground gap-1">
+                  <LucideFileText strokeWidth={"1.3px"} />
+                  <TypographyMuted>
+                    {resumeFile
+                      ? resumeFile.name
+                      : employee.resume
+                        ? extractCleanFilename(employee.resume)
+                        : "Add Your Resume"}
+                  </TypographyMuted>
+                  <input
+                    type="file"
+                    accept="application/pdf,.doc,.docx"
+                    className="hidden"
+                    ref={resumeInputRef}
+                    onChange={(e) => handleFileChange(e, "resume")}
+                  />
+                </div>
 
-                  <div className="flex items-center gap-1">
-                    {isEdit && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => resumeInputRef.current?.click()}
-                      >
-                        <LucideEdit />
-                      </Button>
-                    )}
+                <div className="flex items-center gap-1">
+                  {(isEdit || !employee.resume) && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() => {
+                        if (!employee.resume) {
+                          setIsEdit(true);
+                          resumeInputRef.current?.click();
+                        } else {
+                          resumeInputRef.current?.click();
+                        }
+                      }}
+                    >
+                      <LucideEdit />
+                    </Button>
+                  )}
 
-                    {employee.resume && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => {
-                          if (employee.resume)
-                            setPreviewReferenceUrl(employee.resume);
-                          setPreviewReferenceType("resume");
-                          setOpenReferencePreview(true);
-                        }}
-                        disabled={!employee.resume}
-                      >
-                        <LucideEye />
-                      </Button>
-                    )}
+                  {employee.resume && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() => {
+                        if (employee.resume)
+                          setPreviewReferenceUrl(employee.resume);
+                        setPreviewReferenceType("resume");
+                        setOpenReferencePreview(true);
+                      }}
+                      disabled={!employee.resume}
+                    >
+                      <LucideEye />
+                    </Button>
+                  )}
 
-                    {isEdit ? (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        className="text-red-500 bg-red-100"
-                        onClick={() => setOpenRemoveResumeDialog(true)}
-                      >
-                        <LucideTrash2 />
-                      </Button>
-                    ) : (
+                  {isEdit && employee.resume ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="text-red-500 bg-red-100"
+                      onClick={() => setOpenRemoveResumeDialog(true)}
+                    >
+                      <LucideTrash2 />
+                    </Button>
+                  ) : (
+                    employee.resume && (
                       <Button
                         type="button"
                         variant="outline"
@@ -1791,22 +1797,21 @@ export default function EmployeeProfilePage() {
                       >
                         <LucideDownload />
                       </Button>
-                    )}
-                  </div>
-
-                  {/* Remove Resume Dialog Section */}
-                  <RemoveAlertDialog
-                    type="resume"
-                    openDialog={openRemoveResumeDialog}
-                    setOpenDialog={setOpenRemoveResumeDialog}
-                    onNoClick={disableEditMode}
-                    onYesClick={removeResume}
-                  />
+                    )
+                  )}
                 </div>
-              )}
 
-              {/* Cover Letter */}
+                {/* Remove Resume Dialog Section */}
+                <RemoveAlertDialog
+                  type="resume"
+                  openDialog={openRemoveResumeDialog}
+                  setOpenDialog={setOpenRemoveResumeDialog}
+                  onNoClick={disableEditMode}
+                  onYesClick={removeResume}
+                />
+              </div>
 
+              {/* Cover Letter Section */}
               <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
                 <div className="flex items-center text-muted-foreground gap-1">
                   <LucideFileText strokeWidth={"1.3px"} />
