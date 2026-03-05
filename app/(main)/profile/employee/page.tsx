@@ -106,6 +106,7 @@ import RemoveAlertDialog from "@/components/utils/dialogs/remove-alert-dialog";
 import { parseMaybeDate } from "@/utils/functions/parse-maybe-date";
 import ReferencePreviewDialog from "@/components/utils/dialogs/reference-preview-dialog";
 import EmployeeEducationForm from "@/components/employee/profile/education-form";
+import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
 
 export default function EmployeeProfilePage() {
   /* ------------------- APIs Integration ------------------- */
@@ -164,6 +165,10 @@ export default function EmployeeProfilePage() {
   const [openAvatarPopup, setOpenAvatarPopup] = useState<boolean>(false);
   const [openRemoveAvatarDialog, setOpenRemoveAvatarDialog] = useState(false);
   const ignoreNextClick = useRef<boolean>(false);
+
+  // Crop Avatar
+  const [openCropDialog, setOpenCropDialog] = useState<boolean>(false);
+  const [cropImageUrl, setCropImageUrl] = useState<string>("");
 
   // Resume
   const [resumeFile, setResumeFile] = useState<File | null>(null);
@@ -250,6 +255,13 @@ export default function EmployeeProfilePage() {
   useEffect(() => {
     getCurrentUser();
   }, [getCurrentUser]);
+
+  // Cleanup Cropped Image Object URL Effect
+  useEffect(() => {
+    return () => {
+      if (cropImageUrl?.startsWith("blob:")) URL.revokeObjectURL(cropImageUrl);
+    };
+  }, [cropImageUrl]);
 
   // FieldArray for Experiences
   const experienceFA = useFieldArray({
@@ -428,6 +440,16 @@ export default function EmployeeProfilePage() {
     }
     if ((e.target as HTMLElement).closest(".dialog-content")) return;
     setOpenAvatarPopup(true);
+  };
+
+  // 5.Handle Avatar Crop
+  const handleAvatarCrop = (file: File) => {
+    setAvatarFile(file);
+
+    form.setValue("basicInfo.avatar", file, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
   };
 
   /* ------------------- Experience Bussiness Logics ------------------- */
@@ -685,12 +707,14 @@ export default function EmployeeProfilePage() {
     if (!file) return;
 
     if (type === "avatar") {
-      setAvatarFile(file);
-      form.setValue("basicInfo.avatar", file, {
-        shouldDirty: true,
-        shouldTouch: true,
-      });
+      const previewUrl = URL.createObjectURL(file);
+
+      setCropImageUrl(previewUrl);
+      setOpenCropDialog(true);
+
+      event.target.value = "";
     }
+
     if (type === "resume") {
       setResumeFile(file);
       form.setValue("references.resume", file, {
@@ -983,6 +1007,11 @@ export default function EmployeeProfilePage() {
   if (loading) return <EmployeeProfilePageSkeleton />;
   if (!user || !employee) return null;
 
+  // Avatar Preview
+  const avatarPreview = avatarFile
+    ? URL.createObjectURL(avatarFile)
+    : employee.avatar;
+
   return (
     <form className="!min-w-full flex flex-col gap-5" onSubmit={handleSubmit}>
       {/* Header */}
@@ -995,11 +1024,7 @@ export default function EmployeeProfilePage() {
             }}
           >
             <Avatar className="size-36" rounded="md">
-              <AvatarImage
-                src={
-                  avatarFile ? URL.createObjectURL(avatarFile) : employee.avatar
-                }
-              />
+              <AvatarImage src={avatarPreview} />
               <AvatarFallback className="uppercase">
                 {employee.username?.slice(0, 3)}
               </AvatarFallback>
@@ -1025,6 +1050,13 @@ export default function EmployeeProfilePage() {
                 )}
               </div>
             )}
+
+            <AvatarCropDialog
+              open={openCropDialog}
+              setOpen={setOpenCropDialog}
+              image={cropImageUrl}
+              onCropComplete={handleAvatarCrop}
+            />
 
             <RemoveAlertDialog
               type="avatar"
