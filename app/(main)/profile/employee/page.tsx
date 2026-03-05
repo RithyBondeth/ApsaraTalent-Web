@@ -181,6 +181,7 @@ export default function EmployeeProfilePage() {
   const [socialInput, setSocialInput] = useState<ISocial | null>(null);
   const [socials, setSocials] = useState<ISocial[]>([]);
   const [deleteSocialIds, setDeleteSocialIds] = useState<string[]>([]);
+  const socialSelectPlatformRef = useRef<HTMLButtonElement>(null);
 
   // Skill
   const [skillInput, setSkillInput] = useState<string | null>(null);
@@ -282,7 +283,9 @@ export default function EmployeeProfilePage() {
       profession: {
         job: employee.job ?? "",
         yearOfExperience: employee.yearsOfExperience?.toString() ?? "",
-        availability: employee.availability ?? "",
+        availability: employee.availability.includes("_")
+          ? `${capitalizeWords(employee.availability.split("_")[0])} ${capitalizeWords(employee.availability.split("_")[1])}`
+          : `${capitalizeWords(employee.availability)}`,
         description: employee.description ?? "",
       },
       experiences:
@@ -1345,7 +1348,7 @@ export default function EmployeeProfilePage() {
                             setOpenRemoveExperienceDialog(true);
                             setCurrentExperienceID(experienceId);
                           } else {
-                            experienceFA.remove(index); // remove newly added row
+                            experienceFA.remove(index);
                           }
                         }}
                       />
@@ -1531,7 +1534,7 @@ export default function EmployeeProfilePage() {
               </div>
             )}
 
-            {(isEdit || employee.skills?.length === 0) && (
+            {(isEdit || employee.skills.length === 0) && (
               <Popover
                 open={openSkillPopOver}
                 onOpenChange={setOpenSkillPopOver}
@@ -1560,7 +1563,7 @@ export default function EmployeeProfilePage() {
                     </Button>
                     <Button
                       onClick={() => {
-                        if ((employee.skills?.length ?? 0) === 0) {
+                        if (employee.skills.length === 0) {
                           setIsEdit(true);
                           addSkills();
                         } else {
@@ -1618,7 +1621,7 @@ export default function EmployeeProfilePage() {
               )}
             </div>
 
-            {(isEdit || employee.careerScopes?.length === 0) && (
+            {(isEdit || employee.careerScopes.length === 0) && (
               <>
                 <Popover
                   open={openCareerScopePopOver}
@@ -1691,7 +1694,7 @@ export default function EmployeeProfilePage() {
                   className="w-full text-xs"
                   type="button"
                   onClick={() => {
-                    if ((employee.careerScopes?.length ?? 0) === 0) {
+                    if (employee.careerScopes.length === 0) {
                       setIsEdit(true);
                       addCareerScope();
                     } else {
@@ -1905,14 +1908,14 @@ export default function EmployeeProfilePage() {
             </div>
           )}
 
-          {/* Socials */}
-          {employee.socials && employee.socials.length > 0 && (
-            <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
-              <div className="flex flex-col gap-1">
-                <TypographyH4>Social Information</TypographyH4>
-                <Divider />
-              </div>
+          {/* Social Information Section */}
+          <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
+            <div className="flex flex-col gap-1">
+              <TypographyH4>Social Information</TypographyH4>
+              <Divider />
+            </div>
 
+            {socials && socials.length > 0 ? (
               <div className="flex flex-wrap gap-3">
                 {socials.map((item, index) => (
                   <div className="flex items-center gap-1" key={index}>
@@ -1933,9 +1936,17 @@ export default function EmployeeProfilePage() {
                   </div>
                 ))}
               </div>
+            ) : (
+              <div className="w-full flex items-center justify-center pt-2">
+                <TypographyMuted className="text-sm">
+                  No Social Avaliable
+                </TypographyMuted>
+              </div>
+            )}
 
-              {isEdit && (
-                <div>
+            {(isEdit || employee.socials.length === 0) && (
+              <div>
+                {isEdit && (
                   <div className="w-full flex flex-col items-start gap-5 p-5 mt-3 border-[1px] border-muted rounded-md">
                     <div className="w-full flex justify-between items-center gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
                       <div className="w-full flex flex-col items-start gap-1">
@@ -1951,7 +1962,10 @@ export default function EmployeeProfilePage() {
                           }
                           value={socialInput?.platform}
                         >
-                          <SelectTrigger className="h-12 text-muted-foreground">
+                          <SelectTrigger
+                            className="h-12 text-muted-foreground"
+                            ref={socialSelectPlatformRef}
+                          >
                             <SelectValue placeholder="Platform" />
                           </SelectTrigger>
                           <SelectContent>
@@ -1987,20 +2001,40 @@ export default function EmployeeProfilePage() {
                       />
                     </div>
                   </div>
+                )}
 
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    className="text-xs w-full"
-                    onClick={addSocial}
-                  >
-                    <LucidePlus />
-                    Add new social
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="text-xs w-full"
+                  onClick={() => {
+                    const openPlatformSelect = () => {
+                      const el = socialSelectPlatformRef.current;
+                      if (!el) return;
+
+                      el.focus();
+                      // Radix Select opens reliably with ArrowDown / Enter / Space
+                      el.dispatchEvent(
+                        new KeyboardEvent("keydown", {
+                          key: "ArrowDown",
+                          bubbles: true,
+                        }),
+                      );
+                    };
+
+                    setIsEdit(true);
+                    requestAnimationFrame(() => {
+                      openPlatformSelect();
+                    });
+                    addSocial();
+                  }}
+                >
+                  <LucidePlus />
+                  Add new social
+                </Button>
+              </div>
+            )}
+          </div>
 
           {/* Authentication */}
           <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">

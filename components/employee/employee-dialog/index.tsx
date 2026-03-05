@@ -61,9 +61,13 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
                   />
                   <IconLabel
                     icon={<LucideClock strokeWidth={"1.5px"} />}
-                    text={`${capitalizeWords(
-                      props.availability.split("_")[0],
-                    )} ${capitalizeWords(props.availability.split("_")[1])}`}
+                    text={
+                      props.availability.includes("_")
+                        ? `${capitalizeWords(
+                            props.availability.split("_")[0],
+                          )} ${capitalizeWords(props.availability.split("_")[1])}`
+                        : capitalizeWords(props.availability)
+                    }
                   />
                 </div>
               </div>
