@@ -29,7 +29,7 @@ export const useGetAllEmployeeStore = create<TGetAllEmployeeState>((set) => ({
       else
         set({
           loading: false,
-          error: "An error occurred while fetching all employees",
+          error: "An error occurred while fetching all employees.",
         });
     }
   },

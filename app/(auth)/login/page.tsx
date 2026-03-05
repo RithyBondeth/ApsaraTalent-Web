@@ -75,7 +75,7 @@ function LoginPage() {
   const [loginInitiated, setLoginInitiated] = useState<boolean>(false);
   const [isPreloadingData, setIsPreloadingData] = useState<boolean>(false);
 
-  // React Hook Form: Login Form 
+  // React Hook Form: Login Form
   const {
     handleSubmit,
     register,

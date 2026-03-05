@@ -30,10 +30,11 @@ export const basicInfoSchema = z.object({
               );
             },
             {
-              message: `Invalid file: avatar must be an image (jpeg, png, webp) and < 5MB`,
+              message:
+                "Invalid file: avatar must be an image (jpeg, png, webp) and < 5MB",
             },
           ),
-          z.string(), // for existing image URLs
+          z.string(), // existing image URL
           z.null(),
         ])
         .optional(),
@@ -45,7 +46,7 @@ export const accountSettingSchema = z.object({
   accountSetting: z
     .object({
       email: emailValidation.optional(),
-      phone: khmerPhoneNumberValidation(),
+      phone: khmerPhoneNumberValidation().optional(),
     })
     .optional(),
 });
@@ -66,9 +67,10 @@ export const educationSchema = z.object({
     .array(
       z
         .object({
+          id: z.string().optional(),
           school: textValidation().optional(),
           degree: textValidation().optional(),
-          year: textValidation().optional(),
+          year: dateValidation().optional(),
         })
         .optional(),
     )
@@ -80,6 +82,7 @@ export const experienceSchema = z.object({
     .array(
       z
         .object({
+          id: z.string().optional(),
           title: textValidation().optional(),
           description: textValidation().optional(),
           startDate: dateValidation().optional(),
@@ -95,8 +98,9 @@ export const skillSchema = z.object({
     .array(
       z
         .object({
-          name: textValidation().optional(),
-          description: textValidation().optional(),
+          id: z.string().optional(),
+          name: z.string().optional(),
+          description: z.string().optional(),
         })
         .optional(),
     )
@@ -107,23 +111,33 @@ export const referenceSchema = z.object({
   references: z
     .object({
       resume: z
-        .any()
-        .optional()
-        .refine((file) => !file || file.size <= DOCUMENT_SIZE, {
-          message: "Max file size is 5MB",
-        })
-        .refine((file) => !file || ACCEPTED_FILE_TYPES.includes(file.type), {
-          message: "Only .pdf, .doc, .docx are supported",
-        }),
+        .union([
+          z
+            .instanceof(File)
+            .refine((file) => file.size <= DOCUMENT_SIZE, {
+              message: "Max file size is 5MB",
+            })
+            .refine((file) => ACCEPTED_FILE_TYPES.includes(file.type), {
+              message: "Only .pdf, .doc, .docx are supported",
+            }),
+          z.string(),
+          z.null(),
+        ])
+        .optional(),
       coverLetter: z
-        .any()
-        .optional()
-        .refine((file) => !file || file.size <= DOCUMENT_SIZE, {
-          message: "Max file size is 5MB",
-        })
-        .refine((file) => !file || ACCEPTED_FILE_TYPES.includes(file.type), {
-          message: "Only .pdf, .doc, .docx are supported",
-        }),
+        .union([
+          z
+            .instanceof(File)
+            .refine((file) => file.size <= DOCUMENT_SIZE, {
+              message: "Max file size is 5MB",
+            })
+            .refine((file) => ACCEPTED_FILE_TYPES.includes(file.type), {
+              message: "Only .pdf, .doc, .docx are supported",
+            }),
+          z.string(),
+          z.null(),
+        ])
+        .optional(),
     })
     .optional(),
 });
@@ -131,12 +145,14 @@ export const referenceSchema = z.object({
 export const careerScopesSchema = z.object({
   careerScopes: z
     .array(
-      z.object({
-        name: textValidation().optional(),
-        description: textValidation().optional(),
-      }),
+      z
+        .object({
+          id: z.string().optional(),
+          name: z.string().optional(),
+          description: z.string().optional().nullable(),
+        })
+        .optional(),
     )
-    .min(1, { message: "Please select at least one career option" })
     .optional(),
 });
 
@@ -145,8 +161,9 @@ export const socialSchema = z.object({
     .array(
       z
         .object({
-          platform: textValidation().optional(),
-          url: textValidation().optional(),
+          id: z.string().optional(),
+          platform: z.string().optional(),
+          url: z.string().optional(),
         })
         .optional(),
     )

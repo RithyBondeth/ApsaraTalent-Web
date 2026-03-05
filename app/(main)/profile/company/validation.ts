@@ -144,8 +144,7 @@ export const careerScopesSchema = z.object({
         description: z.string().optional(),
       }),
     )
-    .min(1, { message: "Please select at least one career option" })
-    .optional(),
+    .default([]),
 });
 
 export const socialSchema = z.object({

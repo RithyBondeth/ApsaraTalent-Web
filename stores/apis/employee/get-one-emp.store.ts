@@ -31,7 +31,7 @@ export const useGetOneEmployeeStore = create<TGetOneEmployeeState>((set) => ({
       else
         set({
           loading: false,
-          error: "An error occurred while fetching one employee",
+          error: "An error occurred while fetching one employee.",
         });
     }
   },

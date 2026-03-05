@@ -104,7 +104,7 @@ export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
     const popup = window.open(
       oauthURL,
       "google-oauth",
-      "width=500,height=600,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes"
+      "width=500,height=600,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes",
     );
 
     if (!popup) {

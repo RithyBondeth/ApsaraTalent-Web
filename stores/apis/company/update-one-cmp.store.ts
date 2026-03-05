@@ -105,7 +105,7 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
           }));
         }
 
-        // Career Scope IDs to delete
+        // Career Scopes IDs to delete
         if (
           body.careerScopeIdsToDelete &&
           body.careerScopeIdsToDelete.length > 0

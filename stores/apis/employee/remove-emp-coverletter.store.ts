@@ -1,27 +1,27 @@
-import { API_REMOVE_EMP_AVATAR_URL } from "@/utils/constants/apis/employee_url";
+import { API_REMOVE_EMP_COVER_LETTER_URL } from "@/utils/constants/apis/employee_url";
 import axios from "axios";
 import { create } from "zustand";
 
-type TRemoveEmpAvatarResponse = {
+type TRemoveEmpCoverLetterResponse = {
   message: string | null;
 };
 
-type TRemoveEmpAvatarStoreState = TRemoveEmpAvatarResponse & {
+type TRemoveEmpCoverLetterStoreState = TRemoveEmpCoverLetterResponse & {
   loading: boolean;
   error: string | null;
-  removeEmpAvatar: (employeeID: string) => Promise<void>;
+  removeEmpCoverLetter: (employeeID: string) => Promise<void>;
 };
 
-export const useRemoveEmpAvatarStore = create<TRemoveEmpAvatarStoreState>(
-  (set) => ({
+export const useRemoveEmpCoverLetterStore =
+  create<TRemoveEmpCoverLetterStoreState>((set) => ({
     message: null,
     loading: false,
     error: null,
-    removeEmpAvatar: async (employeeID: string) => {
+    removeEmpCoverLetter: async (employeeID: string) => {
       set({ loading: true, error: null });
       try {
-        const response = await axios.post<TRemoveEmpAvatarResponse>(
-          API_REMOVE_EMP_AVATAR_URL(employeeID),
+        const response = await axios.post<TRemoveEmpCoverLetterResponse>(
+          API_REMOVE_EMP_COVER_LETTER_URL(employeeID),
         );
         set({ loading: false, error: null, message: response.data.message });
       } catch (error) {
@@ -35,11 +35,10 @@ export const useRemoveEmpAvatarStore = create<TRemoveEmpAvatarStoreState>(
         } else {
           set({
             loading: false,
-            error: "An error occurred while removing employee's avatar.",
-            message: "An error occurred while removing employee's avatar.",
+            error: "An error occurred while removing employee's coverLetter.",
+            message: "An error occurred while removing employee's coverLetter.",
           });
         }
       }
     },
-  }),
-);
+  }));

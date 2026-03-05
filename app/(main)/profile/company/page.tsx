@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/carousel";
 import { Input } from "@/components/ui/input";
 import {
+  Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
@@ -27,10 +28,10 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import {
   locationConstant,
+  loginMethodConstant,
   platformConstant,
 } from "@/utils/constants/app.constant";
 import { TLocations } from "@/utils/types/location.type";
-import { Select } from "@radix-ui/react-select";
 import {
   ChevronDown,
   LucideBuilding,
@@ -94,45 +95,120 @@ import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cov
 import { useUploadCompanyImagesStore } from "@/stores/apis/company/upload-cmp-images.store";
 import { useRemoveOneOpenPositionStore } from "@/stores/apis/company/remove-one-open-position.store";
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
-import RemoveOpenPositionDialog from "./_dialogs/remove-open-position-dialog";
 import { isUuid } from "@/utils/functions/check-uuid";
 import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-scopes.store";
 import { useRemoveOneCmpImageStore } from "@/stores/apis/company/remove-one-cmp-image.store";
-import RemoveImageDialog from "./_dialogs/remove-image-dialog";
 import { useRemoveCmpAvatarStore } from "@/stores/apis/company/remove-cmp-avatar.store";
 import { useRemoveCmpCoverStore } from "@/stores/apis/company/remove-cmp-cover.store";
 import emptySvgImage from "@/assets/svg/empty.svg";
 import Image from "next/image";
 import { capitalizeWords } from "@/utils/functions/capitalize-words";
-import RemoveAvatarOrCoverDialog from "./_dialogs/remove-avatar-cover-dialog";
+import RemoveAlertDialog from "@/components/utils/dialogs/remove-alert-dialog";
 
 export default function ProfilePage() {
-  // Store hooks
+  // API Integration
+  // Current User Infomation and Current User CareerScopes
   const { user, loading, getCurrentUser } = useGetCurrentUserStore();
-  const getAllCareerScopeStore = useGetAllCareerScopesStore();
   const company = user?.company;
+  const getAllCareerScopeStore = useGetAllCareerScopesStore();
+
+  // Update Company Information
   const updateOneCmpStore = useUpdateOneCompanyStore();
+
+  // Upload Avatar, Cover and Image
   const uploadAvatarCmpStore = useUploadCompanyAvatarStore();
   const uploadCoverCmpStore = useUploadCompanyCoverStore();
   const uploadCmpImagesStore = useUploadCompanyImagesStore();
-  const removeOneOpenPosition = useRemoveOneOpenPositionStore();
-  const removeOneCompImage = useRemoveOneCmpImageStore();
-  const removeCmpAvatar = useRemoveCmpAvatarStore();
-  const removeCmpCover = useRemoveCmpCoverStore();
 
+  // Remove Avatar, Cover, Image and OpenPosition
+  const removeOneCompImageStore = useRemoveOneCmpImageStore();
+  const removeCmpAvatarStore = useRemoveCmpAvatarStore();
+  const removeCmpCoverStore = useRemoveCmpCoverStore();
+  const removeOneOpenPositionStore = useRemoveOneOpenPositionStore();
+
+  // Compute All Loading States
   const updateProfileLoadingState =
     updateOneCmpStore.loading ||
     uploadAvatarCmpStore.loading ||
     uploadCoverCmpStore.loading ||
     uploadCmpImagesStore.loading ||
-    removeOneOpenPosition.loading ||
-    removeOneCompImage.loading ||
-    removeCmpAvatar.loading ||
-    removeCmpCover.loading;
+    removeOneOpenPositionStore.loading ||
+    removeOneCompImageStore.loading ||
+    removeCmpAvatarStore.loading ||
+    removeCmpCoverStore.loading;
 
-  const { toast } = useToast();
+  // Utils
+  const { toast, dismiss } = useToast();
+  const [isEdit, setIsEdit] = useState<boolean>(false);
 
-  // Form hook
+  // Image and Profile Dialog States
+  const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
+  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
+  const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(
+    null,
+  );
+  const [openRemoveImageDialog, setOpenRemoveImageDialog] =
+    useState<boolean>(false);
+  const [removedImage, setRemoveImage] = useState<{
+    id: string;
+    index: number;
+  } | null>(null);
+  const [openRemoveAvatarDialog, setOpenRemoveAvatarDialog] =
+    useState<boolean>(false);
+  const [openRemoveCoverDialog, setOpenRemoveCoverDialog] =
+    useState<boolean>(false);
+
+  // OpenPosition States
+  const [openPositions, setOpenPositions] = useState<IJobPosition[]>([]);
+  const [openRemoveOpenPositionDialog, setOpenRemoveOpenPositionDialog] =
+    useState<boolean>(false);
+  const [currentOpenPositionID, setCurrentOpenPositionID] = useState<
+    string | null
+  >(null);
+
+  // Select Location and Date States
+  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
+    "",
+  );
+  const [selectedDates, setSelectedDates] = useState<
+    Record<string, { posted?: Date; deadline?: Date }>
+  >({});
+
+  // Benefit States
+  const [benefitInput, setBenefitInput] = useState<IBenefits | null>(null);
+  const [benefits, setBenefits] = useState<IBenefits[]>([]);
+  const [deletedBenefitIds, setDeletedBenefitIds] = useState<number[]>([]);
+  const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
+
+  // Value States
+  const [valueInput, setValueInput] = useState<IValues | null>(null);
+  const [values, setValues] = useState<IValues[]>([]);
+  const [deletedValueIds, setDeletedValueIds] = useState<number[]>([]);
+  const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
+
+  // CareerScope States
+  const [careerScopeInput, setCareerScopeInput] =
+    useState<ICareerScopes | null>(null);
+  const [careerScopes, setCareerScopes] = useState<ICareerScopes[]>([]);
+  const [deleteCareerScopeIds, setDeleteCareerScopeIds] = useState<string[]>(
+    [],
+  );
+  const [openCareerScopePopOver, setOpenCareerScopePopOver] =
+    useState<boolean>(false);
+
+  // Social States
+  const [socialInput, setSocialInput] = useState<ISocial | null>(null);
+  const [socials, setSocials] = useState<ISocial[]>([]);
+  const [deleteSocialIds, setDeleteSocialIds] = useState<string[]>([]);
+
+  // Avatar and Cover File States
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const avatarInputRef = useRef<HTMLInputElement | null>(null);
+  const coverInputRef = useRef<HTMLInputElement | null>(null);
+  const ignoreNextClick = useRef<boolean>(false);
+
+  // React Hook Form: Company Profile Schema
   const form = useForm<TCompanyProfileForm>({
     resolver: zodResolver(companyFormSchema),
     defaultValues: {
@@ -162,78 +238,12 @@ export default function ProfilePage() {
     shouldFocusError: false,
   });
 
-  // All useState hooks
-  const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
-  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
-  const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(
-    null,
-  );
-  const [openRemoveImageDialog, setOpenRemoveImageDialog] =
-    useState<boolean>(false);
-  const [removedImage, setRemoveImage] = useState<{
-    id: string;
-    index: number;
-  } | null>(null);
-  const [openRemoveAvatarDialog, setOpenRemoveAvatarDialog] =
-    useState<boolean>(false);
-  const [openRemoveCoverDialog, setOpenRemoveCoverDialog] =
-    useState<boolean>(false);
-
-  const [openPositions, setOpenPositions] = useState<IJobPosition[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
-    "",
-  );
-  const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
-  const [benefitInput, setBenefitInput] = useState<IBenefits | null>(null);
-  const [benefits, setBenefits] = useState<IBenefits[]>([]);
-  const [deletedBenefitIds, setDeletedBenefitIds] = useState<number[]>([]);
-  const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
-  const [valueInput, setValueInput] = useState<IValues | null>(null);
-  const [values, setValues] = useState<IValues[]>([]);
-  const [deletedValueIds, setDeletedValueIds] = useState<number[]>([]);
-  const [openCareersPopOver, setOpenCareersPopOver] = useState<boolean>(false);
-  const [careersInput, setCareersInput] = useState<ICareerScopes | null>(null);
-  const [careers, setCareers] = useState<ICareerScopes[]>([]);
-  const [deleteCareerScopeIds, setDeleteCareerScopeIds] = useState<string[]>(
-    [],
-  );
-  const [socialInput, setSocialInput] = useState<ISocial | null>(null);
-  const [socials, setSocials] = useState<ISocial[]>([]);
-  const [deleteSocialIds, setDeleteSocialIds] = useState<string[]>([]);
-  const [selectedDates, setSelectedDates] = useState<
-    Record<string, { posted?: Date; deadline?: Date }>
-  >({});
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [coverFile, setCoverFile] = useState<File | null>(null);
-  const [openRemoveOpenPositionDialog, setOpenRemoveOpenPositionDialog] =
-    useState<boolean>(false);
-  const [currentOpenPositionID, setCurrentOpenPositionID] = useState<
-    string | null
-  >(null);
-
-  // All useRef hooks
-  const ignoreNextClick = useRef<boolean>(false);
-  const avatarInputRef = useRef<HTMLInputElement | null>(null);
-  const coverInputRef = useRef<HTMLInputElement | null>(null);
-
-  // All useEffect hooks
+  // All useEffect Hooks
   useEffect(() => {
-    // Get current user with HTTP-only cookies
     getCurrentUser();
   }, []);
 
-  const enableEditMode = () => {
-    getAllCareerScopeStore.getAllCareerScopes();
-    setIsEdit(true);
-  };
-
-  const disableEditMode = () => {
-    if(avatarFile) setAvatarFile(null);
-    setIsEdit(false);
-    form.reset();
-  };
-
+  // Query Current Company Profile Information Effect
   useEffect(() => {
     if (user && company) {
       // Initialize form data
@@ -309,7 +319,7 @@ export default function ProfilePage() {
       });
 
       setSocials(company.socials ?? []);
-      setCareers(company.careerScopes ?? []);
+      setCareerScopes(company.careerScopes ?? []);
       setOpenPositions(company.openPositions ?? []);
       setBenefits(company.benefits ?? []);
       setValues(company.values ?? []);
@@ -325,24 +335,30 @@ export default function ProfilePage() {
     }
   }, [user, company, form]);
 
-  useEffect(() => {
-    const initialSocial = (form.getValues?.("socials") || []).filter(
-      (s): s is { platform: string; url: string } => s !== undefined,
-    );
-    setSocials(initialSocial);
-  }, [form]);
-
+  // Initial CareerScope Effect
   useEffect(() => {
     const initialCareerScope = form.getValues("careerScopes") || [];
-    setCareers(
-      initialCareerScope.map((cp) => ({
-        id: cp?.id ?? "",
-        name: cp?.name ?? "",
-        description: cp?.description ?? "",
+
+    setCareerScopes(
+      initialCareerScope.map((cs) => ({
+        id: cs.id ?? "",
+        name: cs.name,
+        description: cs.description ?? "",
       })),
     );
   }, [form]);
 
+  // Initial Social Effect
+  useEffect(() => {
+    const initialSocial = (form.getValues("socials") || []).filter(
+      (s): s is ISocial =>
+        !!s && typeof s.platform === "string" && typeof s.url === "string",
+    );
+
+    setSocials(initialSocial);
+  }, [form]);
+
+  // Initial Benefit Effect
   useEffect(() => {
     const initialBenefit = form.getValues("benefitsAndValues.benefits") || [];
     setBenefits(
@@ -353,9 +369,10 @@ export default function ProfilePage() {
     );
   }, [form]);
 
+  // Initial Value Effect
   useEffect(() => {
     const initialValue = form.getValues("benefitsAndValues.values") || [];
-    setBenefits(
+    setValues(
       initialValue.map((vl) => ({
         id: vl.id,
         label: vl.label,
@@ -363,6 +380,7 @@ export default function ProfilePage() {
     );
   }, [form]);
 
+  // Image and Profile Popup Ignore Click Effect
   useEffect(() => {
     if (openImagePopup || openProfilePopup) {
       ignoreNextClick.current = true;
@@ -370,7 +388,19 @@ export default function ProfilePage() {
     }
   }, [openImagePopup, openProfilePopup]);
 
-  // Add an open position
+  // Handle Enable and Disable Edit Mode
+  const enableEditMode = () => {
+    getAllCareerScopeStore.getAllCareerScopes();
+    setIsEdit(true);
+  };
+
+  const disableEditMode = () => {
+    setIsEdit(false);
+    form.reset();
+  };
+
+  // OpenPosition Bussiness Logics
+  // 1. Add New OpenPosition
   const addOpenPosition = () => {
     const newPosition = {
       id: Date.now().toString(),
@@ -390,9 +420,9 @@ export default function ProfilePage() {
     setOpenPositions((prevPositions) => [...prevPositions!, newPosition]);
   };
 
-  // Remove an open position
+  // 2. Remove OpenPosition with ID
   const removeOpenPosition = async (openPositionID: string) => {
-    await removeOneOpenPosition.removeOneOpenPosition(
+    await removeOneOpenPositionStore.removeOneOpenPosition(
       company!.id,
       openPositionID,
     );
@@ -414,12 +444,15 @@ export default function ProfilePage() {
     setIsEdit(false);
   };
 
+  // Benefit Bussiness Logics
+  // 1. Add New Benefit
   const addBenefits = () => {
-    const trimmed = benefitInput?.label.trim();
+    const trimmed = benefitInput?.label?.trim();
     if (!trimmed) return;
 
-    // Get current benefits from form
-    const currentBenefits = form.getValues("benefitsAndValues.benefits") || [];
+    const currentBenefits = (
+      form.getValues("benefitsAndValues.benefits") || []
+    ).filter(Boolean) as IBenefits[];
 
     const alreadyExists = currentBenefits.some(
       (bf) => bf.label.toLowerCase() === trimmed.toLowerCase(),
@@ -437,34 +470,40 @@ export default function ProfilePage() {
       return;
     }
 
-    // Add new benefit WITHOUT id (will be created in backend)
-    const updatedBenefits = [...currentBenefits, { label: trimmed }];
+    const updatedBenefits: IBenefits[] = [
+      ...currentBenefits,
+      { label: trimmed },
+    ];
 
-    // Update form state
     form.setValue("benefitsAndValues.benefits", updatedBenefits, {
       shouldDirty: true,
       shouldTouch: true,
     });
 
-    setBenefits(updatedBenefits); // Update local state for UI
+    setBenefits(updatedBenefits);
     setBenefitInput(null);
     setOpenBenefitPopOver(false);
   };
 
+  // 2. Remove Old Benefit with ID
   const removeBenefit = async (benefitToRemove: string) => {
-    const currentBenefits = form.getValues("benefitsAndValues.benefits") || [];
+    const currentBenefits = (
+      form.getValues("benefitsAndValues.benefits") || []
+    ).filter(Boolean) as IBenefits[];
 
-    // Find the benefit to remove
     const benefitToDelete = currentBenefits.find(
       (bf) => bf.label === benefitToRemove,
     );
+    if (!benefitToDelete) return;
 
-    // If it has an ID, track it for deletion
-    if ("id" in benefitToDelete! && benefitToDelete.id) {
+    if (
+      typeof benefitToDelete === "object" &&
+      "id" in benefitToDelete &&
+      benefitToDelete.id
+    ) {
       setDeletedBenefitIds((prev) => [...prev, benefitToDelete.id as number]);
     }
 
-    // Remove from form
     const updated = currentBenefits.filter(
       (bf) => bf.label !== benefitToRemove,
     );
@@ -472,18 +511,21 @@ export default function ProfilePage() {
       shouldDirty: true,
       shouldTouch: true,
     });
-
-    setBenefits(updated); // Update local state for UI
+    setBenefits(updated);
   };
 
+  // Value Bussiness Logics
+  // 1. Add New Value
   const addValue = () => {
-    const trimmed = valueInput?.label.trim();
+    const trimmed = valueInput?.label?.trim();
     if (!trimmed) return;
 
-    const currentValues = form.getValues("benefitsAndValues.values") || [];
+    const currentValues = (
+      form.getValues("benefitsAndValues.values") || []
+    ).filter(Boolean) as IValues[];
 
     const alreadyExists = currentValues.some(
-      (value) => value.label.toLowerCase() === trimmed.toLowerCase(),
+      (v) => (v.label ?? "").toLowerCase() === trimmed.toLowerCase(),
     );
 
     if (alreadyExists) {
@@ -498,8 +540,8 @@ export default function ProfilePage() {
       return;
     }
 
-    // Add new value WITHOUT id
-    const updatedValues = [...currentValues, { label: trimmed }];
+    const updatedValues: IValues[] = [...currentValues, { label: trimmed }];
+
     form.setValue("benefitsAndValues.values", updatedValues, {
       shouldDirty: true,
       shouldTouch: true,
@@ -510,22 +552,25 @@ export default function ProfilePage() {
     setOpenValuePopOver(false);
   };
 
+  // 2. Remove Value with ID
   const removeValue = async (valueToRemove: string) => {
-    const currentValues = form.getValues("benefitsAndValues.values") || [];
+    const currentValues = (
+      form.getValues("benefitsAndValues.values") || []
+    ).filter(Boolean) as IValues[];
 
-    // Find the value to remove
-    const valueToDelete = currentValues.find(
-      (value) => value.label === valueToRemove,
-    );
+    const valueToDelete = currentValues.find((v) => v.label === valueToRemove);
+    if (!valueToDelete) return;
 
-    // If it has an ID, track it for deletion
-    if ("id" in valueToDelete! && valueToDelete.id) {
+    if (
+      typeof valueToDelete === "object" &&
+      "id" in valueToDelete &&
+      valueToDelete.id
+    ) {
       setDeletedValueIds((prev) => [...prev, valueToDelete.id as number]);
     }
 
-    // Remove from form
     const updatedValues = currentValues.filter(
-      (value) => value.label !== valueToRemove,
+      (v) => v.label !== valueToRemove,
     );
     form.setValue("benefitsAndValues.values", updatedValues, {
       shouldDirty: true,
@@ -535,15 +580,18 @@ export default function ProfilePage() {
     setValues(updatedValues);
   };
 
-  const addCareers = () => {
-    const trimmed = careersInput?.name.trim();
-    const id = careersInput?.id;
-    const description = careersInput?.description;
+  // CareerScope Bussiness Logics
+  // 1. Add New CareerScope
+  const addCareerScope = () => {
+    const trimmed = careerScopeInput?.name.trim();
+    const id = careerScopeInput?.id;
+    const description = careerScopeInput?.description;
     if (!trimmed) return;
 
-    const currentCareerScopes = form.getValues("careerScopes") || [];
+    const currentCareerScopes = (form.getValues("careerScopes") || []).filter(
+      Boolean,
+    ) as ICareerScopes[];
 
-    // Check for duplicate careers
     const alreadyExists = currentCareerScopes.some(
       (career) => career.name.toLowerCase() === trimmed.toLowerCase(),
     );
@@ -555,14 +603,14 @@ export default function ProfilePage() {
         description: "Please input another career.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
-      setCareersInput(null);
-      setOpenCareersPopOver(false);
+
+      setCareerScopeInput(null);
+      setOpenCareerScopePopOver(false);
       return;
     }
 
-    // Add new career
     const updatedCareers = [
-      ...careers.map((career) => ({
+      ...careerScopes.map((career) => ({
         id: career.id ?? "",
         name: career.name,
         description: career.description ?? "",
@@ -574,51 +622,58 @@ export default function ProfilePage() {
       shouldTouch: true,
     });
 
-    setCareers(updatedCareers);
-    setCareersInput(null);
-    setOpenCareersPopOver(false); // Close popover after adding career
+    setCareerScopes(updatedCareers);
+    setCareerScopeInput(null);
+    setOpenCareerScopePopOver(false);
   };
 
-  // Handle the career selection from the dropdown or input
+  // 2. CareerScope Selection from the Dropdown or Input
   const handleCareerSelect = (
     selectedCareerId: string,
     selectedCareerName: string,
     selectedCareerDescription: string,
   ) => {
-    setCareersInput({
+    setCareerScopeInput({
       id: selectedCareerId,
       name: selectedCareerName,
       description: selectedCareerDescription,
-    }); // Set the selected career to input
-    setOpenCareersPopOver(false); // Close popover after selecting
+    });
+    setOpenCareerScopePopOver(false);
   };
 
-  // Handle delete career
+  // 3. Remove Old CareerScope with Career's name
   const removeCareer = (careerToRemove: string) => {
-    const currentCareers = form.getValues("careerScopes") || [];
+    const currentCareerScopes = (form.getValues("careerScopes") || []).filter(
+      Boolean,
+    ) as ICareerScopes[];
 
-    // Find the career to delete
-    const careerToDelete = currentCareers.find(
+    const careerToDelete = currentCareerScopes.find(
       (career) => career.name === careerToRemove,
     );
+    if (!careerToDelete) return;
 
-    // If it has an ID, track it for deletion
-    if ("id" in careerToDelete! && careerToDelete.id) {
-      setDeleteCareerScopeIds((prev) => [...prev, careerToDelete.id!]);
+    if (
+      typeof careerToDelete === "object" &&
+      "id" in careerToDelete &&
+      careerToDelete.id
+    ) {
+      setDeleteCareerScopeIds((prev) => [...prev, careerToDelete.id as string]);
     }
 
-    // Remove from form
-    const updatedCareers = currentCareers.filter(
+    const updatedCareerScopes = currentCareerScopes.filter(
       (career) => career.name !== careerToRemove,
     );
-    form.setValue("careerScopes", updatedCareers, {
+
+    form.setValue("careerScopes", updatedCareerScopes, {
       shouldDirty: true,
       shouldTouch: true,
     });
 
-    setCareers(updatedCareers);
+    setCareerScopes(updatedCareerScopes);
   };
 
+  // Social Bussiness Logics
+  // 1. Add New Social
   const addSocial = () => {
     const trimmedPlatform = socialInput?.platform.trim();
     const trimmedUrl = socialInput?.url.trim();
@@ -651,32 +706,38 @@ export default function ProfilePage() {
       shouldTouch: true,
     });
 
-    setSocials(updatedSocials); // Update the state
-    setSocialInput(null); // Reset the input
+    setSocials(updatedSocials);
+    setSocialInput(null);
   };
 
+  // 2. Remove Old Social
   const removeSocial = (platform: TPlatform) => {
-    const currentSocials = form.getValues("socials") || [];
+    const currentSocials = (form.getValues("socials") || []).filter(
+      Boolean,
+    ) as ISocial[];
 
-    const socialToDelete = currentSocials.find(
-      (sc) => sc?.platform === platform,
-    );
+    const socialToDelete = currentSocials.find((s) => s?.platform === platform);
+    if (!socialToDelete) return;
 
-    if ("id" in socialToDelete! && socialToDelete.id) {
+    if (
+      typeof socialToDelete === "object" &&
+      "id" in socialToDelete &&
+      socialToDelete.id
+    ) {
       setDeleteSocialIds((prev) => [...prev, socialToDelete.id as string]);
     }
 
-    const updatedSocials = socials.filter(
-      (sc) => sc.platform !== socialToDelete?.platform,
-    );
+    const updatedSocials = socials.filter((s) => s.platform !== platform);
+
     form.setValue("socials", updatedSocials, {
       shouldDirty: true,
       shouldTouch: true,
     });
 
-    setSocials(updatedSocials); // Update the state
+    setSocials(updatedSocials);
   };
 
+  // Handle Posted and Deadline Date
   const handleDateChange = (
     positionId: string,
     type: "posted" | "deadline",
@@ -691,6 +752,7 @@ export default function ProfilePage() {
     }));
   };
 
+  // Handle Avatar and Cover File Change
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     type: "avatar" | "cover",
@@ -707,6 +769,7 @@ export default function ProfilePage() {
     }
   };
 
+  // onSubmit: Update The Entire Company Profile (API's calling)
   const onSubmit = async (data: TCompanyProfileForm) => {
     console.log("Company Profile Data: ", data);
     const updateBody: Partial<TCompanyUpdateBody> = {};
@@ -865,8 +928,6 @@ export default function ProfilePage() {
 
       await Promise.all(uploadTasks);
 
-      console.log("Updated Body: ", updateBody);
-
       /* ------------------------ API UPDATE ------------------------ */
       if (Object.keys(updateBody).length > 0) {
         await updateOneCmpStore.updateOneCompany(company!.id, updateBody);
@@ -899,13 +960,14 @@ export default function ProfilePage() {
     }
   };
 
+  // handleSubmit: Submit Company Profile Form
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // Explicitly sync all state variables with the form
     form.setValue("benefitsAndValues.benefits", benefits);
     form.setValue("benefitsAndValues.values", values);
-    form.setValue("careerScopes", careers);
+    form.setValue("careerScopes", careerScopes);
     form.setValue("socials", socials);
 
     // Also sync any file uploads that might be managed outside the form
@@ -921,47 +983,41 @@ export default function ProfilePage() {
     form.handleSubmit(onSubmit, console.error)(e);
   };
 
+  // API for Remove Company Images, Avatar and Cover
+  // 1. Remove One Company Image API
   const handleRemoveOneCmpImage = async (imageId: string, index: number) => {
     const updated = form.watch("images")?.filter((_, i) => i !== index);
     form.setValue("images", updated);
 
-    if (company) {
-      await removeOneCompImage.removeOneCmpImage(company.id, imageId);
-    }
+    if (company)
+      await removeOneCompImageStore.removeOneCmpImage(company.id, imageId);
 
-    // Refetch current user
     await getCurrentUser();
     setIsEdit(false);
   };
 
+  // 2. Remove Company Cover API
   const handleRemoveCmpCover = async () => {
-    if (company) {
-      await removeCmpCover.removeCmpCover(company.id);
-    }
+    if (company) await removeCmpCoverStore.removeCmpCover(company.id);
 
-    // Refetch current user
     await getCurrentUser();
     setIsEdit(false);
 
-    // Close dialog
     setOpenRemoveCoverDialog(false);
   };
 
+  // 3. Remvove Company Avatar API
   const handleRemoveCmpAvatar = async () => {
-    if (company) {
-      await removeCmpAvatar.removeCmpAvatar(company.id);
-    }
+    if (company) await removeCmpAvatarStore.removeCmpAvatar(company.id);
 
-    // Refetch current user
     await getCurrentUser();
     console.log("New Current User: ", user);
     setIsEdit(false);
-z
-    // Close dialog
+
     setOpenRemoveAvatarDialog(false);
   };
 
-  // Profile, Cover and Image Popup handlers
+  // Company Profile, Cover and Image Popup Handlers
   const handleClickImagePopup = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -980,8 +1036,10 @@ z
     setOpenProfilePopup(true);
   };
 
+  // API Effect
   useEffect(() => {
-    if (removeOneOpenPosition.loading) {
+    if (removeOneOpenPositionStore.loading) {
+      dismiss();
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -994,7 +1052,8 @@ z
       });
     }
 
-    if (removeOneCompImage.loading) {
+    if (removeOneCompImageStore.loading) {
+      dismiss();
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -1007,7 +1066,36 @@ z
       });
     }
 
+    if (removeCmpAvatarStore.loading) {
+      dismiss();
+      toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <ApsaraLoadingSpinner size={50} loop />
+            <TypographySmall className="font-medium leading-relaxed">
+              Removing Avatar...
+            </TypographySmall>
+          </div>
+        ),
+      });
+    }
+
+    if (removeCmpCoverStore.loading) {
+      dismiss();
+      toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <ApsaraLoadingSpinner size={50} loop />
+            <TypographySmall className="font-medium leading-relaxed">
+              Removing Cover...
+            </TypographySmall>
+          </div>
+        ),
+      });
+    }
+
     if (updateProfileLoadingState) {
+      dismiss();
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -1019,17 +1107,14 @@ z
         ),
       });
     }
-  }, [
-    removeOneOpenPosition.loading,
-    removeOneCompImage.loading,
-    updateProfileLoadingState,
-  ]);
+  }, [updateProfileLoadingState]);
 
   if (loading) return <CompanyProfilePageSkeleton />;
   if (!user || !company) return null;
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+      {/* Company Cover Section */}
       <div
         className="relative h-80 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center"
         style={{
@@ -1063,10 +1148,11 @@ z
                 </TypographySmall>
               </Button>
             )}
-            <RemoveAvatarOrCoverDialog
+            {/* Remove Avatar Dialog Section */}
+            <RemoveAlertDialog
               type="cover"
-              setOnRemoveAvatarOrCoverDialog={setOpenRemoveCoverDialog}
-              onRemoveAvatarOrCoverDialog={openRemoveCoverDialog}
+              setOpenDialog={setOpenRemoveCoverDialog}
+              openDialog={openRemoveCoverDialog}
               onNoClick={() => setOpenRemoveCoverDialog(false)}
               onYesClick={handleRemoveCmpCover}
             />
@@ -1081,11 +1167,14 @@ z
           aria-label="Upload cover image"
         />
         <div className="relative flex items-center gap-5 tablet-sm:flex-col">
+          {/* Avatar Section */}
           <Avatar
             className="size-32 tablet-sm:size-28 relative bg-primary-foreground"
             rounded="md"
             onClick={(e) => {
-              if (!isEdit) handleClickProfilePopup(e);
+              if (!isEdit) {
+                if (company.avatar) handleClickProfilePopup(e);
+              }
             }}
           >
             <AvatarImage
@@ -1114,10 +1203,12 @@ z
                     <LucideXCircle width={"18px"} strokeWidth={"1.2px"} />
                   </Button>
                 )}
-                <RemoveAvatarOrCoverDialog
+
+                {/* Remove Avatar Dialog Section */}
+                <RemoveAlertDialog
                   type="avatar"
-                  setOnRemoveAvatarOrCoverDialog={setOpenRemoveAvatarDialog}
-                  onRemoveAvatarOrCoverDialog={openRemoveAvatarDialog}
+                  setOpenDialog={setOpenRemoveAvatarDialog}
+                  openDialog={openRemoveAvatarDialog}
                   onNoClick={() => setOpenRemoveAvatarDialog(false)}
                   onYesClick={handleRemoveCmpAvatar}
                 />
@@ -1132,6 +1223,7 @@ z
               aria-label="Upload avatar image"
             />
           </Avatar>
+          {/* Name and Industry Section */}
           <div className="flex flex-col items-start gap-2 text-muted tablet-sm:items-center">
             <TypographyH2 className="tablet-sm:text-center tablet-sm:text-xl">
               {company.name}
@@ -1141,6 +1233,8 @@ z
             </TypographyP>
           </div>
         </div>
+
+        {/* Edit Button Section */}
         {isEdit ? (
           <div className="flex items-center gap-3 absolute top-5 right-5 phone-xl:top-2 phone-xl:right-2">
             <Button
@@ -1167,6 +1261,7 @@ z
           </Button>
         )}
       </div>
+
       <div className="flex items-start gap-5 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
         <div className="w-[60%] flex flex-col gap-5">
           {/* Company Information Form Section */}
@@ -1187,6 +1282,8 @@ z
                   />
                 }
               />
+
+              {/* Description Section */}
               <div className="w-full flex flex-col items-start gap-2">
                 <TypographyMuted className="text-xs">
                   Company Description
@@ -1201,6 +1298,8 @@ z
                   disabled={!isEdit}
                 />
               </div>
+
+              {/* Industry Section */}
               <div className="w-full flex items-center justify-between gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
                 <LabelInput
                   label="Industry"
@@ -1213,6 +1312,8 @@ z
                     />
                   }
                 />
+
+                {/* Location Section */}
                 <div className="flex flex-col items-start gap-2">
                   <TypographyMuted className="text-xs">
                     Locations
@@ -1249,62 +1350,72 @@ z
                   />
                 </div>
               </div>
+
+              {/* CompanySize, FoundedYear, Email and PhoneNumber Section */}
               <div className="w-full flex items-center justify-between gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
-                <LabelInput
-                  label="Company Size"
-                  input={
-                    <Input
-                      type="number"
-                      placeholder={
-                        isEdit ? "Company Size" : `${company.companySize}`
-                      }
-                      id="company-size"
-                      {...form.register("basicInfo.companySize")}
-                      prefix={<LucideUsers />}
-                      disabled={!isEdit}
-                    />
-                  }
-                />
-                <LabelInput
-                  label="Founded Year"
-                  input={
-                    <Input
-                      type="number"
-                      placeholder={
-                        isEdit ? "Founded Year" : `${company.foundedYear}`
-                      }
-                      id="company-founded-year"
-                      {...form.register("basicInfo.foundedYear")}
-                      prefix={<LucideBuilding />}
-                      disabled={!isEdit}
-                    />
-                  }
-                />
+                {company.companySize && (
+                  <LabelInput
+                    label="Company Size"
+                    input={
+                      <Input
+                        type="number"
+                        placeholder={
+                          isEdit ? "Company Size" : `${company.companySize}`
+                        }
+                        id="company-size"
+                        {...form.register("basicInfo.companySize")}
+                        prefix={<LucideUsers />}
+                        disabled={!isEdit}
+                      />
+                    }
+                  />
+                )}
+                {company.foundedYear && (
+                  <LabelInput
+                    label="Founded Year"
+                    input={
+                      <Input
+                        type="number"
+                        placeholder={
+                          isEdit ? "Founded Year" : `${company.foundedYear}`
+                        }
+                        id="company-founded-year"
+                        {...form.register("basicInfo.foundedYear")}
+                        prefix={<LucideBuilding />}
+                        disabled={!isEdit}
+                      />
+                    }
+                  />
+                )}
               </div>
-              <LabelInput
-                label="Email"
-                input={
-                  <Input
-                    placeholder={isEdit ? "Email" : user.email}
-                    id="email"
-                    {...form.register("accountSetting.email")}
-                    prefix={<LucideMail />}
-                    disabled={!isEdit}
-                  />
-                }
-              />
-              <LabelInput
-                label="Phone Number"
-                input={
-                  <Input
-                    placeholder={isEdit ? "Phone number" : company.phone}
-                    id="phone"
-                    {...form.register("accountSetting.phone")}
-                    prefix={<LucidePhone />}
-                    disabled={!isEdit}
-                  />
-                }
-              />
+              {user.email && (
+                <LabelInput
+                  label="Email"
+                  input={
+                    <Input
+                      placeholder={isEdit ? "Email" : user.email}
+                      id="email"
+                      {...form.register("accountSetting.email")}
+                      prefix={<LucideMail />}
+                      disabled={!isEdit}
+                    />
+                  }
+                />
+              )}
+              {company.phone && (
+                <LabelInput
+                  label="Phone Number"
+                  input={
+                    <Input
+                      placeholder={isEdit ? "Phone number" : company.phone}
+                      id="phone"
+                      {...form.register("accountSetting.phone")}
+                      prefix={<LucidePhone />}
+                      disabled={!isEdit}
+                    />
+                  }
+                />
+              )}
             </div>
           </div>
 
@@ -1392,9 +1503,12 @@ z
                 </div>
               )}
             </div>
-            <RemoveOpenPositionDialog
-              onRemoveOpDialog={openRemoveOpenPositionDialog}
-              setOnRemoveOpDialog={setOpenRemoveOpenPositionDialog}
+
+            {/* Remove OpenPosition Dialog Section */}
+            <RemoveAlertDialog
+              type="position"
+              openDialog={openRemoveOpenPositionDialog}
+              setOpenDialog={setOpenRemoveOpenPositionDialog}
               onNoClick={() => setOpenRemoveOpenPositionDialog(false)}
               onYesClick={() => {
                 if (currentOpenPositionID) {
@@ -1457,9 +1571,11 @@ z
                       </CarouselItem>
                     );
                   })}
-                  <RemoveImageDialog
-                    onRemoveImageDialog={openRemoveImageDialog}
-                    setOnRemoveImageDialog={setOpenRemoveImageDialog}
+                  {/* Remove Company Image Dialog Section */}
+                  <RemoveAlertDialog
+                    type="image"
+                    openDialog={openRemoveImageDialog}
+                    setOpenDialog={setOpenRemoveImageDialog}
                     onNoClick={() => setOpenRemoveImageDialog(false)}
                     onYesClick={() => {
                       if (removedImage) {
@@ -1512,7 +1628,7 @@ z
         </div>
         <div className="w-[40%] flex flex-col gap-5">
           {/* Benefits Section */}
-          {benefits && benefits.length > 0 && (
+          {((benefits && benefits.length > 0) || isEdit) && (
             <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
               <div className="w-full flex flex-col gap-1">
                 <TypographyH4>Benefits</TypographyH4>
@@ -1558,7 +1674,7 @@ z
                     <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
                       <Input
                         placeholder="Enter your benefit (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
-                        value={benefitInput?.label}
+                        value={benefitInput?.label ?? ""}
                         onChange={(e) =>
                           setBenefitInput({ label: e.target.value })
                         }
@@ -1582,7 +1698,7 @@ z
           )}
 
           {/* Values Section */}
-          {values && values.length > 0 && (
+          {((values && values.length > 0) || isEdit) && (
             <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
               <div className="w-full flex flex-col gap-1">
                 <TypographyH4>Values</TypographyH4>
@@ -1605,6 +1721,7 @@ z
                           text={value.label}
                         />
                         {isEdit && (
+                          // Remove Value Button Section
                           <LucideXCircle
                             className="text-muted-foreground cursor-pointer text-red-500"
                             width={"18px"}
@@ -1628,7 +1745,7 @@ z
                     <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
                       <Input
                         placeholder="Enter your value (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
-                        value={valueInput?.label}
+                        value={valueInput?.label ?? ""}
                         onChange={(e) =>
                           setValueInput({ label: e.target.value })
                         }
@@ -1652,111 +1769,116 @@ z
           )}
 
           {/* CareersScopes Section */}
-          <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
-            <div className="w-full flex flex-col gap-1">
-              <TypographyH4>Careers Scopes</TypographyH4>
-              <Divider />
-            </div>
-            <div className="w-full flex flex-col items-stretch gap-3">
-              <div className="flex flex-wrap gap-3">
-                {careers &&
-                  careers.length > 0 &&
-                  careers.map((career, index) => {
-                    return (
-                      <div key={index}>
-                        <HoverCard>
-                          <HoverCardTrigger className="flex items-center rounded-3xl">
-                            <Tag label={career.name} />
-                            {isEdit && (
-                              <LucideXCircle
-                                className="text-muted-foreground cursor-pointer ml-1 text-red-500"
-                                width={"18px"}
-                                onClick={() => removeCareer(career.name)}
-                              />
-                            )}
-                          </HoverCardTrigger>
-                          <HoverCardContent>
-                            <TypographySmall>
-                              {career.description ?? career.name}
-                            </TypographySmall>
-                          </HoverCardContent>
-                        </HoverCard>
-                      </div>
-                    );
-                  })}
+          {((careerScopes && careerScopes.length > 0) || isEdit) && (
+            <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
+              <div className="w-full flex flex-col gap-1">
+                <TypographyH4>Careers Scopes</TypographyH4>
+                <Divider />
               </div>
+              <div className="w-full flex flex-col items-stretch gap-3">
+                <div className="flex flex-wrap gap-3">
+                  {careerScopes &&
+                    careerScopes.length > 0 &&
+                    careerScopes.map((career, index) => {
+                      return (
+                        <div key={index}>
+                          <HoverCard>
+                            <HoverCardTrigger className="flex items-center rounded-3xl">
+                              <Tag label={career.name} />
+                              {isEdit && (
+                                <LucideXCircle
+                                  className="text-muted-foreground cursor-pointer ml-1 text-red-500"
+                                  width={"18px"}
+                                  onClick={() => removeCareer(career.name)}
+                                />
+                              )}
+                            </HoverCardTrigger>
+                            <HoverCardContent>
+                              <TypographySmall>
+                                {career.description
+                                  ? career.description
+                                  : career.name}
+                              </TypographySmall>
+                            </HoverCardContent>
+                          </HoverCard>
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+              {isEdit && (
+                <Popover
+                  open={openCareerScopePopOver}
+                  onOpenChange={setOpenCareerScopePopOver}
+                >
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className="w-full justify-between"
+                    >
+                      {careerScopeInput
+                        ? getAllCareerScopeStore.careerScopes?.find(
+                            (career) => career.name === careerScopeInput.name,
+                          )?.name
+                        : "Select careers..."}
+                      <ChevronDown className="opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="p-0">
+                    <Command>
+                      <CommandInput
+                        placeholder="Select careers..."
+                        className="h-9"
+                      />
+                      <CommandList>
+                        <CommandEmpty>No career found.</CommandEmpty>
+                        <CommandGroup>
+                          {getAllCareerScopeStore.careerScopes?.map(
+                            (career, index) => (
+                              <CommandItem
+                                key={index}
+                                value={career.name}
+                                onSelect={() => {
+                                  if (career.id)
+                                    handleCareerSelect(
+                                      career.id,
+                                      career.name,
+                                      career.description ?? "",
+                                    );
+                                }}
+                              >
+                                {career.name}
+                                <LucideCircleCheck
+                                  className={
+                                    careerScopeInput?.name === career.name
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  }
+                                />
+                              </CommandItem>
+                            ),
+                          )}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              )}
+              {isEdit && (
+                // Add New Career Section
+                <Button
+                  variant="secondary"
+                  className="w-full text-xs"
+                  type="button"
+                  onClick={addCareerScope}
+                >
+                  <LucidePlus />
+                  Add Career
+                </Button>
+              )}
             </div>
-            {isEdit && (
-              <Popover
-                open={openCareersPopOver}
-                onOpenChange={setOpenCareersPopOver}
-              >
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    className="w-full justify-between"
-                  >
-                    {careersInput
-                      ? getAllCareerScopeStore.careerScopes?.find(
-                          (career) => career.name === careersInput.name,
-                        )?.name
-                      : "Select careers..."}
-                    <ChevronDown className="opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="p-0">
-                  <Command>
-                    <CommandInput
-                      placeholder="Select careers..."
-                      className="h-9"
-                    />
-                    <CommandList>
-                      <CommandEmpty>No career found.</CommandEmpty>
-                      <CommandGroup>
-                        {getAllCareerScopeStore.careerScopes?.map(
-                          (career, index) => (
-                            <CommandItem
-                              key={index}
-                              value={career.name}
-                              onSelect={() => {
-                                if (career.id)
-                                  handleCareerSelect(
-                                    career.id,
-                                    career.name,
-                                    career.description ?? "",
-                                  );
-                              }} // Handle career selection
-                            >
-                              {career.name}
-                              <LucideCircleCheck
-                                className={
-                                  careersInput?.name === career.name
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                }
-                              />
-                            </CommandItem>
-                          ),
-                        )}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-            )}
-            {isEdit && (
-              <Button
-                variant="secondary"
-                className="w-full text-xs"
-                type="button"
-                onClick={addCareers}
-              >
-                <LucidePlus />
-                Add Career
-              </Button>
-            )}
-          </div>
+          )}
 
           {/* Social Information Form Section */}
           {((company.socials && company.socials?.length > 0) || isEdit) && (
@@ -1803,10 +1925,10 @@ z
                             </TypographyMuted>
                             <Select
                               onValueChange={(value: string) =>
-                                setSocialInput({
-                                  ...socialInput!,
+                                setSocialInput((prev) => ({
+                                  ...(prev ?? { platform: "", url: "" }),
                                   platform: value,
-                                })
+                                }))
                               }
                               value={socialInput?.platform}
                             >
@@ -1834,10 +1956,10 @@ z
                                 name="link"
                                 value={socialInput?.url}
                                 onChange={(e) =>
-                                  setSocialInput({
-                                    ...socialInput!,
+                                  setSocialInput((prev) => ({
+                                    ...(prev ?? { platform: "", url: "" }),
                                     url: e.target.value,
-                                  })
+                                  }))
                                 }
                                 prefix={<LucideLink2 />}
                               />
@@ -1845,6 +1967,7 @@ z
                           />
                         </div>
                       </div>
+                      {/* Add New Social Button Section */}
                       <Button
                         variant="secondary"
                         className="text-xs w-full"
@@ -1860,6 +1983,91 @@ z
               </div>
             </div>
           )}
+
+          {/* Authentication Section */}
+          <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
+            <div className="flex flex-col gap-1">
+              <TypographyH4>Authentication</TypographyH4>
+              <Divider />
+            </div>
+            <div className="w-full flex flex-col items-start gap-3">
+              {/* All Socials Authentication Section */}
+              {loginMethodConstant.map((item) => (
+                <div
+                  className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer"
+                  key={item.id}
+                >
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src={item.icon}
+                      alt={item.label}
+                      width={30}
+                      height={30}
+                      className="rounded-full"
+                    />
+                    <TypographySmall>{item.label}</TypographySmall>
+                  </div>
+                  {user.lastLoginMethod &&
+                  user.lastLoginMethod.toUpperCase() ===
+                    item.label.toUpperCase() ? (
+                    <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
+                      <TypographySmall className="text-xs font-medium">
+                        Disconnect
+                      </TypographySmall>
+                    </div>
+                  ) : (
+                    <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
+                      <TypographySmall className="text-xs font-medium">
+                        Connect
+                      </TypographySmall>
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              {/* Email Authentication Section */}
+              <div className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer">
+                <div className="flex items-center gap-2">
+                  <LucideMail className="mx-1" strokeWidth={1.5} />
+                  <TypographySmall>Email</TypographySmall>
+                </div>
+                {user.email ? (
+                  <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
+                    <TypographySmall className="text-xs font-medium">
+                      Disconnect
+                    </TypographySmall>
+                  </div>
+                ) : (
+                  <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
+                    <TypographySmall className="text-xs font-medium">
+                      Connect
+                    </TypographySmall>
+                  </div>
+                )}
+              </div>
+
+              {/* Phone OTP Authentication Section */}
+              <div className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer">
+                <div className="flex items-center gap-2">
+                  <LucidePhone className="mx-1" strokeWidth={1.5} />
+                  <TypographySmall>Phone OTP</TypographySmall>
+                </div>
+                {user.phone ? (
+                  <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
+                    <TypographySmall className="text-xs font-medium">
+                      Disconnect
+                    </TypographySmall>
+                  </div>
+                ) : (
+                  <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
+                    <TypographySmall className="text-xs font-medium">
+                      Connect
+                    </TypographySmall>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
