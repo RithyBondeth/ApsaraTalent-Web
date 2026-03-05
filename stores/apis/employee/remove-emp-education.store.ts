@@ -20,7 +20,7 @@ export const useRemoveEmpEducationStore = create<TRemoveEducationStoreState>(
     removeEducation: async (employeeID: string, educationID: string) => {
       set({ loading: true, error: null });
       try {
-        const response = await axios.post<TRemoveEmpEducationResponse>(
+        const response = await axios.delete<TRemoveEmpEducationResponse>(
           API_REMOVE_EMP_EDUCATION_URL(employeeID, educationID),
         );
         set({ loading: false, error: null, message: response.data.message });

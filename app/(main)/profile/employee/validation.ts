@@ -142,7 +142,6 @@ export const referenceSchema = z.object({
     .optional(),
 });
 
-// ✅ Solution 2: make all fields optional (so inferred type matches your ISkill/ISocial style)
 export const careerScopesSchema = z.object({
   careerScopes: z
     .array(
@@ -150,7 +149,7 @@ export const careerScopesSchema = z.object({
         .object({
           id: z.string().optional(),
           name: z.string().optional(),
-          description: z.string().optional(),
+          description: z.string().optional().nullable(),
         })
         .optional(),
     )
