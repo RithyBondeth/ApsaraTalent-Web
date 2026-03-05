@@ -16,10 +16,11 @@ import { generateResumeAPI } from "./_apis/generate-resume.api";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
+import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 
 let hasFetchedTemplates = false;
 export default function ResumeBuilder() {
-  // Template Helpers 
+  // Template Helpers
   const [generating, setGenerating] = useState<boolean>(false);
   const { setSelectedTemplate, selectedTemplate } = useTemplateSelectionStore();
   const templateMap: Record<string, "modern" | "classic" | "creative"> = {
@@ -35,7 +36,7 @@ export default function ResumeBuilder() {
   // Query All Templates Effect
   useEffect(() => {
     if (hasFetchedTemplates) return;
-  
+
     hasFetchedTemplates = true;
     queryAllTemplates();
   }, [queryAllTemplates]);
@@ -84,7 +85,7 @@ export default function ResumeBuilder() {
 
       {/* Resume Feature Section */}
       <ResumeBuilderFeature />
-      
+
       {/* Resume Generator Section */}
       <ResumeBuilderGenerate
         disabled={!selectedTemplate}
@@ -115,18 +116,12 @@ export default function ResumeBuilder() {
         }}
       />
 
-      {/* Dialog Section */}
-      <Dialog open={generating}>
-        <DialogContent>
-          <div className="w-full flex flex-col items-center justify-center gap-3 py-4">
-            <ApsaraLoadingSpinner size={80} loop />
-            <DialogTitle>Generating your resume…</DialogTitle>
-            <TypographyMuted className="text-center">
-              This may take a few seconds. Please don’t close the tab.
-            </TypographyMuted>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Loading Dialog Section */}
+      <LoadingDialog
+        loading={generating}
+        title="Generating your resume..."
+        subTitle="This may take a few seconds. Please don’t close the tab."
+      />
     </div>
   );
 }
