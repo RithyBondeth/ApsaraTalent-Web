@@ -1011,6 +1011,7 @@ export default function ProfilePage() {
     if (company) await removeCmpAvatarStore.removeCmpAvatar(company.id);
 
     await getCurrentUser();
+    console.log("New Current User: ", user);
     setIsEdit(false);
 
     setOpenRemoveAvatarDialog(false);
@@ -1163,6 +1164,7 @@ export default function ProfilePage() {
           className="hidden"
           accept="image/*"
           onChange={(e) => handleFileChange(e, "cover")}
+          aria-label="Upload cover image"
         />
         <div className="relative flex items-center gap-5 tablet-sm:flex-col">
           {/* Avatar Section */}
@@ -1218,6 +1220,7 @@ export default function ProfilePage() {
               className="hidden"
               accept="image/*"
               onChange={(e) => handleFileChange(e, "avatar")}
+              aria-label="Upload avatar image"
             />
           </Avatar>
           {/* Name and Industry Section */}
