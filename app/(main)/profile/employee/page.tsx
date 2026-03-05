@@ -344,7 +344,8 @@ export default function EmployeeProfilePage() {
   };
 
   // Disable Edit Mode
-  const disableEditMode = () => {
+  const disableEditMode = async () => {
+    await getCurrentUser();
     setOpenRemoveAvatarDialog(false);
     setOpenRemoveExperienceDialog(false);
     setOpenRemoveEducationDialog(false);
