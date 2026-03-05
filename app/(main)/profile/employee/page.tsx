@@ -1710,203 +1710,210 @@ export default function EmployeeProfilePage() {
           </div>
 
           {/* References Section */}
-          {(employee.resume || employee.coverLetter) && (
-            <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
-              <TypographyH4>References Information</TypographyH4>
-              <div className="w-full flex flex-col items-start gap-5 [&>div]:w-full">
-                {/* Resume */}
-                {employee.resume && (
-                  <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
-                    <div className="flex items-center text-muted-foreground gap-1">
-                      <LucideFileText strokeWidth={"1.3px"} />
-                      <TypographyMuted>
-                        {resumeFile
-                          ? resumeFile.name
-                          : employee.resume
-                            ? extractCleanFilename(employee.resume)
-                            : "Resume"}
-                      </TypographyMuted>
-                      <input
-                        type="file"
-                        accept="application/pdf,.doc,.docx"
-                        className="hidden"
-                        ref={resumeInputRef}
-                        onChange={(e) => handleFileChange(e, "resume")}
-                      />
-                    </div>
 
-                    <div className="flex items-center gap-1">
-                      {isEdit && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          onClick={() => resumeInputRef.current?.click()}
-                        >
-                          <LucideEdit />
-                        </Button>
-                      )}
-
-                      {employee.resume && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          onClick={() => {
-                            if (employee.resume)
-                              setPreviewReferenceUrl(employee.resume);
-                            setPreviewReferenceType("resume");
-                            setOpenReferencePreview(true);
-                          }}
-                          disabled={!employee.resume}
-                        >
-                          <LucideEye />
-                        </Button>
-                      )}
-
-                      {isEdit ? (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          className="text-red-500 bg-red-100"
-                          onClick={() => setOpenRemoveResumeDialog(true)}
-                        >
-                          <LucideTrash2 />
-                        </Button>
-                      ) : (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          onClick={() => {
-                            if (employee.resume) {
-                              downloadFileFromUrl(
-                                employee.resume,
-                                extractCleanFilename(employee.resume),
-                              );
-                            }
-                          }}
-                          disabled={!employee.resume}
-                        >
-                          <LucideDownload />
-                        </Button>
-                      )}
-                    </div>
-
-                    {/* Remove Resume Dialog Section */}
-                    <RemoveAlertDialog
-                      type="resume"
-                      openDialog={openRemoveResumeDialog}
-                      setOpenDialog={setOpenRemoveResumeDialog}
-                      onNoClick={disableEditMode}
-                      onYesClick={removeResume}
+          <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
+            <TypographyH4>References Information</TypographyH4>
+            <div className="w-full flex flex-col items-start gap-5 [&>div]:w-full">
+              {/* Resume */}
+              {employee.resume && (
+                <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
+                  <div className="flex items-center text-muted-foreground gap-1">
+                    <LucideFileText strokeWidth={"1.3px"} />
+                    <TypographyMuted>
+                      {resumeFile
+                        ? resumeFile.name
+                        : employee.resume
+                          ? extractCleanFilename(employee.resume)
+                          : "Resume"}
+                    </TypographyMuted>
+                    <input
+                      type="file"
+                      accept="application/pdf,.doc,.docx"
+                      className="hidden"
+                      ref={resumeInputRef}
+                      onChange={(e) => handleFileChange(e, "resume")}
                     />
                   </div>
-                )}
 
-                {/* Cover Letter */}
-                {employee.coverLetter && (
-                  <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
-                    <div className="flex items-center text-muted-foreground gap-1">
-                      <LucideFileText strokeWidth={"1.3px"} />
-                      <TypographyMuted>
-                        {coverLetterFile
-                          ? coverLetterFile.name
-                          : employee.coverLetter
-                            ? extractCleanFilename(employee.coverLetter)
-                            : "Cover Letter"}
-                      </TypographyMuted>
-                      <input
-                        type="file"
-                        accept="application/pdf,.doc,.docx"
-                        className="hidden"
-                        ref={coverLetterInputRef}
-                        onChange={(e) => handleFileChange(e, "coverLetter")}
-                      />
-                    </div>
+                  <div className="flex items-center gap-1">
+                    {isEdit && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => resumeInputRef.current?.click()}
+                      >
+                        <LucideEdit />
+                      </Button>
+                    )}
 
-                    <div className="flex items-center gap-1">
-                      {isEdit && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          onClick={() => coverLetterInputRef.current?.click()}
-                        >
-                          <LucideEdit />
-                        </Button>
-                      )}
+                    {employee.resume && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => {
+                          if (employee.resume)
+                            setPreviewReferenceUrl(employee.resume);
+                          setPreviewReferenceType("resume");
+                          setOpenReferencePreview(true);
+                        }}
+                        disabled={!employee.resume}
+                      >
+                        <LucideEye />
+                      </Button>
+                    )}
 
-                      {employee.coverLetter && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          onClick={() => {
-                            if (employee.coverLetter)
-                              setPreviewReferenceUrl(employee.coverLetter);
-                            setPreviewReferenceType("coverletter");
-                            setOpenReferencePreview(true);
-                          }}
-                          disabled={!employee.coverLetter}
-                        >
-                          <LucideEye />
-                        </Button>
-                      )}
-
-                      {isEdit ? (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          className="text-red-500 bg-red-100"
-                          onClick={() => setOpenRemoveCoverLetterDialog(true)}
-                        >
-                          <LucideTrash2 />
-                        </Button>
-                      ) : (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          onClick={() => {
-                            if (employee.coverLetter) {
-                              downloadFileFromUrl(
-                                employee.coverLetter,
-                                extractCleanFilename(employee.coverLetter),
-                              );
-                            }
-                          }}
-                          disabled={!employee.coverLetter}
-                        >
-                          <LucideDownload />
-                        </Button>
-                      )}
-                    </div>
+                    {isEdit ? (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="text-red-500 bg-red-100"
+                        onClick={() => setOpenRemoveResumeDialog(true)}
+                      >
+                        <LucideTrash2 />
+                      </Button>
+                    ) : (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => {
+                          if (employee.resume) {
+                            downloadFileFromUrl(
+                              employee.resume,
+                              extractCleanFilename(employee.resume),
+                            );
+                          }
+                        }}
+                        disabled={!employee.resume}
+                      >
+                        <LucideDownload />
+                      </Button>
+                    )}
                   </div>
-                )}
+
+                  {/* Remove Resume Dialog Section */}
+                  <RemoveAlertDialog
+                    type="resume"
+                    openDialog={openRemoveResumeDialog}
+                    setOpenDialog={setOpenRemoveResumeDialog}
+                    onNoClick={disableEditMode}
+                    onYesClick={removeResume}
+                  />
+                </div>
+              )}
+
+              {/* Cover Letter */}
+
+              <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
+                <div className="flex items-center text-muted-foreground gap-1">
+                  <LucideFileText strokeWidth={"1.3px"} />
+                  <TypographyMuted>
+                    {coverLetterFile
+                      ? coverLetterFile.name
+                      : employee.coverLetter
+                        ? extractCleanFilename(employee.coverLetter)
+                        : "Add Your CoverLetter"}
+                  </TypographyMuted>
+                  <input
+                    type="file"
+                    accept="application/pdf,.doc,.docx"
+                    className="hidden"
+                    ref={coverLetterInputRef}
+                    onChange={(e) => handleFileChange(e, "coverLetter")}
+                  />
+                </div>
+
+                <div className="flex items-center gap-1">
+                  {(isEdit || !employee.coverLetter) && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() => {
+                        if (!employee.coverLetter) {
+                          setIsEdit(true);
+                          coverLetterInputRef.current?.click();
+                        } else {
+                          coverLetterInputRef.current?.click();
+                        }
+                      }}
+                    >
+                      <LucideEdit />
+                    </Button>
+                  )}
+
+                  {employee.coverLetter && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() => {
+                        if (employee.coverLetter)
+                          setPreviewReferenceUrl(employee.coverLetter);
+                        setPreviewReferenceType("coverletter");
+                        setOpenReferencePreview(true);
+                      }}
+                      disabled={!employee.coverLetter}
+                    >
+                      <LucideEye />
+                    </Button>
+                  )}
+
+                  {isEdit && employee.coverLetter ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="text-red-500 bg-red-100"
+                      onClick={() => setOpenRemoveCoverLetterDialog(true)}
+                    >
+                      <LucideTrash2 />
+                    </Button>
+                  ) : (
+                    employee.coverLetter && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => {
+                          if (employee.coverLetter) {
+                            downloadFileFromUrl(
+                              employee.coverLetter,
+                              extractCleanFilename(employee.coverLetter),
+                            );
+                          }
+                        }}
+                        disabled={!employee.coverLetter}
+                      >
+                        <LucideDownload />
+                      </Button>
+                    )
+                  )}
+                </div>
               </div>
-
-              {/* Reference Preview Dialog Section */}
-              <ReferencePreviewDialog
-                openRefPreview={openReferencePreview}
-                setOpenRefPreview={setOpenReferencePreview}
-                previewRefType={previewReferenceType}
-                referenceUrl={previewReferenceUrl}
-                employeeName={employee.username ?? ""}
-              />
-
-              {/* Remove CoverLetter Dialog Section */}
-              <RemoveAlertDialog
-                type="coverLetter"
-                openDialog={openRemoveCoverLetterDialog}
-                setOpenDialog={setOpenRemoveCoverLetterDialog}
-                onNoClick={disableEditMode}
-                onYesClick={removeCoverLetter}
-              />
             </div>
-          )}
+
+            {/* Reference Preview Dialog Section */}
+            <ReferencePreviewDialog
+              openRefPreview={openReferencePreview}
+              setOpenRefPreview={setOpenReferencePreview}
+              previewRefType={previewReferenceType}
+              referenceUrl={previewReferenceUrl}
+              employeeName={employee.username ?? ""}
+            />
+
+            {/* Remove CoverLetter Dialog Section */}
+            <RemoveAlertDialog
+              type="coverLetter"
+              openDialog={openRemoveCoverLetterDialog}
+              setOpenDialog={setOpenRemoveCoverLetterDialog}
+              onNoClick={disableEditMode}
+              onYesClick={removeCoverLetter}
+            />
+          </div>
 
           {/* Social Information Section */}
           <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
