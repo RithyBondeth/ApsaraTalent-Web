@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
@@ -397,7 +397,6 @@ export default function EmployeeProfilePage() {
     await getCurrentUser();
     closeAllDialogs();
     setIsEdit(false);
-    form.reset();
   };
 
   const openRemoveExperienceOrEducationDialog = (
@@ -563,16 +562,12 @@ export default function EmployeeProfilePage() {
 
   /* ------------------- Skill Bussiness Logics ------------------- */
   // 1.Add New Skill
-  const addSkills = () => {
+  const addNewSkills = () => {
     const trimmed = skillInput?.trim();
     if (!trimmed) return;
 
-    const currentSkills = (form.getValues("skills") || []).filter(
-      Boolean,
-    ) as ISkill[];
-
-    const alreadyExists = currentSkills.some(
-      (s) => (s.name ?? "").toLowerCase() === trimmed.toLowerCase(),
+    const alreadyExists = skills.some(
+      (s) => (s.name ?? "").trim().toLowerCase() === trimmed.toLowerCase(),
     );
 
     if (alreadyExists) {
@@ -598,15 +593,11 @@ export default function EmployeeProfilePage() {
 
   // 2.Remove Skill
   const removeSkill = (skillToRemove: string) => {
-    const currentSkills = (form.getValues("skills") || []).filter(
-      Boolean,
-    ) as ISkill[];
-
-    const skillToDelete = currentSkills.find((s) => s.name === skillToRemove);
+    const skillToDelete = skills.find((s) => s.name === skillToRemove);
     if (skillToDelete?.id)
       setDeleteSkillIds((prev) => [...prev, skillToDelete.id!]);
 
-    const updated = currentSkills.filter((s) => s.name !== skillToRemove);
+    const updated = skills.filter((s) => s.name !== skillToRemove);
     setSkills(updated);
     form.setValue("skills", updated, { shouldDirty: true, shouldTouch: true });
   };
@@ -695,14 +686,10 @@ export default function EmployeeProfilePage() {
 
   // 2.Remove Social
   const removeSocial = (platform: TPlatform) => {
-    const currentSocials = (form.getValues("socials") || []).filter(
-      Boolean,
-    ) as ISocial[];
-
-    const toDelete = currentSocials.find((s) => s.platform === platform);
+    const toDelete = socials.find((s) => s.platform === platform);
     if (toDelete?.id) setDeleteSocialIds((prev) => [...prev, toDelete.id!]);
 
-    const updated = currentSocials.filter((s) => s.platform !== platform);
+    const updated = socials.filter((s) => s.platform !== platform);
     setSocials(updated);
     form.setValue("socials", updated, { shouldDirty: true, shouldTouch: true });
   };
@@ -726,12 +713,8 @@ export default function EmployeeProfilePage() {
     const name = careerScopeInput?.name?.trim();
     if (!name) return;
 
-    const current = (form.getValues("careerScopes") || []).filter(
-      Boolean,
-    ) as ICareerScopes[];
-
-    const alreadyExists = current.some(
-      (c) => (c.name ?? "").toLowerCase() === name.toLowerCase(),
+    const alreadyExists = careerScopes.some(
+      (c) => (c.name ?? "").trim().toLowerCase() === name.toLowerCase(),
     );
     if (alreadyExists) {
       toast({
@@ -770,15 +753,11 @@ export default function EmployeeProfilePage() {
 
   // 3.Remove CareerScope
   const removeCareerScope = (careerToRemove: string) => {
-    const current = (form.getValues("careerScopes") || []).filter(
-      Boolean,
-    ) as ICareerScopes[];
-
-    const toDelete = current.find((c) => c.name === careerToRemove);
+    const toDelete = careerScopes.find((c) => c.name === careerToRemove);
     if (toDelete?.id)
       setDeleteCareerScopeIds((prev) => [...prev, toDelete.id!]);
 
-    const updated = current.filter((c) => c.name !== careerToRemove);
+    const updated = careerScopes.filter((c) => c.name !== careerToRemove);
     setCareerScopes(updated);
     form.setValue("careerScopes", updated, {
       shouldDirty: true,
@@ -1637,7 +1616,7 @@ export default function EmployeeProfilePage() {
               <div className="flex flex-wrap gap-3">
                 {skills.map((skill, index) => (
                   <HoverCard key={index}>
-                    <HoverCardTrigger>
+                    <HoverCardTrigger asChild>
                       <div className="flex items-center gap-1">
                         <Tag label={skill.name} />
                         {isEdit && (
@@ -1694,9 +1673,9 @@ export default function EmployeeProfilePage() {
                       onClick={() => {
                         if (employee.skills.length === 0) {
                           setIsEdit(true);
-                          addSkills();
+                          addNewSkills();
                         } else {
-                          addSkills();
+                          addNewSkills();
                         }
                       }}
                       type="button"
