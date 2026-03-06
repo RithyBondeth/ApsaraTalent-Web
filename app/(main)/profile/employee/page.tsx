@@ -131,16 +131,18 @@ export default function EmployeeProfilePage() {
   const removeEmpEducationStore = useRemoveEmpEducationStore();
 
   // Compute All Loading States
-  const updateProfileLoadingState =
-    updateOneEmpStore.loading ||
-    uploadAvatarEmpStore.loading ||
-    uploadResumeEmpStore.loading ||
-    uploadCoverLetterEmpStore.loading ||
-    removeEmpAvatarStore.loading ||
-    removeEmpResumeStore.loading ||
-    removeEmpCoverLetterStore.loading ||
-    removeEmpEducationStore.loading ||
-    removeEmpExperieceStore.loading;
+  const apiLoadingStates = [
+    updateOneEmpStore.loading,
+    uploadAvatarEmpStore.loading,
+    uploadResumeEmpStore.loading,
+    uploadCoverLetterEmpStore.loading,
+    removeEmpAvatarStore.loading,
+    removeEmpResumeStore.loading,
+    removeEmpCoverLetterStore.loading,
+    removeEmpEducationStore.loading,
+    removeEmpExperieceStore.loading,
+  ];
+  const updateProfileLoadingState = apiLoadingStates.some(Boolean);
 
   /* ------------------------ All States ------------------------ */
   // Utils
@@ -152,12 +154,6 @@ export default function EmployeeProfilePage() {
     "resume" | "coverletter"
   >("resume");
   const [previewReferenceUrl, setPreviewReferenceUrl] = useState<string>("");
-
-  // Select Gender and Location
-  const [selectedGender, setSelectedGender] = useState<TGender | string>("");
-  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
-    "",
-  );
 
   // Avatar
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -338,8 +334,8 @@ export default function EmployeeProfilePage() {
       })),
     });
 
-    setSelectedGender(employee.gender ?? "");
-    setSelectedLocation(employee.location ?? "");
+    // setSelectedGender(employee.gender ?? "");
+    // setSelectedLocation(employee.location ?? "");
 
     setSocials(employee.socials ?? []);
     setSkills(employee.skills ?? []);
@@ -950,7 +946,8 @@ export default function EmployeeProfilePage() {
         await updateOneEmpStore.updateOneEmployee(employee.id, updateBody);
       }
 
-      window.location.reload();
+      await getCurrentUser();
+      setIsEdit(false);
     } catch (err) {
       console.error(err);
       toast({
@@ -1096,7 +1093,6 @@ export default function EmployeeProfilePage() {
           </Button>
         )}
       </div>
-
       {/* Content */}
       <div className="flex items-start gap-5 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
         {/* LEFT */}
@@ -1154,15 +1150,10 @@ export default function EmployeeProfilePage() {
                   <Controller
                     name="basicInfo.location"
                     control={form.control}
-                    defaultValue={selectedLocation}
                     render={({ field }) => (
                       <Select
-                        onValueChange={(value: TLocations) => {
-                          field.onChange(value);
-                          setSelectedLocation(value);
-                        }}
+                        onValueChange={field.onChange}
                         value={field.value}
-                        disabled={!isEdit}
                       >
                         <SelectTrigger className="h-12 text-muted-foreground">
                           <SelectValue placeholder="Location" />
@@ -1184,15 +1175,10 @@ export default function EmployeeProfilePage() {
                   <Controller
                     name="basicInfo.gender"
                     control={form.control}
-                    defaultValue={selectedGender}
                     render={({ field }) => (
                       <Select
-                        onValueChange={(value: TGender) => {
-                          field.onChange(value);
-                          setSelectedGender(value);
-                        }}
+                        onValueChange={field.onChange}
                         value={field.value}
-                        disabled={!isEdit}
                       >
                         <SelectTrigger className="h-12 text-muted-foreground">
                           <SelectValue placeholder="Gender" />
@@ -2070,7 +2056,6 @@ export default function EmployeeProfilePage() {
                     requestAnimationFrame(() => {
                       openPlatformSelect();
                     });
-                    addSocial();
                   }}
                 >
                   <LucidePlus />
@@ -2165,7 +2150,6 @@ export default function EmployeeProfilePage() {
           </div>
         </div>
       </div>
-
       {/* Profile Popup */}
       <ImagePopup
         open={openAvatarPopup}
