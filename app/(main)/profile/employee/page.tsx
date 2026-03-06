@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
@@ -68,10 +68,6 @@ import {
   loginMethodConstant,
   platformConstant,
 } from "@/utils/constants/app.constant";
-import { TGender } from "@/utils/types/gender.type";
-import { TLocations } from "@/utils/types/location.type";
-import { TPlatform } from "@/utils/types/platform.type";
-import { capitalizeWords } from "@/utils/functions/capitalize-words";
 import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { isUuid } from "@/utils/functions/check-uuid";
@@ -107,6 +103,13 @@ import { parseMaybeDate } from "@/utils/functions/parse-maybe-date";
 import ReferencePreviewDialog from "@/components/utils/dialogs/reference-preview-dialog";
 import EmployeeEducationForm from "@/components/employee/profile/education-form";
 import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
+import { useAvatarState } from "@/hooks/profile/employee/use-avatar-state";
+import { useReferenceFilesState } from "@/hooks/profile/employee/use-referencefile-state";
+import { useSkillsState } from "@/hooks/profile/employee/use-skill-state";
+import { useSocialsState } from "@/hooks/profile/employee/use-social-state";
+import { useCareerScopesState } from "@/hooks/profile/employee/use-careerscope-state";
+import { TPlatform } from "@/utils/types/platform.type";
+import { capitalizeWords } from "@/utils/functions/capitalize-words";
 
 export default function EmployeeProfilePage() {
   /* ------------------- APIs Integration ------------------- */
@@ -145,74 +148,89 @@ export default function EmployeeProfilePage() {
   const updateProfileLoadingState = apiLoadingStates.some(Boolean);
 
   /* ------------------------ All States ------------------------ */
-  // Utils
-  const { toast, dismiss } = useToast();
+  // Util States
+  const { toast } = useToast();
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [openReferencePreview, setOpenReferencePreview] =
-    useState<boolean>(false);
-  const [previewReferenceType, setPreviewReferenceType] = useState<
-    "resume" | "coverletter"
-  >("resume");
-  const [previewReferenceUrl, setPreviewReferenceUrl] = useState<string>("");
 
-  // Avatar
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const avatarInputRef = useRef<HTMLInputElement | null>(null);
-  const [openAvatarPopup, setOpenAvatarPopup] = useState<boolean>(false);
-  const [openRemoveAvatarDialog, setOpenRemoveAvatarDialog] = useState(false);
-  const ignoreNextClick = useRef<boolean>(false);
+  // Avatar State Hook
+  const {
+    avatarFile,
+    setAvatarFile,
+    openAvatarPopup,
+    setOpenAvatarPopup,
+    openRemoveAvatarDialog,
+    setOpenRemoveAvatarDialog,
+    openCropDialog,
+    setOpenCropDialog,
+    cropImageUrl,
+    setCropImageUrl,
+    avatarInputRef,
+    ignoreNextClick,
+  } = useAvatarState();
 
-  // Crop Avatar
-  const [openCropDialog, setOpenCropDialog] = useState<boolean>(false);
-  const [cropImageUrl, setCropImageUrl] = useState<string>("");
+  // Reference Files States
+  const {
+    resumeFile,
+    setResumeFile,
+    coverLetterFile,
+    setCoverLetterFile,
+    openRemoveResumeDialog,
+    setOpenRemoveResumeDialog,
+    openRemoveCoverLetterDialog,
+    setOpenRemoveCoverLetterDialog,
+    resumeInputRef,
+    coverLetterInputRef,
+    openReferencePreview,
+    setOpenReferencePreview,
+    previewReferenceType,
+    setPreviewReferenceType,
+    previewReferenceUrl,
+    setPreviewReferenceUrl,
+  } = useReferenceFilesState();
 
-  // Resume
-  const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const resumeInputRef = useRef<HTMLInputElement | null>(null);
-  const [openRemoveResumeDialog, setOpenRemoveResumeDialog] =
-    useState<boolean>(false);
+  // Social State
+  const {
+    socialInput,
+    setSocialInput,
+    socials,
+    setSocials,
+    deleteSocialIds,
+    setDeleteSocialIds,
+    socialSelectPlatformRef,
+  } = useSocialsState();
 
-  // CoverLetter
-  const [coverLetterFile, setCoverLetterFile] = useState<File | null>(null);
-  const coverLetterInputRef = useRef<HTMLInputElement | null>(null);
-  const [openRemoveCoverLetterDialog, setOpenRemoveCoverLetterDialog] =
-    useState<boolean>(false);
+  // Skill State
+  const {
+    skillInput,
+    setSkillInput,
+    skills,
+    setSkills,
+    deleteSkillIds,
+    setDeleteSkillIds,
+    openSkillPopOver,
+    setOpenSkillPopOver,
+  } = useSkillsState();
 
-  // Social
-  const [socialInput, setSocialInput] = useState<ISocial | null>(null);
-  const [socials, setSocials] = useState<ISocial[]>([]);
-  const [deleteSocialIds, setDeleteSocialIds] = useState<string[]>([]);
-  const socialSelectPlatformRef = useRef<HTMLButtonElement>(null);
+  // CareerScope State
+  const {
+    careerScopeInput,
+    setCareerScopeInput,
+    careerScopes,
+    setCareerScopes,
+    deleteCareerScopeIds,
+    setDeleteCareerScopeIds,
+    openCareerScopePopOver,
+    setOpenCareerScopePopOver,
+  } = useCareerScopesState();
 
-  // Skill
-  const [skillInput, setSkillInput] = useState<string | null>(null);
-  const [skills, setSkills] = useState<ISkill[]>([]);
-  const [deleteSkillIds, setDeleteSkillIds] = useState<string[]>([]);
-  const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
-
-  // CareerScope
-  const [careerScopeInput, setCareerScopeInput] =
-    useState<ICareerScopes | null>(null);
-  const [careerScopes, setCareerScopes] = useState<ICareerScopes[]>([]);
-  const [deleteCareerScopeIds, setDeleteCareerScopeIds] = useState<string[]>(
-    [],
-  );
-  const [openCareerScopePopOver, setOpenCareerScopePopOver] =
-    useState<boolean>(false);
-
-  // Experience Remove Dialog States
-  const [openRemoveExperienceDialog, setOpenRemoveExperienceDialog] =
-    useState<boolean>(false);
-  const [currentExperienceID, setCurrentExperienceID] = useState<string | null>(
-    null,
-  );
-
-  // Education Remove Dialog States
-  const [openRemoveEducationDialog, setOpenRemoveEducationDialog] =
-    useState<boolean>(false);
-  const [currentEducationID, setCurrentEducationID] = useState<string | null>(
-    null,
-  );
+  // Experience and Education Remove Dialog State
+  const [removeExpOrEduState, setRemoveExpOrEduState] = useState<{
+    experience: { open: boolean; id: string | null };
+    education: { open: boolean; id: string | null };
+  }>({
+    experience: { open: false, id: null },
+    education: { open: false, id: null },
+  });
 
   /* ------------------------ Employee Profile Form ------------------------ */
   // React Hook Form: Employee Profile Schema
@@ -247,17 +265,25 @@ export default function EmployeeProfilePage() {
     shouldFocusError: false,
   });
 
+  // Avatar Preview
+  const [avatarPreview, setAvatarPreview] = useState<string | undefined>(
+    undefined,
+  );
+
+  useEffect(() => {
+    if (!avatarFile) {
+      setAvatarPreview(employee?.avatar);
+      return;
+    }
+    const url = URL.createObjectURL(avatarFile);
+    setAvatarPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [avatarFile, employee?.avatar]);
+
   // Get Current User Effect
   useEffect(() => {
     getCurrentUser();
   }, [getCurrentUser]);
-
-  // Cleanup Cropped Image Object URL Effect
-  useEffect(() => {
-    return () => {
-      if (cropImageUrl?.startsWith("blob:")) URL.revokeObjectURL(cropImageUrl);
-    };
-  }, [cropImageUrl]);
 
   // FieldArray for Experiences
   const experienceFA = useFieldArray({
@@ -334,9 +360,6 @@ export default function EmployeeProfilePage() {
       })),
     });
 
-    // setSelectedGender(employee.gender ?? "");
-    // setSelectedLocation(employee.location ?? "");
-
     setSocials(employee.socials ?? []);
     setSkills(employee.skills ?? []);
     setCareerScopes(
@@ -348,6 +371,21 @@ export default function EmployeeProfilePage() {
   }, [user, employee, form]);
 
   /* ------------------------ Edit Mode ------------------------ */
+  // Close all the dialogs
+  const closeAllDialogs = () => {
+    setOpenAvatarPopup(false);
+    setOpenRemoveAvatarDialog(false);
+    setOpenCropDialog(false);
+    setOpenRemoveResumeDialog(false);
+    setOpenRemoveCoverLetterDialog(false);
+    setOpenReferencePreview(false);
+    setRemoveExpOrEduState((prev) => ({
+      ...prev,
+      experience: { open: false, id: null },
+      education: { open: false, id: null },
+    }));
+  };
+
   // Enable Edit Mode
   const enableEditMode = () => {
     getAllCareerScopesStore.getAllCareerScopes();
@@ -357,13 +395,28 @@ export default function EmployeeProfilePage() {
   // Disable Edit Mode
   const disableEditMode = async () => {
     await getCurrentUser();
-    setOpenRemoveAvatarDialog(false);
-    setOpenRemoveExperienceDialog(false);
-    setOpenRemoveEducationDialog(false);
-    setOpenRemoveResumeDialog(false);
-    setOpenRemoveCoverLetterDialog(false);
+    closeAllDialogs();
     setIsEdit(false);
     form.reset();
+  };
+
+  const openRemoveExperienceOrEducationDialog = (
+    type: "experience" | "education",
+    id: string,
+  ) => {
+    setRemoveExpOrEduState((prev) => ({
+      ...prev,
+      [type]: { open: true, id },
+    }));
+  };
+
+  const closeRemoveExperienceOrEducationDialog = (
+    type: "experience" | "education",
+  ) => {
+    setRemoveExpOrEduState((prev) => ({
+      ...prev,
+      [type]: { open: false, id: null },
+    }));
   };
 
   /* ------------------- Reference and Avatar Bussiness Logics ------------------- */
@@ -371,8 +424,7 @@ export default function EmployeeProfilePage() {
   const removeResume = async () => {
     if (employee) await removeEmpResumeStore.removeEmpResume(employee.id);
 
-    await getCurrentUser();
-    disableEditMode();
+    await disableEditMode();
 
     toast({
       variant: "success",
@@ -392,8 +444,7 @@ export default function EmployeeProfilePage() {
     if (employee)
       await removeEmpCoverLetterStore.removeEmpCoverLetter(employee.id);
 
-    await getCurrentUser();
-    disableEditMode();
+    await disableEditMode();
 
     toast({
       variant: "success",
@@ -412,8 +463,7 @@ export default function EmployeeProfilePage() {
   const removeAvatar = async () => {
     if (employee) await removeEmpAvatarStore.removeEmpAvatar(employee.id);
 
-    await getCurrentUser();
-    disableEditMode();
+    await disableEditMode();
 
     toast({
       variant: "success",
@@ -465,8 +515,7 @@ export default function EmployeeProfilePage() {
     if (employee)
       await removeEmpExperieceStore.removeExperience(employee.id, experienceID);
 
-    await getCurrentUser();
-    disableEditMode();
+    await disableEditMode();
 
     toast({
       variant: "success",
@@ -497,8 +546,7 @@ export default function EmployeeProfilePage() {
     if (employee)
       await removeEmpEducationStore.removeEducation(employee.id, educationID);
 
-    await getCurrentUser();
-    disableEditMode();
+    await disableEditMode();
 
     toast({
       variant: "success",
@@ -565,38 +613,84 @@ export default function EmployeeProfilePage() {
 
   /* ------------------- Social Bussiness Logics ------------------- */
   // 1.Add New Social
-  const addSocial = () => {
+  const addNewSocial = () => {
     const trimmedPlatform = socialInput?.platform?.trim();
     const trimmedUrl = socialInput?.url?.trim();
-    if (!trimmedPlatform || !trimmedUrl) return;
 
-    const currentSocials = (form.getValues("socials") || []).filter(
-      Boolean,
-    ) as ISocial[];
+    if (!trimmedPlatform || !trimmedUrl) return false;
 
-    const alreadyExists = currentSocials.some(
-      (s) => (s.platform ?? "").toLowerCase() === trimmedPlatform.toLowerCase(),
+    const normalizedPlatform = trimmedPlatform.toLowerCase();
+    const normalizedUrl = trimmedUrl.toLowerCase();
+
+    // Validate URL
+    let parsedUrl: URL;
+    try {
+      parsedUrl = new URL(trimmedUrl);
+    } catch {
+      toast({
+        variant: "destructive",
+        title: "Invalid URL",
+        description: "Please enter a valid social link.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+      return false;
+    }
+
+    // Only allow http/https
+    if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+      toast({
+        variant: "destructive",
+        title: "Invalid URL",
+        description: "Only http and https links are allowed.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+      return false;
+    }
+
+    const platformExists = socials.some(
+      (s) => (s.platform ?? "").trim().toLowerCase() === normalizedPlatform,
     );
 
-    if (alreadyExists) {
+    if (platformExists) {
       toast({
         variant: "destructive",
         title: "Duplicate Social",
         description: "This social platform already exists.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
-      setSocialInput(null);
-      return;
+      return false;
+    }
+
+    const urlExists = socials.some(
+      (s) => (s.url ?? "").trim().toLowerCase() === normalizedUrl,
+    );
+
+    if (urlExists) {
+      toast({
+        variant: "destructive",
+        title: "Duplicate URL",
+        description: "This social link already exists.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+      return false;
     }
 
     const updated = [
       ...socials,
-      { id: "", platform: capitalizeWords(trimmedPlatform), url: trimmedUrl },
+      {
+        id: "",
+        platform: capitalizeWords(trimmedPlatform.toLowerCase()),
+        url: parsedUrl.toString(),
+      },
     ];
 
     setSocials(updated);
-    form.setValue("socials", updated, { shouldDirty: true, shouldTouch: true });
-    setSocialInput(null);
+    form.setValue("socials", updated, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+
+    return true;
   };
 
   // 2.Remove Social
@@ -628,7 +722,7 @@ export default function EmployeeProfilePage() {
   };
 
   // 2.Add New CareerScope
-  const addCareerScope = () => {
+  const addNewCareerScope = () => {
     const name = careerScopeInput?.name?.trim();
     if (!name) return;
 
@@ -986,28 +1080,25 @@ export default function EmployeeProfilePage() {
 
   // Loading State Effect
   useEffect(() => {
-    if (updateProfileLoadingState) {
-      dismiss();
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <ApsaraLoadingSpinner size={50} loop />
-            <TypographySmall className="font-medium leading-relaxed">
-              Updating Employee Profile...
-            </TypographySmall>
-          </div>
-        ),
-      });
-    }
-  }, [updateProfileLoadingState]);
+    if (!updateProfileLoadingState) return;
+
+    const toastInstance = toast({
+      description: (
+        <div className="flex items-center gap-2">
+          <ApsaraLoadingSpinner size={50} loop />
+          <TypographySmall className="font-medium leading-relaxed">
+            Updating Employee Profile...
+          </TypographySmall>
+        </div>
+      ),
+      duration: Infinity,
+    });
+
+    return () => toastInstance.dismiss();
+  }, [updateProfileLoadingState, toast]);
 
   if (loading) return <EmployeeProfilePageSkeleton />;
   if (!user || !employee) return null;
-
-  // Avatar Preview
-  const avatarPreview = avatarFile
-    ? URL.createObjectURL(avatarFile)
-    : employee.avatar;
 
   return (
     <form className="!min-w-full flex flex-col gap-5" onSubmit={handleSubmit}>
@@ -1154,6 +1245,7 @@ export default function EmployeeProfilePage() {
                       <Select
                         onValueChange={field.onChange}
                         value={field.value}
+                        disabled={!isEdit}
                       >
                         <SelectTrigger className="h-12 text-muted-foreground">
                           <SelectValue placeholder="Location" />
@@ -1179,6 +1271,7 @@ export default function EmployeeProfilePage() {
                       <Select
                         onValueChange={field.onChange}
                         value={field.value}
+                        disabled={!isEdit}
                       >
                         <SelectTrigger className="h-12 text-muted-foreground">
                           <SelectValue placeholder="Gender" />
@@ -1363,8 +1456,10 @@ export default function EmployeeProfilePage() {
                         }}
                         onRemove={() => {
                           if (experienceId && isUuid(experienceId)) {
-                            setOpenRemoveExperienceDialog(true);
-                            setCurrentExperienceID(experienceId);
+                            openRemoveExperienceOrEducationDialog(
+                              "experience",
+                              experienceId,
+                            );
                           } else {
                             experienceFA.remove(index);
                           }
@@ -1396,13 +1491,22 @@ export default function EmployeeProfilePage() {
 
               <RemoveAlertDialog
                 type="experience"
-                openDialog={openRemoveExperienceDialog}
-                setOpenDialog={setOpenRemoveExperienceDialog}
+                openDialog={removeExpOrEduState.experience.open}
+                setOpenDialog={(open) =>
+                  setRemoveExpOrEduState((prev) => ({
+                    ...prev,
+                    experience: {
+                      ...prev.experience,
+                      open,
+                    },
+                  }))
+                }
                 onNoClick={disableEditMode}
                 onYesClick={() => {
+                  const currentExperienceID = removeExpOrEduState.experience.id;
                   if (currentExperienceID) {
                     removeExperience(currentExperienceID);
-                    setOpenRemoveExperienceDialog(false);
+                    closeRemoveExperienceOrEducationDialog("experience");
                   }
                 }}
               />
@@ -1465,8 +1569,10 @@ export default function EmployeeProfilePage() {
                         }}
                         onRemove={() => {
                           if (educationId && isUuid(educationId)) {
-                            setOpenRemoveEducationDialog(true);
-                            setCurrentEducationID(educationId);
+                            openRemoveExperienceOrEducationDialog(
+                              "education",
+                              educationId,
+                            );
                           } else {
                             educationFA.remove(index);
                           }
@@ -1498,13 +1604,19 @@ export default function EmployeeProfilePage() {
 
               <RemoveAlertDialog
                 type="education"
-                openDialog={openRemoveEducationDialog}
-                setOpenDialog={setOpenRemoveEducationDialog}
+                openDialog={removeExpOrEduState.education.open}
+                setOpenDialog={(open) =>
+                  setRemoveExpOrEduState((prev) => ({
+                    ...prev,
+                    education: { ...prev.education, open: open },
+                  }))
+                }
                 onNoClick={disableEditMode}
                 onYesClick={() => {
+                  const currentEducationID = removeExpOrEduState.education.id;
                   if (currentEducationID) {
                     removeEducation(currentEducationID);
-                    setOpenRemoveEducationDialog(false);
+                    closeRemoveExperienceOrEducationDialog("education");
                   }
                 }}
               />
@@ -1515,7 +1627,6 @@ export default function EmployeeProfilePage() {
         {/* RIGHT */}
         <div className="w-[40%] flex flex-col gap-5">
           {/* Skills */}
-
           <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
             <div className="w-full flex flex-col gap-1">
               <TypographyH4>Skills</TypographyH4>
@@ -1714,9 +1825,9 @@ export default function EmployeeProfilePage() {
                   onClick={() => {
                     if (employee.careerScopes.length === 0) {
                       setIsEdit(true);
-                      addCareerScope();
+                      addNewCareerScope();
                     } else {
-                      addCareerScope();
+                      addNewCareerScope();
                     }
                   }}
                 >
@@ -2043,7 +2154,6 @@ export default function EmployeeProfilePage() {
                       if (!el) return;
 
                       el.focus();
-                      // Radix Select opens reliably with ArrowDown / Enter / Space
                       el.dispatchEvent(
                         new KeyboardEvent("keydown", {
                           key: "ArrowDown",
@@ -2053,6 +2163,18 @@ export default function EmployeeProfilePage() {
                     };
 
                     setIsEdit(true);
+
+                    const hasDraft =
+                      !!socialInput?.platform?.trim() ||
+                      !!socialInput?.url?.trim();
+
+                    if (hasDraft) {
+                      const added = addNewSocial();
+                      if (!added) return;
+                    }
+
+                    setSocialInput({ platform: "", url: "" });
+
                     requestAnimationFrame(() => {
                       openPlatformSelect();
                     });
@@ -2154,7 +2276,7 @@ export default function EmployeeProfilePage() {
       <ImagePopup
         open={openAvatarPopup}
         setOpen={setOpenAvatarPopup}
-        image={avatarFile ? URL.createObjectURL(avatarFile) : employee.avatar!}
+        image={avatarPreview ?? employee.avatar!}
       />
     </form>
   );
