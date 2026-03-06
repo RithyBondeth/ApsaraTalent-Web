@@ -18,7 +18,7 @@ export const getSocialPlatformTypeIcon = (
     Facebook: FacebookIcon,
     Instagram: InstagramIcon,
     Github: GithubIcon,
-    LinkedIn: LinkedinIcon,
+    Linkedin: LinkedinIcon,
     Telegram: SendIcon,
     Website: EarthIcon,
     Twitter: TwitterIcon,

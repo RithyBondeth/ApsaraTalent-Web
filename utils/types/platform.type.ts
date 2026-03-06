@@ -2,7 +2,7 @@ export type TPlatform =
   | "Facebook"
   | "Instagram"
   | "Telegram"
-  | "LinkedIn"
+  | "Linkedin"
   | "Github"
   | "Website"
   | "Twitter";

@@ -147,12 +147,33 @@ export default function EmployeeProfilePage() {
   ];
   const updateProfileLoadingState = apiLoadingStates.some(Boolean);
 
+  // Loading Message Based on Loading State
+  const loadingMessage = removeEmpAvatarStore.loading
+    ? "Removing avatar..."
+    : removeEmpResumeStore.loading
+      ? "Removing resume..."
+      : removeEmpCoverLetterStore.loading
+        ? "Removing cover letter..."
+        : removeEmpExperieceStore.loading
+          ? "Removing experience..."
+          : removeEmpEducationStore.loading
+            ? "Removing education..."
+            : uploadAvatarEmpStore.loading
+              ? "Uploading avatar..."
+              : uploadResumeEmpStore.loading
+                ? "Uploading resume..."
+                : uploadCoverLetterEmpStore.loading
+                  ? "Uploading cover letter..."
+                  : updateOneEmpStore.loading
+                    ? "Updating employee profile..."
+                    : "";
+
   /* ------------------------ All States ------------------------ */
   // Util States
   const { toast } = useToast();
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
-  // Avatar State Hook
+  // Avatar State
   const {
     avatarFile,
     setAvatarFile,
@@ -265,6 +286,11 @@ export default function EmployeeProfilePage() {
     shouldFocusError: false,
   });
 
+  // Get Current User Effect
+  useEffect(() => {
+    getCurrentUser();
+  }, [getCurrentUser]);
+
   // Avatar Preview
   const [avatarPreview, setAvatarPreview] = useState<string | undefined>(
     undefined,
@@ -279,11 +305,6 @@ export default function EmployeeProfilePage() {
     setAvatarPreview(url);
     return () => URL.revokeObjectURL(url);
   }, [avatarFile, employee?.avatar]);
-
-  // Get Current User Effect
-  useEffect(() => {
-    getCurrentUser();
-  }, [getCurrentUser]);
 
   // FieldArray for Experiences
   const experienceFA = useFieldArray({
@@ -370,8 +391,8 @@ export default function EmployeeProfilePage() {
     );
   }, [user, employee, form]);
 
-  /* ------------------------ Edit Mode ------------------------ */
-  // Close all the dialogs
+  /* --------------------- Edit Mode Bussiness Logics --------------------- */
+  // Close All The Dialogs
   const closeAllDialogs = () => {
     setOpenAvatarPopup(false);
     setOpenRemoveAvatarDialog(false);
@@ -399,6 +420,7 @@ export default function EmployeeProfilePage() {
     setIsEdit(false);
   };
 
+  // Open RemoveExperienceOrEducation Dialog
   const openRemoveExperienceOrEducationDialog = (
     type: "experience" | "education",
     id: string,
@@ -409,6 +431,7 @@ export default function EmployeeProfilePage() {
     }));
   };
 
+  // Close RemoveExperienceOrEducation Dialog
   const closeRemoveExperienceOrEducationDialog = (
     type: "experience" | "education",
   ) => {
@@ -613,31 +636,6 @@ export default function EmployeeProfilePage() {
     const normalizedPlatform = trimmedPlatform.toLowerCase();
     const normalizedUrl = trimmedUrl.toLowerCase();
 
-    // Validate URL
-    let parsedUrl: URL;
-    try {
-      parsedUrl = new URL(trimmedUrl);
-    } catch {
-      toast({
-        variant: "destructive",
-        title: "Invalid URL",
-        description: "Please enter a valid social link.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
-      });
-      return false;
-    }
-
-    // Only allow http/https
-    if (!["http:", "https:"].includes(parsedUrl.protocol)) {
-      toast({
-        variant: "destructive",
-        title: "Invalid URL",
-        description: "Only http and https links are allowed.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
-      });
-      return false;
-    }
-
     const platformExists = socials.some(
       (s) => (s.platform ?? "").trim().toLowerCase() === normalizedPlatform,
     );
@@ -671,7 +669,7 @@ export default function EmployeeProfilePage() {
       {
         id: "",
         platform: capitalizeWords(trimmedPlatform.toLowerCase()),
-        url: parsedUrl.toString(),
+        url: trimmedUrl,
       },
     ];
 
@@ -694,7 +692,7 @@ export default function EmployeeProfilePage() {
     form.setValue("socials", updated, { shouldDirty: true, shouldTouch: true });
   };
 
-  /* ------------------- CareerScope Bussiness Logics ------------------- */
+  /* ---------------------- CareerScope Bussiness Logics ---------------------- */
   // 1.Handle CareerScope Select
   const handleCareerScopeSelect = (
     selectedCareerId: string,
@@ -1035,7 +1033,7 @@ export default function EmployeeProfilePage() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // keep your local arrays synced into RHF
+    // Kepp Local Arrays Synced into RHF
     form.setValue("skills", skills, { shouldDirty: true, shouldTouch: true });
     form.setValue("careerScopes", careerScopes, {
       shouldDirty: true,
@@ -1061,12 +1059,13 @@ export default function EmployeeProfilePage() {
   useEffect(() => {
     if (!updateProfileLoadingState) return;
 
+    // Loading Message on Toast
     const toastInstance = toast({
       description: (
         <div className="flex items-center gap-2">
           <ApsaraLoadingSpinner size={50} loop />
           <TypographySmall className="font-medium leading-relaxed">
-            Updating Employee Profile...
+            {loadingMessage}
           </TypographySmall>
         </div>
       ),
@@ -1074,16 +1073,17 @@ export default function EmployeeProfilePage() {
     });
 
     return () => toastInstance.dismiss();
-  }, [updateProfileLoadingState, toast]);
+  }, [updateProfileLoadingState, loadingMessage, toast]);
 
   if (loading) return <EmployeeProfilePageSkeleton />;
   if (!user || !employee) return null;
 
   return (
     <form className="!min-w-full flex flex-col gap-5" onSubmit={handleSubmit}>
-      {/* Header */}
+      {/* Header Section*/}
       <div className="flex items-center justify-between border border-muted rounded-md p-5 tablet-sm:flex-col tablet-sm:[&>div]:w-full tablet-sm:gap-5">
         <div className="flex items-center justify-start gap-5 tablet-sm:flex-col">
+          {/* Avatar Section */}
           <div
             className="relative"
             onClick={(e) => {
@@ -1118,6 +1118,7 @@ export default function EmployeeProfilePage() {
               </div>
             )}
 
+            {/* Avatar Crop Dialog Section */}
             <AvatarCropDialog
               open={openCropDialog}
               setOpen={setOpenCropDialog}
@@ -1125,6 +1126,7 @@ export default function EmployeeProfilePage() {
               onCropComplete={handleAvatarCrop}
             />
 
+            {/* Remove Avatar Dialog Section */}
             <RemoveAlertDialog
               type="avatar"
               setOpenDialog={setOpenRemoveAvatarDialog}
@@ -1148,6 +1150,7 @@ export default function EmployeeProfilePage() {
           </div>
         </div>
 
+        {/* Edit Profile Button Section */}
         {isEdit ? (
           <div className="flex items-center gap-3">
             <Button type="submit" className="text-xs">
@@ -1163,11 +1166,12 @@ export default function EmployeeProfilePage() {
           </Button>
         )}
       </div>
-      {/* Content */}
+
+      {/* Content Section */}
       <div className="flex items-start gap-5 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
-        {/* LEFT */}
+        {/* LEFT Side Section */}
         <div className="w-[60%] flex flex-col gap-5">
-          {/* Personal Info */}
+          {/* Personal Information Section */}
           <div className="w-full flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
             <div className="flex flex-col gap-1">
               <TypographyH4>Personal Information</TypographyH4>
@@ -1295,7 +1299,7 @@ export default function EmployeeProfilePage() {
             </div>
           </div>
 
-          {/* Professional Info */}
+          {/* Professional Information Section */}
           <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
             <div className="flex flex-col gap-1">
               <TypographyH4>Professional Information</TypographyH4>
@@ -1358,7 +1362,7 @@ export default function EmployeeProfilePage() {
             </div>
           </div>
 
-          {/* Experience Section */}
+          {/* Experience Information Section */}
           {employee.experiences && (
             <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
               <div className="flex flex-col gap-1">
@@ -1376,7 +1380,7 @@ export default function EmployeeProfilePage() {
                 </div>
                 <Divider />
               </div>
-
+              {/* Experience Form Section */}
               <div className="flex flex-col items-start gap-5">
                 {experienceFA.fields.length > 0 ? (
                   experienceFA.fields.map((row, index) => {
@@ -1448,6 +1452,7 @@ export default function EmployeeProfilePage() {
                   })
                 ) : (
                   <div className="w-full flex flex-col items-center justify-center p-3">
+                    {/* Add New Experience Section */}
                     <Image
                       alt="empty"
                       src={addNewExperienceSvgImage}
@@ -1468,6 +1473,7 @@ export default function EmployeeProfilePage() {
                 )}
               </div>
 
+              {/* Remove Experience Dialog Section */}
               <RemoveAlertDialog
                 type="experience"
                 openDialog={removeExpOrEduState.experience.open}
@@ -1492,7 +1498,7 @@ export default function EmployeeProfilePage() {
             </div>
           )}
 
-          {/* Education Section */}
+          {/* Education Information Section */}
           {employee.educations && (
             <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
               <div className="flex flex-col gap-1">
@@ -1511,6 +1517,7 @@ export default function EmployeeProfilePage() {
                 <Divider />
               </div>
 
+              {/* Education Form Section */}
               <div className="flex flex-col items-start gap-5">
                 {educationFA.fields.length > 0 ? (
                   educationFA.fields.map((row, index) => {
@@ -1561,6 +1568,7 @@ export default function EmployeeProfilePage() {
                   })
                 ) : (
                   <div className="w-full flex flex-col items-center justify-center p-3">
+                    {/* Add New Education Section */}
                     <Image
                       alt="empty"
                       src={addNewEducationSvgImage}
@@ -1581,6 +1589,7 @@ export default function EmployeeProfilePage() {
                 )}
               </div>
 
+              {/* Remove Education Dialog Section */}
               <RemoveAlertDialog
                 type="education"
                 openDialog={removeExpOrEduState.education.open}
@@ -1603,45 +1612,52 @@ export default function EmployeeProfilePage() {
           )}
         </div>
 
-        {/* RIGHT */}
+        {/* RIGHT Side Section*/}
         <div className="w-[40%] flex flex-col gap-5">
-          {/* Skills */}
+          {/* Skill Section*/}
           <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
             <div className="w-full flex flex-col gap-1">
               <TypographyH4>Skills</TypographyH4>
               <Divider />
             </div>
 
+            {/* Skil List Section */}
             {skills.length > 0 ? (
               <div className="flex flex-wrap gap-3">
                 {skills.map((skill, index) => (
-                  <HoverCard key={index}>
-                    <HoverCardTrigger asChild>
-                      <div className="flex items-center gap-1">
-                        <Tag label={skill.name} />
-                        {isEdit && (
-                          <LucideXCircle
-                            className="cursor-pointer text-red-500"
-                            width={"18px"}
-                            onClick={() => removeSkill(skill.name)}
-                          />
-                        )}
-                      </div>
-                    </HoverCardTrigger>
-                    <HoverCardContent>
-                      <TypographySmall>{skill.description}</TypographySmall>
-                    </HoverCardContent>
-                  </HoverCard>
+                  <div key={index} className="flex items-center gap-1">
+                    <HoverCard>
+                      <HoverCardTrigger asChild>
+                        <div>
+                          <Tag label={skill.name} />
+                        </div>
+                      </HoverCardTrigger>
+                      <HoverCardContent>
+                        <TypographySmall>{skill.description}</TypographySmall>
+                      </HoverCardContent>
+                    </HoverCard>
+                    {isEdit && (
+                      <button
+                        type="button"
+                        onClick={() => removeSkill(skill.name)}
+                        className="inline-flex items-center justify-center"
+                      >
+                        <LucideXCircle className="text-red-500" width="18px" />
+                      </button>
+                    )}
+                  </div>
                 ))}
               </div>
             ) : (
               <div className="w-full flex items-center justify-center">
+                {/* No Skill Section */}
                 <TypographyMuted className="text-sm">
                   No Skill Avaliable
                 </TypographyMuted>
               </div>
             )}
 
+            {/* Add New Skill Section */}
             {(isEdit || employee.skills.length === 0) && (
               <Popover
                 open={openSkillPopOver}
@@ -1688,27 +1704,23 @@ export default function EmployeeProfilePage() {
             )}
           </div>
 
-          {/* Career Scopes */}
+          {/* Career Scopes Section*/}
           <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
             <div className="w-full flex flex-col gap-1">
               <TypographyH4>Careers Scopes</TypographyH4>
               <Divider />
             </div>
 
+            {/* Career Scopes List Section*/}
             <div className="w-full flex flex-wrap gap-3">
               {careerScopes.length > 0 ? (
                 careerScopes.map((career, index) => (
-                  <div key={index}>
+                  <div key={index} className="flex items-center gap-1">
                     <HoverCard>
-                      <HoverCardTrigger className="flex items-center rounded-3xl">
-                        <Tag label={career.name} />
-                        {isEdit && (
-                          <LucideXCircle
-                            className="text-muted-foreground cursor-pointer ml-1 text-red-500"
-                            width={"18px"}
-                            onClick={() => removeCareerScope(career.name)}
-                          />
-                        )}
+                      <HoverCardTrigger asChild>
+                        <div>
+                          <Tag label={career.name} />
+                        </div>
                       </HoverCardTrigger>
                       <HoverCardContent>
                         <TypographySmall>
@@ -1718,10 +1730,21 @@ export default function EmployeeProfilePage() {
                         </TypographySmall>
                       </HoverCardContent>
                     </HoverCard>
+
+                    {isEdit && (
+                      <button
+                        type="button"
+                        onClick={() => removeCareerScope(career.name)}
+                        className="inline-flex items-center justify-center"
+                      >
+                        <LucideXCircle className="text-red-500" width="18px" />
+                      </button>
+                    )}
                   </div>
                 ))
               ) : (
                 <div className="w-full flex items-center justify-center">
+                  {/* No CareerScopes Section */}
                   <TypographyMuted className="text-sm">
                     No CareerScope Avaliable
                   </TypographyMuted>
@@ -1729,6 +1752,7 @@ export default function EmployeeProfilePage() {
               )}
             </div>
 
+            {/* CareerScopes List Section */}
             {(isEdit || employee.careerScopes.length === 0) && (
               <>
                 <Popover
@@ -1797,6 +1821,7 @@ export default function EmployeeProfilePage() {
                   </PopoverContent>
                 </Popover>
 
+                {/* Add New CareerScopes Section */}
                 <Button
                   variant="secondary"
                   className="w-full text-xs"
@@ -1841,6 +1866,7 @@ export default function EmployeeProfilePage() {
                   />
                 </div>
 
+                {/* Edit Resume Section */}
                 <div className="flex items-center gap-1">
                   {(isEdit || !employee.resume) && (
                     <Button
@@ -1860,6 +1886,7 @@ export default function EmployeeProfilePage() {
                     </Button>
                   )}
 
+                  {/* View Resume Section */}
                   {employee.resume && (
                     <Button
                       type="button"
@@ -1877,6 +1904,7 @@ export default function EmployeeProfilePage() {
                     </Button>
                   )}
 
+                  {/* Remove and Download Resume Section */}
                   {isEdit && employee.resume ? (
                     <Button
                       type="button"
@@ -1919,7 +1947,7 @@ export default function EmployeeProfilePage() {
                 />
               </div>
 
-              {/* Cover Letter Section */}
+              {/* CoverLetter Section */}
               <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
                 <div className="flex items-center text-muted-foreground gap-1">
                   <LucideFileText strokeWidth={"1.3px"} />
@@ -1939,6 +1967,7 @@ export default function EmployeeProfilePage() {
                   />
                 </div>
 
+                {/* Edit CoverLetter Section */}
                 <div className="flex items-center gap-1">
                   {(isEdit || !employee.coverLetter) && (
                     <Button
@@ -1958,6 +1987,7 @@ export default function EmployeeProfilePage() {
                     </Button>
                   )}
 
+                  {/* View CoverLetter Section */}
                   {employee.coverLetter && (
                     <Button
                       type="button"
@@ -1975,6 +2005,7 @@ export default function EmployeeProfilePage() {
                     </Button>
                   )}
 
+                  {/* Remove and Download CoverLetter Section */}
                   {isEdit && employee.coverLetter ? (
                     <Button
                       type="button"
@@ -2009,15 +2040,6 @@ export default function EmployeeProfilePage() {
               </div>
             </div>
 
-            {/* Reference Preview Dialog Section */}
-            <ReferencePreviewDialog
-              openRefPreview={openReferencePreview}
-              setOpenRefPreview={setOpenReferencePreview}
-              previewRefType={previewReferenceType}
-              referenceUrl={previewReferenceUrl}
-              employeeName={employee.username ?? ""}
-            />
-
             {/* Remove CoverLetter Dialog Section */}
             <RemoveAlertDialog
               type="coverLetter"
@@ -2026,15 +2048,25 @@ export default function EmployeeProfilePage() {
               onNoClick={disableEditMode}
               onYesClick={removeCoverLetter}
             />
+
+            {/* Reference (Resume and CoverLetter) Preview Dialog Section */}
+            <ReferencePreviewDialog
+              openRefPreview={openReferencePreview}
+              setOpenRefPreview={setOpenReferencePreview}
+              previewRefType={previewReferenceType}
+              referenceUrl={previewReferenceUrl}
+              employeeName={employee.username ?? ""}
+            />
           </div>
 
-          {/* Social Information Section */}
+          {/* Social Section */}
           <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
             <div className="flex flex-col gap-1">
               <TypographyH4>Social Information</TypographyH4>
               <Divider />
             </div>
 
+            {/* Social List Section */}
             {socials && socials.length > 0 ? (
               <div className="flex flex-wrap gap-3">
                 {socials.map((item, index) => (
@@ -2058,12 +2090,14 @@ export default function EmployeeProfilePage() {
               </div>
             ) : (
               <div className="w-full flex items-center justify-center pt-2">
+                {/* No Social Section */}
                 <TypographyMuted className="text-sm">
                   No Social Avaliable
                 </TypographyMuted>
               </div>
             )}
 
+            {/* Social Input Platform and Link Section */}
             {(isEdit || employee.socials.length === 0) && (
               <div>
                 {isEdit && (
@@ -2076,11 +2110,11 @@ export default function EmployeeProfilePage() {
                         <Select
                           onValueChange={(value: string) =>
                             setSocialInput((prev) => ({
-                              ...(prev ?? { platform: "", url: "" }),
+                              ...(prev ?? { id: "", platform: "", url: "" }),
                               platform: value,
                             }))
                           }
-                          value={socialInput?.platform}
+                          value={socialInput?.platform ?? ""}
                         >
                           <SelectTrigger
                             className="h-12 text-muted-foreground"
@@ -2111,7 +2145,7 @@ export default function EmployeeProfilePage() {
                             value={socialInput?.url ?? ""}
                             onChange={(e) =>
                               setSocialInput((prev) => ({
-                                ...(prev ?? { platform: "", url: "" }),
+                                ...(prev ?? { id: "", platform: "", url: "" }),
                                 url: e.target.value,
                               }))
                             }
@@ -2123,6 +2157,7 @@ export default function EmployeeProfilePage() {
                   </div>
                 )}
 
+                {/* Add New Social Section */}
                 <Button
                   type="button"
                   variant="secondary"
@@ -2166,7 +2201,7 @@ export default function EmployeeProfilePage() {
             )}
           </div>
 
-          {/* Authentication */}
+          {/* Authentication Section*/}
           <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
             <div className="flex flex-col gap-1">
               <TypographyH4>Authentication</TypographyH4>
@@ -2174,6 +2209,7 @@ export default function EmployeeProfilePage() {
             </div>
 
             <div className="w-full flex flex-col items-start gap-3">
+              {/* Google, Facebook, LinkedIn and Github Methods Section */}
               {loginMethodConstant.map((item) => (
                 <div
                   className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer"
@@ -2208,6 +2244,7 @@ export default function EmployeeProfilePage() {
                 </div>
               ))}
 
+              {/* Email/Password Method Section */}
               <div className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer">
                 <div className="flex items-center gap-2">
                   <LucideMail className="mx-1" strokeWidth={1.5} />
@@ -2228,6 +2265,7 @@ export default function EmployeeProfilePage() {
                 )}
               </div>
 
+              {/* PhoneOTP Method Section */}
               <div className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer">
                 <div className="flex items-center gap-2">
                   <LucidePhone className="mx-1" strokeWidth={1.5} />
@@ -2251,7 +2289,8 @@ export default function EmployeeProfilePage() {
           </div>
         </div>
       </div>
-      {/* Profile Popup */}
+
+      {/* Profile Popup Dialog Section */}
       <ImagePopup
         open={openAvatarPopup}
         setOpen={setOpenAvatarPopup}
