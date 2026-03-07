@@ -1,13 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 
-export function useAvatarState() {
+export function useCmpAvatarCoverState() {
+  // Avatar States
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [openAvatarPopup, setOpenAvatarPopup] = useState<boolean>(false);
   const [openRemoveAvatarDialog, setOpenRemoveAvatarDialog] =
     useState<boolean>(false);
+  const avatarInputRef = useRef<HTMLInputElement | null>(null);
   const [openCropDialog, setOpenCropDialog] = useState<boolean>(false);
   const [cropImageUrl, setCropImageUrl] = useState<string>("");
-  const avatarInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Cover States
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const coverInputRef = useRef<HTMLInputElement | null>(null);
+  const [openRemoveCoverDialog, setOpenRemoveCoverDialog] =
+    useState<boolean>(false);
+
+  // Both Avatar and Cover
   const ignoreNextClick = useRef<boolean>(false);
 
   useEffect(() => {
@@ -28,6 +37,13 @@ export function useAvatarState() {
     cropImageUrl,
     setCropImageUrl,
     avatarInputRef,
+
+    coverFile,
+    setCoverFile,
+    openRemoveCoverDialog,
+    setOpenRemoveCoverDialog,
+    coverInputRef,
+
     ignoreNextClick,
   };
 }

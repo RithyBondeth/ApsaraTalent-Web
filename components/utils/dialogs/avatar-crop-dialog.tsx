@@ -22,6 +22,7 @@ type CropArea = {
 };
 
 interface AvatarCropDialogProps {
+  title: string;
   open: boolean;
   setOpen: (open: boolean) => void;
   image: string;
@@ -29,6 +30,7 @@ interface AvatarCropDialogProps {
 }
 
 export default function AvatarCropDialog({
+  title,
   open,
   setOpen,
   image,
@@ -92,7 +94,7 @@ export default function AvatarCropDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>Crop Avatar</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
 
         <div className="relative w-full h-[320px] rounded-md overflow-hidden bg-muted">

@@ -779,8 +779,7 @@ export default function EmployeeProfilePage() {
     event: React.ChangeEvent<HTMLInputElement>,
     type: "avatar" | "resume" | "coverLetter",
   ) => {
-    const file = event.target.files?.[0] ?? null;
-
+    const file = event.target.files ? event.target.files[0] : null;
     if (!file) return;
 
     if (type === "avatar") {
@@ -1153,6 +1152,7 @@ export default function EmployeeProfilePage() {
 
             {/* Avatar Crop Dialog Section */}
             <AvatarCropDialog
+              title={`Crop ${employee.username ?? ""} Avatar`}
               open={openCropDialog}
               setOpen={setOpenCropDialog}
               image={cropImageUrl}

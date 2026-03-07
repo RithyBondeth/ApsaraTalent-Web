@@ -104,6 +104,8 @@ import RemoveAlertDialog from "@/components/utils/dialogs/remove-alert-dialog";
 import { parseMaybeDate } from "@/utils/functions/parse-maybe-date";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import Link from "next/link";
+import { useCmpAvatarCoverState } from "@/hooks/profile/company/use-cmp-avatar-cover-state";
+import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
 
 export default function ProfilePage() {
   // API Integration
@@ -174,16 +176,27 @@ export default function ProfilePage() {
   } | null>(null);
 
   // Avatar and Cover States
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [coverFile, setCoverFile] = useState<File | null>(null);
-  const avatarInputRef = useRef<HTMLInputElement | null>(null);
-  const coverInputRef = useRef<HTMLInputElement | null>(null);
-  const [openAvatarPopup, setOpenAvatarPopup] = useState<boolean>(false);
-  const [openRemoveAvatarDialog, setOpenRemoveAvatarDialog] =
-    useState<boolean>(false);
-  const [openRemoveCoverDialog, setOpenRemoveCoverDialog] =
-    useState<boolean>(false);
-  const ignoreNextClick = useRef<boolean>(false);
+  const {
+    avatarFile,
+    setAvatarFile,
+    openAvatarPopup,
+    setOpenAvatarPopup,
+    openRemoveAvatarDialog,
+    setOpenRemoveAvatarDialog,
+    openCropDialog,
+    setOpenCropDialog,
+    cropImageUrl,
+    setCropImageUrl,
+    avatarInputRef,
+
+    coverFile,
+    setCoverFile,
+    openRemoveCoverDialog,
+    setOpenRemoveCoverDialog,
+    coverInputRef,
+
+    ignoreNextClick,
+  } = useCmpAvatarCoverState();
 
   // Benefit States
   const [benefitInput, setBenefitInput] = useState<IBenefits | null>(null);
@@ -361,6 +374,7 @@ export default function ProfilePage() {
   // Close All The Dialogs
   const closeAllDialogs = () => {
     setOpenRemoveAvatarDialog(false);
+    setOpenCropDialog(false);
     setOpenRemoveImageDialog(false);
     setOpenRemoveOpenPositionDialog(false);
     setOpenRemoveCoverDialog(false);
@@ -372,6 +386,7 @@ export default function ProfilePage() {
     setIsEdit(true);
   };
 
+  // Disable Edit Mode
   const disableEditMode = async () => {
     await getCurrentUser();
     setAvatarFile(null);
@@ -462,20 +477,39 @@ export default function ProfilePage() {
     setOpenAvatarPopup(true);
   };
 
-  // 6.Handle File Change for Avatar and Cover
+  // 6.Handle Avatar Crop
+  const handleAvatarCrop = (file: File) => {
+    setAvatarFile(file);
+
+    form.setValue("basicInfo.avatar", file, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+  };
+
+  // 7.Handle File Change for Avatar and Cover
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     type: "avatar" | "cover",
   ) => {
     const file = event.target.files ? event.target.files[0] : null;
-    if (file) {
-      if (type === "avatar") {
-        setAvatarFile(file);
-        form.setValue("basicInfo.avatar", file);
-      } else if (type === "cover") {
-        setCoverFile(file);
-        form.setValue("basicInfo.cover", file);
-      }
+    if (!file) return;
+
+    if (type === "avatar") {
+      const previewUrl = URL.createObjectURL(file);
+
+      setCropImageUrl(previewUrl);
+      setOpenCropDialog(true);
+
+      event.target.value = "";
+    }
+
+    if (type === "cover") {
+      setCoverFile(file);
+      form.setValue("basicInfo.cover", file, {
+        shouldDirty: true,
+        shouldTouch: true,
+      });
     }
   };
 
@@ -1069,6 +1103,15 @@ export default function ProfilePage() {
             className="hidden"
             accept="image/*"
             onChange={(e) => handleFileChange(e, "cover")}
+          />
+
+          {/* Avatar Crop Dialog Section */}
+          <AvatarCropDialog
+            title={`Crop ${company.name} Avatar`}
+            open={openCropDialog}
+            setOpen={setOpenCropDialog}
+            image={cropImageUrl}
+            onCropComplete={handleAvatarCrop}
           />
 
           {/* Remove Cover Dialog Section */}
