@@ -13,6 +13,7 @@ export default function EmployeeEducationForm(
 
   return (
     <div className="w-full flex flex-col items-start gap-3">
+      {/* Header Section */}
       <div className="w-full flex items-center justify-between">
         <TypographyMuted>Education {props.index + 1}</TypographyMuted>
         {props.isEdit && (
@@ -24,7 +25,10 @@ export default function EmployeeEducationForm(
           />
         )}
       </div>
+
+      {/* Content Section */}
       <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
+        {/* School Section */}
         <LabelInput
           label="School"
           input={
@@ -37,6 +41,7 @@ export default function EmployeeEducationForm(
             />
           }
         />
+        {/* Degree Section */}
         <LabelInput
           label="Degree"
           input={
@@ -49,6 +54,7 @@ export default function EmployeeEducationForm(
             />
           }
         />
+        {/* Graduation Section */}
         <LabelInput
           label="Graduation Year"
           input={

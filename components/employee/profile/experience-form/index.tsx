@@ -14,6 +14,7 @@ export default function EmployeeExperienceForm(
 
   return (
     <div className="w-full flex flex-col items-start gap-3">
+      {/* Header Section */}
       <div className="w-full flex items-center justify-between">
         <TypographyMuted>Experience {props.index + 1}</TypographyMuted>
         {props.isEdit && (
@@ -25,7 +26,10 @@ export default function EmployeeExperienceForm(
           />
         )}
       </div>
+
+      {/* Content Section */}
       <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
+        {/* Title Section */}
         <LabelInput
           label="Title"
           input={
@@ -39,6 +43,7 @@ export default function EmployeeExperienceForm(
             />
           }
         />
+        {/* Description Section */}
         <div className="w-full flex flex-col items-start gap-2">
           <TypographyMuted className="text-xs">Description</TypographyMuted>
           <Textarea
@@ -49,6 +54,7 @@ export default function EmployeeExperienceForm(
             disabled={!props.isEdit}
           />
         </div>
+        {/* StartDate and EndDate Section */}
         <div className="w-full flex justify-between items-center gap-5 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
           <div className="w-1/2 flex flex-col items-start gap-1">
             <TypographyMuted className="text-xs">Start Date</TypographyMuted>

@@ -22,20 +22,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { TAvailability } from "@/utils/types/availability.type";
 
 export default function OpenPositionForm(props: IOpenPositionFormProps) {
+  // Utils
   const { register, control, getValues } = props.form;
   const { toast } = useToast();
 
-  const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
-  const [skillInput, setSkillInput] = useState<string>("");
+  // Skill States
   const initialSkill = getValues(`openPositions.${props.index}.skills`) || "";
   const [skills, setSkills] = useState<string>(initialSkill);
-  const [selectedType, setSelectedType] = useState<TAvailability | null>(null);
+  const [skillInput, setSkillInput] = useState<string | null>(null);
+  const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
 
-  const addSkills = () => {
-    const trimmed = skillInput.trim();
+  // Handle Add Skill
+  const addSkill = () => {
+    const trimmed = skillInput?.trim();
     if (!trimmed) return;
 
     const currentSkillsArray = skills
@@ -53,25 +54,24 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
         description: "This skill already exists.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
-      setSkillInput("");
+      setSkillInput(null);
       setOpenSkillPopOver(false);
       return;
     }
 
-    // Append new skill to string
     const updatedSkills = [...currentSkillsArray, trimmed].join(", ");
     setSkills(updatedSkills);
 
-    // Sync with react-hook-form
     props.form.setValue(`openPositions.${props.index}.skills`, updatedSkills, {
       shouldDirty: true,
     });
 
-    setSkillInput("");
+    setSkillInput(null);
     setOpenSkillPopOver(false);
   };
 
-  const removeSkills = (skillToRemove: string) => {
+  // Handle Remove Skill
+  const removeSkill = (skillToRemove: string) => {
     const updatedSkillsArray = skills
       .split(", ")
       .filter((skill) => skill !== skillToRemove);
@@ -79,7 +79,6 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
 
     setSkills(updatedSkills);
 
-    // Sync with react-hook-form
     props.form.setValue(`openPositions.${props.index}.skills`, updatedSkills, {
       shouldDirty: true,
     });
@@ -87,6 +86,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
 
   return (
     <div className="w-full flex flex-col items-start gap-3">
+      {/* Header Section */}
       <div className="w-full flex items-center justify-between">
         <TypographyMuted>Position {Number(props.index) + 1}</TypographyMuted>
         {props.isEdit && (
@@ -97,7 +97,10 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
           />
         )}
       </div>
+
+      {/* Content Section */}
       <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
+        {/* Title Section */}
         <LabelInput
           label="Title"
           input={
@@ -109,6 +112,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             />
           }
         />
+        {/* Description Section */}
         <div className="w-full flex flex-col items-start gap-2">
           <TypographyMuted className="text-xs">Description</TypographyMuted>
           <Textarea
@@ -119,25 +123,20 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             disabled={!props.isEdit}
           />
         </div>
+        {/* Availability Section */}
         <div className="w-full flex flex-col items-start gap-2">
           <TypographyMuted className="text-xs">Type</TypographyMuted>
           <Controller
             name={`openPositions.${props.index}.type`}
             control={control}
-            defaultValue={selectedType ?? props.type}
             render={({ field }) => (
               <Select
-                value={selectedType ?? props.type}
-                onValueChange={(value: TAvailability) => {
-                  field.onChange(value);
-                  setSelectedType(value);
-                }}
+                value={field.value}
+                onValueChange={field.onChange}
                 disabled={!props.isEdit}
               >
                 <SelectTrigger className="h-12 text-muted-foreground">
-                  <SelectValue
-                    placeholder={props.isEdit ? "Select Type" : selectedType}
-                  />
+                  <SelectValue placeholder={"Select Type"} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem key={"full_time"} value={"full_time"}>
@@ -163,6 +162,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             )}
           />
         </div>
+        {/* Experience Requirement Section */}
         <LabelInput
           label="Experience Requirement"
           input={
@@ -178,6 +178,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             />
           }
         />
+        {/* Education Requirement Section */}
         <LabelInput
           label="Education Requirement"
           input={
@@ -191,10 +192,12 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             />
           }
         />
+        {/* Skill Section */}
         <div className="w-full flex flex-col items-start gap-3">
           <TypographyMuted className="text-xs">
             Skill Requirements
           </TypographyMuted>
+          {/* Skill List Section */}
           <div className="flex flex-wrap gap-2">
             {skills &&
               skills.length > 0 &&
@@ -208,14 +211,16 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
                     <LucideXCircle
                       className="text-muted-foreground cursor-pointer text-red-500"
                       width={"18px"}
-                      onClick={() => removeSkills(item)}
+                      onClick={() => removeSkill(item)}
                     />
                   )}
                 </div>
               ))}
           </div>
+          {/* Skill Poppver Section */}
           {props.isEdit && (
             <Popover open={openSkillPopOver} onOpenChange={setOpenSkillPopOver}>
+              {/* Add Skill Section */}
               <PopoverTrigger asChild>
                 <Button className="w-full text-xs" variant="secondary">
                   Add skill
@@ -226,7 +231,6 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
                 <Input
                   placeholder="Enter your skill (e.g. Figma, Photo shop etc.)"
                   onChange={(e) => setSkillInput(e.target.value)}
-                  value={skillInput}
                 />
                 <div className="flex items-center gap-1 [&>button]:text-xs">
                   <Button
@@ -235,12 +239,13 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
                   >
                     Cancel
                   </Button>
-                  <Button onClick={addSkills}>Save</Button>
+                  <Button onClick={addSkill}>Save</Button>
                 </div>
               </PopoverContent>
             </Popover>
           )}
         </div>
+        {/* Salary Range Section */}
         <LabelInput
           label="Salary Range"
           input={
@@ -264,6 +269,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             />
           }
         />
+        {/* DeadlineDate Section */}
         <div className="w-full flex flex-col items-start gap-1">
           <TypographyMuted className="text-xs">Deadline Date</TypographyMuted>
           <Controller
