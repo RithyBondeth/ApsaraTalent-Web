@@ -38,6 +38,7 @@ import {
   LucideCheck,
   LucideCircleCheck,
   LucideEdit,
+  LucideInfo,
   LucideLink2,
   LucideMail,
   LucidePhone,
@@ -907,7 +908,14 @@ export default function ProfilePage() {
 
       if (!hasUpdateBodyChanges && !hasFileUploads) {
         toast({
-          description: "No changes detected.",
+          description: (
+            <div className="flex items-center gap-2">
+              <LucideInfo />
+              <TypographySmall className="font-medium leading-relaxed">
+                No Changes Detected.
+              </TypographySmall>
+            </div>
+          ),
         });
         return;
       }
@@ -926,7 +934,7 @@ export default function ProfilePage() {
       toast({
         variant: "destructive",
         title: "Error!",
-        description: "Failed to update company profile.",
+        description: "Failed To Update Company Profile.",
       });
     }
   };

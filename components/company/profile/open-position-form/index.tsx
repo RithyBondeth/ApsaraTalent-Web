@@ -116,6 +116,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
         <div className="w-full flex flex-col items-start gap-2">
           <TypographyMuted className="text-xs">Description</TypographyMuted>
           <Textarea
+            autoResize
             placeholder={props.isEdit ? "Description" : props.description}
             id="description"
             {...register(`openPositions.${props.index}.description`)}

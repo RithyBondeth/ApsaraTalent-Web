@@ -54,6 +54,7 @@ import {
   LucideEdit,
   LucideEye,
   LucideFileText,
+  LucideInfo,
   LucideLink2,
   LucideMail,
   LucidePhone,
@@ -886,6 +887,7 @@ export default function EmployeeProfilePage() {
               raw !== undefined && raw !== null && raw !== ""
                 ? Number(raw)
                 : undefined;
+
             if (num !== undefined && !Number.isNaN(num)) {
               (updateBody as any).yearsOfExperience = num;
             }
@@ -905,8 +907,9 @@ export default function EmployeeProfilePage() {
             description: s.description ?? "",
           }));
 
-        if (deleteSkillIds.length > 0)
+        if (deleteSkillIds.length > 0) {
           updateBody.skillIdsToDelete = deleteSkillIds;
+        }
       }
 
       /* ------------------------ CAREER SCOPES ------------------------ */
@@ -919,8 +922,9 @@ export default function EmployeeProfilePage() {
             description: cs.description ?? "",
           }));
 
-        if (deleteCareerScopeIds.length > 0)
+        if (deleteCareerScopeIds.length > 0) {
           updateBody.careerScopeIdsToDelete = deleteCareerScopeIds;
+        }
       }
 
       /* ------------------------ SOCIALS ------------------------ */
@@ -935,8 +939,9 @@ export default function EmployeeProfilePage() {
             url: s.url.trim(),
           }));
 
-        if (deleteSocialIds.length > 0)
+        if (deleteSocialIds.length > 0) {
           updateBody.socialIdsToDelete = deleteSocialIds;
+        }
       }
 
       /* ------------------------ EXPERIENCES ------------------------ */
@@ -995,34 +1000,57 @@ export default function EmployeeProfilePage() {
       /* ------------------------ FILE UPLOADS ------------------------ */
       const uploadTasks: Promise<any>[] = [];
 
-      if (data.basicInfo?.avatar instanceof File) {
+      const avatarFileToUpload = data.basicInfo?.avatar;
+      const resumeFileToUpload = data.references?.resume;
+      const coverLetterFileToUpload = data.references?.coverLetter;
+
+      const hasAvatarUpload = avatarFileToUpload instanceof File;
+      const hasResumeUpload = resumeFileToUpload instanceof File;
+      const hasCoverLetterUpload = coverLetterFileToUpload instanceof File;
+
+      if (hasAvatarUpload) {
         uploadTasks.push(
-          uploadAvatarEmpStore.uploadAvatar(employee.id, data.basicInfo.avatar),
+          uploadAvatarEmpStore.uploadAvatar(employee.id, avatarFileToUpload),
         );
       }
 
-      if (data.references?.resume instanceof File) {
+      if (hasResumeUpload) {
         uploadTasks.push(
-          uploadResumeEmpStore.uploadResume(
-            employee.id,
-            data.references.resume,
-          ),
+          uploadResumeEmpStore.uploadResume(employee.id, resumeFileToUpload),
         );
       }
 
-      if (data.references?.coverLetter instanceof File) {
+      if (hasCoverLetterUpload) {
         uploadTasks.push(
           uploadCoverLetterEmpStore.uploadCoverLetter(
             employee.id,
-            data.references.coverLetter,
+            coverLetterFileToUpload,
           ),
         );
+      }
+
+      const hasUpdateBodyChanges = Object.keys(updateBody).length > 0;
+      const hasFileUploads =
+        hasAvatarUpload || hasResumeUpload || hasCoverLetterUpload;
+
+      if (!hasUpdateBodyChanges && !hasFileUploads) {
+        toast({
+          description: (
+            <div className="flex items-center gap-2">
+              <LucideInfo />
+              <TypographySmall className="font-medium leading-relaxed">
+                No Changes Detected.
+              </TypographySmall>
+            </div>
+          ),
+        });
+        return;
       }
 
       await Promise.all(uploadTasks);
 
       /* ------------------------ API UPDATE ------------------------ */
-      if (Object.keys(updateBody).length > 0) {
+      if (hasUpdateBodyChanges) {
         await updateOneEmpStore.updateOneEmployee(employee.id, updateBody);
       }
 
@@ -1042,13 +1070,9 @@ export default function EmployeeProfilePage() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Kepp Local Arrays Synced into RHF
-    form.setValue("skills", skills, { shouldDirty: true, shouldTouch: true });
-    form.setValue("careerScopes", careerScopes, {
-      shouldDirty: true,
-      shouldTouch: true,
-    });
-    form.setValue("socials", socials, { shouldDirty: true, shouldTouch: true });
+    form.setValue("skills", skills);
+    form.setValue("careerScopes", careerScopes);
+    form.setValue("socials", socials);
 
     if (avatarFile)
       form.setValue("basicInfo.avatar", avatarFile, { shouldDirty: true });
