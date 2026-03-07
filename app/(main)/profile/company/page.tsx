@@ -31,7 +31,6 @@ import {
   loginMethodConstant,
   platformConstant,
 } from "@/utils/constants/app.constant";
-import { TLocations } from "@/utils/types/location.type";
 import {
   ChevronDown,
   LucideBuilding,
@@ -47,7 +46,7 @@ import {
   LucideXCircle,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { companyFormSchema, TCompanyProfileForm } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -80,7 +79,6 @@ import { TPlatform } from "@/utils/types/platform.type";
 import {
   IBenefits,
   ICareerScopes,
-  IJobPosition,
   ISocial,
   IValues,
 } from "@/utils/interfaces/user-interface/company.interface";
@@ -159,20 +157,11 @@ export default function ProfilePage() {
     useState<boolean>(false);
 
   // OpenPosition States
-  const [openPositions, setOpenPositions] = useState<IJobPosition[]>([]);
   const [openRemoveOpenPositionDialog, setOpenRemoveOpenPositionDialog] =
     useState<boolean>(false);
   const [currentOpenPositionID, setCurrentOpenPositionID] = useState<
     string | null
   >(null);
-
-  // Select Location and Date States
-  const [selectedLocation, setSelectedLocation] = useState<TLocations | string>(
-    "",
-  );
-  const [selectedDates, setSelectedDates] = useState<
-    Record<string, { posted?: Date; deadline?: Date }>
-  >({});
 
   // Benefit States
   const [benefitInput, setBenefitInput] = useState<IBenefits | null>(null);
@@ -242,6 +231,12 @@ export default function ProfilePage() {
   useEffect(() => {
     getCurrentUser();
   }, []);
+
+  // FieldArray for OpenPosition
+  const openPositionFA = useFieldArray({
+    control: form.control,
+    name: "openPositions",
+  });
 
   // Query Current Company Profile Information Effect
   useEffect(() => {
@@ -320,18 +315,8 @@ export default function ProfilePage() {
 
       setSocials(company.socials ?? []);
       setCareerScopes(company.careerScopes ?? []);
-      setOpenPositions(company.openPositions ?? []);
       setBenefits(company.benefits ?? []);
       setValues(company.values ?? []);
-      setSelectedLocation(company.location ?? "");
-      setSelectedDates(
-        Object.fromEntries(
-          company.openPositions.map((op) => [
-            op.id?.toString() ?? "",
-            { deadline: new Date(op.deadlineDate) },
-          ]),
-        ),
-      );
     }
   }, [user, company, form]);
 
@@ -399,25 +384,18 @@ export default function ProfilePage() {
     form.reset();
   };
 
-  // OpenPosition Bussiness Logics
-  // 1. Add New OpenPosition
-  const addOpenPosition = () => {
-    const newPosition = {
-      id: Date.now().toString(),
+  const addNewOpenPosition = () => {
+    openPositionFA.append({
+      uuid: "",
       title: "",
       description: "",
       experienceRequirement: "",
       educationRequirement: "",
-      skills: [],
+      skills: "",
       salary: "",
-      type: "Full Time",
-      experience: "",
-      education: "",
-      postedDate: new Date().toISOString(),
-      deadlineDate: new Date().toISOString(),
-    };
-
-    setOpenPositions((prevPositions) => [...prevPositions!, newPosition]);
+      type: "",
+      deadlineDate: undefined,
+    });
   };
 
   // 2. Remove OpenPosition with ID
@@ -735,21 +713,6 @@ export default function ProfilePage() {
     });
 
     setSocials(updatedSocials);
-  };
-
-  // Handle Posted and Deadline Date
-  const handleDateChange = (
-    positionId: string,
-    type: "posted" | "deadline",
-    date: Date,
-  ) => {
-    setSelectedDates((prev) => ({
-      ...prev,
-      [positionId]: {
-        ...prev[positionId],
-        [type]: date,
-      },
-    }));
   };
 
   // Handle Avatar and Cover File Change
@@ -1318,22 +1281,14 @@ export default function ProfilePage() {
                   <Controller
                     name="basicInfo.location"
                     control={form.control}
-                    defaultValue={selectedLocation}
                     render={({ field }) => (
                       <Select
                         value={field.value}
-                        onValueChange={(value: TLocations) => {
-                          field.onChange(value);
-                          setSelectedLocation(value);
-                        }}
+                        onValueChange={field.onChange}
                         disabled={!isEdit}
                       >
                         <SelectTrigger className="h-12 text-muted-foreground">
-                          <SelectValue
-                            placeholder={
-                              isEdit ? "Select Location" : selectedLocation
-                            }
-                          />
+                          <SelectValue placeholder="Location" />
                         </SelectTrigger>
                         <SelectContent>
                           {locationConstant.map((location) => (
@@ -1424,7 +1379,7 @@ export default function ProfilePage() {
                 {isEdit && (
                   <div
                     className="flex items-center gap-1 cursor-pointer"
-                    onClick={addOpenPosition}
+                    onClick={addNewOpenPosition}
                   >
                     <LucidePlus
                       className="text-muted-foreground"
@@ -1440,52 +1395,59 @@ export default function ProfilePage() {
               onSubmit={form.handleSubmit(onSubmit)}
               className="flex flex-col items-start gap-5"
             >
-              {openPositions && openPositions.length > 0 ? (
-                openPositions.map((position, index) => {
-                  const positionId = position.id;
-                  const deadlineDate =
-                    selectedDates[positionId!]?.deadline ||
-                    new Date(position.deadlineDate);
+              {openPositionFA.fields.length > 0 ? (
+                openPositionFA.fields.map((row, index) => {
+                  const openPositionId = form.watch(
+                    `openPositions.${index}.uuid`,
+                  ) as string | undefined;
+
                   return (
                     <OpenPositionForm
-                      key={index}
+                      key={row.id}
                       index={index}
                       form={form}
-                      positionIndex={Number(position.id)}
-                      positionUUID={position.id ?? ""}
+                      positionIndex={index}
+                      positionUUID={openPositionId ?? ""}
                       isEdit={isEdit}
-                      title={position.title}
-                      description={position.description}
-                      type={position.type}
-                      experience={position.experience}
-                      education={position.education}
-                      skills={position.skills}
-                      salary={position.salary}
+                      title={form.watch(`openPositions.${index}.title`)}
+                      description={form.watch(
+                        `openPositions.${index}.description`,
+                      )}
+                      type={form.watch(`openPositions.${index}.type`)}
+                      experienceReqirement={form.watch(
+                        `openPositions.${index}.experienceRequirement`,
+                      )}
+                      educationRequirement={form.watch(
+                        `openPositions.${index}.educationRequirement`,
+                      )}
+                      skills={form.watch(`openPositions.${index}.skills`) ?? ""}
+                      salary={form.watch(`openPositions.${index}.salary`)}
                       deadlineDate={{
-                        defaultValue: deadlineDate,
-                        data: deadlineDate,
-                        onDataChange: (date: Date | undefined) => {
-                          if (date) {
-                            if (positionId)
-                              handleDateChange(positionId, "deadline", date);
-                            form.setValue(
-                              `openPositions.${index}.deadlineDate`,
-                              date,
-                            );
-                          }
+                        defaultValue:
+                          (form.getValues(
+                            `openPositions.${index}.deadlineDate`,
+                          ) as any) ?? new Date(),
+                        data:
+                          (form.getValues(
+                            `openPositions.${index}.deadlineDate`,
+                          ) as any) ?? new Date(),
+                        onDataChange: (date) => {
+                          form.setValue(
+                            `openPositions.${index}.deadlineDate`,
+                            date as any,
+                            {
+                              shouldDirty: true,
+                              shouldTouch: true,
+                            },
+                          );
                         },
                       }}
                       onRemove={() => {
-                        if (position.id) {
-                          if (isUuid(position.id)) {
-                            setOpenRemoveOpenPositionDialog(true);
-                            setCurrentOpenPositionID(position.id);
-                          } else {
-                            const updated = openPositions.filter(
-                              (op) => op.id !== positionId,
-                            );
-                            setOpenPositions(updated);
-                          }
+                        if (openPositionId && isUuid(openPositionId)) {
+                          setOpenRemoveOpenPositionDialog(true);
+                          setCurrentOpenPositionID(openPositionId);
+                        } else {
+                          openPositionFA.remove(index);
                         }
                       }}
                     />

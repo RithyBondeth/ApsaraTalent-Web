@@ -7,6 +7,7 @@ import {
   selectedValidation,
   textValidation,
 } from "@/utils/functions/validations";
+import { text } from "node:stream/consumers";
 import * as z from "zod";
 
 export const basicInfoSchema = z.object({

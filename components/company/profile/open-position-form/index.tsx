@@ -167,7 +167,9 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
           label="Experience Requirement"
           input={
             <Input
-              placeholder={props.isEdit ? "Experience" : props.experience}
+              placeholder={
+                props.isEdit ? "Experience" : props.experienceReqirement
+              }
               id="experience-requirement"
               {...register(
                 `openPositions.${props.index}.experienceRequirement`,
@@ -180,7 +182,9 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
           label="Education Requirement"
           input={
             <Input
-              placeholder={props.isEdit ? "Education" : props.education}
+              placeholder={
+                props.isEdit ? "Education" : props.educationRequirement
+              }
               id="education-requirement"
               {...register(`openPositions.${props.index}.educationRequirement`)}
               disabled={!props.isEdit}
