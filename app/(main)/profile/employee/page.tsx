@@ -318,7 +318,7 @@ export default function EmployeeProfilePage() {
     name: "educations",
   });
 
-  // Hydrate Current User Data from API
+  // Hydrate Current User (Employee) Data from API
   useEffect(() => {
     if (!user || !employee) return;
 
@@ -605,10 +605,16 @@ export default function EmployeeProfilePage() {
       return;
     }
 
-    const updated = [...skills, { id: "", name: trimmed, description: "" }];
-    setSkills(updated);
+    const updatedSkills: ISkill[] = [
+      ...skills,
+      { id: "", name: trimmed, description: "" },
+    ];
+    setSkills(updatedSkills);
 
-    form.setValue("skills", updated, { shouldDirty: true, shouldTouch: true });
+    form.setValue("skills", updatedSkills, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
 
     setSkillInput(null);
     setOpenSkillPopOver(false);
@@ -826,7 +832,7 @@ export default function EmployeeProfilePage() {
   };
 
   /* ------------------- onSubmit Bussiness Logics ------------------- */
-  // 1.onSubmit
+  // 1.onSubmit - API: Update The Entire Employee Profile
   const onSubmit = async (data: TEmployeeProfileForm) => {
     if (!employee) return;
 
@@ -1029,7 +1035,7 @@ export default function EmployeeProfilePage() {
     }
   };
 
-  // 2.Handle Submit
+  // 2.handleSubmit: Submit Employee Profile Form
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -1154,15 +1160,18 @@ export default function EmployeeProfilePage() {
         {isEdit ? (
           <div className="flex items-center gap-3">
             <Button type="submit" className="text-xs">
-              Save <LucideCircleCheck />
+              {updateProfileLoadingState ? "Updating..." : "Save"}{" "}
+              <LucideCircleCheck />
             </Button>
             <Button type="button" className="text-xs" onClick={disableEditMode}>
-              Cancel <LucideXCircle />
+              Cancel
+              <LucideXCircle />
             </Button>
           </div>
         ) : (
           <Button type="button" className="text-xs" onClick={enableEditMode}>
-            Edit Profile <LucideEdit />
+            Edit Profile
+            <LucideEdit />
           </Button>
         )}
       </div>
@@ -1669,7 +1678,8 @@ export default function EmployeeProfilePage() {
                     variant="secondary"
                     type="button"
                   >
-                    Add New Skill <LucidePlus />
+                    Add New Skill
+                    <LucidePlus />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
@@ -2195,7 +2205,7 @@ export default function EmployeeProfilePage() {
                   }}
                 >
                   <LucidePlus />
-                  Add new social
+                  Add New Social
                 </Button>
               </div>
             )}

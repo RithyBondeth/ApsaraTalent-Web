@@ -4,7 +4,7 @@ export interface ICompany {
   industry: string;
   email: string | null;
   description: string;
-  avatar?: string | null;
+  avatar?: string;
   cover?: string;
   companySize: number;
   foundedYear: number;
