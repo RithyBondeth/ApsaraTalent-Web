@@ -151,7 +151,9 @@ export default function ProfilePage() {
               ? "Uploading cover..."
               : uploadCmpImagesStore.loading
                 ? "Uploading image..."
-                : "";
+                : updateOneCmpStore.loading
+                  ? "Updating company profile..."
+                  : "";
 
   /* ------------------------ All States ------------------------ */
   // Utils
