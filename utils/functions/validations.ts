@@ -61,14 +61,21 @@ export const passwordValidation = z
   );
 
 export const khmerPhoneNumberValidation = () => {
-  return z
-    .string()
-    .regex(/^(\+855|0)[0-9]{8,9}$/, {
-      message:
-        "Invalid Khmer phone number format (e.g., +85512345678 or 012345678)",
-    })
-    .optional()
-    .nullable();
+  return z.preprocess(
+    (value) => {
+      if (value === "" || value === null || value === undefined) {
+        return undefined;
+      }
+      return typeof value === "string" ? value.trim() : value;
+    },
+    z
+      .string()
+      .regex(/^(\+855|0)[0-9]{8,9}$/, {
+        message:
+          "Invalid Khmer phone number format (e.g., +85512345678 or 012345678)",
+      })
+      .optional(),
+  );
 };
 
 export const phoneOrEmailValidation = z

@@ -778,6 +778,11 @@ export default function ProfilePage() {
       ];
 
       accountKeys.forEach((key) => {
+        if (dirtyFields?.accountSetting?.phone) {
+          (updateBody as any).phone = data.accountSetting?.phone?.trim()
+            ? data.accountSetting.phone.trim()
+            : null;
+        }
         if (dirtyFields?.accountSetting?.[key]) {
           (updateBody as any)[key] = data.accountSetting?.[key];
         }

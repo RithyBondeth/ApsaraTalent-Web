@@ -7,7 +7,6 @@ import {
   selectedValidation,
   textValidation,
 } from "@/utils/functions/validations";
-import { text } from "node:stream/consumers";
 import * as z from "zod";
 
 export const basicInfoSchema = z.object({
@@ -32,7 +31,7 @@ export const basicInfoSchema = z.object({
               message: `Invalid file: avatar must be an image (jpeg, png, webp) and < 5MB`,
             },
           ),
-          z.string(), // for existing image URLs
+          z.string(),
           z.null(),
         ])
         .optional(),
@@ -49,7 +48,7 @@ export const basicInfoSchema = z.object({
               message: `Invalid file: avatar must be an image (jpeg, png, webp) and < 5MB`,
             },
           ),
-          z.string(), // for existing image URLs
+          z.string(),
           z.null(),
         ])
         .optional(),
