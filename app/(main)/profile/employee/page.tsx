@@ -416,6 +416,9 @@ export default function EmployeeProfilePage() {
   // Disable Edit Mode
   const disableEditMode = async () => {
     await getCurrentUser();
+    setAvatarFile(null);
+    setResumeFile(null);
+    setCoverLetterFile(null);
     closeAllDialogs();
     setIsEdit(false);
   };

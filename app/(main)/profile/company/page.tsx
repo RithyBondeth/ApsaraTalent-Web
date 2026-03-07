@@ -373,6 +373,8 @@ export default function ProfilePage() {
 
   const disableEditMode = async () => {
     await getCurrentUser();
+    setAvatarFile(null);
+    setCoverFile(null);
     closeAllDialogs();
     setIsEdit(false);
   };
@@ -780,11 +782,6 @@ export default function ProfilePage() {
       ];
 
       accountKeys.forEach((key) => {
-        if (dirtyFields?.accountSetting?.phone) {
-          (updateBody as any).phone = data.accountSetting?.phone?.trim()
-            ? data.accountSetting.phone.trim()
-            : null;
-        }
         if (dirtyFields?.accountSetting?.[key]) {
           (updateBody as any)[key] = data.accountSetting?.[key];
         }
@@ -795,8 +792,9 @@ export default function ProfilePage() {
         Array.isArray(dirtyFields.openPositions) &&
         Array.isArray(data.openPositions)
       ) {
-        const updatedPositions = data.openPositions.map((pos, index) => {
+        const updatedPositions = data.openPositions.map((pos) => {
           const updatedPos: Record<string, any> = {};
+
           if (pos.uuid) updatedPos.id = pos.uuid;
           if (!pos.uuid) updatedPos.isNew = true;
 
@@ -815,8 +813,9 @@ export default function ProfilePage() {
           return updatedPos;
         });
 
-        if (updatedPositions.length > 0)
+        if (updatedPositions.length > 0) {
           updateBody.openPositions = updatedPositions as any;
+        }
       }
 
       /* ------------------------ BENEFITS & VALUES ------------------------ */
@@ -826,56 +825,68 @@ export default function ProfilePage() {
       ) {
         updateBody.benefits = data.benefitsAndValues?.benefits || [];
 
-        if (deletedBenefitIds.length > 0)
+        if (deletedBenefitIds.length > 0) {
           updateBody.benefitIdsToDelete = deletedBenefitIds;
+        }
       }
 
       if (dirtyFields.benefitsAndValues?.values || deletedValueIds.length > 0) {
         updateBody.values = data.benefitsAndValues?.values || [];
 
-        if (deletedValueIds.length > 0)
+        if (deletedValueIds.length > 0) {
           updateBody.valueIdsToDelete = deletedValueIds;
+        }
       }
 
       /* ------------------------ CAREER SCOPES ------------------------ */
       if (dirtyFields.careerScopes || deleteCareerScopeIds.length > 0) {
         updateBody.careerScopes = data.careerScopes || [];
 
-        if (deleteCareerScopeIds.length > 0)
+        if (deleteCareerScopeIds.length > 0) {
           updateBody.careerScopeIdsToDelete = deleteCareerScopeIds;
+        }
       }
 
       /* ------------------------ SOCIALS ------------------------ */
       if (dirtyFields.socials || deleteSocialIds.length > 0) {
         updateBody.socials =
           data.socials
-            ?.filter((s): s is { id: string; platform: string; url: string } =>
-              Boolean(s && s.platform && s.url),
+            ?.filter((s): s is { id?: string; platform: string; url: string } =>
+              Boolean(s && s.platform?.trim() && s.url?.trim()),
             )
             .map((s) => ({
-              id: s.id,
-              platform: s.platform,
-              url: s.url,
+              id: s.id ?? "",
+              platform: s.platform.trim(),
+              url: s.url.trim(),
             })) || [];
 
-        if (deleteSocialIds.length > 0)
+        if (deleteSocialIds.length > 0) {
           updateBody.socialIdsToDelete = deleteSocialIds;
+        }
       }
 
-      /* ------------------------ IMAGE UPLOADS ------------------------ */
+      /* ------------------------ FILE UPLOADS ------------------------ */
       const uploadTasks: Promise<any>[] = [];
 
-      if (data.basicInfo?.avatar instanceof File) {
+      const avatarFileToUpload = data.basicInfo?.avatar;
+      const coverFileToUpload = data.basicInfo?.cover;
+
+      const hasAvatarUpload = avatarFileToUpload instanceof File;
+      const hasCoverUpload = coverFileToUpload instanceof File;
+
+      if (hasAvatarUpload) {
         uploadTasks.push(
-          uploadAvatarCmpStore.uploadAvatar(company!.id, data.basicInfo.avatar),
+          uploadAvatarCmpStore.uploadAvatar(company.id, avatarFileToUpload),
         );
       }
 
-      if (data.basicInfo?.cover instanceof File) {
+      if (hasCoverUpload) {
         uploadTasks.push(
-          uploadCoverCmpStore.uploadCover(company!.id, data.basicInfo.cover),
+          uploadCoverCmpStore.uploadCover(company.id, coverFileToUpload),
         );
       }
+
+      let hasImageUploads = false;
 
       if (data.images) {
         const imageFiles: File[] = data.images
@@ -883,17 +894,29 @@ export default function ProfilePage() {
           .filter((image): image is File => image instanceof File);
 
         if (imageFiles.length > 0) {
+          hasImageUploads = true;
           uploadTasks.push(
-            uploadCmpImagesStore.uploadImages(company!.id, imageFiles),
+            uploadCmpImagesStore.uploadImages(company.id, imageFiles),
           );
         }
+      }
+
+      const hasUpdateBodyChanges = Object.keys(updateBody).length > 0;
+      const hasFileUploads =
+        hasAvatarUpload || hasCoverUpload || hasImageUploads;
+
+      if (!hasUpdateBodyChanges && !hasFileUploads) {
+        toast({
+          description: "No changes detected.",
+        });
+        return;
       }
 
       await Promise.all(uploadTasks);
 
       /* ------------------------ API UPDATE ------------------------ */
-      if (Object.keys(updateBody).length > 0) {
-        await updateOneCmpStore.updateOneCompany(company!.id, updateBody);
+      if (hasUpdateBodyChanges) {
+        await updateOneCmpStore.updateOneCompany(company.id, updateBody);
       }
 
       await getCurrentUser();
@@ -912,27 +935,13 @@ export default function ProfilePage() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Kepp Local Arrays Synced into RHF
-    form.setValue("benefitsAndValues.benefits", benefits, {
-      shouldDirty: true,
-      shouldTouch: true,
-    });
-    form.setValue("benefitsAndValues.values", values, {
-      shouldDirty: true,
-      shouldTouch: true,
-    });
-    form.setValue("careerScopes", careerScopes, {
-      shouldDirty: true,
-      shouldTouch: true,
-    });
-    form.setValue("socials", socials, {
-      shouldDirty: true,
-      shouldTouch: true,
-    });
+    form.setValue("benefitsAndValues.benefits", benefits);
+    form.setValue("benefitsAndValues.values", values);
+    form.setValue("careerScopes", careerScopes);
+    form.setValue("socials", socials);
 
     if (avatarFile)
       form.setValue("basicInfo.avatar", avatarFile, { shouldDirty: true });
-
     if (coverFile)
       form.setValue("basicInfo.cover", coverFile, { shouldDirty: true });
 

@@ -58,6 +58,7 @@ import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-a
 import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
+import { TPlatform } from "@/utils/types/platform.type";
 
 export default function EmployeeDetailPage() {
   // Utils
@@ -135,7 +136,6 @@ export default function EmployeeDetailPage() {
   if (!isInitialized || loading) {
     return <EmployeeDetailPageSkeleton />;
   }
-  
 
   // Error State
   if (fetchError) {
@@ -349,9 +349,11 @@ export default function EmployeeDetailPage() {
             <TypographyMuted>Status</TypographyMuted>
             <IconLabel
               icon={<LucideClock strokeWidth={"1.5px"} />}
-              text={`${capitalizeWords(
-                employeeData.availability!.split("_")[0]!,
-              )} ${capitalizeWords(employeeData.availability!.split("_")[1]!)}`}
+              text={
+                employeeData.availability.includes("_")
+                  ? `${capitalizeWords(employeeData.availability.split("_")[0])} ${capitalizeWords(employeeData.availability.split("_")[1])}`
+                  : `${capitalizeWords(employeeData.availability)}`
+              }
             />
           </div>
         </div>
@@ -586,7 +588,7 @@ export default function EmployeeDetailPage() {
                     rel="noopener noreferrer"
                     className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
                   >
-                    {getSocialPlatformTypeIcon(item.platform)}
+                    {getSocialPlatformTypeIcon(item.platform as TPlatform)}
                     <TypographySmall>{item.platform}</TypographySmall>
                   </Link>
                 ))}

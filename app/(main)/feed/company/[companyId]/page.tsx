@@ -86,9 +86,12 @@ export default function CompanyDetailPage() {
   const currentUser = useGetCurrentUserStore((state) => state.user);
   // Liked Stores
   const employeeLikeStore = useEmployeeLikeStore();
-  const queryCurrentEmployeeLiked = useGetCurrentEmployeeLikedStore.getState().queryCurrentEmployeeLiked;
+  const queryCurrentEmployeeLiked =
+    useGetCurrentEmployeeLikedStore.getState().queryCurrentEmployeeLiked;
   // Matching Store
-  const countCurrentEmployeeMatching = useCountCurrentEmployeeMatchingStore.getState().countCurrentEmployeeMatching;
+  const countCurrentEmployeeMatching =
+    useCountCurrentEmployeeMatchingStore.getState()
+      .countCurrentEmployeeMatching;
   // Favorite Stores
   const employeeFavCompanyStore = useEmployeeFavCompanyStore();
   const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
@@ -271,8 +274,7 @@ export default function CompanyDetailPage() {
         <div
           className="relative h-80 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center tablet-sm:items-start"
           style={{ backgroundImage: `url(${companyData.cover})` }}
-        > 
-
+        >
           {/* Blur Background Overlay Section */}
           <BlurBackGroundOverlay />
           <div className="relative flex items-center gap-5 tablet-sm:flex-col">
