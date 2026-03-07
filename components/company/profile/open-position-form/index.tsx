@@ -25,7 +25,7 @@ import {
 
 export default function OpenPositionForm(props: IOpenPositionFormProps) {
   // Utils
-  const { register, control, getValues } = props.form;
+  const { register, control, getValues, setValue } = props.form;
   const { toast } = useToast();
 
   // Skill States
@@ -62,7 +62,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
     const updatedSkills = [...currentSkillsArray, trimmed].join(", ");
     setSkills(updatedSkills);
 
-    props.form.setValue(`openPositions.${props.index}.skills`, updatedSkills, {
+    setValue(`openPositions.${props.index}.skills`, updatedSkills, {
       shouldDirty: true,
     });
 
@@ -79,7 +79,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
 
     setSkills(updatedSkills);
 
-    props.form.setValue(`openPositions.${props.index}.skills`, updatedSkills, {
+    setValue(`openPositions.${props.index}.skills`, updatedSkills, {
       shouldDirty: true,
     });
   };
