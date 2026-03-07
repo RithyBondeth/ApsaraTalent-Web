@@ -5,7 +5,7 @@ export function useSkillsState(initialSkills: ISkill[] = []) {
   const [skillInput, setSkillInput] = useState<string | null>(null);
   const [skills, setSkills] = useState<ISkill[]>(initialSkills);
   const [deleteSkillIds, setDeleteSkillIds] = useState<string[]>([]);
-  const [openSkillPopOver, setOpenSkillPopOver] = useState(false);
+  const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
 
   return {
     skillInput,

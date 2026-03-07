@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
 import {
   Select,
   SelectContent,
@@ -167,7 +166,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
         </div>
         {/* Experience Requirement Section */}
         <LabelInput
-          label="Experience Requirement"
+          label="Experience Requirements"
           input={
             <Input
               placeholder={
@@ -183,7 +182,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
         />
         {/* Education Requirement Section */}
         <LabelInput
-          label="Education Requirement"
+          label="Education Requirements"
           input={
             <Input
               placeholder={

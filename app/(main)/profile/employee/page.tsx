@@ -246,13 +246,14 @@ export default function EmployeeProfilePage() {
   } = useCareerScopesState();
 
   // Experience and Education Remove Dialog State
-  const [removeExpOrEduState, setRemoveExpOrEduState] = useState<{
-    experience: { open: boolean; id: string | null };
-    education: { open: boolean; id: string | null };
-  }>({
-    experience: { open: false, id: null },
-    education: { open: false, id: null },
-  });
+  const [openRemoveExpOrEduDialogState, setOpenRemoveExpOrEduDialogState] =
+    useState<{
+      experience: { open: boolean; id: string | null };
+      education: { open: boolean; id: string | null };
+    }>({
+      experience: { open: false, id: null },
+      education: { open: false, id: null },
+    });
 
   /* ------------------------ Employee Profile Form ------------------------ */
   // React Hook Form: Employee Profile Schema
@@ -401,7 +402,7 @@ export default function EmployeeProfilePage() {
     setOpenRemoveResumeDialog(false);
     setOpenRemoveCoverLetterDialog(false);
     setOpenReferencePreview(false);
-    setRemoveExpOrEduState((prev) => ({
+    setOpenRemoveExpOrEduDialogState((prev) => ({
       ...prev,
       experience: { open: false, id: null },
       education: { open: false, id: null },
@@ -429,7 +430,7 @@ export default function EmployeeProfilePage() {
     type: "experience" | "education",
     id: string,
   ) => {
-    setRemoveExpOrEduState((prev) => ({
+    setOpenRemoveExpOrEduDialogState((prev) => ({
       ...prev,
       [type]: { open: true, id },
     }));
@@ -439,7 +440,7 @@ export default function EmployeeProfilePage() {
   const closeRemoveExperienceOrEducationDialog = (
     type: "experience" | "education",
   ) => {
-    setRemoveExpOrEduState((prev) => ({
+    setOpenRemoveExpOrEduDialogState((prev) => ({
       ...prev,
       [type]: { open: false, id: null },
     }));
@@ -1512,9 +1513,9 @@ export default function EmployeeProfilePage() {
               {/* Remove Experience Dialog Section */}
               <RemoveAlertDialog
                 type="experience"
-                openDialog={removeExpOrEduState.experience.open}
+                openDialog={openRemoveExpOrEduDialogState.experience.open}
                 setOpenDialog={(open) =>
-                  setRemoveExpOrEduState((prev) => ({
+                  setOpenRemoveExpOrEduDialogState((prev) => ({
                     ...prev,
                     experience: {
                       ...prev.experience,
@@ -1524,7 +1525,8 @@ export default function EmployeeProfilePage() {
                 }
                 onNoClick={disableEditMode}
                 onYesClick={() => {
-                  const currentExperienceID = removeExpOrEduState.experience.id;
+                  const currentExperienceID =
+                    openRemoveExpOrEduDialogState.experience.id;
                   if (currentExperienceID) {
                     removeExperience(currentExperienceID);
                     closeRemoveExperienceOrEducationDialog("experience");
@@ -1628,16 +1630,17 @@ export default function EmployeeProfilePage() {
               {/* Remove Education Dialog Section */}
               <RemoveAlertDialog
                 type="education"
-                openDialog={removeExpOrEduState.education.open}
+                openDialog={openRemoveExpOrEduDialogState.education.open}
                 setOpenDialog={(open) =>
-                  setRemoveExpOrEduState((prev) => ({
+                  setOpenRemoveExpOrEduDialogState((prev) => ({
                     ...prev,
                     education: { ...prev.education, open: open },
                   }))
                 }
                 onNoClick={disableEditMode}
                 onYesClick={() => {
-                  const currentEducationID = removeExpOrEduState.education.id;
+                  const currentEducationID =
+                    openRemoveExpOrEduDialogState.education.id;
                   if (currentEducationID) {
                     removeEducation(currentEducationID);
                     closeRemoveExperienceOrEducationDialog("education");

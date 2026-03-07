@@ -46,7 +46,7 @@ import {
   LucideUsers,
   LucideXCircle,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { companyFormSchema, TCompanyProfileForm } from "./validation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -77,8 +77,6 @@ import ImagePopup from "@/components/utils/image-popup";
 import { TPlatform } from "@/utils/types/platform.type";
 import {
   IBenefits,
-  ICareerScopes,
-  ISocial,
   IValues,
 } from "@/utils/interfaces/user-interface/company.interface";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
@@ -106,6 +104,10 @@ import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import Link from "next/link";
 import { useCmpAvatarCoverState } from "@/hooks/profile/company/use-cmp-avatar-cover-state";
 import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
+import useCmpImageState from "@/hooks/profile/company/use-cmp-image-state";
+import useCmpBenefitValueState from "@/hooks/profile/company/use-cmp-benefit-value-state";
+import { useSocialsState } from "@/hooks/profile/employee/use-social-state";
+import { useCmpCareerScopesState } from "@/hooks/profile/company/use-cmp-careerscope-state";
 
 export default function ProfilePage() {
   // API Integration
@@ -164,16 +166,16 @@ export default function ProfilePage() {
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
   // Image States
-  const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
-  const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(
-    null,
-  );
-  const [openRemoveImageDialog, setOpenRemoveImageDialog] =
-    useState<boolean>(false);
-  const [removedImage, setRemoveImage] = useState<{
-    id: string;
-    index: number;
-  } | null>(null);
+  const {
+    openImagePopup,
+    setOpenImagePopup,
+    currentCompanyImage,
+    setCurrentCompanyImage,
+    openRemoveImageDialog,
+    setOpenRemoveImageDialog,
+    removedImage,
+    setRemoveImage,
+  } = useCmpImageState();
 
   // Avatar and Cover States
   const {
@@ -198,40 +200,53 @@ export default function ProfilePage() {
     ignoreNextClick,
   } = useCmpAvatarCoverState();
 
-  // Benefit States
-  const [benefitInput, setBenefitInput] = useState<IBenefits | null>(null);
-  const [benefits, setBenefits] = useState<IBenefits[]>([]);
-  const [deletedBenefitIds, setDeletedBenefitIds] = useState<number[]>([]);
-  const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
+  // Benefit and Value States
+  const {
+    benefitInput,
+    setBenefitInput,
+    benefits,
+    setBenefits,
+    deletedBenefitIds,
+    setDeletedBenefitIds,
+    openBenefitPopOver,
+    setOpenBenefitPopOver,
 
-  // Value States
-  const [valueInput, setValueInput] = useState<IValues | null>(null);
-  const [values, setValues] = useState<IValues[]>([]);
-  const [deletedValueIds, setDeletedValueIds] = useState<number[]>([]);
-  const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
+    valueInput,
+    setValueInput,
+    values,
+    setValues,
+    deletedValueIds,
+    setDeletedValueIds,
+    openValuePopOver,
+    setOpenValuePopOver,
+  } = useCmpBenefitValueState();
 
   // CareerScope States
-  const [careerScopeInput, setCareerScopeInput] =
-    useState<ICareerScopes | null>(null);
-  const [careerScopes, setCareerScopes] = useState<ICareerScopes[]>([]);
-  const [deleteCareerScopeIds, setDeleteCareerScopeIds] = useState<string[]>(
-    [],
-  );
-  const [openCareerScopePopOver, setOpenCareerScopePopOver] =
-    useState<boolean>(false);
+  const {
+    careerScopeInput,
+    setCareerScopeInput,
+    careerScopes,
+    setCareerScopes,
+    deleteCareerScopeIds,
+    setDeleteCareerScopeIds,
+    openCareerScopePopOver,
+    setOpenCareerScopePopOver,
+  } = useCmpCareerScopesState();
 
   // Social States
-  const [socialInput, setSocialInput] = useState<ISocial | null>(null);
-  const [socials, setSocials] = useState<ISocial[]>([]);
-  const [deleteSocialIds, setDeleteSocialIds] = useState<string[]>([]);
-  const socialSelectPlatformRef = useRef<HTMLButtonElement>(null);
+  const {
+    socialInput,
+    setSocialInput,
+    socials,
+    setSocials,
+    deleteSocialIds,
+    setDeleteSocialIds,
+    socialSelectPlatformRef,
+  } = useSocialsState();
 
-  // OpenPosition States
+  // OpenPosition State
   const [openRemoveOpenPositionDialog, setOpenRemoveOpenPositionDialog] =
-    useState<boolean>(false);
-  const [currentOpenPositionID, setCurrentOpenPositionID] = useState<
-    string | null
-  >(null);
+    useState<{ open: boolean; id: string | null }>({ open: false, id: null });
 
   /* ------------------------ Company Profile Form ------------------------ */
   // React Hook Form: Company Profile Schema
@@ -376,7 +391,7 @@ export default function ProfilePage() {
     setOpenRemoveAvatarDialog(false);
     setOpenCropDialog(false);
     setOpenRemoveImageDialog(false);
-    setOpenRemoveOpenPositionDialog(false);
+    setOpenRemoveOpenPositionDialog({ open: false, id: null });
     setOpenRemoveCoverDialog(false);
   };
 
@@ -1391,8 +1406,10 @@ export default function ProfilePage() {
                         }}
                         onRemove={() => {
                           if (openPositionId && isUuid(openPositionId)) {
-                            setOpenRemoveOpenPositionDialog(true);
-                            setCurrentOpenPositionID(openPositionId);
+                            setOpenRemoveOpenPositionDialog({
+                              open: true,
+                              id: openPositionId,
+                            });
                           } else {
                             openPositionFA.remove(index);
                           }
@@ -1418,13 +1435,20 @@ export default function ProfilePage() {
               {/* Remove OpenPosition Dialog Section */}
               <RemoveAlertDialog
                 type="position"
-                openDialog={openRemoveOpenPositionDialog}
-                setOpenDialog={setOpenRemoveOpenPositionDialog}
-                onNoClick={() => setOpenRemoveOpenPositionDialog(false)}
+                openDialog={openRemoveOpenPositionDialog.open}
+                setOpenDialog={(open) =>
+                  setOpenRemoveOpenPositionDialog((prev) => ({
+                    ...prev,
+                    open: open,
+                  }))
+                }
+                onNoClick={() =>
+                  setOpenRemoveOpenPositionDialog({ open: false, id: null })
+                }
                 onYesClick={() => {
-                  if (currentOpenPositionID) {
-                    removeOpenPosition(currentOpenPositionID);
-                    setOpenRemoveOpenPositionDialog(false);
+                  if (openRemoveOpenPositionDialog.id) {
+                    removeOpenPosition(openRemoveOpenPositionDialog.id);
+                    setOpenRemoveOpenPositionDialog({ open: false, id: null });
                   }
                 }}
               />

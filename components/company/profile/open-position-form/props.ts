@@ -9,7 +9,7 @@ export interface IOpenPositionFormProps {
   type: string | undefined;
   experienceReqirement: string | undefined;
   educationRequirement: string | undefined;
-  skills: string[];
+  skills: string;
   salary: string | undefined;
   deadlineDate: IDatePickerItemProps;
   isEdit: boolean;
