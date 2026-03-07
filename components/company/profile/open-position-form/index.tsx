@@ -22,6 +22,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Tag from "@/components/utils/tag";
+import { getRandomBadgeColor } from "@/utils/extensions/get-random-badge-color";
 
 export default function OpenPositionForm(props: IOpenPositionFormProps) {
   // Utils
@@ -202,21 +204,24 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
           <div className="flex flex-wrap gap-2">
             {skills &&
               skills.length > 0 &&
-              skills.split(", ").map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted"
-                >
-                  <TypographySmall>{item}</TypographySmall>
-                  {props.isEdit && (
-                    <LucideXCircle
-                      className="text-muted-foreground cursor-pointer text-red-500"
-                      width={"18px"}
-                      onClick={() => removeSkill(item)}
-                    />
-                  )}
-                </div>
-              ))}
+              skills.split(", ").map((item, index) => {
+                const { bg } = getRandomBadgeColor(item);
+                return (
+                  <div
+                    key={index}
+                    className={`flex items-center ${props.isEdit && `${bg} pr-2 rounded-2xl`}`}
+                  >
+                    <Tag label={item} />
+                    {props.isEdit && (
+                      <LucideXCircle
+                        className="text-muted-foreground cursor-pointer text-red-500"
+                        width={"18px"}
+                        onClick={() => removeSkill(item)}
+                      />
+                    )}
+                  </div>
+                );
+              })}
           </div>
           {/* Skill Poppver Section */}
           {props.isEdit && (
