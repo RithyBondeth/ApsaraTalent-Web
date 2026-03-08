@@ -124,7 +124,12 @@ export default function EducationStepForm({
 
       {/* Add More Button */}
       <div className="w-full flex justify-end">
-        <Button variant="secondary" className="text-xs" onClick={addEducation}>
+        <Button
+          variant="secondary"
+          type="button"
+          className="text-xs"
+          onClick={addEducation}
+        >
           Add More
           <LucidePlus />
         </Button>

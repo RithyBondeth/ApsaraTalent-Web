@@ -1,3 +1,4 @@
+// Profession Step:
 "use client";
 import LabelInput from "@/components/utils/label-input";
 import { IStepFormProps } from "../props";
@@ -14,19 +15,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { availabilityConstant } from "@/utils/constants/app.constant";
-import { TAvailability } from "@/utils/types/availability.type";
-import { useState } from "react";
+import { Controller } from "react-hook-form";
 import ErrorMessage from "@/components/utils/error-message";
 
 export default function ProfessionStepForm({
   register,
-  setValue,
-  trigger,
+  control,
   errors,
 }: IStepFormProps<TEmployeeSignUp>) {
-  const [selectedAvailability, setSelectedAvailability] =
-    useState<TAvailability | null>(null);
-
   return (
     <div className="flex flex-col items-start gap-5">
       <TypographyH4>Add profession information</TypographyH4>
@@ -56,27 +52,30 @@ export default function ProfessionStepForm({
         <div className="w-full flex flex-col items-start gap-2">
           <div className="w-full flex flex-col items-start gap-2">
             <TypographyMuted className="text-xs">Availability</TypographyMuted>
-            <Select
-              onValueChange={(value: TAvailability) => {
-                setSelectedAvailability(value);
-                setValue?.("profession.availability", value, {
-                  shouldValidate: true,
-                });
-                trigger?.("profession.availability");
-              }}
-              value={selectedAvailability || ""}
-            >
-              <SelectTrigger className="h-12 text-muted-foreground">
-                <SelectValue placeholder="Availability" />
-              </SelectTrigger>
-              <SelectContent>
-                {availabilityConstant.map((availability) => (
-                  <SelectItem key={availability.id} value={availability.value}>
-                    {availability.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Controller
+              name="profession.availability"
+              control={control!}
+              render={({ field }) => (
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value || ""}
+                >
+                  <SelectTrigger className="h-12 text-muted-foreground">
+                    <SelectValue placeholder="Availability" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availabilityConstant.map((availability) => (
+                      <SelectItem
+                        key={availability.id}
+                        value={availability.value}
+                      >
+                        {availability.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </div>
           <ErrorMessage>
             {errors!.profession?.availability?.message}

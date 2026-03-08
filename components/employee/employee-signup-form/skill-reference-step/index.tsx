@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { IStepFormProps } from "../props";
 import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
@@ -42,7 +42,7 @@ export default function SkillReferenceStepForm({
 
     // Prevent duplicates (case-insensitive)
     const alreadyExists = skills.some(
-      (skill) => skill.toLowerCase() === trimmed.toLowerCase()
+      (skill) => skill.toLowerCase() === trimmed.toLowerCase(),
     );
     if (alreadyExists) {
       toast({
@@ -72,11 +72,6 @@ export default function SkillReferenceStepForm({
     setValue?.("skillAndReference.skills", updated);
     await trigger?.("skillAndReference.skills");
   };
-  
-  useEffect(() => {
-    register("skillAndReference.resume", { required: true });
-    register("skillAndReference.coverLetter", { required: true });
-  }, [register]);
 
   return (
     <div className="w-full flex flex-col items-start gap-8">
@@ -138,13 +133,9 @@ export default function SkillReferenceStepForm({
                   strokeWidth="1.3px"
                   className="text-muted-foreground cursor-pointer"
                   onClick={() =>
-                    setValue?.(
-                      "skillAndReference.resume",
-                      null as unknown as File,
-                      {
-                        shouldValidate: true,
-                      }
-                    )
+                    setValue?.("skillAndReference.coverLetter", undefined, {
+                      shouldValidate: true,
+                    })
                   }
                 />
               </div>
@@ -165,7 +156,7 @@ export default function SkillReferenceStepForm({
                     }
                   }}
                   validationMessage={getErrorMessage(
-                    errors?.skillAndReference?.resume
+                    errors?.skillAndReference?.resume,
                   )}
                 />
               }
@@ -184,13 +175,9 @@ export default function SkillReferenceStepForm({
                   strokeWidth="1.3px"
                   className="text-muted-foreground cursor-pointer"
                   onClick={() =>
-                    setValue?.(
-                      "skillAndReference.coverLetter",
-                      null as unknown as File,
-                      {
-                        shouldValidate: true,
-                      }
-                    )
+                    setValue?.("skillAndReference.coverLetter", undefined, {
+                      shouldValidate: true,
+                    })
                   }
                 />
               </div>
@@ -211,7 +198,7 @@ export default function SkillReferenceStepForm({
                     }
                   }}
                   validationMessage={getErrorMessage(
-                    errors?.skillAndReference?.coverLetter
+                    errors?.skillAndReference?.coverLetter,
                   )}
                 />
               }

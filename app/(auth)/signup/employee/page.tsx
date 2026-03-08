@@ -1,3 +1,4 @@
+// This is my Employee Signup Page
 "use client";
 import { Button } from "@/components/ui/button";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
@@ -48,7 +49,7 @@ export default function EmployeeSignup() {
   const { basicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
 
-  // API Integration - Employee Socials Data 
+  // API Integration - Employee Socials Data
   const googleUserData = useGoogleLoginStore();
   const githubUserData = useGithubLoginStore();
   const linkedInUserData = useLinkedInLoginStore();
@@ -63,11 +64,17 @@ export default function EmployeeSignup() {
   const uploadCoverLetter = useUploadEmployeeCoverLetter();
   const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
 
-  // React Hook Form: Employee Signup Form 
+  // React Hook Form: Employee Signup Form
   const methods = useForm<TEmployeeSignUp>({
     mode: "onChange",
     resolver: zodResolver(employeeSignUpSchema),
     defaultValues: {
+      profession: {
+        job: "",
+        yearOfExperience: 0,
+        availability: "",
+        description: "",
+      },
       experience: [
         {
           title: "",
@@ -85,7 +92,11 @@ export default function EmployeeSignup() {
       ],
       skillAndReference: {
         skills: [],
+        resume: undefined,
+        coverLetter: undefined,
       },
+      avatar: null,
+      careerScopes: [],
     },
   });
 
@@ -112,166 +123,179 @@ export default function EmployeeSignup() {
   // Handle Next Step and Final Submit
   const nextStep = async () => {
     const fieldsToValidate = stepFieldMap[step];
-
     const isValid = await trigger(fieldsToValidate);
 
-    if (isValid) {
-      if (step === totalSteps) {
-        handleSubmit(async (data) => {
-          if (basicSignupData) {
-            // Signup employee first to get employeeID
-            const employeeId = await empSignup.signup({
-              authEmail: true,
-              email: basicSignupData.email!,
-              password: basicSignupData.password!,
-              firstname: basicSignupData.firstName!,
-              lastname: basicSignupData.lastName!,
-              username: basicSignupData.username!,
-              gender: basicSignupData.gender as TGender,
-              job: data.profession.job,
-              yearsOfExperience: data.profession.yearOfExperience,
-              availability: data.profession.availability,
-              description: data.profession.description,
-              location: basicSignupData.selectedLocation!,
-              phone: basicSignupData.phone!,
-              educations: data.educations.map((edu) => ({
-                school: edu.school,
-                degree: edu.degree,
-                year: new Date(edu.year).toISOString(),
-              })),
-              experiences: data.experience.map((exp) => ({
-                title: exp.title,
-                description: exp.description,
-                startDate: new Date(exp.startDate).toISOString(),
-                endDate: new Date(exp.endDate).toISOString(),
-              })),
-              skills: data.skillAndReference.skills.map((skill) => ({
-                name: skill,
-                description: skill,
-              })),
-              careerScopes: data.careerScopes.map((cs) => ({
-                name: cs,
-                description: cs,
-              })),
-              socials: [],
-            });
+    if (!isValid) return;
 
-            if (!employeeId) {
-              console.error("Employee ID not found after signup");
-              return;
-            }
-
-            // Upload files in parallel
-            const uploadTasks = [];
-
-            if (data.avatar instanceof File)
-              // If employeeID exist then upload avatar
-              uploadTasks.push(
-                uploadAvatar.uploadAvatar(employeeId, data.avatar),
-              );
-
-            if (data.skillAndReference.resume instanceof File)
-               // If employeeID exist then upload resume
-              uploadTasks.push(
-                uploadResume.uploadResume(
-                  employeeId,
-                  data.skillAndReference.resume,
-                ),
-              );
-
-            if (data.skillAndReference.coverLetter instanceof File)
-               // If employeeID exist then upload coverLetter
-              uploadTasks.push(
-                uploadCoverLetter.uploadCoverLetter(
-                  employeeId,
-                  data.skillAndReference.coverLetter,
-                ),
-              );
-
-            // Upload all avatar, resume and coverLetter together
-            await Promise.all(uploadTasks);
-            setUploadsComplete(true);
-          }
-        
-          if (basicPhoneSignupData) {
-            // Signup employee first to get employeeID
-            const employeeId = await empSignup.signup({
-              authEmail: false,
-              email: null,
-              password: null,
-              firstname: null,
-              lastname: null,
-              username: null,
-              gender: "other" as TGender,
-              job: data.profession.job,
-              yearsOfExperience: data.profession.yearOfExperience,
-              availability: data.profession.availability,
-              description: data.profession.description,
-              location: null,
-              phone: basicPhoneSignupData.phone!,
-              educations: data.educations.map((edu) => ({
-                school: edu.school,
-                degree: edu.degree,
-                year: new Date(edu.year).toISOString(),
-              })),
-              experiences: data.experience.map((exp) => ({
-                title: exp.title,
-                description: exp.description,
-                startDate: new Date(exp.startDate).toISOString(),
-                endDate: new Date(exp.endDate).toISOString(),
-              })),
-              skills: data.skillAndReference.skills.map((skill) => ({
-                name: skill,
-                description: skill,
-              })),
-              careerScopes: data.careerScopes.map((cs) => ({
-                name: cs,
-                description: cs,
-              })),
-              socials: [],
-            });
-
-            if (!employeeId) {
-              console.error("Employee ID not found after signup");
-              return;
-            }
-
-            // Upload files in parallel
-            const uploadTasks = [];
-
-            if (data.avatar instanceof File)
-              // If employeeID exist then upload avatar
-              uploadTasks.push(
-                uploadAvatar.uploadAvatar(employeeId, data.avatar),
-              );
-
-            if (data.skillAndReference.resume instanceof File)
-              // If employeeID exist then upload resume
-              uploadTasks.push(
-                uploadResume.uploadResume(
-                  employeeId,
-                  data.skillAndReference.resume,
-                ),
-              );
-
-            if (data.skillAndReference.coverLetter instanceof File)
-              // If employeeID exist then upload coverLetter
-              uploadTasks.push(
-                uploadCoverLetter.uploadCoverLetter(
-                  employeeId,
-                  data.skillAndReference.coverLetter,
-                ),
-              );
-
-            // Upload all avatar, resume and coverLetter together        
-            await Promise.all(uploadTasks);
-            setUploadsComplete(true);
-          }
-        })();
-      } else {
-        setStep((prev) => prev + 1);
-      }
+    if (step !== totalSteps) {
+      setStep((prev) => prev + 1);
+      return;
     }
+
+    handleSubmit(async (data) => {
+      try {
+        setUploadsComplete(false);
+
+        if (basicSignupData) {
+          // Signup employee first to get employeeID
+          const employeeId = await empSignup.signup({
+            authEmail: true,
+            email: basicSignupData.email ?? null,
+            password: basicSignupData.password ?? null,
+            firstname: basicSignupData.firstName ?? null,
+            lastname: basicSignupData.lastName ?? null,
+            username: basicSignupData.username ?? null,
+            gender: (basicSignupData.gender as TGender) ?? ("other" as TGender),
+            job: data.profession.job,
+            yearsOfExperience: data.profession.yearOfExperience,
+            availability: data.profession.availability,
+            description: data.profession.description,
+            location: basicSignupData.selectedLocation ?? null,
+            phone: basicSignupData.phone!,
+            educations: data.educations.map((edu) => ({
+              school: edu.school,
+              degree: edu.degree,
+              year: new Date(edu.year).toISOString(),
+            })),
+            experiences: data.experience.map((exp) => ({
+              title: exp.title,
+              description: exp.description,
+              startDate: new Date(exp.startDate).toISOString(),
+              endDate: new Date(exp.endDate).toISOString(),
+            })),
+            skills: data.skillAndReference.skills.map((skill) => ({
+              name: skill,
+              description: skill,
+            })),
+            careerScopes: data.careerScopes.map((cs) => ({
+              name: cs,
+              description: cs,
+            })),
+            socials: [],
+          });
+
+          if (!employeeId) {
+            console.error("Employee ID not found after signup");
+            return;
+          }
+
+          // Upload files in parallel
+          const uploadTasks: Promise<unknown>[] = [];
+
+          if (data.avatar instanceof File) {
+            // If employeeID exist then upload avatar
+            uploadTasks.push(
+              uploadAvatar.uploadAvatar(employeeId, data.avatar),
+            );
+          }
+
+          if (data.skillAndReference.resume instanceof File) {
+            // If employeeID exist then upload resume
+            uploadTasks.push(
+              uploadResume.uploadResume(
+                employeeId,
+                data.skillAndReference.resume,
+              ),
+            );
+          }
+
+          if (data.skillAndReference.coverLetter instanceof File) {
+            // If employeeID exist then upload coverLetter
+            uploadTasks.push(
+              uploadCoverLetter.uploadCoverLetter(
+                employeeId,
+                data.skillAndReference.coverLetter,
+              ),
+            );
+          }
+
+          // Upload all avatar, resume and coverLetter together
+          await Promise.all(uploadTasks);
+          setUploadsComplete(true);
+          return;
+        }
+
+        if (basicPhoneSignupData) {
+          // Signup employee first to get employeeID
+          const employeeId = await empSignup.signup({
+            authEmail: false,
+            email: null,
+            password: null,
+            firstname: null,
+            lastname: null,
+            username: null,
+            gender: "other" as TGender,
+            job: data.profession.job,
+            yearsOfExperience: data.profession.yearOfExperience,
+            availability: data.profession.availability,
+            description: data.profession.description,
+            location: null,
+            phone: basicPhoneSignupData.phone!,
+            educations: data.educations.map((edu) => ({
+              school: edu.school,
+              degree: edu.degree,
+              year: new Date(edu.year).toISOString(),
+            })),
+            experiences: data.experience.map((exp) => ({
+              title: exp.title,
+              description: exp.description,
+              startDate: new Date(exp.startDate).toISOString(),
+              endDate: new Date(exp.endDate).toISOString(),
+            })),
+            skills: data.skillAndReference.skills.map((skill) => ({
+              name: skill,
+              description: skill,
+            })),
+            careerScopes: data.careerScopes.map((cs) => ({
+              name: cs,
+              description: cs,
+            })),
+            socials: [],
+          });
+
+          if (!employeeId) {
+            console.error("Employee ID not found after signup");
+            return;
+          }
+
+          // Upload files in parallel
+          const uploadTasks: Promise<unknown>[] = [];
+
+          if (data.avatar instanceof File) {
+            // If employeeID exist then upload avatar
+            uploadTasks.push(
+              uploadAvatar.uploadAvatar(employeeId, data.avatar),
+            );
+          }
+
+          if (data.skillAndReference.resume instanceof File) {
+            // If employeeID exist then upload resume
+            uploadTasks.push(
+              uploadResume.uploadResume(
+                employeeId,
+                data.skillAndReference.resume,
+              ),
+            );
+          }
+
+          if (data.skillAndReference.coverLetter instanceof File) {
+            // If employeeID exist then upload coverLetter
+            uploadTasks.push(
+              uploadCoverLetter.uploadCoverLetter(
+                employeeId,
+                data.skillAndReference.coverLetter,
+              ),
+            );
+          }
+
+          // Upload all avatar, resume and coverLetter together
+          await Promise.all(uploadTasks);
+          setUploadsComplete(true);
+        }
+      } catch (error) {
+        console.error("Employee signup failed:", error);
+      }
+    })();
   };
 
   // Handle Previous Step
@@ -301,9 +325,16 @@ export default function EmployeeSignup() {
         duration: 1000,
       });
       setTimeout(() => router.replace("/login"), 1000);
+      return;
     }
 
-    if (empSignup.loading || uploadAvatar.loading || uploadCoverLetter.loading)
+    if (
+      empSignup.loading ||
+      uploadAvatar.loading ||
+      uploadCoverLetter.loading ||
+      uploadResume.loading
+    ) {
+      dismiss();
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -314,15 +345,16 @@ export default function EmployeeSignup() {
           </div>
         ),
       });
+    }
 
-    const errors = [
+    const errorList = [
       { error: empSignup.error, message: empSignup.message },
       { error: uploadAvatar.error, message: uploadAvatar.message },
       { error: uploadResume.error, message: uploadResume.message },
       { error: uploadCoverLetter.error, message: uploadCoverLetter.message },
     ];
 
-    errors.forEach(({ error, message }) => {
+    errorList.forEach(({ error, message }) => {
       if (error) {
         dismiss();
         toast({
@@ -343,22 +375,18 @@ export default function EmployeeSignup() {
     empSignup.loading,
     uploadAvatar.loading,
     uploadCoverLetter.loading,
+    uploadResume.loading,
     uploadAvatar.error,
     empSignup.error,
     uploadCoverLetter.error,
+    uploadResume.error,
     uploadCoverLetter.message,
     uploadResume.message,
     empSignup.message,
     empSignup.accessToken,
     empSignup.refreshToken,
     uploadsComplete,
-    empSignup.signup,
-    uploadAvatar.uploadAvatar,
-    uploadResume.uploadResume,
-    uploadCoverLetter.uploadCoverLetter,
     uploadAvatar.message,
-    uploadResume.error,
-    uploadResume.loading,
   ]);
 
   // Log Basic Signup Data: Regular, Phone and Socials
@@ -405,9 +433,10 @@ export default function EmployeeSignup() {
     <div className="h-[80%] w-[85%] flex flex-col items-start gap-3 tablet-lg:w-full tablet-lg:p-5">
       {/* Navigate Back Button Section */}
       <Button
+        type="button"
         className="absolute top-5 left-5"
         variant="outline"
-        onClick={() => router.push("/signup/option")}
+        onClick={() => router.push("/signup")}
       >
         <LucideArrowLeft />
       </Button>
@@ -452,9 +481,8 @@ export default function EmployeeSignup() {
           {step === 1 && (
             <ProfessionStepForm
               register={register}
+              control={control}
               errors={errors}
-              setValue={setValue}
-              trigger={trigger}
             />
           )}
           {step === 2 && (
@@ -500,16 +528,24 @@ export default function EmployeeSignup() {
           {/* Next & Previous Step Section */}
           {/* Navigation Buttons Section */}
           <div className="flex justify-between my-8">
-            {step > 1 && (
+            {step > 1 ? (
               <Button type="button" onClick={prevStep}>
                 <LucideArrowLeft />
                 Back
               </Button>
+            ) : (
+              <div />
             )}
+
             <Button
               type="button"
               onClick={nextStep}
-              disabled={empSignup.loading}
+              disabled={
+                empSignup.loading ||
+                uploadAvatar.loading ||
+                uploadResume.loading ||
+                uploadCoverLetter.loading
+              }
             >
               {step === totalSteps ? "Submit" : "Next"}
               <LucideArrowRight />

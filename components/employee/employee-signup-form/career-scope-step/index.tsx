@@ -105,6 +105,7 @@ export default function EmployeeCareerScopeStepForm({
       {/* Back Button Section */}
       <Button
         className="absolute top-5 left-5"
+        type="button"
         onClick={() => router.push("/signup")}
       >
         <LucideArrowLeft />

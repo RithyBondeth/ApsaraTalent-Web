@@ -1,3 +1,4 @@
+// My Signup Page
 "use client";
 
 import { Input } from "@/components/ui/input";
@@ -11,7 +12,7 @@ import {
   LucideLockKeyhole,
   LucideMail,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -27,12 +28,10 @@ import {
   genderConstant,
   locationConstant,
 } from "@/utils/constants/app.constant";
-import { TGender } from "@/utils/types/gender.type";
-import { useForm, FieldErrors } from "react-hook-form";
+import { useForm, FieldErrors, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ErrorMessage from "@/components/utils/error-message";
 import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
-import { TLocations } from "@/utils/types/location.type";
 import {
   basicSignupEmployeeSchema,
   basicSignupCompanySchema,
@@ -51,32 +50,60 @@ export default function SignupPage() {
 
   // Signup Helpers
   const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
-  const [selectedLocation, setSelectionLocation] = useState<TLocations | null>(null);
-  const [selectedGender, setSelectedGender] = useState<TGender | null>(null);
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
-  const [confirmPassVisibility, setConfirmPassVisibility] = useState<boolean>(false);
+  const [confirmPassVisibility, setConfirmPassVisibility] =
+    useState<boolean>(false);
 
   // API Integration
   const googleUserData = useGoogleLoginStore();
   const githubUserData = useGithubLoginStore();
   const linkedInUserData = useLinkedInLoginStore();
   const facebookUserData = useFacebookLoginStore();
-    
+
   // Employee and Company Form
-  const isEmployeeForm =
-  (basicSignupData?.selectedRole ||
-    googleUserData.role ||
-    githubUserData.role ||
-    linkedInUserData.role ||
-    facebookUserData.role) === "employee";
+  const selectedRole = useMemo(
+    () =>
+      basicSignupData?.selectedRole ||
+      googleUserData.role ||
+      githubUserData.role ||
+      linkedInUserData.role ||
+      facebookUserData.role,
+    [
+      basicSignupData?.selectedRole,
+      googleUserData.role,
+      githubUserData.role,
+      linkedInUserData.role,
+      facebookUserData.role,
+    ],
+  );
+
+  const isEmployeeForm = selectedRole === "employee";
 
   const cmpForm = useForm<TBasicSignupCompanySchema>({
     resolver: zodResolver(basicSignupCompanySchema),
+    defaultValues: {
+      email: "",
+      phone: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
+
   const empForm = useForm<TBasicSignupEmployeeSchema>({
     resolver: zodResolver(basicSignupEmployeeSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      username: "",
+      selectedLocation: undefined,
+      gender: undefined,
+      phone: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
- 
+
   // Employee and Company Error
   const employeeErrors = empForm.formState
     .errors as FieldErrors<TBasicSignupEmployeeSchema>;
@@ -86,23 +113,31 @@ export default function SignupPage() {
   // Set Basic Signup Data for Employee
   const onSubmitEmployee = (data: TBasicSignupEmployeeSchema) => {
     console.log("Basic Employee Data: ", data);
-    const basicSignupData = {
+
+    const payload = {
+      ...basicSignupData,
       ...data,
+      selectedRole: "employee" as const,
       phone: data.phone ?? undefined,
     };
-    setBasicSignupData(basicSignupData);
-    router.push("signup/employee");
+
+    setBasicSignupData(payload);
+    router.push("/signup/employee");
   };
 
   // Set Basic Signup Data for Company
   const onSubmitCompany = (data: TBasicSignupCompanySchema) => {
     console.log("Basic Company Data: ", data);
-    const basicSignupData = {
+
+    const payload = {
+      ...basicSignupData,
       ...data,
+      selectedRole: "company" as const,
       phone: data.phone ?? undefined,
     };
-    setBasicSignupData(basicSignupData);
-    router.push("signup/company");
+
+    setBasicSignupData(payload);
+    router.push("/signup/company");
   };
 
   // Social Signup Effect
@@ -198,7 +233,7 @@ export default function SignupPage() {
           Connect with professional community around the world.
         </TypographyMuted>
       </div>
-     
+
       {/* Form Section */}
       <form
         className="w-full flex flex-col items-stretch gap-5"
@@ -236,27 +271,27 @@ export default function SignupPage() {
           )}
           {isEmployeeForm && (
             <div className="w-full flex flex-col items-start gap-1">
-              <Select
-                onValueChange={(value: TLocations) => {
-                  setSelectionLocation(value);
-                  empForm.setValue("selectedLocation", value, {
-                    shouldValidate: true,
-                  });
-                  empForm.trigger("selectedLocation");
-                }}
-                value={selectedLocation || ""}
-              >
-                <SelectTrigger className="h-12 text-muted-foreground">
-                  <SelectValue placeholder="Location" />
-                </SelectTrigger>
-                <SelectContent>
-                  {locationConstant.map((location, index) => (
-                    <SelectItem key={index} value={location}>
-                      {location}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Controller
+                name="selectedLocation"
+                control={empForm.control}
+                render={({ field }) => (
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value || ""}
+                  >
+                    <SelectTrigger className="h-12 text-muted-foreground">
+                      <SelectValue placeholder="Location" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {locationConstant.map((location, index) => (
+                        <SelectItem key={index} value={location}>
+                          {location}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
               <ErrorMessage>
                 {typeof employeeErrors.selectedLocation?.message === "string"
                   ? employeeErrors.selectedLocation?.message
@@ -269,25 +304,27 @@ export default function SignupPage() {
           <div className="flex gap-3 [&>select]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
             {isEmployeeForm && (
               <div className="w-full flex flex-col items-start gap-1">
-                <Select
-                  onValueChange={(value: TGender) => {
-                    setSelectedGender(value);
-                    empForm.setValue("gender", value, { shouldValidate: true });
-                    empForm.trigger("gender");
-                  }}
-                  value={selectedGender || ""}
-                >
-                  <SelectTrigger className="h-12 text-muted-foreground">
-                    <SelectValue placeholder="Gender" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {genderConstant.map((gender) => (
-                      <SelectItem key={gender.id} value={gender.value}>
-                        {gender.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Controller
+                  name="gender"
+                  control={empForm.control}
+                  render={({ field }) => (
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value || ""}
+                    >
+                      <SelectTrigger className="h-12 text-muted-foreground">
+                        <SelectValue placeholder="Gender" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {genderConstant.map((gender) => (
+                          <SelectItem key={gender.id} value={gender.value}>
+                            {gender.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
                 <ErrorMessage>
                   {typeof employeeErrors.gender?.message === "string"
                     ? employeeErrors.gender?.message
@@ -301,11 +338,7 @@ export default function SignupPage() {
                 placeholder="Mobile"
                 className="w-full"
                 {...empForm.register("phone")}
-                validationMessage={
-                  isEmployeeForm
-                    ? employeeErrors.phone?.message
-                    : companyErrors.phone?.message
-                }
+                validationMessage={employeeErrors.phone?.message}
               />
             ) : (
               <Input
@@ -313,11 +346,7 @@ export default function SignupPage() {
                 placeholder="Mobile"
                 className="w-full"
                 {...cmpForm.register("phone")}
-                validationMessage={
-                  isEmployeeForm
-                    ? employeeErrors.phone?.message
-                    : companyErrors.phone?.message
-                }
+                validationMessage={companyErrors.phone?.message}
               />
             )}
           </div>
@@ -327,11 +356,7 @@ export default function SignupPage() {
               type="email"
               placeholder="Email"
               {...empForm.register("email")}
-              validationMessage={
-                isEmployeeForm
-                  ? employeeErrors.email?.message
-                  : companyErrors.email?.message
-              }
+              validationMessage={employeeErrors.email?.message}
             />
           ) : (
             <Input
@@ -339,11 +364,7 @@ export default function SignupPage() {
               type="email"
               placeholder="Email"
               {...cmpForm.register("email")}
-              validationMessage={
-                isEmployeeForm
-                  ? employeeErrors.email?.message
-                  : companyErrors.email?.message
-              }
+              validationMessage={companyErrors.email?.message}
             />
           )}
           {isEmployeeForm ? (
@@ -365,11 +386,7 @@ export default function SignupPage() {
               type={passwordVisibility ? "text" : "password"}
               placeholder="Password"
               {...empForm.register("password")}
-              validationMessage={
-                isEmployeeForm
-                  ? employeeErrors.password?.message
-                  : companyErrors.password?.message
-              }
+              validationMessage={employeeErrors.password?.message}
             />
           ) : (
             <Input
@@ -390,11 +407,7 @@ export default function SignupPage() {
               type={passwordVisibility ? "text" : "password"}
               placeholder="Password"
               {...cmpForm.register("password")}
-              validationMessage={
-                isEmployeeForm
-                  ? employeeErrors.password?.message
-                  : companyErrors.password?.message
-              }
+              validationMessage={companyErrors.password?.message}
             />
           )}
           {isEmployeeForm ? (
@@ -416,11 +429,7 @@ export default function SignupPage() {
               type={confirmPassVisibility ? "text" : "password"}
               placeholder="Confirm Password"
               {...empForm.register("confirmPassword")}
-              validationMessage={
-                isEmployeeForm
-                  ? employeeErrors.confirmPassword?.message
-                  : companyErrors.confirmPassword?.message
-              }
+              validationMessage={employeeErrors.confirmPassword?.message}
             />
           ) : (
             <Input
@@ -441,16 +450,13 @@ export default function SignupPage() {
               type={confirmPassVisibility ? "text" : "password"}
               placeholder="Confirm Password"
               {...cmpForm.register("confirmPassword")}
-              validationMessage={
-                isEmployeeForm
-                  ? employeeErrors.confirmPassword?.message
-                  : companyErrors.confirmPassword?.message
-              }
+              validationMessage={companyErrors.confirmPassword?.message}
             />
           )}
         </div>
         <div className="flex items-center gap-3">
           <Button
+            type="button"
             className="flex-1"
             variant="outline"
             onClick={() => router.push("/login")}

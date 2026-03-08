@@ -1,7 +1,7 @@
 import {
   dateValidation,
-  fileValidation,
-  imageValidation,
+  optionalFileValidation,
+  optionalImageValidation,
   positiveNumberValidation,
   selectedValidation,
   textValidation,
@@ -14,7 +14,7 @@ export const professionStepSchema = z.object({
     job: textValidation("Profession", 50),
     yearOfExperience: positiveNumberValidation("Year of experiences"),
     availability: selectedValidation("availability"),
-    description: textValidation("Description", 500),
+    description: textValidation("Description", 1000),
   }),
 });
 
@@ -23,7 +23,7 @@ export const experienceStepSchema = z.object({
   experience: z
     .object({
       title: textValidation("Title", 50),
-      description: textValidation("Description", 200),
+      description: textValidation("Description", 500),
       startDate: dateValidation("Start date"),
       endDate: dateValidation("End date"),
     })
@@ -47,14 +47,14 @@ export const skillReferenceStepSchema = z.object({
     skills: z
       .array(z.string())
       .min(1, { message: "At least one skill is required" }),
-    resume: fileValidation("Resume"),
-    coverLetter: fileValidation("Cover letter"),
+    resume: optionalFileValidation("Resume"),
+    coverLetter: optionalFileValidation("Cover letter"),
   }),
 });
 
 // Define schema for step 5
 export const avatarStepSchema = z.object({
-  avatar: imageValidation("Avatar"),
+  avatar: optionalImageValidation("Avatar"),
 });
 
 export const careerScopesStepSchema = z.object({

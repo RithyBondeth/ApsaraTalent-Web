@@ -106,6 +106,10 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
 
       {/* Experience Section */}
       <div className="flex flex-wrap gap-2 items-center">
+        {props.educations.length > 0 &&
+          props.educations.map((edu, index) => (
+            <Tag key={index} label={edu.degree} />
+          ))}
         <Tag
           label={
             props.yearsOfExperience === 1

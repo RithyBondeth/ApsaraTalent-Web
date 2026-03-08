@@ -66,8 +66,11 @@ export default function FeedPage() {
   // Pop up Dialog
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
   const ignoreNextClick = useRef<boolean>(false);
-  const [currentProfileImage, setCurrentProfileImage] = useState<string | null>(null);
-  const [openLikeSuccessDialog, setOpenLikeSuccessDialog] = useState<boolean>(false);
+  const [currentProfileImage, setCurrentProfileImage] = useState<string | null>(
+    null,
+  );
+  const [openLikeSuccessDialog, setOpenLikeSuccessDialog] =
+    useState<boolean>(false);
 
   // Handle Profile Pop up Dialog
   const handleClickProfilePopup = (e: React.MouseEvent) => {
@@ -79,7 +82,7 @@ export default function FeedPage() {
     if ((e.target as HTMLElement).closest(".dialog-content")) return;
     setOpenProfilePopup(true);
   };
- 
+
   // Open Profile Pop up Dialog Effect
   useEffect(() => {
     if (openProfilePopup) {
@@ -115,7 +118,8 @@ export default function FeedPage() {
   const getCurrentEmployeeMatchingStore = useGetCurrentEmployeeMatchingStore();
   const getCurrentCompanyMatchingStore = useGetCurrentCompanyLikedStore();
   // Count All Employee and Company Matching To Update Badge In Sidebar
-  const { countCurrentEmployeeMatching } = useCountCurrentEmployeeMatchingStore();
+  const { countCurrentEmployeeMatching } =
+    useCountCurrentEmployeeMatchingStore();
   const { countCurrentCompanyMatching } = useCountCurrentCompanyMatchingStore();
 
   // Step 1: Fetch All Current Employee or Company Liked - User Specific Data (Reset When User Change)
@@ -236,7 +240,7 @@ export default function FeedPage() {
       await getCurrentCompanyLikedStore.queryCurrentCompanyLiked(companyID);
     } finally {
       setLikingId(null);
-       // Get Current Company Matching -> Update In Matching Page (Incase There's a Matching)
+      // Get Current Company Matching -> Update In Matching Page (Incase There's a Matching)
       getCurrentEmployeeMatchingStore.queryCurrentEmployeeMatching(employeeID);
     }
   };
