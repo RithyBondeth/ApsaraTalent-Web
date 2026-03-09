@@ -18,6 +18,8 @@ import { getErrorMessage } from "@/utils/extensions/get-error-message";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import ErrorMessage from "@/components/utils/error-message";
+import Tag from "@/components/utils/tag";
+import { getRandomBadgeColor } from "@/utils/extensions/get-random-badge-color";
 
 export default function SkillReferenceStepForm({
   errors,
@@ -78,19 +80,22 @@ export default function SkillReferenceStepForm({
       <div className="w-full flex flex-col items-start gap-3">
         <TypographyH4>Add your skills</TypographyH4>
         <div className="flex flex-wrap gap-3">
-          {skills.map((skill, i) => (
-            <div
-              key={i}
-              className="flex items-center gap-3 py-2 px-3 rounded-3xl bg-muted"
-            >
-              <TypographyMuted className="text-xs">{skill}</TypographyMuted>
-              <LucideXCircle
-                className="text-muted-foreground cursor-pointer"
-                width={"18px"}
-                onClick={() => removeSkill(skill)}
-              />
-            </div>
-          ))}
+          {skills.map((skill, index) => {
+            const { bg } = getRandomBadgeColor(skill);
+            return (
+              <div
+                key={index}
+                className={`flex items-center ${bg} pr-2 rounded-2xl`}
+              >
+                <Tag label={skill} />
+                <LucideXCircle
+                  className="text-muted-foreground cursor-pointer text-red-500"
+                  width={"18px"}
+                  onClick={() => removeSkill(skill)}
+                />
+              </div>
+            );
+          })}
         </div>
         <Popover open={openPopOver} onOpenChange={setOpenPopOver}>
           <PopoverTrigger asChild>
@@ -120,7 +125,7 @@ export default function SkillReferenceStepForm({
         )}
       </div>
       <div className="w-full flex flex-col items-start gap-3">
-        <TypographyH4>Add your references</TypographyH4>
+        <TypographyH4>Add your references (Optional)</TypographyH4>
         <div className="w-full flex items-start gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
           {getValues?.("skillAndReference.resume") ? (
             <div className="flex flex-col items-start gap-2">

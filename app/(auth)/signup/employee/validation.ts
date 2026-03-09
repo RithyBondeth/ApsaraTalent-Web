@@ -35,7 +35,7 @@ export const educationStepSchema = z.object({
   educations: z
     .object({
       school: textValidation("School", 50),
-      degree: textValidation("Degree", 50),
+      degree: textValidation("Degree", 100),
       year: dateValidation("Graduation year"),
     })
     .array(),

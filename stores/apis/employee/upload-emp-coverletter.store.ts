@@ -1,6 +1,7 @@
 import { API_UPLOAD_EMP_COVER_LETTER_URL } from "@/utils/constants/apis/employee_url";
 import axios from "@/lib/axios";
 import { create } from "zustand";
+import { useEmployeeSignupStore } from "../auth/employee-signup.store";
 
 type TUploadEmployeeCoverLetterResponse = {
   message: string | null;
@@ -24,12 +25,14 @@ export const useUploadEmployeeCoverLetter =
         const formData = new FormData();
         formData.append("coverLetter", _coverLetter);
 
+        const accessToken = useEmployeeSignupStore.getState().accessToken;
+
         const response = await axios.post<TUploadEmployeeCoverLetterResponse>(
           API_UPLOAD_EMP_COVER_LETTER_URL(_employeeID),
           formData,
           {
             headers: {
-              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${accessToken}`,
             },
           },
         );

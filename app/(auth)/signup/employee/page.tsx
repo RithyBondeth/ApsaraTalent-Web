@@ -1,4 +1,3 @@
-// This is my Employee Signup Page
 "use client";
 import { Button } from "@/components/ui/button";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
@@ -179,38 +178,34 @@ export default function EmployeeSignup() {
             return;
           }
 
-          // Upload files in parallel
-          const uploadTasks: Promise<unknown>[] = [];
+          console.log("Employee ID: ", employeeId);
 
+          // Upload files sequentially to avoid race conditions
           if (data.avatar instanceof File) {
-            // If employeeID exist then upload avatar
-            uploadTasks.push(
-              uploadAvatar.uploadAvatar(employeeId, data.avatar),
+            console.log(
+              "Attempting to upload avatar for employeeId:",
+              employeeId,
             );
+            console.log("Avatar: ", data.avatar);
+            await uploadAvatar.uploadAvatar(employeeId, data.avatar);
           }
 
           if (data.skillAndReference.resume instanceof File) {
-            // If employeeID exist then upload resume
-            uploadTasks.push(
-              uploadResume.uploadResume(
-                employeeId,
-                data.skillAndReference.resume,
-              ),
+            console.log("Resume: ", data.skillAndReference.resume);
+            await uploadResume.uploadResume(
+              employeeId,
+              data.skillAndReference.resume,
             );
           }
 
           if (data.skillAndReference.coverLetter instanceof File) {
-            // If employeeID exist then upload coverLetter
-            uploadTasks.push(
-              uploadCoverLetter.uploadCoverLetter(
-                employeeId,
-                data.skillAndReference.coverLetter,
-              ),
+            console.log("CoverLetter: ", data.skillAndReference.coverLetter);
+            await uploadCoverLetter.uploadCoverLetter(
+              employeeId,
+              data.skillAndReference.coverLetter,
             );
           }
 
-          // Upload all avatar, resume and coverLetter together
-          await Promise.all(uploadTasks);
           setUploadsComplete(true);
           return;
         }
@@ -258,38 +253,27 @@ export default function EmployeeSignup() {
             return;
           }
 
-          // Upload files in parallel
-          const uploadTasks: Promise<unknown>[] = [];
+          console.log("Employee ID from Phone Signup: ", employeeId);
 
+          // Upload files sequentially to avoid race conditions
           if (data.avatar instanceof File) {
-            // If employeeID exist then upload avatar
-            uploadTasks.push(
-              uploadAvatar.uploadAvatar(employeeId, data.avatar),
-            );
+            await uploadAvatar.uploadAvatar(employeeId, data.avatar);
           }
 
           if (data.skillAndReference.resume instanceof File) {
-            // If employeeID exist then upload resume
-            uploadTasks.push(
-              uploadResume.uploadResume(
-                employeeId,
-                data.skillAndReference.resume,
-              ),
+            await uploadResume.uploadResume(
+              employeeId,
+              data.skillAndReference.resume,
             );
           }
 
           if (data.skillAndReference.coverLetter instanceof File) {
-            // If employeeID exist then upload coverLetter
-            uploadTasks.push(
-              uploadCoverLetter.uploadCoverLetter(
-                employeeId,
-                data.skillAndReference.coverLetter,
-              ),
+            await uploadCoverLetter.uploadCoverLetter(
+              employeeId,
+              data.skillAndReference.coverLetter,
             );
           }
 
-          // Upload all avatar, resume and coverLetter together
-          await Promise.all(uploadTasks);
           setUploadsComplete(true);
         }
       } catch (error) {

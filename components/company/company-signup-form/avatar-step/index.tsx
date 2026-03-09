@@ -2,13 +2,11 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
 import { useState, useEffect } from "react";
-import ErrorMessage from "@/components/utils/error-message";
 import { DragDropFile } from "@/components/utils/drag-drop-file.";
 
 export default function AvatarCompanyStepForm({
   setValue,
   getValues,
-  errors,
 }: IStepFormProps<TCompanySignup>) {
   const [preview, setPreview] = useState<string | null>(null); // Preview state for image
 
@@ -39,7 +37,7 @@ export default function AvatarCompanyStepForm({
 
   return (
     <div className="w-full flex flex-col items-center gap-5">
-      <TypographyH4>Add your company profile picture</TypographyH4>
+      <TypographyH4>Add your company profile picture (Optional)</TypographyH4>
       <div className="w-full flex justify-center">
         {setValue && (
           <DragDropFile<TCompanySignup>
@@ -48,7 +46,7 @@ export default function AvatarCompanyStepForm({
             maxFileSize={5242880}
             multiple={false}
             boxText="Drop your company profile picture here"
-            boxSubText="JPG, PNG or GIF files up to 5MB"
+            boxSubText="JPG, PNG or WEBP files up to 5MB"
             className="max-w-md"
             preview={preview}
             fileName="avatar"
@@ -56,7 +54,6 @@ export default function AvatarCompanyStepForm({
           />
         )}
       </div>
-      {errors?.avatar && <ErrorMessage>{errors.avatar.message}</ErrorMessage>}
     </div>
   );
 }

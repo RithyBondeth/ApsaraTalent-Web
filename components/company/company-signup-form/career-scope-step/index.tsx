@@ -30,6 +30,7 @@ import { LucideArrowLeft, LucideSearch } from "lucide-react";
 import { careerScopesList } from "@/data/career-data";
 import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
+import ErrorMessage from "@/components/utils/error-message";
 
 export default function CompanyCareerScopeStepForm({
   register,
@@ -59,7 +60,7 @@ export default function CompanyCareerScopeStepForm({
       setSelectedCareers(initial);
     }
   }, []);
-  
+
   // Handle Toggle Career
   const toggleCareer = (career: string) => {
     setSelectedCareers((prev) => {
@@ -74,7 +75,7 @@ export default function CompanyCareerScopeStepForm({
   // Handle Pagination
   const paginatedCareers = careerScopesList.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const goToPage = (page: number) => setCurrentPage(page);
@@ -102,6 +103,7 @@ export default function CompanyCareerScopeStepForm({
     <div className="w-full flex flex-col items-stretch gap-8">
       {/* Back Button Section */}
       <Button
+        type="button"
         className="absolute top-5 left-5"
         onClick={() => router.push("/signup")}
       >
@@ -118,7 +120,11 @@ export default function CompanyCareerScopeStepForm({
       </div>
 
       {/* Search Section */}
-      <Button variant="outline" onClick={() => setOpenSearchDialog(true)}>
+      <Button
+        variant="outline"
+        type="button"
+        onClick={() => setOpenSearchDialog(true)}
+      >
         <LucideSearch />
         Search your career
       </Button>
@@ -168,7 +174,7 @@ export default function CompanyCareerScopeStepForm({
 
       {/* Validation Message Section */}
       {errors?.careerScopes && (
-        <p className="text-sm text-red-500">{errors.careerScopes.message}</p>
+        <ErrorMessage>{errors.careerScopes.message}</ErrorMessage>
       )}
 
       {/* Pagination Section */}

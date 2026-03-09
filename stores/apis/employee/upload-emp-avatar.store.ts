@@ -1,6 +1,7 @@
 import { API_UPLOAD_EMP_AVATAR_URL } from "@/utils/constants/apis/employee_url";
 import axios from "@/lib/axios";
 import { create } from "zustand";
+import { useEmployeeSignupStore } from "../auth/employee-signup.store";
 
 type TUploadEmployeeAvatarResponse = {
   message: string | null;
@@ -24,14 +25,16 @@ export const useUploadEmployeeAvatarStore = create<TUploadEmployeeAvatarState>(
         const formData = new FormData();
         formData.append("avatar", _avatar);
 
+        const accessToken = useEmployeeSignupStore.getState().accessToken;
+
         const response = await axios.post<TUploadEmployeeAvatarResponse>(
           API_UPLOAD_EMP_AVATAR_URL(_employeeID),
           formData,
           {
             headers: {
-              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${accessToken}`,
             },
-          }
+          },
         );
         set({ loading: false, error: null, message: response.data.message });
       } catch (error) {
@@ -46,10 +49,10 @@ export const useUploadEmployeeAvatarStore = create<TUploadEmployeeAvatarState>(
           set({
             loading: false,
             error: "An error occurred while uploading employee's avatar",
-            message: "An error occurred while uploading employee's avatar"
+            message: "An error occurred while uploading employee's avatar",
           });
         }
       }
     },
-  })
+  }),
 );

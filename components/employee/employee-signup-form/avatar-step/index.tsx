@@ -39,7 +39,7 @@ export default function AvatarStepForm({
 
   return (
     <div className="w-full flex flex-col items-center gap-5">
-      <TypographyH4>Add your profile picture</TypographyH4>
+      <TypographyH4>Add your profile picture (Optional)</TypographyH4>
       <div className="w-full flex justify-center">
         {setValue && (
           <DragDropFile<TEmployeeSignUp>

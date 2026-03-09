@@ -17,18 +17,13 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { locationConstant } from "@/utils/constants/app.constant";
 import { TLocations } from "@/utils/types/location.type";
-import { useState } from "react";
+import { Controller } from "react-hook-form";
 
 export default function BasicInfoStepForm({
   register,
-  setValue,
-  trigger,
+  control,
   errors,
 }: IStepFormProps<TCompanySignup>) {
-  const [selectedLocation, setSelectedLocation] = useState<TLocations | null>(
-    null
-  );
-
   return (
     <div className="flex flex-col items-start gap-5">
       <TypographyH4>Add Basic information</TypographyH4>
@@ -97,27 +92,27 @@ export default function BasicInfoStepForm({
         <div className="w-full flex flex-col items-start gap-2">
           <div className="w-full flex flex-col items-start gap-3">
             <TypographyMuted className="text-xs">Locations</TypographyMuted>
-            <Select
-              onValueChange={(value: TLocations) => {
-                setSelectedLocation(value);
-                setValue?.("basicInfo.location", value, {
-                  shouldValidate: true,
-                });
-                trigger?.("basicInfo.location");
-              }}
-              value={selectedLocation || ""}
-            >
-              <SelectTrigger className="h-12 text-muted-foreground">
-                <SelectValue placeholder="Location" />
-              </SelectTrigger>
-              <SelectContent>
-                {locationConstant.map((location) => (
-                  <SelectItem key={location} value={location}>
-                    {location}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Controller
+              name="basicInfo.location"
+              control={control!}
+              render={({ field }) => (
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value || ""}
+                >
+                  <SelectTrigger className="h-12 text-muted-foreground">
+                    <SelectValue placeholder="Location" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {locationConstant.map((location) => (
+                      <SelectItem key={location} value={location}>
+                        {location}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </div>
           <ErrorMessage>{errors!.basicInfo?.location?.message}</ErrorMessage>
         </div>

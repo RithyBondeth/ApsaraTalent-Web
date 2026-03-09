@@ -1,7 +1,7 @@
 import { API_AUTH_SIGNUP_URL } from "@/utils/constants/apis/auth_url";
 import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
 import { IUser } from "@/utils/interfaces/user-interface/user.interface";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { create } from "zustand";
 
 type TCompanySignupResponse = {
