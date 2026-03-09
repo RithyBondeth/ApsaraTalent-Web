@@ -162,13 +162,14 @@ export default function OpenPositionStepForm({
           <div className="w-full flex flex-col items-start gap-2">
             <TypographyMuted className="text-xs">Description</TypographyMuted>
             <Textarea
+              autoResize
               placeholder="Description"
               className="placeholder:text-sm"
               {...register(`openPositions.${index}.description`)}
+              validationMessage={
+                errors?.openPositions?.[index]?.description?.message
+              }
             />
-            <ErrorMessage>
-              {errors?.openPositions?.[index]?.description?.message}
-            </ErrorMessage>
           </div>
 
           <div className="w-full flex gap-3 [&>div]:w-1/2 tablet-lg:flex-col tablet-lg:[&>div]:w-full">

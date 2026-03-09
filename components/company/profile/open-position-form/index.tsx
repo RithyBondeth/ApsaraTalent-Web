@@ -123,6 +123,10 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             {...register(`openPositions.${props.index}.description`)}
             className="placeholder:text-sm"
             disabled={!props.isEdit}
+            validationMessage={
+              props.form.formState.errors?.openPositions?.[props.index]
+                ?.description?.message
+            }
           />
         </div>
         {/* Availability Section */}

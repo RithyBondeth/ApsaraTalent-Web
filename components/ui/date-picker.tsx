@@ -1,6 +1,10 @@
 import { format, isValid } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
@@ -35,7 +39,7 @@ export function DatePicker({
             "w-full justify-between border rounded-md px-4 py-6 text-left text-muted-foreground bg-primary-foreground",
             !isValidDate && "text-muted-foreground",
             disabled && "opacity-50 cursor-not-allowed",
-            className
+            className,
           )}
           disabled={disabled}
         >
@@ -50,6 +54,9 @@ export function DatePicker({
           onSelect={onDateChange}
           initialFocus
           disabled={disabled}
+          fromYear={1900}
+          toYear={new Date().getFullYear() + 10}
+          captionLayout="dropdown-buttons"
         />
       </PopoverContent>
     </Popover>

@@ -1,4 +1,3 @@
-// Profession Step:
 "use client";
 import LabelInput from "@/components/utils/label-input";
 import { IStepFormProps } from "../props";
@@ -8,15 +7,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { availabilityConstant } from "@/utils/constants/app.constant";
+  availabilityConstant,
+  yearOfExperienceConstant,
+} from "@/utils/constants/app.constant";
 import { Controller } from "react-hook-form";
 import ErrorMessage from "@/components/utils/error-message";
+import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 
 export default function ProfessionStepForm({
   register,
@@ -38,17 +34,28 @@ export default function ProfessionStepForm({
         }
       />
       <div className="w-full flex justify-between items-start gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
-        <LabelInput
-          label="Year of Experience"
-          input={
-            <Input
-              placeholder="Year of Experience"
-              id="yearOfExperience"
-              {...register("profession.yearOfExperience")}
-              validationMessage={errors!.profession?.yearOfExperience?.message}
+        <div className="w-full flex flex-col items-start gap-2">
+          <div className="w-full flex flex-col items-start gap-2">
+            <TypographyMuted className="text-xs">
+              Year of Experience
+            </TypographyMuted>
+            <Controller
+              name="profession.yearOfExperience"
+              control={control!}
+              render={({ field }) => (
+                <CreatableCombobox
+                  options={yearOfExperienceConstant}
+                  value={field.value || ""}
+                  onChange={field.onChange}
+                  placeholder="Year of Experience"
+                />
+              )}
             />
-          }
-        />
+          </div>
+          <ErrorMessage>
+            {errors!.profession?.yearOfExperience?.message}
+          </ErrorMessage>
+        </div>
         <div className="w-full flex flex-col items-start gap-2">
           <div className="w-full flex flex-col items-start gap-2">
             <TypographyMuted className="text-xs">Availability</TypographyMuted>
@@ -56,24 +63,12 @@ export default function ProfessionStepForm({
               name="profession.availability"
               control={control!}
               render={({ field }) => (
-                <Select
-                  onValueChange={field.onChange}
+                <CreatableCombobox
+                  options={availabilityConstant}
                   value={field.value || ""}
-                >
-                  <SelectTrigger className="h-12 text-muted-foreground">
-                    <SelectValue placeholder="Availability" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availabilityConstant.map((availability) => (
-                      <SelectItem
-                        key={availability.id}
-                        value={availability.value}
-                      >
-                        {availability.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  onChange={field.onChange}
+                  placeholder="Availability"
+                />
               )}
             />
           </div>
@@ -86,13 +81,12 @@ export default function ProfessionStepForm({
         <TypographyMuted className="text-xs">Description</TypographyMuted>
         <div className="w-full flex flex-col items-start gap-2">
           <Textarea
+            autoResize
             placeholder="Description"
             {...register("profession.description")}
             className="placeholder:text-sm"
+            validationMessage={errors!.profession?.description?.message}
           />
-          <ErrorMessage>
-            {errors!.profession?.description?.message}
-          </ErrorMessage>
         </div>
       </div>
     </div>

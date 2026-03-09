@@ -52,6 +52,10 @@ export default function EmployeeExperienceForm(
             id="description"
             {...register(`experiences.${props.index}.description`)}
             disabled={!props.isEdit}
+            validationMessage={
+              props.form.formState.errors?.experiences?.[props.index]
+                ?.description?.message
+            }
           />
         </div>
         {/* StartDate and EndDate Section */}

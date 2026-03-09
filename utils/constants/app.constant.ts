@@ -46,6 +46,15 @@ export const availabilityConstant = [
   { id: 5, label: "Contract", value: "contract" },
 ];
 
+export const yearOfExperienceConstant = [
+  { id: 1, label: "No Experience", value: "no_experience" },
+  { id: 2, label: "Less than 1 year", value: "less_than_1_year" },
+  { id: 3, label: "1 - 3 years", value: "1_to_3_years" },
+  { id: 4, label: "3 - 5 years", value: "3_to_5_years" },
+  { id: 5, label: "5 - 10 years", value: "5_to_10_years" },
+  { id: 6, label: "10+ years", value: "10_plus_years" },
+];
+
 export const locationConstant = [
   "Phnom Penh",
   "Banteay Meanchey",

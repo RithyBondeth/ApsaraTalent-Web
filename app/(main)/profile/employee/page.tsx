@@ -375,12 +375,20 @@ export default function EmployeeProfilePage() {
           platform: s.platform,
           url: s.url,
         })) ?? [],
-      educations: employee.educations?.map((edu) => ({
-        id: edu.id,
-        school: edu.school ?? "",
-        degree: edu.degree ?? "",
-        year: parseMaybeDate(edu.year),
-      })),
+      educations: employee.educations?.map((edu) => {
+        const parsedYear = edu.year
+          ? new Date(edu.year).getFullYear()
+          : undefined;
+        return {
+          id: edu.id,
+          school: edu.school ?? "",
+          degree: edu.degree ?? "",
+          year: parsedYear,
+          isStudying: parsedYear
+            ? parsedYear > new Date().getFullYear()
+            : false,
+        };
+      }),
     });
 
     setSocials(employee.socials ?? []);
@@ -982,18 +990,18 @@ export default function EmployeeProfilePage() {
               id?: string;
               school: string;
               degree: string;
-              year: Date;
+              year: number;
             } =>
               !!edu &&
               !!edu.school?.trim() &&
               !!edu.degree?.trim() &&
-              edu.year instanceof Date,
+              typeof edu.year === "number",
           )
           .map((edu) => ({
             ...(edu.id ? { id: edu.id } : {}),
             school: edu.school.trim(),
             degree: edu.degree.trim(),
-            year: edu.year.toISOString(),
+            year: new Date(edu.year, 0, 1).toISOString(),
           }));
       }
 

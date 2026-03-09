@@ -70,7 +70,8 @@ export const educationSchema = z.object({
           id: z.string().optional(),
           school: textValidation().optional(),
           degree: textValidation().optional(),
-          year: dateValidation().optional(),
+          year: z.number().int().optional(),
+          isStudying: z.boolean().optional(),
         })
         .optional(),
     )
@@ -88,6 +89,18 @@ export const experienceSchema = z.object({
           startDate: dateValidation().optional(),
           endDate: dateValidation().optional(),
         })
+        .refine(
+          (data) => {
+            if (data.startDate && data.endDate) {
+              return data.startDate < data.endDate;
+            }
+            return true;
+          },
+          {
+            message: "End date must be after start date",
+            path: ["endDate"],
+          },
+        )
         .optional(),
     )
     .optional(),

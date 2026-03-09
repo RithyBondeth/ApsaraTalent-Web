@@ -70,23 +70,16 @@ export default function EmployeeSignup() {
     defaultValues: {
       profession: {
         job: "",
-        yearOfExperience: 0,
+        yearOfExperience: "",
         availability: "",
         description: "",
       },
-      experience: [
-        {
-          title: "",
-          description: "",
-          startDate: "" as unknown as Date,
-          endDate: "" as unknown as Date,
-        },
-      ],
+      experience: [],
       educations: [
         {
           school: "",
           degree: "",
-          year: "" as unknown as Date,
+          year: undefined as unknown as number,
         },
       ],
       skillAndReference: {
@@ -119,6 +112,20 @@ export default function EmployeeSignup() {
     6: ["careerScopes"],
   };
 
+  // Check if user has no experience (to skip step 2)
+  const hasNoExperience = () =>
+    getValues("profession.yearOfExperience") === "no_experience";
+
+  // Step navigation helper – skips step 2 for no-experience users
+  const resolveNextStep = (current: number) => {
+    if (current === 1 && hasNoExperience()) return 3;
+    return current + 1;
+  };
+  const resolvePrevStep = (current: number) => {
+    if (current === 3 && hasNoExperience()) return 1;
+    return current - 1;
+  };
+
   // Handle Next Step and Final Submit
   const nextStep = async () => {
     const fieldsToValidate = stepFieldMap[step];
@@ -126,8 +133,13 @@ export default function EmployeeSignup() {
 
     if (!isValid) return;
 
+    // When moving away from step 1 with no experience, clear experience array
+    if (step === 1 && hasNoExperience()) {
+      setValue("experience", []);
+    }
+
     if (step !== totalSteps) {
-      setStep((prev) => prev + 1);
+      setStep((prev) => resolveNextStep(prev));
       return;
     }
 
@@ -154,7 +166,7 @@ export default function EmployeeSignup() {
             educations: data.educations.map((edu) => ({
               school: edu.school,
               degree: edu.degree,
-              year: new Date(edu.year).toISOString(),
+              year: new Date(edu.year, 0, 1).toISOString(),
             })),
             experiences: data.experience.map((exp) => ({
               title: exp.title,
@@ -283,7 +295,7 @@ export default function EmployeeSignup() {
   };
 
   // Handle Previous Step
-  const prevStep = () => setStep((prev) => prev - 1);
+  const prevStep = () => setStep((prev) => resolvePrevStep(prev));
 
   // Employee Singup Effect
   useEffect(() => {
@@ -436,26 +448,38 @@ export default function EmployeeSignup() {
       {/* Step Progress Indicator Section */}
       <div className="w-full flex items-center mb-5">
         {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
-          (st, index) => (
-            <div key={st} className="w-full flex items-center">
-              <div
-                className={`size-8 flex items-center justify-center rounded-full text-muted font-bold transition-all ${
-                  step >= st ? "bg-primary" : "bg-muted text-muted-foreground"
-                }`}
-              >
-                {st}
-              </div>
-              {index < totalSteps - 1 && (
-                <div className="flex-1 h-1 bg-muted relative">
-                  <div
-                    className={`absolute top-0 left-0 h-full transition-all duration-300 ${
-                      step > st ? "bg-primary w-full" : "bg-muted w-0"
-                    }`}
-                  />
+          (st, index) => {
+            const isSkipped =
+              st === 2 &&
+              methods.watch("profession.yearOfExperience") === "no_experience";
+            const isActive = step >= st && !isSkipped;
+            return (
+              <div key={st} className="w-full flex items-center">
+                <div
+                  className={`size-8 flex items-center justify-center rounded-full text-muted font-bold transition-all ${
+                    isSkipped
+                      ? "bg-muted text-muted-foreground opacity-40 line-through"
+                      : isActive
+                        ? "bg-primary"
+                        : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {st}
                 </div>
-              )}
-            </div>
-          ),
+                {index < totalSteps - 1 && (
+                  <div className="flex-1 h-1 bg-muted relative">
+                    <div
+                      className={`absolute top-0 left-0 h-full transition-all duration-300 ${
+                        step > st && !isSkipped
+                          ? "bg-primary w-full"
+                          : "bg-muted w-0"
+                      }`}
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          },
         )}
       </div>
 

@@ -1,15 +1,21 @@
-import { DatePicker } from "@/components/ui/date-picker";
+import { YearPicker } from "@/components/ui/year-picker";
 import { Input } from "@/components/ui/input";
 import LabelInput from "@/components/utils/label-input";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { LucideGraduationCap, LucideSchool, LucideTrash2 } from "lucide-react";
-import { Controller } from "react-hook-form";
+import { Controller, useWatch } from "react-hook-form";
 import { IEmployeeEducationFormProps } from "./props";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function EmployeeEducationForm(
   props: IEmployeeEducationFormProps,
 ) {
   const { register, control } = props.form;
+
+  const isStudying = useWatch({
+    control,
+    name: `educations.${props.index}.isStudying`,
+  });
 
   return (
     <div className="w-full flex flex-col items-start gap-3">
@@ -29,24 +35,49 @@ export default function EmployeeEducationForm(
       {/* Content Section */}
       <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
         {/* School Section */}
-        <LabelInput
-          label="School"
-          input={
-            <Input
-              placeholder="School"
-              id="school"
-              {...register(`educations.${props.index}.school`)}
-              prefix={<LucideSchool strokeWidth={"1.3px"} />}
-              disabled={!props.isEdit}
+        <div className="w-full flex flex-col items-start gap-2">
+          <LabelInput
+            label="School"
+            input={
+              <Input
+                placeholder="School"
+                id="school"
+                {...register(`educations.${props.index}.school`)}
+                prefix={<LucideSchool strokeWidth={"1.3px"} />}
+                disabled={!props.isEdit}
+              />
+            }
+          />
+          {/* isStudying Checkbox */}
+          <div className="flex items-center space-x-2 mt-1">
+            <Controller
+              control={control}
+              name={`educations.${props.index}.isStudying`}
+              render={({ field }) => (
+                <Checkbox
+                  id={`isStudying-profile-${props.index}`}
+                  checked={field.value ?? false}
+                  onCheckedChange={field.onChange}
+                  disabled={!props.isEdit}
+                />
+              )}
             />
-          }
-        />
+            <label
+              htmlFor={`isStudying-profile-${props.index}`}
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground"
+            >
+              I am currently studying here
+            </label>
+          </div>
+        </div>
         {/* Degree Section */}
         <LabelInput
           label="Degree"
           input={
             <Input
-              placeholder="Degree"
+              placeholder={
+                isStudying ? "e.g. Pursuing Bachelor's, Undergrad" : "Degree"
+              }
               id="degree"
               {...register(`educations.${props.index}.degree`)}
               prefix={<LucideGraduationCap strokeWidth={"1.3px"} />}
@@ -56,16 +87,18 @@ export default function EmployeeEducationForm(
         />
         {/* Graduation Section */}
         <LabelInput
-          label="Graduation Year"
+          label={isStudying ? "Expected Graduation Year" : "Graduation Year"}
           input={
             <Controller
               control={control}
               name={`educations.${props.index}.year`}
               render={({ field }) => (
-                <DatePicker
-                  placeholder="Graduation Year"
-                  date={field.value ? new Date(field.value) : undefined}
-                  onDateChange={field.onChange}
+                <YearPicker
+                  placeholder={
+                    isStudying ? "Expected Graduation Year" : "Graduation Year"
+                  }
+                  year={field.value ? Number(field.value) : undefined}
+                  onYearChange={(yr) => field.onChange(yr)}
                   disabled={!props.isEdit}
                 />
               )}

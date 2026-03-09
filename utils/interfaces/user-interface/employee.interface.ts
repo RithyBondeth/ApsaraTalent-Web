@@ -10,7 +10,7 @@ export interface IEmployee {
   phone: string;
   email: string | null;
   job: string;
-  yearsOfExperience: number;
+  yearsOfExperience: string;
   availability: string;
   description: string;
   location?: string | null;

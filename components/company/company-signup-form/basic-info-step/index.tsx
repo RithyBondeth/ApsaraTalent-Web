@@ -44,12 +44,13 @@ export default function BasicInfoStepForm({
             Company Description
           </TypographyMuted>
           <Textarea
+            autoResize
             placeholder="Company Description"
             className="placeholder:text-sm"
             {...register("basicInfo.description")}
+            validationMessage={errors!.basicInfo?.description?.message}
           />
         </div>
-        <ErrorMessage>{errors!.basicInfo?.description?.message}</ErrorMessage>
       </div>
       <div className="w-full flex justify-between items-center gap-3 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
         <LabelInput
