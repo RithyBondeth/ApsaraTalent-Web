@@ -15,6 +15,9 @@ export function useCmpAvatarCoverState() {
   const coverInputRef = useRef<HTMLInputElement | null>(null);
   const [openRemoveCoverDialog, setOpenRemoveCoverDialog] =
     useState<boolean>(false);
+  const [openCoverCropDialog, setOpenCoverCropDialog] =
+    useState<boolean>(false);
+  const [coverCropImageUrl, setCoverCropImageUrl] = useState<string>("");
 
   // Both Avatar and Cover
   const ignoreNextClick = useRef<boolean>(false);
@@ -22,8 +25,10 @@ export function useCmpAvatarCoverState() {
   useEffect(() => {
     return () => {
       if (cropImageUrl?.startsWith("blob:")) URL.revokeObjectURL(cropImageUrl);
+      if (coverCropImageUrl?.startsWith("blob:"))
+        URL.revokeObjectURL(coverCropImageUrl);
     };
-  }, [cropImageUrl]);
+  }, [cropImageUrl, coverCropImageUrl]);
 
   return {
     avatarFile,
@@ -42,6 +47,10 @@ export function useCmpAvatarCoverState() {
     setCoverFile,
     openRemoveCoverDialog,
     setOpenRemoveCoverDialog,
+    openCoverCropDialog,
+    setOpenCoverCropDialog,
+    coverCropImageUrl,
+    setCoverCropImageUrl,
     coverInputRef,
 
     ignoreNextClick,

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import ErrorMessage from "@/components/utils/error-message";
 import { DragDropFile } from "@/components/utils/drag-drop-file.";
 import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
+import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
 
 export default function AvatarStepForm({
   setValue,
@@ -11,16 +12,24 @@ export default function AvatarStepForm({
   errors,
 }: IStepFormProps<TEmployeeSignUp>) {
   const [preview, setPreview] = useState<string | null>(null); // Preview state for image
+  const [selectedImage, setSelectedImage] = useState<string | null>(null); // Original image for cropping
+  const [cropDialogOpen, setCropDialogOpen] = useState(false); // Crop dialog open state
 
-  // Handle file selection and set the file in the form
+  // Handle file selection and open the crop dialog
   const handleFilesSelected = (files: File[]): void => {
     const file = files?.[0];
     if (file) {
-      // Set the selected file to the form field
-      setValue?.("avatar", file, { shouldValidate: true });
       const objectUrl = URL.createObjectURL(file);
-      setPreview(objectUrl); // Set preview for the selected file
+      setSelectedImage(objectUrl);
+      setCropDialogOpen(true);
     }
+  };
+
+  const handleCropComplete = (croppedFile: File) => {
+    // Set the cropped file to the form field
+    setValue?.("avatar", croppedFile, { shouldValidate: true });
+    const objectUrl = URL.createObjectURL(croppedFile);
+    setPreview(objectUrl); // Set preview for the cropped file
   };
 
   // Use effect to get the avatar value from form and set the preview when coming back to this step
@@ -56,6 +65,16 @@ export default function AvatarStepForm({
         )}
       </div>
       {errors?.avatar && <ErrorMessage>{errors.avatar.message}</ErrorMessage>}
+
+      {selectedImage && (
+        <AvatarCropDialog
+          title="Crop Profile Picture"
+          open={cropDialogOpen}
+          setOpen={setCropDialogOpen}
+          image={selectedImage}
+          onCropComplete={handleCropComplete}
+        />
+      )}
     </div>
   );
 }

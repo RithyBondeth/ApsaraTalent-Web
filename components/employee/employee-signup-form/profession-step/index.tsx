@@ -23,10 +23,10 @@ export default function ProfessionStepForm({
     <div className="flex flex-col items-start gap-5">
       <TypographyH4>Add profession information</TypographyH4>
       <LabelInput
-        label="Profession"
+        label="Looking for position"
         input={
           <Input
-            placeholder="Profession"
+            placeholder="Looking for position"
             id="profession"
             {...register("profession.job")}
             validationMessage={errors!.profession?.job?.message}

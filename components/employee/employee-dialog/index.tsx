@@ -53,21 +53,11 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
                   />
                   <IconLabel
                     icon={<LucideUser strokeWidth={"1.5px"} />}
-                    text={
-                      props.yearsOfExperience === 1
-                        ? `${props.yearsOfExperience} year experience`
-                        : `${props.yearsOfExperience} years experience`
-                    }
+                    text={props.yearsOfExperience}
                   />
                   <IconLabel
                     icon={<LucideClock strokeWidth={"1.5px"} />}
-                    text={
-                      props.availability.includes("_")
-                        ? `${capitalizeWords(
-                            props.availability.split("_")[0],
-                          )} ${capitalizeWords(props.availability.split("_")[1])}`
-                        : capitalizeWords(props.availability)
-                    }
+                    text={props.availability}
                   />
                 </div>
               </div>

@@ -27,6 +27,9 @@ interface AvatarCropDialogProps {
   setOpen: (open: boolean) => void;
   image: string;
   onCropComplete: (file: File) => void;
+  aspect?: number;
+  cropShape?: "rect" | "round";
+  fileName?: string;
 }
 
 export default function AvatarCropDialog({
@@ -35,6 +38,9 @@ export default function AvatarCropDialog({
   setOpen,
   image,
   onCropComplete,
+  aspect = 1,
+  cropShape = "round",
+  fileName = "avatar.jpg",
 }: AvatarCropDialogProps) {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -82,7 +88,7 @@ export default function AvatarCropDialog({
 
     const blob = await getCroppedImage(image, croppedAreaPixels);
 
-    const croppedFile = new File([blob], "avatar.jpg", {
+    const croppedFile = new File([blob], fileName, {
       type: "image/jpeg",
     });
 
@@ -103,8 +109,8 @@ export default function AvatarCropDialog({
               image={image}
               crop={crop}
               zoom={zoom}
-              aspect={1}
-              cropShape="round"
+              aspect={aspect}
+              cropShape={cropShape}
               showGrid={false}
               onCropChange={setCrop}
               onZoomChange={setZoom}
@@ -135,7 +141,7 @@ export default function AvatarCropDialog({
           </Button>
 
           <Button type="button" onClick={confirmCrop}>
-            Crop Avatar
+            Crop Image
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -110,22 +110,8 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
           props.educations.map((edu, index) => (
             <Tag key={index} label={edu.degree} />
           ))}
-        <Tag
-          label={
-            props.yearsOfExperience === 1
-              ? `${props.yearsOfExperience} year experience`
-              : `${props.yearsOfExperience} years experience`
-          }
-        />
-        <Tag
-          label={
-            props.availability.includes("_")
-              ? `${capitalizeWords(
-                  props.availability.split("_")[0],
-                )} ${capitalizeWords(props.availability.split("_")[1])}`
-              : capitalizeWords(props.availability)
-          }
-        />
+        <Tag label={props.yearsOfExperience} />
+        <Tag label={props.availability} />
       </div>
 
       {/* button Section */}

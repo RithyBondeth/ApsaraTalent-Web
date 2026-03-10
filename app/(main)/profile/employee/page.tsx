@@ -340,10 +340,7 @@ export default function EmployeeProfilePage() {
       profession: {
         job: employee.job ?? "",
         yearOfExperience: employee.yearsOfExperience?.toString() ?? "",
-        availability: employee.availability.includes("_")
-          ? `${capitalizeWords(employee.availability.split("_")[0])} ${capitalizeWords(employee.availability.split("_")[1])}`
-          : `${capitalizeWords(employee.availability)}`,
-        description: employee.description ?? "",
+        availability: employee.availability,
       },
       experiences:
         employee.experiences?.map((exp) => ({
@@ -1353,10 +1350,10 @@ export default function EmployeeProfilePage() {
 
             <div className="flex flex-col items-start gap-5">
               <LabelInput
-                label="Profession"
+                label="Looking for position"
                 input={
                   <Input
-                    placeholder="Profession"
+                    placeholder="Looking for position"
                     id="profession"
                     {...form.register("profession.job")}
                     prefix={<LucideUser strokeWidth={"1.3px"} />}

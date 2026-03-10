@@ -383,11 +383,7 @@ export default function CompanyDetailPage() {
                                   icon={
                                     <LucideAlarmClock strokeWidth={"1.5px"} />
                                   }
-                                  label={
-                                    availabilityConstant.find(
-                                      (type) => type.value == item.type,
-                                    )?.label ?? ""
-                                  }
+                                  label={item.type}
                                 />
                               )}
                               {item.experience && (

@@ -114,7 +114,7 @@ export default function EmployeeSignup() {
 
   // Check if user has no experience (to skip step 2)
   const hasNoExperience = () =>
-    getValues("profession.yearOfExperience") === "no_experience";
+    getValues("profession.yearOfExperience") === "No Experience";
 
   // Step navigation helper – skips step 2 for no-experience users
   const resolveNextStep = (current: number) => {

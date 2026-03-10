@@ -195,6 +195,10 @@ export default function ProfilePage() {
     setCoverFile,
     openRemoveCoverDialog,
     setOpenRemoveCoverDialog,
+    openCoverCropDialog,
+    setOpenCoverCropDialog,
+    coverCropImageUrl,
+    setCoverCropImageUrl,
     coverInputRef,
 
     ignoreNextClick,
@@ -502,6 +506,15 @@ export default function ProfilePage() {
     });
   };
 
+  const handleCoverCrop = (file: File) => {
+    setCoverFile(file);
+
+    form.setValue("basicInfo.cover", file, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+  };
+
   // 7.Handle File Change for Avatar and Cover
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -520,11 +533,10 @@ export default function ProfilePage() {
     }
 
     if (type === "cover") {
-      setCoverFile(file);
-      form.setValue("basicInfo.cover", file, {
-        shouldDirty: true,
-        shouldTouch: true,
-      });
+      const previewUrl = URL.createObjectURL(file);
+      setCoverCropImageUrl(previewUrl);
+      setOpenCoverCropDialog(true);
+      event.target.value = "";
     }
   };
 
@@ -1129,6 +1141,18 @@ export default function ProfilePage() {
             onCropComplete={handleAvatarCrop}
           />
 
+          {/* Cover Crop Dialog Section */}
+          <AvatarCropDialog
+            title={`Crop ${company.name} Cover`}
+            open={openCoverCropDialog}
+            setOpen={setOpenCoverCropDialog}
+            image={coverCropImageUrl}
+            onCropComplete={handleCoverCrop}
+            aspect={16 / 9}
+            cropShape="rect"
+            fileName="cover.jpg"
+          />
+
           {/* Remove Cover Dialog Section */}
           <RemoveAlertDialog
             type="cover"
@@ -1456,108 +1480,108 @@ export default function ProfilePage() {
           )}
 
           {/* Company Images Section */}
-          {company.images && (
-            <div className="w-full p-5 border-[1px] border-muted rounded-md">
-              <div className="flex flex-col gap-1">
-                <TypographyH4>Company Images Information</TypographyH4>
-                <Divider />
-              </div>
-              <Carousel className="w-full">
-                <CarouselContent className="w-full">
-                  {form.watch("images")?.map((img, index) => {
-                    let imageUrl = img?.image;
-                    if (img?.image instanceof File) {
-                      imageUrl = URL.createObjectURL(img.image);
-                    }
 
-                    return (
-                      <CarouselItem
-                        key={index}
-                        className="max-w-[280px] relative"
-                      >
-                        <div
-                          onClick={(e) => {
-                            if (!isEdit) {
-                              handleClickImagePopup(e);
-                              if (img?.image) {
-                                setCurrentCompanyImage(img.image.toString());
-                              }
-                            }
-                          }}
-                          className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center"
-                          style={{ backgroundImage: `url(${imageUrl})` }}
-                        />
-                        {isEdit && (
-                          <LucideXCircle
-                            className="absolute top-3 right-1 cursor-pointer text-red-500"
-                            type="button"
-                            onClick={() => {
-                              if (img?.id === "" || img?.id === undefined) {
-                                const updated = form
-                                  .watch("images")
-                                  ?.filter((_, i) => i !== index);
-                                form.setValue("images", updated);
-                              } else {
-                                setOpenRemoveImageDialog(true);
-                                setRemoveImage({ id: img.id, index: index });
-                              }
-                            }}
-                          />
-                        )}
-                      </CarouselItem>
-                    );
-                  })}
-                  {/* Remove Company Image Dialog Section */}
-                  <RemoveAlertDialog
-                    type="image"
-                    openDialog={openRemoveImageDialog}
-                    setOpenDialog={setOpenRemoveImageDialog}
-                    onNoClick={() => setOpenRemoveImageDialog(false)}
-                    onYesClick={() => {
-                      if (removedImage) {
-                        removeSingleImage(removedImage.id, removedImage.index);
-                        setOpenRemoveImageDialog(false);
-                      }
-                    }}
-                  />
-                  {isEdit && (
-                    <CarouselItem className="max-w-[280px]">
-                      <label
-                        htmlFor="image-upload"
-                        className="h-[180px] bg-muted rounded-md my-2 ml-2 flex justify-center items-center cursor-pointer"
-                      >
-                        <input
-                          id="image-upload"
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={(e) => {
-                            const files = e.target.files;
-                            if (!files) return;
-                            const currentImages = form.watch("images");
-                            if (currentImages) {
-                              form.setValue("images", [
-                                ...currentImages,
-                                { image: files[0] },
-                              ]);
-                            }
-                          }}
-                        />
-                        <div className="flex flex-col items-center gap-2">
-                          <LucidePlus className="text-muted-foreground" />
-                          <TypographyMuted className="text-xs">
-                            Add Company Image
-                          </TypographyMuted>
-                        </div>
-                      </label>
-                    </CarouselItem>
-                  )}
-                </CarouselContent>
-                <CarouselPrevious type="button" className="ml-8" />
-                <CarouselNext type="button" className="mr-8" />
-              </Carousel>
+          <div className="w-full p-5 border-[1px] border-muted rounded-md">
+            <div className="flex flex-col gap-1">
+              <TypographyH4>Company Images Information</TypographyH4>
+              <Divider />
             </div>
-          )}
+            <Carousel className="w-full">
+              <CarouselContent className="w-full">
+                {form.watch("images")?.map((img, index) => {
+                  let imageUrl = img?.image;
+                  if (img?.image instanceof File) {
+                    imageUrl = URL.createObjectURL(img.image);
+                  }
+
+                  return (
+                    <CarouselItem
+                      key={index}
+                      className="max-w-[280px] relative"
+                    >
+                      <div
+                        onClick={(e) => {
+                          if (!isEdit) {
+                            handleClickImagePopup(e);
+                            if (img?.image) {
+                              setCurrentCompanyImage(img.image.toString());
+                            }
+                          }
+                        }}
+                        className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center"
+                        style={{ backgroundImage: `url(${imageUrl})` }}
+                      />
+                      {isEdit && (
+                        <LucideXCircle
+                          className="absolute top-3 right-1 cursor-pointer text-red-500"
+                          type="button"
+                          onClick={() => {
+                            if (img?.id === "" || img?.id === undefined) {
+                              const updated = form
+                                .watch("images")
+                                ?.filter((_, i) => i !== index);
+                              form.setValue("images", updated);
+                            } else {
+                              setOpenRemoveImageDialog(true);
+                              setRemoveImage({ id: img.id, index: index });
+                            }
+                          }}
+                        />
+                      )}
+                    </CarouselItem>
+                  );
+                })}
+                {/* Remove Company Image Dialog Section */}
+                <RemoveAlertDialog
+                  type="image"
+                  openDialog={openRemoveImageDialog}
+                  setOpenDialog={setOpenRemoveImageDialog}
+                  onNoClick={() => setOpenRemoveImageDialog(false)}
+                  onYesClick={() => {
+                    if (removedImage) {
+                      removeSingleImage(removedImage.id, removedImage.index);
+                      setOpenRemoveImageDialog(false);
+                    }
+                  }}
+                />
+                {(isEdit || company.images?.length === 0) && (
+                  <CarouselItem className="max-w-[280px]">
+                    <label
+                      htmlFor="image-upload"
+                      className="h-[180px] bg-muted rounded-md my-2 ml-2 flex justify-center items-center cursor-pointer"
+                    >
+                      <input
+                        id="image-upload"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          if (!isEdit) enableEditMode();
+                          const files = e.target.files;
+                          if (!files) return;
+                          const currentImages = form.watch("images");
+                          if (currentImages) {
+                            form.setValue("images", [
+                              ...currentImages,
+                              { image: files[0] },
+                            ]);
+                          }
+                        }}
+                      />
+                      <div className="flex flex-col items-center gap-2">
+                        <LucidePlus className="text-muted-foreground" />
+                        <TypographyMuted className="text-xs">
+                          Add Company Image
+                        </TypographyMuted>
+                      </div>
+                    </label>
+                  </CarouselItem>
+                )}
+              </CarouselContent>
+              <CarouselPrevious type="button" className="ml-8" />
+              <CarouselNext type="button" className="mr-8" />
+            </Carousel>
+          </div>
         </div>
 
         {/* RIGHT SIDE Section */}

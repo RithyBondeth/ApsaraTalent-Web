@@ -338,22 +338,14 @@ export default function EmployeeDetailPage() {
             <TypographyMuted>Experience</TypographyMuted>
             <IconLabel
               icon={<LucideBriefcaseBusiness strokeWidth={"1.5px"} />}
-              text={
-                employeeData.yearsOfExperience === 1
-                  ? `${employeeData.yearsOfExperience} year of experience`
-                  : `${employeeData.yearsOfExperience} years of experience`
-              }
+              text={employeeData.yearsOfExperience}
             />
           </div>
           <div className="flex flex-col items-start gap-2">
             <TypographyMuted>Status</TypographyMuted>
             <IconLabel
               icon={<LucideClock strokeWidth={"1.5px"} />}
-              text={
-                employeeData.availability.includes("_")
-                  ? `${capitalizeWords(employeeData.availability.split("_")[0])} ${capitalizeWords(employeeData.availability.split("_")[1])}`
-                  : `${capitalizeWords(employeeData.availability)}`
-              }
+              text={employeeData.availability}
             />
           </div>
         </div>

@@ -147,14 +147,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
             />
             <div className="w-full flex flex-wrap gap-2">
               {props.availableTimes.map((item, index) => (
-                <Tag
-                  key={index}
-                  label={
-                    availabilityConstant
-                      .find((avail) => avail.value === item)
-                      ?.label?.toString() || "Unknown"
-                  }
-                />
+                <Tag key={index} label={item} />
               ))}
             </div>
           </div>

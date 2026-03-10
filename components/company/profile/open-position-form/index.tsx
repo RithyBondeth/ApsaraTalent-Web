@@ -14,15 +14,10 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import Tag from "@/components/utils/tag";
 import { getRandomBadgeColor } from "@/utils/extensions/get-random-badge-color";
+import { availabilityConstant } from "@/utils/constants/app.constant";
 
 export default function OpenPositionForm(props: IOpenPositionFormProps) {
   // Utils
@@ -136,35 +131,12 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             name={`openPositions.${props.index}.type`}
             control={control}
             render={({ field }) => (
-              <Select
-                value={field.value}
-                onValueChange={field.onChange}
-                disabled={!props.isEdit}
-              >
-                <SelectTrigger className="h-12 text-muted-foreground">
-                  <SelectValue placeholder={"Select Type"} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem key={"full_time"} value={"full_time"}>
-                    Full Time
-                  </SelectItem>
-                  <SelectItem key={"part_time"} value={"part_time"}>
-                    Part Time
-                  </SelectItem>
-                  <SelectItem key={"contract"} value={"contract"}>
-                    Contract
-                  </SelectItem>
-                  <SelectItem key={"internship"} value={"internship"}>
-                    Internship
-                  </SelectItem>
-                  <SelectItem key={"remote"} value={"remote"}>
-                    Remote
-                  </SelectItem>
-                  <SelectItem key={"freelance"} value={"freelance"}>
-                    Freelance
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+              <CreatableCombobox
+                options={availabilityConstant}
+                value={field.value || ""}
+                onChange={(value) => field.onChange(value)}
+                placeholder="Select Type"
+              />
             )}
           />
         </div>

@@ -47,12 +47,12 @@ export const availabilityConstant = [
 ];
 
 export const yearOfExperienceConstant = [
-  { id: 1, label: "No Experience", value: "no_experience" },
-  { id: 2, label: "Less than 1 year", value: "less_than_1_year" },
-  { id: 3, label: "1 - 3 years", value: "1_to_3_years" },
-  { id: 4, label: "3 - 5 years", value: "3_to_5_years" },
-  { id: 5, label: "5 - 10 years", value: "5_to_10_years" },
-  { id: 6, label: "10+ years", value: "10_plus_years" },
+  { id: 1, label: "No Experience", value: "No Experience" },
+  { id: 2, label: "Less than 1 year", value: "Less than 1 year" },
+  { id: 3, label: "1 - 3 years", value: "1 - 3 years" },
+  { id: 4, label: "3 - 5 years", value: "3 - 5 years" },
+  { id: 5, label: "5 - 10 years", value: "5 - 10 years" },
+  { id: 6, label: "10+ years", value: "10+ years" },
 ];
 
 export const locationConstant = [
