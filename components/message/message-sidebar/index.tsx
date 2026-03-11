@@ -1,13 +1,13 @@
 "use client"
 
-import { Search, Users } from 'lucide-react';
-import { Input } from "@/components/ui/input";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from '@/lib/utils';
+import { Search, Users } from 'lucide-react';
 import { useState } from 'react';
 import { IChatPreview } from '../props';
-import { cn } from '@/lib/utils';
 
 interface ChatSidebarProps {
   chats: IChatPreview[] | undefined;

@@ -1,28 +1,38 @@
 "use client";
 
+import CompanySearchSvg from "@/assets/svg/company-search.svg";
 import SearchBar from "@/components/search/search-bar";
+import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
+import SearchEmployeeCard from "@/components/search/search-employee-card";
+import { SearchErrorCard } from "@/components/search/search-error-card";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup } from "@/components/ui/radio-group";
+import RadioGroupItemWithLabel from "@/components/ui/radio-group-item";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
-import { Controller, useForm } from "react-hook-form";
-import { companySearchSchema, TCompanySearchSchema } from "./validation";
-import CompanySearchSvg from "@/assets/svg/company-search.svg";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { LucideBriefcaseBusiness, LucideGraduationCap } from "lucide-react";
-import { RadioGroup } from "@/components/ui/radio-group";
-import RadioGroupItemWithLabel from "@/components/ui/radio-group-item";
-import { Skeleton } from "@/components/ui/skeleton";
-import { SearchErrorCard } from "@/components/search/search-error-card";
-import SearchEmployeeCard from "@/components/search/search-employee-card";
 import { useSearchEmployeeStore } from "@/stores/apis/employee/search-emp.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { TLocations } from "@/utils/types/location.type";
+import { yearOfExperienceConstant } from "@/utils/constants/app.constant";
 import { TAvailability } from "@/utils/types/availability.type";
-import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
+import { TLocations } from "@/utils/types/location.type";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { debounce } from "lodash";
+import { LucideBriefcaseBusiness, LucideGraduationCap } from "lucide-react";
+import Image from "next/image";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { companySearchSchema, TCompanySearchSchema } from "./validation";
 
 export default function CompanySearchPage() {
   // Utils
@@ -45,36 +55,35 @@ export default function CompanySearchPage() {
         keyword: "",
         location: "all",
         jobType: "all",
-        experienceLevel: { min: undefined, max: undefined },
-        educationLevel: "all",
-        sortBy: "firstname",
+        experienceLevel: undefined,
+        educationLevel: [],
+        sortBy: "createdAt",
         orderBy: "desc",
       },
     });
 
   // Watch Only What SearchBar Needs  (Prevent full page rerender on every key)
-  const location = watch("location"); 
+  const location = watch("location");
   const jobType = watch("jobType");
 
   // Real Searh Function
   const runSearch = useCallback(
     (data: TCompanySearchSchema) => {
-      const normalizedJobType = data.jobType === "all" ? undefined : data.jobType;
-      const normalizedLocation = data.location === "all" ? undefined : data.location;
+      const normalizedJobType =
+        data.jobType === "all" ? undefined : data.jobType;
+      const normalizedLocation =
+        data.location === "all" ? undefined : data.location;
       const normalizedEducation =
-        data.educationLevel === "all" ? undefined : data.educationLevel;
-
-      const expMin = data.experienceLevel?.min;
-      const expMax = data.experienceLevel?.max;
-      const hasExp = expMin !== undefined || expMax !== undefined;
+        data.educationLevel === undefined || data.educationLevel.length === 0
+          ? undefined
+          : data.educationLevel;
 
       querySearchEmployee({
         careerScopes: scopeNames,
         keyword: data.keyword || undefined,
         location: normalizedLocation as TLocations | undefined,
         jobType: normalizedJobType as TAvailability | undefined,
-        experienceMin: hasExp ? expMin : undefined,
-        experienceMax: hasExp ? expMax : undefined,
+        experienceLevel: data.experienceLevel,
         education: normalizedEducation,
         sortBy: data.sortBy,
         sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
@@ -110,10 +119,10 @@ export default function CompanySearchPage() {
     if (userLocation && userLocation !== "all") {
       setValue("location", userLocation);
     }
-    
+
     querySearchEmployee({
       careerScopes: names,
-      sortBy: "firstname",
+      sortBy: "createdAt",
       sortOrder: "DESC",
     });
 
@@ -142,11 +151,12 @@ export default function CompanySearchPage() {
     return () => debouncedRunSearch.cancel();
   }, [debouncedRunSearch]);
 
-  // Handle Radio Change
   const handleRadioChange = (
     fieldName: keyof TCompanySearchSchema,
-    value: any,
-  ) => setValue(fieldName, value, { shouldDirty: true });
+    value: TCompanySearchSchema[keyof TCompanySearchSchema],
+  ) => {
+    setValue(fieldName, value, { shouldDirty: true });
+  };
 
   return (
     <form
@@ -188,7 +198,24 @@ export default function CompanySearchPage() {
       <div className="w-full flex items-start gap-5 tablet-xl:!flex-col tablet-xl:[&>div]:w-full">
         {/* Filters Section */}
         <div className="w-1/4 flex flex-col items-start gap-8 p-5 shadow-md rounded-md">
-          <TypographyH4 className="text-lg">Refine Result</TypographyH4>
+          <div className="w-full flex items-center justify-between">
+            <TypographyH4 className="text-lg">Refine Result</TypographyH4>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setValue("keyword", "");
+                setValue("location", "all");
+                setValue("jobType", "all");
+                setValue("educationLevel", []);
+                setValue("experienceLevel", undefined);
+              }}
+              className="text-xs h-8 px-2"
+            >
+              Clear Filters
+            </Button>
+          </div>
 
           {/* Education Section */}
           <div className="flex flex-col items-start gap-3">
@@ -200,29 +227,56 @@ export default function CompanySearchPage() {
             <Controller
               name="educationLevel"
               control={control}
-              render={({ field }) => (
-                <RadioGroup
-                  value={field.value ?? "all"}
-                  onValueChange={(val) => handleRadioChange("educationLevel", val)}
-                  className="ml-3"
-                >
-                  <RadioGroupItemWithLabel id="edu-all" value="all" htmlFor="edu-all">
-                    All
-                  </RadioGroupItemWithLabel>
-                  <RadioGroupItemWithLabel id="edu-undergrad" value="Under Graduate" htmlFor="edu-undergrad">
-                    Under Graduate
-                  </RadioGroupItemWithLabel>
-                  <RadioGroupItemWithLabel id="edu-bachelor" value="Bachelor" htmlFor="edu-bachelor">
-                    Bachelor
-                  </RadioGroupItemWithLabel>
-                  <RadioGroupItemWithLabel id="edu-master" value="Master" htmlFor="edu-master">
-                    Master
-                  </RadioGroupItemWithLabel>
-                  <RadioGroupItemWithLabel id="edu-phd" value="PHD" htmlFor="edu-phd">
-                    PhD
-                  </RadioGroupItemWithLabel>
-                </RadioGroup>
-              )}
+              render={({ field }) => {
+                const selected = field.value || [];
+                const options = [
+                  {
+                    id: "edu-undergrad",
+                    label: "Under Graduate",
+                    value: "Under Graduate",
+                  },
+                  { id: "edu-bachelor", label: "Bachelor", value: "Bachelor" },
+                  { id: "edu-master", label: "Master", value: "Master" },
+                  { id: "edu-phd", label: "PhD", value: "PHD" },
+                ];
+
+                return (
+                  <div className="flex flex-col gap-3 ml-3">
+                    {options.map((option) => (
+                      <div
+                        key={option.id}
+                        className="flex items-center space-x-2"
+                      >
+                        <Checkbox
+                          id={option.id}
+                          checked={selected.includes(option.value)}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              handleRadioChange("educationLevel", [
+                                ...selected,
+                                option.value,
+                              ]);
+                            } else {
+                              handleRadioChange(
+                                "educationLevel",
+                                selected.filter(
+                                  (v: string) => v !== option.value,
+                                ),
+                              );
+                            }
+                          }}
+                        />
+                        <label
+                          htmlFor={option.id}
+                          className="text-sm font-medium leading-none cursor-pointer"
+                        >
+                          {option.label}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                );
+              }}
             />
           </div>
 
@@ -236,70 +290,26 @@ export default function CompanySearchPage() {
             <Controller
               name="experienceLevel"
               control={control}
-              render={({ field }) => {
-                const { min, max } = field.value ?? {};
-                const selectedValue =
-                  min === 0 && max === 1
-                    ? "0-1"
-                    : min === 1 && max === 2
-                      ? "1-2"
-                      : min === 2 && max === 3
-                        ? "2-3"
-                        : min === 3 && max === 4
-                          ? "3-4"
-                          : min === 4 && max === undefined
-                            ? ">4"
-                            : "all";
-
-                return (
-                  <RadioGroup
-                    value={selectedValue}
-                    onValueChange={(val) => {
-                      let updated: { min?: number; max?: number } = {};
-                      switch (val) {
-                        case "0-1":
-                          updated = { min: 0, max: 1 };
-                          break;
-                        case "1-2":
-                          updated = { min: 1, max: 2 };
-                          break;
-                        case "2-3":
-                          updated = { min: 2, max: 3 };
-                          break;
-                        case "3-4":
-                          updated = { min: 3, max: 4 };
-                          break;
-                        case ">4":
-                          updated = { min: 4, max: undefined };
-                          break;
-                        default:
-                          updated = { min: undefined, max: undefined };
-                      }
-                      handleRadioChange("experienceLevel", updated);
-                    }}
-                    className="ml-3"
-                  >
-                    <RadioGroupItemWithLabel id="exp-all" value="all" htmlFor="exp-all">
-                      All
+              render={({ field }) => (
+                <RadioGroup
+                  onValueChange={(value) =>
+                    handleRadioChange("experienceLevel", value)
+                  }
+                  value={field.value ?? ""}
+                  className="flex flex-col gap-3 ml-3"
+                >
+                  {yearOfExperienceConstant.map((option) => (
+                    <RadioGroupItemWithLabel
+                      key={option.id}
+                      value={option.value}
+                      id={`exp-${option.id}`}
+                      htmlFor={`exp-${option.id}`}
+                    >
+                      {option.label}
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="exp-0-1" value="0-1" htmlFor="exp-0-1">
-                      Less than 1 year
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="exp-1-2" value="1-2" htmlFor="exp-1-2">
-                      1 - 2 years
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="exp-2-3" value="2-3" htmlFor="exp-2-3">
-                      2 - 3 years
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="exp-3-4" value="3-4" htmlFor="exp-3-4">
-                      3 - 4 years
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="exp-more-4" value=">4" htmlFor="exp-more-4">
-                      More than 4 years
-                    </RadioGroupItemWithLabel>
-                  </RadioGroup>
-                );
-              }}
+                  ))}
+                </RadioGroup>
+              )}
             />
           </div>
         </div>
@@ -318,6 +328,51 @@ export default function CompanySearchPage() {
                 "No employees found"
               )}
             </TypographyH4>
+
+            <Controller
+              name="sortBy"
+              control={control}
+              render={({ field: sortByField }) => (
+                <Controller
+                  name="orderBy"
+                  control={control}
+                  render={({ field: orderByField }) => {
+                    const sortValue = `${sortByField.value}-${orderByField.value}`;
+
+                    return (
+                      <Select
+                        value={sortValue}
+                        onValueChange={(val) => {
+                          const [newSortBy, newOrderBy] = val.split("-");
+                          setValue("sortBy", newSortBy, { shouldDirty: true });
+                          setValue("orderBy", newOrderBy, {
+                            shouldDirty: true,
+                          });
+                        }}
+                      >
+                        <SelectTrigger className="w-[200px] h-9 text-sm">
+                          <SelectValue placeholder="Sort by" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="createdAt-desc">
+                            Newest First
+                          </SelectItem>
+                          <SelectItem value="createdAt-asc">
+                            Oldest First
+                          </SelectItem>
+                          <SelectItem value="yearsOfExperience-desc">
+                            Experience: High to Low
+                          </SelectItem>
+                          <SelectItem value="yearsOfExperience-asc">
+                            Experience: Low to High
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    );
+                  }}
+                />
+              )}
+            />
           </div>
 
           <div className="w-full flex flex-col items-start gap-2">
@@ -350,7 +405,11 @@ export default function CompanySearchPage() {
                   availability={item.availability as TAvailability}
                   description={item.description}
                   location={item.location as TLocations}
-                  skills={Array.isArray(item.skills) ? item.skills.map((s) => s.name) : []}
+                  skills={
+                    Array.isArray(item.skills)
+                      ? item.skills.map((s) => s.name)
+                      : []
+                  }
                   education={
                     Array.isArray(item.educations)
                       ? item.educations.map((edu) => edu.degree).join(", ")
@@ -361,7 +420,8 @@ export default function CompanySearchPage() {
             ) : (
               <div className="w-full text-center py-10">
                 <TypographyP className="text-muted-foreground">
-                  No employees match your search criteria. Try adjusting your filters.
+                  No employees match your search criteria. Try adjusting your
+                  filters.
                 </TypographyP>
               </div>
             )}

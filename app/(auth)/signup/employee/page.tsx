@@ -1,39 +1,39 @@
 "use client";
+import AvatarStepForm from "@/components/employee/employee-signup-form/avatar-step";
+import EmployeeCareerScopeStepForm from "@/components/employee/employee-signup-form/career-scope-step";
+import EducationStepForm from "@/components/employee/employee-signup-form/education-step";
+import ExperienceStepForm from "@/components/employee/employee-signup-form/experience-step";
+import ProfessionStepForm from "@/components/employee/employee-signup-form/profession-step";
+import SkillReferenceStepForm from "@/components/employee/employee-signup-form/skill-reference-step";
 import { Button } from "@/components/ui/button";
+import { ToastAction } from "@/components/ui/toast";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { useEffect, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import ProfessionStepForm from "@/components/employee/employee-signup-form/profession-step";
-import ExperienceStepForm from "@/components/employee/employee-signup-form/experience-step";
-import EducationStepForm from "@/components/employee/employee-signup-form/education-step";
-import SkillReferenceStepForm from "@/components/employee/employee-signup-form/skill-reference-step";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { useToast } from "@/hooks/use-toast";
+import { useEmployeeSignupStore } from "@/stores/apis/auth/employee-signup.store";
+import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
+import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
+import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
+import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
+import { useUploadEmployeeAvatarStore } from "@/stores/apis/employee/upload-emp-avatar.store";
+import { useUploadEmployeeCoverLetter } from "@/stores/apis/employee/upload-emp-coverletter.store";
+import { useUploadEmployeeResumeStore } from "@/stores/apis/employee/upload-emp-resume.store";
+import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
+import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
+import { TGender } from "@/utils/types/gender.type";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  LucideArrowLeft,
-  LucideArrowRight,
-  LucideCheck,
-  LucideInfo,
+    LucideArrowLeft,
+    LucideArrowRight,
+    LucideCheck,
+    LucideInfo
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 import { employeeSignUpSchema, TEmployeeSignUp } from "./validation";
-import { zodResolver } from "@hookform/resolvers/zod";
-import EmployeeCareerScopeStepForm from "@/components/employee/employee-signup-form/career-scope-step";
-import AvatarStepForm from "@/components/employee/employee-signup-form/avatar-step";
-import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
-import { useEmployeeSignupStore } from "@/stores/apis/auth/employee-signup.store";
-import { TGender } from "@/utils/types/gender.type";
-import { useToast } from "@/hooks/use-toast";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { ToastAction } from "@/components/ui/toast";
-import { useUploadEmployeeAvatarStore } from "@/stores/apis/employee/upload-emp-avatar.store";
-import { useUploadEmployeeResumeStore } from "@/stores/apis/employee/upload-emp-resume.store";
-import { useUploadEmployeeCoverLetter } from "@/stores/apis/employee/upload-emp-coverletter.store";
-import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
-import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
-import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
-import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
-import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function EmployeeSignup() {
   // Utils

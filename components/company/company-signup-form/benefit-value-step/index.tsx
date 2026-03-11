@@ -1,21 +1,21 @@
 "use client";
 
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { LucideCircleCheck, LucidePlus, LucideXCircle } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { useState } from "react";
-import IconLabel from "@/components/utils/icon-label";
-import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
-import { useToast } from "@/hooks/use-toast";
+import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger
+} from "@/components/ui/popover";
 import { ToastAction } from "@/components/ui/toast";
 import ErrorMessage from "@/components/utils/error-message";
+import IconLabel from "@/components/utils/icon-label";
+import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { useToast } from "@/hooks/use-toast";
+import { LucideCircleCheck, LucidePlus, LucideXCircle } from "lucide-react";
+import { useState } from "react";
 
 export default function BenefitValueStepForm({
   getValues,

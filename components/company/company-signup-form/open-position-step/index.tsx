@@ -1,26 +1,26 @@
-import { useState } from "react";
-import { Controller, useFieldArray } from "react-hook-form";
-import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
+import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { DatePicker } from "@/components/ui/date-picker";
+import { Input } from "@/components/ui/input";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger
+} from "@/components/ui/popover";
+import { Textarea } from "@/components/ui/textarea";
+import ErrorMessage from "@/components/utils/error-message";
+import LabelInput from "@/components/utils/label-input";
+import Tag from "@/components/utils/tag";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import LabelInput from "@/components/utils/label-input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { LucidePlus, LucideTrash2, LucideXCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { ToastAction } from "@radix-ui/react-toast";
-import ErrorMessage from "@/components/utils/error-message";
 import { getRandomBadgeColor } from "@/utils/extensions/get-random-badge-color";
-import Tag from "@/components/utils/tag";
+import { ToastAction } from "@radix-ui/react-toast";
+import { LucidePlus, LucideTrash2, LucideXCircle } from "lucide-react";
+import { useState } from "react";
+import { Controller, useFieldArray } from "react-hook-form";
 
 export default function OpenPositionStepForm({
   register,

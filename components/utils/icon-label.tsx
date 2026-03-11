@@ -1,6 +1,6 @@
+import { cn } from "@/lib/utils";
 import { ILabelProps } from "@/utils/interfaces/label.interface";
 import { TypographyMuted } from "./typography/typography-muted";
-import { cn } from "@/lib/utils";
 
 export default function IconLabel(props: ILabelProps) {
   return (

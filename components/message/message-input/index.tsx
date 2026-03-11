@@ -1,8 +1,8 @@
 // src/components/message/ChatInput.tsx
-import { useState } from 'react';
-import { Paperclip, Send, SmilePlus } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Paperclip, Send, SmilePlus } from 'lucide-react';
+import { useState } from 'react';
 
 interface ChatInputProps {
   onSendMessage: (content: string) => void;

@@ -1,25 +1,25 @@
 import {
-  LucideBuilding,
-  LucideCircleCheck,
-  LucideMapPin,
-  LucideUsers,
-  User,
+    LucideBuilding,
+    LucideCircleCheck,
+    LucideMapPin,
+    LucideUsers,
+    User
 } from "lucide-react";
+import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
+import { Button } from "../../ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle
 } from "../../ui/dialog";
+import IconLabel from "../../utils/icon-label";
 import { TypographyH4 } from "../../utils/typography/typography-h4";
 import { TypographyMuted } from "../../utils/typography/typography-muted";
-import { ICompanyDialogProps } from "./props";
-import IconLabel from "../../utils/icon-label";
 import { TypographyP } from "../../utils/typography/typography-p";
-import { Button } from "../../ui/button";
-import Link from "next/link";
+import { ICompanyDialogProps } from "./props";
 export default function CompanyDialog(props: ICompanyDialogProps) {
   return (
     <Dialog open={props.open} onOpenChange={props.setOpen}>

@@ -1,116 +1,114 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import addNewEducationSvgImage from "@/assets/svg/add-new-education.svg";
+import addNewExperienceSvgImage from "@/assets/svg/add-new-experience.svg";
+import EmployeeEducationForm from "@/components/employee/profile/education-form";
+import EmployeeExperienceForm from "@/components/employee/profile/experience-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList
+} from "@/components/ui/command";
+import {
+    HoverCard,
+    HoverCardContent,
+    HoverCardTrigger
+} from "@/components/ui/hover-card";
+import { Input } from "@/components/ui/input";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger
+} from "@/components/ui/popover";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { ToastAction } from "@/components/ui/toast";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
+import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
+import ReferencePreviewDialog from "@/components/utils/dialogs/reference-preview-dialog";
+import RemoveAlertDialog from "@/components/utils/dialogs/remove-alert-dialog";
 import Divider from "@/components/utils/divider";
-import LabelInput from "@/components/utils/label-input";
 import IconLabel from "@/components/utils/icon-label";
-import Tag from "@/components/utils/tag";
 import ImagePopup from "@/components/utils/image-popup";
+import LabelInput from "@/components/utils/label-input";
+import Tag from "@/components/utils/tag";
 import { TypographyH3 } from "@/components/utils/typography/typography-h3";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  ChevronDown,
-  LucideAlarmCheck,
-  LucideBriefcaseBusiness,
-  LucideCamera,
-  LucideCheck,
-  LucideCircleCheck,
-  LucideDownload,
-  LucideEdit,
-  LucideEye,
-  LucideFileText,
-  LucideInfo,
-  LucideLink2,
-  LucideMail,
-  LucidePhone,
-  LucidePlus,
-  LucideTrash2,
-  LucideUser,
-  LucideXCircle,
-} from "lucide-react";
-import {
-  genderConstant,
-  locationConstant,
-  loginMethodConstant,
-  platformConstant,
-} from "@/utils/constants/app.constant";
-import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
-import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
-import { isUuid } from "@/utils/functions/check-uuid";
-import { useToast } from "@/hooks/use-toast";
-import { ToastAction } from "@/components/ui/toast";
-import EmployeeProfilePageSkeleton from "./skeleton";
-import EmployeeExperienceForm from "@/components/employee/profile/experience-form";
-import { employeeFormSchema, TEmployeeProfileForm } from "./validation";
-import {
-  ISkill,
-  ICareerScopes,
-  ISocial,
-} from "@/utils/interfaces/user-interface/employee.interface";
-import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-scopes.store";
-import {
-  TEmployeeUpdateBody,
-  useUpdateOneEmployeeStore,
-} from "@/stores/apis/employee/update-one-emp.store";
-import { useUploadEmployeeAvatarStore } from "@/stores/apis/employee/upload-emp-avatar.store";
-import { useUploadEmployeeResumeStore } from "@/stores/apis/employee/upload-emp-resume.store";
-import { useUploadEmployeeCoverLetter } from "@/stores/apis/employee/upload-emp-coverletter.store";
-import { useRemoveEmpAvatarStore } from "@/stores/apis/employee/remove-emp-avatar.store";
-import { useRemoveEmpExperienceStore } from "@/stores/apis/employee/remove-emp-experience.store";
-import addNewEducationSvgImage from "@/assets/svg/add-new-education.svg";
-import addNewExperienceSvgImage from "@/assets/svg/add-new-experience.svg";
-import { useRemoveEmpResumeStore } from "@/stores/apis/employee/remove-emp-resume.store";
-import { useRemoveEmpCoverLetterStore } from "@/stores/apis/employee/remove-emp-coverletter.store";
-import { useRemoveEmpEducationStore } from "@/stores/apis/employee/remove-emp-education.store";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
-import RemoveAlertDialog from "@/components/utils/dialogs/remove-alert-dialog";
-import { parseMaybeDate } from "@/utils/functions/parse-maybe-date";
-import ReferencePreviewDialog from "@/components/utils/dialogs/reference-preview-dialog";
-import EmployeeEducationForm from "@/components/employee/profile/education-form";
-import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
 import { useAvatarState } from "@/hooks/profile/employee/use-avatar-state";
+import { useCareerScopesState } from "@/hooks/profile/employee/use-careerscope-state";
 import { useReferenceFilesState } from "@/hooks/profile/employee/use-referencefile-state";
 import { useSkillsState } from "@/hooks/profile/employee/use-skill-state";
 import { useSocialsState } from "@/hooks/profile/employee/use-social-state";
-import { useCareerScopesState } from "@/hooks/profile/employee/use-careerscope-state";
-import { TPlatform } from "@/utils/types/platform.type";
+import { useToast } from "@/hooks/use-toast";
+import { useRemoveEmpAvatarStore } from "@/stores/apis/employee/remove-emp-avatar.store";
+import { useRemoveEmpCoverLetterStore } from "@/stores/apis/employee/remove-emp-coverletter.store";
+import { useRemoveEmpEducationStore } from "@/stores/apis/employee/remove-emp-education.store";
+import { useRemoveEmpExperienceStore } from "@/stores/apis/employee/remove-emp-experience.store";
+import { useRemoveEmpResumeStore } from "@/stores/apis/employee/remove-emp-resume.store";
+import {
+    TEmployeeUpdateBody,
+    useUpdateOneEmployeeStore
+} from "@/stores/apis/employee/update-one-emp.store";
+import { useUploadEmployeeAvatarStore } from "@/stores/apis/employee/upload-emp-avatar.store";
+import { useUploadEmployeeCoverLetter } from "@/stores/apis/employee/upload-emp-coverletter.store";
+import { useUploadEmployeeResumeStore } from "@/stores/apis/employee/upload-emp-resume.store";
+import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-scopes.store";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import {
+    genderConstant,
+    locationConstant,
+    loginMethodConstant,
+    platformConstant
+} from "@/utils/constants/app.constant";
+import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { capitalizeWords } from "@/utils/functions/capitalize-words";
+import { isUuid } from "@/utils/functions/check-uuid";
+import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
+import { parseMaybeDate } from "@/utils/functions/parse-maybe-date";
+import {
+    ICareerScopes, ISkill, ISocial
+} from "@/utils/interfaces/user-interface/employee.interface";
+import { TPlatform } from "@/utils/types/platform.type";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+    ChevronDown,
+    LucideAlarmCheck,
+    LucideBriefcaseBusiness,
+    LucideCamera,
+    LucideCheck,
+    LucideCircleCheck,
+    LucideDownload,
+    LucideEdit,
+    LucideEye,
+    LucideFileText,
+    LucideInfo,
+    LucideLink2,
+    LucideMail,
+    LucidePhone,
+    LucidePlus,
+    LucideTrash2,
+    LucideUser,
+    LucideXCircle
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
+import EmployeeProfilePageSkeleton from "./skeleton";
+import { employeeFormSchema, TEmployeeProfileForm } from "./validation";
 
 export default function EmployeeProfilePage() {
   /* ------------------- APIs Integration ------------------- */

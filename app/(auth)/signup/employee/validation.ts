@@ -1,9 +1,9 @@
 import {
-  dateValidation,
-  optionalFileValidation,
-  optionalImageValidation,
-  selectedValidation,
-  textValidation,
+    dateValidation,
+    optionalFileValidation,
+    optionalImageValidation,
+    selectedValidation,
+    textValidation
 } from "@/utils/functions/validations";
 import * as z from "zod";
 

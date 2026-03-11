@@ -1,11 +1,10 @@
 "use client";
 
-import { ReactNode } from "react";
-import signupWhiteSvg from "@/assets/svg/signup-white.svg";
 import signupBlackSvg from "@/assets/svg/signup-black.svg";
-import Image from "next/image";
+import signupWhiteSvg from "@/assets/svg/signup-white.svg";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import Image from "next/image";
+import { ReactNode, useEffect, useState } from "react";
 
 export default function SignupLayout({ children }: { children: ReactNode }) {
   // Utils

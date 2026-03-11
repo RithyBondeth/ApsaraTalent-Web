@@ -1,5 +1,5 @@
 import React from "react";
-import { FieldError, Message } from "react-hook-form";
+import { Message } from "react-hook-form";
 
 export interface IInputProps
   extends Omit<

@@ -4,11 +4,9 @@ import { useState } from "react";
 import Cropper from "react-easy-crop";
 
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
+    Dialog,
+    DialogContent, DialogFooter, DialogHeader,
+    DialogTitle
 } from "@/components/ui/dialog";
 
 import { Button } from "@/components/ui/button";

@@ -1,6 +1,6 @@
-import axios from "axios";
 import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
 import { API_RESUME_BUILDER_URL } from "@/utils/constants/apis/resume_url";
+import axios from "axios";
 
 export type PersonalInfo = {
   fullName: string;

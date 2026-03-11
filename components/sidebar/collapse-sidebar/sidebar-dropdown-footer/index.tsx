@@ -1,58 +1,58 @@
 "use client";
 
 import {
-  ChevronsUpDown,
-  LogOut,
-  LucideBookMarked,
-  LucideBuilding,
-  LucideInfo,
-  LucideMoon,
-  LucideSettings,
-  LucideSun,
-  LucideUser,
+    ChevronsUpDown,
+    LogOut,
+    LucideBookMarked,
+    LucideBuilding,
+    LucideInfo,
+    LucideMoon,
+    LucideSettings,
+    LucideSun,
+    LucideUser
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogTitle
+} from "@/components/ui/dialog";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    useSidebar
 } from "@/components/ui/sidebar";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { useLoginStore } from "@/stores/apis/auth/login.store";
+import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
+import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
+import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
+import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
+import { useVerifyOTPStore } from "@/stores/apis/auth/verify-otp.store";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useThemeStore } from "@/stores/themes/theme-store";
-import { useTheme } from "next-themes";
+import {
+    clearAuthCookies,
+    clearAuthCookiesServerSide
+} from "@/utils/auth/cookie-manager";
 import { setCookie } from "cookies-next/client";
+import { useTheme } from "next-themes";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ISidebarDropdownFooterProps } from "./props";
-import { useRouter } from "next/navigation";
-import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useLoginStore } from "@/stores/apis/auth/login.store";
-import { useVerifyOTPStore } from "@/stores/apis/auth/verify-otp.store";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
-import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
-import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
-import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
-import {
-  clearAuthCookies,
-  clearAuthCookiesServerSide,
-} from "@/utils/auth/cookie-manager";
 
 export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
   const { isMobile } = useSidebar();

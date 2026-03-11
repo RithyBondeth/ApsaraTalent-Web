@@ -1,5 +1,5 @@
-import { ThemeProviderClient } from "./theme-provider-client";
 import { cookies } from "next/headers";
+import { ThemeProviderClient } from "./theme-provider-client";
 
 export async function ThemeProvider({
   children,

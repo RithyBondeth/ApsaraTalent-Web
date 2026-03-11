@@ -1,7 +1,7 @@
 import axios from "@/lib/axios";
-import { create } from "zustand";
 import { API_GET_ALL_CAREER_SCOPES_URL } from "@/utils/constants/apis/user_url";
 import { ICareerScopes } from "@/utils/interfaces/user-interface/company.interface";
+import { create } from "zustand";
 
 type TGetAllCareerScopesStoreState = {
   error: string | null;

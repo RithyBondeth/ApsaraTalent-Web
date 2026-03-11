@@ -1,7 +1,7 @@
-import React from 'react';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useCachedImage } from '@/hooks/use-cached-image';
 import { cn } from '@/lib/utils';
+import React from 'react';
 
 export interface CachedAvatarProps {
   src?: string | null;

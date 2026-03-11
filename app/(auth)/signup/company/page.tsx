@@ -3,36 +3,36 @@
 import AvatarCompanyStepForm from "@/components/company/company-signup-form/avatar-step";
 import BasicInfoStepForm from "@/components/company/company-signup-form/basic-info-step";
 import BenefitValueStepForm from "@/components/company/company-signup-form/benefit-value-step";
+import CompanyCareerScopeStepForm from "@/components/company/company-signup-form/career-scope-step";
 import CoverCompanyStepForm from "@/components/company/company-signup-form/cover-step";
 import OpenPositionStepForm from "@/components/company/company-signup-form/open-position-step";
 import { Button } from "@/components/ui/button";
+import { ToastAction } from "@/components/ui/toast";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { useToast } from "@/hooks/use-toast";
+import { useCompanySignupStore } from "@/stores/apis/auth/company-signup.store";
+import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
+import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
+import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
+import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
+import { useUploadCompanyAvatarStore } from "@/stores/apis/company/upload-cmp-avatar.store";
+import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cover.store";
+import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
+import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  LucideArrowLeft,
-  LucideArrowRight,
-  LucideCheck,
-  LucideInfo,
+    LucideArrowLeft,
+    LucideArrowRight,
+    LucideCheck,
+    LucideInfo
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { companySignupSchema, TCompanySignup } from "./validation";
-import { zodResolver } from "@hookform/resolvers/zod";
-import CompanyCareerScopeStepForm from "@/components/company/company-signup-form/career-scope-step";
-import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
-import { useToast } from "@/hooks/use-toast";
-import { useCompanySignupStore } from "@/stores/apis/auth/company-signup.store";
-import { useUploadCompanyAvatarStore } from "@/stores/apis/company/upload-cmp-avatar.store";
-import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cover.store";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { ToastAction } from "@/components/ui/toast";
-import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
-import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
-import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
-import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
-import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function CompanySignup() {
   // Utils

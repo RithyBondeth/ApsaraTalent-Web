@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
+import ImagePopup from "@/components/utils/image-popup";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { TTemplateCardProps } from "./props";
-import ImagePopup from "@/components/utils/image-popup";
 import { useState } from "react";
+import { TTemplateCardProps } from "./props";
 
 export default function TemplateCard(props: TTemplateCardProps) {
   const [popupResume, setPopupResume] = useState<boolean>(false);

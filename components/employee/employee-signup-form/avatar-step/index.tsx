@@ -1,10 +1,10 @@
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
-import { useState, useEffect } from "react";
-import ErrorMessage from "@/components/utils/error-message";
-import { DragDropFile } from "@/components/utils/drag-drop-file.";
 import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
+import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
+import { DragDropFile } from "@/components/utils/drag-drop-file.";
+import ErrorMessage from "@/components/utils/error-message";
+import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { useEffect, useState } from "react";
 
 export default function AvatarStepForm({
   setValue,

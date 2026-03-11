@@ -4,26 +4,16 @@ import ChatMessages from "@/components/message/message-bubble";
 import ChatHeader from "@/components/message/message-header";
 import ChatInput from "@/components/message/message-input";
 import ChatSidebar from "@/components/message/message-sidebar";
-import { IMessage, IChatPreview } from "@/components/message/props";
+import { IChatPreview, IMessage } from "@/components/message/props";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
+import { useToast } from "@/hooks/use-toast";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { chatDatabase } from "@/utils/firebase/firebase";
+import {
+    addDoc, collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, serverTimestamp, updateDoc, where
+} from "firebase/firestore";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-  doc,
-  collection,
-  query,
-  orderBy,
-  onSnapshot,
-  addDoc,
-  serverTimestamp,
-  getDoc,
-  where,
-  getDocs,
-  updateDoc,
-} from "firebase/firestore";
-import { chatDatabase } from "@/utils/firebase/firebase";
-import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useToast } from "@/hooks/use-toast";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 const MessagePage = () => {
   const searchParams = useSearchParams();

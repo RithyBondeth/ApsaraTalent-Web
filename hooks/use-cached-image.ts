@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
 import { imageCache } from '@/utils/cache/image-cache';
+import { useEffect, useState } from 'react';
 
 export interface UseCachedImageOptions {
   fallback?: string;

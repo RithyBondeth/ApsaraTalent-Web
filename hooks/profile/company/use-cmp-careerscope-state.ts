@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { ICareerScopes } from "@/utils/interfaces/user-interface/employee.interface";
+import { useState } from "react";
 
 export function useCmpCareerScopesState(
   initialCareerScopes: ICareerScopes[] = [],

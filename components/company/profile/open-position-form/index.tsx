@@ -1,23 +1,23 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import LabelInput from "@/components/utils/label-input";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { IOpenPositionFormProps } from "./props";
-import { Controller } from "react-hook-form";
-import { Popover } from "@radix-ui/react-popover";
 import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { LucidePlus, LucideTrash2, LucideXCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
 import { ToastAction } from "@/components/ui/toast";
-import { useToast } from "@/hooks/use-toast";
-import { CreatableCombobox } from "@/components/ui/creatable-combobox";
+import LabelInput from "@/components/utils/label-input";
 import Tag from "@/components/utils/tag";
-import { getRandomBadgeColor } from "@/utils/extensions/get-random-badge-color";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { useToast } from "@/hooks/use-toast";
 import { availabilityConstant } from "@/utils/constants/app.constant";
+import { getRandomBadgeColor } from "@/utils/extensions/get-random-badge-color";
+import { Popover } from "@radix-ui/react-popover";
+import { LucidePlus, LucideTrash2, LucideXCircle } from "lucide-react";
+import { useState } from "react";
+import { Controller } from "react-hook-form";
+import { IOpenPositionFormProps } from "./props";
 
 export default function OpenPositionForm(props: IOpenPositionFormProps) {
   // Utils

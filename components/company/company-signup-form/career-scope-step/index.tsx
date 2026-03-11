@@ -1,36 +1,36 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
+import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
+    CommandDialog,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList
 } from "@/components/ui/command";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { LucideArrowLeft, LucideSearch } from "lucide-react";
-import { careerScopesList } from "@/data/career-data";
-import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
-import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious
+} from "@/components/ui/pagination";
 import ErrorMessage from "@/components/utils/error-message";
+import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { careerScopesList } from "@/data/career-data";
+import { LucideArrowLeft, LucideSearch } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 export default function CompanyCareerScopeStepForm({
   register,

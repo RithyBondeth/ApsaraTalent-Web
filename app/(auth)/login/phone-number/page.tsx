@@ -1,25 +1,25 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { LucideCheck, LucideInfo, LucidePhone } from "lucide-react";
-import { useEffect, useState } from "react";
-import LogoComponent from "@/components/utils/logo";
 import phoneNumberWhiteSvg from "@/assets/svg/phone-number-white.svg";
-import Image from "next/image";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { phoneLoginSchema, TPhoneLoginForm } from "./validation";
-import { useRouter } from "next/navigation";
-import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
-import { useLoginOTPStore } from "@/stores/apis/auth/login-otp.store";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useToast } from "@/hooks/use-toast";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { Input } from "@/components/ui/input";
 import { ToastAction } from "@/components/ui/toast";
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
+import LogoComponent from "@/components/utils/logo";
+import { TypographyH2 } from "@/components/utils/typography/typography-h2";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { useToast } from "@/hooks/use-toast";
+import { useLoginOTPStore } from "@/stores/apis/auth/login-otp.store";
+import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LucideCheck, LucideInfo, LucidePhone } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { phoneLoginSchema, TPhoneLoginForm } from "./validation";
 
 export default function PhoneNumberPage() {
   // Utils

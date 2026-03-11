@@ -2,20 +2,20 @@
 
 import CollapseSidebar from "@/components/sidebar/collapse-sidebar";
 import { Button } from "@/components/ui/button";
-import { LucideArrowLeft } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
+    SidebarInset,
+    SidebarProvider,
+    SidebarTrigger
 } from "@/components/ui/sidebar";
+import { ThemeProviderClient } from "@/components/utils/themes/theme-provider-client";
+import { TypographyP } from "@/components/utils/typography/typography-p";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { useThemeStore } from "@/stores/themes/theme-store";
+import { sidebarList } from "@/utils/constants/sidebar.constant";
+import { LucideArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Separator } from "@/components/ui/separator";
-import { TypographyP } from "@/components/utils/typography/typography-p";
-import { sidebarList } from "@/utils/constants/sidebar.constant";
-import { ThemeProviderClient } from "@/components/utils/themes/theme-provider-client";
-import { useThemeStore } from "@/stores/themes/theme-store";
-import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 
 export default function MainLayout({
   children,

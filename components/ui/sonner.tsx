@@ -1,11 +1,11 @@
 "use client"
 
 import {
-  CircleCheck,
-  Info,
-  LoaderCircle,
-  OctagonX,
-  TriangleAlert,
+    CircleCheck,
+    Info,
+    LoaderCircle,
+    OctagonX,
+    TriangleAlert
 } from "lucide-react"
 import { useTheme } from "next-themes"
 import { Toaster as Sonner } from "sonner"

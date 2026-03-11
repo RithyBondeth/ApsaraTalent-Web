@@ -1,31 +1,31 @@
 "use client";
-import React, { useMemo, useCallback } from "react";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "../../ui/sidebar";
-import LogoComponent from "../../utils/logo";
-import { Collapsible, CollapsibleTrigger } from "../../ui/collapsible";
-import { usePathname, useRouter } from "next/navigation";
-import { SidebarDropdownFooter } from "./sidebar-dropdown-footer";
-import { Separator } from "@/components/ui/separator";
-import { sidebarList } from "@/utils/constants/sidebar.constant";
-import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { SidebarDropdownFooterSkeleton } from "./sidebar-dropdown-footer/skeleton";
-import { LucideFileUser } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
-import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
+import { Separator } from "@/components/ui/separator";
+import { useFetchOnce } from "@/hooks/use-fetch-once";
 import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
 import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
-import { useFetchOnce } from "@/hooks/use-fetch-once";
+import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
+import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { sidebarList } from "@/utils/constants/sidebar.constant";
+import { LucideFileUser } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import React, { useCallback, useMemo } from "react";
+import { Collapsible, CollapsibleTrigger } from "../../ui/collapsible";
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarGroup,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    useSidebar
+} from "../../ui/sidebar";
+import LogoComponent from "../../utils/logo";
+import { SidebarDropdownFooter } from "./sidebar-dropdown-footer";
+import { SidebarDropdownFooterSkeleton } from "./sidebar-dropdown-footer/skeleton";
 
 // Badge Component
 const CountBadge = ({ count }: { count: number }) => {

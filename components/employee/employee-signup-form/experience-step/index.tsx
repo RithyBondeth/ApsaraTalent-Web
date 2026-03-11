@@ -1,18 +1,18 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { useFieldArray, Controller } from "react-hook-form";
-import { IStepFormProps } from "../props";
 import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { Input } from "@/components/ui/input";
-import LabelInput from "@/components/utils/label-input";
 import { Button } from "@/components/ui/button";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { DatePicker } from "@/components/ui/date-picker";
-import { LucidePlus, LucideTrash2 } from "lucide-react";
-import ErrorMessage from "@/components/utils/error-message";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import ErrorMessage from "@/components/utils/error-message";
+import LabelInput from "@/components/utils/label-input";
+import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { LucidePlus, LucideTrash2 } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { Controller, useFieldArray } from "react-hook-form";
+import { IStepFormProps } from "../props";
 
 export default function ExperienceStepForm({
   register,

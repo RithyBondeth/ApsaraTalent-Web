@@ -1,41 +1,52 @@
 "use client";
 
+import EmployeeSearchSvg from "@/assets/svg/employee-search.svg";
+import SearchBar from "@/components/search/search-bar";
+import SearchCompanyCard from "@/components/search/search-company-card";
+import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
+import { SearchErrorCard } from "@/components/search/search-error-card";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { RadioGroup } from "@/components/ui/radio-group";
+import RadioGroupItemWithLabel from "@/components/ui/radio-group-item";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import Image from "next/image";
-import EmployeeSearchSvg from "@/assets/svg/employee-search.svg";
-import SearchBar from "@/components/search/search-bar";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { RadioGroup } from "@/components/ui/radio-group";
-import RadioGroupItemWithLabel from "@/components/ui/radio-group-item";
 import { useSearchJobStore } from "@/stores/apis/job/search-job.store";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { Skeleton } from "@/components/ui/skeleton";
+import { yearOfExperienceConstant } from "@/utils/constants/app.constant";
+import { TAvailability } from "@/utils/types/availability.type";
+import { TLocations } from "@/utils/types/location.type";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { debounce } from "lodash";
 import {
-  LucideBriefcaseBusiness,
-  LucideCalendarDays,
-  LucideCircleDollarSign,
-  LucideGraduationCap,
-  LucideUsers,
+    LucideBriefcaseBusiness,
+    LucideCalendarDays,
+    LucideCircleDollarSign,
+    LucideGraduationCap,
+    LucideUsers
 } from "lucide-react";
-import SearchCompanyCard from "@/components/search/search-company-card";
+import Image from "next/image";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { employeeSearchSchema, TEmployeeSearchSchema } from "./validation";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { TLocations } from "@/utils/types/location.type";
-import { SearchErrorCard } from "@/components/search/search-error-card";
-import { TAvailability } from "@/utils/types/availability.type";
-import { debounce } from "lodash";
 
 export default function EmployeeSearchPage() {
   // Utils
   const isFirstWatchRenderRef = useRef<boolean>(true);
   const isInitialSearchDoneRef = useRef<boolean>(false);
 
-  // API Integration 
+  // API Integration
   const { error, loading, jobs, querySearchJobs } = useSearchJobStore();
   const { user } = useGetCurrentUserStore();
 
@@ -53,9 +64,9 @@ export default function EmployeeSearchPage() {
         companySize: {},
         date: {},
         salaryRange: {},
-        educationLevel: "all",
-        experienceLevel: {},
-        sortBy: "title",
+        educationLevel: [],
+        experienceLevel: undefined,
+        sortBy: "createdAt",
         orderBy: "desc",
       },
     });
@@ -79,9 +90,10 @@ export default function EmployeeSearchPage() {
         salaryMin: data.salaryRange?.min,
         salaryMax: data.salaryRange?.max,
         educationRequired:
-          data.educationLevel === "all" ? undefined : data.educationLevel,
-        experienceRequiredMin: data.experienceLevel?.min,
-        experienceRequiredMax: data.experienceLevel?.max,
+          data.educationLevel === undefined || data.educationLevel.length === 0
+            ? undefined
+            : data.educationLevel,
+        experienceLevel: data.experienceLevel,
         sortBy: data.sortBy,
         sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
       });
@@ -139,10 +151,10 @@ export default function EmployeeSearchPage() {
     return () => debouncedRunSearch.cancel();
   }, [debouncedRunSearch]);
 
-  // Hnadle Radio Change
+  // Handle Radio Change
   const handleRadioChange = (
     fieldName: keyof TEmployeeSearchSchema,
-    value: any,
+    value: TEmployeeSearchSchema[keyof TEmployeeSearchSchema],
   ) => {
     setValue(fieldName, value, { shouldDirty: true });
   };
@@ -190,7 +202,27 @@ export default function EmployeeSearchPage() {
       <div className="w-full flex items-start gap-5 tablet-xl:!flex-col tablet-xl:[&>div]:w-full">
         {/* Left Side: Filter Section */}
         <div className="w-1/4 flex flex-col items-start gap-8 p-5 shadow-md rounded-md">
-          <TypographyH4 className="text-lg">Refine Result</TypographyH4>
+          <div className="w-full flex items-center justify-between">
+            <TypographyH4 className="text-lg">Refine Result</TypographyH4>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setValue("keyword", "");
+                setValue("location", "all");
+                setValue("jobType", "all");
+                setValue("date", {});
+                setValue("companySize", { min: undefined, max: undefined });
+                setValue("salaryRange", { min: undefined, max: undefined });
+                setValue("educationLevel", []);
+                setValue("experienceLevel", undefined);
+              }}
+              className="text-xs h-8 px-2"
+            >
+              Clear Filters
+            </Button>
+          </div>
 
           {/* Date Posted Section */}
           <div className="flex flex-col items-start gap-3">
@@ -244,16 +276,32 @@ export default function EmployeeSearchPage() {
                     }}
                     className="ml-3"
                   >
-                    <RadioGroupItemWithLabel id="date-all" value="all" htmlFor="date-all">
+                    <RadioGroupItemWithLabel
+                      id="date-all"
+                      value="all"
+                      htmlFor="date-all"
+                    >
                       All Dates Posted
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="last-24" value="last 24 hours" htmlFor="last-24">
+                    <RadioGroupItemWithLabel
+                      id="last-24"
+                      value="last 24 hours"
+                      htmlFor="last-24"
+                    >
                       Last 24 Hours
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="last-3-days" value="last 3 days" htmlFor="last-3-days">
+                    <RadioGroupItemWithLabel
+                      id="last-3-days"
+                      value="last 3 days"
+                      htmlFor="last-3-days"
+                    >
                       Last 3 Days
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="last-week" value="last week" htmlFor="last-week">
+                    <RadioGroupItemWithLabel
+                      id="last-week"
+                      value="last week"
+                      htmlFor="last-week"
+                    >
                       Last Week
                     </RadioGroupItemWithLabel>
                   </RadioGroup>
@@ -274,50 +322,43 @@ export default function EmployeeSearchPage() {
               control={control}
               render={({ field }) => {
                 const { min, max } = field.value ?? {};
-                const selectedValue =
-                  min === 1 && max === 50
-                    ? "startup"
-                    : min === 51 && max === 500
-                      ? "medium"
-                      : min === 501 && max === undefined
-                        ? "large"
-                        : "all";
-
                 return (
-                  <RadioGroup
-                    value={selectedValue}
-                    onValueChange={(val) => {
-                      let updated: { min?: number; max?: number } = {};
-                      switch (val) {
-                        case "startup":
-                          updated = { min: 1, max: 50 };
-                          break;
-                        case "medium":
-                          updated = { min: 51, max: 500 };
-                          break;
-                        case "large":
-                          updated = { min: 501, max: undefined };
-                          break;
-                        default:
-                          updated = { min: undefined, max: undefined };
-                      }
-                      handleRadioChange("companySize", updated);
-                    }}
-                    className="ml-3"
-                  >
-                    <RadioGroupItemWithLabel id="company-all" value="all" htmlFor="company-all">
-                      All Sizes
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="startup" value="startup" htmlFor="startup">
-                      Start up (1–50)
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="medium" value="medium" htmlFor="medium">
-                      Medium (51–500)
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="large" value="large" htmlFor="large">
-                      Large (500+)
-                    </RadioGroupItemWithLabel>
-                  </RadioGroup>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      placeholder="Min"
+                      value={min ?? ""}
+                      min={0}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        const numVal = val ? parseInt(val) : undefined;
+                        handleRadioChange("companySize", {
+                          min: numVal,
+                          max,
+                        });
+                      }}
+                      className="w-20 h-9 shrink-0"
+                    />
+                    <span className="text-muted-foreground">-</span>
+                    <Input
+                      type="number"
+                      placeholder="Max"
+                      value={max ?? ""}
+                      min={0}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        const numVal = val ? parseInt(val) : undefined;
+                        handleRadioChange("companySize", {
+                          min,
+                          max: numVal,
+                        });
+                      }}
+                      className="w-20 h-9 shrink-0"
+                    />
+                    <span className="text-sm text-muted-foreground whitespace-nowrap">
+                      Employees
+                    </span>
+                  </div>
                 );
               }}
             />
@@ -335,60 +376,43 @@ export default function EmployeeSearchPage() {
               control={control}
               render={({ field }) => {
                 const { min, max } = field.value ?? {};
-                const selectedValue =
-                  min === undefined && max === undefined
-                    ? "all"
-                    : min === 0 && max === 300
-                      ? "0-300"
-                      : min === 300 && max === 600
-                        ? "300-600"
-                        : min === 600 && max === 1000
-                          ? "600-1000"
-                          : min === 1000 && max === undefined
-                            ? "1000+"
-                            : "all";
-
                 return (
-                  <RadioGroup
-                    value={selectedValue}
-                    onValueChange={(val) => {
-                      let updated: { min?: number; max?: number } = {};
-                      switch (val) {
-                        case "0-300":
-                          updated = { min: 0, max: 300 };
-                          break;
-                        case "300-600":
-                          updated = { min: 300, max: 600 };
-                          break;
-                        case "600-1000":
-                          updated = { min: 600, max: 1000 };
-                          break;
-                        case "1000+":
-                          updated = { min: 1000, max: undefined };
-                          break;
-                        default:
-                          updated = { min: undefined, max: undefined };
-                      }
-                      handleRadioChange("salaryRange", updated);
-                    }}
-                    className="ml-3"
-                  >
-                    <RadioGroupItemWithLabel id="salary-all" value="all" htmlFor="salary-all">
-                      All Salaries
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="salary-0-300" value="0-300" htmlFor="salary-0-300">
-                      0$ - 300$
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="salary-300-600" value="300-600" htmlFor="salary-300-600">
-                      300$ - 600$
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="salary-600-1000" value="600-1000" htmlFor="salary-600-1000">
-                      600$ - 1000$
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="salary-1000-up" value="1000+" htmlFor="salary-1000-up">
-                      1000$+
-                    </RadioGroupItemWithLabel>
-                  </RadioGroup>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      placeholder="Min"
+                      value={min ?? ""}
+                      min={0}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        const numVal = val ? parseInt(val) : undefined;
+                        handleRadioChange("salaryRange", {
+                          min: numVal,
+                          max,
+                        });
+                      }}
+                      className="w-20 h-9 shrink-0"
+                    />
+                    <span className="text-muted-foreground">-</span>
+                    <Input
+                      type="number"
+                      placeholder="Max"
+                      value={max ?? ""}
+                      min={0}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        const numVal = val ? parseInt(val) : undefined;
+                        handleRadioChange("salaryRange", {
+                          min,
+                          max: numVal,
+                        });
+                      }}
+                      className="w-20 h-9 shrink-0"
+                    />
+                    <span className="text-sm text-muted-foreground whitespace-nowrap">
+                      $
+                    </span>
+                  </div>
                 );
               }}
             />
@@ -405,29 +429,40 @@ export default function EmployeeSearchPage() {
               name="educationLevel"
               control={control}
               render={({ field }) => {
-                const education = field.value ?? "all";
+                const educations = [
+                  "Under Graduate",
+                  "Bachelor",
+                  "Master",
+                  "PhD",
+                ];
+                const selectedEdu = field.value ?? [];
+
                 return (
-                  <RadioGroup
-                    value={education}
-                    onValueChange={(val) => handleRadioChange("educationLevel", val)}
-                    className="ml-3"
-                  >
-                    <RadioGroupItemWithLabel id="edu-all" value="all" htmlFor="edu-all">
-                      All Levels
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="edu-undergrad" value="Under Graduate" htmlFor="edu-undergrad">
-                      Under Graduate
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="edu-bachelor" value="Bachelor" htmlFor="edu-bachelor">
-                      Bachelor
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="edu-master" value="Master" htmlFor="edu-master">
-                      Master
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="edu-phd" value="PHD" htmlFor="edu-phd">
-                      PhD
-                    </RadioGroupItemWithLabel>
-                  </RadioGroup>
+                  <div className="flex flex-col gap-3 ml-3">
+                    {educations.map((edu) => (
+                      <div key={edu} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`edu-${edu}`}
+                          checked={selectedEdu.includes(edu)}
+                          onCheckedChange={(checked) => {
+                            let updated = [...selectedEdu];
+                            if (checked) {
+                              updated.push(edu);
+                            } else {
+                              updated = updated.filter((item) => item !== edu);
+                            }
+                            handleRadioChange("educationLevel", updated);
+                          }}
+                        />
+                        <label
+                          htmlFor={`edu-${edu}`}
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          {edu}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
                 );
               }}
             />
@@ -443,62 +478,26 @@ export default function EmployeeSearchPage() {
             <Controller
               name="experienceLevel"
               control={control}
-              render={({ field }) => {
-                const { min, max } = field.value ?? {};
-                const selectedValue =
-                  min === 0 && max === 1
-                    ? "<1"
-                    : min === 1 && max === 2
-                      ? "1-2"
-                      : min === 2 && max === 3
-                        ? "2-3"
-                        : min === 3 && max === undefined
-                          ? ">3"
-                          : "all";
-
-                return (
-                  <RadioGroup
-                    value={selectedValue}
-                    onValueChange={(val) => {
-                      let updated: { min?: number; max?: number } = {};
-                      switch (val) {
-                        case "<1":
-                          updated = { min: 0, max: 1 };
-                          break;
-                        case "1-2":
-                          updated = { min: 1, max: 2 };
-                          break;
-                        case "2-3":
-                          updated = { min: 2, max: 3 };
-                          break;
-                        case ">3":
-                          updated = { min: 3, max: undefined };
-                          break;
-                        default:
-                          updated = { min: undefined, max: undefined };
-                      }
-                      handleRadioChange("experienceLevel", updated);
-                    }}
-                    className="ml-3"
-                  >
-                    <RadioGroupItemWithLabel id="exp-all" value="all" htmlFor="exp-all">
-                      All Levels
+              render={({ field }) => (
+                <RadioGroup
+                  onValueChange={(value) =>
+                    handleRadioChange("experienceLevel", value)
+                  }
+                  value={field.value ?? ""}
+                  className="flex flex-col gap-3 ml-3"
+                >
+                  {yearOfExperienceConstant.map((option) => (
+                    <RadioGroupItemWithLabel
+                      key={option.id}
+                      value={option.value}
+                      id={`exp-${option.id}`}
+                      htmlFor={`exp-${option.id}`}
+                    >
+                      {option.label}
                     </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="exp-less-1" value="<1" htmlFor="exp-less-1">
-                      Less than 1 year
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="exp-1-2" value="1-2" htmlFor="exp-1-2">
-                      1 - 2 years
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="exp-2-3" value="2-3" htmlFor="exp-2-3">
-                      2 - 3 years
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel id="exp-more-3" value=">3" htmlFor="exp-more-3">
-                      More than 3 years
-                    </RadioGroupItemWithLabel>
-                  </RadioGroup>
-                );
-              }}
+                  ))}
+                </RadioGroup>
+              )}
             />
           </div>
         </div>
@@ -517,6 +516,51 @@ export default function EmployeeSearchPage() {
                 "No jobs found"
               )}
             </TypographyH4>
+
+            <Controller
+              name="sortBy"
+              control={control}
+              render={({ field: sortByField }) => (
+                <Controller
+                  name="orderBy"
+                  control={control}
+                  render={({ field: orderByField }) => {
+                    const sortValue = `${sortByField.value}-${orderByField.value}`;
+
+                    return (
+                      <Select
+                        value={sortValue}
+                        onValueChange={(val) => {
+                          const [newSortBy, newOrderBy] = val.split("-");
+                          setValue("sortBy", newSortBy, { shouldDirty: true });
+                          setValue("orderBy", newOrderBy, {
+                            shouldDirty: true,
+                          });
+                        }}
+                      >
+                        <SelectTrigger className="w-[200px] h-9 text-sm">
+                          <SelectValue placeholder="Sort by" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="createdAt-desc">
+                            Newest First
+                          </SelectItem>
+                          <SelectItem value="createdAt-asc">
+                            Oldest First
+                          </SelectItem>
+                          <SelectItem value="companySize-desc">
+                            Company Size: High to Low
+                          </SelectItem>
+                          <SelectItem value="companySize-asc">
+                            Company Size: Low to High
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    );
+                  }}
+                />
+              )}
+            />
           </div>
 
           <div className="w-full flex flex-col items-start gap-2">
@@ -561,7 +605,8 @@ export default function EmployeeSearchPage() {
             ) : (
               <div className="w-full text-center py-10">
                 <TypographyP className="text-muted-foreground">
-                  No jobs match your search criteria. Try adjusting your filters.
+                  No jobs match your search criteria. Try adjusting your
+                  filters.
                 </TypographyP>
               </div>
             )}

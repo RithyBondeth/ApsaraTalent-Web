@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import { TypographyLead } from "@/components/utils/typography/typography-lead";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { LucideHeartHandshake } from "lucide-react";
-import { INotificationMatchCardProps } from "./props";
 import { timeAgo } from "@/utils/functions/timeago-formatter";
+import { LucideHeartHandshake } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { INotificationMatchCardProps } from "./props";
 
 export default function NotificationMatchCard(
   props: INotificationMatchCardProps

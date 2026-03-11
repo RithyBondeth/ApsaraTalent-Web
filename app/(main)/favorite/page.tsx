@@ -1,29 +1,29 @@
 "use client";
 
+import emptySvgImage from "@/assets/svg/empty.svg";
+import favoriteSvgImage from "@/assets/svg/favorite.svg";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
+import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
 import Image from "next/image";
-import favoriteSvgImage from "@/assets/svg/favorite.svg";
-import emptySvgImage from "@/assets/svg/empty.svg";
 
-import FavoriteEmployeeCardSkeleton from "@/components/favorite/employee-favorite-card/skeleton";
-import FavoriteCompanyCardSkeleton from "@/components/favorite/company-favorite-card/skeleton";
 import FavoriteCompanyCard from "@/components/favorite/company-favorite-card";
+import FavoriteCompanyCardSkeleton from "@/components/favorite/company-favorite-card/skeleton";
 import FavoriteEmployeeCard from "@/components/favorite/employee-favorite-card";
-import FavoriteBannerSkeleton from "./banner-skeleton";
+import FavoriteEmployeeCardSkeleton from "@/components/favorite/employee-favorite-card/skeleton";
 import { TypographyP } from "@/components/utils/typography/typography-p";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useFetchOnce } from "@/hooks/use-fetch-once";
-import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
-import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
-import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
 import { useToast } from "@/hooks/use-toast";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
-import { LucideBookmarkX } from "lucide-react";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
+import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
+import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { LucideBookmarkX } from "lucide-react";
+import FavoriteBannerSkeleton from "./banner-skeleton";
 
 export default function FavoritePage() {
   // Utils

@@ -1,8 +1,8 @@
 import * as z from "zod";
 import {
-  ACCEPTED_FILE_TYPES,
-  DOCUMENT_SIZE,
-  MAX_IMAGE_SIZE,
+    ACCEPTED_FILE_TYPES,
+    DOCUMENT_SIZE,
+    MAX_IMAGE_SIZE
 } from "../constants/app.constant";
 
 export const fileValidation = (label: string) =>

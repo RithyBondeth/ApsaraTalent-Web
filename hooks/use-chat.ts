@@ -1,22 +1,16 @@
-import { useState, useEffect, useCallback } from 'react';
+import { IChatPreview, IMessage } from '@/components/message/props';
 import { useToast } from '@/hooks/use-toast';
 import { useGetCurrentUserStore } from '@/stores/apis/users/get-current-user.store';
-import { IMessage, IChatPreview } from '@/components/message/props';
-import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  orderBy,
-  addDoc,
-  serverTimestamp,
-  updateDoc,
-  doc,
-  getDoc,
-  getDocs,
-} from 'firebase/firestore';
 import { chatDatabase } from '@/utils/firebase/firebase';
 import { createOrGetChat, UserProfile } from '@/utils/firebase/services/chat-service';
+import {
+    addDoc, collection, doc,
+    getDoc,
+    getDocs, onSnapshot,
+    orderBy, query, serverTimestamp,
+    updateDoc, where
+} from 'firebase/firestore';
+import { useCallback, useEffect, useState } from 'react';
 
 export const useChat = (chatId?: string | null) => {
   const { toast } = useToast();

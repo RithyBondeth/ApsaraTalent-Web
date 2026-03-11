@@ -5,14 +5,14 @@ import ResumeBuilderFeature from "@/components/resume-builder/feature";
 import ResumeBuilderGenerate from "@/components/resume-builder/generate";
 import TemplateCard from "@/components/resume-builder/template";
 import TemplateCardSkeleton from "@/components/resume-builder/template/skeleton";
+import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { useGetAllTemplateStore } from "@/stores/apis/resume/get-all-template.store";
 import { useTemplateSelectionStore } from "@/stores/apis/resume/template-selection.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useEffect, useState } from "react";
-import { buildResumePayloadFromUser } from "./_utils/build-payload";
 import { generateResumeAPI } from "./_apis/generate-resume.api";
-import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
+import { buildResumePayloadFromUser } from "./_utils/build-payload";
 
 let hasFetchedTemplates = false;
 export default function ResumeBuilder() {

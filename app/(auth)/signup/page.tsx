@@ -1,47 +1,44 @@
 // My Signup Page
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from "@/components/ui/select";
+import ErrorMessage from "@/components/utils/error-message";
+import LogoComponent from "@/components/utils/logo";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import {
-  LucideArrowLeft,
-  LucideArrowRight,
-  LucideEye,
-  LucideEyeClosed,
-  LucideLockKeyhole,
-  LucideMail,
-} from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useRouter } from "next/navigation";
-import LogoComponent from "@/components/utils/logo";
+import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
+import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
+import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
+import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
+import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
 import { useThemeStore } from "@/stores/themes/theme-store";
 import {
-  genderConstant,
-  locationConstant,
+    genderConstant,
+    locationConstant
 } from "@/utils/constants/app.constant";
-import { useForm, FieldErrors, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import ErrorMessage from "@/components/utils/error-message";
-import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
 import {
-  basicSignupEmployeeSchema,
-  basicSignupCompanySchema,
-  TBasicSignupEmployeeSchema,
-  TBasicSignupCompanySchema,
+    LucideArrowLeft,
+    LucideArrowRight,
+    LucideEye,
+    LucideEyeClosed,
+    LucideLockKeyhole,
+    LucideMail
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { Controller, FieldErrors, useForm } from "react-hook-form";
+import {
+    basicSignupCompanySchema, basicSignupEmployeeSchema, TBasicSignupCompanySchema, TBasicSignupEmployeeSchema
 } from "./validation";
-import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
-import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
-import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
-import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 
 export default function SignupPage() {
   // Utils

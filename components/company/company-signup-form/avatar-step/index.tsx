@@ -1,9 +1,9 @@
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
-import { useState, useEffect } from "react";
-import { DragDropFile } from "@/components/utils/drag-drop-file.";
+import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
+import { DragDropFile } from "@/components/utils/drag-drop-file.";
+import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { useEffect, useState } from "react";
 
 export default function AvatarCompanyStepForm({
   setValue,

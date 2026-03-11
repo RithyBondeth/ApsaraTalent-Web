@@ -1,6 +1,6 @@
 import {
-  IBenefits,
-  IValues,
+    IBenefits,
+    IValues
 } from "@/utils/interfaces/user-interface/company.interface";
 import { useState } from "react";
 

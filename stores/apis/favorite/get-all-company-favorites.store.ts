@@ -1,6 +1,6 @@
+import axios from "@/lib/axios";
 import { API_FIND_ALL_COMPANY_FAVORITES } from "@/utils/constants/apis/favorite_url";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
-import axios from "@/lib/axios";
 import { create } from "zustand";
 
 export type TGetAllCompanyFavoritesResponse = {

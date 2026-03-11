@@ -1,18 +1,18 @@
 "use client";
-import LabelInput from "@/components/utils/label-input";
-import { IStepFormProps } from "../props";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
+import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import ErrorMessage from "@/components/utils/error-message";
+import LabelInput from "@/components/utils/label-input";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import {
-  availabilityConstant,
-  yearOfExperienceConstant,
+    availabilityConstant,
+    yearOfExperienceConstant
 } from "@/utils/constants/app.constant";
 import { Controller } from "react-hook-form";
-import ErrorMessage from "@/components/utils/error-message";
-import { CreatableCombobox } from "@/components/ui/creatable-combobox";
+import { IStepFormProps } from "../props";
 
 export default function ProfessionStepForm({
   register,

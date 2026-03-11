@@ -1,30 +1,25 @@
 "use client";
 
+import { IJobPosition } from "@/utils/interfaces/user-interface/company.interface";
 import {
-  LucideBookmark,
-  LucideBriefcaseBusiness,
-  LucideBuilding,
-  LucideCircleArrowRight,
-  LucideClock,
-  LucideEye,
-  LucideMapPin,
-  LucideUsers,
+    LucideBookmark,
+    LucideBriefcaseBusiness,
+    LucideBuilding,
+    LucideCircleArrowRight,
+    LucideClock,
+    LucideEye, LucideHeartHandshake, LucideMapPin,
+    LucideUsers
 } from "lucide-react";
-import { LucideHeartHandshake } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Button } from "../../ui/button";
 import CachedAvatar from "../../ui/cached-avatar";
+import IconLabel from "../../utils/icon-label";
+import Tag from "../../utils/tag";
 import { TypographyMuted } from "../../utils/typography/typography-muted";
 import { TypographyP } from "../../utils/typography/typography-p";
 import { TypographySmall } from "../../utils/typography/typography-small";
-import { Button } from "../../ui/button";
-import Tag from "../../utils/tag";
-import IconLabel from "../../utils/icon-label";
-import { useEffect } from "react";
-import { useState } from "react";
-import { ICompanyCardProps } from "./props";
-import { useRef } from "react";
 import CompanyDialog from "../company-dialog";
-import { IJobPosition } from "@/utils/interfaces/user-interface/company.interface";
-import { availabilityConstant } from "@/utils/constants/app.constant";
+import { ICompanyCardProps } from "./props";
 
 export default function CompanyCard(props: ICompanyCardProps) {
   // Utils

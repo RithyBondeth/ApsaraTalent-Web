@@ -1,28 +1,25 @@
 import {
-  LucideClock,
-  LucideGraduationCap,
-  LucideMapPin,
-  LucideUniversity,
-  LucideUser,
-  User,
+    LucideClock,
+    LucideGraduationCap,
+    LucideMapPin,
+    LucideUniversity,
+    LucideUser,
+    User
 } from "lucide-react";
+import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
+import { Button } from "../../ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
+    Dialog,
+    DialogContent, DialogDescription, DialogHeader,
+    DialogTitle
 } from "../../ui/dialog";
+import IconLabel from "../../utils/icon-label";
+import Tag from "../../utils/tag";
+import { TypographyH4 } from "../../utils/typography/typography-h4";
 import { TypographyMuted } from "../../utils/typography/typography-muted";
 import { TypographyP } from "../../utils/typography/typography-p";
-import Tag from "../../utils/tag";
-import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
-import IconLabel from "../../utils/icon-label";
-import { TypographyH4 } from "../../utils/typography/typography-h4";
-import { Button } from "../../ui/button";
 import { IEmployeeDialogProps } from "./props";
-import Link from "next/link";
-import { capitalizeWords } from "@/utils/functions/capitalize-words";
 
 export default function EmployeeDialog(props: IEmployeeDialogProps) {
   return (

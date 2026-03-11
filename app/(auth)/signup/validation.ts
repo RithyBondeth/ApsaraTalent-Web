@@ -1,9 +1,9 @@
 import {
-  emailValidation,
-  khmerPhoneNumberValidation,
-  passwordValidation,
-  selectedValidation,
-  textValidation,
+    emailValidation,
+    khmerPhoneNumberValidation,
+    passwordValidation,
+    selectedValidation,
+    textValidation
 } from "@/utils/functions/validations";
 import * as z from "zod";
 

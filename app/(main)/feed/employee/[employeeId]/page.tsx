@@ -2,63 +2,62 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import {
+    HoverCard,
+    HoverCardContent,
+    HoverCardTrigger
+} from "@/components/ui/hover-card";
+import Divider from "@/components/utils/divider";
 import IconLabel from "@/components/utils/icon-label";
+import ImagePopup from "@/components/utils/image-popup";
 import Tag from "@/components/utils/tag";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import {
-  LucideAtSign,
-  LucideBookmark,
-  LucideBookMarked,
-  LucideBriefcaseBusiness,
-  LucideCalendar,
-  LucideClock,
-  LucideDownload,
-  LucideEye,
-  LucideFileText,
-  LucideGraduationCap,
-  LucideHeartHandshake,
-  LucideMail,
-  LucideMapPinned,
-  LucidePhone,
-  LucideSchool,
-  LucideTransgender,
-  LucideUser,
-  User,
-} from "lucide-react";
-import Divider from "@/components/utils/divider";
-import {
-  IEducation,
-  IExperience,
-  ISkill,
-  ISocial,
-} from "@/utils/interfaces/user-interface/employee.interface";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import React, { useEffect, useRef, useState } from "react";
-import ImagePopup from "@/components/utils/image-popup";
-import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
-import EmployeeDetailPageSkeleton from "./skeleton";
-import { dateFormatter } from "@/utils/functions/dateformatter";
-import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
-import { useCompanyLikeStore } from "@/stores/apis/matching/company-like.store";
-import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useToast } from "@/hooks/use-toast";
-import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
-import { capitalizeWords } from "@/utils/functions/capitalize-words";
 import { useGetOneEmployeeStore } from "@/stores/apis/employee/get-one-emp.store";
+import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
 import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
+import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
+import { useCompanyLikeStore } from "@/stores/apis/matching/company-like.store";
 import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
-import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
+import { dateFormatter } from "@/utils/functions/dateformatter";
+import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
+import {
+    IEducation,
+    IExperience,
+    ISkill,
+    ISocial
+} from "@/utils/interfaces/user-interface/employee.interface";
 import { TPlatform } from "@/utils/types/platform.type";
+import {
+    LucideAtSign,
+    LucideBookmark,
+    LucideBookMarked,
+    LucideBriefcaseBusiness,
+    LucideCalendar,
+    LucideClock,
+    LucideDownload,
+    LucideEye,
+    LucideFileText,
+    LucideGraduationCap,
+    LucideHeartHandshake,
+    LucideMail,
+    LucideMapPinned,
+    LucidePhone,
+    LucideSchool,
+    LucideTransgender,
+    LucideUser,
+    User
+} from "lucide-react";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
+import EmployeeDetailPageSkeleton from "./skeleton";
 
 export default function EmployeeDetailPage() {
   // Utils

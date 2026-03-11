@@ -1,19 +1,19 @@
+import { availabilityWordsFormat } from "@/utils/functions/availability-word-format";
 import {
-  LucideBriefcaseBusiness,
-  LucideClock,
-  LucideMapPin,
-  LucideMessageCircle,
+    LucideBriefcaseBusiness,
+    LucideClock,
+    LucideMapPin,
+    LucideMessageCircle
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
+import { Button } from "../../ui/button";
 import Tag from "../../utils/tag";
 import { TypographyH4 } from "../../utils/typography/typography-h4";
 import { TypographyP } from "../../utils/typography/typography-p";
-import { Button } from "../../ui/button";
 import { IMatchingEmployeeCardProps } from "./props";
-import { availabilityWordsFormat } from "@/utils/functions/availability-word-format";
 
 export default function MatchingEmployeeCard(
-  props: IMatchingEmployeeCardProps
+  props: IMatchingEmployeeCardProps,
 ) {
   return (
     <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-md tablet-xl:flex-col">
@@ -62,9 +62,7 @@ export default function MatchingEmployeeCard(
               <div className="flex flex-col items-start">
                 <TypographyP className="text-xs !m-0">Experience</TypographyP>
                 <TypographyP className="text-sm font-medium !m-0">
-                  {props.experience <= 1
-                    ? `${props.experience} year experience`
-                    : `${props.experience} years experience`}
+                  {props.experience}
                 </TypographyP>
               </div>
             </div>

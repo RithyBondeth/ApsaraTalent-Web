@@ -1,53 +1,53 @@
 "use client";
 
-import EmployeeCard from "@/components/employee/employee-card";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
-import Image from "next/image";
-import feedBlackSvg from "@/assets/svg/feed-black.svg";
-import feedWhiteSvg from "@/assets/svg/feed-white.svg";
-import feedCompanySvg from "@/assets/svg/feed-company.svg";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import React, { useMemo, useRef, useState, useEffect } from "react";
-import { useTheme } from "next-themes";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { useRouter } from "next/navigation";
-import CompanyCard from "@/components/company/company-card";
-import ImagePopup from "@/components/utils/image-popup";
-import EmployeeCardSkeleton from "@/components/employee/employee-card/skeleton";
-import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import CompanyCardSkeleton from "@/components/company/company-card/skeleton";
-import BannerSkeleton from "./banner-skeleton";
-import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
-import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
-import { useCompanyLikeStore } from "@/stores/apis/matching/company-like.store";
-import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
-import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
-import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
-import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
-import { usePreloadImages } from "@/hooks/use-cached-image";
 import emptySvgImage from "@/assets/svg/empty.svg";
+import feedBlackSvg from "@/assets/svg/feed-black.svg";
+import feedCompanySvg from "@/assets/svg/feed-company.svg";
+import feedWhiteSvg from "@/assets/svg/feed-white.svg";
+import CompanyCard from "@/components/company/company-card";
+import CompanyCardSkeleton from "@/components/company/company-card/skeleton";
+import EmployeeCard from "@/components/employee/employee-card";
+import EmployeeCardSkeleton from "@/components/employee/employee-card/skeleton";
+import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogTitle
+} from "@/components/ui/dialog";
+import ImagePopup from "@/components/utils/image-popup";
+import { TypographyH2 } from "@/components/utils/typography/typography-h2";
+import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { usePreloadImages } from "@/hooks/use-cached-image";
+import { useFetchOnce } from "@/hooks/use-fetch-once";
+import { useToast } from "@/hooks/use-toast";
 import { useGetAllCompanyStore } from "@/stores/apis/company/get-all-cmp.store";
 import { useGetAllEmployeeStore } from "@/stores/apis/employee/get-all-emp.store";
+import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
+import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
+import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
+import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
+import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
+import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
+import { useCompanyLikeStore } from "@/stores/apis/matching/company-like.store";
+import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
+import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
+import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store";
+import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
+import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
+import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
-import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
-import { useFetchOnce } from "@/hooks/use-fetch-once";
-import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
-import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
-import { useToast } from "@/hooks/use-toast";
 import { LucideBookMarked, LucideX } from "lucide-react";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
-import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
+import { useTheme } from "next-themes";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import BannerSkeleton from "./banner-skeleton";
 
 // Module-level Cache For Global Data (survives Strict Mode)
 const globalFetchCache = {

@@ -1,21 +1,20 @@
 "use client";
-import CachedAvatar from "../../ui/cached-avatar";
+import {
+    LucideBookmark,
+    LucideCircleArrowRight,
+    LucideEye,
+    LucideHeartHandshake,
+    LucideMapPin
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "../../ui/button";
+import CachedAvatar from "../../ui/cached-avatar";
 import Tag from "../../utils/tag";
 import { TypographyMuted } from "../../utils/typography/typography-muted";
 import { TypographyP } from "../../utils/typography/typography-p";
 import { TypographySmall } from "../../utils/typography/typography-small";
-import {
-  LucideBookmark,
-  LucideCircleArrowRight,
-  LucideEye,
-  LucideHeartHandshake,
-  LucideMapPin,
-} from "lucide-react";
-import { useState, useRef, useEffect } from "react";
-import { IEmployeeCardProps } from "./props";
 import EmployeeDialog from "../employee-dialog";
-import { capitalizeWords } from "@/utils/functions/capitalize-words";
+import { IEmployeeCardProps } from "./props";
 
 export default function EmployeeCard(props: IEmployeeCardProps) {
   // Utils

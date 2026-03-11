@@ -1,5 +1,5 @@
-import { API_UPLOAD_CMP_COVER_URL } from "@/utils/constants/apis/company_url";
 import axios from "@/lib/axios";
+import { API_UPLOAD_CMP_COVER_URL } from "@/utils/constants/apis/company_url";
 import { create } from "zustand";
 import { useCompanySignupStore } from "../auth/company-signup.store";
 

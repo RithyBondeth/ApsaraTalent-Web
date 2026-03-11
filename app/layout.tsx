@@ -1,8 +1,8 @@
+import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/components/utils/themes/theme-provider";
 import type { Metadata } from "next";
 import { Ubuntu } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/utils/themes/theme-provider";
-import { Toaster } from "@/components/ui/toaster";
 
 const ubuntu = Ubuntu({
   subsets: ["latin"],

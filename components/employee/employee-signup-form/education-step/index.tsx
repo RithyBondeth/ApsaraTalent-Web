@@ -1,21 +1,20 @@
-import LabelInput from "@/components/utils/label-input";
-import { IStepFormProps } from "../props";
 import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
-import { Input } from "@/components/ui/input";
-import {
-  LucideGraduationCap,
-  LucidePlus,
-  LucideSchool,
-  LucideTrash2,
-} from "lucide-react";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { Button } from "@/components/ui/button";
-import { Controller, useFieldArray } from "react-hook-form";
-import { YearPicker } from "@/components/ui/year-picker";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import ErrorMessage from "@/components/utils/error-message";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useWatch } from "react-hook-form";
+import { Input } from "@/components/ui/input";
+import { YearPicker } from "@/components/ui/year-picker";
+import ErrorMessage from "@/components/utils/error-message";
+import LabelInput from "@/components/utils/label-input";
+import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import {
+    LucideGraduationCap,
+    LucidePlus,
+    LucideSchool,
+    LucideTrash2
+} from "lucide-react";
+import { Controller, useFieldArray, useWatch } from "react-hook-form";
+import { IStepFormProps } from "../props";
 
 export default function EducationStepForm({
   register,
@@ -133,7 +132,7 @@ export default function EducationStepForm({
   );
 }
 
-import { Control, UseFormRegister, FieldErrors } from "react-hook-form";
+import { Control, FieldErrors, UseFormRegister } from "react-hook-form";
 
 interface IsStudyingWatcherProps {
   index: number;

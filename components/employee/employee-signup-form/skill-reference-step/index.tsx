@@ -1,25 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { IStepFormProps } from "../props";
 import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import LabelInput from "@/components/utils/label-input";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+    Popover,
+    PopoverContent,
+    PopoverTrigger
 } from "@/components/ui/popover";
-import { LucidePlus, LucideXCircle } from "lucide-react";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { getErrorMessage } from "@/utils/extensions/get-error-message";
-import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import ErrorMessage from "@/components/utils/error-message";
+import LabelInput from "@/components/utils/label-input";
 import Tag from "@/components/utils/tag";
+import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { useToast } from "@/hooks/use-toast";
+import { getErrorMessage } from "@/utils/extensions/get-error-message";
 import { getRandomBadgeColor } from "@/utils/extensions/get-random-badge-color";
+import { LucidePlus, LucideXCircle } from "lucide-react";
+import { useState } from "react";
+import { IStepFormProps } from "../props";
 
 export default function SkillReferenceStepForm({
   errors,

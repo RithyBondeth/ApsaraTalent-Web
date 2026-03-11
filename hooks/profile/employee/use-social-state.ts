@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
 import { ISocial } from "@/utils/interfaces/user-interface/employee.interface";
+import { useRef, useState } from "react";
 
 export function useSocialsState(initialSocials: ISocial[] = []) {
   const [socialInput, setSocialInput] = useState<ISocial | null>(null);

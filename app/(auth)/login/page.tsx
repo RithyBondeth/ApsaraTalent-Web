@@ -1,61 +1,58 @@
 "use client";
+import loginBlackSvg from "@/assets/svg/login-black.svg";
+import loginWhiteSvg from "@/assets/svg/login-white.svg";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogTitle
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import SocialButton from "@/components/utils/buttons/social-button";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
-import {
-  googleIcon,
-  facebookIcon,
-  linkedinIcon,
-  githubIcon,
-} from "@/utils/constants/asset.constant";
-import {
-  LucideCheck,
-  LucideEye,
-  LucideEyeClosed,
-  LucideInfo,
-  LucideLockKeyhole,
-  LucideMail,
-  LucidePhone,
-} from "lucide-react";
-import Link from "next/link";
-import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
-import LogoComponent from "@/components/utils/logo";
-import loginWhiteSvg from "@/assets/svg/login-white.svg";
-import loginBlackSvg from "@/assets/svg/login-black.svg";
-import Image from "next/image";
-import { useTheme } from "next-themes";
-import { Controller, useForm } from "react-hook-form";
-import { loginSchema, TLoginForm } from "./validation";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useLoginStore } from "@/stores/apis/auth/login.store";
-import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
+import SocialButton from "@/components/utils/buttons/social-button";
+import LogoComponent from "@/components/utils/logo";
+import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { useToast } from "@/hooks/use-toast";
+import { useLoginStore } from "@/stores/apis/auth/login.store";
+import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
+import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
 import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
 import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
-import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
-import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
-import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
-import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
-import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
-import { getRememberPreference } from "@/utils/auth/get-access-token";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import { useGetAllCompanyStore } from "@/stores/apis/company/get-all-cmp.store";
 import { useGetAllEmployeeStore } from "@/stores/apis/employee/get-all-emp.store";
+import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
+import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
+import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
+import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { getRememberPreference } from "@/utils/auth/get-access-token";
+import {
+    facebookIcon, githubIcon, googleIcon, linkedinIcon
+} from "@/utils/constants/asset.constant";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+    LucideCheck,
+    LucideEye,
+    LucideEyeClosed,
+    LucideInfo,
+    LucideLockKeyhole,
+    LucideMail,
+    LucidePhone
+} from "lucide-react";
+import { useTheme } from "next-themes";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { loginSchema, TLoginForm } from "./validation";
 
 function LoginPage() {
   // Utils: Dialog, Theme

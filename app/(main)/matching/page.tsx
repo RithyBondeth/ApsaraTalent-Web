@@ -1,5 +1,7 @@
 "use client";
 
+import emptySvgImage from "@/assets/svg/empty.svg";
+import matchingSvgImage from "@/assets/svg/matching.svg";
 import MatchingCompanyCard from "@/components/matching/matching-company-card";
 import MatchingCompanyCardSkeleton from "@/components/matching/matching-company-card/skeleton";
 import MatchingEmployeeCard from "@/components/matching/matching-employee-card";
@@ -7,18 +9,15 @@ import MatchingEmployeeCardSkeleton from "@/components/matching/matching-employe
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-current-company-matching.store";
-import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
-import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import Image from "next/image";
-import matchingSvgImage from "@/assets/svg/matching.svg";
-import emptySvgImage from "@/assets/svg/empty.svg";
-import { useCallback } from "react";
-import { useRouter } from "next/navigation";
-import MatchingBannerSkeleton from "./banner-skeleton";
-import { useGetOneEmployeeStore } from "@/stores/apis/employee/get-one-emp.store";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useFetchOnce } from "@/hooks/use-fetch-once";
+import { useGetOneEmployeeStore } from "@/stores/apis/employee/get-one-emp.store";
+import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-current-company-matching.store";
+import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useCallback } from "react";
+import MatchingBannerSkeleton from "./banner-skeleton";
 
 export default function MatchingPage() {
   // Utils

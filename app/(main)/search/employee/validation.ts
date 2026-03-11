@@ -1,8 +1,8 @@
 import {
-  dateValidation,
-  positiveNumberValidation,
-  selectedValidation,
-  textValidation,
+    dateValidation,
+    positiveNumberValidation,
+    selectedValidation,
+    textValidation
 } from "@/utils/functions/validations";
 import * as z from "zod";
 
@@ -29,19 +29,8 @@ export const employeeSearchSchema = z.object({
     })
     .optional(),
 
-  experienceLevel: z
-    .object({
-      min: z
-        .number()
-        .min(0, "Minimum experience level must be 0 or greater")
-        .optional(),
-      max: z
-        .number()
-        .min(0, "Maximum experience level must be 0 or greater")
-        .optional(),
-    })
-    .optional(),
-  educationLevel: selectedValidation("Education Level").optional(),
+  experienceLevel: z.string().optional(),
+  educationLevel: z.array(z.string()).optional(),
   sortBy: textValidation("Sort By", 100),
   orderBy: textValidation("Sort Order", 100),
 });

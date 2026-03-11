@@ -1,11 +1,5 @@
 import {
-  UseFormRegister,
-  FieldValues,
-  FieldErrors,
-  Control,
-  UseFormSetValue,
-  UseFormGetValues,
-  UseFormTrigger,
+    Control, FieldErrors, FieldValues, UseFormGetValues, UseFormRegister, UseFormSetValue, UseFormTrigger
 } from "react-hook-form";
 
 export interface IStepFormProps<T extends FieldValues> {

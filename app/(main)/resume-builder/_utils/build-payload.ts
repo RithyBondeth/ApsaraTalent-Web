@@ -1,5 +1,5 @@
-import { BuildResume, ResumeTemplate } from "../_apis/generate-resume.api";
 import { IUser } from "@/utils/interfaces/user-interface/user.interface";
+import { BuildResume, ResumeTemplate } from "../_apis/generate-resume.api";
 
 function formatDateToMMDDYYYY(dateString?: string | null): string | undefined {
   if (!dateString) return undefined;

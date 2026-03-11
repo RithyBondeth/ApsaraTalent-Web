@@ -1,6 +1,6 @@
+import axios from "@/lib/axios";
 import { API_GET_ONE_EMP_URL } from "@/utils/constants/apis/employee_url";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
-import axios from "@/lib/axios";
 import { create } from "zustand";
 
 type TGetOneEmployeeState = {

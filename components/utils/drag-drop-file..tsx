@@ -1,15 +1,13 @@
-import React, {
-  useState,
-  useRef,
-  ChangeEvent,
-  DragEvent,
-  useEffect,
-} from "react";
-import Image from "next/image";
-import { LucideCircleX, LucideUserCircle } from "lucide-react";
-import { TypographyMuted } from "./typography/typography-muted";
 import { IDragDropFileProps } from "@/utils/interfaces/drag-drop-file.interface";
+import { LucideCircleX, LucideUserCircle } from "lucide-react";
+import Image from "next/image";
+import React, {
+    ChangeEvent,
+    DragEvent,
+    useEffect, useRef, useState
+} from "react";
 import { FieldValues, Path, PathValue } from "react-hook-form";
+import { TypographyMuted } from "./typography/typography-muted";
 
 export const DragDropFile = <T extends FieldValues>({
   onFilesSelected,

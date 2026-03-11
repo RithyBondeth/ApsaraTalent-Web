@@ -1,113 +1,113 @@
 "use client";
 
+import emptySvgImage from "@/assets/svg/empty.svg";
 import OpenPositionForm from "@/components/company/profile/open-position-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious
 } from "@/components/ui/carousel";
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList
+} from "@/components/ui/command";
+import {
+    HoverCard,
+    HoverCardContent,
+    HoverCardTrigger
+} from "@/components/ui/hover-card";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Popover,
+    PopoverContent,
+    PopoverTrigger
+} from "@/components/ui/popover";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { ToastAction } from "@/components/ui/toast";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import BlurBackGroundOverlay from "@/components/utils/bur-background-overlay";
+import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
+import RemoveAlertDialog from "@/components/utils/dialogs/remove-alert-dialog";
 import Divider from "@/components/utils/divider";
 import IconLabel from "@/components/utils/icon-label";
+import ImagePopup from "@/components/utils/image-popup";
 import LabelInput from "@/components/utils/label-input";
+import Tag from "@/components/utils/tag";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import {
-  locationConstant,
-  loginMethodConstant,
-  platformConstant,
-} from "@/utils/constants/app.constant";
-import {
-  ChevronDown,
-  LucideBuilding,
-  LucideCamera,
-  LucideCheck,
-  LucideCircleCheck,
-  LucideEdit,
-  LucideInfo,
-  LucideLink2,
-  LucideMail,
-  LucidePhone,
-  LucidePlus,
-  LucideUsers,
-  LucideXCircle,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { companyFormSchema, TCompanyProfileForm } from "./validation";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { ToastAction } from "@/components/ui/toast";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { useCmpAvatarCoverState } from "@/hooks/profile/company/use-cmp-avatar-cover-state";
+import useCmpBenefitValueState from "@/hooks/profile/company/use-cmp-benefit-value-state";
+import { useCmpCareerScopesState } from "@/hooks/profile/company/use-cmp-careerscope-state";
+import useCmpImageState from "@/hooks/profile/company/use-cmp-image-state";
+import { useSocialsState } from "@/hooks/profile/employee/use-social-state";
+import { useToast } from "@/hooks/use-toast";
+import { useRemoveCmpAvatarStore } from "@/stores/apis/company/remove-cmp-avatar.store";
+import { useRemoveCmpCoverStore } from "@/stores/apis/company/remove-cmp-cover.store";
+import { useRemoveOneCmpImageStore } from "@/stores/apis/company/remove-one-cmp-image.store";
+import { useRemoveOneOpenPositionStore } from "@/stores/apis/company/remove-one-open-position.store";
 import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import Tag from "@/components/utils/tag";
-import ImagePopup from "@/components/utils/image-popup";
-import { TPlatform } from "@/utils/types/platform.type";
-import {
-  IBenefits,
-  IValues,
-} from "@/utils/interfaces/user-interface/company.interface";
-import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { CompanyProfilePageSkeleton } from "./skeleton";
-import {
-  TCompanyUpdateBody,
-  useUpdateOneCompanyStore,
+    TCompanyUpdateBody,
+    useUpdateOneCompanyStore
 } from "@/stores/apis/company/update-one-cmp.store";
 import { useUploadCompanyAvatarStore } from "@/stores/apis/company/upload-cmp-avatar.store";
 import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cover.store";
 import { useUploadCompanyImagesStore } from "@/stores/apis/company/upload-cmp-images.store";
-import { useRemoveOneOpenPositionStore } from "@/stores/apis/company/remove-one-open-position.store";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
-import { isUuid } from "@/utils/functions/check-uuid";
 import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-scopes.store";
-import { useRemoveOneCmpImageStore } from "@/stores/apis/company/remove-one-cmp-image.store";
-import { useRemoveCmpAvatarStore } from "@/stores/apis/company/remove-cmp-avatar.store";
-import { useRemoveCmpCoverStore } from "@/stores/apis/company/remove-cmp-cover.store";
-import emptySvgImage from "@/assets/svg/empty.svg";
-import Image from "next/image";
-import { capitalizeWords } from "@/utils/functions/capitalize-words";
-import RemoveAlertDialog from "@/components/utils/dialogs/remove-alert-dialog";
-import { parseMaybeDate } from "@/utils/functions/parse-maybe-date";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import {
+    locationConstant,
+    loginMethodConstant,
+    platformConstant
+} from "@/utils/constants/app.constant";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
+import { capitalizeWords } from "@/utils/functions/capitalize-words";
+import { isUuid } from "@/utils/functions/check-uuid";
+import { parseMaybeDate } from "@/utils/functions/parse-maybe-date";
+import {
+    IBenefits,
+    IValues
+} from "@/utils/interfaces/user-interface/company.interface";
+import { TPlatform } from "@/utils/types/platform.type";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+    ChevronDown,
+    LucideBuilding,
+    LucideCamera,
+    LucideCheck,
+    LucideCircleCheck,
+    LucideEdit,
+    LucideInfo,
+    LucideLink2,
+    LucideMail,
+    LucidePhone,
+    LucidePlus,
+    LucideUsers,
+    LucideXCircle
+} from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import { useCmpAvatarCoverState } from "@/hooks/profile/company/use-cmp-avatar-cover-state";
-import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
-import useCmpImageState from "@/hooks/profile/company/use-cmp-image-state";
-import useCmpBenefitValueState from "@/hooks/profile/company/use-cmp-benefit-value-state";
-import { useSocialsState } from "@/hooks/profile/employee/use-social-state";
-import { useCmpCareerScopesState } from "@/hooks/profile/company/use-cmp-careerscope-state";
+import { useEffect, useState } from "react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { CompanyProfilePageSkeleton } from "./skeleton";
+import { companyFormSchema, TCompanyProfileForm } from "./validation";
 
 export default function ProfilePage() {
   // API Integration

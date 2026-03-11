@@ -1,9 +1,9 @@
-import Header from "@/components/header";
-import Image from "next/image";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import landingSvg from "@/assets/svg/landing.svg";
+import Header from "@/components/header";
 import ParticlesBackground from "@/components/utils/particle-background";
 import { TypographyH1 } from "@/components/utils/typography/typography-h1";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import Image from "next/image";
 
 export default function IndexPage() {
   return (

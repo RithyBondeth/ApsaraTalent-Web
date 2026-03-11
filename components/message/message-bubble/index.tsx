@@ -1,6 +1,6 @@
 // src/components/message/ChatMessages.tsx
-import { useRef, useEffect } from 'react';
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useEffect, useRef } from 'react';
 import { IChatPreview, IMessage } from '../props';
 
 interface ChatMessagesProps {

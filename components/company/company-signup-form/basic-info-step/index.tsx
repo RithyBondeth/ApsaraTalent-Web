@@ -4,11 +4,11 @@ import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
 import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import ErrorMessage from "@/components/utils/error-message";
@@ -16,7 +16,6 @@ import LabelInput from "@/components/utils/label-input";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { locationConstant } from "@/utils/constants/app.constant";
-import { TLocations } from "@/utils/types/location.type";
 import { Controller } from "react-hook-form";
 
 export default function BasicInfoStepForm({
