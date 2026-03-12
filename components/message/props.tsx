@@ -1,13 +1,11 @@
-import { FieldValue } from "firebase/firestore";
-
 export interface IMessage {
   id: string;
   senderId: string;
   senderName?: string;
   content: string;
-  timestamp: Date | FieldValue;
+  timestamp: Date | string; // NestJS sends ISO strings or Date objects
   isMe?: boolean; // frontend only
-  isRead?: boolean; // 🔥 Add this
+  isRead?: boolean;
 }
 export interface IChatPreview {
   id: string; // chatId

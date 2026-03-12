@@ -11,12 +11,12 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useFetchOnce } from "@/hooks/use-fetch-once";
-import { useGetOneEmployeeStore } from "@/stores/apis/employee/get-one-emp.store";
+import axiosInstance from "@/lib/axios";
 import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-current-company-matching.store";
 import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import MatchingBannerSkeleton from "./banner-skeleton";
 
 export default function MatchingPage() {
@@ -26,7 +26,9 @@ export default function MatchingPage() {
   // API Integration
   const getCurrentEmployeeMatchingStore = useGetCurrentEmployeeMatchingStore();
   const getCurrentCompanyMatchingStore = useGetCurrentCompanyMatchingStore();
-  const { employeeData, queryOneEmployee } = useGetOneEmployeeStore();
+
+  // Track which card is in a loading state to prevent double-clicks
+  const [chatLoadingId, setChatLoadingId] = useState<string | null>(null);
 
   // Use Custom Hook - Handles all ref logic and duplicate prevention
   const { isEmployee, currentUser } = useFetchOnce({
@@ -52,32 +54,29 @@ export default function MatchingPage() {
 
   const isLoading = isLoadingForEmployee || isLoadingForCompany;
 
-  // Memoized Chat Handler
+  // Chat Handler — uses backend REST endpoint, not Firebase
   const handleChatNow = useCallback(
-    async (otherUserId: string) => {
-      await queryOneEmployee(otherUserId);
+    async (senderId: string, receiverId: string) => {
+      if (!currentUser || chatLoadingId) return;
 
-      // if (currentUser) {
-      //   const chatId = await createOrGetChat(
-      //     {
-      //       id: (currentUser.employee?.id || currentUser.company?.id) ?? "",
-      //       name:
-      //         (currentUser.employee?.username || currentUser.company?.name) ??
-      //         "",
-      //       profile:
-      //         (currentUser.employee?.avatar || currentUser.company?.avatar) ??
-      //         "",
-      //     },
-      //     {
-      //       id: employeeData?.id ?? "",
-      //       name: employeeData?.username ?? "",
-      //       profile: employeeData?.avatar ?? "",
-      //     }
-      //   );
-      //   router.push(`/message?chatId=${chatId}`);
-      // }
+      setChatLoadingId(receiverId);
+      try {
+        const baseUrl =
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
+        const res = await axiosInstance.post<{
+          chatId: string;
+          receiverUserId: string;
+        }>(`${baseUrl}/chat/initiate`, { senderId, receiverId });
+        // The message page uses chatId as userId2 for getChatHistory socket call,
+        // so we must navigate with the receiver's actual User ID, not the Chat record ID.
+        router.push(`/message?chatId=${res.data.receiverUserId}`);
+      } catch (err) {
+        console.error("Failed to initiate chat:", err);
+      } finally {
+        setChatLoadingId(null);
+      }
     },
-    [currentUser, employeeData, queryOneEmployee, router],
+    [currentUser, chatLoadingId, router],
   );
 
   if (isLoading) {
@@ -142,7 +141,11 @@ export default function MatchingPage() {
               foundedYear={cmp.foundedYear}
               openPosition={cmp.openPositions}
               location={cmp.location}
-              onChatNowClick={() => handleChatNow(cmp.id)}
+              onChatNowClick={() => {
+                const senderId =
+                  currentUser?.employee?.id ?? currentUser?.company?.id ?? "";
+                handleChatNow(senderId, cmp.id);
+              }}
             />
           ))
         ) : getCurrentCompanyMatchingStore.currentCompanyMatching &&
@@ -159,7 +162,11 @@ export default function MatchingPage() {
               availability={emp.availability}
               location={emp.location ?? ""}
               skills={emp.skills.map((skill) => skill.name)}
-              onChatNowClick={() => handleChatNow(emp.id)}
+              onChatNowClick={() => {
+                const senderId =
+                  currentUser?.employee?.id ?? currentUser?.company?.id ?? "";
+                handleChatNow(senderId, emp.id);
+              }}
             />
           ))
         ) : (
