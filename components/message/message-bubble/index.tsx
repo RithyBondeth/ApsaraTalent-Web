@@ -9,6 +9,30 @@ interface ChatMessagesProps {
   isTyping?: boolean;
 }
 
+const MessageTimeDivider = ({ timestamp }: { timestamp: Date | string }) => {
+  const date = timestamp instanceof Date ? timestamp : new Date(timestamp);
+  const now = new Date();
+  const isToday = date.toDateString() === now.toDateString();
+  const isYesterday =
+    new Date(now.setDate(now.getDate() - 1)).toDateString() ===
+    date.toDateString();
+
+  let label = "";
+  if (isToday) {
+    label = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  } else if (isYesterday) {
+    label = `Yesterday ${date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+  } else {
+    label = `${date.toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" })} ${date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+  }
+
+  return (
+    <div className="text-center text-[10px] font-medium text-muted-foreground my-6 uppercase tracking-wider">
+      {label}
+    </div>
+  );
+};
+
 const ChatMessages = ({
   messages,
   activeChat,
@@ -21,6 +45,25 @@ const ChatMessages = ({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
+  const shouldShowDivider = (
+    currentMsg: IMessage,
+    prevMsg: IMessage | null,
+  ) => {
+    if (!prevMsg) return true;
+
+    const currentTime =
+      currentMsg.timestamp instanceof Date
+        ? currentMsg.timestamp.getTime()
+        : new Date(currentMsg.timestamp).getTime();
+    const prevTime =
+      prevMsg.timestamp instanceof Date
+        ? prevMsg.timestamp.getTime()
+        : new Date(prevMsg.timestamp).getTime();
+
+    // Show divider if gap is > 1 hour (3600000 ms)
+    return currentTime - prevTime > 3600000;
+  };
+
   return (
     <div className="flex-1 p-4 overflow-y-auto bg-muted/30">
       {messages.length === 0 ? (
@@ -31,10 +74,6 @@ const ChatMessages = ({
         </div>
       ) : (
         <>
-          <div className="text-center text-xs text-muted-foreground mb-4">
-            Today
-          </div>
-
           {(() => {
             // Find the index of the last message that is mine and has been seen
             let lastSeenIdx = -1;
@@ -44,14 +83,23 @@ const ChatMessages = ({
                 break;
               }
             }
-            return messages.map((message, idx) => (
-              <MessageBubble
-                key={message.id}
-                message={message}
-                activeChat={activeChat}
-                isLastSeen={idx === lastSeenIdx}
-              />
-            ));
+            return messages.map((message, idx) => {
+              const prevMessage = idx > 0 ? messages[idx - 1] : null;
+              const showDivider = shouldShowDivider(message, prevMessage);
+
+              return (
+                <React.Fragment key={message.id}>
+                  {showDivider && (
+                    <MessageTimeDivider timestamp={message.timestamp} />
+                  )}
+                  <MessageBubble
+                    message={message}
+                    activeChat={activeChat}
+                    isLastSeen={idx === lastSeenIdx}
+                  />
+                </React.Fragment>
+              );
+            });
           })()}
 
           {/* Typing indicator */}
