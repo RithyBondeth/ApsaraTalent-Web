@@ -1,30 +1,29 @@
-// src/components/message/ChatHeader.tsx
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, MoreVertical, Users } from 'lucide-react';
-import { IChatPreview } from '../props';
+import { ChevronLeft, ChevronRight, MoreVertical, Users } from "lucide-react";
+import { IChatHeaderProps } from "./props";
 
-interface ChatHeaderProps {
-  chat: IChatPreview;
-  isSidebarOpen: boolean;
-  onToggleSidebar: () => void;
-}
-
-const ChatHeader = ({ chat, isSidebarOpen, onToggleSidebar }: ChatHeaderProps) => {
+export default function ChatHeader(props: IChatHeaderProps) {
+  const { chat, isSidebarOpen, onToggleSidebar } = props;
   return (
     <div className="p-4 border-b flex justify-between items-center">
       <div className="flex items-center">
-        <Button variant="ghost" size="icon" onClick={onToggleSidebar} className="mr-2 message-xl:hidden">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onToggleSidebar}
+          className="mr-2 message-xl:hidden"
+        >
           {isSidebarOpen ? (
             <ChevronLeft className="h-5 w-5" />
           ) : (
             <ChevronRight className="h-5 w-5" />
           )}
           <span className="sr-only">
-            {isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+            {isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
           </span>
         </Button>
-        
+
         <Avatar className="h-10 w-10">
           {chat.isGroup ? (
             <AvatarFallback className="bg-primary/10">
@@ -34,7 +33,10 @@ const ChatHeader = ({ chat, isSidebarOpen, onToggleSidebar }: ChatHeaderProps) =
             <>
               <AvatarImage src={chat.avatar} alt={chat.name} />
               <AvatarFallback>
-                {chat.name.split(' ').map(n => n[0]).join('')}
+                {chat.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")}
               </AvatarFallback>
             </>
           )}
@@ -45,10 +47,8 @@ const ChatHeader = ({ chat, isSidebarOpen, onToggleSidebar }: ChatHeaderProps) =
         </div>
       </div>
       <Button variant="ghost" size="icon">
-          <MoreVertical className="h-5 w-5" />
+        <MoreVertical className="h-5 w-5" />
       </Button>
     </div>
   );
-};
-
-export default ChatHeader;
+}

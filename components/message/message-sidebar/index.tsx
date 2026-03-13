@@ -12,25 +12,12 @@ import {
 import { cn } from "@/lib/utils";
 import { Check, CheckCheck, Search, Users } from "lucide-react";
 import { useState } from "react";
-import { IChatPreview } from "../props";
+import { IChatListProps, IChatSidebarProps } from "./props";
 
-interface ChatSidebarProps {
-  chats: IChatPreview[] | undefined;
-  activeChat: IChatPreview | null;
-  isOpen: boolean;
-  currentUserId?: string;
-  className?: string;
-  onChatSelect: (chat: IChatPreview) => void;
-}
+export default function ChatSidebar(props: IChatSidebarProps) {
+  const { chats, activeChat, className, isOpen, currentUserId, onChatSelect } =
+    props;
 
-const ChatSidebar = ({
-  chats,
-  activeChat,
-  className,
-  isOpen,
-  currentUserId,
-  onChatSelect,
-}: ChatSidebarProps) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredChats = searchQuery
@@ -97,138 +84,35 @@ const ChatSidebar = ({
       </div>
     </div>
   );
-};
-
-// Expanded chat list
-interface ChatListProps {
-  chats: IChatPreview[] | undefined;
-  activeChat: IChatPreview | null;
-  currentUserId?: string;
-  onChatSelect: (chat: IChatPreview) => void;
 }
 
-const ExpandedChatList = ({
-  chats,
-  activeChat,
-  currentUserId,
-  onChatSelect,
-}: ChatListProps) => (
-  <>
-    {!chats || chats.length === 0 ? (
-      <div className="p-4 text-center text-muted-foreground">
-        No chats found
-      </div>
-    ) : (
-      chats?.map((chat) => {
-        const isLastFromMe = chat.lastMessageSenderId === currentUserId;
-        const isUnread = chat.isRead === false && !isLastFromMe;
-        return (
-          <div
-            key={chat.id}
-            className={`flex items-center p-4 hover:bg-muted transition-colors cursor-pointer ${
-              activeChat?.id === chat.id
-                ? "bg-muted/70"
-                : isUnread
-                  ? "bg-primary/5"
-                  : ""
-            }`}
-            onClick={() => onChatSelect(chat)}
-          >
-            <div className="relative">
-              {chat.isGroup ? (
-                <div className="h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center">
-                  <Users className="h-6 w-6 text-primary" />
-                </div>
-              ) : (
-                <Avatar className="h-12 w-12">
-                  <AvatarImage src={chat.avatar} alt={chat.name} />
-                  <AvatarFallback>
-                    {chat.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </AvatarFallback>
-                </Avatar>
-              )}
-              {chat.unread && (
-                <Badge
-                  variant="default"
-                  className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center"
-                >
-                  {chat.unread}
-                </Badge>
-              )}
-              {/* Unread dot — shown when no count badge but message is unread */}
-              {isUnread && !chat.unread && (
-                <span className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full bg-primary border-2 border-background" />
-              )}
-            </div>
-            <div className="ml-3 flex-1 min-w-0">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center min-w-0">
-                  <h3
-                    className={`text-sm text-foreground truncate ${isUnread ? "font-bold" : "font-medium"}`}
-                  >
-                    {chat.name}
-                  </h3>
-                  {chat.tag && (
-                    <Badge
-                      variant="outline"
-                      className="ml-2 text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300 shrink-0"
-                    >
-                      {chat.tag}
-                    </Badge>
-                  )}
-                </div>
-                <span
-                  className={`text-xs shrink-0 ml-2 ${isUnread ? "text-primary font-semibold" : "text-muted-foreground"}`}
-                >
-                  {chat.time}
-                </span>
-              </div>
-              <div className="flex items-center gap-1">
-                {isLastFromMe && (
-                  <span className="flex-shrink-0">
-                    {chat.isRead ? (
-                      <CheckCheck className="h-3.5 w-3.5 text-primary" />
-                    ) : (
-                      <Check className="h-3.5 w-3.5 text-muted-foreground" />
-                    )}
-                  </span>
-                )}
-                <p
-                  className={`text-sm truncate ${isUnread ? "text-foreground font-medium" : "text-muted-foreground"}`}
-                >
-                  {chat.preview}
-                </p>
-              </div>
-            </div>
-          </div>
-        );
-      })
-    )}
-  </>
-);
+// Expanded chat list
+const ExpandedChatList = (props: IChatListProps) => {
+  const { chats, activeChat, currentUserId, onChatSelect } = props;
 
-// Collapsed chat list
-const CollapsedChatList = ({
-  chats,
-  activeChat,
-  currentUserId,
-  onChatSelect,
-}: ChatListProps) => (
-  <div className="flex flex-col items-center gap-4 pt-2">
-    {chats?.map((chat) => {
-      const isLastFromMe = chat.lastMessageSenderId === currentUserId;
-      const isUnread = chat.isRead === false && !isLastFromMe;
-      return (
-        <TooltipProvider key={chat.id}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div
-                className={`relative cursor-pointer p-1 rounded-full transition-all ${activeChat?.id === chat.id ? "bg-muted scale-110" : "hover:bg-muted/50"}`}
-                onClick={() => onChatSelect(chat)}
-              >
+  return (
+    <>
+      {!chats || chats.length === 0 ? (
+        <div className="p-4 text-center text-muted-foreground">
+          No chats found
+        </div>
+      ) : (
+        chats?.map((chat) => {
+          const isLastFromMe = chat.lastMessageSenderId === currentUserId;
+          const isUnread = chat.isRead === false && !isLastFromMe;
+          return (
+            <div
+              key={chat.id}
+              className={`flex items-center p-4 hover:bg-muted transition-colors cursor-pointer ${
+                activeChat?.id === chat.id
+                  ? "bg-muted/70"
+                  : isUnread
+                    ? "bg-primary/5"
+                    : ""
+              }`}
+              onClick={() => onChatSelect(chat)}
+            >
+              <div className="relative">
                 {chat.isGroup ? (
                   <div className="h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center">
                     <Users className="h-6 w-6 text-primary" />
@@ -252,23 +136,115 @@ const CollapsedChatList = ({
                     {chat.unread}
                   </Badge>
                 )}
-                {/* Unread dot for collapsed view — only for incoming messages */}
+                {/* Unread dot — shown when no count badge but message is unread */}
                 {isUnread && !chat.unread && (
-                  <span className="absolute top-0 right-0 h-3 w-3 rounded-full bg-primary border-2 border-background" />
+                  <span className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full bg-primary border-2 border-background" />
                 )}
               </div>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p className={isUnread ? "font-bold" : ""}>{chat.name}</p>
-              {chat.tag && (
-                <p className="text-xs text-muted-foreground">{chat.tag}</p>
-              )}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      );
-    })}
-  </div>
-);
+              <div className="ml-3 flex-1 min-w-0">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center min-w-0">
+                    <h3
+                      className={`text-sm text-foreground truncate ${isUnread ? "font-bold" : "font-medium"}`}
+                    >
+                      {chat.name}
+                    </h3>
+                    {chat.tag && (
+                      <Badge
+                        variant="outline"
+                        className="ml-2 text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300 shrink-0"
+                      >
+                        {chat.tag}
+                      </Badge>
+                    )}
+                  </div>
+                  <span
+                    className={`text-xs shrink-0 ml-2 ${isUnread ? "text-primary font-semibold" : "text-muted-foreground"}`}
+                  >
+                    {chat.time}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1">
+                  {isLastFromMe && (
+                    <span className="flex-shrink-0">
+                      {chat.isRead ? (
+                        <CheckCheck className="h-3.5 w-3.5 text-primary" />
+                      ) : (
+                        <Check className="h-3.5 w-3.5 text-muted-foreground" />
+                      )}
+                    </span>
+                  )}
+                  <p
+                    className={`text-sm truncate ${isUnread ? "text-foreground font-medium" : "text-muted-foreground"}`}
+                  >
+                    {chat.preview}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
+        })
+      )}
+    </>
+  );
+};
 
-export default ChatSidebar;
+// Collapsed chat list
+const CollapsedChatList = (props: IChatListProps) => {
+  const { chats, activeChat, currentUserId, onChatSelect } = props;
+
+  return (
+    <div className="flex flex-col items-center gap-4 pt-2">
+      {chats?.map((chat) => {
+        const isLastFromMe = chat.lastMessageSenderId === currentUserId;
+        const isUnread = chat.isRead === false && !isLastFromMe;
+        return (
+          <TooltipProvider key={chat.id}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div
+                  className={`relative cursor-pointer p-1 rounded-full transition-all ${activeChat?.id === chat.id ? "bg-muted scale-110" : "hover:bg-muted/50"}`}
+                  onClick={() => onChatSelect(chat)}
+                >
+                  {chat.isGroup ? (
+                    <div className="h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center">
+                      <Users className="h-6 w-6 text-primary" />
+                    </div>
+                  ) : (
+                    <Avatar className="h-12 w-12">
+                      <AvatarImage src={chat.avatar} alt={chat.name} />
+                      <AvatarFallback>
+                        {chat.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
+                      </AvatarFallback>
+                    </Avatar>
+                  )}
+                  {chat.unread && (
+                    <Badge
+                      variant="default"
+                      className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center"
+                    >
+                      {chat.unread}
+                    </Badge>
+                  )}
+                  {/* Unread dot for collapsed view — only for incoming messages */}
+                  {isUnread && !chat.unread && (
+                    <span className="absolute top-0 right-0 h-3 w-3 rounded-full bg-primary border-2 border-background" />
+                  )}
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p className={isUnread ? "font-bold" : ""}>{chat.name}</p>
+                {chat.tag && (
+                  <p className="text-xs text-muted-foreground">{chat.tag}</p>
+                )}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        );
+      })}
+    </div>
+  );
+};

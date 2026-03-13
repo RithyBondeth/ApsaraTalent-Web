@@ -1,10 +1,10 @@
 import {
-    BellRing,
-    BookMarked,
-    Handshake,
-    Home,
-    MessageCircle,
-    SearchCheck
+  BellRing,
+  BookMarked,
+  Handshake,
+  Home,
+  MessageCircle,
+  SearchCheck,
 } from "lucide-react";
 
 export const sidebarList = [

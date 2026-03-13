@@ -1,22 +1,13 @@
-// src/components/message/ChatInput.tsx
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Paperclip, Send, SmilePlus } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { IChatInputProps } from "./props";
+import { CHAT_TYPING_DEBOUNCE_MS } from "@/utils/constants/app.constant";
 
-interface ChatInputProps {
-  onSendMessage: (content: string) => void;
-  onTyping?: (isTyping: boolean) => void;
-  isDisabled?: boolean;
-}
+export default function ChatInput(props: IChatInputProps) {
+  const { onSendMessage, onTyping, isDisabled = false } = props;
 
-const TYPING_DEBOUNCE_MS = 1500;
-
-const ChatInput = ({
-  onSendMessage,
-  onTyping,
-  isDisabled = false,
-}: ChatInputProps) => {
   const [newMessage, setNewMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -42,7 +33,7 @@ const ChatInput = ({
       if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
       typingTimerRef.current = setTimeout(
         () => onTyping(false),
-        TYPING_DEBOUNCE_MS,
+        CHAT_TYPING_DEBOUNCE_MS,
       );
     } else {
       // Input cleared — stop typing immediately
@@ -106,6 +97,4 @@ const ChatInput = ({
       </Button>
     </div>
   );
-};
-
-export default ChatInput;
+}

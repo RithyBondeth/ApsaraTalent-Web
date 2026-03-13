@@ -3,6 +3,7 @@ import GithubIcon from "@/assets/socials/github.png";
 import GoogleIcon from "@/assets/socials/google.png";
 import LinkedInIcon from "@/assets/socials/linkedin.png";
 
+// Files
 export const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 export const DOCUMENT_SIZE = 5 * 1024 * 1024;
 
@@ -84,6 +85,7 @@ export const locationConstant = [
   "Tbong Khmum",
 ];
 
+// Utils
 export const badgeRandomColorsClass = [
   {
     bg: "bg-blue-100",
@@ -134,3 +136,10 @@ export const badgeRandomColorsClass = [
     text: "text-rose-800",
   },
 ];
+
+// Search
+export const SEARCH_DEBOUNCE_MS = 400;
+
+// Messages
+export const CHAT_TYPING_DEBOUNCE_MS = 1500;
+export const CHAT_REACTION_EMOJIS = ["👍", "❤️", "😂", "😮", "😢", "😡"];

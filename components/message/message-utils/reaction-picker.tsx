@@ -8,18 +8,15 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Smile } from "lucide-react";
+import { CHAT_REACTION_EMOJIS } from "@/utils/constants/app.constant";
 
-interface ReactionPickerProps {
+interface IReactionPickerProps {
   onReact: (emoji: string | null) => void;
   currentReaction?: string;
 }
 
-const EMOJIS = ["👍", "❤️", "😂", "😮", "😢", "😡"];
-
-export const ReactionPicker = ({
-  onReact,
-  currentReaction,
-}: ReactionPickerProps) => {
+export const ReactionPicker = (props: IReactionPickerProps) => {
+  const { onReact, currentReaction } = props;
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -37,7 +34,7 @@ export const ReactionPicker = ({
         className="w-fit p-1 rounded-full shadow-lg border-muted bg-background/95 backdrop-blur-md"
       >
         <div className="flex gap-1">
-          {EMOJIS.map((emoji) => (
+          {CHAT_REACTION_EMOJIS.map((emoji) => (
             <button
               key={emoji}
               onClick={() => onReact(emoji === currentReaction ? null : emoji)}

@@ -23,7 +23,10 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useSearchEmployeeStore } from "@/stores/apis/employee/search-emp.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { yearOfExperienceConstant } from "@/utils/constants/app.constant";
+import {
+  SEARCH_DEBOUNCE_MS,
+  yearOfExperienceConstant,
+} from "@/utils/constants/app.constant";
 import { TAvailability } from "@/utils/types/availability.type";
 import { TLocations } from "@/utils/types/location.type";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -94,7 +97,7 @@ export default function CompanySearchPage() {
 
   // Stable Debounded Function
   const debouncedRunSearch = useMemo(
-    () => debounce(runSearch, 400),
+    () => debounce(runSearch, SEARCH_DEBOUNCE_MS),
     [runSearch],
   );
 

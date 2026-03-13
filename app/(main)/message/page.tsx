@@ -1,13 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import ChatMessages from "@/components/message/message-bubble";
+import { ChatMessages } from "@/components/message";
 import ChatHeader from "@/components/message/message-header";
 import ChatInput from "@/components/message/message-input";
 import ChatSidebar from "@/components/message/message-sidebar";
 import { IChatPreview } from "@/components/message/props";
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
-import { useToast } from "@/hooks/use-toast";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useChatStore } from "@/stores/chat.store";
 import axiosInstance from "@/lib/axios";
@@ -20,7 +18,6 @@ const MessagePageContent = () => {
   const router = useRouter();
   const chatId = searchParams.get("chatId"); // Using this as receiverId
   const currentUser = useGetCurrentUserStore((state) => state.user);
-  const { toast } = useToast();
 
   const {
     connect,

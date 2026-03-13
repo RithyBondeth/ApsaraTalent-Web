@@ -8,6 +8,7 @@ export interface IMessage {
   isRead?: boolean;
   reactions?: Record<string, string>;
 }
+
 export interface IChatPreview {
   id: string; // chatId
   name: string; // Chat display name (user or group)
@@ -19,4 +20,10 @@ export interface IChatPreview {
   tag?: string; // "Applicant" or any custom label
   isRead?: boolean;
   lastMessageSenderId?: string;
+}
+
+export interface IChatMessagesProps {
+  messages: IMessage[];
+  activeChat: IChatPreview;
+  isTyping?: boolean;
 }

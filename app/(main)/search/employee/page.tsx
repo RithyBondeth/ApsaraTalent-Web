@@ -11,11 +11,11 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup } from "@/components/ui/radio-group";
 import RadioGroupItemWithLabel from "@/components/ui/radio-group-item";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
@@ -24,17 +24,20 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useSearchJobStore } from "@/stores/apis/job/search-job.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { yearOfExperienceConstant } from "@/utils/constants/app.constant";
+import {
+  SEARCH_DEBOUNCE_MS,
+  yearOfExperienceConstant,
+} from "@/utils/constants/app.constant";
 import { TAvailability } from "@/utils/types/availability.type";
 import { TLocations } from "@/utils/types/location.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { debounce } from "lodash";
 import {
-    LucideBriefcaseBusiness,
-    LucideCalendarDays,
-    LucideCircleDollarSign,
-    LucideGraduationCap,
-    LucideUsers
+  LucideBriefcaseBusiness,
+  LucideCalendarDays,
+  LucideCircleDollarSign,
+  LucideGraduationCap,
+  LucideUsers,
 } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -103,7 +106,7 @@ export default function EmployeeSearchPage() {
 
   // Stable Debounced Function
   const debouncedRunSearch = useMemo(
-    () => debounce(runSearch, 400),
+    () => debounce(runSearch, SEARCH_DEBOUNCE_MS),
     [runSearch],
   );
 

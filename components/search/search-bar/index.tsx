@@ -1,14 +1,14 @@
 import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
 } from "@/components/ui/select";
 import {
-    availabilityConstant,
-    locationConstant
+  availabilityConstant,
+  locationConstant,
 } from "@/utils/constants/app.constant";
 import { TLocations } from "@/utils/types/location.type";
 import { SelectValue } from "@radix-ui/react-select";
