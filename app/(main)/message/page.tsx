@@ -30,6 +30,7 @@ const MessagePageContent = () => {
     isConnected,
     isTyping,
     setTyping,
+    markAsRead,
   } = useChatStore();
 
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -95,6 +96,7 @@ const MessagePageContent = () => {
               chat.sendAt || chat.sentAt || chat.createdAt || Date.now(),
             ).toLocaleTimeString(),
             isRead: chat.isRead,
+            lastMessageSenderId: chat.sender?.id,
           });
         }
       });
@@ -161,8 +163,16 @@ const MessagePageContent = () => {
                 timestamp: new Date(msg.sentAt || msg.createdAt || Date.now()),
                 isMe: msg.sender?.id === currentUserId,
                 isRead: msg.isRead,
+                reactions: msg.reactions || {},
               }))
               .reverse(),
+          });
+
+          // Auto-mark all unread incoming messages as read
+          response.forEach((msg: any) => {
+            if (!msg.isRead && msg.sender?.id !== currentUser?.id) {
+              markAsRead(msg.id, msg.sender?.id);
+            }
           });
         }
       },
@@ -213,6 +223,7 @@ const MessagePageContent = () => {
         chats={chats}
         activeChat={activeChat}
         isOpen={isSidebarOpen}
+        currentUserId={currentUser?.id}
         onChatSelect={(chat) => {
           router.push(`/message?chatId=${chat.id}`);
         }}

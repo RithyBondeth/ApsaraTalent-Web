@@ -19,7 +19,12 @@ interface ChatState {
   sendMessage: (receiverId: string, content: string, type?: string) => void;
   getRecentChats: () => void;
   getChatHistory: (userId2: string) => void;
-  markAsRead: (messageId: string) => void;
+  markAsRead: (messageId: string, senderId: string) => void;
+  reactToMessage: (
+    messageId: string,
+    receiverId: string,
+    emoji: string | null,
+  ) => void;
   setTyping: (receiverId: string, isTyping: boolean) => void;
 }
 
@@ -68,6 +73,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         timestamp: new Date(message.timestamp),
         isRead: message.isRead,
         isMe: false, // Inbound message
+        reactions: message.reactions || {},
       };
 
       set((state) => ({
@@ -79,6 +85,26 @@ export const useChatStore = create<ChatState>((set, get) => ({
     socket.on("userTyping", (data: { userId: string; isTyping: boolean }) => {
       set((state) => ({
         isTyping: { ...state.isTyping, [data.userId]: data.isTyping },
+      }));
+    });
+
+    socket.on(
+      "messageReaction",
+      (data: { messageId: string; reactions: Record<string, string> }) => {
+        set((state) => ({
+          currentMessages: state.currentMessages.map((m) =>
+            m.id === data.messageId ? { ...m, reactions: data.reactions } : m,
+          ),
+        }));
+      },
+    );
+
+    socket.on("messageRead", (data: { messageId: string }) => {
+      // Update the isRead flag on the message the recipient just saw
+      set((state) => ({
+        currentMessages: state.currentMessages.map((m) =>
+          m.id === data.messageId ? { ...m, isRead: true } : m,
+        ),
       }));
     });
 
@@ -152,10 +178,21 @@ export const useChatStore = create<ChatState>((set, get) => ({
     );
   },
 
-  markAsRead: (messageId: string) => {
+  markAsRead: (messageId: string, senderId: string) => {
     const { socket } = get();
     if (socket?.connected) {
-      socket.emit("markAsRead", messageId);
+      socket.emit("markAsRead", { messageId, senderId });
+    }
+  },
+
+  reactToMessage: (
+    messageId: string,
+    receiverId: string,
+    emoji: string | null,
+  ) => {
+    const { socket } = get();
+    if (socket?.connected) {
+      socket.emit("react", { messageId, receiverId, emoji });
     }
   },
 

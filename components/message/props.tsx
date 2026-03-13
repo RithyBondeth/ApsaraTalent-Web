@@ -6,6 +6,7 @@ export interface IMessage {
   timestamp: Date | string; // NestJS sends ISO strings or Date objects
   isMe?: boolean; // frontend only
   isRead?: boolean;
+  reactions?: Record<string, string>;
 }
 export interface IChatPreview {
   id: string; // chatId
@@ -17,4 +18,5 @@ export interface IChatPreview {
   isGroup?: boolean;
   tag?: string; // "Applicant" or any custom label
   isRead?: boolean;
+  lastMessageSenderId?: string;
 }
