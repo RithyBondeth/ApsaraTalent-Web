@@ -8,9 +8,11 @@ import { parseMessageDate } from "@/utils/date";
 /**
  * Extends the base IChatMessagesProps with:
  *  - onReply: callback the parent uses to capture which message is being replied to
+ *  - onEdit:  callback the parent uses to save an inline edit (messageId, newContent)
  */
 interface ChatMessagesProps extends IChatMessagesProps {
   onReply?: (message: IMessage) => void;
+  onEdit?: (messageId: string, newContent: string) => void;
 }
 
 export const ChatMessages = ({
@@ -18,6 +20,7 @@ export const ChatMessages = ({
   activeChat,
   isTyping,
   onReply,
+  onEdit,
 }: ChatMessagesProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -81,6 +84,7 @@ export const ChatMessages = ({
                     activeChat={activeChat}
                     isLastSeen={idx === lastSeenIdx}
                     onReply={onReply} // Pass reply handler so each bubble can trigger it
+                    onEdit={onEdit}   // Pass edit handler so each bubble can confirm edits
                   />
                 </React.Fragment>
               );

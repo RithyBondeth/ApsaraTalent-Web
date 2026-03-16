@@ -49,6 +49,7 @@ interface ChatState {
     content: string,
     type?: string,
     replyTo?: IMessage["replyTo"] | null,
+    attachment?: { url: string; type: "image" | "document"; filename: string } | null,
   ) => void;
   getRecentChats: () => void;
   getChatHistory: (userId2: string) => void;
@@ -67,6 +68,13 @@ interface ChatState {
    * back to both participants and the store listener updates the local list.
    */
   deleteMessage: (messageId: string, receiverId: string) => void;
+
+  /**
+   * Edit the text content of a message the current user sent.
+   * Emits 'editMessage' to the socket; the server broadcasts 'messageEdited'
+   * back to both participants and the store listener updates content + isEdited flag.
+   */
+  editMessage: (messageId: string, receiverId: string, newContent: string) => void;
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -195,12 +203,18 @@ export const useChatStore = create<ChatState>((set, get) => ({
               isMe: true,
               reactions: message.reactions || {},
               isDeleted: message.isDeleted ?? false,
+              isEdited: message.isEdited ?? false,
               // Preserve the replyTo object that was already on the optimistic message
               // (built from the live replyTarget in MessageInput). Only resolve from
               // the ID as a fallback if the optimistic message somehow lost it.
               replyTo: updatedMessages[optimisticIndex].replyTo
                 ?? resolveReplyTo(message.replyToId),
               deliveryStatus: "sent", // Server confirmed → upgrade from 'sending'
+              // Preserve optimistic attachment fields (already shown locally);
+              // the server echoes back the same URL so no flicker.
+              attachment: message.attachment ?? updatedMessages[optimisticIndex].attachment ?? null,
+              attachmentType: message.attachmentType ?? updatedMessages[optimisticIndex].attachmentType,
+              attachmentFilename: message.attachmentFilename ?? updatedMessages[optimisticIndex].attachmentFilename,
             };
             set({ currentMessages: updatedMessages });
             return;
@@ -221,6 +235,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
             message.senderId === "me",
           reactions: message.reactions || {},
           isDeleted: message.isDeleted ?? false,
+          isEdited: message.isEdited ?? false,
           // Resolve replyTo from loaded messages using the UUID the server sent.
           // Previously we stored the raw UUID string here, which caused the
           // quote block header (senderName) to be undefined and appear blank.
@@ -228,6 +243,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
           // New incoming message from the partner has no delivery state
           // (delivery state is only relevant for outgoing messages)
           deliveryStatus: undefined,
+          // Attachment fields from the server payload
+          attachment: message.attachment ?? null,
+          attachmentType: message.attachmentType ?? undefined,
+          attachmentFilename: message.attachmentFilename ?? undefined,
         };
 
         set({ currentMessages: [...currentMessages, formattedMsg] });
@@ -320,6 +339,27 @@ export const useChatStore = create<ChatState>((set, get) => ({
       }
     });
 
+    // ── Edit broadcast ───────────────────────────────────────────────────────
+    // Server broadcasts 'messageEdited' to both sender and receiver.
+    // We update the local message's content and mark isEdited=true so the
+    // "(edited)" label appears without needing to re-fetch history.
+    socket.on(
+      "messageEdited",
+      (data: { messageId: string; newContent: string; isEdited: boolean }) => {
+        const { currentMessages } = get();
+        const exists = currentMessages.some((m) => m.id === data.messageId);
+        if (exists) {
+          set({
+            currentMessages: currentMessages.map((m) =>
+              m.id === data.messageId
+                ? { ...m, content: data.newContent, isEdited: true }
+                : m,
+            ),
+          });
+        }
+      },
+    );
+
     socket.on("error", (error: any) => {
       console.error("Socket error:", error?.message || error || "Unknown");
     });
@@ -344,7 +384,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   /**
-   * Send a message with optional reply-to context.
+   * Send a message with optional reply-to context and/or file attachment.
    *
    * Flow:
    *  1. An optimistic message is inserted immediately into currentMessages
@@ -353,12 +393,16 @@ export const useChatStore = create<ChatState>((set, get) => ({
    *  3. We swap the temp ID for the real ID and upgrade deliveryStatus → 'sent'.
    *     (If the server already broadcast 'newMessage' first, the optimistic
    *      entry is removed to avoid a duplicate.)
+   *
+   * Attachments are pre-uploaded via POST /api/chat/upload before this is called.
+   * The `attachment` param holds the server's response { url, type, filename }.
    */
   sendMessage: (
     receiverId: string,
     content: string,
     type = "text",
     replyTo?: IMessage["replyTo"] | null,
+    attachment?: { url: string; type: "image" | "document"; filename: string } | null,
   ) => {
     const { socket, currentMessages, me } = get();
     if (!socket?.connected) return;
@@ -374,18 +418,27 @@ export const useChatStore = create<ChatState>((set, get) => ({
       isRead: false,
       deliveryStatus: "sending", // Clock icon — waiting for server ack
       replyTo: replyTo ?? undefined, // Inline quote block (if replying)
+      // Attachment fields — shown immediately via local preview URL while ack awaits
+      attachment: attachment?.url ?? null,
+      attachmentType: attachment?.type ?? undefined,
+      attachmentFilename: attachment?.filename ?? undefined,
     };
 
     set({ currentMessages: [...currentMessages, optimisticMsg] });
 
-    // Emit to server; replyToId carries the parent UUID so the DB stores the link
+    // Emit to server; replyToId carries the parent UUID so the DB stores the link.
+    // attachment carries the pre-uploaded URL so the server saves it to the DB.
+    // Derive messageType from the attachment — the server uses this to set the
+    // messageType enum column which we later read back as attachmentType.
+    const resolvedType = attachment?.type ?? type;
     socket.emit(
       "sendMessage",
       {
         receiverId,
         content,
-        type,
+        type: resolvedType,
         replyToId: replyTo?.id ?? null,
+        attachment: attachment?.url ?? null,
       },
       (response: any) => {
         const realId = response?.message?.id;
@@ -584,7 +637,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
               isRead: msg.isRead,
               reactions: msg.reactions || {},
               isDeleted: msg.isDeleted ?? false,
+              isEdited: msg.isEdited ?? false,
               deliveryStatus,
+              // Attachment fields — persisted URL from the server
+              attachment: msg.attachment ?? null,
+              attachmentType: msg.attachmentType as IMessage["attachmentType"] ?? undefined,
+              attachmentFilename: msg.attachmentFilename ?? undefined,
               // replyTo is built below if replyToId is present and resolvable from history
               // For now we attach a minimal placeholder; a future enhancement could
               // resolve the full preview by looking up msg.replyToId in the history array.
@@ -740,5 +798,30 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
     // Tell the server to soft-delete and broadcast to both participants
     socket.emit("deleteMessage", { messageId, receiverId });
+  },
+
+  /**
+   * Edit the text content of a message the current user sent.
+   *
+   * The store does an optimistic update immediately:
+   *  1. The local message content is updated and isEdited=true is set so the
+   *     "(edited)" label appears instantly.
+   *  2. The socket emits 'editMessage' to the server.
+   *  3. The server broadcasts 'messageEdited' back to both participants.
+   *     The socket listener in connect() handles the broadcast (idempotent update).
+   */
+  editMessage: (messageId: string, receiverId: string, newContent: string) => {
+    const { socket, currentMessages } = get();
+    if (!socket?.connected) return;
+
+    // Optimistic update: show new content + "(edited)" label immediately
+    set({
+      currentMessages: currentMessages.map((m) =>
+        m.id === messageId ? { ...m, content: newContent, isEdited: true } : m,
+      ),
+    });
+
+    // Tell the server to update and broadcast to both participants
+    socket.emit("editMessage", { messageId, receiverId, newContent });
   },
 }));

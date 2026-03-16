@@ -51,6 +51,10 @@ const MessagePageContent = () => {
     markAsRead,
   } = useChatStore();
 
+  // Keep stable references to store actions (avoids re-render loops in callbacks)
+  const sendMessage = useChatStore((s) => s.sendMessage);
+  const editMessageAction = useChatStore((s) => s.editMessage);
+
   // Desktop: sidebar open by default. Mobile: always false (overlay takes over).
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   // Mobile overlay open state
@@ -119,14 +123,24 @@ const MessagePageContent = () => {
   // ── Handlers ─────────────────────────────────────────────────────────────
 
   /**
-   * Send a message (with optional reply-to context).
+   * Send a message (with optional reply-to context and/or file attachment).
    * The reply-to comes from ChatInput which builds it from replyTarget.
+   * The attachment is pre-uploaded by ChatInput via POST /api/chat/upload.
    */
   const handleSendMessage = (
     text: string,
     replyTo?: IMessage["replyTo"] | null,
+    attachment?: { url: string; type: "image" | "document"; filename: string } | null,
   ) => {
-    if (chatId) useChatStore.getState().sendMessage(chatId, text, "text", replyTo);
+    if (chatId) sendMessage(chatId, text, "text", replyTo, attachment);
+  };
+
+  /**
+   * Edit an existing message's text content.
+   * Called by MessageBubble when the user confirms an inline edit.
+   */
+  const handleEditMessage = (messageId: string, newContent: string) => {
+    if (chatId) editMessageAction(messageId, chatId, newContent);
   };
 
   const handleTyping = (typing: boolean) => {
@@ -248,6 +262,7 @@ const MessagePageContent = () => {
                 activeChat={activeChat}
                 isTyping={isTyping[activeChat.id] || false}
                 onReply={(msg) => setReplyTarget(msg)} // ← reply handler
+                onEdit={handleEditMessage}             // ← edit handler
               />
             )}
 

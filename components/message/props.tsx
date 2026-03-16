@@ -25,29 +25,50 @@ export interface IMessage {
   isDeleted?: boolean;
 
   /**
+   * Edit flag (synced from backend isEdited column).
+   * When true the bubble shows a small "(edited)" label so both parties know
+   * the original wording may have changed.
+   */
+  isEdited?: boolean;
+
+  /**
    * Delivery state (frontend-only, not persisted).
    *
    * State machine:
    *  'sending' → optimistic message; not yet ack'd by server  (clock icon ⏳)
    *  'sent'    → server saved the message                      (single ✓)
    *  'seen'    → recipient opened the chat                     (double ✓✓ blue)
-   *
-   * Absence (undefined) is treated as 'sent' for history messages loaded from DB.
    */
   deliveryStatus?: "sending" | "sent" | "seen";
 
   /**
    * Reply/quote reference.
    * When set, the bubble renders an inline quote block above the message text.
-   * We store only the minimal preview data — we do NOT refetch the original
-   * message, so even deleted parents show "[Deleted message]" gracefully.
    */
   replyTo?: {
-    id: string; // Original message ID (used for future scroll-to feature)
-    content: string; // Truncated preview of the quoted text
-    senderName: string; // Display name of the original sender
-    isDeleted?: boolean; // True if the original was deleted after the reply
+    id: string;
+    content: string;
+    senderName: string;
+    isDeleted?: boolean;
   };
+
+  /**
+   * Attachment URL (image or document), stored in the DB and served statically.
+   * When set, the bubble renders it below the text content.
+   */
+  attachment?: string | null;
+
+  /**
+   * Attachment media type — derived from the MIME type at upload time.
+   * 'image'    → renders as an inline <img> preview.
+   * 'document' → renders as a download link with a file icon.
+   */
+  attachmentType?: "image" | "document";
+
+  /**
+   * Original filename of the attachment (shown as the download link label).
+   */
+  attachmentFilename?: string;
 }
 
 export interface IChatPreview {
@@ -63,8 +84,6 @@ export interface IChatPreview {
   lastMessageSenderId?: string;
   /**
    * Live online status, updated via 'userStatus' socket event.
-   * Stored inside the IChatPreview so both the sidebar and the chat header
-   * can read the same value without a separate subscription.
    */
   isOnline?: boolean;
 }
@@ -73,4 +92,5 @@ export interface IChatMessagesProps {
   messages: IMessage[];
   activeChat: IChatPreview;
   isTyping?: boolean;
+  onReply?: (message: IMessage) => void;
 }
