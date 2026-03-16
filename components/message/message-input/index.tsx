@@ -131,8 +131,8 @@ export default function ChatInput(props: IChatInputProps) {
             <p className="text-xs text-muted-foreground leading-snug truncate">
               {replyTarget.isDeleted
                 ? "🚫 This message was deleted"
-                : replyTarget.content.slice(0, 100) +
-                  (replyTarget.content.length > 100 ? "…" : "")}
+                : (replyTarget.content ?? "").slice(0, 100) +
+                  ((replyTarget.content ?? "").length > 100 ? "…" : "")}
             </p>
           </div>
           {/* ✕ dismiss button — calls onCancelReply so the parent clears replyTarget */}

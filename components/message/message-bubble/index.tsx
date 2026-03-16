@@ -217,8 +217,8 @@ export default function MessageBubble(props: IMessageBubbleProps) {
                 <p className="leading-snug line-clamp-2">
                   {message.replyTo.isDeleted
                     ? "🚫 This message was deleted"
-                    : message.replyTo.content.slice(0, 80) +
-                      (message.replyTo.content.length > 80 ? "…" : "")}
+                    : (message.replyTo.content ?? "").slice(0, 80) +
+                      ((message.replyTo.content ?? "").length > 80 ? "…" : "")}
                 </p>
               </div>
             )}
