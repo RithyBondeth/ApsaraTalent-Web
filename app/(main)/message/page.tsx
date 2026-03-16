@@ -28,6 +28,8 @@ const MessagePageContent = () => {
     setActiveChat,
     getRecentChats,
     isConnected,
+    isChatsLoaded,
+    isHistoryLoading,
     setTyping,
     markAsRead,
   } = useChatStore();
@@ -43,53 +45,39 @@ const MessagePageContent = () => {
     return () => disconnect();
   }, [connect, disconnect, currentUser]);
 
-  // 2. Synchronization Logic
+  // 2. URL -> Store sync: runs only when chatId or the chats list changes.
+  // Intentionally excludes `activeChat` from deps to avoid infinite loops.
   useEffect(() => {
-    if (!currentUser) return;
+    if (!currentUser || !isConnected) return;
 
-    // Refresh sidebar on load
-    if (activeChats.length === 0) getRecentChats();
-
-    // URL -> Store Sync
     if (chatId) {
-      // Find the chat in the sidebar list (if loaded)
+      // Only switch if we're not already on this chat
+      if (activeChat?.id.toLowerCase() === chatId.toLowerCase()) return;
+
+      // Find the richer sidebar entry first
       const chatFromSidebar = activeChats.find(
         (c) => c.id.toLowerCase() === chatId.toLowerCase(),
       );
 
       if (chatFromSidebar) {
-        // Sync with existing sidebar entry (preferred)
-        if (!activeChat || activeChat.id !== chatFromSidebar.id) {
-          setActiveChat(chatFromSidebar);
-        }
-      } else {
-        // Fallback: Initialize with skeleton if not in sidebar or sidebar still loading
-        // This ensures the chat window opens immediately
-        if (
-          !activeChat ||
-          activeChat.id.toLowerCase() !== chatId.toLowerCase()
-        ) {
-          setActiveChat({
-            id: chatId,
-            name: "Loading...",
-            avatar: "",
-            preview: "",
-            time: "",
-          });
-        }
+        setActiveChat(chatFromSidebar);
+      } else if (isChatsLoaded) {
+        // Sidebar is fully loaded but this chatId isn't in it —
+        // open with a skeleton header; getChatHistory will fill in the name
+        setActiveChat({
+          id: chatId,
+          name: "Loading...",
+          avatar: "",
+          preview: "",
+          time: "",
+        });
       }
+      // If !isChatsLoaded yet, wait for the next render when sidebar arrives
     } else if (activeChat) {
-      // Clear selection if no chatId in URL
       setActiveChat(null);
     }
-  }, [
-    chatId,
-    activeChats,
-    activeChat,
-    currentUser,
-    getRecentChats,
-    setActiveChat,
-  ]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chatId, activeChats, isChatsLoaded, isConnected, currentUser]);
 
   const handleSendMessage = (text: string) => {
     if (chatId) useChatStore.getState().sendMessage(chatId, text);
@@ -99,7 +87,7 @@ const MessagePageContent = () => {
     if (chatId) setTyping(chatId, typing);
   };
 
-  // Mark incoming messages as read when the chat is open
+  // Mark the last incoming unread message as read when the chat is open
   useEffect(() => {
     if (!activeChat || !currentMessages.length) return;
     const lastUnread = [...currentMessages]
@@ -108,7 +96,8 @@ const MessagePageContent = () => {
     if (lastUnread) markAsRead(lastUnread.id, lastUnread.senderId);
   }, [currentMessages, activeChat, markAsRead]);
 
-  const isLoading = !isConnected || (activeChats.length === 0 && !chatId);
+  // Show full-page spinner only while the initial socket connection is being established
+  const isLoading = !isConnected || !isChatsLoaded;
 
   if (isLoading) {
     return (
@@ -137,11 +126,17 @@ const MessagePageContent = () => {
             isSidebarOpen={isSidebarOpen}
             onToggleSidebar={toggleSidebar}
           />
-          <ChatMessages
-            messages={currentMessages}
-            activeChat={activeChat}
-            isTyping={isTyping[activeChat.id] || false}
-          />
+          {isHistoryLoading ? (
+            <div className="flex-1 flex items-center justify-center">
+              <ApsaraLoadingSpinner size={48} loop />
+            </div>
+          ) : (
+            <ChatMessages
+              messages={currentMessages}
+              activeChat={activeChat}
+              isTyping={isTyping[activeChat.id] || false}
+            />
+          )}
           <ChatInput onSendMessage={handleSendMessage} onTyping={handleTyping} />
         </div>
       ) : (

@@ -25,6 +25,8 @@ const resolveProfile = (user: any) => {
 interface ChatState {
   socket: SocketInstance | null;
   isConnected: boolean;
+  isChatsLoaded: boolean; // true once getRecentChats has returned (even if empty list)
+  isHistoryLoading: boolean; // true while getChatHistory is in-flight
   me: any | null; // Tracks current user profile
   activeChat: IChatPreview | null; // Tracks current conversation
   activeChats: IChatPreview[]; // List for sidebar
@@ -53,6 +55,8 @@ interface ChatState {
 export const useChatStore = create<ChatState>((set, get) => ({
   socket: null,
   isConnected: false,
+  isChatsLoaded: false,
+  isHistoryLoading: false,
   me: null,
   activeChat: null,
   activeChats: [],
@@ -63,7 +67,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
   setMe: (user: any) => set({ me: user }),
 
   connect: (user?: any) => {
+    // Update `me` before anything else so callbacks have user context
     if (user) set({ me: user });
+
+    // Don't create a duplicate socket
     if (get().socket?.connected || get().isConnected) return;
 
     const socketUrl =
@@ -79,13 +86,21 @@ export const useChatStore = create<ChatState>((set, get) => ({
     } as any);
 
     socket.on("connect", () => {
+      // Set socket AND connected in one atomic update so getRecentChats
+      // doesn't run while socket is still null in state
       set({ isConnected: true, socket });
-      // Identify this connection for rooms and fetch initial lists
+      // Fetch sidebar + unread right after connection is stable
       get().getRecentChats();
       get().getUnreadCount();
     });
 
-    socket.on("disconnect", () => {
+    socket.on("connect_error", (err: Error) => {
+      console.error("[Socket] Connection error:", err.message);
+      set({ isConnected: false });
+    });
+
+    socket.on("disconnect", (reason: string) => {
+      console.warn("[Socket] Disconnected:", reason);
       set({ isConnected: false });
     });
 
@@ -216,6 +231,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
       set({
         socket: null,
         isConnected: false,
+        isChatsLoaded: false,
+        isHistoryLoading: false,
         activeChats: [],
         currentMessages: [],
       });
@@ -275,58 +292,74 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   getRecentChats: () => {
     const { socket, me } = get();
-    if (socket?.connected && me) {
-      socket.emit("getRecentChats", null, (chats: any[]) => {
-        if (!Array.isArray(chats)) return;
-
-        const currentUserId = me.id;
-        const seenPartners = new Map<string, IChatPreview>();
-
-        chats.forEach((chat: any) => {
-          // Robust ID resolution: handle both nested objects and scalar IDs
-          const senderId =
-            typeof chat.sender === "string"
-              ? chat.sender
-              : chat.sender?.id || chat.senderId;
-          const receiverId =
-            typeof chat.receiver === "string"
-              ? chat.receiver
-              : chat.receiver?.id || chat.receiverId;
-
-          const isSenderMe =
-            senderId?.toLowerCase() === currentUserId.toLowerCase();
-          const otherUser = isSenderMe ? chat.receiver : chat.sender;
-
-          // Fallback to raw ID strings if relations failed to load
-          const partnerId = isSenderMe ? receiverId : senderId;
-
-          if (partnerId && !seenPartners.has(partnerId)) {
-            const { name, avatar } = resolveProfile(otherUser);
-            seenPartners.set(partnerId, {
-              id: partnerId,
-              name,
-              avatar,
-              preview: chat.content,
-              time: formatSidebarTime(
-                chat.sentAt || chat.sendAt || chat.createdAt || Date.now(),
-              ),
-              isRead: chat.isRead,
-              lastMessageSenderId: senderId,
-            });
-          }
-        });
-
-        set({ activeChats: Array.from(seenPartners.values()) });
-      });
+    if (!socket?.connected || !me) {
+      // Mark chats as loaded even if we can't fetch (no user / not connected)
+      // so the UI doesn't block on loading indefinitely
+      set({ isChatsLoaded: true });
+      return;
     }
+
+    socket.emit("getRecentChats", null, (chats: any[]) => {
+      // Always mark loaded so the page stops showing the spinner
+      if (!Array.isArray(chats)) {
+        set({ isChatsLoaded: true });
+        return;
+      }
+
+      const currentUserId = me.id;
+      const seenPartners = new Map<string, IChatPreview>();
+
+      chats.forEach((chat: any) => {
+        // Robust ID resolution: handle both nested objects and scalar IDs
+        const senderId =
+          typeof chat.sender === "string"
+            ? chat.sender
+            : chat.sender?.id || chat.senderId;
+        const receiverId =
+          typeof chat.receiver === "string"
+            ? chat.receiver
+            : chat.receiver?.id || chat.receiverId;
+
+        const isSenderMe =
+          senderId?.toLowerCase() === currentUserId.toLowerCase();
+        const otherUser = isSenderMe ? chat.receiver : chat.sender;
+
+        // Fallback to raw ID strings if relations failed to load
+        const partnerId = isSenderMe ? receiverId : senderId;
+
+        if (partnerId && !seenPartners.has(partnerId)) {
+          const { name, avatar } = resolveProfile(otherUser);
+          seenPartners.set(partnerId, {
+            id: partnerId,
+            name,
+            avatar,
+            preview: chat.content,
+            time: formatSidebarTime(
+              chat.sentAt || chat.sendAt || chat.createdAt || Date.now(),
+            ),
+            isRead: chat.isRead,
+            lastMessageSenderId: senderId,
+          });
+        }
+      });
+
+      set({
+        activeChats: Array.from(seenPartners.values()),
+        isChatsLoaded: true,
+      });
+    });
   },
 
   getChatHistory: (userId2: string) => {
-    const { socket, me, activeChat } = get();
+    const { socket, me } = get();
     if (!socket?.connected || !me) return;
+
+    // Signal loading so the message area shows a spinner instead of blank
+    set({ isHistoryLoading: true, currentMessages: [] });
+
     socket.emit(
       "getChatHistory",
-      { userId2, limit: 100 },
+      { userId2, limit: 50 },
       (
         res:
           | { messages: any[]; partnerId: string; partnerProfile: any }
@@ -337,7 +370,20 @@ export const useChatStore = create<ChatState>((set, get) => ({
         const resolvedPartnerId = Array.isArray(res) ? null : res?.partnerId;
         const partnerProfile = Array.isArray(res) ? null : res?.partnerProfile;
 
+        // Guard: if the user switched chats while request was in-flight, discard
+        const currentActiveChat = get().activeChat;
+        if (
+          currentActiveChat &&
+          currentActiveChat.id.toLowerCase() !== userId2.toLowerCase() &&
+          resolvedPartnerId &&
+          currentActiveChat.id.toLowerCase() !== resolvedPartnerId.toLowerCase()
+        ) {
+          set({ isHistoryLoading: false });
+          return;
+        }
+
         if (Array.isArray(history)) {
+          const meId = get().me?.id || me.id;
           const formatted = history.map((msg) => {
             const senderId =
               typeof msg.sender === "string"
@@ -347,37 +393,35 @@ export const useChatStore = create<ChatState>((set, get) => ({
             return {
               id: msg.id,
               senderId,
+              senderName: msg.senderName,
               content: msg.content,
               timestamp: parseMessageDate(msg.sentAt || msg.createdAt),
-              isMe: senderId?.toLowerCase() === me.id.toLowerCase(),
+              isMe: senderId?.toLowerCase() === meId.toLowerCase(),
               isRead: msg.isRead,
               reactions: msg.reactions || {},
             };
           });
 
-          // Normalization & Profile Resolution
-          if (activeChat) {
-            const isDifferentId =
-              resolvedPartnerId && activeChat.id !== resolvedPartnerId;
-            const isLoading = activeChat.name === "Loading...";
+          // Update chat header profile if it was in skeleton "Loading..." state
+          const latestActiveChat = get().activeChat;
+          const isLoadingName = latestActiveChat?.name === "Loading...";
 
-            if (isDifferentId || isLoading) {
-              const { name, avatar } = resolveProfile(partnerProfile);
-              set({
-                activeChat: {
-                  ...activeChat,
-                  id: resolvedPartnerId || activeChat.id,
-                  name: isLoading ? name : activeChat.name,
-                  avatar: isLoading ? avatar : activeChat.avatar,
-                },
-                currentMessages: formatted,
-              });
-            } else {
-              set({ currentMessages: formatted });
-            }
+          if (latestActiveChat && isLoadingName && partnerProfile) {
+            const { name, avatar } = resolveProfile(partnerProfile);
+            set({
+              activeChat: {
+                ...latestActiveChat,
+                name,
+                avatar,
+              },
+              currentMessages: formatted,
+              isHistoryLoading: false,
+            });
           } else {
-            set({ currentMessages: formatted });
+            set({ currentMessages: formatted, isHistoryLoading: false });
           }
+        } else {
+          set({ isHistoryLoading: false });
         }
       },
     );
@@ -395,9 +439,18 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   setActiveChat: (chat: IChatPreview | null) => {
+    const prevChat = get().activeChat;
+    // Only fetch history when the chat actually changes to a different partner
+    const isNewChat =
+      chat && (!prevChat || prevChat.id.toLowerCase() !== chat.id.toLowerCase());
+
     set({ activeChat: chat });
-    if (chat) get().getChatHistory(chat.id);
-    else set({ currentMessages: [] });
+
+    if (isNewChat) {
+      get().getChatHistory(chat!.id);
+    } else if (!chat) {
+      set({ currentMessages: [], isHistoryLoading: false });
+    }
   },
 
   markAsRead: (messageId: string, senderId: string) => {
