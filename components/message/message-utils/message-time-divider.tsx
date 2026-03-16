@@ -1,29 +1,11 @@
-export const MessageTimeDivider = ({
+import { getDateDividerLabel } from "../../../utils/date";
+
+export default function MessageTimeDivider({
   timestamp,
 }: {
   timestamp: Date | string;
-}) => {
-  const date = timestamp instanceof Date ? timestamp : new Date(timestamp);
-  if (isNaN(date.getTime())) return null;
-
-  const now = new Date();
-  const isToday = date.toDateString() === now.toDateString();
-  const yesterday = new Date();
-  yesterday.setDate(now.getDate() - 1);
-  const isYesterday = date.toDateString() === yesterday.toDateString();
-
-  let label = "";
-  if (isToday) {
-    label = "Today";
-  } else if (isYesterday) {
-    label = "Yesterday";
-  } else {
-    label = date.toLocaleDateString([], {
-      month: "short",
-      day: "numeric",
-      year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
-    });
-  }
+}) {
+  const label = getDateDividerLabel(timestamp);
 
   return (
     <div className="flex items-center gap-4 my-8">
@@ -34,4 +16,4 @@ export const MessageTimeDivider = ({
       <div className="flex-1 h-[1px] bg-muted-foreground/10" />
     </div>
   );
-};
+}
