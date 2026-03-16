@@ -18,8 +18,7 @@ import { Button } from "@/components/ui/button";
 // ─── URL Detection ───────────────────────────────────────────────────────────
 // Matches http/https URLs and bare www. addresses in text.
 // Used to auto-linkify message content.
-const URL_REGEX =
-  /(?:https?:\/\/|www\.)[^\s/$.?#].[^\s]*/gi;
+const URL_REGEX = /(?:https?:\/\/|www\.)[^\s/$.?#].[^\s]*/gi;
 
 /**
  * Splits `text` into segments of plain text and detected URLs.
@@ -417,9 +416,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
       >
         {formatMessageTime(message.timestamp)}
         {/* Delivery icon only for outgoing (isMe) messages */}
-        {message.isMe && (
-          <DeliveryIcon status={message.deliveryStatus} />
-        )}
+        {message.isMe && <DeliveryIcon status={message.deliveryStatus} />}
       </div>
 
       {/* ── Legacy "Seen" indicator ───────────────────────────────────────── */}

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import io from "socket.io-client";
 import { create } from "zustand";
 import { IChatPreview, IMessage } from "@/components/message/props";
@@ -133,6 +132,27 @@ export const useChatStore = create<ChatState>((set, get) => ({
         me,
       } = get();
 
+      // Helper: resolve the replyTo preview object from the current message list.
+      // The server sends replyToId (a plain UUID); we look up the parent message
+      // in the already-loaded currentMessages to get content + senderName.
+      // If the parent isn't loaded yet, we fall back to a minimal placeholder
+      // (id only) so the quote block can still render something.
+      const resolveReplyTo = (replyToId: string | null | undefined): IMessage["replyTo"] => {
+        if (!replyToId) return undefined;
+        const parent = currentMessages.find((m) => m.id === replyToId);
+        if (parent) {
+          return {
+            id: parent.id,
+            content: parent.isDeleted ? "This message was deleted" : parent.content,
+            senderName: parent.senderName || (parent.isMe ? "You" : ""),
+            isDeleted: parent.isDeleted,
+          };
+        }
+        // Parent not in loaded history — return minimal placeholder so at least
+        // the quote block frame renders. Content will be empty string (safe after ?? fix).
+        return { id: replyToId, content: "", senderName: "", isDeleted: false };
+      };
+
       // Always update sidebar/unread regardless of active chat
       getRecentChats();
       getUnreadCount();
@@ -175,7 +195,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
               isMe: true,
               reactions: message.reactions || {},
               isDeleted: message.isDeleted ?? false,
-              replyToId: message.replyToId ?? null,
+              // Preserve the replyTo object that was already on the optimistic message
+              // (built from the live replyTarget in MessageInput). Only resolve from
+              // the ID as a fallback if the optimistic message somehow lost it.
+              replyTo: updatedMessages[optimisticIndex].replyTo
+                ?? resolveReplyTo(message.replyToId),
               deliveryStatus: "sent", // Server confirmed → upgrade from 'sending'
             };
             set({ currentMessages: updatedMessages });
@@ -197,7 +221,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
             message.senderId === "me",
           reactions: message.reactions || {},
           isDeleted: message.isDeleted ?? false,
-          replyToId: message.replyToId ?? null,
+          // Resolve replyTo from loaded messages using the UUID the server sent.
+          // Previously we stored the raw UUID string here, which caused the
+          // quote block header (senderName) to be undefined and appear blank.
+          replyTo: resolveReplyTo(message.replyToId),
           // New incoming message from the partner has no delivery state
           // (delivery state is only relevant for outgoing messages)
           deliveryStatus: undefined,
@@ -483,7 +510,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 })),
                 // Patch activeChat header too if it's one of the queried IDs
                 activeChat:
-                  state.activeChat && onlineMap[state.activeChat.id] !== undefined
+                  state.activeChat &&
+                  onlineMap[state.activeChat.id] !== undefined
                     ? {
                         ...state.activeChat,
                         isOnline: onlineMap[state.activeChat.id],
@@ -650,9 +678,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
             const isOnline = onlineMap[chat!.id] ?? false;
             set((state) => ({
               onlineUsers: { ...state.onlineUsers, [chat!.id]: isOnline },
-              activeChat: state.activeChat?.id === chat!.id
-                ? { ...state.activeChat, isOnline }
-                : state.activeChat,
+              activeChat:
+                state.activeChat?.id === chat!.id
+                  ? { ...state.activeChat, isOnline }
+                  : state.activeChat,
               activeChats: state.activeChats.map((c) =>
                 c.id === chat!.id ? { ...c, isOnline } : c,
               ),

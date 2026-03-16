@@ -34,7 +34,7 @@ export interface IMessage {
    *
    * Absence (undefined) is treated as 'sent' for history messages loaded from DB.
    */
-  deliveryStatus?: 'sending' | 'sent' | 'seen';
+  deliveryStatus?: "sending" | "sent" | "seen";
 
   /**
    * Reply/quote reference.
