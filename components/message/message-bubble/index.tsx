@@ -11,6 +11,7 @@ import { useMemo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { IMessageBubbleProps } from "./props";
+import { formatMessageTime } from "../../../utils/date";
 
 export default function MessageBubble(props: IMessageBubbleProps) {
   const { message, activeChat, isLastSeen } = props;
@@ -226,15 +227,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
       <div
         className={`text-[10px] text-muted-foreground mt-1.5 ${message.isMe ? "text-right" : ""}`}
       >
-        {message.timestamp instanceof Date
-          ? message.timestamp.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-          : new Date(message.timestamp).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
+        {formatMessageTime(message.timestamp)}
       </div>
 
       {/* Seen indicator — only under the last sent message that was read */}

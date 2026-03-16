@@ -35,10 +35,10 @@ export const ChatTypingIndicator = ({
         <span className="typing-dot w-2 h-2 rounded-full bg-primary inline-block" />
         <span className="typing-dot w-2 h-2 rounded-full bg-primary inline-block" />
         <span className="typing-dot w-2 h-2 rounded-full bg-primary inline-block" />
-        <span className="typing-dot w-2 h-2 rounded-full bg-primary inline-block" />
       </div>
       <TypographyMuted className="text-[10px]">
-        {activeChat.name} is typing...
+        typing...
+        {/* {activeChat.name} is typing... */}
       </TypographyMuted>
     </div>
   </div>

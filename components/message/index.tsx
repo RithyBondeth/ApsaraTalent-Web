@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import { IChatMessagesProps, IMessage } from "./props";
-import { MessageTimeDivider } from "./message-utils/message-time-divider";
+import MessageTimeDivider from "./message-utils/message-time-divider";
 import MessageBubble from "./message-bubble";
 import { ChatTypingIndicator } from "./message-utils/typing-indicator";
+import { parseMessageDate } from "@/utils/date";
 
 export const ChatMessages = ({
   messages,
@@ -11,7 +12,6 @@ export const ChatMessages = ({
 }: IChatMessagesProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to bottom when messages change or typing state changes
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
@@ -22,17 +22,8 @@ export const ChatMessages = ({
   ) => {
     if (!prevMsg) return true;
 
-    const currentDate = (
-      currentMsg.timestamp instanceof Date
-        ? currentMsg.timestamp
-        : new Date(currentMsg.timestamp)
-    ).toDateString();
-
-    const prevDate = (
-      prevMsg.timestamp instanceof Date
-        ? prevMsg.timestamp
-        : new Date(prevMsg.timestamp)
-    ).toDateString();
+    const currentDate = parseMessageDate(currentMsg.timestamp).toDateString();
+    const prevDate = parseMessageDate(prevMsg.timestamp).toDateString();
 
     return currentDate !== prevDate;
   };
