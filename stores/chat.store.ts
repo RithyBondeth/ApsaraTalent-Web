@@ -252,18 +252,24 @@ export const useChatStore = create<ChatState>((set, get) => ({
     // Server emits 'userStatus' on every connect and disconnect.
     // We maintain a simple userId → boolean map (onlineUsers).
     // Both the sidebar and the chat header read this map to show the green dot.
+    //
+    // IMPORTANT: This event may fire before getRecentChats has populated
+    // activeChats (race condition on initial load).  We always write to
+    // onlineUsers first — then getRecentChats reads onlineUsers when it
+    // builds each IChatPreview, so the dot will be correct even if this
+    // event arrives early.  The activeChats.map() update handles live
+    // changes that arrive AFTER the sidebar is already rendered.
     socket.on("userStatus", (data: { userId: string; status: string }) => {
       const isOnline = data.status === "online";
 
-      // Update the onlineUsers map so any component can reactively show the dot
       set((state) => ({
+        // Always persist in the map — this is the source of truth
         onlineUsers: { ...state.onlineUsers, [data.userId]: isOnline },
-        // Also update isOnline on the matching IChatPreview so the sidebar dot
-        // reflects the correct state without a separate selector
+        // Patch sidebar rows that are already rendered
         activeChats: state.activeChats.map((chat) =>
           chat.id === data.userId ? { ...chat, isOnline } : chat,
         ),
-        // Update activeChat header too if we're currently in that conversation
+        // Patch the open chat header in real time
         activeChat:
           state.activeChat?.id === data.userId
             ? { ...state.activeChat, isOnline }
@@ -439,10 +445,55 @@ export const useChatStore = create<ChatState>((set, get) => ({
         }
       });
 
+      const builtChats = Array.from(seenPartners.values());
+
       set({
-        activeChats: Array.from(seenPartners.values()),
+        activeChats: builtChats,
         isChatsLoaded: true,
       });
+
+      // ── Fetch live online status for all partners ────────────────────────
+      // Problem this solves:
+      //   The 'userStatus' event is only emitted when a user connects or
+      //   disconnects.  If the partner was ALREADY online before WE connected,
+      //   we missed that event entirely.  The server keeps an in-memory
+      //   connectedUsers Set, so we ask it: "which of these IDs are online?"
+      //   and merge the result into our local onlineUsers map + activeChats.
+      //
+      // We call this inside the getRecentChats callback (not in connect())
+      // because we need the partner list to exist first — otherwise we have
+      // no IDs to query.
+      const partnerIds = builtChats.map((c) => c.id);
+      if (partnerIds.length > 0) {
+        const currentSocket = get().socket;
+        if (currentSocket?.connected) {
+          currentSocket.emit(
+            "getOnlineUsers",
+            partnerIds,
+            (onlineMap: Record<string, boolean>) => {
+              if (!onlineMap || typeof onlineMap !== "object") return;
+
+              // Merge server ground-truth into the local onlineUsers map
+              set((state) => ({
+                onlineUsers: { ...state.onlineUsers, ...onlineMap },
+                // Patch isOnline on each chat row in the sidebar
+                activeChats: state.activeChats.map((chat) => ({
+                  ...chat,
+                  isOnline: onlineMap[chat.id] ?? chat.isOnline ?? false,
+                })),
+                // Patch activeChat header too if it's one of the queried IDs
+                activeChat:
+                  state.activeChat && onlineMap[state.activeChat.id] !== undefined
+                    ? {
+                        ...state.activeChat,
+                        isOnline: onlineMap[state.activeChat.id],
+                      }
+                    : state.activeChat,
+              }));
+            },
+          );
+        }
+      }
     });
   },
 
@@ -583,6 +634,32 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
     if (isNewChat) {
       get().getChatHistory(chat!.id);
+
+      // Refresh online status for this specific partner whenever we open a chat.
+      // This catches the case where:
+      //  (a) getRecentChats ran but getOnlineUsers callback hadn't arrived yet, or
+      //  (b) the user navigates to a chat by URL (chatId param) without the partner
+      //      being in the sidebar yet.
+      const { socket } = get();
+      if (socket?.connected) {
+        socket.emit(
+          "getOnlineUsers",
+          [chat!.id],
+          (onlineMap: Record<string, boolean>) => {
+            if (!onlineMap || typeof onlineMap !== "object") return;
+            const isOnline = onlineMap[chat!.id] ?? false;
+            set((state) => ({
+              onlineUsers: { ...state.onlineUsers, [chat!.id]: isOnline },
+              activeChat: state.activeChat?.id === chat!.id
+                ? { ...state.activeChat, isOnline }
+                : state.activeChat,
+              activeChats: state.activeChats.map((c) =>
+                c.id === chat!.id ? { ...c, isOnline } : c,
+              ),
+            }));
+          },
+        );
+      }
     } else if (!chat) {
       set({ currentMessages: [], isHistoryLoading: false });
     }
