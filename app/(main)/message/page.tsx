@@ -5,6 +5,7 @@ import ChatHeader from "@/components/message/message-header";
 import ChatInput from "@/components/message/message-input";
 import ChatSidebar from "@/components/message/message-sidebar";
 import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
+import { ErrorBoundary } from "@/components/utils/error-boundary";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useChatStore } from "@/stores/chat.store";
 import { useSearchParams } from "next/navigation";
@@ -160,14 +161,16 @@ const MessagePageContent = () => {
 
 export default function MessagePage() {
   return (
-    <Suspense
-      fallback={
-        <div className="h-full flex items-center justify-center">
-          <ApsaraLoadingSpinner size={80} loop />
-        </div>
-      }
-    >
-      <MessagePageContent />
-    </Suspense>
+    <ErrorBoundary>
+      <Suspense
+        fallback={
+          <div className="h-full flex items-center justify-center">
+            <ApsaraLoadingSpinner size={80} loop />
+          </div>
+        }
+      >
+        <MessagePageContent />
+      </Suspense>
+    </ErrorBoundary>
   );
 }
