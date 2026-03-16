@@ -11,10 +11,26 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { Check, CheckCheck, Search, Users, X } from "lucide-react";
+import { Check, CheckCheck, Pencil, Search, Users, X } from "lucide-react";
 import { useState } from "react";
 import { IChatListProps, IChatSidebarProps } from "./props";
 
+/**
+ * Chat sidebar — conversation list with search and "New Chat" button.
+ *
+ * Modes:
+ *   isOpen=true  (expanded)  →  full w-80 panel with avatars, names, previews
+ *   isOpen=false (collapsed) →  narrow w-16 icon-only strip (desktop only)
+ *
+ * Online dot:
+ *   Each IChatPreview may carry an `isOnline` flag set by the Zustand store.
+ *   The store subscribes to 'userStatus' socket events and updates the flag in place,
+ *   so the dot updates reactively without a page refresh or manual refetch.
+ *
+ * New Conversation button:
+ *   Shown in the header as a Pencil icon (✎).  Currently a placeholder — in a future
+ *   iteration this will open a contact-picker modal / search-to-start-chat flow.
+ */
 export default function ChatSidebar(props: IChatSidebarProps) {
   const {
     chats,
@@ -24,6 +40,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
     currentUserId,
     onChatSelect,
     onClose,
+    onNewChat,
   } = props;
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -40,10 +57,8 @@ export default function ChatSidebar(props: IChatSidebarProps) {
     <div
       className={cn(
         "flex flex-col h-full transition-all duration-300 ease-in-out overflow-hidden border-r",
-        // Desktop: collapsible between w-80 and w-16
-        // Mobile (when rendered as overlay): always full width
         isOpen ? "w-80" : "w-16",
-        "md:w-auto", // let desktop control width via isOpen
+        "md:w-auto",
         className,
       )}
       style={
@@ -52,26 +67,43 @@ export default function ChatSidebar(props: IChatSidebarProps) {
           : { minWidth: "var(--sidebar-closed-width, 4rem)" }
       }
     >
-      {/* ── HEADER ───────────────────────────────────────────────── */}
+      {/* ── HEADER ────────────────────────────────────────────────────────── */}
       {isOpen ? (
         <div className="px-4 py-3 border-b flex items-center justify-between shrink-0">
           <h1 className="text-lg font-bold text-foreground tracking-tight">
             Messages
           </h1>
-          {/* Close button only shown in mobile overlay mode */}
-          {onClose && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 md:hidden"
-              onClick={onClose}
-              aria-label="Close sidebar"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          )}
+          <div className="flex items-center gap-1">
+            {/* New Conversation button.
+                Shown in expanded mode.  onNewChat is optional — the parent
+                (MessagePage) can wire it to open a contact picker. */}
+            {onNewChat && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={onNewChat}
+                aria-label="New conversation"
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+            )}
+            {/* Close button only shown in mobile overlay mode */}
+            {onClose && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 md:hidden"
+                onClick={onClose}
+                aria-label="Close sidebar"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </div>
       ) : (
+        /* Collapsed header: just the user avatar */
         <div className="py-3 flex flex-col items-center border-b shrink-0">
           <Avatar className="size-9">
             <AvatarImage src="/avatars/me.jpg" alt="Your Profile" />
@@ -80,7 +112,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
         </div>
       )}
 
-      {/* ── SEARCH ───────────────────────────────────────────────── */}
+      {/* ── SEARCH (expanded mode only) ──────────────────────────────────── */}
       {isOpen && (
         <div className="px-4 py-3 shrink-0">
           <div className="relative">
@@ -95,7 +127,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
         </div>
       )}
 
-      {/* ── CHAT LIST ────────────────────────────────────────────── */}
+      {/* ── CHAT LIST ─────────────────────────────────────────────────────── */}
       <div className="flex-1 overflow-y-auto overscroll-contain">
         {isOpen ? (
           <ExpandedChatList
@@ -117,7 +149,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
   );
 }
 
-// ── Expanded chat list ──────────────────────────────────────────────────────
+// ── Expanded chat list ────────────────────────────────────────────────────────
 
 const ExpandedChatList = (props: IChatListProps) => {
   const { chats, activeChat, currentUserId, onChatSelect } = props;
@@ -149,7 +181,7 @@ const ExpandedChatList = (props: IChatListProps) => {
             )}
             onClick={() => onChatSelect(chat)}
           >
-            {/* Avatar + unread indicator */}
+            {/* Avatar + unread indicator + online dot */}
             <div className="relative shrink-0">
               {chat.isGroup ? (
                 <div className="h-11 w-11 bg-primary/10 rounded-full flex items-center justify-center">
@@ -168,7 +200,8 @@ const ExpandedChatList = (props: IChatListProps) => {
                   </AvatarFallback>
                 </Avatar>
               )}
-              {/* Unread badge */}
+
+              {/* Unread count badge */}
               {chat.unread ? (
                 <Badge
                   variant="default"
@@ -179,6 +212,13 @@ const ExpandedChatList = (props: IChatListProps) => {
               ) : isUnread ? (
                 <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-primary border-2 border-background" />
               ) : null}
+
+              {/* Online status dot — green dot at the bottom-right of the avatar.
+                  Only shown when chat.isOnline is true.
+                  The white ring (border-background) separates it from the avatar. */}
+              {chat.isOnline && (
+                <span className="absolute bottom-0.5 right-0.5 h-2.5 w-2.5 rounded-full bg-green-500 border-2 border-background" />
+              )}
             </div>
 
             {/* Text content */}
@@ -245,7 +285,7 @@ const ExpandedChatList = (props: IChatListProps) => {
   );
 };
 
-// ── Collapsed icon-only list (desktop only) ─────────────────────────────────
+// ── Collapsed icon-only list (desktop only) ──────────────────────────────────
 
 const CollapsedChatList = (props: IChatListProps) => {
   const { chats, activeChat, currentUserId, onChatSelect } = props;
@@ -289,6 +329,8 @@ const CollapsedChatList = (props: IChatListProps) => {
                       </AvatarFallback>
                     </Avatar>
                   )}
+
+                  {/* Unread badge */}
                   {chat.unread ? (
                     <Badge
                       variant="default"
@@ -299,11 +341,20 @@ const CollapsedChatList = (props: IChatListProps) => {
                   ) : isUnread ? (
                     <span className="absolute top-1 right-1 h-2.5 w-2.5 rounded-full bg-primary border-2 border-background" />
                   ) : null}
+
+                  {/* Online dot in collapsed mode — bottom-right of avatar */}
+                  {chat.isOnline && (
+                    <span className="absolute bottom-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-green-500 border-2 border-background" />
+                  )}
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right" className="max-w-[180px]">
                 <p className={cn("font-medium", isUnread && "font-semibold")}>
                   {chat.name}
+                  {/* Show online badge in tooltip too */}
+                  {chat.isOnline && (
+                    <span className="ml-1.5 text-green-500 text-xs">●</span>
+                  )}
                 </p>
                 {chat.tag && (
                   <p className="text-xs text-muted-foreground">{chat.tag}</p>

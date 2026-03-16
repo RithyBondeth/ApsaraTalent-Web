@@ -11,7 +11,25 @@ import { useChatStore } from "@/stores/chat.store";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { IMessage } from "@/components/message/props";
 
+/**
+ * Message page — orchestrates the full chat experience.
+ *
+ * ── Layout Strategy ───────────────────────────────────────────────────────────
+ *   Mobile  (< 768px):  Single-column, full-screen.
+ *     • No chatId in URL → show full-height sidebar list.
+ *     • chatId in URL    → show chat view; back arrow goes back to list.
+ *     • Hamburger in header opens sidebar as an overlay sheet.
+ *   Desktop (≥ 768px):  Classic side-by-side split.
+ *     • Sidebar (w-80) is collapsible via toggle chevron in header.
+ *
+ * ── Key State ─────────────────────────────────────────────────────────────────
+ *   replyTarget — the IMessage the user wants to reply to.
+ *     Set by: MessageBubble → ChatMessages.onReply → here.
+ *     Consumed by: ChatInput (shows quote bar; attaches replyTo to send).
+ *     Cleared by: ChatInput after send, or when user presses ✕.
+ */
 const MessagePageContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -33,16 +51,23 @@ const MessagePageContent = () => {
     markAsRead,
   } = useChatStore();
 
-  // Desktop: sidebar open by default. Mobile: always false (sheet takes over).
+  // Desktop: sidebar open by default. Mobile: always false (overlay takes over).
   const [isSidebarOpen, setSidebarOpen] = useState(true);
-  // Mobile sheet overlay open state
+  // Mobile overlay open state
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  /**
+   * Reply target — when set, the input bar shows a quote preview.
+   * Flow: bubble.onReply(msg) → setReplyTarget(msg) → ChatInput shows preview
+   *       → user sends → handleSendMessage passes replyTo → store attaches it.
+   */
+  const [replyTarget, setReplyTarget] = useState<IMessage | null>(null);
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
   const openMobileSidebar = () => setMobileSidebarOpen(true);
   const closeMobileSidebar = () => setMobileSidebarOpen(false);
 
-  // 1. Core Connection
+  // ── 1. Core socket connection ────────────────────────────────────────────
   useEffect(() => {
     if (currentUser) {
       connect(currentUser);
@@ -50,13 +75,14 @@ const MessagePageContent = () => {
     return () => disconnect();
   }, [connect, disconnect, currentUser]);
 
-  // 2. URL -> Store sync: runs only when chatId or the chats list changes.
-  // Intentionally excludes `activeChat` from deps to avoid infinite loops.
+  // ── 2. URL → Store sync ──────────────────────────────────────────────────
+  // Runs only when chatId or the chats list changes.
+  // Intentionally excludes `activeChat` from deps to avoid infinite re-renders.
   useEffect(() => {
     if (!currentUser || !isConnected) return;
 
     if (chatId) {
-      // Only switch if we're not already on this chat
+      // Guard: don't re-trigger if we're already viewing this chat
       if (activeChat?.id.toLowerCase() === chatId.toLowerCase()) return;
 
       const chatFromSidebar = activeChats.find(
@@ -66,6 +92,7 @@ const MessagePageContent = () => {
       if (chatFromSidebar) {
         setActiveChat(chatFromSidebar);
       } else if (isChatsLoaded) {
+        // Skeleton placeholder while history loads (name will be resolved from DB)
         setActiveChat({
           id: chatId,
           name: "Loading...",
@@ -80,24 +107,7 @@ const MessagePageContent = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatId, activeChats, isChatsLoaded, isConnected, currentUser]);
 
-  const handleSendMessage = (text: string) => {
-    if (chatId) useChatStore.getState().sendMessage(chatId, text);
-  };
-
-  const handleTyping = (typing: boolean) => {
-    if (chatId) setTyping(chatId, typing);
-  };
-
-  const handleChatSelect = (chat: { id: string }) => {
-    closeMobileSidebar();
-    router.push(`/message?chatId=${chat.id}`);
-  };
-
-  const handleBack = () => {
-    router.push("/message");
-  };
-
-  // Mark the last incoming unread message as read when the chat is open
+  // ── 3. Mark unread messages as read when opening a chat ─────────────────
   useEffect(() => {
     if (!activeChat || !currentMessages.length) return;
     const lastUnread = [...currentMessages]
@@ -106,7 +116,36 @@ const MessagePageContent = () => {
     if (lastUnread) markAsRead(lastUnread.id, lastUnread.senderId);
   }, [currentMessages, activeChat, markAsRead]);
 
-  // Show full-page spinner only while initial socket connection is being established
+  // ── Handlers ─────────────────────────────────────────────────────────────
+
+  /**
+   * Send a message (with optional reply-to context).
+   * The reply-to comes from ChatInput which builds it from replyTarget.
+   */
+  const handleSendMessage = (
+    text: string,
+    replyTo?: IMessage["replyTo"] | null,
+  ) => {
+    if (chatId) useChatStore.getState().sendMessage(chatId, text, "text", replyTo);
+  };
+
+  const handleTyping = (typing: boolean) => {
+    if (chatId) setTyping(chatId, typing);
+  };
+
+  const handleChatSelect = (chat: { id: string }) => {
+    closeMobileSidebar();
+    // Clear reply state when switching chats
+    setReplyTarget(null);
+    router.push(`/message?chatId=${chat.id}`);
+  };
+
+  const handleBack = () => {
+    setReplyTarget(null);
+    router.push("/message");
+  };
+
+  // Show full-page spinner only while the initial socket connection + chat list is loading
   const isLoading = !isConnected || !isChatsLoaded;
 
   if (isLoading) {
@@ -121,15 +160,15 @@ const MessagePageContent = () => {
     <div className="w-full h-full flex bg-background overflow-hidden relative">
       {/*
        * MOBILE / TABLET  (<= 768px):  Full-screen sidebar overlays chat.
-       *   - No chatId in URL  → show sidebar list
-       *   - chatId in URL     → show chat view (back arrow navigates to list)
+       *   - No chatId → show sidebar list (full height)
+       *   - chatId    → show chat view; back arrow returns to list
        *   - Hamburger in header opens sidebar sheet over chat view
        *
        * DESKTOP  (> 768px):  Classic side-by-side split view.
-       *   - Sidebar is collapsible (w-80 ↔ w-16) via toggle button in header
+       *   - Sidebar is collapsible (w-80 ↔ w-16) via toggle in header
        */}
 
-      {/* ── DESKTOP SIDEBAR ────────────────────────────────────────── */}
+      {/* ── DESKTOP SIDEBAR ──────────────────────────────────────────────── */}
       <div className="hidden md:flex h-full">
         <ChatSidebar
           chats={activeChats}
@@ -137,18 +176,23 @@ const MessagePageContent = () => {
           isOpen={isSidebarOpen}
           currentUserId={currentUser?.id}
           onChatSelect={(chat) => router.push(`/message?chatId=${chat.id}`)}
+          onNewChat={() => {
+            // TODO: open contact picker modal
+            // For now we just navigate to /message to show the empty state
+            router.push("/message");
+          }}
         />
       </div>
 
-      {/* ── MOBILE SIDEBAR OVERLAY ──────────────────────────────────── */}
+      {/* ── MOBILE SIDEBAR OVERLAY ───────────────────────────────────────── */}
       {isMobileSidebarOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
-          {/* Backdrop */}
+          {/* Backdrop — clicking dismisses the overlay */}
           <div
             className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             onClick={closeMobileSidebar}
           />
-          {/* Sidebar panel slides in from left */}
+          {/* Sidebar panel slides in from the left */}
           <div className="relative w-[85vw] max-w-sm h-full bg-background shadow-xl z-10 animate-in slide-in-from-left duration-300">
             <ChatSidebar
               chats={activeChats}
@@ -157,14 +201,18 @@ const MessagePageContent = () => {
               currentUserId={currentUser?.id}
               onChatSelect={handleChatSelect}
               onClose={closeMobileSidebar}
+              onNewChat={() => {
+                closeMobileSidebar();
+                router.push("/message");
+              }}
             />
           </div>
         </div>
       )}
 
-      {/* ── MAIN CONTENT AREA ───────────────────────────────────────── */}
+      {/* ── MAIN CONTENT AREA ────────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col min-w-0 h-full">
-        {/* Mobile: show sidebar list when no chat selected */}
+        {/* Mobile: show full-height sidebar list when no chat is selected */}
         {!chatId && (
           <div className="md:hidden h-full flex flex-col">
             <ChatSidebar
@@ -173,11 +221,12 @@ const MessagePageContent = () => {
               isOpen={true}
               currentUserId={currentUser?.id}
               onChatSelect={handleChatSelect}
+              onNewChat={() => router.push("/message")}
             />
           </div>
         )}
 
-        {/* Chat view — shown when chatId is in URL */}
+        {/* Chat view — shown when a chatId is in the URL */}
         {activeChat ? (
           <div className="flex flex-col h-full min-w-0">
             <ChatHeader
@@ -187,6 +236,8 @@ const MessagePageContent = () => {
               onBack={handleBack}
               onOpenMobileSidebar={openMobileSidebar}
             />
+
+            {/* Message area — spinner while history is loading */}
             {isHistoryLoading ? (
               <div className="flex-1 flex items-center justify-center">
                 <ApsaraLoadingSpinner size={48} loop />
@@ -196,15 +247,20 @@ const MessagePageContent = () => {
                 messages={currentMessages}
                 activeChat={activeChat}
                 isTyping={isTyping[activeChat.id] || false}
+                onReply={(msg) => setReplyTarget(msg)} // ← reply handler
               />
             )}
+
+            {/* Input bar — shows quote preview when replyTarget is set */}
             <ChatInput
               onSendMessage={handleSendMessage}
               onTyping={handleTyping}
+              replyTarget={replyTarget}
+              onCancelReply={() => setReplyTarget(null)}
             />
           </div>
         ) : (
-          /* Desktop empty state when no chat selected */
+          /* Desktop empty state when no chat is selected */
           <div className="hidden md:flex flex-1 flex-col items-center justify-center p-8 text-center bg-muted/5">
             <div className="max-w-md space-y-3">
               <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">

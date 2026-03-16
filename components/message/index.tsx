@@ -5,17 +5,31 @@ import MessageBubble from "./message-bubble";
 import { ChatTypingIndicator } from "./message-utils/typing-indicator";
 import { parseMessageDate } from "@/utils/date";
 
+/**
+ * Extends the base IChatMessagesProps with:
+ *  - onReply: callback the parent uses to capture which message is being replied to
+ */
+interface ChatMessagesProps extends IChatMessagesProps {
+  onReply?: (message: IMessage) => void;
+}
+
 export const ChatMessages = ({
   messages,
   activeChat,
   isTyping,
-}: IChatMessagesProps) => {
+  onReply,
+}: ChatMessagesProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Auto-scroll to the bottom whenever messages change or typing indicator toggles
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
+  /**
+   * Returns true when the current message starts a new calendar day compared
+   * to the previous message. Used to show the date divider ("Today", "Mon 12 Jan").
+   */
   const shouldShowDivider = (
     currentMsg: IMessage,
     prevMsg: IMessage | null,
@@ -31,6 +45,7 @@ export const ChatMessages = ({
   return (
     <div className="flex-1 px-3 py-4 md:px-4 overflow-y-auto overscroll-contain bg-muted/20">
       {messages.length === 0 ? (
+        /* Empty state */
         <div className="h-full flex flex-col items-center justify-center gap-2 text-center px-4">
           <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
             <svg className="w-6 h-6 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -42,7 +57,9 @@ export const ChatMessages = ({
       ) : (
         <>
           {(() => {
-            // Find the index of the last message that is mine and has been seen
+            // Find the index of the last outgoing message that has been read.
+            // We only show the "Seen" avatar indicator on the very last seen message
+            // to avoid cluttering the chat with multiple "Seen" indicators.
             let lastSeenIdx = -1;
             for (let i = messages.length - 1; i >= 0; i--) {
               if (messages[i].isMe && messages[i].isRead) {
@@ -63,16 +80,18 @@ export const ChatMessages = ({
                     message={message}
                     activeChat={activeChat}
                     isLastSeen={idx === lastSeenIdx}
+                    onReply={onReply} // Pass reply handler so each bubble can trigger it
                   />
                 </React.Fragment>
               );
             });
           })()}
 
-          {/* Typing indicator */}
+          {/* Typing indicator — shown below messages when partner is typing */}
           {isTyping && <ChatTypingIndicator activeChat={activeChat} />}
         </>
       )}
+      {/* Invisible sentinel element — scroll target for auto-scroll */}
       <div ref={messagesEndRef} />
     </div>
   );

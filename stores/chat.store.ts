@@ -34,14 +34,26 @@ interface ChatState {
   unreadCount: number;
   isTyping: Record<string, boolean>; // ReceiverId -> isTyping
 
+  /**
+   * Live online-status map: userId → true/false.
+   * Populated by 'userStatus' socket events from the server.
+   * Components read this to show green / grey dots without individual subscriptions.
+   */
+  onlineUsers: Record<string, boolean>;
+
   // Actions
   connect: (user?: any) => void;
   disconnect: () => void;
   setMe: (user: any) => void;
-  sendMessage: (receiverId: string, content: string, type?: string) => void;
+  sendMessage: (
+    receiverId: string,
+    content: string,
+    type?: string,
+    replyTo?: IMessage["replyTo"] | null,
+  ) => void;
   getRecentChats: () => void;
   getChatHistory: (userId2: string) => void;
-  getUnreadCount: () => void; // Standardized unread fetch
+  getUnreadCount: () => void;
   markAsRead: (messageId: string, senderId: string) => void;
   reactToMessage: (
     messageId: string,
@@ -50,6 +62,12 @@ interface ChatState {
   ) => void;
   setTyping: (receiverId: string, isTyping: boolean) => void;
   setActiveChat: (chat: IChatPreview | null) => void;
+  /**
+   * Soft-delete a message the current user sent.
+   * Emits 'deleteMessage' to the socket; the server broadcasts 'messageDeleted'
+   * back to both participants and the store listener updates the local list.
+   */
+  deleteMessage: (messageId: string, receiverId: string) => void;
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -63,6 +81,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   currentMessages: [],
   unreadCount: 0,
   isTyping: {},
+  onlineUsers: {}, // Starts empty; filled as users connect/disconnect
 
   setMe: (user: any) => set({ me: user }),
 
@@ -104,7 +123,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       set({ isConnected: false });
     });
 
-    // Listeners for backend events
+    // ── Incoming new message ────────────────────────────────────────────────
     socket.on("newMessage", (message: any) => {
       const {
         activeChat,
@@ -129,8 +148,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
         const existsById = currentMessages.some((m) => m.id === message.id);
         if (existsById) return;
 
-        // 2. Optimistic match (replaces temp message with real one from socket)
-        // Check if there's an optimistic message (senderId is user's ID or "me") with matching content
+        // 2. Optimistic match — replace the temp message with the real one from server.
+        // Optimistic IDs are short random strings (< 10 chars); real IDs are UUIDs.
         const isFromMe =
           message.senderId === me?.id || message.senderId === "me";
 
@@ -143,7 +162,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
           );
 
           if (optimisticIndex !== -1) {
-            // Replace the optimistic message with the real one
+            // Swap optimistic → real message.
+            // deliveryStatus upgrades: 'sending' → 'sent' once the server echoes back
             const updatedMessages = [...currentMessages];
             updatedMessages[optimisticIndex] = {
               id: message.id,
@@ -154,13 +174,16 @@ export const useChatStore = create<ChatState>((set, get) => ({
               isRead: message.isRead,
               isMe: true,
               reactions: message.reactions || {},
+              isDeleted: message.isDeleted ?? false,
+              replyToId: message.replyToId ?? null,
+              deliveryStatus: "sent", // Server confirmed → upgrade from 'sending'
             };
             set({ currentMessages: updatedMessages });
             return;
           }
         }
 
-        // 3. Just add if no match found
+        // 3. Add fresh incoming message
         const formattedMsg: IMessage = {
           id: message.id || Math.random().toString(36).substring(7),
           senderId: message.senderId,
@@ -173,23 +196,29 @@ export const useChatStore = create<ChatState>((set, get) => ({
             message.senderId === me?.id ||
             message.senderId === "me",
           reactions: message.reactions || {},
+          isDeleted: message.isDeleted ?? false,
+          replyToId: message.replyToId ?? null,
+          // New incoming message from the partner has no delivery state
+          // (delivery state is only relevant for outgoing messages)
+          deliveryStatus: undefined,
         };
 
         set({ currentMessages: [...currentMessages, formattedMsg] });
       }
     });
 
+    // ── Typing indicator ────────────────────────────────────────────────────
     socket.on("userTyping", (data: { userId: string; isTyping: boolean }) => {
       set((state) => ({
         isTyping: { ...state.isTyping, [data.userId]: data.isTyping },
       }));
     });
 
+    // ── Reaction update ─────────────────────────────────────────────────────
     socket.on(
       "messageReaction",
       (data: { messageId: string; reactions: Record<string, string> }) => {
         const { currentMessages } = get();
-        // Only update if the message is in the CURRENTLY visible messages
         const exists = currentMessages.some((m) => m.id === data.messageId);
         if (exists) {
           set({
@@ -201,20 +230,61 @@ export const useChatStore = create<ChatState>((set, get) => ({
       },
     );
 
+    // ── Message read receipt ────────────────────────────────────────────────
+    // When the recipient opens a chat and reads the last message, the server
+    // fires 'messageRead' back to the sender. We upgrade deliveryStatus → 'seen'
+    // and set isRead=true on the local message so the ✓✓ turns blue.
     socket.on("messageRead", (data: { messageId: string }) => {
       const { currentMessages } = get();
       const exists = currentMessages.some((m) => m.id === data.messageId);
       if (exists) {
         set({
           currentMessages: currentMessages.map((m) =>
-            m.id === data.messageId ? { ...m, isRead: true } : m,
+            m.id === data.messageId
+              ? { ...m, isRead: true, deliveryStatus: "seen" }
+              : m,
           ),
         });
       }
     });
 
+    // ── Online / offline status ─────────────────────────────────────────────
+    // Server emits 'userStatus' on every connect and disconnect.
+    // We maintain a simple userId → boolean map (onlineUsers).
+    // Both the sidebar and the chat header read this map to show the green dot.
     socket.on("userStatus", (data: { userId: string; status: string }) => {
-      // Optional: Update online status indicator in activeChats
+      const isOnline = data.status === "online";
+
+      // Update the onlineUsers map so any component can reactively show the dot
+      set((state) => ({
+        onlineUsers: { ...state.onlineUsers, [data.userId]: isOnline },
+        // Also update isOnline on the matching IChatPreview so the sidebar dot
+        // reflects the correct state without a separate selector
+        activeChats: state.activeChats.map((chat) =>
+          chat.id === data.userId ? { ...chat, isOnline } : chat,
+        ),
+        // Update activeChat header too if we're currently in that conversation
+        activeChat:
+          state.activeChat?.id === data.userId
+            ? { ...state.activeChat, isOnline }
+            : state.activeChat,
+      }));
+    });
+
+    // ── Soft-delete broadcast ───────────────────────────────────────────────
+    // Server broadcasts 'messageDeleted' to both sender and receiver.
+    // We mark the local message as isDeleted=true so the tombstone renders
+    // without needing to re-fetch the entire history.
+    socket.on("messageDeleted", (data: { messageId: string }) => {
+      const { currentMessages } = get();
+      const exists = currentMessages.some((m) => m.id === data.messageId);
+      if (exists) {
+        set({
+          currentMessages: currentMessages.map((m) =>
+            m.id === data.messageId ? { ...m, isDeleted: true } : m,
+          ),
+        });
+      }
     });
 
     socket.on("error", (error: any) => {
@@ -235,15 +305,32 @@ export const useChatStore = create<ChatState>((set, get) => ({
         isHistoryLoading: false,
         activeChats: [],
         currentMessages: [],
+        onlineUsers: {}, // Reset online map on disconnect
       });
     }
   },
 
-  sendMessage: (receiverId: string, content: string, type = "text") => {
+  /**
+   * Send a message with optional reply-to context.
+   *
+   * Flow:
+   *  1. An optimistic message is inserted immediately into currentMessages
+   *     with deliveryStatus='sending' so the user sees instant feedback.
+   *  2. The socket emits 'sendMessage'. The server callback returns the real DB ID.
+   *  3. We swap the temp ID for the real ID and upgrade deliveryStatus → 'sent'.
+   *     (If the server already broadcast 'newMessage' first, the optimistic
+   *      entry is removed to avoid a duplicate.)
+   */
+  sendMessage: (
+    receiverId: string,
+    content: string,
+    type = "text",
+    replyTo?: IMessage["replyTo"] | null,
+  ) => {
     const { socket, currentMessages, me } = get();
     if (!socket?.connected) return;
 
-    // Optimistically add the message to the local state
+    // Build optimistic message — shown instantly before the server responds
     const tempId = Math.random().toString(36).substring(7);
     const optimisticMsg: IMessage = {
       id: tempId,
@@ -252,25 +339,32 @@ export const useChatStore = create<ChatState>((set, get) => ({
       timestamp: new Date(),
       isMe: true,
       isRead: false,
+      deliveryStatus: "sending", // Clock icon — waiting for server ack
+      replyTo: replyTo ?? undefined, // Inline quote block (if replying)
     };
 
     set({ currentMessages: [...currentMessages, optimisticMsg] });
 
-    // Emit to server with callback to replace temporary ID with real DB ID
+    // Emit to server; replyToId carries the parent UUID so the DB stores the link
     socket.emit(
       "sendMessage",
-      { receiverId, content, type },
+      {
+        receiverId,
+        content,
+        type,
+        replyToId: replyTo?.id ?? null,
+      },
       (response: any) => {
         const realId = response?.message?.id;
         if (realId) {
           set((state) => {
-            // Check if this real ID already arrived via socket (Option B race)
+            // If the socket broadcast arrived before this ack (race condition),
+            // the real message is already in the list → just remove the temp entry
             const alreadyExists = state.currentMessages.some(
               (m) => m.id === realId,
             );
 
             if (alreadyExists) {
-              // Remove the temporary message if the real one is already there
               return {
                 currentMessages: state.currentMessages.filter(
                   (msg) => msg.id !== tempId,
@@ -278,10 +372,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
               };
             }
 
-            // Otherwise update tempId -> realId as usual
+            // Normal path: swap tempId → realId and upgrade delivery status
             return {
               currentMessages: state.currentMessages.map((msg) =>
-                msg.id === tempId ? { ...msg, id: realId } : msg,
+                msg.id === tempId
+                  ? { ...msg, id: realId, deliveryStatus: "sent" as const }
+                  : msg,
               ),
             };
           });
@@ -293,14 +389,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
   getRecentChats: () => {
     const { socket, me } = get();
     if (!socket?.connected || !me) {
-      // Mark chats as loaded even if we can't fetch (no user / not connected)
-      // so the UI doesn't block on loading indefinitely
+      // Mark chats as loaded even if we can't fetch so the UI doesn't block
       set({ isChatsLoaded: true });
       return;
     }
 
     socket.emit("getRecentChats", null, (chats: any[]) => {
-      // Always mark loaded so the page stops showing the spinner
       if (!Array.isArray(chats)) {
         set({ isChatsLoaded: true });
         return;
@@ -324,11 +418,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
           senderId?.toLowerCase() === currentUserId.toLowerCase();
         const otherUser = isSenderMe ? chat.receiver : chat.sender;
 
-        // Fallback to raw ID strings if relations failed to load
         const partnerId = isSenderMe ? receiverId : senderId;
 
         if (partnerId && !seenPartners.has(partnerId)) {
           const { name, avatar } = resolveProfile(otherUser);
+          // Carry over existing isOnline state from the onlineUsers map
+          const isOnline = get().onlineUsers[partnerId] ?? false;
           seenPartners.set(partnerId, {
             id: partnerId,
             name,
@@ -339,6 +434,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
             ),
             isRead: chat.isRead,
             lastMessageSenderId: senderId,
+            isOnline, // Preserve live dot from onlineUsers map
           });
         }
       });
@@ -365,12 +461,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
           | { messages: any[]; partnerId: string; partnerProfile: any }
           | any[],
       ) => {
-        // Handle both new {messages, partnerId, partnerProfile} and old [...] formats
         const history = Array.isArray(res) ? res : res?.messages || [];
         const resolvedPartnerId = Array.isArray(res) ? null : res?.partnerId;
         const partnerProfile = Array.isArray(res) ? null : res?.partnerProfile;
 
-        // Guard: if the user switched chats while request was in-flight, discard
+        // Race condition guard: if user switched chats while request was in-flight, discard
         const currentActiveChat = get().activeChat;
         if (
           currentActiveChat &&
@@ -390,15 +485,54 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 ? msg.sender
                 : msg.sender?.id || msg.senderId;
 
+            // For history messages: derive deliveryStatus from isRead
+            // We don't have 'sending' state in history — all stored messages are 'sent'.
+            // If the message is mine and was read, show 'seen'; otherwise 'sent'.
+            const isMine = senderId?.toLowerCase() === meId.toLowerCase();
+            const deliveryStatus: IMessage["deliveryStatus"] = isMine
+              ? msg.isRead
+                ? "seen"
+                : "sent"
+              : undefined; // Partner's messages don't show delivery state on our side
+
             return {
               id: msg.id,
               senderId,
               senderName: msg.senderName,
               content: msg.content,
               timestamp: parseMessageDate(msg.sentAt || msg.createdAt),
-              isMe: senderId?.toLowerCase() === meId.toLowerCase(),
+              isMe: isMine,
               isRead: msg.isRead,
               reactions: msg.reactions || {},
+              isDeleted: msg.isDeleted ?? false,
+              deliveryStatus,
+              // replyTo is built below if replyToId is present and resolvable from history
+              // For now we attach a minimal placeholder; a future enhancement could
+              // resolve the full preview by looking up msg.replyToId in the history array.
+              replyTo: undefined as IMessage["replyTo"],
+            };
+          });
+
+          // Second pass: resolve replyTo previews from within the loaded history batch.
+          // If the parent message is not in this page of history, replyTo stays undefined.
+          const messageById = new Map(formatted.map((m) => [m.id, m]));
+          const withReplies: IMessage[] = formatted.map((msg, _i) => {
+            const rawMsg = history[_i]; // raw from server
+            if (!rawMsg.replyToId) return msg;
+
+            const parent = messageById.get(rawMsg.replyToId);
+            if (!parent) return msg; // Parent not in this page — skip
+
+            return {
+              ...msg,
+              replyTo: {
+                id: parent.id,
+                content: parent.isDeleted
+                  ? "This message was deleted"
+                  : parent.content,
+                senderName: parent.senderName || (parent.isMe ? "You" : ""),
+                isDeleted: parent.isDeleted,
+              },
             };
           });
 
@@ -414,11 +548,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 name,
                 avatar,
               },
-              currentMessages: formatted,
+              currentMessages: withReplies,
               isHistoryLoading: false,
             });
           } else {
-            set({ currentMessages: formatted, isHistoryLoading: false });
+            set({ currentMessages: withReplies, isHistoryLoading: false });
           }
         } else {
           set({ isHistoryLoading: false });
@@ -442,7 +576,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const prevChat = get().activeChat;
     // Only fetch history when the chat actually changes to a different partner
     const isNewChat =
-      chat && (!prevChat || prevChat.id.toLowerCase() !== chat.id.toLowerCase());
+      chat &&
+      (!prevChat || prevChat.id.toLowerCase() !== chat.id.toLowerCase());
 
     set({ activeChat: chat });
 
@@ -471,5 +606,33 @@ export const useChatStore = create<ChatState>((set, get) => ({
   setTyping: (receiverId: string, isTyping: boolean) => {
     const { socket } = get();
     if (socket?.connected) socket.emit("typing", { receiverId, isTyping });
+  },
+
+  /**
+   * Soft-delete a message.
+   *
+   * The store does an optimistic update immediately:
+   *  1. The local message is marked isDeleted=true so the tombstone appears instantly.
+   *  2. The socket emits 'deleteMessage' to the server.
+   *  3. The server broadcasts 'messageDeleted' back to both participants.
+   *     The socket listener in connect() handles the broadcast (idempotent update).
+   *
+   * If the server rejects the delete (e.g. not the sender), the socket will emit
+   * an 'error' event and the optimistic update stays visible — in a future iteration
+   * we could rollback by re-fetching history on error.
+   */
+  deleteMessage: (messageId: string, receiverId: string) => {
+    const { socket, currentMessages } = get();
+    if (!socket?.connected) return;
+
+    // Optimistic update: show tombstone immediately
+    set({
+      currentMessages: currentMessages.map((m) =>
+        m.id === messageId ? { ...m, isDeleted: true } : m,
+      ),
+    });
+
+    // Tell the server to soft-delete and broadcast to both participants
+    socket.emit("deleteMessage", { messageId, receiverId });
   },
 }));
