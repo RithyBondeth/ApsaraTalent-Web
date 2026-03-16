@@ -47,7 +47,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
   };
 
   return (
-    <div className={`mb-4 max-w-[80%] group ${message.isMe ? "ml-auto" : ""}`}>
+    <div className={`mb-3 max-w-[85%] sm:max-w-[75%] md:max-w-[70%] group ${message.isMe ? "ml-auto" : ""}`}>
       {!message.isMe && (
         <div className="flex items-center mb-1">
           <Avatar className="h-6 w-6 mr-2">
@@ -218,8 +218,8 @@ export default function MessageBubble(props: IMessageBubbleProps) {
           )}
         </div>
 
-        {/* Reaction picker button */}
-        <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+        {/* Reaction picker — hidden until hover on desktop, always visible on touch */}
+        <div className="opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity touch-action-auto">
           <ReactionPicker onReact={handleReact} currentReaction={myReaction} />
         </div>
       </div>

@@ -7,6 +7,8 @@ export interface IChatSidebarProps {
   currentUserId?: string;
   className?: string;
   onChatSelect: (chat: IChatPreview) => void;
+  /** Called when the mobile close button (×) is pressed */
+  onClose?: () => void;
 }
 
 export interface IChatListProps {
