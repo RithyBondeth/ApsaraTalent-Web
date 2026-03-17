@@ -106,9 +106,9 @@ function AttachmentBlock({
   filename?: string;
   isMe?: boolean;
 }) {
-  const apiBase =
-    process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
-    "http://localhost:3000";
+  // NEXT_PUBLIC_API_URL is the raw backend base (e.g. "http://localhost:3000").
+  // Attachment URLs are stored as relative paths like /storage/chat/...
+  const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
   const fullUrl = url.startsWith("http") ? url : `${apiBase}${url}`;
 
   if (type === "image") {

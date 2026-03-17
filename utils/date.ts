@@ -1,12 +1,32 @@
 /**
  * Safely parses any date input (string, Date, or number) into a valid JS Date object.
  * Returns current Date if parsing fails.
+ *
+ * Timezone handling:
+ *   - ISO strings WITH a timezone suffix (e.g. "…Z" or "…+07:00") are parsed correctly
+ *     by `new Date()` — the browser converts them to local time automatically.
+ *   - ISO strings WITHOUT a timezone suffix (e.g. "2025-03-17T10:00:00.000") are
+ *     ambiguous. The DB stores TIMESTAMP WITH TIME ZONE (UTC) and TypeORM serializes
+ *     them with "Z", so this case should not occur in practice. As a safety net we
+ *     append "Z" to bare ISO-like strings so they're treated as UTC rather than as
+ *     local time (which would shift the displayed time by the local UTC offset).
  */
 export const parseMessageDate = (
   timestamp: Date | string | number | undefined,
 ): Date => {
   if (!timestamp) return new Date();
-  const date = timestamp instanceof Date ? timestamp : new Date(timestamp);
+  if (timestamp instanceof Date) {
+    return isNaN(timestamp.getTime()) ? new Date() : timestamp;
+  }
+  if (typeof timestamp === 'string') {
+    // If the string looks like an ISO datetime but has no timezone indicator,
+    // append 'Z' so the browser interprets it as UTC (not local time).
+    const bare = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?$/.test(timestamp);
+    const normalised = bare ? timestamp + 'Z' : timestamp;
+    const date = new Date(normalised);
+    return isNaN(date.getTime()) ? new Date() : date;
+  }
+  const date = new Date(timestamp);
   return isNaN(date.getTime()) ? new Date() : date;
 };
 

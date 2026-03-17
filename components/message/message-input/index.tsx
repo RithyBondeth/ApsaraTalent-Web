@@ -14,10 +14,11 @@ import { IMessage } from "../props";
 import { CHAT_TYPING_DEBOUNCE_MS } from "@/utils/constants/app.constant";
 
 // ── Constants ────────────────────────────────────────────────────────────────
+// NEXT_PUBLIC_API_URL is the raw backend base (e.g. "http://localhost:3000").
+// Chat routes live directly under /chat/... (no /api prefix).
 const API_BASE =
   typeof window !== "undefined"
-    ? (process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
-       "http://localhost:3000")
+    ? (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000")
     : "http://localhost:3000";
 
 /** Max file size shown in the UI validation message (must match the backend). */
@@ -46,7 +47,7 @@ const ACCEPTED_MIME_TYPES = [
  * Attachment flow:
  *  1. User clicks the 📎 button → hidden file input opens.
  *  2. File is validated client-side (type + size).
- *  3. File is POSTed to POST /api/chat/upload (REST endpoint).
+ *  3. File is POSTed to POST /chat/upload (REST endpoint).
  *  4. Server saves the file and returns { url, type, filename }.
  *  5. Attachment preview bar appears above the textarea.
  *  6. When user sends, onSendMessage() receives the attachment data.
@@ -65,7 +66,7 @@ export default function ChatInput(props: IChatInputProps) {
   const [isSending, setIsSending] = useState(false);
 
   // ── Attachment state ──────────────────────────────────────────────────────
-  // pendingAttachment: the result from POST /chat/upload (URL, type, filename).
+  // pendingAttachment: the result returned by POST /chat/upload (URL, type, filename).
   // attachmentPreview: a local object URL for image preview before upload.
   // isUploading: true while the file is being uploaded.
   // uploadError: error message if upload failed.
@@ -82,11 +83,14 @@ export default function ChatInput(props: IChatInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Clean up typing timer on unmount
+  // Clean up typing timer on unmount and stop the typing indicator so the
+  // partner doesn't see an infinite "typing…" animation after navigation.
   useEffect(
     () => () => {
       if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
+      onTyping?.(false);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
@@ -133,7 +137,7 @@ export default function ChatInput(props: IChatInputProps) {
    * Steps:
    *  1. Validate MIME type and size client-side for fast feedback.
    *  2. Generate a local object URL for image previews (document shows icon).
-   *  3. Upload to the server via POST /api/chat/upload.
+   *  3. Upload to the server via POST /chat/upload.
    *  4. Store the server response in `pendingAttachment`.
    */
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -164,7 +168,7 @@ export default function ChatInput(props: IChatInputProps) {
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch(`${API_BASE}/api/chat/upload`, {
+      const res = await fetch(`${API_BASE}/chat/upload`, {
         method: "POST",
         body: formData,
         credentials: "include", // Send auth-token cookie
@@ -201,6 +205,8 @@ export default function ChatInput(props: IChatInputProps) {
     }
     setPendingAttachment(null);
     setUploadError(null);
+    // Reset the file input so the same file can be re-selected after removal
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   // ── Send ──────────────────────────────────────────────────────────────────

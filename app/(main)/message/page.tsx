@@ -37,21 +37,19 @@ const MessagePageContent = () => {
   const currentUser = useGetCurrentUserStore((state) => state.user);
 
   const {
-    connect,
-    disconnect,
     activeChat,
     activeChats,
     currentMessages,
     isTyping,
-    setActiveChat,
     isConnected,
     isChatsLoaded,
     isHistoryLoading,
     setTyping,
-    markAsRead,
   } = useChatStore();
 
-  // Keep stable references to store actions (avoids re-render loops in callbacks)
+  // Stable action refs — read directly from the store singleton so they never
+  // appear in useEffect dependency arrays (which would re-fire effects and
+  // call disconnect() on every store update, wiping currentMessages).
   const sendMessage = useChatStore((s) => s.sendMessage);
   const editMessageAction = useChatStore((s) => s.editMessage);
 
@@ -72,32 +70,52 @@ const MessagePageContent = () => {
   const closeMobileSidebar = () => setMobileSidebarOpen(false);
 
   // ── 1. Core socket connection ────────────────────────────────────────────
+  // IMPORTANT: connect/disconnect are read via getState() (not reactive hooks)
+  // so this effect only runs when currentUser actually changes (login/logout).
+  // Using them as reactive dependencies would re-fire the effect on every store
+  // update, calling disconnect() and wiping currentMessages mid-session.
   useEffect(() => {
+    const { connect, disconnect } = useChatStore.getState();
     if (currentUser) {
       connect(currentUser);
     }
     return () => disconnect();
-  }, [connect, disconnect, currentUser]);
+  }, [currentUser]);
 
   // ── 2. URL → Store sync ──────────────────────────────────────────────────
   // Runs only when chatId or the chats list changes.
-  // Intentionally excludes `activeChat` from deps to avoid infinite re-renders.
+  // activeChat is read via getState() (not the reactive value) so the guard
+  // always reflects the current store value without needing it in deps.
   useEffect(() => {
     if (!currentUser || !isConnected) return;
 
+    const { activeChat: currentActiveChat, setActiveChat: setChat } =
+      useChatStore.getState();
+
     if (chatId) {
-      // Guard: don't re-trigger if we're already viewing this chat
-      if (activeChat?.id.toLowerCase() === chatId.toLowerCase()) return;
+      const { currentMessages: msgs, isHistoryLoading } = useChatStore.getState();
+      const alreadyOnChat =
+        currentActiveChat?.id.toLowerCase() === chatId.toLowerCase();
+      const hasMessages = msgs.length > 0;
+
+      // Skip entirely if:
+      //  (a) already on this chat AND messages are loaded (normal guard), OR
+      //  (b) already on this chat AND history is currently loading (getChatHistory
+      //      was already started — don't kick off a second concurrent request)
+      if (alreadyOnChat && (hasMessages || isHistoryLoading)) return;
 
       const chatFromSidebar = activeChats.find(
         (c) => c.id.toLowerCase() === chatId.toLowerCase(),
       );
 
       if (chatFromSidebar) {
-        setActiveChat(chatFromSidebar);
-      } else if (isChatsLoaded) {
-        // Skeleton placeholder while history loads (name will be resolved from DB)
-        setActiveChat({
+        // Found in sidebar — setActiveChat will atomically set loading state + fetch
+        setChat(chatFromSidebar);
+      } else if (isChatsLoaded && !alreadyOnChat) {
+        // Not in sidebar yet (e.g. brand-new chat navigated to directly).
+        // Set a skeleton placeholder so the header renders; getChatHistory will
+        // resolve the name + avatar from partnerProfile when it returns.
+        setChat({
           id: chatId,
           name: "Loading...",
           avatar: "",
@@ -105,10 +123,10 @@ const MessagePageContent = () => {
           time: "",
         });
       }
-    } else if (activeChat) {
-      setActiveChat(null);
+      // If !isChatsLoaded, wait — the effect will re-run when isChatsLoaded becomes true
+    } else if (currentActiveChat) {
+      setChat(null);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatId, activeChats, isChatsLoaded, isConnected, currentUser]);
 
   // ── 3. Mark unread messages as read when opening a chat ─────────────────
@@ -117,8 +135,9 @@ const MessagePageContent = () => {
     const lastUnread = [...currentMessages]
       .reverse()
       .find((m) => !m.isMe && !m.isRead);
-    if (lastUnread) markAsRead(lastUnread.id, lastUnread.senderId);
-  }, [currentMessages, activeChat, markAsRead]);
+    if (lastUnread)
+      useChatStore.getState().markAsRead(lastUnread.id, lastUnread.senderId);
+  }, [currentMessages, activeChat]);
 
   // ── Handlers ─────────────────────────────────────────────────────────────
 
@@ -130,7 +149,11 @@ const MessagePageContent = () => {
   const handleSendMessage = (
     text: string,
     replyTo?: IMessage["replyTo"] | null,
-    attachment?: { url: string; type: "image" | "document"; filename: string } | null,
+    attachment?: {
+      url: string;
+      type: "image" | "document";
+      filename: string;
+    } | null,
   ) => {
     if (chatId) sendMessage(chatId, text, "text", replyTo, attachment);
   };
@@ -159,8 +182,21 @@ const MessagePageContent = () => {
     router.push("/message");
   };
 
-  // Show full-page spinner only while the initial socket connection + chat list is loading
-  const isLoading = !isConnected || !isChatsLoaded;
+  // Show full-page spinner only during initial load (connection + first chat list fetch).
+  // Use a 5-second timeout so a connection error doesn't leave the page stuck forever.
+  const [loadingTimedOut, setLoadingTimedOut] = useState(false);
+  useEffect(() => {
+    // Reset timeout flag whenever we successfully connect so a future disconnect
+    // → reconnect cycle can show the spinner briefly again if needed.
+    if (isConnected && isChatsLoaded) {
+      setLoadingTimedOut(false);
+      return;
+    }
+    const t = setTimeout(() => setLoadingTimedOut(true), 5000);
+    return () => clearTimeout(t);
+  }, [isConnected, isChatsLoaded]);
+
+  const isLoading = (!isConnected || !isChatsLoaded) && !loadingTimedOut;
 
   if (isLoading) {
     return (
@@ -262,7 +298,7 @@ const MessagePageContent = () => {
                 activeChat={activeChat}
                 isTyping={isTyping[activeChat.id] || false}
                 onReply={(msg) => setReplyTarget(msg)} // ← reply handler
-                onEdit={handleEditMessage}             // ← edit handler
+                onEdit={handleEditMessage} // ← edit handler
               />
             )}
 

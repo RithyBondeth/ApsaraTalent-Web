@@ -1,0 +1,33 @@
+{
+  "sidebar": {
+    "feed": "ព័ត៌មានថ្មី",
+    "search": "ស្វែងរក",
+    "favorite": "សំណព្វ",
+    "matching": "ការផ្គូផ្គង",
+    "message": "សារ",
+    "notification": "ការជូនដំណឹង",
+    "aiResumeBuilder": "បង្កើត CV ដោយ AI"
+  },
+  "sidebarFooter": {
+    "myProfile": "របស់ខ្ញុំ",
+    "settings": "ការកំណត់",
+    "appearance": "រូបរាង",
+    "favorite": "សំណព្វ",
+    "reportProblem": "រាយការណ៍បញ្ហា",
+    "logOut": "ចាកចេញ",
+    "confirmLogout": "បញ្ជាក់ការចាកចេញ",
+    "logoutQuestion": "តើអ្នកប្រាកដជាចង់ចាកចេញ?",
+    "cancel": "បោះបង់",
+    "logout": "ចាកចេញ",
+    "language": "ភាសា"
+  },
+  "header": {
+    "chat": "ការជជែក",
+    "aiResumeBuilder": "បង្កើត CV ដោយ AI",
+    "searchFavorite": "ស្វែងរក",
+    "matching": "ការផ្គូផ្គង",
+    "favorites": "សំណព្វ",
+    "profilePage": "ទំព័ររបស់ខ្ញុំ",
+    "settingPage": "ការកំណត់"
+  }
+}

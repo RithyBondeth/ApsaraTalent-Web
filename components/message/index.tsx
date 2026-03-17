@@ -23,10 +23,36 @@ export const ChatMessages = ({
   onEdit,
 }: ChatMessagesProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const prevMessageCountRef = useRef(0);
 
-  // Auto-scroll to the bottom whenever messages change or typing indicator toggles
+  // Auto-scroll to the bottom whenever messages change or typing indicator toggles.
+  // Use "instant" on initial load (first paint of the full history) so the browser
+  // jumps straight to the bottom before the user sees anything — avoids the flash
+  // of the top of a long conversation.
+  // Use "smooth" only for incremental new messages (count goes up by 1-2) so the
+  // scroll animation feels natural during live chat.
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const prevCount = prevMessageCountRef.current;
+    const currentCount = messages.length;
+    prevMessageCountRef.current = currentCount;
+
+    if (!messagesEndRef.current) return;
+
+    // Initial load or history fetch: jump instantly to bottom
+    const isInitialLoad = prevCount === 0 && currentCount > 0;
+    // New message(s) arriving during active chat: smooth scroll
+    const isNewMessage = prevCount > 0 && currentCount > prevCount;
+
+    if (isInitialLoad) {
+      // Defer one tick so the browser finishes painting all messages before
+      // we scroll — otherwise the container height may not be final yet and
+      // the scroll lands in the wrong position on long histories.
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "instant" });
+      }, 0);
+    } else if (isNewMessage || isTyping) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages, isTyping]);
 
   /**

@@ -9,6 +9,7 @@ import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/cou
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { sidebarList } from "@/utils/constants/sidebar.constant";
 import { LucideFileUser } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useCallback, useMemo } from "react";
 import { Collapsible, CollapsibleTrigger } from "../../ui/collapsible";
@@ -40,6 +41,19 @@ export default function CollapseSidebar({
   const router = useRouter();
   const pathname = usePathname();
   const { open } = useSidebar();
+  const t = useTranslations("sidebar");
+
+  const getSidebarTitle = (title: string): string => {
+    const map: Record<string, string> = {
+      Feed: t("feed"),
+      Search: t("search"),
+      Favorite: t("favorite"),
+      Matching: t("matching"),
+      Message: t("message"),
+      Notification: t("notification"),
+    };
+    return map[title] ?? title;
+  };
 
   // API Calls
   const { user, loading } = useGetCurrentUserStore();
@@ -167,7 +181,7 @@ export default function CollapseSidebar({
                           strokeWidth={1.5}
                         />
                       )}
-                      <span>{item.title}</span>
+                      <span>{getSidebarTitle(item.title)}</span>
                       {item.url === "/matching" && (
                         <CountBadge count={matchingCount} />
                       )}
@@ -191,7 +205,7 @@ export default function CollapseSidebar({
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton
-                      tooltip="AI Resume"
+                      tooltip={t("aiResumeBuilder")}
                       className={`font-medium py-3 ${
                         isPathActive("/resume-builder")
                           ? "bg-primary text-primary-foreground"
@@ -199,7 +213,7 @@ export default function CollapseSidebar({
                       }`}
                     >
                       <LucideFileUser className="!size-6" strokeWidth={1.5} />
-                      <span>AI Resume Builder</span>
+                      <span>{t("aiResumeBuilder")}</span>
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                 </SidebarMenuItem>

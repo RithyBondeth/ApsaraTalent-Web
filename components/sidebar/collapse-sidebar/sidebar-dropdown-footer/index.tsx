@@ -2,6 +2,7 @@
 
 import {
     ChevronsUpDown,
+    Globe,
     LogOut,
     LucideBookMarked,
     LucideBuilding,
@@ -43,12 +44,14 @@ import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.sto
 import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
 import { useVerifyOTPStore } from "@/stores/apis/auth/verify-otp.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { useLanguageStore } from "@/stores/languages/language-store";
 import { useThemeStore } from "@/stores/themes/theme-store";
 import {
     clearAuthCookies,
     clearAuthCookiesServerSide
 } from "@/utils/auth/cookie-manager";
 import { setCookie } from "cookies-next/client";
+import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -60,11 +63,17 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
   const { resolvedTheme, setTheme } = useTheme();
   const router = useRouter();
   const [openLogoutDialog, setOpenLogoutDialog] = useState<boolean>(false);
+  const { language, setLanguage } = useLanguageStore();
+  const t = useTranslations("sidebarFooter");
 
   useEffect(() => {
     setTheme(theme);
     setCookie("theme", theme);
   }, [theme, setTheme]);
+
+  useEffect(() => {
+    setCookie("language", language);
+  }, [language]);
 
   const currentUser = useGetCurrentUserStore((state) => state.user);
 
@@ -151,49 +160,55 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
                 ) : (
                   <LucideBuilding />
                 )}
-                My Profile
+                {t("myProfile")}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem onClick={() => router.push("/setting")}>
                 <LucideSettings />
-                Settings
+                {t("settings")}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={toggleTheme}>
                 {resolvedTheme === "dark" ? <LucideSun /> : <LucideMoon />}
-                Appearance
+                {t("appearance")}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setLanguage(language === "en" ? "km" : "en")}
+              >
+                <Globe />
+                {t("language")}: {language === "en" ? "English" : "ខ្មែរ"}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push("/favorite")}>
                 <LucideBookMarked />
-                Favorite
+                {t("favorite")}
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <LucideInfo />
-                Report a problem
+                {t("reportProblem")}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => setOpenLogoutDialog(true)}>
               <LogOut />
-              Log out
+              {t("logOut")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
       <Dialog open={openLogoutDialog} onOpenChange={setOpenLogoutDialog}>
         <DialogContent>
-          <DialogTitle>Confirm Logout</DialogTitle>
-          <TypographySmall>Are you sure you want to logout?</TypographySmall>
+          <DialogTitle>{t("confirmLogout")}</DialogTitle>
+          <TypographySmall>{t("logoutQuestion")}</TypographySmall>
           <DialogFooter>
             <Button
               variant={"outline"}
               onClick={() => setOpenLogoutDialog(false)}
             >
-              Cancel
+              {t("cancel")}
             </Button>
             <Button variant={"destructive"} onClick={handleLogout}>
-              Logout
+              {t("logout")}
             </Button>
           </DialogFooter>
         </DialogContent>

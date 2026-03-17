@@ -14,6 +14,7 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 import { useThemeStore } from "@/stores/themes/theme-store";
 import { sidebarList } from "@/utils/constants/sidebar.constant";
 import { LucideArrowLeft } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -27,6 +28,7 @@ export default function MainLayout({
 
   const { theme } = useThemeStore();
   const user = useGetCurrentUserStore((s) => s.user);
+  const t = useTranslations("header");
 
   /**
    * Feed Detail Page
@@ -65,17 +67,17 @@ export default function MainLayout({
     </SidebarProvider>
   );
 
-  if (pathname.startsWith("/message")) return renderSidebarLayout("Chat");
+  if (pathname.startsWith("/message")) return renderSidebarLayout(t("chat"));
   if (pathname.startsWith("/resume-builder"))
-    return renderSidebarLayout("AI Resume Builder");
+    return renderSidebarLayout(t("aiResumeBuilder"));
   if (pathname.startsWith("/search"))
-    return renderSidebarLayout("Search your favorite");
-  if (pathname.startsWith("/matching")) return renderSidebarLayout("Matching");
-  if (pathname.startsWith("/favorite")) return renderSidebarLayout("Favorites");
+    return renderSidebarLayout(t("searchFavorite"));
+  if (pathname.startsWith("/matching")) return renderSidebarLayout(t("matching"));
+  if (pathname.startsWith("/favorite")) return renderSidebarLayout(t("favorites"));
   if (pathname.startsWith("/profile"))
-    return renderSidebarLayout("Profile Page");
+    return renderSidebarLayout(t("profilePage"));
   if (pathname.startsWith("/setting"))
-    return renderSidebarLayout("Setting Page");
+    return renderSidebarLayout(t("settingPage"));
 
   /**
    * Default Layout

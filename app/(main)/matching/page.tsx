@@ -65,11 +65,13 @@ export default function MatchingPage() {
           process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
         const res = await axiosInstance.post<{
           chatId: string;
-          receiverUserId: string;
+          id: string;        // receiver's resolved User.id — used as chatId in the message page
+          name: string;
+          avatar: string;
         }>(`${baseUrl}/chat/initiate`, { senderId, receiverId });
-        // The message page uses chatId as userId2 for getChatHistory socket call,
-        // so we must navigate with the receiver's actual User ID, not the Chat record ID.
-        router.push(`/message?chatId=${res.data.receiverUserId}`);
+        // The backend returns `id` = the receiver's User.id (resolved from employee/company ID).
+        // The message page uses chatId as userId2 for getChatHistory socket call.
+        router.push(`/message?chatId=${res.data.id}`);
       } catch (err) {
         console.error("Failed to initiate chat:", err);
       } finally {

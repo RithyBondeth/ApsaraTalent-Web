@@ -5,6 +5,25 @@ import { formatSidebarTime, parseMessageDate } from "@/utils/date";
 
 type SocketInstance = ReturnType<typeof io>;
 
+// ── Module-level socket singleton ───────────────────────────────────────────
+// Kept OUTSIDE the Zustand store so React StrictMode's double-invoke
+// (mount → cleanup → mount) doesn't destroy the socket between the two mounts.
+//
+// Problem: In development, React StrictMode calls every useEffect cleanup
+// immediately after the first mount, then remounts.  If connect/disconnect
+// lived purely inside the store, the cleanup `disconnect()` from the first
+// mount would call socket.disconnect() while the WebSocket handshake was
+// still in-flight — producing "WebSocket closed before connection established"
+// — and the second mount's connect() would see socket.connected=false and
+// try to create a new socket, but the old one was already being torn down.
+//
+// Fix: the socket lives here, at module scope.  React's cleanup fires
+// `disconnect()` but we use a short-delay guard (`_pendingDisconnect`) to
+// cancel the actual socket teardown if `connect()` is called again within
+// 80 ms.  This is exactly the StrictMode double-invoke window.
+let _socket: SocketInstance | null = null;
+let _pendingDisconnect: ReturnType<typeof setTimeout> | null = null;
+
 // Helper to resolve display name and avatar from user object
 const resolveProfile = (user: any) => {
   if (!user) return { name: "Unknown", avatar: "/avatars/default.png" };
@@ -49,7 +68,11 @@ interface ChatState {
     content: string,
     type?: string,
     replyTo?: IMessage["replyTo"] | null,
-    attachment?: { url: string; type: "image" | "document"; filename: string } | null,
+    attachment?: {
+      url: string;
+      type: "image" | "document";
+      filename: string;
+    } | null,
   ) => void;
   getRecentChats: () => void;
   getChatHistory: (userId2: string) => void;
@@ -74,7 +97,11 @@ interface ChatState {
    * Emits 'editMessage' to the socket; the server broadcasts 'messageEdited'
    * back to both participants and the store listener updates content + isEdited flag.
    */
-  editMessage: (messageId: string, receiverId: string, newContent: string) => void;
+  editMessage: (
+    messageId: string,
+    receiverId: string,
+    newContent: string,
+  ) => void;
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -96,8 +123,40 @@ export const useChatStore = create<ChatState>((set, get) => ({
     // Update `me` before anything else so callbacks have user context
     if (user) set({ me: user });
 
-    // Don't create a duplicate socket
-    if (get().socket?.connected || get().isConnected) return;
+    // ── Cancel any pending StrictMode disconnect ─────────────────────────
+    // If disconnect() was called < 80 ms ago (StrictMode cleanup between
+    // first and second mount), cancel the teardown and reuse the live socket.
+    if (_pendingDisconnect !== null) {
+      clearTimeout(_pendingDisconnect);
+      _pendingDisconnect = null;
+    }
+
+    // Reuse the module-level socket if it's already fully connected
+    if (_socket?.connected) {
+      // Sync store state in case it was cleared by the StrictMode cleanup path
+      set({ isConnected: true, socket: _socket });
+      get().getRecentChats();
+      get().getUnreadCount();
+      return;
+    }
+
+    // If a socket exists but hasn't connected yet AND hasn't been disconnected,
+    // it's mid-handshake from the first StrictMode mount — wait for it.
+    // The existing socket.on("connect") handler will fire when ready.
+    // IMPORTANT: only reuse if _socket is truly in a "connecting" state.
+    // If _socket.disconnected is true the socket is dead — fall through to create a new one.
+    if (_socket && !_socket.connected && !_socket.disconnected) {
+      // Still connecting — don't create a second socket, existing handlers will fire
+      set({ socket: _socket });
+      return;
+    }
+
+    // If we reach here, _socket is either null or in a disconnected/dead state — create fresh
+    if (_socket) {
+      // Clean up any stale dead socket before replacing it
+      _socket.removeAllListeners();
+      _socket = null;
+    }
 
     const socketUrl =
       process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
@@ -110,6 +169,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
       withCredentials: true,
       transports: ["websocket", "polling"],
     } as any);
+
+    _socket = socket;
 
     socket.on("connect", () => {
       // Set socket AND connected in one atomic update so getRecentChats
@@ -145,13 +206,17 @@ export const useChatStore = create<ChatState>((set, get) => ({
       // in the already-loaded currentMessages to get content + senderName.
       // If the parent isn't loaded yet, we fall back to a minimal placeholder
       // (id only) so the quote block can still render something.
-      const resolveReplyTo = (replyToId: string | null | undefined): IMessage["replyTo"] => {
+      const resolveReplyTo = (
+        replyToId: string | null | undefined,
+      ): IMessage["replyTo"] => {
         if (!replyToId) return undefined;
         const parent = currentMessages.find((m) => m.id === replyToId);
         if (parent) {
           return {
             id: parent.id,
-            content: parent.isDeleted ? "This message was deleted" : parent.content,
+            content: parent.isDeleted
+              ? "This message was deleted"
+              : parent.content,
             senderName: parent.senderName || (parent.isMe ? "You" : ""),
             isDeleted: parent.isDeleted,
           };
@@ -207,14 +272,22 @@ export const useChatStore = create<ChatState>((set, get) => ({
               // Preserve the replyTo object that was already on the optimistic message
               // (built from the live replyTarget in MessageInput). Only resolve from
               // the ID as a fallback if the optimistic message somehow lost it.
-              replyTo: updatedMessages[optimisticIndex].replyTo
-                ?? resolveReplyTo(message.replyToId),
+              replyTo:
+                updatedMessages[optimisticIndex].replyTo ??
+                resolveReplyTo(message.replyToId),
               deliveryStatus: "sent", // Server confirmed → upgrade from 'sending'
               // Preserve optimistic attachment fields (already shown locally);
               // the server echoes back the same URL so no flicker.
-              attachment: message.attachment ?? updatedMessages[optimisticIndex].attachment ?? null,
-              attachmentType: message.attachmentType ?? updatedMessages[optimisticIndex].attachmentType,
-              attachmentFilename: message.attachmentFilename ?? updatedMessages[optimisticIndex].attachmentFilename,
+              attachment:
+                message.attachment ??
+                updatedMessages[optimisticIndex].attachment ??
+                null,
+              attachmentType:
+                message.attachmentType ??
+                updatedMessages[optimisticIndex].attachmentType,
+              attachmentFilename:
+                message.attachmentFilename ??
+                updatedMessages[optimisticIndex].attachmentFilename,
             };
             set({ currentMessages: updatedMessages });
             return;
@@ -368,9 +441,24 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   disconnect: () => {
-    const { socket } = get();
-    if (socket) {
-      socket.disconnect();
+    // ── StrictMode-safe disconnect ───────────────────────────────────────
+    // React StrictMode calls cleanup (disconnect) then immediately remounts
+    // (connect) within ~1 ms.  We defer the actual teardown by 80 ms so
+    // connect() can cancel it before it fires.  On a real unmount (navigation,
+    // logout) connect() is never called again, so the teardown runs normally.
+    if (_pendingDisconnect !== null) return; // Already scheduled
+
+    _pendingDisconnect = setTimeout(() => {
+      _pendingDisconnect = null;
+      // Null out _socket BEFORE calling disconnect() so that any concurrent
+      // connect() call that fires during the async teardown doesn't try to
+      // reuse the half-closed socket (which would leave isConnected=false
+      // forever because no new socket.on("connect") is ever registered).
+      const socketToClose = _socket;
+      _socket = null;
+      if (socketToClose) {
+        socketToClose.disconnect();
+      }
       set({
         socket: null,
         isConnected: false,
@@ -379,8 +467,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
         activeChats: [],
         currentMessages: [],
         onlineUsers: {}, // Reset online map on disconnect
+        // activeChat intentionally NOT reset here — the URL sync effect re-evaluates
+        // it when isConnected / isChatsLoaded flip back to true on reconnect.
+        // Resetting it here would unmount ChatInput mid-render causing it to disappear.
       });
-    }
+    }, 80);
   },
 
   /**
@@ -402,7 +493,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
     content: string,
     type = "text",
     replyTo?: IMessage["replyTo"] | null,
-    attachment?: { url: string; type: "image" | "document"; filename: string } | null,
+    attachment?: {
+      url: string;
+      type: "image" | "document";
+      filename: string;
+    } | null,
   ) => {
     const { socket, currentMessages, me } = get();
     if (!socket?.connected) return;
@@ -428,6 +523,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
     // Emit to server; replyToId carries the parent UUID so the DB stores the link.
     // attachment carries the pre-uploaded URL so the server saves it to the DB.
+    // attachmentFilename carries the original name so the receiver sees "report.pdf"
+    // instead of a UUID path — the server includes it in the 'newMessage' broadcast.
     // Derive messageType from the attachment — the server uses this to set the
     // messageType enum column which we later read back as attachmentType.
     const resolvedType = attachment?.type ?? type;
@@ -439,6 +536,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         type: resolvedType,
         replyToId: replyTo?.id ?? null,
         attachment: attachment?.url ?? null,
+        attachmentFilename: attachment?.filename ?? null,
       },
       (response: any) => {
         const realId = response?.message?.id;
@@ -582,8 +680,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const { socket, me } = get();
     if (!socket?.connected || !me) return;
 
-    // Signal loading so the message area shows a spinner instead of blank
-    set({ isHistoryLoading: true, currentMessages: [] });
+    // Signal loading — only clear currentMessages if not already loading for this chat.
+    // setActiveChat now sets isHistoryLoading=true atomically, so on a fresh chat switch
+    // this is a no-op (isHistoryLoading is already true). This prevents a double-clear
+    // if getChatHistory is called directly after setActiveChat.
+    if (!get().isHistoryLoading) {
+      set({ isHistoryLoading: true, currentMessages: [] });
+    }
 
     socket.emit(
       "getChatHistory",
@@ -597,13 +700,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
         const resolvedPartnerId = Array.isArray(res) ? null : res?.partnerId;
         const partnerProfile = Array.isArray(res) ? null : res?.partnerProfile;
 
-        // Race condition guard: if user switched chats while request was in-flight, discard
+        // Race condition guard: if user switched chats while request was in-flight, discard.
+        // Compare against userId2 (the original input we emitted) only — NOT resolvedPartnerId.
+        // resolvedPartnerId is the server's resolved User PK, which may differ from the
+        // employee/company ID stored in activeChat.id, causing a false positive discard.
         const currentActiveChat = get().activeChat;
         if (
           currentActiveChat &&
-          currentActiveChat.id.toLowerCase() !== userId2.toLowerCase() &&
-          resolvedPartnerId &&
-          currentActiveChat.id.toLowerCase() !== resolvedPartnerId.toLowerCase()
+          currentActiveChat.id.toLowerCase() !== userId2.toLowerCase()
         ) {
           set({ isHistoryLoading: false });
           return;
@@ -641,7 +745,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
               deliveryStatus,
               // Attachment fields — persisted URL from the server
               attachment: msg.attachment ?? null,
-              attachmentType: msg.attachmentType as IMessage["attachmentType"] ?? undefined,
+              attachmentType:
+                (msg.attachmentType as IMessage["attachmentType"]) ?? undefined,
               attachmentFilename: msg.attachmentFilename ?? undefined,
               // replyTo is built below if replyToId is present and resolvable from history
               // For now we attach a minimal placeholder; a future enhancement could
@@ -711,44 +816,70 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   setActiveChat: (chat: IChatPreview | null) => {
     const prevChat = get().activeChat;
-    // Only fetch history when the chat actually changes to a different partner
-    const isNewChat =
+    const isSameChat =
       chat &&
-      (!prevChat || prevChat.id.toLowerCase() !== chat.id.toLowerCase());
+      prevChat &&
+      prevChat.id.toLowerCase() === chat.id.toLowerCase();
 
-    set({ activeChat: chat });
+    // Fetch history when:
+    //  (a) switching to a new/different chat, OR
+    //  (b) same chat but currentMessages is empty (reconnect wiped them)
+    const isNewChat = chat && !isSameChat;
+    const needsRefetch =
+      isSameChat && get().currentMessages.length === 0;
+
+    // Guard: if we're already loading this exact chat (e.g. URL sync called setActiveChat
+    // twice for the same chatId), don't start a second concurrent getChatHistory request.
+    const alreadyLoadingThisChat =
+      isSameChat && get().isHistoryLoading;
+
+    if (!chat) {
+      // Clearing the active chat — reset all related state atomically
+      set({ activeChat: null, currentMessages: [], isHistoryLoading: false });
+      return;
+    }
 
     if (isNewChat) {
-      get().getChatHistory(chat!.id);
+      // Switching to a new chat: atomically set activeChat AND start the loading state
+      // in ONE store update so the UI never sees activeChat=X with stale messages from
+      // the previous chat (avoids a flash of old content before the spinner appears).
+      set({ activeChat: chat, isHistoryLoading: true, currentMessages: [] });
+      get().getChatHistory(chat.id);
+    } else if (needsRefetch && !alreadyLoadingThisChat) {
+      // Same chat but messages were wiped (e.g. after reconnect). Re-fetch silently.
+      set({ activeChat: chat, isHistoryLoading: true, currentMessages: [] });
+      get().getChatHistory(chat.id);
+    } else {
+      // Same chat with messages already loaded (or loading in progress) — just update
+      // the chat metadata (e.g. name/avatar resolved from "Loading..." skeleton).
+      set({ activeChat: chat });
+    }
 
-      // Refresh online status for this specific partner whenever we open a chat.
-      // This catches the case where:
-      //  (a) getRecentChats ran but getOnlineUsers callback hadn't arrived yet, or
-      //  (b) the user navigates to a chat by URL (chatId param) without the partner
-      //      being in the sidebar yet.
-      const { socket } = get();
-      if (socket?.connected) {
-        socket.emit(
-          "getOnlineUsers",
-          [chat!.id],
-          (onlineMap: Record<string, boolean>) => {
-            if (!onlineMap || typeof onlineMap !== "object") return;
-            const isOnline = onlineMap[chat!.id] ?? false;
-            set((state) => ({
-              onlineUsers: { ...state.onlineUsers, [chat!.id]: isOnline },
-              activeChat:
-                state.activeChat?.id === chat!.id
-                  ? { ...state.activeChat, isOnline }
-                  : state.activeChat,
-              activeChats: state.activeChats.map((c) =>
-                c.id === chat!.id ? { ...c, isOnline } : c,
-              ),
-            }));
-          },
-        );
-      }
-    } else if (!chat) {
-      set({ currentMessages: [], isHistoryLoading: false });
+    // Refresh online status for this specific partner whenever we open a chat.
+    // This catches the case where:
+    //  (a) getRecentChats ran but getOnlineUsers callback hadn't arrived yet, or
+    //  (b) the user navigates to a chat by URL (chatId param) without the partner
+    //      being in the sidebar yet.
+    const { socket } = get();
+    if (socket?.connected) {
+      socket.emit(
+        "getOnlineUsers",
+        [chat.id],
+        (onlineMap: Record<string, boolean>) => {
+          if (!onlineMap || typeof onlineMap !== "object") return;
+          const isOnline = onlineMap[chat.id] ?? false;
+          set((state) => ({
+            onlineUsers: { ...state.onlineUsers, [chat.id]: isOnline },
+            activeChat:
+              state.activeChat?.id === chat.id
+                ? { ...state.activeChat, isOnline }
+                : state.activeChat,
+            activeChats: state.activeChats.map((c) =>
+              c.id === chat.id ? { ...c, isOnline } : c,
+            ),
+          }));
+        },
+      );
     }
   },
 

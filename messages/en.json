@@ -1,0 +1,33 @@
+{
+  "sidebar": {
+    "feed": "Feed",
+    "search": "Search",
+    "favorite": "Favorite",
+    "matching": "Matching",
+    "message": "Message",
+    "notification": "Notification",
+    "aiResumeBuilder": "AI Resume Builder"
+  },
+  "sidebarFooter": {
+    "myProfile": "My Profile",
+    "settings": "Settings",
+    "appearance": "Appearance",
+    "favorite": "Favorite",
+    "reportProblem": "Report a problem",
+    "logOut": "Log out",
+    "confirmLogout": "Confirm Logout",
+    "logoutQuestion": "Are you sure you want to logout?",
+    "cancel": "Cancel",
+    "logout": "Logout",
+    "language": "Language"
+  },
+  "header": {
+    "chat": "Chat",
+    "aiResumeBuilder": "AI Resume Builder",
+    "searchFavorite": "Search your favorite",
+    "matching": "Matching",
+    "favorites": "Favorites",
+    "profilePage": "Profile Page",
+    "settingPage": "Setting Page"
+  }
+}
