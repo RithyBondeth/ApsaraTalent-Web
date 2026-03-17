@@ -1,6 +1,6 @@
 import {
-  emailValidation,
-  passwordValidation,
+    emailValidation,
+    passwordValidation
 } from "@/utils/functions/validations";
 import * as z from "zod";
 

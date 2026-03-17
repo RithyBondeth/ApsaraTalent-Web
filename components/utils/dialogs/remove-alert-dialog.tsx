@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogTitle
 } from "@/components/ui/dialog";
 
 export default function RemoveAlertDialog(props: {

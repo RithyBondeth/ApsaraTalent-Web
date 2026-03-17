@@ -4,11 +4,11 @@ import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
 import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import ErrorMessage from "@/components/utils/error-message";
@@ -16,19 +16,13 @@ import LabelInput from "@/components/utils/label-input";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { locationConstant } from "@/utils/constants/app.constant";
-import { TLocations } from "@/utils/types/location.type";
-import { useState } from "react";
+import { Controller } from "react-hook-form";
 
 export default function BasicInfoStepForm({
   register,
-  setValue,
-  trigger,
+  control,
   errors,
 }: IStepFormProps<TCompanySignup>) {
-  const [selectedLocation, setSelectedLocation] = useState<TLocations | null>(
-    null
-  );
-
   return (
     <div className="flex flex-col items-start gap-5">
       <TypographyH4>Add Basic information</TypographyH4>
@@ -49,12 +43,13 @@ export default function BasicInfoStepForm({
             Company Description
           </TypographyMuted>
           <Textarea
+            autoResize
             placeholder="Company Description"
             className="placeholder:text-sm"
             {...register("basicInfo.description")}
+            validationMessage={errors!.basicInfo?.description?.message}
           />
         </div>
-        <ErrorMessage>{errors!.basicInfo?.description?.message}</ErrorMessage>
       </div>
       <div className="w-full flex justify-between items-center gap-3 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
         <LabelInput
@@ -97,27 +92,27 @@ export default function BasicInfoStepForm({
         <div className="w-full flex flex-col items-start gap-2">
           <div className="w-full flex flex-col items-start gap-3">
             <TypographyMuted className="text-xs">Locations</TypographyMuted>
-            <Select
-              onValueChange={(value: TLocations) => {
-                setSelectedLocation(value);
-                setValue?.("basicInfo.location", value, {
-                  shouldValidate: true,
-                });
-                trigger?.("basicInfo.location");
-              }}
-              value={selectedLocation || ""}
-            >
-              <SelectTrigger className="h-12 text-muted-foreground">
-                <SelectValue placeholder="Location" />
-              </SelectTrigger>
-              <SelectContent>
-                {locationConstant.map((location) => (
-                  <SelectItem key={location} value={location}>
-                    {location}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Controller
+              name="basicInfo.location"
+              control={control!}
+              render={({ field }) => (
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value || ""}
+                >
+                  <SelectTrigger className="h-12 text-muted-foreground">
+                    <SelectValue placeholder="Location" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {locationConstant.map((location) => (
+                      <SelectItem key={location} value={location}>
+                        {location}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </div>
           <ErrorMessage>{errors!.basicInfo?.location?.message}</ErrorMessage>
         </div>

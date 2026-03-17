@@ -1,31 +1,32 @@
 "use client";
-import React, { useMemo, useCallback } from "react";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "../../ui/sidebar";
-import LogoComponent from "../../utils/logo";
-import { Collapsible, CollapsibleTrigger } from "../../ui/collapsible";
-import { usePathname, useRouter } from "next/navigation";
-import { SidebarDropdownFooter } from "./sidebar-dropdown-footer";
-import { Separator } from "@/components/ui/separator";
-import { sidebarList } from "@/utils/constants/sidebar.constant";
-import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { SidebarDropdownFooterSkeleton } from "./sidebar-dropdown-footer/skeleton";
-import { LucideFileUser } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
-import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
+import { Separator } from "@/components/ui/separator";
+import { useFetchOnce } from "@/hooks/use-fetch-once";
 import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
 import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
-import { useFetchOnce } from "@/hooks/use-fetch-once";
+import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
+import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { sidebarList } from "@/utils/constants/sidebar.constant";
+import { LucideFileUser } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { usePathname, useRouter } from "next/navigation";
+import React, { useCallback, useMemo } from "react";
+import { Collapsible, CollapsibleTrigger } from "../../ui/collapsible";
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarGroup,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    useSidebar
+} from "../../ui/sidebar";
+import LogoComponent from "../../utils/logo";
+import { SidebarDropdownFooter } from "./sidebar-dropdown-footer";
+import { SidebarDropdownFooterSkeleton } from "./sidebar-dropdown-footer/skeleton";
 
 // Badge Component
 const CountBadge = ({ count }: { count: number }) => {
@@ -40,6 +41,19 @@ export default function CollapseSidebar({
   const router = useRouter();
   const pathname = usePathname();
   const { open } = useSidebar();
+  const t = useTranslations("sidebar");
+
+  const getSidebarTitle = (title: string): string => {
+    const map: Record<string, string> = {
+      Feed: t("feed"),
+      Search: t("search"),
+      Favorite: t("favorite"),
+      Matching: t("matching"),
+      Message: t("message"),
+      Notification: t("notification"),
+    };
+    return map[title] ?? title;
+  };
 
   // API Calls
   const { user, loading } = useGetCurrentUserStore();
@@ -167,7 +181,7 @@ export default function CollapseSidebar({
                           strokeWidth={1.5}
                         />
                       )}
-                      <span>{item.title}</span>
+                      <span>{getSidebarTitle(item.title)}</span>
                       {item.url === "/matching" && (
                         <CountBadge count={matchingCount} />
                       )}
@@ -191,7 +205,7 @@ export default function CollapseSidebar({
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton
-                      tooltip="AI Resume"
+                      tooltip={t("aiResumeBuilder")}
                       className={`font-medium py-3 ${
                         isPathActive("/resume-builder")
                           ? "bg-primary text-primary-foreground"
@@ -199,7 +213,7 @@ export default function CollapseSidebar({
                       }`}
                     >
                       <LucideFileUser className="!size-6" strokeWidth={1.5} />
-                      <span>AI Resume Builder</span>
+                      <span>{t("aiResumeBuilder")}</span>
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                 </SidebarMenuItem>

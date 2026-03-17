@@ -1,6 +1,8 @@
-import axios from "axios";
+import { ResumeTemplate } from "@/utils/interfaces/resume.interface";
+export type { ResumeTemplate };
 import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
 import { API_RESUME_BUILDER_URL } from "@/utils/constants/apis/resume_url";
+import axios from "axios";
 
 export type PersonalInfo = {
   fullName: string;
@@ -15,19 +17,21 @@ export type PersonalInfo = {
 export type Experience = {
   company: string;
   position: string;
-  startDate: string; // Format: MM/DD/YYYY
-  endDate?: string; // Format: MM/DD/YYYY or null
+  startDate: string;
+  endDate?: string;
   description: string;
   achievements: string[];
 };
 
-export type ResumeTemplate = "modern" | "classic" | "creative";
-
 export type BuildResume = {
   personalInfo: PersonalInfo;
+  summary?: string;
+  yearsOfExperience?: string;
+  availability?: string;
   experience: Experience[];
   skills: string[];
   education?: string;
+  careerScopes?: string[];
   template: ResumeTemplate;
 };
 

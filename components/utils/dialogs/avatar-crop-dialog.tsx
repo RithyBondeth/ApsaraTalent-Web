@@ -4,11 +4,9 @@ import { useState } from "react";
 import Cropper from "react-easy-crop";
 
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
+    Dialog,
+    DialogContent, DialogFooter, DialogHeader,
+    DialogTitle
 } from "@/components/ui/dialog";
 
 import { Button } from "@/components/ui/button";
@@ -22,17 +20,25 @@ type CropArea = {
 };
 
 interface AvatarCropDialogProps {
+  title: string;
   open: boolean;
   setOpen: (open: boolean) => void;
   image: string;
   onCropComplete: (file: File) => void;
+  aspect?: number;
+  cropShape?: "rect" | "round";
+  fileName?: string;
 }
 
 export default function AvatarCropDialog({
+  title,
   open,
   setOpen,
   image,
   onCropComplete,
+  aspect = 1,
+  cropShape = "round",
+  fileName = "avatar.jpg",
 }: AvatarCropDialogProps) {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -80,7 +86,7 @@ export default function AvatarCropDialog({
 
     const blob = await getCroppedImage(image, croppedAreaPixels);
 
-    const croppedFile = new File([blob], "avatar.jpg", {
+    const croppedFile = new File([blob], fileName, {
       type: "image/jpeg",
     });
 
@@ -92,7 +98,7 @@ export default function AvatarCropDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>Crop Avatar</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
 
         <div className="relative w-full h-[320px] rounded-md overflow-hidden bg-muted">
@@ -101,8 +107,8 @@ export default function AvatarCropDialog({
               image={image}
               crop={crop}
               zoom={zoom}
-              aspect={1}
-              cropShape="round"
+              aspect={aspect}
+              cropShape={cropShape}
               showGrid={false}
               onCropChange={setCrop}
               onZoomChange={setZoom}
@@ -133,7 +139,7 @@ export default function AvatarCropDialog({
           </Button>
 
           <Button type="button" onClick={confirmCrop}>
-            Crop Avatar
+            Crop Image
           </Button>
         </DialogFooter>
       </DialogContent>

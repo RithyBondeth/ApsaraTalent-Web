@@ -1,20 +1,20 @@
 import {
-  LucideArrowRight,
-  LucideBookmarkX,
-  LucideBriefcaseBusiness,
-  LucideClock,
-  LucideMapPin,
+    LucideArrowRight,
+    LucideBookmarkX,
+    LucideBriefcaseBusiness,
+    LucideClock,
+    LucideMapPin
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
+import { Button } from "../../ui/button";
 import Tag from "../../utils/tag";
 import { TypographyH4 } from "../../utils/typography/typography-h4";
 import { TypographyP } from "../../utils/typography/typography-p";
-import { Button } from "../../ui/button";
 import { IFavoriteEmployeeCardProps } from "./props";
-import { useRouter } from "next/navigation";
 
 export default function FavoriteEmployeeCard(
-  props: IFavoriteEmployeeCardProps
+  props: IFavoriteEmployeeCardProps,
 ) {
   const router = useRouter();
 
@@ -65,9 +65,7 @@ export default function FavoriteEmployeeCard(
               <div className="flex flex-col items-start">
                 <TypographyP className="text-xs !m-0">Experience</TypographyP>
                 <TypographyP className="text-sm font-medium !m-0">
-                  {props.experience <= 1
-                    ? `${props.experience} year experience`
-                    : `${props.experience} years experience`}
+                  {props.experience} years experience
                 </TypographyP>
               </div>
             </div>

@@ -6,14 +6,13 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import {
-  LucideClock,
-  LucideGraduationCap,
-  LucideMapPin,
-  LucideUser,
+    LucideClock,
+    LucideGraduationCap,
+    LucideMapPin,
+    LucideUser
 } from "lucide-react";
-import { TSearchEmployeeCardProps } from "./props";
 import { useRouter } from "next/navigation";
-import { availabilityConstant } from "@/utils/constants/app.constant";
+import { TSearchEmployeeCardProps } from "./props";
 
 export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
   const router = useRouter();
@@ -42,11 +41,7 @@ export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
                   strokeWidth={"1.5px"}
                 />
               }
-              text={
-                props.yearOfExperience === 1
-                  ? `${props.yearOfExperience} year experience`
-                  : `${props.yearOfExperience} years experience`
-              }
+              text={props.yearOfExperience.toString()}
             />
             <IconLabel
               icon={
@@ -63,11 +58,7 @@ export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
       <div className="w-full flex items-center gap-3 phone-340:flex-col phone-340:items-start">
         <IconLabel
           icon={<LucideClock />}
-          text={
-            availabilityConstant.find(
-              (item) => item.value === props.availability
-            )?.label ?? "Unknown"
-          }
+          text={props.availability}
           className="text-muted-foreground"
         />
         <IconLabel

@@ -1,34 +1,34 @@
 "use client";
 
+import phoneOTPWhiteSvg from "@/assets/svg/phone-otp-white.svg";
 import { Button } from "@/components/ui/button";
 import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSeparator,
-  InputOTPSlot,
+    InputOTP,
+    InputOTPGroup,
+    InputOTPSeparator,
+    InputOTPSlot
 } from "@/components/ui/input-otp";
+import { ToastAction } from "@/components/ui/toast";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
+import ErrorMessage from "@/components/utils/error-message";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import phoneOTPWhiteSvg from "@/assets/svg/phone-otp-white.svg";
-import Image from "next/image";
-import { Controller, useForm } from "react-hook-form";
-import ErrorMessage from "@/components/utils/error-message";
-import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 import { useVerifyOTPStore } from "@/stores/apis/auth/verify-otp.store";
-import { useEffect, useState } from "react";
-import { LucideCheck, LucideInfo } from "lucide-react";
-import { ToastAction } from "@/components/ui/toast";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
-import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
-import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
 import { useGetAllCompanyStore } from "@/stores/apis/company/get-all-cmp.store";
-import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
-import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 import { useGetAllEmployeeStore } from "@/stores/apis/employee/get-all-emp.store";
+import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
+import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
+import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
+import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
+import { LucideCheck, LucideInfo } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 export default function PhoneOTPPage() {
   // Utils

@@ -1,10 +1,9 @@
 import {
-  dateValidation,
-  fileValidation,
-  imageValidation,
-  positiveNumberValidation,
-  selectedValidation,
-  textValidation,
+    dateValidation,
+    optionalFileValidation,
+    optionalImageValidation,
+    selectedValidation,
+    textValidation
 } from "@/utils/functions/validations";
 import * as z from "zod";
 
@@ -12,9 +11,11 @@ import * as z from "zod";
 export const professionStepSchema = z.object({
   profession: z.object({
     job: textValidation("Profession", 50),
-    yearOfExperience: positiveNumberValidation("Year of experiences"),
+    yearOfExperience: z
+      .string({ required_error: "Please select your years of experince" })
+      .min(1, { message: "Please select your years of experince" }),
     availability: selectedValidation("availability"),
-    description: textValidation("Description", 500),
+    description: textValidation("Description", 1000),
   }),
 });
 
@@ -23,11 +24,17 @@ export const experienceStepSchema = z.object({
   experience: z
     .object({
       title: textValidation("Title", 50),
-      description: textValidation("Description", 200),
+      description: textValidation("Description", 500),
       startDate: dateValidation("Start date"),
       endDate: dateValidation("End date"),
     })
-    .array(),
+    .refine((data) => data.startDate < data.endDate, {
+      message: "End date must be after start date",
+      path: ["endDate"],
+    })
+    .array()
+    .optional()
+    .default([]),
 });
 
 // Define schema for step 3
@@ -35,8 +42,16 @@ export const educationStepSchema = z.object({
   educations: z
     .object({
       school: textValidation("School", 50),
-      degree: textValidation("Degree", 50),
-      year: dateValidation("Graduation year"),
+      degree: textValidation("Degree", 100),
+      year: z
+        .number({
+          required_error: "Graduation year is required",
+          invalid_type_error: "Graduation year is required",
+        })
+        .int()
+        .min(1900)
+        .max(new Date().getFullYear() + 10),
+      isStudying: z.boolean().optional(),
     })
     .array(),
 });
@@ -47,14 +62,14 @@ export const skillReferenceStepSchema = z.object({
     skills: z
       .array(z.string())
       .min(1, { message: "At least one skill is required" }),
-    resume: fileValidation("Resume"),
-    coverLetter: fileValidation("Cover letter"),
+    resume: optionalFileValidation("Resume"),
+    coverLetter: optionalFileValidation("Cover letter"),
   }),
 });
 
 // Define schema for step 5
 export const avatarStepSchema = z.object({
-  avatar: imageValidation("Avatar"),
+  avatar: optionalImageValidation("Avatar"),
 });
 
 export const careerScopesStepSchema = z.object({

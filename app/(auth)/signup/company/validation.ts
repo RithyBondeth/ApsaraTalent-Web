@@ -1,8 +1,8 @@
 import {
-  dateValidation,
-  imageValidation,
-  selectedValidation,
-  textValidation,
+    dateValidation,
+    optionalImageValidation,
+    selectedValidation,
+    textValidation
 } from "@/utils/functions/validations";
 import * as z from "zod";
 
@@ -20,42 +20,40 @@ export const basicInfoStepSchema = z.object({
 
 // Define schema for step 2
 export const openPositionStepSchema = z.object({
-  openPositions: z.array(
-    z.object({
-      title: textValidation("Title", 100),
-      description: textValidation("Description", 1000),
-      experienceRequirement: textValidation("Experience requirement", 100),
-      educationRequirement: textValidation("Education requirement", 100),
-      skills: z
-        .array(z.string())
-        .min(1, { message: "At least one skill is required" }),
-      salary: textValidation("Salary", 100),
-      types: textValidation("Type", 1000),
-      deadlineDate: dateValidation("Deadline"),
-    }),
-  ),
+  openPositions: z
+    .array(
+      z.object({
+        title: textValidation("Title", 100),
+        description: textValidation("Description", 1000),
+        experienceRequirement: textValidation("Experience requirement", 100),
+        educationRequirement: textValidation("Education requirement", 100),
+        skills: z
+          .array(z.string())
+          .min(1, { message: "At least one skill is required" }),
+        salary: textValidation("Salary", 100),
+        types: textValidation("Type", 1000),
+        deadlineDate: dateValidation("Deadline"),
+      }),
+    )
+    .min(1, { message: "At least one open position is required" }),
 });
 
 // Define schema for step 3
 export const benefitAndValueStepSchema = z.object({
   benefitsAndValues: z.object({
-    benefits: z
-      .array(z.string())
-      .min(1, { message: "At least one benefit is required" }),
-    values: z
-      .array(z.string())
-      .min(1, { message: "At least one value is required" }),
+    benefits: z.array(z.string()).optional(),
+    values: z.array(z.string()).optional(),
   }),
 });
 
 // Define schema for step 4
 export const companyAvatarStepSchema = z.object({
-  avatar: imageValidation("Avatar"),
+  avatar: optionalImageValidation("Avatar"),
 });
 
 // Define schema for step 5
 export const companyCoverStepSchema = z.object({
-  cover: imageValidation("Cover"),
+  cover: optionalImageValidation("Cover"),
 });
 
 export const careerScopesStepSchema = z.object({

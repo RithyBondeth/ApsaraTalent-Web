@@ -1,9 +1,9 @@
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyLead } from "@/components/utils/typography/typography-lead";
 import {
-  LucideChartSpline,
-  LucidePencilRuler,
-  LucideSearch,
+    LucideChartSpline,
+    LucidePencilRuler,
+    LucideSearch
 } from "lucide-react";
 
 export default function ResumeBuilderFeature() {

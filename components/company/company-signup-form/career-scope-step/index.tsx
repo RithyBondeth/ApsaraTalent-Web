@@ -1,35 +1,36 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
+import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
+    CommandDialog,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList
 } from "@/components/ui/command";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { LucideArrowLeft, LucideSearch } from "lucide-react";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious
+} from "@/components/ui/pagination";
+import ErrorMessage from "@/components/utils/error-message";
+import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { careerScopesList } from "@/data/career-data";
-import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
-import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
+import { LucideArrowLeft, LucideSearch } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 export default function CompanyCareerScopeStepForm({
   register,
@@ -59,7 +60,7 @@ export default function CompanyCareerScopeStepForm({
       setSelectedCareers(initial);
     }
   }, []);
-  
+
   // Handle Toggle Career
   const toggleCareer = (career: string) => {
     setSelectedCareers((prev) => {
@@ -74,7 +75,7 @@ export default function CompanyCareerScopeStepForm({
   // Handle Pagination
   const paginatedCareers = careerScopesList.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const goToPage = (page: number) => setCurrentPage(page);
@@ -102,6 +103,7 @@ export default function CompanyCareerScopeStepForm({
     <div className="w-full flex flex-col items-stretch gap-8">
       {/* Back Button Section */}
       <Button
+        type="button"
         className="absolute top-5 left-5"
         onClick={() => router.push("/signup")}
       >
@@ -118,7 +120,11 @@ export default function CompanyCareerScopeStepForm({
       </div>
 
       {/* Search Section */}
-      <Button variant="outline" onClick={() => setOpenSearchDialog(true)}>
+      <Button
+        variant="outline"
+        type="button"
+        onClick={() => setOpenSearchDialog(true)}
+      >
         <LucideSearch />
         Search your career
       </Button>
@@ -168,7 +174,7 @@ export default function CompanyCareerScopeStepForm({
 
       {/* Validation Message Section */}
       {errors?.careerScopes && (
-        <p className="text-sm text-red-500">{errors.careerScopes.message}</p>
+        <ErrorMessage>{errors.careerScopes.message}</ErrorMessage>
       )}
 
       {/* Pagination Section */}

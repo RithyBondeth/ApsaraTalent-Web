@@ -3,36 +3,36 @@
 import AvatarCompanyStepForm from "@/components/company/company-signup-form/avatar-step";
 import BasicInfoStepForm from "@/components/company/company-signup-form/basic-info-step";
 import BenefitValueStepForm from "@/components/company/company-signup-form/benefit-value-step";
+import CompanyCareerScopeStepForm from "@/components/company/company-signup-form/career-scope-step";
 import CoverCompanyStepForm from "@/components/company/company-signup-form/cover-step";
 import OpenPositionStepForm from "@/components/company/company-signup-form/open-position-step";
 import { Button } from "@/components/ui/button";
+import { ToastAction } from "@/components/ui/toast";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { useToast } from "@/hooks/use-toast";
+import { useCompanySignupStore } from "@/stores/apis/auth/company-signup.store";
+import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
+import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
+import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
+import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
+import { useUploadCompanyAvatarStore } from "@/stores/apis/company/upload-cmp-avatar.store";
+import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cover.store";
+import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
+import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  LucideArrowLeft,
-  LucideArrowRight,
-  LucideCheck,
-  LucideInfo,
+    LucideArrowLeft,
+    LucideArrowRight,
+    LucideCheck,
+    LucideInfo
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { companySignupSchema, TCompanySignup } from "./validation";
-import { zodResolver } from "@hookform/resolvers/zod";
-import CompanyCareerScopeStepForm from "@/components/company/company-signup-form/career-scope-step";
-import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
-import { useToast } from "@/hooks/use-toast";
-import { useCompanySignupStore } from "@/stores/apis/auth/company-signup.store";
-import { useUploadCompanyAvatarStore } from "@/stores/apis/company/upload-cmp-avatar.store";
-import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cover.store";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { ToastAction } from "@/components/ui/toast";
-import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
-import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
-import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
-import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
-import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function CompanySignup() {
   // Utils
@@ -55,7 +55,7 @@ export default function CompanySignup() {
 
   // API Integration - Company Signup
   const cmpSignup = useCompanySignupStore();
- 
+
   // API Integration - Company Avatar, Cover
   const uploadAvatar = useUploadCompanyAvatarStore();
   const uploadCover = useUploadCompanyCoverStore();
@@ -66,6 +66,14 @@ export default function CompanySignup() {
     mode: "onChange",
     resolver: zodResolver(companySignupSchema),
     defaultValues: {
+      basicInfo: {
+        name: "",
+        description: "",
+        industry: "",
+        companySize: "",
+        foundedYear: "",
+        location: "",
+      },
       openPositions: [
         {
           title: "",
@@ -82,6 +90,9 @@ export default function CompanySignup() {
         benefits: [],
         values: [],
       },
+      avatar: null,
+      cover: null,
+      careerScopes: [],
     },
   });
 
@@ -108,8 +119,8 @@ export default function CompanySignup() {
   // Handle Next Step and Final Submit
   const nextStep = async () => {
     const fieldsToValidate = stepFieldMap[step];
-
     const isValid = await trigger(fieldsToValidate);
+    if (!isValid) return;
 
     if (isValid) {
       if (step === totalSteps) {
@@ -137,12 +148,14 @@ export default function CompanySignup() {
                 salary: job.salary,
                 deadlineDate: job.deadlineDate.toISOString(),
               })),
-              benefits: data.benefitsAndValues.benefits.map((bf) => ({
-                label: bf,
-              })),
-              values: data.benefitsAndValues.values.map((value) => ({
-                label: value,
-              })),
+              benefits:
+                data.benefitsAndValues.benefits?.map((bf) => ({
+                  label: bf,
+                })) ?? [],
+              values:
+                data.benefitsAndValues.values?.map((value) => ({
+                  label: value,
+                })) ?? [],
               careerScopes: data.careerScopes.map((cs) => ({
                 name: cs,
               })),
@@ -180,7 +193,7 @@ export default function CompanySignup() {
               authEmail: false,
               email: null,
               password: null,
-              name: data.basicInfo.description,
+              name: data.basicInfo.name,
               description: data.basicInfo.description,
               phone: basicPhoneSignupData.phone!,
               industry: data.basicInfo.industry,
@@ -197,12 +210,14 @@ export default function CompanySignup() {
                 salary: job.salary,
                 deadlineDate: job.deadlineDate.toISOString(),
               })),
-              benefits: data.benefitsAndValues.benefits.map((bf) => ({
-                label: bf,
-              })),
-              values: data.benefitsAndValues.values.map((value) => ({
-                label: value,
-              })),
+              benefits:
+                data.benefitsAndValues.benefits?.map((bf) => ({
+                  label: bf,
+                })) ?? [],
+              values:
+                data.benefitsAndValues.values?.map((value) => ({
+                  label: value,
+                })) ?? [],
               careerScopes: data.careerScopes.map((cs) => ({
                 name: cs,
               })),
@@ -215,7 +230,7 @@ export default function CompanySignup() {
             }
 
             // Upload files in parallel
-            const uploadTasks = [];
+            const uploadTasks: Promise<unknown>[] = [];
 
             if (data.avatar instanceof File) {
               // If companyID exist then upload avatar
@@ -269,6 +284,7 @@ export default function CompanySignup() {
     }
 
     if (cmpSignup.loading || uploadAvatar.loading || uploadCover.loading) {
+      dismiss();
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -281,13 +297,13 @@ export default function CompanySignup() {
       });
     }
 
-    const errors = [
+    const errorList = [
       { error: cmpSignup.error, message: cmpSignup.message },
       { error: uploadAvatar.error, message: uploadAvatar.message },
       { error: uploadCover.error, message: uploadCover.message },
     ];
 
-    errors.forEach(({ error, message }) => {
+    errorList.forEach(({ error, message }) => {
       if (error) {
         dismiss();
         toast({
@@ -368,6 +384,7 @@ export default function CompanySignup() {
       <Button
         className="absolute top-5 left-5"
         variant="outline"
+        type="button"
         onClick={() => router.push("/signup")}
       >
         <LucideArrowLeft />
@@ -414,8 +431,7 @@ export default function CompanySignup() {
             {step === 1 && (
               <BasicInfoStepForm
                 register={register}
-                setValue={setValue}
-                trigger={trigger}
+                control={control}
                 errors={errors}
               />
             )}
@@ -443,7 +459,6 @@ export default function CompanySignup() {
                 register={register}
                 setValue={setValue}
                 getValues={getValues}
-                errors={errors}
               />
             )}
             {step === 5 && (
@@ -451,7 +466,6 @@ export default function CompanySignup() {
                 register={register}
                 setValue={setValue}
                 getValues={getValues}
-                errors={errors}
               />
             )}
             {step === 6 && (
@@ -472,7 +486,15 @@ export default function CompanySignup() {
                   Back
                 </Button>
               )}
-              <Button type="button" onClick={nextStep}>
+              <Button
+                type="button"
+                onClick={nextStep}
+                disabled={
+                  cmpSignup.loading ||
+                  uploadAvatar.loading ||
+                  uploadCover.loading
+                }
+              >
                 {step === totalSteps ? "Submit" : "Next"}
                 <LucideArrowRight />
               </Button>

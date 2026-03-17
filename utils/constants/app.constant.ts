@@ -1,8 +1,9 @@
-import GoogleIcon from "@/assets/socials/google.png";
 import FacebookIcon from "@/assets/socials/facebook.webp";
-import LinkedInIcon from "@/assets/socials/linkedin.png";
 import GithubIcon from "@/assets/socials/github.png";
+import GoogleIcon from "@/assets/socials/google.png";
+import LinkedInIcon from "@/assets/socials/linkedin.png";
 
+// Files
 export const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 export const DOCUMENT_SIZE = 5 * 1024 * 1024;
 
@@ -41,9 +42,19 @@ export const loginMethodConstant = [
 export const availabilityConstant = [
   { id: 1, label: "Full Time", value: "full_time" },
   { id: 2, label: "Part Time", value: "part_time" },
-  { id: 3, label: "Remote", value: "remote" },
-  { id: 4, label: "Internship", value: "internship" },
-  { id: 5, label: "Contract", value: "contract" },
+  { id: 3, label: "Internship", value: "internship" },
+  { id: 4, label: "Contract", value: "contract" },
+  { id: 5, label: "Freelance", value: "freelance" },
+  { id: 6, label: "Remote", value: "remote" },
+];
+
+export const yearOfExperienceConstant = [
+  { id: 1, label: "No Experience", value: "No Experience" },
+  { id: 2, label: "Less than 1 year", value: "Less than 1 year" },
+  { id: 3, label: "1 - 2 years", value: "1 - 2 years" },
+  { id: 4, label: "3 - 5 years", value: "3 - 5 years" },
+  { id: 5, label: "6 - 10 years", value: "6 - 10 years" },
+  { id: 6, label: "10+ years", value: "10+ years" },
 ];
 
 export const locationConstant = [
@@ -74,6 +85,7 @@ export const locationConstant = [
   "Tbong Khmum",
 ];
 
+// Utils
 export const badgeRandomColorsClass = [
   {
     bg: "bg-blue-100",
@@ -124,3 +136,10 @@ export const badgeRandomColorsClass = [
     text: "text-rose-800",
   },
 ];
+
+// Search
+export const SEARCH_DEBOUNCE_MS = 400;
+
+// Messages
+export const CHAT_TYPING_DEBOUNCE_MS = 1500;
+export const CHAT_REACTION_EMOJIS = ["👍", "❤️", "😂", "😮", "😢", "😡"];

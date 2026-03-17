@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button";
 import { TypographyLead } from "@/components/utils/typography/typography-lead";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { timeAgo } from "@/utils/functions/timeago-formatter";
 import { LucideMail } from "lucide-react";
 import { INotificationMessageCardProps } from "./props";
-import { timeAgo } from "@/utils/functions/timeago-formatter";
 
 export default function NotificationMessageCard(
   props: INotificationMessageCardProps

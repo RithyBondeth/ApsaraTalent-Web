@@ -1,6 +1,6 @@
+import axios from "@/lib/axios";
 import { API_SEARCH_JOB_URL } from "@/utils/constants/apis/job_url";
 import { TLocations } from "@/utils/types/location.type";
-import axios from "@/lib/axios";
 import { create } from "zustand";
 
 export type TSearchJobQuery = {
@@ -12,9 +12,8 @@ export type TSearchJobQuery = {
   companySizeMax?: number;
   salaryMin?: number;
   salaryMax?: number;
-  experienceRequiredMax?: number;
-  experienceRequiredMin?: number;
-  educationRequired?: string;
+  experienceLevel?: string;
+  educationRequired?: string | string[];
   postedDateFrom?: string;
   postedDateTo?: string;
   sortBy?: string;

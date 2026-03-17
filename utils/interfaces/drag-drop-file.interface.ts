@@ -3,6 +3,7 @@ import { FieldValues, UseFormSetValue } from "react-hook-form";
 
 export interface IDragDropFileProps<T extends FieldValues> {
   onFilesSelected: (files: File[]) => void;
+  onEdit?: () => void;
   acceptedFileTypes?: string;
   maxFileSize?: number;
   multiple?: boolean;

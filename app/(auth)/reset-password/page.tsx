@@ -1,28 +1,28 @@
 "use client";
+import resetPasswordWhiteSvg from "@/assets/svg/reset-password-white.svg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ToastAction } from "@/components/ui/toast";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import {
-  LucideCheck,
-  LucideEye,
-  LucideEyeClosed,
-  LucideInfo,
-  LucideKey,
-  LucideLockKeyhole,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import resetPasswordWhiteSvg from "@/assets/svg/reset-password-white.svg";
-import { useForm } from "react-hook-form";
-import { resetPasswordSchema, TResetPasswordForm } from "./validate";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useToast } from "@/hooks/use-toast";
 import { useResetPasswordStore } from "@/stores/apis/auth/reset-password.store";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { ToastAction } from "@/components/ui/toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+    LucideCheck,
+    LucideEye,
+    LucideEyeClosed,
+    LucideInfo,
+    LucideKey,
+    LucideLockKeyhole
+} from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { resetPasswordSchema, TResetPasswordForm } from "./validate";
 
 export default function ResetPasswordPage() {
   // Utils

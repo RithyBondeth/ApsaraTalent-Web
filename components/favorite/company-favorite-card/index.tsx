@@ -1,20 +1,20 @@
+import IconLabel from "@/components/utils/icon-label";
 import {
-  LucideArrowRight,
-  LucideBookmarkX,
-  LucideBriefcaseBusiness,
-  LucideBuilding,
-  LucideClock,
-  LucideMapPin,
-  LucideUsers,
+    LucideArrowRight,
+    LucideBookmarkX,
+    LucideBriefcaseBusiness,
+    LucideBuilding,
+    LucideClock,
+    LucideMapPin,
+    LucideUsers
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
+import { Button } from "../../ui/button";
 import Tag from "../../utils/tag";
 import { TypographyH4 } from "../../utils/typography/typography-h4";
 import { TypographyP } from "../../utils/typography/typography-p";
-import { Button } from "../../ui/button";
-import IconLabel from "@/components/utils/icon-label";
 import { IFavoriteCompanyCardProps } from "./props";
-import { useRouter } from "next/navigation";
 
 export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
   const router = useRouter();

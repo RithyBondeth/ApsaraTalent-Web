@@ -1,19 +1,19 @@
 "use client";
 
-import Image from "next/image";
 import emailVerificationWhiteSvg from "@/assets/svg/email-verification-black.svg";
 import emailVerificationBlackSvg from "@/assets/svg/email-verification-white.svg";
-import { useTheme } from "next-themes";
+import { Button } from "@/components/ui/button";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { Button } from "@/components/ui/button";
-import { LucideCheck, LucideInfo, LucideMail } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useToast } from "@/hooks/use-toast";
 import { useVerifyEmailStore } from "@/stores/apis/auth/verify-email.store";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
+import { LucideCheck, LucideInfo, LucideMail } from "lucide-react";
+import { useTheme } from "next-themes";
+import Image from "next/image";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function EmailVerificationPage() {
   // Utils

@@ -1,6 +1,6 @@
+import axios from "@/lib/axios";
 import { API_GET_ONE_USER_URL } from "@/utils/constants/apis/user_url";
 import { IUser } from "@/utils/interfaces/user-interface/user.interface";
-import axios from "@/lib/axios";
 import { create } from "zustand";
 
 type TGetOneUserState = {

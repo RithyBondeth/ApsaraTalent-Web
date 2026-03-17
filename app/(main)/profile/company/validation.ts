@@ -1,11 +1,11 @@
 import { MAX_IMAGE_SIZE } from "@/utils/constants/app.constant";
 import {
-  dateValidation,
-  emailValidation,
-  khmerPhoneNumberValidation,
-  positiveNumberValidation,
-  selectedValidation,
-  textValidation,
+    dateValidation,
+    emailValidation,
+    khmerPhoneNumberValidation,
+    positiveNumberValidation,
+    selectedValidation,
+    textValidation
 } from "@/utils/functions/validations";
 import * as z from "zod";
 
@@ -31,7 +31,7 @@ export const basicInfoSchema = z.object({
               message: `Invalid file: avatar must be an image (jpeg, png, webp) and < 5MB`,
             },
           ),
-          z.string(), // for existing image URLs
+          z.string(),
           z.null(),
         ])
         .optional(),
@@ -48,7 +48,7 @@ export const basicInfoSchema = z.object({
               message: `Invalid file: avatar must be an image (jpeg, png, webp) and < 5MB`,
             },
           ),
-          z.string(), // for existing image URLs
+          z.string(),
           z.null(),
         ])
         .optional(),

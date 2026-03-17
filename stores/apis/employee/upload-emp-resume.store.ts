@@ -1,6 +1,7 @@
-import { API_UPLOAD_EMP_RESUME_URL } from "@/utils/constants/apis/employee_url";
 import axios from "@/lib/axios";
+import { API_UPLOAD_EMP_RESUME_URL } from "@/utils/constants/apis/employee_url";
 import { create } from "zustand";
+import { useEmployeeSignupStore } from "../auth/employee-signup.store";
 
 type TUploadEmployeeResumeResponse = {
   message: string | null;
@@ -24,12 +25,14 @@ export const useUploadEmployeeResumeStore = create<TUploadEmployeeAvatarState>(
         const formData = new FormData();
         formData.append("resume", _resume);
 
+        const accessToken = useEmployeeSignupStore.getState().accessToken;
+
         const response = await axios.post<TUploadEmployeeResumeResponse>(
           API_UPLOAD_EMP_RESUME_URL(_employeeID),
           formData,
           {
             headers: {
-              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${accessToken}`,
             },
           },
         );

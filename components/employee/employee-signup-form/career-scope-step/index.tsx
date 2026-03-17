@@ -1,37 +1,37 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import { IStepFormProps } from "../props";
 import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { IStepFormProps } from "../props";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
+    CommandDialog,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList
 } from "@/components/ui/command";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { LucideArrowLeft, LucideSearch } from "lucide-react";
-import { careerScopesList } from "@/data/career-data";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious
+} from "@/components/ui/pagination";
 import ErrorMessage from "@/components/utils/error-message";
+import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { careerScopesList } from "@/data/career-data";
+import { LucideArrowLeft, LucideSearch } from "lucide-react";
 
 export default function EmployeeCareerScopeStepForm({
   register,
@@ -105,6 +105,7 @@ export default function EmployeeCareerScopeStepForm({
       {/* Back Button Section */}
       <Button
         className="absolute top-5 left-5"
+        type="button"
         onClick={() => router.push("/signup")}
       >
         <LucideArrowLeft />

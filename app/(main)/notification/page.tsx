@@ -5,10 +5,10 @@ import NotificationMatchCard from "@/components/notification/notification-match-
 import NotificationMessageCard from "@/components/notification/notification-message-card";
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { TNotificationFilterType } from "@/utils/types/notification.type";
 import { LucideCheckCheck } from "lucide-react";

@@ -1,8 +1,9 @@
+import { Toaster } from "@/components/ui/toaster";
+import { LanguageProvider } from "@/components/utils/languages/language-provider";
+import { ThemeProvider } from "@/components/utils/themes/theme-provider";
 import type { Metadata } from "next";
 import { Ubuntu } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/utils/themes/theme-provider";
-import { Toaster } from "@/components/ui/toaster";
 
 const ubuntu = Ubuntu({
   subsets: ["latin"],
@@ -30,7 +31,9 @@ export default function RootLayout({
         className={`${ubuntu.className} antialiased`}
         suppressHydrationWarning
       >
-        <ThemeProvider>{children}</ThemeProvider>
+        <LanguageProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+        </LanguageProvider>
         <Toaster />
       </body>
     </html>

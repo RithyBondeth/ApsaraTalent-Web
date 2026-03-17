@@ -1,8 +1,8 @@
+import axios from "@/lib/axios";
 import { API_SEARCH_EMP_URL } from "@/utils/constants/apis/employee_url";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
 import { TAvailability } from "@/utils/types/availability.type";
 import { TLocations } from "@/utils/types/location.type";
-import axios from "@/lib/axios";
 import { create } from "zustand";
 
 export type TSearchEmpQuery = {
@@ -10,9 +10,8 @@ export type TSearchEmpQuery = {
   location?: TLocations;
   careerScopes?: string[];
   jobType?: TAvailability;
-  experienceMin?: number;
-  experienceMax?: number;
-  education?: string;
+  experienceLevel?: string;
+  education?: string | string[];
   sortBy?: string;
   sortOrder?: "ASC" | "DESC";
 };

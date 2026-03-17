@@ -2,20 +2,21 @@
 
 import CollapseSidebar from "@/components/sidebar/collapse-sidebar";
 import { Button } from "@/components/ui/button";
-import { LucideArrowLeft } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
+    SidebarInset,
+    SidebarProvider,
+    SidebarTrigger
 } from "@/components/ui/sidebar";
+import { ThemeProviderClient } from "@/components/utils/themes/theme-provider-client";
+import { TypographyP } from "@/components/utils/typography/typography-p";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { useThemeStore } from "@/stores/themes/theme-store";
+import { sidebarList } from "@/utils/constants/sidebar.constant";
+import { LucideArrowLeft } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Separator } from "@/components/ui/separator";
-import { TypographyP } from "@/components/utils/typography/typography-p";
-import { sidebarList } from "@/utils/constants/sidebar.constant";
-import { ThemeProviderClient } from "@/components/utils/themes/theme-provider-client";
-import { useThemeStore } from "@/stores/themes/theme-store";
-import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 
 export default function MainLayout({
   children,
@@ -27,6 +28,7 @@ export default function MainLayout({
 
   const { theme } = useThemeStore();
   const user = useGetCurrentUserStore((s) => s.user);
+  const t = useTranslations("header");
 
   /**
    * Feed Detail Page
@@ -65,17 +67,17 @@ export default function MainLayout({
     </SidebarProvider>
   );
 
-  if (pathname.startsWith("/message")) return renderSidebarLayout("Chat");
+  if (pathname.startsWith("/message")) return renderSidebarLayout(t("chat"));
   if (pathname.startsWith("/resume-builder"))
-    return renderSidebarLayout("AI Resume Builder");
+    return renderSidebarLayout(t("aiResumeBuilder"));
   if (pathname.startsWith("/search"))
-    return renderSidebarLayout("Search your favorite");
-  if (pathname.startsWith("/matching")) return renderSidebarLayout("Matching");
-  if (pathname.startsWith("/favorite")) return renderSidebarLayout("Favorites");
+    return renderSidebarLayout(t("searchFavorite"));
+  if (pathname.startsWith("/matching")) return renderSidebarLayout(t("matching"));
+  if (pathname.startsWith("/favorite")) return renderSidebarLayout(t("favorites"));
   if (pathname.startsWith("/profile"))
-    return renderSidebarLayout("Profile Page");
+    return renderSidebarLayout(t("profilePage"));
   if (pathname.startsWith("/setting"))
-    return renderSidebarLayout("Setting Page");
+    return renderSidebarLayout(t("settingPage"));
 
   /**
    * Default Layout

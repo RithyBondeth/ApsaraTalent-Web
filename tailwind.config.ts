@@ -18,6 +18,13 @@ export default {
   theme: {
   	extend: {
   		screens: {
+			// Standard mobile-first breakpoints (min-width)
+			'sm': '640px',
+			'md': '768px',
+			'lg': '1024px',
+			'xl': '1280px',
+			'2xl': '1536px',
+			// Legacy message-specific max-width breakpoints
 			'message-xs': {
 				max: '400px'
 			},

@@ -1,5 +1,5 @@
-import { TUserRole } from "../../types/role.type";
 import { EAuthLoginMethod } from "../../constants/auth.constant";
+import { TUserRole } from "../../types/role.type";
 import { ICompany } from "./company.interface";
 import { IEmployee } from "./employee.interface";
 

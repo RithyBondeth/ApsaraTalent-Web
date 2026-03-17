@@ -1,21 +1,20 @@
 "use client";
-import CachedAvatar from "../../ui/cached-avatar";
+import {
+    LucideBookmark,
+    LucideCircleArrowRight,
+    LucideEye,
+    LucideHeartHandshake,
+    LucideMapPin
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "../../ui/button";
+import CachedAvatar from "../../ui/cached-avatar";
 import Tag from "../../utils/tag";
 import { TypographyMuted } from "../../utils/typography/typography-muted";
 import { TypographyP } from "../../utils/typography/typography-p";
 import { TypographySmall } from "../../utils/typography/typography-small";
-import {
-  LucideBookmark,
-  LucideCircleArrowRight,
-  LucideEye,
-  LucideHeartHandshake,
-  LucideMapPin,
-} from "lucide-react";
-import { useState, useRef, useEffect } from "react";
-import { IEmployeeCardProps } from "./props";
 import EmployeeDialog from "../employee-dialog";
-import { capitalizeWords } from "@/utils/functions/capitalize-words";
+import { IEmployeeCardProps } from "./props";
 
 export default function EmployeeCard(props: IEmployeeCardProps) {
   // Utils
@@ -106,22 +105,12 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
 
       {/* Experience Section */}
       <div className="flex flex-wrap gap-2 items-center">
-        <Tag
-          label={
-            props.yearsOfExperience === 1
-              ? `${props.yearsOfExperience} year experience`
-              : `${props.yearsOfExperience} years experience`
-          }
-        />
-        <Tag
-          label={
-            props.availability.includes("_")
-              ? `${capitalizeWords(
-                  props.availability.split("_")[0],
-                )} ${capitalizeWords(props.availability.split("_")[1])}`
-              : capitalizeWords(props.availability)
-          }
-        />
+        {props.educations.length > 0 &&
+          props.educations.map((edu, index) => (
+            <Tag key={index} label={edu.degree} />
+          ))}
+        <Tag label={props.yearsOfExperience} />
+        <Tag label={props.availability} />
       </div>
 
       {/* button Section */}

@@ -1,37 +1,43 @@
+import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { Input } from "@/components/ui/input";
-import { TSearchBarProps } from "./props";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
-import { useState, useEffect } from "react";
-import { TLocations } from "@/utils/types/location.type";
-import { SelectValue } from "@radix-ui/react-select";
 import {
   availabilityConstant,
   locationConstant,
 } from "@/utils/constants/app.constant";
-import { TAvailability } from "@/utils/types/availability.type";
+import { TLocations } from "@/utils/types/location.type";
+import { SelectValue } from "@radix-ui/react-select";
+import { useEffect, useState } from "react";
 import { FieldValues, Path } from "react-hook-form";
+import { TSearchBarProps } from "./props";
 
 export default function SearchBar<T extends FieldValues>(
-  props: TSearchBarProps<T>
+  props: TSearchBarProps<T>,
 ) {
   const [selectedLocation, setSelectionLocation] = useState<TLocations | "All">(
-    props.initialLocation || "All"
+    props.initialLocation || "All",
   );
 
-  const [selectedJobType, setSelectionJobType] = useState<
-    TAvailability | "All"
-  >(props.initialJobType || "All");
+  const [selectedJobType, setSelectionJobType] = useState<string>(
+    props.initialJobType || "all",
+  );
 
   useEffect(() => {
     if (props.initialLocation) {
       setSelectionLocation(props.initialLocation);
     }
   }, [props.initialLocation]);
+
+  useEffect(() => {
+    if (props.initialJobType) {
+      setSelectionJobType(props.initialJobType);
+    }
+  }, [props.initialJobType]);
 
   return (
     <div className="w-full flex flex-col items-start gap-2 p-3 shadow-md rounded-md">
@@ -63,27 +69,17 @@ export default function SearchBar<T extends FieldValues>(
             ))}
           </SelectContent>
         </Select>
-        <Select
-          onValueChange={(value: TAvailability) => {
-            setSelectionJobType(value);
-            props.setValue("jobType" as Path<T>, value as T[keyof T]);
+        <CreatableCombobox
+          value={selectedJobType}
+          onChange={(value) => {
+            const newValue = value || "all";
+            setSelectionJobType(newValue);
+            props.setValue("jobType" as Path<T>, newValue as T[keyof T]);
           }}
-          value={selectedJobType === "All" ? "All" : selectedJobType}
-        >
-          <SelectTrigger className="h-12 text-muted-foreground">
-            <SelectValue placeholder="Job Type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem key="all-jobType" value="all">
-              All
-            </SelectItem>
-            {availabilityConstant.map((jobType, index) => (
-              <SelectItem key={index} value={jobType.value}>
-                {jobType.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          options={[{ label: "All", value: "all" }, ...availabilityConstant]}
+          placeholder="Job Type"
+          emptyText="Type job type..."
+        />
       </div>
     </div>
   );

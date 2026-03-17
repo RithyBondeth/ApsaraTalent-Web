@@ -1,8 +1,8 @@
 import * as z from "zod";
 import {
-  ACCEPTED_FILE_TYPES,
-  DOCUMENT_SIZE,
-  MAX_IMAGE_SIZE,
+    ACCEPTED_FILE_TYPES,
+    DOCUMENT_SIZE,
+    MAX_IMAGE_SIZE
 } from "../constants/app.constant";
 
 export const fileValidation = (label: string) =>
@@ -61,14 +61,21 @@ export const passwordValidation = z
   );
 
 export const khmerPhoneNumberValidation = () => {
-  return z
-    .string()
-    .regex(/^(\+855|0)[0-9]{8,9}$/, {
-      message:
-        "Invalid Khmer phone number format (e.g., +85512345678 or 012345678)",
-    })
-    .optional()
-    .nullable();
+  return z.preprocess(
+    (value) => {
+      if (value === "" || value === null || value === undefined) {
+        return undefined;
+      }
+      return typeof value === "string" ? value.trim() : value;
+    },
+    z
+      .string()
+      .regex(/^(\+855|0)[0-9]{8,9}$/, {
+        message:
+          "Invalid Khmer phone number format (e.g., +85512345678 or 012345678)",
+      })
+      .optional(),
+  );
 };
 
 export const phoneOrEmailValidation = z
@@ -130,5 +137,48 @@ export const imageValidation = (label: string) =>
         file === null || file instanceof File || typeof file === "string",
       {
         message: `Please upload a valid file, URL, or leave it empty.`,
+      },
+    );
+
+export const optionalFileValidation = (label: string) =>
+  z
+    .any()
+    .optional()
+    .nullable()
+    .refine((file) => !file || file instanceof File, {
+      message: `${label} must be a valid file`,
+    })
+    .refine((file) => !file || file.size <= DOCUMENT_SIZE, {
+      message: "Max file size is 5MB",
+    })
+    .refine((file) => !file || ACCEPTED_FILE_TYPES.includes(file.type), {
+      message: "Only .pdf, .doc, .docx are supported",
+    });
+
+export const optionalImageValidation = (label: string) =>
+  z
+    .union([
+      z.custom<File>(
+        (file) => {
+          if (!(file instanceof File)) return false;
+          const validTypes = ["image/jpeg", "image/png", "image/webp"];
+          return validTypes.includes(file.type) && file.size <= MAX_IMAGE_SIZE;
+        },
+        {
+          message: `Invalid file: ${label} must be an image (jpeg, png, webp) and < 5MB`,
+        },
+      ),
+      z.string(),
+      z.null(),
+      z.undefined(),
+    ])
+    .refine(
+      (file) =>
+        file === null ||
+        file === undefined ||
+        file instanceof File ||
+        typeof file === "string",
+      {
+        message: `Please upload a valid image file or leave it empty.`,
       },
     );

@@ -6,18 +6,17 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import {
-  LucideAlarmClock,
-  LucideBriefcaseBusiness,
-  LucideBuilding,
-  LucideCircleDollarSign,
-  LucideClock2,
-  LucideGraduationCap,
-  LucideMapPin,
-  LucideUsers,
+    LucideAlarmClock,
+    LucideBriefcaseBusiness,
+    LucideBuilding,
+    LucideCircleDollarSign,
+    LucideClock2,
+    LucideGraduationCap,
+    LucideMapPin,
+    LucideUsers
 } from "lucide-react";
-import { TSearchCompanyCardProps } from "./prop";
 import { useRouter } from "next/navigation";
-import { availabilityConstant } from "@/utils/constants/app.constant";
+import { TSearchCompanyCardProps } from "./prop";
 
 export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
   const router = useRouter();
@@ -67,10 +66,7 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
                   strokeWidth={"1.5px"}
                 />
               }
-              text={
-                availabilityConstant.find((item) => item.value === props.type)
-                  ?.label ?? "Unknown"
-              }
+              text={props.type}
             />
           </div>
         </div>

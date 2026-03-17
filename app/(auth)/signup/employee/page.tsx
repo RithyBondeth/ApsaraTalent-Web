@@ -1,39 +1,39 @@
 "use client";
+import AvatarStepForm from "@/components/employee/employee-signup-form/avatar-step";
+import EmployeeCareerScopeStepForm from "@/components/employee/employee-signup-form/career-scope-step";
+import EducationStepForm from "@/components/employee/employee-signup-form/education-step";
+import ExperienceStepForm from "@/components/employee/employee-signup-form/experience-step";
+import ProfessionStepForm from "@/components/employee/employee-signup-form/profession-step";
+import SkillReferenceStepForm from "@/components/employee/employee-signup-form/skill-reference-step";
 import { Button } from "@/components/ui/button";
+import { ToastAction } from "@/components/ui/toast";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { useEffect, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import ProfessionStepForm from "@/components/employee/employee-signup-form/profession-step";
-import ExperienceStepForm from "@/components/employee/employee-signup-form/experience-step";
-import EducationStepForm from "@/components/employee/employee-signup-form/education-step";
-import SkillReferenceStepForm from "@/components/employee/employee-signup-form/skill-reference-step";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { useToast } from "@/hooks/use-toast";
+import { useEmployeeSignupStore } from "@/stores/apis/auth/employee-signup.store";
+import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
+import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
+import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
+import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
+import { useUploadEmployeeAvatarStore } from "@/stores/apis/employee/upload-emp-avatar.store";
+import { useUploadEmployeeCoverLetter } from "@/stores/apis/employee/upload-emp-coverletter.store";
+import { useUploadEmployeeResumeStore } from "@/stores/apis/employee/upload-emp-resume.store";
+import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
+import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
+import { TGender } from "@/utils/types/gender.type";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  LucideArrowLeft,
-  LucideArrowRight,
-  LucideCheck,
-  LucideInfo,
+    LucideArrowLeft,
+    LucideArrowRight,
+    LucideCheck,
+    LucideInfo
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 import { employeeSignUpSchema, TEmployeeSignUp } from "./validation";
-import { zodResolver } from "@hookform/resolvers/zod";
-import EmployeeCareerScopeStepForm from "@/components/employee/employee-signup-form/career-scope-step";
-import AvatarStepForm from "@/components/employee/employee-signup-form/avatar-step";
-import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
-import { useEmployeeSignupStore } from "@/stores/apis/auth/employee-signup.store";
-import { TGender } from "@/utils/types/gender.type";
-import { useToast } from "@/hooks/use-toast";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { ToastAction } from "@/components/ui/toast";
-import { useUploadEmployeeAvatarStore } from "@/stores/apis/employee/upload-emp-avatar.store";
-import { useUploadEmployeeResumeStore } from "@/stores/apis/employee/upload-emp-resume.store";
-import { useUploadEmployeeCoverLetter } from "@/stores/apis/employee/upload-emp-coverletter.store";
-import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
-import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
-import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
-import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
-import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 
 export default function EmployeeSignup() {
   // Utils
@@ -48,7 +48,7 @@ export default function EmployeeSignup() {
   const { basicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
 
-  // API Integration - Employee Socials Data 
+  // API Integration - Employee Socials Data
   const googleUserData = useGoogleLoginStore();
   const githubUserData = useGithubLoginStore();
   const linkedInUserData = useLinkedInLoginStore();
@@ -63,29 +63,32 @@ export default function EmployeeSignup() {
   const uploadCoverLetter = useUploadEmployeeCoverLetter();
   const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
 
-  // React Hook Form: Employee Signup Form 
+  // React Hook Form: Employee Signup Form
   const methods = useForm<TEmployeeSignUp>({
     mode: "onChange",
     resolver: zodResolver(employeeSignUpSchema),
     defaultValues: {
-      experience: [
-        {
-          title: "",
-          description: "",
-          startDate: "" as unknown as Date,
-          endDate: "" as unknown as Date,
-        },
-      ],
+      profession: {
+        job: "",
+        yearOfExperience: "",
+        availability: "",
+        description: "",
+      },
+      experience: [],
       educations: [
         {
           school: "",
           degree: "",
-          year: "" as unknown as Date,
+          year: undefined as unknown as number,
         },
       ],
       skillAndReference: {
         skills: [],
+        resume: undefined,
+        coverLetter: undefined,
       },
+      avatar: null,
+      careerScopes: [],
     },
   });
 
@@ -109,173 +112,190 @@ export default function EmployeeSignup() {
     6: ["careerScopes"],
   };
 
+  // Check if user has no experience (to skip step 2)
+  const hasNoExperience = () =>
+    getValues("profession.yearOfExperience") === "No Experience";
+
+  // Step navigation helper – skips step 2 for no-experience users
+  const resolveNextStep = (current: number) => {
+    if (current === 1 && hasNoExperience()) return 3;
+    return current + 1;
+  };
+  const resolvePrevStep = (current: number) => {
+    if (current === 3 && hasNoExperience()) return 1;
+    return current - 1;
+  };
+
   // Handle Next Step and Final Submit
   const nextStep = async () => {
     const fieldsToValidate = stepFieldMap[step];
-
     const isValid = await trigger(fieldsToValidate);
 
-    if (isValid) {
-      if (step === totalSteps) {
-        handleSubmit(async (data) => {
-          if (basicSignupData) {
-            // Signup employee first to get employeeID
-            const employeeId = await empSignup.signup({
-              authEmail: true,
-              email: basicSignupData.email!,
-              password: basicSignupData.password!,
-              firstname: basicSignupData.firstName!,
-              lastname: basicSignupData.lastName!,
-              username: basicSignupData.username!,
-              gender: basicSignupData.gender as TGender,
-              job: data.profession.job,
-              yearsOfExperience: data.profession.yearOfExperience,
-              availability: data.profession.availability,
-              description: data.profession.description,
-              location: basicSignupData.selectedLocation!,
-              phone: basicSignupData.phone!,
-              educations: data.educations.map((edu) => ({
-                school: edu.school,
-                degree: edu.degree,
-                year: new Date(edu.year).toISOString(),
-              })),
-              experiences: data.experience.map((exp) => ({
-                title: exp.title,
-                description: exp.description,
-                startDate: new Date(exp.startDate).toISOString(),
-                endDate: new Date(exp.endDate).toISOString(),
-              })),
-              skills: data.skillAndReference.skills.map((skill) => ({
-                name: skill,
-                description: skill,
-              })),
-              careerScopes: data.careerScopes.map((cs) => ({
-                name: cs,
-                description: cs,
-              })),
-              socials: [],
-            });
+    if (!isValid) return;
 
-            if (!employeeId) {
-              console.error("Employee ID not found after signup");
-              return;
-            }
-
-            // Upload files in parallel
-            const uploadTasks = [];
-
-            if (data.avatar instanceof File)
-              // If employeeID exist then upload avatar
-              uploadTasks.push(
-                uploadAvatar.uploadAvatar(employeeId, data.avatar),
-              );
-
-            if (data.skillAndReference.resume instanceof File)
-               // If employeeID exist then upload resume
-              uploadTasks.push(
-                uploadResume.uploadResume(
-                  employeeId,
-                  data.skillAndReference.resume,
-                ),
-              );
-
-            if (data.skillAndReference.coverLetter instanceof File)
-               // If employeeID exist then upload coverLetter
-              uploadTasks.push(
-                uploadCoverLetter.uploadCoverLetter(
-                  employeeId,
-                  data.skillAndReference.coverLetter,
-                ),
-              );
-
-            // Upload all avatar, resume and coverLetter together
-            await Promise.all(uploadTasks);
-            setUploadsComplete(true);
-          }
-        
-          if (basicPhoneSignupData) {
-            // Signup employee first to get employeeID
-            const employeeId = await empSignup.signup({
-              authEmail: false,
-              email: null,
-              password: null,
-              firstname: null,
-              lastname: null,
-              username: null,
-              gender: "other" as TGender,
-              job: data.profession.job,
-              yearsOfExperience: data.profession.yearOfExperience,
-              availability: data.profession.availability,
-              description: data.profession.description,
-              location: null,
-              phone: basicPhoneSignupData.phone!,
-              educations: data.educations.map((edu) => ({
-                school: edu.school,
-                degree: edu.degree,
-                year: new Date(edu.year).toISOString(),
-              })),
-              experiences: data.experience.map((exp) => ({
-                title: exp.title,
-                description: exp.description,
-                startDate: new Date(exp.startDate).toISOString(),
-                endDate: new Date(exp.endDate).toISOString(),
-              })),
-              skills: data.skillAndReference.skills.map((skill) => ({
-                name: skill,
-                description: skill,
-              })),
-              careerScopes: data.careerScopes.map((cs) => ({
-                name: cs,
-                description: cs,
-              })),
-              socials: [],
-            });
-
-            if (!employeeId) {
-              console.error("Employee ID not found after signup");
-              return;
-            }
-
-            // Upload files in parallel
-            const uploadTasks = [];
-
-            if (data.avatar instanceof File)
-              // If employeeID exist then upload avatar
-              uploadTasks.push(
-                uploadAvatar.uploadAvatar(employeeId, data.avatar),
-              );
-
-            if (data.skillAndReference.resume instanceof File)
-              // If employeeID exist then upload resume
-              uploadTasks.push(
-                uploadResume.uploadResume(
-                  employeeId,
-                  data.skillAndReference.resume,
-                ),
-              );
-
-            if (data.skillAndReference.coverLetter instanceof File)
-              // If employeeID exist then upload coverLetter
-              uploadTasks.push(
-                uploadCoverLetter.uploadCoverLetter(
-                  employeeId,
-                  data.skillAndReference.coverLetter,
-                ),
-              );
-
-            // Upload all avatar, resume and coverLetter together        
-            await Promise.all(uploadTasks);
-            setUploadsComplete(true);
-          }
-        })();
-      } else {
-        setStep((prev) => prev + 1);
-      }
+    // When moving away from step 1 with no experience, clear experience array
+    if (step === 1 && hasNoExperience()) {
+      setValue("experience", []);
     }
+
+    if (step !== totalSteps) {
+      setStep((prev) => resolveNextStep(prev));
+      return;
+    }
+
+    handleSubmit(async (data) => {
+      try {
+        setUploadsComplete(false);
+
+        if (basicSignupData) {
+          // Signup employee first to get employeeID
+          const employeeId = await empSignup.signup({
+            authEmail: true,
+            email: basicSignupData.email ?? null,
+            password: basicSignupData.password ?? null,
+            firstname: basicSignupData.firstName ?? null,
+            lastname: basicSignupData.lastName ?? null,
+            username: basicSignupData.username ?? null,
+            gender: (basicSignupData.gender as TGender) ?? ("other" as TGender),
+            job: data.profession.job,
+            yearsOfExperience: data.profession.yearOfExperience,
+            availability: data.profession.availability,
+            description: data.profession.description,
+            location: basicSignupData.selectedLocation ?? null,
+            phone: basicSignupData.phone!,
+            educations: data.educations.map((edu) => ({
+              school: edu.school,
+              degree: edu.degree,
+              year: new Date(edu.year, 0, 1).toISOString(),
+            })),
+            experiences: data.experience.map((exp) => ({
+              title: exp.title,
+              description: exp.description,
+              startDate: new Date(exp.startDate).toISOString(),
+              endDate: new Date(exp.endDate).toISOString(),
+            })),
+            skills: data.skillAndReference.skills.map((skill) => ({
+              name: skill,
+              description: skill,
+            })),
+            careerScopes: data.careerScopes.map((cs) => ({
+              name: cs,
+              description: cs,
+            })),
+            socials: [],
+          });
+
+          if (!employeeId) {
+            console.error("Employee ID not found after signup");
+            return;
+          }
+
+          console.log("Employee ID: ", employeeId);
+
+          // Upload files sequentially to avoid race conditions
+          if (data.avatar instanceof File) {
+            console.log(
+              "Attempting to upload avatar for employeeId:",
+              employeeId,
+            );
+            console.log("Avatar: ", data.avatar);
+            await uploadAvatar.uploadAvatar(employeeId, data.avatar);
+          }
+
+          if (data.skillAndReference.resume instanceof File) {
+            console.log("Resume: ", data.skillAndReference.resume);
+            await uploadResume.uploadResume(
+              employeeId,
+              data.skillAndReference.resume,
+            );
+          }
+
+          if (data.skillAndReference.coverLetter instanceof File) {
+            console.log("CoverLetter: ", data.skillAndReference.coverLetter);
+            await uploadCoverLetter.uploadCoverLetter(
+              employeeId,
+              data.skillAndReference.coverLetter,
+            );
+          }
+
+          setUploadsComplete(true);
+          return;
+        }
+
+        if (basicPhoneSignupData) {
+          // Signup employee first to get employeeID
+          const employeeId = await empSignup.signup({
+            authEmail: false,
+            email: null,
+            password: null,
+            firstname: null,
+            lastname: null,
+            username: null,
+            gender: "other" as TGender,
+            job: data.profession.job,
+            yearsOfExperience: data.profession.yearOfExperience,
+            availability: data.profession.availability,
+            description: data.profession.description,
+            location: null,
+            phone: basicPhoneSignupData.phone!,
+            educations: data.educations.map((edu) => ({
+              school: edu.school,
+              degree: edu.degree,
+              year: new Date(edu.year).toISOString(),
+            })),
+            experiences: data.experience.map((exp) => ({
+              title: exp.title,
+              description: exp.description,
+              startDate: new Date(exp.startDate).toISOString(),
+              endDate: new Date(exp.endDate).toISOString(),
+            })),
+            skills: data.skillAndReference.skills.map((skill) => ({
+              name: skill,
+              description: skill,
+            })),
+            careerScopes: data.careerScopes.map((cs) => ({
+              name: cs,
+              description: cs,
+            })),
+            socials: [],
+          });
+
+          if (!employeeId) {
+            console.error("Employee ID not found after signup");
+            return;
+          }
+
+          console.log("Employee ID from Phone Signup: ", employeeId);
+
+          // Upload files sequentially to avoid race conditions
+          if (data.avatar instanceof File) {
+            await uploadAvatar.uploadAvatar(employeeId, data.avatar);
+          }
+
+          if (data.skillAndReference.resume instanceof File) {
+            await uploadResume.uploadResume(
+              employeeId,
+              data.skillAndReference.resume,
+            );
+          }
+
+          if (data.skillAndReference.coverLetter instanceof File) {
+            await uploadCoverLetter.uploadCoverLetter(
+              employeeId,
+              data.skillAndReference.coverLetter,
+            );
+          }
+
+          setUploadsComplete(true);
+        }
+      } catch (error) {
+        console.error("Employee signup failed:", error);
+      }
+    })();
   };
 
   // Handle Previous Step
-  const prevStep = () => setStep((prev) => prev - 1);
+  const prevStep = () => setStep((prev) => resolvePrevStep(prev));
 
   // Employee Singup Effect
   useEffect(() => {
@@ -301,9 +321,16 @@ export default function EmployeeSignup() {
         duration: 1000,
       });
       setTimeout(() => router.replace("/login"), 1000);
+      return;
     }
 
-    if (empSignup.loading || uploadAvatar.loading || uploadCoverLetter.loading)
+    if (
+      empSignup.loading ||
+      uploadAvatar.loading ||
+      uploadCoverLetter.loading ||
+      uploadResume.loading
+    ) {
+      dismiss();
       toast({
         description: (
           <div className="flex items-center gap-2">
@@ -314,15 +341,16 @@ export default function EmployeeSignup() {
           </div>
         ),
       });
+    }
 
-    const errors = [
+    const errorList = [
       { error: empSignup.error, message: empSignup.message },
       { error: uploadAvatar.error, message: uploadAvatar.message },
       { error: uploadResume.error, message: uploadResume.message },
       { error: uploadCoverLetter.error, message: uploadCoverLetter.message },
     ];
 
-    errors.forEach(({ error, message }) => {
+    errorList.forEach(({ error, message }) => {
       if (error) {
         dismiss();
         toast({
@@ -343,22 +371,18 @@ export default function EmployeeSignup() {
     empSignup.loading,
     uploadAvatar.loading,
     uploadCoverLetter.loading,
+    uploadResume.loading,
     uploadAvatar.error,
     empSignup.error,
     uploadCoverLetter.error,
+    uploadResume.error,
     uploadCoverLetter.message,
     uploadResume.message,
     empSignup.message,
     empSignup.accessToken,
     empSignup.refreshToken,
     uploadsComplete,
-    empSignup.signup,
-    uploadAvatar.uploadAvatar,
-    uploadResume.uploadResume,
-    uploadCoverLetter.uploadCoverLetter,
     uploadAvatar.message,
-    uploadResume.error,
-    uploadResume.loading,
   ]);
 
   // Log Basic Signup Data: Regular, Phone and Socials
@@ -405,9 +429,10 @@ export default function EmployeeSignup() {
     <div className="h-[80%] w-[85%] flex flex-col items-start gap-3 tablet-lg:w-full tablet-lg:p-5">
       {/* Navigate Back Button Section */}
       <Button
+        type="button"
         className="absolute top-5 left-5"
         variant="outline"
-        onClick={() => router.push("/signup/option")}
+        onClick={() => router.push("/signup")}
       >
         <LucideArrowLeft />
       </Button>
@@ -423,26 +448,38 @@ export default function EmployeeSignup() {
       {/* Step Progress Indicator Section */}
       <div className="w-full flex items-center mb-5">
         {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
-          (st, index) => (
-            <div key={st} className="w-full flex items-center">
-              <div
-                className={`size-8 flex items-center justify-center rounded-full text-muted font-bold transition-all ${
-                  step >= st ? "bg-primary" : "bg-muted text-muted-foreground"
-                }`}
-              >
-                {st}
-              </div>
-              {index < totalSteps - 1 && (
-                <div className="flex-1 h-1 bg-muted relative">
-                  <div
-                    className={`absolute top-0 left-0 h-full transition-all duration-300 ${
-                      step > st ? "bg-primary w-full" : "bg-muted w-0"
-                    }`}
-                  />
+          (st, index) => {
+            const isSkipped =
+              st === 2 &&
+              methods.watch("profession.yearOfExperience") === "no_experience";
+            const isActive = step >= st && !isSkipped;
+            return (
+              <div key={st} className="w-full flex items-center">
+                <div
+                  className={`size-8 flex items-center justify-center rounded-full text-muted font-bold transition-all ${
+                    isSkipped
+                      ? "bg-muted text-muted-foreground opacity-40 line-through"
+                      : isActive
+                        ? "bg-primary"
+                        : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {st}
                 </div>
-              )}
-            </div>
-          ),
+                {index < totalSteps - 1 && (
+                  <div className="flex-1 h-1 bg-muted relative">
+                    <div
+                      className={`absolute top-0 left-0 h-full transition-all duration-300 ${
+                        step > st && !isSkipped
+                          ? "bg-primary w-full"
+                          : "bg-muted w-0"
+                      }`}
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          },
         )}
       </div>
 
@@ -452,9 +489,8 @@ export default function EmployeeSignup() {
           {step === 1 && (
             <ProfessionStepForm
               register={register}
+              control={control}
               errors={errors}
-              setValue={setValue}
-              trigger={trigger}
             />
           )}
           {step === 2 && (
@@ -500,16 +536,24 @@ export default function EmployeeSignup() {
           {/* Next & Previous Step Section */}
           {/* Navigation Buttons Section */}
           <div className="flex justify-between my-8">
-            {step > 1 && (
+            {step > 1 ? (
               <Button type="button" onClick={prevStep}>
                 <LucideArrowLeft />
                 Back
               </Button>
+            ) : (
+              <div />
             )}
+
             <Button
               type="button"
               onClick={nextStep}
-              disabled={empSignup.loading}
+              disabled={
+                empSignup.loading ||
+                uploadAvatar.loading ||
+                uploadResume.loading ||
+                uploadCoverLetter.loading
+              }
             >
               {step === totalSteps ? "Submit" : "Next"}
               <LucideArrowRight />

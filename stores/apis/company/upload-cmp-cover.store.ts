@@ -1,6 +1,7 @@
-import { API_UPLOAD_CMP_COVER_URL } from "@/utils/constants/apis/company_url";
 import axios from "@/lib/axios";
+import { API_UPLOAD_CMP_COVER_URL } from "@/utils/constants/apis/company_url";
 import { create } from "zustand";
+import { useCompanySignupStore } from "../auth/company-signup.store";
 
 type TUploadCompanyCoverResponse = {
   message: string | null;
@@ -24,12 +25,14 @@ export const useUploadCompanyCoverStore = create<TUploadCompanyCoverState>(
         const formData = new FormData();
         formData.append("cover", _cover);
 
+        const accessToken = useCompanySignupStore.getState().accessToken;
+
         const response = await axios.post<TUploadCompanyCoverResponse>(
           API_UPLOAD_CMP_COVER_URL(_companyID),
           formData,
           {
             headers: {
-              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${accessToken}`,
             },
           },
         );

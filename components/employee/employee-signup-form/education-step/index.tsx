@@ -1,19 +1,20 @@
-import LabelInput from "@/components/utils/label-input";
-import { IStepFormProps } from "../props";
 import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
-import { Input } from "@/components/ui/input";
-import {
-  LucideGraduationCap,
-  LucidePlus,
-  LucideSchool,
-  LucideTrash2,
-} from "lucide-react";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { Button } from "@/components/ui/button";
-import { Controller, useFieldArray } from "react-hook-form";
-import { DatePicker } from "@/components/ui/date-picker";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { YearPicker } from "@/components/ui/year-picker";
 import ErrorMessage from "@/components/utils/error-message";
+import LabelInput from "@/components/utils/label-input";
+import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import {
+    LucideGraduationCap,
+    LucidePlus,
+    LucideSchool,
+    LucideTrash2
+} from "lucide-react";
+import { Controller, useFieldArray, useWatch } from "react-hook-form";
+import { IStepFormProps } from "../props";
 
 export default function EducationStepForm({
   register,
@@ -29,7 +30,7 @@ export default function EducationStepForm({
     append({
       school: "",
       degree: "",
-      year: "" as unknown as Date,
+      year: undefined as unknown as number,
     });
   };
 
@@ -68,66 +69,130 @@ export default function EducationStepForm({
           )}
 
           {/* School */}
-          <LabelInput
-            label="School"
-            input={
-              <Input
-                placeholder="School"
-                id="school"
-                {...register(`educations.${index}.school`)}
-                prefix={<LucideSchool />}
-                validationMessage={errors!.educations?.[index]?.school?.message}
-              />
-            }
-          />
-
-          {/* Degree */}
-          <LabelInput
-            label="Degree"
-            input={
-              <Input
-                placeholder="Degree"
-                id="degree"
-                {...register(`educations.${index}.degree`)}
-                prefix={<LucideGraduationCap />}
-                validationMessage={errors!.educations?.[index]?.degree?.message}
-              />
-            }
-          />
-
-          {/* Graduation Year */}
           <div className="w-full flex flex-col items-start gap-2">
-            <div className="w-full flex flex-col items-start gap-2">
-              <TypographyMuted className="text-xs">
-                Graduation Year
-              </TypographyMuted>
+            <LabelInput
+              label="School"
+              input={
+                <Input
+                  placeholder="School"
+                  id={`school-${index}`}
+                  {...register(`educations.${index}.school`)}
+                  prefix={<LucideSchool />}
+                  validationMessage={
+                    errors!.educations?.[index]?.school?.message
+                  }
+                />
+              }
+            />
+            {/* isStudying Checkbox */}
+            <div className="flex items-center space-x-2 mt-1">
               <Controller
-                name={`educations.${index}.year`}
                 control={control}
+                name={`educations.${index}.isStudying`}
                 render={({ field }) => (
-                  <DatePicker
-                    placeholder="Graduation Year"
-                    date={field.value ? new Date(field.value) : undefined}
-                    onDateChange={(date) =>
-                      field.onChange(date?.toISOString() || "")
-                    }
+                  <Checkbox
+                    id={`isStudying-${index}`}
+                    checked={field.value ?? false}
+                    onCheckedChange={field.onChange}
                   />
                 )}
               />
+              <label
+                htmlFor={`isStudying-${index}`}
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground"
+              >
+                I am currently studying here
+              </label>
             </div>
-            <ErrorMessage>
-              {errors!.educations?.[index]?.year?.message}
-            </ErrorMessage>
           </div>
+
+          {/* Dynamic Watcher for isStudying */}
+          <IsStudyingWatcher
+            index={index}
+            control={control}
+            register={register}
+            errors={errors}
+          />
         </div>
       ))}
 
       {/* Add More Button */}
       <div className="w-full flex justify-end">
-        <Button variant="secondary" className="text-xs" onClick={addEducation}>
+        <Button
+          variant="secondary"
+          type="button"
+          className="text-xs"
+          onClick={addEducation}
+        >
           Add More
           <LucidePlus />
         </Button>
+      </div>
+    </div>
+  );
+}
+
+import { Control, FieldErrors, UseFormRegister } from "react-hook-form";
+
+interface IsStudyingWatcherProps {
+  index: number;
+  control: Control<TEmployeeSignUp> | undefined;
+  register: UseFormRegister<TEmployeeSignUp>;
+  errors: FieldErrors<TEmployeeSignUp> | undefined;
+}
+
+function IsStudyingWatcher({
+  index,
+  control,
+  register,
+  errors,
+}: IsStudyingWatcherProps) {
+  const isStudying = useWatch({
+    control,
+    name: `educations.${index}.isStudying`,
+  });
+
+  return (
+    <div className="w-full flex flex-col gap-3">
+      {/* Degree */}
+      <LabelInput
+        label="Degree"
+        input={
+          <Input
+            placeholder={
+              isStudying ? "e.g. Pursuing Bachelor's, Undergrad" : "Degree"
+            }
+            id={`degree-${index}`}
+            {...register(`educations.${index}.degree`)}
+            prefix={<LucideGraduationCap />}
+            validationMessage={errors!.educations?.[index]?.degree?.message}
+          />
+        }
+      />
+
+      {/* Graduation Year */}
+      <div className="w-full flex flex-col items-start gap-2">
+        <div className="w-full flex flex-col items-start gap-2">
+          <TypographyMuted className="text-xs">
+            {isStudying ? "Expected Graduation Year" : "Graduation Year"}
+          </TypographyMuted>
+          <Controller
+            name={`educations.${index}.year`}
+            control={control}
+            render={({ field }) => (
+              <YearPicker
+                placeholder={
+                  isStudying ? "Expected Graduation Year" : "Graduation Year"
+                }
+                year={field.value ? Number(field.value) : undefined}
+                onYearChange={(yr) => field.onChange(yr)}
+              />
+            )}
+          />
+        </div>
+        <ErrorMessage>
+          {errors!.educations?.[index]?.year?.message}
+        </ErrorMessage>
       </div>
     </div>
   );

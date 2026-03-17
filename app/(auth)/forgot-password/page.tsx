@@ -1,30 +1,30 @@
 "use client";
 
+import forgotPasswordWhiteSvg from "@/assets/svg/forgot-password-white.svg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ToastAction } from "@/components/ui/toast";
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import {
-  LucideArrowLeft,
-  LucideCheck,
-  LucideInfo,
-  LucideMail,
-  LucidePhone,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import forgotPasswordWhiteSvg from "@/assets/svg/forgot-password-white.svg";
-import Image from "next/image";
-import { useForm } from "react-hook-form";
-import { forgotPasswordSchema, TForgotPasswordForm } from "./validate";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForgotPasswordStore } from "@/stores/apis/auth/forgot-password.store";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useToast } from "@/hooks/use-toast";
-import { ToastAction } from "@/components/ui/toast";
+import { useForgotPasswordStore } from "@/stores/apis/auth/forgot-password.store";
 import { isEmailInput } from "@/utils/extensions/check-email-input";
 import { isNumberPhoneInput } from "@/utils/extensions/check-phone-input";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+    LucideArrowLeft,
+    LucideCheck,
+    LucideInfo,
+    LucideMail,
+    LucidePhone
+} from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { forgotPasswordSchema, TForgotPasswordForm } from "./validate";
 
 export default function ForgotPasswordPage() {
   // Utils

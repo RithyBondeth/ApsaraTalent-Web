@@ -1,24 +1,26 @@
-import { useState } from "react";
-import { Controller, useFieldArray } from "react-hook-form";
-import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
+import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { DatePicker } from "@/components/ui/date-picker";
+import { Input } from "@/components/ui/input";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger
+} from "@/components/ui/popover";
+import { Textarea } from "@/components/ui/textarea";
+import ErrorMessage from "@/components/utils/error-message";
+import LabelInput from "@/components/utils/label-input";
+import Tag from "@/components/utils/tag";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import LabelInput from "@/components/utils/label-input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { LucidePlus, LucideTrash2, LucideXCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { getRandomBadgeColor } from "@/utils/extensions/get-random-badge-color";
 import { ToastAction } from "@radix-ui/react-toast";
-import ErrorMessage from "@/components/utils/error-message";
+import { LucidePlus, LucideTrash2, LucideXCircle } from "lucide-react";
+import { useState } from "react";
+import { Controller, useFieldArray } from "react-hook-form";
 
 export default function OpenPositionStepForm({
   register,
@@ -36,7 +38,7 @@ export default function OpenPositionStepForm({
   const [openPopOvers, setOpenPopOvers] = useState<boolean[]>([]);
 
   const { fields, append, remove } = useFieldArray({
-    control,
+    control: control!,
     name: "openPositions",
   });
 
@@ -50,7 +52,7 @@ export default function OpenPositionStepForm({
 
     // Prevent duplicates (case-insensitive)
     const alreadyExists = currentSkills.some(
-      (skill) => skill.toLowerCase() === trimmed.toLowerCase()
+      (skill) => skill.toLowerCase() === trimmed.toLowerCase(),
     );
     if (alreadyExists) {
       toast({
@@ -78,11 +80,11 @@ export default function OpenPositionStepForm({
     });
   };
 
-  // Handle Remove Skill 
+  // Handle Remove Skill
   const removeSkill = async (skillToRemove: string, index: number) => {
     const currentSkills = getValues?.(`openPositions.${index}.skills`) || [];
     const updatedSkills = currentSkills.filter(
-      (skill) => skill !== skillToRemove
+      (skill) => skill !== skillToRemove,
     );
     setValue?.(`openPositions.${index}.skills`, updatedSkills);
 
@@ -160,13 +162,14 @@ export default function OpenPositionStepForm({
           <div className="w-full flex flex-col items-start gap-2">
             <TypographyMuted className="text-xs">Description</TypographyMuted>
             <Textarea
+              autoResize
               placeholder="Description"
               className="placeholder:text-sm"
               {...register(`openPositions.${index}.description`)}
+              validationMessage={
+                errors?.openPositions?.[index]?.description?.message
+              }
             />
-            <ErrorMessage>
-              {errors?.openPositions?.[index]?.description?.message}
-            </ErrorMessage>
           </div>
 
           <div className="w-full flex gap-3 [&>div]:w-1/2 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
@@ -217,7 +220,7 @@ export default function OpenPositionStepForm({
                 Deadline Date
               </TypographyMuted>
               <Controller
-                control={control}
+                control={control!}
                 name={`openPositions.${index}.deadlineDate`}
                 render={({ field }) => (
                   <DatePicker
@@ -242,21 +245,22 @@ export default function OpenPositionStepForm({
             </TypographyMuted>
             <div className="flex flex-wrap gap-3">
               {(getValues?.(`openPositions.${index}.skills`) || []).map(
-                (skill, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-3 py-2 px-3 rounded-3xl bg-muted"
-                  >
-                    <TypographyMuted className="text-xs">
-                      {skill}
-                    </TypographyMuted>
-                    <LucideXCircle
-                      className="text-muted-foreground cursor-pointer"
-                      width="18px"
-                      onClick={() => removeSkill(skill, index)}
-                    />
-                  </div>
-                )
+                (skill, index) => {
+                  const { bg } = getRandomBadgeColor(skill);
+                  return (
+                    <div
+                      key={index}
+                      className={`flex items-center ${bg} pr-2 rounded-2xl`}
+                    >
+                      <Tag label={skill} />
+                      <LucideXCircle
+                        className="text-muted-foreground cursor-pointer text-red-500"
+                        width={"18px"}
+                        onClick={() => removeSkill(skill, index)}
+                      />
+                    </div>
+                  );
+                },
               )}
             </div>
             <Popover
@@ -269,6 +273,7 @@ export default function OpenPositionStepForm({
             >
               <PopoverTrigger asChild>
                 <Button
+                  type="button"
                   variant="secondary"
                   size="sm"
                   className="text-xs w-full"
@@ -285,6 +290,7 @@ export default function OpenPositionStepForm({
                 />
                 <div className="flex gap-2">
                   <Button
+                    type="button"
                     variant="outline"
                     size="sm"
                     onClick={() =>
@@ -297,7 +303,11 @@ export default function OpenPositionStepForm({
                   >
                     Cancel
                   </Button>
-                  <Button size="sm" onClick={() => addSkill(index)}>
+                  <Button
+                    size="sm"
+                    type="button"
+                    onClick={() => addSkill(index)}
+                  >
                     Save
                   </Button>
                 </div>

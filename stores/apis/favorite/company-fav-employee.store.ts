@@ -1,8 +1,8 @@
-import {
-  API_COMPANY_FAVORITE_EMPLOYEE_URL,
-  API_COMPANY_UNFAVORITE_EMPLOYEE_URL,
-} from "@/utils/constants/apis/favorite_url";
 import axios from "@/lib/axios";
+import {
+    API_COMPANY_FAVORITE_EMPLOYEE_URL,
+    API_COMPANY_UNFAVORITE_EMPLOYEE_URL
+} from "@/utils/constants/apis/favorite_url";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 

@@ -1,13 +1,11 @@
-import { API_AUTH_LOGIN_URL } from "@/utils/constants/apis/auth_url";
-import { create } from "zustand";
 import axios from "@/lib/axios";
-import { useGetCurrentUserStore } from "../users/get-current-user.store";
 import {
-  setAuthCookies,
-  clearAuthCookies,
-  hasAuthToken,
+    clearAuthCookies, setAuthCookies
 } from "@/utils/auth/cookie-manager";
+import { API_AUTH_LOGIN_URL } from "@/utils/constants/apis/auth_url";
 import { TUserAuthResponse } from "@/utils/constants/auth.constant";
+import { create } from "zustand";
+import { useGetCurrentUserStore } from "../users/get-current-user.store";
 
 type TLoginState = {
   loading: boolean;

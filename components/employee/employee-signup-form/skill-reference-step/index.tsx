@@ -1,23 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { IStepFormProps } from "../props";
 import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import LabelInput from "@/components/utils/label-input";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+    Popover,
+    PopoverContent,
+    PopoverTrigger
 } from "@/components/ui/popover";
-import { LucidePlus, LucideXCircle } from "lucide-react";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { getErrorMessage } from "@/utils/extensions/get-error-message";
-import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import ErrorMessage from "@/components/utils/error-message";
+import LabelInput from "@/components/utils/label-input";
+import Tag from "@/components/utils/tag";
+import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { useToast } from "@/hooks/use-toast";
+import { getErrorMessage } from "@/utils/extensions/get-error-message";
+import { getRandomBadgeColor } from "@/utils/extensions/get-random-badge-color";
+import { LucidePlus, LucideXCircle } from "lucide-react";
+import { useState } from "react";
+import { IStepFormProps } from "../props";
 
 export default function SkillReferenceStepForm({
   errors,
@@ -42,7 +44,7 @@ export default function SkillReferenceStepForm({
 
     // Prevent duplicates (case-insensitive)
     const alreadyExists = skills.some(
-      (skill) => skill.toLowerCase() === trimmed.toLowerCase()
+      (skill) => skill.toLowerCase() === trimmed.toLowerCase(),
     );
     if (alreadyExists) {
       toast({
@@ -72,30 +74,28 @@ export default function SkillReferenceStepForm({
     setValue?.("skillAndReference.skills", updated);
     await trigger?.("skillAndReference.skills");
   };
-  
-  useEffect(() => {
-    register("skillAndReference.resume", { required: true });
-    register("skillAndReference.coverLetter", { required: true });
-  }, [register]);
 
   return (
     <div className="w-full flex flex-col items-start gap-8">
       <div className="w-full flex flex-col items-start gap-3">
         <TypographyH4>Add your skills</TypographyH4>
         <div className="flex flex-wrap gap-3">
-          {skills.map((skill, i) => (
-            <div
-              key={i}
-              className="flex items-center gap-3 py-2 px-3 rounded-3xl bg-muted"
-            >
-              <TypographyMuted className="text-xs">{skill}</TypographyMuted>
-              <LucideXCircle
-                className="text-muted-foreground cursor-pointer"
-                width={"18px"}
-                onClick={() => removeSkill(skill)}
-              />
-            </div>
-          ))}
+          {skills.map((skill, index) => {
+            const { bg } = getRandomBadgeColor(skill);
+            return (
+              <div
+                key={index}
+                className={`flex items-center ${bg} pr-2 rounded-2xl`}
+              >
+                <Tag label={skill} />
+                <LucideXCircle
+                  className="text-muted-foreground cursor-pointer text-red-500"
+                  width={"18px"}
+                  onClick={() => removeSkill(skill)}
+                />
+              </div>
+            );
+          })}
         </div>
         <Popover open={openPopOver} onOpenChange={setOpenPopOver}>
           <PopoverTrigger asChild>
@@ -125,7 +125,7 @@ export default function SkillReferenceStepForm({
         )}
       </div>
       <div className="w-full flex flex-col items-start gap-3">
-        <TypographyH4>Add your references</TypographyH4>
+        <TypographyH4>Add your references (Optional)</TypographyH4>
         <div className="w-full flex items-start gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
           {getValues?.("skillAndReference.resume") ? (
             <div className="flex flex-col items-start gap-2">
@@ -138,13 +138,9 @@ export default function SkillReferenceStepForm({
                   strokeWidth="1.3px"
                   className="text-muted-foreground cursor-pointer"
                   onClick={() =>
-                    setValue?.(
-                      "skillAndReference.resume",
-                      null as unknown as File,
-                      {
-                        shouldValidate: true,
-                      }
-                    )
+                    setValue?.("skillAndReference.coverLetter", undefined, {
+                      shouldValidate: true,
+                    })
                   }
                 />
               </div>
@@ -165,7 +161,7 @@ export default function SkillReferenceStepForm({
                     }
                   }}
                   validationMessage={getErrorMessage(
-                    errors?.skillAndReference?.resume
+                    errors?.skillAndReference?.resume,
                   )}
                 />
               }
@@ -184,13 +180,9 @@ export default function SkillReferenceStepForm({
                   strokeWidth="1.3px"
                   className="text-muted-foreground cursor-pointer"
                   onClick={() =>
-                    setValue?.(
-                      "skillAndReference.coverLetter",
-                      null as unknown as File,
-                      {
-                        shouldValidate: true,
-                      }
-                    )
+                    setValue?.("skillAndReference.coverLetter", undefined, {
+                      shouldValidate: true,
+                    })
                   }
                 />
               </div>
@@ -211,7 +203,7 @@ export default function SkillReferenceStepForm({
                     }
                   }}
                   validationMessage={getErrorMessage(
-                    errors?.skillAndReference?.coverLetter
+                    errors?.skillAndReference?.coverLetter,
                   )}
                 />
               }

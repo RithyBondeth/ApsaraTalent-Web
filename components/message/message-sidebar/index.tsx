@@ -1,59 +1,125 @@
-"use client"
+"use client";
 
-import { Search, Users } from 'lucide-react';
-import { Input } from "@/components/ui/input";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useState } from 'react';
-import { IChatPreview } from '../props';
-import { cn } from '@/lib/utils';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import { Check, CheckCheck, Pencil, Search, Users, X } from "lucide-react";
+import { useState } from "react";
+import { IChatListProps, IChatSidebarProps } from "./props";
 
-interface ChatSidebarProps {
-  chats: IChatPreview[] | undefined;
-  activeChat: IChatPreview | null;
-  isOpen: boolean;
-  className?: string;
-  onChatSelect: (chat: IChatPreview) => void;
-}
+/**
+ * Chat sidebar — conversation list with search and "New Chat" button.
+ *
+ * Modes:
+ *   isOpen=true  (expanded)  →  full w-80 panel with avatars, names, previews
+ *   isOpen=false (collapsed) →  narrow w-16 icon-only strip (desktop only)
+ *
+ * Online dot:
+ *   Each IChatPreview may carry an `isOnline` flag set by the Zustand store.
+ *   The store subscribes to 'userStatus' socket events and updates the flag in place,
+ *   so the dot updates reactively without a page refresh or manual refetch.
+ *
+ * New Conversation button:
+ *   Shown in the header as a Pencil icon (✎).  Currently a placeholder — in a future
+ *   iteration this will open a contact-picker modal / search-to-start-chat flow.
+ */
+export default function ChatSidebar(props: IChatSidebarProps) {
+  const {
+    chats,
+    activeChat,
+    className,
+    isOpen,
+    currentUserId,
+    onChatSelect,
+    onClose,
+    onNewChat,
+  } = props;
 
-const ChatSidebar = ({ chats, activeChat, className, isOpen, onChatSelect }: ChatSidebarProps) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  
-  const filteredChats = searchQuery 
-    ? chats?.filter(chat => 
-        chat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        chat.preview.toLowerCase().includes(searchQuery.toLowerCase())
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredChats = searchQuery
+    ? chats?.filter(
+        (chat) =>
+          chat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          chat.preview?.toLowerCase().includes(searchQuery.toLowerCase()),
       )
     : chats;
 
   return (
-    <div 
-      className={cn(`${isOpen ? 'w-96' : 'w-20'} border-r flex flex-col transition-all duration-300 ease-in-out overflow-hidden`, className)}
+    <div
+      className={cn(
+        "flex flex-col h-full transition-all duration-300 ease-in-out overflow-hidden border-r",
+        isOpen ? "w-80" : "w-16",
+        "md:w-auto",
+        className,
+      )}
+      style={
+        isOpen
+          ? { minWidth: "var(--sidebar-open-width, 20rem)" }
+          : { minWidth: "var(--sidebar-closed-width, 4rem)" }
+      }
     >
-      {/* Header */}
+      {/* ── HEADER ────────────────────────────────────────────────────────── */}
       {isOpen ? (
-        <div className="p-4 border-b flex justify-between items-center">
-          <h1 className="text-xl font-bold text-foreground">WorkChat</h1>
-        
+        <div className="px-4 py-3 border-b flex items-center justify-between shrink-0">
+          <h1 className="text-lg font-bold text-foreground tracking-tight">
+            Messages
+          </h1>
+          <div className="flex items-center gap-1">
+            {/* New Conversation button.
+                Shown in expanded mode.  onNewChat is optional — the parent
+                (MessagePage) can wire it to open a contact picker. */}
+            {onNewChat && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={onNewChat}
+                aria-label="New conversation"
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+            )}
+            {/* Close button only shown in mobile overlay mode */}
+            {onClose && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 md:hidden"
+                onClick={onClose}
+                aria-label="Close sidebar"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </div>
       ) : (
-        <div className="py-4 flex flex-col items-center border-b">
-          <Avatar className="size-10 mb-3">
+        /* Collapsed header: just the user avatar */
+        <div className="py-3 flex flex-col items-center border-b shrink-0">
+          <Avatar className="size-9">
             <AvatarImage src="/avatars/me.jpg" alt="Your Profile" />
-            <AvatarFallback>ME</AvatarFallback>
+            <AvatarFallback className="text-xs">ME</AvatarFallback>
           </Avatar>
         </div>
       )}
 
-      {/* Search Bar - Only in expanded view */}
+      {/* ── SEARCH (expanded mode only) ──────────────────────────────────── */}
       {isOpen && (
-        <div className="p-4">
+        <div className="px-4 py-3 shrink-0">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input 
-              placeholder="Search messages..." 
-              className="pl-9 bg-muted/50"
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+            <Input
+              placeholder="Search conversations…"
+              className="pl-9 h-9 bg-muted/50 border-0 focus-visible:ring-1"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -61,129 +127,248 @@ const ChatSidebar = ({ chats, activeChat, className, isOpen, onChatSelect }: Cha
         </div>
       )}
 
-      {/* Chat List */}
-      <div className="flex-1 overflow-y-auto">
+      {/* ── CHAT LIST ─────────────────────────────────────────────────────── */}
+      <div className="flex-1 overflow-y-auto overscroll-contain">
         {isOpen ? (
-          <ExpandedChatList 
-            chats={filteredChats} 
-            activeChat={activeChat} 
-            onChatSelect={onChatSelect} 
+          <ExpandedChatList
+            chats={filteredChats}
+            activeChat={activeChat}
+            currentUserId={currentUserId}
+            onChatSelect={onChatSelect}
           />
         ) : (
-          <CollapsedChatList 
-            chats={filteredChats} 
-            activeChat={activeChat} 
-            onChatSelect={onChatSelect} 
+          <CollapsedChatList
+            chats={filteredChats}
+            activeChat={activeChat}
+            currentUserId={currentUserId}
+            onChatSelect={onChatSelect}
           />
         )}
       </div>
     </div>
   );
-};
-
-// Expanded chat list
-interface ChatListProps {
-  chats: IChatPreview[] | undefined;
-  activeChat: IChatPreview | null;
-  onChatSelect: (chat: IChatPreview) => void;
 }
 
-const ExpandedChatList = ({ chats, activeChat, onChatSelect }: ChatListProps) => (
-  <>
-    {!chats || chats.length === 0 ? (
-      <div className="p-4 text-center text-muted-foreground">
-        No chats found
-      </div>
-    ) : (
-      chats?.map(chat => (
-        <div 
-          key={chat.id} 
-          className={`flex items-center p-4 hover:bg-muted transition-colors cursor-pointer ${activeChat?.id === chat.id ? 'bg-muted/70' : ''}`}
-          onClick={() => onChatSelect(chat)}
-        >
-          <div className="relative">
-            {chat.isGroup ? (
-              <div className="h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center">
-                <Users className="h-6 w-6 text-primary" />
-              </div>
-            ) : (
-              <Avatar className="h-12 w-12">
-                <AvatarImage src={chat.avatar} alt={chat.name} />
-                <AvatarFallback>
-                  {chat.name.split(' ').map(n => n[0]).join('')}
-                </AvatarFallback>
-              </Avatar>
-            )}
-            {chat.unread && (
-              <Badge 
-                variant="default" 
-                className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center"
-              >
-                {chat.unread}
-              </Badge>
-            )}
-          </div>
-          <div className="ml-3 flex-1 h-full">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center">
-                <h3 className="font-medium text-sm text-foreground">{chat.name}</h3>
-                {chat.tag && (
-                  <Badge variant="outline" className="ml-2 text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300">
-                    {chat.tag}
-                  </Badge>
-                )}
-              </div>
-              <span className="text-xs text-muted-foreground">{chat.time}</span>
-            </div>
-            <p className="text-sm text-muted-foreground truncate w-full text-wrap">{chat.preview}</p>
-          </div>
-        </div>
-      ))
-    )}
-  </>
-);
+// ── Expanded chat list ────────────────────────────────────────────────────────
 
-// Collapsed chat list
-const CollapsedChatList = ({ chats, activeChat, onChatSelect }: ChatListProps) => (
-  <div className="flex flex-col items-center gap-4 pt-2">
-    {chats?.map(chat => (
-      <TooltipProvider key={chat.id}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div 
-              className={`relative cursor-pointer p-1 rounded-full transition-all ${activeChat?.id === chat.id ? 'bg-muted scale-110' : 'hover:bg-muted/50'}`}
-              onClick={() => onChatSelect(chat)}
-            >
+const ExpandedChatList = (props: IChatListProps) => {
+  const { chats, activeChat, currentUserId, onChatSelect } = props;
+
+  if (!chats || chats.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-2 p-8 text-center h-40">
+        <Users className="h-8 w-8 text-muted-foreground/40" />
+        <p className="text-sm text-muted-foreground">No conversations yet</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="divide-y divide-border/50">
+      {chats.map((chat) => {
+        const isLastFromMe = chat.lastMessageSenderId === currentUserId;
+        const isUnread = chat.isRead === false && !isLastFromMe;
+        const isActive = activeChat?.id === chat.id;
+
+        return (
+          <button
+            key={chat.id}
+            className={cn(
+              "w-full flex items-center gap-3 px-4 py-3 text-left transition-colors",
+              "hover:bg-muted/60 active:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+              isActive && "bg-muted/70",
+              isUnread && !isActive && "bg-primary/5",
+            )}
+            onClick={() => onChatSelect(chat)}
+          >
+            {/* Avatar + unread indicator + online dot */}
+            <div className="relative shrink-0">
               {chat.isGroup ? (
-                <div className="h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center">
-                  <Users className="h-6 w-6 text-primary" />
+                <div className="h-11 w-11 bg-primary/10 rounded-full flex items-center justify-center">
+                  <Users className="h-5 w-5 text-primary" />
                 </div>
               ) : (
-                <Avatar className="h-12 w-12">
+                <Avatar className="h-11 w-11">
                   <AvatarImage src={chat.avatar} alt={chat.name} />
-                  <AvatarFallback>
-                    {chat.name.split(' ').map(n => n[0]).join('')}
+                  <AvatarFallback className="text-sm font-medium">
+                    {chat.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .slice(0, 2)
+                      .toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
               )}
-              {chat.unread && (
-                <Badge 
-                  variant="default" 
-                  className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center"
+
+              {/* Unread count badge */}
+              {chat.unread ? (
+                <Badge
+                  variant="default"
+                  className="absolute -top-1 -right-1 h-5 min-w-5 px-1 text-[10px] flex items-center justify-center"
                 >
-                  {chat.unread}
+                  {chat.unread > 99 ? "99+" : chat.unread}
                 </Badge>
+              ) : isUnread ? (
+                <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-primary border-2 border-background" />
+              ) : null}
+
+              {/* Online status dot — green dot at the bottom-right of the avatar.
+                  Only shown when chat.isOnline is true.
+                  The white ring (border-background) separates it from the avatar. */}
+              {chat.isOnline && (
+                <span className="absolute bottom-0.5 right-0.5 h-2.5 w-2.5 rounded-full bg-green-500 border-2 border-background" />
               )}
             </div>
-          </TooltipTrigger>
-          <TooltipContent side="right">
-            <p>{chat.name}</p>
-            {chat.tag && <p className="text-xs text-muted-foreground">{chat.tag}</p>}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    ))}
-  </div>
-);
 
-export default ChatSidebar;
+            {/* Text content */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between gap-2 mb-0.5">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <span
+                    className={cn(
+                      "text-sm truncate",
+                      isUnread
+                        ? "font-semibold text-foreground"
+                        : "font-medium text-foreground/90",
+                    )}
+                  >
+                    {chat.name}
+                  </span>
+                  {chat.tag && (
+                    <Badge
+                      variant="outline"
+                      className="text-[10px] px-1.5 py-0 bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 border-purple-200 dark:border-purple-800 shrink-0"
+                    >
+                      {chat.tag}
+                    </Badge>
+                  )}
+                </div>
+                <span
+                  className={cn(
+                    "text-[11px] shrink-0 tabular-nums",
+                    isUnread
+                      ? "text-primary font-medium"
+                      : "text-muted-foreground",
+                  )}
+                >
+                  {chat.time}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-1">
+                {isLastFromMe && (
+                  <span className="shrink-0 text-muted-foreground">
+                    {chat.isRead ? (
+                      <CheckCheck className="h-3.5 w-3.5 text-primary" />
+                    ) : (
+                      <Check className="h-3.5 w-3.5" />
+                    )}
+                  </span>
+                )}
+                <p
+                  className={cn(
+                    "text-xs truncate",
+                    isUnread
+                      ? "text-foreground font-medium"
+                      : "text-muted-foreground",
+                  )}
+                >
+                  {chat.preview || "No messages yet"}
+                </p>
+              </div>
+            </div>
+          </button>
+        );
+      })}
+    </div>
+  );
+};
+
+// ── Collapsed icon-only list (desktop only) ──────────────────────────────────
+
+const CollapsedChatList = (props: IChatListProps) => {
+  const { chats, activeChat, currentUserId, onChatSelect } = props;
+
+  return (
+    <div className="flex flex-col items-center gap-1 pt-2 px-1">
+      {chats?.map((chat) => {
+        const isLastFromMe = chat.lastMessageSenderId === currentUserId;
+        const isUnread = chat.isRead === false && !isLastFromMe;
+        const isActive = activeChat?.id === chat.id;
+
+        return (
+          <TooltipProvider key={chat.id} delayDuration={200}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  className={cn(
+                    "relative p-1.5 rounded-xl transition-all w-full flex justify-center",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    isActive
+                      ? "bg-muted scale-105"
+                      : "hover:bg-muted/60 active:bg-muted",
+                  )}
+                  onClick={() => onChatSelect(chat)}
+                  aria-label={chat.name}
+                >
+                  {chat.isGroup ? (
+                    <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center">
+                      <Users className="h-5 w-5 text-primary" />
+                    </div>
+                  ) : (
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src={chat.avatar} alt={chat.name} />
+                      <AvatarFallback className="text-xs font-medium">
+                        {chat.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                          .slice(0, 2)
+                          .toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  )}
+
+                  {/* Unread badge */}
+                  {chat.unread ? (
+                    <Badge
+                      variant="default"
+                      className="absolute -top-0.5 -right-0.5 h-4 min-w-4 px-0.5 text-[9px] flex items-center justify-center"
+                    >
+                      {chat.unread > 9 ? "9+" : chat.unread}
+                    </Badge>
+                  ) : isUnread ? (
+                    <span className="absolute top-1 right-1 h-2.5 w-2.5 rounded-full bg-primary border-2 border-background" />
+                  ) : null}
+
+                  {/* Online dot in collapsed mode — bottom-right of avatar */}
+                  {chat.isOnline && (
+                    <span className="absolute bottom-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-green-500 border-2 border-background" />
+                  )}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="max-w-[180px]">
+                <p className={cn("font-medium", isUnread && "font-semibold")}>
+                  {chat.name}
+                  {/* Show online badge in tooltip too */}
+                  {chat.isOnline && (
+                    <span className="ml-1.5 text-green-500 text-xs">●</span>
+                  )}
+                </p>
+                {chat.tag && (
+                  <p className="text-xs text-muted-foreground">{chat.tag}</p>
+                )}
+                {chat.preview && (
+                  <p className="text-xs text-muted-foreground truncate">
+                    {chat.preview}
+                  </p>
+                )}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        );
+      })}
+    </div>
+  );
+};

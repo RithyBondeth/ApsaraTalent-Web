@@ -1,17 +1,18 @@
 "use client";
 
-import { useFieldArray, Controller } from "react-hook-form";
-import { IStepFormProps } from "../props";
 import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
-
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { Input } from "@/components/ui/input";
-import LabelInput from "@/components/utils/label-input";
 import { Button } from "@/components/ui/button";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { DatePicker } from "@/components/ui/date-picker";
-import { LucidePlus, LucideTrash2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import ErrorMessage from "@/components/utils/error-message";
+import LabelInput from "@/components/utils/label-input";
+import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { LucidePlus, LucideTrash2 } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { Controller, useFieldArray } from "react-hook-form";
+import { IStepFormProps } from "../props";
 
 export default function ExperienceStepForm({
   register,
@@ -22,6 +23,22 @@ export default function ExperienceStepForm({
     control,
     name: "experience",
   });
+
+  // Ensure at least one empty row is shown when the step mounts.
+  // The ref guard prevents React StrictMode from appending twice.
+  const initializedRef = useRef(false);
+  useEffect(() => {
+    if (!initializedRef.current && fields.length === 0) {
+      initializedRef.current = true;
+      append({
+        title: "",
+        description: "",
+        startDate: "" as unknown as Date,
+        endDate: "" as unknown as Date,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const addExperience = () => {
     append({
@@ -80,21 +97,21 @@ export default function ExperienceStepForm({
           />
 
           {/* Description */}
-          <LabelInput
-            label="Description"
-            input={
-              <Input
-                placeholder="Description"
-                {...register(`experience.${index}.description`)}
-                validationMessage={
-                  errors?.experience?.[index]?.description?.message
-                }
-              />
-            }
-          />
+          <div className="w-full flex flex-col gap-1">
+            <TypographyMuted className="text-xs">Description</TypographyMuted>
+            <Textarea
+              autoResize
+              placeholder="Description"
+              className="placeholder:text-sm"
+              {...register(`experience.${index}.description`)}
+              validationMessage={
+                errors?.experience?.[index]?.description?.message
+              }
+            />
+          </div>
 
           {/* Dates */}
-          <div className="w-full flex items-center gap-4 mt-3">
+          <div className="w-full flex items-center gap-4">
             {/* Start Date */}
             <div className="w-full flex flex-col gap-1">
               <TypographyMuted className="text-xs">Start Date</TypographyMuted>

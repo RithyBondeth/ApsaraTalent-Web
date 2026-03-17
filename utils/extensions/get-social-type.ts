@@ -1,15 +1,15 @@
 import {
-  EarthIcon,
-  FacebookIcon,
-  GithubIcon,
-  InstagramIcon,
-  LinkedinIcon,
-  LucideIcon,
-  SendIcon,
-  TwitterIcon,
+    EarthIcon,
+    FacebookIcon,
+    GithubIcon,
+    InstagramIcon,
+    LinkedinIcon,
+    LucideIcon,
+    SendIcon,
+    TwitterIcon
 } from "lucide-react";
-import { TPlatform } from "../types/platform.type";
 import React from "react";
+import { TPlatform } from "../types/platform.type";
 
 export const getSocialPlatformTypeIcon = (
   platform: TPlatform,
@@ -18,7 +18,7 @@ export const getSocialPlatformTypeIcon = (
     Facebook: FacebookIcon,
     Instagram: InstagramIcon,
     Github: GithubIcon,
-    LinkedIn: LinkedinIcon,
+    Linkedin: LinkedinIcon,
     Telegram: SendIcon,
     Website: EarthIcon,
     Twitter: TwitterIcon,

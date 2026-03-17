@@ -1,18 +1,18 @@
+import IconLabel from "@/components/utils/icon-label";
 import {
-  LucideBriefcaseBusiness,
-  LucideBuilding,
-  LucideClock,
-  LucideMapPin,
-  LucideMessageCircle,
-  LucideUsers,
+    LucideBriefcaseBusiness,
+    LucideBuilding,
+    LucideClock,
+    LucideMapPin,
+    LucideMessageCircle,
+    LucideUsers
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
+import { Button } from "../../ui/button";
 import Tag from "../../utils/tag";
 import { TypographyH4 } from "../../utils/typography/typography-h4";
 import { TypographyP } from "../../utils/typography/typography-p";
-import { Button } from "../../ui/button";
 import { IMatchingCompanyCardProps } from "./props";
-import IconLabel from "@/components/utils/icon-label";
 
 export default function MatchingCompanyCard(props: IMatchingCompanyCardProps) {
   return (

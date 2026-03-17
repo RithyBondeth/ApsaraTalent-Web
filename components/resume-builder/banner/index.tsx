@@ -1,8 +1,8 @@
+import resumeBuilderImageSvg from "@/assets/svg/resume-builder-banner.svg";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import Image from "next/image";
-import resumeBuilderImageSvg from "@/assets/svg/resume-builder-banner.svg";
 
 export default function ResumeBuilderBanner() {
   return (

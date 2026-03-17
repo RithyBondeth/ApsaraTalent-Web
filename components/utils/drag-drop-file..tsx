@@ -1,15 +1,13 @@
-import React, {
-  useState,
-  useRef,
-  ChangeEvent,
-  DragEvent,
-  useEffect,
-} from "react";
-import Image from "next/image";
-import { LucideCircleX, LucideUserCircle } from "lucide-react";
-import { TypographyMuted } from "./typography/typography-muted";
 import { IDragDropFileProps } from "@/utils/interfaces/drag-drop-file.interface";
+import { LucideCircleX, LucideUserCircle } from "lucide-react";
+import Image from "next/image";
+import React, {
+    ChangeEvent,
+    DragEvent,
+    useEffect, useRef, useState
+} from "react";
 import { FieldValues, Path, PathValue } from "react-hook-form";
+import { TypographyMuted } from "./typography/typography-muted";
 
 export const DragDropFile = <T extends FieldValues>({
   onFilesSelected,
@@ -18,7 +16,7 @@ export const DragDropFile = <T extends FieldValues>({
   multiple = false,
   className = "",
   boxText = "Drag and drop image here, or click to select",
-  boxSubText = "JPG, PNG or GIF files up to 10MB",
+  boxSubText = "JPG, PNG or WEBP files up to 5MB",
   icon = LucideUserCircle,
   preview, // Receive the preview image as a prop
   setValue, // Assuming this is used to update the form state
@@ -27,7 +25,7 @@ export const DragDropFile = <T extends FieldValues>({
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(
-    preview || null
+    preview || null,
   ); // Store the preview URL
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -80,7 +78,7 @@ export const DragDropFile = <T extends FieldValues>({
         setValue(
           fileName as Path<T>,
           file as unknown as PathValue<T, Path<T>>,
-          { shouldValidate: true }
+          { shouldValidate: true },
         );
       }
     }

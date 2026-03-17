@@ -1,41 +1,38 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import LabelInput from "@/components/utils/label-input";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { IOpenPositionFormProps } from "./props";
-import { Controller } from "react-hook-form";
-import { Popover } from "@radix-ui/react-popover";
 import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { LucidePlus, LucideTrash2, LucideXCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
 import { ToastAction } from "@/components/ui/toast";
+import LabelInput from "@/components/utils/label-input";
+import Tag from "@/components/utils/tag";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useToast } from "@/hooks/use-toast";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { TAvailability } from "@/utils/types/availability.type";
+import { availabilityConstant } from "@/utils/constants/app.constant";
+import { getRandomBadgeColor } from "@/utils/extensions/get-random-badge-color";
+import { Popover } from "@radix-ui/react-popover";
+import { LucidePlus, LucideTrash2, LucideXCircle } from "lucide-react";
+import { useState } from "react";
+import { Controller } from "react-hook-form";
+import { IOpenPositionFormProps } from "./props";
 
 export default function OpenPositionForm(props: IOpenPositionFormProps) {
-  const { register, control, getValues } = props.form;
+  // Utils
+  const { register, control, getValues, setValue } = props.form;
   const { toast } = useToast();
 
-  const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
-  const [skillInput, setSkillInput] = useState<string>("");
+  // Skill States
   const initialSkill = getValues(`openPositions.${props.index}.skills`) || "";
   const [skills, setSkills] = useState<string>(initialSkill);
-  const [selectedType, setSelectedType] = useState<TAvailability | null>(null);
+  const [skillInput, setSkillInput] = useState<string | null>(null);
+  const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
 
-  const addSkills = () => {
-    const trimmed = skillInput.trim();
+  // Handle Add Skill
+  const addSkill = () => {
+    const trimmed = skillInput?.trim();
     if (!trimmed) return;
 
     const currentSkillsArray = skills
@@ -53,25 +50,24 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
         description: "This skill already exists.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
-      setSkillInput("");
+      setSkillInput(null);
       setOpenSkillPopOver(false);
       return;
     }
 
-    // Append new skill to string
     const updatedSkills = [...currentSkillsArray, trimmed].join(", ");
     setSkills(updatedSkills);
 
-    // Sync with react-hook-form
-    props.form.setValue(`openPositions.${props.index}.skills`, updatedSkills, {
+    setValue(`openPositions.${props.index}.skills`, updatedSkills, {
       shouldDirty: true,
     });
 
-    setSkillInput("");
+    setSkillInput(null);
     setOpenSkillPopOver(false);
   };
 
-  const removeSkills = (skillToRemove: string) => {
+  // Handle Remove Skill
+  const removeSkill = (skillToRemove: string) => {
     const updatedSkillsArray = skills
       .split(", ")
       .filter((skill) => skill !== skillToRemove);
@@ -79,14 +75,14 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
 
     setSkills(updatedSkills);
 
-    // Sync with react-hook-form
-    props.form.setValue(`openPositions.${props.index}.skills`, updatedSkills, {
+    setValue(`openPositions.${props.index}.skills`, updatedSkills, {
       shouldDirty: true,
     });
   };
 
   return (
     <div className="w-full flex flex-col items-start gap-3">
+      {/* Header Section */}
       <div className="w-full flex items-center justify-between">
         <TypographyMuted>Position {Number(props.index) + 1}</TypographyMuted>
         {props.isEdit && (
@@ -97,7 +93,10 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
           />
         )}
       </div>
+
+      {/* Content Section */}
       <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
+        {/* Title Section */}
         <LabelInput
           label="Title"
           input={
@@ -109,65 +108,46 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             />
           }
         />
+        {/* Description Section */}
         <div className="w-full flex flex-col items-start gap-2">
           <TypographyMuted className="text-xs">Description</TypographyMuted>
           <Textarea
+            autoResize
             placeholder={props.isEdit ? "Description" : props.description}
             id="description"
             {...register(`openPositions.${props.index}.description`)}
             className="placeholder:text-sm"
             disabled={!props.isEdit}
+            validationMessage={
+              props.form.formState.errors?.openPositions?.[props.index]
+                ?.description?.message
+            }
           />
         </div>
+        {/* Availability Section */}
         <div className="w-full flex flex-col items-start gap-2">
           <TypographyMuted className="text-xs">Type</TypographyMuted>
           <Controller
             name={`openPositions.${props.index}.type`}
             control={control}
-            defaultValue={selectedType ?? props.type}
             render={({ field }) => (
-              <Select
-                value={selectedType ?? props.type}
-                onValueChange={(value: TAvailability) => {
-                  field.onChange(value);
-                  setSelectedType(value);
-                }}
-                disabled={!props.isEdit}
-              >
-                <SelectTrigger className="h-12 text-muted-foreground">
-                  <SelectValue
-                    placeholder={props.isEdit ? "Select Type" : selectedType}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem key={"full_time"} value={"full_time"}>
-                    Full Time
-                  </SelectItem>
-                  <SelectItem key={"part_time"} value={"part_time"}>
-                    Part Time
-                  </SelectItem>
-                  <SelectItem key={"contract"} value={"contract"}>
-                    Contract
-                  </SelectItem>
-                  <SelectItem key={"internship"} value={"internship"}>
-                    Internship
-                  </SelectItem>
-                  <SelectItem key={"remote"} value={"remote"}>
-                    Remote
-                  </SelectItem>
-                  <SelectItem key={"freelance"} value={"freelance"}>
-                    Freelance
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+              <CreatableCombobox
+                options={availabilityConstant}
+                value={field.value || ""}
+                onChange={(value) => field.onChange(value)}
+                placeholder="Select Type"
+              />
             )}
           />
         </div>
+        {/* Experience Requirement Section */}
         <LabelInput
-          label="Experience Requirement"
+          label="Experience Requirements"
           input={
             <Input
-              placeholder={props.isEdit ? "Experience" : props.experience}
+              placeholder={
+                props.isEdit ? "Experience" : props.experienceReqirement
+              }
               id="experience-requirement"
               {...register(
                 `openPositions.${props.index}.experienceRequirement`,
@@ -176,42 +156,52 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             />
           }
         />
+        {/* Education Requirement Section */}
         <LabelInput
-          label="Education Requirement"
+          label="Education Requirements"
           input={
             <Input
-              placeholder={props.isEdit ? "Education" : props.education}
+              placeholder={
+                props.isEdit ? "Education" : props.educationRequirement
+              }
               id="education-requirement"
               {...register(`openPositions.${props.index}.educationRequirement`)}
               disabled={!props.isEdit}
             />
           }
         />
+        {/* Skill Section */}
         <div className="w-full flex flex-col items-start gap-3">
           <TypographyMuted className="text-xs">
             Skill Requirements
           </TypographyMuted>
+          {/* Skill List Section */}
           <div className="flex flex-wrap gap-2">
             {skills &&
               skills.length > 0 &&
-              skills.split(", ").map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted"
-                >
-                  <TypographySmall>{item}</TypographySmall>
-                  {props.isEdit && (
-                    <LucideXCircle
-                      className="text-muted-foreground cursor-pointer text-red-500"
-                      width={"18px"}
-                      onClick={() => removeSkills(item)}
-                    />
-                  )}
-                </div>
-              ))}
+              skills.split(", ").map((item, index) => {
+                const { bg } = getRandomBadgeColor(item);
+                return (
+                  <div
+                    key={index}
+                    className={`flex items-center ${props.isEdit && `${bg} pr-2 rounded-2xl`}`}
+                  >
+                    <Tag label={item} />
+                    {props.isEdit && (
+                      <LucideXCircle
+                        className="text-muted-foreground cursor-pointer text-red-500"
+                        width={"18px"}
+                        onClick={() => removeSkill(item)}
+                      />
+                    )}
+                  </div>
+                );
+              })}
           </div>
+          {/* Skill Poppver Section */}
           {props.isEdit && (
             <Popover open={openSkillPopOver} onOpenChange={setOpenSkillPopOver}>
+              {/* Add Skill Section */}
               <PopoverTrigger asChild>
                 <Button className="w-full text-xs" variant="secondary">
                   Add skill
@@ -222,7 +212,6 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
                 <Input
                   placeholder="Enter your skill (e.g. Figma, Photo shop etc.)"
                   onChange={(e) => setSkillInput(e.target.value)}
-                  value={skillInput}
                 />
                 <div className="flex items-center gap-1 [&>button]:text-xs">
                   <Button
@@ -231,12 +220,13 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
                   >
                     Cancel
                   </Button>
-                  <Button onClick={addSkills}>Save</Button>
+                  <Button onClick={addSkill}>Save</Button>
                 </div>
               </PopoverContent>
             </Popover>
           )}
         </div>
+        {/* Salary Range Section */}
         <LabelInput
           label="Salary Range"
           input={
@@ -260,6 +250,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             />
           }
         />
+        {/* DeadlineDate Section */}
         <div className="w-full flex flex-col items-start gap-1">
           <TypographyMuted className="text-xs">Deadline Date</TypographyMuted>
           <Controller

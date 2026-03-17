@@ -1,7 +1,7 @@
+import axios from "@/lib/axios";
 import { API_AUTH_SIGNUP_URL } from "@/utils/constants/apis/auth_url";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
 import { IUser } from "@/utils/interfaces/user-interface/user.interface";
-import axios from "axios";
 import { create } from "zustand";
 
 type TEmployeeSignupResponse = {

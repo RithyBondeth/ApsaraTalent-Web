@@ -1,21 +1,21 @@
 "use client";
 
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { LucideCircleCheck, LucidePlus, LucideXCircle } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { useState } from "react";
-import IconLabel from "@/components/utils/icon-label";
-import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
-import { useToast } from "@/hooks/use-toast";
+import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger
+} from "@/components/ui/popover";
 import { ToastAction } from "@/components/ui/toast";
 import ErrorMessage from "@/components/utils/error-message";
+import IconLabel from "@/components/utils/icon-label";
+import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { useToast } from "@/hooks/use-toast";
+import { LucideCircleCheck, LucidePlus, LucideXCircle } from "lucide-react";
+import { useState } from "react";
 
 export default function BenefitValueStepForm({
   getValues,
@@ -23,7 +23,7 @@ export default function BenefitValueStepForm({
   trigger,
   errors,
 }: IStepFormProps<TCompanySignup>) {
-  // Utils 
+  // Utils
   const { toast } = useToast();
 
   // Benefit and Value Helpers
@@ -44,7 +44,7 @@ export default function BenefitValueStepForm({
     if (!trimmed) return;
 
     const alreadyExists = benefits.some(
-      (bf) => bf.toLowerCase() === trimmed.toLowerCase()
+      (bf) => bf.toLowerCase() === trimmed.toLowerCase(),
     );
 
     if (alreadyExists) {
@@ -73,7 +73,7 @@ export default function BenefitValueStepForm({
     if (!trimmed) return;
 
     const alreadyExists = values.some(
-      (value) => value.toLowerCase() === trimmed.toLowerCase()
+      (value) => value.toLowerCase() === trimmed.toLowerCase(),
     );
 
     if (alreadyExists) {
@@ -118,7 +118,7 @@ export default function BenefitValueStepForm({
     <div className="w-full flex flex-col items-start gap-8">
       <div className="w-full flex flex-col items-start gap-3">
         {/* Benefit Section */}
-        <TypographyH4>Add company benefit information</TypographyH4>
+        <TypographyH4>Add company benefit information (Optional)</TypographyH4>
         <div className="flex flex-wrap gap-2">
           {benefits.map((benefit) => (
             <div
@@ -137,11 +137,15 @@ export default function BenefitValueStepForm({
             </div>
           ))}
         </div>
-        
+
         {/* Add Benefit Dialog Section */}
         <Popover open={openBenefitPopOver} onOpenChange={setOpenBenefitPopOver}>
           <PopoverTrigger asChild>
-            <Button className="w-full text-xs" variant="secondary">
+            <Button
+              className="w-full text-xs"
+              type="button"
+              variant="secondary"
+            >
               Add benefit
               <LucidePlus />
             </Button>
@@ -155,11 +159,14 @@ export default function BenefitValueStepForm({
             <div className="flex items-center gap-1 [&>button]:text-xs">
               <Button
                 variant="outline"
+                type="button"
                 onClick={() => setOpenBenefitPopOver(false)}
               >
                 Cancel
               </Button>
-              <Button onClick={addBenefits}>Save</Button>
+              <Button type="button" onClick={addBenefits}>
+                Save
+              </Button>
             </div>
           </PopoverContent>
         </Popover>
@@ -169,7 +176,7 @@ export default function BenefitValueStepForm({
       </div>
       <div className="w-full flex flex-col items-start gap-3">
         {/* Value Section */}
-        <TypographyH4>Add company value information</TypographyH4>
+        <TypographyH4>Add company value information (Optional)</TypographyH4>
         <div className="flex flex-wrap gap-2">
           {values.map((value) => (
             <div
@@ -192,7 +199,11 @@ export default function BenefitValueStepForm({
         {/* Add Value Section */}
         <Popover open={openValuePopOver} onOpenChange={setOpenValuePopOver}>
           <PopoverTrigger asChild>
-            <Button className="w-full text-xs" variant="secondary">
+            <Button
+              className="w-full text-xs"
+              type="button"
+              variant="secondary"
+            >
               Add value
               <LucidePlus />
             </Button>
@@ -205,6 +216,7 @@ export default function BenefitValueStepForm({
             />
             <div className="flex items-center gap-1 [&>button]:text-xs">
               <Button
+                type="button"
                 variant="outline"
                 onClick={() => setOpenValuePopOver(false)}
               >
@@ -214,9 +226,6 @@ export default function BenefitValueStepForm({
             </div>
           </PopoverContent>
         </Popover>
-        <ErrorMessage>
-          {errors?.benefitsAndValues?.values?.message}
-        </ErrorMessage>
       </div>
     </div>
   );

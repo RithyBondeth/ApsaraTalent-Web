@@ -5,7 +5,7 @@ export interface IFavoriteEmployeeCardProps {
   username: string;
   description: string;
   position: string;
-  experience: number;
+  experience: string;
   availability: string;
   location: string;
   skills: string[];

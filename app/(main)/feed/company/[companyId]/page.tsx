@@ -1,68 +1,66 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import IconLabel from "@/components/utils/icon-label";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import {
-  LucideAlarmClock,
-  LucideBookmark,
-  LucideBookMarked,
-  LucideBriefcaseBusiness,
-  LucideBuilding,
-  LucideCalendarDays,
-  LucideCircleCheck,
-  LucideHeartHandshake,
-  LucideMail,
-  LucideMapPinned,
-  LucidePhone,
-  LucideUser,
-  LucideUsers,
-  User,
-} from "lucide-react";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { TypographyP } from "@/components/utils/typography/typography-p";
-import {
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { Carousel } from "@/components/ui/carousel";
-import Divider from "@/components/utils/divider";
-import BlurBackGroundOverlay from "@/components/utils/bur-background-overlay";
 import { Button } from "@/components/ui/button";
-import Tag from "@/components/utils/tag";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { useParams, useRouter } from "next/navigation";
 import {
-  IBenefits,
-  IImage,
-  ISocial,
-} from "@/utils/interfaces/user-interface/company.interface";
-import Link from "next/link";
+    Carousel, CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious
+} from "@/components/ui/carousel";
 import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
+    HoverCard,
+    HoverCardContent,
+    HoverCardTrigger
 } from "@/components/ui/hover-card";
+import BlurBackGroundOverlay from "@/components/utils/bur-background-overlay";
+import Divider from "@/components/utils/divider";
+import IconLabel from "@/components/utils/icon-label";
 import ImagePopup from "@/components/utils/image-popup";
-import React, { useEffect, useRef, useState } from "react";
+import Tag from "@/components/utils/tag";
+import { TypographyH2 } from "@/components/utils/typography/typography-h2";
+import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { TypographyP } from "@/components/utils/typography/typography-p";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
-import { TPlatform } from "@/utils/types/platform.type";
-import { CompanyDetailPageSkeleton } from "./skeleton";
 import { dateFormatterv2 } from "@/utils/functions/dateformatter-v2";
-import { availabilityConstant } from "@/utils/constants/app.constant";
+import {
+    IBenefits,
+    IImage,
+    ISocial
+} from "@/utils/interfaces/user-interface/company.interface";
+import { TPlatform } from "@/utils/types/platform.type";
+import {
+    LucideAlarmClock,
+    LucideBookmark,
+    LucideBookMarked,
+    LucideBriefcaseBusiness,
+    LucideBuilding,
+    LucideCalendarDays,
+    LucideCircleCheck,
+    LucideHeartHandshake,
+    LucideMail,
+    LucideMapPinned,
+    LucidePhone,
+    LucideUser,
+    LucideUsers,
+    User
+} from "lucide-react";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
+import { CompanyDetailPageSkeleton } from "./skeleton";
 
-import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store";
-import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useToast } from "@/hooks/use-toast";
-import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
 import { useGetOneCompanyStore } from "@/stores/apis/company/get-one-cmp.store";
 import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
-import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
-import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
+import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
 import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
+import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
+import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store";
+import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 
 export default function CompanyDetailPage() {
   // Utils
@@ -86,9 +84,12 @@ export default function CompanyDetailPage() {
   const currentUser = useGetCurrentUserStore((state) => state.user);
   // Liked Stores
   const employeeLikeStore = useEmployeeLikeStore();
-  const queryCurrentEmployeeLiked = useGetCurrentEmployeeLikedStore.getState().queryCurrentEmployeeLiked;
+  const queryCurrentEmployeeLiked =
+    useGetCurrentEmployeeLikedStore.getState().queryCurrentEmployeeLiked;
   // Matching Store
-  const countCurrentEmployeeMatching = useCountCurrentEmployeeMatchingStore.getState().countCurrentEmployeeMatching;
+  const countCurrentEmployeeMatching =
+    useCountCurrentEmployeeMatchingStore.getState()
+      .countCurrentEmployeeMatching;
   // Favorite Stores
   const employeeFavCompanyStore = useEmployeeFavCompanyStore();
   const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
@@ -271,8 +272,7 @@ export default function CompanyDetailPage() {
         <div
           className="relative h-80 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center tablet-sm:items-start"
           style={{ backgroundImage: `url(${companyData.cover})` }}
-        > 
-
+        >
           {/* Blur Background Overlay Section */}
           <BlurBackGroundOverlay />
           <div className="relative flex items-center gap-5 tablet-sm:flex-col">
@@ -381,11 +381,7 @@ export default function CompanyDetailPage() {
                                   icon={
                                     <LucideAlarmClock strokeWidth={"1.5px"} />
                                   }
-                                  label={
-                                    availabilityConstant.find(
-                                      (type) => type.value == item.type,
-                                    )?.label ?? ""
-                                  }
+                                  label={item.type}
                                 />
                               )}
                               {item.experience && (
