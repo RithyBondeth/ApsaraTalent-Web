@@ -558,7 +558,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
       </div>
 
       {/* ── Timestamp + delivery state ────────────────────────────────────── */}
-      {showDeliveryTime && (
+      {(message.deliveryStatus === "sending" || showDeliveryTime) && (
         <div
           className={`flex items-center gap-1 text-[10px] text-muted-foreground mt-1.5 ${
             message.isMe ? "justify-end" : ""

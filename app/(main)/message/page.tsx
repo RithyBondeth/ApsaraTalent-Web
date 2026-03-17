@@ -143,20 +143,47 @@ const MessagePageContent = () => {
   // ── Handlers ─────────────────────────────────────────────────────────────
 
   /**
-   * Send a message (with optional reply-to context and/or file attachment).
-   * The reply-to comes from ChatInput which builds it from replyTarget.
-   * The attachment is pre-uploaded by ChatInput via POST /api/chat/upload.
+   * Send a message (with optional reply-to context and/or file attachments).
+   *
+   * Multi-file strategy: each file becomes its own chat message so every
+   * attachment renders as a separate bubble (consistent with how most chat
+   * apps handle multi-file sends).  The text (if any) travels with the
+   * FIRST file so it reads naturally as a caption.  Extra files after the
+   * first are sent as attachment-only messages immediately after.
+   *
+   * Examples:
+   *   text="check this" + [img1, img2]
+   *     → msg1: content="check this", attachment=img1
+   *     → msg2: content="",            attachment=img2
+   *
+   *   text="hello" + no attachments
+   *     → msg1: content="hello"
+   *
+   *   text="" + [doc1]
+   *     → msg1: content="", attachment=doc1
    */
   const handleSendMessage = (
     text: string,
     replyTo?: IMessage["replyTo"] | null,
-    attachment?: {
-      url: string;
-      type: "image" | "document";
-      filename: string;
-    } | null,
+    attachments?: Array<{ url: string; type: "image" | "document"; filename: string }>,
   ) => {
-    if (chatId) sendMessage(chatId, text, "text", replyTo, attachment);
+    if (!chatId) return;
+
+    const files = attachments ?? [];
+
+    if (files.length === 0) {
+      // Plain text message
+      sendMessage(chatId, text, "text", replyTo, null);
+      return;
+    }
+
+    // First file carries the text + replyTo
+    sendMessage(chatId, text, "text", replyTo, files[0]);
+
+    // Remaining files are sent as caption-less attachment messages
+    for (let i = 1; i < files.length; i++) {
+      sendMessage(chatId, "", "text", null, files[i]);
+    }
   };
 
   /**

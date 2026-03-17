@@ -1,6 +1,5 @@
 import { create } from "zustand";
-
-type ResumeTemplate = "modern" | "classic" | "creative";
+import { ResumeTemplate } from "@/utils/interfaces/resume.interface";
 
 interface TemplateSelectionState {
   selectedTemplate: ResumeTemplate | null;

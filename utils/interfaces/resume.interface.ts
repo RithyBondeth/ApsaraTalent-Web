@@ -6,3 +6,17 @@ export interface IResumeTemplate {
   price: number | null;
   isPremium: boolean;
 }
+
+export type ResumeTemplate =
+  | "modern"
+  | "classic"
+  | "creative"
+  | "minimalist"
+  | "timeline"
+  | "bold"
+  | "compact"
+  | "elegant"
+  | "colorful"
+  | "professional"
+  | "corporate"
+  | "dark";

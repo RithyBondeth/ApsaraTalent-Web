@@ -10,7 +10,13 @@ export interface IChatInputProps {
   onSendMessage: (
     content: string,
     replyTo?: IMessage["replyTo"] | null,
-    attachment?: { url: string; type: "image" | "document"; filename: string } | null,
+    /**
+     * All ready-to-send attachments.
+     * Each entry was pre-uploaded via POST /chat/upload and carries a server URL.
+     * The parent (page.tsx) dispatches each as its own socket message so that
+     * every file shows up as a separate bubble (text goes with the first file).
+     */
+    attachments?: Array<{ url: string; type: "image" | "document"; filename: string }>,
   ) => void;
   onTyping?: (isTyping: boolean) => void;
   isDisabled?: boolean;
