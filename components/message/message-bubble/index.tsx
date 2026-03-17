@@ -161,9 +161,11 @@ export default function MessageBubble(props: IMessageBubbleProps) {
   // ── Inline edit state ─────────────────────────────────────────────────────
   // isEditing: true when this bubble is in edit mode (textarea replaces content).
   // editValue: current text in the edit textarea, seeded from message.content.
-  const [isEditing, setIsEditing] = useState(false);
-  const [editValue, setEditValue] = useState(message.content);
-  const editTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [editValue, setEditValue] = useState<string>(message.content);
+  const editTextareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const [showDeliveryTime, setShowDeliveryTime] = useState<boolean>(false);
 
   const startEditing = () => {
     setEditValue(message.content); // reset to current text
@@ -259,7 +261,10 @@ export default function MessageBubble(props: IMessageBubbleProps) {
         }`}
       >
         {/* ── Bubble ────────────────────────────────────────────────────── */}
-        <div className="relative">
+        <div
+          className="relative"
+          onClick={() => setShowDeliveryTime(!showDeliveryTime)}
+        >
           <div
             className={`rounded-2xl text-sm transition-all ${
               message.isMe
@@ -553,14 +558,16 @@ export default function MessageBubble(props: IMessageBubbleProps) {
       </div>
 
       {/* ── Timestamp + delivery state ────────────────────────────────────── */}
-      <div
-        className={`flex items-center gap-1 text-[10px] text-muted-foreground mt-1.5 ${
-          message.isMe ? "justify-end" : ""
-        }`}
-      >
-        {formatMessageTime(message.timestamp)}
-        {message.isMe && <DeliveryIcon status={message.deliveryStatus} />}
-      </div>
+      {showDeliveryTime && (
+        <div
+          className={`flex items-center gap-1 text-[10px] text-muted-foreground mt-1.5 ${
+            message.isMe ? "justify-end" : ""
+          }`}
+        >
+          {formatMessageTime(message.timestamp)}
+          {message.isMe && <DeliveryIcon status={message.deliveryStatus} />}
+        </div>
+      )}
 
       {/* ── "Seen" avatar indicator (last read message) ───────────────────── */}
       {isLastSeen && (

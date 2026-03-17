@@ -93,7 +93,8 @@ const MessagePageContent = () => {
       useChatStore.getState();
 
     if (chatId) {
-      const { currentMessages: msgs, isHistoryLoading } = useChatStore.getState();
+      const { currentMessages: msgs, isHistoryLoading } =
+        useChatStore.getState();
       const alreadyOnChat =
         currentActiveChat?.id.toLowerCase() === chatId.toLowerCase();
       const hasMessages = msgs.length > 0;
