@@ -146,6 +146,7 @@ export default function EmployeeSignup() {
             password: basicSignupData.password ?? null,
             firstname: basicSignupData.firstName ?? null,
             lastname: basicSignupData.lastName ?? null,
+            dob: basicSignupData.dob ?? undefined,
             username: basicSignupData.username ?? null,
             gender: (basicSignupData.gender as TGender) ?? ("other" as TGender),
             job: data.profession.job,
@@ -221,6 +222,7 @@ export default function EmployeeSignup() {
             password: null,
             firstname: null,
             lastname: null,
+            dob: undefined,
             username: null,
             gender: "other" as TGender,
             job: data.profession.job,
@@ -300,7 +302,9 @@ export default function EmployeeSignup() {
       !uploadResume.loading
     ) {
       toast.dismiss();
-      toast.success(empSignup.message ?? "Signup successful!", { duration: 1000 });
+      toast.success(empSignup.message ?? "Signup successful!", {
+        duration: 1000,
+      });
       setTimeout(() => router.replace("/login"), 1000);
       return;
     }

@@ -964,6 +964,20 @@ export default function CanvasTemplate({
                 }
               />
             </span>
+            {personalInfo.age && (
+              <span style={{ fontSize: 11, color: "#6b7280", marginRight: 14 }}>
+                🎂 Age:{" "}
+                <Editable
+                  value={personalInfo.age.toString()}
+                  placeholder="Age"
+                  onCommit={(v) =>
+                    setValue("personalInfo.age", parseInt(v) || 0, {
+                      shouldDirty: true,
+                    })
+                  }
+                />
+              </span>
+            )}
           </div>
 
           {/* Meta row */}

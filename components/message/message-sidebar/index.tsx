@@ -1,7 +1,6 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -11,25 +10,20 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { Check, CheckCheck, Pencil, Search, Users, X } from "lucide-react";
+import { Check, CheckCheck, Plus, Search, Users, X } from "lucide-react";
 import { useState } from "react";
 import { IChatListProps, IChatSidebarProps } from "./props";
 
 /**
  * Chat sidebar — conversation list with search and "New Chat" button.
  *
- * Modes:
- *   isOpen=true  (expanded)  →  full w-80 panel with avatars, names, previews
- *   isOpen=false (collapsed) →  narrow w-16 icon-only strip (desktop only)
- *
- * Online dot:
- *   Each IChatPreview may carry an `isOnline` flag set by the Zustand store.
- *   The store subscribes to 'userStatus' socket events and updates the flag in place,
- *   so the dot updates reactively without a page refresh or manual refetch.
- *
- * New Conversation button:
- *   Shown in the header as a Pencil icon (✎).  Currently a placeholder — in a future
- *   iteration this will open a contact-picker modal / search-to-start-chat flow.
+ * Redesigned to match the shadcnuikit reference:
+ *   - "Chats" heading + circle `+` button
+ *   - Full-width rounded search bar ("Chats search...")
+ *   - Chat rows: large avatar, bold name, time top-right, ✓/✓✓ + preview second line
+ *   - Green unread count badge (right side), online dot bottom-left of avatar
+ *   - Active row: subtle muted background fill
+ *   - Collapsed mode: icon-only strip with tooltips
  */
 export default function ChatSidebar(props: IChatSidebarProps) {
   const {
@@ -37,6 +31,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
     activeChat,
     className,
     isOpen,
+    isResizable,
     currentUserId,
     onChatSelect,
     onClose,
@@ -53,42 +48,39 @@ export default function ChatSidebar(props: IChatSidebarProps) {
       )
     : chats;
 
+  const widthClass = isResizable ? "w-full" : isOpen ? "w-80" : "w-16";
+  const minWidthStyle = isResizable
+    ? undefined
+    : isOpen
+      ? { minWidth: "var(--sidebar-open-width, 20rem)" }
+      : { minWidth: "var(--sidebar-closed-width, 4rem)" };
+
   return (
     <div
       className={cn(
-        "flex flex-col h-full transition-all duration-300 ease-in-out overflow-hidden border-r",
-        isOpen ? "w-80" : "w-16",
-        "md:w-auto",
+        "flex flex-col h-full transition-all duration-300 ease-in-out overflow-hidden border-r bg-background",
+        widthClass,
+        !isResizable && "md:w-auto",
         className,
       )}
-      style={
-        isOpen
-          ? { minWidth: "var(--sidebar-open-width, 20rem)" }
-          : { minWidth: "var(--sidebar-closed-width, 4rem)" }
-      }
+      style={minWidthStyle}
     >
       {/* ── HEADER ────────────────────────────────────────────────────────── */}
       {isOpen ? (
-        <div className="px-4 py-3 border-b flex items-center justify-between shrink-0">
-          <h1 className="text-lg font-bold text-foreground tracking-tight">
-            Messages
+        <div className="px-4 pt-5 pb-3 flex items-center justify-between shrink-0">
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">
+            Chats
           </h1>
           <div className="flex items-center gap-1">
-            {/* New Conversation button.
-                Shown in expanded mode.  onNewChat is optional — the parent
-                (MessagePage) can wire it to open a contact picker. */}
             {onNewChat && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
+              <button
                 onClick={onNewChat}
                 aria-label="New conversation"
+                className="h-9 w-9 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:bg-muted transition-colors"
               >
-                <Pencil className="h-4 w-4" />
-              </Button>
+                <Plus className="h-4 w-4" />
+              </button>
             )}
-            {/* Close button only shown in mobile overlay mode */}
             {onClose && (
               <Button
                 variant="ghost"
@@ -103,23 +95,28 @@ export default function ChatSidebar(props: IChatSidebarProps) {
           </div>
         </div>
       ) : (
-        /* Collapsed header: just the user avatar */
-        <div className="py-3 flex flex-col items-center border-b shrink-0">
-          <Avatar className="size-9">
-            <AvatarImage src="/avatars/me.jpg" alt="Your Profile" />
-            <AvatarFallback className="text-xs">ME</AvatarFallback>
-          </Avatar>
+        /* Collapsed header */
+        <div className="py-4 flex flex-col items-center shrink-0">
+          {onNewChat && (
+            <button
+              onClick={onNewChat}
+              aria-label="New conversation"
+              className="h-9 w-9 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:bg-muted transition-colors"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          )}
         </div>
       )}
 
       {/* ── SEARCH (expanded mode only) ──────────────────────────────────── */}
       {isOpen && (
-        <div className="px-4 py-3 shrink-0">
+        <div className="px-4 pb-3 shrink-0">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
             <Input
-              placeholder="Search conversations…"
-              className="pl-9 h-9 bg-muted/50 border-0 focus-visible:ring-1"
+              placeholder="Chats search..."
+              className="pl-9 h-10 rounded-full bg-muted/40 border-muted focus-visible:ring-1"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -164,7 +161,7 @@ const ExpandedChatList = (props: IChatListProps) => {
   }
 
   return (
-    <div className="divide-y divide-border/50">
+    <div className="py-1">
       {chats.map((chat) => {
         const isLastFromMe = chat.lastMessageSenderId === currentUserId;
         const isUnread = chat.isRead === false && !isLastFromMe;
@@ -175,20 +172,19 @@ const ExpandedChatList = (props: IChatListProps) => {
             key={chat.id}
             className={cn(
               "w-full flex items-center gap-3 px-4 py-3 text-left transition-colors",
-              "hover:bg-muted/60 active:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
-              isActive && "bg-muted/70",
-              isUnread && !isActive && "bg-primary/5",
+              "hover:bg-muted/50 active:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+              isActive && "bg-muted/60",
             )}
             onClick={() => onChatSelect(chat)}
           >
-            {/* Avatar + unread indicator + online dot */}
+            {/* Avatar + online dot */}
             <div className="relative shrink-0">
               {chat.isGroup ? (
-                <div className="h-11 w-11 bg-primary/10 rounded-full flex items-center justify-center">
-                  <Users className="h-5 w-5 text-primary" />
+                <div className="h-12 w-12 bg-muted rounded-full flex items-center justify-center border border-border">
+                  <Users className="h-5 w-5 text-muted-foreground" />
                 </div>
               ) : (
-                <Avatar className="h-11 w-11">
+                <Avatar className="h-12 w-12">
                   <AvatarImage src={chat.avatar} alt={chat.name} />
                   <AvatarFallback className="text-sm font-medium">
                     {chat.name
@@ -201,81 +197,62 @@ const ExpandedChatList = (props: IChatListProps) => {
                 </Avatar>
               )}
 
-              {/* Unread count badge */}
-              {chat.unread ? (
-                <Badge
-                  variant="default"
-                  className="absolute -top-1 -right-1 h-5 min-w-5 px-1 text-[10px] flex items-center justify-center"
-                >
-                  {chat.unread > 99 ? "99+" : chat.unread}
-                </Badge>
-              ) : isUnread ? (
-                <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-primary border-2 border-background" />
-              ) : null}
-
-              {/* Online status dot — green dot at the bottom-right of the avatar.
-                  Only shown when chat.isOnline is true.
-                  The white ring (border-background) separates it from the avatar. */}
+              {/* Online status dot — bottom-left of avatar */}
               {chat.isOnline && (
-                <span className="absolute bottom-0.5 right-0.5 h-2.5 w-2.5 rounded-full bg-green-500 border-2 border-background" />
+                <span className="absolute bottom-0.5 left-0.5 h-3 w-3 rounded-full bg-green-500 border-2 border-background" />
               )}
             </div>
 
             {/* Text content */}
             <div className="flex-1 min-w-0">
+              {/* Row 1: name + time */}
               <div className="flex items-center justify-between gap-2 mb-0.5">
-                <div className="flex items-center gap-1.5 min-w-0">
-                  <span
-                    className={cn(
-                      "text-sm truncate",
-                      isUnread
-                        ? "font-semibold text-foreground"
-                        : "font-medium text-foreground/90",
-                    )}
-                  >
-                    {chat.name}
-                  </span>
-                  {chat.tag && (
-                    <Badge
-                      variant="outline"
-                      className="text-[10px] px-1.5 py-0 bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 border-purple-200 dark:border-purple-800 shrink-0"
-                    >
-                      {chat.tag}
-                    </Badge>
-                  )}
-                </div>
                 <span
                   className={cn(
-                    "text-[11px] shrink-0 tabular-nums",
+                    "text-sm truncate",
                     isUnread
-                      ? "text-primary font-medium"
-                      : "text-muted-foreground",
+                      ? "font-bold text-foreground"
+                      : "font-semibold text-foreground",
                   )}
                 >
+                  {chat.name}
+                </span>
+                <span className="text-xs text-muted-foreground shrink-0 tabular-nums">
                   {chat.time}
                 </span>
               </div>
 
+              {/* Row 2: delivery tick + preview + unread badge */}
               <div className="flex items-center gap-1">
+                {/* Delivery checkmark */}
                 {isLastFromMe && (
-                  <span className="shrink-0 text-muted-foreground">
+                  <span className="shrink-0">
                     {chat.isRead ? (
-                      <CheckCheck className="h-3.5 w-3.5 text-primary" />
+                      <CheckCheck className="h-3.5 w-3.5 text-green-500" />
                     ) : (
-                      <Check className="h-3.5 w-3.5" />
+                      <Check className="h-3.5 w-3.5 text-muted-foreground" />
                     )}
                   </span>
                 )}
+
+                {/* Preview text */}
                 <p
                   className={cn(
-                    "text-xs truncate",
+                    "text-sm truncate flex-1",
                     isUnread
-                      ? "text-foreground font-medium"
+                      ? "text-foreground/80 font-medium"
                       : "text-muted-foreground",
                   )}
                 >
                   {chat.preview || "No messages yet"}
                 </p>
+
+                {/* Unread count badge — green circle */}
+                {chat.unread ? (
+                  <span className="shrink-0 h-5 min-w-5 px-1 rounded-full bg-green-500 text-white text-[11px] font-semibold flex items-center justify-center leading-none">
+                    {chat.unread > 99 ? "99+" : chat.unread}
+                  </span>
+                ) : null}
               </div>
             </div>
           </button>
@@ -306,15 +283,15 @@ const CollapsedChatList = (props: IChatListProps) => {
                     "relative p-1.5 rounded-xl transition-all w-full flex justify-center",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                     isActive
-                      ? "bg-muted scale-105"
+                      ? "bg-muted"
                       : "hover:bg-muted/60 active:bg-muted",
                   )}
                   onClick={() => onChatSelect(chat)}
                   aria-label={chat.name}
                 >
                   {chat.isGroup ? (
-                    <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center">
-                      <Users className="h-5 w-5 text-primary" />
+                    <div className="h-10 w-10 bg-muted rounded-full flex items-center justify-center border border-border">
+                      <Users className="h-5 w-5 text-muted-foreground" />
                     </div>
                   ) : (
                     <Avatar className="h-10 w-10">
@@ -332,26 +309,22 @@ const CollapsedChatList = (props: IChatListProps) => {
 
                   {/* Unread badge */}
                   {chat.unread ? (
-                    <Badge
-                      variant="default"
-                      className="absolute -top-0.5 -right-0.5 h-4 min-w-4 px-0.5 text-[9px] flex items-center justify-center"
-                    >
+                    <span className="absolute -top-0.5 -right-0.5 h-4 min-w-4 px-0.5 rounded-full bg-green-500 text-white text-[9px] font-semibold flex items-center justify-center">
                       {chat.unread > 9 ? "9+" : chat.unread}
-                    </Badge>
+                    </span>
                   ) : isUnread ? (
-                    <span className="absolute top-1 right-1 h-2.5 w-2.5 rounded-full bg-primary border-2 border-background" />
+                    <span className="absolute top-1 right-1 h-2.5 w-2.5 rounded-full bg-green-500 border-2 border-background" />
                   ) : null}
 
-                  {/* Online dot in collapsed mode — bottom-right of avatar */}
+                  {/* Online dot */}
                   {chat.isOnline && (
-                    <span className="absolute bottom-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-green-500 border-2 border-background" />
+                    <span className="absolute bottom-1.5 left-1.5 h-2.5 w-2.5 rounded-full bg-green-500 border-2 border-background" />
                   )}
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right" className="max-w-[180px]">
                 <p className={cn("font-medium", isUnread && "font-semibold")}>
                   {chat.name}
-                  {/* Show online badge in tooltip too */}
                   {chat.isOnline && (
                     <span className="ml-1.5 text-green-500 text-xs">●</span>
                   )}

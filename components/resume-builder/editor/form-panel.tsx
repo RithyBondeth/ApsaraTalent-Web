@@ -47,8 +47,7 @@ function PersonalInfoTab({
   register,
   control,
 }: Pick<FormPanelProps, "register" | "control">) {
-  const socials =
-    useWatch({ control, name: "personalInfo.socials" }) ?? {};
+  const socials = useWatch({ control, name: "personalInfo.socials" }) ?? {};
   const socialKeys = Object.keys(socials);
 
   return (
@@ -87,12 +86,22 @@ function PersonalInfoTab({
         </div>
       </div>
 
-      <div>
-        <FieldLabel>Location</FieldLabel>
-        <Input
-          placeholder="City, Country"
-          {...register("personalInfo.location")}
-        />
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <FieldLabel>Location</FieldLabel>
+          <Input
+            placeholder="City, Country"
+            {...register("personalInfo.location")}
+          />
+        </div>
+        <div>
+          <FieldLabel>Age</FieldLabel>
+          <Input
+            type="number"
+            placeholder="Age"
+            {...register("personalInfo.age", { valueAsNumber: true })}
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -105,10 +114,7 @@ function PersonalInfoTab({
         </div>
         <div>
           <FieldLabel>Availability</FieldLabel>
-          <Input
-            placeholder="e.g. Immediately"
-            {...register("availability")}
-          />
+          <Input placeholder="e.g. Immediately" {...register("availability")} />
         </div>
       </div>
 
@@ -129,8 +135,7 @@ function PersonalInfoTab({
           <FieldLabel>Social Links</FieldLabel>
           <div className="flex flex-col gap-2">
             {socialKeys.map((key) => {
-              const path =
-                `personalInfo.socials.${key}` as Path<BuildResume>;
+              const path = `personalInfo.socials.${key}` as Path<BuildResume>;
               return (
                 <div key={key}>
                   <FieldLabel>{capitalize(key)}</FieldLabel>
@@ -532,10 +537,7 @@ export default function ResumeEditorFormPanel(props: FormPanelProps) {
         <ExperienceTab register={props.register} control={props.control} />
       </TabsContent>
 
-      <TabsContent
-        value="skills"
-        className="flex-1 overflow-y-auto mt-3 pr-1"
-      >
+      <TabsContent value="skills" className="flex-1 overflow-y-auto mt-3 pr-1">
         <SkillsEducationTab {...props} />
       </TabsContent>
     </Tabs>

@@ -4,6 +4,7 @@ export interface IEmployee {
   id: string;
   firstname?: string | null;
   lastname?: string | null;
+  dob?: string | null;
   username?: string | null;
   gender: TGender;
   avatar?: string;

@@ -4,6 +4,8 @@ export interface IChatSidebarProps {
   chats: IChatPreview[] | undefined;
   activeChat: IChatPreview | null;
   isOpen: boolean;
+  /** When true, width is controlled by a resizable parent panel. */
+  isResizable?: boolean;
   currentUserId?: string;
   className?: string;
   onChatSelect: (chat: IChatPreview) => void;

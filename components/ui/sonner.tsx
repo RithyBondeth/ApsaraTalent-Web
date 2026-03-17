@@ -3,12 +3,12 @@
 import {
     CircleCheck,
     Info,
-    LoaderCircle,
     OctagonX,
     TriangleAlert
 } from "lucide-react"
 import { useTheme } from "next-themes"
 import { Toaster as Sonner } from "sonner"
+import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner"
 
 type ToasterProps = React.ComponentProps<typeof Sonner>
 
@@ -24,7 +24,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
         info: <Info className="h-4 w-4" />,
         warning: <TriangleAlert className="h-4 w-4" />,
         error: <OctagonX className="h-4 w-4" />,
-        loading: <LoaderCircle className="h-4 w-4 animate-spin" />,
+        loading: <ApsaraLoadingSpinner size={32} loop />,
       }}
       toastOptions={{
         classNames: {

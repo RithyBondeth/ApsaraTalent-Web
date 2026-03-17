@@ -4,11 +4,11 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import ErrorMessage from "@/components/utils/error-message";
 import LogoComponent from "@/components/utils/logo";
@@ -21,23 +21,26 @@ import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login
 import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
 import { useThemeStore } from "@/stores/themes/theme-store";
 import {
-    genderConstant,
-    locationConstant
+  genderConstant,
+  locationConstant,
 } from "@/utils/constants/app.constant";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-    LucideArrowLeft,
-    LucideArrowRight,
-    LucideEye,
-    LucideEyeClosed,
-    LucideLockKeyhole,
-    LucideMail
+  LucideArrowLeft,
+  LucideArrowRight,
+  LucideEye,
+  LucideEyeClosed,
+  LucideLockKeyhole,
+  LucideMail,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, FieldErrors, useForm } from "react-hook-form";
 import {
-    basicSignupCompanySchema, basicSignupEmployeeSchema, TBasicSignupCompanySchema, TBasicSignupEmployeeSchema
+  basicSignupCompanySchema,
+  basicSignupEmployeeSchema,
+  TBasicSignupCompanySchema,
+  TBasicSignupEmployeeSchema,
 } from "./validation";
 
 export default function SignupPage() {
@@ -91,6 +94,7 @@ export default function SignupPage() {
     defaultValues: {
       firstName: "",
       lastName: "",
+      dob: "",
       username: "",
       selectedLocation: undefined,
       gender: undefined,
@@ -255,6 +259,14 @@ export default function SignupPage() {
               validationMessage={employeeErrors.lastName?.message}
             />
           </div>
+        )}
+        {isEmployeeForm && (
+          <Input
+            type="date"
+            placeholder="Date of Birth"
+            className="w-full"
+            {...empForm.register("dob")}
+          />
         )}
         <div className="w-full flex items-center gap-3 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
           {isEmployeeForm && (

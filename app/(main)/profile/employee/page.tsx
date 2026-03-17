@@ -7,30 +7,30 @@ import EmployeeExperienceForm from "@/components/employee/profile/experience-for
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
 } from "@/components/ui/command";
 import {
-    HoverCard,
-    HoverCardContent,
-    HoverCardTrigger
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Input } from "@/components/ui/input";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
@@ -56,8 +56,8 @@ import { useRemoveEmpEducationStore } from "@/stores/apis/employee/remove-emp-ed
 import { useRemoveEmpExperienceStore } from "@/stores/apis/employee/remove-emp-experience.store";
 import { useRemoveEmpResumeStore } from "@/stores/apis/employee/remove-emp-resume.store";
 import {
-    TEmployeeUpdateBody,
-    useUpdateOneEmployeeStore
+  TEmployeeUpdateBody,
+  useUpdateOneEmployeeStore,
 } from "@/stores/apis/employee/update-one-emp.store";
 import { useUploadEmployeeAvatarStore } from "@/stores/apis/employee/upload-emp-avatar.store";
 import { useUploadEmployeeCoverLetter } from "@/stores/apis/employee/upload-emp-coverletter.store";
@@ -65,10 +65,10 @@ import { useUploadEmployeeResumeStore } from "@/stores/apis/employee/upload-emp-
 import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-scopes.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import {
-    genderConstant,
-    locationConstant,
-    loginMethodConstant,
-    platformConstant
+  genderConstant,
+  locationConstant,
+  loginMethodConstant,
+  platformConstant,
 } from "@/utils/constants/app.constant";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { capitalizeWords } from "@/utils/functions/capitalize-words";
@@ -76,27 +76,29 @@ import { isUuid } from "@/utils/functions/check-uuid";
 import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
 import { parseMaybeDate } from "@/utils/functions/parse-maybe-date";
 import {
-    ICareerScopes, ISkill, ISocial
+  ICareerScopes,
+  ISkill,
+  ISocial,
 } from "@/utils/interfaces/user-interface/employee.interface";
 import { TPlatform } from "@/utils/types/platform.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-    ChevronDown,
-    LucideAlarmCheck,
-    LucideBriefcaseBusiness,
-    LucideCamera,
-    LucideCircleCheck,
-    LucideDownload,
-    LucideEdit,
-    LucideEye,
-    LucideFileText,
-    LucideLink2,
-    LucideMail,
-    LucidePhone,
-    LucidePlus,
-    LucideTrash2,
-    LucideUser,
-    LucideXCircle
+  ChevronDown,
+  LucideAlarmCheck,
+  LucideBriefcaseBusiness,
+  LucideCamera,
+  LucideCircleCheck,
+  LucideDownload,
+  LucideEdit,
+  LucideEye,
+  LucideFileText,
+  LucideLink2,
+  LucideMail,
+  LucidePhone,
+  LucidePlus,
+  LucideTrash2,
+  LucideUser,
+  LucideXCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
@@ -256,6 +258,7 @@ export default function EmployeeProfilePage() {
       basicInfo: {
         firstname: "",
         lastname: "",
+        dob: null,
         username: "",
         gender: "",
         location: "",
@@ -321,6 +324,7 @@ export default function EmployeeProfilePage() {
       basicInfo: {
         firstname: employee.firstname ?? "",
         lastname: employee.lastname ?? "",
+        dob: employee.dob ? new Date(employee.dob) : null,
         username: employee.username ?? "",
         gender: employee.gender ?? "",
         location: employee.location ?? "",
@@ -547,7 +551,10 @@ export default function EmployeeProfilePage() {
     );
 
     if (alreadyExists) {
-      toast.error("Duplicated Skill", { description: "Please input another skill.", action: { label: "Try again", onClick: () => {} } });
+      toast.error("Duplicated Skill", {
+        description: "Please input another skill.",
+        action: { label: "Try again", onClick: () => {} },
+      });
       setSkillInput(null);
       setOpenSkillPopOver(false);
       return;
@@ -595,7 +602,10 @@ export default function EmployeeProfilePage() {
     );
 
     if (platformExists) {
-      toast.error("Duplicate Social", { description: "This social platform already exists.", action: { label: "Try again", onClick: () => {} } });
+      toast.error("Duplicate Social", {
+        description: "This social platform already exists.",
+        action: { label: "Try again", onClick: () => {} },
+      });
       return false;
     }
 
@@ -604,7 +614,10 @@ export default function EmployeeProfilePage() {
     );
 
     if (urlExists) {
-      toast.error("Duplicate URL", { description: "This social link already exists.", action: { label: "Try again", onClick: () => {} } });
+      toast.error("Duplicate URL", {
+        description: "This social link already exists.",
+        action: { label: "Try again", onClick: () => {} },
+      });
       return false;
     }
 
@@ -659,7 +672,10 @@ export default function EmployeeProfilePage() {
       (c) => (c.name ?? "").trim().toLowerCase() === name.toLowerCase(),
     );
     if (alreadyExists) {
-      toast.error("Duplicated Career", { description: "Please select another career.", action: { label: "Try again", onClick: () => {} } });
+      toast.error("Duplicated Career", {
+        description: "Please select another career.",
+        action: { label: "Try again", onClick: () => {} },
+      });
       setCareerScopeInput(null);
       setOpenCareerScopePopOver(false);
       return;
@@ -755,7 +771,9 @@ export default function EmployeeProfilePage() {
       URL.revokeObjectURL(objectUrl);
     } catch (e) {
       console.error(e);
-      toast.error("Download failed", { description: "Unable to download the file. Please try again." });
+      toast.error("Download failed", {
+        description: "Unable to download the file. Please try again.",
+      });
     }
   };
 
@@ -772,6 +790,7 @@ export default function EmployeeProfilePage() {
       const basicInfoKeys: (keyof NonNullable<typeof data.basicInfo>)[] = [
         "firstname",
         "lastname",
+        "dob",
         "username",
         "gender",
         "location",
@@ -779,7 +798,10 @@ export default function EmployeeProfilePage() {
 
       basicInfoKeys.forEach((key) => {
         if (dirtyFields?.basicInfo?.[key]) {
-          (updateBody as any)[key] = data.basicInfo?.[key];
+          const val = data.basicInfo?.[key];
+          // Serialize dob Date to ISO string for the API
+          (updateBody as any)[key] =
+            val instanceof Date ? val.toISOString() : val;
         }
       });
 
@@ -973,7 +995,9 @@ export default function EmployeeProfilePage() {
       setIsEdit(false);
     } catch (err) {
       console.error(err);
-      toast.error("Error!", { description: "Failed to update employee profile." });
+      toast.error("Error!", {
+        description: "Failed to update employee profile.",
+      });
     }
   };
 
@@ -1141,6 +1165,34 @@ export default function EmployeeProfilePage() {
                   }
                 />
               </div>
+
+              <LabelInput
+                label="Date of Birth"
+                input={
+                  <Controller
+                    name="basicInfo.dob"
+                    control={form.control}
+                    render={({ field }) => (
+                      <Input
+                        type="date"
+                        id="dob"
+                        placeholder="Date of Birth"
+                        disabled={!isEdit}
+                        value={
+                          field.value instanceof Date
+                            ? field.value.toISOString().split("T")[0]
+                            : (field.value ?? "")
+                        }
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value ? new Date(e.target.value) : null,
+                          )
+                        }
+                      />
+                    )}
+                  />
+                }
+              />
 
               <LabelInput
                 label="Username"

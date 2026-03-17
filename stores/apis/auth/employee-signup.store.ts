@@ -39,6 +39,7 @@ export const useEmployeeSignupStore = create<TEmployeeSignupState>()((set) => ({
         password: body.password,
         firstname: body.firstname,
         lastname: body.lastname,
+        dob: body.dob ?? undefined,
         username: body.username,
         gender: body.gender,
         job: body.job,

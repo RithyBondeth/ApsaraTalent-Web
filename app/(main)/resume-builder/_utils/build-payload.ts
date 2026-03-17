@@ -105,9 +105,7 @@ export function buildResumePayloadFromUser(
       company: "",
       position: exp.title || "",
       startDate: formatDateToMonthYear(exp.startDate) || "",
-      endDate: exp.endDate
-        ? formatDateToMonthYear(exp.endDate)
-        : "Present",
+      endDate: exp.endDate ? formatDateToMonthYear(exp.endDate) : "Present",
       description: summary || exp.description || "",
       achievements,
     };
@@ -138,6 +136,24 @@ export function buildResumePayloadFromUser(
   // ─── Professional Summary ─────────────────────────────────────────────────
   const summary = employee.description?.trim() || undefined;
 
+  // ─── Age (calculated from dob) ─────────────────────────────────────────────
+  const age = employee.dob
+    ? (() => {
+        const birth = new Date(employee.dob);
+        if (isNaN(birth.getTime())) return undefined;
+        const today = new Date();
+        let years = today.getFullYear() - birth.getFullYear();
+        const monthDiff = today.getMonth() - birth.getMonth();
+        if (
+          monthDiff < 0 ||
+          (monthDiff === 0 && today.getDate() < birth.getDate())
+        ) {
+          years--;
+        }
+        return years > 0 ? years : undefined;
+      })()
+    : undefined;
+
   // ─── Build Final Payload ──────────────────────────────────────────────────
   const payload: BuildResume = {
     personalInfo: {
@@ -145,6 +161,7 @@ export function buildResumePayloadFromUser(
       email: user.email || employee.email || "",
       phone: employee.phone || user.phone || undefined,
       location: employee.location || undefined,
+      age,
       job: employee.job || undefined,
       profilePicture: employee.avatar || undefined,
       socials: Object.keys(socials).length > 0 ? socials : undefined,

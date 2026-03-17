@@ -40,6 +40,50 @@ const resolveProfile = (user: any) => {
   return { name, avatar };
 };
 
+// Build a short message snippet for previews (text or attachment labels).
+const resolveMessageSnippet = (message: {
+  content?: string | null;
+  attachmentType?: string | null;
+  messageType?: string | null;
+  attachment?: string | null;
+}) => {
+  const content =
+    typeof message?.content === "string" ? message.content.trim() : "";
+  if (content) return content;
+
+  const type = String(
+    message?.attachmentType || message?.messageType || "",
+  ).toLowerCase();
+  if (type === "audio") return "Audio message";
+  if (type === "image") return "Photo";
+  if (type === "document") return "Attachment";
+  if (type === "call") return "Call";
+  if (message?.attachment) return "Attachment";
+  return "";
+};
+
+// Build sidebar preview text for last message, including attachment-only messages.
+const resolvePreview = (chat: any, currentUserId: string) => {
+  const senderId =
+    typeof chat?.sender === "string"
+      ? chat.sender
+      : chat.sender?.id || chat.senderId;
+  const isSenderMe =
+    senderId &&
+    senderId.toLowerCase() === currentUserId.toLowerCase();
+  const senderProfile =
+    typeof chat?.sender === "string" ? null : chat?.sender;
+  const senderName = isSenderMe
+    ? "You"
+    : resolveProfile(senderProfile).name;
+
+  const base = resolveMessageSnippet(chat) || "No messages yet";
+
+  if (base === "No messages yet") return base;
+  const prefix = senderName ? `${senderName}: ` : "";
+  return `${prefix}${base}`;
+};
+
 interface ChatState {
   socket: SocketInstance | null;
   isConnected: boolean;
@@ -70,10 +114,12 @@ interface ChatState {
     replyTo?: IMessage["replyTo"] | null,
     attachment?: {
       url: string;
-      type: "image" | "document";
+      type: "image" | "document" | "audio";
       filename: string;
+      duration?: number;
+      amplitude?: number[];
     } | null,
-  ) => void;
+  ) => boolean;
   getRecentChats: () => void;
   getChatHistory: (userId2: string) => void;
   getUnreadCount: () => void;
@@ -179,6 +225,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
       // Fetch sidebar + unread right after connection is stable
       get().getRecentChats();
       get().getUnreadCount();
+      // Register WebRTC call signaling listeners on this socket
+      // (lazy import avoids circular dependency at module level)
+      import("./call.store")
+        .then(({ useCallStore }) => {
+          useCallStore.getState().initCallSignaling(socket);
+        })
+        .catch((err) => {
+          console.warn("[Chat] Failed to init call signaling:", err);
+        });
     });
 
     socket.on("connect_error", (err: Error) => {
@@ -212,11 +267,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
         if (!replyToId) return undefined;
         const parent = currentMessages.find((m) => m.id === replyToId);
         if (parent) {
+          const preview = parent.isDeleted
+            ? "This message was deleted"
+            : resolveMessageSnippet(parent) || "Message";
           return {
             id: parent.id,
-            content: parent.isDeleted
-              ? "This message was deleted"
-              : parent.content,
+            content: preview,
             senderName: parent.senderName || (parent.isMe ? "You" : ""),
             isDeleted: parent.isDeleted,
           };
@@ -266,6 +322,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
               timestamp: parseMessageDate(message.timestamp || message.sentAt),
               isRead: message.isRead,
               isMe: true,
+              messageType: message.messageType ?? updatedMessages[optimisticIndex].messageType,
               reactions: message.reactions || {},
               isDeleted: message.isDeleted ?? false,
               isEdited: message.isEdited ?? false,
@@ -288,6 +345,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
               attachmentFilename:
                 message.attachmentFilename ??
                 updatedMessages[optimisticIndex].attachmentFilename,
+              attachmentDuration:
+                message.attachmentDuration ??
+                updatedMessages[optimisticIndex].attachmentDuration,
+              attachmentAmplitude:
+                message.attachmentAmplitude ??
+                updatedMessages[optimisticIndex].attachmentAmplitude,
             };
             set({ currentMessages: updatedMessages });
             return;
@@ -306,6 +369,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
             message.isMe ||
             message.senderId === me?.id ||
             message.senderId === "me",
+          messageType: message.messageType,
           reactions: message.reactions || {},
           isDeleted: message.isDeleted ?? false,
           isEdited: message.isEdited ?? false,
@@ -320,6 +384,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
           attachment: message.attachment ?? null,
           attachmentType: message.attachmentType ?? undefined,
           attachmentFilename: message.attachmentFilename ?? undefined,
+          attachmentDuration: message.attachmentDuration ?? undefined,
+          attachmentAmplitude: message.attachmentAmplitude ?? undefined,
         };
 
         set({ currentMessages: [...currentMessages, formattedMsg] });
@@ -495,12 +561,20 @@ export const useChatStore = create<ChatState>((set, get) => ({
     replyTo?: IMessage["replyTo"] | null,
     attachment?: {
       url: string;
-      type: "image" | "document";
+      type: "image" | "document" | "audio";
       filename: string;
+      duration?: number;
+      amplitude?: number[];
     } | null,
   ) => {
     const { socket, currentMessages, me } = get();
-    if (!socket?.connected) return;
+    if (!socket?.connected) {
+      console.warn("[Chat] sendMessage: socket not connected — message not sent");
+      return false;
+    }
+
+    // Derive message type from attachment before building optimistic message
+    const resolvedType = attachment?.type ?? type;
 
     // Build optimistic message — shown instantly before the server responds
     const tempId = Math.random().toString(36).substring(7);
@@ -511,12 +585,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
       timestamp: new Date(),
       isMe: true,
       isRead: false,
+      messageType: resolvedType,
       deliveryStatus: "sending", // Clock icon — waiting for server ack
       replyTo: replyTo ?? undefined, // Inline quote block (if replying)
       // Attachment fields — shown immediately via local preview URL while ack awaits
       attachment: attachment?.url ?? null,
       attachmentType: attachment?.type ?? undefined,
       attachmentFilename: attachment?.filename ?? undefined,
+      attachmentDuration: attachment?.duration ?? undefined,
+      attachmentAmplitude: attachment?.amplitude ?? undefined,
     };
 
     set({ currentMessages: [...currentMessages, optimisticMsg] });
@@ -527,7 +604,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
     // instead of a UUID path — the server includes it in the 'newMessage' broadcast.
     // Derive messageType from the attachment — the server uses this to set the
     // messageType enum column which we later read back as attachmentType.
-    const resolvedType = attachment?.type ?? type;
     socket.emit(
       "sendMessage",
       {
@@ -537,6 +613,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
         replyToId: replyTo?.id ?? null,
         attachment: attachment?.url ?? null,
         attachmentFilename: attachment?.filename ?? null,
+        attachmentDuration: attachment?.duration ?? null,
+        attachmentAmplitude: attachment?.amplitude ?? null,
       },
       (response: any) => {
         const realId = response?.message?.id;
@@ -568,6 +646,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
         }
       },
     );
+
+    return true;
   },
 
   getRecentChats: () => {
@@ -612,7 +692,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
             id: partnerId,
             name,
             avatar,
-            preview: chat.content,
+            preview: resolvePreview(chat, currentUserId),
             time: formatSidebarTime(
               chat.sentAt || chat.sendAt || chat.createdAt || Date.now(),
             ),
@@ -739,6 +819,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
               timestamp: parseMessageDate(msg.sentAt || msg.createdAt),
               isMe: isMine,
               isRead: msg.isRead,
+              messageType: msg.messageType,
               reactions: msg.reactions || {},
               isDeleted: msg.isDeleted ?? false,
               isEdited: msg.isEdited ?? false,
@@ -748,6 +829,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
               attachmentType:
                 (msg.attachmentType as IMessage["attachmentType"]) ?? undefined,
               attachmentFilename: msg.attachmentFilename ?? undefined,
+              attachmentDuration: msg.attachmentDuration ?? undefined,
+              attachmentAmplitude: msg.attachmentAmplitude ?? undefined,
               // replyTo is built below if replyToId is present and resolvable from history
               // For now we attach a minimal placeholder; a future enhancement could
               // resolve the full preview by looking up msg.replyToId in the history array.
@@ -765,13 +848,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
             const parent = messageById.get(rawMsg.replyToId);
             if (!parent) return msg; // Parent not in this page — skip
 
+            const preview = parent.isDeleted
+              ? "This message was deleted"
+              : resolveMessageSnippet(parent) || "Message";
             return {
               ...msg,
               replyTo: {
                 id: parent.id,
-                content: parent.isDeleted
-                  ? "This message was deleted"
-                  : parent.content,
+                content: preview,
                 senderName: parent.senderName || (parent.isMe ? "You" : ""),
                 isDeleted: parent.isDeleted,
               },

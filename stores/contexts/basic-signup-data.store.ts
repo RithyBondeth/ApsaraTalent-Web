@@ -3,6 +3,7 @@ import { create } from "zustand";
 type TBasicSignupData = {
   firstName?: string;
   lastName?: string;
+  dob?: string;
   username?: string;
   gender?: string;
   selectedRole?: string;

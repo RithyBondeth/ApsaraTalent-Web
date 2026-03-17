@@ -16,8 +16,14 @@ export interface IChatInputProps {
      * The parent (page.tsx) dispatches each as its own socket message so that
      * every file shows up as a separate bubble (text goes with the first file).
      */
-    attachments?: Array<{ url: string; type: "image" | "document"; filename: string }>,
-  ) => void;
+    attachments?: Array<{
+      url: string;
+      type: "image" | "document" | "audio";
+      filename: string;
+      duration?: number;
+      amplitude?: number[];
+    }>,
+  ) => boolean;
   onTyping?: (isTyping: boolean) => void;
   isDisabled?: boolean;
   /**

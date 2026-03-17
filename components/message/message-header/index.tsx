@@ -5,7 +5,9 @@ import {
   ChevronLeft,
   ChevronRight,
   MoreVertical,
+  Phone,
   Users,
+  Video,
 } from "lucide-react";
 import { IChatHeaderProps } from "./props";
 
@@ -13,13 +15,14 @@ import { IChatHeaderProps } from "./props";
  * Chat conversation header.
  *
  * Layout:
- *   [Back (mobile)] [Sidebar toggle (desktop)] [Avatar + Online dot] [Name + status]  ···  [Hamburger (mobile)] [⋮]
+ *   [Back (mobile)] [Sidebar toggle (desktop)] [Avatar + Online dot] [Name + status]
+ *   ···  [Video call] [Phone call] [Hamburger (mobile)] [⋮]
  *
  * Online dot logic:
  *   - The `chat.isOnline` field comes from the Zustand store (useChatStore.activeChat).
- *   - The store listens to 'userStatus' socket events from the server and sets
+ *   - The store listens to 'userStatus' socket events and sets
  *     activeChat.isOnline = true/false in real time.
- *   - Green dot = online.  No dot (hidden) = offline.
+ *   - Green dot = online.  No dot = offline.
  */
 export default function ChatHeader(props: IChatHeaderProps) {
   const {
@@ -28,13 +31,15 @@ export default function ChatHeader(props: IChatHeaderProps) {
     onToggleSidebar,
     onBack,
     onOpenMobileSidebar,
+    onStartVoiceCall,
+    onStartVideoCall,
   } = props;
 
   return (
     <div className="px-3 md:px-4 py-3 border-b flex items-center justify-between bg-background shrink-0 gap-2">
       {/* ── LEFT SECTION ──────────────────────────────────────────────────── */}
       <div className="flex items-center gap-2 min-w-0">
-        {/* Mobile back button — navigates to the conversation list (md:hidden) */}
+        {/* Mobile back button */}
         {onBack && (
           <Button
             variant="ghost"
@@ -47,7 +52,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
           </Button>
         )}
 
-        {/* Desktop sidebar collapse/expand toggle (hidden md:flex) */}
+        {/* Desktop sidebar collapse/expand toggle */}
         <Button
           variant="ghost"
           size="icon"
@@ -62,8 +67,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
           )}
         </Button>
 
-        {/* Avatar with online indicator dot.
-            The wrapper is relative so we can overlay the dot on the corner. */}
+        {/* Avatar with online indicator dot */}
         <div className="relative shrink-0">
           <Avatar className="h-9 w-9">
             {chat.isGroup ? (
@@ -85,8 +89,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
             )}
           </Avatar>
 
-          {/* Green online dot — only rendered when the partner is online.
-              The border-background ring separates it from the avatar image. */}
+          {/* Green online dot */}
           {chat.isOnline && (
             <span
               aria-label="Online"
@@ -100,8 +103,6 @@ export default function ChatHeader(props: IChatHeaderProps) {
           <h2 className="font-semibold text-sm text-foreground truncate leading-tight">
             {chat.name}
           </h2>
-          {/* Status text mirrors the dot: green "Online" or muted "Offline".
-              This gives screen-reader users a text equivalent of the dot. */}
           <p
             className={`text-xs leading-tight ${
               chat.isOnline ? "text-green-500" : "text-muted-foreground"
@@ -114,7 +115,29 @@ export default function ChatHeader(props: IChatHeaderProps) {
 
       {/* ── RIGHT SECTION ─────────────────────────────────────────────────── */}
       <div className="flex items-center gap-1 shrink-0">
-        {/* Mobile hamburger — opens sidebar overlay (md:hidden) */}
+        {/* Video call button */}
+        <Button
+          variant="outline"
+          size="icon"
+          className="hidden sm:flex h-9 w-9 text-muted-foreground hover:text-foreground"
+          onClick={onStartVideoCall}
+          aria-label="Start video call"
+        >
+          <Video className="h-4 w-4" />
+        </Button>
+
+        {/* Voice call button */}
+        <Button
+          variant="outline"
+          size="icon"
+          className="hidden sm:flex h-9 w-9 text-muted-foreground hover:text-foreground"
+          onClick={onStartVoiceCall}
+          aria-label="Start voice call"
+        >
+          <Phone className="h-4 w-4" />
+        </Button>
+
+        {/* Mobile hamburger — opens sidebar overlay */}
         {onOpenMobileSidebar && (
           <Button
             variant="ghost"
@@ -139,7 +162,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
           </Button>
         )}
 
-        {/* More options (future: context menu for mute, block, etc.) */}
+        {/* More options */}
         <Button
           variant="ghost"
           size="icon"
