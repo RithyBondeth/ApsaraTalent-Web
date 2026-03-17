@@ -1176,9 +1176,10 @@ export default function EmployeeProfilePage() {
           <input
             ref={avatarInputRef}
             type="file"
-            className="hidden"
             accept="image/*"
+            className="hidden"
             onChange={(e) => handleFileChange(e, "avatar")}
+            aria-label="Upload avatar image"
           />
 
           <div className="flex flex-col items-start gap-1 tablet-sm:items-center">
