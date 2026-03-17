@@ -45,3 +45,9 @@ Dockerfile
 Dockerfile.dev
 docker-compose.yml
 .dockerignore
+
+# AI
+.claude
+.cursor
+CLAUDE.md
+GEMINI.md

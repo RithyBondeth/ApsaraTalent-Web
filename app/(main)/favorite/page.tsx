@@ -14,20 +14,16 @@ import FavoriteCompanyCardSkeleton from "@/components/favorite/company-favorite-
 import FavoriteEmployeeCard from "@/components/favorite/employee-favorite-card";
 import FavoriteEmployeeCardSkeleton from "@/components/favorite/employee-favorite-card/skeleton";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useFetchOnce } from "@/hooks/use-fetch-once";
-import { useToast } from "@/hooks/use-toast";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
 import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
 import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
 import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { LucideBookmarkX } from "lucide-react";
+import { toast } from "sonner";
 import FavoriteBannerSkeleton from "./banner-skeleton";
 
 export default function FavoritePage() {
-  // Utils
-  const { toast } = useToast();
 
   // API Integration
   const currentUser = useGetCurrentUserStore((state) => state.user);
@@ -66,28 +62,14 @@ export default function FavoritePage() {
       );
       // Count All Employee Favorites To See New Update
       countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeID);
-      toast({
-        variant: "success",
-        description: (
-          <div className="flex items-center gap-2">
-            <LucideBookmarkX />
-            <TypographySmall className="font-medium leading-relaxed">
-              {companyName} removed from favorites.
-            </TypographySmall>
-          </div>
-        ),
-      });
+      toast.success(`${companyName} removed from favorites.`);
       // Query All Employee Favorites To See New Update
       await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(employeeID);
     } catch (error) {
       const err =
         employeeFavCompanyStore.error ||
         "Failed to remove company from favorites.";
-      toast({
-        title: "Error",
-        description: err,
-        variant: "destructive",
-      });
+      toast.error(err);
     }
   };
 
@@ -108,28 +90,14 @@ export default function FavoritePage() {
       );
       // Count All Company Favorites To See New Update
       countAllCompanyFavoritesStore.countAllCompanyFavorites(companyID);
-      toast({
-        variant: "success",
-        description: (
-          <div className="flex items-center gap-2">
-            <LucideBookmarkX />
-            <TypographySmall className="font-medium leading-relaxed">
-              {employeeName} removed from favorites.
-            </TypographySmall>
-          </div>
-        ),
-      });
+      toast.success(`${employeeName} removed from favorites.`);
       // Query All Company Favorites To See New Update
       await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyID);
     } catch (error) {
       const err =
         companyFavEmployeeStore.error ||
         "Failed to remove employee from favorites.";
-      toast({
-        title: "Error",
-        description: err,
-        variant: "destructive",
-      });
+      toast.error(err);
     }
   };
 

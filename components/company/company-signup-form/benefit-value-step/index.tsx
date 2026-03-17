@@ -9,11 +9,10 @@ import {
     PopoverContent,
     PopoverTrigger
 } from "@/components/ui/popover";
-import { ToastAction } from "@/components/ui/toast";
+import { toast } from "sonner";
 import ErrorMessage from "@/components/utils/error-message";
 import IconLabel from "@/components/utils/icon-label";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { useToast } from "@/hooks/use-toast";
 import { LucideCircleCheck, LucidePlus, LucideXCircle } from "lucide-react";
 import { useState } from "react";
 
@@ -24,7 +23,6 @@ export default function BenefitValueStepForm({
   errors,
 }: IStepFormProps<TCompanySignup>) {
   // Utils
-  const { toast } = useToast();
 
   // Benefit and Value Helpers
   const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
@@ -48,11 +46,9 @@ export default function BenefitValueStepForm({
     );
 
     if (alreadyExists) {
-      toast({
-        variant: "destructive",
-        title: "Duplicated Benefit",
+      toast.error("Duplicated Benefit", {
         description: "Please input another benefit.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
+        action: { label: "Try again", onClick: () => {} },
       });
       return;
     }
@@ -77,11 +73,9 @@ export default function BenefitValueStepForm({
     );
 
     if (alreadyExists) {
-      toast({
-        variant: "destructive",
-        title: "Duplicated value",
+      toast.error("Duplicated value", {
         description: "Please input another value.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
+        action: { label: "Try again", onClick: () => {} },
       });
       return;
     }

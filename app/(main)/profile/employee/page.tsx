@@ -33,8 +33,6 @@ import {
     SelectValue
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { ToastAction } from "@/components/ui/toast";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
 import ReferencePreviewDialog from "@/components/utils/dialogs/reference-preview-dialog";
 import RemoveAlertDialog from "@/components/utils/dialogs/remove-alert-dialog";
@@ -52,7 +50,6 @@ import { useCareerScopesState } from "@/hooks/profile/employee/use-careerscope-s
 import { useReferenceFilesState } from "@/hooks/profile/employee/use-referencefile-state";
 import { useSkillsState } from "@/hooks/profile/employee/use-skill-state";
 import { useSocialsState } from "@/hooks/profile/employee/use-social-state";
-import { useToast } from "@/hooks/use-toast";
 import { useRemoveEmpAvatarStore } from "@/stores/apis/employee/remove-emp-avatar.store";
 import { useRemoveEmpCoverLetterStore } from "@/stores/apis/employee/remove-emp-coverletter.store";
 import { useRemoveEmpEducationStore } from "@/stores/apis/employee/remove-emp-education.store";
@@ -88,13 +85,11 @@ import {
     LucideAlarmCheck,
     LucideBriefcaseBusiness,
     LucideCamera,
-    LucideCheck,
     LucideCircleCheck,
     LucideDownload,
     LucideEdit,
     LucideEye,
     LucideFileText,
-    LucideInfo,
     LucideLink2,
     LucideMail,
     LucidePhone,
@@ -103,6 +98,7 @@ import {
     LucideUser,
     LucideXCircle
 } from "lucide-react";
+import { toast } from "sonner";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -169,7 +165,6 @@ export default function EmployeeProfilePage() {
 
   /* ------------------------ All States ------------------------ */
   // Util States
-  const { toast } = useToast();
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
   // Avatar State
@@ -456,17 +451,7 @@ export default function EmployeeProfilePage() {
 
     await disableEditMode();
 
-    toast({
-      variant: "success",
-      description: (
-        <div className="flex items-center gap-2">
-          <LucideCheck />
-          <TypographySmall className="font-medium leading-relaxed">
-            Remove Resume Successfully!
-          </TypographySmall>
-        </div>
-      ),
-    });
+    toast.success("Remove Resume Successfully!");
   };
 
   // 2.API: Remove CoverLetter
@@ -476,17 +461,7 @@ export default function EmployeeProfilePage() {
 
     await disableEditMode();
 
-    toast({
-      variant: "success",
-      description: (
-        <div className="flex items-center gap-2">
-          <LucideCheck />
-          <TypographySmall className="font-medium leading-relaxed">
-            Remove CoverLetter Successfully!
-          </TypographySmall>
-        </div>
-      ),
-    });
+    toast.success("Remove CoverLetter Successfully!");
   };
 
   // 3.API: Remove Avatar
@@ -495,17 +470,7 @@ export default function EmployeeProfilePage() {
 
     await disableEditMode();
 
-    toast({
-      variant: "success",
-      description: (
-        <div className="flex items-center gap-2">
-          <LucideCheck />
-          <TypographySmall className="font-medium leading-relaxed">
-            Remove Avatar Successfully!
-          </TypographySmall>
-        </div>
-      ),
-    });
+    toast.success("Remove Avatar Successfully!");
   };
 
   // 4.Handle Click Avatar Popup
@@ -547,17 +512,7 @@ export default function EmployeeProfilePage() {
 
     await disableEditMode();
 
-    toast({
-      variant: "success",
-      description: (
-        <div className="flex items-center gap-2">
-          <LucideCheck />
-          <TypographySmall className="font-medium leading-relaxed">
-            Remove Experience Successfully!
-          </TypographySmall>
-        </div>
-      ),
-    });
+    toast.success("Remove Experience Successfully!");
   };
 
   /* ------------------- Education Bussiness Logics ------------------- */
@@ -578,17 +533,7 @@ export default function EmployeeProfilePage() {
 
     await disableEditMode();
 
-    toast({
-      variant: "success",
-      description: (
-        <div className="flex items-center gap-2">
-          <LucideCheck />
-          <TypographySmall className="font-medium leading-relaxed">
-            Remove Education Successfully!
-          </TypographySmall>
-        </div>
-      ),
-    });
+    toast.success("Remove Education Successfully!");
   };
 
   /* ------------------- Skill Bussiness Logics ------------------- */
@@ -602,12 +547,7 @@ export default function EmployeeProfilePage() {
     );
 
     if (alreadyExists) {
-      toast({
-        variant: "destructive",
-        title: "Duplicated Skill",
-        description: "Please input another skill.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
-      });
+      toast.error("Duplicated Skill", { description: "Please input another skill.", action: { label: "Try again", onClick: () => {} } });
       setSkillInput(null);
       setOpenSkillPopOver(false);
       return;
@@ -655,12 +595,7 @@ export default function EmployeeProfilePage() {
     );
 
     if (platformExists) {
-      toast({
-        variant: "destructive",
-        title: "Duplicate Social",
-        description: "This social platform already exists.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
-      });
+      toast.error("Duplicate Social", { description: "This social platform already exists.", action: { label: "Try again", onClick: () => {} } });
       return false;
     }
 
@@ -669,12 +604,7 @@ export default function EmployeeProfilePage() {
     );
 
     if (urlExists) {
-      toast({
-        variant: "destructive",
-        title: "Duplicate URL",
-        description: "This social link already exists.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
-      });
+      toast.error("Duplicate URL", { description: "This social link already exists.", action: { label: "Try again", onClick: () => {} } });
       return false;
     }
 
@@ -729,12 +659,7 @@ export default function EmployeeProfilePage() {
       (c) => (c.name ?? "").trim().toLowerCase() === name.toLowerCase(),
     );
     if (alreadyExists) {
-      toast({
-        variant: "destructive",
-        title: "Duplicated Career",
-        description: "Please select another career.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
-      });
+      toast.error("Duplicated Career", { description: "Please select another career.", action: { label: "Try again", onClick: () => {} } });
       setCareerScopeInput(null);
       setOpenCareerScopePopOver(false);
       return;
@@ -830,11 +755,7 @@ export default function EmployeeProfilePage() {
       URL.revokeObjectURL(objectUrl);
     } catch (e) {
       console.error(e);
-      toast({
-        variant: "destructive",
-        title: "Download failed",
-        description: "Unable to download the file. Please try again.",
-      });
+      toast.error("Download failed", { description: "Unable to download the file. Please try again." });
     }
   };
 
@@ -1037,16 +958,7 @@ export default function EmployeeProfilePage() {
         hasAvatarUpload || hasResumeUpload || hasCoverLetterUpload;
 
       if (!hasUpdateBodyChanges && !hasFileUploads) {
-        toast({
-          description: (
-            <div className="flex items-center gap-2">
-              <LucideInfo />
-              <TypographySmall className="font-medium leading-relaxed">
-                No Changes Detected.
-              </TypographySmall>
-            </div>
-          ),
-        });
+        toast.info("No Changes Detected.");
         return;
       }
 
@@ -1061,11 +973,7 @@ export default function EmployeeProfilePage() {
       setIsEdit(false);
     } catch (err) {
       console.error(err);
-      toast({
-        variant: "destructive",
-        title: "Error!",
-        description: "Failed to update employee profile.",
-      });
+      toast.error("Error!", { description: "Failed to update employee profile." });
     }
   };
 
@@ -1096,20 +1004,10 @@ export default function EmployeeProfilePage() {
     if (!updateProfileLoadingState) return;
 
     // Loading Message on Toast
-    const toastInstance = toast({
-      description: (
-        <div className="flex items-center gap-2">
-          <ApsaraLoadingSpinner size={50} loop />
-          <TypographySmall className="font-medium leading-relaxed">
-            {loadingMessage}
-          </TypographySmall>
-        </div>
-      ),
-      duration: Infinity,
-    });
+    const toastId = toast.loading(loadingMessage);
 
-    return () => toastInstance.dismiss();
-  }, [updateProfileLoadingState, loadingMessage, toast]);
+    return () => toast.dismiss(toastId);
+  }, [updateProfileLoadingState, loadingMessage]);
 
   if (loading) return <EmployeeProfilePageSkeleton />;
   if (!user || !employee) return null;

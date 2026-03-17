@@ -8,13 +8,12 @@ import {
     PopoverContent,
     PopoverTrigger
 } from "@/components/ui/popover";
-import { ToastAction } from "@/components/ui/toast";
 import ErrorMessage from "@/components/utils/error-message";
 import LabelInput from "@/components/utils/label-input";
 import Tag from "@/components/utils/tag";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { getErrorMessage } from "@/utils/extensions/get-error-message";
 import { getRandomBadgeColor } from "@/utils/extensions/get-random-badge-color";
 import { LucidePlus, LucideXCircle } from "lucide-react";
@@ -28,9 +27,6 @@ export default function SkillReferenceStepForm({
   register,
   trigger,
 }: IStepFormProps<TEmployeeSignUp>) {
-  // Utils
-  const { toast } = useToast();
-
   // Skill Helpers
   const [openPopOver, setOpenPopOver] = useState<boolean>(false);
   const [skillInput, setSkillInput] = useState<string>("");
@@ -47,11 +43,9 @@ export default function SkillReferenceStepForm({
       (skill) => skill.toLowerCase() === trimmed.toLowerCase(),
     );
     if (alreadyExists) {
-      toast({
-        variant: "destructive",
-        title: "Duplicated Skill",
+      toast.error("Duplicated Skill", {
         description: "Please input another skill.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
+        action: { label: "Try again", onClick: () => {} },
       });
       return;
     }

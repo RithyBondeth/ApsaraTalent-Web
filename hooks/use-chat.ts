@@ -1,5 +1,5 @@
 import { IChatPreview, IMessage } from '@/components/message/props';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { useGetCurrentUserStore } from '@/stores/apis/users/get-current-user.store';
 import { chatDatabase } from '@/utils/firebase/firebase';
 import { createOrGetChat, UserProfile } from '@/utils/firebase/services/chat-service';
@@ -13,7 +13,6 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 
 export const useChat = (chatId?: string | null) => {
-  const { toast } = useToast();
   const currentUser = useGetCurrentUserStore((state) => state.user);
 
   const [messages, setMessages] = useState<IMessage[]>([]);
@@ -95,9 +94,7 @@ export const useChat = (chatId?: string | null) => {
             setIsLoading(false);
           } catch (error) {
             console.error('Error loading chat previews:', error);
-            toast({
-              variant: 'destructive',
-              title: 'Error',
+            toast.error('Error', {
               description: 'Failed to load chats. Please try again.',
             });
             setIsLoading(false);
@@ -105,9 +102,7 @@ export const useChat = (chatId?: string | null) => {
         },
         (error) => {
           console.error('Error in chat snapshot listener:', error);
-          toast({
-            variant: 'destructive',
-            title: 'Connection Error',
+          toast.error('Connection Error', {
             description: 'Lost connection to chat service.',
           });
           setIsLoading(false);
@@ -119,7 +114,7 @@ export const useChat = (chatId?: string | null) => {
       console.error('Error setting up chat listener:', error);
       setIsLoading(false);
     }
-  }, [getCurrentUserId, toast]);
+  }, [getCurrentUserId]);
 
   // Load messages for specific chat
   useEffect(() => {
@@ -149,18 +144,14 @@ export const useChat = (chatId?: string | null) => {
               time: '',
             });
           } else {
-            toast({
-              variant: 'destructive',
-              title: 'Chat Not Found',
+            toast.error('Chat Not Found', {
               description: 'The requested chat does not exist.',
             });
           }
         })
         .catch((error) => {
           console.error('Error loading chat info:', error);
-          toast({
-            variant: 'destructive',
-            title: 'Error',
+          toast.error('Error', {
             description: 'Failed to load chat information.',
           });
         });
@@ -186,9 +177,7 @@ export const useChat = (chatId?: string | null) => {
         },
         (error) => {
           console.error('Error in messages snapshot listener:', error);
-          toast({
-            variant: 'destructive',
-            title: 'Error',
+          toast.error('Error', {
             description: 'Failed to load messages.',
           });
           setIsLoadingMessages(false);
@@ -200,7 +189,7 @@ export const useChat = (chatId?: string | null) => {
       console.error('Error setting up message listener:', error);
       setIsLoadingMessages(false);
     }
-  }, [chatId, getCurrentUserId, toast]);
+  }, [chatId, getCurrentUserId]);
 
   // Send message
   const sendMessage = useCallback(async (text: string, targetChatId?: string) => {
@@ -229,15 +218,13 @@ export const useChat = (chatId?: string | null) => {
       });
     } catch (error) {
       console.error('Error sending message:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Failed to Send',
+      toast.error('Failed to Send', {
         description: 'Your message could not be sent. Please try again.',
       });
     } finally {
       setIsSending(false);
     }
-  }, [chatId, getCurrentUserId, toast]);
+  }, [chatId, getCurrentUserId]);
 
   return {
     // State

@@ -8,13 +8,10 @@ import {
     InputOTPSeparator,
     InputOTPSlot
 } from "@/components/ui/input-otp";
-import { ToastAction } from "@/components/ui/toast";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import ErrorMessage from "@/components/utils/error-message";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { useToast } from "@/hooks/use-toast";
 import { useVerifyOTPStore } from "@/stores/apis/auth/verify-otp.store";
 import { useGetAllCompanyStore } from "@/stores/apis/company/get-all-cmp.store";
 import { useGetAllEmployeeStore } from "@/stores/apis/employee/get-all-emp.store";
@@ -24,7 +21,7 @@ import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-curre
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
-import { LucideCheck, LucideInfo } from "lucide-react";
+import { toast } from "sonner";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -33,7 +30,6 @@ import { Controller, useForm } from "react-hook-form";
 export default function PhoneOTPPage() {
   // Utils
   const router = useRouter();
-  const { toast, dismiss } = useToast();
 
   // Verify OTP Helpers
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
@@ -125,7 +121,7 @@ export default function PhoneOTPPage() {
 
     // If the role of user is none, navigate user to signup first
     if (verifyOTPStore.role === "none") {
-      dismiss();
+      toast.dismiss();
       setLoginInitiated(false);
       router.replace("/signup/option");
       return;
@@ -133,57 +129,25 @@ export default function PhoneOTPPage() {
 
     // If user is authenticated, navigate user to feed page
     if (verifyOTPStore.isAuthenticated && loginInitiated) {
-      (dismiss(),
-        toast({
-          description: (
-            <div className="flex items-center gap-2">
-              <ApsaraLoadingSpinner size={50} loop />
-              <TypographySmall className="font-medium leading-relaxed">
-                Authenticating...
-              </TypographySmall>
-            </div>
-          ),
-          duration: Infinity,
-        }));
+      toast.dismiss();
+      const loadingId = toast.loading("Authenticating...");
 
-      // Prelaod all user data while showing loading message
+      // Preload all user data while showing loading message
       preloadUserData()
         .then(() => {
           console.log("User data preload successfully in otp page");
-          dismiss();
-          toast({
-            variant: "success",
-            description: (
-              <div className="flex items-center gap-2">
-                <LucideCheck />
-                <TypographySmall className="font-medium leading-relaxed">
-                  {verifyOTPStore.message}
-                </TypographySmall>
-              </div>
-            ),
-            duration: 1000,
-          });
+          toast.dismiss(loadingId);
+          toast.success(verifyOTPStore.message ?? "Successfully Logged In", { duration: 1000 });
         })
         .catch((error) => {
           console.error("Error preloading user data: ", error);
-          dismiss();
-          toast({
-            variant: "destructive",
-            description: (
-              <div className="flex items-center gap-2">
-                <LucideCheck />
-                <TypographySmall className="font-medium leading-relaxed">
-                  {verifyOTPStore.message}
-                </TypographySmall>
-              </div>
-            ),
-            duration: 1000,
-          });
+          toast.dismiss(loadingId);
+          toast.error(verifyOTPStore.message ?? String(error), { duration: 1000 });
         })
         .finally(() => {
           console.log("inside route to feed finally");
           setTimeout(() => {
-            dismiss();
+            toast.dismiss();
             setLoginInitiated(false);
             router.push("/feed");
           }, 1000);
@@ -191,41 +155,19 @@ export default function PhoneOTPPage() {
     }
 
     if (verifyOTPStore.loading && loginInitiated) {
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <ApsaraLoadingSpinner size={40} loop />
-            <TypographySmall className="font-medium">
-              Verifying your otp code...
-            </TypographySmall>
-          </div>
-        ),
-      });
+      toast.loading("Verifying your otp code...");
     }
 
     if (verifyOTPStore.error && loginInitiated) {
-      dismiss();
-      toast({
-        variant: "destructive",
-        description: (
-          <div className="flex flex-row items-center gap-2">
-            <LucideInfo />
-            <TypographySmall className="font-medium leading-relaxed">
-              {verifyOTPStore.error}
-            </TypographySmall>
-          </div>
-        ),
-        action: (
-          <ToastAction
-            altText="Try again"
-            onClick={() => {
-              reset();
-              setLoginInitiated(false);
-            }}
-          >
-            Retry
-          </ToastAction>
-        ),
+      toast.dismiss();
+      toast.error(verifyOTPStore.error, {
+        action: {
+          label: "Retry",
+          onClick: () => {
+            reset();
+            setLoginInitiated(false);
+          },
+        },
       });
     }
   }, [

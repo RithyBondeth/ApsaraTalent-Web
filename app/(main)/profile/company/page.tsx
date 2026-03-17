@@ -38,8 +38,6 @@ import {
     SelectValue
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { ToastAction } from "@/components/ui/toast";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import BlurBackGroundOverlay from "@/components/utils/bur-background-overlay";
 import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
 import RemoveAlertDialog from "@/components/utils/dialogs/remove-alert-dialog";
@@ -58,7 +56,7 @@ import useCmpBenefitValueState from "@/hooks/profile/company/use-cmp-benefit-val
 import { useCmpCareerScopesState } from "@/hooks/profile/company/use-cmp-careerscope-state";
 import useCmpImageState from "@/hooks/profile/company/use-cmp-image-state";
 import { useSocialsState } from "@/hooks/profile/employee/use-social-state";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useRemoveCmpAvatarStore } from "@/stores/apis/company/remove-cmp-avatar.store";
 import { useRemoveCmpCoverStore } from "@/stores/apis/company/remove-cmp-cover.store";
 import { useRemoveOneCmpImageStore } from "@/stores/apis/company/remove-one-cmp-image.store";
@@ -91,10 +89,8 @@ import {
     ChevronDown,
     LucideBuilding,
     LucideCamera,
-    LucideCheck,
     LucideCircleCheck,
     LucideEdit,
-    LucideInfo,
     LucideLink2,
     LucideMail,
     LucidePhone,
@@ -162,7 +158,6 @@ export default function ProfilePage() {
 
   /* ------------------------ All States ------------------------ */
   // Utils
-  const { toast } = useToast();
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
   // Image States
@@ -421,17 +416,7 @@ export default function ProfilePage() {
 
     await disableEditMode();
 
-    toast({
-      variant: "success",
-      description: (
-        <div className="flex items-center gap-2">
-          <LucideCheck />
-          <TypographySmall className="font-medium leading-relaxed">
-            Remove Avatar Successfully!
-          </TypographySmall>
-        </div>
-      ),
-    });
+    toast.success("Remove Avatar Successfully!");
   };
 
   // 2.API: Remove Cover
@@ -440,17 +425,7 @@ export default function ProfilePage() {
 
     await disableEditMode();
 
-    toast({
-      variant: "success",
-      description: (
-        <div className="flex items-center gap-2">
-          <LucideCheck />
-          <TypographySmall className="font-medium leading-relaxed">
-            Remove Cover Successfully!
-          </TypographySmall>
-        </div>
-      ),
-    });
+    toast.success("Remove Cover Successfully!");
   };
 
   // 3.API: Remove Single Image
@@ -463,17 +438,7 @@ export default function ProfilePage() {
 
     await disableEditMode();
 
-    toast({
-      variant: "success",
-      description: (
-        <div className="flex items-center gap-2">
-          <LucideCheck />
-          <TypographySmall className="font-medium leading-relaxed">
-            Remove Cover Successfully!
-          </TypographySmall>
-        </div>
-      ),
-    });
+    toast.success("Remove Cover Successfully!");
   };
 
   // 4.Handle Click Image Popup
@@ -565,17 +530,7 @@ export default function ProfilePage() {
 
     await disableEditMode();
 
-    toast({
-      variant: "success",
-      description: (
-        <div className="flex items-center gap-2">
-          <LucideCheck />
-          <TypographySmall className="font-medium leading-relaxed">
-            Remove Open Position Successfully!
-          </TypographySmall>
-        </div>
-      ),
-    });
+    toast.success("Remove Open Position Successfully!");
   };
 
   /* ------------------- Benefit Bussiness Logics ------------------- */
@@ -589,12 +544,7 @@ export default function ProfilePage() {
     );
 
     if (alreadyExists) {
-      toast({
-        variant: "destructive",
-        title: "Duplicated Benefit",
-        description: "Please input another benefit.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
-      });
+      toast.error("Duplicated Benefit", { description: "Please input another benefit.", action: { label: "Try again", onClick: () => {} } });
       setBenefitInput(null);
       setOpenBenefitPopOver(false);
       return;
@@ -637,12 +587,7 @@ export default function ProfilePage() {
     );
 
     if (alreadyExists) {
-      toast({
-        variant: "destructive",
-        title: "Duplicated value",
-        description: "Please input another value.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
-      });
+      toast.error("Duplicated value", { description: "Please input another value.", action: { label: "Try again", onClick: () => {} } });
       setValueInput(null);
       setOpenValuePopOver(false);
       return;
@@ -697,12 +642,7 @@ export default function ProfilePage() {
       (c) => (c.name ?? "").trim().toLowerCase() === name.toLowerCase(),
     );
     if (alreadyExists) {
-      toast({
-        variant: "destructive",
-        title: "Duplicated Career",
-        description: "Please select another career.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
-      });
+      toast.error("Duplicated Career", { description: "Please select another career.", action: { label: "Try again", onClick: () => {} } });
       setCareerScopeInput(null);
       setOpenCareerScopePopOver(false);
       return;
@@ -761,12 +701,7 @@ export default function ProfilePage() {
     );
 
     if (platformExists) {
-      toast({
-        variant: "destructive",
-        title: "Duplicate Social",
-        description: "This social platform already exists.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
-      });
+      toast.error("Duplicate Social", { description: "This social platform already exists.", action: { label: "Try again", onClick: () => {} } });
       return false;
     }
 
@@ -775,12 +710,7 @@ export default function ProfilePage() {
     );
 
     if (urlExists) {
-      toast({
-        variant: "destructive",
-        title: "Duplicate URL",
-        description: "This social link already exists.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
-      });
+      toast.error("Duplicate URL", { description: "This social link already exists.", action: { label: "Try again", onClick: () => {} } });
       return false;
     }
 
@@ -968,16 +898,7 @@ export default function ProfilePage() {
         hasAvatarUpload || hasCoverUpload || hasImageUploads;
 
       if (!hasUpdateBodyChanges && !hasFileUploads) {
-        toast({
-          description: (
-            <div className="flex items-center gap-2">
-              <LucideInfo />
-              <TypographySmall className="font-medium leading-relaxed">
-                No Changes Detected.
-              </TypographySmall>
-            </div>
-          ),
-        });
+        toast.info("No Changes Detected.");
         return;
       }
 
@@ -992,11 +913,7 @@ export default function ProfilePage() {
       setIsEdit(false);
     } catch (error) {
       console.error(error);
-      toast({
-        variant: "destructive",
-        title: "Error!",
-        description: "Failed To Update Company Profile.",
-      });
+      toast.error("Error!", { description: "Failed To Update Company Profile." });
     }
   };
 
@@ -1024,19 +941,9 @@ export default function ProfilePage() {
     if (!updateProfileLoadingState) return;
 
     // Loading Message on Toast
-    const toastInstance = toast({
-      description: (
-        <div className="flex items-center gap-2">
-          <ApsaraLoadingSpinner size={50} loop />
-          <TypographySmall className="font-medium leading-relaxed">
-            {loadingMessage}
-          </TypographySmall>
-        </div>
-      ),
-      duration: Infinity,
-    });
+    const toastId = toast.loading(loadingMessage);
 
-    return () => toastInstance.dismiss();
+    return () => toast.dismiss(toastId);
   }, [updateProfileLoadingState, loadingMessage, toast]);
 
   if (loading) return <CompanyProfilePageSkeleton />;

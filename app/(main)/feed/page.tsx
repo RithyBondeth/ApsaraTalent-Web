@@ -20,10 +20,9 @@ import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { usePreloadImages } from "@/hooks/use-cached-image";
 import { useFetchOnce } from "@/hooks/use-fetch-once";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useGetAllCompanyStore } from "@/stores/apis/company/get-all-cmp.store";
 import { useGetAllEmployeeStore } from "@/stores/apis/employee/get-all-emp.store";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
@@ -42,7 +41,6 @@ import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-c
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
-import { LucideBookMarked, LucideX } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -57,7 +55,6 @@ const globalFetchCache = {
 
 export default function FeedPage() {
   // Utils
-  const { toast } = useToast();
   const router = useRouter();
   const [mounted, setMounted] = useState<boolean>(false);
   const { resolvedTheme } = useTheme();
@@ -257,33 +254,13 @@ export default function FeedPage() {
       await employeeFavCompanyStore.addCompanyToFavorite(employeeID, companyID);
       // Count All Employee Favorite -> Update Favorite Badge In Sidebar
       countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeID);
-      toast({
-        variant: "success",
-        description: (
-          <div className="flex items-center gap-2">
-            <LucideBookMarked />
-            <TypographySmall className="font-medium leading-relaxed">
-              {companyName} added to favorites.
-            </TypographySmall>
-          </div>
-        ),
-      });
-      // Get All Employee Favorites -> Upddate Favorite Page
+      toast.success(`${companyName} added to favorites.`);
+      // Get All Employee Favorites -> Update Favorite Page
       await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(employeeID);
     } catch (error) {
       const err =
         employeeFavCompanyStore.error || "Failed to save company to favorites.";
-      toast({
-        variant: "destructive",
-        description: (
-          <div className="flex items-center gap-2">
-            <LucideX />
-            <TypographySmall className="font-medium leading-relaxed">
-              {err}
-            </TypographySmall>
-          </div>
-        ),
-      });
+      toast.error(err);
     }
   };
 
@@ -302,32 +279,12 @@ export default function FeedPage() {
       );
       // Count All Company Favorite -> Update Favorite Badge In Sidebar
       countAllCompanyFavoritesStore.countAllCompanyFavorites(companyID);
-      toast({
-        variant: "success",
-        description: (
-          <div className="flex items-center gap-2">
-            <LucideBookMarked />
-            <TypographySmall className="font-medium leading-relaxed">
-              {employeeName} added to favorites.
-            </TypographySmall>
-          </div>
-        ),
-      });
-      // Get All Company Favorites -> Upddate Favorite Page
+      toast.success(`${employeeName} added to favorites.`);
+      // Get All Company Favorites -> Update Favorite Page
       await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyID);
     } catch (error) {
       const err = companyFavEmployeeStore.error || "Failed to save employee";
-      toast({
-        variant: "destructive",
-        description: (
-          <div className="flex items-center gap-2">
-            <LucideBookMarked />
-            <TypographySmall className="font-medium leading-relaxed">
-              {err}
-            </TypographySmall>
-          </div>
-        ),
-      });
+      toast.error(err);
     }
   };
 

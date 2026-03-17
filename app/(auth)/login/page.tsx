@@ -12,14 +12,11 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { ToastAction } from "@/components/ui/toast";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import SocialButton from "@/components/utils/buttons/social-button";
 import LogoComponent from "@/components/utils/logo";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { useToast } from "@/hooks/use-toast";
 import { useLoginStore } from "@/stores/apis/auth/login.store";
 import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
@@ -38,14 +35,13 @@ import {
 } from "@/utils/constants/asset.constant";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-    LucideCheck,
     LucideEye,
     LucideEyeClosed,
-    LucideInfo,
     LucideLockKeyhole,
     LucideMail,
     LucidePhone
 } from "lucide-react";
+import { toast } from "sonner";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
@@ -58,7 +54,6 @@ function LoginPage() {
   // Utils: Dialog, Theme
   const router = useRouter();
   const { resolvedTheme } = useTheme();
-  const { toast, dismiss } = useToast();
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [openRmbDialog, setOpenRmbDialog] = useState<boolean>(false);
 
@@ -179,56 +174,23 @@ function LoginPage() {
     if (!loginInitiated) return;
 
     if (isAuthenticated && loginInitiated) {
-      dismiss(); // Dismiss any previous toasts
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <ApsaraLoadingSpinner size={50} loop />
-            <TypographySmall className="font-medium">
-              Authenticating...
-            </TypographySmall>
-          </div>
-        ),
-        duration: Infinity,
-      });
+      const loadingId = toast.loading("Authenticating...");
 
       // Preload all user data while showing loading message
       preloadUserData()
         .then(() => {
           console.log("User data preloaded successfully in loin page");
-          dismiss();
-          toast({
-            variant: "success",
-            description: (
-              <div className="flex items-center gap-2">
-                <LucideCheck />
-                <TypographySmall className="font-medium leading-relaxed">
-                  {message}
-                </TypographySmall>
-              </div>
-            ),
-            duration: 1000,
-          });
+          toast.dismiss(loadingId);
+          toast.success(message ?? "Successfully Logged In", { duration: 1000 });
         })
         .catch((error) => {
           console.error("Error preloading user data: ", error);
-          dismiss();
-          toast({
-            variant: "destructive",
-            description: (
-              <div className="flex items-center gap-2">
-                <LucideCheck />
-                <TypographySmall className="font-medium leading-relaxed">
-                  {error}
-                </TypographySmall>
-              </div>
-            ),
-            duration: 1000,
-          });
+          toast.dismiss(loadingId);
+          toast.error(String(error), { duration: 1000 });
         })
         .finally(() => {
           setTimeout(() => {
-            dismiss();
+            toast.dismiss();
             setLoginInitiated(false);
             router.push("/feed");
           }, 1000);
@@ -236,42 +198,19 @@ function LoginPage() {
     }
 
     if (loading && loginInitiated) {
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <ApsaraLoadingSpinner size={50} loop />
-            <TypographySmall className="font-medium">
-              Authenticating...
-            </TypographySmall>
-          </div>
-        ),
-        duration: Infinity,
-      });
+      toast.loading("Authenticating...");
     }
 
     if (error && loginInitiated) {
-      dismiss();
-      toast({
-        variant: "destructive",
-        description: (
-          <div className="flex flex-row items-center gap-2">
-            <LucideInfo />
-            <TypographySmall className="font-medium leading-relaxed">
-              {message}
-            </TypographySmall>
-          </div>
-        ),
-        action: (
-          <ToastAction
-            altText="Try again"
-            onClick={() => {
-              reset();
-              setLoginInitiated(false);
-            }}
-          >
-            Retry
-          </ToastAction>
-        ),
+      toast.dismiss();
+      toast.error(message ?? "Login failed", {
+        action: {
+          label: "Retry",
+          onClick: () => {
+            reset();
+            setLoginInitiated(false);
+          },
+        },
       });
     }
   }, [isAuthenticated, error, message, loading, loginInitiated]);
@@ -323,17 +262,7 @@ function LoginPage() {
     );
 
     if (isAnySocialLoading) {
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <ApsaraLoadingSpinner size={50} loop />
-            <TypographySmall className="font-medium">
-              Authenticating...
-            </TypographySmall>
-          </div>
-        ),
-        duration: Infinity,
-      });
+      toast.loading("Authenticating...");
       return;
     }
 
@@ -344,19 +273,8 @@ function LoginPage() {
       !isProcessingSocialLogin.current
     ) {
       isProcessingSocialLogin.current = true; // Prevent duplicate execution
-      dismiss();
-      // Show data loading toast immediately
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <ApsaraLoadingSpinner size={50} loop />
-            <TypographySmall className="font-medium">
-              Authenticating...
-            </TypographySmall>
-          </div>
-        ),
-        duration: Infinity,
-      });
+      toast.dismiss();
+      const loadingId = toast.loading("Authenticating...");
 
       setIsPreloadingData(true);
 
@@ -364,40 +282,17 @@ function LoginPage() {
       preloadUserData()
         .then(() => {
           console.log("User data preloaded successfully");
-          dismiss();
-          toast({
-            variant: "success",
-            description: (
-              <div className="flex items-center gap-2">
-                <LucideCheck />
-                <TypographySmall className="font-medium leading-relaxed">
-                  Successfully Logged In
-                </TypographySmall>
-              </div>
-            ),
-            duration: 1000,
-          });
+          toast.dismiss(loadingId);
+          toast.success("Successfully Logged In", { duration: 1000 });
         })
         .catch((error) => {
           console.error("Error preloading user data:", error);
-          dismiss();
-
-          toast({
-            variant: "destructive",
-            description: (
-              <div className="flex items-center gap-2">
-                <LucideCheck />
-                <TypographySmall className="font-medium leading-relaxed">
-                  {error}
-                </TypographySmall>
-              </div>
-            ),
-            duration: 1000,
-          });
+          toast.dismiss(loadingId);
+          toast.error(String(error), { duration: 1000 });
         })
         .finally(() => {
           setTimeout(() => {
-            dismiss();
+            toast.dismiss();
             setIsPreloadingData(false);
             setSocialLoginInitiated(false);
             isProcessingSocialLogin.current = false;
@@ -410,21 +305,11 @@ function LoginPage() {
 
     // Handle new user (needs to register first)
     if (newUserStore && !isAnySocialLoading) {
-      dismiss();
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <LucideInfo />
-            <TypographySmall className="font-medium leading-relaxed">
-              Please register first
-            </TypographySmall>
-          </div>
-        ),
-        duration: 1500,
-      });
+      toast.dismiss();
+      toast.info("Please register first", { duration: 1500 });
 
       setTimeout(() => {
-        dismiss();
+        toast.dismiss();
         setSocialLoginInitiated(false);
         router.push("/signup/option");
       }, 1500);
@@ -434,27 +319,14 @@ function LoginPage() {
 
     // Handle errors
     if (errorStore && !isAnySocialLoading) {
-      dismiss();
-      toast({
-        variant: "destructive",
-        description: (
-          <div className="flex flex-row items-center gap-2">
-            <LucideInfo />
-            <TypographySmall className="font-medium leading-relaxed">
-              {errorStore.store.error || "Social login failed"}
-            </TypographySmall>
-          </div>
-        ),
-        action: (
-          <ToastAction
-            altText="Try again"
-            onClick={() => {
-              setSocialLoginInitiated(false);
-            }}
-          >
-            Retry
-          </ToastAction>
-        ),
+      toast.dismiss();
+      toast.error(errorStore.store.error || "Social login failed", {
+        action: {
+          label: "Retry",
+          onClick: () => {
+            setSocialLoginInitiated(false);
+          },
+        },
       });
     }
   }, [

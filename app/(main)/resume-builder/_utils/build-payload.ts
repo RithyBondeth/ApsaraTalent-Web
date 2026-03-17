@@ -49,6 +49,17 @@ function splitDescriptionAndAchievements(description?: string): {
   };
 }
 
+/**
+ * Extracts a 4-digit year from any date string.
+ * Handles ISO datetimes ("2023-12-31T17:00:00.000Z" → "2023"),
+ * date-only strings ("2023-12-31" → "2023"), and plain years ("2023" → "2023").
+ */
+function formatEduYear(year?: string | null): string | undefined {
+  if (!year) return undefined;
+  const match = year.match(/\d{4}/);
+  return match ? match[0] : year;
+}
+
 export function buildResumePayloadFromUser(
   user: IUser,
   template: ResumeTemplate,
@@ -105,7 +116,7 @@ export function buildResumePayloadFromUser(
   // ─── Education ────────────────────────────────────────────────────────────
   const educationLines = (employee.educations || [])
     .map((edu) => {
-      const parts = [edu.degree, edu.school, edu.year]
+      const parts = [edu.degree, edu.school, formatEduYear(edu.year)]
         .filter(Boolean)
         .join(", ");
       return parts;

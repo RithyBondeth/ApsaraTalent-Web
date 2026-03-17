@@ -15,7 +15,7 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useGetOneEmployeeStore } from "@/stores/apis/employee/get-one-emp.store";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
 import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
@@ -62,7 +62,6 @@ import EmployeeDetailPageSkeleton from "./skeleton";
 export default function EmployeeDetailPage() {
   // Utils
   const router = useRouter();
-  const { toast, dismiss } = useToast();
   const params = useParams<{ employeeId: string }>();
   const id = params.employeeId;
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
@@ -176,7 +175,7 @@ export default function EmployeeDetailPage() {
       if (!companyId || !employeeId) return;
 
       try {
-        dismiss();
+        toast.dismiss();
         await companyLikeStore.companyLike(companyId, employeeId);
         const companyData = useCompanyLikeStore.getState().data;
         if (companyData) {
@@ -185,38 +184,19 @@ export default function EmployeeDetailPage() {
             companyData.employee.username ??
             `${companyData.employee.lastname} ${companyData.employee.lastname}`;
           if (isMatching) {
-            toast({
-              variant: "success",
-              title: "It's a match!",
-              description: (
-                <div className="flex items-center gap-2">
-                  <LucideHeartHandshake />
-                  <TypographySmall className="font-medium">
-                    {employeeName} and your company like each other.
-                  </TypographySmall>
-                </div>
-              ),
+            toast.success("It's a match!", {
+              description: `${employeeName} and your company like each other.`,
             });
             countCurrentCompanyMatching(companyId);
             setTimeout(() => router.push("/matching"), 800);
           } else {
-            toast({
-              variant: "success",
-              description: (
-                <div className="flex items-center gap-2">
-                  <LucideHeartHandshake />
-                  <TypographySmall className="font-medium">
-                    You liked {employeeName}.
-                  </TypographySmall>
-                </div>
-              ),
-            });
+            toast.success(`You liked ${employeeName}.`);
             setTimeout(() => router.push("/feed"), 800);
           }
         }
       } catch (error) {
         const err = companyLikeStore.error || "Failed to like employee";
-        toast({ variant: "destructive", title: "Error", description: err });
+        toast.error(err);
       } finally {
         queryCurrentCompanyLiked(companyId);
       }
@@ -240,21 +220,11 @@ export default function EmployeeDetailPage() {
           employeeId,
         );
         countAllCompanyFavoritesStore.countAllCompanyFavorites(companyId);
-        toast({
-          variant: "success",
-          description: (
-            <div className="flex items-center gap-2">
-              <LucideBookMarked />
-              <TypographySmall className="font-medium">
-                {employeeName} added to favorites.
-              </TypographySmall>
-            </div>
-          ),
-        });
+        toast.success(`${employeeName} added to favorites.`);
         getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyId);
       } catch (error) {
         const err = companyFavEmployeeStore.error || "Failed to save employee.";
-        toast({ title: "Error", description: err, variant: "destructive" });
+        toast.error(err);
       }
     }
   };

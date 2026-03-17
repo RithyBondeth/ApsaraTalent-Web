@@ -6,11 +6,10 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
 import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
-import { ToastAction } from "@/components/ui/toast";
+import { toast } from "sonner";
 import LabelInput from "@/components/utils/label-input";
 import Tag from "@/components/utils/tag";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { useToast } from "@/hooks/use-toast";
 import { availabilityConstant } from "@/utils/constants/app.constant";
 import { getRandomBadgeColor } from "@/utils/extensions/get-random-badge-color";
 import { Popover } from "@radix-ui/react-popover";
@@ -22,7 +21,6 @@ import { IOpenPositionFormProps } from "./props";
 export default function OpenPositionForm(props: IOpenPositionFormProps) {
   // Utils
   const { register, control, getValues, setValue } = props.form;
-  const { toast } = useToast();
 
   // Skill States
   const initialSkill = getValues(`openPositions.${props.index}.skills`) || "";
@@ -44,11 +42,9 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
     );
 
     if (alreadyExists) {
-      toast({
-        variant: "destructive",
-        title: "Duplicated Skill",
+      toast.error("Duplicated Skill", {
         description: "This skill already exists.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
+        action: { label: "Try again", onClick: () => {} },
       });
       setSkillInput(null);
       setOpenSkillPopOver(false);
