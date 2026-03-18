@@ -141,6 +141,18 @@ export default function CollapseSidebar({
     return { name: "", email: "", avatar: "" };
   }, [isEmployee, isCompany, user]);
 
+  // Badge count per URL
+  const getBadgeCount = useCallback(
+    (url: string): number => {
+      if (url === "/matching") return matchingCount;
+      if (url === "/favorite") return favoriteCount;
+      if (url === "/message") return unreadMessages;
+      if (url === "/notification") return unreadNotifications;
+      return 0;
+    },
+    [matchingCount, favoriteCount, unreadMessages, unreadNotifications],
+  );
+
   // Check if a path is active
   const isPathActive = useCallback(
     (url: string) => pathname === url || pathname.startsWith(`${url}/`),
@@ -193,10 +205,15 @@ export default function CollapseSidebar({
                     >
                       <Link href={resolveUrl(item.url)} prefetch={true}>
                         {item.icon && (
-                          <item.icon
-                            className="!size-6 group-data-[collapsible=icon]:pr-1"
-                            strokeWidth={1.5}
-                          />
+                          <span className="relative shrink-0">
+                            <item.icon
+                              className="!size-6 group-data-[collapsible=icon]:pr-1"
+                              strokeWidth={1.5}
+                            />
+                            {!open && getBadgeCount(item.url) > 0 && (
+                              <span className="absolute -top-1 -right-1 size-2 rounded-full bg-red-500" />
+                            )}
+                          </span>
                         )}
                         <span>{getSidebarTitle(item.title)}</span>
                         {item.url === "/matching" && (
