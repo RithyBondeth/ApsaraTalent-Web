@@ -45,7 +45,6 @@ export function CallOverlay({
   caller,
   callee,
   isMuted,
-  callStartedAt,
   remoteStream,
   onMute,
   onEnd,

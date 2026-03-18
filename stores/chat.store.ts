@@ -70,13 +70,9 @@ const resolvePreview = (chat: any, currentUserId: string) => {
       ? chat.sender
       : chat.sender?.id || chat.senderId;
   const isSenderMe =
-    senderId &&
-    senderId.toLowerCase() === currentUserId.toLowerCase();
-  const senderProfile =
-    typeof chat?.sender === "string" ? null : chat?.sender;
-  const senderName = isSenderMe
-    ? "You"
-    : resolveProfile(senderProfile).name;
+    senderId && senderId.toLowerCase() === currentUserId.toLowerCase();
+  const senderProfile = typeof chat?.sender === "string" ? null : chat?.sender;
+  const senderName = isSenderMe ? "You" : resolveProfile(senderProfile).name;
 
   const base = resolveMessageSnippet(chat) || "No messages yet";
 
@@ -316,7 +312,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 time: newTime,
                 isRead: isActiveChatOpen ? true : isFromMe ? c.isRead : false,
                 lastMessageSenderId: message.senderId,
-                unread: isNewUnread ? (c.unread ?? 0) + 1 : c.unread ?? 0,
+                unread: isNewUnread ? (c.unread ?? 0) + 1 : (c.unread ?? 0),
               };
             }),
             // Bump total unread count immediately for the sidebar badge
@@ -380,7 +376,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
               timestamp: parseMessageDate(message.timestamp || message.sentAt),
               isRead: message.isRead,
               isMe: true,
-              messageType: message.messageType ?? updatedMessages[optimisticIndex].messageType,
+              messageType:
+                message.messageType ??
+                updatedMessages[optimisticIndex].messageType,
               reactions: message.reactions || {},
               isDeleted: message.isDeleted ?? false,
               isEdited: message.isEdited ?? false,
@@ -477,32 +475,35 @@ export const useChatStore = create<ChatState>((set, get) => ({
     // When the recipient opens a chat and reads the last message, the server
     // fires 'messageRead' back to the sender. We upgrade deliveryStatus → 'seen'
     // and set isRead=true on the local message so the ✓✓ turns blue.
-    socket.on("messageRead", (data: { messageId: string; readerId?: string }) => {
-      const { currentMessages, activeChat } = get();
+    socket.on(
+      "messageRead",
+      (data: { messageId: string; readerId?: string }) => {
+        const { currentMessages, activeChat } = get();
 
-      // Update the message bubble: delivery status → "seen", isRead → true
-      const msg = currentMessages.find((m) => m.id === data.messageId);
-      if (msg) {
-        set({
-          currentMessages: currentMessages.map((m) =>
-            m.id === data.messageId
-              ? { ...m, isRead: true, deliveryStatus: "seen" }
-              : m,
-          ),
-        });
-      }
+        // Update the message bubble: delivery status → "seen", isRead → true
+        const msg = currentMessages.find((m) => m.id === data.messageId);
+        if (msg) {
+          set({
+            currentMessages: currentMessages.map((m) =>
+              m.id === data.messageId
+                ? { ...m, isRead: true, deliveryStatus: "seen" }
+                : m,
+            ),
+          });
+        }
 
-      // Also patch the sidebar row so the ✓✓ tick turns green instantly
-      // and the bold/unread indicator clears for the reader's side
-      const readerId = data.readerId ?? activeChat?.id;
-      if (readerId) {
-        set((state) => ({
-          activeChats: state.activeChats.map((c) =>
-            c.id === readerId ? { ...c, isRead: true, unread: 0 } : c,
-          ),
-        }));
-      }
-    });
+        // Also patch the sidebar row so the ✓✓ tick turns green instantly
+        // and the bold/unread indicator clears for the reader's side
+        const readerId = data.readerId ?? activeChat?.id;
+        if (readerId) {
+          set((state) => ({
+            activeChats: state.activeChats.map((c) =>
+              c.id === readerId ? { ...c, isRead: true, unread: 0 } : c,
+            ),
+          }));
+        }
+      },
+    );
 
     // ── Online / offline status ─────────────────────────────────────────────
     // Server emits 'userStatus' on every connect and disconnect.
@@ -640,7 +641,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
   ) => {
     const { socket, currentMessages, me } = get();
     if (!socket?.connected) {
-      console.warn("[Chat] sendMessage: socket not connected — message not sent");
+      console.warn(
+        "[Chat] sendMessage: socket not connected — message not sent",
+      );
       return false;
     }
 
@@ -990,21 +993,17 @@ export const useChatStore = create<ChatState>((set, get) => ({
   setActiveChat: (chat: IChatPreview | null) => {
     const prevChat = get().activeChat;
     const isSameChat =
-      chat &&
-      prevChat &&
-      prevChat.id.toLowerCase() === chat.id.toLowerCase();
+      chat && prevChat && prevChat.id.toLowerCase() === chat.id.toLowerCase();
 
     // Fetch history when:
     //  (a) switching to a new/different chat, OR
     //  (b) same chat but currentMessages is empty (reconnect wiped them)
     const isNewChat = chat && !isSameChat;
-    const needsRefetch =
-      isSameChat && get().currentMessages.length === 0;
+    const needsRefetch = isSameChat && get().currentMessages.length === 0;
 
     // Guard: if we're already loading this exact chat (e.g. URL sync called setActiveChat
     // twice for the same chatId), don't start a second concurrent getChatHistory request.
-    const alreadyLoadingThisChat =
-      isSameChat && get().isHistoryLoading;
+    const alreadyLoadingThisChat = isSameChat && get().isHistoryLoading;
 
     if (!chat) {
       // Clearing the active chat — reset all related state atomically
@@ -1068,9 +1067,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         set((state) => ({
           // Clear unread count + set isRead on the active chat row
           activeChats: state.activeChats.map((c) =>
-            c.id === activeChat.id
-              ? { ...c, isRead: true, unread: 0 }
-              : c,
+            c.id === activeChat.id ? { ...c, isRead: true, unread: 0 } : c,
           ),
           // Mark all incoming messages as read in the open conversation
           currentMessages: state.currentMessages.map((m) =>

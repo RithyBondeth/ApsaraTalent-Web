@@ -24,7 +24,6 @@ export default function SkillReferenceStepForm({
   errors,
   setValue,
   getValues,
-  register,
   trigger,
 }: IStepFormProps<TEmployeeSignUp>) {
   // Skill Helpers

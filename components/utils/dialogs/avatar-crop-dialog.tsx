@@ -46,7 +46,7 @@ export default function AvatarCropDialog({
     null,
   );
 
-  const handleCropComplete = (_: any, croppedPixels: CropArea) => {
+  const handleCropComplete = (_: unknown, croppedPixels: CropArea) => {
     setCroppedAreaPixels(croppedPixels);
   };
 

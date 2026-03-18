@@ -800,7 +800,7 @@ export default function EmployeeProfilePage() {
         if (dirtyFields?.basicInfo?.[key]) {
           const val = data.basicInfo?.[key];
           // Serialize dob Date to ISO string for the API
-          (updateBody as any)[key] =
+          (updateBody as Record<string, unknown>)[key] =
             val instanceof Date ? val.toISOString() : val;
         }
       });
@@ -813,7 +813,7 @@ export default function EmployeeProfilePage() {
 
       accountKeys.forEach((key) => {
         if (dirtyFields?.accountSetting?.[key]) {
-          (updateBody as any)[key] = data.accountSetting?.[key];
+          (updateBody as Record<string, unknown>)[key] = data.accountSetting?.[key];
         }
       });
 
@@ -835,10 +835,10 @@ export default function EmployeeProfilePage() {
                 : undefined;
 
             if (num !== undefined && !Number.isNaN(num)) {
-              (updateBody as any).yearsOfExperience = num;
+              (updateBody as Record<string, unknown>).yearsOfExperience = num;
             }
           } else {
-            (updateBody as any)[key] = (data.profession as any)?.[key];
+            (updateBody as Record<string, unknown>)[key] = (data.profession as Record<string, unknown>)?.[key];
           }
         }
       });
@@ -944,7 +944,7 @@ export default function EmployeeProfilePage() {
       }
 
       /* ------------------------ FILE UPLOADS ------------------------ */
-      const uploadTasks: Promise<any>[] = [];
+      const uploadTasks: Promise<unknown>[] = [];
 
       const avatarFileToUpload = data.basicInfo?.avatar;
       const resumeFileToUpload = data.references?.resume;
@@ -1396,15 +1396,15 @@ export default function EmployeeProfilePage() {
                           defaultValue:
                             (form.getValues(
                               `experiences.${index}.startDate`,
-                            ) as any) ?? new Date(),
+                            ) as unknown as Date) ?? new Date(),
                           data:
                             (form.watch(
                               `experiences.${index}.startDate`,
-                            ) as any) ?? new Date(),
+                            ) as unknown as Date) ?? new Date(),
                           onDataChange: (date) => {
                             form.setValue(
                               `experiences.${index}.startDate`,
-                              date as any,
+                              date as unknown as Date,
                               { shouldDirty: true, shouldTouch: true },
                             );
                           },
@@ -1413,15 +1413,15 @@ export default function EmployeeProfilePage() {
                           defaultValue:
                             (form.getValues(
                               `experiences.${index}.endDate`,
-                            ) as any) ?? new Date(),
+                            ) as unknown as Date) ?? new Date(),
                           data:
                             (form.watch(
                               `experiences.${index}.endDate`,
-                            ) as any) ?? new Date(),
+                            ) as unknown as Date) ?? new Date(),
                           onDataChange: (date) => {
                             form.setValue(
                               `experiences.${index}.endDate`,
-                              date as any,
+                              date as unknown as Date,
                               {
                                 shouldDirty: true,
                                 shouldTouch: true,
@@ -1532,16 +1532,16 @@ export default function EmployeeProfilePage() {
                           defaultValue:
                             (form.getValues(
                               `educations.${index}.year`,
-                            ) as any) ?? new Date(),
+                            ) as unknown as Date) ?? new Date(),
 
                           data:
                             (form.getValues(
                               `educations.${index}.year`,
-                            ) as any) ?? new Date(),
+                            ) as unknown as Date) ?? new Date(),
                           onDataChange: (date) => {
                             form.setValue(
                               `educations.${index}.year`,
-                              date as any,
+                              date as unknown as number,
                               { shouldDirty: true, shouldTouch: true },
                             );
                           },

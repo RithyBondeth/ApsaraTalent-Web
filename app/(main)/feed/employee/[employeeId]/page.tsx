@@ -37,7 +37,6 @@ import { TPlatform } from "@/utils/types/platform.type";
 import {
     LucideAtSign,
     LucideBookmark,
-    LucideBookMarked,
     LucideBriefcaseBusiness,
     LucideCalendar,
     LucideClock,
@@ -194,7 +193,7 @@ export default function EmployeeDetailPage() {
             setTimeout(() => router.push("/feed"), 800);
           }
         }
-      } catch (error) {
+      } catch {
         const err = companyLikeStore.error || "Failed to like employee";
         toast.error(err);
       } finally {
@@ -222,7 +221,7 @@ export default function EmployeeDetailPage() {
         countAllCompanyFavoritesStore.countAllCompanyFavorites(companyId);
         toast.success(`${employeeName} added to favorites.`);
         getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyId);
-      } catch (error) {
+      } catch {
         const err = companyFavEmployeeStore.error || "Failed to save employee.";
         toast.error(err);
       }

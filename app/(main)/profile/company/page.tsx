@@ -778,7 +778,7 @@ export default function ProfilePage() {
 
       basicInfoKeys.forEach((key) => {
         if (dirtyFields?.basicInfo?.[key]) {
-          (updateBody as any)[key] = data.basicInfo?.[key];
+          (updateBody as Record<string, unknown>)[key] = data.basicInfo?.[key];
         }
       });
 
@@ -790,7 +790,7 @@ export default function ProfilePage() {
 
       accountKeys.forEach((key) => {
         if (dirtyFields?.accountSetting?.[key]) {
-          (updateBody as any)[key] = data.accountSetting?.[key];
+          (updateBody as Record<string, unknown>)[key] = data.accountSetting?.[key];
         }
       });
 
@@ -800,7 +800,7 @@ export default function ProfilePage() {
         Array.isArray(data.openPositions)
       ) {
         const updatedPositions = data.openPositions.map((pos) => {
-          const updatedPos: Record<string, any> = {};
+          const updatedPos: Record<string, unknown> = {};
 
           if (pos.uuid) updatedPos.id = pos.uuid;
           if (!pos.uuid) updatedPos.isNew = true;
@@ -821,6 +821,7 @@ export default function ProfilePage() {
         });
 
         if (updatedPositions.length > 0) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           updateBody.openPositions = updatedPositions as any;
         }
       }
@@ -873,7 +874,7 @@ export default function ProfilePage() {
       }
 
       /* ------------------------ FILE UPLOADS ------------------------ */
-      const uploadTasks: Promise<any>[] = [];
+      const uploadTasks: Promise<unknown>[] = [];
 
       const avatarFileToUpload = data.basicInfo?.avatar;
       const coverFileToUpload = data.basicInfo?.cover;
@@ -1338,15 +1339,15 @@ export default function ProfilePage() {
                           defaultValue:
                             (form.getValues(
                               `openPositions.${index}.deadlineDate`,
-                            ) as any) ?? new Date(),
+                            ) as unknown as Date) ?? new Date(),
                           data:
                             (form.getValues(
                               `openPositions.${index}.deadlineDate`,
-                            ) as any) ?? new Date(),
+                            ) as unknown as Date) ?? new Date(),
                           onDataChange: (date) => {
                             form.setValue(
                               `openPositions.${index}.deadlineDate`,
-                              date as any,
+                              date as unknown as Date,
                               {
                                 shouldDirty: true,
                                 shouldTouch: true,

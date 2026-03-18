@@ -102,7 +102,7 @@ export default function MatchingPage() {
         {/* Content Section */}
         <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center tablet-xl:mt-5 px-5">
           <TypographyH2 className="leading-relaxed tablet-xl:text-center">
-            Ready to find your match? Let's make it happen.
+            Ready to find your match? Let&apos;s make it happen.
           </TypographyH2>
           <TypographyH4 className="leading-relaxed tablet-xl:text-center">
             Find Your Perfect Match & Start a Conversation
@@ -111,7 +111,7 @@ export default function MatchingPage() {
             Start chatting, connect instantly, and build your future together.
           </TypographyH4>
           <TypographyMuted className="leading-relaxed tablet-xl:text-center">
-            When companies and talents like each other — it's a match.
+            When companies and talents like each other — it&apos;s a match.
           </TypographyMuted>
         </div>
 

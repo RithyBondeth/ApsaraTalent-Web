@@ -3,7 +3,7 @@ import * as React from "react";
 import type { FieldError, FieldErrorsImpl, Merge } from "react-hook-form";
 import { TypographySmall } from "../utils/typography/typography-small";
 
-type RHFMessage = string | FieldError | Merge<FieldError, FieldErrorsImpl<any>>;
+type RHFMessage = string | FieldError | Merge<FieldError, FieldErrorsImpl<Record<string, unknown>>>;
 
 export interface IInputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "prefix" | "suffix"> {
