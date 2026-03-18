@@ -11,9 +11,14 @@ import { useRouter } from "next/navigation";
 import { INotificationMatchCardProps } from "./props";
 
 export default function NotificationMatchCard(
-  props: INotificationMatchCardProps
+  props: INotificationMatchCardProps,
 ) {
   const router = useRouter();
+
+  const handleViewProfile = () => {
+    if (props.onMarkRead && !props.seen) props.onMarkRead(props.id);
+    router.push(`/feed/${props.role}/${props.user.id}`);
+  };
 
   return (
     <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-lg">
@@ -55,7 +60,7 @@ export default function NotificationMatchCard(
           </div>
           <Button
             className="text-xs tablet-sm:text-[10px]"
-            onClick={() => router.push(`/feed/${props.role}/${props.user.id}`)}
+            onClick={handleViewProfile}
           >
             View Profile
           </Button>

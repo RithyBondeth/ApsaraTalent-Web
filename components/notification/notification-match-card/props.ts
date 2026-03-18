@@ -1,6 +1,7 @@
 import { TUserRole } from "@/utils/types/role.type";
 
 export interface INotificationMatchCardProps {
+  id: string;
   seen: boolean;
   timestamp: string;
   role: TUserRole;
@@ -11,4 +12,5 @@ export interface INotificationMatchCardProps {
     industry: string | null;
     avatar: string;
   };
+  onMarkRead?: (id: string) => void;
 }

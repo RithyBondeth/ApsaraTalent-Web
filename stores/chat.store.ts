@@ -2,6 +2,7 @@ import io from "socket.io-client";
 import { create } from "zustand";
 import { IChatPreview, IMessage } from "@/components/message/props";
 import { formatSidebarTime, parseMessageDate } from "@/utils/date";
+import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 
 type SocketInstance = ReturnType<typeof io>;
 
@@ -285,6 +286,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
       // Always update sidebar/unread regardless of active chat
       getRecentChats();
       getUnreadCount();
+      // Also refresh notification unread count so the sidebar bell badge stays current
+      void useNotificationStore.getState().fetchUnreadCount();
 
       // Only add to current message list if it belongs to the ACTIVE chat
       const isForActiveChat =
@@ -969,7 +972,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   markAsRead: (messageId: string, senderId: string) => {
     const { socket } = get();
-    if (socket?.connected) socket.emit("markAsRead", { messageId, senderId });
+    if (socket?.connected) {
+      socket.emit("markAsRead", { messageId, senderId });
+      // Sync: mark the corresponding chat notification as read so both
+      // Chat.isRead and Notification.isRead stay consistent.
+      useNotificationStore.getState().markReadByChatMessageId(messageId);
+    }
   },
 
   reactToMessage: (

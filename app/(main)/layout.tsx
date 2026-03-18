@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/sidebar";
 import { ThemeProviderClient } from "@/components/utils/themes/theme-provider-client";
 import { TypographyP } from "@/components/utils/typography/typography-p";
+import { usePushNotifications } from "@/hooks/use-push-notifications";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useThemeStore } from "@/stores/themes/theme-store";
 import { sidebarList } from "@/utils/constants/sidebar.constant";
@@ -29,6 +30,8 @@ export default function MainLayout({
   const { theme } = useThemeStore();
   const user = useGetCurrentUserStore((s) => s.user);
   const t = useTranslations("header");
+
+  usePushNotifications();
 
   /**
    * Feed Detail Page

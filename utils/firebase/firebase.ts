@@ -15,4 +15,4 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 const chatDatabase = getFirestore(app);
 
-export { chatDatabase };
+export { chatDatabase, app as firebaseApp };

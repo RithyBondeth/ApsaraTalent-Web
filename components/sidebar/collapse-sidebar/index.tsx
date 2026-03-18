@@ -6,12 +6,14 @@ import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-a
 import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
 import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
 import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
+import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { useChatStore } from "@/stores/chat.store";
 import { sidebarList } from "@/utils/constants/sidebar.constant";
 import { LucideFileUser } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { Collapsible, CollapsibleTrigger } from "../../ui/collapsible";
 import {
     Sidebar,
@@ -65,6 +67,16 @@ export default function CollapseSidebar({
     useCountAllEmployeeFavoritesStore();
   const { totalAllCompanyFavorites, countAllCompanyFavorites } =
     useCountAllCompanyFavoritesStore();
+
+  // Notification & message unread counts
+  const { unreadCount: unreadNotifications, fetchUnreadCount } =
+    useNotificationStore();
+  const unreadMessages = useChatStore((s) => s.unreadCount);
+
+  // Fetch unread notification count on mount (and keep it fresh)
+  useEffect(() => {
+    void fetchUnreadCount();
+  }, [fetchUnreadCount]);
 
   // Handles all ref logic and duplicate prevention
   const { isEmployee, isCompany } = useFetchOnce({
@@ -187,6 +199,12 @@ export default function CollapseSidebar({
                       )}
                       {item.url === "/favorite" && (
                         <CountBadge count={favoriteCount} />
+                      )}
+                      {item.url === "/message" && (
+                        <CountBadge count={unreadMessages} />
+                      )}
+                      {item.url === "/notification" && (
+                        <CountBadge count={unreadNotifications} />
                       )}
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
