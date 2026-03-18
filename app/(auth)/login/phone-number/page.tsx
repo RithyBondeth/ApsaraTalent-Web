@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import LogoComponent from "@/components/utils/logo";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
+
 import { useLoginOTPStore } from "@/stores/apis/auth/login-otp.store";
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 import { zodResolver } from "@hookform/resolvers/zod";

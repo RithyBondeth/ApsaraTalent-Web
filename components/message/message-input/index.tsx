@@ -569,7 +569,7 @@ export default function ChatInput(props: IChatInputProps) {
                     skinTonePosition="none"
                     searchPosition="top"
                     perLine={8}
-                    onEmojiSelect={(emoji: any) =>
+                    onEmojiSelect={(emoji: { native?: string }) =>
                       insertEmoji(emoji?.native ?? "")
                     }
                   />

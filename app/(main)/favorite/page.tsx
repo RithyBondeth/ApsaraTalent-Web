@@ -181,10 +181,10 @@ export default function FavoritePage() {
             Find your favorites at a Glance
           </TypographyH2>
           <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-            Quick access to the companies and talents you've saved
+            Quick access to the companies and talents you&apos;ve saved
           </TypographyH4>
           <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-            Review, connect, and take the next step whenever you're ready
+            Review, connect, and take the next step whenever you&apos;re ready
           </TypographyH4>
           <TypographyMuted className="leading-relaxed tablet-xl:text-center">
             Your personal shortlist — organized in one place.

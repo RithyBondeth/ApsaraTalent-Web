@@ -37,7 +37,6 @@ import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/cou
 import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store";
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
-import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
@@ -276,12 +275,6 @@ export default function FeedPage() {
   );
 
   // Matching stores
-  const queryCurrentEmployeeMatching = useGetCurrentEmployeeMatchingStore(
-    (s) => s.queryCurrentEmployeeMatching,
-  );
-  const queryCurrentCompanyLikedFn = useGetCurrentCompanyLikedStore(
-    (s) => s.queryCurrentCompanyLiked,
-  );
   const countCurrentEmployeeMatching = useCountCurrentEmployeeMatchingStore(
     (s) => s.countCurrentEmployeeMatching,
   );
@@ -427,7 +420,7 @@ export default function FeedPage() {
         countAllEmployeeFavorites(employeeID);
         toast.success(`${companyName} added to favorites.`);
         await queryAllEmployeeFavorites(employeeID);
-      } catch (error) {
+      } catch {
         toast.error(empFavError || "Failed to save company to favorites.");
       }
     },
@@ -448,7 +441,7 @@ export default function FeedPage() {
         countAllCompanyFavorites(companyID);
         toast.success(`${employeeName} added to favorites.`);
         await queryAllCompanyFavorites(companyID);
-      } catch (error) {
+      } catch {
         toast.error(cmpFavError || "Failed to save employee");
       }
     },
