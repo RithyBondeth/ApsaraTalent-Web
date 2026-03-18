@@ -1,4 +1,4 @@
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 import { LanguageProvider } from "@/components/utils/languages/language-provider";
 import { ThemeProvider } from "@/components/utils/themes/theme-provider";
 import type { Metadata } from "next";

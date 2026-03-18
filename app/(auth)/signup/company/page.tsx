@@ -7,12 +7,8 @@ import CompanyCareerScopeStepForm from "@/components/company/company-signup-form
 import CoverCompanyStepForm from "@/components/company/company-signup-form/cover-step";
 import OpenPositionStepForm from "@/components/company/company-signup-form/open-position-step";
 import { Button } from "@/components/ui/button";
-import { ToastAction } from "@/components/ui/toast";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { useToast } from "@/hooks/use-toast";
 import { useCompanySignupStore } from "@/stores/apis/auth/company-signup.store";
 import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
@@ -23,12 +19,8 @@ import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cov
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-    LucideArrowLeft,
-    LucideArrowRight,
-    LucideCheck,
-    LucideInfo
-} from "lucide-react";
+import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -37,7 +29,6 @@ import { companySignupSchema, TCompanySignup } from "./validation";
 export default function CompanySignup() {
   // Utils
   const router = useRouter();
-  const { toast, dismiss } = useToast();
 
   // Company Form Helpers
   const [step, setStep] = useState<number>(1);
@@ -268,33 +259,14 @@ export default function CompanySignup() {
       !uploadAvatar.loading &&
       !uploadCover.loading
     ) {
-      dismiss();
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <LucideCheck />
-            <TypographySmall className="font-medium leading-relaxed">
-              {cmpSignup.message}
-            </TypographySmall>
-          </div>
-        ),
-        duration: 1000,
-      });
+      toast.dismiss();
+      toast.success(cmpSignup.message ?? "Signup successful!", { duration: 1000 });
       setTimeout(() => router.replace("/login"), 1000);
     }
 
     if (cmpSignup.loading || uploadAvatar.loading || uploadCover.loading) {
-      dismiss();
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <ApsaraLoadingSpinner size={40} loop />
-            <TypographySmall className="font-medium">
-              Loading...
-            </TypographySmall>
-          </div>
-        ),
-      });
+      toast.dismiss();
+      toast.loading("Loading...");
     }
 
     const errorList = [
@@ -305,18 +277,9 @@ export default function CompanySignup() {
 
     errorList.forEach(({ error, message }) => {
       if (error) {
-        dismiss();
-        toast({
-          variant: "destructive",
-          description: (
-            <div className="flex items-center gap-2">
-              <LucideInfo />
-              <TypographySmall className="font-medium leading-relaxed">
-                {message}
-              </TypographySmall>
-            </div>
-          ),
-          action: <ToastAction altText="Try again">Retry</ToastAction>,
+        toast.dismiss();
+        toast.error(message ?? "An error occurred", {
+          action: { label: "Retry", onClick: () => {} },
         });
       }
     });

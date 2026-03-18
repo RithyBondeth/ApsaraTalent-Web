@@ -10,20 +10,19 @@ import EmployeeCard from "@/components/employee/employee-card";
 import EmployeeCardSkeleton from "@/components/employee/employee-card/skeleton";
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogFooter,
-    DialogTitle
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import ImagePopup from "@/components/utils/image-popup";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { usePreloadImages } from "@/hooks/use-cached-image";
 import { useFetchOnce } from "@/hooks/use-fetch-once";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useGetAllCompanyStore } from "@/stores/apis/company/get-all-cmp.store";
 import { useGetAllEmployeeStore } from "@/stores/apis/employee/get-all-emp.store";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
@@ -42,11 +41,16 @@ import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-c
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
-import { LucideBookMarked, LucideX } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import BannerSkeleton from "./banner-skeleton";
 
 // Module-level Cache For Global Data (survives Strict Mode)
@@ -55,9 +59,108 @@ const globalFetchCache = {
   employees: false,
 };
 
+// ---------------------------------------------------------------------------
+// Memoized card wrappers — stable identity prevents full list re-renders
+// ---------------------------------------------------------------------------
+type CompanyFeedCardProps = {
+  company: ICompany;
+  employeeId: string;
+  isLiking: boolean;
+  isFavorite: boolean;
+  onView: (id: string) => void;
+  onLike: (employeeId: string, companyId: string) => void;
+  onSave: (employeeId: string, companyId: string, name: string) => void;
+  onProfileImageClick: (e: React.MouseEvent) => void;
+  onSetProfileImage: (url: string) => void;
+};
+
+const CompanyFeedCard = React.memo(function CompanyFeedCard({
+  company,
+  employeeId,
+  isLiking,
+  isFavorite,
+  onView,
+  onLike,
+  onSave,
+  onProfileImageClick,
+  onSetProfileImage,
+}: CompanyFeedCardProps) {
+  return (
+    <div
+      className={`break-inside-avoid mb-5${isLiking ? " animate-card-pop-shrink" : ""}`}
+    >
+      <CompanyCard
+        {...company}
+        id={company.id}
+        onViewClick={() => onView(company.id)}
+        onSaveClick={() =>
+          onSave(employeeId, company.id, company.name ?? "Company")
+        }
+        hideSaveButton={isFavorite}
+        onLikeClick={() => onLike(employeeId, company.id)}
+        onLikeClickDisable={isLiking}
+        onProfileImageClick={(e: React.MouseEvent) => {
+          if (company.avatar) {
+            onProfileImageClick(e);
+            onSetProfileImage(company.avatar);
+          }
+        }}
+      />
+    </div>
+  );
+});
+
+type EmployeeFeedCardProps = {
+  employee: IEmployee;
+  companyId: string;
+  isLiking: boolean;
+  isFavorite: boolean;
+  onView: (id: string) => void;
+  onLike: (companyId: string, employeeId: string) => void;
+  onSave: (companyId: string, employeeId: string, name: string) => void;
+  onProfileImageClick: (e: React.MouseEvent) => void;
+  onSetProfileImage: (url: string) => void;
+};
+
+const EmployeeFeedCard = React.memo(function EmployeeFeedCard({
+  employee,
+  companyId,
+  isLiking,
+  isFavorite,
+  onView,
+  onLike,
+  onSave,
+  onProfileImageClick,
+  onSetProfileImage,
+}: EmployeeFeedCardProps) {
+  return (
+    <div
+      className={`break-inside-avoid mb-5${isLiking ? " animate-card-pop-shrink" : ""}`}
+    >
+      <EmployeeCard
+        {...employee}
+        id={employee.id}
+        onViewClick={() => onView(employee.id)}
+        onSaveClick={() =>
+          onSave(companyId, employee.id, employee.username ?? "Employee")
+        }
+        hideSaveButton={isFavorite}
+        onLikeClick={() => onLike(companyId, employee.id)}
+        onLikeClickDisable={isLiking}
+        onProfileImageClick={(e: React.MouseEvent) => {
+          if (employee.avatar) {
+            onProfileImageClick(e);
+            onSetProfileImage(employee.avatar);
+          }
+        }}
+      />
+    </div>
+  );
+});
+// ---------------------------------------------------------------------------
+
 export default function FeedPage() {
   // Utils
-  const { toast } = useToast();
   const router = useRouter();
   const [mounted, setMounted] = useState<boolean>(false);
   const { resolvedTheme } = useTheme();
@@ -91,69 +194,133 @@ export default function FeedPage() {
     }
   }, [openProfilePopup]);
 
-  // API Integration
-  // User Stores
-  const currentUser = useGetCurrentUserStore((state) => state.user);
-  const getAllCompanyStore = useGetAllCompanyStore();
-  const getAllEmployeeStore = useGetAllEmployeeStore();
+  // API Integration — field selectors to avoid re-renders from unrelated store changes
+  const currentUser = useGetCurrentUserStore((s) => s.user);
 
-  // Liked Store
-  const employeeLikeStore = useEmployeeLikeStore();
-  const companyLikeStore = useCompanyLikeStore();
-  const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore();
-  const getCurrentCompanyLikedStore = useGetCurrentCompanyLikedStore();
-  // Liked Helper
+  // All Companies / Employees data
+  const companyData = useGetAllCompanyStore((s) => s.companyData);
+  const companyLoading = useGetAllCompanyStore((s) => s.loading);
+  const queryCompany = useGetAllCompanyStore((s) => s.queryCompany);
+
+  const employeesData = useGetAllEmployeeStore((s) => s.employeesData);
+  const employeeLoading = useGetAllEmployeeStore((s) => s.loading);
+  const queryEmployee = useGetAllEmployeeStore((s) => s.queryEmployee);
+
+  // Liked stores
+  const employeeLike = useEmployeeLikeStore((s) => s.employeeLike);
+  const employeeLikeLoading = useEmployeeLikeStore((s) => s.loading);
+  const companyLike = useCompanyLikeStore((s) => s.companyLike);
+  const companyLikeLoading = useCompanyLikeStore((s) => s.loading);
+
+  const currentEmployeeLiked = useGetCurrentEmployeeLikedStore(
+    (s) => s.currentEmployeeLiked,
+  );
+  const currentEmployeeLikedLoading = useGetCurrentEmployeeLikedStore(
+    (s) => s.loading,
+  );
+  const queryCurrentEmployeeLiked = useGetCurrentEmployeeLikedStore(
+    (s) => s.queryCurrentEmployeeLiked,
+  );
+  const optimisticAddEmployeeLiked = useGetCurrentEmployeeLikedStore(
+    (s) => s.optimisticAddLiked,
+  );
+
+  const currentCompanyLiked = useGetCurrentCompanyLikedStore(
+    (s) => s.currentCompanyLiked,
+  );
+  const currentCompanyLikedLoading = useGetCurrentCompanyLikedStore(
+    (s) => s.loading,
+  );
+  const queryCurrentCompanyLiked = useGetCurrentCompanyLikedStore(
+    (s) => s.queryCurrentCompanyLiked,
+  );
+  const optimisticAddCompanyLiked = useGetCurrentCompanyLikedStore(
+    (s) => s.optimisticAddLiked,
+  );
+
+  // Liked helper
   const [likingId, setLikingId] = useState<string | null>(null);
 
-  // Favorite Stores
-  const employeeFavCompanyStore = useEmployeeFavCompanyStore();
-  const companyFavEmployeeStore = useCompanyFavEmployeeStore();
-  const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
-  const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
-  // Count All Employee and Company Favorites To Update Badge In Sidebar
-  const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
-  const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
+  // Favorite stores
+  const addCompanyToFavorite = useEmployeeFavCompanyStore(
+    (s) => s.addCompanyToFavorite,
+  );
+  const empFavError = useEmployeeFavCompanyStore((s) => s.error);
+  // Subscribe to the Set directly so the page re-renders when favorites change
+  const favoriteCompanyIds = useEmployeeFavCompanyStore(
+    (s) => s.favoriteCompanyIds,
+  );
+  const isEmpFavorite = (id: string) => favoriteCompanyIds.has(id);
 
-  // Matching Stores
-  const getCurrentEmployeeMatchingStore = useGetCurrentEmployeeMatchingStore();
-  const getCurrentCompanyMatchingStore = useGetCurrentCompanyLikedStore();
-  // Count All Employee and Company Matching To Update Badge In Sidebar
-  const { countCurrentEmployeeMatching } =
-    useCountCurrentEmployeeMatchingStore();
-  const { countCurrentCompanyMatching } = useCountCurrentCompanyMatchingStore();
+  const addEmployeeToFavorite = useCompanyFavEmployeeStore(
+    (s) => s.addEmployeeToFavorite,
+  );
+  const cmpFavError = useCompanyFavEmployeeStore((s) => s.error);
+  const favoriteEmployeeIds = useCompanyFavEmployeeStore(
+    (s) => s.favoriteEmployeeIds,
+  );
+  const isCmpFavorite = (id: string) => favoriteEmployeeIds.has(id);
+
+  const queryAllEmployeeFavorites = useGetAllEmployeeFavoritesStore(
+    (s) => s.queryAllEmployeeFavorites,
+  );
+  const queryAllCompanyFavorites = useGetAllCompanyFavoritesStore(
+    (s) => s.queryAllCompanyFavorites,
+  );
+
+  const countAllEmployeeFavorites = useCountAllEmployeeFavoritesStore(
+    (s) => s.countAllEmployeeFavorites,
+  );
+  const countAllCompanyFavorites = useCountAllCompanyFavoritesStore(
+    (s) => s.countAllCompanyFavorites,
+  );
+
+  // Matching stores
+  const queryCurrentEmployeeMatching = useGetCurrentEmployeeMatchingStore(
+    (s) => s.queryCurrentEmployeeMatching,
+  );
+  const queryCurrentCompanyLikedFn = useGetCurrentCompanyLikedStore(
+    (s) => s.queryCurrentCompanyLiked,
+  );
+  const countCurrentEmployeeMatching = useCountCurrentEmployeeMatchingStore(
+    (s) => s.countCurrentEmployeeMatching,
+  );
+  const countCurrentCompanyMatching = useCountCurrentCompanyMatchingStore(
+    (s) => s.countCurrentCompanyMatching,
+  );
 
   // Step 1: Fetch All Current Employee or Company Liked - User Specific Data (Reset When User Change)
   const { isEmployee } = useFetchOnce({
     cacheKey: "feed-page",
-    onEmployeeFetch: (employeeId) => {
-      console.log("Querying employee liked inside Feed Page!!!");
-      getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(employeeId);
-    },
-    onCompanyFetch: (companyId) => {
-      console.log("Querying company liked inside Feed Page!!!");
-      getCurrentCompanyLikedStore.queryCurrentCompanyLiked(companyId);
-    },
+    onEmployeeFetch: queryCurrentEmployeeLiked,
+    onCompanyFetch: queryCurrentCompanyLiked,
+  });
+
+  // Stable refs for store methods — prevents useEffect from re-running when
+  // Zustand creates new function references on each render
+  const queryCompanyRef = useRef(queryCompany);
+  const queryEmployeeRef = useRef(queryEmployee);
+  useEffect(() => {
+    queryCompanyRef.current = queryCompany;
+    queryEmployeeRef.current = queryEmployee;
   });
 
   // Step 2: Fetch All Companies or Employees - Global Data (Only Once, Never Resets)
-  // Safe Mode: Fetch Only 1 Time
   useEffect(() => {
     if (!currentUser) return;
 
     if (isEmployee) {
       if (!globalFetchCache.companies) {
-        console.log("Querying all companies inside Feed Page!!!");
-        getAllCompanyStore.queryCompany();
+        queryCompanyRef.current();
         globalFetchCache.companies = true;
       }
     } else {
       if (!globalFetchCache.employees) {
-        console.log("Querying all employees inside Feed Page!!!");
-        getAllEmployeeStore.queryEmployee();
+        queryEmployeeRef.current();
         globalFetchCache.employees = true;
       }
     }
-  }, [isEmployee, currentUser, getAllCompanyStore, getAllEmployeeStore]);
+  }, [isEmployee, currentUser]);
 
   // Step 3: Filter Users Based on Role
   // If User is Employee filter -> Companies (Filter Out Current Employee Liked)
@@ -161,175 +328,147 @@ export default function FeedPage() {
   const allUsers: ICompany[] | IEmployee[] = useMemo(() => {
     if (!currentUser) return [];
 
-    let users: ICompany[] | IEmployee[] = [];
-
     if (isEmployee) {
-      users = getAllCompanyStore.companyData ?? [];
-      const currentEmployeeLiked =
-        getCurrentEmployeeLikedStore.currentEmployeeLiked;
+      const users = companyData ?? [];
       if (currentEmployeeLiked) {
-        users = users.filter((company) => {
-          const companyId = company.id;
-          return (
-            companyId &&
-            !currentEmployeeLiked.some((liked) => liked.id === companyId)
-          );
-        });
+        return users.filter(
+          (company) =>
+            company.id &&
+            !currentEmployeeLiked.some((liked) => liked.id === company.id),
+        );
       }
+      return users;
     } else {
-      users = getAllEmployeeStore.employeesData ?? [];
-      const currentCompanyLiked =
-        getCurrentCompanyLikedStore.currentCompanyLiked;
+      const users = employeesData ?? [];
       if (currentCompanyLiked) {
-        users = users.filter((employee) => {
-          const employeeId = employee.id;
-          return (
-            employeeId &&
-            !currentCompanyLiked.some((liked) => liked.id === employeeId)
-          );
-        });
+        return users.filter(
+          (employee) =>
+            employee.id &&
+            !currentCompanyLiked.some((liked) => liked.id === employee.id),
+        );
       }
+      return users;
     }
-
-    return users;
   }, [
     currentUser,
     isEmployee,
-    getAllCompanyStore.companyData,
-    getAllEmployeeStore.employeesData,
-    getCurrentEmployeeLikedStore.currentEmployeeLiked,
-    getCurrentCompanyLikedStore.currentCompanyLiked,
+    companyData,
+    employeesData,
+    currentEmployeeLiked,
+    currentCompanyLiked,
   ]);
 
   // Handle Employee Like Company
-  const handleEmployeeLikeCompany = async (
-    employeeID: string,
-    companyID: string,
-  ) => {
-    if (!employeeID || !companyID) return;
-    setLikingId(companyID);
-    try {
-      // Employee Liked Company
-      await employeeLikeStore.employeeLike(employeeID, companyID);
-      // Count Current Employee Matching -> Update Matching Badge in Sidebar
-      countCurrentEmployeeMatching(employeeID);
-      setOpenLikeSuccessDialog(true);
-      // Get Current Employee Liked -> Update All Users (Filter Out Current Employee Liked)
-      await getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(employeeID);
-    } finally {
-      setLikingId(null);
-      // Get Current Company Matching -> Update In Matching Page (Incase There's a Matching)
-      getCurrentCompanyMatchingStore.queryCurrentCompanyLiked(companyID);
-    }
-  };
+  const handleEmployeeLikeCompany = useCallback(
+    async (employeeID: string, companyID: string) => {
+      if (!employeeID || !companyID) return;
+      setLikingId(companyID);
+
+      // Optimistic update — remove card instantly before API responds
+      const company = companyData?.find((c) => c.id === companyID);
+      if (company) optimisticAddEmployeeLiked(company);
+
+      try {
+        await employeeLike(employeeID, companyID);
+        countCurrentEmployeeMatching(employeeID);
+        setOpenLikeSuccessDialog(true);
+        // Sync with server to confirm (replaces optimistic state)
+        await queryCurrentEmployeeLiked(employeeID);
+      } finally {
+        setLikingId(null);
+      }
+    },
+    [
+      employeeLike,
+      countCurrentEmployeeMatching,
+      queryCurrentEmployeeLiked,
+      optimisticAddEmployeeLiked,
+      companyData,
+    ],
+  );
 
   // Handle Company Like Employee
-  const handleCompanyLikeEmployee = async (
-    companyID: string,
-    employeeID: string,
-  ) => {
-    if (!companyID || !employeeID) return;
-    setLikingId(employeeID);
-    try {
-      // Company Liked Employee
-      await companyLikeStore.companyLike(companyID, employeeID);
-      // Count Current Company Matching -> Update Matching Badge in Sidebar
-      countCurrentCompanyMatching(companyID);
-      setOpenLikeSuccessDialog(true);
-      // Get Current Company Liked -> Update All Users (Filter Out Current Company Liked)
-      await getCurrentCompanyLikedStore.queryCurrentCompanyLiked(companyID);
-    } finally {
-      setLikingId(null);
-      // Get Current Company Matching -> Update In Matching Page (Incase There's a Matching)
-      getCurrentEmployeeMatchingStore.queryCurrentEmployeeMatching(employeeID);
-    }
-  };
+  const handleCompanyLikeEmployee = useCallback(
+    async (companyID: string, employeeID: string) => {
+      if (!companyID || !employeeID) return;
+      setLikingId(employeeID);
+
+      // Optimistic update — remove card instantly before API responds
+      const employee = employeesData?.find((e) => e.id === employeeID);
+      if (employee) optimisticAddCompanyLiked(employee);
+
+      try {
+        await companyLike(companyID, employeeID);
+        countCurrentCompanyMatching(companyID);
+        setOpenLikeSuccessDialog(true);
+        // Sync with server to confirm (replaces optimistic state)
+        // Bug fix: was calling queryCurrentEmployeeMatching (wrong store) — now correctly
+        // re-fetches the liked list so the filter stays accurate.
+        await queryCurrentCompanyLiked(companyID);
+      } finally {
+        setLikingId(null);
+      }
+    },
+    [
+      companyLike,
+      countCurrentCompanyMatching,
+      queryCurrentCompanyLiked,
+      optimisticAddCompanyLiked,
+      employeesData,
+    ],
+  );
 
   // Handle Employee Favorite Company
-  const handleEmployeeFavoriteCompany = async (
-    employeeID: string,
-    companyID: string,
-    companyName: string,
-  ) => {
-    if (!employeeID || !companyID) return;
-    try {
-      // Employee Favorite Company
-      await employeeFavCompanyStore.addCompanyToFavorite(employeeID, companyID);
-      // Count All Employee Favorite -> Update Favorite Badge In Sidebar
-      countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeID);
-      toast({
-        variant: "success",
-        description: (
-          <div className="flex items-center gap-2">
-            <LucideBookMarked />
-            <TypographySmall className="font-medium leading-relaxed">
-              {companyName} added to favorites.
-            </TypographySmall>
-          </div>
-        ),
-      });
-      // Get All Employee Favorites -> Upddate Favorite Page
-      await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(employeeID);
-    } catch (error) {
-      const err =
-        employeeFavCompanyStore.error || "Failed to save company to favorites.";
-      toast({
-        variant: "destructive",
-        description: (
-          <div className="flex items-center gap-2">
-            <LucideX />
-            <TypographySmall className="font-medium leading-relaxed">
-              {err}
-            </TypographySmall>
-          </div>
-        ),
-      });
-    }
-  };
+  const handleEmployeeFavoriteCompany = useCallback(
+    async (employeeID: string, companyID: string, companyName: string) => {
+      if (!employeeID || !companyID) return;
+      try {
+        await addCompanyToFavorite(employeeID, companyID);
+        countAllEmployeeFavorites(employeeID);
+        toast.success(`${companyName} added to favorites.`);
+        await queryAllEmployeeFavorites(employeeID);
+      } catch (error) {
+        toast.error(empFavError || "Failed to save company to favorites.");
+      }
+    },
+    [
+      addCompanyToFavorite,
+      countAllEmployeeFavorites,
+      queryAllEmployeeFavorites,
+      empFavError,
+    ],
+  );
 
   // Handle Company Favorite Employee
-  const handleCompanyFavoriteEmployee = async (
-    companyID: string,
-    employeeID: string,
-    employeeName: string,
-  ) => {
-    if (!companyID || !employeeID) return;
-    try {
-      // Company Favorite Employee
-      await companyFavEmployeeStore.addEmployeeToFavorite(
-        companyID,
-        employeeID,
-      );
-      // Count All Company Favorite -> Update Favorite Badge In Sidebar
-      countAllCompanyFavoritesStore.countAllCompanyFavorites(companyID);
-      toast({
-        variant: "success",
-        description: (
-          <div className="flex items-center gap-2">
-            <LucideBookMarked />
-            <TypographySmall className="font-medium leading-relaxed">
-              {employeeName} added to favorites.
-            </TypographySmall>
-          </div>
-        ),
-      });
-      // Get All Company Favorites -> Upddate Favorite Page
-      await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyID);
-    } catch (error) {
-      const err = companyFavEmployeeStore.error || "Failed to save employee";
-      toast({
-        variant: "destructive",
-        description: (
-          <div className="flex items-center gap-2">
-            <LucideBookMarked />
-            <TypographySmall className="font-medium leading-relaxed">
-              {err}
-            </TypographySmall>
-          </div>
-        ),
-      });
-    }
-  };
+  const handleCompanyFavoriteEmployee = useCallback(
+    async (companyID: string, employeeID: string, employeeName: string) => {
+      if (!companyID || !employeeID) return;
+      try {
+        await addEmployeeToFavorite(companyID, employeeID);
+        countAllCompanyFavorites(companyID);
+        toast.success(`${employeeName} added to favorites.`);
+        await queryAllCompanyFavorites(companyID);
+      } catch (error) {
+        toast.error(cmpFavError || "Failed to save employee");
+      }
+    },
+    [
+      addEmployeeToFavorite,
+      countAllCompanyFavorites,
+      queryAllCompanyFavorites,
+      cmpFavError,
+    ],
+  );
+
+  // Stable view handlers for memoized cards
+  const handleEmployeeViewCompany = useCallback(
+    (id: string) => router.push(`/feed/company/${id}`),
+    [router],
+  );
+  const handleCompanyViewEmployee = useCallback(
+    (id: string) => router.push(`/feed/employee/${id}`),
+    [router],
+  );
 
   // Preload Profile Avatar For Better Performance (useCachedImage Hook)
   const profileImageUrls = useMemo(() => {
@@ -341,10 +480,8 @@ export default function FeedPage() {
   const isLoading =
     !mounted ||
     !currentUser ||
-    (isEmployee &&
-      (getAllCompanyStore.loading || getCurrentEmployeeLikedStore.loading)) ||
-    (!isEmployee &&
-      (getAllEmployeeStore.loading || getCurrentCompanyLikedStore.loading));
+    (isEmployee && (companyLoading || currentEmployeeLikedLoading)) ||
+    (!isEmployee && (employeeLoading || currentCompanyLikedLoading));
 
   // Get Image Based On Theme
   const feedImage =
@@ -381,6 +518,7 @@ export default function FeedPage() {
             height={300}
             width={400}
             className="tablet-xl:!w-full"
+            priority
           />
         </div>
       ) : (
@@ -405,6 +543,7 @@ export default function FeedPage() {
               height={250}
               width={350}
               className="tablet-xl:!w-full"
+              priority
             />
           ) : (
             <Image
@@ -413,20 +552,31 @@ export default function FeedPage() {
               height={250}
               width={350}
               className="tablet-xl:!w-full"
+              priority
             />
           )}
         </div>
       )}
 
       {/* Feed Card Section */}
-      <div className="w-full grid grid-cols-3 gap-5 laptop-sm:grid-cols-2 tablet-lg:!grid-cols-1 phone-xl:gap-3">
+      <div className="w-full columns-3 gap-5 laptop-sm:columns-2 tablet-lg:!columns-1 phone-xl:gap-3">
         {/* Loading Skeleton Section */}
         {isLoading ? (
           Array.from({ length: 9 }).map((_, index) =>
             isEmployee ? (
-              <CompanyCardSkeleton key={`company-skeleton-${index}`} />
+              <div
+                key={`company-skeleton-${index}`}
+                className="break-inside-avoid mb-5"
+              >
+                <CompanyCardSkeleton />
+              </div>
             ) : (
-              <EmployeeCardSkeleton key={`employee-skeleton-${index}`} />
+              <div
+                key={`employee-skeleton-${index}`}
+                className="break-inside-avoid mb-5"
+              >
+                <EmployeeCardSkeleton />
+              </div>
             ),
           )
         ) : allUsers.length > 0 ? (
@@ -434,89 +584,37 @@ export default function FeedPage() {
           allUsers.map((user) =>
             isEmployee ? (
               // Company Card Section
-              <CompanyCard
+              <CompanyFeedCard
                 key={user.id}
-                {...(user as ICompany)}
-                id={user.id}
-                onViewClick={() => {
-                  router.push(`/feed/company/${user.id}`);
-                }}
-                onSaveClick={() => {
-                  if (currentUser && currentUser.employee) {
-                    const company = user as ICompany;
-
-                    const employeeID = currentUser.employee.id;
-                    const companyID = company.id;
-                    const companyName = company.name;
-                    handleEmployeeFavoriteCompany(
-                      employeeID,
-                      companyID,
-                      companyName ?? "Company",
-                    );
-                  }
-                }}
-                hideSaveButton={employeeFavCompanyStore.isFavorite(user.id)}
-                onLikeClick={() => {
-                  if (currentUser && currentUser.employee) {
-                    const employeeID = currentUser.employee.id;
-                    const companyID = user.id;
-                    handleEmployeeLikeCompany(employeeID, companyID);
-                  }
-                }}
-                onLikeClickDisable={
-                  user.id === likingId && employeeLikeStore.loading
-                }
-                onProfileImageClick={(e: React.MouseEvent) => {
-                  if (user.avatar) {
-                    handleClickProfilePopup(e);
-                    setCurrentProfileImage(user.avatar);
-                  }
-                }}
+                company={user as ICompany}
+                employeeId={currentUser?.employee?.id ?? ""}
+                isLiking={user.id === likingId && employeeLikeLoading}
+                isFavorite={isEmpFavorite(user.id)}
+                onView={handleEmployeeViewCompany}
+                onLike={handleEmployeeLikeCompany}
+                onSave={handleEmployeeFavoriteCompany}
+                onProfileImageClick={handleClickProfilePopup}
+                onSetProfileImage={setCurrentProfileImage}
               />
             ) : (
               // Employee Card Section
-              <EmployeeCard
+              <EmployeeFeedCard
                 key={user.id}
-                {...(user as IEmployee)}
-                id={user.id}
-                onSaveClick={async () => {
-                  if (currentUser && currentUser.company) {
-                    const employee = user as IEmployee;
-
-                    const companyID = currentUser.company.id;
-                    const employeeID = employee.id;
-                    const employeeName = employee.username;
-                    handleCompanyFavoriteEmployee(
-                      companyID,
-                      employeeID,
-                      employeeName ?? "Employee",
-                    );
-                  }
-                }}
-                hideSaveButton={companyFavEmployeeStore.isFavorite(user.id)}
-                onViewClick={() => router.push(`/feed/employee/${user.id}`)}
-                onLikeClick={() => {
-                  if (currentUser && currentUser.company) {
-                    const companyID = currentUser.company.id;
-                    const employeeID = user.id;
-                    handleCompanyLikeEmployee(companyID, employeeID);
-                  }
-                }}
-                onLikeClickDisable={
-                  user.id === likingId && companyLikeStore.loading
-                }
-                onProfileImageClick={(e: React.MouseEvent) => {
-                  if (user.avatar) {
-                    handleClickProfilePopup(e);
-                    setCurrentProfileImage(user.avatar);
-                  }
-                }}
+                employee={user as IEmployee}
+                companyId={currentUser?.company?.id ?? ""}
+                isLiking={user.id === likingId && companyLikeLoading}
+                isFavorite={isCmpFavorite(user.id)}
+                onView={handleCompanyViewEmployee}
+                onLike={handleCompanyLikeEmployee}
+                onSave={handleCompanyFavoriteEmployee}
+                onProfileImageClick={handleClickProfilePopup}
+                onSetProfileImage={setCurrentProfileImage}
               />
             ),
           )
         ) : (
           // No User Available Section
-          <div className="col-span-3 laptop-sm:col-span-2 tablet-lg:col-span-1 flex flex-col items-center justify-center my-16">
+          <div className="flex flex-col items-center justify-center my-16">
             <Image src={emptySvgImage} alt="empty" height={200} width={200} />
             <TypographyP className="!m-0">No user available</TypographyP>
           </div>

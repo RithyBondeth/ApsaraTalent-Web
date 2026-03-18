@@ -4,17 +4,15 @@ import phoneNumberWhiteSvg from "@/assets/svg/phone-number-white.svg";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { ToastAction } from "@/components/ui/toast";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import LogoComponent from "@/components/utils/logo";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { useToast } from "@/hooks/use-toast";
 import { useLoginOTPStore } from "@/stores/apis/auth/login-otp.store";
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LucideCheck, LucideInfo, LucidePhone } from "lucide-react";
+import { LucidePhone } from "lucide-react";
+import { toast } from "sonner";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -24,7 +22,6 @@ import { phoneLoginSchema, TPhoneLoginForm } from "./validation";
 export default function PhoneNumberPage() {
   // Utils
   const router = useRouter();
-  const { toast, dismiss } = useToast();
 
   // Phone OTP Helpers
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
@@ -60,50 +57,17 @@ export default function PhoneNumberPage() {
     if (!isSubmitted) return;
 
     if (isSuccess) {
-      dismiss();
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <LucideCheck />
-            <TypographySmall className="font-medium leading-relaxed">
-              {message}
-            </TypographySmall>
-          </div>
-        ),
-        duration: 1000,
-      });
+      toast.dismiss();
+      toast.success(message ?? "OTP sent!", { duration: 1000 });
       setTimeout(() => router.replace("/login/phone-number/phone-otp"), 1000);
     }
 
-    if (loading)
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <ApsaraLoadingSpinner size={40} loop />
-            <TypographySmall className="font-medium">
-              Logging in...
-            </TypographySmall>
-          </div>
-        ),
-      });
+    if (loading) toast.loading("Logging in...");
 
     if (error) {
-      dismiss();
-      toast({
-        variant: "destructive",
-        description: (
-          <div className="flex flex-row items-center gap-2">
-            <LucideInfo />
-            <TypographySmall className="font-medium leading-relaxed">
-              {message}
-            </TypographySmall>
-          </div>
-        ),
-        action: (
-          <ToastAction altText="Try again" onClick={() => reset()}>
-            Retry
-          </ToastAction>
-        ),
+      toast.dismiss();
+      toast.error(message ?? "An error occurred", {
+        action: { label: "Retry", onClick: () => reset() },
       });
     }
   }, [error, loading, isSuccess, message, isSubmitted]);

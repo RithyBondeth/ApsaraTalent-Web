@@ -6,12 +6,8 @@ import ExperienceStepForm from "@/components/employee/employee-signup-form/exper
 import ProfessionStepForm from "@/components/employee/employee-signup-form/profession-step";
 import SkillReferenceStepForm from "@/components/employee/employee-signup-form/skill-reference-step";
 import { Button } from "@/components/ui/button";
-import { ToastAction } from "@/components/ui/toast";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { useToast } from "@/hooks/use-toast";
 import { useEmployeeSignupStore } from "@/stores/apis/auth/employee-signup.store";
 import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
@@ -24,12 +20,8 @@ import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-sign
 import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
 import { TGender } from "@/utils/types/gender.type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-    LucideArrowLeft,
-    LucideArrowRight,
-    LucideCheck,
-    LucideInfo
-} from "lucide-react";
+import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -38,7 +30,6 @@ import { employeeSignUpSchema, TEmployeeSignUp } from "./validation";
 export default function EmployeeSignup() {
   // Utils
   const router = useRouter();
-  const { toast, dismiss } = useToast();
 
   // Employee Form Helpers
   const [step, setStep] = useState<number>(1);
@@ -155,6 +146,7 @@ export default function EmployeeSignup() {
             password: basicSignupData.password ?? null,
             firstname: basicSignupData.firstName ?? null,
             lastname: basicSignupData.lastName ?? null,
+            dob: basicSignupData.dob ?? undefined,
             username: basicSignupData.username ?? null,
             gender: (basicSignupData.gender as TGender) ?? ("other" as TGender),
             job: data.profession.job,
@@ -230,6 +222,7 @@ export default function EmployeeSignup() {
             password: null,
             firstname: null,
             lastname: null,
+            dob: undefined,
             username: null,
             gender: "other" as TGender,
             job: data.profession.job,
@@ -308,16 +301,8 @@ export default function EmployeeSignup() {
       !uploadCoverLetter.loading &&
       !uploadResume.loading
     ) {
-      dismiss();
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <LucideCheck />
-            <TypographySmall className="font-medium leading-relaxed">
-              {empSignup.message}
-            </TypographySmall>
-          </div>
-        ),
+      toast.dismiss();
+      toast.success(empSignup.message ?? "Signup successful!", {
         duration: 1000,
       });
       setTimeout(() => router.replace("/login"), 1000);
@@ -330,17 +315,8 @@ export default function EmployeeSignup() {
       uploadCoverLetter.loading ||
       uploadResume.loading
     ) {
-      dismiss();
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <ApsaraLoadingSpinner size={40} loop />
-            <TypographySmall className="font-medium">
-              Loading...
-            </TypographySmall>
-          </div>
-        ),
-      });
+      toast.dismiss();
+      toast.loading("Loading...");
     }
 
     const errorList = [
@@ -352,18 +328,9 @@ export default function EmployeeSignup() {
 
     errorList.forEach(({ error, message }) => {
       if (error) {
-        dismiss();
-        toast({
-          variant: "destructive",
-          description: (
-            <div className="flex items-center gap-2">
-              <LucideInfo />
-              <TypographySmall className="font-medium leading-relaxed">
-                {message}
-              </TypographySmall>
-            </div>
-          ),
-          action: <ToastAction altText="Try again">Retry</ToastAction>,
+        toast.dismiss();
+        toast.error(message ?? "An error occurred", {
+          action: { label: "Retry", onClick: () => {} },
         });
       }
     });

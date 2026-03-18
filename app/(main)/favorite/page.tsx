@@ -14,21 +14,17 @@ import FavoriteCompanyCardSkeleton from "@/components/favorite/company-favorite-
 import FavoriteEmployeeCard from "@/components/favorite/employee-favorite-card";
 import FavoriteEmployeeCardSkeleton from "@/components/favorite/employee-favorite-card/skeleton";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useFetchOnce } from "@/hooks/use-fetch-once";
-import { useToast } from "@/hooks/use-toast";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
 import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
 import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
 import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { LucideBookmarkX } from "lucide-react";
+import { useCallback, useState } from "react";
+import { toast } from "sonner";
 import FavoriteBannerSkeleton from "./banner-skeleton";
 
 export default function FavoritePage() {
-  // Utils
-  const { toast } = useToast();
-
   // API Integration
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
@@ -37,6 +33,9 @@ export default function FavoritePage() {
   const companyFavEmployeeStore = useCompanyFavEmployeeStore();
   const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
   const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
+
+  // Track IDs that are currently being removed (for animation)
+  const [removingFavIds, setRemovingFavIds] = useState<Set<string>>(new Set());
 
   // Use Custom Hook - Handles all ref logic and duplicate prevention
   const { isEmployee } = useFetchOnce({
@@ -49,89 +48,98 @@ export default function FavoritePage() {
     },
   });
 
+  // Animate then remove helper
+  const animateThenRemove = useCallback(
+    (favId: string, removeFn: () => Promise<void>) => {
+      // Start card-pop-shrink animation
+      setRemovingFavIds((prev) => new Set(prev).add(favId));
+      // After animation completes (400ms), run the actual removal
+      setTimeout(async () => {
+        try {
+          await removeFn();
+        } finally {
+          setRemovingFavIds((prev) => {
+            const next = new Set(prev);
+            next.delete(favId);
+            return next;
+          });
+        }
+      }, 400);
+    },
+    [],
+  );
+
   // Handle Employee Remove Company From Favorite
-  const handleEmployeeRemoveCompanyFromFavorite = async (
-    employeeID: string,
-    companyID: string,
-    favoriteID: string,
-    companyName: string,
-  ) => {
-    if (!employeeID || !companyID || !favoriteID) return;
-    try {
-      // Employee Favorited Company Function
-      await employeeFavCompanyStore.removeCompanyFromFavorite(
-        employeeID,
-        companyID,
-        favoriteID,
-      );
-      // Count All Employee Favorites To See New Update
-      countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeID);
-      toast({
-        variant: "success",
-        description: (
-          <div className="flex items-center gap-2">
-            <LucideBookmarkX />
-            <TypographySmall className="font-medium leading-relaxed">
-              {companyName} removed from favorites.
-            </TypographySmall>
-          </div>
-        ),
+  const handleEmployeeRemoveCompanyFromFavorite = useCallback(
+    (
+      employeeID: string,
+      companyID: string,
+      favoriteID: string,
+      companyName: string,
+    ) => {
+      if (!employeeID || !companyID || !favoriteID) return;
+      animateThenRemove(favoriteID, async () => {
+        try {
+          await employeeFavCompanyStore.removeCompanyFromFavorite(
+            employeeID,
+            companyID,
+            favoriteID,
+          );
+          countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeID);
+          toast.success(`${companyName} removed from favorites.`);
+          await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
+            employeeID,
+          );
+        } catch {
+          const err =
+            employeeFavCompanyStore.error ||
+            "Failed to remove company from favorites.";
+          toast.error(err);
+        }
       });
-      // Query All Employee Favorites To See New Update
-      await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(employeeID);
-    } catch (error) {
-      const err =
-        employeeFavCompanyStore.error ||
-        "Failed to remove company from favorites.";
-      toast({
-        title: "Error",
-        description: err,
-        variant: "destructive",
-      });
-    }
-  };
+    },
+    [
+      animateThenRemove,
+      employeeFavCompanyStore,
+      countAllEmployeeFavoritesStore,
+      getAllEmployeeFavoritesStore,
+    ],
+  );
 
   // Handle Company Remove Employee From Favorite
-  const handleCompanyRemoveEmployeeFromFavorite = async (
-    companyID: string,
-    employeeID: string,
-    favoriteID: string,
-    employeeName: string,
-  ) => {
-    if (!companyID || !employeeID || !favoriteID) return;
-    try {
-      // Company Favorited Employee Function
-      await companyFavEmployeeStore.removeEmployeeFromFavorite(
-        companyID,
-        employeeID,
-        favoriteID,
-      );
-      // Count All Company Favorites To See New Update
-      countAllCompanyFavoritesStore.countAllCompanyFavorites(companyID);
-      toast({
-        variant: "success",
-        description: (
-          <div className="flex items-center gap-2">
-            <LucideBookmarkX />
-            <TypographySmall className="font-medium leading-relaxed">
-              {employeeName} removed from favorites.
-            </TypographySmall>
-          </div>
-        ),
+  const handleCompanyRemoveEmployeeFromFavorite = useCallback(
+    (
+      companyID: string,
+      employeeID: string,
+      favoriteID: string,
+      employeeName: string,
+    ) => {
+      if (!companyID || !employeeID || !favoriteID) return;
+      animateThenRemove(favoriteID, async () => {
+        try {
+          await companyFavEmployeeStore.removeEmployeeFromFavorite(
+            companyID,
+            employeeID,
+            favoriteID,
+          );
+          countAllCompanyFavoritesStore.countAllCompanyFavorites(companyID);
+          toast.success(`${employeeName} removed from favorites.`);
+          await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyID);
+        } catch {
+          const err =
+            companyFavEmployeeStore.error ||
+            "Failed to remove employee from favorites.";
+          toast.error(err);
+        }
       });
-      // Query All Company Favorites To See New Update
-      await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyID);
-    } catch (error) {
-      const err =
-        companyFavEmployeeStore.error ||
-        "Failed to remove employee from favorites.";
-      toast({
-        title: "Error",
-        description: err,
-        variant: "destructive",
-      });
-    }
-  };
+    },
+    [
+      animateThenRemove,
+      companyFavEmployeeStore,
+      countAllCompanyFavoritesStore,
+      getAllCompanyFavoritesStore,
+    ],
+  );
 
   // Compute All Loading State
   const isLoadingForEmployee =
@@ -210,18 +218,14 @@ export default function FavoritePage() {
               foundedYear={fav.company.foundedYear}
               openPosition={fav.company.openPositions ?? []}
               location={fav.company.location}
+              isRemoving={removingFavIds.has(fav.id)}
               onRemoveFromFavorite={() => {
                 if (currentUser && currentUser.employee) {
-                  const employeeID = currentUser.employee.id;
-                  const companyID = fav.company.id;
-                  const favoriteID = fav.id;
-                  const companyName = fav.company.name;
-
                   handleEmployeeRemoveCompanyFromFavorite(
-                    employeeID,
-                    companyID,
-                    favoriteID,
-                    companyName,
+                    currentUser.employee.id,
+                    fav.company.id,
+                    fav.id,
+                    fav.company.name,
                   );
                 }
               }}
@@ -243,20 +247,15 @@ export default function FavoritePage() {
               availability={fav.employee.availability}
               location={fav.employee.location ?? ""}
               skills={(fav.employee.skills ?? []).map((skill) => skill.name)}
+              isRemoving={removingFavIds.has(fav.id)}
               onRemoveFromFavorite={() => {
                 if (currentUser && currentUser.company) {
-                  const companyID = currentUser.company.id;
-                  const employeeID = fav.employee.id;
-                  const favoriteID = fav.id;
-                  const employeeName =
-                    fav.employee.username ??
-                    `${fav.employee.firstname} ${fav.employee.lastname}`;
-
                   handleCompanyRemoveEmployeeFromFavorite(
-                    companyID,
-                    employeeID,
-                    favoriteID,
-                    employeeName,
+                    currentUser.company.id,
+                    fav.employee.id,
+                    fav.id,
+                    fav.employee.username ??
+                      `${fav.employee.firstname} ${fav.employee.lastname}`,
                   );
                 }
               }}

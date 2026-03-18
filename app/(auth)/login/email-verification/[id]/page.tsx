@@ -3,13 +3,11 @@
 import emailVerificationWhiteSvg from "@/assets/svg/email-verification-black.svg";
 import emailVerificationBlackSvg from "@/assets/svg/email-verification-white.svg";
 import { Button } from "@/components/ui/button";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { useToast } from "@/hooks/use-toast";
 import { useVerifyEmailStore } from "@/stores/apis/auth/verify-email.store";
-import { LucideCheck, LucideInfo, LucideMail } from "lucide-react";
+import { LucideMail } from "lucide-react";
+import { toast } from "sonner";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
@@ -20,7 +18,6 @@ export default function EmailVerificationPage() {
   const { resolvedTheme } = useTheme();
   const params = useParams();
   const token = params?.id;
-  const { toast, dismiss} = useToast();
   const router = useRouter();
 
   // Verify Email Helper
@@ -39,46 +36,16 @@ export default function EmailVerificationPage() {
   useEffect(() => {
     if (!isSubmitted) return;
 
-    if (loading)
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <ApsaraLoadingSpinner size={40} loop />
-            <TypographySmall className="font-medium">
-              Verifying...
-            </TypographySmall>
-          </div>
-        ),
-      });
+    if (loading) toast.loading("Verifying...");
 
     if (error) {
-      dismiss();
-      toast({
-        variant: "destructive",
-        description: (
-          <div className="flex flex-row items-center gap-2">
-            <LucideInfo />
-            <TypographySmall className="font-medium leading-relaxed">
-              {message}
-            </TypographySmall>
-          </div>
-        ),
-      });
+      toast.dismiss();
+      toast.error(message ?? "Verification failed");
     }
 
     if (!loading && !error && message) {
-      dismiss();
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <LucideCheck />
-            <TypographySmall className="font-medium leading-relaxed">
-              {message}
-            </TypographySmall>
-          </div>
-        ),
-        duration: 1500,
-      });
+      toast.dismiss();
+      toast.success(message, { duration: 1500 });
       setTimeout(() => router.push("/login"), 1000);
     }
   }, [error, loading, message, isSubmitted]);

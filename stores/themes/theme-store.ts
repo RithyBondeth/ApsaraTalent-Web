@@ -7,6 +7,8 @@ interface ThemeState {
   setTheme: (theme: TTheme) => void;
   toggleTheme: () => void;
   systemTheme: "light" | "dark"; // Track system preference
+  isHydrated: boolean;
+  setHydrated: (hydrated: boolean) => void;
 }
 
 export const useThemeStore = create<ThemeState>()(
@@ -25,16 +27,16 @@ export const useThemeStore = create<ThemeState>()(
       return {
         theme: "system", // Default theme
         systemTheme: getSystemTheme(),
+        isHydrated: false,
+        setHydrated: (hydrated: boolean) => set({ isHydrated: hydrated }),
 
         setTheme: (theme) => set({ theme }),
 
         toggleTheme: () => {
           const currentTheme = get().theme;
-          let newTheme: TTheme;
-
-          if (currentTheme === "light") newTheme = "dark";
-          else if (currentTheme === "dark") newTheme = "light";
-          else newTheme = getSystemTheme(); // If "system", switch to detected theme
+          const effectiveTheme =
+            currentTheme === "system" ? get().systemTheme : currentTheme;
+          const newTheme: TTheme = effectiveTheme === "dark" ? "light" : "dark";
 
           set({ theme: newTheme });
         },
@@ -42,6 +44,9 @@ export const useThemeStore = create<ThemeState>()(
     },
     {
       name: "theme-storage",
+      onRehydrateStorage: () => (state) => {
+        state?.setHydrated(true);
+      },
     },
   ),
 );

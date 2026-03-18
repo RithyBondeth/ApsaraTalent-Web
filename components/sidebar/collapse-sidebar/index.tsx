@@ -6,23 +6,26 @@ import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-a
 import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
 import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
 import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
+import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { useChatStore } from "@/stores/chat.store";
 import { sidebarList } from "@/utils/constants/sidebar.constant";
 import { LucideFileUser } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { usePathname, useRouter } from "next/navigation";
-import React, { useCallback, useMemo } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { Collapsible, CollapsibleTrigger } from "../../ui/collapsible";
 import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarGroup,
-    SidebarHeader,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    useSidebar
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
 } from "../../ui/sidebar";
 import LogoComponent from "../../utils/logo";
 import { SidebarDropdownFooter } from "./sidebar-dropdown-footer";
@@ -31,29 +34,35 @@ import { SidebarDropdownFooterSkeleton } from "./sidebar-dropdown-footer/skeleto
 // Badge Component
 const CountBadge = ({ count }: { count: number }) => {
   if (count === 0) return null;
-  return <Badge className="ml-auto bg-red-500 dark:text-primary">{count}</Badge>;
+  return (
+    <Badge className="ml-auto bg-red-500 dark:text-primary">{count}</Badge>
+  );
 };
 
 export default function CollapseSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   // Utils
-  const router = useRouter();
   const pathname = usePathname();
   const { open } = useSidebar();
   const t = useTranslations("sidebar");
 
-  const getSidebarTitle = (title: string): string => {
-    const map: Record<string, string> = {
+  const sidebarTitleMap = useMemo<Record<string, string>>(
+    () => ({
       Feed: t("feed"),
       Search: t("search"),
       Favorite: t("favorite"),
       Matching: t("matching"),
       Message: t("message"),
       Notification: t("notification"),
-    };
-    return map[title] ?? title;
-  };
+    }),
+    [t],
+  );
+
+  const getSidebarTitle = useCallback(
+    (title: string): string => sidebarTitleMap[title] ?? title,
+    [sidebarTitleMap],
+  );
 
   // API Calls
   const { user, loading } = useGetCurrentUserStore();
@@ -65,6 +74,16 @@ export default function CollapseSidebar({
     useCountAllEmployeeFavoritesStore();
   const { totalAllCompanyFavorites, countAllCompanyFavorites } =
     useCountAllCompanyFavoritesStore();
+
+  // Notification & message unread counts
+  const { unreadCount: unreadNotifications, fetchUnreadCount } =
+    useNotificationStore();
+  const unreadMessages = useChatStore((s) => s.unreadCount);
+
+  // Fetch unread notification count on mount (and keep it fresh)
+  useEffect(() => {
+    void fetchUnreadCount();
+  }, [fetchUnreadCount]);
 
   // Handles all ref logic and duplicate prevention
   const { isEmployee, isCompany } = useFetchOnce({
@@ -122,36 +141,33 @@ export default function CollapseSidebar({
     return { name: "", email: "", avatar: "" };
   }, [isEmployee, isCompany, user]);
 
-  // Memoized navigation handler
-  const handleNavigation = useCallback(
-    (url: string) => {
-      if (url === "/search") {
-        router.push(`${url}/${user?.role}`);
-      } else {
-        router.push(url);
-      }
-    },
-    [router, user?.role]
-  );
-
   // Check if a path is active
   const isPathActive = useCallback(
+    (url: string) => pathname === url || pathname.startsWith(`${url}/`),
+    [pathname],
+  );
+
+  // Resolve URL for search (needs role appended)
+  const resolveUrl = useCallback(
     (url: string) => {
-      return pathname === url || pathname.startsWith(`${url}/`);
+      if (url === "/search") return `/search/${user?.role ?? ""}`;
+      return url;
     },
-    [pathname]
+    [user?.role],
   );
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader onClick={() => router.push("/feed")}>
-        {open ? (
-          <LogoComponent priority={true} />
-        ) : (
-          <SidebarMenuButton tooltip="Apsara Talent" className="text-sm">
-            <LogoComponent withoutTitle />
-          </SidebarMenuButton>
-        )}
+      <SidebarHeader>
+        <Link href="/feed">
+          {open ? (
+            <LogoComponent priority={true} />
+          ) : (
+            <SidebarMenuButton tooltip="Apsara Talent" className="text-sm">
+              <LogoComponent withoutTitle />
+            </SidebarMenuButton>
+          )}
+        </Link>
       </SidebarHeader>
 
       <SidebarContent>
@@ -163,7 +179,6 @@ export default function CollapseSidebar({
                 asChild
                 defaultOpen={true}
                 className="group/collapsible"
-                onClick={() => handleNavigation(item.url)}
               >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
@@ -174,20 +189,29 @@ export default function CollapseSidebar({
                           ? "bg-primary text-primary-foreground"
                           : ""
                       }`}
+                      asChild
                     >
-                      {item.icon && (
-                        <item.icon
-                          className="!size-6 group-data-[collapsible=icon]:pr-1"
-                          strokeWidth={1.5}
-                        />
-                      )}
-                      <span>{getSidebarTitle(item.title)}</span>
-                      {item.url === "/matching" && (
-                        <CountBadge count={matchingCount} />
-                      )}
-                      {item.url === "/favorite" && (
-                        <CountBadge count={favoriteCount} />
-                      )}
+                      <Link href={resolveUrl(item.url)} prefetch={true}>
+                        {item.icon && (
+                          <item.icon
+                            className="!size-6 group-data-[collapsible=icon]:pr-1"
+                            strokeWidth={1.5}
+                          />
+                        )}
+                        <span>{getSidebarTitle(item.title)}</span>
+                        {item.url === "/matching" && (
+                          <CountBadge count={matchingCount} />
+                        )}
+                        {item.url === "/favorite" && (
+                          <CountBadge count={favoriteCount} />
+                        )}
+                        {item.url === "/message" && (
+                          <CountBadge count={unreadMessages} />
+                        )}
+                        {item.url === "/notification" && (
+                          <CountBadge count={unreadNotifications} />
+                        )}
+                      </Link>
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                 </SidebarMenuItem>
@@ -200,7 +224,6 @@ export default function CollapseSidebar({
                 asChild
                 defaultOpen={true}
                 className="group/collapsible"
-                onClick={() => router.push("/resume-builder")}
               >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
@@ -211,9 +234,12 @@ export default function CollapseSidebar({
                           ? "bg-primary text-primary-foreground"
                           : ""
                       }`}
+                      asChild
                     >
-                      <LucideFileUser className="!size-6" strokeWidth={1.5} />
-                      <span>{t("aiResumeBuilder")}</span>
+                      <Link href="/resume-builder" prefetch={true}>
+                        <LucideFileUser className="!size-6" strokeWidth={1.5} />
+                        <span>{t("aiResumeBuilder")}</span>
+                      </Link>
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                 </SidebarMenuItem>

@@ -5,20 +5,79 @@ import NotificationMatchCard from "@/components/notification/notification-match-
 import NotificationMessageCard from "@/components/notification/notification-message-card";
 import { Button } from "@/components/ui/button";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  INotification,
+  useNotificationStore,
+} from "@/stores/apis/notification/notification.store";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { TNotificationFilterType } from "@/utils/types/notification.type";
-import { LucideCheckCheck } from "lucide-react";
-import { useState } from "react";
+import { LucideBellOff, LucideCheckCheck } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+
+/** Derive a display-friendly user object from a notification's title + data fields. */
+function resolveNotificationUser(notification: INotification) {
+  return {
+    id: notification.data?.senderId ?? "",
+    name: notification.title,
+    position: (notification.data?.position as string | null) ?? null,
+    industry: (notification.data?.industry as string | null) ?? null,
+    avatar: (notification.data?.avatar as string) ?? "/avatars/default.png",
+  };
+}
 
 export default function NotificationPage() {
-  // Notification Helpers
-  const [notificationFilter, setNotificationFilter] = useState<TNotificationFilterType>("all");
+  const [notificationFilter, setNotificationFilter] =
+    useState<TNotificationFilterType>("all");
+
+  const { user } = useGetCurrentUserStore();
+  const role = user?.role ?? "employee";
+
+  const {
+    notifications,
+    loading,
+    fetchNotifications,
+    fetchUnreadCount,
+    markRead,
+    markAllRead,
+  } = useNotificationStore();
+
+  // Fetch on mount
+  useEffect(() => {
+    void fetchNotifications({ page: 1, limit: 50 });
+    void fetchUnreadCount();
+  }, [fetchNotifications, fetchUnreadCount]);
+
+  // Re-fetch when switching to "unread" filter
+  useEffect(() => {
+    if (notificationFilter === "unread") {
+      void fetchNotifications({ page: 1, limit: 50, unreadOnly: true });
+    } else {
+      void fetchNotifications({ page: 1, limit: 50, unreadOnly: false });
+    }
+  }, [notificationFilter, fetchNotifications]);
+
+  const filteredNotifications = useMemo(() => {
+    return notifications.filter((n) => {
+      if (notificationFilter === "all") return true;
+      if (notificationFilter === "unread") return !n.isRead;
+      if (notificationFilter === "match") return n.type === "match";
+      if (notificationFilter === "message") return n.type === "chat";
+      return true;
+    });
+  }, [notifications, notificationFilter]);
+
   const notificationButtonVariant = (currentFilter: TNotificationFilterType) =>
     notificationFilter === currentFilter ? "default" : "secondary";
+
+  const handleMarkAllRead = async () => {
+    await markAllRead();
+    void fetchUnreadCount();
+  };
 
   return (
     <div className="w-full flex flex-col gap-5 px-5">
@@ -75,7 +134,12 @@ export default function NotificationPage() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button className="text-xs" variant={"outline"}>
+
+        <Button
+          className="text-xs"
+          variant="outline"
+          onClick={handleMarkAllRead}
+        >
           <LucideCheckCheck />
           Mark All As Read
         </Button>
@@ -83,46 +147,60 @@ export default function NotificationPage() {
 
       {/* Notification List Section */}
       <div className="flex flex-col gap-5">
-        <NotificationMatchCard
-          seen={true}
-          role={"company"}
-          user={{
-            id: "uuid1",
-            name: "Neural Horizon",
-            industry: "Artificial Intelligence",
-            position: null,
-            avatar:
-              "http://localhost:3000/storage/company-avatars/neuralarc-avatar-1748940621736-895400190.jpg",
-          }}
-          timestamp={"2025-06-02 07:02:13.864662"}
-        />
-        <NotificationMatchCard
-          seen={false}
-          role={"employee"}
-          user={{
-            id: "uuid2",
-            name: "Rithy Bondeth",
-            position: "Full Stack Developer",
-            industry: null,
-            avatar:
-              "http://localhost:3000/storage/employee-avatars/bondeth-avatar-1748847738561-216110095.jpg",
-          }}
-          timestamp={"2025-10-02 07:02:13.864662"}
-        />
-        <NotificationMessageCard
-          seen={false}
-          role={"employee"}
-          user={{
-            id: "uuid2",
-            name: "Rithy Bondeth",
-            position: "Full Stack Developer",
-            industry: null,
-            avatar:
-              "http://localhost:3000/storage/employee-avatars/bondeth-avatar-1748847738561-216110095.jpg",
-          }}
-          timestamp={"2025-10-02 07:02:13.864662"}
-        />
-        <NotificationCardSkeleton />
+        {/* Loading skeletons */}
+        {loading && (
+          <>
+            <NotificationCardSkeleton />
+            <NotificationCardSkeleton />
+            <NotificationCardSkeleton />
+          </>
+        )}
+
+        {/* Empty state */}
+        {!loading && filteredNotifications.length === 0 && (
+          <div className="flex flex-col items-center justify-center gap-3 py-20 text-muted-foreground">
+            <LucideBellOff className="size-10" strokeWidth={1.5} />
+            <p className="text-sm">No notifications yet</p>
+          </div>
+        )}
+
+        {/* Notification cards */}
+        {!loading &&
+          filteredNotifications.map((notification: INotification) => {
+            const notifUser = resolveNotificationUser(notification);
+
+            if (notification.type === "chat") {
+              return (
+                <NotificationMessageCard
+                  key={notification.id}
+                  id={notification.id}
+                  seen={notification.isRead}
+                  timestamp={notification.createdAt}
+                  role={role}
+                  user={notifUser}
+                  preview={notification.message}
+                  onMarkRead={markRead}
+                />
+              );
+            }
+
+            if (notification.type === "match") {
+              return (
+                <NotificationMatchCard
+                  key={notification.id}
+                  id={notification.id}
+                  seen={notification.isRead}
+                  timestamp={notification.createdAt}
+                  role={role}
+                  user={notifUser}
+                  onMarkRead={markRead}
+                />
+              );
+            }
+
+            // Fallback: unknown type — skip
+            return null;
+          })}
       </div>
     </div>
   );

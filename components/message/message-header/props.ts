@@ -8,4 +8,8 @@ export interface IChatHeaderProps {
   onBack?: () => void;
   /** Mobile: opens the sidebar overlay sheet */
   onOpenMobileSidebar?: () => void;
+  /** Called when the user clicks the voice-call button. */
+  onStartVoiceCall?: () => void;
+  /** Called when the user clicks the video-call button (future). */
+  onStartVideoCall?: () => void;
 }

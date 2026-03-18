@@ -62,13 +62,33 @@ export interface IMessage {
    * Attachment media type — derived from the MIME type at upload time.
    * 'image'    → renders as an inline <img> preview.
    * 'document' → renders as a download link with a file icon.
+   * 'audio'    → renders as a waveform audio player.
    */
-  attachmentType?: "image" | "document";
+  attachmentType?: "image" | "document" | "audio";
 
   /**
    * Original filename of the attachment (shown as the download link label).
    */
   attachmentFilename?: string;
+
+  /**
+   * Duration of an audio attachment in seconds.
+   * Set client-side at recording time; echoed back by the server.
+   */
+  attachmentDuration?: number;
+
+  /**
+   * 30-point normalized waveform amplitude array (values 0–1) for audio attachments.
+   * Sampled via Web Audio API AnalyserNode during recording; stored as JSON in DB.
+   * Used to render the animated waveform bars in the audio player bubble.
+   * Falls back to a flat default if absent (e.g. old messages pre-feature).
+   */
+  attachmentAmplitude?: number[];
+
+  /**
+   * Message type from backend (text/image/document/audio/call).
+   */
+  messageType?: "text" | "image" | "document" | "audio" | "call" | string;
 }
 
 export interface IChatPreview {

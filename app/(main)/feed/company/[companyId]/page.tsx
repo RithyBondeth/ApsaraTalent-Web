@@ -3,15 +3,16 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-    Carousel, CarouselContent,
-    CarouselItem,
-    CarouselNext,
-    CarouselPrevious
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
 } from "@/components/ui/carousel";
 import {
-    HoverCard,
-    HoverCardContent,
-    HoverCardTrigger
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import BlurBackGroundOverlay from "@/components/utils/bur-background-overlay";
 import Divider from "@/components/utils/divider";
@@ -26,33 +27,33 @@ import { TypographySmall } from "@/components/utils/typography/typography-small"
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { dateFormatterv2 } from "@/utils/functions/dateformatter-v2";
 import {
-    IBenefits,
-    IImage,
-    ISocial
+  IBenefits,
+  IImage,
+  ISocial,
 } from "@/utils/interfaces/user-interface/company.interface";
 import { TPlatform } from "@/utils/types/platform.type";
 import {
-    LucideAlarmClock,
-    LucideBookmark,
-    LucideBookMarked,
-    LucideBriefcaseBusiness,
-    LucideBuilding,
-    LucideCalendarDays,
-    LucideCircleCheck,
-    LucideHeartHandshake,
-    LucideMail,
-    LucideMapPinned,
-    LucidePhone,
-    LucideUser,
-    LucideUsers,
-    User
+  LucideAlarmClock,
+  LucideBookmark,
+  LucideBookMarked,
+  LucideBriefcaseBusiness,
+  LucideBuilding,
+  LucideCalendarDays,
+  LucideCircleCheck,
+  LucideHeartHandshake,
+  LucideMail,
+  LucideMapPinned,
+  LucidePhone,
+  LucideUser,
+  LucideUsers,
+  User,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { CompanyDetailPageSkeleton } from "./skeleton";
 
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useGetOneCompanyStore } from "@/stores/apis/company/get-one-cmp.store";
 import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
 import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
@@ -65,7 +66,6 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 export default function CompanyDetailPage() {
   // Utils
   const router = useRouter();
-  const { toast, dismiss } = useToast();
   const param = useParams<{ companyId: string }>();
   const id = param.companyId;
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
@@ -183,46 +183,27 @@ export default function CompanyDetailPage() {
       if (!employeeId || !companyId) return;
 
       try {
-        dismiss();
+        toast.dismiss();
         await employeeLikeStore.employeeLike(employeeId, companyId);
         const employeeData = useEmployeeLikeStore.getState().data;
         if (employeeData) {
           const isMatching = employeeData.isMatched;
           const companyName = employeeData.company.name;
           if (isMatching) {
-            toast({
-              variant: "success",
-              title: "It's a match!",
-              description: (
-                <div className="flex items-center gap-2">
-                  <LucideHeartHandshake />
-                  <TypographySmall className="font-medium">
-                    {companyName} and you like each other.
-                  </TypographySmall>
-                </div>
-              ),
+            toast.success("It's a match!", {
+              description: `${companyName} and you like each other.`,
             });
             countCurrentEmployeeMatching(employeeId);
             setTimeout(() => router.push("/matching"), 800);
           } else {
             console.log("Wait for this user to like you back....");
-            toast({
-              variant: "success",
-              description: (
-                <div className="flex items-center gap-2">
-                  <LucideHeartHandshake />
-                  <TypographySmall className="font-medium">
-                    You liked {companyName} company.
-                  </TypographySmall>
-                </div>
-              ),
-            });
+            toast.success(`You liked ${companyName} company.`);
             setTimeout(() => router.push("/feed"), 800);
           }
         }
       } catch (error) {
         const err = employeeLikeStore.error || "Failed to like company";
-        toast({ variant: "destructive", title: "Error", description: err });
+        toast.error(err);
       } finally {
         queryCurrentEmployeeLiked(employeeId);
       }
@@ -244,23 +225,13 @@ export default function CompanyDetailPage() {
           companyId,
         );
         countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeId);
-        toast({
-          variant: "success",
-          description: (
-            <div className="flex items-center gap-2">
-              <LucideBookMarked />
-              <TypographySmall className="font-medium">
-                {companyName} added to favorites.
-              </TypographySmall>
-            </div>
-          ),
-        });
+        toast.success(`${companyName} added to favorites.`);
         await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
           employeeId,
         );
       } catch (error) {
         const err = employeeFavCompanyStore.error || "Failed to save company";
-        toast({ title: "Error", description: err, variant: "destructive" });
+        toast.error(err);
       }
     }
   };
@@ -290,7 +261,7 @@ export default function CompanyDetailPage() {
                 {companyData.name ? companyData.name.slice(0, 3) : <User />}
               </AvatarFallback>
             </Avatar>
-            <div className="flex flex-col items-start gap-2 text-muted tablet-sm:items-center">
+            <div className="flex flex-col items-start gap-2 text-white tablet-sm:items-center">
               <TypographyH2 className="tablet-sm:text-center tablet-sm:text-xl">
                 {companyData.name}
               </TypographyH2>
@@ -301,12 +272,12 @@ export default function CompanyDetailPage() {
                 <IconLabel
                   icon={<LucideCalendarDays />}
                   text={`Founded in ${companyData.foundedYear}`}
-                  className="[&>p]:text-primary-foreground"
+                  className="[&>p]:text-white"
                 />
                 <IconLabel
                   icon={<LucideUsers />}
                   text={`${companyData.companySize}+ Employees`}
-                  className="[&>p]:text-primary-foreground"
+                  className="[&>p]:text-white"
                 />
               </div>
             </div>

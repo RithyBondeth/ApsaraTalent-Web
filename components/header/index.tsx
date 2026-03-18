@@ -6,13 +6,16 @@ import { setCookie } from "cookies-next";
 import { LucideLogIn, LucideMoon, LucideSun } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import LogoComponent from "../utils/logo";
 
 export default function Header({ className }: { className?: string }) {
   const { theme, toggleTheme } = useThemeStore();
   const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState<boolean>(false);
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     setTheme(theme);
@@ -35,7 +38,7 @@ export default function Header({ className }: { className?: string }) {
       {/* Right Menu Section */}
       <div className="flex items-center gap-5 tablet-sm:gap-2">
         <Button variant="outline" onClick={toggleTheme}>
-          {resolvedTheme === "dark" ? <LucideSun /> : <LucideMoon />}
+          {mounted && resolvedTheme === "dark" ? <LucideSun /> : <LucideMoon />}
         </Button>
         <Link href="/login">
           <Button className="tablet-sm:text-xs">

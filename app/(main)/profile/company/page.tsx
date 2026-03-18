@@ -5,41 +5,39 @@ import OpenPositionForm from "@/components/company/profile/open-position-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-    Carousel,
-    CarouselContent,
-    CarouselItem,
-    CarouselNext,
-    CarouselPrevious
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
 } from "@/components/ui/carousel";
 import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
 } from "@/components/ui/command";
 import {
-    HoverCard,
-    HoverCardContent,
-    HoverCardTrigger
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Input } from "@/components/ui/input";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { ToastAction } from "@/components/ui/toast";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import BlurBackGroundOverlay from "@/components/utils/bur-background-overlay";
 import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
 import RemoveAlertDialog from "@/components/utils/dialogs/remove-alert-dialog";
@@ -58,14 +56,14 @@ import useCmpBenefitValueState from "@/hooks/profile/company/use-cmp-benefit-val
 import { useCmpCareerScopesState } from "@/hooks/profile/company/use-cmp-careerscope-state";
 import useCmpImageState from "@/hooks/profile/company/use-cmp-image-state";
 import { useSocialsState } from "@/hooks/profile/employee/use-social-state";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useRemoveCmpAvatarStore } from "@/stores/apis/company/remove-cmp-avatar.store";
 import { useRemoveCmpCoverStore } from "@/stores/apis/company/remove-cmp-cover.store";
 import { useRemoveOneCmpImageStore } from "@/stores/apis/company/remove-one-cmp-image.store";
 import { useRemoveOneOpenPositionStore } from "@/stores/apis/company/remove-one-open-position.store";
 import {
-    TCompanyUpdateBody,
-    useUpdateOneCompanyStore
+  TCompanyUpdateBody,
+  useUpdateOneCompanyStore,
 } from "@/stores/apis/company/update-one-cmp.store";
 import { useUploadCompanyAvatarStore } from "@/stores/apis/company/upload-cmp-avatar.store";
 import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cover.store";
@@ -73,34 +71,32 @@ import { useUploadCompanyImagesStore } from "@/stores/apis/company/upload-cmp-im
 import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-scopes.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import {
-    locationConstant,
-    loginMethodConstant,
-    platformConstant
+  locationConstant,
+  loginMethodConstant,
+  platformConstant,
 } from "@/utils/constants/app.constant";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { capitalizeWords } from "@/utils/functions/capitalize-words";
 import { isUuid } from "@/utils/functions/check-uuid";
 import { parseMaybeDate } from "@/utils/functions/parse-maybe-date";
 import {
-    IBenefits,
-    IValues
+  IBenefits,
+  IValues,
 } from "@/utils/interfaces/user-interface/company.interface";
 import { TPlatform } from "@/utils/types/platform.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-    ChevronDown,
-    LucideBuilding,
-    LucideCamera,
-    LucideCheck,
-    LucideCircleCheck,
-    LucideEdit,
-    LucideInfo,
-    LucideLink2,
-    LucideMail,
-    LucidePhone,
-    LucidePlus,
-    LucideUsers,
-    LucideXCircle
+  ChevronDown,
+  LucideBuilding,
+  LucideCamera,
+  LucideCircleCheck,
+  LucideEdit,
+  LucideLink2,
+  LucideMail,
+  LucidePhone,
+  LucidePlus,
+  LucideUsers,
+  LucideXCircle,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -162,7 +158,6 @@ export default function ProfilePage() {
 
   /* ------------------------ All States ------------------------ */
   // Utils
-  const { toast } = useToast();
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
   // Image States
@@ -421,17 +416,7 @@ export default function ProfilePage() {
 
     await disableEditMode();
 
-    toast({
-      variant: "success",
-      description: (
-        <div className="flex items-center gap-2">
-          <LucideCheck />
-          <TypographySmall className="font-medium leading-relaxed">
-            Remove Avatar Successfully!
-          </TypographySmall>
-        </div>
-      ),
-    });
+    toast.success("Remove Avatar Successfully!");
   };
 
   // 2.API: Remove Cover
@@ -440,17 +425,7 @@ export default function ProfilePage() {
 
     await disableEditMode();
 
-    toast({
-      variant: "success",
-      description: (
-        <div className="flex items-center gap-2">
-          <LucideCheck />
-          <TypographySmall className="font-medium leading-relaxed">
-            Remove Cover Successfully!
-          </TypographySmall>
-        </div>
-      ),
-    });
+    toast.success("Remove Cover Successfully!");
   };
 
   // 3.API: Remove Single Image
@@ -463,17 +438,7 @@ export default function ProfilePage() {
 
     await disableEditMode();
 
-    toast({
-      variant: "success",
-      description: (
-        <div className="flex items-center gap-2">
-          <LucideCheck />
-          <TypographySmall className="font-medium leading-relaxed">
-            Remove Cover Successfully!
-          </TypographySmall>
-        </div>
-      ),
-    });
+    toast.success("Remove Cover Successfully!");
   };
 
   // 4.Handle Click Image Popup
@@ -565,17 +530,7 @@ export default function ProfilePage() {
 
     await disableEditMode();
 
-    toast({
-      variant: "success",
-      description: (
-        <div className="flex items-center gap-2">
-          <LucideCheck />
-          <TypographySmall className="font-medium leading-relaxed">
-            Remove Open Position Successfully!
-          </TypographySmall>
-        </div>
-      ),
-    });
+    toast.success("Remove Open Position Successfully!");
   };
 
   /* ------------------- Benefit Bussiness Logics ------------------- */
@@ -589,11 +544,9 @@ export default function ProfilePage() {
     );
 
     if (alreadyExists) {
-      toast({
-        variant: "destructive",
-        title: "Duplicated Benefit",
+      toast.error("Duplicated Benefit", {
         description: "Please input another benefit.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
+        action: { label: "Try again", onClick: () => {} },
       });
       setBenefitInput(null);
       setOpenBenefitPopOver(false);
@@ -637,11 +590,9 @@ export default function ProfilePage() {
     );
 
     if (alreadyExists) {
-      toast({
-        variant: "destructive",
-        title: "Duplicated value",
+      toast.error("Duplicated value", {
         description: "Please input another value.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
+        action: { label: "Try again", onClick: () => {} },
       });
       setValueInput(null);
       setOpenValuePopOver(false);
@@ -697,11 +648,9 @@ export default function ProfilePage() {
       (c) => (c.name ?? "").trim().toLowerCase() === name.toLowerCase(),
     );
     if (alreadyExists) {
-      toast({
-        variant: "destructive",
-        title: "Duplicated Career",
+      toast.error("Duplicated Career", {
         description: "Please select another career.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
+        action: { label: "Try again", onClick: () => {} },
       });
       setCareerScopeInput(null);
       setOpenCareerScopePopOver(false);
@@ -761,11 +710,9 @@ export default function ProfilePage() {
     );
 
     if (platformExists) {
-      toast({
-        variant: "destructive",
-        title: "Duplicate Social",
+      toast.error("Duplicate Social", {
         description: "This social platform already exists.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
+        action: { label: "Try again", onClick: () => {} },
       });
       return false;
     }
@@ -775,11 +722,9 @@ export default function ProfilePage() {
     );
 
     if (urlExists) {
-      toast({
-        variant: "destructive",
-        title: "Duplicate URL",
+      toast.error("Duplicate URL", {
         description: "This social link already exists.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
+        action: { label: "Try again", onClick: () => {} },
       });
       return false;
     }
@@ -968,16 +913,7 @@ export default function ProfilePage() {
         hasAvatarUpload || hasCoverUpload || hasImageUploads;
 
       if (!hasUpdateBodyChanges && !hasFileUploads) {
-        toast({
-          description: (
-            <div className="flex items-center gap-2">
-              <LucideInfo />
-              <TypographySmall className="font-medium leading-relaxed">
-                No Changes Detected.
-              </TypographySmall>
-            </div>
-          ),
-        });
+        toast.info("No Changes Detected.");
         return;
       }
 
@@ -992,9 +928,7 @@ export default function ProfilePage() {
       setIsEdit(false);
     } catch (error) {
       console.error(error);
-      toast({
-        variant: "destructive",
-        title: "Error!",
+      toast.error("Error!", {
         description: "Failed To Update Company Profile.",
       });
     }
@@ -1024,19 +958,11 @@ export default function ProfilePage() {
     if (!updateProfileLoadingState) return;
 
     // Loading Message on Toast
-    const toastInstance = toast({
-      description: (
-        <div className="flex items-center gap-2">
-          <ApsaraLoadingSpinner size={50} loop />
-          <TypographySmall className="font-medium leading-relaxed">
-            {loadingMessage}
-          </TypographySmall>
-        </div>
-      ),
-      duration: Infinity,
-    });
+    const toastId = toast.loading(loadingMessage);
 
-    return () => toastInstance.dismiss();
+    return () => {
+      toast.dismiss(toastId);
+    };
   }, [updateProfileLoadingState, loadingMessage, toast]);
 
   if (loading) return <CompanyProfilePageSkeleton />;

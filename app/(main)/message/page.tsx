@@ -3,15 +3,26 @@
 import { ChatMessages } from "@/components/message";
 import ChatHeader from "@/components/message/message-header";
 import ChatInput from "@/components/message/message-input";
+import MessagePageSkeleton, {
+  MessagePaneSkeleton,
+  MessageThreadSkeleton,
+} from "@/components/message/message-page-skeleton";
 import ChatSidebar from "@/components/message/message-sidebar";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
+import { CallOrchestrator } from "@/components/call";
 import { ErrorBoundary } from "@/components/utils/error-boundary";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useChatStore } from "@/stores/chat.store";
+import { useCallStore } from "@/stores/call.store";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { IMessage } from "@/components/message/props";
+import type { ImperativePanelHandle } from "react-resizable-panels";
 
 /**
  * Message page — orchestrates the full chat experience.
@@ -53,8 +64,20 @@ const MessagePageContent = () => {
   const sendMessage = useChatStore((s) => s.sendMessage);
   const editMessageAction = useChatStore((s) => s.editMessage);
 
+  // ── Voice call initiation ─────────────────────────────────────────────────
+  const initiateCall = useCallStore((s) => s.initiateCall);
+  const handleStartVoiceCall = () => {
+    if (!activeChat) return;
+    initiateCall({
+      userId: activeChat.id,
+      name: activeChat.name,
+      avatar: activeChat.avatar,
+    });
+  };
+
   // Desktop: sidebar open by default. Mobile: always false (overlay takes over).
   const [isSidebarOpen, setSidebarOpen] = useState(true);
+  const sidebarPanelRef = useRef<ImperativePanelHandle>(null);
   // Mobile overlay open state
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
@@ -66,6 +89,15 @@ const MessagePageContent = () => {
   const [replyTarget, setReplyTarget] = useState<IMessage | null>(null);
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
+
+  // Keep resizable panel state in sync with the sidebar toggle (avoid calling
+  // panel methods inside setState which triggers render-phase updates).
+  useEffect(() => {
+    const panel = sidebarPanelRef.current;
+    if (!panel) return;
+    if (isSidebarOpen) panel.expand();
+    else panel.collapse();
+  }, [isSidebarOpen]);
   const openMobileSidebar = () => setMobileSidebarOpen(true);
   const closeMobileSidebar = () => setMobileSidebarOpen(false);
 
@@ -165,25 +197,33 @@ const MessagePageContent = () => {
   const handleSendMessage = (
     text: string,
     replyTo?: IMessage["replyTo"] | null,
-    attachments?: Array<{ url: string; type: "image" | "document"; filename: string }>,
-  ) => {
-    if (!chatId) return;
+    attachments?: Array<{
+      url: string;
+      type: "image" | "document" | "audio";
+      filename: string;
+      duration?: number;
+      amplitude?: number[];
+    }>,
+  ): boolean => {
+    if (!chatId) return false;
 
     const files = attachments ?? [];
 
     if (files.length === 0) {
       // Plain text message
-      sendMessage(chatId, text, "text", replyTo, null);
-      return;
+      return sendMessage(chatId, text, "text", replyTo, null);
     }
 
     // First file carries the text + replyTo
-    sendMessage(chatId, text, "text", replyTo, files[0]);
+    const sent = sendMessage(chatId, text, "text", replyTo, files[0]);
+    if (!sent) return false;
 
     // Remaining files are sent as caption-less attachment messages
     for (let i = 1; i < files.length; i++) {
       sendMessage(chatId, "", "text", null, files[i]);
     }
+
+    return true;
   };
 
   /**
@@ -227,15 +267,73 @@ const MessagePageContent = () => {
   const isLoading = (!isConnected || !isChatsLoaded) && !loadingTimedOut;
 
   if (isLoading) {
-    return (
-      <div className="h-full flex items-center justify-center">
-        <ApsaraLoadingSpinner size={80} loop />
-      </div>
-    );
+    return <MessagePageSkeleton />;
   }
+
+  const chatView = activeChat ? (
+    <div className="flex flex-col h-full min-w-0">
+      <ChatHeader
+        chat={activeChat}
+        isSidebarOpen={isSidebarOpen}
+        onToggleSidebar={toggleSidebar}
+        onBack={handleBack}
+        onOpenMobileSidebar={openMobileSidebar}
+        onStartVoiceCall={handleStartVoiceCall}
+      />
+
+      {/* Message area — spinner while history is loading */}
+      {isHistoryLoading ? (
+        <MessageThreadSkeleton />
+      ) : (
+        <ChatMessages
+          messages={currentMessages}
+          activeChat={activeChat}
+          isTyping={isTyping[activeChat.id] || false}
+          onReply={(msg) => setReplyTarget(msg)} // ← reply handler
+          onEdit={handleEditMessage} // ← edit handler
+        />
+      )}
+
+      {/* Input bar — shows quote preview when replyTarget is set */}
+      <ChatInput
+        onSendMessage={handleSendMessage}
+        onTyping={handleTyping}
+        replyTarget={replyTarget}
+        onCancelReply={() => setReplyTarget(null)}
+      />
+    </div>
+  ) : null;
+
+  const desktopEmptyState = (
+    <div className="flex flex-1 flex-col items-center justify-center p-8 text-center bg-muted/5">
+      <div className="max-w-md space-y-3">
+        <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+          <svg
+            className="w-8 h-8 text-primary"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+            />
+          </svg>
+        </div>
+        <h2 className="text-2xl font-semibold">Your Messages</h2>
+        <p className="text-muted-foreground">
+          Select a conversation from the sidebar to start chatting.
+        </p>
+      </div>
+    </div>
+  );
 
   return (
     <div className="w-full h-full flex bg-background overflow-hidden relative">
+      {/* Call overlay + incoming modal — persists across chat switches */}
+      <CallOrchestrator />
       {/*
        * MOBILE / TABLET  (<= 768px):  Full-screen sidebar overlays chat.
        *   - No chatId → show sidebar list (full height)
@@ -246,21 +344,41 @@ const MessagePageContent = () => {
        *   - Sidebar is collapsible (w-80 ↔ w-16) via toggle in header
        */}
 
-      {/* ── DESKTOP SIDEBAR ──────────────────────────────────────────────── */}
-      <div className="hidden md:flex h-full">
-        <ChatSidebar
-          chats={activeChats}
-          activeChat={activeChat}
-          isOpen={isSidebarOpen}
-          currentUserId={currentUser?.id}
-          onChatSelect={(chat) => router.push(`/message?chatId=${chat.id}`)}
-          onNewChat={() => {
-            // TODO: open contact picker modal
-            // For now we just navigate to /message to show the empty state
-            router.push("/message");
-          }}
-        />
-      </div>
+      {/* ── DESKTOP RESIZABLE LAYOUT ─────────────────────────────────────── */}
+      <ResizablePanelGroup
+        direction="horizontal"
+        className="hidden md:flex w-full h-full"
+      >
+        <ResizablePanel
+          ref={sidebarPanelRef}
+          defaultSize={26}
+          minSize={18}
+          maxSize={40}
+          collapsible
+          collapsedSize={6}
+          onCollapse={() => setSidebarOpen(false)}
+          onExpand={() => setSidebarOpen(true)}
+        >
+          <ChatSidebar
+            chats={activeChats}
+            activeChat={activeChat}
+            isOpen={isSidebarOpen}
+            isResizable
+            className="h-full"
+            currentUserId={currentUser?.id}
+            onChatSelect={(chat) => router.push(`/message?chatId=${chat.id}`)}
+            onNewChat={() => {
+              // TODO: open contact picker modal
+              // For now we just navigate to /message to show the empty state
+              router.push("/message");
+            }}
+          />
+        </ResizablePanel>
+        <ResizableHandle withHandle />
+        <ResizablePanel minSize={60} className="flex flex-col min-w-0">
+          {chatView ?? desktopEmptyState}
+        </ResizablePanel>
+      </ResizablePanelGroup>
 
       {/* ── MOBILE SIDEBAR OVERLAY ───────────────────────────────────────── */}
       {isMobileSidebarOpen && (
@@ -288,8 +406,8 @@ const MessagePageContent = () => {
         </div>
       )}
 
-      {/* ── MAIN CONTENT AREA ────────────────────────────────────────────── */}
-      <div className="flex-1 flex flex-col min-w-0 h-full">
+      {/* ── MOBILE CONTENT AREA ──────────────────────────────────────────── */}
+      <div className="md:hidden flex-1 flex flex-col min-w-0 h-full">
         {/* Mobile: show full-height sidebar list when no chat is selected */}
         {!chatId && (
           <div className="md:hidden h-full flex flex-col">
@@ -305,63 +423,10 @@ const MessagePageContent = () => {
         )}
 
         {/* Chat view — shown when a chatId is in the URL */}
-        {activeChat ? (
-          <div className="flex flex-col h-full min-w-0">
-            <ChatHeader
-              chat={activeChat}
-              isSidebarOpen={isSidebarOpen}
-              onToggleSidebar={toggleSidebar}
-              onBack={handleBack}
-              onOpenMobileSidebar={openMobileSidebar}
-            />
-
-            {/* Message area — spinner while history is loading */}
-            {isHistoryLoading ? (
-              <div className="flex-1 flex items-center justify-center">
-                <ApsaraLoadingSpinner size={48} loop />
-              </div>
-            ) : (
-              <ChatMessages
-                messages={currentMessages}
-                activeChat={activeChat}
-                isTyping={isTyping[activeChat.id] || false}
-                onReply={(msg) => setReplyTarget(msg)} // ← reply handler
-                onEdit={handleEditMessage} // ← edit handler
-              />
-            )}
-
-            {/* Input bar — shows quote preview when replyTarget is set */}
-            <ChatInput
-              onSendMessage={handleSendMessage}
-              onTyping={handleTyping}
-              replyTarget={replyTarget}
-              onCancelReply={() => setReplyTarget(null)}
-            />
-          </div>
-        ) : (
-          /* Desktop empty state when no chat is selected */
-          <div className="hidden md:flex flex-1 flex-col items-center justify-center p-8 text-center bg-muted/5">
-            <div className="max-w-md space-y-3">
-              <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                <svg
-                  className="w-8 h-8 text-primary"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                  />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-semibold">Your Messages</h2>
-              <p className="text-muted-foreground">
-                Select a conversation from the sidebar to start chatting.
-              </p>
-            </div>
+        {chatId && chatView}
+        {chatId && !chatView && (
+          <div className="flex-1 min-w-0">
+            <MessagePaneSkeleton />
           </div>
         )}
       </div>
@@ -372,13 +437,7 @@ const MessagePageContent = () => {
 export default function MessagePage() {
   return (
     <ErrorBoundary>
-      <Suspense
-        fallback={
-          <div className="h-full flex items-center justify-center">
-            <ApsaraLoadingSpinner size={80} loop />
-          </div>
-        }
-      >
+      <Suspense fallback={<MessagePageSkeleton />}>
         <MessagePageContent />
       </Suspense>
     </ErrorBoundary>

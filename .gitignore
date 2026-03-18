@@ -30,8 +30,11 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files - ignore local/secret files, keep production template
+.env
+.env.local
+.env.development
+!.env.production
 
 # vercel
 .vercel
@@ -40,8 +43,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Docker
-Dockerfile
+# Docker - ignore dev files, keep production Dockerfile
 Dockerfile.dev
 docker-compose.yml
-.dockerignore
+
+# AI
+.claude
+.cursor
+CLAUDE.md
+GEMINI.md

@@ -3,23 +3,14 @@
 import forgotPasswordWhiteSvg from "@/assets/svg/forgot-password-white.svg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ToastAction } from "@/components/ui/toast";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { useToast } from "@/hooks/use-toast";
 import { useForgotPasswordStore } from "@/stores/apis/auth/forgot-password.store";
 import { isEmailInput } from "@/utils/extensions/check-email-input";
 import { isNumberPhoneInput } from "@/utils/extensions/check-phone-input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-    LucideArrowLeft,
-    LucideCheck,
-    LucideInfo,
-    LucideMail,
-    LucidePhone
-} from "lucide-react";
+import { LucideArrowLeft, LucideMail, LucidePhone } from "lucide-react";
+import { toast } from "sonner";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -29,7 +20,6 @@ import { forgotPasswordSchema, TForgotPasswordForm } from "./validate";
 export default function ForgotPasswordPage() {
   // Utils
   const router = useRouter();
-  const { toast, dismiss } = useToast();
 
   // Forgot Password Helpers
   const [inputValue, setInputValue] = useState<string>("");
@@ -62,51 +52,19 @@ export default function ForgotPasswordPage() {
     if (!isSubmitted) return;
 
     if (loading) {
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <ApsaraLoadingSpinner size={50} loop />
-            <TypographySmall className="font-medium">
-              Loading...
-            </TypographySmall>
-          </div>
-        ),
-      });
+      toast.loading("Loading...");
     }
 
     if (error) {
-      dismiss();
-      toast({
-        variant: "destructive",
-        description: (
-          <div className="flex flex-row items-center gap-2">
-            <LucideInfo />
-            <TypographySmall className="font-medium leading-relaxed">
-              {message}
-            </TypographySmall>
-          </div>
-        ),
-        action: (
-          <ToastAction altText="Try again" onClick={() => reset()}>
-            Retry
-          </ToastAction>
-        ),
+      toast.dismiss();
+      toast.error(message ?? "An error occurred", {
+        action: { label: "Retry", onClick: () => reset() },
       });
     }
 
     if (!loading && !error && message) {
-      dismiss();
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <LucideCheck />
-            <TypographySmall className="font-medium leading-relaxed">
-              {message}
-            </TypographySmall>
-          </div>
-        ),
-        duration: 1000,
-      });
+      toast.dismiss();
+      toast.success(message, { duration: 1000 });
       setTimeout(() => router.push("/reset-password"), 1000);
     }
   }, [error, message, loading, isSubmitted]);

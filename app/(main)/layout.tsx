@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/sidebar";
 import { ThemeProviderClient } from "@/components/utils/themes/theme-provider-client";
 import { TypographyP } from "@/components/utils/typography/typography-p";
+import { useChatConnection } from "@/hooks/use-chat-connection";
+import { usePushNotifications } from "@/hooks/use-push-notifications";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useThemeStore } from "@/stores/themes/theme-store";
 import { sidebarList } from "@/utils/constants/sidebar.constant";
@@ -30,8 +32,11 @@ export default function MainLayout({
   const user = useGetCurrentUserStore((s) => s.user);
   const t = useTranslations("header");
 
+  usePushNotifications();
+  useChatConnection(); // Keep chat socket alive on all pages for real-time badge updates
+
   /**
-   * Feed Detail Page
+   * Feed Detail Page — no sidebar
    */
   if (pathname.startsWith("/feed/")) {
     return (
@@ -47,58 +52,50 @@ export default function MainLayout({
   }
 
   /**
-   * Reusable Sidebar Layout
+   * Determine header title
    */
-  const renderSidebarLayout = (title: string) => (
-    <SidebarProvider>
-      <CollapseSidebar key={user?.id || "nouser"} />
-      <div className="w-full h-screen message-xs:h-full flex flex-col">
-        <SidebarInset>
-          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-            <div className="flex items-center gap-2 px-4">
-              <SidebarTrigger />
-              <Separator orientation="vertical" className="mr-2 h-4" />
-              <TypographyP className="!m-0">{title}</TypographyP>
-            </div>
-          </header>
-        </SidebarInset>
-        <div className="h-full">{children}</div>
-      </div>
-    </SidebarProvider>
-  );
-
-  if (pathname.startsWith("/message")) return renderSidebarLayout(t("chat"));
-  if (pathname.startsWith("/resume-builder"))
-    return renderSidebarLayout(t("aiResumeBuilder"));
-  if (pathname.startsWith("/search"))
-    return renderSidebarLayout(t("searchFavorite"));
-  if (pathname.startsWith("/matching")) return renderSidebarLayout(t("matching"));
-  if (pathname.startsWith("/favorite")) return renderSidebarLayout(t("favorites"));
-  if (pathname.startsWith("/profile"))
-    return renderSidebarLayout(t("profilePage"));
-  if (pathname.startsWith("/setting"))
-    return renderSidebarLayout(t("settingPage"));
+  const getHeaderTitle = () => {
+    if (pathname.startsWith("/message")) return t("chat");
+    if (pathname.startsWith("/resume-builder")) return t("aiResumeBuilder");
+    if (pathname.startsWith("/search")) return t("searchFavorite");
+    if (pathname.startsWith("/matching")) return t("matching");
+    if (pathname.startsWith("/favorite")) return t("favorites");
+    if (pathname.startsWith("/profile")) return t("profilePage");
+    if (pathname.startsWith("/setting")) return t("settingPage");
+    return sidebarData[0]?.description ?? "";
+  };
 
   /**
-   * Default Layout
+   * Determine content wrapper class
+   */
+  const getContentClass = () => {
+    if (pathname.startsWith("/message")) return "w-full h-screen message-xs:h-full flex flex-col";
+    return "w-full";
+  };
+
+  const getChildrenWrapperClass = () => {
+    if (pathname.startsWith("/message")) return "h-full";
+    return "m-5";
+  };
+
+  /**
+   * Single stable layout tree — SidebarProvider never remounts on navigation
    */
   return (
     <ThemeProviderClient defaultTheme={theme}>
       <SidebarProvider>
         <CollapseSidebar key={user?.id || "nouser"} />
-        <div className="w-full">
+        <div className={getContentClass()}>
           <SidebarInset>
             <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
               <div className="flex items-center gap-2 px-4">
                 <SidebarTrigger />
                 <Separator orientation="vertical" className="mr-2 h-4" />
-                <TypographyP className="!m-0">
-                  {sidebarData[0]?.description}
-                </TypographyP>
+                <TypographyP className="!m-0">{getHeaderTitle()}</TypographyP>
               </div>
             </header>
           </SidebarInset>
-          <div className="m-5">{children}</div>
+          <div key={pathname} className={`${getChildrenWrapperClass()} animate-page-in`}>{children}</div>
         </div>
       </SidebarProvider>
     </ThemeProviderClient>

@@ -9,6 +9,7 @@ export type PersonalInfo = {
   email: string;
   phone?: string;
   location?: string;
+  age?: number;
   profilePicture?: string;
   socials?: Record<string, string>;
   job?: string;

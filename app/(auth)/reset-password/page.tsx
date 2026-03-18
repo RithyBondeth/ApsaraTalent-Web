@@ -2,22 +2,12 @@
 import resetPasswordWhiteSvg from "@/assets/svg/reset-password-white.svg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ToastAction } from "@/components/ui/toast";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { useToast } from "@/hooks/use-toast";
 import { useResetPasswordStore } from "@/stores/apis/auth/reset-password.store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-    LucideCheck,
-    LucideEye,
-    LucideEyeClosed,
-    LucideInfo,
-    LucideKey,
-    LucideLockKeyhole
-} from "lucide-react";
+import { LucideEye, LucideEyeClosed, LucideKey, LucideLockKeyhole } from "lucide-react";
+import { toast } from "sonner";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -27,7 +17,6 @@ import { resetPasswordSchema, TResetPasswordForm } from "./validate";
 export default function ResetPasswordPage() {
   // Utils
   const router = useRouter();
-  const { toast, dismiss } = useToast();
 
   // Reset Password Helpers
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
@@ -58,51 +47,18 @@ export default function ResetPasswordPage() {
   useEffect(() => {
     if (!isSubmitted) return;
 
-    if (loading)
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <ApsaraLoadingSpinner size={50} loop />
-            <TypographySmall className="font-medium">
-              Loading...
-            </TypographySmall>
-          </div>
-        ),
-      });
+    if (loading) toast.loading("Loading...");
 
     if (error) {
-      dismiss();
-      toast({
-        variant: "destructive",
-        description: (
-          <div className="flex flex-row items-center gap-2">
-            <LucideInfo />
-            <TypographySmall className="font-medium leading-relaxed">
-              {message}
-            </TypographySmall>
-          </div>
-        ),
-        action: (
-          <ToastAction altText="Try again" onClick={() => reset()}>
-            Retry
-          </ToastAction>
-        ),
+      toast.dismiss();
+      toast.error(message ?? "An error occurred", {
+        action: { label: "Retry", onClick: () => reset() },
       });
     }
 
     if (!loading && !error && message) {
-      dismiss();
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <LucideCheck />
-            <TypographySmall className="font-medium leading-relaxed">
-              {message}
-            </TypographySmall>
-          </div>
-        ),
-        duration: 1500,
-      });
+      toast.dismiss();
+      toast.success(message, { duration: 1500 });
       setTimeout(() => router.push("/login"), 1000);
     }
   }, [error, loading, message, isSubmitted]);

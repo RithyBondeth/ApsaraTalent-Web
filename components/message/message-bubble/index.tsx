@@ -17,23 +17,22 @@ import {
   CheckCheck,
   Clock,
   Download,
+  ExternalLink,
   FileText,
   Pencil,
+  Phone,
   Reply,
   Trash2,
   X,
 } from "lucide-react";
+import { AudioPlayer } from "./audio-player";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useCallStore } from "@/stores/call.store";
 
 // ─── URL Detection ───────────────────────────────────────────────────────────
-// Matches http/https URLs and bare www. addresses in text.
 const URL_REGEX = /(?:https?:\/\/|www\.)[^\s/$.?#].[^\s]*/gi;
 
-/**
- * Splits `text` into segments of plain text and detected URLs.
- * Returns an array of React nodes so the bubble can render each part correctly.
- */
 function renderTextWithLinks(text: string): React.ReactNode[] {
   const parts: React.ReactNode[] = [];
   let lastIndex = 0;
@@ -65,12 +64,6 @@ function renderTextWithLinks(text: string): React.ReactNode[] {
 }
 
 // ─── Delivery Status Icon ────────────────────────────────────────────────────
-/**
- * Shows a small icon next to the timestamp for outgoing messages:
- *  ⏳ sending — clock (optimistic, not yet ack'd)
- *  ✓  sent    — single grey check
- *  ✓✓ seen    — double blue check
- */
 function DeliveryIcon({
   status,
 }: {
@@ -80,40 +73,61 @@ function DeliveryIcon({
   if (status === "sending")
     return <Clock className="h-3 w-3 text-muted-foreground/60 inline-block" />;
   if (status === "seen")
-    return <CheckCheck className="h-3 w-3 text-primary inline-block" />;
+    return <CheckCheck className="h-3 w-3 text-green-500 inline-block" />;
   return <Check className="h-3 w-3 text-muted-foreground/60 inline-block" />;
+}
+
+// ─── Format file size ────────────────────────────────────────────────────────
+function formatFileSize(bytes?: number): string {
+  if (!bytes) return "";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 // ─── Attachment Renderer ─────────────────────────────────────────────────────
 /**
  * Renders the file attached to a message.
  *
- * Image   → inline <img> preview with a click-to-open link.
- * Document → download card with file icon, filename, and download button.
- *
- * The URL comes from the server's static /uploads/ route.
- * attachmentType is derived from the MIME type at upload time and stored
- * alongside the URL so we don't have to re-detect it here.
+ * Image    → inline <img> preview with click-to-open.
+ * Document → rich card matching shadcnuikit:
+ *            [icon] filename (size)
+ *            [ Download ]  [ Preview ]
  */
 function AttachmentBlock({
   url,
   type,
   filename,
+  fileSize,
   isMe,
+  duration,
+  amplitude,
 }: {
   url: string;
-  type: "image" | "document";
+  type: "image" | "document" | "audio";
   filename?: string;
+  fileSize?: number;
   isMe?: boolean;
+  duration?: number;
+  amplitude?: number[];
 }) {
-  // NEXT_PUBLIC_API_URL is the raw backend base (e.g. "http://localhost:3000").
-  // Attachment URLs are stored as relative paths like /storage/chat/...
   const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
   const fullUrl = url.startsWith("http") ? url : `${apiBase}${url}`;
 
+  // ── Audio voice message ────────────────────────────────────────────────────
+  if (type === "audio") {
+    return (
+      <AudioPlayer
+        url={fullUrl}
+        duration={duration}
+        amplitude={amplitude}
+        isMe={isMe}
+      />
+    );
+  }
+
   if (type === "image") {
     return (
-      // Clicking the image opens it in a new tab
       <a
         href={fullUrl}
         target="_blank"
@@ -124,30 +138,79 @@ function AttachmentBlock({
         <img
           src={fullUrl}
           alt={filename || "Image attachment"}
-          className="max-w-full rounded-lg max-h-64 object-cover cursor-pointer hover:opacity-90 transition-opacity"
+          className="max-w-full rounded-xl max-h-64 object-cover cursor-pointer hover:opacity-90 transition-opacity"
         />
       </a>
     );
   }
 
-  // Document — show a small card with filename and download button
+  // ── Document card (shadcnuikit style) ─────────────────────────────────────
   return (
-    <a
-      href={fullUrl}
-      download={filename}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`flex items-center gap-2 mt-1 p-2 rounded-lg border text-xs
-        ${
-          isMe
-            ? "border-primary-foreground/20 bg-primary-foreground/10 text-primary-foreground"
-            : "border-border bg-muted/40 text-foreground"
-        } hover:opacity-80 transition-opacity max-w-[220px]`}
+    <div
+      className={`mt-2 rounded-2xl border overflow-hidden ${
+        isMe
+          ? "border-primary-foreground/20 bg-primary-foreground/10"
+          : "border-border bg-background"
+      }`}
     >
-      <FileText className="h-5 w-5 shrink-0 opacity-70" />
-      <span className="truncate flex-1">{filename || "Document"}</span>
-      <Download className="h-3.5 w-3.5 shrink-0 opacity-70" />
-    </a>
+      {/* File info row */}
+      <div className="flex items-center gap-3 px-4 py-3">
+        <FileText
+          className={`h-8 w-8 shrink-0 ${
+            isMe ? "text-primary-foreground/70" : "text-muted-foreground/60"
+          }`}
+        />
+        <div className="min-w-0">
+          <p
+            className={`text-sm font-medium truncate leading-tight ${
+              isMe ? "text-primary-foreground" : "text-foreground"
+            }`}
+          >
+            {filename || "Document"}
+          </p>
+          {fileSize && (
+            <p
+              className={`text-xs mt-0.5 ${
+                isMe ? "text-primary-foreground/60" : "text-muted-foreground"
+              }`}
+            >
+              ({formatFileSize(fileSize)})
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Action buttons row */}
+      <div className={`flex gap-2 px-4 pb-3`}>
+        <a
+          href={fullUrl}
+          download={filename}
+          className={`flex-1 h-8 flex items-center justify-center gap-1.5 rounded-lg border text-xs font-medium transition-colors ${
+            isMe
+              ? "border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
+              : "border-border text-foreground hover:bg-muted"
+          }`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Download className="h-3 w-3" />
+          Download
+        </a>
+        <a
+          href={fullUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`flex-1 h-8 flex items-center justify-center gap-1.5 rounded-lg border text-xs font-medium transition-colors ${
+            isMe
+              ? "border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
+              : "border-border text-foreground hover:bg-muted"
+          }`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <ExternalLink className="h-3 w-3" />
+          Preview
+        </a>
+      </div>
+    </div>
   );
 }
 
@@ -156,11 +219,10 @@ export default function MessageBubble(props: IMessageBubbleProps) {
   const { message, activeChat, isLastSeen, onReply, onEdit } = props;
 
   const { reactToMessage, deleteMessage } = useChatStore();
+  const initiateCall = useCallStore((s) => s.initiateCall);
   const { user: currentUser } = useGetCurrentUserStore();
 
   // ── Inline edit state ─────────────────────────────────────────────────────
-  // isEditing: true when this bubble is in edit mode (textarea replaces content).
-  // editValue: current text in the edit textarea, seeded from message.content.
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editValue, setEditValue] = useState<string>(message.content);
   const editTextareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -168,9 +230,8 @@ export default function MessageBubble(props: IMessageBubbleProps) {
   const [showDeliveryTime, setShowDeliveryTime] = useState<boolean>(false);
 
   const startEditing = () => {
-    setEditValue(message.content); // reset to current text
+    setEditValue(message.content);
     setIsEditing(true);
-    // Focus textarea on next tick (after it renders)
     setTimeout(() => editTextareaRef.current?.focus(), 0);
   };
 
@@ -178,11 +239,18 @@ export default function MessageBubble(props: IMessageBubbleProps) {
 
   const confirmEdit = () => {
     const trimmed = editValue.trim();
-    // Only submit if the content actually changed and is non-empty
     if (trimmed && trimmed !== message.content) {
       onEdit?.(message.id, trimmed);
     }
     setIsEditing(false);
+  };
+
+  const handleCallAgain = () => {
+    initiateCall({
+      userId: activeChat.id,
+      name: activeChat.name,
+      avatar: activeChat.avatar,
+    });
   };
 
   // ── Reaction helpers ──────────────────────────────────────────────────────
@@ -211,15 +279,8 @@ export default function MessageBubble(props: IMessageBubbleProps) {
     return activeChat.name;
   };
 
-  // ── Delete handler ────────────────────────────────────────────────────────
-  const handleDelete = () => {
-    deleteMessage(message.id, activeChat.id);
-  };
-
-  // ── Reply handler ─────────────────────────────────────────────────────────
-  const handleReply = () => {
-    onReply?.(message);
-  };
+  const handleDelete = () => deleteMessage(message.id, activeChat.id);
+  const handleReply = () => onReply?.(message);
 
   return (
     <div
@@ -227,7 +288,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
         message.isMe ? "ml-auto" : ""
       }`}
     >
-      {/* ── Sender label (only for partner messages) ──────────────────────── */}
+      {/* ── Sender label (partner messages only) ──────────────────────────── */}
       {!message.isMe && (
         <div className="flex items-center mb-1">
           <Avatar className="h-6 w-6 mr-2">
@@ -268,13 +329,11 @@ export default function MessageBubble(props: IMessageBubbleProps) {
           <div
             className={`rounded-2xl text-sm transition-all ${
               message.isMe
-                ? "bg-primary text-primary-foreground rounded-br-none"
-                : "bg-background text-foreground rounded-tl-none shadow-sm"
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-foreground"
             } ${message.isDeleted ? "px-3 py-2 opacity-60" : "p-3"}`}
           >
-            {/* ── Reply / Quote block ────────────────────────────────────── */}
-            {/* Shows the quoted parent message above this bubble's content.
-                Only visible when this message is a reply and is not deleted. */}
+            {/* ── Reply / Quote block ──────────────────────────────────── */}
             {message.replyTo && !message.isDeleted && (
               <div
                 className={`mb-2 pl-2 border-l-2 text-xs opacity-80 rounded-sm py-0.5 ${
@@ -295,16 +354,30 @@ export default function MessageBubble(props: IMessageBubbleProps) {
               </div>
             )}
 
-            {/* ── Message content (or tombstone, or edit textarea) ───────── */}
+            {/* ── Message content ──────────────────────────────────────── */}
             {message.isDeleted ? (
-              // Tombstone — shown when message has been soft-deleted
               <span className="italic text-muted-foreground text-xs">
                 🚫 This message was deleted
               </span>
+            ) : message.messageType === "call" ? (
+              <div className="flex flex-col gap-2 min-w-[180px]">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <Phone className="h-4 w-4" />
+                  <span>{message.content || "Call"}</span>
+                </div>
+                <Button
+                  variant={message.isMe ? "secondary" : "default"}
+                  size="sm"
+                  className="w-full"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCallAgain();
+                  }}
+                >
+                  Call again
+                </Button>
+              </div>
             ) : isEditing ? (
-              // ── Inline edit mode ─────────────────────────────────────────
-              // Replaces the text content with a textarea so the user can
-              // type the new version. Enter confirms; Escape cancels.
               <div className="flex flex-col gap-1.5 min-w-[200px]">
                 <Textarea
                   ref={editTextareaRef}
@@ -322,7 +395,6 @@ export default function MessageBubble(props: IMessageBubbleProps) {
                     placeholder:text-primary-foreground/50 focus-visible:ring-primary-foreground/50"
                   rows={1}
                 />
-                {/* Edit action buttons: confirm (✓) and cancel (✕) */}
                 <div className="flex gap-1 justify-end">
                   <Button
                     variant="ghost"
@@ -345,26 +417,24 @@ export default function MessageBubble(props: IMessageBubbleProps) {
                 </div>
               </div>
             ) : (
-              // ── Normal content ────────────────────────────────────────────
               <>
-                {/* Text content with auto-linked URLs */}
                 {message.content && (
                   <span className="whitespace-pre-wrap break-words">
                     {renderTextWithLinks(message.content)}
                   </span>
                 )}
 
-                {/* Attachment — image preview or document download card */}
                 {message.attachment && (
                   <AttachmentBlock
                     url={message.attachment}
                     type={message.attachmentType ?? "document"}
                     filename={message.attachmentFilename}
                     isMe={message.isMe}
+                    duration={message.attachmentDuration}
+                    amplitude={message.attachmentAmplitude}
                   />
                 )}
 
-                {/* "(edited)" label — subtle indicator that content was changed */}
                 {message.isEdited && (
                   <span className="text-[10px] opacity-60 ml-1 italic">
                     (edited)
@@ -374,7 +444,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
             )}
           </div>
 
-          {/* ── Reaction display badge ───────────────────────────────────── */}
+          {/* ── Reaction display badge ──────────────────────────────────── */}
           {totalReactionCount > 0 && !message.isDeleted && (
             <Popover>
               <PopoverTrigger asChild>
@@ -505,11 +575,9 @@ export default function MessageBubble(props: IMessageBubbleProps) {
           )}
         </div>
 
-        {/* ── Action buttons (hover/touch reveal) ─────────────────────────── */}
-        {/* Hidden by default; appear on hover. Hidden on deleted or editing messages. */}
+        {/* ── Action buttons (hover reveal) ───────────────────────────────── */}
         {!message.isDeleted && !isEditing && (
           <div className="opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity flex items-center gap-0.5">
-            {/* Reply button */}
             {onReply && (
               <Button
                 variant="ghost"
@@ -522,14 +590,15 @@ export default function MessageBubble(props: IMessageBubbleProps) {
               </Button>
             )}
 
-            {/* Reaction picker */}
             <ReactionPicker
               onReact={handleReact}
               currentReaction={myReaction}
             />
 
-            {/* Edit button — own messages only, and only text messages (no attachment-only edits) */}
-            {message.isMe && onEdit && !message.attachment && (
+            {message.isMe &&
+              onEdit &&
+              !message.attachment &&
+              message.messageType !== "call" && (
               <Button
                 variant="ghost"
                 size="icon"
@@ -541,7 +610,6 @@ export default function MessageBubble(props: IMessageBubbleProps) {
               </Button>
             )}
 
-            {/* Delete button — own messages only */}
             {message.isMe && (
               <Button
                 variant="ghost"
@@ -557,12 +625,12 @@ export default function MessageBubble(props: IMessageBubbleProps) {
         )}
       </div>
 
-      {/* ── Timestamp + delivery state ────────────────────────────────────── */}
+      {/* ── Timestamp + delivery state (click to show) ────────────────────── */}
       {(message.deliveryStatus === "sending" || showDeliveryTime) && (
         <div
-          className={`flex items-center gap-1 text-[10px] text-muted-foreground mt-1.5 ${
+          className={`flex items-center gap-1 text-[10px] text-muted-foreground mt-1 ${
             message.isMe ? "justify-end" : ""
-          }`}
+          } ${totalReactionCount > 0 ? "mb-3" : ""}`}
         >
           {formatMessageTime(message.timestamp)}
           {message.isMe && <DeliveryIcon status={message.deliveryStatus} />}
@@ -571,7 +639,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
 
       {/* ── "Seen" avatar indicator (last read message) ───────────────────── */}
       {isLastSeen && (
-        <div className="flex items-center justify-end gap-1 mt-1">
+        <div className="flex items-center justify-end gap-1 mt-0.5">
           <Avatar className="h-4 w-4">
             <AvatarImage src={activeChat.avatar} alt={activeChat.name} />
             <AvatarFallback className="text-[8px]">

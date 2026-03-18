@@ -50,6 +50,7 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
         if (body.email) requestBody.email = body.email;
         if (body.firstname) requestBody.firstname = body.firstname;
         if (body.lastname) requestBody.lastname = body.lastname;
+        if (body.dob !== undefined) requestBody.dob = body.dob;
         if (body.username) requestBody.username = body.username;
         if (body.gender) requestBody.gender = body.gender;
 

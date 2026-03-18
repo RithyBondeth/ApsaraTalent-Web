@@ -30,7 +30,7 @@ import {
 import { TAvailability } from "@/utils/types/availability.type";
 import { TLocations } from "@/utils/types/location.type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { debounce } from "lodash";
+import debounce from "lodash.debounce";
 import { LucideBriefcaseBusiness, LucideGraduationCap } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";

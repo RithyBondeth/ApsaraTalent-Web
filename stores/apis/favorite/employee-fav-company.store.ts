@@ -38,66 +38,57 @@ export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>()(
       },
 
       addCompanyToFavorite: async (employeeID, companyID) => {
-        set({ loading: true, error: null });
+        // Optimistic update — hide the save button immediately
+        set((state) => ({
+          favoriteCompanyIds: new Set(state.favoriteCompanyIds).add(companyID),
+          loading: true,
+          error: null,
+        }));
 
         try {
           const response = await axios.post<{ message: string }>(
             API_EMPLOYEE_FAVORITE_COMPANY_URL(employeeID, companyID),
           );
-
-          set((state) => ({
-            favoriteCompanyIds: new Set(state.favoriteCompanyIds).add(
-              companyID,
-            ),
-            loading: false,
-            message: response.data.message,
-          }));
+          set({ loading: false, message: response.data.message });
         } catch (error) {
-          const errorMessage =  axios.isAxiosError(error)
-          ? error.response?.data?.message || error.message
-          : "Failed to add favorite";
-
-          set({
-            loading: false,
-            error: errorMessage,
-            message: errorMessage,
+          // Roll back optimistic update on failure
+          let errorMessage = "Failed to add favorite";
+          set((state) => {
+            const rolled = new Set(state.favoriteCompanyIds);
+            rolled.delete(companyID);
+            errorMessage = axios.isAxiosError(error)
+              ? error.response?.data?.message || error.message
+              : "Failed to add favorite";
+            return { favoriteCompanyIds: rolled, loading: false, error: errorMessage, message: errorMessage };
           });
+          throw new Error(errorMessage);
         }
       },
 
       removeCompanyFromFavorite: async (employeeID, companyID, favoriteID) => {
-        set({ loading: true, error: null });
+        // Optimistic update — remove immediately from Set
+        set((state) => {
+          const updated = new Set(state.favoriteCompanyIds);
+          updated.delete(companyID);
+          return { favoriteCompanyIds: updated, loading: true, error: null };
+        });
 
         try {
           const response = await axios.post<{ message: string }>(
-            API_EMPLOYEE_UNFAVORITE_COMPANY_URL(
-              employeeID,
-              companyID,
-              favoriteID,
-            ),
+            API_EMPLOYEE_UNFAVORITE_COMPANY_URL(employeeID, companyID, favoriteID),
           );
-
-          set((state) => {
-            const updated = new Set(state.favoriteCompanyIds);
-            updated.delete(companyID);
-
-            return {
-              favoriteCompanyIds: updated,
-              loading: false,
-              message: response.data.message,
-              error: null,
-            };
-          });
+          set({ loading: false, message: response.data.message, error: null });
         } catch (error) {
-          const errorMessage =  axios.isAxiosError(error)
-          ? error.response?.data?.message || error.message
-          : "Failed to remove company from favorite";
-
-          set({
-            loading: false,
-            error: errorMessage,
-            message: errorMessage,
+          // Roll back — add ID back to Set
+          let errorMessage = "Failed to remove company from favorite";
+          set((state) => {
+            const rolledBack = new Set(state.favoriteCompanyIds).add(companyID);
+            errorMessage = axios.isAxiosError(error)
+              ? error.response?.data?.message || error.message
+              : "Failed to remove company from favorite";
+            return { favoriteCompanyIds: rolledBack, loading: false, error: errorMessage, message: errorMessage };
           });
+          throw new Error(errorMessage);
         }
       },
 

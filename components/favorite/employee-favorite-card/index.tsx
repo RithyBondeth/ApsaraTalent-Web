@@ -19,7 +19,7 @@ export default function FavoriteEmployeeCard(
   const router = useRouter();
 
   return (
-    <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-md tablet-xl:flex-col tablet-xl:items-start">
+    <div className={`w-full flex items-start gap-5 p-5 shadow-md rounded-md tablet-xl:flex-col tablet-xl:items-start${props.isRemoving ? " animate-card-pop-shrink" : ""}`}>
       <Avatar rounded="md" className="size-56 tablet-xl:size-36">
         <AvatarFallback>{props.name.slice(0, 2).toUpperCase()}</AvatarFallback>
         <AvatarImage src={props.avatar} />

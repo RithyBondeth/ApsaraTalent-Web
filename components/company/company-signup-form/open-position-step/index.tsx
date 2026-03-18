@@ -15,9 +15,8 @@ import LabelInput from "@/components/utils/label-input";
 import Tag from "@/components/utils/tag";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { getRandomBadgeColor } from "@/utils/extensions/get-random-badge-color";
-import { ToastAction } from "@radix-ui/react-toast";
 import { LucidePlus, LucideTrash2, LucideXCircle } from "lucide-react";
 import { useState } from "react";
 import { Controller, useFieldArray } from "react-hook-form";
@@ -31,7 +30,6 @@ export default function OpenPositionStepForm({
   trigger,
 }: IStepFormProps<TCompanySignup>) {
   // Utils
-  const { toast } = useToast();
 
   // Open Position Helpers
   const [skillInput, setSkillInput] = useState<string>("");
@@ -55,11 +53,9 @@ export default function OpenPositionStepForm({
       (skill) => skill.toLowerCase() === trimmed.toLowerCase(),
     );
     if (alreadyExists) {
-      toast({
-        variant: "destructive",
-        title: "Duplicated Skill",
+      toast.error("Duplicated Skill", {
         description: "Please input another skill.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
+        action: { label: "Try again", onClick: () => {} },
       });
       return;
     }

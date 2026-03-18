@@ -1,9 +1,9 @@
 import {
-    emailValidation,
-    khmerPhoneNumberValidation,
-    passwordValidation,
-    selectedValidation,
-    textValidation
+  emailValidation,
+  khmerPhoneNumberValidation,
+  passwordValidation,
+  selectedValidation,
+  textValidation,
 } from "@/utils/functions/validations";
 import * as z from "zod";
 
@@ -11,6 +11,7 @@ export const basicSignupEmployeeSchema = z
   .object({
     firstName: textValidation("First name", 50),
     lastName: textValidation("Last name", 50),
+    dob: z.string().optional(),
     username: textValidation("Username", 50),
     phone: khmerPhoneNumberValidation(),
     gender: selectedValidation("Gender"),

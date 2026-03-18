@@ -23,9 +23,14 @@ export default function MatchingPage() {
   // Utils
   const router = useRouter();
 
-  // API Integration
-  const getCurrentEmployeeMatchingStore = useGetCurrentEmployeeMatchingStore();
-  const getCurrentCompanyMatchingStore = useGetCurrentCompanyMatchingStore();
+  // API Integration — use field selectors to avoid re-renders from unrelated store changes
+  const empMatching = useGetCurrentEmployeeMatchingStore((s) => s.currentEmployeeMatching);
+  const empLoading = useGetCurrentEmployeeMatchingStore((s) => s.loading);
+  const queryCurrentEmployeeMatching = useGetCurrentEmployeeMatchingStore((s) => s.queryCurrentEmployeeMatching);
+
+  const cmpMatching = useGetCurrentCompanyMatchingStore((s) => s.currentCompanyMatching);
+  const cmpLoading = useGetCurrentCompanyMatchingStore((s) => s.loading);
+  const queryCurrentCompanyMatching = useGetCurrentCompanyMatchingStore((s) => s.queryCurrentCompanyMatching);
 
   // Track which card is in a loading state to prevent double-clicks
   const [chatLoadingId, setChatLoadingId] = useState<string | null>(null);
@@ -33,24 +38,16 @@ export default function MatchingPage() {
   // Use Custom Hook - Handles all ref logic and duplicate prevention
   const { isEmployee, currentUser } = useFetchOnce({
     cacheKey: "matching-page",
-    onEmployeeFetch: (employeeId) => {
-      getCurrentEmployeeMatchingStore.queryCurrentEmployeeMatching(employeeId);
-    },
-    onCompanyFetch: (companyId) => {
-      getCurrentCompanyMatchingStore.queryCurrentCompanyMatching(companyId);
-    },
+    onEmployeeFetch: queryCurrentEmployeeMatching,
+    onCompanyFetch: queryCurrentCompanyMatching,
   });
 
   // Compute All Loading States
   const isLoadingForEmployee =
-    isEmployee &&
-    (getCurrentEmployeeMatchingStore.loading ||
-      getCurrentEmployeeMatchingStore.currentEmployeeMatching === null);
+    isEmployee && (empLoading || empMatching === null);
 
   const isLoadingForCompany =
-    !isEmployee &&
-    (getCurrentCompanyMatchingStore.loading ||
-      getCurrentCompanyMatchingStore.currentCompanyMatching === null);
+    !isEmployee && (cmpLoading || cmpMatching === null);
 
   const isLoading = isLoadingForEmployee || isLoadingForCompany;
 
@@ -125,14 +122,14 @@ export default function MatchingPage() {
           height={250}
           width={350}
           className="tablet-xl:!w-full"
+          priority
         />
       </div>
 
       {/* Matching Card List Section */}
       <div className="flex flex-col items-start gap-3">
-        {getCurrentEmployeeMatchingStore.currentEmployeeMatching &&
-        getCurrentEmployeeMatchingStore.currentEmployeeMatching.length > 0 ? (
-          getCurrentEmployeeMatchingStore.currentEmployeeMatching.map((cmp) => (
+        {empMatching && empMatching.length > 0 ? (
+          empMatching.map((cmp) => (
             <MatchingCompanyCard
               key={cmp.id}
               name={cmp.name}
@@ -150,9 +147,8 @@ export default function MatchingPage() {
               }}
             />
           ))
-        ) : getCurrentCompanyMatchingStore.currentCompanyMatching &&
-          getCurrentCompanyMatchingStore.currentCompanyMatching.length > 0 ? (
-          getCurrentCompanyMatchingStore.currentCompanyMatching.map((emp) => (
+        ) : cmpMatching && cmpMatching.length > 0 ? (
+          cmpMatching.map((emp) => (
             <MatchingEmployeeCard
               key={emp.id}
               name={`${emp.firstname} ${emp.lastname}`}
