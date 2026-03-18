@@ -37,35 +37,32 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
       },
 
       addEmployeeToFavorite: async (companyID: string, employeeID: string) => {
-        set({ loading: true, error: null });
+        // Optimistic update — hide the save button immediately
+        set((state) => ({
+          favoriteEmployeeIds: new Set(state.favoriteEmployeeIds).add(employeeID),
+          loading: true,
+          error: null,
+        }));
 
         try {
           const response = await axios.post<{ message: string }>(
             API_COMPANY_FAVORITE_EMPLOYEE_URL(companyID, employeeID),
           );
-          set((state) => ({
-            favoriteEmployeeIds: new Set(state.favoriteEmployeeIds).add(
-              employeeID,
-            ),
-            loading: false,
-            message: response.data.message,
-            error: null,
-          }));
+          set({ loading: false, message: response.data.message, error: null });
         } catch (error) {
-          if (axios.isAxiosError(error)) {
-            const errorMessage =
-              error.response?.data?.message instanceof Array
+          // Roll back optimistic update on failure
+          let errorMessage = "An error occurred while adding employee to favorite";
+          set((state) => {
+            const rolled = new Set(state.favoriteEmployeeIds);
+            rolled.delete(employeeID);
+            errorMessage = axios.isAxiosError(error)
+              ? error.response?.data?.message instanceof Array
                 ? error.response.data.message.join(", ")
-                : error.response?.data?.message || error.message;
-
-            set({ loading: false, error: errorMessage, message: errorMessage });
-          } else {
-            set({
-              loading: false,
-              error: "An error occurred while adding employee to favorite",
-              message: "An error occurred while adding employee to favorite",
-            });
-          }
+                : error.response?.data?.message || error.message
+              : "An error occurred while adding employee to favorite";
+            return { favoriteEmployeeIds: rolled, loading: false, error: errorMessage, message: errorMessage };
+          });
+          throw new Error(errorMessage);
         }
       },
 
@@ -74,37 +71,29 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
         employeeID: string,
         favoriteID: string,
       ) => {
-        set({ loading: true, error: null });
+        // Optimistic update — remove immediately from Set
+        set((state) => {
+          const updated = new Set(state.favoriteEmployeeIds);
+          updated.delete(employeeID);
+          return { favoriteEmployeeIds: updated, loading: true, error: null };
+        });
 
         try {
           const response = await axios.post<{ message: string }>(
-            API_COMPANY_UNFAVORITE_EMPLOYEE_URL(
-              companyID,
-              employeeID,
-              favoriteID,
-            ),
+            API_COMPANY_UNFAVORITE_EMPLOYEE_URL(companyID, employeeID, favoriteID),
           );
-
-          set((state) => {
-            const updated = new Set(state.favoriteEmployeeIds);
-            updated.delete(employeeID);
-
-            return {
-              favoriteEmployeeIds: updated,
-              loading: false,
-              message: response.data.message,
-              error: null,
-            };
-          });
+          set({ loading: false, message: response.data.message, error: null });
         } catch (error) {
-          const errorMessage =  axios.isAxiosError(error)
-          ? error.response?.data?.message || error.message
-          : "Failed to remove employee from favorite";
-          set({
-            loading: false,
-            error: errorMessage,
-            message: errorMessage,
+          // Roll back — add ID back to Set
+          let errorMessage = "Failed to remove employee from favorite";
+          set((state) => {
+            const rolledBack = new Set(state.favoriteEmployeeIds).add(employeeID);
+            errorMessage = axios.isAxiosError(error)
+              ? error.response?.data?.message || error.message
+              : "Failed to remove employee from favorite";
+            return { favoriteEmployeeIds: rolledBack, loading: false, error: errorMessage, message: errorMessage };
           });
+          throw new Error(errorMessage);
         }
       },
 

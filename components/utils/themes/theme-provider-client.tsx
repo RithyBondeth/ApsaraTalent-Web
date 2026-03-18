@@ -1,8 +1,28 @@
 "use client";
 
 import { useThemeStore } from "@/stores/themes/theme-store";
-import { ThemeProvider as NextThemesProvider } from "next-themes";
-import { useEffect, useState } from "react";
+import { TTheme } from "@/utils/types/theme.type";
+import { setCookie } from "cookies-next/client";
+import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes";
+import { useEffect } from "react";
+
+function normalizeTheme(theme: string): TTheme {
+  if (theme === "light" || theme === "dark" || theme === "system") {
+    return theme;
+  }
+  return "system";
+}
+
+function ThemeSync({ theme }: { theme: TTheme }) {
+  const { setTheme } = useTheme();
+
+  useEffect(() => {
+    setTheme(theme);
+    setCookie("theme", theme);
+  }, [theme, setTheme]);
+
+  return null;
+}
 
 export function ThemeProviderClient({
   children,
@@ -11,22 +31,19 @@ export function ThemeProviderClient({
   children: React.ReactNode;
   defaultTheme: string;
 }) {
-  const { theme, setTheme } = useThemeStore();
-  const [mounted, setMounted] = useState(false);
-
-  // Run this only after the component has mounted
-  useEffect(() => {
-    setMounted(true);
-    if (theme === "system") {
-      setTheme(defaultTheme as "light" | "dark" | "system"); // Initialize theme with defaultTheme
-    }
-  }, [theme, defaultTheme, setTheme]);
-
-  // If not mounted yet, render nothing to avoid hydration mismatch
-  if (!mounted) return <>{children}</>;
+  const theme = useThemeStore((state) => state.theme);
+  const isHydrated = useThemeStore((state) => state.isHydrated);
+  const fallbackTheme = normalizeTheme(defaultTheme);
+  const activeTheme = isHydrated ? theme : fallbackTheme;
 
   return (
-    <NextThemesProvider attribute="class" defaultTheme={theme} enableSystem>
+    <NextThemesProvider
+      attribute="class"
+      defaultTheme={fallbackTheme}
+      enableSystem
+      disableTransitionOnChange
+    >
+      <ThemeSync theme={activeTheme} />
       {children}
     </NextThemesProvider>
   );

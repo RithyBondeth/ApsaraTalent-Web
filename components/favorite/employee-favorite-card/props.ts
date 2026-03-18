@@ -9,5 +9,6 @@ export interface IFavoriteEmployeeCardProps {
   availability: string;
   location: string;
   skills: string[];
+  isRemoving?: boolean;
   onRemoveFromFavorite: () => void;
 }

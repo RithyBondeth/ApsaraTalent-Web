@@ -3,9 +3,12 @@
 import { ChatMessages } from "@/components/message";
 import ChatHeader from "@/components/message/message-header";
 import ChatInput from "@/components/message/message-input";
+import MessagePageSkeleton, {
+  MessagePaneSkeleton,
+  MessageThreadSkeleton,
+} from "@/components/message/message-page-skeleton";
 import ChatSidebar from "@/components/message/message-sidebar";
 import { CallOrchestrator } from "@/components/call";
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner";
 import { ErrorBoundary } from "@/components/utils/error-boundary";
 import {
   ResizableHandle,
@@ -264,11 +267,7 @@ const MessagePageContent = () => {
   const isLoading = (!isConnected || !isChatsLoaded) && !loadingTimedOut;
 
   if (isLoading) {
-    return (
-      <div className="h-full flex items-center justify-center">
-        <ApsaraLoadingSpinner size={80} loop />
-      </div>
-    );
+    return <MessagePageSkeleton />;
   }
 
   const chatView = activeChat ? (
@@ -284,9 +283,7 @@ const MessagePageContent = () => {
 
       {/* Message area — spinner while history is loading */}
       {isHistoryLoading ? (
-        <div className="flex-1 flex items-center justify-center">
-          <ApsaraLoadingSpinner size={48} loop />
-        </div>
+        <MessageThreadSkeleton />
       ) : (
         <ChatMessages
           messages={currentMessages}
@@ -428,8 +425,8 @@ const MessagePageContent = () => {
         {/* Chat view — shown when a chatId is in the URL */}
         {chatId && chatView}
         {chatId && !chatView && (
-          <div className="flex-1 flex items-center justify-center">
-            <ApsaraLoadingSpinner size={48} loop />
+          <div className="flex-1 min-w-0">
+            <MessagePaneSkeleton />
           </div>
         )}
       </div>
@@ -440,13 +437,7 @@ const MessagePageContent = () => {
 export default function MessagePage() {
   return (
     <ErrorBoundary>
-      <Suspense
-        fallback={
-          <div className="h-full flex items-center justify-center">
-            <ApsaraLoadingSpinner size={80} loop />
-          </div>
-        }
-      >
+      <Suspense fallback={<MessagePageSkeleton />}>
         <MessagePageContent />
       </Suspense>
     </ErrorBoundary>

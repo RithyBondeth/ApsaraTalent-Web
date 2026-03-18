@@ -30,6 +30,15 @@ export const useGetAllCompanyFavoritesStore =
           API_FIND_ALL_COMPANY_FAVORITES(companyID),
         );
         set({ loading: false, error: null, employeeData: response.data });
+
+        // Sync the persisted favoriteEmployeeIds Set so isFavorite() is accurate
+        // on page load without requiring the user to re-save each item.
+        const { useCompanyFavEmployeeStore } = await import(
+          "@/stores/apis/favorite/company-fav-employee.store"
+        );
+        useCompanyFavEmployeeStore.setState({
+          favoriteEmployeeIds: new Set(response.data.map((f) => f.employee.id)),
+        });
       } catch (error) {
         if (axios.isAxiosError(error)) {
           const errorMessage =

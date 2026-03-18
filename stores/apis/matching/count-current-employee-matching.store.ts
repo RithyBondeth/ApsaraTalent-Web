@@ -1,5 +1,5 @@
 import { API_COUNT_CURRENT_EMPLOYEE_MATCHING_URL } from "@/utils/constants/apis/matching_url";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { create } from "zustand";
 
 type TCountCurrentEmployeeMatchingResponse = {

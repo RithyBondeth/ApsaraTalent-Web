@@ -1030,7 +1030,9 @@ export default function EmployeeProfilePage() {
     // Loading Message on Toast
     const toastId = toast.loading(loadingMessage);
 
-    return () => toast.dismiss(toastId);
+    return () => {
+      toast.dismiss(toastId);
+    };
   }, [updateProfileLoadingState, loadingMessage]);
 
   if (loading) return <EmployeeProfilePageSkeleton />;

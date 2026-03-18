@@ -5,37 +5,37 @@ import OpenPositionForm from "@/components/company/profile/open-position-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-    Carousel,
-    CarouselContent,
-    CarouselItem,
-    CarouselNext,
-    CarouselPrevious
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
 } from "@/components/ui/carousel";
 import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
 } from "@/components/ui/command";
 import {
-    HoverCard,
-    HoverCardContent,
-    HoverCardTrigger
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Input } from "@/components/ui/input";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import BlurBackGroundOverlay from "@/components/utils/bur-background-overlay";
@@ -62,8 +62,8 @@ import { useRemoveCmpCoverStore } from "@/stores/apis/company/remove-cmp-cover.s
 import { useRemoveOneCmpImageStore } from "@/stores/apis/company/remove-one-cmp-image.store";
 import { useRemoveOneOpenPositionStore } from "@/stores/apis/company/remove-one-open-position.store";
 import {
-    TCompanyUpdateBody,
-    useUpdateOneCompanyStore
+  TCompanyUpdateBody,
+  useUpdateOneCompanyStore,
 } from "@/stores/apis/company/update-one-cmp.store";
 import { useUploadCompanyAvatarStore } from "@/stores/apis/company/upload-cmp-avatar.store";
 import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cover.store";
@@ -71,32 +71,32 @@ import { useUploadCompanyImagesStore } from "@/stores/apis/company/upload-cmp-im
 import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-scopes.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import {
-    locationConstant,
-    loginMethodConstant,
-    platformConstant
+  locationConstant,
+  loginMethodConstant,
+  platformConstant,
 } from "@/utils/constants/app.constant";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { capitalizeWords } from "@/utils/functions/capitalize-words";
 import { isUuid } from "@/utils/functions/check-uuid";
 import { parseMaybeDate } from "@/utils/functions/parse-maybe-date";
 import {
-    IBenefits,
-    IValues
+  IBenefits,
+  IValues,
 } from "@/utils/interfaces/user-interface/company.interface";
 import { TPlatform } from "@/utils/types/platform.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-    ChevronDown,
-    LucideBuilding,
-    LucideCamera,
-    LucideCircleCheck,
-    LucideEdit,
-    LucideLink2,
-    LucideMail,
-    LucidePhone,
-    LucidePlus,
-    LucideUsers,
-    LucideXCircle
+  ChevronDown,
+  LucideBuilding,
+  LucideCamera,
+  LucideCircleCheck,
+  LucideEdit,
+  LucideLink2,
+  LucideMail,
+  LucidePhone,
+  LucidePlus,
+  LucideUsers,
+  LucideXCircle,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -544,7 +544,10 @@ export default function ProfilePage() {
     );
 
     if (alreadyExists) {
-      toast.error("Duplicated Benefit", { description: "Please input another benefit.", action: { label: "Try again", onClick: () => {} } });
+      toast.error("Duplicated Benefit", {
+        description: "Please input another benefit.",
+        action: { label: "Try again", onClick: () => {} },
+      });
       setBenefitInput(null);
       setOpenBenefitPopOver(false);
       return;
@@ -587,7 +590,10 @@ export default function ProfilePage() {
     );
 
     if (alreadyExists) {
-      toast.error("Duplicated value", { description: "Please input another value.", action: { label: "Try again", onClick: () => {} } });
+      toast.error("Duplicated value", {
+        description: "Please input another value.",
+        action: { label: "Try again", onClick: () => {} },
+      });
       setValueInput(null);
       setOpenValuePopOver(false);
       return;
@@ -642,7 +648,10 @@ export default function ProfilePage() {
       (c) => (c.name ?? "").trim().toLowerCase() === name.toLowerCase(),
     );
     if (alreadyExists) {
-      toast.error("Duplicated Career", { description: "Please select another career.", action: { label: "Try again", onClick: () => {} } });
+      toast.error("Duplicated Career", {
+        description: "Please select another career.",
+        action: { label: "Try again", onClick: () => {} },
+      });
       setCareerScopeInput(null);
       setOpenCareerScopePopOver(false);
       return;
@@ -701,7 +710,10 @@ export default function ProfilePage() {
     );
 
     if (platformExists) {
-      toast.error("Duplicate Social", { description: "This social platform already exists.", action: { label: "Try again", onClick: () => {} } });
+      toast.error("Duplicate Social", {
+        description: "This social platform already exists.",
+        action: { label: "Try again", onClick: () => {} },
+      });
       return false;
     }
 
@@ -710,7 +722,10 @@ export default function ProfilePage() {
     );
 
     if (urlExists) {
-      toast.error("Duplicate URL", { description: "This social link already exists.", action: { label: "Try again", onClick: () => {} } });
+      toast.error("Duplicate URL", {
+        description: "This social link already exists.",
+        action: { label: "Try again", onClick: () => {} },
+      });
       return false;
     }
 
@@ -913,7 +928,9 @@ export default function ProfilePage() {
       setIsEdit(false);
     } catch (error) {
       console.error(error);
-      toast.error("Error!", { description: "Failed To Update Company Profile." });
+      toast.error("Error!", {
+        description: "Failed To Update Company Profile.",
+      });
     }
   };
 
@@ -943,7 +960,9 @@ export default function ProfilePage() {
     // Loading Message on Toast
     const toastId = toast.loading(loadingMessage);
 
-    return () => toast.dismiss(toastId);
+    return () => {
+      toast.dismiss(toastId);
+    };
   }, [updateProfileLoadingState, loadingMessage, toast]);
 
   if (loading) return <CompanyProfilePageSkeleton />;

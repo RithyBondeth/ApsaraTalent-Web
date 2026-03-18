@@ -10,5 +10,6 @@ export interface IFavoriteCompanyCardProps {
   openPosition: IJobPosition[];
   companySize: number;
   location: string;
+  isRemoving?: boolean;
   onRemoveFromFavorite: () => void;
 }

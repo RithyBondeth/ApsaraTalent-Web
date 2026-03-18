@@ -4,11 +4,11 @@ import loginWhiteSvg from "@/assets/svg/login-white.svg";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogTitle
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -31,15 +31,18 @@ import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-curr
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { getRememberPreference } from "@/utils/auth/get-access-token";
 import {
-    facebookIcon, githubIcon, googleIcon, linkedinIcon
+  facebookIcon,
+  githubIcon,
+  googleIcon,
+  linkedinIcon,
 } from "@/utils/constants/asset.constant";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-    LucideEye,
-    LucideEyeClosed,
-    LucideLockKeyhole,
-    LucideMail,
-    LucidePhone
+  LucideEye,
+  LucideEyeClosed,
+  LucideLockKeyhole,
+  LucideMail,
+  LucidePhone,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTheme } from "next-themes";
@@ -54,6 +57,7 @@ function LoginPage() {
   // Utils: Dialog, Theme
   const router = useRouter();
   const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState<boolean>(false);
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [openRmbDialog, setOpenRmbDialog] = useState<boolean>(false);
 
@@ -81,6 +85,10 @@ function LoginPage() {
       rememberMe: false,
     },
   });
+
+  // Mark as mounted so the theme-dependent image is only resolved client-side,
+  // preventing the SSR/client hydration mismatch on the login image.
+  useEffect(() => setMounted(true), []);
 
   // Load remember preference on mount
   useEffect(() => {
@@ -181,7 +189,9 @@ function LoginPage() {
         .then(() => {
           console.log("User data preloaded successfully in loin page");
           toast.dismiss(loadingId);
-          toast.success(message ?? "Successfully Logged In", { duration: 1000 });
+          toast.success(message ?? "Successfully Logged In", {
+            duration: 1000,
+          });
         })
         .catch((error) => {
           console.error("Error preloading user data: ", error);
@@ -351,8 +361,10 @@ function LoginPage() {
   ]);
 
   // Get Current Image Based on Theme
-  const currentTheme = resolvedTheme || "light";
-  const loginImage = currentTheme === "dark" ? loginWhiteSvg : loginBlackSvg;
+  // Only resolve the theme after mounting — avoids SSR/client hydration mismatch
+  // because resolvedTheme is undefined on the server.
+  const loginImage =
+    mounted && resolvedTheme === "dark" ? loginWhiteSvg : loginBlackSvg;
 
   return (
     <div className="h-screen w-screen flex justify-between items-stretch tablet-lg:flex-col tablet-lg:[&>div]:w-full">

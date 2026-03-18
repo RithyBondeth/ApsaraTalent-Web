@@ -9,6 +9,7 @@ import axios from "@/lib/axios";
 import { API_UPDATE_PUSH_TOKEN_URL } from "@/utils/constants/apis/user_url";
 import { firebaseApp } from "@/utils/firebase/firebase";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 
 const PUSH_TOKEN_STORAGE_KEY = "apsara-push-token";
 
@@ -113,7 +114,39 @@ export const usePushNotifications = () => {
             vibrate?: number[];
           });
         });
+
+        // ── Real-time badge update (foreground) ──────────────────────────────
+        // A push arrived while the tab is focused — bump the bell badge immediately
+        // without waiting for a re-fetch, so the sidebar counter updates instantly.
+        useNotificationStore.getState().incrementUnreadCount();
       });
+
+      // ── Real-time badge update (background → foreground) ─────────────────
+      // When a push arrives while the tab is hidden (background/minimised),
+      // the service worker handles it.  When the user switches back to the tab
+      // we re-fetch the true count from the API so the badge is always accurate.
+      const handleVisibilityChange = () => {
+        if (document.visibilityState === "visible") {
+          void useNotificationStore.getState().fetchUnreadCount();
+        }
+      };
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+
+      // The service worker also posts a 'NOTIFICATION_RECEIVED' message to all
+      // clients when it handles a background push. This lets us update the badge
+      // even if the tab is visible but was somehow out of sync.
+      const handleSwMessage = (event: MessageEvent) => {
+        if (event.data?.type === "NOTIFICATION_RECEIVED") {
+          void useNotificationStore.getState().fetchUnreadCount();
+        }
+      };
+      navigator.serviceWorker.addEventListener("message", handleSwMessage);
+
+      // Cleanup listeners on hook unmount
+      return () => {
+        document.removeEventListener("visibilitychange", handleVisibilityChange);
+        navigator.serviceWorker.removeEventListener("message", handleSwMessage);
+      };
     };
 
     void setupPushNotifications();

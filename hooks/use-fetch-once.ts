@@ -29,6 +29,15 @@ export function useFetchOnce(
   const currentUser = useGetCurrentUserStore((s) => s.user);
   const lastUserIdRef = useRef<string | null>(null);
 
+  // Stable refs for callbacks — prevents the effect from re-running when
+  // parent re-renders create new inline function references
+  const onEmployeeFetchRef = useRef(onEmployeeFetch);
+  const onCompanyFetchRef = useRef(onCompanyFetch);
+  useEffect(() => {
+    onEmployeeFetchRef.current = onEmployeeFetch;
+    onCompanyFetchRef.current = onCompanyFetch;
+  });
+
   const userData = useMemo(() => {
     const employee = currentUser?.role === "employee" ? currentUser.employee : null;
     const company = currentUser?.role === "company" ? currentUser.company : null;
@@ -50,35 +59,39 @@ export function useFetchOnce(
     fetchCache.set(cacheKey, new Set<string>());
   }
 
-  const cache = fetchCache.get(cacheKey)!;
+  // Stable ref to the cache Set — avoids the Set reference being a dep
+  const cacheRef = useRef(fetchCache.get(cacheKey)!);
+  useEffect(() => {
+    cacheRef.current = fetchCache.get(cacheKey) ?? new Set();
+  }, [cacheKey]);
 
-  // Clear cache when user changes
+  // Clear cache entry when user changes
   useEffect(() => {
     if (userData.currentUserId !== lastUserIdRef.current) {
       if (lastUserIdRef.current) {
-        cache.delete(lastUserIdRef.current);
+        cacheRef.current.delete(lastUserIdRef.current);
       }
       lastUserIdRef.current = userData.currentUserId ?? null;
     }
-  }, [userData.currentUserId, cache]);
+  }, [userData.currentUserId]);
 
   useEffect(() => {
     if (!enabled || !userData.currentUserId) return;
 
     // Check if already fetched for THIS specific cache key + user
-    if (cache.has(userData.currentUserId)) {
+    if (cacheRef.current.has(userData.currentUserId)) {
       return;
     }
 
     // Mark as fetched BEFORE calling (prevents race conditions)
-    cache.add(userData.currentUserId);
+    cacheRef.current.add(userData.currentUserId);
 
-    if (userData.isEmployee && userData.employeeId && onEmployeeFetch) {
-      onEmployeeFetch(userData.employeeId);
+    if (userData.isEmployee && userData.employeeId && onEmployeeFetchRef.current) {
+      onEmployeeFetchRef.current(userData.employeeId);
     }
 
-    if (userData.isCompany && userData.companyId && onCompanyFetch) {
-      onCompanyFetch(userData.companyId);
+    if (userData.isCompany && userData.companyId && onCompanyFetchRef.current) {
+      onCompanyFetchRef.current(userData.companyId);
     }
   }, [
     enabled,
@@ -87,9 +100,6 @@ export function useFetchOnce(
     userData.isCompany,
     userData.employeeId,
     userData.companyId,
-    onEmployeeFetch,
-    onCompanyFetch,
-    cache,
   ]);
 
   return userData;

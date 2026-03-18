@@ -3,15 +3,16 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-    Carousel, CarouselContent,
-    CarouselItem,
-    CarouselNext,
-    CarouselPrevious
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
 } from "@/components/ui/carousel";
 import {
-    HoverCard,
-    HoverCardContent,
-    HoverCardTrigger
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import BlurBackGroundOverlay from "@/components/utils/bur-background-overlay";
 import Divider from "@/components/utils/divider";
@@ -26,26 +27,26 @@ import { TypographySmall } from "@/components/utils/typography/typography-small"
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { dateFormatterv2 } from "@/utils/functions/dateformatter-v2";
 import {
-    IBenefits,
-    IImage,
-    ISocial
+  IBenefits,
+  IImage,
+  ISocial,
 } from "@/utils/interfaces/user-interface/company.interface";
 import { TPlatform } from "@/utils/types/platform.type";
 import {
-    LucideAlarmClock,
-    LucideBookmark,
-    LucideBookMarked,
-    LucideBriefcaseBusiness,
-    LucideBuilding,
-    LucideCalendarDays,
-    LucideCircleCheck,
-    LucideHeartHandshake,
-    LucideMail,
-    LucideMapPinned,
-    LucidePhone,
-    LucideUser,
-    LucideUsers,
-    User
+  LucideAlarmClock,
+  LucideBookmark,
+  LucideBookMarked,
+  LucideBriefcaseBusiness,
+  LucideBuilding,
+  LucideCalendarDays,
+  LucideCircleCheck,
+  LucideHeartHandshake,
+  LucideMail,
+  LucideMapPinned,
+  LucidePhone,
+  LucideUser,
+  LucideUsers,
+  User,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -260,7 +261,7 @@ export default function CompanyDetailPage() {
                 {companyData.name ? companyData.name.slice(0, 3) : <User />}
               </AvatarFallback>
             </Avatar>
-            <div className="flex flex-col items-start gap-2 text-muted tablet-sm:items-center">
+            <div className="flex flex-col items-start gap-2 text-white tablet-sm:items-center">
               <TypographyH2 className="tablet-sm:text-center tablet-sm:text-xl">
                 {companyData.name}
               </TypographyH2>
@@ -271,12 +272,12 @@ export default function CompanyDetailPage() {
                 <IconLabel
                   icon={<LucideCalendarDays />}
                   text={`Founded in ${companyData.foundedYear}`}
-                  className="[&>p]:text-primary-foreground"
+                  className="[&>p]:text-white"
                 />
                 <IconLabel
                   icon={<LucideUsers />}
                   text={`${companyData.companySize}+ Employees`}
-                  className="[&>p]:text-primary-foreground"
+                  className="[&>p]:text-white"
                 />
               </div>
             </div>

@@ -1,9 +1,18 @@
+"use client";
+
 import landingSvg from "@/assets/svg/landing.svg";
 import Header from "@/components/header";
-import ParticlesBackground from "@/components/utils/particle-background";
 import { TypographyH1 } from "@/components/utils/typography/typography-h1";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+
+// Lazy-load tsparticles — it's a ~250KB library only needed on the landing page
+// ssr: false prevents it from running during server-side rendering
+const ParticlesBackground = dynamic(
+  () => import("@/components/utils/particle-background"),
+  { ssr: false },
+);
 
 export default function IndexPage() {
   return (

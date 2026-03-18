@@ -21,9 +21,16 @@ import { IMessage } from "../props";
 import { CHAT_TYPING_DEBOUNCE_MS } from "@/utils/constants/app.constant";
 import { useVoiceRecorder } from "@/hooks/use-voice-recorder";
 import { VoiceRecordingUI } from "./voice-recording-ui";
-import data from "@emoji-mart/data";
-import Picker from "@emoji-mart/react";
 import { useThemeStore } from "@/stores/themes/theme-store";
+import dynamic from "next/dynamic";
+
+// Lazy-load emoji-mart — ~90KB dataset + picker only needed when user opens the emoji popover
+const Picker = dynamic(() => import("@emoji-mart/react"), { ssr: false });
+// Lazy-load emoji data alongside the picker to avoid blocking initial bundle
+let emojiData: unknown = null;
+if (typeof window !== "undefined") {
+  import("@emoji-mart/data").then((mod) => { emojiData = mod.default; });
+}
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 const API_BASE =
@@ -555,7 +562,7 @@ export default function ChatInput(props: IChatInputProps) {
                   className="w-[320px] p-0"
                 >
                   <Picker
-                    data={data}
+                    data={emojiData}
                     theme={resolvedTheme === "dark" ? "dark" : "light"}
                     set="native"
                     previewPosition="none"

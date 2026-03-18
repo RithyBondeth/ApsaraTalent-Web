@@ -41,6 +41,8 @@ type TNotificationState = {
     unreadOnly?: boolean;
   }) => Promise<void>;
   fetchUnreadCount: () => Promise<void>;
+  /** Instantly bump unreadCount by 1 (used when a foreground push arrives) */
+  incrementUnreadCount: () => void;
   markRead: (notificationId: string) => Promise<void>;
   markAllRead: () => Promise<void>;
   /** Optimistically mark a notification as read by its chat messageId (from data.messageId) */
@@ -86,6 +88,10 @@ export const useNotificationStore = create<TNotificationState>((set, get) => ({
     } catch {
       // Silently fail — unread count is non-critical
     }
+  },
+
+  incrementUnreadCount: () => {
+    set((state) => ({ unreadCount: state.unreadCount + 1 }));
   },
 
   markRead: async (notificationId: string) => {

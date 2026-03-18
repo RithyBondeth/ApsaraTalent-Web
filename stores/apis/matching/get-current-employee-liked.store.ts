@@ -9,13 +9,21 @@ type TGetCurrentEmployeeLikedState = {
   loading: boolean;
   error: string | null;
   queryCurrentEmployeeLiked: (employeeId: string) => Promise<void>;
+  /** Optimistically add a company to the liked list so the card disappears instantly */
+  optimisticAddLiked: (company: ICompany) => void;
 };
 
 export const useGetCurrentEmployeeLikedStore =
-  create<TGetCurrentEmployeeLikedState>((set) => ({
+  create<TGetCurrentEmployeeLikedState>((set, get) => ({
     currentEmployeeLiked: null,
     loading: false,
     error: null,
+    optimisticAddLiked: (company: ICompany) => {
+      const current = get().currentEmployeeLiked ?? [];
+      if (!current.some((c) => c.id === company.id)) {
+        set({ currentEmployeeLiked: [...current, company] });
+      }
+    },
     queryCurrentEmployeeLiked: async (employeeId: string) => {
       set({ loading: true, error: null });
 

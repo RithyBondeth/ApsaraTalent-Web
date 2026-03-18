@@ -86,7 +86,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
             onClick={props.onLikeClick}
             disabled={props.onLikeClickDisable}
           >
-            <LucideHeartHandshake className="!size-6 transition-all duration-300 ease-in-out" />
+            <LucideHeartHandshake className={`!size-6 transition-all duration-300 ease-in-out${props.onLikeClickDisable ? " animate-pop-shrink" : ""}`} />
           </Button>
         </div>
       </div>
@@ -115,16 +115,18 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
 
       {/* button Section */}
       <div className="w-full flex items-center justify-end gap-3">
-        {!props.hideSaveButton && (
-          <Button
-            className="text-sm"
-            variant="outline"
-            onClick={props.onSaveClick}
-          >
-            Save
-            <LucideBookmark />
-          </Button>
-        )}
+        <Button
+          className={`text-sm ${
+            props.hideSaveButton
+              ? "animate-pop-shrink pointer-events-none"
+              : "opacity-100 scale-100"
+          }`}
+          variant="outline"
+          onClick={props.onSaveClick}
+        >
+          Save
+          <LucideBookmark />
+        </Button>
         <Button className="text-sm" onClick={props.onViewClick}>
           View
           <LucideCircleArrowRight />

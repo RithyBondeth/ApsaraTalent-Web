@@ -43,6 +43,8 @@ import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.sto
 import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
 import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
 import { useVerifyOTPStore } from "@/stores/apis/auth/verify-otp.store";
+import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
+import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useLanguageStore } from "@/stores/languages/language-store";
 import { useThemeStore } from "@/stores/themes/theme-store";
@@ -84,6 +86,12 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
   const linkedInLogout = useLinkedInLoginStore((state) => state.clearToken);
   const facebookLogout = useFacebookLoginStore((state) => state.clearToken);
   const clearCurrentUser = useGetCurrentUserStore((state) => state.clearUser);
+  const clearEmployeeFavorites = useEmployeeFavCompanyStore(
+    (state) => state.clearFavorites,
+  );
+  const clearCompanyFavorites = useCompanyFavEmployeeStore(
+    (state) => state.clearFavorite,
+  );
 
   const handleLogout = async () => {
     setOpenLogoutDialog(false);
@@ -95,6 +103,12 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
     githubLogout();
     linkedInLogout();
     facebookLogout();
+
+    // Clear favorite stores and their persisted cache (prevents cross-user stale IDs)
+    clearEmployeeFavorites();
+    clearCompanyFavorites();
+    useEmployeeFavCompanyStore.persist.clearStorage();
+    useCompanyFavEmployeeStore.persist.clearStorage();
 
     // Clear current user persist
     clearCurrentUser();

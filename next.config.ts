@@ -1,8 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+    output: 'standalone',
+
+    // Strip console.log in production — keeps console.error and console.warn
+    compiler: {
+        removeConsole: process.env.NODE_ENV === 'production'
+            ? { exclude: ['error', 'warn'] }
+            : false,
+    },
+
     images: {
-        domains: ["localhost"],
+        domains: [],
         remotePatterns: [
             {
                 protocol: 'https',

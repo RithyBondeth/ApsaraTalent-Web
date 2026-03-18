@@ -283,11 +283,66 @@ export const useChatStore = create<ChatState>((set, get) => ({
         return { id: replyToId, content: "", senderName: "", isDeleted: false };
       };
 
-      // Always update sidebar/unread regardless of active chat
-      getRecentChats();
-      getUnreadCount();
-      // Also refresh notification unread count so the sidebar bell badge stays current
-      void useNotificationStore.getState().fetchUnreadCount();
+      // ── Real-time sidebar patch ──────────────────────────────────────────
+      // Instead of re-fetching ALL chats (slow round-trip), surgically update
+      // only the affected chat row so the sidebar reflects the new message
+      // instantly: preview text, timestamp, and unread badge.
+      const isFromMe = message.senderId === get().me?.id;
+      const isForMe = message.receiverId === get().me?.id;
+      const isActiveChatOpen =
+        activeChat &&
+        (message.senderId === activeChat.id ||
+          message.receiverId === activeChat.id);
+
+      // The partner is whoever is NOT me in this exchange
+      const partnerId = isFromMe ? message.receiverId : message.senderId;
+      const preview = resolveMessageSnippet(message) || "";
+      const previewText = isFromMe ? `You: ${preview}` : preview;
+      const newTime = formatSidebarTime(
+        message.sentAt || message.timestamp || Date.now(),
+      );
+      // A message is unread if it's for me AND the chat is not currently open
+      const isNewUnread = !isFromMe && isForMe && !isActiveChatOpen;
+
+      set((state) => {
+        const exists = state.activeChats.some((c) => c.id === partnerId);
+        if (exists) {
+          return {
+            activeChats: state.activeChats.map((c) => {
+              if (c.id !== partnerId) return c;
+              return {
+                ...c,
+                preview: previewText || c.preview,
+                time: newTime,
+                isRead: isActiveChatOpen ? true : isFromMe ? c.isRead : false,
+                lastMessageSenderId: message.senderId,
+                unread: isNewUnread ? (c.unread ?? 0) + 1 : c.unread ?? 0,
+              };
+            }),
+            // Bump total unread count immediately for the sidebar badge
+            unreadCount: isNewUnread
+              ? state.unreadCount + 1
+              : state.unreadCount,
+          };
+        }
+        // Partner not yet in sidebar — trigger a full fetch to add them
+        getRecentChats();
+        return {};
+      });
+
+      // ── Notification bell badge — real-time update ───────────────────────
+      // Only bump the badge when:
+      //  (a) the message was sent by someone else (not me), AND
+      //  (b) the receiver is the current user (message is for me), AND
+      //  (c) the chat is NOT currently open (if I'm reading it, no unread badge needed)
+      if (!isFromMe && isForMe && !isActiveChatOpen) {
+        // Increment immediately so the badge reacts the instant the message arrives
+        useNotificationStore.getState().incrementUnreadCount();
+      } else {
+        // If the chat is open or it's my own message, sync the true count from API
+        // to correct any drift (e.g. mark-as-read just happened)
+        void useNotificationStore.getState().fetchUnreadCount();
+      }
 
       // Only add to current message list if it belongs to the ACTIVE chat
       const isForActiveChat =
@@ -422,10 +477,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
     // When the recipient opens a chat and reads the last message, the server
     // fires 'messageRead' back to the sender. We upgrade deliveryStatus → 'seen'
     // and set isRead=true on the local message so the ✓✓ turns blue.
-    socket.on("messageRead", (data: { messageId: string }) => {
-      const { currentMessages } = get();
-      const exists = currentMessages.some((m) => m.id === data.messageId);
-      if (exists) {
+    socket.on("messageRead", (data: { messageId: string; readerId?: string }) => {
+      const { currentMessages, activeChat } = get();
+
+      // Update the message bubble: delivery status → "seen", isRead → true
+      const msg = currentMessages.find((m) => m.id === data.messageId);
+      if (msg) {
         set({
           currentMessages: currentMessages.map((m) =>
             m.id === data.messageId
@@ -433,6 +490,17 @@ export const useChatStore = create<ChatState>((set, get) => ({
               : m,
           ),
         });
+      }
+
+      // Also patch the sidebar row so the ✓✓ tick turns green instantly
+      // and the bold/unread indicator clears for the reader's side
+      const readerId = data.readerId ?? activeChat?.id;
+      if (readerId) {
+        set((state) => ({
+          activeChats: state.activeChats.map((c) =>
+            c.id === readerId ? { ...c, isRead: true, unread: 0 } : c,
+          ),
+        }));
       }
     });
 
@@ -669,6 +737,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
       const currentUserId = me.id;
       const seenPartners = new Map<string, IChatPreview>();
+      // Count unread messages per partner (messages sent TO me that I haven't read)
+      const unreadPerPartner = new Map<string, number>();
 
       chats.forEach((chat: any) => {
         // Robust ID resolution: handle both nested objects and scalar IDs
@@ -686,8 +756,17 @@ export const useChatStore = create<ChatState>((set, get) => ({
         const otherUser = isSenderMe ? chat.receiver : chat.sender;
 
         const partnerId = isSenderMe ? receiverId : senderId;
+        if (!partnerId) return;
 
-        if (partnerId && !seenPartners.has(partnerId)) {
+        // Count unread: messages FROM partner TO me that are not yet read
+        if (!isSenderMe && chat.isRead === false) {
+          unreadPerPartner.set(
+            partnerId,
+            (unreadPerPartner.get(partnerId) ?? 0) + 1,
+          );
+        }
+
+        if (!seenPartners.has(partnerId)) {
           const { name, avatar } = resolveProfile(otherUser);
           // Carry over existing isOnline state from the onlineUsers map
           const isOnline = get().onlineUsers[partnerId] ?? false;
@@ -702,9 +781,16 @@ export const useChatStore = create<ChatState>((set, get) => ({
             isRead: chat.isRead,
             lastMessageSenderId: senderId,
             isOnline, // Preserve live dot from onlineUsers map
+            unread: 0, // will be filled in below
           });
         }
       });
+
+      // Attach the computed unread counts to each chat row
+      for (const [partnerId, count] of unreadPerPartner) {
+        const chat = seenPartners.get(partnerId);
+        if (chat) seenPartners.set(partnerId, { ...chat, unread: count });
+      }
 
       const builtChats = Array.from(seenPartners.values());
 
@@ -971,11 +1057,38 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   markAsRead: (messageId: string, senderId: string) => {
-    const { socket } = get();
+    const { socket, activeChat } = get();
     if (socket?.connected) {
       socket.emit("markAsRead", { messageId, senderId });
-      // Sync: mark the corresponding chat notification as read so both
-      // Chat.isRead and Notification.isRead stay consistent.
+
+      // ── Optimistic local updates ─────────────────────────────────────────
+      // 1. Mark all unread incoming messages in this chat as read locally
+      //    so the sidebar badge and bold name clear immediately.
+      if (activeChat) {
+        set((state) => ({
+          // Clear unread count + set isRead on the active chat row
+          activeChats: state.activeChats.map((c) =>
+            c.id === activeChat.id
+              ? { ...c, isRead: true, unread: 0 }
+              : c,
+          ),
+          // Mark all incoming messages as read in the open conversation
+          currentMessages: state.currentMessages.map((m) =>
+            !m.isMe && !m.isRead ? { ...m, isRead: true } : m,
+          ),
+        }));
+      }
+
+      // 2. Recompute total unread count from the updated activeChats list
+      const updatedChats = get().activeChats;
+      const me = get().me;
+      const newUnread = updatedChats.reduce((sum, c) => {
+        const isUnread = c.isRead === false && c.lastMessageSenderId !== me?.id;
+        return sum + (isUnread ? (c.unread ?? 1) : 0);
+      }, 0);
+      set({ unreadCount: newUnread });
+
+      // 3. Sync notification store
       useNotificationStore.getState().markReadByChatMessageId(messageId);
     }
   },

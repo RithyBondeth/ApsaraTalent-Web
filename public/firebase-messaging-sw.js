@@ -24,15 +24,30 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
   const title = payload.notification?.title || payload.data?.title || "New notification";
   const body = payload.notification?.body || payload.data?.body || "";
-  const icon = payload.notification?.icon || "/icon.svg";
+  const icon = payload.notification?.icon || payload.data?.senderAvatar || "/icon.svg";
+
+  const senderId = payload.data?.senderId;
+  const tag = senderId ? `chat-${senderId}` : undefined;
+  const url = payload.data?.url || "/notification";
 
   self.registration.showNotification(title, {
     body,
     icon,
     badge: "/icon.svg",
-    data: payload.data || {},
-    // Vibrate pattern for mobile
+    data: { ...(payload.data || {}), url },
     vibrate: [200, 100, 200],
+    ...(tag && { tag }),
+    renotify: true,
+    requireInteraction: true,
+  });
+
+  // ── Notify open tabs to refresh their unread badge ───────────────────────
+  // If the user has the app open in another tab while this push arrives,
+  // post a message so the foreground tab can re-fetch the unread count.
+  clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
+    for (const client of clientList) {
+      client.postMessage({ type: "NOTIFICATION_RECEIVED" });
+    }
   });
 });
 

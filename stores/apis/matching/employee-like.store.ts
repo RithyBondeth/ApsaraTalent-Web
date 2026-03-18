@@ -33,18 +33,22 @@ export const useEmployeeLikeStore = create<TEmployeeLikeState>((set) => ({
 
       set({ loading: false, error: null, data: response.data });
     } catch (error) {
+      const errorMessage = axios.isAxiosError(error)
+        ? error.response?.data?.message || error.message
+        : "Failed to like employee";
       if (axios.isAxiosError(error))
         set({
-          error: error.response?.data?.message,
+          error: errorMessage,
           loading: false,
           data: null,
         });
       else
         set({
-          error: "Failed to like employee",
+          error: errorMessage,
           loading: false,
           data: null,
         });
+      throw new Error(errorMessage);
     }
   },
 }));
