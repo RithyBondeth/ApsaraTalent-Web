@@ -3,6 +3,11 @@ import { create } from "zustand";
 import { IChatPreview, IMessage } from "@/components/message/props";
 import { formatSidebarTime, parseMessageDate } from "@/utils/date";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
+import axios from "@/lib/axios";
+import {
+  getApiOrigin,
+  normalizeMediaUrl,
+} from "@/utils/functions/normalize-media-url";
 
 type SocketInstance = ReturnType<typeof io>;
 
@@ -37,7 +42,8 @@ const resolveProfile = (user: any) => {
       user.email
     : co?.name || user.email;
 
-  const avatar = emp?.avatar || co?.avatar || "/avatars/default.png";
+  const avatar =
+    normalizeMediaUrl(emp?.avatar || co?.avatar) || "/avatars/default.png";
   return { name, avatar };
 };
 
@@ -201,9 +207,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       _socket = null;
     }
 
-    const socketUrl =
-      process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
-      "http://localhost:3000";
+    const socketUrl = getApiOrigin();
 
     // auth-token is httpOnly — JS cannot read it via document.cookie.
     // withCredentials: true sends ALL cookies (including httpOnly) in the
@@ -392,7 +396,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
               // Preserve optimistic attachment fields (already shown locally);
               // the server echoes back the same URL so no flicker.
               attachment:
-                message.attachment ??
+                normalizeMediaUrl(message.attachment) ??
                 updatedMessages[optimisticIndex].attachment ??
                 null,
               attachmentType:
@@ -437,7 +441,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
           // (delivery state is only relevant for outgoing messages)
           deliveryStatus: undefined,
           // Attachment fields from the server payload
-          attachment: message.attachment ?? null,
+          attachment: normalizeMediaUrl(message.attachment) ?? null,
           attachmentType: message.attachmentType ?? undefined,
           attachmentFilename: message.attachmentFilename ?? undefined,
           attachmentDuration: message.attachmentDuration ?? undefined,
@@ -663,7 +667,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       deliveryStatus: "sending", // Clock icon — waiting for server ack
       replyTo: replyTo ?? undefined, // Inline quote block (if replying)
       // Attachment fields — shown immediately via local preview URL while ack awaits
-      attachment: attachment?.url ?? null,
+      attachment: normalizeMediaUrl(attachment?.url) ?? null,
       attachmentType: attachment?.type ?? undefined,
       attachmentFilename: attachment?.filename ?? undefined,
       attachmentDuration: attachment?.duration ?? undefined,
@@ -685,7 +689,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         content,
         type: resolvedType,
         replyToId: replyTo?.id ?? null,
-        attachment: attachment?.url ?? null,
+        attachment: normalizeMediaUrl(attachment?.url) ?? null,
         attachmentFilename: attachment?.filename ?? null,
         attachmentDuration: attachment?.duration ?? null,
         attachmentAmplitude: attachment?.amplitude ?? null,
@@ -732,12 +736,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       return;
     }
 
-    socket.emit("getRecentChats", null, (chats: any[]) => {
-      if (!Array.isArray(chats)) {
-        set({ isChatsLoaded: true });
-        return;
-      }
-
+    const applyRecentChats = (chats: any[]) => {
       const currentUserId = me.id;
       const seenPartners = new Map<string, IChatPreview>();
       // Count unread messages per partner (messages sent TO me that I haven't read)
@@ -845,7 +844,50 @@ export const useChatStore = create<ChatState>((set, get) => ({
           );
         }
       }
-    });
+    };
+
+    const fallbackFetchRecentChats = async () => {
+      try {
+        const response = await axios.get(`${getApiOrigin()}/chat/recent`);
+        if (Array.isArray(response.data)) {
+          applyRecentChats(response.data);
+          return;
+        }
+      } catch (error) {
+        console.error("[Chat] REST fallback for recent chats failed:", error);
+      }
+
+      // Keep any previously loaded chats if they exist; only hard-reset on first load.
+      if (get().activeChats.length === 0) {
+        set({ activeChats: [], isChatsLoaded: true });
+      } else {
+        set({ isChatsLoaded: true });
+      }
+    };
+
+    socket.timeout(10000).emit(
+      "getRecentChats",
+      (error: Error | null, chats: any[]) => {
+        if (error) {
+          console.warn("[Chat] getRecentChats socket timeout, using REST fallback");
+          void fallbackFetchRecentChats();
+          return;
+        }
+
+        if (!Array.isArray(chats)) {
+          void fallbackFetchRecentChats();
+          return;
+        }
+
+        // Production hardening: if WS returns empty on first load, try REST once.
+        if (chats.length === 0 && get().activeChats.length === 0) {
+          void fallbackFetchRecentChats();
+          return;
+        }
+
+        applyRecentChats(chats);
+      },
+    );
   },
 
   getChatHistory: (userId2: string) => {
@@ -917,7 +959,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
               isEdited: msg.isEdited ?? false,
               deliveryStatus,
               // Attachment fields — persisted URL from the server
-              attachment: msg.attachment ?? null,
+              attachment: normalizeMediaUrl(msg.attachment) ?? null,
               attachmentType:
                 (msg.attachmentType as IMessage["attachmentType"]) ?? undefined,
               attachmentFilename: msg.attachmentFilename ?? undefined,

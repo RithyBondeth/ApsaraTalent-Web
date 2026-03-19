@@ -59,7 +59,7 @@ export default function MatchingPage() {
       setChatLoadingId(receiverId);
       try {
         const baseUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
         const res = await axiosInstance.post<{
           chatId: string;
           id: string;        // receiver's resolved User.id — used as chatId in the message page

@@ -29,6 +29,7 @@ import { AudioPlayer } from "./audio-player";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useCallStore } from "@/stores/call.store";
+import { normalizeMediaUrl } from "@/utils/functions/normalize-media-url";
 
 // ─── URL Detection ───────────────────────────────────────────────────────────
 const URL_REGEX = /(?:https?:\/\/|www\.)[^\s/$.?#].[^\s]*/gi;
@@ -111,8 +112,7 @@ function AttachmentBlock({
   duration?: number;
   amplitude?: number[];
 }) {
-  const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-  const fullUrl = url.startsWith("http") ? url : `${apiBase}${url}`;
+  const fullUrl = normalizeMediaUrl(url) || url;
 
   // ── Audio voice message ────────────────────────────────────────────────────
   if (type === "audio") {

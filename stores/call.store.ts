@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import io from "socket.io-client";
+import { normalizeMediaUrl } from "@/utils/functions/normalize-media-url";
 
 type SocketInstance = ReturnType<typeof io>;
 
@@ -38,6 +39,13 @@ export interface ICallParticipant {
   name: string;
   avatar: string;
 }
+
+const normalizeParticipantAvatar = (
+  participant: ICallParticipant,
+): ICallParticipant => ({
+  ...participant,
+  avatar: normalizeMediaUrl(participant.avatar) || participant.avatar,
+});
 
 // ── SocketInstance payload types ──────────────────────────────────────────────────────
 export interface CallOfferPayload {
@@ -219,7 +227,13 @@ export const useCallStore = create<CallState>((set, get) => ({
     const offer = await pc.createOffer();
     await pc.setLocalDescription(offer);
 
-    set({ status: "calling", callId, localStream, callee, isMuted: false });
+    set({
+      status: "calling",
+      callId,
+      localStream,
+      callee: normalizeParticipantAvatar(callee),
+      isMuted: false,
+    });
 
     socket.emit("callOffer", { callId, receiverId: callee.userId, offer });
 
@@ -372,7 +386,10 @@ export const useCallStore = create<CallState>((set, get) => ({
       caller: {
         userId: data.callerId,
         name: data.callerName,
-        avatar: data.callerAvatar,
+        avatar:
+          normalizeMediaUrl(data.callerAvatar) ||
+          data.callerAvatar ||
+          "/avatars/default.png",
       },
     });
   },
