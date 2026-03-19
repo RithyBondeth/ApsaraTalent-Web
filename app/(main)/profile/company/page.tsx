@@ -40,6 +40,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import BlurBackGroundOverlay from "@/components/utils/bur-background-overlay";
 import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
+import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import RemoveAlertDialog from "@/components/utils/dialogs/remove-alert-dialog";
 import Divider from "@/components/utils/divider";
 import IconLabel from "@/components/utils/icon-label";
@@ -954,23 +955,17 @@ export default function ProfilePage() {
     );
   };
 
-  // Loading State Effect
-  useEffect(() => {
-    if (!updateProfileLoadingState) return;
-
-    // Loading Message on Toast
-    const toastId = toast.loading(loadingMessage);
-
-    return () => {
-      toast.dismiss(toastId);
-    };
-  }, [updateProfileLoadingState, loadingMessage, toast]);
-
   if (loading) return <CompanyProfilePageSkeleton />;
   if (!user || !company) return null;
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+      <LoadingDialog
+        loading={updateProfileLoadingState}
+        title={loadingMessage || "Updating company profile..."}
+        subTitle="Please wait while we save your company details."
+      />
+
       {/* Header Section */}
       <div
         className="relative h-80 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center"

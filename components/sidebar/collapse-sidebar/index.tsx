@@ -35,7 +35,7 @@ import { SidebarDropdownFooterSkeleton } from "./sidebar-dropdown-footer/skeleto
 const CountBadge = ({ count }: { count: number }) => {
   if (count === 0) return null;
   return (
-    <Badge className="ml-auto bg-red-500 dark:text-primary">{count}</Badge>
+    <Badge className="bg-red-500 dark:text-primary">{count}</Badge>
   );
 };
 
@@ -192,45 +192,50 @@ export default function CollapseSidebar({
                 defaultOpen={true}
                 className="group/collapsible"
               >
-                <SidebarMenuItem>
+                <SidebarMenuItem className="relative">
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton
+                      isActive={isPathActive(item.url)}
                       tooltip={item.title}
-                      className={`font-medium py-3 ${
-                        isPathActive(item.url)
-                          ? "bg-primary text-primary-foreground"
-                          : ""
-                      }`}
+                      className="font-medium py-3 transition-all duration-300 ease-out data-[active=true]:bg-primary data-[active=true]:text-primary-foreground data-[active=true]:shadow-[0_8px_18px_hsl(var(--primary)/0.28)] data-[active=true]:animate-sidebar-active-in hover:data-[active=true]:bg-primary hover:data-[active=true]:text-primary-foreground"
                       asChild
                     >
                       <Link href={resolveUrl(item.url)} prefetch={true}>
                         {item.icon && (
-                          <span className="relative shrink-0">
-                            <item.icon
-                              className="!size-6 group-data-[collapsible=icon]:pr-1"
-                              strokeWidth={1.5}
-                            />
-                            {!open && getBadgeCount(item.url) > 0 && (
-                              <span className="absolute -top-1 -right-1 size-2 rounded-full bg-red-500" />
-                            )}
+                          <item.icon
+                            className="!size-6 shrink-0"
+                            strokeWidth={1.5}
+                          />
+                        )}
+                        <span className="group-data-[collapsible=icon]:hidden">{getSidebarTitle(item.title)}</span>
+                        {item.url === "/matching" && (
+                          <span className="group-data-[collapsible=icon]:hidden ml-auto">
+                            <CountBadge count={matchingCount} />
                           </span>
                         )}
-                        <span>{getSidebarTitle(item.title)}</span>
-                        {item.url === "/matching" && (
-                          <CountBadge count={matchingCount} />
-                        )}
                         {item.url === "/favorite" && (
-                          <CountBadge count={favoriteCount} />
+                          <span className="group-data-[collapsible=icon]:hidden ml-auto">
+                            <CountBadge count={favoriteCount} />
+                          </span>
                         )}
                         {item.url === "/message" && (
-                          <CountBadge count={unreadMessages} />
+                          <span className="group-data-[collapsible=icon]:hidden ml-auto">
+                            <CountBadge count={unreadMessages} />
+                          </span>
                         )}
                         {item.url === "/notification" && (
-                          <CountBadge count={unreadNotifications} />
+                          <span className="group-data-[collapsible=icon]:hidden ml-auto">
+                            <CountBadge count={unreadNotifications} />
+                          </span>
                         )}
                       </Link>
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
+                  {!open && getBadgeCount(item.url) > 0 && (
+                    <span className="pointer-events-none absolute -top-1.5 right-1 z-50 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold leading-none">
+                      {getBadgeCount(item.url) > 99 ? "99+" : getBadgeCount(item.url)}
+                    </span>
+                  )}
                 </SidebarMenuItem>
               </Collapsible>
             ))}
@@ -242,20 +247,17 @@ export default function CollapseSidebar({
                 defaultOpen={true}
                 className="group/collapsible"
               >
-                <SidebarMenuItem>
+                <SidebarMenuItem className="relative">
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton
+                      isActive={isPathActive("/resume-builder")}
                       tooltip={t("aiResumeBuilder")}
-                      className={`font-medium py-3 ${
-                        isPathActive("/resume-builder")
-                          ? "bg-primary text-primary-foreground"
-                          : ""
-                      }`}
+                      className="font-medium py-3 transition-all duration-300 ease-out data-[active=true]:bg-primary data-[active=true]:text-primary-foreground data-[active=true]:shadow-[0_8px_18px_hsl(var(--primary)/0.28)] data-[active=true]:animate-sidebar-active-in hover:data-[active=true]:bg-primary hover:data-[active=true]:text-primary-foreground"
                       asChild
                     >
                       <Link href="/resume-builder" prefetch={true}>
-                        <LucideFileUser className="!size-6" strokeWidth={1.5} />
-                        <span>{t("aiResumeBuilder")}</span>
+                        <LucideFileUser className="!size-6 shrink-0" strokeWidth={1.5} />
+                        <span className="group-data-[collapsible=icon]:hidden">{t("aiResumeBuilder")}</span>
                       </Link>
                     </SidebarMenuButton>
                   </CollapsibleTrigger>

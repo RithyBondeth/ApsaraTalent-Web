@@ -1,6 +1,11 @@
 "use client";
 
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import ApsaraLoadingSpinner from "../apsara-loading-spinner";
 import { TypographyMuted } from "../typography/typography-muted";
@@ -27,9 +32,20 @@ export default function LoadingDialog(props: Props) {
 
   return (
     <Dialog open={loading}>
-      <DialogContent className="max-w-sm" onPointerDownOutside={(e) => e.preventDefault()}>
-        <div className="w-full flex flex-col items-center justify-center gap-4 py-2">
-          <ApsaraLoadingSpinner size={64} loop />
+      <DialogContent
+        className="max-w-sm overflow-hidden border-border/60 bg-background/95 backdrop-blur-sm shadow-2xl [&>button]:hidden"
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+      >
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="loading-dialog-orb absolute -top-16 -right-10 h-32 w-32 rounded-full bg-primary/15 blur-2xl" />
+          <div className="loading-dialog-orb absolute -bottom-16 -left-10 h-32 w-32 rounded-full bg-primary/15 blur-2xl" />
+        </div>
+
+        <div className="relative z-10 w-full flex flex-col items-center justify-center gap-4 py-2">
+          <div className="loading-dialog-spinner-wrap">
+            <ApsaraLoadingSpinner size={64} loop />
+          </div>
 
           <DialogTitle className="text-center text-base">{title}</DialogTitle>
 
@@ -65,14 +81,20 @@ export default function LoadingDialog(props: Props) {
                         done
                           ? "text-primary"
                           : active
-                          ? "text-foreground font-medium"
-                          : "text-muted-foreground"
+                            ? "text-foreground font-medium"
+                            : "text-muted-foreground"
                       }`}
                     >
                       {done ? (
-                        <CheckCircle2 size={14} className="shrink-0 text-primary" />
+                        <CheckCircle2
+                          size={14}
+                          className="shrink-0 text-primary"
+                        />
                       ) : active ? (
-                        <Loader2 size={14} className="shrink-0 animate-spin text-primary" />
+                        <Loader2
+                          size={14}
+                          className="shrink-0 animate-spin text-primary"
+                        />
                       ) : (
                         <span className="w-3.5 h-3.5 shrink-0 rounded-full border border-muted-foreground/40 inline-block" />
                       )}
@@ -83,8 +105,12 @@ export default function LoadingDialog(props: Props) {
               </ul>
             </div>
           ) : (
-            subTitle && (
-              <TypographyMuted className="text-center text-xs">{subTitle}</TypographyMuted>
+            (subTitle || title) && (
+              <DialogDescription asChild>
+                <TypographyMuted className="text-center text-xs">
+                  {subTitle ?? "Please wait while we process your request."}
+                </TypographyMuted>
+              </DialogDescription>
             )
           )}
         </div>

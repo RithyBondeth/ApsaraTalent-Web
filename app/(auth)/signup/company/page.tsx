@@ -7,6 +7,7 @@ import CompanyCareerScopeStepForm from "@/components/company/company-signup-form
 import CoverCompanyStepForm from "@/components/company/company-signup-form/cover-step";
 import OpenPositionStepForm from "@/components/company/company-signup-form/open-position-step";
 import { Button } from "@/components/ui/button";
+import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useCompanySignupStore } from "@/stores/apis/auth/company-signup.store";
@@ -51,6 +52,15 @@ export default function CompanySignup() {
   const uploadAvatar = useUploadCompanyAvatarStore();
   const uploadCover = useUploadCompanyCoverStore();
   const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
+  const isSignupLoading =
+    cmpSignup.loading || uploadAvatar.loading || uploadCover.loading;
+  const signupLoadingMessage = cmpSignup.loading
+    ? "Creating your company account..."
+    : uploadAvatar.loading
+      ? "Uploading company avatar..."
+      : uploadCover.loading
+        ? "Uploading company cover..."
+        : "Processing your request...";
 
   // React Hook Form: Company Signup Form
   const methods = useForm<TCompanySignup>({
@@ -264,11 +274,6 @@ export default function CompanySignup() {
       setTimeout(() => router.replace("/login"), 1000);
     }
 
-    if (cmpSignup.loading || uploadAvatar.loading || uploadCover.loading) {
-      toast.dismiss();
-      toast.loading("Loading...");
-    }
-
     const errorList = [
       { error: cmpSignup.error, message: cmpSignup.message },
       { error: uploadAvatar.error, message: uploadAvatar.message },
@@ -343,6 +348,12 @@ export default function CompanySignup() {
 
   return (
     <div className="h-[80%] w-[85%] flex flex-col items-start gap-3 tablet-lg:w-full tablet-lg:p-5 tablet-xl:mb-5">
+      <LoadingDialog
+        loading={isSignupLoading}
+        title={signupLoadingMessage}
+        subTitle="Please wait while we complete your company signup."
+      />
+
       {/* Navigate Back Button Section */}
       <Button
         className="absolute top-5 left-5"

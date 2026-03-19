@@ -6,6 +6,7 @@ import ExperienceStepForm from "@/components/employee/employee-signup-form/exper
 import ProfessionStepForm from "@/components/employee/employee-signup-form/profession-step";
 import SkillReferenceStepForm from "@/components/employee/employee-signup-form/skill-reference-step";
 import { Button } from "@/components/ui/button";
+import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useEmployeeSignupStore } from "@/stores/apis/auth/employee-signup.store";
@@ -53,6 +54,20 @@ export default function EmployeeSignup() {
   const uploadResume = useUploadEmployeeResumeStore();
   const uploadCoverLetter = useUploadEmployeeCoverLetter();
   const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
+  const isSignupLoading =
+    empSignup.loading ||
+    uploadAvatar.loading ||
+    uploadCoverLetter.loading ||
+    uploadResume.loading;
+  const signupLoadingMessage = empSignup.loading
+    ? "Creating your employee account..."
+    : uploadAvatar.loading
+      ? "Uploading profile avatar..."
+      : uploadResume.loading
+        ? "Uploading resume..."
+        : uploadCoverLetter.loading
+          ? "Uploading cover letter..."
+          : "Processing your request...";
 
   // React Hook Form: Employee Signup Form
   const methods = useForm<TEmployeeSignUp>({
@@ -309,16 +324,6 @@ export default function EmployeeSignup() {
       return;
     }
 
-    if (
-      empSignup.loading ||
-      uploadAvatar.loading ||
-      uploadCoverLetter.loading ||
-      uploadResume.loading
-    ) {
-      toast.dismiss();
-      toast.loading("Loading...");
-    }
-
     const errorList = [
       { error: empSignup.error, message: empSignup.message },
       { error: uploadAvatar.error, message: uploadAvatar.message },
@@ -394,6 +399,12 @@ export default function EmployeeSignup() {
 
   return (
     <div className="h-[80%] w-[85%] flex flex-col items-start gap-3 tablet-lg:w-full tablet-lg:p-5">
+      <LoadingDialog
+        loading={isSignupLoading}
+        title={signupLoadingMessage}
+        subTitle="Please wait while we complete your employee signup."
+      />
+
       {/* Navigate Back Button Section */}
       <Button
         type="button"

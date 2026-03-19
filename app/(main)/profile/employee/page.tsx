@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
+import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import ReferencePreviewDialog from "@/components/utils/dialogs/reference-preview-dialog";
 import RemoveAlertDialog from "@/components/utils/dialogs/remove-alert-dialog";
 import Divider from "@/components/utils/divider";
@@ -1023,23 +1024,17 @@ export default function EmployeeProfilePage() {
     );
   };
 
-  // Loading State Effect
-  useEffect(() => {
-    if (!updateProfileLoadingState) return;
-
-    // Loading Message on Toast
-    const toastId = toast.loading(loadingMessage);
-
-    return () => {
-      toast.dismiss(toastId);
-    };
-  }, [updateProfileLoadingState, loadingMessage]);
-
   if (loading) return <EmployeeProfilePageSkeleton />;
   if (!user || !employee) return null;
 
   return (
     <form className="!min-w-full flex flex-col gap-5" onSubmit={handleSubmit}>
+      <LoadingDialog
+        loading={updateProfileLoadingState}
+        title={loadingMessage || "Updating employee profile..."}
+        subTitle="Please wait while we save your profile changes."
+      />
+
       {/* Header Section*/}
       <div className="flex items-center justify-between border border-muted rounded-md p-5 tablet-sm:flex-col tablet-sm:[&>div]:w-full tablet-sm:gap-5">
         <div className="flex items-center justify-start gap-5 tablet-sm:flex-col">

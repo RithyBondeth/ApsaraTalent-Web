@@ -131,13 +131,17 @@ export default function EmployeeDetailPage() {
 
   // Loading State
   if (!isInitialized || loading) {
-    return <EmployeeDetailPageSkeleton />;
+    return (
+      <div className="animate-page-in">
+        <EmployeeDetailPageSkeleton />
+      </div>
+    );
   }
 
   // Error State
   if (fetchError) {
     return (
-      <div className="h-screen w-screen flex justify-center items-center">
+      <div className="h-screen w-screen flex justify-center items-center animate-page-in">
         <div className="flex flex-col items-center gap-3">
           <TypographyH4 className="text-red-500">{fetchError}</TypographyH4>
           <Button
@@ -154,7 +158,7 @@ export default function EmployeeDetailPage() {
   // No Data Available State
   if (!employeeData) {
     return (
-      <div className="h-screen w-screen flex justify-center items-center">
+      <div className="h-screen w-screen flex justify-center items-center animate-page-in">
         <div className="flex flex-col items-center gap-3">
           <TypographyH4>Employee not found</TypographyH4>
           <Link href="/">
@@ -242,7 +246,7 @@ export default function EmployeeDetailPage() {
   };
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5 animate-page-in">
       {/* Personal Information Section */}
       <div className="w-full flex items-stretch justify-between border border-muted py-5 px-10 tablet-xl:flex-col tablet-xl:[&>div]:w-full tablet-xl:gap-5">
         <div className="flex flex-col items-center gap-5">

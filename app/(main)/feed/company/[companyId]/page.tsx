@@ -139,13 +139,17 @@ export default function CompanyDetailPage() {
 
   // Loading State
   if (!isInitialized || loading) {
-    return <CompanyDetailPageSkeleton />;
+    return (
+      <div className="animate-page-in">
+        <CompanyDetailPageSkeleton />
+      </div>
+    );
   }
 
   // Error State
   if (fetchError) {
     return (
-      <div className="h-screen w-screen flex justify-center items-center">
+      <div className="h-screen w-screen flex justify-center items-center animate-page-in">
         <div className="flex flex-col items-center gap-3">
           <TypographyH4 className="text-red-500">{fetchError}</TypographyH4>
           <Button
@@ -162,7 +166,7 @@ export default function CompanyDetailPage() {
   // No Data Available State
   if (!companyData) {
     return (
-      <div className="h-screen w-screen flex justify-center items-center">
+      <div className="h-screen w-screen flex justify-center items-center animate-page-in">
         <div className="flex flex-col items-center gap-3">
           <TypographyH4>Company not found</TypographyH4>
           <Link href="/">
@@ -236,7 +240,7 @@ export default function CompanyDetailPage() {
   };
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5 animate-page-in">
       {/* Header Section */}
       {companyData && (
         <div
