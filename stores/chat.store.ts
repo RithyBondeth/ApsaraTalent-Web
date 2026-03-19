@@ -214,7 +214,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     // WebSocket upgrade request, and the gateway reads it from the Cookie header.
     const socket: SocketInstance = io(`${socketUrl}/chat`, {
       withCredentials: true,
-      transports: ["websocket", "polling"],
+      transports: ["websocket"],
     } as any);
 
     _socket = socket;

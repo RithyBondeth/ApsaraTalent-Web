@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import io from "socket.io-client";
-import { normalizeMediaUrl } from "@/utils/functions/normalize-media-url";
+import { getApiOrigin, normalizeMediaUrl } from "@/utils/functions/normalize-media-url";
 
 type SocketInstance = ReturnType<typeof io>;
 
@@ -12,10 +12,20 @@ let _pc: RTCPeerConnection | null = null;
 let _pendingOffer: RTCSessionDescriptionInit | null = null;
 let _ringTimeout: ReturnType<typeof setTimeout> | null = null;
 
-const ICE_SERVERS: RTCIceServer[] = [
+const FALLBACK_ICE_SERVERS: RTCIceServer[] = [
   { urls: "stun:stun.l.google.com:19302" },
   { urls: "stun:stun1.l.google.com:19302" },
 ];
+
+async function fetchIceServers(): Promise<RTCIceServer[]> {
+  try {
+    const res = await fetch(`${getApiOrigin()}/auth/ice-servers`);
+    const data = await res.json();
+    return (data.iceServers as RTCIceServer[]) ?? FALLBACK_ICE_SERVERS;
+  } catch {
+    return FALLBACK_ICE_SERVERS;
+  }
+}
 
 /** How long (ms) to wait for the callee to answer before treating it as missed. */
 const CALL_RING_TIMEOUT_MS = 30_000;
@@ -190,8 +200,9 @@ export const useCallStore = create<CallState>((set, get) => ({
 
     const callId = crypto.randomUUID();
 
-    // Create peer connection
-    const pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
+    // Create peer connection with Twilio TURN servers
+    const iceServers = await fetchIceServers();
+    const pc = new RTCPeerConnection({ iceServers });
     _pc = pc;
 
     // Add local tracks
@@ -264,7 +275,8 @@ export const useCallStore = create<CallState>((set, get) => ({
       return;
     }
 
-    const pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
+    const iceServers = await fetchIceServers();
+    const pc = new RTCPeerConnection({ iceServers });
     _pc = pc;
 
     localStream.getTracks().forEach((t) => pc.addTrack(t, localStream));
