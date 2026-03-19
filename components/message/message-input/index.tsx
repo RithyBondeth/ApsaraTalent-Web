@@ -29,7 +29,9 @@ const Picker = dynamic(() => import("@emoji-mart/react"), { ssr: false });
 // Lazy-load emoji data alongside the picker to avoid blocking initial bundle
 let emojiData: unknown = null;
 if (typeof window !== "undefined") {
-  import("@emoji-mart/data").then((mod) => { emojiData = mod.default; });
+  import("@emoji-mart/data").then((mod) => {
+    emojiData = mod.default;
+  });
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────

@@ -1,4 +1,4 @@
-import { clearAuthCookies } from "@/utils/auth/cookie-manager";
+import { clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-manager";
 import { API_AUTH_SOCIAL_GITHUB_URL } from "@/utils/constants/apis/auth_url";
 import { EAuthLoginMethod } from "@/utils/constants/auth.constant";
 import { TUserRole } from "@/utils/types/role.type";
@@ -10,6 +10,9 @@ export type TGithubLoginResponse = {
   type: "GITHUB_AUTH_SUCCESS" | "GITHUB_AUTH_ERROR";
   error?: string;
   newUser?: boolean;
+  accessToken?: string | null;
+  refreshToken?: string | null;
+  remember?: boolean;
   user?: {
     email: string | null;
     username: string | null;
@@ -53,8 +56,13 @@ const FINISH_LOGIN = (data: TGithubLoginResponse) => {
     return;
   }
 
-  // Cookies are already set by backend (httpOnly)
-  // Just update the Zustand store with user info
+  // Persist first-party cookies on web domain so Next middleware can read
+  // auth-token even when API and Web run on different domains.
+  if (data.accessToken && data.refreshToken) {
+    setAuthCookies(data.accessToken, data.refreshToken, Boolean(data.remember));
+  }
+
+  // Update store with user info
   useGithubLoginStore.setState({
     loading: false,
     isAuthenticated: true,

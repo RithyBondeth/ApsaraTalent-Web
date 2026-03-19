@@ -1,4 +1,4 @@
-import { clearAuthCookies } from "@/utils/auth/cookie-manager";
+import { clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-manager";
 import { API_AUTH_SOCIAL_GOOGLE_URL } from "@/utils/constants/apis/auth_url";
 import { EAuthLoginMethod } from "@/utils/constants/auth.constant";
 import { TUserRole } from "@/utils/types/role.type";
@@ -10,6 +10,9 @@ export type TGoogleLoginResponse = {
   type: "GOOGLE_AUTH_SUCCESS" | "GOOGLE_AUTH_ERROR";
   error?: string;
   newUser?: boolean;
+  accessToken?: string | null;
+  refreshToken?: string | null;
+  remember?: boolean;
   user?: {
     email: string | null;
     firstname: string | null;
@@ -41,7 +44,7 @@ export type TGoogleLoginState = {
   clearToken: () => void;
 };
 
-const BACKEND_ORIGIN = API_AUTH_SOCIAL_GOOGLE_URL.split("/social")[0];
+const BACKEND_ORIGIN = new URL(API_AUTH_SOCIAL_GOOGLE_URL).origin;
 
 const FINISH_LOGIN = (data: TGoogleLoginResponse) => {
   if (!data || data.type !== "GOOGLE_AUTH_SUCCESS") {
@@ -53,8 +56,13 @@ const FINISH_LOGIN = (data: TGoogleLoginResponse) => {
     return;
   }
 
-  // Cookies are already set by backend (httpOnly)
-  // Just update the Zustand store with user info
+  // Persist first-party cookies on web domain so Next middleware can read
+  // auth-token even when API and Web run on different domains.
+  if (data.accessToken && data.refreshToken) {
+    setAuthCookies(data.accessToken, data.refreshToken, Boolean(data.remember));
+  }
+
+  // Update store with user info
   useGoogleLoginStore.setState({
     loading: false,
     isAuthenticated: true,
