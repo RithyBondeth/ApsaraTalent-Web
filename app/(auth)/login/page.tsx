@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import SocialButton from "@/components/utils/buttons/social-button";
+import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import LogoComponent from "@/components/utils/logo";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
@@ -120,6 +121,18 @@ function LoginPage() {
   const linkedInLoginStore = useLinkedInLoginStore();
   const githubLoginStore = useGithubLoginStore();
   const facebookLoginStore = useFacebookLoginStore();
+  const isAnySocialLoading =
+    googleLoginStore.loading ||
+    linkedInLoginStore.loading ||
+    githubLoginStore.loading ||
+    facebookLoginStore.loading;
+  const isAuthLoading =
+    (loginInitiated && loading) ||
+    (socialLoginInitiated && isAnySocialLoading) ||
+    isPreloadingData;
+  const authLoadingTitle = isPreloadingData
+    ? "Preparing your workspace..."
+    : "Authenticating...";
 
   const preloadUserData = async () => {
     try {
@@ -182,33 +195,28 @@ function LoginPage() {
     if (!loginInitiated) return;
 
     if (isAuthenticated && loginInitiated) {
-      const loadingId = toast.loading("Authenticating...");
+      setIsPreloadingData(true);
 
       // Preload all user data while showing loading message
       preloadUserData()
         .then(() => {
           console.log("User data preloaded successfully in loin page");
-          toast.dismiss(loadingId);
           toast.success(message ?? "Successfully Logged In", {
             duration: 1000,
           });
         })
         .catch((error) => {
           console.error("Error preloading user data: ", error);
-          toast.dismiss(loadingId);
           toast.error(String(error), { duration: 1000 });
         })
         .finally(() => {
           setTimeout(() => {
             toast.dismiss();
+            setIsPreloadingData(false);
             setLoginInitiated(false);
             router.push("/feed");
           }, 1000);
         });
-    }
-
-    if (loading && loginInitiated) {
-      toast.loading("Authenticating...");
     }
 
     if (error && loginInitiated) {
@@ -257,7 +265,7 @@ function LoginPage() {
     ];
 
     // One of social store is loading
-    const isAnySocialLoading = socialStores.some((s) => s.store.loading);
+    const socialLoadingState = socialStores.some((s) => s.store.loading);
     // One of social store is authenticated
     const isAnySocialAuthenticated = socialStores.find(
       (s) => s.store.isAuthenticated,
@@ -271,20 +279,18 @@ function LoginPage() {
       (s) => s.store.newUser === true && !s.store.isAuthenticated,
     );
 
-    if (isAnySocialLoading) {
-      toast.loading("Authenticating...");
+    if (socialLoadingState) {
       return;
     }
 
     // Handle successful authentication - show loading while preloading data
     if (
       isAnySocialAuthenticated &&
-      !isAnySocialLoading &&
+      !socialLoadingState &&
       !isProcessingSocialLogin.current
     ) {
       isProcessingSocialLogin.current = true; // Prevent duplicate execution
       toast.dismiss();
-      const loadingId = toast.loading("Authenticating...");
 
       setIsPreloadingData(true);
 
@@ -292,12 +298,10 @@ function LoginPage() {
       preloadUserData()
         .then(() => {
           console.log("User data preloaded successfully");
-          toast.dismiss(loadingId);
           toast.success("Successfully Logged In", { duration: 1000 });
         })
         .catch((error) => {
           console.error("Error preloading user data:", error);
-          toast.dismiss(loadingId);
           toast.error(String(error), { duration: 1000 });
         })
         .finally(() => {
@@ -314,7 +318,8 @@ function LoginPage() {
     }
 
     // Handle new user (needs to register first)
-    if (newUserStore && !isAnySocialLoading) {
+    if (newUserStore && !socialLoadingState) {
+      setIsPreloadingData(false);
       toast.dismiss();
       toast.info("Please register first", { duration: 1500 });
 
@@ -328,7 +333,8 @@ function LoginPage() {
     }
 
     // Handle errors
-    if (errorStore && !isAnySocialLoading) {
+    if (errorStore && !socialLoadingState) {
+      setIsPreloadingData(false);
       toast.dismiss();
       toast.error(errorStore.store.error || "Social login failed", {
         action: {
@@ -368,6 +374,12 @@ function LoginPage() {
 
   return (
     <div className="h-screen w-screen flex justify-between items-stretch tablet-lg:flex-col tablet-lg:[&>div]:w-full">
+      <LoadingDialog
+        loading={isAuthLoading}
+        title={authLoadingTitle}
+        subTitle="Please wait while we authenticate your account."
+      />
+
       <div className="h-screen w-1/2 flex justify-center items-center bg-primary-foreground tablet-lg:h-fit">
         <div className="size-[70%] flex flex-col items-start justify-center gap-3 tablet-md:w-[85%] tablet-md:py-10">
           {/* Title Section */}

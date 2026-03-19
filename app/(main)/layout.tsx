@@ -4,9 +4,9 @@ import CollapseSidebar from "@/components/sidebar/collapse-sidebar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
-    SidebarInset,
-    SidebarProvider,
-    SidebarTrigger
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { ThemeProviderClient } from "@/components/utils/themes/theme-provider-client";
 import { TypographyP } from "@/components/utils/typography/typography-p";
@@ -46,7 +46,9 @@ export default function MainLayout({
             <LucideArrowLeft />
           </Button>
         </Link>
-        <div className="container mx-auto p-5">{children}</div>
+        <div key={pathname} className="container mx-auto p-5 animate-page-in">
+          {children}
+        </div>
       </div>
     );
   }
@@ -69,7 +71,8 @@ export default function MainLayout({
    * Determine content wrapper class
    */
   const getContentClass = () => {
-    if (pathname.startsWith("/message")) return "w-full h-screen message-xs:h-full flex flex-col";
+    if (pathname.startsWith("/message"))
+      return "w-full h-screen message-xs:h-full flex flex-col";
     return "w-full";
   };
 
@@ -95,7 +98,12 @@ export default function MainLayout({
               </div>
             </header>
           </SidebarInset>
-          <div key={pathname} className={`${getChildrenWrapperClass()} animate-page-in`}>{children}</div>
+          <div
+            key={pathname}
+            className={`${getChildrenWrapperClass()} animate-page-in`}
+          >
+            {children}
+          </div>
         </div>
       </SidebarProvider>
     </ThemeProviderClient>
