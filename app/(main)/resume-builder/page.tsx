@@ -80,16 +80,16 @@ export default function ResumeBuilder() {
   };
 
   return (
-    <div className="w-full flex flex-col items-start gap-5 px-10">
+    <div className="w-full flex flex-col items-start gap-5 px-2.5 sm:px-5 lg:px-8">
       {/* Banner */}
       <ResumeBuilderBanner />
 
       {/* Template grid */}
       <div className="w-full">
-        <div className="w-full flex justify-between items-center">
+        <div className="w-full flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between">
           <TypographyH4>Choose your template</TypographyH4>
         </div>
-        <div className="grid grid-cols-3 gap-3 my-3 tablet-lg:grid-cols-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 my-3">
           {templateData && templateData.length > 0
             ? templateData.map((resume) => {
                 const mapped = templateMap[resume.title];

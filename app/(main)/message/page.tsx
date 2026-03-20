@@ -23,6 +23,9 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { IMessage } from "@/components/message/props";
 import type { ImperativePanelHandle } from "react-resizable-panels";
+import { TypographyP } from "@/components/utils/typography/typography-p";
+import Image from "next/image";
+import MessageSvgImage from "@/assets/svg/message.svg";
 
 /**
  * Message page — orchestrates the full chat experience.
@@ -31,7 +34,6 @@ import type { ImperativePanelHandle } from "react-resizable-panels";
  *   Mobile  (< 768px):  Single-column, full-screen.
  *     • No chatId in URL → show full-height sidebar list.
  *     • chatId in URL    → show chat view; back arrow goes back to list.
- *     • Hamburger in header opens sidebar as an overlay sheet.
  *   Desktop (≥ 768px):  Classic side-by-side split.
  *     • Sidebar (w-80) is collapsible via toggle chevron in header.
  *
@@ -75,11 +77,9 @@ const MessagePageContent = () => {
     });
   };
 
-  // Desktop: sidebar open by default. Mobile: always false (overlay takes over).
+  // Desktop: sidebar open by default (resizable). Mobile uses list → chat navigation.
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const sidebarPanelRef = useRef<ImperativePanelHandle>(null);
-  // Mobile overlay open state
-  const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   /**
    * Reply target — when set, the input bar shows a quote preview.
@@ -98,8 +98,6 @@ const MessagePageContent = () => {
     if (isSidebarOpen) panel.expand();
     else panel.collapse();
   }, [isSidebarOpen]);
-  const openMobileSidebar = () => setMobileSidebarOpen(true);
-  const closeMobileSidebar = () => setMobileSidebarOpen(false);
 
   // ── 1. Core socket connection ────────────────────────────────────────────
   // IMPORTANT: connect/disconnect are read via getState() (not reactive hooks)
@@ -239,7 +237,6 @@ const MessagePageContent = () => {
   };
 
   const handleChatSelect = (chat: { id: string }) => {
-    closeMobileSidebar();
     // Clear reply state when switching chats
     setReplyTarget(null);
     router.push(`/message?chatId=${chat.id}`);
@@ -271,13 +268,12 @@ const MessagePageContent = () => {
   }
 
   const chatView = activeChat ? (
-    <div className="flex flex-col h-full min-w-0">
+    <div className="flex flex-col h-full min-h-0 min-w-0">
       <ChatHeader
         chat={activeChat}
         isSidebarOpen={isSidebarOpen}
         onToggleSidebar={toggleSidebar}
         onBack={handleBack}
-        onOpenMobileSidebar={openMobileSidebar}
         onStartVoiceCall={handleStartVoiceCall}
       />
 
@@ -306,115 +302,76 @@ const MessagePageContent = () => {
 
   const desktopEmptyState = (
     <div className="flex flex-1 flex-col items-center justify-center p-8 text-center bg-muted/5">
-      <div className="max-w-md space-y-3">
-        <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-          <svg
-            className="w-8 h-8 text-primary"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-            />
-          </svg>
-        </div>
-        <h2 className="text-2xl font-semibold">Your Messages</h2>
-        <p className="text-muted-foreground">
+      <div className="w-full flex flex-col items-center justify-center my-16">
+        <Image src={MessageSvgImage} alt="Message" height={300} width={300} />
+        <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
           Select a conversation from the sidebar to start chatting.
-        </p>
+        </TypographyP>
       </div>
     </div>
   );
 
   return (
-    <div className="w-full h-full flex bg-background overflow-hidden relative">
+    <div className="w-full h-[calc(100dvh-4rem)] md:h-full min-h-0 flex bg-background overflow-hidden relative">
       {/* Call overlay + incoming modal — persists across chat switches */}
       <CallOrchestrator />
       {/*
-       * MOBILE / TABLET  (<= 768px):  Full-screen sidebar overlays chat.
+       * MOBILE / TABLET  (<= 768px):  Messenger-style single-column flow.
        *   - No chatId → show sidebar list (full height)
        *   - chatId    → show chat view; back arrow returns to list
-       *   - Hamburger in header opens sidebar sheet over chat view
        *
        * DESKTOP  (> 768px):  Classic side-by-side split view.
        *   - Sidebar is collapsible (w-80 ↔ w-16) via toggle in header
        */}
 
       {/* ── DESKTOP RESIZABLE LAYOUT ─────────────────────────────────────── */}
-      <ResizablePanelGroup
-        direction="horizontal"
-        className="hidden md:flex w-full h-full"
-      >
-        <ResizablePanel
-          ref={sidebarPanelRef}
-          defaultSize={26}
-          minSize={18}
-          maxSize={40}
-          collapsible
-          collapsedSize={6}
-          onCollapse={() => setSidebarOpen(false)}
-          onExpand={() => setSidebarOpen(true)}
+      <div className="hidden lg:flex w-full h-full min-h-0">
+        <ResizablePanelGroup
+          direction="horizontal"
+          className="w-full h-full min-h-0"
         >
-          <ChatSidebar
-            chats={activeChats}
-            activeChat={activeChat}
-            isOpen={isSidebarOpen}
-            isResizable
-            className="h-full"
-            currentUserId={currentUser?.id}
-            onChatSelect={(chat) => router.push(`/message?chatId=${chat.id}`)}
-            onNewChat={() => {
-              // TODO: open contact picker modal
-              // For now we just navigate to /message to show the empty state
-              router.push("/message");
-            }}
-          />
-        </ResizablePanel>
-        <ResizableHandle withHandle />
-        <ResizablePanel minSize={60} className="flex flex-col min-w-0">
-          {chatView ?? desktopEmptyState}
-        </ResizablePanel>
-      </ResizablePanelGroup>
-
-      {/* ── MOBILE SIDEBAR OVERLAY ───────────────────────────────────────── */}
-      {isMobileSidebarOpen && (
-        <div className="md:hidden fixed inset-0 z-50 flex">
-          {/* Backdrop — clicking dismisses the overlay */}
-          <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-            onClick={closeMobileSidebar}
-          />
-          {/* Sidebar panel slides in from the left */}
-          <div className="relative w-[85vw] max-w-sm h-full bg-background shadow-xl z-10 animate-in slide-in-from-left duration-300">
+          <ResizablePanel
+            ref={sidebarPanelRef}
+            defaultSize={26}
+            minSize={18}
+            maxSize={40}
+            collapsible
+            collapsedSize={6}
+            onCollapse={() => setSidebarOpen(false)}
+            onExpand={() => setSidebarOpen(true)}
+          >
             <ChatSidebar
               chats={activeChats}
               activeChat={activeChat}
-              isOpen={true}
+              isOpen={isSidebarOpen}
+              isResizable
+              className="h-full"
               currentUserId={currentUser?.id}
-              onChatSelect={handleChatSelect}
-              onClose={closeMobileSidebar}
+              onChatSelect={(chat) => router.push(`/message?chatId=${chat.id}`)}
               onNewChat={() => {
-                closeMobileSidebar();
+                // TODO: open contact picker modal
+                // For now we just navigate to /message to show the empty state
                 router.push("/message");
               }}
             />
-          </div>
-        </div>
-      )}
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel minSize={60} className="flex flex-col min-w-0">
+            {chatView ?? desktopEmptyState}
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
 
       {/* ── MOBILE CONTENT AREA ──────────────────────────────────────────── */}
-      <div className="md:hidden flex-1 flex flex-col min-w-0 h-full">
+      <div className="lg:hidden flex-1 flex flex-col min-w-0 h-full min-h-0">
         {/* Mobile: show full-height sidebar list when no chat is selected */}
         {!chatId && (
-          <div className="md:hidden h-full flex flex-col">
+          <div className="h-full min-h-0 flex flex-col">
             <ChatSidebar
               chats={activeChats}
               activeChat={activeChat}
               isOpen={true}
+              className="h-full w-full"
               currentUserId={currentUser?.id}
               onChatSelect={handleChatSelect}
               onNewChat={() => router.push("/message")}
@@ -425,7 +382,7 @@ const MessagePageContent = () => {
         {/* Chat view — shown when a chatId is in the URL */}
         {chatId && chatView}
         {chatId && !chatView && (
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 min-h-0">
             <MessagePaneSkeleton />
           </div>
         )}

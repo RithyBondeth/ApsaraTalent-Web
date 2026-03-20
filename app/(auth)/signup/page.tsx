@@ -2,6 +2,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -110,6 +111,13 @@ export default function SignupPage() {
     .errors as FieldErrors<TBasicSignupEmployeeSchema>;
   const companyErrors = cmpForm.formState
     .errors as FieldErrors<TBasicSignupCompanySchema>;
+
+  const formatDateForField = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   // Set Basic Signup Data for Employee
   const onSubmitEmployee = (data: TBasicSignupEmployeeSchema) => {
@@ -222,9 +230,9 @@ export default function SignupPage() {
   ]);
 
   return (
-    <div className="size-[70%] flex flex-col items-start justify-center gap-3 tablet-sm:w-[90%]">
+    <div className="w-full max-w-[620px] flex flex-col items-start justify-center gap-4 px-1 tablet-sm:max-w-full">
       {/* Title Section */}
-      <div className="mb-5">
+      <div className="mb-4">
         <LogoComponent
           isBlackLogo={theme === "light" ? false : true}
           className="!h-12 w-auto"
@@ -261,12 +269,34 @@ export default function SignupPage() {
           </div>
         )}
         {isEmployeeForm && (
-          <Input
-            type="date"
-            placeholder="Date of Birth"
-            className="w-full"
-            {...empForm.register("dob")}
-          />
+          <div className="w-full flex flex-col items-start gap-1">
+            <Controller
+              name="dob"
+              control={empForm.control}
+              render={({ field }) => {
+                const selectedDate = field.value
+                  ? new Date(field.value)
+                  : undefined;
+                const safeDate =
+                  selectedDate instanceof Date &&
+                  !Number.isNaN(selectedDate.getTime())
+                    ? selectedDate
+                    : undefined;
+
+                return (
+                  <DatePicker
+                    placeholder="Date of Birth"
+                    date={safeDate}
+                    onDateChange={(date) =>
+                      field.onChange(date ? formatDateForField(date) : "")
+                    }
+                    dateFormat="dd MMM yyyy"
+                  />
+                );
+              }}
+            />
+            <ErrorMessage>{employeeErrors.dob?.message}</ErrorMessage>
+          </div>
         )}
         <div className="w-full flex items-center gap-3 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
           {isEmployeeForm && (
@@ -463,17 +493,17 @@ export default function SignupPage() {
             />
           )}
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 tablet-sm:flex-col">
           <Button
             type="button"
-            className="flex-1"
+            className="flex-1 tablet-sm:w-full"
             variant="outline"
             onClick={() => router.push("/login")}
           >
             <LucideArrowLeft />
             Back
           </Button>
-          <Button className="flex-1" type="submit">
+          <Button className="flex-1 tablet-sm:w-full" type="submit">
             <LucideArrowRight />
             Next
           </Button>

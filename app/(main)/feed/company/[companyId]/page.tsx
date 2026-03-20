@@ -271,7 +271,7 @@ export default function CompanyDetailPage() {
               <TypographyP className="!m-0 tablet-sm:text-center tablet-sm:text-sm">
                 {companyData.industry}
               </TypographyP>
-              <div className="flex items-center gap-5">
+              <div className="flex flex-wrap items-center gap-3 tablet-sm:justify-center">
                 <IconLabel
                   icon={<LucideCalendarDays />}
                   text={`Founded in ${companyData.foundedYear}`}
@@ -285,7 +285,7 @@ export default function CompanyDetailPage() {
               </div>
             </div>
           </div>
-          <div className="z-10 absolute right-3 bottom-3 flex items-center gap-3">
+          <div className="z-10 absolute left-3 right-3 bottom-3 flex flex-wrap justify-stretch gap-2 [&>button]:flex-1 sm:[&>button]:flex-none sm:justify-end sm:gap-3 sm:left-auto sm:right-3">
             {!employeeFavCompanyStore.isFavorite(id) && (
               <Button
                 variant="outline"
@@ -312,7 +312,7 @@ export default function CompanyDetailPage() {
         <div className="w-2/3 flex flex-col items-stretch gap-5">
           {/* Description Section */}
           {companyData && companyData.description && (
-            <div className="w-full flex flex-col items-start gap-3 border border-muted py-5 px-10">
+            <div className="w-full flex flex-col items-start gap-3 border border-muted py-4 sm:py-5 px-4 sm:px-6 lg:px-10">
               <div className="w-full flex flex-col gap-2">
                 <TypographyH4>About {companyData.name}</TypographyH4>
                 <Divider />
@@ -329,7 +329,7 @@ export default function CompanyDetailPage() {
           {companyData &&
             companyData.openPositions &&
             companyData.openPositions.length > 0 && (
-              <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
+              <div className="flex flex-col items-start gap-3 border border-muted py-4 sm:py-5 px-4 sm:px-6 lg:px-10">
                 <div className="w-full flex flex-col gap-2">
                   <TypographyH4>Open Positions</TypographyH4>
                   <Divider />
@@ -479,7 +479,7 @@ export default function CompanyDetailPage() {
 
           {/* Life at Company Section */}
           {companyData.images && companyData.images.length > 0 && (
-            <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
+            <div className="flex flex-col items-start gap-3 border border-muted py-4 sm:py-5 px-4 sm:px-6 lg:px-10">
               <div className="w-full flex flex-col gap-2">
                 <TypographyH4>Life at {companyData.name}</TypographyH4>
                 <Divider />
@@ -508,7 +508,7 @@ export default function CompanyDetailPage() {
           )}
         </div>
         <div className="w-1/3 flex flex-col items-stretch gap-5">
-          <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
+          <div className="flex flex-col items-start gap-3 border border-muted py-4 sm:py-5 px-4 sm:px-6 lg:px-10">
             <div className="w-full flex flex-col gap-2">
               <TypographyH4>Company Information</TypographyH4>
               <Divider />
@@ -594,7 +594,7 @@ export default function CompanyDetailPage() {
           {/* Culture and Benefit Section */}
           {(companyData.values.length > 0 ||
             companyData.benefits.length > 0) && (
-            <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
+            <div className="flex flex-col items-start gap-3 border border-muted py-4 sm:py-5 px-4 sm:px-6 lg:px-10">
               <div className="w-full flex flex-col gap-2">
                 <TypographyH4>Company Culture</TypographyH4>
                 <Divider />
@@ -650,7 +650,7 @@ export default function CompanyDetailPage() {
 
           {/* Social Section */}
           {companyData.socials && companyData.socials.length > 0 && (
-            <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
+            <div className="flex flex-col items-start gap-3 border border-muted py-4 sm:py-5 px-4 sm:px-6 lg:px-10">
               <div className="w-full flex flex-col gap-2">
                 <TypographyH4>Company Socials</TypographyH4>
                 <Divider />

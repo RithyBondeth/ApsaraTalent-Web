@@ -52,7 +52,7 @@ function PersonalInfoTab({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
           <FieldLabel>Full Name</FieldLabel>
           <Input
@@ -69,7 +69,7 @@ function PersonalInfoTab({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
           <FieldLabel>Email</FieldLabel>
           <Input
@@ -86,7 +86,7 @@ function PersonalInfoTab({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
           <FieldLabel>Location</FieldLabel>
           <Input
@@ -104,7 +104,7 @@ function PersonalInfoTab({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
           <FieldLabel>Years of Experience</FieldLabel>
           <Input
@@ -215,7 +215,7 @@ function ExperienceCard({
       {/* Card body */}
       {open && (
         <div className="p-3 flex flex-col gap-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <FieldLabel>Position / Role</FieldLabel>
               <Input
@@ -232,7 +232,7 @@ function ExperienceCard({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <FieldLabel>Start Date</FieldLabel>
               <Input
@@ -417,7 +417,7 @@ function SkillsEducationTab({ register, control, setValue }: FormPanelProps) {
             </span>
           ))}
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           <Input
             placeholder="Add a skill..."
             value={newSkill}
@@ -434,6 +434,7 @@ function SkillsEducationTab({ register, control, setValue }: FormPanelProps) {
             variant="secondary"
             size="sm"
             onClick={addSkill}
+            className="sm:min-w-20"
           >
             Add
           </Button>
@@ -479,7 +480,7 @@ function SkillsEducationTab({ register, control, setValue }: FormPanelProps) {
             </span>
           ))}
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           <Input
             placeholder="Add a career interest..."
             value={newScope}
@@ -496,6 +497,7 @@ function SkillsEducationTab({ register, control, setValue }: FormPanelProps) {
             variant="secondary"
             size="sm"
             onClick={addScope}
+            className="sm:min-w-20"
           >
             Add
           </Button>
@@ -510,14 +512,14 @@ export default function ResumeEditorFormPanel(props: FormPanelProps) {
   return (
     <Tabs defaultValue="personal" className="flex flex-col h-full">
       {/* Tab bar */}
-      <TabsList className="w-full shrink-0 grid grid-cols-3">
-        <TabsTrigger value="personal" className="text-xs gap-1.5">
+      <TabsList className="grid w-full shrink-0 grid-cols-3">
+        <TabsTrigger value="personal" className="gap-1 text-[11px] sm:gap-1.5 sm:text-xs">
           <User size={12} /> Personal
         </TabsTrigger>
-        <TabsTrigger value="experience" className="text-xs gap-1.5">
+        <TabsTrigger value="experience" className="gap-1 text-[11px] sm:gap-1.5 sm:text-xs">
           <Briefcase size={12} /> Experience
         </TabsTrigger>
-        <TabsTrigger value="skills" className="text-xs gap-1.5">
+        <TabsTrigger value="skills" className="gap-1 text-[11px] sm:gap-1.5 sm:text-xs">
           <GraduationCap size={12} /> Skills
         </TabsTrigger>
       </TabsList>

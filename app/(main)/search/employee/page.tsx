@@ -37,7 +37,9 @@ import {
   LucideCalendarDays,
   LucideCircleDollarSign,
   LucideGraduationCap,
+  LucideSlidersHorizontal,
   LucideUsers,
+  LucideX,
 } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -55,6 +57,7 @@ export default function EmployeeSearchPage() {
 
   // Employee Search for Company Helper
   const [scopeNames, setScopeNames] = useState<string[]>([]);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   // React Hook Form: Employee Search Form
   const { register, control, setValue, handleSubmit, watch } =
@@ -164,11 +167,11 @@ export default function EmployeeSearchPage() {
 
   return (
     <form
-      className="w-full flex flex-col items-start gap-5 px-10"
+      className="w-full flex flex-col items-start gap-5 px-2.5 sm:px-5 lg:px-8"
       onSubmit={handleSubmit(runSearch)}
     >
       {/* Banner Section */}
-      <div className="w-full flex items-center justify-between gap-10 laptop-sm:flex-col laptop-sm:items-center">
+      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 laptop-sm:flex-col laptop-sm:items-center">
         <div className="w-full flex flex-col items-start gap-3 laptop-sm:py-5">
           <TypographyH2 className="leading-relaxed">
             Find Opportunities, Anywhere.
@@ -202,9 +205,33 @@ export default function EmployeeSearchPage() {
         />
       </div>
 
+      {/* Mobile/Tablet filter toggle */}
+      <div className="hidden w-full tablet-xl:flex">
+        <Button
+          type="button"
+          variant="outline"
+          className="h-10 w-full justify-between"
+          onClick={() => setMobileFiltersOpen((v) => !v)}
+        >
+          <span className="flex items-center gap-2 text-sm">
+            <LucideSlidersHorizontal className="h-4 w-4" />
+            Refine Results
+          </span>
+          {mobileFiltersOpen ? (
+            <LucideX className="h-4 w-4" />
+          ) : (
+            <span className="text-xs text-muted-foreground">Open</span>
+          )}
+        </Button>
+      </div>
+
       <div className="w-full flex items-start gap-5 tablet-xl:!flex-col tablet-xl:[&>div]:w-full">
         {/* Left Side: Filter Section */}
-        <div className="w-1/4 flex flex-col items-start gap-8 p-5 shadow-md rounded-md">
+        <div
+          className={`w-1/4 flex flex-col items-start gap-6 p-4 sm:p-5 shadow-md rounded-md tablet-xl:w-full ${
+            mobileFiltersOpen ? "tablet-xl:flex" : "tablet-xl:hidden"
+          }`}
+        >
           <div className="w-full flex items-center justify-between">
             <TypographyH4 className="text-lg">Refine Result</TypographyH4>
             <Button
@@ -326,7 +353,7 @@ export default function EmployeeSearchPage() {
               render={({ field }) => {
                 const { min, max } = field.value ?? {};
                 return (
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <Input
                       type="number"
                       placeholder="Min"
@@ -340,7 +367,7 @@ export default function EmployeeSearchPage() {
                           max,
                         });
                       }}
-                      className="w-20 h-9 shrink-0"
+                      className="h-9 w-[88px] shrink-0"
                     />
                     <span className="text-muted-foreground">-</span>
                     <Input
@@ -356,7 +383,7 @@ export default function EmployeeSearchPage() {
                           max: numVal,
                         });
                       }}
-                      className="w-20 h-9 shrink-0"
+                      className="h-9 w-[88px] shrink-0"
                     />
                     <span className="text-sm text-muted-foreground whitespace-nowrap">
                       Employees
@@ -380,7 +407,7 @@ export default function EmployeeSearchPage() {
               render={({ field }) => {
                 const { min, max } = field.value ?? {};
                 return (
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <Input
                       type="number"
                       placeholder="Min"
@@ -394,7 +421,7 @@ export default function EmployeeSearchPage() {
                           max,
                         });
                       }}
-                      className="w-20 h-9 shrink-0"
+                      className="h-9 w-[88px] shrink-0"
                     />
                     <span className="text-muted-foreground">-</span>
                     <Input
@@ -410,7 +437,7 @@ export default function EmployeeSearchPage() {
                           max: numVal,
                         });
                       }}
-                      className="w-20 h-9 shrink-0"
+                      className="h-9 w-[88px] shrink-0"
                     />
                     <span className="text-sm text-muted-foreground whitespace-nowrap">
                       $
@@ -441,7 +468,7 @@ export default function EmployeeSearchPage() {
                 const selectedEdu = field.value ?? [];
 
                 return (
-                  <div className="flex flex-col gap-3 ml-3">
+                  <div className="ml-1.5 flex flex-col gap-3 sm:ml-3">
                     {educations.map((edu) => (
                       <div key={edu} className="flex items-center space-x-2">
                         <Checkbox
@@ -487,7 +514,7 @@ export default function EmployeeSearchPage() {
                     handleRadioChange("experienceLevel", value)
                   }
                   value={field.value ?? ""}
-                  className="flex flex-col gap-3 ml-3"
+                  className="ml-1.5 flex flex-col gap-3 sm:ml-3"
                 >
                   {yearOfExperienceConstant.map((option) => (
                     <RadioGroupItemWithLabel
@@ -506,8 +533,8 @@ export default function EmployeeSearchPage() {
         </div>
 
         {/* Right Side: Results */}
-        <div className="w-3/4 flex flex-col items-start gap-3">
-          <div className="w-full flex justify-between items-center">
+        <div className="w-3/4 flex flex-col items-start gap-3 tablet-xl:w-full">
+          <div className="w-full flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-3">
             <TypographyH4 className="text-lg">
               {loading ? (
                 <Skeleton className="h-6 w-40 bg-muted" />
@@ -541,7 +568,7 @@ export default function EmployeeSearchPage() {
                           });
                         }}
                       >
-                        <SelectTrigger className="w-[200px] h-9 text-sm">
+                        <SelectTrigger className="w-full sm:w-[200px] h-9 text-sm">
                           <SelectValue placeholder="Sort by" />
                         </SelectTrigger>
                         <SelectContent>

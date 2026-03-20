@@ -50,7 +50,7 @@ export default function ResumeEditorPreviewPanel({
     const { width } = wrapper.getBoundingClientRect();
     if (width === 0) return;
 
-    const newFit = Math.min((width - 48) / A4_W, 1);
+    const newFit = Math.min((width - 24) / A4_W, 1);
     setFitScale(newFit);
 
     // naturalHeight is the unscaled scrollHeight; multiply by current scale
@@ -89,9 +89,9 @@ export default function ResumeEditorPreviewPanel({
   return (
     <div className="flex flex-col h-full">
       {/* ── Top bar ─────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between px-4 py-2 border-b bg-muted/30 shrink-0 gap-3">
+      <div className="flex items-center justify-between gap-2 border-b bg-muted/30 px-2.5 py-2 sm:gap-3 sm:px-4 shrink-0">
         {/* Left: title */}
-        <div className="flex items-center gap-2 text-sm font-medium text-foreground shrink-0">
+        <div className="flex items-center gap-1.5 text-xs font-medium text-foreground sm:text-sm shrink-0">
           <Eye size={15} className="text-muted-foreground" />
           Resume Canvas
         </div>
@@ -104,7 +104,7 @@ export default function ResumeEditorPreviewPanel({
               Updating…
             </div>
           ) : (
-            <span className="text-xs text-muted-foreground hidden sm:block">
+            <span className="hidden text-xs text-muted-foreground md:block">
               Click text to edit · Hover to add/delete · Drag to reorder
             </span>
           )}
@@ -115,7 +115,7 @@ export default function ResumeEditorPreviewPanel({
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7"
+            className="h-8 w-8 sm:h-7 sm:w-7"
             onClick={zoomOut}
             disabled={zoomMultiplier <= ZOOM_MIN}
             title="Zoom out"
@@ -135,7 +135,7 @@ export default function ResumeEditorPreviewPanel({
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7"
+            className="h-8 w-8 sm:h-7 sm:w-7"
             onClick={zoomIn}
             disabled={zoomMultiplier >= ZOOM_MAX}
             title="Zoom in"
@@ -146,7 +146,7 @@ export default function ResumeEditorPreviewPanel({
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7"
+            className="h-8 w-8 sm:h-7 sm:w-7"
             onClick={zoomFit}
             title="Fit to window"
           >
@@ -158,7 +158,7 @@ export default function ResumeEditorPreviewPanel({
       {/* ── Scroll wrapper ───────────────────────────────────────── */}
       <div
         ref={scrollWrapperRef}
-        className="flex-1 overflow-auto bg-zinc-100 dark:bg-zinc-900 flex items-start justify-center p-6"
+        className="flex-1 overflow-auto bg-zinc-100 dark:bg-zinc-900 flex items-start justify-center p-2.5 sm:p-6"
         onClick={() => useCanvasEditorStore.getState().clearSelection()}
       >
         {/* Shell: layout dimensions after CSS transform */}

@@ -22,8 +22,8 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
   const router = useRouter();
 
   return (
-    <div className="w-full flex flex-col items-start gap-4 px-4 py-3 shadow-md rounded-md">
-      <div className="w-full flex items-center gap-5 tablet-md:flex-col tablet-md:items-start">
+    <div className="w-full flex flex-col items-start gap-4 rounded-md px-3 py-3 shadow-md sm:px-4">
+      <div className="w-full flex items-center gap-3 sm:gap-5 tablet-md:flex-col tablet-md:items-start">
         <Avatar rounded="md" className="size-28 phone-md:!hidden">
           <AvatarFallback>
             {props.company.name.slice(0, 3).toUpperCase()}
@@ -40,7 +40,7 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
               {props.company.industry}
             </TypographyMuted>
           </div>
-          <div className="flex items-center gap-3 phone-340:flex-col phone-340:items-start">
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 phone-340:flex-col phone-340:items-start">
             <IconLabel
               icon={
                 <LucideUsers
@@ -71,7 +71,7 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
           </div>
         </div>
       </div>
-      <div className="flex flex-col items-start gap-3 mt-3">
+      <div className="mt-2.5 flex flex-col items-start gap-2.5 sm:mt-3 sm:gap-3">
         <IconLabel
           icon={
             <LucideGraduationCap
@@ -91,7 +91,7 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
           text={`Experience - ${props.experience}`}
         />
       </div>
-      <TypographyP className="!m-0 text-sm leading-loose">
+      <TypographyP className="!m-0 text-sm leading-relaxed sm:leading-loose">
         {props.description}
       </TypographyP>
       <div className="flex flex-wrap items-center gap-3">
@@ -99,8 +99,8 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
           <Tag label={item} key={index} />
         ))}
       </div>
-      <div className="w-full flex items-center justify-between phone-xl:!flex-col phone-xl:!gap-3 phone-xl:!items-start">
-        <div className="w-full flex items-center gap-3">
+      <div className="w-full flex items-center justify-between gap-3 phone-xl:!flex-col phone-xl:!items-start">
+        <div className="w-full flex flex-wrap items-center gap-2.5 sm:gap-3">
           <IconLabel
             text={props.salary}
             icon={
@@ -120,9 +120,9 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
             }
           />
         </div>
-        <div className="w-full flex justify-end items-center gap-2 [&>button]:text-xs">
+        <div className="w-full flex items-center justify-end gap-2 phone-xl:[&>button]:w-full [&>button]:text-xs">
           <Button
-            className="text-xs"
+            className="text-xs phone-xl:justify-center"
             onClick={() => {
               router.replace(`/feed/company/${props.id}`);
             }}

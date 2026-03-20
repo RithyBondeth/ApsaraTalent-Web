@@ -24,13 +24,21 @@ export default function MatchingPage() {
   const router = useRouter();
 
   // API Integration — use field selectors to avoid re-renders from unrelated store changes
-  const empMatching = useGetCurrentEmployeeMatchingStore((s) => s.currentEmployeeMatching);
+  const empMatching = useGetCurrentEmployeeMatchingStore(
+    (s) => s.currentEmployeeMatching,
+  );
   const empLoading = useGetCurrentEmployeeMatchingStore((s) => s.loading);
-  const queryCurrentEmployeeMatching = useGetCurrentEmployeeMatchingStore((s) => s.queryCurrentEmployeeMatching);
+  const queryCurrentEmployeeMatching = useGetCurrentEmployeeMatchingStore(
+    (s) => s.queryCurrentEmployeeMatching,
+  );
 
-  const cmpMatching = useGetCurrentCompanyMatchingStore((s) => s.currentCompanyMatching);
+  const cmpMatching = useGetCurrentCompanyMatchingStore(
+    (s) => s.currentCompanyMatching,
+  );
   const cmpLoading = useGetCurrentCompanyMatchingStore((s) => s.loading);
-  const queryCurrentCompanyMatching = useGetCurrentCompanyMatchingStore((s) => s.queryCurrentCompanyMatching);
+  const queryCurrentCompanyMatching = useGetCurrentCompanyMatchingStore(
+    (s) => s.queryCurrentCompanyMatching,
+  );
 
   // Track which card is in a loading state to prevent double-clicks
   const [chatLoadingId, setChatLoadingId] = useState<string | null>(null);
@@ -62,7 +70,7 @@ export default function MatchingPage() {
           process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
         const res = await axiosInstance.post<{
           chatId: string;
-          id: string;        // receiver's resolved User.id — used as chatId in the message page
+          id: string; // receiver's resolved User.id — used as chatId in the message page
           name: string;
           avatar: string;
         }>(`${baseUrl}/chat/initiate`, { senderId, receiverId });
@@ -80,9 +88,9 @@ export default function MatchingPage() {
 
   if (isLoading) {
     return (
-      <div className="w-full flex flex-col px-5 mt-3">
+      <div className="mt-3 flex w-full flex-col px-2.5 sm:px-5">
         <MatchingBannerSkeleton />
-        <div className="flex flex-col items-start gap-3 p-3">
+        <div className="flex flex-col items-start gap-3 p-2 sm:p-3">
           {[...Array(3)].map((_, index) =>
             isEmployee ? (
               <MatchingCompanyCardSkeleton key={index} />
@@ -96,11 +104,11 @@ export default function MatchingPage() {
   }
 
   return (
-    <div className="w-full flex flex-col px-5">
+    <div className="w-full flex flex-col px-2.5 sm:px-5">
       {/* Banner Section */}
-      <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
+      <div className="w-full flex items-center justify-between gap-4 sm:gap-5 tablet-xl:flex-col tablet-xl:items-center">
         {/* Content Section */}
-        <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center tablet-xl:mt-5 px-5">
+        <div className="flex flex-col items-start gap-3 px-1 sm:px-5 tablet-xl:mt-2 tablet-xl:w-full tablet-xl:items-center">
           <TypographyH2 className="leading-relaxed tablet-xl:text-center">
             Ready to find your match? Let&apos;s make it happen.
           </TypographyH2>
@@ -121,7 +129,7 @@ export default function MatchingPage() {
           alt="matching"
           height={250}
           width={350}
-          className="tablet-xl:!w-full"
+          className="h-auto max-w-[320px] tablet-xl:!w-full"
           priority
         />
       </div>
@@ -170,7 +178,9 @@ export default function MatchingPage() {
         ) : (
           <div className="w-full flex flex-col items-center justify-center my-16">
             <Image src={emptySvgImage} alt="empty" height={200} width={200} />
-            <TypographyP className="!m-0">No matched available</TypographyP>
+            <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
+              Matching List Empty
+            </TypographyP>
           </div>
         )}
       </div>

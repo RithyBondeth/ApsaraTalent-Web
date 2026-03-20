@@ -48,7 +48,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
   }, [openProfileDialog]);
 
   return (
-    <div className="h-fit w-full flex flex-col items-start gap-5 p-3 rounded-lg shadow-sm border border-muted cursor-pointer">
+    <div className="h-fit w-full flex flex-col items-start gap-5 rounded-lg border border-muted p-3 shadow-sm cursor-pointer">
       {/* Profile Section */}
       <div className="w-full flex items-start justify-between phone-xl:flex-col phone-xl:gap-5">
         <div className="flex items-center gap-3">
@@ -76,17 +76,17 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
         </div>
         <div className="flex items-center gap-1">
           <Button
-            className="size-12 rounded-md transition-all duration-300 ease-in-out hover:scale-105"
+            className="size-10 sm:size-12 rounded-md transition-all duration-300 ease-in-out hover:scale-105"
             onClick={handleClickDialog}
           >
-            <LucideEye className="!size-6 transition-all duration-300 ease-in-out" />
+            <LucideEye className="!size-5 sm:!size-6 transition-all duration-300 ease-in-out" />
           </Button>
           <Button
-            className="size-12 rounded-md transition-all duration-300 ease-in-out hover:scale-105"
+            className="size-10 sm:size-12 rounded-md transition-all duration-300 ease-in-out hover:scale-105"
             onClick={props.onLikeClick}
             disabled={props.onLikeClickDisable}
           >
-            <LucideHeartHandshake className={`!size-6 transition-all duration-300 ease-in-out${props.onLikeClickDisable ? " animate-pop-shrink" : ""}`} />
+            <LucideHeartHandshake className={`!size-5 sm:!size-6 transition-all duration-300 ease-in-out${props.onLikeClickDisable ? " animate-pop-shrink" : ""}`} />
           </Button>
         </div>
       </div>
@@ -114,7 +114,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
       </div>
 
       {/* button Section */}
-      <div className="w-full flex items-center justify-end gap-3">
+      <div className="w-full flex items-center justify-end gap-2 sm:gap-3 phone-xl:justify-stretch phone-xl:[&>button]:flex-1">
         <Button
           className={`text-sm ${
             props.hideSaveButton

@@ -45,10 +45,21 @@ export const usePushNotifications = () => {
         return;
       }
 
-      const registration = await navigator.serviceWorker.register(
-        "/firebase-messaging-sw.js",
-      );
-      const readyRegistration = await navigator.serviceWorker.ready;
+      let registration: ServiceWorkerRegistration;
+      try {
+        registration = await navigator.serviceWorker.register(
+          "/firebase-messaging-sw.js",
+          { scope: "/" },
+        );
+        // Trigger an update check so the latest public SW is picked up quickly.
+        void registration.update();
+      } catch (error) {
+        console.error("[Push] Service worker registration failed:", error);
+        return;
+      }
+
+      const readyRegistration =
+        (await navigator.serviceWorker.ready.catch(() => null)) || registration;
 
       const messaging = getMessaging(firebaseApp);
       let token: string | null = null;

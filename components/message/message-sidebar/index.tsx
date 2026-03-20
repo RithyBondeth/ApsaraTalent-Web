@@ -48,27 +48,26 @@ export default function ChatSidebar(props: IChatSidebarProps) {
       )
     : chats;
 
-  const widthClass = isResizable ? "w-full" : isOpen ? "w-80" : "w-16";
-  const minWidthStyle = isResizable
-    ? undefined
-    : isOpen
-      ? { minWidth: "var(--sidebar-open-width, 20rem)" }
-      : { minWidth: "var(--sidebar-closed-width, 4rem)" };
+  const widthClass = isResizable ? "w-full" : isOpen ? "w-full lg:w-80" : "w-16";
+  const minWidthStyle =
+    !isResizable && !isOpen
+      ? { minWidth: "var(--sidebar-closed-width, 4rem)" }
+      : undefined;
 
   return (
     <div
       className={cn(
         "flex flex-col h-full transition-all duration-300 ease-in-out overflow-hidden border-r bg-background",
         widthClass,
-        !isResizable && "md:w-auto",
+        !isResizable && "lg:w-auto",
         className,
       )}
       style={minWidthStyle}
     >
       {/* ── HEADER ────────────────────────────────────────────────────────── */}
       {isOpen ? (
-        <div className="px-4 pt-5 pb-3 flex items-center justify-between shrink-0">
-          <h1 className="text-2xl font-bold text-foreground tracking-tight">
+        <div className="px-3 md:px-4 pt-4 md:pt-5 pb-2.5 md:pb-3 flex items-center justify-between shrink-0">
+          <h1 className="text-xl md:text-2xl font-bold text-foreground tracking-tight">
             Chats
           </h1>
           <div className="flex items-center gap-1">
@@ -85,7 +84,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 md:hidden"
+                className="h-8 w-8 lg:hidden"
                 onClick={onClose}
                 aria-label="Close sidebar"
               >
@@ -111,7 +110,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
 
       {/* ── SEARCH (expanded mode only) ──────────────────────────────────── */}
       {isOpen && (
-        <div className="px-4 pb-3 shrink-0">
+        <div className="px-3 md:px-4 pb-3 shrink-0">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
             <Input
@@ -171,7 +170,7 @@ const ExpandedChatList = (props: IChatListProps) => {
           <button
             key={chat.id}
             className={cn(
-              "w-full flex items-center gap-3 px-4 py-3 text-left transition-colors",
+              "w-full flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 text-left transition-colors",
               "hover:bg-muted/50 active:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
               isActive && "bg-muted/60",
             )}
@@ -180,11 +179,11 @@ const ExpandedChatList = (props: IChatListProps) => {
             {/* Avatar + online dot */}
             <div className="relative shrink-0">
               {chat.isGroup ? (
-                <div className="h-12 w-12 bg-muted rounded-full flex items-center justify-center border border-border">
+                <div className="h-11 w-11 md:h-12 md:w-12 bg-muted rounded-full flex items-center justify-center border border-border">
                   <Users className="h-5 w-5 text-muted-foreground" />
                 </div>
               ) : (
-                <Avatar className="h-12 w-12">
+                <Avatar className="h-11 w-11 md:h-12 md:w-12">
                   <AvatarImage src={chat.avatar} alt={chat.name} />
                   <AvatarFallback className="text-sm font-medium">
                     {chat.name

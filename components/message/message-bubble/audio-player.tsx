@@ -128,9 +128,8 @@ export function AudioPlayer({
     isPlaying || currentTime > 0 ? currentTime : audioDuration;
 
   return (
-    <div className="flex items-center gap-2 mt-1 min-w-[180px] max-w-xs">
+    <div className="flex items-center gap-2 mt-1 min-w-[150px] sm:min-w-[180px] max-w-xs">
       {/* Hidden native audio element */}
-      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
       <audio ref={audioRef} src={url} preload="metadata" />
 
       {/* Play / Pause button */}

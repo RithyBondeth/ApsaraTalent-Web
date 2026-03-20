@@ -9,7 +9,14 @@ import LoadingDialog, {
 import { toast } from "sonner";
 import { generateResumeAPI, BuildResume } from "../_apis/generate-resume.api";
 import { useResumeEditStore } from "@/stores/apis/resume/resume-edit.store";
-import { ArrowLeft, Download, FileText, PanelLeftOpen, PanelLeftClose } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  ArrowLeft,
+  Download,
+  FileText,
+  PanelLeftOpen,
+  PanelLeftClose,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
@@ -27,6 +34,7 @@ const DOWNLOAD_STEPS: LoadingStep[] = [
 export default function ResumeEditorPage() {
   const router = useRouter();
   const { payload, clearPayload } = useResumeEditStore();
+  const isMobile = useIsMobile();
 
   /* ── Redirect if no payload in store ────────────────────────── */
   useEffect(() => {
@@ -48,6 +56,10 @@ export default function ResumeEditorPage() {
 
   /* ── Left panel (form) collapsed state ───────────────────────── */
   const [formPanelOpen, setFormPanelOpen] = useState(false);
+
+  useEffect(() => {
+    setFormPanelOpen(!isMobile);
+  }, [isMobile]);
 
   /* ── Live preview with 600 ms debounce ───────────────────────── */
   const watchedValues = useWatch({ control }) as BuildResume;
@@ -162,11 +174,11 @@ export default function ResumeEditorPage() {
   if (!payload) return null;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] overflow-hidden">
+    <div className="flex flex-col h-[calc(100dvh-4rem)] overflow-hidden">
       {/* ── Top action bar ───────────────────────────────────────── */}
-      <div className="flex items-center justify-between px-5 py-3 border-b bg-background shrink-0 gap-4">
+      <div className="flex flex-col gap-2 border-b bg-background px-2.5 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5">
         {/* Left: back + toggle form + title */}
-        <div className="flex items-center gap-3">
+        <div className="flex w-full flex-wrap items-start gap-2 sm:w-auto sm:items-center sm:gap-3">
           <Button
             variant="outline"
             size="sm"
@@ -190,7 +202,12 @@ export default function ResumeEditorPage() {
             ) : (
               <PanelLeftOpen size={14} />
             )}
-            {formPanelOpen ? "Hide Fields" : "Show Fields"}
+            <span className="hidden sm:inline">
+              {formPanelOpen ? "Hide Fields" : "Show Fields"}
+            </span>
+            <span className="sm:hidden">
+              {formPanelOpen ? "Hide" : "Fields"}
+            </span>
           </Button>
 
           <div className="flex items-center gap-2">
@@ -210,27 +227,28 @@ export default function ResumeEditorPage() {
         </div>
 
         {/* Right: download */}
-        <Button
-          onClick={handleDownload}
-          disabled={downloading}
-          className="gap-2 shrink-0"
-        >
-          <Download size={15} />
-          Download PDF
-        </Button>
+          <Button
+            onClick={handleDownload}
+            disabled={downloading}
+            className="w-full shrink-0 justify-center gap-2 sm:w-auto"
+          >
+            <Download size={15} />
+            Download PDF
+          </Button>
       </div>
 
       {/* ── Split layout ─────────────────────────────────────────── */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden flex-col lg:flex-row">
         {/* Left — form panel (collapsible) */}
         {formPanelOpen && (
-          <div className="w-[420px] shrink-0 flex flex-col border-r bg-background overflow-hidden">
-            <div className="px-4 pt-4 pb-2 shrink-0">
+          <div className="w-full shrink-0 flex flex-col border-b bg-background overflow-hidden max-h-[56vh] lg:max-h-none lg:w-[420px] lg:border-b-0 lg:border-r">
+            <div className="shrink-0 px-3 pt-3 pb-2 sm:px-4 sm:pt-4">
               <p className="text-xs text-muted-foreground">
-                Edit your resume details below. The canvas updates automatically.
+                Edit your resume details below. The canvas updates
+                automatically.
               </p>
             </div>
-            <div className="flex-1 overflow-hidden px-4 pb-4">
+            <div className="flex-1 overflow-hidden px-3 pb-3 sm:px-4 sm:pb-4">
               <ResumeEditorFormPanel
                 register={register}
                 control={control}
