@@ -23,6 +23,7 @@ import { useVoiceRecorder } from "@/hooks/use-voice-recorder";
 import { VoiceRecordingUI } from "./voice-recording-ui";
 import { useThemeStore } from "@/stores/themes/theme-store";
 import dynamic from "next/dynamic";
+import { getCookie } from "cookies-next";
 
 // Lazy-load emoji-mart — ~90KB dataset + picker only needed when user opens the emoji popover
 const Picker = dynamic(() => import("@emoji-mart/react"), { ssr: false });
@@ -242,10 +243,14 @@ export default function ChatInput(props: IChatInputProps) {
         try {
           const formData = new FormData();
           formData.append("file", file);
+          const accessToken = getCookie("auth-token");
           const res = await fetch(`${API_BASE}/chat/upload`, {
             method: "POST",
             body: formData,
             credentials: "include",
+            headers: accessToken
+              ? { Authorization: `Bearer ${String(accessToken)}` }
+              : undefined,
           });
           if (!res.ok) {
             const body = await res.json().catch(() => ({}));
@@ -522,8 +527,24 @@ export default function ChatInput(props: IChatInputProps) {
               onStop={() =>
                 stopRecording((attachment) => {
                   const replyTo = buildReplyTo(replyTarget);
-                  onSendMessage("", replyTo, [attachment]);
-                  if (replyTarget) onCancelReply?.();
+                  const sent = onSendMessage("", replyTo, [attachment]);
+                  if (sent) {
+                    if (replyTarget) onCancelReply?.();
+                    return;
+                  }
+
+                  // If real-time send failed (e.g., temporary socket disconnect),
+                  // keep the uploaded voice file as a ready attachment so user can retry.
+                  setPendingFiles((prev) => [
+                    ...prev,
+                    {
+                      id: Math.random().toString(36).slice(2),
+                      preview: null,
+                      status: "ready",
+                      uploaded: attachment,
+                      filename: attachment.filename,
+                    },
+                  ]);
                 })
               }
             />

@@ -1,8 +1,7 @@
 import { ResumeTemplate } from "@/utils/interfaces/resume.interface";
 export type { ResumeTemplate };
-import { getUnifiedAccessToken } from "@/utils/auth/get-access-token";
 import { API_RESUME_BUILDER_URL } from "@/utils/constants/apis/resume_url";
-import axios from "axios";
+import axios from "@/lib/axios";
 
 export type PersonalInfo = {
   fullName: string;
@@ -37,15 +36,24 @@ export type BuildResume = {
 };
 
 export async function generateResumeAPI(payload: BuildResume) {
-  const token = getUnifiedAccessToken();
+  try {
+    const response = await axios.post(API_RESUME_BUILDER_URL, payload, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      responseType: "json",
+      timeout: 180000,
+    });
 
-  const response = await axios.post(API_RESUME_BUILDER_URL, payload, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    responseType: "json",
-  });
-
-  return response.data;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const apiMessage =
+        (error.response?.data as { message?: string } | undefined)?.message ||
+        error.message ||
+        "Failed to build resume";
+      throw new Error(apiMessage);
+    }
+    throw error;
+  }
 }

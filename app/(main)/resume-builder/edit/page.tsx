@@ -110,6 +110,9 @@ export default function ResumeEditorPage() {
     startProgress(95);
     try {
       const result = await generateResumeAPI(currentPayload);
+      if (!result?.data || typeof result.data !== "string") {
+        throw new Error("Resume service returned invalid data");
+      }
       stopProgress(100);
       await new Promise((r) => setTimeout(r, 500));
 
@@ -137,8 +140,12 @@ export default function ResumeEditorPage() {
     } catch (error) {
       console.error("Failed to generate resume:", error);
       stopProgress(0);
+      const description =
+        error instanceof Error && error.message
+          ? error.message
+          : "Something went wrong. Please try again.";
       toast.error("Download failed", {
-        description: "Something went wrong. Please try again.",
+        description,
       });
     } finally {
       setDownloading(false);

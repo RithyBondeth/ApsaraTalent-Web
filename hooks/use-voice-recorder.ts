@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
+import { getCookie } from "cookies-next";
 
 // ── Constants ──────────────────────────────────────────────────────────────────
 const API_BASE =
@@ -238,10 +239,14 @@ export function useVoiceRecorder(): VoiceRecorderResult {
           try {
             const formData = new FormData();
             formData.append("file", blob, filename);
+            const accessToken = getCookie("auth-token");
             const res = await fetch(`${API_BASE}/chat/upload`, {
               method: "POST",
               body: formData,
               credentials: "include",
+              headers: accessToken
+                ? { Authorization: `Bearer ${String(accessToken)}` }
+                : undefined,
             });
             if (!res.ok) {
               const body = await res.json().catch(() => ({}));

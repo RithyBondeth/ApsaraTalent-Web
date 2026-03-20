@@ -10,7 +10,9 @@ type SocketInstance = ReturnType<typeof io>;
 // connection between the two mounts.
 let _pc: RTCPeerConnection | null = null;
 let _pendingOffer: RTCSessionDescriptionInit | null = null;
+let _pendingRemoteIceCandidates: RTCIceCandidateInit[] = [];
 let _ringTimeout: ReturnType<typeof setTimeout> | null = null;
+let _connectTimeout: ReturnType<typeof setTimeout> | null = null;
 
 const FALLBACK_ICE_SERVERS: RTCIceServer[] = [
   { urls: "stun:stun.l.google.com:19302" },
@@ -32,6 +34,8 @@ const CALL_RING_TIMEOUT_MS = 30_000;
 
 /** How long (ms) to show "Call ended / declined" before resetting to idle. */
 const CALL_END_DISMISS_MS = 2_000;
+/** How long (ms) to wait in "connecting" before failing the call. */
+const CALL_CONNECT_TIMEOUT_MS = 25_000;
 
 // ── Types ────────────────────────────────────────────────────────────────────
 export type CallStatus =
@@ -149,6 +153,37 @@ function clearRingTimeout() {
   if (_ringTimeout) { clearTimeout(_ringTimeout); _ringTimeout = null; }
 }
 
+function clearConnectTimeout() {
+  if (_connectTimeout) {
+    clearTimeout(_connectTimeout);
+    _connectTimeout = null;
+  }
+}
+
+function armConnectTimeout() {
+  clearConnectTimeout();
+  _connectTimeout = setTimeout(() => {
+    if (useCallStore.getState().status === "connecting") {
+      useCallStore.getState().endCall("error");
+    }
+  }, CALL_CONNECT_TIMEOUT_MS);
+}
+
+async function flushPendingIceCandidates() {
+  if (!_pc?.remoteDescription || _pendingRemoteIceCandidates.length === 0) return;
+
+  const queued = [..._pendingRemoteIceCandidates];
+  _pendingRemoteIceCandidates = [];
+
+  for (const candidate of queued) {
+    try {
+      await _pc.addIceCandidate(new RTCIceCandidate(candidate));
+    } catch (err) {
+      console.warn("[Call] addIceCandidate (flush) failed:", err);
+    }
+  }
+}
+
 // ── Grab socket from chat store (lazy to avoid circular import) ───────────────
 function getSocketInstance(): SocketInstance | null {
   // Dynamic require at call time — avoids circular dep at module init
@@ -194,6 +229,9 @@ export const useCallStore = create<CallState>((set, get) => ({
     const socket = getSocketInstance();
     if (!socket?.connected) return;
     if (get().status !== "idle") return; // Already in a call
+    _pendingRemoteIceCandidates = [];
+    _pendingOffer = null;
+    clearConnectTimeout();
 
     // Get microphone
     let localStream: MediaStream;
@@ -234,8 +272,10 @@ export const useCallStore = create<CallState>((set, get) => ({
     pc.onconnectionstatechange = () => {
       const state = pc.connectionState;
       if (state === "connected") {
+        clearConnectTimeout();
         set({ status: "connected", callStartedAt: new Date() });
       } else if (state === "failed" || state === "closed") {
+        clearConnectTimeout();
         get().endCall("error");
       }
     };
@@ -313,11 +353,13 @@ export const useCallStore = create<CallState>((set, get) => ({
 
     await pc.setRemoteDescription(_pendingOffer);
     _pendingOffer = null;
+    await flushPendingIceCandidates();
 
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
 
     set({ status: "connecting", localStream, isMuted: false });
+    armConnectTimeout();
 
     socket.emit("callAnswer", { callId, callerId: caller.userId, answer });
   },
@@ -332,7 +374,9 @@ export const useCallStore = create<CallState>((set, get) => ({
     }
 
     _pendingOffer = null;
+    _pendingRemoteIceCandidates = [];
     clearRingTimeout();
+    clearConnectTimeout();
     closePc();
 
     set((state) => ({
@@ -356,8 +400,10 @@ export const useCallStore = create<CallState>((set, get) => ({
     }
 
     clearRingTimeout();
+    clearConnectTimeout();
     closePc();
     _pendingOffer = null;
+    _pendingRemoteIceCandidates = [];
 
     set((state) => ({
       status: "ended",
@@ -398,6 +444,7 @@ export const useCallStore = create<CallState>((set, get) => ({
     }
 
     _pendingOffer = data.offer;
+    _pendingRemoteIceCandidates = [];
     set({
       status: "ringing",
       callId: data.callId,
@@ -418,7 +465,9 @@ export const useCallStore = create<CallState>((set, get) => ({
     if (!_pc) return;
     try {
       await _pc.setRemoteDescription(data.answer);
+      await flushPendingIceCandidates();
       set({ status: "connecting" });
+      armConnectTimeout();
     } catch (err) {
       console.error("[Call] setRemoteDescription failed:", err);
       get().endCall("error");
@@ -427,7 +476,10 @@ export const useCallStore = create<CallState>((set, get) => ({
 
   // ── _handleIceCandidate ────────────────────────────────────────────────────
   _handleIceCandidate: async (data: IceCandidatePayload) => {
-    if (!_pc) return;
+    if (!_pc || !_pc.remoteDescription) {
+      _pendingRemoteIceCandidates.push(data.candidate);
+      return;
+    }
     try {
       await _pc.addIceCandidate(new RTCIceCandidate(data.candidate));
     } catch (err) {
@@ -442,8 +494,10 @@ export const useCallStore = create<CallState>((set, get) => ({
     if (status === "idle") return; // Already cleaned up
 
     clearRingTimeout();
+    clearConnectTimeout();
     closePc();
     _pendingOffer = null;
+    _pendingRemoteIceCandidates = [];
 
     set((state) => ({
       status: "ended",
