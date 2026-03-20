@@ -22,48 +22,72 @@ const authRoutes = [
 ];
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  const token = request.cookies.get("auth-token")?.value;
-  const isAuthenticated = !!token;
+  try {
+    const { pathname } = request.nextUrl;
+    const token = request.cookies.get("auth-token")?.value ?? "";
+    const isAuthenticated = token.length > 0;
 
-  const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route),
-  );
+    const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
+    const isProtectedRoute = protectedRoutes.some((route) =>
+      pathname.startsWith(route),
+    );
 
-  // role-aware handling
-  if (isAuthenticated && token) {
+    // If this path is neither auth nor protected, do nothing.
+    if (!isAuthRoute && !isProtectedRoute) {
+      return NextResponse.next();
+    }
+
+    // Unauthenticated users can't access protected routes
+    if (!isAuthenticated && isProtectedRoute) {
+      const encoded = encodeURIComponent(pathname);
+      return NextResponse.redirect(
+        new URL(`/login?callbackUrl=${encoded}`, request.url),
+      );
+    }
+
+    if (!isAuthenticated) {
+      return NextResponse.next();
+    }
+
+    // Token is present; role decoding may fail for malformed/expired tokens.
+    // In that case, keep default authenticated behavior without crashing edge runtime.
     const role = getRoleFromJwt(token);
 
     // If user has token but role is "none", force onboarding
     if (role === "none") {
-      // allow signup/login route
-      if (isAuthRoute) return NextResponse.next();
-
-      // block protected routes until onboarding completes
-      if (isProtectedRoute)
+      if (isProtectedRoute) {
         return NextResponse.redirect(new URL("/signup/option", request.url));
-
+      }
       return NextResponse.next();
     }
 
-    // fully authed users shouldn't access auth routes
+    // Fully authenticated users shouldn't access auth pages
     if (isAuthRoute) {
       return NextResponse.redirect(new URL("/feed", request.url));
     }
-  }
 
-  // Unauthenticated users can't access protected routes
-  if (!isAuthenticated && isProtectedRoute) {
-    const encoded = encodeURIComponent(pathname);
-    return NextResponse.redirect(
-      new URL(`/login?callbackUrl=${encoded}`, request.url),
-    );
+    return NextResponse.next();
+  } catch {
+    // Never let middleware failures crash production edge function.
+    return NextResponse.next();
   }
-
-  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/((?!_next|icon.svg|api).*)"],
+  // Limit middleware to auth/protected app routes only.
+  // This avoids running edge logic for static assets and unrelated pages.
+  matcher: [
+    "/feed/:path*",
+    "/profile/:path*",
+    "/favorite/:path*",
+    "/search/:path*",
+    "/matching/:path*",
+    "/message/:path*",
+    "/notification/:path*",
+    "/resume-builder/:path*",
+    "/login/:path*",
+    "/signup/:path*",
+    "/forgot-password/:path*",
+    "/reset-password/:path*",
+  ],
 };

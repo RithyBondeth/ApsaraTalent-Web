@@ -4,6 +4,7 @@ import { IChatPreview, IMessage } from "@/components/message/props";
 import { formatSidebarTime, parseMessageDate } from "@/utils/date";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import axios from "@/lib/axios";
+import { getCookie } from "cookies-next";
 import {
   getApiOrigin,
   normalizeMediaUrl,
@@ -209,12 +210,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
     const socketUrl = getApiOrigin();
 
-    // auth-token is httpOnly — JS cannot read it via document.cookie.
-    // withCredentials: true sends ALL cookies (including httpOnly) in the
-    // WebSocket upgrade request, and the gateway reads it from the Cookie header.
+    const socketToken = getCookie("auth-token");
+
+    // Prefer explicit token auth in socket handshake so production does not
+    // depend on third-party cookie behavior for cross-origin websocket upgrades.
     const socket: SocketInstance = io(`${socketUrl}/chat`, {
       withCredentials: true,
-      transports: ["websocket"],
+      transports: ["websocket", "polling"],
+      auth: socketToken ? { token: String(socketToken) } : undefined,
     } as any);
 
     _socket = socket;

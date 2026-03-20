@@ -172,6 +172,12 @@ export const useCallStore = create<CallState>((set, get) => ({
   initCallSignaling: (socket) => {
     // Use get() inside each callback (not a one-time snapshot) so the
     // handlers always call the LATEST version of the action functions.
+    socket.off("incomingCall");
+    socket.off("callAnswered");
+    socket.off("remoteIceCandidate");
+    socket.off("callDeclined");
+    socket.off("callEnded");
+
     socket.on("incomingCall", (data: CallOfferPayload) => get()._handleOffer(data));
     socket.on("callAnswered", (data: CallAnswerPayload) => get()._handleAnswer(data));
     socket.on("remoteIceCandidate", (data: IceCandidatePayload) => get()._handleIceCandidate(data));
