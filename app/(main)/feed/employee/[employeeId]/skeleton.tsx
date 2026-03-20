@@ -6,7 +6,7 @@ export default function EmployeeDetailPageSkeleton() {
   return (
     <div className="flex flex-col gap-5">
       {/* Personal Information Skeleton */}
-      <div className="w-full flex justify-between border border-muted py-5 px-10 tablet-xl:flex-col tablet-xl:[&>div]:w-full tablet-xl:gap-5">
+      <div className="w-full flex justify-between border border-muted py-4 sm:py-5 px-4 sm:px-6 lg:px-10 tablet-xl:flex-col tablet-xl:[&>div]:w-full tablet-xl:gap-5">
         <div className="flex flex-col items-center gap-5">
           <Skeleton className="size-40 tablet-xl:size-52 rounded-md" />
           <div className="flex flex-col items-center gap-1">

@@ -40,14 +40,15 @@ export default function SearchBar<T extends FieldValues>(
   }, [props.initialJobType]);
 
   return (
-    <div className="w-full flex flex-col items-start gap-2 p-3 shadow-md rounded-md">
+    <div className="w-full flex flex-col items-start gap-2 p-2.5 sm:p-3 shadow-md rounded-md">
       <Input
         placeholder={
           props.isEmployee ? "Job title, keywords" : "Position title, keywords"
         }
+        className="h-10 sm:h-11"
         {...props.register("keyword" as Path<T>)}
       />
-      <div className="w-full flex items-center gap-3 [&>div]:w-1/2">
+      <div className="w-full flex flex-col gap-2.5 sm:flex-row sm:items-center sm:gap-3 sm:[&>div]:w-1/2">
         <Select
           onValueChange={(value: TLocations) => {
             setSelectionLocation(value);
@@ -55,7 +56,7 @@ export default function SearchBar<T extends FieldValues>(
           }}
           value={selectedLocation === "All" ? "All" : selectedLocation}
         >
-          <SelectTrigger className="h-12 text-muted-foreground">
+          <SelectTrigger className="h-10 sm:h-12 text-muted-foreground">
             <SelectValue placeholder="Location" />
           </SelectTrigger>
           <SelectContent>

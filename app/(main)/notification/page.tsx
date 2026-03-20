@@ -16,8 +16,11 @@ import {
 } from "@/stores/apis/notification/notification.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { TNotificationFilterType } from "@/utils/types/notification.type";
-import { LucideBellOff, LucideCheckCheck } from "lucide-react";
+import { LucideCheckCheck } from "lucide-react";
+import NotificationSvgImage from "@/assets/svg/notification.svg";
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
+import { TypographyP } from "@/components/utils/typography/typography-p";
 
 /** Derive a display-friendly user object from a notification's title + data fields. */
 function resolveNotificationUser(notification: INotification) {
@@ -80,10 +83,10 @@ export default function NotificationPage() {
   };
 
   return (
-    <div className="w-full flex flex-col gap-5 px-5">
+    <div className="w-full flex flex-col gap-4 sm:gap-5 px-2.5 sm:px-5">
       {/* Header Section */}
-      <div className="w-full flex items-center justify-between">
-        <div className="flex items-center gap-3 [&>button]:text-xs tablet-sm:hidden">
+      <div className="w-full flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap items-center gap-2 [&>button]:text-xs tablet-sm:hidden">
           <Button
             variant={notificationButtonVariant("all")}
             onClick={() => setNotificationFilter("all")}
@@ -113,7 +116,7 @@ export default function NotificationPage() {
         {/* Responsive Dropdown Section */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild className="hidden tablet-sm:flex">
-            <Button className="text-xs">
+            <Button className="h-9 w-full text-xs sm:w-auto">
               Filter:{" "}
               {notificationFilter.charAt(0).toUpperCase() +
                 notificationFilter.slice(1).toLowerCase()}
@@ -136,7 +139,7 @@ export default function NotificationPage() {
         </DropdownMenu>
 
         <Button
-          className="text-xs"
+          className="h-9 w-full text-xs sm:w-auto"
           variant="outline"
           onClick={handleMarkAllRead}
         >
@@ -158,9 +161,16 @@ export default function NotificationPage() {
 
         {/* Empty state */}
         {!loading && filteredNotifications.length === 0 && (
-          <div className="flex flex-col items-center justify-center gap-3 py-20 text-muted-foreground">
-            <LucideBellOff className="size-10" strokeWidth={1.5} />
-            <p className="text-sm">No notifications yet</p>
+          <div className="w-full flex flex-col items-center justify-center my-16">
+            <Image
+              src={NotificationSvgImage}
+              alt="Notification"
+              height={200}
+              width={200}
+            />
+            <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
+              No notifications yet
+            </TypographyP>
           </div>
         )}
 

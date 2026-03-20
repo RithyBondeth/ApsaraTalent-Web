@@ -156,9 +156,9 @@ export default function FavoritePage() {
 
   if (isLoading) {
     return (
-      <div className="w-full flex flex-col px-5 mt-3">
+      <div className="mt-3 flex w-full flex-col px-2.5 sm:px-5">
         <FavoriteBannerSkeleton />
-        <div className="flex flex-col items-start gap-3 p-3">
+        <div className="flex flex-col items-start gap-3 p-2 sm:p-3">
           {[...Array(3)].map((_, index) =>
             isEmployee ? (
               <FavoriteCompanyCardSkeleton key={index} />
@@ -172,11 +172,11 @@ export default function FavoritePage() {
   }
 
   return (
-    <div className="w-full flex flex-col px-5">
+    <div className="w-full flex flex-col px-2.5 sm:px-5">
       {/* Banner Section */}
-      <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
+      <div className="w-full flex items-center justify-between gap-4 sm:gap-5 tablet-xl:flex-col tablet-xl:items-center">
         {/* Content Section */}
-        <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center tablet-xl:mt-5 px-5">
+        <div className="flex flex-col items-start gap-3 px-1 sm:px-5 tablet-xl:mt-2 tablet-xl:w-full tablet-xl:items-center">
           <TypographyH2 className="leading-relaxed tablet-xl:text-center">
             Find your favorites at a Glance
           </TypographyH2>
@@ -197,7 +197,7 @@ export default function FavoritePage() {
           alt="favorites"
           height={250}
           width={350}
-          className="tablet-xl:!w-full"
+          className="h-auto max-w-[320px] tablet-xl:!w-full"
         />
       </div>
 
@@ -264,7 +264,9 @@ export default function FavoritePage() {
         ) : (
           <div className="w-full flex flex-col items-center justify-center my-16">
             <Image src={emptySvgImage} alt="empty" height={200} width={200} />
-            <TypographyP className="!m-0">No favorited available</TypographyP>
+            <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
+              Favorite List Empty
+            </TypographyP>
           </div>
         )}
       </div>

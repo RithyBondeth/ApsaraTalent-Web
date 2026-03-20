@@ -44,8 +44,9 @@ export default function CollapseSidebar({
 }: React.ComponentProps<typeof Sidebar>) {
   // Utils
   const pathname = usePathname();
-  const { open } = useSidebar();
+  const { open, isMobile, setOpenMobile } = useSidebar();
   const t = useTranslations("sidebar");
+  const isExpanded = isMobile ? true : open;
 
   const sidebarTitleMap = useMemo<Record<string, string>>(
     () => ({
@@ -168,11 +169,17 @@ export default function CollapseSidebar({
     [user?.role],
   );
 
+  const handleNavClick = useCallback(() => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  }, [isMobile, setOpenMobile]);
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <Link href="/feed">
-          {open ? (
+          {isExpanded ? (
             <LogoComponent priority={true} />
           ) : (
             <SidebarMenuButton tooltip="Apsara Talent" className="text-sm">
@@ -182,9 +189,9 @@ export default function CollapseSidebar({
         </Link>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="pb-1">
         <SidebarGroup>
-          <SidebarMenu className="space-y-5">
+          <SidebarMenu className="space-y-1.5 md:space-y-3">
             {sidebarList.map((item) => (
               <Collapsible
                 key={item.title}
@@ -197,41 +204,45 @@ export default function CollapseSidebar({
                     <SidebarMenuButton
                       isActive={isPathActive(item.url)}
                       tooltip={item.title}
-                      className="font-medium py-3 transition-all duration-300 ease-out data-[active=true]:bg-primary data-[active=true]:text-primary-foreground data-[active=true]:shadow-[0_8px_18px_hsl(var(--primary)/0.28)] data-[active=true]:animate-sidebar-active-in hover:data-[active=true]:bg-primary hover:data-[active=true]:text-primary-foreground"
+                      className="font-medium px-2.5 md:px-2 py-2.5 md:py-3 text-[15px] md:text-sm transition-all duration-300 ease-out data-[active=true]:bg-primary data-[active=true]:text-primary-foreground data-[active=true]:shadow-[0_8px_18px_hsl(var(--primary)/0.28)] data-[active=true]:animate-sidebar-active-in hover:data-[active=true]:bg-primary hover:data-[active=true]:text-primary-foreground"
                       asChild
                     >
-                      <Link href={resolveUrl(item.url)} prefetch={true}>
+                      <Link
+                        href={resolveUrl(item.url)}
+                        prefetch={true}
+                        onClick={handleNavClick}
+                      >
                         {item.icon && (
                           <item.icon
-                            className="!size-6 shrink-0"
+                            className="!size-5 md:!size-6 shrink-0"
                             strokeWidth={1.5}
                           />
                         )}
                         <span className="group-data-[collapsible=icon]:hidden">{getSidebarTitle(item.title)}</span>
-                        {item.url === "/matching" && (
-                          <span className="group-data-[collapsible=icon]:hidden ml-auto">
+                        {isExpanded && item.url === "/matching" && (
+                          <span className="ml-auto">
                             <CountBadge count={matchingCount} />
                           </span>
                         )}
-                        {item.url === "/favorite" && (
-                          <span className="group-data-[collapsible=icon]:hidden ml-auto">
+                        {isExpanded && item.url === "/favorite" && (
+                          <span className="ml-auto">
                             <CountBadge count={favoriteCount} />
                           </span>
                         )}
-                        {item.url === "/message" && (
-                          <span className="group-data-[collapsible=icon]:hidden ml-auto">
+                        {isExpanded && item.url === "/message" && (
+                          <span className="ml-auto">
                             <CountBadge count={unreadMessages} />
                           </span>
                         )}
-                        {item.url === "/notification" && (
-                          <span className="group-data-[collapsible=icon]:hidden ml-auto">
+                        {isExpanded && item.url === "/notification" && (
+                          <span className="ml-auto">
                             <CountBadge count={unreadNotifications} />
                           </span>
                         )}
                       </Link>
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
-                  {!open && getBadgeCount(item.url) > 0 && (
+                  {!isExpanded && getBadgeCount(item.url) > 0 && (
                     <span className="pointer-events-none absolute -top-1.5 right-1 z-50 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold leading-none">
                       {getBadgeCount(item.url) > 99 ? "99+" : getBadgeCount(item.url)}
                     </span>
@@ -252,11 +263,18 @@ export default function CollapseSidebar({
                     <SidebarMenuButton
                       isActive={isPathActive("/resume-builder")}
                       tooltip={t("aiResumeBuilder")}
-                      className="font-medium py-3 transition-all duration-300 ease-out data-[active=true]:bg-primary data-[active=true]:text-primary-foreground data-[active=true]:shadow-[0_8px_18px_hsl(var(--primary)/0.28)] data-[active=true]:animate-sidebar-active-in hover:data-[active=true]:bg-primary hover:data-[active=true]:text-primary-foreground"
+                      className="font-medium px-2.5 md:px-2 py-2.5 md:py-3 text-[15px] md:text-sm transition-all duration-300 ease-out data-[active=true]:bg-primary data-[active=true]:text-primary-foreground data-[active=true]:shadow-[0_8px_18px_hsl(var(--primary)/0.28)] data-[active=true]:animate-sidebar-active-in hover:data-[active=true]:bg-primary hover:data-[active=true]:text-primary-foreground"
                       asChild
                     >
-                      <Link href="/resume-builder" prefetch={true}>
-                        <LucideFileUser className="!size-6 shrink-0" strokeWidth={1.5} />
+                      <Link
+                        href="/resume-builder"
+                        prefetch={true}
+                        onClick={handleNavClick}
+                      >
+                        <LucideFileUser
+                          className="!size-5 md:!size-6 shrink-0"
+                          strokeWidth={1.5}
+                        />
                         <span className="group-data-[collapsible=icon]:hidden">{t("aiResumeBuilder")}</span>
                       </Link>
                     </SidebarMenuButton>
@@ -270,7 +288,7 @@ export default function CollapseSidebar({
 
       <Separator />
 
-      <SidebarFooter>
+      <SidebarFooter className="pb-[max(0.5rem,env(safe-area-inset-bottom))]">
         {loading || !user ? (
           <SidebarDropdownFooterSkeleton />
         ) : (

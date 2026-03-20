@@ -36,19 +36,19 @@ export default function ChatHeader(props: IChatHeaderProps) {
   } = props;
 
   return (
-    <div className="px-3 md:px-4 py-3 border-b flex items-center justify-between bg-background shrink-0 gap-2">
+    <div className="px-2.5 sm:px-3 md:px-4 py-2.5 md:py-3 border-b flex items-center justify-between bg-background shrink-0 gap-1.5 sm:gap-2 min-h-14">
       {/* ── LEFT SECTION ──────────────────────────────────────────────────── */}
-      <div className="flex items-center gap-2 min-w-0">
+      <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
         {/* Mobile back button */}
         {onBack && (
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden h-9 w-9 shrink-0 -ml-1"
+            className="lg:hidden h-8 w-8 shrink-0 -ml-1"
             onClick={onBack}
             aria-label="Back to conversations"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4" />
           </Button>
         )}
 
@@ -57,7 +57,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
           variant="ghost"
           size="icon"
           onClick={onToggleSidebar}
-          className="hidden md:flex h-9 w-9 shrink-0"
+          className="hidden lg:flex h-9 w-9 shrink-0"
           aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
         >
           {isSidebarOpen ? (
@@ -69,10 +69,10 @@ export default function ChatHeader(props: IChatHeaderProps) {
 
         {/* Avatar with online indicator dot */}
         <div className="relative shrink-0">
-          <Avatar className="h-9 w-9">
+          <Avatar className="h-8 w-8 sm:h-9 sm:w-9">
             {chat.isGroup ? (
               <AvatarFallback className="bg-primary/10">
-                <Users className="h-5 w-5 text-primary" />
+                <Users className="h-4 w-4 text-primary" />
               </AvatarFallback>
             ) : (
               <>
@@ -99,7 +99,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
         </div>
 
         {/* Name & online status text */}
-        <div className="min-w-0">
+        <div className="min-w-0 max-w-[52vw] sm:max-w-none">
           <h2 className="font-semibold text-sm text-foreground truncate leading-tight">
             {chat.name}
           </h2>
@@ -114,7 +114,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
       </div>
 
       {/* ── RIGHT SECTION ─────────────────────────────────────────────────── */}
-      <div className="flex items-center gap-1 shrink-0">
+      <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
         {/* Video call button */}
         <Button
           variant="outline"
@@ -130,7 +130,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
         <Button
           variant="outline"
           size="icon"
-          className="hidden sm:flex h-9 w-9 text-muted-foreground hover:text-foreground"
+          className="h-8 w-8 sm:h-9 sm:w-9 text-muted-foreground hover:text-foreground"
           onClick={onStartVoiceCall}
           aria-label="Start voice call"
         >
@@ -142,7 +142,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden h-9 w-9"
+            className="lg:hidden h-8 w-8"
             onClick={onOpenMobileSidebar}
             aria-label="Open conversations"
           >
@@ -166,7 +166,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="h-9 w-9"
+          className="h-8 w-8 sm:h-9 sm:w-9"
           aria-label="More options"
         >
           <MoreVertical className="h-5 w-5" />

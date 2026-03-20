@@ -482,15 +482,15 @@ export default function FeedPage() {
   const feedCompanyImage = feedCompanySvg;
 
   return (
-    <div className="w-full flex flex-col items-start gap-5">
+    <div className="w-full flex flex-col items-start gap-4 sm:gap-5">
       {/* Header Section */}
       {isLoading ? (
         <BannerSkeleton />
       ) : isEmployee ? (
-        <div className="w-full flex items-center justify-between gap-10 tablet-xl:flex-col tablet-xl:items-center">
+        <div className="w-full flex items-center justify-between gap-6 lg:gap-10 tablet-xl:flex-col tablet-xl:items-center">
           {/* Employee Banner - Content Section */}
           <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
-            <TypographyH2 className="!leading-relaxed text-4xl tablet-xl:text-3xl tablet-xl:text-center">
+            <TypographyH2 className="!leading-relaxed text-2xl sm:text-4xl tablet-xl:text-3xl tablet-xl:text-center">
               Connect with global professionals and grow your network
             </TypographyH2>
             <TypographyH4 className="!leading-relaxed tablet-xl:text-center">
@@ -510,7 +510,7 @@ export default function FeedPage() {
             alt="feed"
             height={300}
             width={400}
-            className="tablet-xl:!w-full"
+            className="h-auto max-w-[360px] tablet-xl:!w-full"
             priority
           />
         </div>
@@ -535,7 +535,7 @@ export default function FeedPage() {
               alt="feed"
               height={250}
               width={350}
-              className="tablet-xl:!w-full"
+              className="h-auto max-w-[340px] tablet-xl:!w-full"
               priority
             />
           ) : (
@@ -544,7 +544,7 @@ export default function FeedPage() {
               alt="feed"
               height={250}
               width={350}
-              className="tablet-xl:!w-full"
+              className="h-auto max-w-[340px] tablet-xl:!w-full"
               priority
             />
           )}
@@ -554,65 +554,69 @@ export default function FeedPage() {
       {/* Feed Card Section */}
       <div className="w-full columns-3 gap-5 laptop-sm:columns-2 tablet-lg:!columns-1 phone-xl:gap-3">
         {/* Loading Skeleton Section */}
-        {isLoading ? (
-          Array.from({ length: 9 }).map((_, index) =>
-            isEmployee ? (
-              <div
-                key={`company-skeleton-${index}`}
-                className="break-inside-avoid mb-5"
-              >
-                <CompanyCardSkeleton />
-              </div>
-            ) : (
-              <div
-                key={`employee-skeleton-${index}`}
-                className="break-inside-avoid mb-5"
-              >
-                <EmployeeCardSkeleton />
-              </div>
-            ),
-          )
-        ) : allUsers.length > 0 ? (
-          // Card List Section
-          allUsers.map((user) =>
-            isEmployee ? (
-              // Company Card Section
-              <CompanyFeedCard
-                key={user.id}
-                company={user as ICompany}
-                employeeId={currentUser?.employee?.id ?? ""}
-                isLiking={user.id === likingId && employeeLikeLoading}
-                isFavorite={isEmpFavorite(user.id)}
-                onView={handleEmployeeViewCompany}
-                onLike={handleEmployeeLikeCompany}
-                onSave={handleEmployeeFavoriteCompany}
-                onProfileImageClick={handleClickProfilePopup}
-                onSetProfileImage={setCurrentProfileImage}
-              />
-            ) : (
-              // Employee Card Section
-              <EmployeeFeedCard
-                key={user.id}
-                employee={user as IEmployee}
-                companyId={currentUser?.company?.id ?? ""}
-                isLiking={user.id === likingId && companyLikeLoading}
-                isFavorite={isCmpFavorite(user.id)}
-                onView={handleCompanyViewEmployee}
-                onLike={handleCompanyLikeEmployee}
-                onSave={handleCompanyFavoriteEmployee}
-                onProfileImageClick={handleClickProfilePopup}
-                onSetProfileImage={setCurrentProfileImage}
-              />
-            ),
-          )
-        ) : (
-          // No User Available Section
-          <div className="flex flex-col items-center justify-center my-16">
-            <Image src={emptySvgImage} alt="empty" height={200} width={200} />
-            <TypographyP className="!m-0">No user available</TypographyP>
-          </div>
-        )}
+        {isLoading
+          ? Array.from({ length: 9 }).map((_, index) =>
+              isEmployee ? (
+                <div
+                  key={`company-skeleton-${index}`}
+                  className="break-inside-avoid mb-5"
+                >
+                  <CompanyCardSkeleton />
+                </div>
+              ) : (
+                <div
+                  key={`employee-skeleton-${index}`}
+                  className="break-inside-avoid mb-5"
+                >
+                  <EmployeeCardSkeleton />
+                </div>
+              ),
+            )
+          : allUsers.length > 0 &&
+            // Card List Section
+            allUsers.map((user) =>
+              isEmployee ? (
+                // Company Card Section
+                <CompanyFeedCard
+                  key={user.id}
+                  company={user as ICompany}
+                  employeeId={currentUser?.employee?.id ?? ""}
+                  isLiking={user.id === likingId && employeeLikeLoading}
+                  isFavorite={isEmpFavorite(user.id)}
+                  onView={handleEmployeeViewCompany}
+                  onLike={handleEmployeeLikeCompany}
+                  onSave={handleEmployeeFavoriteCompany}
+                  onProfileImageClick={handleClickProfilePopup}
+                  onSetProfileImage={setCurrentProfileImage}
+                />
+              ) : (
+                // Employee Card Section
+                <EmployeeFeedCard
+                  key={user.id}
+                  employee={user as IEmployee}
+                  companyId={currentUser?.company?.id ?? ""}
+                  isLiking={user.id === likingId && companyLikeLoading}
+                  isFavorite={isCmpFavorite(user.id)}
+                  onView={handleCompanyViewEmployee}
+                  onLike={handleCompanyLikeEmployee}
+                  onSave={handleCompanyFavoriteEmployee}
+                  onProfileImageClick={handleClickProfilePopup}
+                  onSetProfileImage={setCurrentProfileImage}
+                />
+              ),
+            )}
       </div>
+
+      {/* No User Available Section */}
+      {allUsers.length === 0 && (
+        <div className="w-full flex flex-col items-center justify-center my-16">
+          <Image src={emptySvgImage} alt="empty" height={200} width={200} />
+          <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
+            {isEmployee ? "Company List Empty" : "Employee List Empty"}
+          </TypographyP>
+        </div>
+      )}
+
       {/* Image Popup Section */}
       <ImagePopup
         open={openProfilePopup}

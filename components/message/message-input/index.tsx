@@ -151,7 +151,6 @@ export default function ChatInput(props: IChatInputProps) {
   // Revoke all object URLs on unmount
   useEffect(() => {
     return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
       setPendingFiles((prev) => {
         prev.forEach((f) => {
           if (f.preview) URL.revokeObjectURL(f.preview);
@@ -362,7 +361,7 @@ export default function ChatInput(props: IChatInputProps) {
     inputDisabled || (!newMessage.trim() && readyCount === 0) || isUploadingAny;
 
   return (
-    <div className="px-3 py-3 md:px-4 bg-background border-t shrink-0">
+    <div className="px-2.5 py-2 md:px-4 md:py-3 bg-background border-t shrink-0 [padding-bottom:calc(env(safe-area-inset-bottom)+0.5rem)] md:[padding-bottom:0.75rem]">
       {/* ── Reply preview bar ───────────────────────────────────────────── */}
       {replyTarget && (
         <div className="mb-2 flex items-start gap-2 px-1">
@@ -392,7 +391,7 @@ export default function ChatInput(props: IChatInputProps) {
       )}
 
       {/* ── Main input container ────────────────────────────────────────── */}
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex items-end justify-between gap-1.5 sm:gap-2">
         {/* Hidden file input */}
         <input
           ref={fileInputRef}
@@ -413,11 +412,11 @@ export default function ChatInput(props: IChatInputProps) {
                 {pendingFiles.map((file) => (
                   <div
                     key={file.id}
-                    className="relative shrink-0 w-14 flex flex-col items-center gap-0.5"
+                    className="relative shrink-0 w-12 sm:w-14 flex flex-col items-center gap-0.5"
                   >
                     {/* Thumbnail */}
                     <div
-                      className={`relative w-14 h-14 rounded-lg overflow-hidden bg-muted border flex items-center justify-center ${
+                      className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden bg-muted border flex items-center justify-center ${
                         file.status === "error"
                           ? "border-destructive/50"
                           : "border-border/50"
@@ -483,7 +482,7 @@ export default function ChatInput(props: IChatInputProps) {
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={inputDisabled}
-                    className="shrink-0 w-14 h-14 rounded-lg border border-dashed border-border/70 bg-muted/30 flex flex-col items-center justify-center gap-0.5 hover:bg-muted/60 hover:border-border transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                    className="shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-lg border border-dashed border-border/70 bg-muted/30 flex flex-col items-center justify-center gap-0.5 hover:bg-muted/60 hover:border-border transition-colors disabled:opacity-40 disabled:pointer-events-none"
                     aria-label="Add more files"
                   >
                     <Paperclip className="h-4 w-4 text-muted-foreground" />
@@ -549,12 +548,12 @@ export default function ChatInput(props: IChatInputProps) {
               }
             />
           ) : (
-            <div className="flex items-end px-3 py-2 gap-1">
+            <div className="flex items-end px-2.5 sm:px-3 py-1.5 sm:py-2 gap-0.5 sm:gap-1">
               {/* Textarea */}
               <textarea
                 ref={textareaRef}
                 placeholder={isDisabled ? "Loading..." : "Enter message..."}
-                className="flex-1 resize-none bg-transparent text-sm leading-relaxed text-foreground placeholder:text-muted-foreground outline-none border-none min-h-[32px] max-h-[120px] overflow-y-auto py-1 disabled:opacity-50"
+                className="flex-1 resize-none bg-transparent text-sm leading-relaxed text-foreground placeholder:text-muted-foreground outline-none border-none min-h-[30px] sm:min-h-[32px] max-h-[96px] sm:max-h-[120px] overflow-y-auto py-1 disabled:opacity-50"
                 rows={1}
                 value={newMessage}
                 onChange={(e) => handleInputChange(e.target.value)}
@@ -581,17 +580,19 @@ export default function ChatInput(props: IChatInputProps) {
                 </PopoverTrigger>
                 <PopoverContent
                   side="top"
-                  align="start"
-                  className="w-[320px] p-0"
+                  align="end"
+                  sideOffset={8}
+                  className="w-[min(92vw,340px)] max-h-[55vh] overflow-hidden p-0"
                 >
                   <Picker
                     data={emojiData}
                     theme={resolvedTheme === "dark" ? "dark" : "light"}
                     set="native"
+                    dynamicWidth
                     previewPosition="none"
                     skinTonePosition="none"
                     searchPosition="top"
-                    perLine={8}
+                    perLine={7}
                     onEmojiSelect={(emoji: { native?: string }) =>
                       insertEmoji(emoji?.native ?? "")
                     }
@@ -639,10 +640,10 @@ export default function ChatInput(props: IChatInputProps) {
             variant="default"
             onClick={handleSend}
             disabled={sendDisabled}
-            className="shrink-0 h-10 px-5 font-medium"
+            className="shrink-0 h-9 w-9 sm:h-10 sm:w-10 rounded-full p-0 font-medium"
             aria-label="Send message"
           >
-            <LucideSendHorizonal />
+            <LucideSendHorizonal className="h-4 w-4" />
           </Button>
         )}
       </div>

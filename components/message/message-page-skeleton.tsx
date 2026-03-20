@@ -59,8 +59,8 @@ export function MessagePaneSkeleton() {
     <div className="flex flex-col h-full min-w-0">
       <div className="px-3 md:px-4 py-3 border-b flex items-center justify-between bg-background shrink-0 gap-2">
         <div className="flex items-center gap-2 min-w-0">
-          <Skeleton className="h-9 w-9 rounded-md md:hidden" />
-          <Skeleton className="h-9 w-9 rounded-md hidden md:block" />
+          <Skeleton className="h-9 w-9 rounded-md lg:hidden" />
+          <Skeleton className="h-9 w-9 rounded-md hidden lg:block" />
           <Skeleton className="h-9 w-9 rounded-full" />
           <div className="space-y-1">
             <Skeleton className="h-4 w-28" />
@@ -86,7 +86,7 @@ export function MessagePaneSkeleton() {
 export default function MessagePageSkeleton() {
   return (
     <div className="w-full h-full flex bg-background overflow-hidden relative">
-      <div className="hidden md:flex w-full h-full">
+      <div className="hidden lg:flex w-full h-full">
         <div className="w-[26%] min-w-[260px] max-w-[420px]">
           <ChatSidebarSkeleton />
         </div>
@@ -96,7 +96,7 @@ export default function MessagePageSkeleton() {
         </div>
       </div>
 
-      <div className="md:hidden w-full h-full">
+      <div className="lg:hidden w-full h-full">
         <ChatSidebarSkeleton />
       </div>
     </div>

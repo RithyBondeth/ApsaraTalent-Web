@@ -2,8 +2,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function FavoriteEmployeeCardSkeleton() {
   return (
-    <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-md tablet-xl:flex-col tablet-xl:items-start">
-      <Skeleton className="size-56 rounded-md" />
+    <div className="w-full flex items-start gap-3 rounded-md p-3 shadow-md sm:gap-5 sm:p-5 tablet-xl:flex-col tablet-xl:items-start">
+      <Skeleton className="size-28 rounded-md sm:size-36 lg:size-56" />
 
       <div className="w-full flex flex-col items-start gap-3">
         <div className="w-full flex items-start justify-between phone-xl:flex-col phone-xl:gap-3">
@@ -21,8 +21,8 @@ export default function FavoriteEmployeeCardSkeleton() {
           ))}
         </div>
 
-        <div className="w-full flex items-center justify-between mt-2 tablet-md:flex-col tablet-md:items-start tablet-md:gap-5">
-          <div className="flex items-center gap-5 tablet-md:flex-col tablet-md:items-start">
+        <div className="mt-2 flex w-full items-center justify-between gap-3 tablet-md:flex-col tablet-md:items-start tablet-md:gap-5">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-5 tablet-md:flex-col tablet-md:items-start">
             {[...Array(3)].map((_, i) => (
               <div key={i} className="flex items-center gap-2">
                 <Skeleton className="h-10 w-10 rounded-md" />
@@ -34,7 +34,7 @@ export default function FavoriteEmployeeCardSkeleton() {
             ))}
           </div>
 
-          <Skeleton className="h-10 w-28 rounded-md" />
+          <Skeleton className="h-10 w-full rounded-md sm:w-28" />
         </div>
       </div>
     </div>

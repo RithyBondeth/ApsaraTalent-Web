@@ -72,7 +72,7 @@ export const ChatMessages = ({
   };
 
   return (
-    <div className="flex-1 px-3 py-4 md:px-4 overflow-y-auto overscroll-contain bg-muted/20">
+    <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain bg-muted/20 px-2.5 py-3 sm:px-3 sm:py-4 md:px-4">
       {messages.length === 0 ? (
         /* Empty state */
         <div className="h-full flex flex-col items-center justify-center gap-2 text-center px-4">

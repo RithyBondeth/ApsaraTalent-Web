@@ -248,7 +248,7 @@ export default function EmployeeDetailPage() {
   return (
     <div className="flex flex-col gap-5 animate-page-in">
       {/* Personal Information Section */}
-      <div className="w-full flex items-stretch justify-between border border-muted py-5 px-10 tablet-xl:flex-col tablet-xl:[&>div]:w-full tablet-xl:gap-5">
+      <div className="w-full flex items-stretch justify-between border border-muted py-4 sm:py-5 px-4 sm:px-6 lg:px-10 tablet-xl:flex-col tablet-xl:[&>div]:w-full tablet-xl:gap-5">
         <div className="flex flex-col items-center gap-5">
           <Avatar
             className="size-40 tablet-xl:!size-52"
@@ -438,10 +438,10 @@ export default function EmployeeDetailPage() {
               </div>
 
               {employeeData.resume && (
-                <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
-                  <div className="flex items-center text-muted-foreground gap-1">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-3 py-2 bg-muted rounded-md">
+                  <div className="flex items-center text-muted-foreground gap-1 min-w-0">
                     <LucideFileText strokeWidth={"1.5px"} />
-                    <TypographyMuted>
+                    <TypographyMuted className="truncate">
                       {extractCleanFilename(employeeData.resume)}
                     </TypographyMuted>
                   </div>
@@ -469,10 +469,10 @@ export default function EmployeeDetailPage() {
               )}
 
               {employeeData.coverLetter && (
-                <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
-                  <div className="flex items-center text-muted-foreground gap-1">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-3 py-2 bg-muted rounded-md">
+                  <div className="flex items-center text-muted-foreground gap-1 min-w-0">
                     <LucideFileText strokeWidth={"1.5px"} />
-                    <TypographyMuted>
+                    <TypographyMuted className="truncate">
                       {extractCleanFilename(employeeData.coverLetter)}
                     </TypographyMuted>
                   </div>
@@ -563,7 +563,7 @@ export default function EmployeeDetailPage() {
       </div>
 
       {/* Action Buttons Section */}
-      <div className="flex items-center gap-2">
+      <div className="flex w-full flex-wrap items-center gap-2 [&>button]:flex-1 sm:w-auto sm:[&>button]:flex-none">
         {!companyFavEmployeeStore.isFavorite(id) && (
           <Button
             variant={"outline"}

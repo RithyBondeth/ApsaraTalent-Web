@@ -41,12 +41,12 @@ export default function MainLayout({
   if (pathname.startsWith("/feed/")) {
     return (
       <div className="relative">
-        <Link href="/feed" className="absolute top-5 left-5 z-20">
+        <Link href="/feed" className="absolute top-3 left-3 sm:top-4 sm:left-4 lg:top-5 lg:left-5 z-20">
           <Button variant="outline" size="icon">
             <LucideArrowLeft />
           </Button>
         </Link>
-        <div key={pathname} className="container mx-auto p-5 animate-page-in">
+        <div key={pathname} className="container mx-auto p-3 sm:p-4 lg:p-5 animate-page-in">
           {children}
         </div>
       </div>
@@ -72,13 +72,13 @@ export default function MainLayout({
    */
   const getContentClass = () => {
     if (pathname.startsWith("/message"))
-      return "w-full h-screen message-xs:h-full flex flex-col";
+      return "w-full h-screen h-[100dvh] flex flex-col";
     return "w-full";
   };
 
   const getChildrenWrapperClass = () => {
-    if (pathname.startsWith("/message")) return "h-full";
-    return "m-5";
+    if (pathname.startsWith("/message")) return "h-full min-h-0";
+    return "m-3 sm:m-4 lg:m-5";
   };
 
   /**
@@ -90,11 +90,13 @@ export default function MainLayout({
         <CollapseSidebar key={user?.id || "nouser"} />
         <div className={getContentClass()}>
           <SidebarInset>
-            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-              <div className="flex items-center gap-2 px-4">
+            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-2.5 sm:px-4 [padding-top:env(safe-area-inset-top)]">
+              <div className="flex min-w-0 items-center gap-1.5 sm:gap-2 px-0.5 sm:px-2">
                 <SidebarTrigger />
                 <Separator orientation="vertical" className="mr-2 h-4" />
-                <TypographyP className="!m-0">{getHeaderTitle()}</TypographyP>
+                <TypographyP className="!m-0 truncate text-[15px] sm:text-base">
+                  {getHeaderTitle()}
+                </TypographyP>
               </div>
             </header>
           </SidebarInset>

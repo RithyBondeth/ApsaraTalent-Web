@@ -355,6 +355,7 @@ export default function EmployeeSignup() {
     empSignup.refreshToken,
     uploadsComplete,
     uploadAvatar.message,
+    router,
   ]);
 
   // Log Basic Signup Data: Regular, Phone and Socials
@@ -398,7 +399,7 @@ export default function EmployeeSignup() {
   ]);
 
   return (
-    <div className="h-[80%] w-[85%] flex flex-col items-start gap-3 tablet-lg:w-full tablet-lg:p-5">
+    <div className="w-full max-w-4xl mx-auto flex flex-col items-start gap-4 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
       <LoadingDialog
         loading={isSignupLoading}
         title={signupLoadingMessage}
@@ -408,7 +409,7 @@ export default function EmployeeSignup() {
       {/* Navigate Back Button Section */}
       <Button
         type="button"
-        className="absolute top-5 left-5"
+        className="mb-1"
         variant="outline"
         onClick={() => router.push("/signup")}
       >
@@ -416,7 +417,7 @@ export default function EmployeeSignup() {
       </Button>
 
       {/* Header Section */}
-      <div className="mb-5">
+      <div className="mb-2">
         <TypographyH2>Sign up as employee</TypographyH2>
         <TypographyMuted className="text-md">
           Explore your dream job with our platform, Apsara Talent.
@@ -424,41 +425,43 @@ export default function EmployeeSignup() {
       </div>
 
       {/* Step Progress Indicator Section */}
-      <div className="w-full flex items-center mb-5">
-        {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
-          (st, index) => {
-            const isSkipped =
-              st === 2 &&
-              methods.watch("profession.yearOfExperience") === "no_experience";
-            const isActive = step >= st && !isSkipped;
-            return (
-              <div key={st} className="w-full flex items-center">
-                <div
-                  className={`size-8 flex items-center justify-center rounded-full text-muted font-bold transition-all ${
-                    isSkipped
-                      ? "bg-muted text-muted-foreground opacity-40 line-through"
-                      : isActive
-                        ? "bg-primary"
-                        : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  {st}
-                </div>
-                {index < totalSteps - 1 && (
-                  <div className="flex-1 h-1 bg-muted relative">
-                    <div
-                      className={`absolute top-0 left-0 h-full transition-all duration-300 ${
-                        step > st && !isSkipped
-                          ? "bg-primary w-full"
-                          : "bg-muted w-0"
-                      }`}
-                    />
+      <div className="w-full overflow-x-auto pb-1 mb-4">
+        <div className="w-full min-w-[360px] flex items-center">
+          {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
+            (st, index) => {
+              const isSkipped =
+                st === 2 &&
+                methods.watch("profession.yearOfExperience") === "no_experience";
+              const isActive = step >= st && !isSkipped;
+              return (
+                <div key={st} className="w-full flex items-center">
+                  <div
+                    className={`size-7 text-xs sm:size-8 sm:text-sm flex items-center justify-center rounded-full text-muted font-bold transition-all ${
+                      isSkipped
+                        ? "bg-muted text-muted-foreground opacity-40 line-through"
+                        : isActive
+                          ? "bg-primary"
+                          : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {st}
                   </div>
-                )}
-              </div>
-            );
-          },
-        )}
+                  {index < totalSteps - 1 && (
+                    <div className="flex-1 h-0.5 sm:h-1 bg-muted relative">
+                      <div
+                        className={`absolute top-0 left-0 h-full transition-all duration-300 ${
+                          step > st && !isSkipped
+                            ? "bg-primary w-full"
+                            : "bg-muted w-0"
+                        }`}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            },
+          )}
+        </div>
       </div>
 
       {/* Form Section */}
@@ -513,18 +516,19 @@ export default function EmployeeSignup() {
 
           {/* Next & Previous Step Section */}
           {/* Navigation Buttons Section */}
-          <div className="flex justify-between my-8">
+          <div className="my-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             {step > 1 ? (
-              <Button type="button" onClick={prevStep}>
+              <Button type="button" onClick={prevStep} className="w-full sm:w-auto">
                 <LucideArrowLeft />
                 Back
               </Button>
             ) : (
-              <div />
+              <div className="hidden sm:block" />
             )}
 
             <Button
               type="button"
+              className="w-full sm:w-auto"
               onClick={nextStep}
               disabled={
                 empSignup.loading ||

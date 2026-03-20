@@ -18,13 +18,13 @@ export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
   const router = useRouter();
 
   return (
-    <div className="w-full flex flex-col items-start gap-4 px-4 py-3 shadow-md rounded-md">
-      <div className="w-full flex items-center gap-5 tablet-md:flex-col tablet-md:items-start">
+    <div className="w-full flex flex-col items-start gap-4 rounded-md px-3 py-3 shadow-md sm:px-4">
+      <div className="w-full flex items-center gap-3 sm:gap-5 tablet-md:flex-col tablet-md:items-start">
         <Avatar rounded="md" className="size-28 phone-md:!hidden">
           <AvatarImage src={props.avatar} />
           <AvatarFallback>{props.username?.slice(0, 2)}</AvatarFallback>
         </Avatar>
-        <div className="flex flex-col items-start gap-3">
+        <div className="flex flex-col items-start gap-2.5 sm:gap-3">
           <div>
             <TypographyH4 className="text-lg">
               {props.firstname} {props.lastname}
@@ -33,7 +33,7 @@ export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
               {props.job}
             </TypographyMuted>
           </div>
-          <div className="w-full flex items-center gap-3">
+          <div className="w-full flex flex-wrap items-center gap-2.5 sm:gap-3">
             <IconLabel
               icon={
                 <LucideUser
@@ -67,7 +67,7 @@ export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
           className="text-muted-foreground"
         />
       </div>
-      <TypographyP className="!m-0 text-sm leading-loose">
+      <TypographyP className="!m-0 text-sm leading-relaxed sm:leading-loose">
         {props.description}
       </TypographyP>
       <div className="flex flex-wrap items-center gap-3">
@@ -75,8 +75,9 @@ export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
           <Tag label={item} key={index} />
         ))}
       </div>
-      <div className="w-full flex justify-end items-center gap-2 [&>button]:text-xs">
+      <div className="w-full flex items-center justify-end gap-2 phone-xl:[&>button]:w-full [&>button]:text-xs">
         <Button
+          className="phone-xl:justify-center"
           onClick={() => {
             router.replace(`/feed/employee/${props.id}`);
           }}

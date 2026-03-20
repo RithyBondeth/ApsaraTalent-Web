@@ -16,13 +16,13 @@ export default function MatchingEmployeeCard(
   props: IMatchingEmployeeCardProps,
 ) {
   return (
-    <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-md tablet-xl:flex-col">
-      <Avatar rounded="md" className="size-56 tablet-xl:size-36">
+    <div className="w-full flex items-start gap-3 rounded-md p-3 shadow-md sm:gap-5 sm:p-5 tablet-xl:flex-col">
+      <Avatar rounded="md" className="size-28 sm:size-36 lg:size-56">
         <AvatarFallback>{props.name.slice(0, 2).toUpperCase()}</AvatarFallback>
         <AvatarImage src={props.avatar} />
       </Avatar>
       <div className="w-full flex flex-col items-start gap-3">
-        <div className="w-full flex items-start justify-between tablet-xl:justify-start tablet-xl:gap-3">
+        <div className="w-full flex items-start justify-between gap-2 tablet-xl:justify-start tablet-xl:gap-3">
           <div className="flex flex-col items-start gap-1">
             <TypographyH4 className="text-lg">{props.name}</TypographyH4>
             <TypographyP className="text-sm font-medium !m-0">
@@ -39,8 +39,8 @@ export default function MatchingEmployeeCard(
             <Tag label={skill} key={index} />
           ))}
         </div>
-        <div className="w-full flex items-center justify-between mt-2 tablet-xl:flex-col tablet-xl:items-start tablet-xl:gap-5">
-          <div className="flex items-center gap-5 tablet-lg:flex-col tablet-lg:items-start">
+        <div className="mt-2 flex w-full items-center justify-between gap-3 tablet-xl:flex-col tablet-xl:items-start tablet-xl:gap-5">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-5 tablet-lg:flex-col tablet-lg:items-start">
             <div className="flex items-center gap-2">
               <div className="p-3 rounded-md bg-blue-100">
                 <LucideBriefcaseBusiness
@@ -78,7 +78,10 @@ export default function MatchingEmployeeCard(
               </div>
             </div>
           </div>
-          <Button className="text-xs" onClick={props.onChatNowClick}>
+          <Button
+            className="w-full text-xs phone-xl:justify-center sm:w-auto"
+            onClick={props.onChatNowClick}
+          >
             Chat now
             <LucideMessageCircle />
           </Button>

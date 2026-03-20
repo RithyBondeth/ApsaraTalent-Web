@@ -529,7 +529,7 @@ function LoginPage() {
 
       {/* Image Poster Section */}
       <div className="w-1/2 flex justify-center items-center bg-primary tablet-lg:p-10">
-        <Image src={loginImage} alt="login" height={undefined} width={600} />
+        <Image src={loginImage} alt="login" height={undefined} width={450} />
       </div>
 
       {/* Remember Dialog Section */}

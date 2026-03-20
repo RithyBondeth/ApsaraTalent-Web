@@ -21,9 +21,9 @@ export default function NotificationMatchCard(
   };
 
   return (
-    <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-lg">
-      <div className="rounded-md p-3 text-blue-500 bg-blue-100">
-        <LucideHeartHandshake className="size-8" strokeWidth={1.5}/>
+    <div className="w-full flex items-start gap-3 rounded-lg p-3 shadow-md sm:gap-5 sm:p-5">
+      <div className="rounded-md bg-blue-100 p-2.5 text-blue-500 sm:p-3">
+        <LucideHeartHandshake className="size-6 sm:size-8" strokeWidth={1.5}/>
       </div>
       <div className="w-full flex flex-col items-start gap-2">
         <div className="w-full flex items-center justify-between phone-xl:flex-col phone-xl:items-start">
@@ -43,7 +43,7 @@ export default function NotificationMatchCard(
             ? `, A ${props.user.position}.`
             : `, ${props.user.industry} Company.`}
         </TypographyMuted>
-        <div className="w-full flex items-center justify-between tablet-sm:mt-1 tablet-sm:justify-end">
+        <div className="w-full flex items-center justify-between gap-2 tablet-sm:mt-1 tablet-sm:justify-end">
           <div className="flex items-center gap-3 tablet-sm:hidden">
             <div className="flex items-center gap-2">
               <Avatar rounded="md" className="bg-secondary size-8">
@@ -59,7 +59,7 @@ export default function NotificationMatchCard(
             </div>
           </div>
           <Button
-            className="text-xs tablet-sm:text-[10px]"
+            className="h-8 text-xs tablet-sm:h-9 tablet-sm:w-full tablet-sm:text-xs"
             onClick={handleViewProfile}
           >
             View Profile

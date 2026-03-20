@@ -17,15 +17,20 @@ export default function SignupLayout({ children }: { children: ReactNode }) {
   const signupImage = currentTheme === "dark" ? signupBlackSvg : signupWhiteSvg;
 
   return (
-    <div className="h-screen w-screen flex items-center tablet-xl:flex-col tablet-xl:[&>div]:w-full">
+    <div className="min-h-screen w-full flex items-stretch overflow-x-hidden">
       {/* Children Section */}
-      <div className="w-1/2 h-full flex justify-center items-center tablet-lg:h-fit tablet-xl:[&>div]:pb-20 phone-xl:!px-0 [&>div]:phone-xl:!px-5 [&>div]:phone-xl:!mt-8">
-        {children}
+      <div className="w-1/2 min-h-screen flex justify-center items-center px-8 py-10 tablet-xl:w-full tablet-xl:min-h-screen tablet-xl:items-start tablet-xl:px-4 tablet-xl:py-6">
+        <div className="w-full max-w-[680px]">{children}</div>
       </div>
 
       {/* Image Poster Section */}
-      <div className="w-1/2 h-full flex justify-center items-center bg-primary tablet-xl:p-10">
-        <Image src={signupImage} alt="signup" height={undefined} width={600} />
+      <div className="w-1/2 min-h-screen flex justify-center items-center bg-primary px-8 py-10 tablet-xl:hidden">
+        <Image
+          src={signupImage}
+          alt="signup"
+          className="h-auto w-full max-w-[620px]"
+          priority
+        />
       </div>
     </div>
   );

@@ -34,7 +34,7 @@ export default function ReferencePreviewDialog(props: {
 
   return (
     <Dialog open={props.openRefPreview} onOpenChange={props.setOpenRefPreview}>
-      <DialogContent className="w-[60vw] max-w-5xl h-[85vh] p-0 overflow-hidden flex flex-col">
+      <DialogContent className="w-[95vw] sm:w-[85vw] lg:w-[60vw] max-w-5xl h-[85vh] p-0 overflow-hidden flex flex-col">
         <DialogHeader className="px-4 py-3 border-b">
           <DialogTitle className="text-sm">
             {props.previewRefType === "resume"

@@ -145,8 +145,8 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : "right"}
+            className="max-h-[min(70vh,32rem)] w-[--radix-dropdown-menu-trigger-width] min-w-56 overflow-y-auto rounded-lg"
+            side={isMobile ? "top" : "right"}
             align="end"
             sideOffset={4}
           >

@@ -360,7 +360,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
                 🚫 This message was deleted
               </span>
             ) : message.messageType === "call" ? (
-              <div className="flex flex-col gap-2 min-w-[180px]">
+              <div className="flex flex-col gap-2 min-w-[150px] sm:min-w-[180px]">
                 <div className="flex items-center gap-2 text-sm font-medium">
                   <Phone className="h-4 w-4" />
                   <span>{message.content || "Call"}</span>
@@ -378,7 +378,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
                 </Button>
               </div>
             ) : isEditing ? (
-              <div className="flex flex-col gap-1.5 min-w-[200px]">
+              <div className="flex flex-col gap-1.5 min-w-[160px] sm:min-w-[200px]">
                 <Textarea
                   ref={editTextareaRef}
                   value={editValue}

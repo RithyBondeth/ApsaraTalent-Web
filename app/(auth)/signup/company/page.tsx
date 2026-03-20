@@ -304,6 +304,7 @@ export default function CompanySignup() {
     uploadCover.message,
     uploadCover.uploadCover,
     uploadsComplete,
+    router,
   ]);
 
   // Log Basic Signup Data: Regular, Phone and Socials
@@ -347,7 +348,7 @@ export default function CompanySignup() {
   ]);
 
   return (
-    <div className="h-[80%] w-[85%] flex flex-col items-start gap-3 tablet-lg:w-full tablet-lg:p-5 tablet-xl:mb-5">
+    <div className="w-full max-w-4xl mx-auto flex flex-col items-start gap-4 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
       <LoadingDialog
         loading={isSignupLoading}
         title={signupLoadingMessage}
@@ -356,7 +357,7 @@ export default function CompanySignup() {
 
       {/* Navigate Back Button Section */}
       <Button
-        className="absolute top-5 left-5"
+        className="mb-1"
         variant="outline"
         type="button"
         onClick={() => router.push("/signup")}
@@ -364,7 +365,7 @@ export default function CompanySignup() {
         <LucideArrowLeft />
       </Button>
       {/* Title Section */}
-      <div className="mb-5">
+      <div className="mb-2">
         <TypographyH2>Sign up as company</TypographyH2>
         <TypographyMuted className="text-md">
           Find your potential candidate, Apsara Talent.
@@ -372,31 +373,35 @@ export default function CompanySignup() {
       </div>
       <div className="w-full">
         {/* Step Progress Section */}
-        <div className="w-full flex items-center mb-5">
-          {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
-            (st, index) => (
-              <div key={st} className="w-full flex items-center">
-                {/* Step Circle */}
-                <div
-                  className={`size-8 flex items-center justify-center rounded-full text-muted font-bold transition-all ${
-                    step >= st ? "bg-primary" : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  {st}
-                </div>
-                {/* Line Between Steps (Only Render Before Last Step) */}
-                {index < totalSteps - 1 && (
-                  <div className="flex-1 h-1 bg-muted relative">
-                    <div
-                      className={`absolute top-0 left-0 h-full transition-all duration-300 ${
-                        step > st ? "bg-primary w-full" : "bg-muted w-0"
-                      }`}
-                    />
+        <div className="w-full overflow-x-auto pb-1 mb-4">
+          <div className="w-full min-w-[360px] flex items-center">
+            {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
+              (st, index) => (
+                <div key={st} className="w-full flex items-center">
+                  {/* Step Circle */}
+                  <div
+                    className={`size-7 text-xs sm:size-8 sm:text-sm flex items-center justify-center rounded-full text-muted font-bold transition-all ${
+                      step >= st
+                        ? "bg-primary"
+                        : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {st}
                   </div>
-                )}
-              </div>
-            ),
-          )}
+                  {/* Line Between Steps (Only Render Before Last Step) */}
+                  {index < totalSteps - 1 && (
+                    <div className="flex-1 h-0.5 sm:h-1 bg-muted relative">
+                      <div
+                        className={`absolute top-0 left-0 h-full transition-all duration-300 ${
+                          step > st ? "bg-primary w-full" : "bg-muted w-0"
+                        }`}
+                      />
+                    </div>
+                  )}
+                </div>
+              ),
+            )}
+          </div>
         </div>
 
         {/* Form Section */}
@@ -453,15 +458,16 @@ export default function CompanySignup() {
 
             {/* Next & Previous Step Section */}
             {/* Navigation Buttons Section */}
-            <div className="flex justify-between my-8">
+            <div className="my-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               {step > 1 && (
-                <Button type="button" onClick={prevStep}>
+                <Button type="button" onClick={prevStep} className="w-full sm:w-auto">
                   <LucideArrowLeft />
                   Back
                 </Button>
               )}
               <Button
                 type="button"
+                className="w-full sm:w-auto"
                 onClick={nextStep}
                 disabled={
                   cmpSignup.loading ||
