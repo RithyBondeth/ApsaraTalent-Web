@@ -1,13 +1,13 @@
 import {
-    dateValidation,
-    optionalFileValidation,
-    optionalImageValidation,
-    selectedValidation,
-    textValidation
+  dateValidation,
+  optionalFileValidation,
+  optionalImageValidation,
+  selectedValidation,
+  textValidation,
 } from "@/utils/functions/validations";
 import * as z from "zod";
 
-// Define schema for step 1
+// Define schema for step 1: Professtion
 export const professionStepSchema = z.object({
   profession: z.object({
     job: textValidation("Profession", 50),
@@ -19,7 +19,7 @@ export const professionStepSchema = z.object({
   }),
 });
 
-// Define schema for step 2
+// Define schema for step 2: Experience
 export const experienceStepSchema = z.object({
   experience: z
     .object({
@@ -37,7 +37,7 @@ export const experienceStepSchema = z.object({
     .default([]),
 });
 
-// Define schema for step 3
+// Define schema for step 3: Education
 export const educationStepSchema = z.object({
   educations: z
     .object({
@@ -56,7 +56,7 @@ export const educationStepSchema = z.object({
     .array(),
 });
 
-// Define schema for step 4
+// Define schema for step 4: SkillReference
 export const skillReferenceStepSchema = z.object({
   skillAndReference: z.object({
     skills: z
@@ -67,11 +67,12 @@ export const skillReferenceStepSchema = z.object({
   }),
 });
 
-// Define schema for step 5
+// Define schema for step 5: Avatar
 export const avatarStepSchema = z.object({
   avatar: optionalImageValidation("Avatar"),
 });
 
+// Define schema for step 6: Career Scopes
 export const careerScopesStepSchema = z.object({
   careerScopes: z
     .array(z.string())

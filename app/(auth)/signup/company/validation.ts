@@ -1,12 +1,12 @@
 import {
-    dateValidation,
-    optionalImageValidation,
-    selectedValidation,
-    textValidation
+  dateValidation,
+  optionalImageValidation,
+  selectedValidation,
+  textValidation,
 } from "@/utils/functions/validations";
 import * as z from "zod";
 
-// Define Schema for step 1
+// Define Schema for step 1: Basic Information
 export const basicInfoStepSchema = z.object({
   basicInfo: z.object({
     name: textValidation("Name", 20),
@@ -18,7 +18,7 @@ export const basicInfoStepSchema = z.object({
   }),
 });
 
-// Define schema for step 2
+// Define schema for step 2: OpenPosition
 export const openPositionStepSchema = z.object({
   openPositions: z
     .array(
@@ -38,7 +38,7 @@ export const openPositionStepSchema = z.object({
     .min(1, { message: "At least one open position is required" }),
 });
 
-// Define schema for step 3
+// Define schema for step 3: Benefit and Value
 export const benefitAndValueStepSchema = z.object({
   benefitsAndValues: z.object({
     benefits: z.array(z.string()).optional(),
@@ -46,16 +46,17 @@ export const benefitAndValueStepSchema = z.object({
   }),
 });
 
-// Define schema for step 4
+// Define schema for step 4: Avatar
 export const companyAvatarStepSchema = z.object({
   avatar: optionalImageValidation("Avatar"),
 });
 
-// Define schema for step 5
+// Define schema for step 5: Cover
 export const companyCoverStepSchema = z.object({
   cover: optionalImageValidation("Cover"),
 });
 
+// Define schema for step 6: Career Scopes
 export const careerScopesStepSchema = z.object({
   careerScopes: z
     .array(z.string())

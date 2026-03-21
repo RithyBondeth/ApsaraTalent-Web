@@ -28,32 +28,34 @@ import { FormProvider, useForm } from "react-hook-form";
 import { companySignupSchema, TCompanySignup } from "./validation";
 
 export default function CompanySignup() {
-  // Utils
+  /*----------------------------------------------- Utils -----------------------------------------------*/
   const router = useRouter();
 
-  // Company Form Helpers
   const [step, setStep] = useState<number>(1);
   const totalSteps = 6;
+  const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
 
-  // Company Data: Regular and Phone
+  /*--------------------------------------- API Integration ---------------------------------------*/
+  // Get user basic data from Basic, Phone, Google, Github, LinkedIn, Facebook
   const { basicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
-
-  // API Integration - Company Socials Data
   const googleUserData = useGoogleLoginStore();
   const githubUserData = useGithubLoginStore();
   const linkedInUserData = useLinkedInLoginStore();
   const facebookUserData = useFacebookLoginStore();
 
-  // API Integration - Company Signup
-  const cmpSignup = useCompanySignupStore();
-
-  // API Integration - Company Avatar, Cover
+  // Upload Avatar, Cover
   const uploadAvatar = useUploadCompanyAvatarStore();
   const uploadCover = useUploadCompanyCoverStore();
-  const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
+
+  // Company Register
+  const cmpSignup = useCompanySignupStore();
+
+  /*---------------------------------- Loading States ----------------------------------*/
   const isSignupLoading =
     cmpSignup.loading || uploadAvatar.loading || uploadCover.loading;
+
+  // Signup loading title
   const signupLoadingMessage = cmpSignup.loading
     ? "Creating your company account..."
     : uploadAvatar.loading
@@ -62,7 +64,7 @@ export default function CompanySignup() {
         ? "Uploading company cover..."
         : "Processing your request...";
 
-  // React Hook Form: Company Signup Form
+  /*------------------------ React Hook Form: Company Signup Form ----------------------*/
   const methods = useForm<TCompanySignup>({
     mode: "onChange",
     resolver: zodResolver(companySignupSchema),
@@ -117,6 +119,10 @@ export default function CompanySignup() {
     6: ["careerScopes"],
   };
 
+  /*----------------------------------- Navigation Helpers -----------------------------------*/
+  // Handle Previous Step
+  const prevStep = () => setStep((prev) => prev - 1);
+
   // Handle Next Step and Final Submit
   const nextStep = async () => {
     const fieldsToValidate = stepFieldMap[step];
@@ -125,7 +131,9 @@ export default function CompanySignup() {
 
     if (isValid) {
       if (step === totalSteps) {
+        /*------------------------ Final Submit: Company Registration ------------------------*/
         handleSubmit(async (data) => {
+          // Register with regular email-password
           if (basicSignupData) {
             // Signup company first to get companyID
             const companyId = await cmpSignup.signup({
@@ -171,23 +179,20 @@ export default function CompanySignup() {
             // Upload files in parallel
             const uploadTasks = [];
 
-            if (data.avatar instanceof File) {
-              // If companyID exist then upload avatar
+            if (data.avatar instanceof File)
               uploadTasks.push(
                 uploadAvatar.uploadAvatar(companyId, data.avatar),
               );
-            }
 
-            if (data.cover instanceof File) {
-              // If companyID exist then upload cover
+            if (data.cover instanceof File)
               uploadTasks.push(uploadCover.uploadCover(companyId, data.cover));
-            }
 
             // Upload all avatar and cover together
             await Promise.all(uploadTasks);
             setUploadsComplete(true);
           }
 
+          // Register with phone-otp
           if (basicPhoneSignupData) {
             // Signup company first to get companyID
             const companyId = await cmpSignup.signup({
@@ -233,17 +238,13 @@ export default function CompanySignup() {
             // Upload files in parallel
             const uploadTasks: Promise<unknown>[] = [];
 
-            if (data.avatar instanceof File) {
-              // If companyID exist then upload avatar
+            if (data.avatar instanceof File)
               uploadTasks.push(
                 uploadAvatar.uploadAvatar(companyId, data.avatar),
               );
-            }
 
-            if (data.cover instanceof File) {
-              // If companyID exist then upload cover
+            if (data.cover instanceof File)
               uploadTasks.push(uploadCover.uploadCover(companyId, data.cover));
-            }
 
             // Upload all avatar and cover together
             await Promise.all(uploadTasks);
@@ -256,10 +257,7 @@ export default function CompanySignup() {
     }
   };
 
-  // Handle Previous Step
-  const prevStep = () => setStep((prev) => prev - 1);
-
-  // Company Signup Effect
+  /*--------------------------- Company Signup Effect ---------------------------*/
   useEffect(() => {
     if (
       cmpSignup.accessToken &&
@@ -270,7 +268,9 @@ export default function CompanySignup() {
       !uploadCover.loading
     ) {
       toast.dismiss();
-      toast.success(cmpSignup.message ?? "Signup successful!", { duration: 1000 });
+      toast.success(cmpSignup.message ?? "Signup successful!", {
+        duration: 1000,
+      });
       setTimeout(() => router.replace("/login"), 1000);
     }
 
@@ -348,13 +348,8 @@ export default function CompanySignup() {
   ]);
 
   return (
+    /*----------------------------------------------- Main Content -----------------------------------------------*/
     <div className="w-full max-w-4xl mx-auto flex flex-col items-start gap-4 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
-      <LoadingDialog
-        loading={isSignupLoading}
-        title={signupLoadingMessage}
-        subTitle="Please wait while we complete your company signup."
-      />
-
       {/* Navigate Back Button Section */}
       <Button
         className="mb-1"
@@ -372,7 +367,7 @@ export default function CompanySignup() {
         </TypographyMuted>
       </div>
       <div className="w-full">
-        {/* Step Progress Section */}
+        {/* Step Progress Indicator Section */}
         <div className="w-full overflow-x-auto pb-1 mb-4">
           <div className="w-full min-w-[360px] flex items-center">
             {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
@@ -460,7 +455,11 @@ export default function CompanySignup() {
             {/* Navigation Buttons Section */}
             <div className="my-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               {step > 1 && (
-                <Button type="button" onClick={prevStep} className="w-full sm:w-auto">
+                <Button
+                  type="button"
+                  onClick={prevStep}
+                  className="w-full sm:w-auto"
+                >
                   <LucideArrowLeft />
                   Back
                 </Button>
@@ -482,6 +481,13 @@ export default function CompanySignup() {
           </form>
         </FormProvider>
       </div>
+
+      {/* Loading Dialog */}
+      <LoadingDialog
+        loading={isSignupLoading}
+        title={signupLoadingMessage}
+        subTitle="Please wait while we complete your company signup."
+      />
     </div>
   );
 }

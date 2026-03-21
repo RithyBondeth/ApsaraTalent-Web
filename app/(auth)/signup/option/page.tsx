@@ -2,11 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import ErrorMessage from "@/components/utils/error-message";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
@@ -25,6 +25,7 @@ import { Controller, useForm } from "react-hook-form";
 import { signupOptionSchema, TSignupOptionSchema } from "./validation";
 
 export default function SingUpOption() {
+  /*-------------------------------------- All States --------------------------------------*/
   // Utils
   const router = useRouter();
 
@@ -33,13 +34,14 @@ export default function SingUpOption() {
   const { basicPhoneSignupData, setBasicPhoneSignupData } =
     useBasicPhoneSignupDataStore();
 
-  // API Integration: Social Data
+  /* ---------------------------- API Integration: Social Data ------------------------------*/
+  // Get user basic data from socials: Google, Github, LinkedIn, Facebook
   const googleUserData = useGoogleLoginStore();
   const githubUserData = useGithubLoginStore();
   const linkedInUserData = useLinkedInLoginStore();
   const facebookUserData = useFacebookLoginStore();
 
-  // React Hook Form: Signup Option Form
+  /*-------------------------- React Hook Form: Signup Option Form ---------------------------*/
   const {
     handleSubmit,
     control,
@@ -51,6 +53,7 @@ export default function SingUpOption() {
     },
   });
 
+  /*--------------------------------- Signup Option Function ---------------------------------*/
   // Set Role For Signup Option Function
   const onSubmit = (data: TSignupOptionSchema) => {
     console.log("Form Submitted With role:", data.selectedRole);
@@ -129,6 +132,7 @@ export default function SingUpOption() {
   };
 
   return (
+    /*-------------------------------------------- Main Content --------------------------------------------*/
     <div className="h-[80%] w-[85%] flex flex-col items-center justify-start gap-3 tablet-lg:w-full tablet-lg:p-5">
       <form
         className="flex flex-col items-start gap-5"

@@ -386,6 +386,7 @@ function LoginPage() {
     mounted && resolvedTheme === "dark" ? loginWhiteSvg : loginBlackSvg;
 
   return (
+    /*-------------------------------------------- Main Content --------------------------------------------*/
     <div className="h-screen w-screen flex justify-between items-stretch tablet-lg:flex-col tablet-lg:[&>div]:w-full">
       {/* Left Section */}
       <div className="h-screen w-1/2 flex justify-center items-center bg-primary-foreground tablet-lg:h-fit">

@@ -69,6 +69,7 @@ export default function ForgotPasswordPage() {
   }, [error, message, loading, isSubmitted]);
 
   return (
+    /*-------------------------------------------- Main Content --------------------------------------------*/
     <div className="h-screen w-screen flex items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
       {/* Left Section */}
       <div className="w-1/2 flex justify-center items-center bg-primary-foreground tablet-md:h-[40%]">

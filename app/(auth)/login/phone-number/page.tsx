@@ -73,6 +73,7 @@ export default function PhoneNumberPage() {
   }, [error, loading, isSuccess, message, isSubmitted]);
 
   return (
+    /*-------------------------------------------- Main Content --------------------------------------------*/
     <div className="h-screen w-screen flex justify-between items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
       {/* Left Section */}
       <div className="h-screen w-1/2 flex justify-center items-center">

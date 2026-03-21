@@ -26,14 +26,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    /*---------------------------------- Main Layout ----------------------------------*/
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <body
         className={`${ubuntu.className} antialiased`}
         suppressHydrationWarning
       >
+        {/* Language Provider */}
         <LanguageProvider>
+          {/* Theme Provider */}
           <ThemeProvider>{children}</ThemeProvider>
         </LanguageProvider>
+        {/* Toast Container */}
         <Toaster />
       </body>
     </html>

@@ -1,4 +1,3 @@
-// My Signup Page
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -43,8 +42,10 @@ import {
   TBasicSignupCompanySchema,
   TBasicSignupEmployeeSchema,
 } from "./validation";
+import { formatDateForField } from "@/utils/functions/datebformatter-for-field";
 
 export default function SignupPage() {
+  /*--------------------------------------- All States ---------------------------------------*/
   // Utils
   const router = useRouter();
   const { theme } = useThemeStore();
@@ -55,13 +56,18 @@ export default function SignupPage() {
   const [confirmPassVisibility, setConfirmPassVisibility] =
     useState<boolean>(false);
 
-  // API Integration
+  /*------------------------------------ API Integrations ------------------------------------*/
+  // Get user basic data from socials: Google, Github, LinkedIn, Facebook
   const googleUserData = useGoogleLoginStore();
   const githubUserData = useGithubLoginStore();
   const linkedInUserData = useLinkedInLoginStore();
   const facebookUserData = useFacebookLoginStore();
 
-  // Employee and Company Form
+  /*----------------------------------- User Role Handling -----------------------------------*/
+  /* 
+    Determine user role (Employee or Company) by checking local state first,
+    then falling back to any connected social login providers.
+  */
   const selectedRole = useMemo(
     () =>
       basicSignupData?.selectedRole ||
@@ -77,9 +83,9 @@ export default function SignupPage() {
       facebookUserData.role,
     ],
   );
-
   const isEmployeeForm = selectedRole === "employee";
 
+  /*------------------------- React Hook Form: Emp and Cmp Signup Form -------------------------*/
   const cmpForm = useForm<TBasicSignupCompanySchema>({
     resolver: zodResolver(basicSignupCompanySchema),
     defaultValues: {
@@ -106,19 +112,13 @@ export default function SignupPage() {
     },
   });
 
-  // Employee and Company Error
+  // Employee and Company Error States
   const employeeErrors = empForm.formState
     .errors as FieldErrors<TBasicSignupEmployeeSchema>;
   const companyErrors = cmpForm.formState
     .errors as FieldErrors<TBasicSignupCompanySchema>;
 
-  const formatDateForField = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
-
+  /*----------------------------------- Signup Function -----------------------------------*/
   // Set Basic Signup Data for Employee
   const onSubmitEmployee = (data: TBasicSignupEmployeeSchema) => {
     console.log("Basic Employee Data: ", data);
@@ -149,7 +149,7 @@ export default function SignupPage() {
     router.push("/signup/company");
   };
 
-  // Social Signup Effect
+  /*--------------------------------- Social Signup Effect ---------------------------------*/
   useEffect(() => {
     // Handle Google login data - Auto Fill Information in Form
     if (
@@ -230,6 +230,7 @@ export default function SignupPage() {
   ]);
 
   return (
+    /*-------------------------------------------- Main Content --------------------------------------------*/
     <div className="w-full max-w-[620px] flex flex-col items-start justify-center gap-4 px-1 tablet-sm:max-w-full">
       {/* Title Section */}
       <div className="mb-4">
@@ -252,6 +253,7 @@ export default function SignupPage() {
             : cmpForm.handleSubmit(onSubmitCompany)
         }
       >
+        {/* Employee: Firstname & Lastname Section */}
         {isEmployeeForm && (
           <div className="flex items-center gap-3 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
             <Input
@@ -268,6 +270,8 @@ export default function SignupPage() {
             />
           </div>
         )}
+
+        {/* Employee: DOB Section */}
         {isEmployeeForm && (
           <div className="w-full flex flex-col items-start gap-1">
             <Controller
@@ -298,6 +302,8 @@ export default function SignupPage() {
             <ErrorMessage>{employeeErrors.dob?.message}</ErrorMessage>
           </div>
         )}
+
+        {/* Employee: Username & Location Section */}
         <div className="w-full flex items-center gap-3 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
           {isEmployeeForm && (
             <Input
@@ -339,8 +345,10 @@ export default function SignupPage() {
             </div>
           )}
         </div>
+
         <div className="flex flex-col items-stretch gap-5">
           <div className="flex gap-3 [&>select]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
+            {/* Employee: Gender Section */}
             {isEmployeeForm && (
               <div className="w-full flex flex-col items-start gap-1">
                 <Controller
@@ -371,6 +379,7 @@ export default function SignupPage() {
                 </ErrorMessage>
               </div>
             )}
+            {/* Employee & Company: Phone Number Section */}
             {isEmployeeForm ? (
               <Input
                 type="number"
@@ -389,6 +398,8 @@ export default function SignupPage() {
               />
             )}
           </div>
+
+          {/* Employee & Company: Email Section */}
           {isEmployeeForm ? (
             <Input
               prefix={<LucideMail strokeWidth={"1.3px"} />}
@@ -406,6 +417,8 @@ export default function SignupPage() {
               validationMessage={companyErrors.email?.message}
             />
           )}
+
+          {/* Employee & Company: Password Section */}
           {isEmployeeForm ? (
             <Input
               prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
@@ -449,6 +462,8 @@ export default function SignupPage() {
               validationMessage={companyErrors.password?.message}
             />
           )}
+
+          {/* Employee & Company: Confirm Password Section */}
           {isEmployeeForm ? (
             <Input
               prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
@@ -493,6 +508,8 @@ export default function SignupPage() {
             />
           )}
         </div>
+
+        {/* Employee & Company: Back & Next Buttons Section */}
         <div className="flex items-center gap-3 tablet-sm:flex-col">
           <Button
             type="button"

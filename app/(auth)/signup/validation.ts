@@ -21,7 +21,6 @@ export const basicSignupEmployeeSchema = z
     confirmPassword: z.string().min(1, "Confirm password is required"),
   })
   .superRefine((data, ctx) => {
-    // Access password and confirmPassword from the object schema
     if (data.confirmPassword !== data.password) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -39,7 +38,6 @@ export const basicSignupCompanySchema = z
     confirmPassword: z.string().min(1, "Confirm password is required"),
   })
   .superRefine((data, ctx) => {
-    // Access password and confirmPassword from the object schema
     if (data.confirmPassword !== data.password) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,

@@ -1,4 +1,5 @@
 "use client";
+
 import AvatarStepForm from "@/components/employee/employee-signup-form/avatar-step";
 import EmployeeCareerScopeStepForm from "@/components/employee/employee-signup-form/career-scope-step";
 import EducationStepForm from "@/components/employee/employee-signup-form/education-step";
@@ -29,36 +30,38 @@ import { FormProvider, useForm } from "react-hook-form";
 import { employeeSignUpSchema, TEmployeeSignUp } from "./validation";
 
 export default function EmployeeSignup() {
-  // Utils
+  /*-------------------------------------------- Utils --------------------------------------------*/
   const router = useRouter();
 
-  // Employee Form Helpers
   const [step, setStep] = useState<number>(1);
   const totalSteps = 6;
+  const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
 
-  // Employee Data: Regular and Phone
+  /*--------------------------------------- API Integration ---------------------------------------*/
+  // Get user basic data from Basic, Phone, Google, Github, LinkedIn, Facebook
   const { basicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
-
-  // API Integration - Employee Socials Data
   const googleUserData = useGoogleLoginStore();
   const githubUserData = useGithubLoginStore();
   const linkedInUserData = useLinkedInLoginStore();
   const facebookUserData = useFacebookLoginStore();
 
-  // API Integration - Employee Signup
-  const empSignup = useEmployeeSignupStore();
-
-  // API Integration - Employee Avatar, Resume and CoverLetter
+  // Upload Avatar, Resume, CoverLetter
   const uploadAvatar = useUploadEmployeeAvatarStore();
   const uploadResume = useUploadEmployeeResumeStore();
   const uploadCoverLetter = useUploadEmployeeCoverLetter();
-  const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
+
+  // Employee Register
+  const empSignup = useEmployeeSignupStore();
+
+  /*---------------------------------- Loading States ----------------------------------*/
   const isSignupLoading =
     empSignup.loading ||
     uploadAvatar.loading ||
     uploadCoverLetter.loading ||
     uploadResume.loading;
+
+  // Signup loading title
   const signupLoadingMessage = empSignup.loading
     ? "Creating your employee account..."
     : uploadAvatar.loading
@@ -69,7 +72,7 @@ export default function EmployeeSignup() {
           ? "Uploading cover letter..."
           : "Processing your request...";
 
-  // React Hook Form: Employee Signup Form
+  /*------------------------ React Hook Form: Employee Signup Form ----------------------*/
   const methods = useForm<TEmployeeSignUp>({
     mode: "onChange",
     resolver: zodResolver(employeeSignUpSchema),
@@ -118,6 +121,7 @@ export default function EmployeeSignup() {
     6: ["careerScopes"],
   };
 
+  /*----------------------------------- Navigation Helpers -----------------------------------*/
   // Check if user has no experience (to skip step 2)
   const hasNoExperience = () =>
     getValues("profession.yearOfExperience") === "No Experience";
@@ -131,6 +135,9 @@ export default function EmployeeSignup() {
     if (current === 3 && hasNoExperience()) return 1;
     return current - 1;
   };
+
+  // Handle Previous Step
+  const prevStep = () => setStep((prev) => resolvePrevStep(prev));
 
   // Handle Next Step and Final Submit
   const nextStep = async () => {
@@ -149,10 +156,12 @@ export default function EmployeeSignup() {
       return;
     }
 
+    /*--------------------------- Final Submit: Employee Registration ---------------------------*/
     handleSubmit(async (data) => {
       try {
         setUploadsComplete(false);
 
+        // Register with regular email-password
         if (basicSignupData) {
           // Signup employee first to get employeeID
           const employeeId = await empSignup.signup({
@@ -197,38 +206,27 @@ export default function EmployeeSignup() {
             return;
           }
 
-          console.log("Employee ID: ", employeeId);
-
-          // Upload files sequentially to avoid race conditions
-          if (data.avatar instanceof File) {
-            console.log(
-              "Attempting to upload avatar for employeeId:",
-              employeeId,
-            );
-            console.log("Avatar: ", data.avatar);
+          // Upload files avatar, resume and coverLetter
+          if (data.avatar instanceof File)
             await uploadAvatar.uploadAvatar(employeeId, data.avatar);
-          }
 
-          if (data.skillAndReference.resume instanceof File) {
-            console.log("Resume: ", data.skillAndReference.resume);
+          if (data.skillAndReference.resume instanceof File)
             await uploadResume.uploadResume(
               employeeId,
               data.skillAndReference.resume,
             );
-          }
 
-          if (data.skillAndReference.coverLetter instanceof File) {
-            console.log("CoverLetter: ", data.skillAndReference.coverLetter);
+          if (data.skillAndReference.coverLetter instanceof File)
             await uploadCoverLetter.uploadCoverLetter(
               employeeId,
               data.skillAndReference.coverLetter,
             );
-          }
 
           setUploadsComplete(true);
           return;
         }
 
+        // Register with phone-otp
         if (basicPhoneSignupData) {
           // Signup employee first to get employeeID
           const employeeId = await empSignup.signup({
@@ -273,39 +271,32 @@ export default function EmployeeSignup() {
             return;
           }
 
-          console.log("Employee ID from Phone Signup: ", employeeId);
-
           // Upload files sequentially to avoid race conditions
-          if (data.avatar instanceof File) {
+          if (data.avatar instanceof File)
             await uploadAvatar.uploadAvatar(employeeId, data.avatar);
-          }
 
-          if (data.skillAndReference.resume instanceof File) {
+          if (data.skillAndReference.resume instanceof File)
             await uploadResume.uploadResume(
               employeeId,
               data.skillAndReference.resume,
             );
-          }
 
-          if (data.skillAndReference.coverLetter instanceof File) {
+          if (data.skillAndReference.coverLetter instanceof File)
             await uploadCoverLetter.uploadCoverLetter(
               employeeId,
               data.skillAndReference.coverLetter,
             );
-          }
 
           setUploadsComplete(true);
+          return;
         }
       } catch (error) {
-        console.error("Employee signup failed:", error);
+        console.error("Employee Registration Error:", error);
       }
     })();
   };
 
-  // Handle Previous Step
-  const prevStep = () => setStep((prev) => resolvePrevStep(prev));
-
-  // Employee Singup Effect
+  /*--------------------------- Employee Signup Effect ---------------------------*/
   useEffect(() => {
     if (
       empSignup.accessToken &&
@@ -399,13 +390,8 @@ export default function EmployeeSignup() {
   ]);
 
   return (
+    /*----------------------------------------------- Main Content -----------------------------------------------*/
     <div className="w-full max-w-4xl mx-auto flex flex-col items-start gap-4 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
-      <LoadingDialog
-        loading={isSignupLoading}
-        title={signupLoadingMessage}
-        subTitle="Please wait while we complete your employee signup."
-      />
-
       {/* Navigate Back Button Section */}
       <Button
         type="button"
@@ -431,7 +417,8 @@ export default function EmployeeSignup() {
             (st, index) => {
               const isSkipped =
                 st === 2 &&
-                methods.watch("profession.yearOfExperience") === "no_experience";
+                methods.watch("profession.yearOfExperience") ===
+                  "no_experience";
               const isActive = step >= st && !isSkipped;
               return (
                 <div key={st} className="w-full flex items-center">
@@ -518,7 +505,11 @@ export default function EmployeeSignup() {
           {/* Navigation Buttons Section */}
           <div className="my-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             {step > 1 ? (
-              <Button type="button" onClick={prevStep} className="w-full sm:w-auto">
+              <Button
+                type="button"
+                onClick={prevStep}
+                className="w-full sm:w-auto"
+              >
                 <LucideArrowLeft />
                 Back
               </Button>
@@ -543,6 +534,13 @@ export default function EmployeeSignup() {
           </div>
         </form>
       </FormProvider>
+
+      {/* Loading Dialog */}
+      <LoadingDialog
+        loading={isSignupLoading}
+        title={signupLoadingMessage}
+        subTitle="Please wait while we complete your employee signup."
+      />
     </div>
   );
 }
