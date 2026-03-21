@@ -1,4 +1,5 @@
 "use client";
+
 import resetPasswordWhiteSvg from "@/assets/svg/reset-password-white.svg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,7 +7,12 @@ import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useResetPasswordStore } from "@/stores/apis/auth/reset-password.store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LucideEye, LucideEyeClosed, LucideKey, LucideLockKeyhole } from "lucide-react";
+import {
+  LucideEye,
+  LucideEyeClosed,
+  LucideKey,
+  LucideLockKeyhole,
+} from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -15,6 +21,7 @@ import { useForm } from "react-hook-form";
 import { resetPasswordSchema, TResetPasswordForm } from "./validate";
 
 export default function ResetPasswordPage() {
+  /*------------------------------------ All States -----------------------------------*/
   // Utils
   const router = useRouter();
 
@@ -24,10 +31,10 @@ export default function ResetPasswordPage() {
     useState<boolean>(false);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
-  // API Integration
+  /*--------------------------------- API Integration ---------------------------------*/
   const { loading, error, message, resetPassword } = useResetPasswordStore();
 
-  // React Hook Form: Reset Password Form
+  /*----------------------- React Hook Form: Reset Password Form ----------------------*/
   const {
     handleSubmit,
     register,
@@ -37,13 +44,13 @@ export default function ResetPasswordPage() {
     resolver: zodResolver(resetPasswordSchema),
   });
 
-  // Reset Password Function
+  /*----------------------------- Reset Password Function -----------------------------*/
   const onSubmit = async (data: TResetPasswordForm) => {
     setIsSubmitted(true);
     await resetPassword(data.token, data.password, data.confirmPassword);
   };
 
-  // Reset Password Effect
+  /*------------------------------ Reset Password Effect ------------------------------*/
   useEffect(() => {
     if (!isSubmitted) return;
 
@@ -65,6 +72,7 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="h-screen w-screen flex justify-between items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
+      {/* Left Section */}
       <div className="h-screen w-1/2 flex justify-center items-center bg-primary-foreground">
         <div className="h-fit w-[60%] flex flex-col items-stretch gap-3 tablet-lg:w-[80%] tablet-md:py-10">
           {/* Title Section */}
@@ -125,8 +133,8 @@ export default function ResetPasswordPage() {
         </div>
       </div>
 
-      {/* Image Poster Section */}
-      <div className="w-1/2 flex justify-center items-center bg-primary tablet-md:p-10">
+      {/* Right Section: Image Poster Section */}
+      <div className="w-1/2 flex justify-center items-center bg-primary tablet-md:h-[60%] tablet-md:p-10">
         <Image
           src={resetPasswordWhiteSvg}
           alt="reset-password"

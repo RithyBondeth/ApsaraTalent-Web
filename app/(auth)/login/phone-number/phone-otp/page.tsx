@@ -162,9 +162,8 @@ export default function PhoneOTPPage() {
         });
     }
 
-    if (verifyOTPStore.loading && loginInitiated) {
+    if (verifyOTPStore.loading && loginInitiated)
       toast.loading("Verifying your otp code...");
-    }
 
     if (verifyOTPStore.error && loginInitiated) {
       toast.dismiss();

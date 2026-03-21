@@ -18,6 +18,7 @@ import { useForm } from "react-hook-form";
 import { forgotPasswordSchema, TForgotPasswordForm } from "./validate";
 
 export default function ForgotPasswordPage() {
+  /*------------------------------------ All States -----------------------------------*/
   // Utils
   const router = useRouter();
 
@@ -25,10 +26,10 @@ export default function ForgotPasswordPage() {
   const [inputValue, setInputValue] = useState<string>("");
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
-  // API Integration
+  /*--------------------------------- API Integration ---------------------------------*/
   const { loading, error, message, forgotPassword } = useForgotPasswordStore();
 
-  // React Hook Form: Forgot Password Form
+  /*----------------------- React Hook Form: Forgot Password Form ----------------------*/
   const {
     handleSubmit,
     register,
@@ -38,7 +39,7 @@ export default function ForgotPasswordPage() {
     resolver: zodResolver(forgotPasswordSchema),
   });
 
-  // Forgot Password Function
+  /*----------------------------- Forgot Password Function -----------------------------*/
   const onSubmit = async (data: TForgotPasswordForm) => {
     setIsSubmitted(true);
     const idenifier = data.forgotPassword;
@@ -47,13 +48,11 @@ export default function ForgotPasswordPage() {
     else await forgotPassword(idenifier);
   };
 
-  // Forgot Password Effect
+  /*------------------------------ Forgot Password Effect ------------------------------*/
   useEffect(() => {
     if (!isSubmitted) return;
 
-    if (loading) {
-      toast.loading("Loading...");
-    }
+    if (loading) toast.loading("Loading...");
 
     if (error) {
       toast.dismiss();
@@ -71,6 +70,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="h-screen w-screen flex items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
+      {/* Left Section */}
       <div className="w-1/2 flex justify-center items-center bg-primary-foreground tablet-md:h-[40%]">
         <div className="size-[60%] flex flex-col items-stretch gap-3 tablet-md:justify-center tablet-md:size-full tablet-md:pb-10 tablet-md:p-5">
           {/* Title Section */}
@@ -115,7 +115,7 @@ export default function ForgotPasswordPage() {
         </div>
       </div>
 
-      {/* Image Poster Section */}
+      {/* Right Section: Image Poster Section */}
       <div className="w-1/2 flex justify-center items-center bg-primary tablet-md:h-[60%]">
         <Image
           src={forgotPasswordWhiteSvg}
