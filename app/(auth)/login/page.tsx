@@ -1,4 +1,5 @@
 "use client";
+
 import loginBlackSvg from "@/assets/svg/login-black.svg";
 import loginWhiteSvg from "@/assets/svg/login-white.svg";
 import { Button } from "@/components/ui/button";
@@ -55,6 +56,7 @@ import { Controller, useForm } from "react-hook-form";
 import { loginSchema, TLoginForm } from "./validation";
 
 function LoginPage() {
+  /*--------------------------------------- All States ---------------------------------------*/
   // Utils: Dialog, Theme
   const router = useRouter();
   const { resolvedTheme } = useTheme();
@@ -72,7 +74,7 @@ function LoginPage() {
   const [loginInitiated, setLoginInitiated] = useState<boolean>(false);
   const [isPreloadingData, setIsPreloadingData] = useState<boolean>(false);
 
-  // React Hook Form: Login Form
+  /*-------------------------------- React Hook Form: Login Form -------------------------------*/
   const {
     handleSubmit,
     register,
@@ -87,8 +89,10 @@ function LoginPage() {
     },
   });
 
-  // Mark as mounted so the theme-dependent image is only resolved client-side,
-  // preventing the SSR/client hydration mismatch on the login image.
+  /*
+    - Mark as mounted so the theme-dependent image is only resolved client-side,
+    - Preventing the SSR/client hydration mismatch on the login image.
+  */
   useEffect(() => setMounted(true), []);
 
   // Load remember preference on mount
@@ -101,7 +105,7 @@ function LoginPage() {
     }
   }, [setValue]);
 
-  // API Integration
+  /*---------------------------------- API Integrations ----------------------------------*/
   // Current User, Get All Employees and Companies
   const { getCurrentUser } = useGetCurrentUserStore();
   const { queryCompany } = useGetAllCompanyStore();
@@ -121,19 +125,27 @@ function LoginPage() {
   const linkedInLoginStore = useLinkedInLoginStore();
   const githubLoginStore = useGithubLoginStore();
   const facebookLoginStore = useFacebookLoginStore();
+
+  /*---------------------------------- Loading States ----------------------------------*/
+  // Check if any social login is loading
   const isAnySocialLoading =
     googleLoginStore.loading ||
     linkedInLoginStore.loading ||
     githubLoginStore.loading ||
     facebookLoginStore.loading;
+
+  // Check if any authentication is loading
   const isAuthLoading =
     (loginInitiated && loading) ||
     (socialLoginInitiated && isAnySocialLoading) ||
     isPreloadingData;
+
+  // Authentication loading title
   const authLoadingTitle = isPreloadingData
     ? "Preparing your workspace..."
     : "Authenticating...";
 
+  /*---------------------------------- Preload User Data ----------------------------------*/
   const preloadUserData = async () => {
     try {
       // First get current user data
@@ -184,12 +196,13 @@ function LoginPage() {
     }
   };
 
-  // Login Function
+  /*--------------------------------- Login Function ---------------------------------*/
   const onSubmit = async (data: TLoginForm) => {
     setLoginInitiated(true);
     await login(data.email, data.password, data.rememberMe!);
   };
 
+  /*---------------------------------- Login Effect ----------------------------------*/
   // Regular Email-Password Login Effect
   useEffect(() => {
     if (!loginInitiated) return;
@@ -366,20 +379,15 @@ function LoginPage() {
     isPreloadingData,
   ]);
 
-  // Get Current Image Based on Theme
+  /*--------------------------------- Get Current Image Based on Theme ---------------------------------*/
   // Only resolve the theme after mounting — avoids SSR/client hydration mismatch
-  // because resolvedTheme is undefined on the server.
+  // Because resolvedTheme is undefined on the server.
   const loginImage =
     mounted && resolvedTheme === "dark" ? loginWhiteSvg : loginBlackSvg;
 
   return (
     <div className="h-screen w-screen flex justify-between items-stretch tablet-lg:flex-col tablet-lg:[&>div]:w-full">
-      <LoadingDialog
-        loading={isAuthLoading}
-        title={authLoadingTitle}
-        subTitle="Please wait while we authenticate your account."
-      />
-
+      {/* Left Section */}
       <div className="h-screen w-1/2 flex justify-center items-center bg-primary-foreground tablet-lg:h-fit">
         <div className="size-[70%] flex flex-col items-start justify-center gap-3 tablet-md:w-[85%] tablet-md:py-10">
           {/* Title Section */}
@@ -527,7 +535,7 @@ function LoginPage() {
         </div>
       </div>
 
-      {/* Image Poster Section */}
+      {/* Right Sectiin: Image Poster Section */}
       <div className="w-1/2 flex justify-center items-center bg-primary tablet-lg:p-10">
         <Image src={loginImage} alt="login" height={undefined} width={450} />
       </div>
@@ -561,6 +569,13 @@ function LoginPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Loading Dialog */}
+      <LoadingDialog
+        loading={isAuthLoading}
+        title={authLoadingTitle}
+        subTitle="Please wait while we authenticate your account."
+      />
     </div>
   );
 }

@@ -14,6 +14,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function EmailVerificationPage() {
+  /*------------------------------------ All States ------------------------------------*/
   // Utils
   const { resolvedTheme } = useTheme();
   const params = useParams();
@@ -22,17 +23,17 @@ export default function EmailVerificationPage() {
 
   // Verify Email Helper
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
-  
-  // API Integration
+
+  /*--------------------------------- API Integration ---------------------------------*/
   const { loading, error, message, verifyEmail } = useVerifyEmailStore();
 
-  // Verify Email Function
+  /*------------------------------ Verify Email Function -------------------------------*/
   const handleVerifyEmail = async () => {
     setIsSubmitted(true);
     await verifyEmail(token as string);
   };
 
-  // Verify Email Effect
+  /*------------------------------- Verify Email Effect --------------------------------*/
   useEffect(() => {
     if (!isSubmitted) return;
 
@@ -50,7 +51,7 @@ export default function EmailVerificationPage() {
     }
   }, [error, loading, message, isSubmitted]);
 
-  // Get Current Image Based on Theme
+  /*------------------------- Get Current Image Based on Theme -------------------------*/
   const currentTheme = resolvedTheme || "light";
   const emailVerificationImage =
     currentTheme === "dark"
@@ -59,6 +60,7 @@ export default function EmailVerificationPage() {
 
   return (
     <div className="h-screen w-screen flex items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
+      {/* Left Section */}
       <div className="w-1/2 flex justify-center items-center bg-primary-foreground tablet-md:h-[40%]">
         <div className="size-[65%] flex flex-col items-stretch gap-3 tablet-md:justify-center tablet-md:size-full tablet-md:pb-10 tablet-md:p-5">
           {/* Title Section */}
@@ -78,8 +80,8 @@ export default function EmailVerificationPage() {
           </Button>
         </div>
       </div>
-      
-      {/* Image Poster Section */}
+
+      {/* Right Section: Image Poster Section */}
       <div className="w-1/2 flex justify-center items-center bg-primary tablet-lg:p-10">
         <Image
           src={emailVerificationImage}

@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import LogoComponent from "@/components/utils/logo";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-
 import { useLoginOTPStore } from "@/stores/apis/auth/login-otp.store";
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +19,7 @@ import { Controller, useForm } from "react-hook-form";
 import { phoneLoginSchema, TPhoneLoginForm } from "./validation";
 
 export default function PhoneNumberPage() {
+  /*--------------------------------------- All States ---------------------------------------*/
   // Utils
   const router = useRouter();
 
@@ -30,7 +30,7 @@ export default function PhoneNumberPage() {
   // API Integration
   const { loading, error, message, isSuccess, loginOtp } = useLoginOTPStore();
 
-  // React Hook Form: Phone OTP Form
+  /*------------------------------ React Hook Form: Phone OTP Form -----------------------------*/
   const {
     handleSubmit,
     register,
@@ -41,7 +41,7 @@ export default function PhoneNumberPage() {
     resolver: zodResolver(phoneLoginSchema),
   });
 
-  // Phone OTP Function
+  /*--------------------------------- Phone OTP Function ---------------------------------*/
   const onSubmit = async (data: TPhoneLoginForm) => {
     setIsSubmitted(true);
     setBasicPhoneSignupData({
@@ -52,7 +52,7 @@ export default function PhoneNumberPage() {
     await loginOtp(phone);
   };
 
-  // Phone OTP Effect
+  /*---------------------------------- Phone OTP Effect ----------------------------------*/
   useEffect(() => {
     if (!isSubmitted) return;
 
@@ -74,6 +74,7 @@ export default function PhoneNumberPage() {
 
   return (
     <div className="h-screen w-screen flex justify-between items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
+      {/* Left Section */}
       <div className="h-screen w-1/2 flex justify-center items-center">
         <div className="h-fit w-[70%] flex flex-col items-stretch gap-3 tablet-lg:w-[85%] tablet-md:w-[95%] tablet-md:py-10">
           {/* Title Section */}
@@ -119,7 +120,7 @@ export default function PhoneNumberPage() {
         </div>
       </div>
 
-      {/* Image Poster Section */}
+      {/* Right Section: Image Poster Section */}
       <div className="w-1/2 flex justify-center items-center bg-primary tablet-sm:p-10">
         <Image
           src={phoneNumberWhiteSvg}

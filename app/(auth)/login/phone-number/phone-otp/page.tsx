@@ -3,10 +3,10 @@
 import phoneOTPWhiteSvg from "@/assets/svg/phone-otp-white.svg";
 import { Button } from "@/components/ui/button";
 import {
-    InputOTP,
-    InputOTPGroup,
-    InputOTPSeparator,
-    InputOTPSlot
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
 } from "@/components/ui/input-otp";
 import ErrorMessage from "@/components/utils/error-message";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
@@ -28,6 +28,7 @@ import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 export default function PhoneOTPPage() {
+  /*------------------------------------ All States -------------------------------------*/
   // Utils
   const router = useRouter();
 
@@ -35,19 +36,22 @@ export default function PhoneOTPPage() {
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
   const [loginInitiated, setLoginInitiated] = useState<boolean>(false);
 
-  // API Integration
+  /*---------------------------------- API Integration ----------------------------------*/
   // Current User, Get All Employees and Get All Companies
   const { getCurrentUser } = useGetCurrentUserStore();
   const { queryEmployee } = useGetAllEmployeeStore();
   const { queryCompany } = useGetAllCompanyStore();
-  // Employee and Company Liked and Favorited 
+
+  // Employee and Company Liked and Favorited
   const getCurrentCompanyLikedStore = useGetCurrentCompanyLikedStore();
   const getAllCompanyFavoriteStore = useGetAllCompanyFavoritesStore();
   const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore();
   const getAllEmployeeFavoriteStore = useGetAllEmployeeFavoritesStore();
+
   // Verify OTP Authentication
   const verifyOTPStore = useVerifyOTPStore();
 
+  /*--------------------------------- Preload User Data ---------------------------------*/
   const preloadUserData = async () => {
     try {
       // Fist load current user
@@ -98,7 +102,7 @@ export default function PhoneOTPPage() {
     }
   };
 
-  // React Hook Form: Verify OTP Form
+  /*--------------------------- React Hook Form: Verify OTP Form ----------------------------*/
   const {
     control,
     handleSubmit,
@@ -115,11 +119,11 @@ export default function PhoneOTPPage() {
     );
   };
 
-  // Verify OTP Effect
+  /*---------------------------------- Verify OTP Effect ----------------------------------*/
   useEffect(() => {
     if (!loginInitiated) return;
 
-    // If the role of user is none, navigate user to signup first
+    // Option A: If the role of user is none, navigate user to signup first
     if (verifyOTPStore.role === "none") {
       toast.dismiss();
       setLoginInitiated(false);
@@ -127,7 +131,7 @@ export default function PhoneOTPPage() {
       return;
     }
 
-    // If user is authenticated, navigate user to feed page
+    // Option B: If user is authenticated, navigate user to feed page
     if (verifyOTPStore.isAuthenticated && loginInitiated) {
       toast.dismiss();
       const loadingId = toast.loading("Authenticating...");
@@ -137,12 +141,16 @@ export default function PhoneOTPPage() {
         .then(() => {
           console.log("User data preload successfully in otp page");
           toast.dismiss(loadingId);
-          toast.success(verifyOTPStore.message ?? "Successfully Logged In", { duration: 1000 });
+          toast.success(verifyOTPStore.message ?? "Successfully Logged In", {
+            duration: 1000,
+          });
         })
         .catch((error) => {
           console.error("Error preloading user data: ", error);
           toast.dismiss(loadingId);
-          toast.error(verifyOTPStore.message ?? String(error), { duration: 1000 });
+          toast.error(verifyOTPStore.message ?? String(error), {
+            duration: 1000,
+          });
         })
         .finally(() => {
           console.log("inside route to feed finally");
@@ -176,10 +184,12 @@ export default function PhoneOTPPage() {
     verifyOTPStore.message,
     loginInitiated,
     verifyOTPStore.isAuthenticated,
+    verifyOTPStore.role,
   ]);
 
   return (
     <div className="h-screen w-screen flex items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
+      {/* Left Section */}
       <div className="h-screen w-1/2 flex justify-center items-center bg-primary-foreground tablet-md:h-fit">
         <div className="w-[70%] flex flex-col items-stretch gap-3 tablet-md:w-[90%] tablet-md:py-10">
           {/* Title Section */}
@@ -197,6 +207,7 @@ export default function PhoneOTPPage() {
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col items-stretch gap-5"
           >
+            {/* OTP Input Section */}
             <Controller
               name="otp"
               control={control}
@@ -258,6 +269,8 @@ export default function PhoneOTPPage() {
           </form>
         </div>
       </div>
+
+      {/* Right Section: Image Poster Section */}
       <div className="w-1/2 flex justify-center items-center bg-primary tablet-md:p-10 tablet-md:h-full">
         <Image
           src={phoneOTPWhiteSvg}
