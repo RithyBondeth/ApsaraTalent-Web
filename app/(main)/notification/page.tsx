@@ -1,6 +1,5 @@
 "use client";
 
-import { NotificationCardSkeleton } from "@/components/notification/notification-card-skeleton";
 import NotificationMatchCard from "@/components/notification/notification-match-card";
 import NotificationMessageCard from "@/components/notification/notification-message-card";
 import { Button } from "@/components/ui/button";
@@ -21,6 +20,7 @@ import NotificationSvgImage from "@/assets/svg/notification.svg";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { TypographyP } from "@/components/utils/typography/typography-p";
+import NotificationCardSkeleton from "./skeleton";
 
 /** Derive a display-friendly user object from a notification's title + data fields. */
 function resolveNotificationUser(notification: INotification) {
@@ -34,12 +34,16 @@ function resolveNotificationUser(notification: INotification) {
 }
 
 export default function NotificationPage() {
+  /* -------------------------------- All States -------------------------------- */
   const [notificationFilter, setNotificationFilter] =
     useState<TNotificationFilterType>("all");
 
+  /* ------------------------------ API Integration ------------------------------ */
+  // Current User
   const { user } = useGetCurrentUserStore();
   const role = user?.role ?? "employee";
 
+  // Notification APIs
   const {
     notifications,
     loading,
@@ -49,6 +53,7 @@ export default function NotificationPage() {
     markAllRead,
   } = useNotificationStore();
 
+  /* ----------------------------- Fetch Effects ------------------------------ */
   // Fetch on mount
   useEffect(() => {
     void fetchNotifications({ page: 1, limit: 50 });
@@ -64,6 +69,8 @@ export default function NotificationPage() {
     }
   }, [notificationFilter, fetchNotifications]);
 
+  /* -------------------------------- Methods --------------------------------- */
+  // Filter notifications based on the current filter
   const filteredNotifications = useMemo(() => {
     return notifications.filter((n) => {
       if (notificationFilter === "all") return true;
@@ -74,15 +81,18 @@ export default function NotificationPage() {
     });
   }, [notifications, notificationFilter]);
 
+  // Get notification button variant
   const notificationButtonVariant = (currentFilter: TNotificationFilterType) =>
     notificationFilter === currentFilter ? "default" : "secondary";
 
+  // Handle mark all read
   const handleMarkAllRead = async () => {
     await markAllRead();
     void fetchUnreadCount();
   };
 
   return (
+    /* --------------------------------- Main Content --------------------------------- */
     <div className="w-full flex flex-col gap-4 sm:gap-5 px-2.5 sm:px-5">
       {/* Header Section */}
       <div className="w-full flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
@@ -150,7 +160,7 @@ export default function NotificationPage() {
 
       {/* Notification List Section */}
       <div className="flex flex-col gap-5">
-        {/* Loading skeletons */}
+        {/* Loading Skeleton Section */}
         {loading && (
           <>
             <NotificationCardSkeleton />
@@ -159,7 +169,7 @@ export default function NotificationPage() {
           </>
         )}
 
-        {/* Empty state */}
+        {/* Empty State Section */}
         {!loading && filteredNotifications.length === 0 && (
           <div className="w-full flex flex-col items-center justify-center my-16">
             <Image
@@ -174,7 +184,7 @@ export default function NotificationPage() {
           </div>
         )}
 
-        {/* Notification cards */}
+        {/* Notification Cards Section */}
         {!loading &&
           filteredNotifications.map((notification: INotification) => {
             const notifUser = resolveNotificationUser(notification);

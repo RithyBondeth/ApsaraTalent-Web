@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function NotificationCardSkeleton() {
+export default function NotificationCardSkeleton() {
   return (
     <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-lg">
       {/* Icon Skeleton */}
