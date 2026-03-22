@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function CompanyProfilePageSkeleton() {
+export function CompanyProfilePageLoadingSkeleton() {
   return (
     <div className="flex flex-col gap-5">
       {/* Cover Image Section */}

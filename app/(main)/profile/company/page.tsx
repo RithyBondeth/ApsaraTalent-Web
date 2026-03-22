@@ -103,61 +103,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { CompanyProfilePageSkeleton } from "./skeleton";
 import { companyFormSchema, TCompanyProfileForm } from "./validation";
+import { CompanyProfilePageLoadingSkeleton } from "./skeleton";
 
 export default function ProfilePage() {
-  // API Integration
-  // Current User Infomation and Current User CareerScopes
-  const { user, loading, getCurrentUser } = useGetCurrentUserStore();
-  const company = user?.company;
-  const getAllCareerScopeStore = useGetAllCareerScopesStore();
-
-  // Update Company Information
-  const updateOneCmpStore = useUpdateOneCompanyStore();
-
-  // Upload Avatar, Cover and Image
-  const uploadAvatarCmpStore = useUploadCompanyAvatarStore();
-  const uploadCoverCmpStore = useUploadCompanyCoverStore();
-  const uploadCmpImagesStore = useUploadCompanyImagesStore();
-
-  // Remove Avatar, Cover, Image and OpenPosition
-  const removeOneCompImageStore = useRemoveOneCmpImageStore();
-  const removeCmpAvatarStore = useRemoveCmpAvatarStore();
-  const removeCmpCoverStore = useRemoveCmpCoverStore();
-  const removeOneOpenPositionStore = useRemoveOneOpenPositionStore();
-
-  // Compute All Loading States
-  const updateProfileLoadingState =
-    updateOneCmpStore.loading ||
-    uploadAvatarCmpStore.loading ||
-    uploadCoverCmpStore.loading ||
-    uploadCmpImagesStore.loading ||
-    removeOneOpenPositionStore.loading ||
-    removeOneCompImageStore.loading ||
-    removeCmpAvatarStore.loading ||
-    removeCmpCoverStore.loading;
-
-  // Loading Message Based on Loading State
-  const loadingMessage = removeCmpAvatarStore.loading
-    ? "Removing avatar..."
-    : removeCmpCoverStore.loading
-      ? "Removing cover..."
-      : removeOneCompImageStore.loading
-        ? "Removing image..."
-        : removeOneOpenPositionStore.loading
-          ? "Removing open position..."
-          : uploadAvatarCmpStore.loading
-            ? "Uploading avatar..."
-            : uploadCoverCmpStore.loading
-              ? "Uploading cover..."
-              : uploadCmpImagesStore.loading
-                ? "Uploading image..."
-                : updateOneCmpStore.loading
-                  ? "Updating company profile..."
-                  : "";
-
-  /* ------------------------ All States ------------------------ */
+  /* -------------------------------- All States -------------------------------- */
   // Utils
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
@@ -248,7 +198,57 @@ export default function ProfilePage() {
   const [openRemoveOpenPositionDialog, setOpenRemoveOpenPositionDialog] =
     useState<{ open: boolean; id: string | null }>({ open: false, id: null });
 
-  /* ------------------------ Company Profile Form ------------------------ */
+  /* ------------------------------ API Integration ------------------------------ */
+  // Current User Infomation and Current User CareerScopes
+  const { user, loading, getCurrentUser } = useGetCurrentUserStore();
+  const company = user?.company;
+  const getAllCareerScopeStore = useGetAllCareerScopesStore();
+
+  // Update Company Information
+  const updateOneCmpStore = useUpdateOneCompanyStore();
+
+  // Upload Avatar, Cover and Image
+  const uploadAvatarCmpStore = useUploadCompanyAvatarStore();
+  const uploadCoverCmpStore = useUploadCompanyCoverStore();
+  const uploadCmpImagesStore = useUploadCompanyImagesStore();
+
+  // Remove Avatar, Cover, Image and OpenPosition
+  const removeOneCompImageStore = useRemoveOneCmpImageStore();
+  const removeCmpAvatarStore = useRemoveCmpAvatarStore();
+  const removeCmpCoverStore = useRemoveCmpCoverStore();
+  const removeOneOpenPositionStore = useRemoveOneOpenPositionStore();
+
+  // Compute All Loading States
+  const updateProfileLoadingState =
+    updateOneCmpStore.loading ||
+    uploadAvatarCmpStore.loading ||
+    uploadCoverCmpStore.loading ||
+    uploadCmpImagesStore.loading ||
+    removeOneOpenPositionStore.loading ||
+    removeOneCompImageStore.loading ||
+    removeCmpAvatarStore.loading ||
+    removeCmpCoverStore.loading;
+
+  // Loading Message Based on Loading State
+  const loadingMessage = removeCmpAvatarStore.loading
+    ? "Removing avatar..."
+    : removeCmpCoverStore.loading
+      ? "Removing cover..."
+      : removeOneCompImageStore.loading
+        ? "Removing image..."
+        : removeOneOpenPositionStore.loading
+          ? "Removing open position..."
+          : uploadAvatarCmpStore.loading
+            ? "Uploading avatar..."
+            : uploadCoverCmpStore.loading
+              ? "Uploading cover..."
+              : uploadCmpImagesStore.loading
+                ? "Uploading image..."
+                : updateOneCmpStore.loading
+                  ? "Updating company profile..."
+                  : "";
+
+  /* ------------------------------- Profile Form ------------------------------- */
   // React Hook Form: Company Profile Schema
   const form = useForm<TCompanyProfileForm>({
     resolver: zodResolver(companyFormSchema),
@@ -279,6 +279,7 @@ export default function ProfilePage() {
     shouldFocusError: false,
   });
 
+  /* --------------------------------- Effects ---------------------------------- */
   // Get Current User Effect
   useEffect(() => {
     getCurrentUser();
@@ -385,7 +386,8 @@ export default function ProfilePage() {
     }
   }, [user, company, form]);
 
-  /* --------------------- Edit Mode Bussiness Logics --------------------- */
+  /* -------------------------------- Methods --------------------------------- */
+  // ── Edit Mode Methods ────────────────────────────────────────────────────
   // Close All The Dialogs
   const closeAllDialogs = () => {
     setOpenRemoveAvatarDialog(false);
@@ -410,7 +412,7 @@ export default function ProfilePage() {
     setIsEdit(false);
   };
 
-  /* ------------------- Avatar, Cover and Image Bussiness Logics ------------------- */
+  // ── Avatar, Cover and Image Methods ────────────────────────────────────────────────────
   // 1.API: Remove Avatar
   const removeAvatar = async () => {
     if (company) await removeCmpAvatarStore.removeCmpAvatar(company.id);
@@ -506,7 +508,7 @@ export default function ProfilePage() {
     }
   };
 
-  /* ------------------- OpenPosition Bussiness Logics ------------------- */
+  // ── OpenPosition Methods ────────────────────────────────────────────────────
   // 1.Add New Open Position
   const addNewOpenPosition = () => {
     openPositionFA.append({
@@ -534,7 +536,7 @@ export default function ProfilePage() {
     toast.success("Remove Open Position Successfully!");
   };
 
-  /* ------------------- Benefit Bussiness Logics ------------------- */
+  // ── Benefit Methods ────────────────────────────────────────────────────
   // 1. Add New Benefit
   const addNewBenefits = () => {
     const trimmed = benefitInput?.label?.trim();
@@ -580,7 +582,7 @@ export default function ProfilePage() {
     });
   };
 
-  /* ------------------- Value Bussiness Logics ------------------- */
+  // ── Value Methods ────────────────────────────────────────────────────
   // 1.Add New Value
   const addNewValue = () => {
     const trimmed = valueInput?.label?.trim();
@@ -626,7 +628,7 @@ export default function ProfilePage() {
     });
   };
 
-  /* -------------------  CareerScope Bussiness Logics ------------------- */
+  // ── CareerScope Methods ────────────────────────────────────────────────────
   //  1.Handle CareerScope Select
   const handleCareerScopeSelect = (
     selectedCareerId: string,
@@ -695,7 +697,7 @@ export default function ProfilePage() {
     });
   };
 
-  /* ------------------- Social Bussiness Logics ------------------- */
+  // ── Social Methods ────────────────────────────────────────────────────
   // 1.Add New Social
   const addNewSocial = () => {
     const trimmedPlatform = socialInput?.platform?.trim();
@@ -758,7 +760,7 @@ export default function ProfilePage() {
     form.setValue("socials", updated, { shouldDirty: true, shouldTouch: true });
   };
 
-  /* ------------------- onSubmit Bussiness Logics ------------------- */
+  // ── onSubmit Methods ────────────────────────────────────────────────────
   // 1.onSubmit - API: Update The Entire Company Profile
   const onSubmit = async (data: TCompanyProfileForm) => {
     if (!company) return;
@@ -791,7 +793,8 @@ export default function ProfilePage() {
 
       accountKeys.forEach((key) => {
         if (dirtyFields?.accountSetting?.[key]) {
-          (updateBody as Record<string, unknown>)[key] = data.accountSetting?.[key];
+          (updateBody as Record<string, unknown>)[key] =
+            data.accountSetting?.[key];
         }
       });
 
@@ -955,10 +958,14 @@ export default function ProfilePage() {
     );
   };
 
-  if (loading) return <CompanyProfilePageSkeleton />;
+  /* ------------------------------- Loading State ------------------------------- */
+  if (loading) return <CompanyProfilePageLoadingSkeleton />;
+
+  /* -------------------------------- Empty State -------------------------------- */
   if (!user || !company) return null;
 
   return (
+    /* ------------------------------- Main Content ------------------------------- */
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <LoadingDialog
         loading={updateProfileLoadingState}

@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function EmployeeProfilePageSkeleton() {
+export default function EmployeeProfilePageLoadingSkeleton() {
   return (
     <div className="!min-w-full flex flex-col gap-5">
       {/* Header Section with Avatar and Edit Button */}
