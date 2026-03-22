@@ -1,7 +1,7 @@
 import axios from "@/lib/axios";
 import {
-    API_EMPLOYEE_FAVORITE_COMPANY_URL,
-    API_EMPLOYEE_UNFAVORITE_COMPANY_URL
+  API_EMPLOYEE_FAVORITE_COMPANY_URL,
+  API_EMPLOYEE_UNFAVORITE_COMPANY_URL,
 } from "@/utils/constants/apis/favorite_url";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -10,7 +10,7 @@ export type TEmployeeFavCompanyState = {
   favoriteCompanyIds: Set<string>;
   message: string | null;
   loading: boolean;
-  error: string | null;
+  empFavError: string | null;
   isFavorite: (companyID: string) => boolean;
   addCompanyToFavorite: (
     employeeID: string,
@@ -30,7 +30,7 @@ export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>()(
       favoriteCompanyIds: new Set(),
       message: null,
       loading: false,
-      error: null,
+      empFavError: null,
 
       isFavorite: (companyID: string) => {
         const isFavorite = get().favoriteCompanyIds.has(companyID);
@@ -59,7 +59,12 @@ export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>()(
             errorMessage = axios.isAxiosError(error)
               ? error.response?.data?.message || error.message
               : "Failed to add favorite";
-            return { favoriteCompanyIds: rolled, loading: false, error: errorMessage, message: errorMessage };
+            return {
+              favoriteCompanyIds: rolled,
+              loading: false,
+              error: errorMessage,
+              message: errorMessage,
+            };
           });
           throw new Error(errorMessage);
         }
@@ -75,9 +80,17 @@ export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>()(
 
         try {
           const response = await axios.post<{ message: string }>(
-            API_EMPLOYEE_UNFAVORITE_COMPANY_URL(employeeID, companyID, favoriteID),
+            API_EMPLOYEE_UNFAVORITE_COMPANY_URL(
+              employeeID,
+              companyID,
+              favoriteID,
+            ),
           );
-          set({ loading: false, message: response.data.message, error: null });
+          set({
+            loading: false,
+            message: response.data.message,
+            empFavError: null,
+          });
         } catch (error) {
           // Roll back — add ID back to Set
           let errorMessage = "Failed to remove company from favorite";
@@ -86,7 +99,12 @@ export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>()(
             errorMessage = axios.isAxiosError(error)
               ? error.response?.data?.message || error.message
               : "Failed to remove company from favorite";
-            return { favoriteCompanyIds: rolledBack, loading: false, error: errorMessage, message: errorMessage };
+            return {
+              favoriteCompanyIds: rolledBack,
+              loading: false,
+              error: errorMessage,
+              message: errorMessage,
+            };
           });
           throw new Error(errorMessage);
         }
@@ -96,7 +114,7 @@ export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>()(
         set({
           favoriteCompanyIds: new Set(),
           message: null,
-          error: null,
+          empFavError: null,
         });
       },
     }),

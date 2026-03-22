@@ -99,7 +99,7 @@ export default function FavoritePage() {
           );
         } catch {
           const err =
-            employeeFavCompanyStore.error ||
+            employeeFavCompanyStore.empFavError ||
             "Failed to remove company from favorites.";
           toast.error(err);
         }
@@ -134,7 +134,7 @@ export default function FavoritePage() {
           await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyID);
         } catch {
           const err =
-            companyFavEmployeeStore.error ||
+            companyFavEmployeeStore.cmpFavError ||
             "Failed to remove employee from favorites.";
           toast.error(err);
         }

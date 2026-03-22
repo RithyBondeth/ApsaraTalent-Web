@@ -4,9 +4,7 @@ import emptySvgImage from "@/assets/svg/empty.svg";
 import feedBlackSvg from "@/assets/svg/feed-black.svg";
 import feedCompanySvg from "@/assets/svg/feed-company.svg";
 import feedWhiteSvg from "@/assets/svg/feed-white.svg";
-import CompanyCard from "@/components/company/company-card";
 import CompanyCardSkeleton from "@/components/company/company-card/skeleton";
-import EmployeeCard from "@/components/employee/employee-card";
 import EmployeeCardSkeleton from "@/components/employee/employee-card/skeleton";
 import { Button } from "@/components/ui/button";
 import {
@@ -51,6 +49,8 @@ import React, {
   useState,
 } from "react";
 import BannerSkeleton from "./banner-skeleton";
+import { CompanyFeedCard } from "./_components/company-feed-card";
+import { EmployeeFeedCard } from "./_components/employee-feed-card";
 
 // Module-level Cache For Global Data (survives Strict Mode)
 const globalFetchCache = {
@@ -58,112 +58,15 @@ const globalFetchCache = {
   employees: false,
 };
 
-// ---------------------------------------------------------------------------
-// Memoized card wrappers — stable identity prevents full list re-renders
-// ---------------------------------------------------------------------------
-type CompanyFeedCardProps = {
-  company: ICompany;
-  employeeId: string;
-  isLiking: boolean;
-  isFavorite: boolean;
-  onView: (id: string) => void;
-  onLike: (employeeId: string, companyId: string) => void;
-  onSave: (employeeId: string, companyId: string, name: string) => void;
-  onProfileImageClick: (e: React.MouseEvent) => void;
-  onSetProfileImage: (url: string) => void;
-};
-
-const CompanyFeedCard = React.memo(function CompanyFeedCard({
-  company,
-  employeeId,
-  isLiking,
-  isFavorite,
-  onView,
-  onLike,
-  onSave,
-  onProfileImageClick,
-  onSetProfileImage,
-}: CompanyFeedCardProps) {
-  return (
-    <div
-      className={`break-inside-avoid mb-5${isLiking ? " animate-card-pop-shrink" : ""}`}
-    >
-      <CompanyCard
-        {...company}
-        id={company.id}
-        onViewClick={() => onView(company.id)}
-        onSaveClick={() =>
-          onSave(employeeId, company.id, company.name ?? "Company")
-        }
-        hideSaveButton={isFavorite}
-        onLikeClick={() => onLike(employeeId, company.id)}
-        onLikeClickDisable={isLiking}
-        onProfileImageClick={(e: React.MouseEvent) => {
-          if (company.avatar) {
-            onProfileImageClick(e);
-            onSetProfileImage(company.avatar);
-          }
-        }}
-      />
-    </div>
-  );
-});
-
-type EmployeeFeedCardProps = {
-  employee: IEmployee;
-  companyId: string;
-  isLiking: boolean;
-  isFavorite: boolean;
-  onView: (id: string) => void;
-  onLike: (companyId: string, employeeId: string) => void;
-  onSave: (companyId: string, employeeId: string, name: string) => void;
-  onProfileImageClick: (e: React.MouseEvent) => void;
-  onSetProfileImage: (url: string) => void;
-};
-
-const EmployeeFeedCard = React.memo(function EmployeeFeedCard({
-  employee,
-  companyId,
-  isLiking,
-  isFavorite,
-  onView,
-  onLike,
-  onSave,
-  onProfileImageClick,
-  onSetProfileImage,
-}: EmployeeFeedCardProps) {
-  return (
-    <div
-      className={`break-inside-avoid mb-5${isLiking ? " animate-card-pop-shrink" : ""}`}
-    >
-      <EmployeeCard
-        {...employee}
-        id={employee.id}
-        onViewClick={() => onView(employee.id)}
-        onSaveClick={() =>
-          onSave(companyId, employee.id, employee.username ?? "Employee")
-        }
-        hideSaveButton={isFavorite}
-        onLikeClick={() => onLike(companyId, employee.id)}
-        onLikeClickDisable={isLiking}
-        onProfileImageClick={(e: React.MouseEvent) => {
-          if (employee.avatar) {
-            onProfileImageClick(e);
-            onSetProfileImage(employee.avatar);
-          }
-        }}
-      />
-    </div>
-  );
-});
-// ---------------------------------------------------------------------------
-
 export default function FeedPage() {
-  // Utils
+  /* ------------------------------- All States ------------------------------- */
   const router = useRouter();
   const [mounted, setMounted] = useState<boolean>(false);
   const { resolvedTheme } = useTheme();
   useEffect(() => setMounted(true), []);
+
+  // Liked helper
+  const [likingId, setLikingId] = useState<string | null>(null);
 
   // Pop up Dialog
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
@@ -174,43 +77,26 @@ export default function FeedPage() {
   const [openLikeSuccessDialog, setOpenLikeSuccessDialog] =
     useState<boolean>(false);
 
-  // Handle Profile Pop up Dialog
-  const handleClickProfilePopup = (e: React.MouseEvent) => {
-    if (ignoreNextClick.current) {
-      ignoreNextClick.current = false;
-      return;
-    }
-
-    if ((e.target as HTMLElement).closest(".dialog-content")) return;
-    setOpenProfilePopup(true);
-  };
-
-  // Open Profile Pop up Dialog Effect
-  useEffect(() => {
-    if (openProfilePopup) {
-      ignoreNextClick.current = true;
-      setTimeout(() => (ignoreNextClick.current = false), 200);
-    }
-  }, [openProfilePopup]);
-
-  // API Integration — field selectors to avoid re-renders from unrelated store changes
+  /* ---------------------------- API Integration ------------------------------ */
+  // Current User
   const currentUser = useGetCurrentUserStore((s) => s.user);
 
-  // All Companies / Employees data
+  // All Company Data APIs
   const companyData = useGetAllCompanyStore((s) => s.companyData);
   const companyLoading = useGetAllCompanyStore((s) => s.loading);
   const queryCompany = useGetAllCompanyStore((s) => s.queryCompany);
 
+  // All Employee Data APIs
   const employeesData = useGetAllEmployeeStore((s) => s.employeesData);
   const employeeLoading = useGetAllEmployeeStore((s) => s.loading);
   const queryEmployee = useGetAllEmployeeStore((s) => s.queryEmployee);
 
-  // Liked stores
+  /* ------------------------------------------------------------------------------/ 
+  /                                  LIKED                                         /
+  /-------------------------------------------------------------------------------*/
+  /* ------------------------- All Employee Liked APIs -------------------------- */
   const employeeLike = useEmployeeLikeStore((s) => s.employeeLike);
   const employeeLikeLoading = useEmployeeLikeStore((s) => s.loading);
-  const companyLike = useCompanyLikeStore((s) => s.companyLike);
-  const companyLikeLoading = useCompanyLikeStore((s) => s.loading);
-
   const currentEmployeeLiked = useGetCurrentEmployeeLikedStore(
     (s) => s.currentEmployeeLiked,
   );
@@ -224,6 +110,9 @@ export default function FeedPage() {
     (s) => s.optimisticAddLiked,
   );
 
+  /* ------------------------- All Company Liked APIs -------------------------- */
+  const companyLike = useCompanyLikeStore((s) => s.companyLike);
+  const companyLikeLoading = useCompanyLikeStore((s) => s.loading);
   const currentCompanyLiked = useGetCurrentCompanyLikedStore(
     (s) => s.currentCompanyLiked,
   );
@@ -237,51 +126,36 @@ export default function FeedPage() {
     (s) => s.optimisticAddLiked,
   );
 
-  // Liked helper
-  const [likingId, setLikingId] = useState<string | null>(null);
-
-  // Favorite stores
-  const addCompanyToFavorite = useEmployeeFavCompanyStore(
-    (s) => s.addCompanyToFavorite,
-  );
-  const empFavError = useEmployeeFavCompanyStore((s) => s.error);
-  // Subscribe to the Set directly so the page re-renders when favorites change
-  const favoriteCompanyIds = useEmployeeFavCompanyStore(
-    (s) => s.favoriteCompanyIds,
-  );
+  /* ------------------------------------------------------------------------------/ 
+  /                                  FAVORITE                                      /
+  /------------------------------------------------------------------------------ */
+  /* ------------------------ All Employee Favorite APIs ------------------------ */
+  const { addCompanyToFavorite, favoriteCompanyIds, empFavError } =
+    useEmployeeFavCompanyStore();
   const isEmpFavorite = (id: string) => favoriteCompanyIds.has(id);
+  const { queryAllEmployeeFavorites } = useGetAllEmployeeFavoritesStore();
 
-  const addEmployeeToFavorite = useCompanyFavEmployeeStore(
-    (s) => s.addEmployeeToFavorite,
-  );
-  const cmpFavError = useCompanyFavEmployeeStore((s) => s.error);
-  const favoriteEmployeeIds = useCompanyFavEmployeeStore(
-    (s) => s.favoriteEmployeeIds,
-  );
+  /* ------------------------ All Company Favorite APIs ------------------------ */
+  const { addEmployeeToFavorite, favoriteEmployeeIds, cmpFavError } =
+    useCompanyFavEmployeeStore();
   const isCmpFavorite = (id: string) => favoriteEmployeeIds.has(id);
+  const { queryAllCompanyFavorites } = useGetAllCompanyFavoritesStore();
 
-  const queryAllEmployeeFavorites = useGetAllEmployeeFavoritesStore(
-    (s) => s.queryAllEmployeeFavorites,
-  );
-  const queryAllCompanyFavorites = useGetAllCompanyFavoritesStore(
-    (s) => s.queryAllCompanyFavorites,
-  );
+  /* ------------------------------------------------------------------------------/ 
+  /                          COUNT BADGE IN SIDEBAR                                /
+  /------------------------------------------------------------------------------ */
+  // Count All Current Employee/Company Favorite APIs
+  const { countAllEmployeeFavorites } = useCountAllEmployeeFavoritesStore();
+  const { countAllCompanyFavorites } = useCountAllCompanyFavoritesStore();
 
-  const countAllEmployeeFavorites = useCountAllEmployeeFavoritesStore(
-    (s) => s.countAllEmployeeFavorites,
-  );
-  const countAllCompanyFavorites = useCountAllCompanyFavoritesStore(
-    (s) => s.countAllCompanyFavorites,
-  );
+  // Count Current Employee/Company Matching APIs
+  const { countCurrentEmployeeMatching } =
+    useCountCurrentEmployeeMatchingStore();
+  const { countCurrentCompanyMatching } = useCountCurrentCompanyMatchingStore();
 
-  // Matching stores
-  const countCurrentEmployeeMatching = useCountCurrentEmployeeMatchingStore(
-    (s) => s.countCurrentEmployeeMatching,
-  );
-  const countCurrentCompanyMatching = useCountCurrentCompanyMatchingStore(
-    (s) => s.countCurrentCompanyMatching,
-  );
-
+  /* ------------------------------------------------------------------------------/ 
+  /              FETCH USER: EMPLOYEE OR COMPANY (Reset When User Change)          /
+  /------------------------------------------------------------------------------ */
   // Step 1: Fetch All Current Employee or Company Liked - User Specific Data (Reset When User Change)
   const { isEmployee } = useFetchOnce({
     cacheKey: "feed-page",
@@ -351,7 +225,8 @@ export default function FeedPage() {
     currentCompanyLiked,
   ]);
 
-  // Handle Employee Like Company
+  /* ----------------------------- LIKED METHODS ----------------------------- */
+  // 1.Handle Employee Like Company
   const handleEmployeeLikeCompany = useCallback(
     async (employeeID: string, companyID: string) => {
       if (!employeeID || !companyID) return;
@@ -380,7 +255,7 @@ export default function FeedPage() {
     ],
   );
 
-  // Handle Company Like Employee
+  // 2.Handle Company Like Employee
   const handleCompanyLikeEmployee = useCallback(
     async (companyID: string, employeeID: string) => {
       if (!companyID || !employeeID) return;
@@ -411,7 +286,8 @@ export default function FeedPage() {
     ],
   );
 
-  // Handle Employee Favorite Company
+  /* ----------------------------- FAVORITE METHODS ----------------------------- */
+  // 1.Handle Employee Favorite Company
   const handleEmployeeFavoriteCompany = useCallback(
     async (employeeID: string, companyID: string, companyName: string) => {
       if (!employeeID || !companyID) return;
@@ -432,7 +308,7 @@ export default function FeedPage() {
     ],
   );
 
-  // Handle Company Favorite Employee
+  // 2.Handle Company Favorite Employee
   const handleCompanyFavoriteEmployee = useCallback(
     async (companyID: string, employeeID: string, employeeName: string) => {
       if (!companyID || !employeeID) return;
@@ -453,6 +329,33 @@ export default function FeedPage() {
     ],
   );
 
+  /* ---------------------- PROFILE POPUP & PRELOAD IMAGES ---------------------- */
+  // Preload Profile Avatar For Better Performance (useCachedImage Hook)
+  const profileImageUrls = useMemo(() => {
+    return allUsers.map((user) => user.avatar).filter(Boolean);
+  }, [allUsers]);
+  usePreloadImages(profileImageUrls);
+
+  // Handle Profile Pop up Dialog
+  const handleClickProfilePopup = (e: React.MouseEvent) => {
+    if (ignoreNextClick.current) {
+      ignoreNextClick.current = false;
+      return;
+    }
+
+    if ((e.target as HTMLElement).closest(".dialog-content")) return;
+    setOpenProfilePopup(true);
+  };
+
+  // Profile Pop up Effect
+  useEffect(() => {
+    if (openProfilePopup) {
+      ignoreNextClick.current = true;
+      setTimeout(() => (ignoreNextClick.current = false), 200);
+    }
+  }, [openProfilePopup]);
+
+  /* ------------------- View Employee & Company Detail Page ------------------- */
   // Stable view handlers for memoized cards
   const handleEmployeeViewCompany = useCallback(
     (id: string) => router.push(`/feed/company/${id}`),
@@ -463,25 +366,22 @@ export default function FeedPage() {
     [router],
   );
 
-  // Preload Profile Avatar For Better Performance (useCachedImage Hook)
-  const profileImageUrls = useMemo(() => {
-    return allUsers.map((user) => user.avatar).filter(Boolean);
-  }, [allUsers]);
-  usePreloadImages(profileImageUrls);
-
-  // Compute All Loading States
+  /* ------------------------------ Loading State ------------------------------ */
   const isLoading =
     !mounted ||
     !currentUser ||
     (isEmployee && (companyLoading || currentEmployeeLikedLoading)) ||
     (!isEmployee && (employeeLoading || currentCompanyLikedLoading));
 
-  // Get Image Based On Theme
+  /* --------------------- Get Current Image Based on Theme --------------------- */
+  // Only resolve the theme after mounting — avoids SSR/client hydration mismatch
+  // Because resolvedTheme is undefined on the server.
   const feedImage =
     mounted && resolvedTheme === "dark" ? feedBlackSvg : feedWhiteSvg;
   const feedCompanyImage = feedCompanySvg;
 
   return (
+    /* ------------------------------ Main Content ------------------------------ */
     <div className="w-full flex flex-col items-start gap-4 sm:gap-5">
       {/* Header Section */}
       {isLoading ? (
