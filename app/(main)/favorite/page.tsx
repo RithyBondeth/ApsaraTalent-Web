@@ -8,11 +8,8 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
 import Image from "next/image";
-
 import FavoriteCompanyCard from "@/components/favorite/company-favorite-card";
-import FavoriteCompanyCardSkeleton from "@/components/favorite/company-favorite-card/skeleton";
 import FavoriteEmployeeCard from "@/components/favorite/employee-favorite-card";
-import FavoriteEmployeeCardSkeleton from "@/components/favorite/employee-favorite-card/skeleton";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useFetchOnce } from "@/hooks/use-fetch-once";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
@@ -22,21 +19,30 @@ import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
-import FavoriteBannerSkeleton from "./banner-skeleton";
+import { FavoriteLoadingSkeleton } from "./skeleton";
 
 export default function FavoritePage() {
-  // API Integration
+  /* ----------------------------- API Integration ----------------------------- */
+  // Current User
   const currentUser = useGetCurrentUserStore((state) => state.user);
+
+  // Get All Employee and Company Favorites
   const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
   const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
+
+  // Remove Employee and Company Favorites
   const employeeFavCompanyStore = useEmployeeFavCompanyStore();
   const companyFavEmployeeStore = useCompanyFavEmployeeStore();
+
+  // Count All Employee and Company Favorites
   const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
   const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
 
+  /* ---------------------------------- State ---------------------------------- */
   // Track IDs that are currently being removed (for animation)
   const [removingFavIds, setRemovingFavIds] = useState<Set<string>>(new Set());
 
+  /* ---------------------------- Fetch All Favorites -------------------------- */
   // Use Custom Hook - Handles all ref logic and duplicate prevention
   const { isEmployee } = useFetchOnce({
     cacheKey: "favorite-page",
@@ -48,7 +54,8 @@ export default function FavoritePage() {
     },
   });
 
-  // Animate then remove helper
+  /* --------------------------- Remove From Favorite -------------------------- */
+  // Load Remove Animation Then Remove
   const animateThenRemove = useCallback(
     (favId: string, removeFn: () => Promise<void>) => {
       // Start card-pop-shrink animation
@@ -141,7 +148,7 @@ export default function FavoritePage() {
     ],
   );
 
-  // Compute All Loading State
+  /* ------------------------------ Loading States ------------------------------ */
   const isLoadingForEmployee =
     isEmployee &&
     (getAllEmployeeFavoritesStore.loading ||
@@ -154,24 +161,10 @@ export default function FavoritePage() {
 
   const isLoading = isLoadingForEmployee || isLoadingForCompany;
 
-  if (isLoading) {
-    return (
-      <div className="mt-3 flex w-full flex-col px-2.5 sm:px-5">
-        <FavoriteBannerSkeleton />
-        <div className="flex flex-col items-start gap-3 p-2 sm:p-3">
-          {[...Array(3)].map((_, index) =>
-            isEmployee ? (
-              <FavoriteCompanyCardSkeleton key={index} />
-            ) : (
-              <FavoriteEmployeeCardSkeleton key={index} />
-            ),
-          )}
-        </div>
-      </div>
-    );
-  }
+  if (isLoading) return <FavoriteLoadingSkeleton isEmployee={isEmployee} />;
 
   return (
+    /* ---------------------------------------- Main Content -------------------------------------- */
     <div className="w-full flex flex-col px-2.5 sm:px-5">
       {/* Banner Section */}
       <div className="w-full flex items-center justify-between gap-4 sm:gap-5 tablet-xl:flex-col tablet-xl:items-center">
@@ -262,6 +255,7 @@ export default function FavoritePage() {
             />
           ))
         ) : (
+          /* ---------------------------- Empty State --------------------------- */
           <div className="w-full flex flex-col items-center justify-center my-16">
             <Image src={emptySvgImage} alt="empty" height={200} width={200} />
             <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
