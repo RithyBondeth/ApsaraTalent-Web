@@ -868,11 +868,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
       }
     };
 
-    socket.timeout(10000).emit(
-      "getRecentChats",
-      (error: Error | null, chats: any[]) => {
+    socket
+      .timeout(10000)
+      .emit("getRecentChats", (error: Error | null, chats: any[]) => {
         if (error) {
-          console.warn("[Chat] getRecentChats socket timeout, using REST fallback");
+          console.warn(
+            "[Chat] getRecentChats socket timeout, using REST fallback",
+          );
           void fallbackFetchRecentChats();
           return;
         }
@@ -889,8 +891,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         }
 
         applyRecentChats(chats);
-      },
-    );
+      });
   },
 
   getChatHistory: (userId2: string) => {
