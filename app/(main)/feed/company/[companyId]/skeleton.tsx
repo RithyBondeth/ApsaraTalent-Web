@@ -1,4 +1,3 @@
-// components/company-detail-skeleton.tsx
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function CompanyDetailPageSkeleton() {

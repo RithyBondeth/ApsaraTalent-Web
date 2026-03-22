@@ -63,7 +63,7 @@ import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-curr
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 
 export default function CompanyDetailPage() {
-  // Utils
+  /* -------------------------------- All States -------------------------------- */
   const router = useRouter();
   const param = useParams<{ companyId: string }>();
   const id = param.companyId;
@@ -78,28 +78,29 @@ export default function CompanyDetailPage() {
   );
   const ignoreNextClick = useRef<boolean>(false);
 
-  // API Integration
-  const { loading, companyData, queryOneCompany } = useGetOneCompanyStore();
-  const currentUser = useGetCurrentUserStore((state) => state.user);
-  // Liked Stores
-  const employeeLikeStore = useEmployeeLikeStore();
-  const queryCurrentEmployeeLiked =
-    useGetCurrentEmployeeLikedStore.getState().queryCurrentEmployeeLiked;
-  // Matching Store
-  const countCurrentEmployeeMatching =
-    useCountCurrentEmployeeMatchingStore.getState()
-      .countCurrentEmployeeMatching;
-  // Favorite Stores
-  const employeeFavCompanyStore = useEmployeeFavCompanyStore();
-  const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
-  const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
-
   // Initialize Component (Client-Side Only)
   useEffect(() => {
     if (typeof window !== "undefined") setIsInitialized(true);
   }, []);
 
-  // Fetch One Company Effect
+  /* ------------------------------ API Integration ------------------------------ */
+  // Current User
+  const currentUser = useGetCurrentUserStore((state) => state.user);
+  const { loading, companyData, queryOneCompany } = useGetOneCompanyStore();
+
+  // Liked APIs
+  const employeeLikeStore = useEmployeeLikeStore();
+  const queryCurrentEmployeeLiked = useGetCurrentEmployeeLikedStore();
+
+  // Favorited APIs
+  const employeeFavCompanyStore = useEmployeeFavCompanyStore();
+  const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
+
+  // Count Current Matching & Favorite APIs -> Update Badge in Sidebar
+  const countCurrentEmployeeMatching = useCountCurrentEmployeeMatchingStore();
+  const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
+
+  /* ------------------------- Fetch One Company Effect ------------------------- */
   useEffect(() => {
     const fetchOneCompany = async () => {
       if (!isInitialized || !id) return;
@@ -117,7 +118,7 @@ export default function CompanyDetailPage() {
     fetchOneCompany();
   }, [id, isInitialized, queryOneCompany]);
 
-  // Handle Profile Popup Clicks
+  /* --------------------------------- Profile Popup --------------------------------- */
   const handleClickImagePopup = () => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -137,8 +138,16 @@ export default function CompanyDetailPage() {
     setOpenProfilePopup(true);
   };
 
-  // Loading State
-  if (!isInitialized || loading) {
+  useEffect(() => {
+    if (openProfilePopup) {
+      ignoreNextClick.current = true;
+      setTimeout(() => (ignoreNextClick.current = false), 200);
+    }
+  }, [openProfilePopup]);
+
+  /* --------------------------------- Loading States --------------------------------- */
+  const isLoading = !isInitialized || loading;
+  if (isLoading) {
     return (
       <div className="animate-page-in">
         <CompanyDetailPageSkeleton />
@@ -146,7 +155,7 @@ export default function CompanyDetailPage() {
     );
   }
 
-  // Error State
+  /* ---------------------------------- Error States ---------------------------------- */
   if (fetchError) {
     return (
       <div className="h-screen w-screen flex justify-center items-center animate-page-in">
@@ -163,7 +172,7 @@ export default function CompanyDetailPage() {
     );
   }
 
-  // No Data Available State
+  /* ----------------------------- No Data Available States ---------------------------- */
   if (!companyData) {
     return (
       <div className="h-screen w-screen flex justify-center items-center animate-page-in">
@@ -177,30 +186,33 @@ export default function CompanyDetailPage() {
     );
   }
 
-  // Handle Employee Like Company
+  /* ------------------------- LIKED & FAVORITED METHODS------------------------- */
+  // 1.Handle Employee Like Company
   const handleLike = async () => {
     if (currentUser && currentUser.employee) {
       const employeeId = currentUser.employee.id;
-      const companyId = companyData.id;
+      const companyId = companyData?.id;
 
       if (!employeeId || !companyId) return;
 
       try {
         toast.dismiss();
         await employeeLikeStore.employeeLike(employeeId, companyId);
-        const employeeData = useEmployeeLikeStore.getState().data;
-        if (employeeData) {
-          const isMatching = employeeData.isMatched;
-          const companyName = employeeData.company.name;
+        const employeeDataLiked = useEmployeeLikeStore.getState().data;
+        if (employeeDataLiked) {
+          const isMatching = employeeDataLiked.isMatched;
+          const companyName = employeeDataLiked.company.name;
           if (isMatching) {
             toast.success("It's a match!", {
               description: `${companyName} and you like each other.`,
             });
-            countCurrentEmployeeMatching(employeeId);
+            countCurrentEmployeeMatching.countCurrentEmployeeMatching(
+              employeeId,
+            );
             setTimeout(() => router.push("/matching"), 800);
           } else {
             console.log("Wait for this user to like you back....");
-            toast.success(`You liked ${companyName} company.`);
+            toast.success(`You liked ${companyName}.`);
             setTimeout(() => router.push("/feed"), 800);
           }
         }
@@ -208,17 +220,17 @@ export default function CompanyDetailPage() {
         const err = employeeLikeStore.error || "Failed to like company";
         toast.error(err);
       } finally {
-        queryCurrentEmployeeLiked(employeeId);
+        queryCurrentEmployeeLiked.queryCurrentEmployeeLiked(employeeId);
       }
     }
   };
 
-  // Handle Employee Add Company To Favorite
+  // 2.Handle Employee Add Company To Favorite
   const handleAddToFavorite = async () => {
     if (currentUser && currentUser.employee) {
       const employeeId = currentUser.employee.id;
-      const companyId = companyData.id;
-      const companyName = companyData.name;
+      const companyId = companyData?.id;
+      const companyName = companyData?.name;
 
       if (!employeeId || !companyId) return;
 
@@ -233,13 +245,15 @@ export default function CompanyDetailPage() {
           employeeId,
         );
       } catch {
-        const err = employeeFavCompanyStore.error || "Failed to save company";
+        const err =
+          employeeFavCompanyStore.empFavError || "Failed to save company";
         toast.error(err);
       }
     }
   };
 
   return (
+    /* --------------------------------- Main Content --------------------------------- */
     <div className="flex flex-col gap-5 animate-page-in">
       {/* Header Section */}
       {companyData && (

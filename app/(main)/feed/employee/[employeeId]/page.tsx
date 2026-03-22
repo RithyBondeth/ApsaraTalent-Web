@@ -3,9 +3,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-    HoverCard,
-    HoverCardContent,
-    HoverCardTrigger
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import Divider from "@/components/utils/divider";
 import IconLabel from "@/components/utils/icon-label";
@@ -28,30 +28,30 @@ import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { dateFormatter } from "@/utils/functions/dateformatter";
 import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
 import {
-    IEducation,
-    IExperience,
-    ISkill,
-    ISocial
+  IEducation,
+  IExperience,
+  ISkill,
+  ISocial,
 } from "@/utils/interfaces/user-interface/employee.interface";
 import { TPlatform } from "@/utils/types/platform.type";
 import {
-    LucideAtSign,
-    LucideBookmark,
-    LucideBriefcaseBusiness,
-    LucideCalendar,
-    LucideClock,
-    LucideDownload,
-    LucideEye,
-    LucideFileText,
-    LucideGraduationCap,
-    LucideHeartHandshake,
-    LucideMail,
-    LucideMapPinned,
-    LucidePhone,
-    LucideSchool,
-    LucideTransgender,
-    LucideUser,
-    User
+  LucideAtSign,
+  LucideBookmark,
+  LucideBriefcaseBusiness,
+  LucideCalendar,
+  LucideClock,
+  LucideDownload,
+  LucideEye,
+  LucideFileText,
+  LucideGraduationCap,
+  LucideHeartHandshake,
+  LucideMail,
+  LucideMapPinned,
+  LucidePhone,
+  LucideSchool,
+  LucideTransgender,
+  LucideUser,
+  User,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -59,7 +59,7 @@ import React, { useEffect, useRef, useState } from "react";
 import EmployeeDetailPageSkeleton from "./skeleton";
 
 export default function EmployeeDetailPage() {
-  // Utils
+  /* -------------------------------- All States -------------------------------- */
   const router = useRouter();
   const params = useParams<{ employeeId: string }>();
   const id = params.employeeId;
@@ -70,29 +70,29 @@ export default function EmployeeDetailPage() {
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
   const ignoreNextClick = useRef<boolean>(false);
 
-  // API Integration
-  const { loading, employeeData, queryOneEmployee } = useGetOneEmployeeStore();
-  const currentUser = useGetCurrentUserStore((state) => state.user);
-  // Liked Stores
-  const companyLikeStore = useCompanyLikeStore();
-  const queryCurrentCompanyLiked =
-    useGetCurrentCompanyLikedStore.getState().queryCurrentCompanyLiked;
-  // Matching Store
-  const countCurrentCompanyMatching =
-    useCountCurrentCompanyMatchingStore.getState().countCurrentCompanyMatching;
-  // Favorite Store
-  const companyFavEmployeeStore = useCompanyFavEmployeeStore();
-  const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
-  const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
-
   // Initialize Component (Client-Side Only)
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setIsInitialized(true);
-    }
+    if (typeof window !== "undefined") setIsInitialized(true);
   }, []);
 
-  // Fetch One Employee Effect
+  /* ------------------------------ API Integration ------------------------------ */
+  // Current User
+  const currentUser = useGetCurrentUserStore((state) => state.user);
+  const { loading, employeeData, queryOneEmployee } = useGetOneEmployeeStore();
+
+  // Liked APIs
+  const companyLikeStore = useCompanyLikeStore();
+  const queryCurrentCompanyLiked = useGetCurrentCompanyLikedStore();
+
+  // Favorited APIs
+  const companyFavEmployeeStore = useCompanyFavEmployeeStore();
+  const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
+
+  // Count Current Matching & Favorite APIs -> Update Badge in Sidebar
+  const countCurrentCompanyMatching = useCountCurrentCompanyMatchingStore();
+  const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
+
+  /* ------------------------- Fetch One Employee Effect ------------------------- */
   useEffect(() => {
     const fetchOneEmployee = async () => {
       if (!isInitialized || !id) return;
@@ -110,7 +110,72 @@ export default function EmployeeDetailPage() {
     fetchOneEmployee();
   }, [id, isInitialized, queryOneEmployee]);
 
-  // Handle Profile Popup Clicks
+  /* ------------------------- LIKED & FAVORITED METHODS------------------------- */
+  // 1.Handle Company Like Employee
+  const handleLike = async () => {
+    if (currentUser && currentUser.company) {
+      const companyId = currentUser.company.id;
+      const employeeId = employeeData?.id;
+
+      if (!companyId || !employeeId) return;
+
+      try {
+        toast.dismiss();
+        await companyLikeStore.companyLike(companyId, employeeId);
+        const companyData = useCompanyLikeStore.getState().data;
+        if (companyData) {
+          const isMatching = companyData.isMatched;
+          const employeeName =
+            companyData.employee.username ??
+            `${companyData.employee.lastname} ${companyData.employee.lastname}`;
+          if (isMatching) {
+            toast.success("It's a match!", {
+              description: `${employeeName} and your company like each other.`,
+            });
+            countCurrentCompanyMatching.countCurrentCompanyMatching(companyId);
+            setTimeout(() => router.push("/matching"), 800);
+          } else {
+            toast.success(`You liked ${employeeName}.`);
+            setTimeout(() => router.push("/feed"), 800);
+          }
+        }
+      } catch {
+        const err = companyLikeStore.error || "Failed to like employee";
+        toast.error(err);
+      } finally {
+        queryCurrentCompanyLiked.queryCurrentCompanyLiked(companyId);
+      }
+    }
+  };
+
+  // 2.Handle Company Add Employee To Favorite
+  const handleAddToFavorite = async () => {
+    if (currentUser && currentUser.company) {
+      const companyId = currentUser.company.id;
+      const employeeId = employeeData?.id;
+      const employeeName =
+        employeeData?.username ??
+        `${employeeData?.firstname} ${employeeData?.lastname}`;
+
+      if (!companyId || !employeeId) return;
+
+      try {
+        await companyFavEmployeeStore.addEmployeeToFavorite(
+          companyId,
+          employeeId,
+        );
+        countAllCompanyFavoritesStore.countAllCompanyFavorites(companyId);
+        toast.success(`${employeeName} added to favorites.`);
+        getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyId);
+      } catch {
+        const err =
+          companyFavEmployeeStore.cmpFavError || "Failed to save employee.";
+        toast.error(err);
+      }
+    }
+  };
+
+  /* --------------------------------- Profile Popup --------------------------------- */
   const handleClickProfilePopup = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -129,8 +194,22 @@ export default function EmployeeDetailPage() {
     }
   }, [openProfilePopup]);
 
-  // Loading State
-  if (!isInitialized || loading) {
+  /* --------------------------------- File Downloads --------------------------------- */
+  const handleDownloadFile = (url: string, filename: string) => {
+    if (!url) return;
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", filename);
+    link.setAttribute("target", "_blank");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  /* --------------------------------- Loading States --------------------------------- */
+  const isLoading = !isInitialized || loading;
+  if (isLoading) {
     return (
       <div className="animate-page-in">
         <EmployeeDetailPageSkeleton />
@@ -138,7 +217,7 @@ export default function EmployeeDetailPage() {
     );
   }
 
-  // Error State
+  /* ---------------------------------- Error States ---------------------------------- */
   if (fetchError) {
     return (
       <div className="h-screen w-screen flex justify-center items-center animate-page-in">
@@ -155,7 +234,7 @@ export default function EmployeeDetailPage() {
     );
   }
 
-  // No Data Available State
+  /* ----------------------------- No Data Available States ---------------------------- */
   if (!employeeData) {
     return (
       <div className="h-screen w-screen flex justify-center items-center animate-page-in">
@@ -169,83 +248,8 @@ export default function EmployeeDetailPage() {
     );
   }
 
-  // Handle Company Like Employee
-  const handleLike = async () => {
-    if (currentUser && currentUser.company) {
-      const companyId = currentUser.company.id;
-      const employeeId = employeeData.id;
-
-      if (!companyId || !employeeId) return;
-
-      try {
-        toast.dismiss();
-        await companyLikeStore.companyLike(companyId, employeeId);
-        const companyData = useCompanyLikeStore.getState().data;
-        if (companyData) {
-          const isMatching = companyData.isMatched;
-          const employeeName =
-            companyData.employee.username ??
-            `${companyData.employee.lastname} ${companyData.employee.lastname}`;
-          if (isMatching) {
-            toast.success("It's a match!", {
-              description: `${employeeName} and your company like each other.`,
-            });
-            countCurrentCompanyMatching(companyId);
-            setTimeout(() => router.push("/matching"), 800);
-          } else {
-            toast.success(`You liked ${employeeName}.`);
-            setTimeout(() => router.push("/feed"), 800);
-          }
-        }
-      } catch {
-        const err = companyLikeStore.error || "Failed to like employee";
-        toast.error(err);
-      } finally {
-        queryCurrentCompanyLiked(companyId);
-      }
-    }
-  };
-
-  // Handle Company Add Employee To Favorite
-  const handleAddToFavorite = async () => {
-    if (currentUser && currentUser.company) {
-      const companyId = currentUser.company.id;
-      const employeeId = employeeData.id;
-      const employeeName =
-        employeeData.username ??
-        `${employeeData.firstname} ${employeeData.lastname}`;
-
-      if (!companyId || !employeeId) return;
-
-      try {
-        await companyFavEmployeeStore.addEmployeeToFavorite(
-          companyId,
-          employeeId,
-        );
-        countAllCompanyFavoritesStore.countAllCompanyFavorites(companyId);
-        toast.success(`${employeeName} added to favorites.`);
-        getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyId);
-      } catch {
-        const err = companyFavEmployeeStore.error || "Failed to save employee.";
-        toast.error(err);
-      }
-    }
-  };
-
-  // Handle File Downloads - Resume and CoverLetter
-  const handleDownloadFile = (url: string, filename: string) => {
-    if (!url) return;
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", filename);
-    link.setAttribute("target", "_blank");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   return (
+    /* --------------------------------- Main Content --------------------------------- */
     <div className="flex flex-col gap-5 animate-page-in">
       {/* Personal Information Section */}
       <div className="w-full flex items-stretch justify-between border border-muted py-4 sm:py-5 px-4 sm:px-6 lg:px-10 tablet-xl:flex-col tablet-xl:[&>div]:w-full tablet-xl:gap-5">
