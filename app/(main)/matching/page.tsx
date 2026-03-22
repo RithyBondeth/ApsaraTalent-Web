@@ -3,80 +3,48 @@
 import emptySvgImage from "@/assets/svg/empty.svg";
 import matchingSvgImage from "@/assets/svg/matching.svg";
 import MatchingCompanyCard from "@/components/matching/matching-company-card";
-import MatchingCompanyCardSkeleton from "@/components/matching/matching-company-card/skeleton";
 import MatchingEmployeeCard from "@/components/matching/matching-employee-card";
-import MatchingEmployeeCardSkeleton from "@/components/matching/matching-employee-card/skeleton";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useFetchOnce } from "@/hooks/use-fetch-once";
-import axiosInstance from "@/lib/axios";
 import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-current-company-matching.store";
 import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
-import MatchingBannerSkeleton from "./banner-skeleton";
+import { initateChat } from "./_apis/initiate-chat.api";
+import MatchingLoadingSkeleton from "./skeleton";
 
 export default function MatchingPage() {
-  // Utils
+  /* -------------------------------- All States ------------------------------- */
   const router = useRouter();
-
-  // API Integration — use field selectors to avoid re-renders from unrelated store changes
-  const empMatching = useGetCurrentEmployeeMatchingStore(
-    (s) => s.currentEmployeeMatching,
-  );
-  const empLoading = useGetCurrentEmployeeMatchingStore((s) => s.loading);
-  const queryCurrentEmployeeMatching = useGetCurrentEmployeeMatchingStore(
-    (s) => s.queryCurrentEmployeeMatching,
-  );
-
-  const cmpMatching = useGetCurrentCompanyMatchingStore(
-    (s) => s.currentCompanyMatching,
-  );
-  const cmpLoading = useGetCurrentCompanyMatchingStore((s) => s.loading);
-  const queryCurrentCompanyMatching = useGetCurrentCompanyMatchingStore(
-    (s) => s.queryCurrentCompanyMatching,
-  );
-
   // Track which card is in a loading state to prevent double-clicks
   const [chatLoadingId, setChatLoadingId] = useState<string | null>(null);
 
+  /* ----------------------------- API Integration ----------------------------- */
+  const getCurrentEmpStore = useGetCurrentEmployeeMatchingStore();
+  const getCurrentCmpStore = useGetCurrentCompanyMatchingStore();
+
+  /* ---------------------------- Fetch All Favorites -------------------------- */
   // Use Custom Hook - Handles all ref logic and duplicate prevention
   const { isEmployee, currentUser } = useFetchOnce({
     cacheKey: "matching-page",
-    onEmployeeFetch: queryCurrentEmployeeMatching,
-    onCompanyFetch: queryCurrentCompanyMatching,
+    onEmployeeFetch: getCurrentEmpStore.queryCurrentEmployeeMatching,
+    onCompanyFetch: getCurrentCmpStore.queryCurrentCompanyMatching,
   });
 
-  // Compute All Loading States
-  const isLoadingForEmployee =
-    isEmployee && (empLoading || empMatching === null);
-
-  const isLoadingForCompany =
-    !isEmployee && (cmpLoading || cmpMatching === null);
-
-  const isLoading = isLoadingForEmployee || isLoadingForCompany;
-
-  // Chat Handler — uses backend REST endpoint, not Firebase
+  /* ------------------------------- Chat Handler ------------------------------- */
   const handleChatNow = useCallback(
     async (senderId: string, receiverId: string) => {
       if (!currentUser || chatLoadingId) return;
+      if (senderId === receiverId) return;
 
       setChatLoadingId(receiverId);
       try {
-        const baseUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-        const res = await axiosInstance.post<{
-          chatId: string;
-          id: string; // receiver's resolved User.id — used as chatId in the message page
-          name: string;
-          avatar: string;
-        }>(`${baseUrl}/chat/initiate`, { senderId, receiverId });
-        // The backend returns `id` = the receiver's User.id (resolved from employee/company ID).
-        // The message page uses chatId as userId2 for getChatHistory socket call.
-        router.push(`/message?chatId=${res.data.id}`);
+        const initateChatData = await initateChat(senderId, receiverId);
+        router.push(`/message?chatId=${initateChatData.id}`);
       } catch (err) {
         console.error("Failed to initiate chat:", err);
       } finally {
@@ -86,24 +54,23 @@ export default function MatchingPage() {
     [currentUser, chatLoadingId, router],
   );
 
-  if (isLoading) {
-    return (
-      <div className="mt-3 flex w-full flex-col px-2.5 sm:px-5">
-        <MatchingBannerSkeleton />
-        <div className="flex flex-col items-start gap-3 p-2 sm:p-3">
-          {[...Array(3)].map((_, index) =>
-            isEmployee ? (
-              <MatchingCompanyCardSkeleton key={index} />
-            ) : (
-              <MatchingEmployeeCardSkeleton key={index} />
-            ),
-          )}
-        </div>
-      </div>
-    );
-  }
+  /* ------------------------------ Loading States ------------------------------ */
+  const isLoadingForEmployee =
+    isEmployee &&
+    (getCurrentEmpStore.loading ||
+      getCurrentEmpStore.currentEmployeeMatching === null);
+
+  const isLoadingForCompany =
+    !isEmployee &&
+    (getCurrentCmpStore.loading ||
+      getCurrentCmpStore.currentCompanyMatching === null);
+
+  const isLoading = isLoadingForEmployee || isLoadingForCompany;
+
+  if (isLoading) return <MatchingLoadingSkeleton isEmployee={isEmployee} />;
 
   return (
+    /* -------------------------------------------------- Main Content ------------------------------------------------ */
     <div className="w-full flex flex-col px-2.5 sm:px-5">
       {/* Banner Section */}
       <div className="w-full flex items-center justify-between gap-4 sm:gap-5 tablet-xl:flex-col tablet-xl:items-center">
@@ -136,8 +103,10 @@ export default function MatchingPage() {
 
       {/* Matching Card List Section */}
       <div className="flex flex-col items-start gap-3">
-        {empMatching && empMatching.length > 0 ? (
-          empMatching.map((cmp) => (
+        {getCurrentEmpStore.currentEmployeeMatching &&
+        getCurrentEmpStore.currentEmployeeMatching.length > 0 ? (
+          getCurrentEmpStore.currentEmployeeMatching.map((cmp) => (
+            /* Matching Company Card */
             <MatchingCompanyCard
               key={cmp.id}
               name={cmp.name}
@@ -155,8 +124,10 @@ export default function MatchingPage() {
               }}
             />
           ))
-        ) : cmpMatching && cmpMatching.length > 0 ? (
-          cmpMatching.map((emp) => (
+        ) : getCurrentCmpStore.currentCompanyMatching &&
+          getCurrentCmpStore.currentCompanyMatching.length > 0 ? (
+          getCurrentCmpStore.currentCompanyMatching.map((emp) => (
+            /* Matching Employee Card */
             <MatchingEmployeeCard
               key={emp.id}
               name={`${emp.firstname} ${emp.lastname}`}
@@ -176,6 +147,7 @@ export default function MatchingPage() {
             />
           ))
         ) : (
+          /* ------------------------- Empty Matching List ------------------------- */
           <div className="w-full flex flex-col items-center justify-center my-16">
             <Image src={emptySvgImage} alt="empty" height={200} width={200} />
             <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">

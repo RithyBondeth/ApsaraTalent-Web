@@ -255,7 +255,7 @@ export default function FavoritePage() {
             />
           ))
         ) : (
-          /* ---------------------------- Empty State --------------------------- */
+          /* ----------------------- Empty Favorite List ----------------------- */
           <div className="w-full flex flex-col items-center justify-center my-16">
             <Image src={emptySvgImage} alt="empty" height={200} width={200} />
             <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
