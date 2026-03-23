@@ -48,7 +48,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
   }, [openProfileDialog]);
 
   return (
-    <div className="h-fit w-full flex flex-col items-start gap-5 rounded-lg border border-muted p-3 shadow-sm cursor-pointer">
+    <div className="h-fit w-full flex flex-col items-start gap-5 rounded-lg border border-muted p-3 shadow-sm cursor-pointer transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_8px_28px_hsl(var(--foreground)/0.1)] hover:border-primary/25">
       {/* Profile Section */}
       <div className="w-full flex items-start justify-between phone-xl:flex-col phone-xl:gap-5">
         <div className="flex items-center gap-3">
@@ -76,13 +76,13 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
         </div>
         <div className="flex items-center gap-1">
           <Button
-            className="size-10 sm:size-12 rounded-md transition-all duration-300 ease-in-out hover:scale-105"
+            className="size-10 sm:size-12 rounded-xl transition-all duration-300 ease-out hover:scale-110 active:scale-95"
             onClick={handleClickDialog}
           >
             <LucideEye className="!size-5 sm:!size-6 transition-all duration-300 ease-in-out" />
           </Button>
           <Button
-            className="size-10 sm:size-12 rounded-md transition-all duration-300 ease-in-out hover:scale-105"
+            className="size-10 sm:size-12 rounded-xl transition-all duration-300 ease-out hover:scale-110 active:scale-95"
             onClick={props.onLikeClick}
             disabled={props.onLikeClickDisable}
           >

@@ -46,8 +46,9 @@ export function ScrollProgressBar() {
       className="fixed top-0 left-0 right-0 z-[9999] h-[3px] pointer-events-none"
     >
       <div
-        className="h-full bg-primary origin-left will-change-transform"
+        className="h-full origin-left will-change-transform"
         style={{
+          background: "linear-gradient(90deg, hsl(var(--primary)) 0%, #7c3aed 55%, #ec4899 100%)",
           transform: `scaleX(${progress / 100})`,
           transition: progress === 0 ? "none" : "transform 80ms linear",
         }}

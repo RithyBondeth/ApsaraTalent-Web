@@ -170,9 +170,9 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
                 onClick={() => router.push(`/profile/${currentUser?.role}`)}
               >
                 {currentUser?.role === "employee" ? (
-                  <LucideUser />
+                  <LucideUser className="text-violet-500" />
                 ) : (
-                  <LucideBuilding />
+                  <LucideBuilding className="text-violet-500" />
                 )}
                 {t("myProfile")}
               </DropdownMenuItem>
@@ -180,32 +180,34 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem onClick={() => router.push("/setting")}>
-                <LucideSettings />
+                <LucideSettings className="text-slate-500" />
                 {t("settings")}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={toggleTheme}>
-                {resolvedTheme === "dark" ? <LucideSun /> : <LucideMoon />}
+                {resolvedTheme === "dark"
+                  ? <LucideSun className="text-amber-400" />
+                  : <LucideMoon className="text-indigo-400" />}
                 {t("appearance")}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => setLanguage(language === "en" ? "km" : "en")}
               >
-                <Globe />
+                <Globe className="text-emerald-500" />
                 {t("language")}: {language === "en" ? "English" : "ខ្មែរ"}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push("/favorite")}>
-                <LucideBookMarked />
+                <LucideBookMarked className="text-pink-500" />
                 {t("favorite")}
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <LucideInfo />
+                <LucideInfo className="text-orange-400" />
                 {t("reportProblem")}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => setOpenLogoutDialog(true)}>
-              <LogOut />
-              {t("logOut")}
+              <LogOut className="text-destructive" />
+              <span className="text-destructive">{t("logOut")}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
