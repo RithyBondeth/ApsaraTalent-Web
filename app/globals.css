@@ -76,17 +76,19 @@
 
 @layer base {
   * {
-    @apply border-border; 
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
+    -webkit-overflow-scrolling: touch;
+  }
+  html {
+    scroll-behavior: smooth;
   }
   .input-otp-slot {
     @apply !size-14 !text-xl;
   }
 }
-
-
 
 @layer base {
   * {
@@ -95,6 +97,11 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@keyframes shimmer {
+  from { background-position: -200% center; }
+  to   { background-position:  200% center; }
 }
 
 @keyframes page-in {
@@ -151,5 +158,34 @@
 
   .loading-dialog-spinner-wrap {
     animation: loading-dialog-spinner-bob 1.4s ease-in-out infinite;
+  }
+
+  /* Shimmer for skeleton loaders */
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted)) 25%,
+      hsl(var(--muted-foreground) / 0.15) 50%,
+      hsl(var(--muted)) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
+  }
+
+  /* Staggered list entry — apply to a container whose children have animate-page-in */
+  .stagger-children > *:nth-child(1) { animation-delay:   0ms; }
+  .stagger-children > *:nth-child(2) { animation-delay:  50ms; }
+  .stagger-children > *:nth-child(3) { animation-delay: 100ms; }
+  .stagger-children > *:nth-child(4) { animation-delay: 150ms; }
+  .stagger-children > *:nth-child(5) { animation-delay: 200ms; }
+  .stagger-children > *:nth-child(n+6) { animation-delay: 250ms; }
+}
+
+/* Respect user's reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
