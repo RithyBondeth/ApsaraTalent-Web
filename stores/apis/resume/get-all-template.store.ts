@@ -1,4 +1,5 @@
 import axios from "@/lib/axios";
+import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { API_GET_ALL_TEMPLATE_URL } from "@/utils/constants/apis/resume_url";
 import { IResumeTemplate } from "@/utils/interfaces/resume/resume-template.interface";
 import { create } from "zustand";
@@ -23,16 +24,13 @@ export const useGetAllTemplateStore = create<TGetAllTemplateState>((set) => ({
       );
       set({ loading: false, error: null, templateData: response.data });
     } catch (error) {
-      if (axios.isAxiosError(error))
-        set({
-          loading: false,
-          error: error.response?.data?.message || error.message,
-        });
-      else
-        set({
-          loading: false,
-          error: "An error occurred while fetching all resume's templates",
-        });
+      set({
+        loading: false,
+        error: extractApiErrorMessage(
+          error,
+          "An error occurred while fetching all resume's templates",
+        ),
+      });
     }
   },
 }));

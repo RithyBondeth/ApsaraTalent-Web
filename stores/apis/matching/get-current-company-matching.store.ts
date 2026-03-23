@@ -1,4 +1,5 @@
 import axios from "@/lib/axios";
+import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { API_GET_CURRENT_COMPANY_MATCHING_URL } from "@/utils/constants/apis/matching_url";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
 import { create } from "zustand";
@@ -33,18 +34,14 @@ export const useGetCurrentCompanyMatchingStore =
           error: null,
         });
       } catch (error) {
-        if (axios.isAxiosError(error))
-          set({
-            error: error.response?.data?.message,
-            loading: false,
-            currentCompanyMatching: null,
-          });
-        else
-          set({
-            error: "Failed to get current company matching",
-            loading: false,
-            currentCompanyMatching: null,
-          });
+        set({
+          error: extractApiErrorMessage(
+            error,
+            "Failed to get current company matching",
+          ),
+          loading: false,
+          currentCompanyMatching: null,
+        });
       }
     },
   }));

@@ -1,4 +1,5 @@
 import axios from "@/lib/axios";
+import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { API_GET_ALL_CAREER_SCOPES_URL } from "@/utils/constants/apis/user_url";
 import { ICareerScopes } from "@/utils/interfaces/user-interface/company.interface";
 import { create } from "zustand";
@@ -22,16 +23,13 @@ export const useGetAllCareerScopesStore = create<TGetAllCareerScopesStoreState>(
         const response = await axios.get<[]>(API_GET_ALL_CAREER_SCOPES_URL);
         set({ careerScopes: response.data, loading: false, error: null });
       } catch (error) {
-        if (axios.isAxiosError(error))
-          set({
-            loading: false,
-            error: error.response?.data?.message || error.message,
-          });
-        else
-          set({
-            loading: false,
-            error: "An error occurred while fetching all career scopes",
-          });
+        set({
+          loading: false,
+          error: extractApiErrorMessage(
+            error,
+            "An error occurred while fetching all career scopes",
+          ),
+        });
       }
     },
   }),

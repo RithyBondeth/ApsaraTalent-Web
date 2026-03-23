@@ -1,4 +1,5 @@
 import axios from "@/lib/axios";
+import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { API_FIND_ALL_COMPANY_FAVORITES } from "@/utils/constants/apis/favorite_url";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
 import { create } from "zustand";
@@ -40,19 +41,13 @@ export const useGetAllCompanyFavoritesStore =
           favoriteEmployeeIds: new Set(response.data.map((f) => f.employee.id)),
         });
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const errorMessage =
-            error.response?.data?.message instanceof Array
-              ? error.response.data.message.join(", ")
-              : error.response?.data?.message || error.message;
-
-          set({ loading: false, error: errorMessage });
-        } else {
-          set({
-            loading: false,
-            error: "An error occurred while fetching all company's favorites",
-          });
-        }
+        set({
+          loading: false,
+          error: extractApiErrorMessage(
+            error,
+            "An error occurred while fetching all company's favorites",
+          ),
+        });
       }
     },
   }));

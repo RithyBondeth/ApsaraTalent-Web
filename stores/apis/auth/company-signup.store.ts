@@ -1,4 +1,5 @@
 import axios from "@/lib/axios";
+import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { API_AUTH_SIGNUP_URL } from "@/utils/constants/apis/auth_url";
 import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
 import { IUser } from "@/utils/interfaces/user-interface/user.interface";
@@ -81,20 +82,12 @@ export const useCompanySignupStore = create<TCompanySignupState>()((set) => ({
 
       return companyID;
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const errorMessage =
-          error.response?.data?.message instanceof Array
-            ? error.response.data.message.join(", ")
-            : error.response?.data?.message || error.message;
+      const errorMessage = extractApiErrorMessage(
+        error,
+        "An error occurred while signing up as company.",
+      );
 
-        set({ loading: false, error: errorMessage, message: errorMessage });
-      } else {
-        set({
-          loading: false,
-          error: "An error occurred while signing up as company.",
-          message: "An error occurred while signing up as company.",
-        });
-      }
+      set({ loading: false, error: errorMessage, message: errorMessage });
     }
   },
 }));

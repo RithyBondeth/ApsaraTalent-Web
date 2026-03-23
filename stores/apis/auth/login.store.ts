@@ -1,4 +1,5 @@
 import axios from "@/lib/axios";
+import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import {
     clearAuthCookies, setAuthCookies
 } from "@/utils/auth/cookie-manager";
@@ -55,21 +56,16 @@ export const useLoginStore = create<TLoginState>((set) => ({
         user: response.data.user,
       });
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        set({
-          loading: false,
-          error: error.response?.data?.message || error.message,
-          message: error.response?.data?.message || "Something went wrong",
-          isAuthenticated: false,
-        });
-      } else {
-        set({
-          loading: false,
-          error: "An error occurred while login",
-          message: "An error occurred while login",
-          isAuthenticated: false,
-        });
-      }
+      const errorMessage = extractApiErrorMessage(
+        error,
+        "An error occurred while login",
+      );
+      set({
+        loading: false,
+        error: errorMessage,
+        message: errorMessage,
+        isAuthenticated: false,
+      });
     }
   },
   clearToken: () => {

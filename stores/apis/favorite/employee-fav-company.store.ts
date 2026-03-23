@@ -1,4 +1,5 @@
 import axios from "@/lib/axios";
+import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import {
   API_EMPLOYEE_FAVORITE_COMPANY_URL,
   API_EMPLOYEE_UNFAVORITE_COMPANY_URL,
@@ -57,9 +58,7 @@ export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>()(
           set((state) => {
             const rolled = new Set(state.favoriteCompanyIds);
             rolled.delete(companyID);
-            errorMessage = axios.isAxiosError(error)
-              ? error.response?.data?.message || error.message
-              : "Failed to add favorite";
+            errorMessage = extractApiErrorMessage(error, "Failed to add favorite");
             return {
               favoriteCompanyIds: rolled,
               loading: false,
@@ -101,9 +100,10 @@ export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>()(
           let errorMessage = "Failed to remove company from favorite";
           set((state) => {
             const rolledBack = new Set(state.favoriteCompanyIds).add(companyID);
-            errorMessage = axios.isAxiosError(error)
-              ? error.response?.data?.message || error.message
-              : "Failed to remove company from favorite";
+            errorMessage = extractApiErrorMessage(
+              error,
+              "Failed to remove company from favorite",
+            );
             return {
               favoriteCompanyIds: rolledBack,
               loading: false,

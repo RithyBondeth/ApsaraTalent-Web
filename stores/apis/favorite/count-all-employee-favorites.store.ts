@@ -1,5 +1,6 @@
 import { API_COUNT_ALL_EMPLOYEE_FAVORITES } from "@/utils/constants/apis/favorite_url";
 import axios from "@/lib/axios";
+import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { create } from "zustand";
 
 type TCountAllEmployeeFavoriteResponse = {
@@ -31,18 +32,14 @@ export const useCountAllEmployeeFavoritesStore =
           error: null,
         });
       } catch (error) {
-        if (axios.isAxiosError(error))
-          set({
-            error: error.response?.data.message,
-            loading: false,
-            totalAllEmployeeFavorites: null,
-          });
-        else
-          set({
-            error: "Failed to count all employee favorites",
-            loading: false,
-            totalAllEmployeeFavorites: null,
-          });
+        set({
+          error: extractApiErrorMessage(
+            error,
+            "Failed to count all employee favorites",
+          ),
+          loading: false,
+          totalAllEmployeeFavorites: null,
+        });
       }
     },
   }));

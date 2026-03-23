@@ -1,4 +1,5 @@
 import axios from "@/lib/axios";
+import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { API_UPDATE_CMP_INFO_URL } from "@/utils/constants/apis/company_url";
 import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
 import { create } from "zustand";
@@ -141,19 +142,11 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
           error: null,
         });
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const errorMessage =
-            error.response?.data?.message instanceof Array
-              ? error.response.data.message.join(", ")
-              : error.response?.data?.message || error.message;
-          set({ loading: false, error: errorMessage, message: errorMessage });
-        } else {
-          set({
-            loading: false,
-            error: "An error occurred while updating company's information",
-            message: "An error occurred while updating company's information",
-          });
-        }
+        const errorMessage = extractApiErrorMessage(
+          error,
+          "An error occurred while updating company's information",
+        );
+        set({ loading: false, error: errorMessage, message: errorMessage });
       }
     },
   }),

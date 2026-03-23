@@ -1,4 +1,5 @@
 import axios from "@/lib/axios";
+import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { API_SEARCH_EMP_URL } from "@/utils/constants/apis/employee_url";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
 import { TAvailability } from "@/utils/types/availability.type";
@@ -56,18 +57,11 @@ export const useSearchEmployeeStore = create<TSearchEmployeeState>((set) => ({
         error: null,
       });
     } catch (error) {
-      if (axios.isAxiosError(error))
-        set({
-          error: error.response?.data?.message,
-          loading: false,
-          employees: null,
-        });
-      else
-        set({
-          error: "Failed to search employee",
-          loading: false,
-          employees: null,
-        });
+      set({
+        error: extractApiErrorMessage(error, "Failed to search employee"),
+        loading: false,
+        employees: null,
+      });
     }
   },
 }));

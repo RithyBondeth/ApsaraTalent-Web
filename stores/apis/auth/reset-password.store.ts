@@ -1,4 +1,5 @@
 import { API_AUTH_RESET_PASSWORD_URL } from "@/utils/constants/apis/auth_url";
+import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import axios from "axios";
 import { create } from "zustand";
 
@@ -34,19 +35,15 @@ export const useResetPasswordStore = create<TResetPasswordState>()((set) => ({
       });
       set({ loading: false, message: response.data.message, error: null });
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        set({
-          loading: false,
-          error: error.response?.data?.message || error.message,
-          message: error.response?.data?.message || "Something went wrong",
-        });
-      } else {
-        set({
-          loading: false,
-          error: "An error occurred while resetting password",
-          message: "An error occurred while resetting password",
-        });
-      }
+      const errorMessage = extractApiErrorMessage(
+        error,
+        "An error occurred while resetting password",
+      );
+      set({
+        loading: false,
+        error: errorMessage,
+        message: errorMessage,
+      });
     }
   },
 }));

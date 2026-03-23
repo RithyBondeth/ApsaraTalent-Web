@@ -1,4 +1,5 @@
 import axios from "@/lib/axios";
+import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { API_GET_CURRENT_COMPANY_LIKED_URL } from "@/utils/constants/apis/matching_url";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
 import { create } from "zustand";
@@ -38,18 +39,11 @@ export const useGetCurrentCompanyLikedStore =
           error: null,
         });
       } catch (error) {
-        if (axios.isAxiosError(error))
-          set({
-            error: error.response?.data?.message,
-            loading: false,
-            currentCompanyLiked: null,
-          });
-        else
-          set({
-            error: "Failed to get current company liked",
-            loading: false,
-            currentCompanyLiked: null,
-          });
+        set({
+          error: extractApiErrorMessage(error, "Failed to get current company liked"),
+          loading: false,
+          currentCompanyLiked: null,
+        });
       }
     },
   }));

@@ -1,4 +1,5 @@
 import axios from "@/lib/axios";
+import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { API_AUTH_SIGNUP_URL } from "@/utils/constants/apis/auth_url";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
 import { IUser } from "@/utils/interfaces/user-interface/user.interface";
@@ -87,20 +88,12 @@ export const useEmployeeSignupStore = create<TEmployeeSignupState>()((set) => ({
 
       return employeeID;
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const errorMessage =
-          error.response?.data?.message instanceof Array
-            ? error.response.data.message.join(", ")
-            : error.response?.data?.message || error.message;
+      const errorMessage = extractApiErrorMessage(
+        error,
+        "An error occurred while signing up as employee",
+      );
 
-        set({ loading: false, error: errorMessage, message: errorMessage });
-      } else {
-        set({
-          loading: false,
-          error: "An error occurred while signing up as employee",
-          message: "An error occurred while signing up as employee",
-        });
-      }
+      set({ loading: false, error: errorMessage, message: errorMessage });
     }
   },
 }));

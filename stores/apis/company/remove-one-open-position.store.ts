@@ -1,4 +1,5 @@
 import axios from "@/lib/axios";
+import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { API_REMOVE_ONE_OPEN_POSITION } from "@/utils/constants/apis/company_url";
 import { create } from "zustand";
 
@@ -32,20 +33,12 @@ export const useRemoveOneOpenPositionStore =
         );
         set({ message: response.data.message, error: null, loading: false });
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const errorMessage =
-            error.response?.data?.message instanceof Array
-              ? error.response.data.message.join(", ")
-              : error.response?.data?.message || error.message;
+        const errorMessage = extractApiErrorMessage(
+          error,
+          "An error occurred while removing company's open position",
+        );
 
-          set({ loading: false, error: errorMessage, message: errorMessage });
-        } else {
-          set({
-            loading: false,
-            error: "An error occurred while removing company's open position",
-            message: "An error occurred while removing company's open position",
-          });
-        }
+        set({ loading: false, error: errorMessage, message: errorMessage });
       }
     },
   }));

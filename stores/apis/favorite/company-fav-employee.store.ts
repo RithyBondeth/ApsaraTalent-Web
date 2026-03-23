@@ -1,4 +1,5 @@
 import axios from "@/lib/axios";
+import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import {
   API_COMPANY_FAVORITE_EMPLOYEE_URL,
   API_COMPANY_UNFAVORITE_EMPLOYEE_URL,
@@ -59,16 +60,14 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
           });
         } catch (error) {
           // Roll back optimistic update on failure
-          let errorMessage =
-            "An error occurred while adding employee to favorite";
+          let errorMessage = "An error occurred while adding employee to favorite";
           set((state) => {
             const rolled = new Set(state.favoriteEmployeeIds);
             rolled.delete(employeeID);
-            errorMessage = axios.isAxiosError(error)
-              ? error.response?.data?.message instanceof Array
-                ? error.response.data.message.join(", ")
-                : error.response?.data?.message || error.message
-              : "An error occurred while adding employee to favorite";
+            errorMessage = extractApiErrorMessage(
+              error,
+              "An error occurred while adding employee to favorite",
+            );
             return {
               favoriteEmployeeIds: rolled,
               loading: false,
@@ -116,9 +115,10 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
             const rolledBack = new Set(state.favoriteEmployeeIds).add(
               employeeID,
             );
-            errorMessage = axios.isAxiosError(error)
-              ? error.response?.data?.message || error.message
-              : "Failed to remove employee from favorite";
+            errorMessage = extractApiErrorMessage(
+              error,
+              "Failed to remove employee from favorite",
+            );
             return {
               favoriteEmployeeIds: rolledBack,
               loading: false,

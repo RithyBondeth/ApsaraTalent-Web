@@ -1,4 +1,5 @@
 import axios from "@/lib/axios";
+import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { API_GET_ALL_USERS_URL } from "@/utils/constants/apis/user_url";
 import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 import { create } from "zustand";
@@ -21,16 +22,13 @@ export const useGetAllUsersStore = create<TGetAllUsersStoreState>((set) => ({
       const response = await axios.get<IUser[]>(API_GET_ALL_USERS_URL);
       set({ users: response.data, loading: false, error: null });
     } catch (error) {
-      if (axios.isAxiosError(error))
-        set({
-          loading: false,
-          error: error.response?.data?.message || error.message,
-        });
-      else
-        set({
-          loading: false,
-          error: "An error occurred while fetching all users",
-        });
+      set({
+        loading: false,
+        error: extractApiErrorMessage(
+          error,
+          "An error occurred while fetching all users",
+        ),
+      });
     }
   },
 }));

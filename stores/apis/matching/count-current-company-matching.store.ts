@@ -1,5 +1,6 @@
 import { API_COUNT_CURRENT_COMPANY_MATCHING_URL } from "@/utils/constants/apis/matching_url";
 import axios from "@/lib/axios";
+import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { create } from "zustand";
 
 type TCountCurrentCompanyMatchingResponse = {
@@ -31,18 +32,14 @@ export const useCountCurrentCompanyMatchingStore =
           error: null,
         });
       } catch (error) {
-        if (axios.isAxiosError(error))
-          set({
-            error: error.response?.data.message,
-            loading: false,
-            totalCmpMatching: null,
-          });
-        else
-          set({
-            error: "Failed to count current company matching",
-            loading: false,
-            totalCmpMatching: null,
-          });
+        set({
+          error: extractApiErrorMessage(
+            error,
+            "Failed to count current company matching",
+          ),
+          loading: false,
+          totalCmpMatching: null,
+        });
       }
     },
   }));

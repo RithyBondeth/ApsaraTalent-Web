@@ -1,4 +1,5 @@
 import axios from "@/lib/axios";
+import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { API_MATCHING_EMP_LIKE_URL } from "@/utils/constants/apis/matching_url";
 import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
@@ -33,21 +34,15 @@ export const useEmployeeLikeStore = create<TEmployeeLikeState>((set) => ({
 
       set({ loading: false, error: null, data: response.data });
     } catch (error) {
-      const errorMessage = axios.isAxiosError(error)
-        ? error.response?.data?.message || error.message
-        : "Failed to like employee";
-      if (axios.isAxiosError(error))
-        set({
-          error: errorMessage,
-          loading: false,
-          data: null,
-        });
-      else
-        set({
-          error: errorMessage,
-          loading: false,
-          data: null,
-        });
+      const errorMessage = extractApiErrorMessage(
+        error,
+        "Failed to like employee",
+      );
+      set({
+        error: errorMessage,
+        loading: false,
+        data: null,
+      });
       throw new Error(errorMessage);
     }
   },

@@ -1,4 +1,5 @@
 import axios from "@/lib/axios";
+import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import {
   API_GET_NOTIFICATIONS_URL,
   API_GET_UNREAD_NOTIFICATION_COUNT_URL,
@@ -12,7 +13,7 @@ export interface INotification {
   title: string;
   message: string;
   type: "chat" | "match" | string | null;
-  data: Record<string, any> | null;
+  data: Record<string, unknown> | null;
   isRead: boolean;
   createdAt: string;
   updatedAt: string;
@@ -74,8 +75,11 @@ export const useNotificationStore = create<TNotificationState>((set, get) => ({
         loading: false,
         error: null,
       });
-    } catch {
-      set({ loading: false, error: "Failed to fetch notifications" });
+    } catch (error) {
+      set({
+        loading: false,
+        error: extractApiErrorMessage(error, "Failed to fetch notifications"),
+      });
     }
   },
 

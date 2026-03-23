@@ -1,4 +1,5 @@
 import axios from "@/lib/axios";
+import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { API_SEARCH_JOB_URL } from "@/utils/constants/apis/job_url";
 import { TLocations } from "@/utils/types/location.type";
 import { create } from "zustand";
@@ -81,18 +82,11 @@ export const useSearchJobStore = create<TSearchJobState>((set) => ({
         error: null,
       });
     } catch (error) {
-      if (axios.isAxiosError(error))
-        set({
-          error: error.response?.data?.message,
-          loading: false,
-          jobs: null,
-        });
-      else
-        set({
-          error: "Failed to search jobs",
-          loading: false,
-          jobs: null,
-        });
+      set({
+        error: extractApiErrorMessage(error, "Failed to search jobs"),
+        loading: false,
+        jobs: null,
+      });
     }
   },
 }));
