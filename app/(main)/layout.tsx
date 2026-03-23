@@ -8,6 +8,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { ScrollProgressBar } from "@/components/utils/scroll-progress-bar";
 import { ThemeProviderClient } from "@/components/utils/themes/theme-provider-client";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useChatConnection } from "@/hooks/chat/use-chat-connection";
@@ -70,6 +71,7 @@ export default function MainLayout({
   if (pathname.startsWith("/feed/")) {
     return (
       <div className="relative">
+        <ScrollProgressBar />
         <Link
           href="/feed"
           className="absolute top-3 left-3 sm:top-4 sm:left-4 lg:top-5 lg:left-5 z-20"
@@ -91,6 +93,7 @@ export default function MainLayout({
   // ── Single stable layout tree — SidebarProvider never remounts on navigation ─────────────────────────────────────────
   return (
     <ThemeProviderClient defaultTheme={theme}>
+      <ScrollProgressBar />
       <SidebarProvider>
         <CollapseSidebar key={user?.id || "nouser"} />
         <div className={getContentClass()}>
