@@ -195,13 +195,13 @@ export default function EmployeeProfilePage() {
       education: { open: false, id: null },
     });
 
-  /* ------------------------------ API Integration ------------------------------ */
+  /* ----------------------------- API Integration ---------------------------- */
   // Current User Information and Current User CareerScopes
   const { user, loading, getCurrentUser } = useGetCurrentUserStore();
   const employee = user?.employee;
   const getAllCareerScopesStore = useGetAllCareerScopesStore();
 
-  // Update Employee Information
+  // Update Employee Informatio
   const updateOneEmpStore = useUpdateOneEmployeeStore();
 
   // Update Avatar, Resume and CoverLetter
@@ -215,41 +215,6 @@ export default function EmployeeProfilePage() {
   const removeEmpCoverLetterStore = useRemoveEmpCoverLetterStore();
   const removeEmpExperieceStore = useRemoveEmpExperienceStore();
   const removeEmpEducationStore = useRemoveEmpEducationStore();
-
-  // Compute All Loading States
-  const apiLoadingStates = [
-    updateOneEmpStore.loading,
-    uploadAvatarEmpStore.loading,
-    uploadResumeEmpStore.loading,
-    uploadCoverLetterEmpStore.loading,
-    removeEmpAvatarStore.loading,
-    removeEmpResumeStore.loading,
-    removeEmpCoverLetterStore.loading,
-    removeEmpEducationStore.loading,
-    removeEmpExperieceStore.loading,
-  ];
-  const updateProfileLoadingState = apiLoadingStates.some(Boolean);
-
-  // Loading Message Based on Loading State
-  const loadingMessage = removeEmpAvatarStore.loading
-    ? "Removing avatar..."
-    : removeEmpResumeStore.loading
-      ? "Removing resume..."
-      : removeEmpCoverLetterStore.loading
-        ? "Removing cover letter..."
-        : removeEmpExperieceStore.loading
-          ? "Removing experience..."
-          : removeEmpEducationStore.loading
-            ? "Removing education..."
-            : uploadAvatarEmpStore.loading
-              ? "Uploading avatar..."
-              : uploadResumeEmpStore.loading
-                ? "Uploading resume..."
-                : uploadCoverLetterEmpStore.loading
-                  ? "Uploading cover letter..."
-                  : updateOneEmpStore.loading
-                    ? "Updating employee profile..."
-                    : "";
 
   /* ------------------------------- Profile Form ------------------------------- */
   // React Hook Form: Employee Profile Schema
@@ -399,7 +364,7 @@ export default function EmployeeProfilePage() {
 
   /* -------------------------------- Methods --------------------------------- */
   // ── Edit Mode Methods ────────────────────────────────────────────────────
-  // Close All The Dialogs
+  // ── Close All The Dialogs ─────────────────────────────────────────
   const closeAllDialogs = () => {
     setOpenAvatarPopup(false);
     setOpenRemoveAvatarDialog(false);
@@ -414,13 +379,13 @@ export default function EmployeeProfilePage() {
     }));
   };
 
-  // Enable Edit Mode
+  // ── Enable Edit Mode ─────────────────────────────────────────
   const enableEditMode = () => {
     getAllCareerScopesStore.getAllCareerScopes();
     setIsEdit(true);
   };
 
-  // Disable Edit Mode
+  // ── Disable Edit Mode ─────────────────────────────────────────
   const disableEditMode = async () => {
     await getCurrentUser();
     setAvatarFile(null);
@@ -430,7 +395,7 @@ export default function EmployeeProfilePage() {
     setIsEdit(false);
   };
 
-  // Open RemoveExperienceOrEducation Dialog
+  // ── Open RemoveExperienceOrEducation Dialog ─────────────────────────────────────────
   const openRemoveExperienceOrEducationDialog = (
     type: "experience" | "education",
     id: string,
@@ -441,7 +406,7 @@ export default function EmployeeProfilePage() {
     }));
   };
 
-  // Close RemoveExperienceOrEducation Dialog
+  // ── Close RemoveExperienceOrEducation Dialog ─────────────────────────────────────────
   const closeRemoveExperienceOrEducationDialog = (
     type: "experience" | "education",
   ) => {
@@ -452,7 +417,7 @@ export default function EmployeeProfilePage() {
   };
 
   // ── Reference and Avatar Methods ────────────────────────────────────────────────────
-  // 1.API: Remove Resume
+  // ── API: Remove Resume ─────────────────────────────────────────
   const removeResume = async () => {
     if (employee) await removeEmpResumeStore.removeEmpResume(employee.id);
 
@@ -461,7 +426,7 @@ export default function EmployeeProfilePage() {
     toast.success("Remove Resume Successfully!");
   };
 
-  // 2.API: Remove CoverLetter
+  // ── API: Remove CoverLetter ─────────────────────────────────────────
   const removeCoverLetter = async () => {
     if (employee)
       await removeEmpCoverLetterStore.removeEmpCoverLetter(employee.id);
@@ -471,7 +436,7 @@ export default function EmployeeProfilePage() {
     toast.success("Remove CoverLetter Successfully!");
   };
 
-  // 3.API: Remove Avatar
+  // ── API: Remove Avatar ─────────────────────────────────────────
   const removeAvatar = async () => {
     if (employee) await removeEmpAvatarStore.removeEmpAvatar(employee.id);
 
@@ -480,7 +445,7 @@ export default function EmployeeProfilePage() {
     toast.success("Remove Avatar Successfully!");
   };
 
-  // 4.Handle Click Avatar Popup
+  // ── Handle Click Avatar Popup ─────────────────────────────────────────
   const handleClickAvatarPopup = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -490,7 +455,7 @@ export default function EmployeeProfilePage() {
     setOpenAvatarPopup(true);
   };
 
-  // 5.Handle Avatar Crop
+  // ── Handle Avatar Crop ─────────────────────────────────────────
   const handleAvatarCrop = (file: File) => {
     setAvatarFile(file);
 
@@ -501,7 +466,7 @@ export default function EmployeeProfilePage() {
   };
 
   // ── Experience Methods ────────────────────────────────────────────────────
-  // 1.Add New Experience
+  // ── Add New Experience ─────────────────────────────────────────
   const addNewExperience = () => {
     experienceFA.append({
       id: "",
@@ -512,7 +477,7 @@ export default function EmployeeProfilePage() {
     });
   };
 
-  // 2.API: Remove Experience
+  // ── API: Remove Experience ─────────────────────────────────────────
   const removeExperience = async (experienceID: string) => {
     if (employee)
       await removeEmpExperieceStore.removeExperience(employee.id, experienceID);
@@ -523,7 +488,7 @@ export default function EmployeeProfilePage() {
   };
 
   // ── Education Methods ────────────────────────────────────────────────────
-  // 1.Add New Education
+  // ── Add New Education ─────────────────────────────────────────
   const addNewEducation = () => {
     educationFA.append({
       id: "",
@@ -533,7 +498,7 @@ export default function EmployeeProfilePage() {
     });
   };
 
-  // 2.API: Remove Education
+  // ── API: Remove Education ─────────────────────────────────────────
   const removeEducation = async (educationID: string) => {
     if (employee)
       await removeEmpEducationStore.removeEducation(employee.id, educationID);
@@ -544,7 +509,7 @@ export default function EmployeeProfilePage() {
   };
 
   // ── Skill Methods ────────────────────────────────────────────────────
-  // 1.Add New Skill
+  // ── Add New Skill ─────────────────────────────────────────
   const addNewSkills = () => {
     const trimmed = skillInput?.trim();
     if (!trimmed) return;
@@ -578,7 +543,7 @@ export default function EmployeeProfilePage() {
     setOpenSkillPopOver(false);
   };
 
-  // 2.Remove Skill
+  // ── Remove Skill ─────────────────────────────────────────
   const removeSkill = (skillToRemove: string) => {
     const skillToDelete = skills.find((s) => s.name === skillToRemove);
     if (skillToDelete?.id)
@@ -590,7 +555,7 @@ export default function EmployeeProfilePage() {
   };
 
   // ── Social Methods ────────────────────────────────────────────────────
-  // 1.Add New Social
+  // ── Add New Social ─────────────────────────────────────────
   const addNewSocial = () => {
     const trimmedPlatform = socialInput?.platform?.trim();
     const trimmedUrl = socialInput?.url?.trim();
@@ -642,7 +607,7 @@ export default function EmployeeProfilePage() {
     return true;
   };
 
-  // 2.Remove Social
+  // ── Remove Social ─────────────────────────────────────────
   const removeSocial = (platform: TPlatform) => {
     const toDelete = socials.find((s) => s.platform === platform);
     if (toDelete?.id) setDeleteSocialIds((prev) => [...prev, toDelete.id!]);
@@ -653,7 +618,7 @@ export default function EmployeeProfilePage() {
   };
 
   // ── CareerScope Methods ────────────────────────────────────────────────────
-  // 1.Handle CareerScope Select
+  // ── Handle CareerScope Select ─────────────────────────────────────────
   const handleCareerScopeSelect = (
     selectedCareerId: string,
     selectedCareerName: string,
@@ -666,7 +631,7 @@ export default function EmployeeProfilePage() {
     });
   };
 
-  // 2.Add New CareerScope
+  // ── Add New CareerScope ─────────────────────────────────────────
   const addNewCareerScope = () => {
     const name = careerScopeInput?.name?.trim();
     if (!name) return;
@@ -707,7 +672,7 @@ export default function EmployeeProfilePage() {
     setOpenCareerScopePopOver(false);
   };
 
-  // 3.Remove CareerScope
+  // ── Remove CareerScope ─────────────────────────────────────────
   const removeCareerScope = (careerToRemove: string) => {
     const toDelete = careerScopes.find((c) => c.name === careerToRemove);
     if (toDelete?.id)
@@ -722,7 +687,7 @@ export default function EmployeeProfilePage() {
   };
 
   // ── File Methods ────────────────────────────────────────────────────
-  // Handle File Change: Avatar, Resume and CoverLetter
+  // ── Handle File Change: Avatar, Resume and CoverLetter ─────────────────────────────────────────
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     type: "avatar" | "resume" | "coverLetter",
@@ -755,7 +720,7 @@ export default function EmployeeProfilePage() {
     }
   };
 
-  // Handle File Download: Resume and CoverLetter
+  // ── Handle File Download: Resume and CoverLetter ─────────────────────────────────────────
   const downloadFileFromUrl = async (url: string, filename?: string) => {
     try {
       const res = await fetch(url);
@@ -781,7 +746,7 @@ export default function EmployeeProfilePage() {
   };
 
   // ── onSubmit Methods ────────────────────────────────────────────────────
-  // 1.onSubmit - API: Update The Entire Employee Profile
+  // ── onSubmit - API: Update The Entire Employee Profile ─────────────────────────────────────────
   const onSubmit = async (data: TEmployeeProfileForm) => {
     if (!employee) return;
 
@@ -1007,7 +972,7 @@ export default function EmployeeProfilePage() {
     }
   };
 
-  // 2.handleSubmit: Submit Employee Profile Form
+  // ── handleSubmit: Submit Employee Profile Form ─────────────────────────────────────────
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -1030,13 +995,48 @@ export default function EmployeeProfilePage() {
   };
 
   /* ------------------------------- Loading State ------------------------------- */
+  // Compute All Loading States
+  const apiLoadingStates = [
+    updateOneEmpStore.loading,
+    uploadAvatarEmpStore.loading,
+    uploadResumeEmpStore.loading,
+    uploadCoverLetterEmpStore.loading,
+    removeEmpAvatarStore.loading,
+    removeEmpResumeStore.loading,
+    removeEmpCoverLetterStore.loading,
+    removeEmpEducationStore.loading,
+    removeEmpExperieceStore.loading,
+  ];
+  const updateProfileLoadingState = apiLoadingStates.some(Boolean);
+
+  // Loading Message Based on Loading State
+  const loadingMessage = removeEmpAvatarStore.loading
+    ? "Removing avatar..."
+    : removeEmpResumeStore.loading
+      ? "Removing resume..."
+      : removeEmpCoverLetterStore.loading
+        ? "Removing cover letter..."
+        : removeEmpExperieceStore.loading
+          ? "Removing experience..."
+          : removeEmpEducationStore.loading
+            ? "Removing education..."
+            : uploadAvatarEmpStore.loading
+              ? "Uploading avatar..."
+              : uploadResumeEmpStore.loading
+                ? "Uploading resume..."
+                : uploadCoverLetterEmpStore.loading
+                  ? "Uploading cover letter..."
+                  : updateOneEmpStore.loading
+                    ? "Updating employee profile..."
+                    : "";
+
   if (loading) return <EmployeeProfilePageLoadingSkeleton />;
 
-  /* -------------------------------- Empty State -------------------------------- */
+  /* -------------------------------- Empty State ------------------------------ */
   if (!user || !employee) return null;
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
-    /* ------------------------------- Main Content ------------------------------- */
     <form className="!min-w-full flex flex-col gap-5" onSubmit={handleSubmit}>
       <LoadingDialog
         loading={updateProfileLoadingState}

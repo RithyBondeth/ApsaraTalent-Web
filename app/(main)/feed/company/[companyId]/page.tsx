@@ -216,7 +216,7 @@ export default function CompanyDetailPage() {
     }
   };
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* ------------------------------ Loading State ------------------------------ */
   const isLoading = !isInitialized || loading;
   if (isLoading) {
     return (
@@ -226,6 +226,7 @@ export default function CompanyDetailPage() {
     );
   }
 
+  /* ------------------------------- Error State ------------------------------- */
   if (fetchError) {
     return (
       <div className="h-screen w-screen flex justify-center items-center animate-page-in">
@@ -242,6 +243,7 @@ export default function CompanyDetailPage() {
     );
   }
 
+  /* ------------------------------- NotFound State ------------------------------- */
   if (!companyData) {
     return (
       <div className="h-screen w-screen flex justify-center items-center animate-page-in">
@@ -255,6 +257,7 @@ export default function CompanyDetailPage() {
     );
   }
 
+  /* ---------------------------------- Render UI ---------------------------------- */
   return (
     <div className="flex flex-col gap-5 animate-page-in">
       {/* Header Section */}

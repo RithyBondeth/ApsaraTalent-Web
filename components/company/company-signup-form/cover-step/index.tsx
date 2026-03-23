@@ -2,6 +2,7 @@ import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
 import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
 import { DragDropFile } from "@/components/utils/drag-drop-file.";
+import ErrorMessage from "@/components/utils/error-message";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { LucideBuilding } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -9,6 +10,7 @@ import { useEffect, useState } from "react";
 export default function CoverCompanyStepForm({
   setValue,
   getValues,
+  errors,
 }: IStepFormProps<TCompanySignup>) {
   const [preview, setPreview] = useState<string | null>(null); // Preview state for image
   const [selectedImage, setSelectedImage] = useState<string | null>(null); // Original image for cropping
@@ -66,6 +68,10 @@ export default function CoverCompanyStepForm({
           />
         )}
       </div>
+
+      {errors?.cover?.message && (
+        <ErrorMessage>{errors.cover.message as string}</ErrorMessage>
+      )}
 
       {selectedImage && (
         <AvatarCropDialog

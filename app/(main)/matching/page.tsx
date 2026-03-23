@@ -57,7 +57,7 @@ export default function MatchingPage() {
     [currentUser, chatLoadingId, router],
   );
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* ------------------------------ Loading State ------------------------------ */
   const isLoadingForEmployee =
     isEmployee &&
     (getCurrentEmpStore.loading ||
@@ -72,6 +72,7 @@ export default function MatchingPage() {
 
   if (isLoading) return <MatchingLoadingSkeleton isEmployee={isEmployee} />;
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col px-2.5 sm:px-5">
       {/* Banner Section */}
@@ -149,7 +150,7 @@ export default function MatchingPage() {
             />
           ))
         ) : (
-          /* ---------------- Empty Matching List Section ----------------*/
+          /* Empty Matching List Section */
           <div className="w-full flex flex-col items-center justify-center my-16">
             <Image src={emptySvgImage} alt="empty" height={200} width={200} />
             <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">

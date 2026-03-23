@@ -68,13 +68,16 @@ export const DragDropFile = <T extends FieldValues>({
   };
 
   const processFile = (file: File): void => {
-    if (file.type.startsWith("image/") && file.size <= maxFileSize) {
+    const validImageTypes = ["image/jpeg", "image/png", "image/webp"];
+    const isValidType = validImageTypes.includes(file.type);
+
+    if (file.size <= maxFileSize) {
       const objectUrl = URL.createObjectURL(file);
       setFilePreview(objectUrl);
       setSelectedFileName(file.name);
 
-      // Set the preview in form state
-      if (setValue && fileName) {
+      // Only set the form value for supported types (jpeg/png/webp)
+      if (setValue && fileName && isValidType) {
         setValue(
           fileName as Path<T>,
           file as unknown as PathValue<T, Path<T>>,

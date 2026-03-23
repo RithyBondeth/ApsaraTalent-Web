@@ -22,8 +22,6 @@ import { toast } from "sonner";
 import { FavoriteLoadingSkeleton } from "./skeleton";
 
 export default function FavoritePage() {
-  /* ---------------------------------- Utils --------------------------------- */
-
   /* ----------------------------- API Integration ---------------------------- */
   // Current User
   const currentUser = useGetCurrentUserStore((state) => state.user);
@@ -78,7 +76,7 @@ export default function FavoritePage() {
     [],
   );
 
-  // ── Handle Employee Remove Company From Favorite ─────────────────────────────────────────
+  // ── Handle Employee Remove Company From Favorite ─────────────────────────────────
   const handleEmployeeRemoveCompanyFromFavorite = useCallback(
     (
       employeeID: string,
@@ -115,7 +113,7 @@ export default function FavoritePage() {
     ],
   );
 
-  // ── Handle Company Remove Employee From Favorite ─────────────────────────────────────────
+  // ── Handle Company Remove Employee From Favorite ───────────────────────────────────
   const handleCompanyRemoveEmployeeFromFavorite = useCallback(
     (
       companyID: string,
@@ -150,7 +148,7 @@ export default function FavoritePage() {
     ],
   );
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* ----------------------------- Loading State ------------------------------- */
   const isLoadingForEmployee =
     isEmployee &&
     (getAllEmployeeFavoritesStore.loading ||
@@ -165,6 +163,7 @@ export default function FavoritePage() {
 
   if (isLoading) return <FavoriteLoadingSkeleton isEmployee={isEmployee} />;
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col px-2.5 sm:px-5">
       {/* Banner Section */}
@@ -256,7 +255,7 @@ export default function FavoritePage() {
             />
           ))
         ) : (
-          /* ----------------------- Empty Favorite List ----------------------- */
+          /* Empty Favorite List */
           <div className="w-full flex flex-col items-center justify-center my-16">
             <Image src={emptySvgImage} alt="empty" height={200} width={200} />
             <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">

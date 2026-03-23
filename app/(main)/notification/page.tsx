@@ -22,7 +22,7 @@ import { useEffect, useMemo, useState } from "react";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import NotificationCardSkeleton from "./skeleton";
 
-/* ---------------------------------- Utils --------------------------------- */
+/* ------------------------------------- Utils ------------------------------------- */
 /** Derive a display-friendly user object from a notification's title + data fields. */
 function resolveNotificationUser(notification: INotification) {
   return {
@@ -71,7 +71,7 @@ export default function NotificationPage() {
   }, [notificationFilter, fetchNotifications]);
 
   /* --------------------------------- Methods --------------------------------- */
-  // ── Filter notifications based on the current filter ────────────────────────
+  // ── Filter notifications based on the current filter ──────────────
   const filteredNotifications = useMemo(() => {
     return notifications.filter((n) => {
       if (notificationFilter === "all") return true;
@@ -82,7 +82,7 @@ export default function NotificationPage() {
     });
   }, [notifications, notificationFilter]);
 
-  // ── Get notification button variant ─────────────────────────────────────────
+  // ── Get notification button variant ──────────────────────────────
   const notificationButtonVariant = (currentFilter: TNotificationFilterType) =>
     notificationFilter === currentFilter ? "default" : "secondary";
 

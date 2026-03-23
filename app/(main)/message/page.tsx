@@ -26,7 +26,7 @@ import type { ImperativePanelHandle } from "react-resizable-panels";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import Image from "next/image";
 import MessageSvgImage from "@/assets/svg/message.svg";
-import MessageLoadingSkeleton from "./loading";
+import MessageLoadingSkeleton from "./skeleton";
 
 const MessagePageContent = () => {
   /* ---------------------------------- Utils --------------------------------- */
@@ -144,10 +144,10 @@ const MessagePageContent = () => {
   }, [isConnected, isChatsLoaded]);
 
   /* --------------------------------- Methods --------------------------------- */
-  // ── 1. Toggle Sidebar ─────────────────────────────────────────
+  // ── 1. Toggle Sidebar ────────────────────────────────────────
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
-  // ── 2. Handle Start Voice Call ─────────────────────────────────────────
+  // ── 2. Handle Start Voice Call ───────────────────────────────
   const handleStartVoiceCall = () => {
     if (!activeChat) return;
     initiateCall({
@@ -200,23 +200,24 @@ const MessagePageContent = () => {
     if (chatId) setTyping(chatId, typing);
   };
 
-  // ── 6. Handle Chat Select ─────────────────────────────────────────
+  // ── 6. Handle Chat Select ─────────────────────────────────────
   const handleChatSelect = (chat: { id: string }) => {
     setReplyTarget(null);
     router.push(`/message?chatId=${chat.id}`);
   };
 
-  // ── 7. Handle Back ─────────────────────────────────────────
+  // ── 7. Handle Back ────────────────────────────────────────────
   const handleBack = () => {
     setReplyTarget(null);
     router.push("/message");
   };
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* ------------------------------------ Loading State ------------------------------------ */
   const isLoading = (!isConnected || !isChatsLoaded) && !loadingTimedOut;
 
   if (isLoading) return <MessageLoadingSkeleton />;
 
+  /* -------------------------------------- Chat View -------------------------------------- */
   const chatView = activeChat ? (
     <div className="flex flex-col h-full min-h-0 min-w-0">
       <ChatHeader
@@ -250,6 +251,7 @@ const MessagePageContent = () => {
     </div>
   ) : null;
 
+  /* ------------------------------ Desktop Empty State View ------------------------------ */
   const desktopEmptyStateView = (
     <div className="flex flex-1 flex-col items-center justify-center p-8 text-center bg-muted/5">
       <div className="w-full flex flex-col items-center justify-center my-16">
@@ -261,6 +263,7 @@ const MessagePageContent = () => {
     </div>
   );
 
+  /* -------------------------------------- Render UI -------------------------------------- */
   return (
     <div className="w-full h-[calc(100dvh-4rem)] md:h-full min-h-0 flex bg-background overflow-hidden relative">
       {/* Call overlay + incoming modal — persists across chat switches */}
@@ -317,7 +320,7 @@ const MessagePageContent = () => {
           </div>
         )}
 
-        {/* Chat view — shown when a chatId is in the URL */}
+        {/* Chat View Section — Shown when a chatId is in the URL */}
         {chatId && chatView}
         {chatId && !chatView && (
           <div className="flex-1 min-w-0 min-h-0">

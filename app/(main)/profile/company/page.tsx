@@ -198,7 +198,7 @@ export default function ProfilePage() {
   const [openRemoveOpenPositionDialog, setOpenRemoveOpenPositionDialog] =
     useState<{ open: boolean; id: string | null }>({ open: false, id: null });
 
-  /* ------------------------------ API Integration ------------------------------ */
+  /* ----------------------------- API Integration ---------------------------- */
   // Current User Infomation and Current User CareerScopes
   const { user, loading, getCurrentUser } = useGetCurrentUserStore();
   const company = user?.company;
@@ -217,36 +217,6 @@ export default function ProfilePage() {
   const removeCmpAvatarStore = useRemoveCmpAvatarStore();
   const removeCmpCoverStore = useRemoveCmpCoverStore();
   const removeOneOpenPositionStore = useRemoveOneOpenPositionStore();
-
-  // Compute All Loading States
-  const updateProfileLoadingState =
-    updateOneCmpStore.loading ||
-    uploadAvatarCmpStore.loading ||
-    uploadCoverCmpStore.loading ||
-    uploadCmpImagesStore.loading ||
-    removeOneOpenPositionStore.loading ||
-    removeOneCompImageStore.loading ||
-    removeCmpAvatarStore.loading ||
-    removeCmpCoverStore.loading;
-
-  // Loading Message Based on Loading State
-  const loadingMessage = removeCmpAvatarStore.loading
-    ? "Removing avatar..."
-    : removeCmpCoverStore.loading
-      ? "Removing cover..."
-      : removeOneCompImageStore.loading
-        ? "Removing image..."
-        : removeOneOpenPositionStore.loading
-          ? "Removing open position..."
-          : uploadAvatarCmpStore.loading
-            ? "Uploading avatar..."
-            : uploadCoverCmpStore.loading
-              ? "Uploading cover..."
-              : uploadCmpImagesStore.loading
-                ? "Uploading image..."
-                : updateOneCmpStore.loading
-                  ? "Updating company profile..."
-                  : "";
 
   /* ------------------------------- Profile Form ------------------------------- */
   // React Hook Form: Company Profile Schema
@@ -388,7 +358,7 @@ export default function ProfilePage() {
 
   /* -------------------------------- Methods --------------------------------- */
   // ── Edit Mode Methods ────────────────────────────────────────────────────
-  // Close All The Dialogs
+  // ── Close All The Dialogs ─────────────────────────────────────────
   const closeAllDialogs = () => {
     setOpenRemoveAvatarDialog(false);
     setOpenCropDialog(false);
@@ -397,13 +367,13 @@ export default function ProfilePage() {
     setOpenRemoveCoverDialog(false);
   };
 
-  // Enable Edit Mode
+  // ── Enable Edit Mode ─────────────────────────────────────────
   const enableEditMode = () => {
     getAllCareerScopeStore.getAllCareerScopes();
     setIsEdit(true);
   };
 
-  // Disable Edit Mode
+  // ── Disable Edit Mode ─────────────────────────────────────────
   const disableEditMode = async () => {
     await getCurrentUser();
     setAvatarFile(null);
@@ -412,8 +382,8 @@ export default function ProfilePage() {
     setIsEdit(false);
   };
 
-  // ── Avatar, Cover and Image Methods ────────────────────────────────────────────────────
-  // 1.API: Remove Avatar
+  // ── Avatar, Cover and Image Methods ──────────────────────────────────────
+  // ── API: Remove Avatar ─────────────────────────────────────────
   const removeAvatar = async () => {
     if (company) await removeCmpAvatarStore.removeCmpAvatar(company.id);
 
@@ -422,7 +392,7 @@ export default function ProfilePage() {
     toast.success("Remove Avatar Successfully!");
   };
 
-  // 2.API: Remove Cover
+  // ── API: Remove Cover ─────────────────────────────────────────
   const removeCover = async () => {
     if (company) await removeCmpCoverStore.removeCmpCover(company.id);
 
@@ -431,7 +401,7 @@ export default function ProfilePage() {
     toast.success("Remove Cover Successfully!");
   };
 
-  // 3.API: Remove Single Image
+  // ── API: Remove Single Image ───────────────────────────────────
   const removeSingleImage = async (imageId: string, index: number) => {
     const updated = form.watch("images")?.filter((_, i) => i !== index);
     form.setValue("images", updated);
@@ -444,7 +414,7 @@ export default function ProfilePage() {
     toast.success("Remove Cover Successfully!");
   };
 
-  // 4.Handle Click Image Popup
+  // ── Handle Click Image Popup ────────────────────────────────────
   const handleClickImagePopup = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -454,7 +424,7 @@ export default function ProfilePage() {
     setOpenImagePopup(true);
   };
 
-  // 5.Handle Click Avatar Popup
+  // ── Handle Click Avatar Popup ────────────────────────────────────
   const handleClickAvatarPopup = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -464,7 +434,7 @@ export default function ProfilePage() {
     setOpenAvatarPopup(true);
   };
 
-  // 6.Handle Avatar Crop
+  // ── Handle Avatar Crop ───────────────────────────────────────────
   const handleAvatarCrop = (file: File) => {
     setAvatarFile(file);
 
@@ -483,7 +453,7 @@ export default function ProfilePage() {
     });
   };
 
-  // 7.Handle File Change for Avatar and Cover
+  // ── Handle File Change for Avatar and Cover ──────────────────────────
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     type: "avatar" | "cover",
@@ -508,8 +478,8 @@ export default function ProfilePage() {
     }
   };
 
-  // ── OpenPosition Methods ────────────────────────────────────────────────────
-  // 1.Add New Open Position
+  // ── OpenPosition Methods ────────────────────────────────────────────────
+  // ── Add New Open Position ─────────────────────────────────────────
   const addNewOpenPosition = () => {
     openPositionFA.append({
       uuid: "",
@@ -524,7 +494,7 @@ export default function ProfilePage() {
     });
   };
 
-  // 2. API: Remove OpenPosition
+  // ── API: Remove OpenPosition ────────────────────────────────────────
   const removeOpenPosition = async (openPositionID: string) => {
     await removeOneOpenPositionStore.removeOneOpenPosition(
       company!.id,
@@ -537,7 +507,7 @@ export default function ProfilePage() {
   };
 
   // ── Benefit Methods ────────────────────────────────────────────────────
-  // 1. Add New Benefit
+  // ── Add New Benefit ─────────────────────────────────────────
   const addNewBenefits = () => {
     const trimmed = benefitInput?.label?.trim();
     if (!trimmed) return;
@@ -568,7 +538,7 @@ export default function ProfilePage() {
     setOpenBenefitPopOver(false);
   };
 
-  // 2. Remove Benefit
+  // ── Remove Benefit ─────────────────────────────────────────
   const removeBenefit = (benefitToRemove: string) => {
     const benefitToDelete = benefits.find((bf) => bf.label === benefitToRemove);
     if (benefitToDelete?.id)
@@ -583,7 +553,7 @@ export default function ProfilePage() {
   };
 
   // ── Value Methods ────────────────────────────────────────────────────
-  // 1.Add New Value
+  // ── Add New Value ─────────────────────────────────────────
   const addNewValue = () => {
     const trimmed = valueInput?.label?.trim();
     if (!trimmed) return;
@@ -614,7 +584,7 @@ export default function ProfilePage() {
     setOpenValuePopOver(false);
   };
 
-  // 2.Remove Value
+  // ── Remove Value ─────────────────────────────────────────
   const removeValue = (valueToRemove: string) => {
     const valueToDelete = values.find((v) => v.label === valueToRemove);
     if (valueToDelete?.id)
@@ -629,7 +599,7 @@ export default function ProfilePage() {
   };
 
   // ── CareerScope Methods ────────────────────────────────────────────────────
-  //  1.Handle CareerScope Select
+  // ── Handle CareerScope Select ─────────────────────────────────────
   const handleCareerScopeSelect = (
     selectedCareerId: string,
     selectedCareerName: string,
@@ -642,7 +612,7 @@ export default function ProfilePage() {
     });
   };
 
-  // 2.Add New CareerScope
+  // ── Add New CareerScope ─────────────────────────────────────────
   const addNewCareerScope = () => {
     const name = careerScopeInput?.name?.trim();
     if (!name) return;
@@ -683,7 +653,7 @@ export default function ProfilePage() {
     setOpenCareerScopePopOver(false);
   };
 
-  // 3.Remove CareerScope
+  // ── Remove CareerScope ─────────────────────────────────────────
   const removeCareerScope = (careerToRemove: string) => {
     const toDelete = careerScopes.find((c) => c.name === careerToRemove);
     if (toDelete?.id)
@@ -698,7 +668,7 @@ export default function ProfilePage() {
   };
 
   // ── Social Methods ────────────────────────────────────────────────────
-  // 1.Add New Social
+  // ── Add New Social ─────────────────────────────────────────
   const addNewSocial = () => {
     const trimmedPlatform = socialInput?.platform?.trim();
     const trimmedUrl = socialInput?.url?.trim();
@@ -750,7 +720,7 @@ export default function ProfilePage() {
     return true;
   };
 
-  // 2.Remove Social
+  // ── Remove Social ─────────────────────────────────────────
   const removeSocial = (platform: TPlatform) => {
     const toDelete = socials.find((s) => s.platform === platform);
     if (toDelete?.id) setDeleteSocialIds((prev) => [...prev, toDelete.id!]);
@@ -761,7 +731,7 @@ export default function ProfilePage() {
   };
 
   // ── onSubmit Methods ────────────────────────────────────────────────────
-  // 1.onSubmit - API: Update The Entire Company Profile
+  // ── onSubmit - API: Update The Entire Company Profile ───────
   const onSubmit = async (data: TCompanyProfileForm) => {
     if (!company) return;
 
@@ -939,7 +909,7 @@ export default function ProfilePage() {
     }
   };
 
-  // 2.handleSubmit: Submit Company Profile Form
+  // ── handleSubmit: Submit Company Profile Form ───────────
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -958,14 +928,44 @@ export default function ProfilePage() {
     );
   };
 
-  /* ------------------------------- Loading State ------------------------------- */
+  /* -------------------------------- Loading States ------------------------------- */
+  // Compute All Loading States
+  const updateProfileLoadingState =
+    updateOneCmpStore.loading ||
+    uploadAvatarCmpStore.loading ||
+    uploadCoverCmpStore.loading ||
+    uploadCmpImagesStore.loading ||
+    removeOneOpenPositionStore.loading ||
+    removeOneCompImageStore.loading ||
+    removeCmpAvatarStore.loading ||
+    removeCmpCoverStore.loading;
+
+  // Loading Message Based on Loading State
+  const loadingMessage = removeCmpAvatarStore.loading
+    ? "Removing avatar..."
+    : removeCmpCoverStore.loading
+      ? "Removing cover..."
+      : removeOneCompImageStore.loading
+        ? "Removing image..."
+        : removeOneOpenPositionStore.loading
+          ? "Removing open position..."
+          : uploadAvatarCmpStore.loading
+            ? "Uploading avatar..."
+            : uploadCoverCmpStore.loading
+              ? "Uploading cover..."
+              : uploadCmpImagesStore.loading
+                ? "Uploading image..."
+                : updateOneCmpStore.loading
+                  ? "Updating company profile..."
+                  : "";
+
   if (loading) return <CompanyProfilePageLoadingSkeleton />;
 
-  /* -------------------------------- Empty State -------------------------------- */
+  /* -------------------------------- Empty State ------------------------------ */
   if (!user || !company) return null;
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
-    /* ------------------------------- Main Content ------------------------------- */
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <LoadingDialog
         loading={updateProfileLoadingState}

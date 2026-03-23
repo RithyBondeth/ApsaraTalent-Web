@@ -440,6 +440,7 @@ export default function CompanySignup() {
                 register={register}
                 setValue={setValue}
                 getValues={getValues}
+                errors={errors}
               />
             )}
             {step === 6 && (

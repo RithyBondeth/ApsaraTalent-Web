@@ -88,7 +88,7 @@ export default function ResumeBuilder() {
     }
   };
 
-  // ── Handle Generate Resume Payload ─────────────────────────────────────────
+  // ── Handle Generate Resume Payload ─────────────────────────────────────
   const handleGenerate = () => {
     if (!currentUser || !currentUser.employee) return;
     if (!selectedTemplate) return;
@@ -100,10 +100,10 @@ export default function ResumeBuilder() {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col items-start gap-5 px-2.5 sm:px-5 lg:px-8">
-      {/* Banner */}
+      {/* Banner Section */}
       <ResumeBuilderBanner />
 
-      {/* Template grid */}
+      {/* Template Grid Section */}
       <div className="w-full">
         <div className="w-full flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between">
           <TypographyH4>Choose your template</TypographyH4>
@@ -132,10 +132,10 @@ export default function ResumeBuilder() {
         </div>
       </div>
 
-      {/* Features */}
+      {/* Features Section */}
       <ResumeBuilderFeature />
 
-      {/* Generate CTA */}
+      {/* Generate Section */}
       <ResumeBuilderGenerate
         disabled={!selectedTemplate}
         onGenerateClick={handleGenerate}

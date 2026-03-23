@@ -122,7 +122,7 @@ export default function EmployeeDetailPage() {
   }, [openProfilePopup]);
 
   /* --------------------------------- Methods --------------------------------- */
-  // ── Handle Company Like Employee ─────────────────────────────────────────
+  // ── Handle Company Like Employee ────────────────────────────────────────
   const handleLike = async () => {
     if (currentUser && currentUser.company) {
       const companyId = currentUser.company.id;
@@ -159,7 +159,7 @@ export default function EmployeeDetailPage() {
     }
   };
 
-  // ── Handle Company Add Employee To Favorite ─────────────────────────────────────────
+  // ── Handle Company Add Employee To Favorite ─────────────────────────────
   const handleAddToFavorite = async () => {
     if (currentUser && currentUser.company) {
       const companyId = currentUser.company.id;
@@ -198,7 +198,7 @@ export default function EmployeeDetailPage() {
     setOpenProfilePopup(true);
   };
 
-  // ── Handle Download File ─────────────────────────────────────────
+  // ── Handle Download File ────────────────────────────────────────────────
   const handleDownloadFile = (url: string, filename: string) => {
     if (!url) return;
 
@@ -211,7 +211,7 @@ export default function EmployeeDetailPage() {
     document.body.removeChild(link);
   };
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* -------------------------------- Loading State -------------------------------- */
   const isLoading = !isInitialized || loading;
   if (isLoading) {
     return (
@@ -221,6 +221,7 @@ export default function EmployeeDetailPage() {
     );
   }
 
+  /* --------------------------------- Error State --------------------------------- */
   if (fetchError) {
     return (
       <div className="h-screen w-screen flex justify-center items-center animate-page-in">
@@ -237,6 +238,7 @@ export default function EmployeeDetailPage() {
     );
   }
 
+  /* ------------------------------- Not Found State ------------------------------- */
   if (!employeeData) {
     return (
       <div className="h-screen w-screen flex justify-center items-center animate-page-in">
@@ -250,6 +252,7 @@ export default function EmployeeDetailPage() {
     );
   }
 
+  /* ----------------------------------- Render UI ----------------------------------- */
   return (
     <div className="flex flex-col gap-5 animate-page-in">
       {/* Personal Information Section */}
