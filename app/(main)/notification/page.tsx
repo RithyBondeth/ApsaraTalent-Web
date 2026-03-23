@@ -16,7 +16,6 @@ import {
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { TNotificationFilterType } from "@/utils/types/notification.type";
 import { LucideCheckCheck } from "lucide-react";
-
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { TypographyP } from "@/components/utils/typography/typography-p";
