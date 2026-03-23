@@ -2,9 +2,11 @@ import { IDragDropFileProps } from "@/utils/interfaces/drag-drop-file.interface"
 import { LucideCircleX, LucideUserCircle } from "lucide-react";
 import Image from "next/image";
 import React, {
-    ChangeEvent,
-    DragEvent,
-    useEffect, useRef, useState
+  ChangeEvent,
+  DragEvent,
+  useEffect,
+  useRef,
+  useState,
 } from "react";
 import { FieldValues, Path, PathValue } from "react-hook-form";
 import { TypographyMuted } from "./typography/typography-muted";
