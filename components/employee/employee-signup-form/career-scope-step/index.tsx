@@ -9,29 +9,29 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-    CommandDialog,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
 } from "@/components/ui/command";
 import { DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
 } from "@/components/ui/pagination";
 import ErrorMessage from "@/components/utils/error-message";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { careerScopesList } from "@/data/career-data";
 import { LucideArrowLeft, LucideSearch } from "lucide-react";
+import { careerScopesListConstant } from "@/utils/constants/ui.constant";
 
 export default function EmployeeCareerScopeStepForm({
   register,
@@ -48,7 +48,7 @@ export default function EmployeeCareerScopeStepForm({
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedCareers, setSelectedCareers] = useState<string[]>([]);
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(careerScopesList.length / itemsPerPage);
+  const totalPages = Math.ceil(careerScopesListConstant.length / itemsPerPage);
 
   // Register field and sync initial value ONCE
   useEffect(() => {
@@ -74,7 +74,7 @@ export default function EmployeeCareerScopeStepForm({
   };
 
   // Handle Pagination
-  const paginatedCareers = careerScopesList.slice(
+  const paginatedCareers = careerScopesListConstant.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage,
   );
@@ -133,7 +133,7 @@ export default function EmployeeCareerScopeStepForm({
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Suggestions">
-            {careerScopesList.slice(0, 5).map((item, index) => (
+            {careerScopesListConstant.slice(0, 5).map((item, index) => (
               <CommandItem key={index} className="flex items-center gap-2">
                 <Checkbox
                   checked={selectedCareers.includes(item.value)}
