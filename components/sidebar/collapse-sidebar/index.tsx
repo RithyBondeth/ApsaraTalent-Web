@@ -31,40 +31,89 @@ import LogoComponent from "../../utils/logo";
 import { SidebarDropdownFooter } from "./sidebar-dropdown-footer";
 import { SidebarDropdownFooterSkeleton } from "./sidebar-dropdown-footer/skeleton";
 
-/* ── Inline badge shown next to menu text when sidebar is open ── */
+/* ─────────────────────────────────────────────────────────────────────────
+   Inline badge (expanded sidebar)
+   ───────────────────────────────────────────────────────────────────────── */
 const CountBadge = ({ count }: { count: number }) => {
   if (count === 0) return null;
   return (
-    <span className="ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-destructive px-1.5 text-[10px] font-bold leading-none text-destructive-foreground">
+    <span className="ml-auto flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-destructive px-1.5 text-[10px] font-bold leading-none text-destructive-foreground ring-[2px] ring-destructive/20">
       {count > 99 ? "99+" : count}
     </span>
   );
 };
 
-/* ── Shared className for every SidebarMenuButton ── */
+/* ─────────────────────────────────────────────────────────────────────────
+   Floating badge (collapsed sidebar) — with ping animation for attention
+   ───────────────────────────────────────────────────────────────────────── */
+const FloatingBadge = ({ count }: { count: number }) => {
+  if (count === 0) return null;
+  return (
+    <span className="pointer-events-none absolute -top-1.5 right-0.5 z-50">
+      {/* Ping ring */}
+      <span className="absolute inset-0 animate-ping rounded-full bg-destructive opacity-60" />
+      {/* Solid badge */}
+      <span className="relative flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold leading-none text-destructive-foreground">
+        {count > 99 ? "99+" : count}
+      </span>
+    </span>
+  );
+};
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Section label with coloured dot marker
+   ───────────────────────────────────────────────────────────────────────── */
+const NavGroupLabel = ({ children }: { children: React.ReactNode }) => (
+  <SidebarGroupLabel className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
+    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary/50" />
+    {children}
+  </SidebarGroupLabel>
+);
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Shared button className
+   Active:  gradient fill + inset left glow accent + outer drop shadow
+   Hover:   2 px slide-right micro-animation (cancelled on active items)
+   ───────────────────────────────────────────────────────────────────────── */
 const MENU_BTN_CLS = [
   "group-data-[collapsible=icon]:justify-center",
   "font-medium",
   "px-2.5 py-2.5",
   "text-[15px] md:text-sm",
   "transition-all duration-300 ease-out",
-  /* active */
-  "data-[active=true]:bg-primary data-[active=true]:text-primary-foreground",
-  "data-[active=true]:shadow-[0_4px_14px_hsl(var(--primary)/0.35)]",
+  /* hover slide-right on non-active items */
+  "hover:translate-x-[2px]",
+  /* ── active state ── */
+  "data-[active=true]:bg-gradient-to-r",
+  "data-[active=true]:from-primary",
+  "data-[active=true]:to-primary/80",
+  "data-[active=true]:text-primary-foreground",
+  "data-[active=true]:font-semibold",
+  /* inset left accent bar + outer glow */
+  "data-[active=true]:shadow-[inset_3px_0_0_hsl(var(--primary-foreground)/0.3),_0_6px_20px_hsl(var(--primary)/0.4)]",
   "data-[active=true]:animate-sidebar-active-in",
-  /* lock active style on hover */
-  "hover:data-[active=true]:bg-primary hover:data-[active=true]:text-primary-foreground",
+  /* cancel slide on active */
+  "data-[active=true]:translate-x-0",
+  "hover:data-[active=true]:translate-x-0",
+  /* lock gradient on hover-over-active */
+  "hover:data-[active=true]:bg-gradient-to-r",
+  "hover:data-[active=true]:from-primary",
+  "hover:data-[active=true]:to-primary/80",
+  "hover:data-[active=true]:text-primary-foreground",
 ].join(" ");
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   Main component
+   ═══════════════════════════════════════════════════════════════════════════ */
 export default function CollapseSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  /* ── Utils ─────────────────────────────────── */
   const pathname = usePathname();
   const { open, isMobile, setOpenMobile } = useSidebar();
   const t = useTranslations("sidebar");
   const isExpanded = isMobile ? true : open;
 
+  /* ── i18n map ─────────────────────────────── */
   const sidebarTitleMap = useMemo<Record<string, string>>(
     () => ({
       Feed: t("feed"),
@@ -82,7 +131,7 @@ export default function CollapseSidebar({
     [sidebarTitleMap],
   );
 
-  /* ── API ────────────────────────────────────── */
+  /* ── API stores ───────────────────────────── */
   const { user, loading } = useGetCurrentUserStore();
   const { countCurrentEmployeeMatching, totalEmpMatching } =
     useCountCurrentEmployeeMatchingStore();
@@ -112,7 +161,7 @@ export default function CollapseSidebar({
     },
   });
 
-  /* ── Derived counts ─────────────────────────── */
+  /* ── Derived counts ─────────────────────── */
   const matchingCount = useMemo(() => {
     if (isEmployee) return totalEmpMatching ?? 0;
     if (isCompany) return totalCmpMatching ?? 0;
@@ -144,6 +193,7 @@ export default function CollapseSidebar({
     [isEmployee, isCompany, user],
   );
 
+  /* ── Helpers ─────────────────────────────── */
   const getBadgeCount = useCallback(
     (url: string): number => {
       if (url === "/matching") return matchingCount;
@@ -169,7 +219,7 @@ export default function CollapseSidebar({
     if (isMobile) setOpenMobile(false);
   }, [isMobile, setOpenMobile]);
 
-  /* ── Shared nav item renderer ─────────────── */
+  /* ── Nav item renderer ───────────────────── */
   const renderNavItem = (
     url: string,
     title: string,
@@ -177,6 +227,8 @@ export default function CollapseSidebar({
     badgeCount?: number,
   ) => {
     const count = badgeCount ?? getBadgeCount(url);
+    const active = isPathActive(url);
+
     return (
       <Collapsible
         key={url}
@@ -187,14 +239,25 @@ export default function CollapseSidebar({
         <SidebarMenuItem className="relative">
           <CollapsibleTrigger asChild>
             <SidebarMenuButton
-              isActive={isPathActive(url)}
+              isActive={active}
               tooltip={title}
               className={MENU_BTN_CLS}
               asChild
             >
-              <Link href={resolveUrl(url)} prefetch={true} onClick={handleNavClick}>
-                <Icon className="!size-5 shrink-0" strokeWidth={1.5} />
-                <span className="group-data-[collapsible=icon]:hidden">{title}</span>
+              <Link
+                href={resolveUrl(url)}
+                prefetch={true}
+                onClick={handleNavClick}
+              >
+                {/* Icon — bolder stroke when active for extra punch */}
+                <Icon
+                  className="!size-5 shrink-0 transition-all duration-300"
+                  strokeWidth={active ? 2.2 : 1.5}
+                />
+                <span className="group-data-[collapsible=icon]:hidden">
+                  {title}
+                </span>
+                {/* Inline badge (expanded only) */}
                 {isExpanded && count > 0 && (
                   <span className="group-data-[collapsible=icon]:hidden">
                     <CountBadge count={count} />
@@ -204,41 +267,47 @@ export default function CollapseSidebar({
             </SidebarMenuButton>
           </CollapsibleTrigger>
 
-          {/* Floating badge visible only when sidebar is collapsed */}
-          {!isExpanded && count > 0 && (
-            <span className="pointer-events-none absolute -top-1.5 right-1 z-50 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold leading-none text-destructive-foreground">
-              {count > 99 ? "99+" : count}
-            </span>
-          )}
+          {/* Floating badge with ping — collapsed only */}
+          {!isExpanded && <FloatingBadge count={count} />}
         </SidebarMenuItem>
       </Collapsible>
     );
   };
 
-  /* ── Render ─────────────────────────────────── */
+  /* ── Render ──────────────────────────────── */
   return (
     <Sidebar collapsible="icon" {...props}>
-      {/* ── Header / Logo ── */}
-      <SidebarHeader className="pb-3">
-        <Link href="/feed" className="flex items-center">
-          {isExpanded ? (
+
+      {/* ══ Logo / Header ══ */}
+      <SidebarHeader className="pt-1 pb-3">
+        {isExpanded ? (
+          <Link
+            href="/feed"
+            className="flex items-center rounded-xl px-2 py-1.5 transition-all duration-200 hover:bg-sidebar-accent"
+          >
             <LogoComponent priority={true} />
-          ) : (
-            <SidebarMenuButton tooltip="Apsara Talent" className="text-sm">
+          </Link>
+        ) : (
+          <SidebarMenuButton
+            tooltip="Apsara Talent"
+            className="justify-center text-sm"
+            asChild
+          >
+            <Link href="/feed">
               <LogoComponent withoutTitle />
-            </SidebarMenuButton>
-          )}
-        </Link>
+            </Link>
+          </SidebarMenuButton>
+        )}
       </SidebarHeader>
 
       <Separator className="mb-1" />
 
-      {/* ── Navigation Items ── */}
+      {/* ══ Nav items ══ */}
       <SidebarContent className="pb-1">
+
+        {/* Navigation group */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-[11px] uppercase tracking-wider">
-            Navigation
-          </SidebarGroupLabel>
+          <NavGroupLabel>Navigation</NavGroupLabel>
           <SidebarMenu className="space-y-0.5">
             {sidebarList.map((item) =>
               renderNavItem(item.url, getSidebarTitle(item.title), item.icon),
@@ -246,27 +315,21 @@ export default function CollapseSidebar({
           </SidebarMenu>
         </SidebarGroup>
 
-        {/* ── Tools (employees only) ── */}
+        {/* Tools group — employees only */}
         {!isCompany && (
           <SidebarGroup>
-            <SidebarGroupLabel className="text-[11px] uppercase tracking-wider">
-              Tools
-            </SidebarGroupLabel>
+            <NavGroupLabel>Tools</NavGroupLabel>
             <SidebarMenu>
-              {renderNavItem(
-                "/resume-builder",
-                t("aiResumeBuilder"),
-                LucideFileUser,
-                0,
-              )}
+              {renderNavItem("/resume-builder", t("aiResumeBuilder"), LucideFileUser, 0)}
             </SidebarMenu>
           </SidebarGroup>
         )}
+
       </SidebarContent>
 
       <Separator />
 
-      {/* ── Footer / User menu ── */}
+      {/* ══ Footer / user menu ══ */}
       <SidebarFooter className="pb-[max(0.5rem,env(safe-area-inset-bottom))]">
         {loading || !user ? (
           <SidebarDropdownFooterSkeleton />
@@ -274,6 +337,7 @@ export default function CollapseSidebar({
           <SidebarDropdownFooter user={userData} />
         )}
       </SidebarFooter>
+
     </Sidebar>
   );
 }
