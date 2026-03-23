@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallStore } from "@/stores/features/call.store";
-import { IncomingCallModal } from "./incoming-call-modal";
-import { CallOverlay } from "./call-overlay";
+import { IncomingCallModal } from "../incoming-call-modal";
+import { CallOverlay } from "../call-overlay";
 
 /**
  * Call Orchestrator — mounts once in the message page layout.

@@ -4,52 +4,77 @@ import {
   GoogleIcon,
   LinkedInIcon,
 } from "@/utils/constants/asset.constant";
+import { StaticImageData } from "next/image";
 
-export const genderConstant = [
+export const genderConstant: {
+  id: number;
+  label: string;
+  value: string;
+}[] = [
   { id: 1, label: "Male", value: "male" },
   { id: 2, label: "Female", value: "female" },
-];
+] as const;
 
-export const userRoleConstant = [
+export const userRoleConstant: {
+  id: number;
+  label: string;
+  value: string;
+}[] = [
   { id: 1, label: "Employee or (Freelancer)", value: "employee" },
   { id: 2, label: "Company or (Employer)", value: "company" },
-];
+] as const;
 
-export const platformConstant = [
+export const platformConstant: {
+  id: number;
+  label: string;
+  value: string;
+}[] = [
   { id: 1, label: "Facebook", value: "facebook" },
   { id: 2, label: "Instagram", value: "Instagram" },
   { id: 3, label: "Telegram", value: "telegram" },
   { id: 4, label: "LinkedIn", value: "linkedin" },
   { id: 5, label: "Github", value: "github" },
   { id: 6, label: "Website", value: "website" },
-];
+] as const;
 
-export const loginMethodConstant = [
+export const loginMethodConstant: {
+  id: number;
+  label: string;
+  icon: StaticImageData;
+}[] = [
   { id: 1, label: "Google", icon: GoogleIcon },
   { id: 2, label: "Facebook", icon: FacebookIcon },
   { id: 3, label: "LinkedIn", icon: LinkedInIcon },
   { id: 4, label: "Github", icon: GithubIcon },
-];
+] as const;
 
-export const availabilityConstant = [
+export const availabilityConstant: {
+  id: number;
+  label: string;
+  value: string;
+}[] = [
   { id: 1, label: "Full Time", value: "full_time" },
   { id: 2, label: "Part Time", value: "part_time" },
   { id: 3, label: "Internship", value: "internship" },
   { id: 4, label: "Contract", value: "contract" },
   { id: 5, label: "Freelance", value: "freelance" },
   { id: 6, label: "Remote", value: "remote" },
-];
+] as const;
 
-export const yearOfExperienceConstant = [
+export const yearOfExperienceConstant: {
+  id: number;
+  label: string;
+  value: string;
+}[] = [
   { id: 1, label: "No Experience", value: "No Experience" },
   { id: 2, label: "Less than 1 year", value: "Less than 1 year" },
   { id: 3, label: "1 - 2 years", value: "1 - 2 years" },
   { id: 4, label: "3 - 5 years", value: "3 - 5 years" },
   { id: 5, label: "6 - 10 years", value: "6 - 10 years" },
   { id: 6, label: "10+ years", value: "10+ years" },
-];
+] as const;
 
-export const locationConstant = [
+export const locationConstant: string[] = [
   "Phnom Penh",
   "Banteay Meanchey",
   "Battambang",
@@ -75,9 +100,9 @@ export const locationConstant = [
   "Svay Rieng",
   "Takeo",
   "Tbong Khmum",
-];
+] as const;
 
-export const badgeRandomColorsClass = [
+export const badgeRandomColorsClass: { bg: string; text: string }[] = [
   { bg: "bg-blue-100", text: "text-blue-800" },
   { bg: "bg-green-100", text: "text-green-800" },
   { bg: "bg-purple-100", text: "text-purple-800" },
@@ -90,9 +115,13 @@ export const badgeRandomColorsClass = [
   { bg: "bg-emerald-100", text: "text-emerald-800" },
   { bg: "bg-cyan-100", text: "text-cyan-800" },
   { bg: "bg-rose-100", text: "text-rose-800" },
-];
+] as const;
 
-export const careerScopesListConstant = [
+export const careerScopesListConstant: {
+  label: string;
+  value: string;
+  description: string;
+}[] = [
   // --- CORE SOFTWARE & APP DEVELOPMENT ---
   {
     label: "Software Engineering",
@@ -692,4 +721,4 @@ export const careerScopesListConstant = [
     value: "Astrobiology & Space Medicine",
     description: "Non-existent locally as a career path.",
   },
-];
+] as const;

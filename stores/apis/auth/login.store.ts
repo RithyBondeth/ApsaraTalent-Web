@@ -1,19 +1,17 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
-import {
-    clearAuthCookies, setAuthCookies
-} from "@/utils/auth/cookie-manager";
+import { clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-manager";
 import { API_AUTH_LOGIN_URL } from "@/utils/constants/apis/auth_url";
-import { TUserAuthResponse } from "@/utils/constants/auth.constant";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../users/get-current-user.store";
+import { IUserAuthResponse } from "@/utils/interfaces/auth.interface";
 
 type TLoginState = {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
   message: string | null;
-  user: TUserAuthResponse | null;
+  user: IUserAuthResponse | null;
   login: (
     email: string,
     password: string,

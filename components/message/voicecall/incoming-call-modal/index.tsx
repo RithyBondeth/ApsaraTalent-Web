@@ -2,13 +2,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Phone, PhoneOff } from "lucide-react";
-import type { ICallParticipant } from "@/stores/features/call.store";
-
-interface IncomingCallModalProps {
-  caller: ICallParticipant;
-  onAccept: () => void;
-  onDecline: () => void;
-}
+import { IIncomingCallModalProps } from "./props";
 
 /**
  * Centered modal overlay shown when an incoming voice call arrives.
@@ -24,7 +18,11 @@ interface IncomingCallModalProps {
  * The pulsing ring animation is achieved via Tailwind `animate-ping` on a
  * span positioned behind the avatar.
  */
-export function IncomingCallModal({ caller, onAccept, onDecline }: IncomingCallModalProps) {
+export function IncomingCallModal({
+  caller,
+  onAccept,
+  onDecline,
+}: IIncomingCallModalProps) {
   const initials = caller.name
     .split(" ")
     .map((n) => n[0])
@@ -52,7 +50,9 @@ export function IncomingCallModal({ caller, onAccept, onDecline }: IncomingCallM
           <span className="absolute inline-flex h-16 w-16 rounded-full bg-green-500/10 border-2 border-green-500/30" />
           <Avatar className="h-16 w-16 relative z-10">
             <AvatarImage src={caller.avatar} alt={caller.name} />
-            <AvatarFallback className="text-lg font-semibold">{initials}</AvatarFallback>
+            <AvatarFallback className="text-lg font-semibold">
+              {initials}
+            </AvatarFallback>
           </Avatar>
         </div>
 

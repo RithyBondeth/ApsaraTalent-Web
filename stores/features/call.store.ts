@@ -41,7 +41,7 @@ const CALL_END_DISMISS_MS = 2_000;
 const CALL_CONNECT_TIMEOUT_MS = 25_000;
 
 // ── Types ────────────────────────────────────────────────────────────────────
-export type CallStatus =
+export type TCallStatus =
   | "idle"
   | "calling" // Initiator: offer sent, waiting for callee to pick up
   | "ringing" // Receiver: IncomingCallModal is visible
@@ -65,7 +65,7 @@ const normalizeParticipantAvatar = (
 });
 
 // ── SocketInstance payload types ──────────────────────────────────────────────────────
-export interface CallOfferPayload {
+export interface ICallOfferPayload {
   callId: string;
   callerId: string;
   callerName: string;
@@ -73,19 +73,19 @@ export interface CallOfferPayload {
   offer: RTCSessionDescriptionInit;
 }
 
-export interface CallAnswerPayload {
+export interface ICallAnswerPayload {
   callId: string;
   answer: RTCSessionDescriptionInit;
 }
 
-export interface IceCandidatePayload {
+export interface IIceCandidatePayload {
   callId: string;
   candidate: RTCIceCandidateInit;
 }
 
 // ── Store interface ───────────────────────────────────────────────────────────
-interface CallState {
-  status: CallStatus;
+interface ICallState {
+  status: TCallStatus;
   callId: string | null;
   localStream: MediaStream | null;
   remoteStream: MediaStream | null;
@@ -131,9 +131,9 @@ interface CallState {
   toggleMute: () => void;
 
   // ── Internal signal handlers (called by socket listeners) ───────────────
-  _handleOffer: (data: CallOfferPayload) => void;
-  _handleAnswer: (data: CallAnswerPayload) => void;
-  _handleIceCandidate: (data: IceCandidatePayload) => void;
+  _handleOffer: (data: ICallOfferPayload) => void;
+  _handleAnswer: (data: ICallAnswerPayload) => void;
+  _handleIceCandidate: (data: IIceCandidatePayload) => void;
   _handleCallEnd: (data: { callId: string; reason?: CallEndReason }) => void;
 }
 
@@ -205,7 +205,7 @@ function getSocketInstance(): SocketInstance | null {
 }
 
 // ── Store ─────────────────────────────────────────────────────────────────────
-export const useCallStore = create<CallState>((set, get) => ({
+export const useCallStore = create<ICallState>((set, get) => ({
   status: "idle",
   callId: null,
   localStream: null,
@@ -225,13 +225,13 @@ export const useCallStore = create<CallState>((set, get) => ({
     socket.off("callDeclined");
     socket.off("callEnded");
 
-    socket.on("incomingCall", (data: CallOfferPayload) =>
+    socket.on("incomingCall", (data: ICallOfferPayload) =>
       get()._handleOffer(data),
     );
-    socket.on("callAnswered", (data: CallAnswerPayload) =>
+    socket.on("callAnswered", (data: ICallAnswerPayload) =>
       get()._handleAnswer(data),
     );
-    socket.on("remoteIceCandidate", (data: IceCandidatePayload) =>
+    socket.on("remoteIceCandidate", (data: IIceCandidatePayload) =>
       get()._handleIceCandidate(data),
     );
     socket.on("callDeclined", (data: { callId: string }) =>
@@ -453,7 +453,7 @@ export const useCallStore = create<CallState>((set, get) => ({
   },
 
   // ── _handleOffer (incomingCall) ────────────────────────────────────────────
-  _handleOffer: (data: CallOfferPayload) => {
+  _handleOffer: (data: ICallOfferPayload) => {
     if (get().status !== "idle") {
       // Already in a call — auto-decline the new one
       const socket = getSocketInstance();
@@ -481,7 +481,7 @@ export const useCallStore = create<CallState>((set, get) => ({
   },
 
   // ── _handleAnswer (callAnswered) ───────────────────────────────────────────
-  _handleAnswer: async (data: CallAnswerPayload) => {
+  _handleAnswer: async (data: ICallAnswerPayload) => {
     clearRingTimeout();
     if (!_pc) return;
     try {
@@ -496,7 +496,7 @@ export const useCallStore = create<CallState>((set, get) => ({
   },
 
   // ── _handleIceCandidate ────────────────────────────────────────────────────
-  _handleIceCandidate: async (data: IceCandidatePayload) => {
+  _handleIceCandidate: async (data: IIceCandidatePayload) => {
     if (!_pc || !_pc.remoteDescription) {
       _pendingRemoteIceCandidates.push(data.candidate);
       return;

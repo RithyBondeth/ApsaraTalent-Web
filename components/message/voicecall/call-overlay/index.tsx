@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Mic, MicOff, PhoneOff } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import type { CallStatus, ICallParticipant } from "@/stores/features/call.store";
+import { ICallOverlayProps } from "./props";
 
 // ── Helper: format elapsed call seconds as MM:SS ──────────────────────────────
 function formatCallDuration(seconds: number): string {
@@ -13,21 +13,6 @@ function formatCallDuration(seconds: number): string {
   const s = (seconds % 60).toString().padStart(2, "0");
   return `${m}:${s}`;
 }
-
-interface CallOverlayProps {
-  status: CallStatus;
-  /** For the receiver: the person who called. */
-  caller: ICallParticipant | null;
-  /** For the initiator: the person being called. */
-  callee: ICallParticipant | null;
-  isMuted: boolean;
-  callStartedAt: Date | null;
-  /** Remote MediaStream — played via hidden <audio autoPlay>. */
-  remoteStream: MediaStream | null;
-  onMute: () => void;
-  onEnd: () => void;
-}
-
 /**
  * Floating in-call card — displayed while a call is active (connecting or connected).
  *
@@ -48,7 +33,7 @@ export function CallOverlay({
   remoteStream,
   onMute,
   onEnd,
-}: CallOverlayProps) {
+}: ICallOverlayProps) {
   // Duration timer — updates every second once connected
   const [elapsed, setElapsed] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -113,7 +98,9 @@ export function CallOverlay({
         <div className="flex items-center gap-3 mb-4">
           <Avatar className="h-10 w-10 shrink-0">
             <AvatarImage src={partner.avatar} alt={partner.name} />
-            <AvatarFallback className="text-sm font-medium">{initials}</AvatarFallback>
+            <AvatarFallback className="text-sm font-medium">
+              {initials}
+            </AvatarFallback>
           </Avatar>
           <div className="min-w-0">
             <p className="font-semibold text-sm text-foreground truncate leading-tight">

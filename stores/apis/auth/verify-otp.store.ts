@@ -1,17 +1,17 @@
 import { clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-manager";
 import { API_AUTH_VERIFY_OTP_URL } from "@/utils/constants/apis/auth_url";
-import { TUserAuthResponse } from "@/utils/constants/auth.constant";
 import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import axios from "axios";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../users/get-current-user.store";
+import { IUserAuthResponse } from "@/utils/interfaces/auth.interface";
 
 type TVerifyOTPResponse = {
   message: string | null;
   accessToken: string | null;
   refreshToken: string | null;
-  user: TUserAuthResponse | null;
+  user: IUserAuthResponse | null;
 };
 
 type TVerifyOTPStoreState = TVerifyOTPResponse & {

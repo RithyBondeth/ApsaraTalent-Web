@@ -9,4 +9,4 @@ export const DOWNLOAD_RESUME_STEPS: TLoadingStep[] = [
   { label: "Applying template styling", completeAt: 78 },
   { label: "Rendering PDF", completeAt: 92 },
   { label: "Finalising & compressing", completeAt: 99 },
-];
+] as const;

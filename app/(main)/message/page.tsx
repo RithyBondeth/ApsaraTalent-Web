@@ -8,7 +8,7 @@ import {
   MessageThreadSkeleton,
 } from "@/components/message/message-page-skeleton";
 import ChatSidebar from "@/components/message/message-sidebar";
-import { CallOrchestrator } from "@/components/call";
+import { CallOrchestrator } from "@/components/message/voicecall/call-orchestrator";
 import { ErrorBoundary } from "@/components/utils/error-boundary";
 import {
   ResizableHandle,
@@ -21,7 +21,6 @@ import { useCallStore } from "@/stores/features/call.store";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { IMessage } from "@/utils/types/chat.type";
 import type { ImperativePanelHandle } from "react-resizable-panels";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import Image from "next/image";
@@ -29,6 +28,7 @@ import Image from "next/image";
 import MessageLoadingSkeleton from "./skeleton";
 import { MessageSvgImage } from "@/utils/constants/asset.constant";
 import { CHAT_LOADING_TIMEOUT_MS } from "@/utils/constants/chat.constant";
+import { IMessage } from "@/components/message/props";
 
 const MessagePageContent = () => {
   /* ---------------------------------- Utils --------------------------------- */
@@ -141,7 +141,10 @@ const MessagePageContent = () => {
       setLoadingTimedOut(false);
       return;
     }
-    const t = setTimeout(() => setLoadingTimedOut(true), CHAT_LOADING_TIMEOUT_MS);
+    const t = setTimeout(
+      () => setLoadingTimedOut(true),
+      CHAT_LOADING_TIMEOUT_MS,
+    );
     return () => clearTimeout(t);
   }, [isConnected, isChatsLoaded]);
 

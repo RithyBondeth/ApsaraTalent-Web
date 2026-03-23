@@ -51,4 +51,4 @@ export const sidebarList = [
     icon: BellRing,
     badge: 0,
   },
-];
+] as const;
