@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { SectionWrapper } from "./section-wrapper";
-import { SectionId, useCanvasEditorStore } from "@/stores/canvas-editor.store";
+import { SectionId, useCanvasEditorStore } from "@/stores/features/canvas-editor.store";
 
 /* ─── Types ─────────────────────────────────────────────────── */
 interface CanvasTemplateProps {

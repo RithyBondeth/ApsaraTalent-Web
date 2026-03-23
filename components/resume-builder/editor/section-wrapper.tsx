@@ -3,7 +3,7 @@
 import { GripVertical } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { SectionId, useCanvasEditorStore } from "@/stores/canvas-editor.store";
+import { SectionId, useCanvasEditorStore } from "@/stores/features/canvas-editor.store";
 
 interface SectionWrapperProps {
   sectionId: SectionId;

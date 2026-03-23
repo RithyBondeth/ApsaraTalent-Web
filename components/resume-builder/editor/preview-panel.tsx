@@ -6,7 +6,7 @@ import FloatingToolbar from "./floating-toolbar";
 import { Eye, RefreshCw, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 import { UseFormSetValue, UseFormGetValues } from "react-hook-form";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { useCanvasEditorStore } from "@/stores/canvas-editor.store";
+import { useCanvasEditorStore } from "@/stores/features/canvas-editor.store";
 import { Button } from "@/components/ui/button";
 
 interface PreviewPanelProps {

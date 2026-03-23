@@ -16,8 +16,8 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useChatStore } from "@/stores/chat.store";
-import { useCallStore } from "@/stores/call.store";
+import { useChatStore } from "@/stores/features/chat.store";
+import { useCallStore } from "@/stores/features/call.store";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";

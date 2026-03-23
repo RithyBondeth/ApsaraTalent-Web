@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Mic, MicOff, PhoneOff } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import type { CallStatus, ICallParticipant } from "@/stores/call.store";
+import type { CallStatus, ICallParticipant } from "@/stores/features/call.store";
 
 // ── Helper: format elapsed call seconds as MM:SS ──────────────────────────────
 function formatCallDuration(seconds: number): string {

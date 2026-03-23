@@ -8,7 +8,7 @@ import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/coun
 import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useChatStore } from "@/stores/chat.store";
+import { useChatStore } from "@/stores/features/chat.store";
 import { sidebarList } from "@/utils/constants/sidebar.constant";
 import { LucideFileUser } from "lucide-react";
 import { useTranslations } from "next-intl";

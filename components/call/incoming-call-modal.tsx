@@ -2,7 +2,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Phone, PhoneOff } from "lucide-react";
-import type { ICallParticipant } from "@/stores/call.store";
+import type { ICallParticipant } from "@/stores/features/call.store";
 
 interface IncomingCallModalProps {
   caller: ICallParticipant;

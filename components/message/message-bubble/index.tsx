@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ReactionPicker } from "../message-utils/reaction-picker";
-import { useChatStore } from "@/stores/chat.store";
+import { useChatStore } from "@/stores/features/chat.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useMemo, useRef, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -28,7 +28,7 @@ import {
 import { AudioPlayer } from "./audio-player";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useCallStore } from "@/stores/call.store";
+import { useCallStore } from "@/stores/features/call.store";
 import { normalizeMediaUrl } from "@/utils/functions/normalize-media-url";
 
 // ─── URL Detection ───────────────────────────────────────────────────────────

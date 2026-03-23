@@ -1,6 +1,6 @@
 "use client";
 
-import { useChatStore } from "@/stores/chat.store";
+import { useChatStore } from "@/stores/features/chat.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useEffect } from "react";
 
