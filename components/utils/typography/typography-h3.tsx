@@ -1,12 +1,16 @@
 import { cn } from "@/lib/utils";
-import { ITypographyProps } from "@/utils/interfaces/typography.interface";
+import { ReactNode } from "react";
 
-export function TypographyH3(props: ITypographyProps) {
+export function TypographyH3(props: {
+  children: ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
   return (
     <h3
       className={cn(
         "scroll-m-20 text-2xl font-semibold tracking-tight",
-        props.className
+        props.className,
       )}
       style={props.style}
     >

@@ -1,7 +1,11 @@
 import { cn } from "@/lib/utils";
-import { ITypographyProps } from "@/utils/interfaces/typography.interface";
+import { ReactNode } from "react";
 
-export function TypographyP(props: ITypographyProps) {
+export function TypographyP(props: {
+  children: ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
   return (
     <p
       className={cn("leading-7 [&:not(:first-child)]:mt-6", props.className)}

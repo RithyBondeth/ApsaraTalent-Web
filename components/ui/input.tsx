@@ -3,13 +3,18 @@ import * as React from "react";
 import type { FieldError, FieldErrorsImpl, Merge } from "react-hook-form";
 import { TypographySmall } from "../utils/typography/typography-small";
 
-type RHFMessage = string | FieldError | Merge<FieldError, FieldErrorsImpl<Record<string, unknown>>>;
+type TRHFMessage =
+  | string
+  | FieldError
+  | Merge<FieldError, FieldErrorsImpl<Record<string, unknown>>>;
 
-export interface IInputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "prefix" | "suffix"> {
+export interface IInputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "prefix" | "suffix"
+> {
   prefix?: React.ReactNode;
   suffix?: React.ReactNode;
-  validationMessage?: RHFMessage;
+  validationMessage?: TRHFMessage;
 }
 
 const Input = React.forwardRef<HTMLInputElement, IInputProps>(
@@ -24,20 +29,24 @@ const Input = React.forwardRef<HTMLInputElement, IInputProps>(
         <div
           className={cn(
             "flex items-center h-12 w-full rounded-md border border-input bg-background px-3 text-base ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-            className
+            className,
           )}
         >
-          {prefix && <span className="mr-2 text-muted-foreground">{prefix}</span>}
+          {prefix && (
+            <span className="mr-2 text-muted-foreground">{prefix}</span>
+          )}
           <input
             type={type}
             className={cn(
               "flex-1 bg-transparent outline-none placeholder:text-sm",
-              props.disabled ? "text-muted-foreground" : "text-foreground"
+              props.disabled ? "text-muted-foreground" : "text-foreground",
             )}
             ref={ref}
             {...props}
           />
-          {suffix && <span className="ml-2 text-muted-foreground">{suffix}</span>}
+          {suffix && (
+            <span className="ml-2 text-muted-foreground">{suffix}</span>
+          )}
         </div>
 
         {Boolean(message) && (
@@ -47,7 +56,7 @@ const Input = React.forwardRef<HTMLInputElement, IInputProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 Input.displayName = "Input";

@@ -1,6 +1,10 @@
 import { cn } from "@/lib/utils";
-import { IErrorMessageProps } from "@/utils/interfaces/error-message.interface";
 import { TypographySmall } from "./typography/typography-small";
+
+interface IErrorMessageProps {
+  className?: string;
+  children: React.ReactNode;
+}
 
 export default function ErrorMessage(props: IErrorMessageProps) {
   return (

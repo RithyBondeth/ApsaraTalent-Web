@@ -1,7 +1,11 @@
 import { cn } from "@/lib/utils";
-import { ITypographyProps } from "@/utils/interfaces/typography.interface";
+import { ReactNode } from "react";
 
-export function TypographyH2(props: ITypographyProps) {
+export function TypographyH2(props: {
+  children: ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
   return (
     <h2
       className={cn(

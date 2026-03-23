@@ -1,7 +1,11 @@
 import { cn } from "@/lib/utils";
-import { ITypographyProps } from "@/utils/interfaces/typography.interface";
+import { ReactNode } from "react";
 
-export function TypographyMuted(props: ITypographyProps) {
+export function TypographyMuted(props: {
+  children: ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
   return (
     <p
       className={cn("text-sm text-muted-foreground", props.className)}

@@ -1,7 +1,22 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ISocialButtonProps } from "@/utils/interfaces/social-button.interface";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
+
+interface ISocialButtonProps {
+  image: StaticImageData;
+  label: string;
+  variant:
+    | "link"
+    | "default"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | null
+    | undefined;
+  className?: string;
+  onClick: () => void;
+}
 
 export default function SocialButton(props: ISocialButtonProps) {
   return (

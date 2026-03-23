@@ -1,7 +1,11 @@
 import { cn } from "@/lib/utils";
-import { ITypographyProps } from "@/utils/interfaces/typography.interface";
+import { ReactNode } from "react";
 
-export function TypographyBlackqoute(props: ITypographyProps) {
+export function TypographyBlackqoute(props: {
+  children: ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
   return (
     <p
       className={cn("mt-6 border-l-2 pl-6 italic", props.className)}

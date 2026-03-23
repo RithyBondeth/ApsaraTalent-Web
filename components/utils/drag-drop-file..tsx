@@ -1,5 +1,4 @@
-import { IDragDropFileProps } from "@/utils/interfaces/drag-drop-file.interface";
-import { LucideCircleX, LucideUserCircle } from "lucide-react";
+import { LucideCircleX, LucideProps, LucideUserCircle } from "lucide-react";
 import Image from "next/image";
 import React, {
   ChangeEvent,
@@ -8,8 +7,25 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { FieldValues, Path, PathValue } from "react-hook-form";
+import { FieldValues, Path, PathValue, UseFormSetValue } from "react-hook-form";
 import { TypographyMuted } from "./typography/typography-muted";
+
+interface IDragDropFileProps<T extends FieldValues> {
+  onFilesSelected: (files: File[]) => void;
+  onEdit?: () => void;
+  acceptedFileTypes?: string;
+  maxFileSize?: number;
+  multiple?: boolean;
+  className?: string;
+  boxText?: string;
+  boxSubText?: string;
+  preview?: string | null;
+  setValue?: UseFormSetValue<T>;
+  fileName?: "avatar" | "cover" | undefined | null;
+  icon?: React.ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
+  >;
+}
 
 export const DragDropFile = <T extends FieldValues>({
   onFilesSelected,

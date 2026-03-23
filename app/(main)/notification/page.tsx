@@ -27,7 +27,7 @@ import { NotificationSvgImage } from "@/utils/constants/asset.constant";
 /** Derive a display-friendly user object from a notification's title + data fields. */
 function resolveNotificationUser(notification: INotification) {
   return {
-    id: notification.data?.senderId ?? "",
+    id: (notification.data?.senderId as string) ?? "",
     name: notification.title,
     position: (notification.data?.position as string | null) ?? null,
     industry: (notification.data?.industry as string | null) ?? null,

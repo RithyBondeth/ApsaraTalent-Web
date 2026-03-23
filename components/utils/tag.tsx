@@ -1,6 +1,11 @@
 import { getRandomBadgeColor } from "@/utils/functions/get-random-badge-color";
-import { ITagInterface } from "@/utils/interfaces/tag.interface";
 import { TypographyMuted } from "./typography/typography-muted";
+
+interface ITagInterface {
+  label: string;
+  icon?: React.ReactNode;
+  className?: string;
+}
 
 export default function Tag(props: ITagInterface) {
   const { bg, text } = getRandomBadgeColor(props.label);

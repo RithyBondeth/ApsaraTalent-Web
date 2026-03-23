@@ -1,7 +1,11 @@
 import { cn } from "@/lib/utils";
-import { ITypographyProps } from "@/utils/interfaces/typography.interface";
+import { ReactNode } from "react";
 
-export function TypographyLarge(props: ITypographyProps) {
+export function TypographyLarge(props: {
+  children: ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
   return (
     <div
       className={cn("text-lg font-semibold", props.className)}
