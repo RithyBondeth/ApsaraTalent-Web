@@ -29,7 +29,7 @@ export const useGetCurrentUserStore = create<TGetCurrentUserState>()(
             loading: false,
             error: null,
           });
-        } catch (error) {
+        } catch {
           set({
             user: null,
             loading: false,
@@ -45,7 +45,6 @@ export const useGetCurrentUserStore = create<TGetCurrentUserState>()(
           loading: false,
           error: null,
         });
-        localStorage.removeItem("current-user-store");
       },
     }),
     {

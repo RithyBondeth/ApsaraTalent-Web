@@ -43,7 +43,7 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
             employeeID,
           ),
           loading: true,
-          error: null,
+          cmpFavError: null,
         }));
 
         try {
@@ -70,7 +70,7 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
             return {
               favoriteEmployeeIds: rolled,
               loading: false,
-              error: errorMessage,
+              cmpFavError: errorMessage,
               message: errorMessage,
             };
           });
@@ -87,7 +87,11 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
         set((state) => {
           const updated = new Set(state.favoriteEmployeeIds);
           updated.delete(employeeID);
-          return { favoriteEmployeeIds: updated, loading: true, error: null };
+          return {
+            favoriteEmployeeIds: updated,
+            loading: true,
+            cmpFavError: null,
+          };
         });
 
         try {
@@ -116,7 +120,7 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
             return {
               favoriteEmployeeIds: rolledBack,
               loading: false,
-              error: errorMessage,
+              cmpFavError: errorMessage,
               message: errorMessage,
             };
           });
