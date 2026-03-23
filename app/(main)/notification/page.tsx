@@ -22,6 +22,7 @@ import { useEffect, useMemo, useState } from "react";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import NotificationCardSkeleton from "./skeleton";
 
+/* ---------------------------------- Utils --------------------------------- */
 /** Derive a display-friendly user object from a notification's title + data fields. */
 function resolveNotificationUser(notification: INotification) {
   return {
@@ -34,11 +35,7 @@ function resolveNotificationUser(notification: INotification) {
 }
 
 export default function NotificationPage() {
-  /* -------------------------------- All States -------------------------------- */
-  const [notificationFilter, setNotificationFilter] =
-    useState<TNotificationFilterType>("all");
-
-  /* ------------------------------ API Integration ------------------------------ */
+  /* ----------------------------- API Integration ---------------------------- */
   // Current User
   const { user } = useGetCurrentUserStore();
   const role = user?.role ?? "employee";
@@ -53,7 +50,11 @@ export default function NotificationPage() {
     markAllRead,
   } = useNotificationStore();
 
-  /* ----------------------------- Fetch Effects ------------------------------ */
+  /* -------------------------------- All States ------------------------------- */
+  const [notificationFilter, setNotificationFilter] =
+    useState<TNotificationFilterType>("all");
+
+  /* --------------------------------- Effects --------------------------------- */
   // Fetch on mount
   useEffect(() => {
     void fetchNotifications({ page: 1, limit: 50 });
@@ -69,8 +70,8 @@ export default function NotificationPage() {
     }
   }, [notificationFilter, fetchNotifications]);
 
-  /* -------------------------------- Methods --------------------------------- */
-  // Filter notifications based on the current filter
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Filter notifications based on the current filter ────────────────────────
   const filteredNotifications = useMemo(() => {
     return notifications.filter((n) => {
       if (notificationFilter === "all") return true;
@@ -81,18 +82,18 @@ export default function NotificationPage() {
     });
   }, [notifications, notificationFilter]);
 
-  // Get notification button variant
+  // ── Get notification button variant ─────────────────────────────────────────
   const notificationButtonVariant = (currentFilter: TNotificationFilterType) =>
     notificationFilter === currentFilter ? "default" : "secondary";
 
-  // Handle mark all read
+  // ── Handle mark all read ─────────────────────────────────────────
   const handleMarkAllRead = async () => {
     await markAllRead();
     void fetchUnreadCount();
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
-    /* --------------------------------- Main Content --------------------------------- */
     <div className="w-full flex flex-col gap-4 sm:gap-5 px-2.5 sm:px-5">
       {/* Header Section */}
       <div className="w-full flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">

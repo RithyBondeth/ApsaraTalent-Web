@@ -1,9 +1,9 @@
 import { create } from "zustand";
-import { ResumeTemplate } from "@/utils/interfaces/resume.interface";
+import { TResumeTemplate } from "@/utils/types/resume.type";
 
 interface TemplateSelectionState {
-  selectedTemplate: ResumeTemplate | null;
-  setSelectedTemplate: (template: ResumeTemplate) => void;
+  selectedTemplate: TResumeTemplate | null;
+  setSelectedTemplate: (template: TResumeTemplate) => void;
 }
 
 export const useTemplateSelectionStore = create<TemplateSelectionState>()(

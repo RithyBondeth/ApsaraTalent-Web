@@ -1,6 +1,6 @@
 "use client";
 
-import { BuildResume } from "@/app/(main)/resume-builder/_apis/generate-resume.api";
+import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
 import CanvasTemplate from "./canvas-template";
 import FloatingToolbar from "./floating-toolbar";
 import { Eye, RefreshCw, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
@@ -10,9 +10,9 @@ import { useCanvasEditorStore } from "@/stores/canvas-editor.store";
 import { Button } from "@/components/ui/button";
 
 interface PreviewPanelProps {
-  data: BuildResume;
-  setValue: UseFormSetValue<BuildResume>;
-  getValues: UseFormGetValues<BuildResume>;
+  data: IBuildResume;
+  setValue: UseFormSetValue<IBuildResume>;
+  getValues: UseFormGetValues<IBuildResume>;
   updating?: boolean;
 }
 

@@ -59,23 +59,12 @@ import React, { useEffect, useRef, useState } from "react";
 import EmployeeDetailPageSkeleton from "./skeleton";
 
 export default function EmployeeDetailPage() {
-  /* -------------------------------- All States -------------------------------- */
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const params = useParams<{ employeeId: string }>();
   const id = params.employeeId;
-  const [isInitialized, setIsInitialized] = useState<boolean>(false);
-  const [fetchError, setFetchError] = useState<string | null>(null);
 
-  // Popup States
-  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
-  const ignoreNextClick = useRef<boolean>(false);
-
-  // Initialize Component (Client-Side Only)
-  useEffect(() => {
-    if (typeof window !== "undefined") setIsInitialized(true);
-  }, []);
-
-  /* ------------------------------ API Integration ------------------------------ */
+  /* ----------------------------- API Integration ---------------------------- */
   // Current User
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const { loading, employeeData, queryOneEmployee } = useGetOneEmployeeStore();
@@ -92,7 +81,21 @@ export default function EmployeeDetailPage() {
   const countCurrentCompanyMatching = useCountCurrentCompanyMatchingStore();
   const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
 
-  /* ------------------------- Fetch One Employee Effect ------------------------- */
+  /* -------------------------------- All States ------------------------------- */
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  // Popup States
+  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
+  const ignoreNextClick = useRef<boolean>(false);
+
+  /* --------------------------------- Effects --------------------------------- */
+  // Initialize Component (Client-Side Only)
+  useEffect(() => {
+    if (typeof window !== "undefined") setIsInitialized(true);
+  }, []);
+
+  // Fetch One Employee Effect
   useEffect(() => {
     const fetchOneEmployee = async () => {
       if (!isInitialized || !id) return;
@@ -110,8 +113,16 @@ export default function EmployeeDetailPage() {
     fetchOneEmployee();
   }, [id, isInitialized, queryOneEmployee]);
 
-  /* ------------------------- LIKED & FAVORITED METHODS------------------------- */
-  // 1.Handle Company Like Employee
+  // Profile Popup Effect
+  useEffect(() => {
+    if (openProfilePopup) {
+      ignoreNextClick.current = true;
+      setTimeout(() => (ignoreNextClick.current = false), 200);
+    }
+  }, [openProfilePopup]);
+
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle Company Like Employee ─────────────────────────────────────────
   const handleLike = async () => {
     if (currentUser && currentUser.company) {
       const companyId = currentUser.company.id;
@@ -148,7 +159,7 @@ export default function EmployeeDetailPage() {
     }
   };
 
-  // 2.Handle Company Add Employee To Favorite
+  // ── Handle Company Add Employee To Favorite ─────────────────────────────────────────
   const handleAddToFavorite = async () => {
     if (currentUser && currentUser.company) {
       const companyId = currentUser.company.id;
@@ -175,7 +186,7 @@ export default function EmployeeDetailPage() {
     }
   };
 
-  /* --------------------------------- Profile Popup --------------------------------- */
+  // ── Handle Click Profile Popup ─────────────────────────────────────────
   const handleClickProfilePopup = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -187,14 +198,7 @@ export default function EmployeeDetailPage() {
     setOpenProfilePopup(true);
   };
 
-  useEffect(() => {
-    if (openProfilePopup) {
-      ignoreNextClick.current = true;
-      setTimeout(() => (ignoreNextClick.current = false), 200);
-    }
-  }, [openProfilePopup]);
-
-  /* --------------------------------- File Downloads --------------------------------- */
+  // ── Handle Download File ─────────────────────────────────────────
   const handleDownloadFile = (url: string, filename: string) => {
     if (!url) return;
 
@@ -207,7 +211,7 @@ export default function EmployeeDetailPage() {
     document.body.removeChild(link);
   };
 
-  /* --------------------------------- Loading States --------------------------------- */
+  /* -------------------------------- Render UI -------------------------------- */
   const isLoading = !isInitialized || loading;
   if (isLoading) {
     return (
@@ -217,7 +221,6 @@ export default function EmployeeDetailPage() {
     );
   }
 
-  /* ---------------------------------- Error States ---------------------------------- */
   if (fetchError) {
     return (
       <div className="h-screen w-screen flex justify-center items-center animate-page-in">
@@ -234,7 +237,6 @@ export default function EmployeeDetailPage() {
     );
   }
 
-  /* ----------------------------- No Data Available States ---------------------------- */
   if (!employeeData) {
     return (
       <div className="h-screen w-screen flex justify-center items-center animate-page-in">
@@ -249,7 +251,6 @@ export default function EmployeeDetailPage() {
   }
 
   return (
-    /* --------------------------------- Main Content --------------------------------- */
     <div className="flex flex-col gap-5 animate-page-in">
       {/* Personal Information Section */}
       <div className="w-full flex items-stretch justify-between border border-muted py-4 sm:py-5 px-4 sm:px-6 lg:px-10 tablet-xl:flex-col tablet-xl:[&>div]:w-full tablet-xl:gap-5">

@@ -1,6 +1,12 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function TemplateCardSkeleton() {
+export default function ResumeBuilderLoadingSkeleton() {
+  return Array.from({ length: 12 }, (_, index) => (
+    <TemplateCardSkeleton key={index} />
+  ));
+}
+
+function TemplateCardSkeleton() {
   return (
     <div className="h-fit w-full flex flex-col rounded-lg shadow-sm border border-muted overflow-hidden">
       {/* Preview area — matches the real card's h-48 */}

@@ -22,7 +22,9 @@ import { toast } from "sonner";
 import { FavoriteLoadingSkeleton } from "./skeleton";
 
 export default function FavoritePage() {
-  /* ----------------------------- API Integration ----------------------------- */
+  /* ---------------------------------- Utils --------------------------------- */
+
+  /* ----------------------------- API Integration ---------------------------- */
   // Current User
   const currentUser = useGetCurrentUserStore((state) => state.user);
 
@@ -38,12 +40,12 @@ export default function FavoritePage() {
   const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
   const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
 
-  /* ---------------------------------- State ---------------------------------- */
+  /* -------------------------------- All States ------------------------------- */
   // Track IDs that are currently being removed (for animation)
   const [removingFavIds, setRemovingFavIds] = useState<Set<string>>(new Set());
 
-  /* ---------------------------- Fetch All Favorites -------------------------- */
-  // Use Custom Hook - Handles all ref logic and duplicate prevention
+  /* --------------------------------- Effects --------------------------------- */
+  // Fetch All Favorites (Use Custom Hook - Handles all ref logic and duplicate prevention)
   const { isEmployee } = useFetchOnce({
     cacheKey: "favorite-page",
     onEmployeeFetch: (employeeId) => {
@@ -54,8 +56,8 @@ export default function FavoritePage() {
     },
   });
 
-  /* --------------------------- Remove From Favorite -------------------------- */
-  // Load Remove Animation Then Remove
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Load Remove Animation Then Remove ─────────────────────────────────────────
   const animateThenRemove = useCallback(
     (favId: string, removeFn: () => Promise<void>) => {
       // Start card-pop-shrink animation
@@ -76,7 +78,7 @@ export default function FavoritePage() {
     [],
   );
 
-  // Handle Employee Remove Company From Favorite
+  // ── Handle Employee Remove Company From Favorite ─────────────────────────────────────────
   const handleEmployeeRemoveCompanyFromFavorite = useCallback(
     (
       employeeID: string,
@@ -113,7 +115,7 @@ export default function FavoritePage() {
     ],
   );
 
-  // Handle Company Remove Employee From Favorite
+  // ── Handle Company Remove Employee From Favorite ─────────────────────────────────────────
   const handleCompanyRemoveEmployeeFromFavorite = useCallback(
     (
       companyID: string,
@@ -148,7 +150,7 @@ export default function FavoritePage() {
     ],
   );
 
-  /* ------------------------------ Loading States ------------------------------ */
+  /* -------------------------------- Render UI -------------------------------- */
   const isLoadingForEmployee =
     isEmployee &&
     (getAllEmployeeFavoritesStore.loading ||
@@ -164,7 +166,6 @@ export default function FavoritePage() {
   if (isLoading) return <FavoriteLoadingSkeleton isEmployee={isEmployee} />;
 
   return (
-    /* ---------------------------------------- Main Content -------------------------------------- */
     <div className="w-full flex flex-col px-2.5 sm:px-5">
       {/* Banner Section */}
       <div className="w-full flex items-center justify-between gap-4 sm:gap-5 tablet-xl:flex-col tablet-xl:items-center">

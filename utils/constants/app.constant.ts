@@ -2,6 +2,7 @@ import FacebookIcon from "@/assets/socials/facebook.webp";
 import GithubIcon from "@/assets/socials/github.png";
 import GoogleIcon from "@/assets/socials/google.png";
 import LinkedInIcon from "@/assets/socials/linkedin.png";
+import { TLoadingStep } from "@/components/utils/dialogs/loading-dialog";
 
 // Files
 export const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
@@ -143,3 +144,15 @@ export const SEARCH_DEBOUNCE_MS = 400;
 // Messages
 export const CHAT_TYPING_DEBOUNCE_MS = 1500;
 export const CHAT_REACTION_EMOJIS = ["👍", "❤️", "😂", "😮", "😢", "😡"];
+
+// Resume
+export const LIVE_RESUME_PREVIEW_DEBOUNCE_MS = 600;
+
+export const DOWNLOAD_RESUME_STEPS: TLoadingStep[] = [
+  { label: "Preparing your resume data", completeAt: 20 },
+  { label: "Sending to AI engine", completeAt: 40 },
+  { label: "Generating HTML layout", completeAt: 60 },
+  { label: "Applying template styling", completeAt: 78 },
+  { label: "Rendering PDF", completeAt: 92 },
+  { label: "Finalising & compressing", completeAt: 99 },
+];

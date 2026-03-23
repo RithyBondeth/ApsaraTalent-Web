@@ -18,24 +18,27 @@ import { initateChat } from "./_apis/initiate-chat.api";
 import MatchingLoadingSkeleton from "./skeleton";
 
 export default function MatchingPage() {
-  /* -------------------------------- All States ------------------------------- */
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
-  // Track which card is in a loading state to prevent double-clicks
-  const [chatLoadingId, setChatLoadingId] = useState<string | null>(null);
 
-  /* ----------------------------- API Integration ----------------------------- */
+  /* ----------------------------- API Integration ---------------------------- */
   const getCurrentEmpStore = useGetCurrentEmployeeMatchingStore();
   const getCurrentCmpStore = useGetCurrentCompanyMatchingStore();
 
-  /* ---------------------------- Fetch All Favorites -------------------------- */
-  // Use Custom Hook - Handles all ref logic and duplicate prevention
+  /* -------------------------------- All States ------------------------------- */
+  // Track which card is in a loading state to prevent double-clicks
+  const [chatLoadingId, setChatLoadingId] = useState<string | null>(null);
+
+  /* --------------------------------- Effects --------------------------------- */
+  // Use Custom Hook - Handles all ref logic and duplicate prevention for fetching favorites
   const { isEmployee, currentUser } = useFetchOnce({
     cacheKey: "matching-page",
     onEmployeeFetch: getCurrentEmpStore.queryCurrentEmployeeMatching,
     onCompanyFetch: getCurrentCmpStore.queryCurrentCompanyMatching,
   });
 
-  /* ------------------------------- Chat Handler ------------------------------- */
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Chat Handler ─────────────────────────────────────────
   const handleChatNow = useCallback(
     async (senderId: string, receiverId: string) => {
       if (!currentUser || chatLoadingId) return;
@@ -54,7 +57,7 @@ export default function MatchingPage() {
     [currentUser, chatLoadingId, router],
   );
 
-  /* ------------------------------ Loading States ------------------------------ */
+  /* -------------------------------- Render UI -------------------------------- */
   const isLoadingForEmployee =
     isEmployee &&
     (getCurrentEmpStore.loading ||
@@ -70,7 +73,6 @@ export default function MatchingPage() {
   if (isLoading) return <MatchingLoadingSkeleton isEmployee={isEmployee} />;
 
   return (
-    /* -------------------------------------------------- Main Content ------------------------------------------------ */
     <div className="w-full flex flex-col px-2.5 sm:px-5">
       {/* Banner Section */}
       <div className="w-full flex items-center justify-between gap-4 sm:gap-5 tablet-xl:flex-col tablet-xl:items-center">
@@ -147,7 +149,7 @@ export default function MatchingPage() {
             />
           ))
         ) : (
-          /* ------------------------- Empty Matching List ------------------------- */
+          /* ---------------- Empty Matching List Section ----------------*/
           <div className="w-full flex flex-col items-center justify-center my-16">
             <Image src={emptySvgImage} alt="empty" height={200} width={200} />
             <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">

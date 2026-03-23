@@ -1,9 +1,9 @@
 "use client";
 
 import {
-  BuildResume,
-  Experience,
-} from "@/app/(main)/resume-builder/_apis/generate-resume.api";
+  IBuildResume,
+  IExperience as Experience,
+} from "@/utils/interfaces/resume/resume.interface";
 import { UseFormSetValue, UseFormGetValues } from "react-hook-form";
 import { useRef, useCallback, useState, useEffect } from "react";
 import {
@@ -34,9 +34,9 @@ import { SectionId, useCanvasEditorStore } from "@/stores/canvas-editor.store";
 
 /* ─── Types ─────────────────────────────────────────────────── */
 interface CanvasTemplateProps {
-  data: BuildResume;
-  setValue: UseFormSetValue<BuildResume>;
-  getValues: UseFormGetValues<BuildResume>;
+  data: IBuildResume;
+  setValue: UseFormSetValue<IBuildResume>;
+  getValues: UseFormGetValues<IBuildResume>;
 }
 
 /* ─── Editable field wrapper ─────────────────────────────────── */
@@ -340,8 +340,8 @@ function ExperienceEntry({
   exp: Experience;
   sortableId: string;
   index: number;
-  setValue: UseFormSetValue<BuildResume>;
-  getValues: UseFormGetValues<BuildResume>;
+  setValue: UseFormSetValue<IBuildResume>;
+  getValues: UseFormGetValues<IBuildResume>;
   onDelete: () => void;
 }) {
   const {
@@ -548,7 +548,7 @@ function SkillChip({
   skill: string;
   sortableId: string;
   index: number;
-  setValue: UseFormSetValue<BuildResume>;
+  setValue: UseFormSetValue<IBuildResume>;
   onDelete: () => void;
 }) {
   const {

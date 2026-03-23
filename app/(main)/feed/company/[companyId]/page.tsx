@@ -63,27 +63,12 @@ import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-curr
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 
 export default function CompanyDetailPage() {
-  /* -------------------------------- All States -------------------------------- */
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const param = useParams<{ companyId: string }>();
   const id = param.companyId;
-  const [isInitialized, setIsInitialized] = useState<boolean>(false);
-  const [fetchError, setFetchError] = useState<string | null>(null);
 
-  // Popup States
-  const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
-  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
-  const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(
-    null,
-  );
-  const ignoreNextClick = useRef<boolean>(false);
-
-  // Initialize Component (Client-Side Only)
-  useEffect(() => {
-    if (typeof window !== "undefined") setIsInitialized(true);
-  }, []);
-
-  /* ------------------------------ API Integration ------------------------------ */
+  /* ----------------------------- API Integration ---------------------------- */
   // Current User
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const { loading, companyData, queryOneCompany } = useGetOneCompanyStore();
@@ -100,7 +85,25 @@ export default function CompanyDetailPage() {
   const countCurrentEmployeeMatching = useCountCurrentEmployeeMatchingStore();
   const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
 
-  /* ------------------------- Fetch One Company Effect ------------------------- */
+  /* -------------------------------- All States ------------------------------- */
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  // Popup States
+  const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
+  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
+  const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(
+    null,
+  );
+  const ignoreNextClick = useRef<boolean>(false);
+
+  /* --------------------------------- Effects --------------------------------- */
+  // Initialize Component (Client-Side Only)
+  useEffect(() => {
+    if (typeof window !== "undefined") setIsInitialized(true);
+  }, []);
+
+  // Fetch One Company Effect
   useEffect(() => {
     const fetchOneCompany = async () => {
       if (!isInitialized || !id) return;
@@ -118,7 +121,16 @@ export default function CompanyDetailPage() {
     fetchOneCompany();
   }, [id, isInitialized, queryOneCompany]);
 
-  /* --------------------------------- Profile Popup --------------------------------- */
+  // Profile Popup Effect
+  useEffect(() => {
+    if (openProfilePopup) {
+      ignoreNextClick.current = true;
+      setTimeout(() => (ignoreNextClick.current = false), 200);
+    }
+  }, [openProfilePopup]);
+
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle Click Image Popup ─────────────────────────────────────────
   const handleClickImagePopup = () => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -127,6 +139,7 @@ export default function CompanyDetailPage() {
     setOpenImagePopup(true);
   };
 
+  // ── Handle Click Profile Popup ─────────────────────────────────────────
   const handleClickProfilePopup = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -138,56 +151,7 @@ export default function CompanyDetailPage() {
     setOpenProfilePopup(true);
   };
 
-  useEffect(() => {
-    if (openProfilePopup) {
-      ignoreNextClick.current = true;
-      setTimeout(() => (ignoreNextClick.current = false), 200);
-    }
-  }, [openProfilePopup]);
-
-  /* --------------------------------- Loading States --------------------------------- */
-  const isLoading = !isInitialized || loading;
-  if (isLoading) {
-    return (
-      <div className="animate-page-in">
-        <CompanyDetailPageSkeleton />
-      </div>
-    );
-  }
-
-  /* ---------------------------------- Error States ---------------------------------- */
-  if (fetchError) {
-    return (
-      <div className="h-screen w-screen flex justify-center items-center animate-page-in">
-        <div className="flex flex-col items-center gap-3">
-          <TypographyH4 className="text-red-500">{fetchError}</TypographyH4>
-          <Button
-            variant="destructive"
-            onClick={() => window.location.reload()}
-          >
-            Retry
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  /* ----------------------------- No Data Available States ---------------------------- */
-  if (!companyData) {
-    return (
-      <div className="h-screen w-screen flex justify-center items-center animate-page-in">
-        <div className="flex flex-col items-center gap-3">
-          <TypographyH4>Company not found</TypographyH4>
-          <Link href="/">
-            <Button variant="outline">Back to Home</Button>
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  /* ------------------------- LIKED & FAVORITED METHODS------------------------- */
-  // 1.Handle Employee Like Company
+  // ── Handle Employee Like Company ─────────────────────────────────────────
   const handleLike = async () => {
     if (currentUser && currentUser.employee) {
       const employeeId = currentUser.employee.id;
@@ -225,7 +189,7 @@ export default function CompanyDetailPage() {
     }
   };
 
-  // 2.Handle Employee Add Company To Favorite
+  // ── Handle Employee Add Company To Favorite ─────────────────────────────────────────
   const handleAddToFavorite = async () => {
     if (currentUser && currentUser.employee) {
       const employeeId = currentUser.employee.id;
@@ -252,8 +216,46 @@ export default function CompanyDetailPage() {
     }
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
+  const isLoading = !isInitialized || loading;
+  if (isLoading) {
+    return (
+      <div className="animate-page-in">
+        <CompanyDetailPageSkeleton />
+      </div>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <div className="h-screen w-screen flex justify-center items-center animate-page-in">
+        <div className="flex flex-col items-center gap-3">
+          <TypographyH4 className="text-red-500">{fetchError}</TypographyH4>
+          <Button
+            variant="destructive"
+            onClick={() => window.location.reload()}
+          >
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!companyData) {
+    return (
+      <div className="h-screen w-screen flex justify-center items-center animate-page-in">
+        <div className="flex flex-col items-center gap-3">
+          <TypographyH4>Company not found</TypographyH4>
+          <Link href="/">
+            <Button variant="outline">Back to Home</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    /* --------------------------------- Main Content --------------------------------- */
     <div className="flex flex-col gap-5 animate-page-in">
       {/* Header Section */}
       {companyData && (

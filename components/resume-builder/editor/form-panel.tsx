@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import {
-  BuildResume,
-  Experience,
-} from "@/app/(main)/resume-builder/_apis/generate-resume.api";
+  IBuildResume,
+  IExperience as Experience,
+} from "@/utils/interfaces/resume/resume.interface";
 import {
   UseFormRegister,
   UseFormSetValue,
@@ -30,9 +30,9 @@ import { useState } from "react";
 
 /* ─── Types ─────────────────────────────────────────────────── */
 interface FormPanelProps {
-  register: UseFormRegister<BuildResume>;
-  control: Control<BuildResume>;
-  setValue: UseFormSetValue<BuildResume>;
+  register: UseFormRegister<IBuildResume>;
+  control: Control<IBuildResume>;
+  setValue: UseFormSetValue<IBuildResume>;
 }
 
 /* ─── Small helper label ─────────────────────────────────────── */
@@ -135,7 +135,7 @@ function PersonalInfoTab({
           <FieldLabel>Social Links</FieldLabel>
           <div className="flex flex-col gap-2">
             {socialKeys.map((key) => {
-              const path = `personalInfo.socials.${key}` as Path<BuildResume>;
+              const path = `personalInfo.socials.${key}` as Path<IBuildResume>;
               return (
                 <div key={key}>
                   <FieldLabel>{capitalize(key)}</FieldLabel>
@@ -162,19 +162,19 @@ function ExperienceCard({
   showRemove,
 }: {
   index: number;
-  register: UseFormRegister<BuildResume>;
-  control: Control<BuildResume>;
+  register: UseFormRegister<IBuildResume>;
+  control: Control<IBuildResume>;
   onRemove: () => void;
   showRemove: boolean;
 }) {
   const [open, setOpen] = useState(true);
   const position = useWatch({
     control,
-    name: `experience.${index}.position` as Path<BuildResume>,
+    name: `experience.${index}.position` as Path<IBuildResume>,
   });
 
   // Achievements nested field array
-  const achPath = `experience.${index}.achievements` as Path<BuildResume>;
+  const achPath = `experience.${index}.achievements` as Path<IBuildResume>;
   const {
     fields: achFields,
     append: achAppend,
@@ -282,7 +282,7 @@ function ExperienceCard({
                   <Input
                     placeholder="e.g. Increased revenue by 30%"
                     {...register(
-                      `experience.${index}.achievements.${ai}` as Path<BuildResume>,
+                      `experience.${index}.achievements.${ai}` as Path<IBuildResume>,
                     )}
                   />
                   <button
@@ -513,13 +513,22 @@ export default function ResumeEditorFormPanel(props: FormPanelProps) {
     <Tabs defaultValue="personal" className="flex flex-col h-full">
       {/* Tab bar */}
       <TabsList className="grid w-full shrink-0 grid-cols-3">
-        <TabsTrigger value="personal" className="gap-1 text-[11px] sm:gap-1.5 sm:text-xs">
+        <TabsTrigger
+          value="personal"
+          className="gap-1 text-[11px] sm:gap-1.5 sm:text-xs"
+        >
           <User size={12} /> Personal
         </TabsTrigger>
-        <TabsTrigger value="experience" className="gap-1 text-[11px] sm:gap-1.5 sm:text-xs">
+        <TabsTrigger
+          value="experience"
+          className="gap-1 text-[11px] sm:gap-1.5 sm:text-xs"
+        >
           <Briefcase size={12} /> Experience
         </TabsTrigger>
-        <TabsTrigger value="skills" className="gap-1 text-[11px] sm:gap-1.5 sm:text-xs">
+        <TabsTrigger
+          value="skills"
+          className="gap-1 text-[11px] sm:gap-1.5 sm:text-xs"
+        >
           <GraduationCap size={12} /> Skills
         </TabsTrigger>
       </TabsList>

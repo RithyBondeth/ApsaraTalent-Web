@@ -10,7 +10,7 @@ import { CheckCircle2, Loader2 } from "lucide-react";
 import ApsaraLoadingSpinner from "../apsara-loading-spinner";
 import { TypographyMuted } from "../typography/typography-muted";
 
-export type LoadingStep = {
+export type TLoadingStep = {
   label: string;
   /** 0–100 progress value at which this step becomes "done" */
   completeAt: number;
@@ -21,7 +21,7 @@ type Props = {
   title: string;
   subTitle?: string;
   /** When provided, renders the step-progress UI instead of the plain spinner */
-  steps?: LoadingStep[];
+  steps?: TLoadingStep[];
   /** 0–100 */
   progress?: number;
 };

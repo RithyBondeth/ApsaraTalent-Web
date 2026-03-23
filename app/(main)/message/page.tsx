@@ -29,22 +29,12 @@ import MessageSvgImage from "@/assets/svg/message.svg";
 import MessageLoadingSkeleton from "./loading";
 
 const MessagePageContent = () => {
-  /* -------------------------------- All States -------------------------------- */
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const searchParams = useSearchParams();
   const chatId = searchParams.get("chatId");
 
-  // Desktop: sidebar open by default (resizable). Mobile uses list → chat navigation.
-  const [isSidebarOpen, setSidebarOpen] = useState<boolean>(true);
-  const sidebarPanelRef = useRef<ImperativePanelHandle>(null);
-
-  // Reply target — when set, the input bar shows a quote preview.
-  const [replyTarget, setReplyTarget] = useState<IMessage | null>(null);
-
-  // Loading timeout flag
-  const [loadingTimedOut, setLoadingTimedOut] = useState<boolean>(false);
-
-  /* ------------------------------ API Integration ------------------------------ */
+  /* ----------------------------- API Integration ---------------------------- */
   // Current User
   const currentUser = useGetCurrentUserStore((state) => state.user);
 
@@ -65,7 +55,18 @@ const MessagePageContent = () => {
   // Voice Call Initiation
   const initiateCall = useCallStore((s) => s.initiateCall);
 
-  /* --------------------------------- Effects ---------------------------------- */
+  /* -------------------------------- All States ------------------------------- */
+  // Desktop: sidebar open by default (resizable). Mobile uses list → chat navigation.
+  const [isSidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const sidebarPanelRef = useRef<ImperativePanelHandle>(null);
+
+  // Reply target — when set, the input bar shows a quote preview.
+  const [replyTarget, setReplyTarget] = useState<IMessage | null>(null);
+
+  // Loading timeout flag
+  const [loadingTimedOut, setLoadingTimedOut] = useState<boolean>(false);
+
+  /* --------------------------------- Effects --------------------------------- */
   // Keep resizable panel state in sync with the sidebar toggle (avoid calling
   // panel methods inside setState which triggers render-phase updates).
   useEffect(() => {
@@ -142,11 +143,11 @@ const MessagePageContent = () => {
     return () => clearTimeout(t);
   }, [isConnected, isChatsLoaded]);
 
-  /* -------------------------------- Methods --------------------------------- */
-  // 1.Toggle Sidebar
+  /* --------------------------------- Methods --------------------------------- */
+  // ── 1. Toggle Sidebar ─────────────────────────────────────────
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
-  // 2.Handle Start Voice Call
+  // ── 2. Handle Start Voice Call ─────────────────────────────────────────
   const handleStartVoiceCall = () => {
     if (!activeChat) return;
     initiateCall({
@@ -156,7 +157,7 @@ const MessagePageContent = () => {
     });
   };
 
-  // 3.Send Message
+  // ── 3. Send Message ─────────────────────────────────────────
   const handleSendMessage = (
     text: string,
     replyTo?: IMessage["replyTo"] | null,
@@ -189,34 +190,33 @@ const MessagePageContent = () => {
     return true;
   };
 
-  // 4.Edit Message
+  // ── 4. Edit Message ─────────────────────────────────────────
   const handleEditMessage = (messageId: string, newContent: string) => {
     if (chatId) editMessageAction(messageId, chatId, newContent);
   };
 
-  // 5.Handle Typing
+  // ── 5. Handle Typing ─────────────────────────────────────────
   const handleTyping = (typing: boolean) => {
     if (chatId) setTyping(chatId, typing);
   };
 
-  // 6.Handle Chat Select
+  // ── 6. Handle Chat Select ─────────────────────────────────────────
   const handleChatSelect = (chat: { id: string }) => {
     setReplyTarget(null);
     router.push(`/message?chatId=${chat.id}`);
   };
 
-  // 7.Handle Back
+  // ── 7. Handle Back ─────────────────────────────────────────
   const handleBack = () => {
     setReplyTarget(null);
     router.push("/message");
   };
 
-  /* -------------------------------- Loading State --------------------------------- */
+  /* -------------------------------- Render UI -------------------------------- */
   const isLoading = (!isConnected || !isChatsLoaded) && !loadingTimedOut;
 
   if (isLoading) return <MessageLoadingSkeleton />;
 
-  /* --------------------------------- Main Content --------------------------------- */
   const chatView = activeChat ? (
     <div className="flex flex-col h-full min-h-0 min-w-0">
       <ChatHeader

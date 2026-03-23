@@ -59,25 +59,11 @@ const globalFetchCache = {
 };
 
 export default function FeedPage() {
-  /* ------------------------------- All States ------------------------------- */
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
-  const [mounted, setMounted] = useState<boolean>(false);
   const { resolvedTheme } = useTheme();
-  useEffect(() => setMounted(true), []);
 
-  // Liked helper
-  const [likingId, setLikingId] = useState<string | null>(null);
-
-  // Pop up Dialog
-  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
-  const ignoreNextClick = useRef<boolean>(false);
-  const [currentProfileImage, setCurrentProfileImage] = useState<string | null>(
-    null,
-  );
-  const [openLikeSuccessDialog, setOpenLikeSuccessDialog] =
-    useState<boolean>(false);
-
-  /* ---------------------------- API Integration ------------------------------ */
+  /* ----------------------------- API Integration ---------------------------- */
   // Current User
   const currentUser = useGetCurrentUserStore((s) => s.user);
 
@@ -91,10 +77,7 @@ export default function FeedPage() {
   const employeeLoading = useGetAllEmployeeStore((s) => s.loading);
   const queryEmployee = useGetAllEmployeeStore((s) => s.queryEmployee);
 
-  /* ------------------------------------------------------------------------------/ 
-  /                                  LIKED                                         /
-  /-------------------------------------------------------------------------------*/
-  /* ------------------------- All Employee Liked APIs -------------------------- */
+  // All Employee Liked APIs
   const employeeLike = useEmployeeLikeStore((s) => s.employeeLike);
   const employeeLikeLoading = useEmployeeLikeStore((s) => s.loading);
   const currentEmployeeLiked = useGetCurrentEmployeeLikedStore(
@@ -110,7 +93,7 @@ export default function FeedPage() {
     (s) => s.optimisticAddLiked,
   );
 
-  /* ------------------------- All Company Liked APIs -------------------------- */
+  // All Company Liked APIs
   const companyLike = useCompanyLikeStore((s) => s.companyLike);
   const companyLikeLoading = useCompanyLikeStore((s) => s.loading);
   const currentCompanyLiked = useGetCurrentCompanyLikedStore(
@@ -126,24 +109,18 @@ export default function FeedPage() {
     (s) => s.optimisticAddLiked,
   );
 
-  /* ------------------------------------------------------------------------------/ 
-  /                                  FAVORITE                                      /
-  /------------------------------------------------------------------------------ */
-  /* ------------------------ All Employee Favorite APIs ------------------------ */
+  // All Employee Favorite APIs
   const { addCompanyToFavorite, favoriteCompanyIds, empFavError } =
     useEmployeeFavCompanyStore();
   const isEmpFavorite = (id: string) => favoriteCompanyIds.has(id);
   const { queryAllEmployeeFavorites } = useGetAllEmployeeFavoritesStore();
 
-  /* ------------------------ All Company Favorite APIs ------------------------ */
+  // All Company Favorite APIs
   const { addEmployeeToFavorite, favoriteEmployeeIds, cmpFavError } =
     useCompanyFavEmployeeStore();
   const isCmpFavorite = (id: string) => favoriteEmployeeIds.has(id);
   const { queryAllCompanyFavorites } = useGetAllCompanyFavoritesStore();
 
-  /* ------------------------------------------------------------------------------/ 
-  /                          COUNT BADGE IN SIDEBAR                                /
-  /------------------------------------------------------------------------------ */
   // Count All Current Employee/Company Favorite APIs
   const { countAllEmployeeFavorites } = useCountAllEmployeeFavoritesStore();
   const { countAllCompanyFavorites } = useCountAllCompanyFavoritesStore();
@@ -153,10 +130,25 @@ export default function FeedPage() {
     useCountCurrentEmployeeMatchingStore();
   const { countCurrentCompanyMatching } = useCountCurrentCompanyMatchingStore();
 
-  /* ------------------------------------------------------------------------------/ 
-  /              FETCH USER: EMPLOYEE OR COMPANY (Reset When User Change)          /
-  /------------------------------------------------------------------------------ */
-  // Step 1: Fetch All Current Employee or Company Liked - User Specific Data (Reset When User Change)
+  /* -------------------------------- All States ------------------------------- */
+  const [mounted, setMounted] = useState<boolean>(false);
+
+  // Liked helper
+  const [likingId, setLikingId] = useState<string | null>(null);
+
+  // Pop up Dialog
+  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
+  const ignoreNextClick = useRef<boolean>(false);
+  const [currentProfileImage, setCurrentProfileImage] = useState<string | null>(
+    null,
+  );
+  const [openLikeSuccessDialog, setOpenLikeSuccessDialog] =
+    useState<boolean>(false);
+
+  /* --------------------------------- Effects --------------------------------- */
+  useEffect(() => setMounted(true), []);
+
+  // Fetch All Current Employee or Company Liked - User Specific Data (Reset When User Change)
   const { isEmployee } = useFetchOnce({
     cacheKey: "feed-page",
     onEmployeeFetch: queryCurrentEmployeeLiked,
@@ -172,7 +164,7 @@ export default function FeedPage() {
     queryEmployeeRef.current = queryEmployee;
   });
 
-  // Step 2: Fetch All Companies or Employees - Global Data (Only Once, Never Resets)
+  // Fetch All Companies or Employees - Global Data (Only Once, Never Resets)
   useEffect(() => {
     if (!currentUser) return;
 
@@ -189,7 +181,7 @@ export default function FeedPage() {
     }
   }, [isEmployee, currentUser]);
 
-  // Step 3: Filter Users Based on Role
+  // Filter Users Based on Role
   // If User is Employee filter -> Companies (Filter Out Current Employee Liked)
   // If User is Company filter -> Employees (Filter Out Current Company Liked)
   const allUsers: ICompany[] | IEmployee[] = useMemo(() => {
@@ -225,8 +217,22 @@ export default function FeedPage() {
     currentCompanyLiked,
   ]);
 
-  /* ----------------------------- LIKED METHODS ----------------------------- */
-  // 1.Handle Employee Like Company
+  // Preload Profile Avatar For Better Performance (useCachedImage Hook)
+  const profileImageUrls = useMemo(() => {
+    return allUsers.map((user) => user.avatar).filter(Boolean);
+  }, [allUsers]);
+  usePreloadImages(profileImageUrls);
+
+  // Profile Pop up Effect
+  useEffect(() => {
+    if (openProfilePopup) {
+      ignoreNextClick.current = true;
+      setTimeout(() => (ignoreNextClick.current = false), 200);
+    }
+  }, [openProfilePopup]);
+
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle Employee Like Company ─────────────────────────────────────────
   const handleEmployeeLikeCompany = useCallback(
     async (employeeID: string, companyID: string) => {
       if (!employeeID || !companyID) return;
@@ -255,7 +261,7 @@ export default function FeedPage() {
     ],
   );
 
-  // 2.Handle Company Like Employee
+  // ── Handle Company Like Employee ─────────────────────────────────────────
   const handleCompanyLikeEmployee = useCallback(
     async (companyID: string, employeeID: string) => {
       if (!companyID || !employeeID) return;
@@ -270,8 +276,6 @@ export default function FeedPage() {
         countCurrentCompanyMatching(companyID);
         setOpenLikeSuccessDialog(true);
         // Sync with server to confirm (replaces optimistic state)
-        // Bug fix: was calling queryCurrentEmployeeMatching (wrong store) — now correctly
-        // re-fetches the liked list so the filter stays accurate.
         await queryCurrentCompanyLiked(companyID);
       } finally {
         setLikingId(null);
@@ -286,8 +290,7 @@ export default function FeedPage() {
     ],
   );
 
-  /* ----------------------------- FAVORITE METHODS ----------------------------- */
-  // 1.Handle Employee Favorite Company
+  // ── Handle Employee Favorite Company ─────────────────────────────────────────
   const handleEmployeeFavoriteCompany = useCallback(
     async (employeeID: string, companyID: string, companyName: string) => {
       if (!employeeID || !companyID) return;
@@ -308,7 +311,7 @@ export default function FeedPage() {
     ],
   );
 
-  // 2.Handle Company Favorite Employee
+  // ── Handle Company Favorite Employee ─────────────────────────────────────────
   const handleCompanyFavoriteEmployee = useCallback(
     async (companyID: string, employeeID: string, employeeName: string) => {
       if (!companyID || !employeeID) return;
@@ -329,14 +332,7 @@ export default function FeedPage() {
     ],
   );
 
-  /* ---------------------- PROFILE POPUP & PRELOAD IMAGES ---------------------- */
-  // Preload Profile Avatar For Better Performance (useCachedImage Hook)
-  const profileImageUrls = useMemo(() => {
-    return allUsers.map((user) => user.avatar).filter(Boolean);
-  }, [allUsers]);
-  usePreloadImages(profileImageUrls);
-
-  // Handle Profile Pop up Dialog
+  // ── Handle Profile Pop up Dialog ─────────────────────────────────────────
   const handleClickProfilePopup = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -347,16 +343,7 @@ export default function FeedPage() {
     setOpenProfilePopup(true);
   };
 
-  // Profile Pop up Effect
-  useEffect(() => {
-    if (openProfilePopup) {
-      ignoreNextClick.current = true;
-      setTimeout(() => (ignoreNextClick.current = false), 200);
-    }
-  }, [openProfilePopup]);
-
-  /* ------------------- View Employee & Company Detail Page ------------------- */
-  // Stable view handlers for memoized cards
+  // ── View Employee & Company Detail Page ─────────────────────────────────────────
   const handleEmployeeViewCompany = useCallback(
     (id: string) => router.push(`/feed/company/${id}`),
     [router],
@@ -366,22 +353,20 @@ export default function FeedPage() {
     [router],
   );
 
-  /* ------------------------------ Loading State ------------------------------ */
+  /* -------------------------------- Render UI -------------------------------- */
   const isLoading =
     !mounted ||
     !currentUser ||
     (isEmployee && (companyLoading || currentEmployeeLikedLoading)) ||
     (!isEmployee && (employeeLoading || currentCompanyLikedLoading));
 
-  /* --------------------- Get Current Image Based on Theme --------------------- */
+  // Get Current Image Based on Theme
   // Only resolve the theme after mounting — avoids SSR/client hydration mismatch
-  // Because resolvedTheme is undefined on the server.
   const feedImage =
     mounted && resolvedTheme === "dark" ? feedBlackSvg : feedWhiteSvg;
   const feedCompanyImage = feedCompanySvg;
 
   return (
-    /* ------------------------------ Main Content ------------------------------ */
     <div className="w-full flex flex-col items-start gap-4 sm:gap-5">
       {/* Header Section */}
       {isLoading ? (
@@ -507,7 +492,7 @@ export default function FeedPage() {
             )}
       </div>
 
-      {/* No User Available Section */}
+      {/* Empty List Section */}
       {allUsers.length === 0 && (
         <div className="w-full flex flex-col items-center justify-center my-16">
           <Image src={emptySvgImage} alt="empty" height={200} width={200} />

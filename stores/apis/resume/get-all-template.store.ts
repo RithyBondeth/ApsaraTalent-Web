@@ -1,6 +1,6 @@
 import axios from "@/lib/axios";
 import { API_GET_ALL_TEMPLATE_URL } from "@/utils/constants/apis/resume_url";
-import { IResumeTemplate } from "@/utils/interfaces/resume.interface";
+import { IResumeTemplate } from "@/utils/interfaces/resume/resume-template.interface";
 import { create } from "zustand";
 
 type TGetAllTemplateState = {
