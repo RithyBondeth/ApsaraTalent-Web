@@ -43,19 +43,21 @@ import { Controller, useForm } from "react-hook-form";
 import { companySearchSchema, TCompanySearchSchema } from "./validation";
 
 export default function CompanySearchPage() {
-  // Utils
+  /* ---------------------------------- Utils --------------------------------- */
   const didInitRef = useRef<boolean>(false);
   const skipFirstWatchRef = useRef<boolean>(true);
 
-  // API Integration
+  /* ----------------------------- API Integration ---------------------------- */
   const { error, loading, employees, querySearchEmployee } =
     useSearchEmployeeStore();
   const { user } = useGetCurrentUserStore();
 
+  /* -------------------------------- All States ------------------------------ */
   // Company Search For Employee Helper
   const [scopeNames, setScopeNames] = useState<string[]>([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
+  /* ------------------------------- Search Form ------------------------------ */
   // React Hook Form: Company Search Form
   const { register, setValue, control, handleSubmit, watch } =
     useForm<TCompanySearchSchema>({
@@ -75,7 +77,8 @@ export default function CompanySearchPage() {
   const location = watch("location");
   const jobType = watch("jobType");
 
-  // Real Searh Function
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Real Search Function ─────────────────────────────────────────
   const runSearch = useCallback(
     (data: TCompanySearchSchema) => {
       const normalizedJobType =
@@ -101,12 +104,13 @@ export default function CompanySearchPage() {
     [querySearchEmployee, scopeNames],
   );
 
-  // Stable Debounded Function
+  // ── Stable Debounced Function ───────────────────────────────────────
   const debouncedRunSearch = useMemo(
     () => debounce(runSearch, SEARCH_DEBOUNCE_MS),
     [runSearch],
   );
 
+  /* --------------------------------- Effects --------------------------------- */
   // Initial Search Effect (Once per mount / Per user ready)
   useEffect(() => {
     if (!user) return;
@@ -160,6 +164,8 @@ export default function CompanySearchPage() {
     return () => debouncedRunSearch.cancel();
   }, [debouncedRunSearch]);
 
+  /* ----------------------------- Event Handlers ---------------------------- */
+  // ── Handle Radio Change ─────────────────────────────────────────
   const handleRadioChange = (
     fieldName: keyof TCompanySearchSchema,
     value: TCompanySearchSchema[keyof TCompanySearchSchema],
@@ -167,6 +173,7 @@ export default function CompanySearchPage() {
     setValue(fieldName, value, { shouldDirty: true });
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <form
       className="w-full flex flex-col items-start gap-5 px-2.5 sm:px-5 lg:px-8"
@@ -194,6 +201,7 @@ export default function CompanySearchPage() {
           />
         </div>
 
+        {/* Company Search Banner Section */}
         <Image
           src={CompanySearchSvg}
           alt="company-search"
@@ -203,7 +211,7 @@ export default function CompanySearchPage() {
         />
       </div>
 
-      {/* Mobile/Tablet filter toggle */}
+      {/* Mobile/Tablet Filter Toogle Section */}
       <div className="hidden w-full tablet-xl:flex">
         <Button
           type="button"
@@ -410,6 +418,7 @@ export default function CompanySearchPage() {
 
           <div className="w-full flex flex-col items-start gap-2">
             {loading ? (
+              /* Loading Skeleton Section */
               <div className="w-full mb-3">
                 {Array(3)
                   .fill(0)
@@ -418,6 +427,7 @@ export default function CompanySearchPage() {
                   ))}
               </div>
             ) : error ? (
+              /* Error Section */
               <div className="w-full mb-3">
                 <SearchErrorCard
                   error={error}
@@ -425,6 +435,7 @@ export default function CompanySearchPage() {
                 />
               </div>
             ) : employees && employees.length > 0 ? (
+              /* Employee Search Card Section */
               employees.map((item) => (
                 <SearchEmployeeCard
                   key={item.id}
@@ -451,6 +462,7 @@ export default function CompanySearchPage() {
                 />
               ))
             ) : (
+              /* Not Found Section */
               <div className="w-full text-center py-10">
                 <TypographyP className="text-muted-foreground">
                   No employees match your search criteria. Try adjusting your

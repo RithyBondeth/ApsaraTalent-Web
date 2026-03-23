@@ -47,18 +47,20 @@ import { Controller, useForm } from "react-hook-form";
 import { employeeSearchSchema, TEmployeeSearchSchema } from "./validation";
 
 export default function EmployeeSearchPage() {
-  // Utils
+  /* ---------------------------------- Utils --------------------------------- */
   const isFirstWatchRenderRef = useRef<boolean>(true);
   const isInitialSearchDoneRef = useRef<boolean>(false);
 
-  // API Integration
+  /* ----------------------------- API Integration ---------------------------- */
   const { error, loading, jobs, querySearchJobs } = useSearchJobStore();
   const { user } = useGetCurrentUserStore();
 
+  /* -------------------------------- All States ------------------------------ */
   // Employee Search for Company Helper
   const [scopeNames, setScopeNames] = useState<string[]>([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
+  /* ------------------------------- Search Form ------------------------------ */
   // React Hook Form: Employee Search Form
   const { register, control, setValue, handleSubmit, watch } =
     useForm<TEmployeeSearchSchema>({
@@ -81,7 +83,8 @@ export default function EmployeeSearchPage() {
   const location = watch("location");
   const jobType = watch("jobType");
 
-  // Real Search Function
+  /* --------------------------------- Methods -------------------------------- */
+  // ── Real Search Function ────────────────────────────────────────
   const runSearch = useCallback(
     (data: TEmployeeSearchSchema) => {
       querySearchJobs({
@@ -107,12 +110,13 @@ export default function EmployeeSearchPage() {
     [querySearchJobs, scopeNames],
   );
 
-  // Stable Debounced Function
+  // ── Stable Debounced Function ─────────────────────────────────────
   const debouncedRunSearch = useMemo(
     () => debounce(runSearch, SEARCH_DEBOUNCE_MS),
     [runSearch],
   );
 
+  /* --------------------------------- Effects --------------------------------- */
   // Initial Search Effect (Once per mount / Per user ready)
   useEffect(() => {
     if (!user) return;
@@ -157,7 +161,8 @@ export default function EmployeeSearchPage() {
     return () => debouncedRunSearch.cancel();
   }, [debouncedRunSearch]);
 
-  // Handle Radio Change
+  /* ----------------------------- Event Handlers ---------------------------- */
+  // ── Handle Radio Change ─────────────────────────────────────────
   const handleRadioChange = (
     fieldName: keyof TEmployeeSearchSchema,
     value: TEmployeeSearchSchema[keyof TEmployeeSearchSchema],
@@ -165,6 +170,7 @@ export default function EmployeeSearchPage() {
     setValue(fieldName, value, { shouldDirty: true });
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <form
       className="w-full flex flex-col items-start gap-5 px-2.5 sm:px-5 lg:px-8"
@@ -196,6 +202,7 @@ export default function EmployeeSearchPage() {
           />
         </div>
 
+        {/* Employee Seach Banner Section */}
         <Image
           src={EmployeeSearchSvg}
           alt="employee-search"
@@ -205,7 +212,7 @@ export default function EmployeeSearchPage() {
         />
       </div>
 
-      {/* Mobile/Tablet filter toggle */}
+      {/* Mobile/Tablet Filter Toggle Section */}
       <div className="hidden w-full tablet-xl:flex">
         <Button
           type="button"
@@ -340,7 +347,7 @@ export default function EmployeeSearchPage() {
             />
           </div>
 
-          {/* Company Size */}
+          {/* Company Size Section */}
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideUsers strokeWidth={"1.5px"} />
@@ -394,7 +401,7 @@ export default function EmployeeSearchPage() {
             />
           </div>
 
-          {/* Salary Range */}
+          {/* Salary Range Section */}
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideCircleDollarSign strokeWidth={"1.5px"} />
@@ -448,7 +455,7 @@ export default function EmployeeSearchPage() {
             />
           </div>
 
-          {/* Education Level */}
+          {/* Education Level Section */}
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideGraduationCap strokeWidth={"1.5px"} />
@@ -498,7 +505,7 @@ export default function EmployeeSearchPage() {
             />
           </div>
 
-          {/* Experience Level */}
+          {/* Experience Level Section */}
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideBriefcaseBusiness strokeWidth={"1.5px"} />
@@ -532,7 +539,7 @@ export default function EmployeeSearchPage() {
           </div>
         </div>
 
-        {/* Right Side: Results */}
+        {/* Right Side: Results Section */}
         <div className="w-3/4 flex flex-col items-start gap-3 tablet-xl:w-full">
           <div className="w-full flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-3">
             <TypographyH4 className="text-lg">
@@ -595,6 +602,7 @@ export default function EmployeeSearchPage() {
 
           <div className="w-full flex flex-col items-start gap-2">
             {loading ? (
+              /* Loading Skeleton Section */
               <div className="w-full mb-3">
                 {Array(3)
                   .fill(0)
@@ -610,6 +618,7 @@ export default function EmployeeSearchPage() {
                 />
               </div>
             ) : jobs && jobs.length > 0 ? (
+              /* Search Company Card Section */
               jobs.map((item, index) => (
                 <SearchCompanyCard
                   key={item.id || index}
@@ -633,6 +642,7 @@ export default function EmployeeSearchPage() {
                 />
               ))
             ) : (
+              /* Not Found Section */
               <div className="w-full text-center py-10">
                 <TypographyP className="text-muted-foreground">
                   No jobs match your search criteria. Try adjusting your

@@ -1,6 +1,6 @@
 import {
-    selectedValidation,
-    textValidation
+  selectedValidation,
+  textValidation,
 } from "@/utils/functions/validations";
 import * as z from "zod";
 

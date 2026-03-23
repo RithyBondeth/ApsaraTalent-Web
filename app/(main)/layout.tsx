@@ -25,37 +25,22 @@ export default function MainLayout({
 }: {
   children: React.ReactNode;
 }) {
+  /* ---------------------------------- Utils --------------------------------- */
   const pathname = usePathname();
   const sidebarData = sidebarList.filter((item) => item.url === pathname);
-
-  const { theme } = useThemeStore();
-  const user = useGetCurrentUserStore((s) => s.user);
   const t = useTranslations("header");
+  const { theme } = useThemeStore();
 
+  /* ----------------------------- API Integration ---------------------------- */
+  const user = useGetCurrentUserStore((s) => s.user);
+
+  /* --------------------------------- Effects -------------------------------- */
   usePushNotifications();
-  useChatConnection(); // Keep chat socket alive on all pages for real-time badge updates
+  // Keep chat socket alive on all pages for real-time badge updates
+  useChatConnection();
 
-  /**
-   * Feed Detail Page — no sidebar
-   */
-  if (pathname.startsWith("/feed/")) {
-    return (
-      <div className="relative">
-        <Link href="/feed" className="absolute top-3 left-3 sm:top-4 sm:left-4 lg:top-5 lg:left-5 z-20">
-          <Button variant="outline" size="icon">
-            <LucideArrowLeft />
-          </Button>
-        </Link>
-        <div key={pathname} className="container mx-auto p-3 sm:p-4 lg:p-5 animate-page-in">
-          {children}
-        </div>
-      </div>
-    );
-  }
-
-  /**
-   * Determine header title
-   */
+  /* --------------------------------- Methods -------------------------------- */
+  // ── Determine header title ─────────────────────────────────────────
   const getHeaderTitle = () => {
     if (pathname.startsWith("/message")) return t("chat");
     if (pathname.startsWith("/resume-builder")) return t("aiResumeBuilder");
@@ -67,23 +52,43 @@ export default function MainLayout({
     return sidebarData[0]?.description ?? "";
   };
 
-  /**
-   * Determine content wrapper class
-   */
+  // ── Determine content wrapper class ─────────────────────────────────
   const getContentClass = () => {
     if (pathname.startsWith("/message"))
       return "w-full h-screen h-[100dvh] flex flex-col";
     return "w-full";
   };
 
+  // ── Determine children wrapper class ────────────────────────────────
   const getChildrenWrapperClass = () => {
     if (pathname.startsWith("/message")) return "h-full min-h-0";
     return "m-3 sm:m-4 lg:m-5";
   };
 
-  /**
-   * Single stable layout tree — SidebarProvider never remounts on navigation
-   */
+  /* -------------------------------- Render UI -------------------------------- */
+  // ── Feed Detail Page — no sidebar ───────────────────────────────────
+  if (pathname.startsWith("/feed/")) {
+    return (
+      <div className="relative">
+        <Link
+          href="/feed"
+          className="absolute top-3 left-3 sm:top-4 sm:left-4 lg:top-5 lg:left-5 z-20"
+        >
+          <Button variant="outline" size="icon">
+            <LucideArrowLeft />
+          </Button>
+        </Link>
+        <div
+          key={pathname}
+          className="container mx-auto p-3 sm:p-4 lg:p-5 animate-page-in"
+        >
+          {children}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Single stable layout tree — SidebarProvider never remounts on navigation ─────────────────────────────────────────
   return (
     <ThemeProviderClient defaultTheme={theme}>
       <SidebarProvider>
