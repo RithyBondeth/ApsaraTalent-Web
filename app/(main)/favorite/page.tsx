@@ -194,7 +194,7 @@ export default function FavoritePage() {
       </div>
 
       {/* Favorite Card List Section */}
-      <div className="flex flex-col items-start gap-3">
+      <div className="flex flex-col items-start gap-3 stagger-list">
         {isEmployee &&
         getAllEmployeeFavoritesStore.companyData &&
         getAllEmployeeFavoritesStore.companyData.length > 0 ? (
@@ -256,7 +256,7 @@ export default function FavoritePage() {
         ) : (
           /* Empty Favorite List */
           <div className="w-full flex flex-col items-center justify-center my-16">
-            <Image src={emptySvgImage} alt="empty" height={200} width={200} />
+            <Image src={emptySvgImage} alt="empty" height={200} width={200} className="animate-float" />
             <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
               Favorite List Empty
             </TypographyP>

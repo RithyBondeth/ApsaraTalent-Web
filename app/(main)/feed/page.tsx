@@ -433,7 +433,7 @@ export default function FeedPage() {
       )}
 
       {/* Feed Card Section */}
-      <div className="w-full columns-3 gap-5 laptop-sm:columns-2 tablet-lg:!columns-1 phone-xl:gap-3">
+      <div className="w-full columns-3 gap-5 laptop-sm:columns-2 tablet-lg:!columns-1 phone-xl:gap-3 stagger-list">
         {/* Loading Skeleton Section */}
         {isLoading
           ? Array.from({ length: 9 }).map((_, index) =>
@@ -491,7 +491,7 @@ export default function FeedPage() {
       {/* Empty List Section */}
       {allUsers.length === 0 && (
         <div className="w-full flex flex-col items-center justify-center my-16">
-          <Image src={emptySvgImage} alt="empty" height={200} width={200} />
+          <Image src={emptySvgImage} alt="empty" height={200} width={200} className="animate-float" />
           <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
             {isEmployee ? "Company List Empty" : "Employee List Empty"}
           </TypographyP>
