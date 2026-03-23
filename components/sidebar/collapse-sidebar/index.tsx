@@ -1,5 +1,4 @@
 "use client";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useFetchOnce } from "@/hooks/utils/use-fetch-once";
 import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
@@ -21,6 +20,7 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -31,16 +31,35 @@ import LogoComponent from "../../utils/logo";
 import { SidebarDropdownFooter } from "./sidebar-dropdown-footer";
 import { SidebarDropdownFooterSkeleton } from "./sidebar-dropdown-footer/skeleton";
 
-// Badge Component
+/* ── Inline badge shown next to menu text when sidebar is open ── */
 const CountBadge = ({ count }: { count: number }) => {
   if (count === 0) return null;
-  return <Badge className="bg-red-500 dark:text-primary">{count}</Badge>;
+  return (
+    <span className="ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-destructive px-1.5 text-[10px] font-bold leading-none text-destructive-foreground">
+      {count > 99 ? "99+" : count}
+    </span>
+  );
 };
+
+/* ── Shared className for every SidebarMenuButton ── */
+const MENU_BTN_CLS = [
+  "group-data-[collapsible=icon]:justify-center",
+  "font-medium",
+  "px-2.5 py-2.5",
+  "text-[15px] md:text-sm",
+  "transition-all duration-300 ease-out",
+  /* active */
+  "data-[active=true]:bg-primary data-[active=true]:text-primary-foreground",
+  "data-[active=true]:shadow-[0_4px_14px_hsl(var(--primary)/0.35)]",
+  "data-[active=true]:animate-sidebar-active-in",
+  /* lock active style on hover */
+  "hover:data-[active=true]:bg-primary hover:data-[active=true]:text-primary-foreground",
+].join(" ");
 
 export default function CollapseSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  // Utils
+  /* ── Utils ─────────────────────────────────── */
   const pathname = usePathname();
   const { open, isMobile, setOpenMobile } = useSidebar();
   const t = useTranslations("sidebar");
@@ -63,7 +82,7 @@ export default function CollapseSidebar({
     [sidebarTitleMap],
   );
 
-  // API Calls
+  /* ── API ────────────────────────────────────── */
   const { user, loading } = useGetCurrentUserStore();
   const { countCurrentEmployeeMatching, totalEmpMatching } =
     useCountCurrentEmployeeMatchingStore();
@@ -73,18 +92,14 @@ export default function CollapseSidebar({
     useCountAllEmployeeFavoritesStore();
   const { totalAllCompanyFavorites, countAllCompanyFavorites } =
     useCountAllCompanyFavoritesStore();
-
-  // Notification & message unread counts
   const { unreadCount: unreadNotifications, fetchUnreadCount } =
     useNotificationStore();
   const unreadMessages = useChatStore((s) => s.unreadCount);
 
-  // Fetch unread notification count on mount (and keep it fresh)
   useEffect(() => {
     void fetchUnreadCount();
   }, [fetchUnreadCount]);
 
-  // Handles all ref logic and duplicate prevention
   const { isEmployee, isCompany } = useFetchOnce({
     cacheKey: "sidebar-component",
     onEmployeeFetch: (employeeId) => {
@@ -97,7 +112,7 @@ export default function CollapseSidebar({
     },
   });
 
-  // Memoized counts
+  /* ── Derived counts ─────────────────────────── */
   const matchingCount = useMemo(() => {
     if (isEmployee) return totalEmpMatching ?? 0;
     if (isCompany) return totalCmpMatching ?? 0;
@@ -108,39 +123,27 @@ export default function CollapseSidebar({
     if (isEmployee) return totalAllEmployeeFavorites ?? 0;
     if (isCompany) return totalAllCompanyFavorites ?? 0;
     return 0;
-  }, [
-    isEmployee,
-    isCompany,
-    totalAllEmployeeFavorites,
-    totalAllCompanyFavorites,
-  ]);
+  }, [isEmployee, isCompany, totalAllEmployeeFavorites, totalAllCompanyFavorites]);
 
-  // Memoized user data
-  const userData = useMemo((): {
-    name: string;
-    email: string;
-    avatar: string;
-  } => {
-    if (isEmployee && user?.employee) {
-      return {
-        name: user.employee.username ?? "",
-        email: user.email ?? user.phone ?? "",
-        avatar: user.employee.avatar ?? "",
-      };
-    }
+  const userData = useMemo(
+    (): { name: string; email: string; avatar: string } => {
+      if (isEmployee && user?.employee)
+        return {
+          name: user.employee.username ?? "",
+          email: user.email ?? user.phone ?? "",
+          avatar: user.employee.avatar ?? "",
+        };
+      if (isCompany && user?.company)
+        return {
+          name: user.company.name ?? "",
+          email: user.email ?? user.phone ?? "",
+          avatar: user.company.avatar ?? "",
+        };
+      return { name: "", email: "", avatar: "" };
+    },
+    [isEmployee, isCompany, user],
+  );
 
-    if (isCompany && user?.company) {
-      return {
-        name: user.company.name ?? "",
-        email: user.email ?? user.phone ?? "",
-        avatar: user.company.avatar ?? "",
-      };
-    }
-
-    return { name: "", email: "", avatar: "" };
-  }, [isEmployee, isCompany, user]);
-
-  // Badge count per URL
   const getBadgeCount = useCallback(
     (url: string): number => {
       if (url === "/matching") return matchingCount;
@@ -152,31 +155,72 @@ export default function CollapseSidebar({
     [matchingCount, favoriteCount, unreadMessages, unreadNotifications],
   );
 
-  // Check if a path is active
   const isPathActive = useCallback(
     (url: string) => pathname === url || pathname.startsWith(`${url}/`),
     [pathname],
   );
 
-  // Resolve URL for search (needs role appended)
   const resolveUrl = useCallback(
-    (url: string) => {
-      if (url === "/search") return `/search/${user?.role ?? ""}`;
-      return url;
-    },
+    (url: string) => (url === "/search" ? `/search/${user?.role ?? ""}` : url),
     [user?.role],
   );
 
   const handleNavClick = useCallback(() => {
-    if (isMobile) {
-      setOpenMobile(false);
-    }
+    if (isMobile) setOpenMobile(false);
   }, [isMobile, setOpenMobile]);
 
+  /* ── Shared nav item renderer ─────────────── */
+  const renderNavItem = (
+    url: string,
+    title: string,
+    Icon: React.ElementType,
+    badgeCount?: number,
+  ) => {
+    const count = badgeCount ?? getBadgeCount(url);
+    return (
+      <Collapsible
+        key={url}
+        asChild
+        defaultOpen={true}
+        className="group/collapsible"
+      >
+        <SidebarMenuItem className="relative">
+          <CollapsibleTrigger asChild>
+            <SidebarMenuButton
+              isActive={isPathActive(url)}
+              tooltip={title}
+              className={MENU_BTN_CLS}
+              asChild
+            >
+              <Link href={resolveUrl(url)} prefetch={true} onClick={handleNavClick}>
+                <Icon className="!size-5 shrink-0" strokeWidth={1.5} />
+                <span className="group-data-[collapsible=icon]:hidden">{title}</span>
+                {isExpanded && count > 0 && (
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    <CountBadge count={count} />
+                  </span>
+                )}
+              </Link>
+            </SidebarMenuButton>
+          </CollapsibleTrigger>
+
+          {/* Floating badge visible only when sidebar is collapsed */}
+          {!isExpanded && count > 0 && (
+            <span className="pointer-events-none absolute -top-1.5 right-1 z-50 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold leading-none text-destructive-foreground">
+              {count > 99 ? "99+" : count}
+            </span>
+          )}
+        </SidebarMenuItem>
+      </Collapsible>
+    );
+  };
+
+  /* ── Render ─────────────────────────────────── */
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <Link href="/feed">
+      {/* ── Header / Logo ── */}
+      <SidebarHeader className="pb-3">
+        <Link href="/feed" className="flex items-center">
           {isExpanded ? (
             <LogoComponent priority={true} />
           ) : (
@@ -187,111 +231,42 @@ export default function CollapseSidebar({
         </Link>
       </SidebarHeader>
 
+      <Separator className="mb-1" />
+
+      {/* ── Navigation Items ── */}
       <SidebarContent className="pb-1">
         <SidebarGroup>
-          <SidebarMenu className="space-y-1.5 md:space-y-3">
-            {sidebarList.map((item) => (
-              <Collapsible
-                key={item.title}
-                asChild
-                defaultOpen={true}
-                className="group/collapsible"
-              >
-                <SidebarMenuItem className="relative">
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton
-                      isActive={isPathActive(item.url)}
-                      tooltip={item.title}
-                      className="font-medium px-2.5 md:px-2 py-2.5 md:py-3 text-[15px] md:text-sm transition-all duration-300 ease-out data-[active=true]:bg-primary data-[active=true]:text-primary-foreground data-[active=true]:shadow-[0_8px_18px_hsl(var(--primary)/0.28)] data-[active=true]:animate-sidebar-active-in hover:data-[active=true]:bg-primary hover:data-[active=true]:text-primary-foreground"
-                      asChild
-                    >
-                      <Link
-                        href={resolveUrl(item.url)}
-                        prefetch={true}
-                        onClick={handleNavClick}
-                      >
-                        {item.icon && (
-                          <item.icon
-                            className="!size-5 md:!size-6 shrink-0"
-                            strokeWidth={1.5}
-                          />
-                        )}
-                        <span className="group-data-[collapsible=icon]:hidden">
-                          {getSidebarTitle(item.title)}
-                        </span>
-                        {isExpanded && item.url === "/matching" && (
-                          <span className="ml-auto">
-                            <CountBadge count={matchingCount} />
-                          </span>
-                        )}
-                        {isExpanded && item.url === "/favorite" && (
-                          <span className="ml-auto">
-                            <CountBadge count={favoriteCount} />
-                          </span>
-                        )}
-                        {isExpanded && item.url === "/message" && (
-                          <span className="ml-auto">
-                            <CountBadge count={unreadMessages} />
-                          </span>
-                        )}
-                        {isExpanded && item.url === "/notification" && (
-                          <span className="ml-auto">
-                            <CountBadge count={unreadNotifications} />
-                          </span>
-                        )}
-                      </Link>
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                  {!isExpanded && getBadgeCount(item.url) > 0 && (
-                    <span className="pointer-events-none absolute -top-1.5 right-1 z-50 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold leading-none">
-                      {getBadgeCount(item.url) > 99
-                        ? "99+"
-                        : getBadgeCount(item.url)}
-                    </span>
-                  )}
-                </SidebarMenuItem>
-              </Collapsible>
-            ))}
-
-            {/* AI Resume Builder - Only for employees */}
-            {!isCompany && (
-              <Collapsible
-                asChild
-                defaultOpen={true}
-                className="group/collapsible"
-              >
-                <SidebarMenuItem className="relative">
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton
-                      isActive={isPathActive("/resume-builder")}
-                      tooltip={t("aiResumeBuilder")}
-                      className="font-medium px-2.5 md:px-2 py-2.5 md:py-3 text-[15px] md:text-sm transition-all duration-300 ease-out data-[active=true]:bg-primary data-[active=true]:text-primary-foreground data-[active=true]:shadow-[0_8px_18px_hsl(var(--primary)/0.28)] data-[active=true]:animate-sidebar-active-in hover:data-[active=true]:bg-primary hover:data-[active=true]:text-primary-foreground"
-                      asChild
-                    >
-                      <Link
-                        href="/resume-builder"
-                        prefetch={true}
-                        onClick={handleNavClick}
-                      >
-                        <LucideFileUser
-                          className="!size-5 md:!size-6 shrink-0"
-                          strokeWidth={1.5}
-                        />
-                        <span className="group-data-[collapsible=icon]:hidden">
-                          {t("aiResumeBuilder")}
-                        </span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                </SidebarMenuItem>
-              </Collapsible>
+          <SidebarGroupLabel className="text-[11px] uppercase tracking-wider">
+            Navigation
+          </SidebarGroupLabel>
+          <SidebarMenu className="space-y-0.5">
+            {sidebarList.map((item) =>
+              renderNavItem(item.url, getSidebarTitle(item.title), item.icon),
             )}
           </SidebarMenu>
         </SidebarGroup>
+
+        {/* ── Tools (employees only) ── */}
+        {!isCompany && (
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-[11px] uppercase tracking-wider">
+              Tools
+            </SidebarGroupLabel>
+            <SidebarMenu>
+              {renderNavItem(
+                "/resume-builder",
+                t("aiResumeBuilder"),
+                LucideFileUser,
+                0,
+              )}
+            </SidebarMenu>
+          </SidebarGroup>
+        )}
       </SidebarContent>
 
       <Separator />
 
+      {/* ── Footer / User menu ── */}
       <SidebarFooter className="pb-[max(0.5rem,env(safe-area-inset-bottom))]">
         {loading || !user ? (
           <SidebarDropdownFooterSkeleton />
