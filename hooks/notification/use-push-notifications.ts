@@ -7,7 +7,7 @@ import {
 } from "firebase/messaging";
 import axios from "@/lib/axios";
 import { API_UPDATE_PUSH_TOKEN_URL } from "@/utils/constants/apis/user_url";
-import { firebaseApp } from "@/utils/firebase/firebase";
+import { firebaseApp } from "@/lib/firebase";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 
