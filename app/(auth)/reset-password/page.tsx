@@ -21,20 +21,19 @@ import { useForm } from "react-hook-form";
 import { resetPasswordSchema, TResetPasswordForm } from "./validate";
 
 export default function ResetPasswordPage() {
-  /*------------------------------------ All States -----------------------------------*/
-  // Utils
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
 
-  // Reset Password Helpers
+  /* -------------------------------- All States ------------------------------ */
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [confirmPassVisibility, setConfirmPassVisibility] =
     useState<boolean>(false);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
-  /*--------------------------------- API Integration ---------------------------------*/
+  /* ----------------------------- API Integration ----------------------------- */
   const { loading, error, message, resetPassword } = useResetPasswordStore();
 
-  /*----------------------- React Hook Form: Reset Password Form ----------------------*/
+  /* ------------------- React Hook Form: Reset Password Form ------------------- */
   const {
     handleSubmit,
     register,
@@ -44,13 +43,15 @@ export default function ResetPasswordPage() {
     resolver: zodResolver(resetPasswordSchema),
   });
 
-  /*----------------------------- Reset Password Function -----------------------------*/
+  /* --------------------------------- Methods ---------------------------------- */
+  // ── Reset Password Function ───────────────────────────────────────
   const onSubmit = async (data: TResetPasswordForm) => {
     setIsSubmitted(true);
     await resetPassword(data.token, data.password, data.confirmPassword);
   };
 
-  /*------------------------------ Reset Password Effect ------------------------------*/
+  /* --------------------------------- Effects ---------------------------------- */
+  // ── Reset Password Effect ─────────────────────────────────────────
   useEffect(() => {
     if (!isSubmitted) return;
 
@@ -70,8 +71,8 @@ export default function ResetPasswordPage() {
     }
   }, [error, loading, message, isSubmitted]);
 
+  /* ---------------------------------- Render UI -------------------------------- */
   return (
-    /*-------------------------------------------- Main Content --------------------------------------------*/
     <div className="h-screen w-screen flex justify-between items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
       {/* Left Section */}
       <div className="h-screen w-1/2 flex justify-center items-center bg-primary-foreground">

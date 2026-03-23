@@ -28,15 +28,15 @@ import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 export default function PhoneOTPPage() {
-  /*------------------------------------ All States -------------------------------------*/
-  // Utils
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
 
-  // Verify OTP Helpers
+  /* -------------------------------- All States ------------------------------ */
+
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
   const [loginInitiated, setLoginInitiated] = useState<boolean>(false);
 
-  /*---------------------------------- API Integration ----------------------------------*/
+  /* ------------------------------ API Integration --------------------------- */
   // Current User, Get All Employees and Get All Companies
   const { getCurrentUser } = useGetCurrentUserStore();
   const { queryEmployee } = useGetAllEmployeeStore();
@@ -51,7 +51,8 @@ export default function PhoneOTPPage() {
   // Verify OTP Authentication
   const verifyOTPStore = useVerifyOTPStore();
 
-  /*--------------------------------- Preload User Data ---------------------------------*/
+  /* -------------------------------- Methods --------------------------------- */
+  // ── Preload User Data ─────────────────────────────────────────
   const preloadUserData = async () => {
     try {
       // Fist load current user
@@ -102,7 +103,7 @@ export default function PhoneOTPPage() {
     }
   };
 
-  /*--------------------------- React Hook Form: Verify OTP Form ----------------------------*/
+  /* ---------------------- React Hook Form: Verify OTP Form -------------------- */
   const {
     control,
     handleSubmit,
@@ -119,7 +120,8 @@ export default function PhoneOTPPage() {
     );
   };
 
-  /*---------------------------------- Verify OTP Effect ----------------------------------*/
+  /* --------------------------------- Effects --------------------------------- */
+  // ── Verify OTP Effect ─────────────────────────────────────────
   useEffect(() => {
     if (!loginInitiated) return;
 
@@ -186,8 +188,8 @@ export default function PhoneOTPPage() {
     verifyOTPStore.role,
   ]);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
-    /*-------------------------------------------- Main Content --------------------------------------------*/
     <div className="h-screen w-screen flex items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
       {/* Left Section */}
       <div className="h-screen w-1/2 flex justify-center items-center bg-primary-foreground tablet-md:h-fit">

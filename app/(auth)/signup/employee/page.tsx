@@ -30,14 +30,14 @@ import { FormProvider, useForm } from "react-hook-form";
 import { employeeSignUpSchema, TEmployeeSignUp } from "./validation";
 
 export default function EmployeeSignup() {
-  /*-------------------------------------------- Utils --------------------------------------------*/
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
 
   const [step, setStep] = useState<number>(1);
   const totalSteps = 6;
   const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
 
-  /*--------------------------------------- API Integration ---------------------------------------*/
+  /* ----------------------------- API Integration ---------------------------- */
   // Get user basic data from Basic, Phone, Google, Github, LinkedIn, Facebook
   const { basicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
@@ -54,25 +54,7 @@ export default function EmployeeSignup() {
   // Employee Register
   const empSignup = useEmployeeSignupStore();
 
-  /*---------------------------------- Loading States ----------------------------------*/
-  const isSignupLoading =
-    empSignup.loading ||
-    uploadAvatar.loading ||
-    uploadCoverLetter.loading ||
-    uploadResume.loading;
-
-  // Signup loading title
-  const signupLoadingMessage = empSignup.loading
-    ? "Creating your employee account..."
-    : uploadAvatar.loading
-      ? "Uploading profile avatar..."
-      : uploadResume.loading
-        ? "Uploading resume..."
-        : uploadCoverLetter.loading
-          ? "Uploading cover letter..."
-          : "Processing your request...";
-
-  /*------------------------ React Hook Form: Employee Signup Form ----------------------*/
+  /* ------------------ React Hook Form: Employee Signup Form ----------------- */
   const methods = useForm<TEmployeeSignUp>({
     mode: "onChange",
     resolver: zodResolver(employeeSignUpSchema),
@@ -121,7 +103,7 @@ export default function EmployeeSignup() {
     6: ["careerScopes"],
   };
 
-  /*----------------------------------- Navigation Helpers -----------------------------------*/
+  // ── Navigation Helpers ─────────────────────────────────────────
   // Check if user has no experience (to skip step 2)
   const hasNoExperience = () =>
     getValues("profession.yearOfExperience") === "No Experience";
@@ -156,7 +138,8 @@ export default function EmployeeSignup() {
       return;
     }
 
-    /*--------------------------- Final Submit: Employee Registration ---------------------------*/
+    /* --------------------------------- Methods --------------------------------- */
+    // ── Final Submit: Employee Registration ────────────────────────────
     handleSubmit(async (data) => {
       try {
         setUploadsComplete(false);
@@ -296,7 +279,8 @@ export default function EmployeeSignup() {
     })();
   };
 
-  /*--------------------------- Employee Signup Effect ---------------------------*/
+  /* --------------------------------- Effects --------------------------------- */
+  // ── Employee Signup Effect ───────────────────────────────────────
   useEffect(() => {
     if (
       empSignup.accessToken &&
@@ -389,8 +373,26 @@ export default function EmployeeSignup() {
     facebookUserData,
   ]);
 
+  /* -------------------------------- Loading States -------------------------------- */
+  const isSignupLoading =
+    empSignup.loading ||
+    uploadAvatar.loading ||
+    uploadCoverLetter.loading ||
+    uploadResume.loading;
+
+  // Signup loading title
+  const signupLoadingMessage = empSignup.loading
+    ? "Creating your employee account..."
+    : uploadAvatar.loading
+      ? "Uploading profile avatar..."
+      : uploadResume.loading
+        ? "Uploading resume..."
+        : uploadCoverLetter.loading
+          ? "Uploading cover letter..."
+          : "Processing your request...";
+
+  /* ----------------------------------- Render UI ----------------------------------- */
   return (
-    /*----------------------------------------------- Main Content -----------------------------------------------*/
     <div className="w-full max-w-4xl mx-auto flex flex-col items-start gap-4 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
       {/* Navigate Back Button Section */}
       <Button
@@ -535,7 +537,7 @@ export default function EmployeeSignup() {
         </form>
       </FormProvider>
 
-      {/* Loading Dialog */}
+      {/* Loading Dialog Section */}
       <LoadingDialog
         loading={isSignupLoading}
         title={signupLoadingMessage}

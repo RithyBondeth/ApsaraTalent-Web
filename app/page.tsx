@@ -16,9 +16,9 @@ const ParticlesBackground = dynamic(
   { ssr: false },
 );
 
+/*-------------------------------------------- Render UI --------------------------------------------*/
 export default function IndexPage() {
   return (
-    /*-------------------------------------------- Main Content --------------------------------------------*/
     <div className="relative flex min-h-[100dvh] flex-col lg:flex-row lg:items-center lg:justify-between overflow-hidden">
       {/* Animation Background Section */}
       <ParticlesBackground />

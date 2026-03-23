@@ -45,25 +45,24 @@ import {
 import { formatDateForField } from "@/utils/functions/datebformatter-for-field";
 
 export default function SignupPage() {
-  /*--------------------------------------- All States ---------------------------------------*/
-  // Utils
+  /* --------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const { theme } = useThemeStore();
 
-  // Signup Helpers
+  /* -------------------------------- All States ------------------------------ */
   const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [confirmPassVisibility, setConfirmPassVisibility] =
     useState<boolean>(false);
 
-  /*------------------------------------ API Integrations ------------------------------------*/
+  /* ----------------------------- API Integration ---------------------------- */
   // Get user basic data from socials: Google, Github, LinkedIn, Facebook
   const googleUserData = useGoogleLoginStore();
   const githubUserData = useGithubLoginStore();
   const linkedInUserData = useLinkedInLoginStore();
   const facebookUserData = useFacebookLoginStore();
 
-  /*----------------------------------- User Role Handling -----------------------------------*/
+  /* --------------------------- User Role Handling --------------------------- */
   /* 
     Determine user role (Employee or Company) by checking local state first,
     then falling back to any connected social login providers.
@@ -85,7 +84,7 @@ export default function SignupPage() {
   );
   const isEmployeeForm = selectedRole === "employee";
 
-  /*------------------------- React Hook Form: Emp and Cmp Signup Form -------------------------*/
+  /* ----------------------- React Hook Form: Emp and Cmp Signup Form ---------------------- */
   const cmpForm = useForm<TBasicSignupCompanySchema>({
     resolver: zodResolver(basicSignupCompanySchema),
     defaultValues: {
@@ -118,7 +117,8 @@ export default function SignupPage() {
   const companyErrors = cmpForm.formState
     .errors as FieldErrors<TBasicSignupCompanySchema>;
 
-  /*----------------------------------- Signup Function -----------------------------------*/
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Signup Function ─────────────────────────────────────────
   // Set Basic Signup Data for Employee
   const onSubmitEmployee = (data: TBasicSignupEmployeeSchema) => {
     console.log("Basic Employee Data: ", data);
@@ -149,7 +149,8 @@ export default function SignupPage() {
     router.push("/signup/company");
   };
 
-  /*--------------------------------- Social Signup Effect ---------------------------------*/
+  /* --------------------------------- Effects --------------------------------- */
+  // ── Social Signup Effect ─────────────────────────────────────────
   useEffect(() => {
     // Handle Google login data - Auto Fill Information in Form
     if (
@@ -229,8 +230,8 @@ export default function SignupPage() {
     empForm,
   ]);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
-    /*-------------------------------------------- Main Content --------------------------------------------*/
     <div className="w-full max-w-[620px] flex flex-col items-start justify-center gap-4 px-1 tablet-sm:max-w-full">
       {/* Title Section */}
       <div className="mb-4">

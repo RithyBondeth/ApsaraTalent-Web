@@ -19,18 +19,18 @@ import { Controller, useForm } from "react-hook-form";
 import { phoneLoginSchema, TPhoneLoginForm } from "./validation";
 
 export default function PhoneNumberPage() {
-  /*--------------------------------------- All States ---------------------------------------*/
-  // Utils
+  /* ----------------------------------- Utils -------------------------------- */
   const router = useRouter();
 
-  // Phone OTP Helpers
+  /* --------------------------------- All States ----------------------------- */
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const { setBasicPhoneSignupData } = useBasicPhoneSignupDataStore();
 
+  /* ----------------------------- API Integration ---------------------------- */
   // API Integration
   const { loading, error, message, isSuccess, loginOtp } = useLoginOTPStore();
 
-  /*------------------------------ React Hook Form: Phone OTP Form -----------------------------*/
+  /* --------------------- React Hook Form: Phone OTP Form --------------------- */
   const {
     handleSubmit,
     register,
@@ -41,7 +41,8 @@ export default function PhoneNumberPage() {
     resolver: zodResolver(phoneLoginSchema),
   });
 
-  /*--------------------------------- Phone OTP Function ---------------------------------*/
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Phone OTP Function ───────────────────────────────────────
   const onSubmit = async (data: TPhoneLoginForm) => {
     setIsSubmitted(true);
     setBasicPhoneSignupData({
@@ -52,7 +53,8 @@ export default function PhoneNumberPage() {
     await loginOtp(phone);
   };
 
-  /*---------------------------------- Phone OTP Effect ----------------------------------*/
+  /* --------------------------------- Effects --------------------------------- */
+  // ── Phone OTP Effect ─────────────────────────────────────────
   useEffect(() => {
     if (!isSubmitted) return;
 
@@ -73,7 +75,7 @@ export default function PhoneNumberPage() {
   }, [error, loading, isSuccess, message, isSubmitted]);
 
   return (
-    /*-------------------------------------------- Main Content --------------------------------------------*/
+    /* -------------------------------- Render UI -------------------------------- */
     <div className="h-screen w-screen flex justify-between items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
       {/* Left Section */}
       <div className="h-screen w-1/2 flex justify-center items-center">

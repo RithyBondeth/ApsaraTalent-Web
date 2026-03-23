@@ -28,14 +28,14 @@ import { FormProvider, useForm } from "react-hook-form";
 import { companySignupSchema, TCompanySignup } from "./validation";
 
 export default function CompanySignup() {
-  /*----------------------------------------------- Utils -----------------------------------------------*/
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
 
   const [step, setStep] = useState<number>(1);
   const totalSteps = 6;
   const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
 
-  /*--------------------------------------- API Integration ---------------------------------------*/
+  /* ----------------------------- API Integration ---------------------------- */
   // Get user basic data from Basic, Phone, Google, Github, LinkedIn, Facebook
   const { basicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
@@ -51,20 +51,7 @@ export default function CompanySignup() {
   // Company Register
   const cmpSignup = useCompanySignupStore();
 
-  /*---------------------------------- Loading States ----------------------------------*/
-  const isSignupLoading =
-    cmpSignup.loading || uploadAvatar.loading || uploadCover.loading;
-
-  // Signup loading title
-  const signupLoadingMessage = cmpSignup.loading
-    ? "Creating your company account..."
-    : uploadAvatar.loading
-      ? "Uploading company avatar..."
-      : uploadCover.loading
-        ? "Uploading company cover..."
-        : "Processing your request...";
-
-  /*------------------------ React Hook Form: Company Signup Form ----------------------*/
+  /* ------------------- React Hook Form: Company Signup Form ------------------ */
   const methods = useForm<TCompanySignup>({
     mode: "onChange",
     resolver: zodResolver(companySignupSchema),
@@ -119,7 +106,7 @@ export default function CompanySignup() {
     6: ["careerScopes"],
   };
 
-  /*----------------------------------- Navigation Helpers -----------------------------------*/
+  // ── Navigation Helpers ─────────────────────────────────────────
   // Handle Previous Step
   const prevStep = () => setStep((prev) => prev - 1);
 
@@ -131,7 +118,8 @@ export default function CompanySignup() {
 
     if (isValid) {
       if (step === totalSteps) {
-        /*------------------------ Final Submit: Company Registration ------------------------*/
+        /* --------------------------------- Methods --------------------------------- */
+        // ── Final Submit: Company Registration ────────────────────
         handleSubmit(async (data) => {
           // Register with regular email-password
           if (basicSignupData) {
@@ -257,7 +245,8 @@ export default function CompanySignup() {
     }
   };
 
-  /*--------------------------- Company Signup Effect ---------------------------*/
+  /* --------------------------------- Effects --------------------------------- */
+  // ── Company Signup Effect ──────────────────────────────────
   useEffect(() => {
     if (
       cmpSignup.accessToken &&
@@ -347,8 +336,21 @@ export default function CompanySignup() {
     facebookUserData,
   ]);
 
+  /* -------------------------------- Loading State -------------------------------- */
+  const isSignupLoading =
+    cmpSignup.loading || uploadAvatar.loading || uploadCover.loading;
+
+  // Signup loading title
+  const signupLoadingMessage = cmpSignup.loading
+    ? "Creating your company account..."
+    : uploadAvatar.loading
+      ? "Uploading company avatar..."
+      : uploadCover.loading
+        ? "Uploading company cover..."
+        : "Processing your request...";
+
+  /* ---------------------------------- Render UI ---------------------------------- */
   return (
-    /*----------------------------------------------- Main Content -----------------------------------------------*/
     <div className="w-full max-w-4xl mx-auto flex flex-col items-start gap-4 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
       {/* Navigate Back Button Section */}
       <Button
@@ -483,7 +485,7 @@ export default function CompanySignup() {
         </FormProvider>
       </div>
 
-      {/* Loading Dialog */}
+      {/* Loading Dialog Section */}
       <LoadingDialog
         loading={isSignupLoading}
         title={signupLoadingMessage}

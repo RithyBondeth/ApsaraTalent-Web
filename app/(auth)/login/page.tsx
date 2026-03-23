@@ -56,10 +56,11 @@ import { Controller, useForm } from "react-hook-form";
 import { loginSchema, TLoginForm } from "./validation";
 
 function LoginPage() {
-  /*--------------------------------------- All States ---------------------------------------*/
-  // Utils: Dialog, Theme
+  /* ------------------------------------ Utils -------------------------------- */
   const router = useRouter();
   const { resolvedTheme } = useTheme();
+
+  /* -------------------------------- All States ------------------------------- */
   const [mounted, setMounted] = useState<boolean>(false);
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [openRmbDialog, setOpenRmbDialog] = useState<boolean>(false);
@@ -74,38 +75,7 @@ function LoginPage() {
   const [loginInitiated, setLoginInitiated] = useState<boolean>(false);
   const [isPreloadingData, setIsPreloadingData] = useState<boolean>(false);
 
-  /*-------------------------------- React Hook Form: Login Form -------------------------------*/
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-    reset,
-    control,
-    setValue,
-  } = useForm<TLoginForm>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      rememberMe: false,
-    },
-  });
-
-  /*
-    - Mark as mounted so the theme-dependent image is only resolved client-side,
-    - Preventing the SSR/client hydration mismatch on the login image.
-  */
-  useEffect(() => setMounted(true), []);
-
-  // Load remember preference on mount
-  useEffect(() => {
-    try {
-      const savedRememberPreference = getRememberPreference();
-      setValue("rememberMe", savedRememberPreference);
-    } catch (error) {
-      console.error("Error loading remember preference:", error);
-    }
-  }, [setValue]);
-
-  /*---------------------------------- API Integrations ----------------------------------*/
+  /* ----------------------------- API Integration ----------------------------- */
   // Current User, Get All Employees and Companies
   const { getCurrentUser } = useGetCurrentUserStore();
   const { queryCompany } = useGetAllCompanyStore();
@@ -126,26 +96,23 @@ function LoginPage() {
   const githubLoginStore = useGithubLoginStore();
   const facebookLoginStore = useFacebookLoginStore();
 
-  /*---------------------------------- Loading States ----------------------------------*/
-  // Check if any social login is loading
-  const isAnySocialLoading =
-    googleLoginStore.loading ||
-    linkedInLoginStore.loading ||
-    githubLoginStore.loading ||
-    facebookLoginStore.loading;
+  /* ----------------------- React Hook Form: Login Form ----------------------- */
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+    reset,
+    control,
+    setValue,
+  } = useForm<TLoginForm>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      rememberMe: false,
+    },
+  });
 
-  // Check if any authentication is loading
-  const isAuthLoading =
-    (loginInitiated && loading) ||
-    (socialLoginInitiated && isAnySocialLoading) ||
-    isPreloadingData;
-
-  // Authentication loading title
-  const authLoadingTitle = isPreloadingData
-    ? "Preparing your workspace..."
-    : "Authenticating...";
-
-  /*---------------------------------- Preload User Data ----------------------------------*/
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Preload User Data ────────────────────────────────────────
   const preloadUserData = async () => {
     try {
       // First get current user data
@@ -196,13 +163,30 @@ function LoginPage() {
     }
   };
 
-  /*--------------------------------- Login Function ---------------------------------*/
+  // ── Login Function ───────────────────────────────────────
   const onSubmit = async (data: TLoginForm) => {
     setLoginInitiated(true);
     await login(data.email, data.password, data.rememberMe!);
   };
 
-  /*---------------------------------- Login Effect ----------------------------------*/
+  /* --------------------------------- Effects --------------------------------- */
+  /*
+    - Mark as mounted so the theme-dependent image is only resolved client-side,
+    - Preventing the SSR/client hydration mismatch on the login image.
+  */
+  useEffect(() => setMounted(true), []);
+
+  // ── Remember Preference Effect ──────────────────────────
+  useEffect(() => {
+    try {
+      const savedRememberPreference = getRememberPreference();
+      setValue("rememberMe", savedRememberPreference);
+    } catch (error) {
+      console.error("Error loading remember preference:", error);
+    }
+  }, [setValue]);
+
+  // ── Login Effect ─────────────────────────────────────────
   // Regular Email-Password Login Effect
   useEffect(() => {
     if (!loginInitiated) return;
@@ -379,14 +363,30 @@ function LoginPage() {
     isPreloadingData,
   ]);
 
-  /*--------------------------------- Get Current Image Based on Theme ---------------------------------*/
+  /* -------------------------------- Loading State -------------------------------- */
+  const isAnySocialLoading =
+    googleLoginStore.loading ||
+    linkedInLoginStore.loading ||
+    githubLoginStore.loading ||
+    facebookLoginStore.loading;
+
+  const isAuthLoading =
+    (loginInitiated && loading) ||
+    (socialLoginInitiated && isAnySocialLoading) ||
+    isPreloadingData;
+
+  const authLoadingTitle = isPreloadingData
+    ? "Preparing your workspace..."
+    : "Authenticating...";
+
+  // Get Current Image Based on Theme
   // Only resolve the theme after mounting — avoids SSR/client hydration mismatch
   // Because resolvedTheme is undefined on the server.
   const loginImage =
     mounted && resolvedTheme === "dark" ? loginWhiteSvg : loginBlackSvg;
 
+  /* ----------------------------------- Render UI ----------------------------------- */
   return (
-    /*-------------------------------------------- Main Content --------------------------------------------*/
     <div className="h-screen w-screen flex justify-between items-stretch tablet-lg:flex-col tablet-lg:[&>div]:w-full">
       {/* Left Section */}
       <div className="h-screen w-1/2 flex justify-center items-center bg-primary-foreground tablet-lg:h-fit">
@@ -571,7 +571,7 @@ function LoginPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Loading Dialog */}
+      {/* Loading Dialog Section */}
       <LoadingDialog
         loading={isAuthLoading}
         title={authLoadingTitle}

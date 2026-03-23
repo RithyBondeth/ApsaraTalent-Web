@@ -25,23 +25,23 @@ import { Controller, useForm } from "react-hook-form";
 import { signupOptionSchema, TSignupOptionSchema } from "./validation";
 
 export default function SingUpOption() {
-  /*-------------------------------------- All States --------------------------------------*/
-  // Utils
+  /* ---------------------------------- Utils ---------------------------------- */
   const router = useRouter();
 
+  /* -------------------------------- All States ------------------------------- */
   // Signup Option Helpers
   const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData, setBasicPhoneSignupData } =
     useBasicPhoneSignupDataStore();
 
-  /* ---------------------------- API Integration: Social Data ------------------------------*/
+  /* --------------------- API Integration: Social Data ------------------------ */
   // Get user basic data from socials: Google, Github, LinkedIn, Facebook
   const googleUserData = useGoogleLoginStore();
   const githubUserData = useGithubLoginStore();
   const linkedInUserData = useLinkedInLoginStore();
   const facebookUserData = useFacebookLoginStore();
 
-  /*-------------------------- React Hook Form: Signup Option Form ---------------------------*/
+  /* -------------------- React Hook Form: Signup Option Form ------------------- */
   const {
     handleSubmit,
     control,
@@ -53,7 +53,8 @@ export default function SingUpOption() {
     },
   });
 
-  /*--------------------------------- Signup Option Function ---------------------------------*/
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Signup Option Function ─────────────────────────────────────────
   // Set Role For Signup Option Function
   const onSubmit = (data: TSignupOptionSchema) => {
     console.log("Form Submitted With role:", data.selectedRole);
@@ -131,14 +132,17 @@ export default function SingUpOption() {
     router.push("/signup");
   };
 
+  /* ---------------------------------------- Render UI ---------------------------------------- */
   return (
-    /*-------------------------------------------- Main Content --------------------------------------------*/
     <div className="h-[80%] w-[85%] flex flex-col items-center justify-start gap-3 tablet-lg:w-full tablet-lg:p-5">
       <form
         className="flex flex-col items-start gap-5"
         onSubmit={handleSubmit(onSubmit)}
       >
+        {/* Title Section */}
         <TypographyH2>Who do you wanna be in our platform?</TypographyH2>
+
+        {/* Role Selection Section */}
         <div className="w-full flex flex-col items-start gap-2">
           <Controller
             name="selectedRole"
@@ -160,6 +164,8 @@ export default function SingUpOption() {
           />
           <ErrorMessage>{errors.selectedRole?.message}</ErrorMessage>
         </div>
+
+        {/* Button Section */}
         <div className="w-full flex items-center gap-5">
           <Button
             className="w-1/2"

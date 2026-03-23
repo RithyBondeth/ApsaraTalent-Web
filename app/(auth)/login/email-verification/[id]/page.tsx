@@ -14,26 +14,27 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function EmailVerificationPage() {
-  /*------------------------------------ All States -----------------------------------*/
-  // Utils
+  /* ---------------------------------- Utils -------------------------------- */
   const { resolvedTheme } = useTheme();
   const params = useParams();
   const token = params?.id;
   const router = useRouter();
 
-  // Verify Email Helper
+  /* ------------------------------- All States ------------------------------ */
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
-  /*--------------------------------- API Integration ---------------------------------*/
+  /* ----------------------------- API Integration --------------------------- */
   const { loading, error, message, verifyEmail } = useVerifyEmailStore();
 
-  /*------------------------------ Verify Email Function -------------------------------*/
+  /* --------------------------------- Methods ------------------------------- */
+  // ── Verify Email Function ──────────────────────────────────────
   const handleVerifyEmail = async () => {
     setIsSubmitted(true);
     await verifyEmail(token as string);
   };
 
-  /*------------------------------- Verify Email Effect --------------------------------*/
+  /* -------------------------------- Effects -------------------------------- */
+  // ── Verify Email Effect ─────────────────────────────────────────
   useEffect(() => {
     if (!isSubmitted) return;
 
@@ -51,15 +52,15 @@ export default function EmailVerificationPage() {
     }
   }, [error, loading, message, isSubmitted]);
 
-  /*------------------------- Get Current Image Based on Theme -------------------------*/
+  // ── Get Current Image Based on Theme ─────────────────────────────
   const currentTheme = resolvedTheme || "light";
   const emailVerificationImage =
     currentTheme === "dark"
       ? emailVerificationWhiteSvg
       : emailVerificationBlackSvg;
 
+  /* ------------------------------ Render UI ------------------------------ */
   return (
-    /*----------------------------------- Main Content ----------------------------------*/
     <div className="h-screen w-screen flex items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
       {/* Left Section */}
       <div className="w-1/2 flex justify-center items-center bg-primary-foreground tablet-md:h-[40%]">
