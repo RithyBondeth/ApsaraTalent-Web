@@ -1,6 +1,7 @@
 import { TTheme } from "@/utils/types/theme.type";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { STORE_PERSIST_KEYS } from "../_shared/persist-keys";
 
 interface ThemeState {
   theme: TTheme;
@@ -43,7 +44,7 @@ export const useThemeStore = create<ThemeState>()(
       };
     },
     {
-      name: "theme-storage",
+      name: STORE_PERSIST_KEYS.theme,
       onRehydrateStorage: () => (state) => {
         state?.setHydrated(true);
       },

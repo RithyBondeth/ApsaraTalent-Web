@@ -3,6 +3,8 @@ import { API_GET_CURRENT_USER_URL } from "@/utils/constants/apis/user_url";
 import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { extractApiErrorMessage } from "../../_shared/api-error-message";
+import { STORE_PERSIST_KEYS } from "../../_shared/persist-keys";
 
 type TGetCurrentUserState = {
   loading: boolean;
@@ -29,11 +31,11 @@ export const useGetCurrentUserStore = create<TGetCurrentUserState>()(
             loading: false,
             error: null,
           });
-        } catch {
+        } catch (error) {
           set({
             user: null,
             loading: false,
-            error: "Failed to fetch current user",
+            error: extractApiErrorMessage(error, "Failed to fetch current user"),
           });
         }
       },
@@ -48,7 +50,7 @@ export const useGetCurrentUserStore = create<TGetCurrentUserState>()(
       },
     }),
     {
-      name: "current-user-store",
+      name: STORE_PERSIST_KEYS.currentUser,
       partialize: (state) => ({ user: state.user }),
     },
   ),

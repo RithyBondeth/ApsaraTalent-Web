@@ -21,7 +21,7 @@ import { useCallStore } from "@/stores/features/call.store";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { IMessage } from "@/components/message/props";
+import { IMessage } from "@/utils/types/chat.type";
 import type { ImperativePanelHandle } from "react-resizable-panels";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import Image from "next/image";

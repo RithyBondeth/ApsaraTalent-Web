@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { STORE_PERSIST_KEYS } from "../_shared/persist-keys";
 
 export type TCheckAuthState = {
   isAuth: boolean;
@@ -15,7 +16,7 @@ export const useCheckAuthStore = create<TCheckAuthState>()(
       },
     }),
     {
-      name: "AuthCheckStore",
+      name: STORE_PERSIST_KEYS.checkAuth,
       partialize: (state) => ({ isAuth: state.isAuth }),
     },
   ),

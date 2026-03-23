@@ -17,13 +17,13 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { IChatInputProps } from "./props";
-import { IMessage } from "../props";
 import { CHAT_TYPING_DEBOUNCE_MS } from "@/utils/constants/chat.constant";
 import { useVoiceRecorder } from "@/hooks/chat/use-voice-recorder";
 import { VoiceRecordingUI } from "./voice-recording-ui";
 import { useThemeStore } from "@/stores/themes/theme-store";
 import dynamic from "next/dynamic";
 import { getCookie } from "cookies-next";
+import { IMessage } from "../props";
 
 // Lazy-load emoji-mart — ~90KB dataset + picker only needed when user opens the emoji popover
 const Picker = dynamic(() => import("@emoji-mart/react"), { ssr: false });

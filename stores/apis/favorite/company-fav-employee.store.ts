@@ -5,6 +5,7 @@ import {
 } from "@/utils/constants/apis/favorite_url";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { STORE_PERSIST_KEYS } from "../../_shared/persist-keys";
 
 export type TCompanyFavEmployeeState = {
   favoriteEmployeeIds: Set<string>;
@@ -22,6 +23,7 @@ export type TCompanyFavEmployeeState = {
     favoriteID: string,
   ) => Promise<void>;
   clearFavorite: () => void;
+  clearFavorites: () => void;
 };
 
 export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
@@ -135,10 +137,17 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
           cmpFavError: null,
         });
       },
+      clearFavorites: () => {
+        set({
+          favoriteEmployeeIds: new Set(),
+          message: null,
+          cmpFavError: null,
+        });
+      },
     }),
 
     {
-      name: "company-favorite-employee",
+      name: STORE_PERSIST_KEYS.companyFavoriteEmployee,
       partialize: (state) => ({
         favoriteEmployeeIds: Array.from(state.favoriteEmployeeIds),
       }),

@@ -5,6 +5,7 @@ import {
 } from "@/utils/constants/apis/favorite_url";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { STORE_PERSIST_KEYS } from "../../_shared/persist-keys";
 
 export type TEmployeeFavCompanyState = {
   favoriteCompanyIds: Set<string>;
@@ -123,7 +124,7 @@ export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>()(
       },
     }),
     {
-      name: "employee-favorite-company",
+      name: STORE_PERSIST_KEYS.employeeFavoriteCompany,
       partialize: (state) => ({
         favoriteCompanyIds: Array.from(state.favoriteCompanyIds),
       }),

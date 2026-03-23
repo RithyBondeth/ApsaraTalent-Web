@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { IChatMessagesProps, IMessage } from "./props";
+import { IChatMessagesProps, IMessage } from "@/utils/types/chat.type";
 import MessageTimeDivider from "./message-utils/message-time-divider";
 import MessageBubble from "./message-bubble";
 import { ChatTypingIndicator } from "./message-utils/typing-indicator";

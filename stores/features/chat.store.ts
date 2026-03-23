@@ -1,6 +1,5 @@
 import io from "socket.io-client";
 import { create } from "zustand";
-import { IChatPreview, IMessage } from "@/components/message/props";
 import { formatSidebarTime, parseMessageDate } from "@/utils/date";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import axios from "@/lib/axios";
@@ -9,6 +8,7 @@ import {
   getApiOrigin,
   normalizeMediaUrl,
 } from "@/utils/functions/normalize-media-url";
+import { IChatPreview, IMessage } from "@/components/message/props";
 
 type SocketInstance = ReturnType<typeof io>;
 
