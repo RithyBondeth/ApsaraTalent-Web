@@ -29,7 +29,7 @@ import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { getRememberPreference } from "@/utils/auth/get-access-token";
+import { getRememberPreference } from "@/utils/auth/cookie-manager";
 import {
   FacebookIcon as facebookIcon,
   GithubIcon as githubIcon,
@@ -53,6 +53,7 @@ import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { loginSchema, TLoginForm } from "./validation";
 import { loginBlackSvg, loginWhiteSvg } from "@/utils/constants/asset.constant";
+import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 function LoginPage() {
   /* ------------------------------------ Utils -------------------------------- */
@@ -211,7 +212,7 @@ function LoginPage() {
             setIsPreloadingData(false);
             setLoginInitiated(false);
             router.push("/feed");
-          }, 1000);
+          }, DEFAULT_REDIRECT_DELAY_MS);
         });
     }
 
@@ -307,7 +308,7 @@ function LoginPage() {
             setSocialLoginInitiated(false);
             isProcessingSocialLogin.current = false;
             router.push("/feed");
-          }, 1000);
+          }, DEFAULT_REDIRECT_DELAY_MS);
         });
 
       return;
@@ -323,7 +324,7 @@ function LoginPage() {
         toast.dismiss();
         setSocialLoginInitiated(false);
         router.push("/signup/option");
-      }, 1500);
+      }, DEFAULT_REDIRECT_DELAY_MS);
 
       return;
     }

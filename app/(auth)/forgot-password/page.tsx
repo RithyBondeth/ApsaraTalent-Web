@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { forgotPasswordSchema, TForgotPasswordForm } from "./validate";
 import { forgotPasswordWhiteSvg } from "@/utils/constants/asset.constant";
+import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 export default function ForgotPasswordPage() {
   /* ------------------------------- All States ------------------------------ */
@@ -66,7 +67,7 @@ export default function ForgotPasswordPage() {
     if (!loading && !error && message) {
       toast.dismiss();
       toast.success(message, { duration: 1000 });
-      setTimeout(() => router.push("/reset-password"), 1000);
+      setTimeout(() => router.push("/reset-password"), DEFAULT_REDIRECT_DELAY_MS);
     }
   }, [error, message, loading, isSubmitted]);
 

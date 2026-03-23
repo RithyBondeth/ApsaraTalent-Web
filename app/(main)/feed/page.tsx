@@ -14,7 +14,7 @@ import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { usePreloadImages } from "@/hooks/utils/use-cached-image";
+
 import { useFetchOnce } from "@/hooks/utils/use-fetch-once";
 import { toast } from "sonner";
 import { useGetAllCompanyStore } from "@/stores/apis/company/get-all-cmp.store";
@@ -47,7 +47,12 @@ import React, {
 import BannerSkeleton from "./banner-skeleton";
 import { CompanyFeedCard } from "./_components/company-feed-card";
 import { EmployeeFeedCard } from "./_components/employee-feed-card";
-import { emptySvgImage, feedBlackSvg, feedCompanySvg, feedWhiteSvg } from "@/utils/constants/asset.constant";
+import {
+  emptySvgImage,
+  feedBlackSvg,
+  feedCompanySvg,
+  feedWhiteSvg,
+} from "@/utils/constants/asset.constant";
 
 // Module-level Cache For Global Data (survives Strict Mode)
 const globalFetchCache = {
@@ -213,12 +218,6 @@ export default function FeedPage() {
     currentEmployeeLiked,
     currentCompanyLiked,
   ]);
-
-  // Preload Profile Avatar For Better Performance (useCachedImage Hook)
-  const profileImageUrls = useMemo(() => {
-    return allUsers.map((user) => user.avatar).filter(Boolean);
-  }, [allUsers]);
-  usePreloadImages(profileImageUrls);
 
   // Profile Pop up Effect
   useEffect(() => {

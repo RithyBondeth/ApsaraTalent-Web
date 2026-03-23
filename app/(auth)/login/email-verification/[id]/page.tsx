@@ -11,6 +11,7 @@ import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { emailVerificationWhiteSvg, emailVerificationBlackSvg } from "@/utils/constants/asset.constant";
+import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 export default function EmailVerificationPage() {
   /* ---------------------------------- Utils -------------------------------- */
@@ -47,7 +48,7 @@ export default function EmailVerificationPage() {
     if (!loading && !error && message) {
       toast.dismiss();
       toast.success(message, { duration: 1500 });
-      setTimeout(() => router.push("/login"), 1000);
+      setTimeout(() => router.push("/login"), DEFAULT_REDIRECT_DELAY_MS);
     }
   }, [error, loading, message, isSubmitted]);
 

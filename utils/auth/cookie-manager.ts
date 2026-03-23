@@ -1,9 +1,7 @@
-import { deleteCookie, setCookie } from "cookies-next";
+import { deleteCookie, setCookie, getCookie } from "cookies-next";
 import { COOKIE_CONFIG } from "../constants/cookie.constant";
 
-/**
- * Set authentication cookies with proper security settings
- */
+// Set Authentication Cookies with Proper Security Settings
 export const setAuthCookies = (
   accessToken: string,
   refreshToken: string,
@@ -36,7 +34,7 @@ export const setAuthCookies = (
       httpOnly: false, // Set to true if backend supports it
     });
 
-    // Store remember preference
+    // Store Remember Preference
     setCookie(COOKIE_CONFIG.REMEMBER_PREFERENCE, rememberMe.toString(), {
       maxAge: COOKIE_CONFIG.PREFERENCE_STORAGE,
       secure: COOKIE_CONFIG.SECURE,
@@ -59,9 +57,7 @@ export const setAuthCookies = (
   }
 };
 
-/**
- * Clear all authentication cookies with comprehensive fallback methods
- */
+// Clear All Authentication Cookies with Comprehensive Fallback Methods
 export const clearAuthCookies = (): void => {
   console.log("Clearing authentication cookies...");
 
@@ -125,9 +121,7 @@ export const clearAuthCookies = (): void => {
   }
 };
 
-/**
- * Server-side logout API call
- */
+// Server-Side Logout API Call
 export const clearAuthCookiesServerSide = async () => {
   try {
     console.log("Calling server-side logout API...");
@@ -150,42 +144,13 @@ export const clearAuthCookiesServerSide = async () => {
   }
 };
 
-/**
- * Check if authentication token exists in cookies
- */
-export const hasAuthToken = (): boolean => {
-  if (typeof document === "undefined") {
-    return false;
-  }
-
+// Get Remember Preference
+export const getRememberPreference = (): boolean => {
+  if (typeof document === "undefined") return false;
   try {
-    const cookie = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith(`${COOKIE_CONFIG.AUTH_TOKEN}=`));
-
-    return !!cookie && cookie.split("=")[1]?.length > 0;
+    const preference = getCookie(COOKIE_CONFIG.REMEMBER_PREFERENCE);
+    return preference === "true";
   } catch (error) {
-    console.error("Error checking auth token:", error);
     return false;
-  }
-};
-
-/**
- * Get authentication token from document.cookie (client-side only)
- */
-export const getAuthTokenFromCookie = (): string | null => {
-  if (typeof document === "undefined") {
-    return null;
-  }
-
-  try {
-    const cookie = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith(`${COOKIE_CONFIG.AUTH_TOKEN}=`));
-
-    return cookie ? cookie.split("=")[1] : null;
-  } catch (error) {
-    console.error("Error getting auth token from cookie:", error);
-    return null;
   }
 };

@@ -26,6 +26,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { phoneOTPWhiteSvg } from "@/utils/constants/asset.constant";
+import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 export default function PhoneOTPPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -160,7 +161,7 @@ export default function PhoneOTPPage() {
             toast.dismiss();
             setLoginInitiated(false);
             router.push("/feed");
-          }, 1000);
+          }, DEFAULT_REDIRECT_DELAY_MS);
         });
     }
 

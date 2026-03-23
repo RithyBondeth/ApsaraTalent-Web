@@ -61,6 +61,7 @@ import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/cou
 import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store";
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 export default function CompanyDetailPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -173,11 +174,11 @@ export default function CompanyDetailPage() {
             countCurrentEmployeeMatching.countCurrentEmployeeMatching(
               employeeId,
             );
-            setTimeout(() => router.push("/matching"), 800);
+            setTimeout(() => router.push("/matching"), DEFAULT_REDIRECT_DELAY_MS);
           } else {
             console.log("Wait for this user to like you back....");
             toast.success(`You liked ${companyName}.`);
-            setTimeout(() => router.push("/feed"), 800);
+            setTimeout(() => router.push("/feed"), DEFAULT_REDIRECT_DELAY_MS);
           }
         }
       } catch {

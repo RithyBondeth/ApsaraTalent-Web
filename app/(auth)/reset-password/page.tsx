@@ -19,6 +19,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { resetPasswordSchema, TResetPasswordForm } from "./validate";
 import { resetPasswordWhiteSvg } from "@/utils/constants/asset.constant";
+import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 export default function ResetPasswordPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -67,7 +68,7 @@ export default function ResetPasswordPage() {
     if (!loading && !error && message) {
       toast.dismiss();
       toast.success(message, { duration: 1500 });
-      setTimeout(() => router.push("/login"), 1000);
+      setTimeout(() => router.push("/login"), DEFAULT_REDIRECT_DELAY_MS);
     }
   }, [error, loading, message, isSubmitted]);
 

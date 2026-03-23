@@ -57,6 +57,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import EmployeeDetailPageSkeleton from "./skeleton";
+import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 export default function EmployeeDetailPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -144,10 +145,10 @@ export default function EmployeeDetailPage() {
               description: `${employeeName} and your company like each other.`,
             });
             countCurrentCompanyMatching.countCurrentCompanyMatching(companyId);
-            setTimeout(() => router.push("/matching"), 800);
+            setTimeout(() => router.push("/matching"), DEFAULT_REDIRECT_DELAY_MS);
           } else {
             toast.success(`You liked ${employeeName}.`);
-            setTimeout(() => router.push("/feed"), 800);
+            setTimeout(() => router.push("/feed"), DEFAULT_REDIRECT_DELAY_MS);
           }
         }
       } catch {

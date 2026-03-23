@@ -28,6 +28,7 @@ import Image from "next/image";
 
 import MessageLoadingSkeleton from "./skeleton";
 import { MessageSvgImage } from "@/utils/constants/asset.constant";
+import { CHAT_LOADING_TIMEOUT_MS } from "@/utils/constants/chat.constant";
 
 const MessagePageContent = () => {
   /* ---------------------------------- Utils --------------------------------- */
@@ -140,7 +141,7 @@ const MessagePageContent = () => {
       setLoadingTimedOut(false);
       return;
     }
-    const t = setTimeout(() => setLoadingTimedOut(true), 5000);
+    const t = setTimeout(() => setLoadingTimedOut(true), CHAT_LOADING_TIMEOUT_MS);
     return () => clearTimeout(t);
   }, [isConnected, isChatsLoaded]);
 

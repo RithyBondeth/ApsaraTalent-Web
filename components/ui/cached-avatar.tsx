@@ -1,5 +1,4 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useCachedImage } from "@/hooks/utils/use-cached-image";
 import { cn } from "@/lib/utils";
 import React from "react";
 
@@ -50,11 +49,6 @@ export function CachedAvatar({
   preload = true,
   showLoadingState = false,
 }: CachedAvatarProps) {
-  const { cachedUrl, isLoading } = useCachedImage(src, {
-    fallback: fallback || undefined,
-    preload,
-  });
-
   const avatarClasses = cn(
     sizeClasses[size],
     roundedClasses[rounded],
@@ -64,16 +58,12 @@ export function CachedAvatar({
 
   return (
     <Avatar className={avatarClasses} onClick={onClick}>
-      {showLoadingState && isLoading ? (
-        <div className="w-full h-full bg-muted animate-pulse" />
-      ) : (
-        <>
-          <AvatarImage src={cachedUrl} alt={alt} />
-          <AvatarFallback className={cn("uppercase", roundedClasses[rounded])}>
-            {children || (alt ? alt.slice(0, 2) : "??")}
-          </AvatarFallback>
-        </>
-      )}
+      <>
+        <AvatarImage src={src || undefined} alt={alt} />
+        <AvatarFallback className={cn("uppercase", roundedClasses[rounded])}>
+          {children || (alt ? alt.slice(0, 2) : "??")}
+        </AvatarFallback>
+      </>
     </Avatar>
   );
 }
