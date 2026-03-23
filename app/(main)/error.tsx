@@ -11,13 +11,15 @@ export default function MainError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  /* -------------------------------- Effects ------------------------------- */
   useEffect(() => {
     console.error(error);
   }, [error]);
 
+  /* ------------------------------- Render UI ------------------------------ */
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-8 text-center px-4">
-      {/* ── Animated icon ── */}
+      {/* Animated Icon Section */}
       <div className="relative flex items-center justify-center">
         {/* Outer slow-pulse ring */}
         <div className="absolute size-36 rounded-full bg-destructive/8 animate-pulse" />
@@ -29,7 +31,7 @@ export default function MainError({
         </div>
       </div>
 
-      {/* ── Text ── */}
+      {/* Text Section */}
       <div className="flex flex-col gap-3">
         <h2 className="text-2xl font-bold tracking-tight">
           Something went wrong
@@ -45,7 +47,7 @@ export default function MainError({
         )}
       </div>
 
-      {/* ── Action ── */}
+      {/* Action Section */}
       <Button onClick={reset} className="gap-2 rounded-xl px-6">
         <LucideRefreshCw className="size-4" />
         Try again
