@@ -6,10 +6,7 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
-import {
-  availabilityConstant,
-  locationConstant,
-} from "@/utils/constants/app.constant";
+import { availabilityConstant, locationConstant } from "@/utils/constants/ui.constant";
 import { TLocations } from "@/utils/types/location.type";
 import { SelectValue } from "@radix-ui/react-select";
 import { useEffect, useState } from "react";

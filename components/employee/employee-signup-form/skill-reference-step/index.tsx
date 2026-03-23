@@ -15,7 +15,7 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/utils/extensions/get-error-message";
-import { getRandomBadgeColor } from "@/utils/extensions/get-random-badge-color";
+import { getRandomBadgeColor } from "@/utils/functions/get-random-badge-color";
 import { LucidePlus, LucideXCircle } from "lucide-react";
 import { useState } from "react";
 import { IStepFormProps } from "../props";

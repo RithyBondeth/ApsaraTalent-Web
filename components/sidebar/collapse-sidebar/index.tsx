@@ -1,7 +1,7 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { useFetchOnce } from "@/hooks/use-fetch-once";
+import { useFetchOnce } from "@/hooks/utils/use-fetch-once";
 import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
 import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
 import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
@@ -34,9 +34,7 @@ import { SidebarDropdownFooterSkeleton } from "./sidebar-dropdown-footer/skeleto
 // Badge Component
 const CountBadge = ({ count }: { count: number }) => {
   if (count === 0) return null;
-  return (
-    <Badge className="bg-red-500 dark:text-primary">{count}</Badge>
-  );
+  return <Badge className="bg-red-500 dark:text-primary">{count}</Badge>;
 };
 
 export default function CollapseSidebar({
@@ -218,7 +216,9 @@ export default function CollapseSidebar({
                             strokeWidth={1.5}
                           />
                         )}
-                        <span className="group-data-[collapsible=icon]:hidden">{getSidebarTitle(item.title)}</span>
+                        <span className="group-data-[collapsible=icon]:hidden">
+                          {getSidebarTitle(item.title)}
+                        </span>
                         {isExpanded && item.url === "/matching" && (
                           <span className="ml-auto">
                             <CountBadge count={matchingCount} />
@@ -244,7 +244,9 @@ export default function CollapseSidebar({
                   </CollapsibleTrigger>
                   {!isExpanded && getBadgeCount(item.url) > 0 && (
                     <span className="pointer-events-none absolute -top-1.5 right-1 z-50 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold leading-none">
-                      {getBadgeCount(item.url) > 99 ? "99+" : getBadgeCount(item.url)}
+                      {getBadgeCount(item.url) > 99
+                        ? "99+"
+                        : getBadgeCount(item.url)}
                     </span>
                   )}
                 </SidebarMenuItem>
@@ -275,7 +277,9 @@ export default function CollapseSidebar({
                           className="!size-5 md:!size-6 shrink-0"
                           strokeWidth={1.5}
                         />
-                        <span className="group-data-[collapsible=icon]:hidden">{t("aiResumeBuilder")}</span>
+                        <span className="group-data-[collapsible=icon]:hidden">
+                          {t("aiResumeBuilder")}
+                        </span>
                       </Link>
                     </SidebarMenuButton>
                   </CollapsibleTrigger>

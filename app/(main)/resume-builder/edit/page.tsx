@@ -7,7 +7,7 @@ import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import { toast } from "sonner";
 import { generateResumeAPI } from "../_apis/generate-resume.api";
 import { useResumeEditStore } from "@/stores/apis/resume/resume-edit.store";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/utils/use-mobile";
 import {
   ArrowLeft,
   Download,
@@ -19,10 +19,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
-import {
-  DOWNLOAD_RESUME_STEPS,
-  LIVE_RESUME_PREVIEW_DEBOUNCE_MS,
-} from "@/utils/constants/app.constant";
+import { DOWNLOAD_RESUME_STEPS, LIVE_RESUME_PREVIEW_DEBOUNCE_MS } from "@/utils/constants/resume.constant";
 
 export default function ResumeEditorPage() {
   /* ---------------------------------- Utils ---------------------------------- */

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getRoleFromJwt } from "./utils/functions/get-role-from-jwt";
+import { getRoleFromJwt } from "./utils/extensions/get-role-from-jwt";
 
 const protectedRoutes = [
   "/feed",

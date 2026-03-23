@@ -1,4 +1,4 @@
-import { selectedValidation } from "@/utils/functions/validations";
+import { selectedValidation } from "@/utils/extensions/validations";
 import * as z from "zod";
 
 export const signupOptionSchema = z.object({

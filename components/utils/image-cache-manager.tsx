@@ -2,14 +2,14 @@
 
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { useImageCache } from "@/hooks/use-cached-image";
+import { useImageCache } from "@/hooks/utils/use-cached-image";
 import { LucideRefreshCw, LucideTrash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 

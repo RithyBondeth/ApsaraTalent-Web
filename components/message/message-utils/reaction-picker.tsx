@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Smile } from "lucide-react";
-import { CHAT_REACTION_EMOJIS } from "@/utils/constants/app.constant";
+import { CHAT_REACTION_EMOJIS } from "@/utils/constants/chat.constant";
 
 interface IReactionPickerProps {
   onReact: (emoji: string | null) => void;

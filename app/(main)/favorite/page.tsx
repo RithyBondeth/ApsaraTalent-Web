@@ -1,7 +1,5 @@
 "use client";
 
-import emptySvgImage from "@/assets/svg/empty.svg";
-import favoriteSvgImage from "@/assets/svg/favorite.svg";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
@@ -11,7 +9,7 @@ import Image from "next/image";
 import FavoriteCompanyCard from "@/components/favorite/company-favorite-card";
 import FavoriteEmployeeCard from "@/components/favorite/employee-favorite-card";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { useFetchOnce } from "@/hooks/use-fetch-once";
+import { useFetchOnce } from "@/hooks/utils/use-fetch-once";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
 import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
 import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
@@ -20,6 +18,7 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { FavoriteLoadingSkeleton } from "./skeleton";
+import { emptySvgImage, favoriteSvgImage } from "@/utils/constants/asset.constant";
 
 export default function FavoritePage() {
   /* ----------------------------- API Integration ---------------------------- */

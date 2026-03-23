@@ -1,6 +1,9 @@
 import { create } from "zustand";
 import io from "socket.io-client";
-import { getApiOrigin, normalizeMediaUrl } from "@/utils/functions/normalize-media-url";
+import {
+  getApiOrigin,
+  normalizeMediaUrl,
+} from "@/utils/functions/normalize-media-url";
 
 type SocketInstance = ReturnType<typeof io>;
 
@@ -40,11 +43,11 @@ const CALL_CONNECT_TIMEOUT_MS = 25_000;
 // ── Types ────────────────────────────────────────────────────────────────────
 export type CallStatus =
   | "idle"
-  | "calling"      // Initiator: offer sent, waiting for callee to pick up
-  | "ringing"      // Receiver: IncomingCallModal is visible
-  | "connecting"   // ICE negotiation — audio not yet flowing
-  | "connected"    // Audio flowing ✓
-  | "ended";       // Transient — shown briefly before → idle
+  | "calling" // Initiator: offer sent, waiting for callee to pick up
+  | "ringing" // Receiver: IncomingCallModal is visible
+  | "connecting" // ICE negotiation — audio not yet flowing
+  | "connected" // Audio flowing ✓
+  | "ended"; // Transient — shown briefly before → idle
 
 export type CallEndReason = "declined" | "ended" | "missed" | "error";
 
@@ -138,7 +141,11 @@ interface CallState {
 /** Safely close and nullify the RTCPeerConnection. */
 function closePc() {
   if (_pc) {
-    try { _pc.close(); } catch { /* ignore */ }
+    try {
+      _pc.close();
+    } catch {
+      /* ignore */
+    }
     _pc = null;
   }
 }
@@ -150,7 +157,10 @@ function stopStream(stream: MediaStream | null): null {
 }
 
 function clearRingTimeout() {
-  if (_ringTimeout) { clearTimeout(_ringTimeout); _ringTimeout = null; }
+  if (_ringTimeout) {
+    clearTimeout(_ringTimeout);
+    _ringTimeout = null;
+  }
 }
 
 function clearConnectTimeout() {
@@ -170,7 +180,8 @@ function armConnectTimeout() {
 }
 
 async function flushPendingIceCandidates() {
-  if (!_pc?.remoteDescription || _pendingRemoteIceCandidates.length === 0) return;
+  if (!_pc?.remoteDescription || _pendingRemoteIceCandidates.length === 0)
+    return;
 
   const queued = [..._pendingRemoteIceCandidates];
   _pendingRemoteIceCandidates = [];
@@ -188,7 +199,8 @@ async function flushPendingIceCandidates() {
 function getSocketInstance(): SocketInstance | null {
   // Dynamic require at call time — avoids circular dep at module init
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { useChatStore } = require("./chat.store") as typeof import("./chat.store");
+  const { useChatStore } =
+    require("./chat.store") as typeof import("./chat.store");
   return useChatStore.getState().socket;
 }
 
@@ -213,9 +225,15 @@ export const useCallStore = create<CallState>((set, get) => ({
     socket.off("callDeclined");
     socket.off("callEnded");
 
-    socket.on("incomingCall", (data: CallOfferPayload) => get()._handleOffer(data));
-    socket.on("callAnswered", (data: CallAnswerPayload) => get()._handleAnswer(data));
-    socket.on("remoteIceCandidate", (data: IceCandidatePayload) => get()._handleIceCandidate(data));
+    socket.on("incomingCall", (data: CallOfferPayload) =>
+      get()._handleOffer(data),
+    );
+    socket.on("callAnswered", (data: CallAnswerPayload) =>
+      get()._handleAnswer(data),
+    );
+    socket.on("remoteIceCandidate", (data: IceCandidatePayload) =>
+      get()._handleIceCandidate(data),
+    );
     socket.on("callDeclined", (data: { callId: string }) =>
       get()._handleCallEnd({ callId: data.callId, reason: "declined" }),
     );
@@ -439,7 +457,10 @@ export const useCallStore = create<CallState>((set, get) => ({
     if (get().status !== "idle") {
       // Already in a call — auto-decline the new one
       const socket = getSocketInstance();
-      socket?.emit("callDecline", { callId: data.callId, callerId: data.callerId });
+      socket?.emit("callDecline", {
+        callId: data.callId,
+        callerId: data.callerId,
+      });
       return;
     }
 

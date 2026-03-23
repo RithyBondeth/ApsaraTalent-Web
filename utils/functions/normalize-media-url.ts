@@ -5,9 +5,7 @@ const LOCAL_STORAGE_URL_REGEX =
 
 const ABSOLUTE_HTTP_URL_REGEX = /^https?:\/\//i;
 
-const isPlainObject = (
-  value: unknown,
-): value is Record<string, unknown> =>
+const isPlainObject = (value: unknown): value is Record<string, unknown> =>
   Object.prototype.toString.call(value) === "[object Object]";
 
 export const getApiOrigin = (): string => {

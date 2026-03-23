@@ -1,6 +1,5 @@
 "use client";
 
-import phoneNumberWhiteSvg from "@/assets/svg/phone-number-white.svg";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -17,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { phoneLoginSchema, TPhoneLoginForm } from "./validation";
+import { phoneNumberWhiteSvg } from "@/utils/constants/asset.constant";
 
 export default function PhoneNumberPage() {
   /* ----------------------------------- Utils -------------------------------- */

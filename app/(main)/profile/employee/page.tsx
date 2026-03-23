@@ -1,7 +1,5 @@
 "use client";
 
-import addNewEducationSvgImage from "@/assets/svg/add-new-education.svg";
-import addNewExperienceSvgImage from "@/assets/svg/add-new-experience.svg";
 import EmployeeEducationForm from "@/components/employee/profile/education-form";
 import EmployeeExperienceForm from "@/components/employee/profile/experience-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -65,15 +63,10 @@ import { useUploadEmployeeCoverLetter } from "@/stores/apis/employee/upload-emp-
 import { useUploadEmployeeResumeStore } from "@/stores/apis/employee/upload-emp-resume.store";
 import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-scopes.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import {
-  genderConstant,
-  locationConstant,
-  loginMethodConstant,
-  platformConstant,
-} from "@/utils/constants/app.constant";
+import { genderConstant, locationConstant, loginMethodConstant, platformConstant } from "@/utils/constants/ui.constant";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { capitalizeWords } from "@/utils/functions/capitalize-words";
-import { isUuid } from "@/utils/functions/check-uuid";
+import { isUuid } from "@/utils/extensions/check-uuid";
 import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
 import { parseMaybeDate } from "@/utils/functions/parse-maybe-date";
 import {
@@ -108,6 +101,7 @@ import React, { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { employeeFormSchema, TEmployeeProfileForm } from "./validation";
 import EmployeeProfilePageLoadingSkeleton from "./skeleton";
+import { addNewEducationSvgImage, addNewExperienceSvgImage } from "@/utils/constants/asset.constant";
 
 export default function EmployeeProfilePage() {
   /* -------------------------------- All States -------------------------------- */

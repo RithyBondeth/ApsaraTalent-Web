@@ -16,11 +16,12 @@ import {
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { TNotificationFilterType } from "@/utils/types/notification.type";
 import { LucideCheckCheck } from "lucide-react";
-import NotificationSvgImage from "@/assets/svg/notification.svg";
+
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import NotificationCardSkeleton from "./skeleton";
+import { NotificationSvgImage } from "@/utils/constants/asset.constant";
 
 /* ------------------------------------- Utils ------------------------------------- */
 /** Derive a display-friendly user object from a notification's title + data fields. */

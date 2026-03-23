@@ -155,7 +155,10 @@ export const usePushNotifications = () => {
 
       // Cleanup listeners on hook unmount
       return () => {
-        document.removeEventListener("visibilitychange", handleVisibilityChange);
+        document.removeEventListener(
+          "visibilitychange",
+          handleVisibilityChange,
+        );
         navigator.serviceWorker.removeEventListener("message", handleSwMessage);
       };
     };

@@ -3,7 +3,7 @@ import {
   optionalImageValidation,
   selectedValidation,
   textValidation,
-} from "@/utils/functions/validations";
+} from "@/utils/extensions/validations";
 import * as z from "zod";
 
 // Define Schema for step 1: Basic Information

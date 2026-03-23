@@ -1,6 +1,5 @@
 "use client";
 
-import forgotPasswordWhiteSvg from "@/assets/svg/forgot-password-white.svg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
@@ -16,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { forgotPasswordSchema, TForgotPasswordForm } from "./validate";
+import { forgotPasswordWhiteSvg } from "@/utils/constants/asset.constant";
 
 export default function ForgotPasswordPage() {
   /* ------------------------------- All States ------------------------------ */

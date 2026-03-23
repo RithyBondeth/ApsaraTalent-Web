@@ -1,12 +1,12 @@
 import {
-    EarthIcon,
-    FacebookIcon,
-    GithubIcon,
-    InstagramIcon,
-    LinkedinIcon,
-    LucideIcon,
-    SendIcon,
-    TwitterIcon
+  EarthIcon,
+  FacebookIcon,
+  GithubIcon,
+  InstagramIcon,
+  LinkedinIcon,
+  LucideIcon,
+  SendIcon,
+  TwitterIcon,
 } from "lucide-react";
 import React from "react";
 import { TPlatform } from "../types/platform.type";

@@ -2,7 +2,7 @@
 
 import { createPortal } from "react-dom";
 import { Bold, Italic, ChevronDown } from "lucide-react";
-import { useTextSelection } from "@/hooks/use-text-selection";
+import { useTextSelection } from "@/hooks/utils/use-text-selection";
 import { useEffect, useState } from "react";
 
 /* ─── Toolbar button ─────────────────────────────────────────── */

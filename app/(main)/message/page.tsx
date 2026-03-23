@@ -25,8 +25,9 @@ import { IMessage } from "@/components/message/props";
 import type { ImperativePanelHandle } from "react-resizable-panels";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import Image from "next/image";
-import MessageSvgImage from "@/assets/svg/message.svg";
+
 import MessageLoadingSkeleton from "./skeleton";
+import { MessageSvgImage } from "@/utils/constants/asset.constant";
 
 const MessagePageContent = () => {
   /* ---------------------------------- Utils --------------------------------- */

@@ -20,10 +20,7 @@ import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.sto
 import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
 import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
 import { useThemeStore } from "@/stores/themes/theme-store";
-import {
-  genderConstant,
-  locationConstant,
-} from "@/utils/constants/app.constant";
+import { genderConstant, locationConstant } from "@/utils/constants/ui.constant";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   LucideArrowLeft,

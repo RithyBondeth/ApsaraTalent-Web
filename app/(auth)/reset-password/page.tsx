@@ -1,6 +1,5 @@
 "use client";
 
-import resetPasswordWhiteSvg from "@/assets/svg/reset-password-white.svg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
@@ -19,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { resetPasswordSchema, TResetPasswordForm } from "./validate";
+import { resetPasswordWhiteSvg } from "@/utils/constants/asset.constant";
 
 export default function ResetPasswordPage() {
   /* ---------------------------------- Utils --------------------------------- */

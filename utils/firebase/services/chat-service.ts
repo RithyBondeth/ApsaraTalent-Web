@@ -1,8 +1,14 @@
 import { chatDatabase } from "@/utils/firebase/firebase";
 import {
-    addDoc, collection, doc,
-    getDoc, getDocs,
-    query, serverTimestamp, updateDoc, where
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  serverTimestamp,
+  updateDoc,
+  where,
 } from "firebase/firestore";
 
 export interface UserProfile {

@@ -1,14 +1,12 @@
 "use client";
 
-import emptySvgImage from "@/assets/svg/empty.svg";
-import matchingSvgImage from "@/assets/svg/matching.svg";
 import MatchingCompanyCard from "@/components/matching/matching-company-card";
 import MatchingEmployeeCard from "@/components/matching/matching-employee-card";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { useFetchOnce } from "@/hooks/use-fetch-once";
+import { useFetchOnce } from "@/hooks/utils/use-fetch-once";
 import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-current-company-matching.store";
 import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
 import Image from "next/image";
@@ -16,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { initateChat } from "./_apis/initiate-chat.api";
 import MatchingLoadingSkeleton from "./skeleton";
+import { emptySvgImage, matchingSvgImage } from "@/utils/constants/asset.constant";
 
 export default function MatchingPage() {
   /* ---------------------------------- Utils --------------------------------- */

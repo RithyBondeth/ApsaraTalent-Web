@@ -1,9 +1,5 @@
 "use client";
 
-import emptySvgImage from "@/assets/svg/empty.svg";
-import feedBlackSvg from "@/assets/svg/feed-black.svg";
-import feedCompanySvg from "@/assets/svg/feed-company.svg";
-import feedWhiteSvg from "@/assets/svg/feed-white.svg";
 import CompanyCardSkeleton from "@/components/company/company-card/skeleton";
 import EmployeeCardSkeleton from "@/components/employee/employee-card/skeleton";
 import { Button } from "@/components/ui/button";
@@ -18,8 +14,8 @@ import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { usePreloadImages } from "@/hooks/use-cached-image";
-import { useFetchOnce } from "@/hooks/use-fetch-once";
+import { usePreloadImages } from "@/hooks/utils/use-cached-image";
+import { useFetchOnce } from "@/hooks/utils/use-fetch-once";
 import { toast } from "sonner";
 import { useGetAllCompanyStore } from "@/stores/apis/company/get-all-cmp.store";
 import { useGetAllEmployeeStore } from "@/stores/apis/employee/get-all-emp.store";
@@ -51,6 +47,7 @@ import React, {
 import BannerSkeleton from "./banner-skeleton";
 import { CompanyFeedCard } from "./_components/company-feed-card";
 import { EmployeeFeedCard } from "./_components/employee-feed-card";
+import { emptySvgImage, feedBlackSvg, feedCompanySvg, feedWhiteSvg } from "@/utils/constants/asset.constant";
 
 // Module-level Cache For Global Data (survives Strict Mode)
 const globalFetchCache = {

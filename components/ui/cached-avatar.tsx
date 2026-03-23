@@ -1,7 +1,7 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useCachedImage } from '@/hooks/use-cached-image';
-import { cn } from '@/lib/utils';
-import React from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useCachedImage } from "@/hooks/utils/use-cached-image";
+import { cn } from "@/lib/utils";
+import React from "react";
 
 export interface CachedAvatarProps {
   src?: string | null;
@@ -59,7 +59,7 @@ export function CachedAvatar({
     sizeClasses[size],
     roundedClasses[rounded],
     onClick && "cursor-pointer",
-    className
+    className,
   );
 
   return (

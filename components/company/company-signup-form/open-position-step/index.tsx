@@ -16,7 +16,7 @@ import Tag from "@/components/utils/tag";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { toast } from "sonner";
-import { getRandomBadgeColor } from "@/utils/extensions/get-random-badge-color";
+import { getRandomBadgeColor } from "@/utils/functions/get-random-badge-color";
 import { LucidePlus, LucideTrash2, LucideXCircle } from "lucide-react";
 import { useState } from "react";
 import { Controller, useFieldArray } from "react-hook-form";

@@ -1,13 +1,11 @@
 "use client";
 
-import BlackLogo from "@/assets/svg/logo-version2-black.svg";
-import WhiteLogo from "@/assets/svg/logo-version2-white.svg";
-import LogoWithoutTitle from "@/assets/svg/logo-without-title.svg";
 import { cn } from "@/lib/utils";
 import { ILogoProps } from "@/utils/interfaces/logo.interface";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { BlackLogo, WhiteLogo, LogoWithoutTitle } from "@/utils/constants/asset.constant";
 
 export default function LogoComponent(props: ILogoProps) {
   const { height = 100, width = 200, className, priority = false } = props;

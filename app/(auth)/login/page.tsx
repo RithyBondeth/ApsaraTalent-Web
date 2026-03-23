@@ -1,7 +1,5 @@
 "use client";
 
-import loginBlackSvg from "@/assets/svg/login-black.svg";
-import loginWhiteSvg from "@/assets/svg/login-white.svg";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -33,10 +31,10 @@ import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-curr
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { getRememberPreference } from "@/utils/auth/get-access-token";
 import {
-  facebookIcon,
-  githubIcon,
-  googleIcon,
-  linkedinIcon,
+  FacebookIcon as facebookIcon,
+  GithubIcon as githubIcon,
+  GoogleIcon as googleIcon,
+  LinkedInIcon as linkedinIcon,
 } from "@/utils/constants/asset.constant";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -54,6 +52,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { loginSchema, TLoginForm } from "./validation";
+import { loginBlackSvg, loginWhiteSvg } from "@/utils/constants/asset.constant";
 
 function LoginPage() {
   /* ------------------------------------ Utils -------------------------------- */

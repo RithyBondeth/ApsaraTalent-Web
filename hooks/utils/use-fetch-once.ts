@@ -22,9 +22,14 @@ interface UseFetchOnceReturn {
 const fetchCache = new Map<string, Set<string>>();
 
 export function useFetchOnce(
-  options: UseFetchOnceOptions = {}
+  options: UseFetchOnceOptions = {},
 ): UseFetchOnceReturn {
-  const { onEmployeeFetch, onCompanyFetch, enabled = true, cacheKey = "default" } = options;
+  const {
+    onEmployeeFetch,
+    onCompanyFetch,
+    enabled = true,
+    cacheKey = "default",
+  } = options;
 
   const currentUser = useGetCurrentUserStore((s) => s.user);
   const lastUserIdRef = useRef<string | null>(null);
@@ -39,8 +44,10 @@ export function useFetchOnce(
   });
 
   const userData = useMemo(() => {
-    const employee = currentUser?.role === "employee" ? currentUser.employee : null;
-    const company = currentUser?.role === "company" ? currentUser.company : null;
+    const employee =
+      currentUser?.role === "employee" ? currentUser.employee : null;
+    const company =
+      currentUser?.role === "company" ? currentUser.company : null;
 
     const currentUserId = employee?.id ?? company?.id;
 
@@ -86,7 +93,11 @@ export function useFetchOnce(
     // Mark as fetched BEFORE calling (prevents race conditions)
     cacheRef.current.add(userData.currentUserId);
 
-    if (userData.isEmployee && userData.employeeId && onEmployeeFetchRef.current) {
+    if (
+      userData.isEmployee &&
+      userData.employeeId &&
+      onEmployeeFetchRef.current
+    ) {
       onEmployeeFetchRef.current(userData.employeeId);
     }
 

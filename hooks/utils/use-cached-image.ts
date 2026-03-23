@@ -1,5 +1,5 @@
-import { imageCache } from '@/utils/cache/image-cache';
-import { useEffect, useState } from 'react';
+import { imageCache } from "@/utils/cache/image-cache";
+import { useEffect, useState } from "react";
 
 export interface UseCachedImageOptions {
   fallback?: string;
@@ -13,11 +13,13 @@ export interface UseCachedImageOptions {
  * @returns Object with cached image URL and loading state
  */
 export function useCachedImage(
-  imageUrl: string | undefined | null, 
-  options: UseCachedImageOptions = {}
+  imageUrl: string | undefined | null,
+  options: UseCachedImageOptions = {},
 ) {
   const { fallback, preload = false } = options;
-  const [cachedUrl, setCachedUrl] = useState<string | undefined>(imageUrl || fallback);
+  const [cachedUrl, setCachedUrl] = useState<string | undefined>(
+    imageUrl || fallback,
+  );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -49,7 +51,7 @@ export function useCachedImage(
 
     // Cleanup: revoke object URL when component unmounts or URL changes
     return () => {
-      if (cachedUrl && cachedUrl.startsWith('blob:')) {
+      if (cachedUrl && cachedUrl.startsWith("blob:")) {
         URL.revokeObjectURL(cachedUrl);
       }
     };
@@ -73,7 +75,7 @@ export function usePreloadImages(imageUrls: (string | undefined | null)[]) {
 
   useEffect(() => {
     const validUrls = imageUrls.filter((url): url is string => Boolean(url));
-    
+
     if (validUrls.length === 0) return;
 
     setIsPreloading(true);

@@ -1,7 +1,5 @@
 "use client";
 
-import emailVerificationWhiteSvg from "@/assets/svg/email-verification-black.svg";
-import emailVerificationBlackSvg from "@/assets/svg/email-verification-white.svg";
 import { Button } from "@/components/ui/button";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
@@ -12,6 +10,7 @@ import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { emailVerificationWhiteSvg, emailVerificationBlackSvg } from "@/utils/constants/asset.constant";
 
 export default function EmailVerificationPage() {
   /* ---------------------------------- Utils -------------------------------- */

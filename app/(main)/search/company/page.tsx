@@ -1,6 +1,5 @@
 "use client";
 
-import CompanySearchSvg from "@/assets/svg/company-search.svg";
 import SearchBar from "@/components/search/search-bar";
 import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
 import SearchEmployeeCard from "@/components/search/search-employee-card";
@@ -23,10 +22,8 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useSearchEmployeeStore } from "@/stores/apis/employee/search-emp.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import {
-  SEARCH_DEBOUNCE_MS,
-  yearOfExperienceConstant,
-} from "@/utils/constants/app.constant";
+import { SEARCH_DEBOUNCE_MS } from "@/utils/constants/search.constant";
+import { yearOfExperienceConstant } from "@/utils/constants/ui.constant";
 import { TAvailability } from "@/utils/types/availability.type";
 import { TLocations } from "@/utils/types/location.type";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -41,6 +38,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { companySearchSchema, TCompanySearchSchema } from "./validation";
+import { CompanySearchSvg } from "@/utils/constants/asset.constant";
 
 export default function CompanySearchPage() {
   /* ---------------------------------- Utils --------------------------------- */

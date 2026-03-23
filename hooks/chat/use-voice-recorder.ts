@@ -55,7 +55,10 @@ function getSupportedMimeType(): string {
     "audio/mp4",
   ];
   for (const mime of candidates) {
-    if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported(mime)) {
+    if (
+      typeof MediaRecorder !== "undefined" &&
+      MediaRecorder.isTypeSupported(mime)
+    ) {
       return mime;
     }
   }
@@ -63,7 +66,10 @@ function getSupportedMimeType(): string {
 }
 
 // ── Helper: downsample amplitude array to WAVEFORM_POINTS ─────────────────────
-function downsampleAmplitude(samples: number[], targetPoints: number): number[] {
+function downsampleAmplitude(
+  samples: number[],
+  targetPoints: number,
+): number[] {
   if (samples.length === 0) return Array(targetPoints).fill(0.3);
   if (samples.length <= targetPoints) {
     // Pad with average to fill remaining slots
@@ -97,7 +103,9 @@ export function useVoiceRecorder(): VoiceRecorderResult {
   const amplitudeSamplesRef = useRef<number[]>([]);
   const durationTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const amplitudeTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const maxDurationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const maxDurationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
   const durationSecondsRef = useRef(0);
 
   // ── Cleanup helper ─────────────────────────────────────────────────────────
@@ -137,7 +145,9 @@ export function useVoiceRecorder(): VoiceRecorderResult {
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     } catch {
-      setErrorMessage("Microphone access denied. Please allow microphone permission.");
+      setErrorMessage(
+        "Microphone access denied. Please allow microphone permission.",
+      );
       return;
     }
 
@@ -178,7 +188,9 @@ export function useVoiceRecorder(): VoiceRecorderResult {
     }, 1000);
 
     // Amplitude sampler (captures one value every AMPLITUDE_SAMPLE_INTERVAL_MS)
-    const freqData = new Uint8Array(analyserRef.current?.frequencyBinCount ?? 128);
+    const freqData = new Uint8Array(
+      analyserRef.current?.frequencyBinCount ?? 128,
+    );
     amplitudeTimerRef.current = setInterval(() => {
       if (!analyserRef.current) {
         amplitudeSamplesRef.current.push(0.3); // flat when analyser unavailable
@@ -186,7 +198,8 @@ export function useVoiceRecorder(): VoiceRecorderResult {
       }
       analyserRef.current.getByteFrequencyData(freqData);
       // Average of the frequency bins (0–255) normalised to 0–1
-      const avg = freqData.reduce((sum, v) => sum + v, 0) / freqData.length / 255;
+      const avg =
+        freqData.reduce((sum, v) => sum + v, 0) / freqData.length / 255;
       amplitudeSamplesRef.current.push(avg);
     }, AMPLITUDE_SAMPLE_INTERVAL_MS);
 
@@ -230,7 +243,11 @@ export function useVoiceRecorder(): VoiceRecorderResult {
           const amplitude = downsampleAmplitude(normalised, WAVEFORM_POINTS);
 
           // Derive file extension from MIME type
-          const ext = mimeType.includes("ogg") ? "ogg" : mimeType.includes("mp4") ? "m4a" : "webm";
+          const ext = mimeType.includes("ogg")
+            ? "ogg"
+            : mimeType.includes("mp4")
+              ? "m4a"
+              : "webm";
           const filename = `voice-message-${Date.now()}.${ext}`;
 
           cleanupRefs();
@@ -273,7 +290,8 @@ export function useVoiceRecorder(): VoiceRecorderResult {
         // Clear timers but DON'T call cleanupRefs yet (onstop will do it after assembly)
         if (durationTimerRef.current) clearInterval(durationTimerRef.current);
         if (amplitudeTimerRef.current) clearInterval(amplitudeTimerRef.current);
-        if (maxDurationTimerRef.current) clearTimeout(maxDurationTimerRef.current);
+        if (maxDurationTimerRef.current)
+          clearTimeout(maxDurationTimerRef.current);
 
         recorder.stop();
       });

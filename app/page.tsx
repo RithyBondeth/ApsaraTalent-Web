@@ -1,11 +1,11 @@
 "use client";
 
-import landingSvg from "@/assets/svg/landing.svg";
 import Header from "@/components/header";
 import { TypographyH1 } from "@/components/utils/typography/typography-h1";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import { landingSvg } from "@/utils/constants/asset.constant";
 
 /*
  - Lazy-load tsparticles — it's a ~250KB library only needed on the landing page

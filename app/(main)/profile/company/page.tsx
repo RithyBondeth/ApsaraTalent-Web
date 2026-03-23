@@ -1,6 +1,5 @@
 "use client";
 
-import emptySvgImage from "@/assets/svg/empty.svg";
 import OpenPositionForm from "@/components/company/profile/open-position-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -71,14 +70,10 @@ import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cov
 import { useUploadCompanyImagesStore } from "@/stores/apis/company/upload-cmp-images.store";
 import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-scopes.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import {
-  locationConstant,
-  loginMethodConstant,
-  platformConstant,
-} from "@/utils/constants/app.constant";
+import { locationConstant, loginMethodConstant, platformConstant } from "@/utils/constants/ui.constant";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { capitalizeWords } from "@/utils/functions/capitalize-words";
-import { isUuid } from "@/utils/functions/check-uuid";
+import { isUuid } from "@/utils/extensions/check-uuid";
 import { parseMaybeDate } from "@/utils/functions/parse-maybe-date";
 import {
   IBenefits,
@@ -105,6 +100,7 @@ import { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { companyFormSchema, TCompanyProfileForm } from "./validation";
 import { CompanyProfilePageLoadingSkeleton } from "./skeleton";
+import { emptySvgImage } from "@/utils/constants/asset.constant";
 
 export default function ProfilePage() {
   /* -------------------------------- All States -------------------------------- */

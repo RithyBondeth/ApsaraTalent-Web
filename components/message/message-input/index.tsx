@@ -18,8 +18,8 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { IChatInputProps } from "./props";
 import { IMessage } from "../props";
-import { CHAT_TYPING_DEBOUNCE_MS } from "@/utils/constants/app.constant";
-import { useVoiceRecorder } from "@/hooks/use-voice-recorder";
+import { CHAT_TYPING_DEBOUNCE_MS } from "@/utils/constants/chat.constant";
+import { useVoiceRecorder } from "@/hooks/chat/use-voice-recorder";
 import { VoiceRecordingUI } from "./voice-recording-ui";
 import { useThemeStore } from "@/stores/themes/theme-store";
 import dynamic from "next/dynamic";
