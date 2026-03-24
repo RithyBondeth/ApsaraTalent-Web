@@ -29,7 +29,7 @@ const TITLES: Record<string, { en: string; km: string }> = {
   "/search/company": { en: "Find Companies", km: "ស្វែងរក" },
   "/profile/employee": { en: "My Profile", km: "ទំព័ររបស់ខ្ញុំ" },
   "/profile/company": { en: "Company Profile", km: "ប្រវត្តិរូបក្រុមហ៊ុន" },
-  "/favorite": { en: "Saved", km: "សំណព្វ" },
+  "/favorite": { en: "Favorite", km: "រក្សាទុក" },
   "/matching": { en: "Matching", km: "ការផ្គូផ្គង" },
   "/notification": { en: "Notifications", km: "ការជូនដំណឹង" },
   "/message": { en: "Messages", km: "សារ" },
@@ -44,9 +44,21 @@ const TITLES: Record<string, { en: string; km: string }> = {
 
 /* ── Prefix-based matches for dynamic routes ─────────────── */
 const PREFIX_TITLES: Array<{ prefix: string; en: string; km: string }> = [
-  { prefix: "/feed/employee/", en: "Talent Profile", km: "ប្រវត្តិរូបអ្នកមានទេព្យោ" },
-  { prefix: "/feed/company/", en: "Company Profile", km: "ប្រវត្តិរូបក្រុមហ៊ុន" },
-  { prefix: "/login/email-verification/", en: "Verify Email", km: "ផ្ទៀងផ្ទាត់អ៊ីមែល" },
+  {
+    prefix: "/feed/employee/",
+    en: "Talent Profile",
+    km: "ប្រវត្តិរូបអ្នកមានទេព្យោ",
+  },
+  {
+    prefix: "/feed/company/",
+    en: "Company Profile",
+    km: "ប្រវត្តិរូបក្រុមហ៊ុន",
+  },
+  {
+    prefix: "/login/email-verification/",
+    en: "Verify Email",
+    km: "ផ្ទៀងផ្ទាត់អ៊ីមែល",
+  },
 ];
 
 function resolveTitle(pathname: string, lang: "en" | "km"): string {
@@ -69,8 +81,7 @@ export function TitleSync() {
   useEffect(() => {
     const lang = (language ?? "en") as "en" | "km";
     const pageTitle = resolveTitle(pathname, lang);
-    document.title =
-      pageTitle === BRAND ? BRAND : `${pageTitle} — ${BRAND}`;
+    document.title = pageTitle === BRAND ? BRAND : `${pageTitle} — ${BRAND}`;
   }, [language, pathname]);
 
   return null;
