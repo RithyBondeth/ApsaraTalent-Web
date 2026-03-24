@@ -145,12 +145,11 @@ export default function SingUpOption() {
       <TypographyH2>Who do you wanna be in our platform?</TypographyH2>
 
       {/* Subtitle */}
-      <TypographyMuted>Choose your role to get started with Apsara Talent.</TypographyMuted>
+      <TypographyMuted>
+        Choose your role to get started with Apsara Talent.
+      </TypographyMuted>
 
-      <form
-        className="w-full flex flex-col gap-5"
-        onSubmit={handleSubmit(onSubmit)}
-      >
+      <form className="w-full flex flex-col" onSubmit={handleSubmit(onSubmit)}>
         {/* Role Selection Section */}
         <div className="w-full flex flex-col items-start gap-2">
           <Controller
@@ -192,8 +191,12 @@ export default function SingUpOption() {
         </div>
       </form>
 
-      {/* Note */}
-      <p className="text-xs text-muted-foreground text-center">You can always update your profile later.</p>
+      {/* Note Section */}
+      <div className="w-full flex items-center justify-center">
+        <TypographyMuted className="text-xs">
+          You can always update your profile later.
+        </TypographyMuted>
+      </div>
     </div>
   );
 }

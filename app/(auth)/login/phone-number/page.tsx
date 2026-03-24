@@ -91,7 +91,7 @@ export default function PhoneNumberPage() {
           <LogoComponent className="!h-24 w-auto self-start" withoutTitle />
 
           {/* Title Section */}
-          <div>
+          <div className="flex flex-col items-start">
             <TypographyH2 className="phone-xl:text-xl">
               Sign in with Your Phone Number
             </TypographyH2>
@@ -133,7 +133,7 @@ export default function PhoneNumberPage() {
           {/* Back to login link */}
           <Link
             href="/login"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors text-center"
+            className="underline text-sm text-primary hover:text-primary/80 transition-colors text-center"
           >
             ← Back to email login
           </Link>

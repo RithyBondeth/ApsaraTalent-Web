@@ -3,7 +3,10 @@
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import { ReactNode, useEffect, useState } from "react";
-import { signupBlackSvg, signupWhiteSvg } from "@/utils/constants/asset.constant";
+import {
+  signupBlackSvg,
+  signupWhiteSvg,
+} from "@/utils/constants/asset.constant";
 
 export default function SignupLayout({ children }: { children: ReactNode }) {
   /* --------------------------------- Utils --------------------------------- */
@@ -22,7 +25,9 @@ export default function SignupLayout({ children }: { children: ReactNode }) {
     <div className="min-h-screen w-full flex items-stretch overflow-x-hidden">
       {/* Children Section */}
       <div className="w-1/2 min-h-screen flex justify-center items-center px-6 sm:px-8 py-8 sm:py-10 tablet-xl:w-full tablet-xl:min-h-screen tablet-xl:items-start tablet-xl:px-4 tablet-xl:py-6">
-        <div className="w-full max-w-[680px] animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">{children}</div>
+        <div className="w-full max-w-[680px] animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
+          {children}
+        </div>
       </div>
 
       {/* Image Poster Section */}

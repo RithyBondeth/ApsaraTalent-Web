@@ -21,6 +21,7 @@ import { useForm } from "react-hook-form";
 import { resetPasswordSchema, TResetPasswordForm } from "./validate";
 import { resetPasswordWhiteSvg } from "@/utils/constants/asset.constant";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
+import Link from "next/link";
 
 export default function ResetPasswordPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -95,7 +96,7 @@ export default function ResetPasswordPage() {
           </div>
 
           {/* Title Section */}
-          <div>
+          <div className="flex flex-col items-start">
             <TypographyH2 className="phone-xl:text-2xl">
               Set Up Your New Password
             </TypographyH2>
@@ -115,6 +116,7 @@ export default function ResetPasswordPage() {
             {!tokenFromUrl && (
               <Input
                 prefix={<LucideKey />}
+                type="text"
                 placeholder="Token (from your email)"
                 {...register("token")}
                 validationMessage={errors.token?.message}
@@ -159,13 +161,14 @@ export default function ResetPasswordPage() {
           </form>
 
           {/* Back to Login Link */}
-          <Button
-            variant="link"
-            className="w-fit mx-auto"
-            onClick={() => router.push("/login")}
-          >
-            Back to Login
-          </Button>
+          <div className="w-full flex justify-center">
+            <Link
+              href="/login"
+              className="underline text-sm text-primary hover:text-primary/80 transition-colors text-center"
+            >
+              ← Back to login
+            </Link>
+          </div>
         </div>
       </div>
 

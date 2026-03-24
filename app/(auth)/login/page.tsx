@@ -394,7 +394,7 @@ function LoginPage() {
       <div className="w-1/2 h-full flex items-center justify-center bg-background p-6 sm:p-10 tablet-lg:w-full tablet-lg:h-auto tablet-lg:py-12">
         <div className="w-full max-w-[480px] flex flex-col gap-4 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
           {/* Logo & Title Section */}
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col items-start gap-1">
             <LogoComponent className="!h-16 w-auto self-start" withoutTitle />
             <TypographyH2 className="phone-xl:text-2xl">
               Log in to your Account

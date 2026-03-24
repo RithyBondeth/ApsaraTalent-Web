@@ -8,7 +8,12 @@ import { useForgotPasswordStore } from "@/stores/apis/auth/forgot-password.store
 import { isEmailInput } from "@/utils/extensions/check-email-input";
 import { isNumberPhoneInput } from "@/utils/extensions/check-phone-input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LucideArrowLeft, LucideLock, LucideMail, LucidePhone } from "lucide-react";
+import {
+  LucideArrowLeft,
+  LucideLock,
+  LucideMail,
+  LucidePhone,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
@@ -69,7 +74,10 @@ export default function ForgotPasswordPage() {
     if (!loading && !error && message) {
       toast.dismiss();
       toast.success(t("forgotPasswordEmailSent"), { duration: 1000 });
-      setTimeout(() => router.push("/reset-password"), DEFAULT_REDIRECT_DELAY_MS);
+      setTimeout(
+        () => router.push("/reset-password"),
+        DEFAULT_REDIRECT_DELAY_MS,
+      );
     }
   }, [error, message, loading, isSubmitted]);
 
@@ -85,7 +93,7 @@ export default function ForgotPasswordPage() {
           </div>
 
           {/* Title Section */}
-          <div>
+          <div className="flex flex-col items-start">
             <TypographyH2 className="tablet-sm:text-2xl">
               Forgot your Password?
             </TypographyH2>

@@ -479,9 +479,7 @@ export default function CompanySignup() {
               className="flex-1 sm:flex-initial sm:min-w-[140px]"
               onClick={nextStep}
               disabled={
-                cmpSignup.loading ||
-                uploadAvatar.loading ||
-                uploadCover.loading
+                cmpSignup.loading || uploadAvatar.loading || uploadCover.loading
               }
             >
               {step === totalSteps ? "Submit" : "Next"}

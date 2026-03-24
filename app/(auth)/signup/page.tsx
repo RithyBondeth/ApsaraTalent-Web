@@ -20,7 +20,10 @@ import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.sto
 import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
 import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
 import { useThemeStore } from "@/stores/themes/theme-store";
-import { genderConstant, locationConstant } from "@/utils/constants/ui.constant";
+import {
+  genderConstant,
+  locationConstant,
+} from "@/utils/constants/ui.constant";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   LucideArrowLeft,
@@ -237,7 +240,7 @@ export default function SignupPage() {
       />
 
       {/* Title Section */}
-      <div>
+      <div className="flex flex-col items-start">
         <TypographyH2>Welcome to Apsara Talent</TypographyH2>
         <TypographyMuted className="text-md">
           Connect with professional community around the world.
@@ -515,7 +518,7 @@ export default function SignupPage() {
             type="button"
             className="flex-1 tablet-sm:w-full"
             variant="outline"
-            onClick={() => router.push("/login")}
+            onClick={() => router.push("/signup/option")}
           >
             <LucideArrowLeft />
             Back
