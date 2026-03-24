@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { resetPasswordSchema, TResetPasswordForm } from "./validate";
@@ -23,13 +23,16 @@ import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 export default function ResetPasswordPage() {
   /* ---------------------------------- Utils --------------------------------- */
-  const router = useRouter();
+  const router       = useRouter();
+  const searchParams = useSearchParams();
+
+  /* ── Auto-read token from URL: /reset-password?token=xxx ── */
+  const tokenFromUrl = searchParams.get("token") ?? "";
 
   /* -------------------------------- All States ------------------------------ */
-  const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
-  const [confirmPassVisibility, setConfirmPassVisibility] =
-    useState<boolean>(false);
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [passwordVisibility,    setPasswordVisibility]    = useState(false);
+  const [confirmPassVisibility, setConfirmPassVisibility] = useState(false);
+  const [isSubmitted,           setIsSubmitted]           = useState(false);
 
   /* ----------------------------- API Integration ----------------------------- */
   const { loading, error, message, resetPassword } = useResetPasswordStore();
@@ -40,19 +43,24 @@ export default function ResetPasswordPage() {
     register,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<TResetPasswordForm>({
     resolver: zodResolver(resetPasswordSchema),
+    defaultValues: { token: tokenFromUrl },
   });
 
+  /* ── Pre-fill token whenever URL param is available ── */
+  useEffect(() => {
+    if (tokenFromUrl) setValue("token", tokenFromUrl);
+  }, [tokenFromUrl, setValue]);
+
   /* --------------------------------- Methods ---------------------------------- */
-  // ── Reset Password Function ───────────────────────────────────────
   const onSubmit = async (data: TResetPasswordForm) => {
     setIsSubmitted(true);
     await resetPassword(data.token, data.password, data.confirmPassword);
   };
 
   /* --------------------------------- Effects ---------------------------------- */
-  // ── Reset Password Effect ─────────────────────────────────────────
   useEffect(() => {
     if (!isSubmitted) return;
 
@@ -84,7 +92,9 @@ export default function ResetPasswordPage() {
               Set Up Your New Password
             </TypographyH2>
             <TypographyMuted className="text-md phone-xl:text-sm">
-              Create a strong password to keep your account safe.
+              {tokenFromUrl
+                ? "Create a strong password to keep your account safe."
+                : "Paste the token from your email, then enter a new password."}
             </TypographyMuted>
           </div>
 
@@ -93,25 +103,27 @@ export default function ResetPasswordPage() {
             className="flex flex-col gap-3"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <Input
-              prefix={<LucideKey />}
-              placeholder="Token"
-              {...register("token")}
-              validationMessage={errors.token?.message}
-            />
+            {/* Token field — hidden when auto-filled from URL query param */}
+            {!tokenFromUrl && (
+              <Input
+                prefix={<LucideKey />}
+                placeholder="Token (from your email)"
+                {...register("token")}
+                validationMessage={errors.token?.message}
+              />
+            )}
+
             <Input
               prefix={<LucideLockKeyhole />}
               suffix={
                 passwordVisibility ? (
-                  <LucideEyeClosed
-                    onClick={() => setPasswordVisibility(false)}
-                  />
+                  <LucideEyeClosed onClick={() => setPasswordVisibility(false)} />
                 ) : (
                   <LucideEye onClick={() => setPasswordVisibility(true)} />
                 )
               }
               type={passwordVisibility ? "text" : "password"}
-              placeholder="Password"
+              placeholder="New Password"
               {...register("password")}
               validationMessage={errors.password?.message}
             />
@@ -119,9 +131,7 @@ export default function ResetPasswordPage() {
               prefix={<LucideLockKeyhole />}
               suffix={
                 confirmPassVisibility ? (
-                  <LucideEyeClosed
-                    onClick={() => setConfirmPassVisibility(false)}
-                  />
+                  <LucideEyeClosed onClick={() => setConfirmPassVisibility(false)} />
                 ) : (
                   <LucideEye onClick={() => setConfirmPassVisibility(true)} />
                 )
@@ -131,12 +141,14 @@ export default function ResetPasswordPage() {
               {...register("confirmPassword")}
               validationMessage={errors.confirmPassword?.message}
             />
-            <Button type="submit">Continue</Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? "Resetting…" : "Reset Password"}
+            </Button>
           </form>
         </div>
       </div>
 
-      {/* Right Section: Image Poster Section */}
+      {/* Right Section: Image Poster */}
       <div className="w-1/2 flex justify-center items-center bg-primary tablet-md:h-[60%] tablet-md:p-10">
         <Image
           src={resetPasswordWhiteSvg}
