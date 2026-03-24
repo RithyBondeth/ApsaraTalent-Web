@@ -23,16 +23,17 @@ import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 export default function ResetPasswordPage() {
   /* ---------------------------------- Utils --------------------------------- */
-  const router       = useRouter();
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   /* ── Auto-read token from URL: /reset-password?token=xxx ── */
   const tokenFromUrl = searchParams.get("token") ?? "";
 
   /* -------------------------------- All States ------------------------------ */
-  const [passwordVisibility,    setPasswordVisibility]    = useState(false);
-  const [confirmPassVisibility, setConfirmPassVisibility] = useState(false);
-  const [isSubmitted,           setIsSubmitted]           = useState(false);
+  const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
+  const [confirmPassVisibility, setConfirmPassVisibility] =
+    useState<boolean>(false);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   /* ----------------------------- API Integration ----------------------------- */
   const { loading, error, message, resetPassword } = useResetPasswordStore();
@@ -117,7 +118,9 @@ export default function ResetPasswordPage() {
               prefix={<LucideLockKeyhole />}
               suffix={
                 passwordVisibility ? (
-                  <LucideEyeClosed onClick={() => setPasswordVisibility(false)} />
+                  <LucideEyeClosed
+                    onClick={() => setPasswordVisibility(false)}
+                  />
                 ) : (
                   <LucideEye onClick={() => setPasswordVisibility(true)} />
                 )
@@ -131,7 +134,9 @@ export default function ResetPasswordPage() {
               prefix={<LucideLockKeyhole />}
               suffix={
                 confirmPassVisibility ? (
-                  <LucideEyeClosed onClick={() => setConfirmPassVisibility(false)} />
+                  <LucideEyeClosed
+                    onClick={() => setConfirmPassVisibility(false)}
+                  />
                 ) : (
                   <LucideEye onClick={() => setConfirmPassVisibility(true)} />
                 )

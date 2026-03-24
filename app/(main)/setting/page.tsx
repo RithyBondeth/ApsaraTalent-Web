@@ -130,24 +130,61 @@ function ThemeCard({
               : "bg-gradient-to-br from-white via-zinc-100 to-zinc-800 border-zinc-300",
         )}
       >
-        <div className={cn("h-1.5 rounded-full w-3/4", value === "dark" ? "bg-zinc-600" : "bg-zinc-300")} />
-        <div className={cn("h-1   rounded-full w-1/2", value === "dark" ? "bg-zinc-700" : "bg-zinc-200")} />
+        <div
+          className={cn(
+            "h-1.5 rounded-full w-3/4",
+            value === "dark" ? "bg-zinc-600" : "bg-zinc-300",
+          )}
+        />
+        <div
+          className={cn(
+            "h-1   rounded-full w-1/2",
+            value === "dark" ? "bg-zinc-700" : "bg-zinc-200",
+          )}
+        />
         <div className="flex gap-1 mt-0.5">
-          <div className={cn("h-3 rounded flex-1", value === "dark" ? "bg-zinc-800" : "bg-zinc-100")} />
-          <div className={cn("h-3 rounded flex-1", value === "dark" ? "bg-zinc-800" : "bg-zinc-100")} />
+          <div
+            className={cn(
+              "h-3 rounded flex-1",
+              value === "dark" ? "bg-zinc-800" : "bg-zinc-100",
+            )}
+          />
+          <div
+            className={cn(
+              "h-3 rounded flex-1",
+              value === "dark" ? "bg-zinc-800" : "bg-zinc-100",
+            )}
+          />
         </div>
       </div>
 
       {/* Label */}
       <div className="flex items-center gap-1.5 justify-center">
-        <span className={cn("[&>svg]:size-3.5", active ? "text-primary" : "text-muted-foreground")}>{icon}</span>
-        <span className={cn("text-xs font-medium",  active ? "text-primary" : "text-muted-foreground")}>{label}</span>
+        <span
+          className={cn(
+            "[&>svg]:size-3.5",
+            active ? "text-primary" : "text-muted-foreground",
+          )}
+        >
+          {icon}
+        </span>
+        <span
+          className={cn(
+            "text-xs font-medium",
+            active ? "text-primary" : "text-muted-foreground",
+          )}
+        >
+          {label}
+        </span>
       </div>
 
       {/* Active checkmark */}
       {active && (
         <span className="absolute top-2 right-2 flex items-center justify-center size-4 rounded-full bg-primary">
-          <LucideCheck className="size-2.5 text-primary-foreground" strokeWidth={3} />
+          <LucideCheck
+            className="size-2.5 text-primary-foreground"
+            strokeWidth={3}
+          />
         </span>
       )}
     </button>
@@ -181,12 +218,19 @@ function LanguageCard({
     >
       <span className="text-2xl shrink-0">{flag}</span>
       <div className="flex flex-col flex-1 min-w-0">
-        <span className={cn("text-sm font-semibold", active ? "text-primary" : "")}>{label}</span>
+        <span
+          className={cn("text-sm font-semibold", active ? "text-primary" : "")}
+        >
+          {label}
+        </span>
         <span className="text-xs text-muted-foreground">{nativeLabel}</span>
       </div>
       {active && (
         <span className="flex items-center justify-center size-5 rounded-full bg-primary shrink-0">
-          <LucideCheck className="size-3 text-primary-foreground" strokeWidth={3} />
+          <LucideCheck
+            className="size-3 text-primary-foreground"
+            strokeWidth={3}
+          />
         </span>
       )}
     </button>
@@ -196,15 +240,15 @@ function LanguageCard({
 /* ───────────────────────── Page ───────────────────────────────── */
 
 export default function SettingPage() {
-  const currentUser    = useGetCurrentUserStore((s) => s.user);
-  const { theme, setTheme: setStoreTheme }  = useThemeStore();
-  const { setTheme: setNextTheme }          = useTheme();
-  const { language, setLanguage }           = useLanguageStore();
+  const currentUser = useGetCurrentUserStore((s) => s.user);
+  const { theme, setTheme: setStoreTheme } = useThemeStore();
+  const { setTheme: setNextTheme } = useTheme();
+  const { language, setLanguage } = useLanguageStore();
   const { forgotPassword } = useForgotPasswordStore();
 
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [sending, setSending] = useState(false);
-  const [sent,    setSent]    = useState(false);
+  const [sent, setSent] = useState(false);
 
   /* ── theme ── */
   const handleThemeChange = (t: TTheme) => {
@@ -255,21 +299,25 @@ export default function SettingPage() {
 
   const memberSince = currentUser?.createdAt
     ? new Date(currentUser.createdAt).toLocaleDateString("en-US", {
-        year: "numeric", month: "long", day: "numeric",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
       })
     : "—";
 
   const lastLogin = currentUser?.lastLoginAt
     ? new Date(currentUser.lastLoginAt).toLocaleDateString("en-US", {
-        year: "numeric", month: "short", day: "numeric",
-        hour: "2-digit", minute: "2-digit",
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       })
     : "—";
 
   /* ─────────────────────── Render ──────────────────────────────── */
   return (
     <div className="w-full max-w-2xl mx-auto flex flex-col gap-8 px-3 py-6 sm:px-5 sm:py-8">
-
       {/* Page title */}
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
@@ -279,29 +327,75 @@ export default function SettingPage() {
       </div>
 
       {/* ══════════════ APPEARANCE ══════════════ */}
-      <SettingSection icon={<LucidePalette />} title="Appearance" description="Choose how Apsara Talent looks for you">
+      <SettingSection
+        icon={<LucidePalette />}
+        title="Appearance"
+        description="Choose how Apsara Talent looks for you"
+      >
         <div className="flex flex-col gap-4 p-4">
           <div className="grid grid-cols-3 gap-3">
-            <ThemeCard value="light"  label="Light"  icon={<LucideSun />}     active={theme === "light"}  onClick={() => handleThemeChange("light")} />
-            <ThemeCard value="dark"   label="Dark"   icon={<LucideMoon />}    active={theme === "dark"}   onClick={() => handleThemeChange("dark")} />
-            <ThemeCard value="system" label="System" icon={<LucideMonitor />} active={theme === "system"} onClick={() => handleThemeChange("system")} />
+            <ThemeCard
+              value="light"
+              label="Light"
+              icon={<LucideSun />}
+              active={theme === "light"}
+              onClick={() => handleThemeChange("light")}
+            />
+            <ThemeCard
+              value="dark"
+              label="Dark"
+              icon={<LucideMoon />}
+              active={theme === "dark"}
+              onClick={() => handleThemeChange("dark")}
+            />
+            <ThemeCard
+              value="system"
+              label="System"
+              icon={<LucideMonitor />}
+              active={theme === "system"}
+              onClick={() => handleThemeChange("system")}
+            />
           </div>
           <p className="text-xs text-muted-foreground text-center">
-            {theme === "system" ? "Follows your device's system preference" : `Using ${theme} mode`}
+            {theme === "system"
+              ? "Follows your device's system preference"
+              : `Using ${theme} mode`}
           </p>
         </div>
       </SettingSection>
 
       {/* ══════════════ LANGUAGE ══════════════ */}
-      <SettingSection icon={<LucideGlobe />} title="Language" description="Select the language used throughout the app">
+      <SettingSection
+        icon={<LucideGlobe />}
+        title="Language"
+        description="Select the language used throughout the app"
+      >
         <div className="flex flex-col gap-3 p-4">
-          <LanguageCard value="en" flag="🇬🇧" label="English" nativeLabel="English"   active={language === "en"} onClick={() => handleLanguageChange("en")} />
-          <LanguageCard value="km" flag="🇰🇭" label="Khmer"   nativeLabel="ភាសាខ្មែរ" active={language === "km"} onClick={() => handleLanguageChange("km")} />
+          <LanguageCard
+            value="en"
+            flag="🇬🇧"
+            label="English"
+            nativeLabel="English"
+            active={language === "en"}
+            onClick={() => handleLanguageChange("en")}
+          />
+          <LanguageCard
+            value="km"
+            flag="🇰🇭"
+            label="Khmer"
+            nativeLabel="ភាសាខ្មែរ"
+            active={language === "km"}
+            onClick={() => handleLanguageChange("km")}
+          />
         </div>
       </SettingSection>
 
       {/* ══════════════ ACCOUNT ══════════════ */}
-      <SettingSection icon={<LucideUser />} title="Account" description="Your account details and security">
+      <SettingSection
+        icon={<LucideUser />}
+        title="Account"
+        description="Your account details and security"
+      >
         {/* Avatar header */}
         <div className="flex items-center gap-4 px-4 py-4 bg-muted/30">
           <Avatar className="size-14 rounded-xl shrink-0">
@@ -311,23 +405,55 @@ export default function SettingPage() {
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col gap-1 min-w-0">
-            <p className="font-semibold text-sm leading-none truncate">{displayName}</p>
-            <p className="text-xs text-muted-foreground truncate">{currentUser?.email ?? "—"}</p>
-            <Badge variant="secondary" className="w-fit mt-0.5 text-[10px] capitalize">
+            <p className="font-semibold text-sm leading-none truncate">
+              {displayName}
+            </p>
+            <p className="text-xs text-muted-foreground truncate">
+              {currentUser?.email ?? "—"}
+            </p>
+            <Badge
+              variant="secondary"
+              className="w-fit mt-0.5 text-[10px] capitalize"
+            >
               {currentUser?.role ?? "—"}
             </Badge>
           </div>
         </div>
         <Separator />
 
-        <SettingRow icon={<LucideMail />}       label="Email"           value={currentUser?.email ?? "—"} />
-        <SettingRow icon={<LucideShieldCheck />} label="Two-Factor Auth" value={
-          currentUser?.isTwoFactorEnabled
-            ? <Badge className="text-[10px] bg-emerald-500/10 text-emerald-600 border border-emerald-300/40 hover:bg-emerald-500/10">Enabled</Badge>
-            : <Badge variant="outline" className="text-[10px] text-muted-foreground">Disabled</Badge>
-        } />
-        <SettingRow icon={<LucideLogIn />}  label="Last Login"    value={lastLogin} />
-        <SettingRow icon={<LucideInfo />}   label="Member Since"  value={memberSince} />
+        <SettingRow
+          icon={<LucideMail />}
+          label="Email"
+          value={currentUser?.email ?? "—"}
+        />
+        <SettingRow
+          icon={<LucideShieldCheck />}
+          label="Two-Factor Auth"
+          value={
+            currentUser?.isTwoFactorEnabled ? (
+              <Badge className="text-[10px] bg-emerald-500/10 text-emerald-600 border border-emerald-300/40 hover:bg-emerald-500/10">
+                Enabled
+              </Badge>
+            ) : (
+              <Badge
+                variant="outline"
+                className="text-[10px] text-muted-foreground"
+              >
+                Disabled
+              </Badge>
+            )
+          }
+        />
+        <SettingRow
+          icon={<LucideLogIn />}
+          label="Last Login"
+          value={lastLogin}
+        />
+        <SettingRow
+          icon={<LucideInfo />}
+          label="Member Since"
+          value={memberSince}
+        />
 
         {/* ── Reset Password row ── */}
         <div className="flex items-center justify-between gap-4 px-4 py-3">
@@ -346,7 +472,10 @@ export default function SettingPage() {
             size="sm"
             variant="outline"
             className="shrink-0 text-xs rounded-lg"
-            onClick={() => { setSent(false); setResetDialogOpen(true); }}
+            onClick={() => {
+              setSent(false);
+              setResetDialogOpen(true);
+            }}
           >
             Reset
           </Button>
@@ -354,21 +483,58 @@ export default function SettingPage() {
       </SettingSection>
 
       {/* ══════════════ ABOUT ══════════════ */}
-      <SettingSection icon={<LucideInfo />} title="About" description="App information">
-        <SettingRow icon={<LucideInfo />}        label="Version"          value={<Badge variant="secondary" className="text-[10px] font-mono">v1.0.0</Badge>} />
-        <SettingRow icon={<LucideShieldCheck />}  label="Privacy Policy"   value={<span className="text-xs text-primary hover:underline cursor-pointer">View →</span>} />
-        <SettingRow icon={<LucideInfo />}         label="Terms of Service" value={<span className="text-xs text-primary hover:underline cursor-pointer">View →</span>} last />
+      <SettingSection
+        icon={<LucideInfo />}
+        title="About"
+        description="App information"
+      >
+        <SettingRow
+          icon={<LucideInfo />}
+          label="Version"
+          value={
+            <Badge variant="secondary" className="text-[10px] font-mono">
+              v1.0.0
+            </Badge>
+          }
+        />
+        <SettingRow
+          icon={<LucideShieldCheck />}
+          label="Privacy Policy"
+          value={
+            <span className="text-xs text-primary hover:underline cursor-pointer">
+              View →
+            </span>
+          }
+        />
+        <SettingRow
+          icon={<LucideInfo />}
+          label="Terms of Service"
+          value={
+            <span className="text-xs text-primary hover:underline cursor-pointer">
+              View →
+            </span>
+          }
+          last
+        />
       </SettingSection>
 
       {/* ══════════════ RESET PASSWORD DIALOG ══════════════ */}
-      <Dialog open={resetDialogOpen} onOpenChange={(o) => { setResetDialogOpen(o); if (!o) setSent(false); }}>
+      <Dialog
+        open={resetDialogOpen}
+        onOpenChange={(o) => {
+          setResetDialogOpen(o);
+          if (!o) setSent(false);
+        }}
+      >
         <DialogContent className="max-w-sm rounded-2xl">
           <DialogHeader>
             {/* Icon */}
             <div className="mx-auto mb-2 flex items-center justify-center size-14 rounded-2xl bg-primary/10 border border-primary/20">
               <LucideKeyRound className="size-6 text-primary" />
             </div>
-            <DialogTitle className="text-center">Reset your password</DialogTitle>
+            <DialogTitle className="text-center">
+              Reset your password
+            </DialogTitle>
             <DialogDescription className="text-center text-sm leading-relaxed">
               {sent ? (
                 <>
@@ -420,7 +586,6 @@ export default function SettingPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
     </div>
   );
 }
