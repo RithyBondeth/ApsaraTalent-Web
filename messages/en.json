@@ -6,7 +6,9 @@
     "matching": "Matching",
     "message": "Message",
     "notification": "Notification",
-    "aiResumeBuilder": "AI Resume Builder"
+    "aiResumeBuilder": "AI Resume Builder",
+    "navigationGroup": "Navigation",
+    "toolsGroup": "Tools"
   },
   "sidebarFooter": {
     "myProfile": "My Profile",
@@ -28,6 +30,8 @@
     "matching": "Matching",
     "favorites": "Favorites",
     "profilePage": "Profile Page",
-    "settingPage": "Setting Page"
+    "settingPage": "Setting Page",
+    "feedDescription": "Explore your connections",
+    "notificationDescription": "Stay updated with matches and messages"
   }
 }

@@ -489,7 +489,7 @@ export default function FeedPage() {
       </div>
 
       {/* Empty List Section */}
-      {allUsers.length === 0 && (
+      {!isLoading && allUsers.length === 0 && (
         <div className="w-full flex flex-col items-center justify-center my-16">
           <Image src={emptySvgImage} alt="empty" height={200} width={200} className="animate-float" />
           <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">

@@ -35,13 +35,10 @@ import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
 import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import ReferencePreviewDialog from "@/components/utils/dialogs/reference-preview-dialog";
 import RemoveAlertDialog from "@/components/utils/dialogs/remove-alert-dialog";
-import Divider from "@/components/utils/divider";
 import IconLabel from "@/components/utils/icon-label";
 import ImagePopup from "@/components/utils/image-popup";
 import LabelInput from "@/components/utils/label-input";
 import Tag from "@/components/utils/tag";
-import { TypographyH3 } from "@/components/utils/typography/typography-h3";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useAvatarState } from "@/hooks/profile/employee/use-avatar-state";
@@ -82,26 +79,42 @@ import {
   LucideBriefcaseBusiness,
   LucideCamera,
   LucideCircleCheck,
+  LucideCompass,
   LucideDownload,
   LucideEdit,
   LucideEye,
   LucideFileText,
+  LucideGlobe,
+  LucideGraduationCap,
   LucideLink2,
   LucideMail,
   LucidePhone,
   LucidePlus,
+  LucideSettings,
   LucideTrash2,
   LucideUser,
   LucideXCircle,
+  LucideZap,
 } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { employeeFormSchema, TEmployeeProfileForm } from "./validation";
 import EmployeeProfilePageLoadingSkeleton from "./skeleton";
 import { addNewEducationSvgImage, addNewExperienceSvgImage } from "@/utils/constants/asset.constant";
+
+function SectionTitle({ icon, title }: { icon: React.ReactNode; title: string }) {
+  return (
+    <div className="flex items-center gap-2.5 mb-4 pb-3.5 border-b border-border/60">
+      <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+        <span className="[&>svg]:size-[18px] [&>svg]:text-primary [&>svg]:stroke-[1.5]">{icon}</span>
+      </div>
+      <h3 className="font-semibold text-base">{title}</h3>
+    </div>
+  );
+}
 
 export default function EmployeeProfilePage() {
   /* -------------------------------- All States -------------------------------- */
@@ -299,6 +312,7 @@ export default function EmployeeProfilePage() {
         job: employee.job ?? "",
         yearOfExperience: employee.yearsOfExperience?.toString() ?? "",
         availability: employee.availability,
+        description: employee.description ?? "",
       },
       experiences:
         employee.experiences?.map((exp) => ({
@@ -1031,7 +1045,7 @@ export default function EmployeeProfilePage() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <form className="!min-w-full flex flex-col gap-5" onSubmit={handleSubmit}>
+    <form className="!min-w-full flex flex-col gap-5 overflow-x-hidden" onSubmit={handleSubmit}>
       <LoadingDialog
         loading={updateProfileLoadingState}
         title={loadingMessage || "Updating employee profile..."}
@@ -1039,107 +1053,138 @@ export default function EmployeeProfilePage() {
       />
 
       {/* Header Section*/}
-      <div className="flex items-center justify-between border border-muted rounded-md p-5 tablet-sm:flex-col tablet-sm:[&>div]:w-full tablet-sm:gap-5">
-        <div className="flex items-center justify-start gap-5 tablet-sm:flex-col">
-          {/* Avatar Section */}
-          <div
-            className="relative"
-            onClick={(e) => {
-              if (!isEdit && employee.avatar) handleClickAvatarPopup(e);
-            }}
-          >
-            <Avatar className="size-36" rounded="md">
-              <AvatarImage src={avatarPreview} />
-              <AvatarFallback className="uppercase">
-                {employee.username?.slice(0, 3)}
-              </AvatarFallback>
-            </Avatar>
+      <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
+        {/* Gradient Banner */}
+        <div className="h-28 sm:h-36 bg-gradient-to-r from-primary to-primary/60 relative overflow-hidden">
+          <div className="absolute -top-6 right-10 size-36 rounded-full bg-white/5" />
+          <div className="absolute top-4 right-32 size-20 rounded-full bg-white/5" />
+          <div className="absolute -bottom-4 right-4 size-24 rounded-full bg-white/5" />
 
-            {isEdit && (
-              <div className="flex items-center gap-1 absolute bottom-1 right-1">
-                <Button
-                  className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-foreground text-primary-foreground"
-                  type="button"
-                  onClick={() => avatarInputRef.current?.click()}
-                >
-                  <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
+          {/* Edit/Save/Cancel buttons — top-right of banner on desktop */}
+          <div className="absolute top-4 right-4 hidden sm:flex items-center gap-3">
+            {isEdit ? (
+              <>
+                <Button type="submit" className="text-xs">
+                  {updateProfileLoadingState ? "Updating..." : "Save"}{" "}
+                  <LucideCircleCheck />
                 </Button>
-                {employee.avatar && (
-                  <Button
-                    className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-red-500 text-primary-foreground"
-                    type="button"
-                    onClick={() => setOpenRemoveAvatarDialog(true)}
-                  >
-                    <LucideXCircle width={"18px"} strokeWidth={"1.2px"} />
-                  </Button>
-                )}
-              </div>
+                <Button type="button" className="text-xs" onClick={disableEditMode}>
+                  Cancel
+                  <LucideXCircle />
+                </Button>
+              </>
+            ) : (
+              <Button type="button" className="text-xs" onClick={enableEditMode}>
+                Edit Profile
+                <LucideEdit />
+              </Button>
             )}
-
-            {/* Avatar Crop Dialog Section */}
-            <AvatarCropDialog
-              title={`Crop ${employee.username ?? ""} Avatar`}
-              open={openCropDialog}
-              setOpen={setOpenCropDialog}
-              image={cropImageUrl}
-              onCropComplete={handleAvatarCrop}
-            />
-
-            {/* Remove Avatar Dialog Section */}
-            <RemoveAlertDialog
-              type="avatar"
-              setOpenDialog={setOpenRemoveAvatarDialog}
-              openDialog={openRemoveAvatarDialog}
-              onNoClick={disableEditMode}
-              onYesClick={removeAvatar}
-            />
-          </div>
-
-          <input
-            ref={avatarInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => handleFileChange(e, "avatar")}
-            aria-label="Upload avatar image"
-          />
-
-          <div className="flex flex-col items-start gap-1 tablet-sm:items-center">
-            <TypographyH3>{employee.username}</TypographyH3>
-            <TypographyMuted>{employee.job}</TypographyMuted>
           </div>
         </div>
 
-        {/* Edit Profile Button Section */}
-        {isEdit ? (
-          <div className="flex items-center gap-3">
-            <Button type="submit" className="text-xs">
-              {updateProfileLoadingState ? "Updating..." : "Save"}{" "}
-              <LucideCircleCheck />
-            </Button>
-            <Button type="button" className="text-xs" onClick={disableEditMode}>
-              Cancel
-              <LucideXCircle />
-            </Button>
+        {/* Avatar + name area */}
+        <div className="px-4 sm:px-6 pb-5">
+          <div className="flex items-start gap-4 tablet-md:flex-col tablet-md:items-center">
+            {/* Avatar with overlap */}
+            <div
+              className="relative -mt-10 sm:-mt-12 flex-shrink-0"
+              onClick={(e) => {
+                if (!isEdit && employee.avatar) handleClickAvatarPopup(e);
+              }}
+            >
+              <Avatar className="size-20 sm:size-24 ring-[3px] ring-card shadow-xl" rounded="md">
+                <AvatarImage src={avatarPreview} />
+                <AvatarFallback className="uppercase">
+                  {employee.username?.slice(0, 3)}
+                </AvatarFallback>
+              </Avatar>
+
+              {isEdit && (
+                <div className="flex items-center gap-1 absolute bottom-1 right-1">
+                  <Button
+                    className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-foreground text-primary-foreground"
+                    type="button"
+                    onClick={() => avatarInputRef.current?.click()}
+                  >
+                    <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
+                  </Button>
+                  {employee.avatar && (
+                    <Button
+                      className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-red-500 text-primary-foreground"
+                      type="button"
+                      onClick={() => setOpenRemoveAvatarDialog(true)}
+                    >
+                      <LucideXCircle width={"18px"} strokeWidth={"1.2px"} />
+                    </Button>
+                  )}
+                </div>
+              )}
+
+              {/* Avatar Crop Dialog Section */}
+              <AvatarCropDialog
+                title={`Crop ${employee.username ?? ""} Avatar`}
+                open={openCropDialog}
+                setOpen={setOpenCropDialog}
+                image={cropImageUrl}
+                onCropComplete={handleAvatarCrop}
+              />
+
+              {/* Remove Avatar Dialog Section */}
+              <RemoveAlertDialog
+                type="avatar"
+                setOpenDialog={setOpenRemoveAvatarDialog}
+                openDialog={openRemoveAvatarDialog}
+                onNoClick={disableEditMode}
+                onYesClick={removeAvatar}
+              />
+            </div>
+
+            <input
+              ref={avatarInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => handleFileChange(e, "avatar")}
+              aria-label="Upload avatar image"
+            />
+
+            {/* Name + job title */}
+            <div className="flex flex-col items-start gap-1 pt-2 tablet-md:items-center tablet-md:pt-0 flex-1">
+              <h2 className="text-xl font-bold leading-tight">{employee.username}</h2>
+              <p className="text-sm text-muted-foreground">{employee.job}</p>
+            </div>
+
+            {/* Edit/Save/Cancel buttons — visible only on mobile (stacked below name) */}
+            <div className="flex sm:hidden items-center gap-3 tablet-md:w-full tablet-md:justify-center">
+              {isEdit ? (
+                <>
+                  <Button type="submit" className="text-xs">
+                    {updateProfileLoadingState ? "Updating..." : "Save"}{" "}
+                    <LucideCircleCheck />
+                  </Button>
+                  <Button type="button" className="text-xs" onClick={disableEditMode}>
+                    Cancel
+                    <LucideXCircle />
+                  </Button>
+                </>
+              ) : (
+                <Button type="button" className="text-xs" onClick={enableEditMode}>
+                  Edit Profile
+                  <LucideEdit />
+                </Button>
+              )}
+            </div>
           </div>
-        ) : (
-          <Button type="button" className="text-xs" onClick={enableEditMode}>
-            Edit Profile
-            <LucideEdit />
-          </Button>
-        )}
+        </div>
       </div>
 
       {/* Content Section */}
       <div className="flex items-start gap-5 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
         {/* LEFT Side Section */}
-        <div className="w-[60%] flex flex-col gap-5">
+        <div className="w-[60%] min-w-0 flex flex-col gap-5">
           {/* Personal Information Section */}
-          <div className="w-full flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
-            <div className="flex flex-col gap-1">
-              <TypographyH4>Personal Information</TypographyH4>
-              <Divider />
-            </div>
+          <div className="w-full flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
+            <SectionTitle icon={<LucideUser />} title="Personal Information" />
 
             <div className="flex flex-col items-start gap-5">
               <div className="w-full flex items-center justify-between gap-5 [&>div]:!w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
@@ -1291,11 +1336,8 @@ export default function EmployeeProfilePage() {
           </div>
 
           {/* Professional Information Section */}
-          <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
-            <div className="flex flex-col gap-1">
-              <TypographyH4>Professional Information</TypographyH4>
-              <Divider />
-            </div>
+          <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
+            <SectionTitle icon={<LucideBriefcaseBusiness />} title="Professional Information" />
 
             <div className="flex flex-col items-start gap-5">
               <LabelInput
@@ -1355,21 +1397,23 @@ export default function EmployeeProfilePage() {
 
           {/* Experience Information Section */}
           {employee.experiences && (
-            <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
-              <div className="flex flex-col gap-1">
-                <div className="flex justify-between items-center">
-                  <TypographyH4>Experience Information</TypographyH4>
-                  {isEdit && (
-                    <div onClick={addNewExperience}>
-                      <IconLabel
-                        text="Add Experience"
-                        icon={<LucidePlus className="text-muted-foreground" />}
-                        className="cursor-pointer"
-                      />
-                    </div>
-                  )}
+            <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
+              <div className="flex items-center justify-between gap-2.5 mb-0 pb-3.5 border-b border-border/60">
+                <div className="flex items-center gap-2.5">
+                  <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <span className="[&>svg]:size-[18px] [&>svg]:text-primary [&>svg]:stroke-[1.5]"><LucideBriefcaseBusiness /></span>
+                  </div>
+                  <h3 className="font-semibold text-base">Experience Information</h3>
                 </div>
-                <Divider />
+                {isEdit && (
+                  <div onClick={addNewExperience}>
+                    <IconLabel
+                      text="Add Experience"
+                      icon={<LucidePlus className="text-muted-foreground" />}
+                      className="cursor-pointer"
+                    />
+                  </div>
+                )}
               </div>
               {/* Experience Form Section */}
               <div className="flex flex-col items-start gap-5">
@@ -1492,21 +1536,23 @@ export default function EmployeeProfilePage() {
 
           {/* Education Information Section */}
           {employee.educations && (
-            <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
-              <div className="flex flex-col gap-1">
-                <div className="flex justify-between items-center">
-                  <TypographyH4>Education Information</TypographyH4>
-                  {isEdit && (
-                    <div onClick={addNewEducation}>
-                      <IconLabel
-                        text="Add Education"
-                        icon={<LucidePlus className="text-muted-foreground" />}
-                        className="cursor-pointer"
-                      />
-                    </div>
-                  )}
+            <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
+              <div className="flex items-center justify-between gap-2.5 mb-0 pb-3.5 border-b border-border/60">
+                <div className="flex items-center gap-2.5">
+                  <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <span className="[&>svg]:size-[18px] [&>svg]:text-primary [&>svg]:stroke-[1.5]"><LucideGraduationCap /></span>
+                  </div>
+                  <h3 className="font-semibold text-base">Education Information</h3>
                 </div>
-                <Divider />
+                {isEdit && (
+                  <div onClick={addNewEducation}>
+                    <IconLabel
+                      text="Add Education"
+                      icon={<LucidePlus className="text-muted-foreground" />}
+                      className="cursor-pointer"
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Education Form Section */}
@@ -1606,12 +1652,11 @@ export default function EmployeeProfilePage() {
         </div>
 
         {/* RIGHT Side Section*/}
-        <div className="w-[40%] flex flex-col gap-5">
+        <div className="w-[40%] min-w-0 flex flex-col gap-5">
           {/* Skill Section*/}
-          <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
-            <div className="w-full flex flex-col gap-1">
-              <TypographyH4>Skills</TypographyH4>
-              <Divider />
+          <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
+            <div className="w-full">
+              <SectionTitle icon={<LucideZap />} title="Skills" />
             </div>
 
             {/* Skil List Section */}
@@ -1699,10 +1744,9 @@ export default function EmployeeProfilePage() {
           </div>
 
           {/* Career Scopes Section*/}
-          <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
-            <div className="w-full flex flex-col gap-1">
-              <TypographyH4>Careers Scopes</TypographyH4>
-              <Divider />
+          <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
+            <div className="w-full">
+              <SectionTitle icon={<LucideCompass />} title="Career Scopes" />
             </div>
 
             {/* Career Scopes List Section*/}
@@ -1837,8 +1881,8 @@ export default function EmployeeProfilePage() {
           </div>
 
           {/* References Section */}
-          <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
-            <TypographyH4>References Information</TypographyH4>
+          <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
+            <SectionTitle icon={<LucideFileText />} title="References Information" />
             <div className="w-full flex flex-col items-start gap-5 [&>div]:w-full">
               {/* Resume Section */}
               <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
@@ -2054,29 +2098,37 @@ export default function EmployeeProfilePage() {
           </div>
 
           {/* Social Section */}
-          <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
-            <div className="flex flex-col gap-1">
-              <TypographyH4>Social Information</TypographyH4>
-              <Divider />
-            </div>
+          <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
+            <SectionTitle icon={<LucideGlobe />} title="Social Information" />
 
             {/* Social List Section */}
             {socials && socials.length > 0 ? (
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2">
                 {socials.map((item, index) => (
-                  <div className="flex items-center gap-1" key={index}>
+                  <div
+                    className="flex items-center gap-1.5 max-w-full"
+                    key={index}
+                  >
                     <Link
                       href={item.url}
-                      className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 rounded-full hover:underline max-w-[200px] sm:max-w-[260px] overflow-hidden"
                     >
-                      {getSocialPlatformTypeIcon(item.platform as TPlatform)}
-                      <TypographySmall>{item.platform}</TypographySmall>
+                      <span className="flex-shrink-0">
+                        {getSocialPlatformTypeIcon(
+                          item.platform as TPlatform,
+                        )}
+                      </span>
+                      <span className="text-sm truncate">
+                        {item.platform}
+                      </span>
                     </Link>
                     {isEdit && (
                       <LucideXCircle
-                        className="text-muted-foreground cursor-pointer text-red-500"
-                        width={"18px"}
-                        onClick={() => removeSocial(item.platform as TPlatform)}
+                        className="flex-shrink-0 cursor-pointer text-red-500 hover:text-red-600 transition-colors"
+                        size={18}
+                        onClick={() =>
+                          removeSocial(item.platform as TPlatform)
+                        }
                       />
                     )}
                   </div>
@@ -2095,9 +2147,9 @@ export default function EmployeeProfilePage() {
             {(isEdit || employee.socials.length === 0) && (
               <div>
                 {isEdit && (
-                  <div className="w-full flex flex-col items-start gap-5 p-5 mt-3 border-[1px] border-muted rounded-md">
-                    <div className="w-full flex justify-between items-center gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
-                      <div className="w-full flex flex-col items-start gap-1">
+                  <div className="w-full flex flex-col items-start gap-4 p-4 mt-3 border border-muted rounded-xl overflow-hidden">
+                    <div className="w-full flex flex-col sm:flex-row gap-3 sm:gap-4">
+                      <div className="w-full sm:w-[180px] flex-shrink-0 flex flex-col items-start gap-1">
                         <TypographyMuted className="text-xs">
                           Platform
                         </TypographyMuted>
@@ -2111,7 +2163,7 @@ export default function EmployeeProfilePage() {
                           value={socialInput?.platform ?? ""}
                         >
                           <SelectTrigger
-                            className="h-12 text-muted-foreground"
+                            className="h-10 text-muted-foreground"
                             ref={socialSelectPlatformRef}
                           >
                             <SelectValue placeholder="Platform" />
@@ -2129,24 +2181,31 @@ export default function EmployeeProfilePage() {
                         </Select>
                       </div>
 
-                      <LabelInput
-                        label="Link"
-                        input={
-                          <Input
-                            placeholder="Link"
-                            id="link"
-                            name="link"
-                            value={socialInput?.url ?? ""}
-                            onChange={(e) =>
-                              setSocialInput((prev) => ({
-                                ...(prev ?? { id: "", platform: "", url: "" }),
-                                url: e.target.value,
-                              }))
-                            }
-                            prefix={<LucideLink2 />}
-                          />
-                        }
-                      />
+                      <div className="flex-1 min-w-0">
+                        <LabelInput
+                          label="Link"
+                          input={
+                            <Input
+                              className="w-full"
+                              placeholder="https://example.com/profile"
+                              id="link"
+                              name="link"
+                              value={socialInput?.url ?? ""}
+                              onChange={(e) =>
+                                setSocialInput((prev) => ({
+                                  ...(prev ?? {
+                                    id: "",
+                                    platform: "",
+                                    url: "",
+                                  }),
+                                  url: e.target.value,
+                                }))
+                              }
+                              prefix={<LucideLink2 />}
+                            />
+                          }
+                        />
+                      </div>
                     </div>
                   </div>
                 )}
@@ -2196,11 +2255,8 @@ export default function EmployeeProfilePage() {
           </div>
 
           {/* Authentication Section*/}
-          <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
-            <div className="flex flex-col gap-1">
-              <TypographyH4>Authentication</TypographyH4>
-              <Divider />
-            </div>
+          <div className="flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
+            <SectionTitle icon={<LucideSettings />} title="Authentication" />
 
             <div className="w-full flex flex-col items-start gap-3">
               {/* Google, Facebook, LinkedIn and Github Methods Section */}

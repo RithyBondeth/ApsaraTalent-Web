@@ -21,12 +21,14 @@ export function LanguageProviderClient({
   const { language, setLanguage } = useLanguageStore();
   const [mounted, setMounted] = useState(false);
 
+  // Sync Zustand store from cookie once on mount only.
+  // Must NOT re-run when `language` changes — that would immediately
+  // reverse a user-triggered toggle if the cookie hasn't updated yet.
   useEffect(() => {
+    setLanguage(defaultLanguage as "en" | "km");
     setMounted(true);
-    if (language === "en" && defaultLanguage === "km") {
-      setLanguage("km");
-    }
-  }, [defaultLanguage, language, setLanguage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const activeLocale = mounted ? language : (defaultLanguage as "en" | "km");
 

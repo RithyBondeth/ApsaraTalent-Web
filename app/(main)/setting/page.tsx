@@ -37,6 +37,7 @@ import { useTheme } from "next-themes";
 import { setCookie } from "cookies-next";
 import { useState } from "react";
 import { toast } from "sonner";
+import Link from "next/link";
 
 /* ─────────────────────── sub-components ─────────────────────── */
 
@@ -501,18 +502,18 @@ export default function SettingPage() {
           icon={<LucideShieldCheck />}
           label="Privacy Policy"
           value={
-            <span className="text-xs text-primary hover:underline cursor-pointer">
+            <Link href="/privacy" className="text-xs text-primary hover:underline">
               View →
-            </span>
+            </Link>
           }
         />
         <SettingRow
           icon={<LucideInfo />}
           label="Terms of Service"
           value={
-            <span className="text-xs text-primary hover:underline cursor-pointer">
+            <Link href="/terms" className="text-xs text-primary hover:underline">
               View →
-            </span>
+            </Link>
           }
           last
         />

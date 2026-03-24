@@ -1,7 +1,6 @@
 "use client";
 
 import CollapseSidebar from "@/components/sidebar/collapse-sidebar";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
@@ -16,9 +15,7 @@ import { usePushNotifications } from "@/hooks/notification/use-push-notification
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useThemeStore } from "@/stores/themes/theme-store";
 import { sidebarList } from "@/utils/constants/sidebar.constant";
-import { LucideArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export default function MainLayout({
@@ -43,6 +40,7 @@ export default function MainLayout({
   /* --------------------------------- Methods -------------------------------- */
   // ── Determine header title ─────────────────────────────────────────
   const getHeaderTitle = () => {
+    if (pathname.startsWith("/feed")) return t("feedDescription");
     if (pathname.startsWith("/message")) return t("chat");
     if (pathname.startsWith("/resume-builder")) return t("aiResumeBuilder");
     if (pathname.startsWith("/search")) return t("searchFavorite");
@@ -50,6 +48,7 @@ export default function MainLayout({
     if (pathname.startsWith("/favorite")) return t("favorites");
     if (pathname.startsWith("/profile")) return t("profilePage");
     if (pathname.startsWith("/setting")) return t("settingPage");
+    if (pathname.startsWith("/notification")) return t("notificationDescription");
     return sidebarData[0]?.description ?? "";
   };
 
@@ -72,14 +71,6 @@ export default function MainLayout({
     return (
       <div className="relative">
         <ScrollProgressBar />
-        <Link
-          href="/feed"
-          className="absolute top-3 left-3 sm:top-4 sm:left-4 lg:top-5 lg:left-5 z-20"
-        >
-          <Button variant="outline" size="icon">
-            <LucideArrowLeft />
-          </Button>
-        </Link>
         <div
           key={pathname}
           className="container mx-auto p-3 sm:p-4 lg:p-5 animate-page-in"

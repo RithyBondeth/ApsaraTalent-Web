@@ -2,40 +2,45 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function FavoriteEmployeeCardSkeleton() {
   return (
-    <div className="w-full flex items-start gap-3 rounded-md p-3 shadow-md sm:gap-5 sm:p-5 tablet-xl:flex-col tablet-xl:items-start">
-      <Skeleton className="size-28 rounded-md sm:size-36 lg:size-56" />
+    <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
+      <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
+        {/* Avatar */}
+        <Skeleton className="size-16 sm:size-20 rounded-xl flex-shrink-0" />
 
-      <div className="w-full flex flex-col items-start gap-3">
-        <div className="w-full flex items-start justify-between phone-xl:flex-col phone-xl:gap-3">
-          <div className="flex flex-col items-start gap-2">
-            <Skeleton className="h-5 w-40" />
-            <Skeleton className="h-4 w-24" />
+        <div className="flex-1 min-w-0 flex flex-col gap-3">
+          {/* Header */}
+          <div className="flex items-start justify-between gap-2">
+            <div>
+              <Skeleton className="h-5 w-36" />
+              <Skeleton className="h-3.5 w-20 mt-1.5" />
+            </div>
+            <Skeleton className="h-6 w-24 rounded-full flex-shrink-0" />
           </div>
-          <Skeleton className="h-6 w-24 rounded-full" />
-        </div>
 
-        <Skeleton className="h-4 w-full max-w-lg" />
-        <div className="flex flex-wrap items-center gap-2">
-          {[...Array(3)].map((_, i) => (
-            <Skeleton key={i} className="h-6 w-20 rounded-full" />
-          ))}
-        </div>
+          {/* Description */}
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-3/4" />
 
-        <div className="mt-2 flex w-full items-center justify-between gap-3 tablet-md:flex-col tablet-md:items-start tablet-md:gap-5">
-          <div className="flex flex-wrap items-center gap-4 sm:gap-5 tablet-md:flex-col tablet-md:items-start">
+          {/* Tags */}
+          <div className="flex flex-wrap gap-1.5">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <Skeleton className="h-10 w-10 rounded-md" />
-                <div className="flex flex-col gap-1">
-                  <Skeleton className="h-3 w-14" />
-                  <Skeleton className="h-4 w-24" />
-                </div>
-              </div>
+              <Skeleton key={i} className="h-6 w-16 rounded-full" />
             ))}
           </div>
 
-          <Skeleton className="h-10 w-full rounded-md sm:w-28" />
+          {/* Meta Chips */}
+          <div className="flex flex-wrap gap-2">
+            {[...Array(3)].map((_, i) => (
+              <Skeleton key={i} className="h-7 w-24 rounded-full" />
+            ))}
+          </div>
         </div>
+      </div>
+
+      {/* Action Bar */}
+      <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end gap-2">
+        <Skeleton className="h-8 w-20 rounded-md" />
+        <Skeleton className="h-8 w-24 rounded-md" />
       </div>
     </div>
   );

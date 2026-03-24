@@ -13,7 +13,7 @@ import { LucideFileUser } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Collapsible, CollapsibleTrigger } from "../../ui/collapsible";
 import {
   Sidebar,
@@ -161,6 +161,10 @@ export default function CollapseSidebar({
     },
   });
 
+  /* ── Hydration guard — defer role-dependent UI until client ── */
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   /* ── Derived counts ─────────────────────── */
   const matchingCount = useMemo(() => {
     if (isEmployee) return totalEmpMatching ?? 0;
@@ -307,7 +311,7 @@ export default function CollapseSidebar({
 
         {/* Navigation group */}
         <SidebarGroup>
-          <NavGroupLabel>Navigation</NavGroupLabel>
+          <NavGroupLabel>{t("navigationGroup")}</NavGroupLabel>
           <SidebarMenu className="space-y-0.5">
             {sidebarList.map((item) =>
               renderNavItem(item.url, getSidebarTitle(item.title), item.icon),
@@ -315,10 +319,10 @@ export default function CollapseSidebar({
           </SidebarMenu>
         </SidebarGroup>
 
-        {/* Tools group — employees only */}
-        {!isCompany && (
+        {/* Tools group — employees only (deferred until after hydration) */}
+        {mounted && isEmployee && (
           <SidebarGroup>
-            <NavGroupLabel>Tools</NavGroupLabel>
+            <NavGroupLabel>{t("toolsGroup")}</NavGroupLabel>
             <SidebarMenu>
               {renderNavItem("/resume-builder", t("aiResumeBuilder"), LucideFileUser, 0)}
             </SidebarMenu>

@@ -7,13 +7,9 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import Divider from "@/components/utils/divider";
-import IconLabel from "@/components/utils/icon-label";
 import ImagePopup from "@/components/utils/image-popup";
 import Tag from "@/components/utils/tag";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { toast } from "sonner";
 import { useGetOneEmployeeStore } from "@/stores/apis/employee/get-one-emp.store";
@@ -35,22 +31,23 @@ import {
 } from "@/utils/interfaces/user-interface/employee.interface";
 import { TPlatform } from "@/utils/types/platform.type";
 import {
+  LucideArrowLeft,
   LucideAtSign,
   LucideBookmark,
   LucideBriefcaseBusiness,
   LucideCalendar,
-  LucideClock,
   LucideDownload,
   LucideEye,
   LucideFileText,
+  LucideGlobe,
   LucideGraduationCap,
   LucideHeartHandshake,
   LucideMail,
   LucideMapPinned,
   LucidePhone,
-  LucideSchool,
   LucideTransgender,
   LucideUser,
+  LucideZap,
   User,
 } from "lucide-react";
 import Link from "next/link";
@@ -59,62 +56,101 @@ import React, { useEffect, useRef, useState } from "react";
 import EmployeeDetailPageSkeleton from "./skeleton";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
+/* ── Local helpers ──────────────────────────────────────────────── */
+function Card({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`bg-card rounded-2xl border border-border/60 shadow-sm ${className ?? ""}`}
+    >
+      {children}
+    </div>
+  );
+}
+
+function SectionTitle({
+  icon,
+  title,
+}: {
+  icon: React.ReactNode;
+  title: string;
+}) {
+  return (
+    <div className="flex items-center gap-2.5 mb-4 pb-3.5 border-b border-border/60">
+      <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+        <span className="[&>svg]:size-[18px] [&>svg]:text-primary [&>svg]:stroke-[1.5]">
+          {icon}
+        </span>
+      </div>
+      <h3 className="font-semibold text-base">{title}</h3>
+    </div>
+  );
+}
+
+function MetaChip({ icon, label }: { icon: React.ReactNode; label: string }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/70 px-3 py-1.5 rounded-full [&>svg]:size-3.5 [&>svg]:shrink-0">
+      {icon}
+      {label}
+    </span>
+  );
+}
+
+function availabilityClass(availability: string) {
+  const s = availability.toLowerCase();
+  if (s.includes("full"))
+    return "bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-300";
+  if (s.includes("part"))
+    return "bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300";
+  if (s.includes("free"))
+    return "bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300";
+  return "bg-muted text-muted-foreground";
+}
+
+/* ── Main component ─────────────────────────────────────────────── */
 export default function EmployeeDetailPage() {
-  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const params = useParams<{ employeeId: string }>();
   const id = params.employeeId;
 
-  /* ----------------------------- API Integration ---------------------------- */
-  // Current User
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const { loading, employeeData, queryOneEmployee } = useGetOneEmployeeStore();
 
-  // Liked APIs
   const companyLikeStore = useCompanyLikeStore();
   const queryCurrentCompanyLiked = useGetCurrentCompanyLikedStore();
-
-  // Favorited APIs
   const companyFavEmployeeStore = useCompanyFavEmployeeStore();
   const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
-
-  // Count Current Matching & Favorite APIs -> Update Badge in Sidebar
   const countCurrentCompanyMatching = useCountCurrentCompanyMatchingStore();
   const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
 
-  /* -------------------------------- All States ------------------------------- */
-  const [isInitialized, setIsInitialized] = useState<boolean>(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [openProfilePopup, setOpenProfilePopup] = useState(false);
+  const ignoreNextClick = useRef(false);
 
-  // Popup States
-  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
-  const ignoreNextClick = useRef<boolean>(false);
-
-  /* --------------------------------- Effects --------------------------------- */
-  // Initialize Component (Client-Side Only)
   useEffect(() => {
     if (typeof window !== "undefined") setIsInitialized(true);
   }, []);
 
-  // Fetch One Employee Effect
   useEffect(() => {
-    const fetchOneEmployee = async () => {
+    const fetch = async () => {
       if (!isInitialized || !id) return;
-
       try {
         setFetchError(null);
         useGetOneEmployeeStore.setState({ employeeData: null, loading: true });
-        await queryOneEmployee(id as string);
-      } catch (error) {
-        console.error("Failed to fetch employee data:", error);
+        await queryOneEmployee(id);
+      } catch {
         setFetchError("Failed to load employee data. Please try again.");
       }
     };
-
-    fetchOneEmployee();
+    fetch();
   }, [id, isInitialized, queryOneEmployee]);
 
-  // Profile Popup Effect
   useEffect(() => {
     if (openProfilePopup) {
       ignoreNextClick.current = true;
@@ -122,27 +158,22 @@ export default function EmployeeDetailPage() {
     }
   }, [openProfilePopup]);
 
-  /* --------------------------------- Methods --------------------------------- */
-  // ── Handle Company Like Employee ────────────────────────────────────────
   const handleLike = async () => {
-    if (currentUser && currentUser.company) {
+    if (currentUser?.company) {
       const companyId = currentUser.company.id;
       const employeeId = employeeData?.id;
-
       if (!companyId || !employeeId) return;
-
       try {
         toast.dismiss();
         await companyLikeStore.companyLike(companyId, employeeId);
-        const companyData = useCompanyLikeStore.getState().data;
-        if (companyData) {
-          const isMatching = companyData.isMatched;
-          const employeeName =
-            companyData.employee.username ??
-            `${companyData.employee.lastname} ${companyData.employee.lastname}`;
-          if (isMatching) {
+        const data = useCompanyLikeStore.getState().data;
+        if (data) {
+          const name =
+            data.employee.username ??
+            `${data.employee.lastname} ${data.employee.lastname}`;
+          if (data.isMatched) {
             toast.success("It's a match!", {
-              description: `${employeeName} and your company like each other.`,
+              description: `${name} and your company like each other.`,
             });
             countCurrentCompanyMatching.countCurrentCompanyMatching(companyId);
             setTimeout(
@@ -150,62 +181,52 @@ export default function EmployeeDetailPage() {
               DEFAULT_REDIRECT_DELAY_MS,
             );
           } else {
-            toast.success(`You liked ${employeeName}.`);
+            toast.success(`You liked ${name}.`);
             setTimeout(() => router.push("/feed"), DEFAULT_REDIRECT_DELAY_MS);
           }
         }
       } catch {
-        const err = companyLikeStore.error || "Failed to like employee";
-        toast.error(err);
+        toast.error(companyLikeStore.error || "Failed to like employee");
       } finally {
         queryCurrentCompanyLiked.queryCurrentCompanyLiked(companyId);
       }
     }
   };
 
-  // ── Handle Company Add Employee To Favorite ─────────────────────────────
   const handleAddToFavorite = async () => {
-    if (currentUser && currentUser.company) {
+    if (currentUser?.company) {
       const companyId = currentUser.company.id;
       const employeeId = employeeData?.id;
-      const employeeName =
+      const name =
         employeeData?.username ??
         `${employeeData?.firstname} ${employeeData?.lastname}`;
-
       if (!companyId || !employeeId) return;
-
       try {
         await companyFavEmployeeStore.addEmployeeToFavorite(
           companyId,
           employeeId,
         );
         countAllCompanyFavoritesStore.countAllCompanyFavorites(companyId);
-        toast.success(`${employeeName} added to favorites.`);
+        toast.success(`${name} added to favorites.`);
         getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyId);
       } catch {
-        const err =
-          companyFavEmployeeStore.cmpFavError || "Failed to save employee.";
-        toast.error(err);
+        toast.error(
+          companyFavEmployeeStore.cmpFavError || "Failed to save employee.",
+        );
       }
     }
   };
 
-  // ── Handle Click Profile Popup ─────────────────────────────────────────
   const handleClickProfilePopup = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
       return;
     }
-
     if ((e.target as HTMLElement).closest(".dialog-content")) return;
-
     setOpenProfilePopup(true);
   };
 
-  // ── Handle Download File ────────────────────────────────────────────────
   const handleDownloadFile = (url: string, filename: string) => {
-    if (!url) return;
-
     const link = document.createElement("a");
     link.href = url;
     link.setAttribute("download", filename);
@@ -215,22 +236,19 @@ export default function EmployeeDetailPage() {
     document.body.removeChild(link);
   };
 
-  /* -------------------------------- Loading State -------------------------------- */
   const isLoading = !isInitialized || loading;
-  if (isLoading) {
+  if (isLoading)
     return (
       <div className="animate-page-in">
         <EmployeeDetailPageSkeleton />
       </div>
     );
-  }
 
-  /* --------------------------------- Error State --------------------------------- */
-  if (fetchError) {
+  if (fetchError)
     return (
-      <div className="h-screen w-screen flex justify-center items-center animate-page-in">
-        <div className="flex flex-col items-center gap-3">
-          <TypographyH4 className="text-red-500">{fetchError}</TypographyH4>
+      <div className="flex h-[60vh] items-center justify-center animate-page-in">
+        <div className="flex flex-col items-center gap-3 text-center">
+          <p className="text-red-500 font-medium">{fetchError}</p>
           <Button
             variant="destructive"
             onClick={() => window.location.reload()}
@@ -240,191 +258,165 @@ export default function EmployeeDetailPage() {
         </div>
       </div>
     );
-  }
 
-  /* ------------------------------- Not Found State ------------------------------- */
-  if (!employeeData) {
+  if (!employeeData)
     return (
-      <div className="h-screen w-screen flex justify-center items-center animate-page-in">
+      <div className="flex h-[60vh] items-center justify-center animate-page-in">
         <div className="flex flex-col items-center gap-3">
-          <TypographyH4>Employee not found</TypographyH4>
-          <Link href="/">
-            <Button variant="outline">Back to Home</Button>
+          <p className="font-medium">Employee not found</p>
+          <Link href="/feed">
+            <Button variant="outline">Back to Feed</Button>
           </Link>
         </div>
       </div>
     );
-  }
 
-  /* ----------------------------------- Render UI ----------------------------------- */
+  const isFav = companyFavEmployeeStore.isFavorite(id);
+  const likeDisabled = companyLikeStore.loading || !currentUser?.company?.id;
+  const favDisabled =
+    companyFavEmployeeStore.loading || !currentUser?.company?.id;
+  const fullName = [employeeData.firstname, employeeData.lastname]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <div className="flex flex-col gap-5 animate-page-in">
-      {/* Personal Information Section */}
-      <div className="w-full flex items-stretch justify-between border border-muted py-4 sm:py-5 px-4 sm:px-6 lg:px-10 tablet-xl:flex-col tablet-xl:[&>div]:w-full tablet-xl:gap-5">
-        <div className="flex flex-col items-center gap-5">
-          <Avatar
-            className="size-40 tablet-xl:!size-52"
-            rounded="md"
-            onClick={(e) => {
-              if (employeeData.avatar) {
-                handleClickProfilePopup(e);
-              }
-            }}
+    <div className="flex flex-col gap-5 animate-page-in tablet-sm:pb-24">
+      {/* ── Back Navigation Header ── */}
+      <header className="sticky top-0 z-10 border-b border-border/60 bg-background/95 backdrop-blur-sm -mx-4 sm:-mx-6 px-4 sm:px-6">
+        <div className="flex items-center gap-4 py-3">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            <AvatarImage src={employeeData.avatar ?? ""} />
-            <AvatarFallback className="uppercase font-bold">
-              {employeeData.username ? (
-                employeeData.username.slice(0, 3)
-              ) : (
-                <User />
-              )}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col items-center gap-1">
-            <TypographyH4>
-              {employeeData.firstname} {employeeData.lastname}
-            </TypographyH4>
-            <TypographyMuted>{employeeData.job}</TypographyMuted>
-          </div>
+            <LucideArrowLeft className="size-4" />
+            Back
+          </button>
+          <span className="text-border">|</span>
+          <span className="text-sm font-semibold truncate">{fullName || "Employee Detail"}</span>
         </div>
-        <div className="flex flex-col items-start gap-5">
-          <div className="flex flex-col items-start gap-2">
-            <TypographyMuted>Firstname</TypographyMuted>
-            <IconLabel
-              icon={<LucideUser strokeWidth={"1.5px"} />}
-              text={employeeData.firstname ?? ""}
-            />
-          </div>
-          <div className="flex flex-col items-start gap-2">
-            <TypographyMuted>Lastname</TypographyMuted>
-            <IconLabel
-              icon={<LucideUser strokeWidth={"1.5px"} />}
-              text={employeeData.lastname ?? ""}
-            />
-          </div>
-          <div className="flex flex-col items-start gap-2">
-            <TypographyMuted>Username</TypographyMuted>
-            <IconLabel
-              icon={<LucideAtSign strokeWidth={"1.5px"} />}
-              text={employeeData.username ?? ""}
-            />
-          </div>
+      </header>
+
+      {/* ── Hero Card ─────────────────────────────────────────────── */}
+      <Card>
+        {/* Gradient banner with decorative circles */}
+        <div className="h-36 sm:h-44 rounded-t-2xl bg-gradient-to-r from-primary to-primary/50 relative overflow-hidden">
+          <div className="absolute -top-6 right-10 size-36 rounded-full bg-white/5" />
+          <div className="absolute top-4 right-32 size-20 rounded-full bg-white/5" />
+          <div className="absolute -bottom-4 right-4 size-24 rounded-full bg-white/5" />
         </div>
-        <div className="flex flex-col items-start gap-5">
-          <div className="flex flex-col items-start gap-2">
-            <TypographyMuted>Gender</TypographyMuted>
-            <IconLabel
-              icon={<LucideTransgender strokeWidth={"1.5px"} />}
-              text={employeeData.gender.toUpperCase() ?? "Other".toUpperCase()}
-            />
-          </div>
-          <div className="flex flex-col items-start gap-2">
-            <TypographyMuted>Experience</TypographyMuted>
-            <IconLabel
-              icon={<LucideBriefcaseBusiness strokeWidth={"1.5px"} />}
-              text={employeeData.yearsOfExperience}
-            />
-          </div>
-          <div className="flex flex-col items-start gap-2">
-            <TypographyMuted>Status</TypographyMuted>
-            <IconLabel
-              icon={<LucideClock strokeWidth={"1.5px"} />}
-              text={employeeData.availability}
-            />
-          </div>
-        </div>
-      </div>
 
-      {/* Description, Education, Skill and Experience Section */}
-      <div className="flex items-stretch gap-5 tablet-xl:flex-col tablet-xl:[&>div]:w-full">
-        <div className="w-2/3 flex flex-col gap-5">
-          {/* Description Section */}
-          <div className="flex flex-col gap-5 border border-muted p-5">
-            <div className="flex flex-col gap-2">
-              <TypographyH4>Description</TypographyH4>
-              <Divider />
-            </div>
-            <div className="flex flex-col gap-2 border-l-4 border-primary pl-4">
-              <TypographySmall className="leading-loose">
-                {employeeData.description}
-              </TypographySmall>
-            </div>
-          </div>
+        {/* Identity */}
+        <div className="px-4 sm:px-6 pb-5">
+          <div className="flex items-start gap-4 tablet-md:flex-col tablet-md:items-center">
+            {/* Avatar — overlaps banner */}
+            <Avatar
+              className="size-20 sm:size-24 -mt-10 sm:-mt-12 ring-[3px] ring-card shadow-xl flex-shrink-0 cursor-pointer"
+              rounded="md"
+              onClick={(e) => {
+                if (employeeData.avatar) handleClickProfilePopup(e);
+              }}
+            >
+              <AvatarImage src={employeeData.avatar ?? ""} />
+              <AvatarFallback className="uppercase font-bold text-xl">
+                {employeeData.username ? (
+                  employeeData.username.slice(0, 2)
+                ) : (
+                  <User />
+                )}
+              </AvatarFallback>
+            </Avatar>
 
-          {/* Education Section */}
-          {employeeData.educations && employeeData.educations.length > 0 && (
-            <div className="flex flex-col gap-5 border border-muted p-5">
-              <div className="flex flex-col gap-2">
-                <TypographyH4>Education</TypographyH4>
-                <Divider />
-              </div>
-              {employeeData.educations.map((item: IEducation) => (
-                <div
-                  className="flex flex-col gap-2 border-l-4 border-primary pl-4"
-                  key={item.id}
-                >
-                  <IconLabel
-                    icon={<LucideSchool strokeWidth={"1.5px"} />}
-                    text={item.school}
-                  />
-                  <IconLabel
-                    icon={<LucideGraduationCap strokeWidth={"1.5px"} />}
-                    text={item.degree}
-                  />
-                  <IconLabel
-                    icon={<LucideCalendar strokeWidth={"1.5px"} />}
-                    text={dateFormatter(item.year)}
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Experience Section */}
-          {employeeData.experiences && employeeData.experiences.length > 0 && (
-            <div className="flex flex-col gap-5 border border-muted p-5">
-              <div className="flex flex-col gap-2">
-                <TypographyH4>Experience</TypographyH4>
-                <Divider />
-              </div>
-              <div className="flex flex-col gap-5">
-                {employeeData.experiences.map((item: IExperience) => (
-                  <div
-                    className="border-l-4 border-primary pl-4 space-y-2"
-                    key={item.id}
+            {/* Name + info */}
+            <div className="flex-1 min-w-0 pt-2 tablet-md:text-center tablet-md:pt-0 tablet-md:mt-1">
+              <div className="flex items-center gap-2 flex-wrap tablet-md:justify-center">
+                <h1 className="text-xl sm:text-2xl font-bold leading-tight">
+                  {fullName}
+                </h1>
+                {employeeData.availability && (
+                  <span
+                    className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${availabilityClass(employeeData.availability)}`}
                   >
-                    <div className="flex flex-col gap-1">
-                      <TypographyP className="text-lg font-semibold">
-                        {item.title}
-                      </TypographyP>
-                      <TypographyMuted>
-                        {dateFormatter(item.startDate)} -{" "}
-                        {dateFormatter(item.endDate)}
-                      </TypographyMuted>
-                    </div>
-                    <TypographyMuted className="text-primary leading-relaxed">
-                      {item.description}
-                    </TypographyMuted>
-                  </div>
-                ))}
+                    {employeeData.availability}
+                  </span>
+                )}
+              </div>
+              <p className="text-muted-foreground text-sm mt-0.5">
+                {employeeData.job}
+              </p>
+              <div className="flex flex-wrap gap-2 mt-3 tablet-md:justify-center">
+                {employeeData.gender && (
+                  <MetaChip
+                    icon={<LucideTransgender />}
+                    label={employeeData.gender}
+                  />
+                )}
+                {employeeData.yearsOfExperience && (
+                  <MetaChip
+                    icon={<LucideBriefcaseBusiness />}
+                    label={employeeData.yearsOfExperience}
+                  />
+                )}
+                {employeeData.location && (
+                  <MetaChip
+                    icon={<LucideMapPinned />}
+                    label={employeeData.location}
+                  />
+                )}
+                {employeeData.username && (
+                  <MetaChip
+                    icon={<LucideAtSign />}
+                    label={employeeData.username}
+                  />
+                )}
               </div>
             </div>
+
+            {/* Desktop actions */}
+            <div className="flex gap-2 flex-shrink-0 pt-2 tablet-md:hidden">
+              {!isFav && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAddToFavorite}
+                  disabled={favDisabled}
+                >
+                  <LucideBookmark className="size-4" /> Save
+                </Button>
+              )}
+              <Button size="sm" onClick={handleLike} disabled={likeDisabled}>
+                <LucideHeartHandshake className="size-4" /> Like
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      {/* ── Content Grid ──────────────────────────────────────────── */}
+      <div className="flex items-start gap-5 tablet-xl:flex-col">
+        {/* Left — main content */}
+        <div className="flex-1 min-w-0 flex flex-col gap-5">
+          {/* About */}
+          {employeeData.description && (
+            <Card className="p-5 sm:p-6">
+              <SectionTitle icon={<LucideUser />} title="About" />
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {employeeData.description}
+              </p>
+            </Card>
           )}
 
-          {/* Skills Section */}
+          {/* Skills */}
           {employeeData.skills && employeeData.skills.length > 0 && (
-            <div className="flex flex-col gap-5 border border-muted p-5">
-              <div className="flex flex-col gap-2">
-                <TypographyH4>Skills</TypographyH4>
-                <Divider />
-              </div>
-              <div className="flex flex-wrap gap-3">
+            <Card className="p-5 sm:p-6">
+              <SectionTitle icon={<LucideZap />} title="Skills" />
+              <div className="flex flex-wrap gap-2">
                 {employeeData.skills.map((item: ISkill) => (
                   <HoverCard key={item.id}>
                     <HoverCardTrigger>
                       <Tag label={item.name} />
                     </HoverCardTrigger>
-                    <HoverCardContent className="flex flex-col items-start gap-1">
+                    <HoverCardContent className="flex flex-col gap-1">
                       <TypographySmall className="text-sm">
                         {item.name}
                       </TypographySmall>
@@ -435,169 +427,219 @@ export default function EmployeeDetailPage() {
                   </HoverCard>
                 ))}
               </div>
-            </div>
+            </Card>
+          )}
+
+          {/* Experience */}
+          {employeeData.experiences && employeeData.experiences.length > 0 && (
+            <Card className="p-5 sm:p-6">
+              <SectionTitle
+                icon={<LucideBriefcaseBusiness />}
+                title="Experience"
+              />
+              <div className="flex flex-col gap-3">
+                {employeeData.experiences.map(
+                  (item: IExperience, i: number) => (
+                    <div key={item.id} className="flex gap-3">
+                      {/* Timeline dot + line */}
+                      <div className="flex flex-col items-center pt-1 flex-shrink-0">
+                        <div className="size-2.5 rounded-full bg-primary ring-2 ring-primary/20 flex-shrink-0" />
+                        {i < employeeData.experiences.length - 1 && (
+                          <div className="w-px flex-1 bg-border/60 mt-1.5" />
+                        )}
+                      </div>
+                      {/* Content */}
+                      <div
+                        className={`flex-1 min-w-0 ${i < employeeData.experiences.length - 1 ? "pb-3" : ""}`}
+                      >
+                        <div className="rounded-xl border border-border/60 p-4 hover:border-primary/30 hover:shadow-sm transition-all duration-200">
+                          <p className="font-semibold text-sm">{item.title}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            {dateFormatter(item.startDate)} —{" "}
+                            {dateFormatter(item.endDate)}
+                          </p>
+                          {item.description && (
+                            <TypographyMuted className="text-sm leading-relaxed mt-2">
+                              {item.description}
+                            </TypographyMuted>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ),
+                )}
+              </div>
+            </Card>
+          )}
+
+          {/* Education */}
+          {employeeData.educations && employeeData.educations.length > 0 && (
+            <Card className="p-5 sm:p-6">
+              <SectionTitle icon={<LucideGraduationCap />} title="Education" />
+              <div className="flex flex-col gap-3">
+                {employeeData.educations.map((item: IEducation) => (
+                  <div
+                    key={item.id}
+                    className="flex items-start gap-3 rounded-xl border border-border/60 p-4 hover:border-primary/30 hover:shadow-sm transition-all duration-200"
+                  >
+                    <div className="size-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <LucideGraduationCap
+                        className="size-4 text-primary"
+                        strokeWidth={1.5}
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-semibold text-sm">{item.school}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {item.degree}
+                      </p>
+                      {item.year && (
+                        <p className="text-xs text-muted-foreground/70 mt-0.5 flex items-center gap-1">
+                          <LucideCalendar className="size-3" />
+                          {dateFormatter(item.year)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
           )}
         </div>
 
-        {/* Resume and Contact Section */}
-        <div className="w-1/3 flex flex-col gap-5">
-          {/* Resume Section */}
+        {/* Right — sidebar */}
+        <div className="w-72 flex flex-col gap-5 tablet-xl:w-full">
+          {/* Documents */}
           {(employeeData.resume || employeeData.coverLetter) && (
-            <div className="flex flex-col gap-5 border border-muted p-5">
-              <div className="flex flex-col gap-2">
-                <TypographyH4>Resume</TypographyH4>
-                <Divider />
+            <Card className="p-5">
+              <SectionTitle icon={<LucideFileText />} title="Documents" />
+              <div className="flex flex-col gap-2.5">
+                {[
+                  { file: employeeData.resume, suffix: "resume" },
+                  { file: employeeData.coverLetter, suffix: "coverletter" },
+                ]
+                  .filter((d) => d.file)
+                  .map(({ file, suffix }) => (
+                    <div
+                      key={suffix}
+                      className="flex items-center justify-between gap-2 px-3 py-2.5 bg-muted/50 rounded-xl border border-border/40"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <LucideFileText
+                          className="size-4 text-muted-foreground flex-shrink-0"
+                          strokeWidth={1.5}
+                        />
+                        <span className="text-xs text-muted-foreground truncate">
+                          {extractCleanFilename(file!)}
+                        </span>
+                      </div>
+                      <div className="flex gap-0.5 flex-shrink-0">
+                        <Link href={file!} target="_blank">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-8"
+                          >
+                            <LucideEye className="size-3.5" />
+                          </Button>
+                        </Link>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="size-8"
+                          onClick={() =>
+                            handleDownloadFile(
+                              file!,
+                              `${employeeData.username || "user"}-${suffix}`,
+                            )
+                          }
+                        >
+                          <LucideDownload className="size-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
               </div>
-
-              {employeeData.resume && (
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-3 py-2 bg-muted rounded-md">
-                  <div className="flex items-center text-muted-foreground gap-1 min-w-0">
-                    <LucideFileText strokeWidth={"1.5px"} />
-                    <TypographyMuted className="truncate">
-                      {extractCleanFilename(employeeData.resume)}
-                    </TypographyMuted>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Link href={employeeData.resume} target="_blank">
-                      <Button variant="outline" size="icon">
-                        <LucideEye />
-                      </Button>
-                    </Link>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() =>
-                        employeeData?.resume &&
-                        handleDownloadFile(
-                          employeeData.resume,
-                          `${employeeData.username || "user"}-resume`,
-                        )
-                      }
-                    >
-                      <LucideDownload />
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              {employeeData.coverLetter && (
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-3 py-2 bg-muted rounded-md">
-                  <div className="flex items-center text-muted-foreground gap-1 min-w-0">
-                    <LucideFileText strokeWidth={"1.5px"} />
-                    <TypographyMuted className="truncate">
-                      {extractCleanFilename(employeeData.coverLetter)}
-                    </TypographyMuted>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Link href={employeeData.coverLetter} target="_blank">
-                      <Button variant="outline" size="icon">
-                        <LucideEye />
-                      </Button>
-                    </Link>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() =>
-                        employeeData?.coverLetter &&
-                        handleDownloadFile(
-                          employeeData.coverLetter,
-                          `${employeeData.username || "user"}-coverletter`,
-                        )
-                      }
-                    >
-                      <LucideDownload />
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </div>
+            </Card>
           )}
 
-          {/* Contact Section */}
-          <div className="flex flex-col gap-5 border border-muted p-5">
-            <div className="flex flex-col gap-2">
-              <TypographyH4>Contact</TypographyH4>
-              <Divider />
+          {/* Contact */}
+          <Card className="p-5">
+            <SectionTitle icon={<LucidePhone />} title="Contact" />
+            <div className="space-y-3.5">
+              {[
+                {
+                  icon: <LucidePhone />,
+                  label: "Phone",
+                  val: employeeData.phone,
+                },
+                {
+                  icon: <LucideMail />,
+                  label: "Email",
+                  val: employeeData.email,
+                },
+                {
+                  icon: <LucideMapPinned />,
+                  label: "Address",
+                  val: employeeData.location,
+                },
+              ]
+                .filter((r) => r.val)
+                .map((row) => (
+                  <div key={row.label} className="flex items-start gap-2.5">
+                    <span className="text-muted-foreground mt-0.5 flex-shrink-0 [&>svg]:size-4 [&>svg]:stroke-[1.5]">
+                      {row.icon}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
+                        {row.label}
+                      </p>
+                      <p className="text-sm mt-0.5 break-words">{row.val}</p>
+                    </div>
+                  </div>
+                ))}
             </div>
-            <div className="flex flex-col gap-5">
-              {employeeData.phone && (
-                <div className="flex flex-col items-start gap-2">
-                  <TypographyMuted>Phone</TypographyMuted>
-                  <IconLabel
-                    icon={<LucidePhone strokeWidth={"1.5px"} />}
-                    text={employeeData.phone}
-                  />
-                </div>
-              )}
-              <div className="flex flex-col items-start gap-2">
-                <TypographyMuted>Email</TypographyMuted>
-                <IconLabel
-                  icon={<LucideMail strokeWidth={"1.5px"} />}
-                  text={employeeData.email ?? ""}
-                />
-              </div>
-              {employeeData.location && (
-                <div className="flex flex-col items-start gap-2">
-                  <TypographyMuted>Address</TypographyMuted>
-                  <IconLabel
-                    icon={<LucideMapPinned strokeWidth={"1.5px"} />}
-                    text={employeeData.location}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
+          </Card>
 
-          {/* Socials Section */}
+          {/* Socials */}
           {employeeData.socials && employeeData.socials.length > 0 && (
-            <div className="flex flex-col gap-5 border border-muted p-5">
-              <div className="flex flex-col gap-2">
-                <TypographyH4>Socials</TypographyH4>
-                <Divider />
-              </div>
-              <div className="flex flex-wrap gap-3">
+            <Card className="p-5">
+              <SectionTitle icon={<LucideGlobe />} title="Social Links" />
+              <div className="flex flex-wrap gap-2">
                 {employeeData.socials.map((item: ISocial) => (
                   <Link
                     key={item.id}
                     href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-muted hover:bg-muted/80 rounded-full text-xs font-medium transition-colors"
                   >
                     {getSocialPlatformTypeIcon(item.platform as TPlatform)}
-                    <TypographySmall>{item.platform}</TypographySmall>
+                    {item.platform}
                   </Link>
                 ))}
               </div>
-            </div>
+            </Card>
           )}
         </div>
       </div>
 
-      {/* Action Buttons Section */}
-      <div className="flex w-full flex-wrap items-center gap-2 [&>button]:flex-1 sm:w-auto sm:[&>button]:flex-none">
-        {!companyFavEmployeeStore.isFavorite(id) && (
+      {/* Mobile sticky action bar */}
+      <div className="hidden tablet-md:flex fixed bottom-0 left-0 right-0 z-20 gap-3 px-4 py-3 bg-background/95 backdrop-blur-sm border-t border-border [&>button]:flex-1">
+        {!isFav && (
           <Button
-            variant={"outline"}
+            variant="outline"
             onClick={handleAddToFavorite}
-            disabled={
-              companyFavEmployeeStore.loading || !currentUser?.company?.id
-            }
+            disabled={favDisabled}
           >
-            <LucideBookmark />
-            Save to favorite
+            <LucideBookmark /> Save
           </Button>
         )}
-        <Button
-          onClick={handleLike}
-          disabled={companyLikeStore.loading || !currentUser?.company?.id}
-        >
-          <LucideHeartHandshake />
-          Like
+        <Button onClick={handleLike} disabled={likeDisabled}>
+          <LucideHeartHandshake /> Like
         </Button>
       </div>
 
-      {/* Profile Popup Section */}
       <ImagePopup
         open={openProfilePopup}
         setOpen={setOpenProfilePopup}

@@ -37,19 +37,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import BlurBackGroundOverlay from "@/components/utils/bur-background-overlay";
 import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
 import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import RemoveAlertDialog from "@/components/utils/dialogs/remove-alert-dialog";
-import Divider from "@/components/utils/divider";
 import IconLabel from "@/components/utils/icon-label";
 import ImagePopup from "@/components/utils/image-popup";
 import LabelInput from "@/components/utils/label-input";
 import Tag from "@/components/utils/tag";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useCmpAvatarCoverState } from "@/hooks/profile/company/use-cmp-avatar-cover-state";
 import useCmpBenefitValueState from "@/hooks/profile/company/use-cmp-benefit-value-state";
@@ -70,7 +65,11 @@ import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cov
 import { useUploadCompanyImagesStore } from "@/stores/apis/company/upload-cmp-images.store";
 import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-scopes.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { locationConstant, loginMethodConstant, platformConstant } from "@/utils/constants/ui.constant";
+import {
+  locationConstant,
+  loginMethodConstant,
+  platformConstant,
+} from "@/utils/constants/ui.constant";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { capitalizeWords } from "@/utils/functions/capitalize-words";
 import { isUuid } from "@/utils/extensions/check-uuid";
@@ -86,21 +85,44 @@ import {
   LucideBuilding,
   LucideCamera,
   LucideCircleCheck,
+  LucideCompass,
   LucideEdit,
+  LucideGlobe,
   LucideLink2,
   LucideMail,
   LucidePhone,
   LucidePlus,
+  LucideSettings,
   LucideUsers,
   LucideXCircle,
+  LucideZap,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { companyFormSchema, TCompanyProfileForm } from "./validation";
 import { CompanyProfilePageLoadingSkeleton } from "./skeleton";
 import { emptySvgImage } from "@/utils/constants/asset.constant";
+
+function SectionTitle({
+  icon,
+  title,
+}: {
+  icon: React.ReactNode;
+  title: string;
+}) {
+  return (
+    <div className="flex items-center gap-2.5 mb-4 pb-3.5 border-b border-border/60">
+      <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+        <span className="[&>svg]:size-[18px] [&>svg]:text-primary [&>svg]:stroke-[1.5]">
+          {icon}
+        </span>
+      </div>
+      <h3 className="font-semibold text-base">{title}</h3>
+    </div>
+  );
+}
 
 export default function ProfilePage() {
   /* -------------------------------- All States -------------------------------- */
@@ -962,7 +984,10 @@ export default function ProfilePage() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-5 overflow-x-hidden"
+    >
       <LoadingDialog
         loading={updateProfileLoadingState}
         title={loadingMessage || "Updating company profile..."}
@@ -970,181 +995,195 @@ export default function ProfilePage() {
       />
 
       {/* Header Section */}
-      <div
-        className="relative h-80 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center"
-        style={{
-          backgroundImage: `url(${avatarOrCoverPreview.cover})`,
-        }}
-      >
-        {/* Cover and Overlay Section */}
-        <BlurBackGroundOverlay />
-        {isEdit && (
-          <div className="absolute bottom-5 right-5 flex flex-col items-start gap-2">
-            <Button
-              className="flex items-center gap-2 cursor-pointer py-1 px-3 rounded-full bg-foreground text-primary-foreground"
-              onClick={() => coverInputRef.current?.click()}
-              type="button"
-            >
-              <LucideCamera strokeWidth={"1.2px"} width={"18px"} />
-              <TypographySmall className="text-xs">
-                Change Cover
-              </TypographySmall>
-            </Button>
-            {company.cover && (
+      <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
+        {/* Cover image */}
+        <div
+          className={`h-44 sm:h-56 rounded-t-2xl bg-cover bg-center bg-no-repeat relative ${!company.cover ? "bg-gradient-to-br from-primary/25 via-primary/10 to-muted/80" : ""}`}
+          style={
+            company.cover
+              ? { backgroundImage: `url(${avatarOrCoverPreview.cover})` }
+              : {}
+          }
+        >
+          {isEdit && (
+            <div className="absolute bottom-3 right-3 flex flex-col items-end gap-2">
               <Button
-                className="flex items-center gap-2 cursor-pointer py-1 px-3 rounded-full bg-red-500 text-red-100"
-                onClick={() => setOpenRemoveCoverDialog(true)}
+                className="flex items-center gap-2 cursor-pointer py-1 px-3 rounded-full bg-foreground text-primary-foreground"
+                onClick={() => coverInputRef.current?.click()}
                 type="button"
               >
-                <LucideXCircle strokeWidth={"1.2px"} width={"18px"} />
+                <LucideCamera strokeWidth={"1.2px"} width={"18px"} />
                 <TypographySmall className="text-xs">
-                  Remove Cover
+                  Change Cover
                 </TypographySmall>
               </Button>
-            )}
-          </div>
-        )}
-
-        <div className="relative flex items-center gap-5 tablet-sm:flex-col">
-          {/* Avatar Section */}
-          <Avatar
-            className="size-32 tablet-sm:size-28 relative bg-primary-foreground"
-            rounded="md"
-            onClick={(e) => {
-              if (!isEdit && company.avatar) handleClickAvatarPopup(e);
-            }}
-          >
-            <AvatarImage src={avatarOrCoverPreview.avatar} />
-            <AvatarFallback className="uppercase text-lg font-medium">
-              {company.name.slice(0, 3)}
-            </AvatarFallback>
-
-            {isEdit && (
-              <div className="absolute bottom-1 right-1 flex items-center gap-2">
+              {company.cover && (
                 <Button
-                  className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-foreground text-primary-foreground"
-                  onClick={() => avatarInputRef.current?.click()}
+                  className="flex items-center gap-2 cursor-pointer py-1 px-3 rounded-full bg-red-500 text-red-100"
+                  onClick={() => setOpenRemoveCoverDialog(true)}
                   type="button"
                 >
-                  <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
+                  <LucideXCircle strokeWidth={"1.2px"} width={"18px"} />
+                  <TypographySmall className="text-xs">
+                    Remove Cover
+                  </TypographySmall>
                 </Button>
-                {company.avatar && (
-                  <Button
-                    className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-red-500 text-red-100"
-                    onClick={() => setOpenRemoveAvatarDialog(true)}
-                    type="button"
-                  >
-                    <LucideXCircle width={"18px"} strokeWidth={"1.2px"} />
-                  </Button>
-                )}
-              </div>
-            )}
-          </Avatar>
-
-          <input
-            ref={avatarInputRef}
-            type="file"
-            className="hidden"
-            accept="image/*"
-            onChange={(e) => handleFileChange(e, "avatar")}
-          />
-
-          <input
-            ref={coverInputRef}
-            type="file"
-            className="hidden"
-            accept="image/*"
-            onChange={(e) => handleFileChange(e, "cover")}
-          />
-
-          {/* Avatar Crop Dialog Section */}
-          <AvatarCropDialog
-            title={`Crop ${company.name} Avatar`}
-            open={openCropDialog}
-            setOpen={setOpenCropDialog}
-            image={cropImageUrl}
-            onCropComplete={handleAvatarCrop}
-          />
-
-          {/* Cover Crop Dialog Section */}
-          <AvatarCropDialog
-            title={`Crop ${company.name} Cover`}
-            open={openCoverCropDialog}
-            setOpen={setOpenCoverCropDialog}
-            image={coverCropImageUrl}
-            onCropComplete={handleCoverCrop}
-            aspect={16 / 9}
-            cropShape="rect"
-            fileName="cover.jpg"
-          />
-
-          {/* Remove Cover Dialog Section */}
-          <RemoveAlertDialog
-            type="cover"
-            setOpenDialog={setOpenRemoveCoverDialog}
-            openDialog={openRemoveCoverDialog}
-            onNoClick={() => setOpenRemoveCoverDialog(false)}
-            onYesClick={removeCover}
-          />
-
-          {/* Remove Avatar Dialog Section */}
-          <RemoveAlertDialog
-            type="avatar"
-            setOpenDialog={setOpenRemoveAvatarDialog}
-            openDialog={openRemoveAvatarDialog}
-            onNoClick={() => setOpenRemoveAvatarDialog(false)}
-            onYesClick={removeAvatar}
-          />
-
-          {/* Name and Industry Section */}
-          <div className="flex flex-col items-start gap-2 text-muted tablet-sm:items-center">
-            <TypographyH2 className="tablet-sm:text-center tablet-sm:text-xl">
-              {company.name}
-            </TypographyH2>
-            <TypographyP className="!m-0 tablet-sm:text-center tablet-sm:text-sm">
-              {company.industry}
-            </TypographyP>
-          </div>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* Edit Profile Button Section */}
-        {isEdit ? (
-          <div className="flex items-center gap-3 absolute top-5 right-5 phone-xl:top-2 phone-xl:right-2">
-            <Button
-              className="text-xs"
-              type="submit"
-              disabled={updateProfileLoadingState}
-            >
-              {updateProfileLoadingState ? "Updating..." : "Save"}
-              <LucideCircleCheck />
-            </Button>
-            <Button className="text-xs" type="button" onClick={disableEditMode}>
-              Cancel
-              <LucideXCircle />
-            </Button>
+        {/* Identity */}
+        <div className="px-4 sm:px-6 pb-5">
+          <div className="flex items-start gap-4 tablet-md:flex-col tablet-md:items-center">
+            {/* Avatar with overlap */}
+            <div className="relative -mt-10 sm:-mt-12 flex-shrink-0">
+              <Avatar
+                className="size-20 sm:size-24 ring-[3px] ring-card shadow-xl bg-primary-foreground"
+                rounded="md"
+                onClick={(e) => {
+                  if (!isEdit && company.avatar) handleClickAvatarPopup(e);
+                }}
+              >
+                <AvatarImage src={avatarOrCoverPreview.avatar} />
+                <AvatarFallback className="uppercase text-lg font-medium">
+                  {company.name.slice(0, 3)}
+                </AvatarFallback>
+              </Avatar>
+
+              {isEdit && (
+                <div className="absolute bottom-1 right-1 flex items-center gap-1">
+                  <Button
+                    className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-foreground text-primary-foreground"
+                    onClick={() => avatarInputRef.current?.click()}
+                    type="button"
+                  >
+                    <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
+                  </Button>
+                  {company.avatar && (
+                    <Button
+                      className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-red-500 text-red-100"
+                      onClick={() => setOpenRemoveAvatarDialog(true)}
+                      type="button"
+                    >
+                      <LucideXCircle width={"18px"} strokeWidth={"1.2px"} />
+                    </Button>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <input
+              ref={avatarInputRef}
+              type="file"
+              className="hidden"
+              accept="image/*"
+              onChange={(e) => handleFileChange(e, "avatar")}
+            />
+
+            <input
+              ref={coverInputRef}
+              type="file"
+              className="hidden"
+              accept="image/*"
+              onChange={(e) => handleFileChange(e, "cover")}
+            />
+
+            {/* Avatar Crop Dialog Section */}
+            <AvatarCropDialog
+              title={`Crop ${company.name} Avatar`}
+              open={openCropDialog}
+              setOpen={setOpenCropDialog}
+              image={cropImageUrl}
+              onCropComplete={handleAvatarCrop}
+            />
+
+            {/* Cover Crop Dialog Section */}
+            <AvatarCropDialog
+              title={`Crop ${company.name} Cover`}
+              open={openCoverCropDialog}
+              setOpen={setOpenCoverCropDialog}
+              image={coverCropImageUrl}
+              onCropComplete={handleCoverCrop}
+              aspect={16 / 9}
+              cropShape="rect"
+              fileName="cover.jpg"
+            />
+
+            {/* Remove Cover Dialog Section */}
+            <RemoveAlertDialog
+              type="cover"
+              setOpenDialog={setOpenRemoveCoverDialog}
+              openDialog={openRemoveCoverDialog}
+              onNoClick={() => setOpenRemoveCoverDialog(false)}
+              onYesClick={removeCover}
+            />
+
+            {/* Remove Avatar Dialog Section */}
+            <RemoveAlertDialog
+              type="avatar"
+              setOpenDialog={setOpenRemoveAvatarDialog}
+              openDialog={openRemoveAvatarDialog}
+              onNoClick={() => setOpenRemoveAvatarDialog(false)}
+              onYesClick={removeAvatar}
+            />
+
+            {/* Name and Industry */}
+            <div className="flex flex-col items-start gap-1 pt-2 tablet-md:items-center tablet-md:pt-0 flex-1 min-w-0">
+              <h2 className="text-xl font-bold leading-tight">
+                {company.name}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {company.industry}
+              </p>
+            </div>
+
+            {/* Edit Profile Button Section */}
+            <div className="flex items-center gap-3 pt-2 tablet-md:pt-0 tablet-md:w-full tablet-md:justify-center">
+              {isEdit ? (
+                <>
+                  <Button
+                    className="text-xs"
+                    type="submit"
+                    disabled={updateProfileLoadingState}
+                  >
+                    {updateProfileLoadingState ? "Updating..." : "Save"}
+                    <LucideCircleCheck />
+                  </Button>
+                  <Button
+                    className="text-xs"
+                    type="button"
+                    onClick={disableEditMode}
+                  >
+                    Cancel
+                    <LucideXCircle />
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  className="text-xs"
+                  type="button"
+                  onClick={enableEditMode}
+                >
+                  Edit Profile
+                  <LucideEdit />
+                </Button>
+              )}
+            </div>
           </div>
-        ) : (
-          <Button
-            className="text-xs absolute top-5 right-5 phone-xl:top-2 phone-xl:right-2"
-            type="button"
-            onClick={enableEditMode}
-          >
-            Edit Profile
-            <LucideEdit />
-          </Button>
-        )}
+        </div>
       </div>
 
       {/* Content Section */}
       <div className="flex items-start gap-5 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
         {/* LEFT Side Section */}
-        <div className="w-[60%] flex flex-col gap-5">
+        <div className="w-[60%] min-w-0 flex flex-col gap-5">
           {/* Company Information Section */}
-          <div className="w-full flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
-            <div className="flex flex-col gap-1">
-              <TypographyH4>Company Information</TypographyH4>
-              <Divider />
-            </div>
+          <div className="w-full flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
+            <SectionTitle
+              icon={<LucideBuilding />}
+              title="Company Information"
+            />
 
             {/* Name and Description Section */}
             <div className="flex flex-col items-start gap-5">
@@ -1286,21 +1325,27 @@ export default function ProfilePage() {
 
           {/* OpenPosition Information Section */}
           {company.openPositions && (
-            <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
-              <div className="flex flex-col gap-1">
-                <div className="flex justify-between items-center">
-                  <TypographyH4>Open Position Information</TypographyH4>
-                  {isEdit && (
-                    <div onClick={addNewOpenPosition}>
-                      <IconLabel
-                        text="Add OpenPosition"
-                        icon={<LucidePlus className="text-muted-foreground" />}
-                        className="cursor-pointer"
-                      />
-                    </div>
-                  )}
+            <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
+              <div className="flex items-center justify-between gap-2.5 mb-0 pb-3.5 border-b border-border/60">
+                <div className="flex items-center gap-2.5">
+                  <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <span className="[&>svg]:size-[18px] [&>svg]:text-primary [&>svg]:stroke-[1.5]">
+                      <LucideUsers />
+                    </span>
+                  </div>
+                  <h3 className="font-semibold text-base">
+                    Open Position Information
+                  </h3>
                 </div>
-                <Divider />
+                {isEdit && (
+                  <div onClick={addNewOpenPosition}>
+                    <IconLabel
+                      text="Add OpenPosition"
+                      icon={<LucidePlus className="text-muted-foreground" />}
+                      className="cursor-pointer"
+                    />
+                  </div>
+                )}
               </div>
               {/* OpenPosition Form Section */}
               <div className="flex flex-col items-start gap-5">
@@ -1405,12 +1450,11 @@ export default function ProfilePage() {
           )}
 
           {/* Company Images Section */}
-
-          <div className="w-full p-5 border-[1px] border-muted rounded-md">
-            <div className="flex flex-col gap-1">
-              <TypographyH4>Company Images Information</TypographyH4>
-              <Divider />
-            </div>
+          <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
+            <SectionTitle
+              icon={<LucideBuilding />}
+              title="Company Images Information"
+            />
             <Carousel className="w-full">
               <CarouselContent className="w-full">
                 {form.watch("images")?.map((img, index) => {
@@ -1510,12 +1554,11 @@ export default function ProfilePage() {
         </div>
 
         {/* RIGHT SIDE Section */}
-        <div className="w-[40%] flex flex-col gap-5">
+        <div className="w-[40%] min-w-0 flex flex-col gap-5">
           {/* Benefits Section */}
-          <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
-            <div className="w-full flex flex-col gap-1">
-              <TypographyH4>Benefits</TypographyH4>
-              <Divider />
+          <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
+            <div className="w-full">
+              <SectionTitle icon={<LucideCircleCheck />} title="Benefits" />
             </div>
 
             {/* Benefit List Section */}
@@ -1603,10 +1646,9 @@ export default function ProfilePage() {
           </div>
 
           {/* Values Section */}
-          <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
-            <div className="w-full flex flex-col gap-1">
-              <TypographyH4>Values</TypographyH4>
-              <Divider />
+          <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
+            <div className="w-full">
+              <SectionTitle icon={<LucideZap />} title="Values" />
             </div>
 
             {/* Value List Section */}
@@ -1693,10 +1735,9 @@ export default function ProfilePage() {
           </div>
 
           {/* Career Scopes Section*/}
-          <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
-            <div className="w-full flex flex-col gap-1">
-              <TypographyH4>Careers Scopes</TypographyH4>
-              <Divider />
+          <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
+            <div className="w-full">
+              <SectionTitle icon={<LucideCompass />} title="Career Scopes" />
             </div>
 
             {/* Career Scopes List Section*/}
@@ -1831,28 +1872,30 @@ export default function ProfilePage() {
           </div>
 
           {/* Social Section */}
-          <div className="w-full border border-muted rounded-md p-5 flex flex-col items-stretch gap-5">
-            <div className="flex flex-col gap-1">
-              <TypographyH4>Social Information</TypographyH4>
-              <Divider />
-            </div>
+          <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
+            <SectionTitle icon={<LucideGlobe />} title="Social Information" />
 
             {/* Social List Section */}
             {socials && socials.length > 0 ? (
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2">
                 {socials.map((item, index) => (
-                  <div className="flex items-center gap-1" key={index}>
+                  <div
+                    className="flex items-center gap-1.5 max-w-full"
+                    key={index}
+                  >
                     <Link
                       href={item.url}
-                      className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 rounded-full hover:underline max-w-[200px] sm:max-w-[260px] overflow-hidden"
                     >
-                      {getSocialPlatformTypeIcon(item.platform as TPlatform)}
-                      <TypographySmall>{item.platform}</TypographySmall>
+                      <span className="flex-shrink-0">
+                        {getSocialPlatformTypeIcon(item.platform as TPlatform)}
+                      </span>
+                      <span className="text-sm truncate">{item.platform}</span>
                     </Link>
                     {isEdit && (
                       <LucideXCircle
-                        className="text-muted-foreground cursor-pointer text-red-500"
-                        width={"18px"}
+                        className="flex-shrink-0 cursor-pointer text-red-500 hover:text-red-600 transition-colors"
+                        size={18}
                         onClick={() => removeSocial(item.platform as TPlatform)}
                       />
                     )}
@@ -1872,9 +1915,9 @@ export default function ProfilePage() {
             {(isEdit || company.socials.length === 0) && (
               <div>
                 {isEdit && (
-                  <div className="w-full flex flex-col items-start gap-5 p-5 mt-3 border-[1px] border-muted rounded-md">
-                    <div className="w-full flex justify-between items-center gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
-                      <div className="w-full flex flex-col items-start gap-1">
+                  <div className="w-full flex flex-col items-start gap-4 p-4 mt-3 border border-muted rounded-xl overflow-hidden">
+                    <div className="w-full flex flex-col sm:flex-row gap-3 sm:gap-4">
+                      <div className="w-full sm:w-[180px] flex-shrink-0 flex flex-col items-start gap-1">
                         <TypographyMuted className="text-xs">
                           Platform
                         </TypographyMuted>
@@ -1888,7 +1931,7 @@ export default function ProfilePage() {
                           value={socialInput?.platform ?? ""}
                         >
                           <SelectTrigger
-                            className="h-12 text-muted-foreground"
+                            className="h-10 text-muted-foreground"
                             ref={socialSelectPlatformRef}
                           >
                             <SelectValue placeholder="Platform" />
@@ -1906,24 +1949,31 @@ export default function ProfilePage() {
                         </Select>
                       </div>
 
-                      <LabelInput
-                        label="Link"
-                        input={
-                          <Input
-                            placeholder="Link"
-                            id="link"
-                            name="link"
-                            value={socialInput?.url ?? ""}
-                            onChange={(e) =>
-                              setSocialInput((prev) => ({
-                                ...(prev ?? { id: "", platform: "", url: "" }),
-                                url: e.target.value,
-                              }))
-                            }
-                            prefix={<LucideLink2 />}
-                          />
-                        }
-                      />
+                      <div className="flex-1 min-w-0">
+                        <LabelInput
+                          label="Link"
+                          input={
+                            <Input
+                              className="w-full"
+                              placeholder="https://example.com/profile"
+                              id="link"
+                              name="link"
+                              value={socialInput?.url ?? ""}
+                              onChange={(e) =>
+                                setSocialInput((prev) => ({
+                                  ...(prev ?? {
+                                    id: "",
+                                    platform: "",
+                                    url: "",
+                                  }),
+                                  url: e.target.value,
+                                }))
+                              }
+                              prefix={<LucideLink2 />}
+                            />
+                          }
+                        />
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1973,11 +2023,8 @@ export default function ProfilePage() {
           </div>
 
           {/* Authentication Section*/}
-          <div className="flex flex-col items-stretch gap-5 border border-muted rounded-md p-5">
-            <div className="flex flex-col gap-1">
-              <TypographyH4>Authentication</TypographyH4>
-              <Divider />
-            </div>
+          <div className="flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
+            <SectionTitle icon={<LucideSettings />} title="Authentication" />
 
             <div className="w-full flex flex-col items-start gap-3">
               {/* Google, Facebook, LinkedIn and Github Methods Section */}

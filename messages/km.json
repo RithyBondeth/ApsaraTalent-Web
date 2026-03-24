@@ -6,7 +6,9 @@
     "matching": "ការផ្គូផ្គង",
     "message": "សារ",
     "notification": "ការជូនដំណឹង",
-    "aiResumeBuilder": "បង្កើត CV ដោយ AI"
+    "aiResumeBuilder": "បង្កើត CV ដោយ AI",
+    "navigationGroup": "ការរុករក",
+    "toolsGroup": "ឧបករណ៍"
   },
   "sidebarFooter": {
     "myProfile": "របស់ខ្ញុំ",
@@ -28,6 +30,8 @@
     "matching": "ការផ្គូផ្គង",
     "favorites": "សំណព្វ",
     "profilePage": "ទំព័ររបស់ខ្ញុំ",
-    "settingPage": "ការកំណត់"
+    "settingPage": "ការកំណត់",
+    "feedDescription": "ស្វែងរកការភ្ជាប់របស់អ្នក",
+    "notificationDescription": "ទទួលដំណឹងអំពីការផ្គូផ្គង និងសារ"
   }
 }
