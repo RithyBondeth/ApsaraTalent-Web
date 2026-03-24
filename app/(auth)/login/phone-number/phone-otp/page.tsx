@@ -274,10 +274,12 @@ export default function PhoneOTPPage() {
           </form>
 
           {/* Resend code text */}
-          <p className="text-sm text-muted-foreground text-center">
+          <TypographyMuted className="text-center">
             Didn&apos;t receive code?{" "}
-            <span className="text-foreground font-medium">Resend</span>
-          </p>
+            <TypographySmall className="text-foreground font-medium cursor-pointer">
+              Resend
+            </TypographySmall>
+          </TypographyMuted>
         </div>
       </div>
 

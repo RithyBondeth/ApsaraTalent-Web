@@ -65,7 +65,10 @@ export default function PhoneNumberPage() {
     if (isSuccess) {
       toast.dismiss();
       toast.success(t("otpSent"), { duration: 1000 });
-      setTimeout(() => router.replace("/login/phone-number/phone-otp"), DEFAULT_REDIRECT_DELAY_MS);
+      setTimeout(
+        () => router.replace("/login/phone-number/phone-otp"),
+        DEFAULT_REDIRECT_DELAY_MS,
+      );
     }
 
     if (loading) toast.loading(t("loggingIn"));

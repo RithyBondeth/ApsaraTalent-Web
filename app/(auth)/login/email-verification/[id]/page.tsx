@@ -11,7 +11,10 @@ import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { emailVerificationWhiteSvg, emailVerificationBlackSvg } from "@/utils/constants/asset.constant";
+import {
+  emailVerificationWhiteSvg,
+  emailVerificationBlackSvg,
+} from "@/utils/constants/asset.constant";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 export default function EmailVerificationPage() {
@@ -73,7 +76,7 @@ export default function EmailVerificationPage() {
           </div>
 
           {/* Title Section */}
-          <div>
+          <div className="flex flex-col items-start">
             <TypographyH2 className="tablet-sm:text-2xl">
               Email Verification
             </TypographyH2>
