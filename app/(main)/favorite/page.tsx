@@ -16,11 +16,14 @@ import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-
 import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useCallback, useState } from "react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { FavoriteLoadingSkeleton } from "./skeleton";
 import { emptySvgImage, favoriteSvgImage } from "@/utils/constants/asset.constant";
 
 export default function FavoritePage() {
+  const t = useTranslations("toast");
+
   /* ----------------------------- API Integration ---------------------------- */
   // Current User
   const currentUser = useGetCurrentUserStore((state) => state.user);
@@ -92,14 +95,14 @@ export default function FavoritePage() {
             favoriteID,
           );
           countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeID);
-          toast.success(`${companyName} removed from favorites.`);
+          toast.success(t("removedFromFavorites", { name: companyName }));
           await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
             employeeID,
           );
         } catch {
           const err =
             employeeFavCompanyStore.empFavError ||
-            "Failed to remove company from favorites.";
+            t("failedToRemoveFavorite");
           toast.error(err);
         }
       });
@@ -129,12 +132,12 @@ export default function FavoritePage() {
             favoriteID,
           );
           countAllCompanyFavoritesStore.countAllCompanyFavorites(companyID);
-          toast.success(`${employeeName} removed from favorites.`);
+          toast.success(t("removedFromFavorites", { name: employeeName }));
           await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyID);
         } catch {
           const err =
             companyFavEmployeeStore.cmpFavError ||
-            "Failed to remove employee from favorites.";
+            t("failedToRemoveFavorite");
           toast.error(err);
         }
       });

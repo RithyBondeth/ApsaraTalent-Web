@@ -260,7 +260,13 @@ const MessagePageContent = () => {
   const desktopEmptyStateView = (
     <div className="flex flex-1 flex-col items-center justify-center p-8 text-center bg-muted/5">
       <div className="w-full flex flex-col items-center justify-center my-16">
-        <Image src={MessageSvgImage} alt="Message" height={300} width={300} className="animate-float" />
+        <Image
+          src={MessageSvgImage}
+          alt="Message"
+          height={300}
+          width={300}
+          className="animate-float"
+        />
         <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
           Select a conversation from the sidebar to start chatting.
         </TypographyP>

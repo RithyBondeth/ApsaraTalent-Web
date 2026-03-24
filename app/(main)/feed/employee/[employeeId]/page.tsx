@@ -12,6 +12,7 @@ import Tag from "@/components/utils/tag";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useGetOneEmployeeStore } from "@/stores/apis/employee/get-one-emp.store";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
 import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
@@ -118,6 +119,7 @@ export default function EmployeeDetailPage() {
   const params = useParams<{ employeeId: string }>();
   const id = params.employeeId;
 
+  const t = useTranslations("toast");
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const { loading, employeeData, queryOneEmployee } = useGetOneEmployeeStore();
 
@@ -172,8 +174,8 @@ export default function EmployeeDetailPage() {
             data.employee.username ??
             `${data.employee.lastname} ${data.employee.lastname}`;
           if (data.isMatched) {
-            toast.success("It's a match!", {
-              description: `${name} and your company like each other.`,
+            toast.success(t("itsAMatch"), {
+              description: t("yourCompanyLikedEachOther", { name }),
             });
             countCurrentCompanyMatching.countCurrentCompanyMatching(companyId);
             setTimeout(
@@ -181,12 +183,12 @@ export default function EmployeeDetailPage() {
               DEFAULT_REDIRECT_DELAY_MS,
             );
           } else {
-            toast.success(`You liked ${name}.`);
+            toast.success(t("youLiked", { name }));
             setTimeout(() => router.push("/feed"), DEFAULT_REDIRECT_DELAY_MS);
           }
         }
       } catch {
-        toast.error(companyLikeStore.error || "Failed to like employee");
+        toast.error(companyLikeStore.error || t("failedToLikeEmployee"));
       } finally {
         queryCurrentCompanyLiked.queryCurrentCompanyLiked(companyId);
       }
@@ -207,11 +209,11 @@ export default function EmployeeDetailPage() {
           employeeId,
         );
         countAllCompanyFavoritesStore.countAllCompanyFavorites(companyId);
-        toast.success(`${name} added to favorites.`);
+        toast.success(t("addedToFavorites", { name }));
         getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyId);
       } catch {
         toast.error(
-          companyFavEmployeeStore.cmpFavError || "Failed to save employee.",
+          companyFavEmployeeStore.cmpFavError || t("failedToSaveFavorite"),
         );
       }
     }

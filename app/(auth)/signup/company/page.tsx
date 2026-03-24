@@ -22,6 +22,7 @@ import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.sto
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -31,6 +32,7 @@ import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 export default function CompanySignup() {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("auth");
 
   const [step, setStep] = useState<number>(1);
   const totalSteps = 6;
@@ -258,7 +260,7 @@ export default function CompanySignup() {
       !uploadCover.loading
     ) {
       toast.dismiss();
-      toast.success(cmpSignup.message ?? "Signup successful!", {
+      toast.success(t("signupSuccessful"), {
         duration: 1000,
       });
       setTimeout(() => router.replace("/login"), DEFAULT_REDIRECT_DELAY_MS);
@@ -273,8 +275,8 @@ export default function CompanySignup() {
     errorList.forEach(({ error, message }) => {
       if (error) {
         toast.dismiss();
-        toast.error(message ?? "An error occurred", {
-          action: { label: "Retry", onClick: () => {} },
+        toast.error(t("anErrorOccurred"), {
+          action: { label: t("retry"), onClick: () => {} },
         });
       }
     });
@@ -343,154 +345,157 @@ export default function CompanySignup() {
 
   // Signup loading title
   const signupLoadingMessage = cmpSignup.loading
-    ? "Creating your company account..."
+    ? t("creatingCompanyAccount")
     : uploadAvatar.loading
-      ? "Uploading company avatar..."
+      ? t("uploadingCompanyAvatar")
       : uploadCover.loading
-        ? "Uploading company cover..."
-        : "Processing your request...";
+        ? t("uploadingCompanyCover")
+        : t("processingRequest");
 
   /* ---------------------------------- Render UI ---------------------------------- */
   return (
-    <div className="w-full max-w-4xl mx-auto flex flex-col items-start gap-4 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
+    <div className="w-full max-w-4xl mx-auto flex flex-col gap-5 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
       {/* Navigate Back Button Section */}
-      <Button
-        className="mb-1"
-        variant="outline"
+      <button
         type="button"
         onClick={() => router.push("/signup")}
+        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors w-fit"
       >
-        <LucideArrowLeft />
-      </Button>
+        <LucideArrowLeft className="size-4" />
+        Back to basic info
+      </button>
+
       {/* Title Section */}
-      <div className="mb-2">
+      <div>
         <TypographyH2>Sign up as company</TypographyH2>
         <TypographyMuted className="text-md">
           Find your potential candidate, Apsara Talent.
         </TypographyMuted>
       </div>
-      <div className="w-full">
-        {/* Step Progress Indicator Section */}
-        <div className="w-full overflow-x-auto pb-1 mb-4">
-          <div className="w-full min-w-[360px] flex items-center">
-            {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
-              (st, index) => (
-                <div key={st} className="w-full flex items-center">
-                  {/* Step Circle */}
-                  <div
-                    className={`size-7 text-xs sm:size-8 sm:text-sm flex items-center justify-center rounded-full text-muted font-bold transition-all ${
-                      step >= st
-                        ? "bg-primary"
-                        : "bg-muted text-muted-foreground"
-                    }`}
-                  >
-                    {st}
-                  </div>
-                  {/* Line Between Steps (Only Render Before Last Step) */}
-                  {index < totalSteps - 1 && (
-                    <div className="flex-1 h-0.5 sm:h-1 bg-muted relative">
-                      <div
-                        className={`absolute top-0 left-0 h-full transition-all duration-300 ${
-                          step > st ? "bg-primary w-full" : "bg-muted w-0"
-                        }`}
-                      />
-                    </div>
-                  )}
-                </div>
-              ),
-            )}
-          </div>
-        </div>
 
-        {/* Form Section */}
-        <FormProvider {...methods}>
-          <form className="w-full" onSubmit={(e) => e.preventDefault()}>
-            {step === 1 && (
-              <BasicInfoStepForm
-                register={register}
-                control={control}
-                errors={errors}
-              />
-            )}
-            {step === 2 && (
-              <OpenPositionStepForm
-                register={register}
-                getValues={getValues}
-                setValue={setValue}
-                trigger={trigger}
-                errors={errors}
-                control={control}
-              />
-            )}
-            {step === 3 && (
-              <BenefitValueStepForm
-                register={register}
-                getValues={getValues}
-                setValue={setValue}
-                trigger={trigger}
-                errors={errors}
-              />
-            )}
-            {step === 4 && (
-              <AvatarCompanyStepForm
-                register={register}
-                setValue={setValue}
-                getValues={getValues}
-              />
-            )}
-            {step === 5 && (
-              <CoverCompanyStepForm
-                register={register}
-                setValue={setValue}
-                getValues={getValues}
-                errors={errors}
-              />
-            )}
-            {step === 6 && (
-              <CompanyCareerScopeStepForm
-                register={register}
-                getValues={getValues}
-                setValue={setValue}
-                errors={errors}
-              />
-            )}
-
-            {/* Next & Previous Step Section */}
-            {/* Navigation Buttons Section */}
-            <div className="my-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              {step > 1 && (
-                <Button
-                  type="button"
-                  onClick={prevStep}
-                  className="w-full sm:w-auto"
+      {/* Step Progress Indicator Section */}
+      <div className="w-full overflow-x-auto pb-2 mb-2">
+        <div className="w-full min-w-[360px] flex items-center gap-0">
+          {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
+            (st, index) => (
+              <div key={st} className="w-full flex items-center">
+                {/* Step Circle */}
+                <div
+                  className={`size-8 text-xs sm:size-9 sm:text-sm flex items-center justify-center rounded-full font-bold transition-all ${
+                    step >= st
+                      ? "bg-primary text-primary-foreground shadow-md shadow-primary/30"
+                      : "bg-muted text-muted-foreground"
+                  }`}
                 >
-                  <LucideArrowLeft />
-                  Back
-                </Button>
-              )}
+                  {st}
+                </div>
+                {/* Line Between Steps (Only Render Before Last Step) */}
+                {index < totalSteps - 1 && (
+                  <div className="flex-1 h-1 bg-muted rounded-full relative">
+                    <div
+                      className={`absolute top-0 left-0 h-full rounded-full bg-primary transition-all duration-300 ${
+                        step > st ? "w-full" : "w-0"
+                      }`}
+                    />
+                  </div>
+                )}
+              </div>
+            ),
+          )}
+        </div>
+      </div>
+
+      {/* Form Section */}
+      <FormProvider {...methods}>
+        <form className="w-full" onSubmit={(e) => e.preventDefault()}>
+          {step === 1 && (
+            <BasicInfoStepForm
+              register={register}
+              control={control}
+              errors={errors}
+            />
+          )}
+          {step === 2 && (
+            <OpenPositionStepForm
+              register={register}
+              getValues={getValues}
+              setValue={setValue}
+              trigger={trigger}
+              errors={errors}
+              control={control}
+            />
+          )}
+          {step === 3 && (
+            <BenefitValueStepForm
+              register={register}
+              getValues={getValues}
+              setValue={setValue}
+              trigger={trigger}
+              errors={errors}
+            />
+          )}
+          {step === 4 && (
+            <AvatarCompanyStepForm
+              register={register}
+              setValue={setValue}
+              getValues={getValues}
+            />
+          )}
+          {step === 5 && (
+            <CoverCompanyStepForm
+              register={register}
+              setValue={setValue}
+              getValues={getValues}
+              errors={errors}
+            />
+          )}
+          {step === 6 && (
+            <CompanyCareerScopeStepForm
+              register={register}
+              getValues={getValues}
+              setValue={setValue}
+              errors={errors}
+            />
+          )}
+
+          {/* Navigation Buttons Section */}
+          <div className="mt-6 mb-4 flex gap-3 sm:justify-between">
+            {step > 1 ? (
               <Button
                 type="button"
-                className="w-full sm:w-auto"
-                onClick={nextStep}
-                disabled={
-                  cmpSignup.loading ||
-                  uploadAvatar.loading ||
-                  uploadCover.loading
-                }
+                variant="outline"
+                onClick={prevStep}
+                className="flex-1 sm:flex-initial sm:min-w-[140px]"
               >
-                {step === totalSteps ? "Submit" : "Next"}
-                <LucideArrowRight />
+                <LucideArrowLeft />
+                Back
               </Button>
-            </div>
-          </form>
-        </FormProvider>
-      </div>
+            ) : (
+              <div className="hidden sm:block" />
+            )}
+
+            <Button
+              type="button"
+              className="flex-1 sm:flex-initial sm:min-w-[140px]"
+              onClick={nextStep}
+              disabled={
+                cmpSignup.loading ||
+                uploadAvatar.loading ||
+                uploadCover.loading
+              }
+            >
+              {step === totalSteps ? "Submit" : "Next"}
+              <LucideArrowRight />
+            </Button>
+          </div>
+        </form>
+      </FormProvider>
 
       {/* Loading Dialog Section */}
       <LoadingDialog
         loading={isSignupLoading}
         title={signupLoadingMessage}
-        subTitle="Please wait while we complete your company signup."
+        subTitle={t("pleaseWaitCompanySignup")}
       />
     </div>
   );

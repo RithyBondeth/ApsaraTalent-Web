@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import LabelInput from "@/components/utils/label-input";
 import Tag from "@/components/utils/tag";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
@@ -20,6 +21,7 @@ import { IOpenPositionFormProps } from "./props";
 
 export default function OpenPositionForm(props: IOpenPositionFormProps) {
   // Utils
+  const t = useTranslations("toast");
   const { register, control, getValues, setValue } = props.form;
 
   // Skill States
@@ -42,9 +44,9 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
     );
 
     if (alreadyExists) {
-      toast.error("Duplicated Skill", {
-        description: "This skill already exists.",
-        action: { label: "Try again", onClick: () => {} },
+      toast.error(t("duplicatedSkill"), {
+        description: t("thisSkillAlreadyExists"),
+        action: { label: t("tryAgain"), onClick: () => {} },
       });
       setSkillInput(null);
       setOpenSkillPopOver(false);

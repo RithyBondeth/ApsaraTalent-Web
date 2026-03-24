@@ -4,6 +4,7 @@ import ResumeEditorFormPanel from "@/components/resume-builder/editor/form-panel
 import ResumeEditorPreviewPanel from "@/components/resume-builder/editor/preview-panel";
 import { Button } from "@/components/ui/button";
 import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { generateResumeAPI } from "../_apis/generate-resume.api";
 import { useResumeEditStore } from "@/stores/apis/resume/resume-edit.store";
@@ -22,6 +23,8 @@ import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
 import { DOWNLOAD_RESUME_STEPS, LIVE_RESUME_PREVIEW_DEBOUNCE_MS } from "@/utils/constants/resume.constant";
 
 export default function ResumeEditorPage() {
+  const t = useTranslations("toast");
+
   /* ---------------------------------- Utils ---------------------------------- */
   const router = useRouter();
   const isMobile = useIsMobile();
@@ -140,8 +143,8 @@ export default function ResumeEditorPage() {
       link.click();
       window.URL.revokeObjectURL(objectUrl);
 
-      toast.success("Resume downloaded!", {
-        description: "Your resume has been saved to your downloads folder.",
+      toast.success(t("resumeDownloaded"), {
+        description: t("resumeSavedToDownloads"),
       });
 
       // Clear store and go back to template selection
@@ -153,8 +156,8 @@ export default function ResumeEditorPage() {
       const description =
         error instanceof Error && error.message
           ? error.message
-          : "Something went wrong. Please try again.";
-      toast.error("Download failed", {
+          : t("somethingWentWrong");
+      toast.error(t("downloadFailed"), {
         description,
       });
     } finally {

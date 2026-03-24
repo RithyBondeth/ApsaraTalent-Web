@@ -54,6 +54,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { CompanyDetailPageSkeleton } from "./skeleton";
 
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useGetOneCompanyStore } from "@/stores/apis/company/get-one-cmp.store";
 import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
 import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
@@ -121,6 +122,7 @@ export default function CompanyDetailPage() {
   const param = useParams<{ companyId: string }>();
   const id = param.companyId;
 
+  const t = useTranslations("toast");
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const { loading, companyData, queryOneCompany } = useGetOneCompanyStore();
 
@@ -185,16 +187,16 @@ export default function CompanyDetailPage() {
         const liked = useEmployeeLikeStore.getState().data;
         if (liked) {
           if (liked.isMatched) {
-            toast.success("It's a match!", { description: `${liked.company.name} and you like each other.` });
+            toast.success(t("itsAMatch"), { description: t("youLikedEachOther", { name: liked.company.name }) });
             countCurrentEmployeeMatching.countCurrentEmployeeMatching(employeeId);
             setTimeout(() => router.push("/matching"), DEFAULT_REDIRECT_DELAY_MS);
           } else {
-            toast.success(`You liked ${liked.company.name}.`);
+            toast.success(t("youLiked", { name: liked.company.name }));
             setTimeout(() => router.push("/feed"), DEFAULT_REDIRECT_DELAY_MS);
           }
         }
       } catch {
-        toast.error(employeeLikeStore.error || "Failed to like company");
+        toast.error(employeeLikeStore.error || t("failedToLikeCompany"));
       } finally {
         queryCurrentEmployeeLiked.queryCurrentEmployeeLiked(employeeId);
       }
@@ -209,10 +211,10 @@ export default function CompanyDetailPage() {
       try {
         await employeeFavCompanyStore.addCompanyToFavorite(employeeId, companyId);
         countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeId);
-        toast.success(`${companyData?.name} added to favorites.`);
+        toast.success(t("addedToFavorites", { name: companyData?.name }));
         await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(employeeId);
       } catch {
-        toast.error(employeeFavCompanyStore.empFavError || "Failed to save company");
+        toast.error(employeeFavCompanyStore.empFavError || t("failedToSaveFavorite"));
       }
     }
   };

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/select";
 import ErrorMessage from "@/components/utils/error-message";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
 import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
@@ -19,7 +20,7 @@ import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.sto
 import { userRoleConstant } from "@/utils/constants/ui.constant";
 import { TUserRole } from "@/utils/types/role.type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
+import { LucideArrowLeft, LucideArrowRight, LucideUsers } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { signupOptionSchema, TSignupOptionSchema } from "./validation";
@@ -134,14 +135,22 @@ export default function SingUpOption() {
 
   /* ---------------------------------------- Render UI ---------------------------------------- */
   return (
-    <div className="h-[80%] w-[85%] flex flex-col items-center justify-start gap-3 tablet-lg:w-full tablet-lg:p-5">
+    <div className="w-full max-w-[500px] mx-auto flex flex-col items-start gap-6 py-8 tablet-lg:py-4">
+      {/* Icon Badge */}
+      <div className="size-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+        <LucideUsers className="size-6 text-primary" />
+      </div>
+
+      {/* Title Section */}
+      <TypographyH2>Who do you wanna be in our platform?</TypographyH2>
+
+      {/* Subtitle */}
+      <TypographyMuted>Choose your role to get started with Apsara Talent.</TypographyMuted>
+
       <form
-        className="flex flex-col items-start gap-5"
+        className="w-full flex flex-col gap-5"
         onSubmit={handleSubmit(onSubmit)}
       >
-        {/* Title Section */}
-        <TypographyH2>Who do you wanna be in our platform?</TypographyH2>
-
         {/* Role Selection Section */}
         <div className="w-full flex flex-col items-start gap-2">
           <Controller
@@ -166,21 +175,25 @@ export default function SingUpOption() {
         </div>
 
         {/* Button Section */}
-        <div className="w-full flex items-center gap-5">
+        <div className="w-full flex items-center gap-3">
           <Button
-            className="w-1/2"
+            className="flex-1"
+            variant="outline"
             type="button"
             onClick={() => router.push("/login")}
           >
             <LucideArrowLeft />
             Back
           </Button>
-          <Button className="w-1/2" type="submit">
+          <Button className="flex-1" type="submit">
             Next
             <LucideArrowRight />
           </Button>
         </div>
       </form>
+
+      {/* Note */}
+      <p className="text-xs text-muted-foreground text-center">You can always update your profile later.</p>
     </div>
   );
 }

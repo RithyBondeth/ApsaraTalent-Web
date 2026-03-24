@@ -26,6 +26,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
         error: <OctagonX className="h-4 w-4 text-destructive" />,
         loading: <ApsaraLoadingSpinner size={32} loop />,
       }}
+      style={{ fontFamily: "var(--font-ubuntu), var(--font-khmer), sans-serif" }}
       toastOptions={{
         classNames: {
           toast:

@@ -52,6 +52,7 @@ import { useCmpCareerScopesState } from "@/hooks/profile/company/use-cmp-careers
 import useCmpImageState from "@/hooks/profile/company/use-cmp-image-state";
 import { useSocialsState } from "@/hooks/profile/employee/use-social-state";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useRemoveCmpAvatarStore } from "@/stores/apis/company/remove-cmp-avatar.store";
 import { useRemoveCmpCoverStore } from "@/stores/apis/company/remove-cmp-cover.store";
 import { useRemoveOneCmpImageStore } from "@/stores/apis/company/remove-one-cmp-image.store";
@@ -127,6 +128,7 @@ function SectionTitle({
 export default function ProfilePage() {
   /* -------------------------------- All States -------------------------------- */
   // Utils
+  const t = useTranslations("toast");
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
   // Image States
@@ -407,7 +409,7 @@ export default function ProfilePage() {
 
     await disableEditMode();
 
-    toast.success("Remove Avatar Successfully!");
+    toast.success(t("removeAvatarSuccess"));
   };
 
   // ── API: Remove Cover ─────────────────────────────────────────
@@ -416,7 +418,7 @@ export default function ProfilePage() {
 
     await disableEditMode();
 
-    toast.success("Remove Cover Successfully!");
+    toast.success(t("removeCoverSuccess"));
   };
 
   // ── API: Remove Single Image ───────────────────────────────────
@@ -429,7 +431,7 @@ export default function ProfilePage() {
 
     await disableEditMode();
 
-    toast.success("Remove Cover Successfully!");
+    toast.success(t("removeCoverSuccess"));
   };
 
   // ── Handle Click Image Popup ────────────────────────────────────
@@ -521,7 +523,7 @@ export default function ProfilePage() {
 
     await disableEditMode();
 
-    toast.success("Remove Open Position Successfully!");
+    toast.success(t("removeOpenPositionSuccess"));
   };
 
   // ── Benefit Methods ────────────────────────────────────────────────────
@@ -535,9 +537,9 @@ export default function ProfilePage() {
     );
 
     if (alreadyExists) {
-      toast.error("Duplicated Benefit", {
-        description: "Please input another benefit.",
-        action: { label: "Try again", onClick: () => {} },
+      toast.error(t("duplicatedBenefit"), {
+        description: t("pleaseInputAnotherBenefit"),
+        action: { label: t("tryAgain"), onClick: () => {} },
       });
       setBenefitInput(null);
       setOpenBenefitPopOver(false);
@@ -581,9 +583,9 @@ export default function ProfilePage() {
     );
 
     if (alreadyExists) {
-      toast.error("Duplicated value", {
-        description: "Please input another value.",
-        action: { label: "Try again", onClick: () => {} },
+      toast.error(t("duplicatedValue"), {
+        description: t("pleaseInputAnotherValue"),
+        action: { label: t("tryAgain"), onClick: () => {} },
       });
       setValueInput(null);
       setOpenValuePopOver(false);
@@ -639,9 +641,9 @@ export default function ProfilePage() {
       (c) => (c.name ?? "").trim().toLowerCase() === name.toLowerCase(),
     );
     if (alreadyExists) {
-      toast.error("Duplicated Career", {
-        description: "Please select another career.",
-        action: { label: "Try again", onClick: () => {} },
+      toast.error(t("duplicatedCareer"), {
+        description: t("pleaseSelectAnotherCareer"),
+        action: { label: t("tryAgain"), onClick: () => {} },
       });
       setCareerScopeInput(null);
       setOpenCareerScopePopOver(false);
@@ -701,9 +703,9 @@ export default function ProfilePage() {
     );
 
     if (platformExists) {
-      toast.error("Duplicate Social", {
-        description: "This social platform already exists.",
-        action: { label: "Try again", onClick: () => {} },
+      toast.error(t("duplicateSocial"), {
+        description: t("socialPlatformAlreadyExists"),
+        action: { label: t("tryAgain"), onClick: () => {} },
       });
       return false;
     }
@@ -713,9 +715,9 @@ export default function ProfilePage() {
     );
 
     if (urlExists) {
-      toast.error("Duplicate URL", {
-        description: "This social link already exists.",
-        action: { label: "Try again", onClick: () => {} },
+      toast.error(t("duplicateUrl"), {
+        description: t("socialLinkAlreadyExists"),
+        action: { label: t("tryAgain"), onClick: () => {} },
       });
       return false;
     }
@@ -906,7 +908,7 @@ export default function ProfilePage() {
         hasAvatarUpload || hasCoverUpload || hasImageUploads;
 
       if (!hasUpdateBodyChanges && !hasFileUploads) {
-        toast.info("No Changes Detected.");
+        toast.info(t("noChangesDetected"));
         return;
       }
 
@@ -921,8 +923,8 @@ export default function ProfilePage() {
       setIsEdit(false);
     } catch (error) {
       console.error(error);
-      toast.error("Error!", {
-        description: "Failed To Update Company Profile.",
+      toast.error(t("error"), {
+        description: t("failedToUpdateCompanyProfile"),
       });
     }
   };

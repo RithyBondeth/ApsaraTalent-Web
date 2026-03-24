@@ -12,7 +12,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LucidePhone } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { phoneLoginSchema, TPhoneLoginForm } from "./validation";
@@ -22,6 +24,7 @@ import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 export default function PhoneNumberPage() {
   /* ----------------------------------- Utils -------------------------------- */
   const router = useRouter();
+  const t = useTranslations("auth");
 
   /* --------------------------------- All States ----------------------------- */
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
@@ -61,29 +64,31 @@ export default function PhoneNumberPage() {
 
     if (isSuccess) {
       toast.dismiss();
-      toast.success(message ?? "OTP sent!", { duration: 1000 });
+      toast.success(t("otpSent"), { duration: 1000 });
       setTimeout(() => router.replace("/login/phone-number/phone-otp"), DEFAULT_REDIRECT_DELAY_MS);
     }
 
-    if (loading) toast.loading("Logging in...");
+    if (loading) toast.loading(t("loggingIn"));
 
     if (error) {
       toast.dismiss();
-      toast.error(message ?? "An error occurred", {
-        action: { label: "Retry", onClick: () => reset() },
+      toast.error(t("anErrorOccurred"), {
+        action: { label: t("retry"), onClick: () => reset() },
       });
     }
   }, [error, loading, isSuccess, message, isSubmitted]);
 
   return (
     /* -------------------------------- Render UI -------------------------------- */
-    <div className="h-screen w-screen flex justify-between items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
+    <div className="min-h-screen w-full flex tablet-md:flex-col">
       {/* Left Section */}
-      <div className="h-screen w-1/2 flex justify-center items-center">
-        <div className="h-fit w-[70%] flex flex-col items-stretch gap-3 tablet-lg:w-[85%] tablet-md:w-[95%] tablet-md:py-10">
+      <div className="w-1/2 min-h-screen flex items-center justify-center bg-background p-6 sm:p-10 tablet-md:w-full tablet-md:min-h-0 tablet-md:py-12">
+        <div className="w-full max-w-[440px] flex flex-col gap-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
+          {/* Logo */}
+          <LogoComponent className="!h-24 w-auto self-start" withoutTitle />
+
           {/* Title Section */}
-          <div className="mb-5">
-            <LogoComponent className="!h-24 w-auto" withoutTitle />
+          <div>
             <TypographyH2 className="phone-xl:text-xl">
               Sign in with Your Phone Number
             </TypographyH2>
@@ -121,17 +126,27 @@ export default function PhoneNumberPage() {
             </div>
             <Button>Login</Button>
           </form>
+
+          {/* Back to login link */}
+          <Link
+            href="/login"
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors text-center"
+          >
+            ← Back to email login
+          </Link>
         </div>
       </div>
 
       {/* Right Section: Image Poster Section */}
-      <div className="w-1/2 flex justify-center items-center bg-primary tablet-sm:p-10">
+      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary relative overflow-hidden tablet-md:hidden">
         <Image
           src={phoneNumberWhiteSvg}
           alt="phone-number"
           height={undefined}
           width={600}
         />
+        <div className="absolute -top-20 -right-20 size-64 rounded-full bg-white/5" />
+        <div className="absolute -bottom-10 -left-10 size-48 rounded-full bg-white/5" />
       </div>
     </div>
   );

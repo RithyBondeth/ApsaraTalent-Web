@@ -36,6 +36,7 @@ import {
 import { useTheme } from "next-themes";
 import { setCookie } from "cookies-next";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import Link from "next/link";
 
@@ -241,6 +242,7 @@ function LanguageCard({
 /* ───────────────────────── Page ───────────────────────────────── */
 
 export default function SettingPage() {
+  const t = useTranslations("toast");
   const currentUser = useGetCurrentUserStore((s) => s.user);
   const { theme, setTheme: setStoreTheme } = useThemeStore();
   const { setTheme: setNextTheme } = useTheme();
@@ -281,10 +283,10 @@ export default function SettingPage() {
     setSending(false);
 
     if (error) {
-      toast.error(message ?? "Failed to send reset email. Please try again.");
+      toast.error(t("failedToSendResetEmail"));
     } else {
       setSent(true);
-      toast.success("Reset link sent! Check your inbox.");
+      toast.success(t("resetLinkSent"));
     }
   };
 

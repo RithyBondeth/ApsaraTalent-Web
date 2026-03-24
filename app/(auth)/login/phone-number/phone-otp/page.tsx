@@ -23,6 +23,7 @@ import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-sign
 import { toast } from "sonner";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { phoneOTPWhiteSvg } from "@/utils/constants/asset.constant";
@@ -31,6 +32,7 @@ import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 export default function PhoneOTPPage() {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("auth");
 
   /* -------------------------------- All States ------------------------------ */
 
@@ -137,14 +139,14 @@ export default function PhoneOTPPage() {
     // Option B: If user is authenticated, navigate user to feed page
     if (verifyOTPStore.isAuthenticated && loginInitiated) {
       toast.dismiss();
-      const loadingId = toast.loading("Authenticating...");
+      const loadingId = toast.loading(t("authenticating"));
 
       // Preload all user data while showing loading message
       preloadUserData()
         .then(() => {
           console.log("User data preload successfully in otp page");
           toast.dismiss(loadingId);
-          toast.success(verifyOTPStore.message ?? "Successfully Logged In", {
+          toast.success(t("successLoggedIn"), {
             duration: 1000,
           });
         })
@@ -166,13 +168,13 @@ export default function PhoneOTPPage() {
     }
 
     if (verifyOTPStore.loading && loginInitiated)
-      toast.loading("Verifying your otp code...");
+      toast.loading(t("verifyingOtp"));
 
     if (verifyOTPStore.error && loginInitiated) {
       toast.dismiss();
       toast.error(verifyOTPStore.error, {
         action: {
-          label: "Retry",
+          label: t("retry"),
           onClick: () => {
             reset();
             setLoginInitiated(false);
@@ -191,12 +193,12 @@ export default function PhoneOTPPage() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="h-screen w-screen flex items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
+    <div className="min-h-screen w-full flex tablet-md:flex-col">
       {/* Left Section */}
-      <div className="h-screen w-1/2 flex justify-center items-center bg-primary-foreground tablet-md:h-fit">
-        <div className="w-[70%] flex flex-col items-stretch gap-3 tablet-md:w-[90%] tablet-md:py-10">
+      <div className="w-1/2 min-h-screen flex items-center justify-center bg-background p-6 sm:p-10 tablet-md:w-full tablet-md:min-h-0 tablet-md:py-12">
+        <div className="w-full max-w-[440px] flex flex-col gap-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
           {/* Title Section */}
-          <div className="mb-5">
+          <div>
             <TypographyH2 className="phone-xl:text-2xl">
               OTP Verification
             </TypographyH2>
@@ -232,30 +234,30 @@ export default function PhoneOTPPage() {
                     <InputOTPGroup>
                       <InputOTPSlot
                         index={0}
-                        className="input-otp-slot tablet-md:!size-10"
+                        className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
                       />
                       <InputOTPSlot
                         index={1}
-                        className="input-otp-slot tablet-md:!size-10"
+                        className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
                       />
                       <InputOTPSlot
                         index={2}
-                        className="input-otp-slot tablet-md:!size-10"
+                        className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
                       />
                     </InputOTPGroup>
                     <InputOTPSeparator />
                     <InputOTPGroup>
                       <InputOTPSlot
                         index={3}
-                        className="input-otp-slot tablet-md:!size-10"
+                        className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
                       />
                       <InputOTPSlot
                         index={4}
-                        className="input-otp-slot tablet-md:!size-10"
+                        className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
                       />
                       <InputOTPSlot
                         index={5}
-                        className="input-otp-slot tablet-md:!size-10"
+                        className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
                       />
                     </InputOTPGroup>
                   </InputOTP>
@@ -270,17 +272,25 @@ export default function PhoneOTPPage() {
             />
             <Button type="submit">Continue</Button>
           </form>
+
+          {/* Resend code text */}
+          <p className="text-sm text-muted-foreground text-center">
+            Didn&apos;t receive code?{" "}
+            <span className="text-foreground font-medium">Resend</span>
+          </p>
         </div>
       </div>
 
       {/* Right Section: Image Poster Section */}
-      <div className="w-1/2 flex justify-center items-center bg-primary tablet-md:p-10 tablet-md:h-full">
+      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary relative overflow-hidden tablet-md:hidden">
         <Image
           src={phoneOTPWhiteSvg}
           alt="phone-otp"
           height={undefined}
           width={600}
         />
+        <div className="absolute -top-20 -right-20 size-64 rounded-full bg-white/5" />
+        <div className="absolute -bottom-10 -left-10 size-48 rounded-full bg-white/5" />
       </div>
     </div>
   );

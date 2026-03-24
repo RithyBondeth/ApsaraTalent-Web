@@ -60,7 +60,7 @@ export default function SignupPage() {
   const facebookUserData = useFacebookLoginStore();
 
   /* --------------------------- User Role Handling --------------------------- */
-  /* 
+  /*
     Determine user role (Employee or Company) by checking local state first,
     then falling back to any connected social login providers.
   */
@@ -229,13 +229,15 @@ export default function SignupPage() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full max-w-[620px] flex flex-col items-start justify-center gap-4 px-1 tablet-sm:max-w-full">
+    <div className="w-full max-w-[620px] flex flex-col gap-5 tablet-sm:max-w-full">
+      {/* Logo Section */}
+      <LogoComponent
+        isBlackLogo={theme === "light" ? false : true}
+        className="!h-12 w-auto self-start"
+      />
+
       {/* Title Section */}
-      <div className="mb-4">
-        <LogoComponent
-          isBlackLogo={theme === "light" ? false : true}
-          className="!h-12 w-auto"
-        />
+      <div>
         <TypographyH2>Welcome to Apsara Talent</TypographyH2>
         <TypographyMuted className="text-md">
           Connect with professional community around the world.
@@ -244,7 +246,7 @@ export default function SignupPage() {
 
       {/* Form Section */}
       <form
-        className="w-full flex flex-col items-stretch gap-5"
+        className="w-full flex flex-col gap-4"
         onSubmit={
           isEmployeeForm
             ? empForm.handleSubmit(onSubmitEmployee)
@@ -344,7 +346,7 @@ export default function SignupPage() {
           )}
         </div>
 
-        <div className="flex flex-col items-stretch gap-5">
+        <div className="flex flex-col items-stretch gap-4">
           <div className="flex gap-3 [&>select]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
             {/* Employee: Gender Section */}
             {isEmployeeForm && (

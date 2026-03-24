@@ -23,7 +23,7 @@ export default function SocialButton(props: ISocialButtonProps) {
     <Button
       type="button"
       variant={props.variant}
-      className={cn(props.className, "py-6 rounded-md")}
+      className={cn(props.className, "py-5 rounded-md")}
       onClick={props.onClick}
     >
       <Image

@@ -45,6 +45,7 @@ import {
   LucidePhone,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
@@ -59,6 +60,7 @@ function LoginPage() {
   /* ------------------------------------ Utils -------------------------------- */
   const router = useRouter();
   const { resolvedTheme } = useTheme();
+  const t = useTranslations("auth");
 
   /* -------------------------------- All States ------------------------------- */
   const [mounted, setMounted] = useState<boolean>(false);
@@ -198,7 +200,7 @@ function LoginPage() {
       preloadUserData()
         .then(() => {
           console.log("User data preloaded successfully in loin page");
-          toast.success(message ?? "Successfully Logged In", {
+          toast.success(t("successLoggedIn"), {
             duration: 1000,
           });
         })
@@ -218,9 +220,9 @@ function LoginPage() {
 
     if (error && loginInitiated) {
       toast.dismiss();
-      toast.error(message ?? "Login failed", {
+      toast.error(t("loginFailed"), {
         action: {
-          label: "Retry",
+          label: t("retry"),
           onClick: () => {
             reset();
             setLoginInitiated(false);
@@ -295,7 +297,7 @@ function LoginPage() {
       preloadUserData()
         .then(() => {
           console.log("User data preloaded successfully");
-          toast.success("Successfully Logged In", { duration: 1000 });
+          toast.success(t("successLoggedIn"), { duration: 1000 });
         })
         .catch((error) => {
           console.error("Error preloading user data:", error);
@@ -318,7 +320,7 @@ function LoginPage() {
     if (newUserStore && !socialLoadingState) {
       setIsPreloadingData(false);
       toast.dismiss();
-      toast.info("Please register first", { duration: 1500 });
+      toast.info(t("pleaseRegisterFirst"), { duration: 1500 });
 
       setTimeout(() => {
         toast.dismiss();
@@ -333,9 +335,9 @@ function LoginPage() {
     if (errorStore && !socialLoadingState) {
       setIsPreloadingData(false);
       toast.dismiss();
-      toast.error(errorStore.store.error || "Social login failed", {
+      toast.error(errorStore.store.error || t("socialLoginFailed"), {
         action: {
-          label: "Retry",
+          label: t("retry"),
           onClick: () => {
             setSocialLoginInitiated(false);
           },
@@ -376,8 +378,8 @@ function LoginPage() {
     isPreloadingData;
 
   const authLoadingTitle = isPreloadingData
-    ? "Preparing your workspace..."
-    : "Authenticating...";
+    ? t("preparingWorkspace")
+    : t("authenticating");
 
   // Get Current Image Based on Theme
   // Only resolve the theme after mounting — avoids SSR/client hydration mismatch
@@ -387,13 +389,13 @@ function LoginPage() {
 
   /* ----------------------------------- Render UI ----------------------------------- */
   return (
-    <div className="h-screen w-screen flex justify-between items-stretch tablet-lg:flex-col tablet-lg:[&>div]:w-full">
+    <div className="h-screen w-full flex overflow-hidden tablet-lg:flex-col tablet-lg:h-auto tablet-lg:overflow-y-auto">
       {/* Left Section */}
-      <div className="h-screen w-1/2 flex justify-center items-center bg-primary-foreground tablet-lg:h-fit">
-        <div className="size-[70%] flex flex-col items-start justify-center gap-3 tablet-md:w-[85%] tablet-md:py-10">
-          {/* Title Section */}
-          <div>
-            <LogoComponent className="!h-24 w-auto" withoutTitle />
+      <div className="w-1/2 h-full flex items-center justify-center bg-background p-6 sm:p-10 tablet-lg:w-full tablet-lg:h-auto tablet-lg:py-12">
+        <div className="w-full max-w-[480px] flex flex-col gap-4 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
+          {/* Logo & Title Section */}
+          <div className="flex flex-col gap-1">
+            <LogoComponent className="!h-16 w-auto self-start" withoutTitle />
             <TypographyH2 className="phone-xl:text-2xl">
               Log in to your Account
             </TypographyH2>
@@ -404,12 +406,12 @@ function LoginPage() {
 
           {/* Social Button Login Section */}
           <div className="w-full flex flex-col gap-3">
-            <div className="flex justify-between items-center gap-3">
+            <div className="grid grid-cols-2 gap-3">
               <SocialButton
                 image={googleIcon}
                 label="Google"
                 variant="outline"
-                className="w-1/2"
+                className="w-full transition-colors hover:bg-muted/50"
                 onClick={() => {
                   setOpenRmbDialog(true);
                   setSocialTypeIdentifier("google");
@@ -419,19 +421,17 @@ function LoginPage() {
                 image={facebookIcon}
                 label="Facebook"
                 variant="outline"
-                className="w-1/2"
+                className="w-full transition-colors hover:bg-muted/50"
                 onClick={() => {
                   setOpenRmbDialog(true);
                   setSocialTypeIdentifier("facebook");
                 }}
               />
-            </div>
-            <div className="flex justify-between items-center gap-3">
               <SocialButton
                 image={linkedinIcon}
                 label="LinkedIn"
                 variant="outline"
-                className="w-1/2"
+                className="w-full transition-colors hover:bg-muted/50"
                 onClick={() => {
                   setOpenRmbDialog(true);
                   setSocialTypeIdentifier("linkedIn");
@@ -441,7 +441,7 @@ function LoginPage() {
                 image={githubIcon}
                 label="Github"
                 variant="outline"
-                className="w-1/2"
+                className="w-full transition-colors hover:bg-muted/50"
                 onClick={() => {
                   setOpenRmbDialog(true);
                   setSocialTypeIdentifier("github");
@@ -450,6 +450,7 @@ function LoginPage() {
             </div>
             <Button
               variant="outline"
+              className="w-full transition-colors hover:bg-muted/50"
               onClick={() => router.push("login/phone-number")}
             >
               <LucidePhone />
@@ -458,20 +459,20 @@ function LoginPage() {
           </div>
 
           {/* Divider Section */}
-          <div className="w-full flex justify-between items-center">
-            <Separator className="w-1/3" />
-            <TypographyMuted className="text-xs text-center">
+          <div className="w-full flex items-center gap-3">
+            <Separator className="flex-1" />
+            <TypographyMuted className="text-xs whitespace-nowrap">
               or continue with email
             </TypographyMuted>
-            <Separator className="w-1/3" />
+            <Separator className="flex-1" />
           </div>
 
           {/* Login Form Section */}
           <form
-            className="w-full flex flex-col items-stretch gap-5"
+            className="w-full flex flex-col items-stretch gap-3"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-3">
               <Input
                 prefix={<LucideMail strokeWidth={"1.3px"} />}
                 placeholder="Email"
@@ -500,8 +501,8 @@ function LoginPage() {
                 validationMessage={errors.password?.message}
               />
             </div>
-            <div className="flex justify-between items-center mb-5">
-              <div className="flex items-center gap-1">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-1.5">
                 <Controller
                   name="rememberMe"
                   control={control}
@@ -517,17 +518,17 @@ function LoginPage() {
                   Remember me
                 </TypographyMuted>
               </div>
-              <TypographySmall className="text-xs cursor-pointer hover:text-muted-foreground">
+              <TypographySmall className="text-xs cursor-pointer hover:text-muted-foreground transition-colors">
                 <Link href="/forgot-password">Forgot Password?</Link>
               </TypographySmall>
             </div>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" className="w-full" disabled={loading}>
               Login
             </Button>
-            <div className="flex items-center gap-2 mx-auto">
+            <div className="flex items-center justify-center gap-2">
               <TypographyMuted>Do not have account?</TypographyMuted>
               <Link href="/signup/option">
-                <TypographySmall className="text-xs cursor-pointer hover:text-muted-foreground">
+                <TypographySmall className="text-xs cursor-pointer hover:text-muted-foreground transition-colors">
                   Create account
                 </TypographySmall>
               </Link>
@@ -536,18 +537,28 @@ function LoginPage() {
         </div>
       </div>
 
-      {/* Right Sectiin: Image Poster Section */}
-      <div className="w-1/2 flex justify-center items-center bg-primary tablet-lg:p-10">
-        <Image src={loginImage} alt="login" height={undefined} width={450} />
+      {/* Right Section: Image Poster Section */}
+      <div className="w-1/2 h-full flex items-center justify-center bg-primary relative overflow-hidden tablet-lg:hidden">
+        {/* Decorative circles */}
+        <div className="absolute -top-20 -right-20 size-64 rounded-full bg-white/5" />
+        <div className="absolute -bottom-16 -left-16 size-48 rounded-full bg-white/5" />
+        <div className="absolute top-1/4 -left-10 size-32 rounded-full bg-white/[0.03]" />
+        <div className="absolute bottom-1/3 right-10 size-20 rounded-full bg-white/[0.07]" />
+        <Image
+          src={loginImage}
+          alt="login"
+          height={undefined}
+          width={450}
+          className="relative z-10"
+        />
       </div>
 
       {/* Remember Dialog Section */}
       <Dialog open={openRmbDialog} onOpenChange={setOpenRmbDialog}>
         <DialogContent>
-          <DialogTitle>Remember Me</DialogTitle>
+          <DialogTitle>{t("rememberMe")}</DialogTitle>
           <DialogDescription>
-            Do you want to remember this login? (30 days for &quot;Yes&quot;, 1
-            day for &quot;No&quot;)
+            {t("rememberMeDescription")}
           </DialogDescription>
           <DialogFooter>
             <Button
@@ -557,7 +568,7 @@ function LoginPage() {
                 setOpenRmbDialog(false);
               }}
             >
-              No
+              {t("no")}
             </Button>
             <Button
               onClick={() => {
@@ -565,7 +576,7 @@ function LoginPage() {
                 setOpenRmbDialog(false);
               }}
             >
-              Yes
+              {t("yes")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -575,7 +586,7 @@ function LoginPage() {
       <LoadingDialog
         loading={isAuthLoading}
         title={authLoadingTitle}
-        subTitle="Please wait while we authenticate your account."
+        subTitle={t("pleaseWaitAuth")}
       />
     </div>
   );

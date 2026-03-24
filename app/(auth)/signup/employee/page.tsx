@@ -24,6 +24,7 @@ import { TGender } from "@/utils/types/gender.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -33,6 +34,7 @@ import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 export default function EmployeeSignup() {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("auth");
 
   const [step, setStep] = useState<number>(1);
   const totalSteps = 6;
@@ -293,7 +295,7 @@ export default function EmployeeSignup() {
       !uploadResume.loading
     ) {
       toast.dismiss();
-      toast.success(empSignup.message ?? "Signup successful!", {
+      toast.success(t("signupSuccessful"), {
         duration: 1000,
       });
       setTimeout(() => router.replace("/login"), DEFAULT_REDIRECT_DELAY_MS);
@@ -310,8 +312,8 @@ export default function EmployeeSignup() {
     errorList.forEach(({ error, message }) => {
       if (error) {
         toast.dismiss();
-        toast.error(message ?? "An error occurred", {
-          action: { label: "Retry", onClick: () => {} },
+        toast.error(t("anErrorOccurred"), {
+          action: { label: t("retry"), onClick: () => {} },
         });
       }
     });
@@ -383,30 +385,30 @@ export default function EmployeeSignup() {
 
   // Signup loading title
   const signupLoadingMessage = empSignup.loading
-    ? "Creating your employee account..."
+    ? t("creatingEmployeeAccount")
     : uploadAvatar.loading
-      ? "Uploading profile avatar..."
+      ? t("uploadingAvatar")
       : uploadResume.loading
-        ? "Uploading resume..."
+        ? t("uploadingResume")
         : uploadCoverLetter.loading
-          ? "Uploading cover letter..."
-          : "Processing your request...";
+          ? t("uploadingCoverLetter")
+          : t("processingRequest");
 
   /* ----------------------------------- Render UI ----------------------------------- */
   return (
-    <div className="w-full max-w-4xl mx-auto flex flex-col items-start gap-4 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
+    <div className="w-full max-w-4xl mx-auto flex flex-col gap-5 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
       {/* Navigate Back Button Section */}
-      <Button
+      <button
         type="button"
-        className="mb-1"
-        variant="outline"
         onClick={() => router.push("/signup")}
+        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors w-fit"
       >
-        <LucideArrowLeft />
-      </Button>
+        <LucideArrowLeft className="size-4" />
+        Back to basic info
+      </button>
 
       {/* Header Section */}
-      <div className="mb-2">
+      <div>
         <TypographyH2>Sign up as employee</TypographyH2>
         <TypographyMuted className="text-md">
           Explore your dream job with our platform, Apsara Talent.
@@ -414,8 +416,8 @@ export default function EmployeeSignup() {
       </div>
 
       {/* Step Progress Indicator Section */}
-      <div className="w-full overflow-x-auto pb-1 mb-4">
-        <div className="w-full min-w-[360px] flex items-center">
+      <div className="w-full overflow-x-auto pb-2 mb-2">
+        <div className="w-full min-w-[360px] flex items-center gap-0">
           {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
             (st, index) => {
               const isSkipped =
@@ -426,23 +428,21 @@ export default function EmployeeSignup() {
               return (
                 <div key={st} className="w-full flex items-center">
                   <div
-                    className={`size-7 text-xs sm:size-8 sm:text-sm flex items-center justify-center rounded-full text-muted font-bold transition-all ${
+                    className={`size-8 text-xs sm:size-9 sm:text-sm flex items-center justify-center rounded-full font-bold transition-all ${
                       isSkipped
                         ? "bg-muted text-muted-foreground opacity-40 line-through"
                         : isActive
-                          ? "bg-primary"
+                          ? "bg-primary text-primary-foreground shadow-md shadow-primary/30"
                           : "bg-muted text-muted-foreground"
                     }`}
                   >
                     {st}
                   </div>
                   {index < totalSteps - 1 && (
-                    <div className="flex-1 h-0.5 sm:h-1 bg-muted relative">
+                    <div className="flex-1 h-1 bg-muted rounded-full relative">
                       <div
-                        className={`absolute top-0 left-0 h-full transition-all duration-300 ${
-                          step > st && !isSkipped
-                            ? "bg-primary w-full"
-                            : "bg-muted w-0"
+                        className={`absolute top-0 left-0 h-full rounded-full bg-primary transition-all duration-300 ${
+                          step > st && !isSkipped ? "w-full" : "w-0"
                         }`}
                       />
                     </div>
@@ -504,14 +504,14 @@ export default function EmployeeSignup() {
             />
           )}
 
-          {/* Next & Previous Step Section */}
           {/* Navigation Buttons Section */}
-          <div className="my-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-6 mb-4 flex gap-3 sm:justify-between">
             {step > 1 ? (
               <Button
                 type="button"
+                variant="outline"
                 onClick={prevStep}
-                className="w-full sm:w-auto"
+                className="flex-1 sm:flex-initial sm:min-w-[140px]"
               >
                 <LucideArrowLeft />
                 Back
@@ -522,7 +522,7 @@ export default function EmployeeSignup() {
 
             <Button
               type="button"
-              className="w-full sm:w-auto"
+              className="flex-1 sm:flex-initial sm:min-w-[140px]"
               onClick={nextStep}
               disabled={
                 empSignup.loading ||
@@ -542,7 +542,7 @@ export default function EmployeeSignup() {
       <LoadingDialog
         loading={isSignupLoading}
         title={signupLoadingMessage}
-        subTitle="Please wait while we complete your employee signup."
+        subTitle={t("pleaseWaitSignup")}
       />
     </div>
   );

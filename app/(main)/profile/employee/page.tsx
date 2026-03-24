@@ -98,6 +98,7 @@ import {
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
@@ -117,6 +118,8 @@ function SectionTitle({ icon, title }: { icon: React.ReactNode; title: string })
 }
 
 export default function EmployeeProfilePage() {
+  const t = useTranslations("toast");
+
   /* -------------------------------- All States -------------------------------- */
   // Util States
   const [isEdit, setIsEdit] = useState<boolean>(false);
@@ -431,7 +434,7 @@ export default function EmployeeProfilePage() {
 
     await disableEditMode();
 
-    toast.success("Remove Resume Successfully!");
+    toast.success(t("removeResumeSuccess"));
   };
 
   // ── API: Remove CoverLetter ─────────────────────────────────────────
@@ -441,7 +444,7 @@ export default function EmployeeProfilePage() {
 
     await disableEditMode();
 
-    toast.success("Remove CoverLetter Successfully!");
+    toast.success(t("removeCoverLetterSuccess"));
   };
 
   // ── API: Remove Avatar ─────────────────────────────────────────
@@ -450,7 +453,7 @@ export default function EmployeeProfilePage() {
 
     await disableEditMode();
 
-    toast.success("Remove Avatar Successfully!");
+    toast.success(t("removeAvatarSuccess"));
   };
 
   // ── Handle Click Avatar Popup ─────────────────────────────────────────
@@ -492,7 +495,7 @@ export default function EmployeeProfilePage() {
 
     await disableEditMode();
 
-    toast.success("Remove Experience Successfully!");
+    toast.success(t("removeExperienceSuccess"));
   };
 
   // ── Education Methods ────────────────────────────────────────────────────
@@ -513,7 +516,7 @@ export default function EmployeeProfilePage() {
 
     await disableEditMode();
 
-    toast.success("Remove Education Successfully!");
+    toast.success(t("removeEducationSuccess"));
   };
 
   // ── Skill Methods ────────────────────────────────────────────────────
@@ -527,9 +530,9 @@ export default function EmployeeProfilePage() {
     );
 
     if (alreadyExists) {
-      toast.error("Duplicated Skill", {
-        description: "Please input another skill.",
-        action: { label: "Try again", onClick: () => {} },
+      toast.error(t("duplicatedSkill"), {
+        description: t("pleaseInputAnotherSkill"),
+        action: { label: t("tryAgain"), onClick: () => {} },
       });
       setSkillInput(null);
       setOpenSkillPopOver(false);
@@ -578,9 +581,9 @@ export default function EmployeeProfilePage() {
     );
 
     if (platformExists) {
-      toast.error("Duplicate Social", {
-        description: "This social platform already exists.",
-        action: { label: "Try again", onClick: () => {} },
+      toast.error(t("duplicateSocial"), {
+        description: t("socialPlatformAlreadyExists"),
+        action: { label: t("tryAgain"), onClick: () => {} },
       });
       return false;
     }
@@ -590,9 +593,9 @@ export default function EmployeeProfilePage() {
     );
 
     if (urlExists) {
-      toast.error("Duplicate URL", {
-        description: "This social link already exists.",
-        action: { label: "Try again", onClick: () => {} },
+      toast.error(t("duplicateUrl"), {
+        description: t("socialLinkAlreadyExists"),
+        action: { label: t("tryAgain"), onClick: () => {} },
       });
       return false;
     }
@@ -648,9 +651,9 @@ export default function EmployeeProfilePage() {
       (c) => (c.name ?? "").trim().toLowerCase() === name.toLowerCase(),
     );
     if (alreadyExists) {
-      toast.error("Duplicated Career", {
-        description: "Please select another career.",
-        action: { label: "Try again", onClick: () => {} },
+      toast.error(t("duplicatedCareer"), {
+        description: t("pleaseSelectAnotherCareer"),
+        action: { label: t("tryAgain"), onClick: () => {} },
       });
       setCareerScopeInput(null);
       setOpenCareerScopePopOver(false);
@@ -747,8 +750,8 @@ export default function EmployeeProfilePage() {
       URL.revokeObjectURL(objectUrl);
     } catch (e) {
       console.error(e);
-      toast.error("Download failed", {
-        description: "Unable to download the file. Please try again.",
+      toast.error(t("downloadFailed"), {
+        description: t("unableToDownloadFile"),
       });
     }
   };
@@ -959,7 +962,7 @@ export default function EmployeeProfilePage() {
         hasAvatarUpload || hasResumeUpload || hasCoverLetterUpload;
 
       if (!hasUpdateBodyChanges && !hasFileUploads) {
-        toast.info("No Changes Detected.");
+        toast.info(t("noChangesDetected"));
         return;
       }
 
@@ -974,8 +977,8 @@ export default function EmployeeProfilePage() {
       setIsEdit(false);
     } catch (err) {
       console.error(err);
-      toast.error("Error!", {
-        description: "Failed to update employee profile.",
+      toast.error(t("error"), {
+        description: t("failedToUpdateEmployeeProfile"),
       });
     }
   };

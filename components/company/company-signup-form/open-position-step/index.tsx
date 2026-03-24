@@ -15,6 +15,7 @@ import LabelInput from "@/components/utils/label-input";
 import Tag from "@/components/utils/tag";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getRandomBadgeColor } from "@/utils/functions/get-random-badge-color";
 import { LucidePlus, LucideTrash2, LucideXCircle } from "lucide-react";
@@ -30,6 +31,7 @@ export default function OpenPositionStepForm({
   trigger,
 }: IStepFormProps<TCompanySignup>) {
   // Utils
+  const t = useTranslations("toast");
 
   // Open Position Helpers
   const [skillInput, setSkillInput] = useState<string>("");
@@ -53,9 +55,9 @@ export default function OpenPositionStepForm({
       (skill) => skill.toLowerCase() === trimmed.toLowerCase(),
     );
     if (alreadyExists) {
-      toast.error("Duplicated Skill", {
-        description: "Please input another skill.",
-        action: { label: "Try again", onClick: () => {} },
+      toast.error(t("duplicatedSkill"), {
+        description: t("pleaseInputAnotherSkill"),
+        action: { label: t("tryAgain"), onClick: () => {} },
       });
       return;
     }

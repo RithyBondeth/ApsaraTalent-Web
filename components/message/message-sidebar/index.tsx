@@ -48,7 +48,11 @@ export default function ChatSidebar(props: IChatSidebarProps) {
       )
     : chats;
 
-  const widthClass = isResizable ? "w-full" : isOpen ? "w-full lg:w-80" : "w-16";
+  const widthClass = isResizable
+    ? "w-full"
+    : isOpen
+      ? "w-full lg:w-80"
+      : "w-16";
   const minWidthStyle =
     !isResizable && !isOpen
       ? { minWidth: "var(--sidebar-closed-width, 4rem)" }
@@ -281,9 +285,7 @@ const CollapsedChatList = (props: IChatListProps) => {
                   className={cn(
                     "relative p-1.5 rounded-xl transition-all w-full flex justify-center",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                    isActive
-                      ? "bg-muted"
-                      : "hover:bg-muted/60 active:bg-muted",
+                    isActive ? "bg-muted" : "hover:bg-muted/60 active:bg-muted",
                   )}
                   onClick={() => onChatSelect(chat)}
                   aria-label={chat.name}

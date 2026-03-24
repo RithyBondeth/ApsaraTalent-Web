@@ -17,6 +17,7 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 
 import { useFetchOnce } from "@/hooks/utils/use-fetch-once";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useGetAllCompanyStore } from "@/stores/apis/company/get-all-cmp.store";
 import { useGetAllEmployeeStore } from "@/stores/apis/employee/get-all-emp.store";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
@@ -64,6 +65,7 @@ export default function FeedPage() {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const { resolvedTheme } = useTheme();
+  const t = useTranslations("toast");
 
   /* ----------------------------- API Integration ---------------------------- */
   // Current User
@@ -293,10 +295,10 @@ export default function FeedPage() {
       try {
         await addCompanyToFavorite(employeeID, companyID);
         countAllEmployeeFavorites(employeeID);
-        toast.success(`${companyName} added to favorites.`);
+        toast.success(t("addedToFavorites", { name: companyName }));
         await queryAllEmployeeFavorites(employeeID);
       } catch {
-        toast.error(empFavError || "Failed to save company to favorites.");
+        toast.error(empFavError || t("failedToSaveFavorite"));
       }
     },
     [
@@ -314,10 +316,10 @@ export default function FeedPage() {
       try {
         await addEmployeeToFavorite(companyID, employeeID);
         countAllCompanyFavorites(companyID);
-        toast.success(`${employeeName} added to favorites.`);
+        toast.success(t("addedToFavorites", { name: employeeName }));
         await queryAllCompanyFavorites(companyID);
       } catch {
-        toast.error(cmpFavError || "Failed to save employee");
+        toast.error(cmpFavError || t("failedToSaveFavorite"));
       }
     },
     [

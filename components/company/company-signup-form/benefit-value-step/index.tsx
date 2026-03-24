@@ -9,6 +9,7 @@ import {
     PopoverContent,
     PopoverTrigger
 } from "@/components/ui/popover";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import ErrorMessage from "@/components/utils/error-message";
 import IconLabel from "@/components/utils/icon-label";
@@ -23,6 +24,7 @@ export default function BenefitValueStepForm({
   errors,
 }: IStepFormProps<TCompanySignup>) {
   // Utils
+  const t = useTranslations("toast");
 
   // Benefit and Value Helpers
   const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
@@ -46,9 +48,9 @@ export default function BenefitValueStepForm({
     );
 
     if (alreadyExists) {
-      toast.error("Duplicated Benefit", {
-        description: "Please input another benefit.",
-        action: { label: "Try again", onClick: () => {} },
+      toast.error(t("duplicatedBenefit"), {
+        description: t("pleaseInputAnotherBenefit"),
+        action: { label: t("tryAgain"), onClick: () => {} },
       });
       return;
     }
@@ -73,9 +75,9 @@ export default function BenefitValueStepForm({
     );
 
     if (alreadyExists) {
-      toast.error("Duplicated value", {
-        description: "Please input another value.",
-        action: { label: "Try again", onClick: () => {} },
+      toast.error(t("duplicatedValue"), {
+        description: t("pleaseInputAnotherValue"),
+        action: { label: t("tryAgain"), onClick: () => {} },
       });
       return;
     }
