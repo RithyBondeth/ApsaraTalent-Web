@@ -104,7 +104,7 @@ export default function MatchingPage() {
       </div>
 
       {/* Matching Card List Section */}
-      <div className="flex flex-col items-start gap-3">
+      <div className="flex flex-col items-start gap-3 stagger-list">
         {getCurrentEmpStore.currentEmployeeMatching &&
         getCurrentEmpStore.currentEmployeeMatching.length > 0 ? (
           getCurrentEmpStore.currentEmployeeMatching.map((cmp) => (
@@ -151,7 +151,7 @@ export default function MatchingPage() {
         ) : (
           /* Empty Matching List Section */
           <div className="w-full flex flex-col items-center justify-center my-16">
-            <Image src={emptySvgImage} alt="empty" height={200} width={200} />
+            <Image src={emptySvgImage} alt="empty" height={200} width={200} className="animate-float" />
             <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
               Matching List Empty
             </TypographyP>

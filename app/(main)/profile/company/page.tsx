@@ -1372,7 +1372,7 @@ export default function ProfilePage() {
                     <Image
                       alt="empty"
                       src={emptySvgImage}
-                      className="size-44"
+                      className="size-44 animate-float"
                     />
                     <TypographyMuted className="text-sm">
                       No Open Position Available.

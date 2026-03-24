@@ -20,10 +20,10 @@ const Toaster = ({ ...props }: ToasterProps) => {
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
       icons={{
-        success: <CircleCheck className="h-4 w-4" />,
-        info: <Info className="h-4 w-4" />,
-        warning: <TriangleAlert className="h-4 w-4" />,
-        error: <OctagonX className="h-4 w-4" />,
+        success: <CircleCheck className="h-4 w-4 text-emerald-500" />,
+        info: <Info className="h-4 w-4 text-blue-500" />,
+        warning: <TriangleAlert className="h-4 w-4 text-amber-500" />,
+        error: <OctagonX className="h-4 w-4 text-destructive" />,
         loading: <ApsaraLoadingSpinner size={32} loop />,
       }}
       toastOptions={{

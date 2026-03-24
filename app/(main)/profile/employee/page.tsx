@@ -1447,7 +1447,7 @@ export default function EmployeeProfilePage() {
                     <Image
                       alt="empty"
                       src={addNewExperienceSvgImage}
-                      className="size-60"
+                      className="size-60 animate-float"
                     />
                     <Button
                       className="text-xs"
@@ -1564,7 +1564,7 @@ export default function EmployeeProfilePage() {
                     <Image
                       alt="empty"
                       src={addNewEducationSvgImage}
-                      className="size-60"
+                      className="size-60 animate-float"
                     />
                     <Button
                       variant={"secondary"}

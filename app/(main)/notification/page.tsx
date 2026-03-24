@@ -178,6 +178,7 @@ export default function NotificationPage() {
               alt="Notification"
               height={200}
               width={200}
+              className="animate-float"
             />
             <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
               No notifications yet
