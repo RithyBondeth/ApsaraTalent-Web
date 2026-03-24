@@ -557,9 +557,7 @@ function LoginPage() {
       <Dialog open={openRmbDialog} onOpenChange={setOpenRmbDialog}>
         <DialogContent>
           <DialogTitle>{t("rememberMe")}</DialogTitle>
-          <DialogDescription>
-            {t("rememberMeDescription")}
-          </DialogDescription>
+          <DialogDescription>{t("rememberMeDescription")}</DialogDescription>
           <DialogFooter>
             <Button
               variant={"outline"}
