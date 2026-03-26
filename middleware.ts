@@ -10,6 +10,9 @@ const protectedRoutes = [
   "/message",
   "/notification",
   "/resume-builder",
+  "/dashboard",
+  "/interview",
+  "/setting",
 ];
 const authRoutes = [
   "/login",
@@ -85,6 +88,9 @@ export const config = {
     "/message/:path*",
     "/notification/:path*",
     "/resume-builder/:path*",
+    "/dashboard/:path*",
+    "/interview/:path*",
+    "/setting/:path*",
     "/login/:path*",
     "/signup/:path*",
     "/forgot-password/:path*",

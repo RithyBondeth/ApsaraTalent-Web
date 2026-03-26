@@ -549,7 +549,7 @@ export function PrivacyContent() {
   const c = content[language];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background animate-page-in">
       {/* ── Top nav ── */}
       <header className="sticky top-0 z-10 border-b border-border/60 bg-background/95 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto flex items-center gap-4 px-4 py-3 sm:px-6">

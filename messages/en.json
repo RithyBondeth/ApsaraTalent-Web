@@ -1,9 +1,11 @@
 {
   "sidebar": {
+    "dashboard": "Dashboard",
     "feed": "Feed",
     "search": "Search",
     "favorite": "Favorite",
     "matching": "Matching",
+    "interview": "Interview",
     "message": "Message",
     "notification": "Notification",
     "aiResumeBuilder": "AI Resume Builder",

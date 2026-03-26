@@ -276,7 +276,7 @@ const MessagePageContent = () => {
 
   /* -------------------------------------- Render UI -------------------------------------- */
   return (
-    <div className="w-full h-[calc(100dvh-4rem)] md:h-full min-h-0 flex bg-background overflow-hidden relative">
+    <div className="w-full h-[calc(100dvh-4rem)] md:h-full min-h-0 flex bg-background overflow-hidden relative animate-page-in">
       {/* Call overlay + incoming modal — persists across chat switches */}
       <CallOrchestrator />
 

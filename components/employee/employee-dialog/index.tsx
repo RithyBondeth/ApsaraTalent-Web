@@ -6,6 +6,7 @@ import {
   LucideUser,
 } from "lucide-react";
 import Link from "next/link";
+import { useMemo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import {
@@ -14,6 +15,8 @@ import {
   DialogDescription,
   DialogTitle,
 } from "../../ui/dialog";
+import { ProfileProgressBar } from "../../profile/profile-progress-bar";
+import { getEmployeeProfileCompletion } from "@/utils/functions/profile-completion";
 import { IEmployeeDialogProps } from "./props";
 
 /* ── Availability badge with color coding ─────────────────── */
@@ -54,6 +57,8 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
     [props.firstname, props.lastname].filter(Boolean).join(" ") ||
     props.username ||
     "Talent";
+
+  const completion = useMemo(() => getEmployeeProfileCompletion(props), [props]);
 
   return (
     <Dialog open={props.open} onOpenChange={(isOpen) => props.setOpen(isOpen)}>
@@ -102,6 +107,11 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
             {props.availability && (
               <AvailabilityBadge availability={props.availability} />
             )}
+          </div>
+
+          {/* Profile Progress */}
+          <div className="mt-3">
+            <ProfileProgressBar percentage={completion.percentage} />
           </div>
         </div>
 

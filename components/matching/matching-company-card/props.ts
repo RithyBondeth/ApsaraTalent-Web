@@ -10,4 +10,5 @@ export interface IMatchingCompanyCardProps {
   companySize: number;
   location: string;
   onChatNowClick: () => void;
+  onScheduleClick?: () => void;
 }

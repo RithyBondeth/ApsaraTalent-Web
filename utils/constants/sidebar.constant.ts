@@ -1,6 +1,8 @@
 import {
+  BarChart3,
   BellRing,
   BookMarked,
+  CalendarCheck,
   Handshake,
   Home,
   MessageCircle,
@@ -8,6 +10,13 @@ import {
 } from "lucide-react";
 
 export const sidebarList = [
+  {
+    title: "Dashboard",
+    description: "View your analytics",
+    url: "/dashboard",
+    icon: BarChart3,
+    badge: 0,
+  },
   {
     title: "Feed",
     description: "Explore your connections",
@@ -35,6 +44,13 @@ export const sidebarList = [
     description: "All of the matching users",
     url: "/matching",
     icon: Handshake,
+    badge: 0,
+  },
+  {
+    title: "Interview",
+    description: "Manage your interviews",
+    url: "/interview",
+    icon: CalendarCheck,
     badge: 0,
   },
   {

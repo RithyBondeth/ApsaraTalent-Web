@@ -299,45 +299,6 @@ export default function CompanySignup() {
     router,
   ]);
 
-  // Log Basic Signup Data: Regular, Phone and Socials
-  useEffect(() => {
-    console.log("Basic Signup Data: ", basicSignupData);
-    console.log("Basic Phone Signup Data: ", basicPhoneSignupData);
-    console.log("Basic Google Signup Data: ", {
-      firstname: googleUserData.firstname,
-      lastname: googleUserData.lastname,
-      email: googleUserData.email,
-      picture: googleUserData.picture,
-      role: googleUserData.role,
-    });
-    console.log("Basic Github Signup Data: ", {
-      username: githubUserData.username,
-      email: githubUserData.email,
-      picture: githubUserData.picture,
-      role: githubUserData.role,
-    });
-    console.log("Basic LinkedIn Signup Data: ", {
-      firstname: linkedInUserData.firstname,
-      lastname: linkedInUserData.lastname,
-      email: linkedInUserData.email,
-      picture: linkedInUserData.picture,
-      role: linkedInUserData.role,
-    });
-    console.log("Basic Facebook Signup Data: ", {
-      firstname: facebookUserData.firstname,
-      lastname: facebookUserData.lastname,
-      email: facebookUserData.email,
-      picture: facebookUserData.picture,
-      role: facebookUserData.role,
-    });
-  }, [
-    basicSignupData,
-    basicPhoneSignupData,
-    googleUserData,
-    linkedInUserData,
-    githubUserData,
-    facebookUserData,
-  ]);
 
   /* -------------------------------- Loading State -------------------------------- */
   const isSignupLoading =

@@ -365,7 +365,7 @@ export default function FeedPage() {
   const feedCompanyImage = feedCompanySvg;
 
   return (
-    <div className="w-full flex flex-col items-start gap-4 sm:gap-5">
+    <div className="w-full flex flex-col items-start gap-4 sm:gap-5 animate-page-in">
       {/* Header Section */}
       {isLoading ? (
         <BannerSkeleton />
@@ -435,24 +435,14 @@ export default function FeedPage() {
       )}
 
       {/* Feed Card Section */}
-      <div className="w-full columns-3 gap-5 laptop-sm:columns-2 tablet-lg:!columns-1 phone-xl:gap-3 stagger-list">
+      <div className="w-full grid grid-cols-3 gap-x-4 gap-y-4 laptop-sm:grid-cols-2 laptop-sm:gap-x-3 laptop-sm:gap-y-3 tablet-lg:grid-cols-1 tablet-lg:gap-x-0 tablet-lg:gap-y-3 stagger-list">
         {/* Loading Skeleton Section */}
         {isLoading
           ? Array.from({ length: 9 }).map((_, index) =>
               isEmployee ? (
-                <div
-                  key={`company-skeleton-${index}`}
-                  className="break-inside-avoid mb-5"
-                >
-                  <CompanyCardSkeleton />
-                </div>
+                <CompanyCardSkeleton key={`company-skeleton-${index}`} />
               ) : (
-                <div
-                  key={`employee-skeleton-${index}`}
-                  className="break-inside-avoid mb-5"
-                >
-                  <EmployeeCardSkeleton />
-                </div>
+                <EmployeeCardSkeleton key={`employee-skeleton-${index}`} />
               ),
             )
           : allUsers.length > 0 &&
@@ -493,7 +483,13 @@ export default function FeedPage() {
       {/* Empty List Section */}
       {!isLoading && allUsers.length === 0 && (
         <div className="w-full flex flex-col items-center justify-center my-16">
-          <Image src={emptySvgImage} alt="empty" height={200} width={200} className="animate-float" />
+          <Image
+            src={emptySvgImage}
+            alt="empty"
+            height={200}
+            width={200}
+            className="animate-float"
+          />
           <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
             {isEmployee ? "Company List Empty" : "Employee List Empty"}
           </TypographyP>

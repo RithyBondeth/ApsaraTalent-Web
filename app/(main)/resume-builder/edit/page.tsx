@@ -175,7 +175,7 @@ export default function ResumeEditorPage() {
   if (!payload) return null;
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-4rem)] overflow-hidden">
+    <div className="flex flex-col h-[calc(100dvh-4rem)] overflow-hidden animate-page-in">
       {/* ── Top Action Bar ───────────────────────────────────────── */}
       <div className="flex flex-col gap-2 border-b bg-background px-2.5 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5">
         {/* Left: Back + Toggle Form + Title */}

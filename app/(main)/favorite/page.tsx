@@ -9,13 +9,12 @@ import Image from "next/image";
 import FavoriteCompanyCard from "@/components/favorite/company-favorite-card";
 import FavoriteEmployeeCard from "@/components/favorite/employee-favorite-card";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { useFetchOnce } from "@/hooks/utils/use-fetch-once";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
 import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
 import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
 import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { FavoriteLoadingSkeleton } from "./skeleton";
@@ -45,16 +44,18 @@ export default function FavoritePage() {
   const [removingFavIds, setRemovingFavIds] = useState<Set<string>>(new Set());
 
   /* --------------------------------- Effects --------------------------------- */
-  // Fetch All Favorites (Use Custom Hook - Handles all ref logic and duplicate prevention)
-  const { isEmployee } = useFetchOnce({
-    cacheKey: "favorite-page",
-    onEmployeeFetch: (employeeId) => {
-      getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(employeeId);
-    },
-    onCompanyFetch: (companyId) => {
-      getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyId);
-    },
-  });
+  const isEmployee = currentUser?.role === "employee";
+
+  // Always fetch fresh data on every mount so liked items are never stale
+  useEffect(() => {
+    if (!currentUser) return;
+    if (isEmployee && currentUser.employee?.id) {
+      getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(currentUser.employee.id);
+    } else if (!isEmployee && currentUser.company?.id) {
+      getAllCompanyFavoritesStore.queryAllCompanyFavorites(currentUser.company.id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser?.employee?.id, currentUser?.company?.id]);
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Load Remove Animation Then Remove ─────────────────────────────────────────
@@ -167,7 +168,7 @@ export default function FavoritePage() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col px-2.5 sm:px-5">
+    <div className="w-full flex flex-col px-2.5 sm:px-5 animate-page-in">
       {/* Banner Section */}
       <div className="w-full flex items-center justify-between gap-4 sm:gap-5 tablet-xl:flex-col tablet-xl:items-center">
         {/* Content Section */}

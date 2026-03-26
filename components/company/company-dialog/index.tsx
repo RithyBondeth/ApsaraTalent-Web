@@ -7,6 +7,7 @@ import {
   LucideUsers,
 } from "lucide-react";
 import Link from "next/link";
+import { useMemo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import {
@@ -15,9 +16,12 @@ import {
   DialogDescription,
   DialogTitle,
 } from "../../ui/dialog";
+import { ProfileProgressBar } from "../../profile/profile-progress-bar";
+import { getCompanyProfileCompletion } from "@/utils/functions/profile-completion";
 import { ICompanyDialogProps } from "./props";
 
 export default function CompanyDialog(props: ICompanyDialogProps) {
+  const completion = useMemo(() => getCompanyProfileCompletion(props), [props]);
   return (
     <Dialog open={props.open} onOpenChange={props.setOpen}>
       <DialogContent className="p-0 gap-0 flex flex-col overflow-hidden sm:max-w-lg sm:rounded-xl max-h-[90dvh] tablet-sm:!left-0 tablet-sm:!translate-x-0 tablet-sm:!translate-y-0 tablet-sm:!top-auto tablet-sm:!bottom-0 tablet-sm:!w-full tablet-sm:!max-w-none tablet-sm:rounded-t-2xl tablet-sm:!rounded-b-none tablet-sm:max-h-[92dvh]">
@@ -77,6 +81,11 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
                 Est. {props.foundedYear}
               </span>
             )}
+          </div>
+
+          {/* Profile Progress */}
+          <div className="mt-3">
+            <ProfileProgressBar percentage={completion.percentage} />
           </div>
         </div>
 

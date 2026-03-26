@@ -55,6 +55,7 @@ import {
 import { setCookie } from "cookies-next/client";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ISidebarDropdownFooterProps } from "./props";
@@ -166,22 +167,24 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem
-                onClick={() => router.push(`/profile/${currentUser?.role}`)}
-              >
-                {currentUser?.role === "employee" ? (
-                  <LucideUser className="text-violet-500" />
-                ) : (
-                  <LucideBuilding className="text-violet-500" />
-                )}
-                {t("myProfile")}
+              <DropdownMenuItem asChild>
+                <Link href={`/profile/${currentUser?.role ?? "employee"}`} prefetch={true}>
+                  {currentUser?.role === "employee" ? (
+                    <LucideUser className="text-violet-500" />
+                  ) : (
+                    <LucideBuilding className="text-violet-500" />
+                  )}
+                  {t("myProfile")}
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => router.push("/setting")}>
-                <LucideSettings className="text-slate-500" />
-                {t("settings")}
+              <DropdownMenuItem asChild>
+                <Link href="/setting" prefetch={true}>
+                  <LucideSettings className="text-slate-500" />
+                  {t("settings")}
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={toggleTheme}>
                 {resolvedTheme === "dark"
@@ -195,9 +198,11 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
                 <Globe className="text-emerald-500" />
                 {t("language")}: {language === "en" ? "English" : "ខ្មែរ"}
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push("/favorite")}>
-                <LucideBookMarked className="text-pink-500" />
-                {t("favorite")}
+              <DropdownMenuItem asChild>
+                <Link href="/favorite" prefetch={true}>
+                  <LucideBookMarked className="text-pink-500" />
+                  {t("favorite")}
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <LucideInfo className="text-orange-400" />

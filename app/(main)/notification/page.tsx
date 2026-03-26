@@ -94,7 +94,7 @@ export default function NotificationPage() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col gap-4 sm:gap-5 px-2.5 sm:px-5">
+    <div className="w-full flex flex-col gap-4 sm:gap-5 px-2.5 sm:px-5 animate-page-in">
       {/* Header Section */}
       <div className="w-full flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-2 [&>button]:text-xs tablet-sm:hidden">

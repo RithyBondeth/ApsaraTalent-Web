@@ -105,6 +105,8 @@ import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { companyFormSchema, TCompanyProfileForm } from "./validation";
 import { CompanyProfilePageLoadingSkeleton } from "./skeleton";
 import { emptySvgImage } from "@/utils/constants/asset.constant";
+import ProfileCompletionCard from "@/components/profile/profile-completion-card";
+import { getCompanyProfileCompletion } from "@/utils/functions/profile-completion";
 
 function SectionTitle({
   icon,
@@ -984,16 +986,25 @@ export default function ProfilePage() {
   /* -------------------------------- Empty State ------------------------------ */
   if (!user || !company) return null;
 
+  /* -------------------------------- Profile Completion ---------------------- */
+  const profileCompletion = getCompanyProfileCompletion(company);
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-5 overflow-x-hidden"
+      className="flex flex-col gap-5 overflow-x-hidden animate-page-in"
     >
       <LoadingDialog
         loading={updateProfileLoadingState}
         title={loadingMessage || "Updating company profile..."}
         subTitle="Please wait while we save your company details."
+      />
+
+      {/* Profile Completion */}
+      <ProfileCompletionCard
+        percentage={profileCompletion.percentage}
+        missingFields={profileCompletion.missingFields}
       />
 
       {/* Header Section */}

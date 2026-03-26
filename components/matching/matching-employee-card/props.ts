@@ -9,4 +9,5 @@ export interface IMatchingEmployeeCardProps {
   location: string;
   skills: string[];
   onChatNowClick: () => void;
+  onScheduleClick?: () => void;
 }

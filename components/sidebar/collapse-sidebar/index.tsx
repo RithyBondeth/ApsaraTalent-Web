@@ -116,10 +116,12 @@ export default function CollapseSidebar({
   /* ── i18n map ─────────────────────────────── */
   const sidebarTitleMap = useMemo<Record<string, string>>(
     () => ({
+      Dashboard: t("dashboard"),
       Feed: t("feed"),
       Search: t("search"),
       Favorite: t("favorite"),
       Matching: t("matching"),
+      Interview: t("interview"),
       Message: t("message"),
       Notification: t("notification"),
     }),

@@ -99,7 +99,7 @@ export default function ResumeBuilder() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col items-start gap-5 px-2.5 sm:px-5 lg:px-8">
+    <div className="w-full flex flex-col items-start gap-5 px-2.5 sm:px-5 lg:px-8 animate-page-in">
       {/* Banner Section */}
       <ResumeBuilderBanner />
 

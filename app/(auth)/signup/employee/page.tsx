@@ -192,22 +192,31 @@ export default function EmployeeSignup() {
             return;
           }
 
-          // Upload files avatar, resume and coverLetter
+          // Upload files in parallel for faster registration
+          const uploadTasks: Promise<unknown>[] = [];
+
           if (data.avatar instanceof File)
-            await uploadAvatar.uploadAvatar(employeeId, data.avatar);
+            uploadTasks.push(
+              uploadAvatar.uploadAvatar(employeeId, data.avatar),
+            );
 
           if (data.skillAndReference.resume instanceof File)
-            await uploadResume.uploadResume(
-              employeeId,
-              data.skillAndReference.resume,
+            uploadTasks.push(
+              uploadResume.uploadResume(
+                employeeId,
+                data.skillAndReference.resume,
+              ),
             );
 
           if (data.skillAndReference.coverLetter instanceof File)
-            await uploadCoverLetter.uploadCoverLetter(
-              employeeId,
-              data.skillAndReference.coverLetter,
+            uploadTasks.push(
+              uploadCoverLetter.uploadCoverLetter(
+                employeeId,
+                data.skillAndReference.coverLetter,
+              ),
             );
 
+          await Promise.all(uploadTasks);
           setUploadsComplete(true);
           return;
         }
@@ -257,22 +266,31 @@ export default function EmployeeSignup() {
             return;
           }
 
-          // Upload files sequentially to avoid race conditions
+          // Upload files in parallel for faster registration
+          const uploadTasks: Promise<unknown>[] = [];
+
           if (data.avatar instanceof File)
-            await uploadAvatar.uploadAvatar(employeeId, data.avatar);
+            uploadTasks.push(
+              uploadAvatar.uploadAvatar(employeeId, data.avatar),
+            );
 
           if (data.skillAndReference.resume instanceof File)
-            await uploadResume.uploadResume(
-              employeeId,
-              data.skillAndReference.resume,
+            uploadTasks.push(
+              uploadResume.uploadResume(
+                employeeId,
+                data.skillAndReference.resume,
+              ),
             );
 
           if (data.skillAndReference.coverLetter instanceof File)
-            await uploadCoverLetter.uploadCoverLetter(
-              employeeId,
-              data.skillAndReference.coverLetter,
+            uploadTasks.push(
+              uploadCoverLetter.uploadCoverLetter(
+                employeeId,
+                data.skillAndReference.coverLetter,
+              ),
             );
 
+          await Promise.all(uploadTasks);
           setUploadsComplete(true);
           return;
         }
@@ -336,45 +354,6 @@ export default function EmployeeSignup() {
     router,
   ]);
 
-  // Log Basic Signup Data: Regular, Phone and Socials
-  useEffect(() => {
-    console.log("Basic Signup Data: ", basicSignupData);
-    console.log("Basic Phone Signup Data: ", basicPhoneSignupData);
-    console.log("Basic Google Signup Data: ", {
-      firstname: googleUserData.firstname,
-      lastname: googleUserData.lastname,
-      email: googleUserData.email,
-      picture: googleUserData.picture,
-      role: googleUserData.role,
-    });
-    console.log("Basic Github Signup Data: ", {
-      username: githubUserData.username,
-      email: githubUserData.email,
-      picture: githubUserData.picture,
-      role: githubUserData.role,
-    });
-    console.log("Basic LinkedIn Signup Data: ", {
-      firstname: linkedInUserData.firstname,
-      lastname: linkedInUserData.lastname,
-      email: linkedInUserData.email,
-      picture: linkedInUserData.picture,
-      role: linkedInUserData.role,
-    });
-    console.log("Basic Facebook Signup Data: ", {
-      firstname: facebookUserData.firstname,
-      lastname: facebookUserData.lastname,
-      email: facebookUserData.email,
-      picture: facebookUserData.picture,
-      role: facebookUserData.role,
-    });
-  }, [
-    basicSignupData,
-    basicPhoneSignupData,
-    googleUserData,
-    githubUserData,
-    linkedInUserData,
-    facebookUserData,
-  ]);
 
   /* -------------------------------- Loading States -------------------------------- */
   const isSignupLoading =

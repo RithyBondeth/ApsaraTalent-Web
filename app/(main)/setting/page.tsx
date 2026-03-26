@@ -320,7 +320,7 @@ export default function SettingPage() {
 
   /* ─────────────────────── Render ──────────────────────────────── */
   return (
-    <div className="w-full max-w-2xl mx-auto flex flex-col gap-8 px-3 py-6 sm:px-5 sm:py-8">
+    <div className="w-full max-w-2xl mx-auto flex flex-col gap-8 px-3 py-6 sm:px-5 sm:py-8 animate-page-in">
       {/* Page title */}
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold tracking-tight">Settings</h1>

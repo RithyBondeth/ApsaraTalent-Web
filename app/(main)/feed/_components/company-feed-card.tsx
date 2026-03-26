@@ -29,12 +29,12 @@ export const CompanyFeedCard = React.memo(function CompanyFeedCard({
   onSetProfileImage,
 }: ICompanyFeedCardProps) {
   return (
-    <div
-      className={`break-inside-avoid mb-5${isLiking ? " animate-card-pop-shrink" : ""}`}
-    >
+    <div className={isLiking ? "animate-card-pop-shrink" : ""}>
       <CompanyCard
         {...company}
         id={company.id}
+        variant="grid"
+        viewHref={`/feed/company/${company.id}`}
         onViewClick={() => onView(company.id)}
         onSaveClick={() =>
           onSave(employeeId, company.id, company.name ?? "Company")

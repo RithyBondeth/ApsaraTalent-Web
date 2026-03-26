@@ -1,9 +1,11 @@
 {
   "sidebar": {
+    "dashboard": "ផ្ទាំងគ្រប់គ្រង",
     "feed": "ព័ត៌មានថ្មី",
     "search": "ស្វែងរក",
     "favorite": "រក្សាទុក",
     "matching": "ការផ្គូផ្គង",
+    "interview": "សម្ភាសន៍",
     "message": "សារ",
     "notification": "ការជូនដំណឹង",
     "aiResumeBuilder": "បង្កើត CV ដោយ AI",

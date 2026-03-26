@@ -105,6 +105,8 @@ import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { employeeFormSchema, TEmployeeProfileForm } from "./validation";
 import EmployeeProfilePageLoadingSkeleton from "./skeleton";
 import { addNewEducationSvgImage, addNewExperienceSvgImage } from "@/utils/constants/asset.constant";
+import ProfileCompletionCard from "@/components/profile/profile-completion-card";
+import { getEmployeeProfileCompletion } from "@/utils/functions/profile-completion";
 
 function SectionTitle({ icon, title }: { icon: React.ReactNode; title: string }) {
   return (
@@ -1046,13 +1048,22 @@ export default function EmployeeProfilePage() {
   /* -------------------------------- Empty State ------------------------------ */
   if (!user || !employee) return null;
 
+  /* -------------------------------- Profile Completion ---------------------- */
+  const profileCompletion = getEmployeeProfileCompletion(employee);
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <form className="!min-w-full flex flex-col gap-5 overflow-x-hidden" onSubmit={handleSubmit}>
+    <form className="!min-w-full flex flex-col gap-5 overflow-x-hidden animate-page-in" onSubmit={handleSubmit}>
       <LoadingDialog
         loading={updateProfileLoadingState}
         title={loadingMessage || "Updating employee profile..."}
         subTitle="Please wait while we save your profile changes."
+      />
+
+      {/* Profile Completion */}
+      <ProfileCompletionCard
+        percentage={profileCompletion.percentage}
+        missingFields={profileCompletion.missingFields}
       />
 
       {/* Header Section*/}

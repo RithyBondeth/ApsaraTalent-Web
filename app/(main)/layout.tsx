@@ -71,10 +71,7 @@ export default function MainLayout({
     return (
       <div className="relative">
         <ScrollProgressBar />
-        <div
-          key={pathname}
-          className="container mx-auto p-3 sm:p-4 lg:p-5 animate-page-in"
-        >
+        <div className="container mx-auto p-3 sm:p-4 lg:p-5 animate-page-in">
           {children}
         </div>
       </div>
@@ -100,7 +97,6 @@ export default function MainLayout({
             </header>
           </SidebarInset>
           <div
-            key={pathname}
             className={`${getChildrenWrapperClass()} animate-page-in`}
           >
             {children}

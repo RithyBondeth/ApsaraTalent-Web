@@ -73,7 +73,7 @@ export default function MatchingPage() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col px-2.5 sm:px-5">
+    <div className="w-full flex flex-col px-2.5 sm:px-5 animate-page-in">
       {/* Banner Section */}
       <div className="w-full flex items-center justify-between gap-4 sm:gap-5 tablet-xl:flex-col tablet-xl:items-center">
         {/* Content Section */}
@@ -124,6 +124,7 @@ export default function MatchingPage() {
                   currentUser?.employee?.id ?? currentUser?.company?.id ?? "";
                 handleChatNow(senderId, cmp.id);
               }}
+              onScheduleClick={() => router.push(`/interview?with=${cmp.id}`)}
             />
           ))
         ) : getCurrentCmpStore.currentCompanyMatching &&
@@ -146,6 +147,7 @@ export default function MatchingPage() {
                   currentUser?.employee?.id ?? currentUser?.company?.id ?? "";
                 handleChatNow(senderId, emp.id);
               }}
+              onScheduleClick={() => router.push(`/interview?with=${emp.id}`)}
             />
           ))
         ) : (

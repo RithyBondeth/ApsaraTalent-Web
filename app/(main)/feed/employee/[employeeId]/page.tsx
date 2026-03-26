@@ -56,52 +56,9 @@ import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import EmployeeDetailPageSkeleton from "./skeleton";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
+import { DetailCard as Card, SectionTitle, MetaChip } from "@/components/feed/detail-helpers";
 
 /* ── Local helpers ──────────────────────────────────────────────── */
-function Card({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <div
-      className={`bg-card rounded-2xl border border-border/60 shadow-sm ${className ?? ""}`}
-    >
-      {children}
-    </div>
-  );
-}
-
-function SectionTitle({
-  icon,
-  title,
-}: {
-  icon: React.ReactNode;
-  title: string;
-}) {
-  return (
-    <div className="flex items-center gap-2.5 mb-4 pb-3.5 border-b border-border/60">
-      <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-        <span className="[&>svg]:size-[18px] [&>svg]:text-primary [&>svg]:stroke-[1.5]">
-          {icon}
-        </span>
-      </div>
-      <h3 className="font-semibold text-base">{title}</h3>
-    </div>
-  );
-}
-
-function MetaChip({ icon, label }: { icon: React.ReactNode; label: string }) {
-  return (
-    <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/70 px-3 py-1.5 rounded-full [&>svg]:size-3.5 [&>svg]:shrink-0">
-      {icon}
-      {label}
-    </span>
-  );
-}
-
 function availabilityClass(availability: string) {
   const s = availability.toLowerCase();
   if (s.includes("full"))
@@ -131,6 +88,7 @@ export default function EmployeeDetailPage() {
   const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
 
   const [isInitialized, setIsInitialized] = useState(false);
+  const [accessGranted, setAccessGranted] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [openProfilePopup, setOpenProfilePopup] = useState(false);
   const ignoreNextClick = useRef(false);
@@ -138,6 +96,24 @@ export default function EmployeeDetailPage() {
   useEffect(() => {
     if (typeof window !== "undefined") setIsInitialized(true);
   }, []);
+
+  // Block access if this employee was already liked by the current company
+  useEffect(() => {
+    if (!isInitialized) return;
+    if (!currentUser?.company?.id) {
+      setAccessGranted(true);
+      return;
+    }
+    (async () => {
+      await useGetCurrentCompanyLikedStore.getState().queryCurrentCompanyLiked(currentUser.company!.id);
+      const liked = useGetCurrentCompanyLikedStore.getState().currentCompanyLiked;
+      if (liked?.some((e) => e.id === id)) {
+        router.replace("/feed");
+      } else {
+        setAccessGranted(true);
+      }
+    })();
+  }, [isInitialized, id, currentUser?.company?.id, router]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -191,6 +167,7 @@ export default function EmployeeDetailPage() {
         toast.error(companyLikeStore.error || t("failedToLikeEmployee"));
       } finally {
         queryCurrentCompanyLiked.queryCurrentCompanyLiked(companyId);
+        countAllCompanyFavoritesStore.countAllCompanyFavorites(companyId);
       }
     }
   };
@@ -238,7 +215,7 @@ export default function EmployeeDetailPage() {
     document.body.removeChild(link);
   };
 
-  const isLoading = !isInitialized || loading;
+  const isLoading = !isInitialized || !accessGranted || loading;
   if (isLoading)
     return (
       <div className="animate-page-in">

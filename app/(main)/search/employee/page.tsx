@@ -171,7 +171,7 @@ export default function EmployeeSearchPage() {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <form
-      className="w-full flex flex-col items-start gap-5 px-2.5 sm:px-5 lg:px-8"
+      className="w-full flex flex-col items-start gap-5 px-2.5 sm:px-5 lg:px-8 animate-page-in"
       onSubmit={handleSubmit(runSearch)}
     >
       {/* Banner Section */}

@@ -29,12 +29,12 @@ export const EmployeeFeedCard = React.memo(function EmployeeFeedCard({
   onSetProfileImage,
 }: IEmployeeFeedCardProps) {
   return (
-    <div
-      className={`break-inside-avoid mb-5${isLiking ? " animate-card-pop-shrink" : ""}`}
-    >
+    <div className={isLiking ? "animate-card-pop-shrink" : ""}>
       <EmployeeCard
         {...employee}
         id={employee.id}
+        variant="grid"
+        viewHref={`/feed/employee/${employee.id}`}
         onViewClick={() => onView(employee.id)}
         onSaveClick={() =>
           onSave(companyId, employee.id, employee.username ?? "Employee")

@@ -1,6 +1,7 @@
 import {
   LucideBriefcaseBusiness,
   LucideBuilding,
+  LucideCalendarCheck,
   LucideClock,
   LucideMapPin,
   LucideMessageCircle,
@@ -101,7 +102,13 @@ export default function MatchingCompanyCard(props: IMatchingCompanyCardProps) {
       </div>
 
       {/* Action Bar */}
-      <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end">
+      <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end gap-2">
+        {props.onScheduleClick && (
+          <Button size="sm" variant="outline" className="text-xs" onClick={props.onScheduleClick}>
+            <LucideCalendarCheck className="size-3.5" />
+            Schedule
+          </Button>
+        )}
         <Button size="sm" className="text-xs" onClick={props.onChatNowClick}>
           <LucideMessageCircle className="size-3.5" />
           Chat Now
