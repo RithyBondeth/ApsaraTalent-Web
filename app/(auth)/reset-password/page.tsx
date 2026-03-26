@@ -90,7 +90,7 @@ export default function ResetPasswordPage() {
       {/* Left Section */}
       <div className="w-1/2 min-h-screen flex items-center justify-center bg-background p-6 sm:p-10 tablet-md:w-full tablet-md:min-h-0 tablet-md:py-16">
         <div className="w-full max-w-[440px] flex flex-col items-start gap-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
-          {/* Icon Badge */}
+          {/* Icon Badge Section */}
           <div className="size-16 rounded-2xl bg-primary/10 flex items-center justify-center">
             <LucideKey className="size-7 text-primary" />
           </div>
@@ -112,7 +112,7 @@ export default function ResetPasswordPage() {
             className="w-full flex flex-col gap-3"
             onSubmit={handleSubmit(onSubmit)}
           >
-            {/* Token field — hidden when auto-filled from URL query param */}
+            {/* Token Field Section — hidden when auto-filled from URL query param */}
             {!tokenFromUrl && (
               <Input
                 prefix={<LucideKey />}
@@ -174,7 +174,7 @@ export default function ResetPasswordPage() {
 
       {/* Right Section: Image Poster */}
       <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary relative overflow-hidden tablet-md:hidden">
-        {/* Decorative Circles */}
+        {/* Decorative Circles Section */}
         <div className="absolute -top-20 -right-20 size-72 rounded-full bg-white/5" />
         <div className="absolute -bottom-32 -left-32 size-96 rounded-full bg-white/5" />
 

@@ -11,10 +11,6 @@ import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useEmployeeSignupStore } from "@/stores/apis/auth/employee-signup.store";
-import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
-import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
-import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
-import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
 import { useUploadEmployeeAvatarStore } from "@/stores/apis/employee/upload-emp-avatar.store";
 import { useUploadEmployeeCoverLetter } from "@/stores/apis/employee/upload-emp-coverletter.store";
 import { useUploadEmployeeResumeStore } from "@/stores/apis/employee/upload-emp-resume.store";
@@ -41,13 +37,9 @@ export default function EmployeeSignup() {
   const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
 
   /* ----------------------------- API Integration ---------------------------- */
-  // Get user basic data from Basic, Phone, Google, Github, LinkedIn, Facebook
+  // Get user basic data from Basic, Phone
   const { basicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
-  const googleUserData = useGoogleLoginStore();
-  const githubUserData = useGithubLoginStore();
-  const linkedInUserData = useLinkedInLoginStore();
-  const facebookUserData = useFacebookLoginStore();
 
   // Upload Avatar, Resume, CoverLetter
   const uploadAvatar = useUploadEmployeeAvatarStore();
@@ -353,7 +345,6 @@ export default function EmployeeSignup() {
     uploadAvatar.message,
     router,
   ]);
-
 
   /* -------------------------------- Loading States -------------------------------- */
   const isSignupLoading =

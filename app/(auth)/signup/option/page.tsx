@@ -136,7 +136,7 @@ export default function SingUpOption() {
   /* ---------------------------------------- Render UI ---------------------------------------- */
   return (
     <div className="w-full max-w-[500px] mx-auto flex flex-col items-start gap-6 py-8 tablet-lg:py-4">
-      {/* Icon Badge */}
+      {/* Icon Badge Section */}
       <div className="size-14 rounded-2xl bg-primary/10 flex items-center justify-center">
         <LucideUsers className="size-6 text-primary" />
       </div>
@@ -144,7 +144,7 @@ export default function SingUpOption() {
       {/* Title Section */}
       <TypographyH2>Who do you wanna be in our platform?</TypographyH2>
 
-      {/* Subtitle */}
+      {/* Subtitle Section */}
       <TypographyMuted>
         Choose your role to get started with Apsara Talent.
       </TypographyMuted>

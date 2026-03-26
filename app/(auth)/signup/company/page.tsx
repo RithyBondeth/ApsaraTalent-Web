@@ -39,13 +39,9 @@ export default function CompanySignup() {
   const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
 
   /* ----------------------------- API Integration ---------------------------- */
-  // Get user basic data from Basic, Phone, Google, Github, LinkedIn, Facebook
+  // Get user basic data from Basic, Phone
   const { basicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
-  const googleUserData = useGoogleLoginStore();
-  const githubUserData = useGithubLoginStore();
-  const linkedInUserData = useLinkedInLoginStore();
-  const facebookUserData = useFacebookLoginStore();
 
   // Upload Avatar, Cover
   const uploadAvatar = useUploadCompanyAvatarStore();
@@ -298,7 +294,6 @@ export default function CompanySignup() {
     uploadsComplete,
     router,
   ]);
-
 
   /* -------------------------------- Loading State -------------------------------- */
   const isSignupLoading =

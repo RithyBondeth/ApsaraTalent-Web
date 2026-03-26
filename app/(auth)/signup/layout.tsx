@@ -14,14 +14,14 @@ export default function SignupLayout({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState<boolean>(false);
   useEffect(() => setMounted(true), []);
 
-  /* -------------------- Get Current Image Based on Theme -------------------- */
+  /* ------------------- Get Current Image Based on Theme -------------------- */
   // Only resolve the theme after mounting — avoids SSR/client hydration mismatch
   // Because resolvedTheme is undefined on the server.
   const currentTheme = mounted ? resolvedTheme : "light";
   const signupImage = currentTheme === "dark" ? signupBlackSvg : signupWhiteSvg;
 
+  /* ------------------------------- Render UI ------------------------------- */
   return (
-    /* ------------------------------- Render UI ------------------------------- */
     <div className="min-h-screen w-full flex items-stretch overflow-x-hidden">
       {/* Children Section */}
       <div className="w-1/2 min-h-screen flex justify-center items-center px-6 sm:px-8 py-8 sm:py-10 tablet-xl:w-full tablet-xl:min-h-screen tablet-xl:items-start tablet-xl:px-4 tablet-xl:py-6">

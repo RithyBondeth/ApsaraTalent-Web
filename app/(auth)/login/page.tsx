@@ -89,7 +89,7 @@ function LoginPage() {
   const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore(); // Companies favorited by current employee
   const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore(); // Employees favorited by current company
 
-  //Regular Email-Password Authentication Store
+  // Regular Email-Password Authentication Store
   const { isAuthenticated, message, login, error, loading } = useLoginStore();
 
   // Social Authentication Stores

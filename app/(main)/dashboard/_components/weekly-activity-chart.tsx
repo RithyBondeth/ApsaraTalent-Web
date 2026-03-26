@@ -16,7 +16,9 @@ interface WeeklyActivityChartProps {
 }
 
 export function WeeklyActivityChart({ data }: WeeklyActivityChartProps) {
-  const hasData = data.some((d) => d.likes > 0 || d.received > 0 || d.matches > 0);
+  const hasData = data.some(
+    (d) => d.likes > 0 || d.received > 0 || d.matches > 0,
+  );
 
   if (!hasData) {
     return (
