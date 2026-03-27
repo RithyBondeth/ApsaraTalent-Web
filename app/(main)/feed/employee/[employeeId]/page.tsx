@@ -56,7 +56,11 @@ import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import EmployeeDetailPageSkeleton from "./skeleton";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
-import { DetailCard as Card, SectionTitle, MetaChip } from "@/components/feed/detail-helpers";
+import {
+  DetailCard as Card,
+  SectionTitle,
+  MetaChip,
+} from "@/components/feed/detail-helpers";
 
 /* ── Local helpers ──────────────────────────────────────────────── */
 function availabilityClass(availability: string) {
@@ -105,8 +109,11 @@ export default function EmployeeDetailPage() {
       return;
     }
     (async () => {
-      await useGetCurrentCompanyLikedStore.getState().queryCurrentCompanyLiked(currentUser.company!.id);
-      const liked = useGetCurrentCompanyLikedStore.getState().currentCompanyLiked;
+      await useGetCurrentCompanyLikedStore
+        .getState()
+        .queryCurrentCompanyLiked(currentUser.company!.id);
+      const liked =
+        useGetCurrentCompanyLikedStore.getState().currentCompanyLiked;
       if (liked?.some((e) => e.id === id)) {
         router.replace("/feed");
       } else {
@@ -272,7 +279,9 @@ export default function EmployeeDetailPage() {
             Back
           </button>
           <span className="text-border">|</span>
-          <span className="text-sm font-semibold truncate">{fullName || "Employee Detail"}</span>
+          <span className="text-sm font-semibold truncate">
+            {fullName || "Employee Detail"}
+          </span>
         </div>
       </header>
 
@@ -327,25 +336,25 @@ export default function EmployeeDetailPage() {
                 {employeeData.gender && (
                   <MetaChip
                     icon={<LucideTransgender />}
-                    label={employeeData.gender}
+                    text={employeeData.gender}
                   />
                 )}
                 {employeeData.yearsOfExperience && (
                   <MetaChip
                     icon={<LucideBriefcaseBusiness />}
-                    label={employeeData.yearsOfExperience}
+                    text={employeeData.yearsOfExperience}
                   />
                 )}
                 {employeeData.location && (
                   <MetaChip
                     icon={<LucideMapPinned />}
-                    label={employeeData.location}
+                    text={employeeData.location}
                   />
                 )}
                 {employeeData.username && (
                   <MetaChip
                     icon={<LucideAtSign />}
-                    label={employeeData.username}
+                    text={employeeData.username}
                   />
                 )}
               </div>

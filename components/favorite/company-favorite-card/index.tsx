@@ -1,3 +1,4 @@
+import MetaChip from "../../utils/meta-chip";
 import {
   LucideArrowRight,
   LucideBookmarkX,
@@ -13,22 +14,6 @@ import { Button } from "../../ui/button";
 import Tag from "../../utils/tag";
 import { IFavoriteCompanyCardProps } from "./props";
 
-/* ── Inline meta chip ── */
-function MetaChip({
-  icon,
-  text,
-}: {
-  icon: React.ReactNode;
-  text: string;
-}) {
-  return (
-    <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/70 px-3 py-1.5 rounded-full">
-      <span className="[&>svg]:size-3.5 flex-shrink-0">{icon}</span>
-      <span className="truncate">{text}</span>
-    </span>
-  );
-}
-
 export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
   const router = useRouter();
 
@@ -37,7 +22,7 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
       className={`bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20${props.isRemoving ? " animate-card-pop-shrink" : ""}`}
     >
       <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
-        {/* Avatar */}
+        {/* Avatar Section: Company Avatar */}
         <Avatar
           rounded="md"
           className="size-16 sm:size-20 flex-shrink-0 ring-[2px] ring-border/40"
@@ -48,9 +33,9 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
           <AvatarImage src={props.avatar} />
         </Avatar>
 
-        {/* Content */}
+        {/* Content Section */}
         <div className="flex-1 min-w-0 flex flex-col gap-3">
-          {/* Header */}
+          {/* Header Section: Company Name, Industry, Founded Year */}
           <div>
             <h3 className="text-base font-bold leading-tight truncate">
               {props.name}
@@ -67,14 +52,14 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
             </div>
           </div>
 
-          {/* Description */}
+          {/* Description Section */}
           {props.description && (
             <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
               {props.description}
             </p>
           )}
 
-          {/* Open Positions Tags */}
+          {/* OpenPositions Tags Section: OpenPosition Title Tags */}
           {props.openPosition.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {props.openPosition.map((op) => (
@@ -83,7 +68,7 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
             </div>
           )}
 
-          {/* Meta Chips */}
+          {/* Meta Chips Section: Company Size, Open Positions, Location */}
           <div className="flex flex-wrap gap-2">
             <MetaChip
               icon={<LucideUsers />}
@@ -106,7 +91,7 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
         </div>
       </div>
 
-      {/* Action Bar */}
+      {/* Action Bar Section: Remove and View Detail */}
       <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end gap-2">
         <Button
           variant="outline"

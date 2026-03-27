@@ -4,7 +4,6 @@ import { useAnalyticsStore } from "@/stores/apis/matching/analytics.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { LucideUsers } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { DashboardSkeleton } from "./skeleton";
 import { statisticCardConstants } from "@/utils/constants/dashboard.constant";
 import { WeeklyActivityChart } from "@/components/dashboard/weekly-activity-chart";
 import { MatchRateRadial } from "@/components/dashboard/match-rate-radial";
@@ -13,9 +12,12 @@ import { TypographyH3 } from "@/components/utils/typography/typography-h3";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import StatisticCard from "@/components/dashboard/statistic-card";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { DashboardLoadingSkeleton } from "@/components/dashboard/skeleton";
+import { useTranslations } from "next-intl";
 
 export default function DashboardPage() {
   /* ----------------------------- API Integration ---------------------------- */
+  const t = useTranslations("dashboard");
   const { user } = useGetCurrentUserStore();
   const { data, loading, error, fetchAnalytics } = useAnalyticsStore();
 
@@ -43,7 +45,7 @@ export default function DashboardPage() {
   const isEmployee = user?.role === "employee";
 
   /* ---------------------------- Loading State ------------------------------ */
-  if (loading || !data) return <DashboardSkeleton />;
+  if (loading || !data) return <DashboardLoadingSkeleton />;
 
   /* ----------------------------- Error State ------------------------------- */
   if (error)
@@ -58,9 +60,9 @@ export default function DashboardPage() {
     <div className="flex flex-col gap-6 p-4 md:p-6 animate-page-in">
       {/* Header Section */}
       <div className="flex flex-col items-start gap-1">
-        <TypographyH3>Dashboard</TypographyH3>
+        <TypographyH3>{t("title")}</TypographyH3>
         <TypographyP className="!m-0 text-sm text-muted-foreground">
-          Your activity overview at a glance.
+          {t("description")}
         </TypographyP>
       </div>
 
@@ -71,7 +73,7 @@ export default function DashboardPage() {
             key={index}
             icon={card.icon}
             value={data[card.key]}
-            label={card.label}
+            label={t(card.translationKey)}
             suffix={card.suffix}
             color={card.color}
             bgColor={card.bgColor}
@@ -86,23 +88,23 @@ export default function DashboardPage() {
           {/* Weekly Activity Header Section */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex flex-col items-start gap-2">
-              <TypographyH4>Weekly Activity</TypographyH4>
+              <TypographyH4>{t("weeklyActivity")}</TypographyH4>
               <TypographyP className="!m-0 text-xs text-muted-foreground">
-                Your activity over the last 7 days
+                {t("weeklyActivityDescription")}
               </TypographyP>
             </div>
             <div className="flex items-center gap-3 text-xs text-muted-foreground">
               <span className="flex items-center gap-1.5">
                 <span className="size-2.5 rounded-full bg-primary" />
-                Likes
+                {t("likes")}
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="size-2.5 rounded-full bg-pink-500" />
-                Received
+                {t("received")}
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="size-2.5 rounded-full bg-emerald-500" />
-                Matches
+                {t("matches")}
               </span>
             </div>
           </div>
@@ -114,9 +116,9 @@ export default function DashboardPage() {
         <div className="bg-card rounded-2xl border border-border/60 p-5 sm:p-6 flex flex-col">
           {/* Match Rate Header Section */}
           <div className="flex flex-col items-start gap-2">
-            <TypographyH4>Match Rate</TypographyH4>
+            <TypographyH4>{t("matchRate")}</TypographyH4>
             <TypographyP className="!m-0 text-xs text-muted-foreground">
-              Percentage of likes that became matches
+              {t("matchRateDescription")}
             </TypographyP>
           </div>
           {/* Match Rate Chart Section */}
@@ -130,7 +132,7 @@ export default function DashboardPage() {
       <div className="bg-card rounded-2xl border border-border/60 p-5 sm:p-6">
         <div className="flex items-center gap-2 mb-4">
           <LucideUsers className="h-4.5 w-4.5 text-primary" />
-          <TypographyH4>Recent Matches</TypographyH4>
+          <TypographyH4>{t("recentMatches")}</TypographyH4>
         </div>
         <RecentMatchesList
           matches={data.recentMatches}

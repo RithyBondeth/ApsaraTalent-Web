@@ -17,13 +17,15 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { FavoriteLoadingSkeleton } from "./skeleton";
+
 import {
   emptySvgImage,
   favoriteSvgImage,
 } from "@/utils/constants/asset.constant";
+import { FavoriteLoadingSkeleton } from "@/components/favorite/skeleton";
 
 export default function FavoritePage() {
+  /* --------------------------------- Utils ---------------------------------- */
   const t = useTranslations("toast");
 
   /* ----------------------------- API Integration ---------------------------- */
@@ -156,7 +158,7 @@ export default function FavoritePage() {
     ],
   );
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* ------------------------------- Loading State ------------------------------ */
   const isLoadingForEmployee =
     isEmployee &&
     (getAllEmployeeFavoritesStore.loading ||
@@ -171,6 +173,7 @@ export default function FavoritePage() {
 
   if (isLoading) return <FavoriteLoadingSkeleton isEmployee={isEmployee} />;
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col px-2.5 sm:px-5 animate-page-in">
       {/* Banner Section */}

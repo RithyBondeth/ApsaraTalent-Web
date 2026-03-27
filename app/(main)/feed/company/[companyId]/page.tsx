@@ -64,7 +64,11 @@ import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
-import { DetailCard as Card, SectionTitle, MetaChip } from "@/components/feed/detail-helpers";
+import {
+  DetailCard as Card,
+  SectionTitle,
+  MetaChip,
+} from "@/components/feed/detail-helpers";
 
 /* ── Main component ─────────────────────────────────────────────── */
 export default function CompanyDetailPage() {
@@ -319,19 +323,19 @@ export default function CompanyDetailPage() {
                 {companyData.location && (
                   <MetaChip
                     icon={<LucideMapPinned />}
-                    label={companyData.location}
+                    text={companyData.location}
                   />
                 )}
                 {companyData.companySize && (
                   <MetaChip
                     icon={<LucideUsers />}
-                    label={`${companyData.companySize}+ Employees`}
+                    text={`${companyData.companySize}+ Employees`}
                   />
                 )}
                 {companyData.foundedYear && (
                   <MetaChip
                     icon={<LucideCalendarDays />}
-                    label={`Est. ${companyData.foundedYear}`}
+                    text={`Est. ${companyData.foundedYear}`}
                   />
                 )}
               </div>

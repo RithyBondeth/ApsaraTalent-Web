@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function DashboardSkeleton() {
+export function DashboardLoadingSkeleton() {
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6">
       {/* Header Section */}

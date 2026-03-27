@@ -3,7 +3,7 @@ import { Bookmark, Handshake, Heart, HeartHandshake } from "lucide-react";
 
 type TStatisticCardConfig = {
   key: keyof TAnalyticsData;
-  label: string;
+  translationKey: string;
   icon: React.ElementType;
   color: string;
   bgColor: string;
@@ -13,28 +13,28 @@ type TStatisticCardConfig = {
 export const statisticCardConstants: TStatisticCardConfig[] = [
   {
     key: "totalLikesGiven",
-    label: "Likes Given",
+    translationKey: "likesGiven",
     icon: Heart,
     color: "text-rose-500",
     bgColor: "bg-rose-500/10",
   },
   {
     key: "totalLikesReceived",
-    label: "Likes Received",
+    translationKey: "likesReceived",
     icon: HeartHandshake,
     color: "text-pink-500",
     bgColor: "bg-pink-500/10",
   },
   {
     key: "totalMatches",
-    label: "Total Matches",
+    translationKey: "totalMatches",
     icon: Handshake,
     color: "text-emerald-500",
     bgColor: "bg-emerald-500/10",
   },
   {
     key: "totalFavorites",
-    label: "Saved Favorites",
+    translationKey: "savedFavorites",
     icon: Bookmark,
     color: "text-amber-500",
     bgColor: "bg-amber-500/10",

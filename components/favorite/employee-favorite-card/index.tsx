@@ -1,3 +1,4 @@
+import MetaChip from "../../utils/meta-chip";
 import { availabilityWordsFormat } from "@/utils/functions/availability-word-format";
 import {
   LucideArrowRight,
@@ -12,22 +13,6 @@ import { Button } from "../../ui/button";
 import Tag from "../../utils/tag";
 import { IFavoriteEmployeeCardProps } from "./props";
 
-/* ── Inline meta chip ── */
-function MetaChip({
-  icon,
-  text,
-}: {
-  icon: React.ReactNode;
-  text: string;
-}) {
-  return (
-    <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/70 px-3 py-1.5 rounded-full">
-      <span className="[&>svg]:size-3.5 flex-shrink-0">{icon}</span>
-      <span className="truncate">{text}</span>
-    </span>
-  );
-}
-
 /* ── Availability badge color ── */
 function availabilityClass(val: string) {
   const v = val.toLowerCase().replace(/[_-]/g, "");
@@ -40,7 +25,9 @@ function availabilityClass(val: string) {
   return "bg-muted text-muted-foreground";
 }
 
-export default function FavoriteEmployeeCard(props: IFavoriteEmployeeCardProps) {
+export default function FavoriteEmployeeCard(
+  props: IFavoriteEmployeeCardProps,
+) {
   const router = useRouter();
   const availLabel = availabilityWordsFormat(props.availability);
 

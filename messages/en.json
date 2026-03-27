@@ -116,5 +116,21 @@
     "resumeDownloaded": "Resume downloaded!",
     "resumeSavedToDownloads": "Your resume has been saved to your downloads folder.",
     "somethingWentWrong": "Something went wrong. Please try again."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "description": "Your activity overview at a glance.",
+    "weeklyActivity": "Weekly Activity",
+    "weeklyActivityDescription": "Your activity over the last 7 days",
+    "matchRate": "Match Rate",
+    "matchRateDescription": "Percentage of likes that became matches",
+    "recentMatches": "Recent Matches",
+    "likesGiven": "Likes Given",
+    "likesReceived": "Likes Received",
+    "totalMatches": "Total Matches",
+    "savedFavorites": "Saved Favorites",
+    "likes": "Likes",
+    "received": "Received",
+    "matches": "Matches"
   }
 }

@@ -24,6 +24,7 @@ const TITLES: Record<string, { en: string; km: string }> = {
   "/reset-password": { en: "Reset Password", km: "កំណត់ពាក្យសម្ងាត់ឡើងវិញ" },
 
   /* Main app */
+  "/dashboard": { en: "Dashboard", km: "ផ្ទាំងគ្រប់គ្រង" },
   "/feed": { en: "Feed", km: "ព័ត៌មានថ្មី" },
   "/search/employee": { en: "Find Talent", km: "ស្វែងរក" },
   "/search/company": { en: "Find Companies", km: "ស្វែងរក" },

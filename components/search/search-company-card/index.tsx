@@ -1,3 +1,4 @@
+import MetaChip from "../../utils/meta-chip";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Tag from "@/components/utils/tag";
@@ -12,22 +13,6 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { TSearchCompanyCardProps } from "./prop";
-
-/* ── Inline meta chip ── */
-function MetaChip({
-  icon,
-  text,
-}: {
-  icon: React.ReactNode;
-  text: string;
-}) {
-  return (
-    <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/70 px-3 py-1.5 rounded-full">
-      <span className="[&>svg]:size-3.5 flex-shrink-0">{icon}</span>
-      <span className="truncate">{text}</span>
-    </span>
-  );
-}
 
 export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
   const router = useRouter();
@@ -44,10 +29,7 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
             <AvatarFallback className="text-xs font-semibold">
               {props.company.name.slice(0, 3).toUpperCase()}
             </AvatarFallback>
-            <AvatarImage
-              src={props.company.avatar}
-              alt={props.company.name}
-            />
+            <AvatarImage src={props.company.avatar} alt={props.company.name} />
           </Avatar>
 
           <div className="flex-1 min-w-0">

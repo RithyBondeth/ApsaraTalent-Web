@@ -1,4 +1,4 @@
-import React from "react";
+import MetaChip from "../utils/meta-chip";
 
 export function DetailCard({
   children,
@@ -35,17 +35,4 @@ export function SectionTitle({
   );
 }
 
-export function MetaChip({
-  icon,
-  label,
-}: {
-  icon: React.ReactNode;
-  label: string;
-}) {
-  return (
-    <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/70 px-3 py-1.5 rounded-full [&>svg]:size-3.5 [&>svg]:shrink-0">
-      {icon}
-      {label}
-    </span>
-  );
-}
+export { MetaChip };

@@ -2,10 +2,10 @@ import {
   TRecentMatch,
   TWeeklyActivity,
 } from "@/stores/apis/matching/analytics.store";
-import { ElementType, JSX } from "react";
+import { ElementType } from "react";
 
 export interface IStatisticCardProps {
-  icon: ElementType<any, keyof JSX.IntrinsicElements>;
+  icon: ElementType;
   value: number | TWeeklyActivity[] | TRecentMatch[];
   label: string;
   suffix?: string;

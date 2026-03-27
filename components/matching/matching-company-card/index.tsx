@@ -1,3 +1,4 @@
+import MetaChip from "../../utils/meta-chip";
 import {
   LucideBriefcaseBusiness,
   LucideBuilding,
@@ -11,22 +12,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import Tag from "../../utils/tag";
 import { IMatchingCompanyCardProps } from "./props";
-
-/* ── Inline meta chip ── */
-function MetaChip({
-  icon,
-  text,
-}: {
-  icon: React.ReactNode;
-  text: string;
-}) {
-  return (
-    <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/70 px-3 py-1.5 rounded-full">
-      <span className="[&>svg]:size-3.5 flex-shrink-0">{icon}</span>
-      <span className="truncate">{text}</span>
-    </span>
-  );
-}
 
 export default function MatchingCompanyCard(props: IMatchingCompanyCardProps) {
   return (
@@ -104,7 +89,12 @@ export default function MatchingCompanyCard(props: IMatchingCompanyCardProps) {
       {/* Action Bar */}
       <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end gap-2">
         {props.onScheduleClick && (
-          <Button size="sm" variant="outline" className="text-xs" onClick={props.onScheduleClick}>
+          <Button
+            size="sm"
+            variant="outline"
+            className="text-xs"
+            onClick={props.onScheduleClick}
+          >
             <LucideCalendarCheck className="size-3.5" />
             Schedule
           </Button>

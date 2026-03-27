@@ -1,3 +1,4 @@
+import MetaChip from "../../utils/meta-chip";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Tag from "@/components/utils/tag";
@@ -9,22 +10,6 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { TSearchEmployeeCardProps } from "./props";
-
-/* ── Inline meta chip ── */
-function MetaChip({
-  icon,
-  text,
-}: {
-  icon: React.ReactNode;
-  text: string;
-}) {
-  return (
-    <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/70 px-3 py-1.5 rounded-full">
-      <span className="[&>svg]:size-3.5 flex-shrink-0">{icon}</span>
-      <span className="truncate">{text}</span>
-    </span>
-  );
-}
 
 /* ── Availability badge color ── */
 function availabilityClass(val: string) {
@@ -83,10 +68,7 @@ export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
           />
           <MetaChip icon={<LucideMapPin />} text={props.location} />
           <MetaChip icon={<LucideClock />} text={props.availability} />
-          <MetaChip
-            icon={<LucideGraduationCap />}
-            text={props.education}
-          />
+          <MetaChip icon={<LucideGraduationCap />} text={props.education} />
         </div>
 
         {/* Description */}
