@@ -118,11 +118,15 @@ import { SectionTitle } from "@/components/utils/section-title";
 import ProfileCompletionCard from "@/components/profile/profile-completion-card";
 
 export default function EmployeeProfilePage() {
+  /* ----------------------------------- Utils ---------------------------------- */
   const t = useTranslations("toast");
 
   /* -------------------------------- All States -------------------------------- */
   // Util States
   const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [avatarPreview, setAvatarPreview] = useState<string | undefined>(
+    undefined,
+  );
 
   // Avatar State
   const {
@@ -266,11 +270,7 @@ export default function EmployeeProfilePage() {
     getCurrentUser();
   }, [getCurrentUser]);
 
-  // Avatar Preview
-  const [avatarPreview, setAvatarPreview] = useState<string | undefined>(
-    undefined,
-  );
-
+  // Avatar Preview Effect
   useEffect(() => {
     if (!avatarFile) {
       setAvatarPreview(employee?.avatar);
@@ -374,8 +374,8 @@ export default function EmployeeProfilePage() {
   }, [user, employee, form]);
 
   /* -------------------------------- Methods --------------------------------- */
-  // ── Edit Mode Methods ────────────────────────────────────────────────────
-  // ── Close All The Dialogs ─────────────────────────────────────────
+  // ── Edit Mode Methods ──────────────────────────────────────────
+  // ── Close All The Dialogs ───────────────────────────────
   const closeAllDialogs = () => {
     setOpenAvatarPopup(false);
     setOpenRemoveAvatarDialog(false);
@@ -390,7 +390,7 @@ export default function EmployeeProfilePage() {
     }));
   };
 
-  // ── Enable Edit Mode ─────────────────────────────────────────
+  // ── Enable Edit Mode ───────────────────────────────────
   const enableEditMode = () => {
     getAllCareerScopesStore.getAllCareerScopes();
     setIsEdit(true);
@@ -406,7 +406,7 @@ export default function EmployeeProfilePage() {
     setIsEdit(false);
   };
 
-  // ── Open RemoveExperienceOrEducation Dialog ─────────────────────────────────────────
+  // ── Open RemoveExperienceOrEducation Dialog ─────────────────────
   const openRemoveExperienceOrEducationDialog = (
     type: "experience" | "education",
     id: string,
@@ -417,7 +417,7 @@ export default function EmployeeProfilePage() {
     }));
   };
 
-  // ── Close RemoveExperienceOrEducation Dialog ─────────────────────────────────────────
+  // ── Close RemoveExperienceOrEducation Dialog ────────────────────
   const closeRemoveExperienceOrEducationDialog = (
     type: "experience" | "education",
   ) => {
@@ -437,7 +437,7 @@ export default function EmployeeProfilePage() {
     toast.success(t("removeResumeSuccess"));
   };
 
-  // ── API: Remove CoverLetter ─────────────────────────────────────────
+  // ── API: Remove CoverLetter ─────────────────────────────────────
   const removeCoverLetter = async () => {
     if (employee)
       await removeEmpCoverLetterStore.removeEmpCoverLetter(employee.id);
@@ -456,7 +456,7 @@ export default function EmployeeProfilePage() {
     toast.success(t("removeAvatarSuccess"));
   };
 
-  // ── Handle Click Avatar Popup ─────────────────────────────────────────
+  // ── Handle Click Avatar Popup ───────────────────────────────────
   const handleClickAvatarPopup = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -1055,27 +1055,21 @@ export default function EmployeeProfilePage() {
       className="!min-w-full flex flex-col gap-5 overflow-x-hidden animate-page-in"
       onSubmit={handleSubmit}
     >
-      <LoadingDialog
-        loading={updateProfileLoadingState}
-        title={loadingMessage || "Updating employee profile..."}
-        subTitle="Please wait while we save your profile changes."
-      />
-
-      {/* Profile Completion */}
+      {/* Profile Completion Section */}
       <ProfileCompletionCard
         percentage={profileCompletion.percentage}
         missingFields={profileCompletion.missingFields}
       />
 
-      {/* Header Section*/}
+      {/* Header Section */}
       <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
-        {/* Gradient Banner */}
+        {/* Gradient Banner Section */}
         <div className="h-28 sm:h-36 bg-gradient-to-r from-primary to-primary/60 relative overflow-hidden">
           <div className="absolute -top-6 right-10 size-36 rounded-full bg-white/5" />
           <div className="absolute top-4 right-32 size-20 rounded-full bg-white/5" />
           <div className="absolute -bottom-4 right-4 size-24 rounded-full bg-white/5" />
 
-          {/* Edit/Save/Cancel buttons — top-right of banner on desktop */}
+          {/* Edit/Save/Cancel Button Section: top-right of banner on desktop */}
           <div className="absolute top-4 right-4 hidden sm:flex items-center gap-3">
             {isEdit ? (
               <>
@@ -1105,10 +1099,10 @@ export default function EmployeeProfilePage() {
           </div>
         </div>
 
-        {/* Avatar + name area */}
+        {/* Avatar, Name, Job Title Section */}
         <div className="px-4 sm:px-6 pb-5">
           <div className="flex items-start gap-4 tablet-md:flex-col tablet-md:items-center">
-            {/* Avatar with overlap */}
+            {/* Avatar with Overlap Secrion */}
             <div
               className="relative -mt-10 sm:-mt-12 flex-shrink-0"
               onClick={(e) => {
@@ -1165,6 +1159,7 @@ export default function EmployeeProfilePage() {
               />
             </div>
 
+            {/* Avatar Input Section */}
             <input
               ref={avatarInputRef}
               type="file"
@@ -1174,7 +1169,7 @@ export default function EmployeeProfilePage() {
               aria-label="Upload avatar image"
             />
 
-            {/* Name + job title */}
+            {/* Name and Job Title Section */}
             <div className="flex flex-col items-start gap-1 pt-2 tablet-md:items-center tablet-md:pt-0 flex-1">
               <h2 className="text-xl font-bold leading-tight">
                 {employee.username}
@@ -1182,7 +1177,7 @@ export default function EmployeeProfilePage() {
               <p className="text-sm text-muted-foreground">{employee.job}</p>
             </div>
 
-            {/* Edit/Save/Cancel buttons — visible only on mobile (stacked below name) */}
+            {/* Edit/Save/Cancel Button Section — visible only on mobile (stacked below name) */}
             <div className="flex sm:hidden items-center gap-3 tablet-md:w-full tablet-md:justify-center">
               {isEdit ? (
                 <>
@@ -1218,7 +1213,7 @@ export default function EmployeeProfilePage() {
       <div className="flex items-start gap-5 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
         {/* LEFT Side Section */}
         <div className="w-[60%] min-w-0 flex flex-col gap-5">
-          {/* Personal Information Section */}
+          {/* Personal Information Section: Firstname, Lastname, Username, DOB, Location, Gender, Email and Phone Number */}
           <div className="w-full flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
             <SectionTitle icon={<LucideUser />} title="Personal Information" />
 
@@ -2147,7 +2142,7 @@ export default function EmployeeProfilePage() {
             />
           </div>
 
-          {/* Social Section */}
+          {/* Socials Section */}
           <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
             <SectionTitle icon={<LucideGlobe />} title="Social Information" />
 
@@ -2383,6 +2378,13 @@ export default function EmployeeProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Loading Dialog Section */}
+      <LoadingDialog
+        loading={updateProfileLoadingState}
+        title={loadingMessage || "Updating employee profile..."}
+        subTitle="Please wait while we save your profile changes."
+      />
 
       {/* Profile Popup Dialog Section */}
       <ImagePopup

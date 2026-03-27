@@ -202,6 +202,15 @@ export default function ProfilePage() {
   const [openRemoveOpenPositionDialog, setOpenRemoveOpenPositionDialog] =
     useState<{ open: boolean; id: string | null }>({ open: false, id: null });
 
+  // Avatar and Cover Preview
+  const [avatarOrCoverPreview, setAvatarOrCoverPreview] = useState<{
+    avatar: string | undefined;
+    cover: string | undefined;
+  }>({
+    avatar: undefined,
+    cover: undefined,
+  });
+
   /* ----------------------------- API Integration ---------------------------- */
   // Current User Infomation and Current User CareerScopes
   const { user, loading, getCurrentUser } = useGetCurrentUserStore();
@@ -258,15 +267,6 @@ export default function ProfilePage() {
   useEffect(() => {
     getCurrentUser();
   }, []);
-
-  // Avatar and Cover Preview
-  const [avatarOrCoverPreview, setAvatarOrCoverPreview] = useState<{
-    avatar: string | undefined;
-    cover: string | undefined;
-  }>({
-    avatar: undefined,
-    cover: undefined,
-  });
 
   useEffect(() => {
     let avatarUrl: string | undefined;
@@ -362,7 +362,7 @@ export default function ProfilePage() {
 
   /* -------------------------------- Methods --------------------------------- */
   // ── Edit Mode Methods ────────────────────────────────────────────────────
-  // ── Close All The Dialogs ─────────────────────────────────────────
+  // ── Close All The Dialogs ─────────────────────────────────────
   const closeAllDialogs = () => {
     setOpenRemoveAvatarDialog(false);
     setOpenCropDialog(false);
@@ -377,7 +377,7 @@ export default function ProfilePage() {
     setIsEdit(true);
   };
 
-  // ── Disable Edit Mode ─────────────────────────────────────────
+  // ── Disable Edit Mode ────────────────────────────────────────────────────
   const disableEditMode = async () => {
     await getCurrentUser();
     setAvatarFile(null);
@@ -968,7 +968,7 @@ export default function ProfilePage() {
   /* -------------------------------- Empty State ------------------------------ */
   if (!user || !company) return null;
 
-  /* -------------------------------- Profile Completion ---------------------- */
+  /* -------------------------------- Profile Completion ----------------------- */
   const profileCompletion = getCompanyProfileCompletion(company);
 
   /* -------------------------------- Render UI -------------------------------- */
@@ -977,13 +977,7 @@ export default function ProfilePage() {
       onSubmit={handleSubmit}
       className="flex flex-col gap-5 overflow-x-hidden animate-page-in"
     >
-      <LoadingDialog
-        loading={updateProfileLoadingState}
-        title={loadingMessage || "Updating company profile..."}
-        subTitle="Please wait while we save your company details."
-      />
-
-      {/* Profile Completion */}
+      {/* Profile Completion Section */}
       <ProfileCompletionCard
         percentage={profileCompletion.percentage}
         missingFields={profileCompletion.missingFields}
@@ -991,7 +985,7 @@ export default function ProfilePage() {
 
       {/* Header Section */}
       <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
-        {/* Cover image */}
+        {/* Cover Image Section */}
         <div
           className={`h-44 sm:h-56 rounded-t-2xl bg-cover bg-center bg-no-repeat relative ${!company.cover ? "bg-gradient-to-br from-primary/25 via-primary/10 to-muted/80" : ""}`}
           style={
@@ -1028,10 +1022,10 @@ export default function ProfilePage() {
           )}
         </div>
 
-        {/* Identity */}
         <div className="px-4 sm:px-6 pb-5">
+          {/* Identity Section */}
           <div className="flex items-start gap-4 tablet-md:flex-col tablet-md:items-center">
-            {/* Avatar with overlap */}
+            {/* Avatar with Overlap Section */}
             <div className="relative -mt-10 sm:-mt-12 flex-shrink-0">
               <Avatar
                 className="size-20 sm:size-24 ring-[3px] ring-card shadow-xl bg-primary-foreground"
@@ -1068,6 +1062,7 @@ export default function ProfilePage() {
               )}
             </div>
 
+            {/* Avatar Input Section */}
             <input
               ref={avatarInputRef}
               type="file"
@@ -1076,6 +1071,7 @@ export default function ProfilePage() {
               onChange={(e) => handleFileChange(e, "avatar")}
             />
 
+            {/* Cover Input Section */}
             <input
               ref={coverInputRef}
               type="file"
@@ -1869,7 +1865,6 @@ export default function ProfilePage() {
           {/* Social Section */}
           <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
             <SectionTitle icon={<LucideGlobe />} title="Social Information" />
-
             {/* Social List Section */}
             {socials && socials.length > 0 ? (
               <div className="flex flex-wrap gap-2">
@@ -2102,6 +2097,13 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Loading Dialog Section */}
+      <LoadingDialog
+        loading={updateProfileLoadingState}
+        title={loadingMessage || "Updating company profile..."}
+        subTitle="Please wait while we save your company details."
+      />
 
       {/* Image Popup Section */}
       {currentCompanyImage && (

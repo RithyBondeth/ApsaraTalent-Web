@@ -149,6 +149,7 @@ export default function NotificationPage() {
           </DropdownMenuContent>
         </DropdownMenu>
 
+        {/* Mark All As Read Button Section */}
         <Button
           className="h-9 w-full text-xs sm:w-auto"
           variant="outline"
