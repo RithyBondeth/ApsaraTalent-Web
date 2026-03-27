@@ -43,6 +43,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { employeeSearchSchema, TEmployeeSearchSchema } from "./validation";
 import { EmployeeSearchSvg } from "@/utils/constants/asset.constant";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
 
 export default function EmployeeSearchPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -56,8 +57,9 @@ export default function EmployeeSearchPage() {
   /* -------------------------------- All States ------------------------------ */
   // Employee Search for Company Helper
   const [scopeNames, setScopeNames] = useState<string[]>([]);
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
 
+  /* ------------------------------- Search Form ------------------------------ */
   // React Hook Form: Employee Search Form
   const { register, control, setValue, handleSubmit, watch } =
     useForm<TEmployeeSearchSchema>({
@@ -113,14 +115,6 @@ export default function EmployeeSearchPage() {
     [runSearch],
   );
 
-  // ── Handle Radio Change ─────────────────────────────────────────
-  const handleRadioChange = (
-    fieldName: keyof TEmployeeSearchSchema,
-    value: TEmployeeSearchSchema[keyof TEmployeeSearchSchema],
-  ) => {
-    setValue(fieldName, value, { shouldDirty: true });
-  };
-
   /* --------------------------------- Effects --------------------------------- */
   // Initial Search Effect (Once per mount / Per user ready)
   useEffect(() => {
@@ -165,6 +159,15 @@ export default function EmployeeSearchPage() {
   useEffect(() => {
     return () => debouncedRunSearch.cancel();
   }, [debouncedRunSearch]);
+
+  /* ----------------------------- Event Handlers ---------------------------- */
+  // ── Handle Radio Change ─────────────────────────────────────────
+  const handleRadioChange = (
+    fieldName: keyof TEmployeeSearchSchema,
+    value: TEmployeeSearchSchema[keyof TEmployeeSearchSchema],
+  ) => {
+    setValue(fieldName, value, { shouldDirty: true });
+  };
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -216,14 +219,14 @@ export default function EmployeeSearchPage() {
           className="h-10 w-full justify-between"
           onClick={() => setMobileFiltersOpen((v) => !v)}
         >
-          <span className="flex items-center gap-2 text-sm">
+          <div className="flex items-center gap-2">
             <LucideSlidersHorizontal className="h-4 w-4" />
-            Refine Results
-          </span>
+            <TypographySmall>Refine Results</TypographySmall>
+          </div>
           {mobileFiltersOpen ? (
             <LucideX className="h-4 w-4" />
           ) : (
-            <span className="text-xs text-muted-foreground">Open</span>
+            <TypographySmall>Open</TypographySmall>
           )}
         </Button>
       </div>
@@ -537,12 +540,15 @@ export default function EmployeeSearchPage() {
 
         {/* Right Side: Results Section */}
         <div className="w-3/4 flex flex-col items-start gap-3 tablet-xl:w-full">
+          {/* Results Header Section */}
           <div className="w-full flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-3">
             <TypographyH4 className="text-lg">
               {loading ? (
                 <Skeleton className="h-6 w-40 bg-muted" />
               ) : error ? (
-                <span className="text-destructive">0 Job is listing</span>
+                <TypographySmall className="text-destructive">
+                  0 Job is listing
+                </TypographySmall>
               ) : jobs && jobs.length > 0 ? (
                 `${jobs.length} Job${jobs.length === 1 ? "" : "s"} listed`
               ) : (
@@ -596,6 +602,7 @@ export default function EmployeeSearchPage() {
             />
           </div>
 
+          {/* Results List Section */}
           <div className="w-full flex flex-col items-start gap-2">
             {loading ? (
               /* Loading Skeleton Section */
@@ -638,7 +645,7 @@ export default function EmployeeSearchPage() {
                 />
               ))
             ) : (
-              /* Not Found Section */
+              /* Empty List Section */
               <div className="w-full text-center py-10">
                 <TypographyP className="text-muted-foreground">
                   No jobs match your search criteria. Try adjusting your

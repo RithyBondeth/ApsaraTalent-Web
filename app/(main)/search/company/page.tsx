@@ -39,6 +39,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { companySearchSchema, TCompanySearchSchema } from "./validation";
 import { CompanySearchSvg } from "@/utils/constants/asset.constant";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
 
 export default function CompanySearchPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -53,7 +54,7 @@ export default function CompanySearchPage() {
   /* -------------------------------- All States ------------------------------ */
   // Company Search For Employee Helper
   const [scopeNames, setScopeNames] = useState<string[]>([]);
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
 
   /* ------------------------------- Search Form ------------------------------ */
   // React Hook Form: Company Search Form
@@ -217,21 +218,22 @@ export default function CompanySearchPage() {
           className="h-10 w-full justify-between"
           onClick={() => setMobileFiltersOpen((v) => !v)}
         >
-          <span className="flex items-center gap-2 text-sm">
+          <TypographySmall className="flex items-center gap-2 text-sm">
             <LucideSlidersHorizontal className="h-4 w-4" />
             Refine Results
-          </span>
+          </TypographySmall>
           {mobileFiltersOpen ? (
             <LucideX className="h-4 w-4" />
           ) : (
-            <span className="text-xs text-muted-foreground">Open</span>
+            <TypographySmall className="text-xs text-muted-foreground">
+              Open
+            </TypographySmall>
           )}
         </Button>
       </div>
 
-      {/* Left Side: Filter Section */}
       <div className="w-full flex items-start gap-5 tablet-xl:!flex-col tablet-xl:[&>div]:w-full">
-        {/* Filters Section */}
+        {/* Left Side: Filters Section */}
         <div
           className={`w-1/4 flex flex-col items-start gap-6 p-4 sm:p-5 shadow-md rounded-md tablet-xl:w-full ${
             mobileFiltersOpen ? "tablet-xl:flex" : "tablet-xl:hidden"
@@ -353,14 +355,17 @@ export default function CompanySearchPage() {
           </div>
         </div>
 
-        {/* Results Section */}
+        {/* Right Side: Results Section */}
         <div className="w-3/4 flex flex-col items-start gap-3 tablet-xl:w-full">
+          {/* Results Header Section */}
           <div className="w-full flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-3">
             <TypographyH4 className="text-lg">
               {loading ? (
                 <Skeleton className="h-6 w-40 bg-muted" />
               ) : error ? (
-                <span className="text-destructive">0 Employee Found</span>
+                <TypographySmall className="text-destructive">
+                  0 Employee Found
+                </TypographySmall>
               ) : employees && employees.length > 0 ? (
                 `${employees.length} Employee${employees.length > 1 ? "s" : ""} Found`
               ) : (
@@ -414,9 +419,10 @@ export default function CompanySearchPage() {
             />
           </div>
 
+          {/* Results List Section */}
           <div className="w-full flex flex-col items-start gap-2">
             {loading ? (
-              /* Loading Skeleton Section */
+              /* Loading State Section */
               <div className="w-full mb-3">
                 {Array(3)
                   .fill(0)
@@ -425,7 +431,7 @@ export default function CompanySearchPage() {
                   ))}
               </div>
             ) : error ? (
-              /* Error Section */
+              /* Error State Section */
               <div className="w-full mb-3">
                 <SearchErrorCard
                   error={error}
@@ -460,7 +466,7 @@ export default function CompanySearchPage() {
                 />
               ))
             ) : (
-              /* Not Found Section */
+              /* Empty List Section */
               <div className="w-full text-center py-10">
                 <TypographyP className="text-muted-foreground">
                   No employees match your search criteria. Try adjusting your

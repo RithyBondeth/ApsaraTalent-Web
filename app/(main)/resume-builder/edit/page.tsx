@@ -24,13 +24,15 @@ import {
   DOWNLOAD_RESUME_STEPS,
   LIVE_RESUME_PREVIEW_DEBOUNCE_MS,
 } from "@/utils/constants/resume.constant";
+import { TypographyLead } from "@/components/utils/typography/typography-lead";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { TypographyP } from "@/components/utils/typography/typography-p";
 
 export default function ResumeEditorPage() {
-  const t = useTranslations("toast");
-
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const isMobile = useIsMobile();
+  const t = useTranslations("toast");
 
   /* ----------------------------- API Integration ---------------------------- */
   const { payload, clearPayload } = useResumeEditStore();
@@ -53,6 +55,7 @@ export default function ResumeEditorPage() {
   const [dlProgress, setDlProgress] = useState<number>(0);
   const progressTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  /* ------------------------------ React Hook Form --------------------------- */
   const { register, control, getValues, setValue, reset } =
     useForm<IBuildResume>({
       defaultValues: payload ?? undefined,
@@ -173,14 +176,15 @@ export default function ResumeEditorPage() {
     router.push("/resume-builder");
   };
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* ------------------------------- Null State -------------------------------- */
   if (!payload) return null;
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col h-[calc(100dvh-4rem)] overflow-hidden animate-page-in">
-      {/* ── Top Action Bar ───────────────────────────────────────── */}
+      {/* Top Action Bar Section */}
       <div className="flex flex-col gap-2 border-b bg-background px-2.5 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5">
-        {/* Left: Back + Toggle Form + Title */}
+        {/* Left Section: Back + Toggle Form + Title */}
         <div className="flex w-full flex-wrap items-start gap-2 sm:w-auto sm:items-center sm:gap-3">
           <Button
             variant="outline"
@@ -192,7 +196,7 @@ export default function ResumeEditorPage() {
             Back
           </Button>
 
-          {/* Toggle The Form Panel */}
+          {/* Toggle The Form Panel Section */}
           <Button
             variant="outline"
             size="sm"
@@ -213,23 +217,24 @@ export default function ResumeEditorPage() {
             </span>
           </Button>
 
+          {/* Resume Title Section */}
           <div className="flex items-center gap-2">
             <FileText size={16} className="text-primary shrink-0" />
             <div>
-              <p className="text-sm font-semibold leading-none">
+              <TypographyLead className="text-sm font-semibold leading-none">
                 Resume Editor
-              </p>
-              <p className="text-xs text-muted-foreground mt-0.5 capitalize">
+              </TypographyLead>
+              <TypographySmall className="text-xs text-muted-foreground mt-0.5 capitalize">
                 Template:{" "}
                 <span className="text-foreground font-medium">
                   {payload.template}
                 </span>
-              </p>
+              </TypographySmall>
             </div>
           </div>
         </div>
 
-        {/* Right: Download Button */}
+        {/* Right Section: Download Button */}
         <Button
           onClick={handleDownload}
           disabled={downloading}
@@ -240,16 +245,16 @@ export default function ResumeEditorPage() {
         </Button>
       </div>
 
-      {/* ── Split Layout ─────────────────────────────────────────── */}
+      {/* Split Layout Section */}
       <div className="flex flex-1 overflow-hidden flex-col lg:flex-row">
-        {/* Left — Form Panel (Collapsible) */}
+        {/* Left Section: Form Panel (Collapsible) */}
         {formPanelOpen && (
           <div className="w-full shrink-0 flex flex-col border-b bg-background overflow-hidden max-h-[56vh] lg:max-h-none lg:w-[420px] lg:border-b-0 lg:border-r">
             <div className="shrink-0 px-3 pt-3 pb-2 sm:px-4 sm:pt-4">
-              <p className="text-xs text-muted-foreground">
+              <TypographyP className="text-xs text-muted-foreground">
                 Edit your resume details below. The canvas updates
                 automatically.
-              </p>
+              </TypographyP>
             </div>
             <div className="flex-1 overflow-hidden px-3 pb-3 sm:px-4 sm:pb-4">
               <ResumeEditorFormPanel
@@ -261,7 +266,7 @@ export default function ResumeEditorPage() {
           </div>
         )}
 
-        {/* Right — editable canvas (full width when form is hidden) */}
+        {/* Right Section: Editable Canvas (full width when form is hidden) */}
         <div className="flex-1 flex flex-col overflow-hidden">
           <ResumeEditorPreviewPanel
             data={previewData}
@@ -272,7 +277,7 @@ export default function ResumeEditorPage() {
         </div>
       </div>
 
-      {/* Download Loading Dialog */}
+      {/* Download Loading Dialog Section */}
       <LoadingDialog
         loading={downloading}
         title="Generating your PDF..."
