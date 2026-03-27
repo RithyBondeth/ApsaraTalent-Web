@@ -59,29 +59,25 @@ import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 import MetaChip from "@/components/utils/meta-chip";
 import { DetailCard } from "@/components/utils/detail-card";
 import { SectionTitle } from "@/components/utils/section-title";
+import { getAvailabilityStyleClass } from "@/utils/extensions/get-availability-class";
 
-/* ── Local helpers ──────────────────────────────────────────────── */
-function availabilityClass(availability: string) {
-  const s = availability.toLowerCase();
-  if (s.includes("full"))
-    return "bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-300";
-  if (s.includes("part"))
-    return "bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300";
-  if (s.includes("free"))
-    return "bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300";
-  return "bg-muted text-muted-foreground";
-}
-
-/* ── Main component ─────────────────────────────────────────────── */
 export default function EmployeeDetailPage() {
+  /* ---------------------------------- Utils ---------------------------------- */
   const router = useRouter();
   const params = useParams<{ employeeId: string }>();
   const id = params.employeeId;
-
   const t = useTranslations("toast");
+
+  /* -------------------------------- All States ------------------------------- */
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [accessGranted, setAccessGranted] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [openProfilePopup, setOpenProfilePopup] = useState(false);
+  const ignoreNextClick = useRef(false);
+
+  /* ------------------------------ API Integration ---------------------------- */
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const { loading, employeeData, queryOneEmployee } = useGetOneEmployeeStore();
-
   const companyLikeStore = useCompanyLikeStore();
   const queryCurrentCompanyLiked = useGetCurrentCompanyLikedStore();
   const companyFavEmployeeStore = useCompanyFavEmployeeStore();
@@ -89,12 +85,7 @@ export default function EmployeeDetailPage() {
   const countCurrentCompanyMatching = useCountCurrentCompanyMatchingStore();
   const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
 
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [accessGranted, setAccessGranted] = useState(false);
-  const [fetchError, setFetchError] = useState<string | null>(null);
-  const [openProfilePopup, setOpenProfilePopup] = useState(false);
-  const ignoreNextClick = useRef(false);
-
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     if (typeof window !== "undefined") setIsInitialized(true);
   }, []);
@@ -141,6 +132,8 @@ export default function EmployeeDetailPage() {
     }
   }, [openProfilePopup]);
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle Company Like Employee ─────────────────────────────────────────
   const handleLike = async () => {
     if (currentUser?.company) {
       const companyId = currentUser.company.id;
@@ -177,6 +170,7 @@ export default function EmployeeDetailPage() {
     }
   };
 
+  // ── Handle Add Employee To Favorite ─────────────────────────────────────
   const handleAddToFavorite = async () => {
     if (currentUser?.company) {
       const companyId = currentUser.company.id;
@@ -201,6 +195,7 @@ export default function EmployeeDetailPage() {
     }
   };
 
+  // ── Handle Click Profile Popup ───────────────────────────────────────
   const handleClickProfilePopup = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -210,6 +205,7 @@ export default function EmployeeDetailPage() {
     setOpenProfilePopup(true);
   };
 
+  // ── Handle Download File ──────────────────────────────────────────────
   const handleDownloadFile = (url: string, filename: string) => {
     const link = document.createElement("a");
     link.href = url;
@@ -220,6 +216,7 @@ export default function EmployeeDetailPage() {
     document.body.removeChild(link);
   };
 
+  /* ------------------------------- Loading State ------------------------------- */
   const isLoading = !isInitialized || !accessGranted || loading;
   if (isLoading)
     return (
@@ -228,6 +225,7 @@ export default function EmployeeDetailPage() {
       </div>
     );
 
+  /* -------------------------------- Error State -------------------------------- */
   if (fetchError)
     return (
       <div className="flex h-[60vh] items-center justify-center animate-page-in">
@@ -243,6 +241,7 @@ export default function EmployeeDetailPage() {
       </div>
     );
 
+  /* ------------------------------ Not Found State ---------------------------- */
   if (!employeeData)
     return (
       <div className="flex h-[60vh] items-center justify-center animate-page-in">
@@ -255,6 +254,7 @@ export default function EmployeeDetailPage() {
       </div>
     );
 
+  /* ------------------------------ Derived States ---------------------------- */
   const isFav = companyFavEmployeeStore.isFavorite(id);
   const likeDisabled = companyLikeStore.loading || !currentUser?.company?.id;
   const favDisabled =
@@ -263,9 +263,10 @@ export default function EmployeeDetailPage() {
     .filter(Boolean)
     .join(" ");
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col gap-5 animate-page-in tablet-sm:pb-24">
-      {/* ── Back Navigation Header ── */}
+      {/* Back Navigation Header Section */}
       <header className="sticky top-0 z-10 border-b border-border/60 bg-background/95 backdrop-blur-sm -mx-4 sm:-mx-6 px-4 sm:px-6">
         <div className="flex items-center gap-4 py-3">
           <button
@@ -283,19 +284,19 @@ export default function EmployeeDetailPage() {
         </div>
       </header>
 
-      {/* ── Hero Card ─────────────────────────────────────────────── */}
+      {/* Hero Card Section */}
       <DetailCard>
-        {/* Gradient banner with decorative circles */}
+        {/* Banner Section */}
         <div className="h-36 sm:h-44 rounded-t-2xl bg-gradient-to-r from-primary to-primary/50 relative overflow-hidden">
           <div className="absolute -top-6 right-10 size-36 rounded-full bg-white/5" />
           <div className="absolute top-4 right-32 size-20 rounded-full bg-white/5" />
           <div className="absolute -bottom-4 right-4 size-24 rounded-full bg-white/5" />
         </div>
 
-        {/* Identity */}
+        {/* Identity Section */}
         <div className="px-4 sm:px-6 pb-5">
           <div className="flex items-start gap-4 tablet-md:flex-col tablet-md:items-center">
-            {/* Avatar — overlaps banner */}
+            {/* Avatar Section */}
             <Avatar
               className="size-20 sm:size-24 -mt-10 sm:-mt-12 ring-[3px] ring-card shadow-xl flex-shrink-0 cursor-pointer"
               rounded="md"
@@ -313,7 +314,7 @@ export default function EmployeeDetailPage() {
               </AvatarFallback>
             </Avatar>
 
-            {/* Name + info */}
+            {/* Information Section: FullName, Username, JobTitle, Gender, YearOfExperience, Location. */}
             <div className="flex-1 min-w-0 pt-2 tablet-md:text-center tablet-md:pt-0 tablet-md:mt-1">
               <div className="flex items-center gap-2 flex-wrap tablet-md:justify-center">
                 <h1 className="text-xl sm:text-2xl font-bold leading-tight">
@@ -321,7 +322,7 @@ export default function EmployeeDetailPage() {
                 </h1>
                 {employeeData.availability && (
                   <span
-                    className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${availabilityClass(employeeData.availability)}`}
+                    className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${getAvailabilityStyleClass(employeeData.availability)}`}
                   >
                     {employeeData.availability}
                   </span>
@@ -358,7 +359,7 @@ export default function EmployeeDetailPage() {
               </div>
             </div>
 
-            {/* Desktop actions */}
+            {/* Desktop Action Buttons Section */}
             <div className="flex gap-2 flex-shrink-0 pt-2 tablet-md:hidden">
               {!isFav && (
                 <Button
@@ -378,11 +379,11 @@ export default function EmployeeDetailPage() {
         </div>
       </DetailCard>
 
-      {/* ── Content Grid ──────────────────────────────────────────── */}
+      {/* Content Grid Section */}
       <div className="flex items-start gap-5 tablet-xl:flex-col">
-        {/* Left — main content */}
+        {/* Left Section */}
         <div className="flex-1 min-w-0 flex flex-col gap-5">
-          {/* About */}
+          {/* About Section */}
           {employeeData.description && (
             <DetailCard className="p-5 sm:p-6">
               <SectionTitle icon={<LucideUser />} title="About" />
@@ -392,7 +393,7 @@ export default function EmployeeDetailPage() {
             </DetailCard>
           )}
 
-          {/* Skills */}
+          {/* Skills Section */}
           {employeeData.skills && employeeData.skills.length > 0 && (
             <DetailCard className="p-5 sm:p-6">
               <SectionTitle icon={<LucideZap />} title="Skills" />
@@ -416,7 +417,7 @@ export default function EmployeeDetailPage() {
             </DetailCard>
           )}
 
-          {/* Experience */}
+          {/* Experience Section */}
           {employeeData.experiences && employeeData.experiences.length > 0 && (
             <DetailCard className="p-5 sm:p-6">
               <SectionTitle
@@ -458,7 +459,7 @@ export default function EmployeeDetailPage() {
             </DetailCard>
           )}
 
-          {/* Education */}
+          {/* Education Section */}
           {employeeData.educations && employeeData.educations.length > 0 && (
             <DetailCard className="p-5 sm:p-6">
               <SectionTitle icon={<LucideGraduationCap />} title="Education" />
@@ -493,9 +494,9 @@ export default function EmployeeDetailPage() {
           )}
         </div>
 
-        {/* Right — sidebar */}
+        {/* Right Section: Sidebar Section */}
         <div className="w-72 flex flex-col gap-5 tablet-xl:w-full">
-          {/* Documents */}
+          {/* Documents Section */}
           {(employeeData.resume || employeeData.coverLetter) && (
             <DetailCard className="p-5">
               <SectionTitle icon={<LucideFileText />} title="Documents" />
@@ -549,7 +550,7 @@ export default function EmployeeDetailPage() {
             </DetailCard>
           )}
 
-          {/* Contact */}
+          {/* Contact Section */}
           <DetailCard className="p-5">
             <SectionTitle icon={<LucidePhone />} title="Contact" />
             <div className="space-y-3.5">
@@ -587,7 +588,7 @@ export default function EmployeeDetailPage() {
             </div>
           </DetailCard>
 
-          {/* Socials */}
+          {/* Socials Section */}
           {employeeData.socials && employeeData.socials.length > 0 && (
             <DetailCard className="p-5">
               <SectionTitle icon={<LucideGlobe />} title="Social Links" />
@@ -610,7 +611,7 @@ export default function EmployeeDetailPage() {
         </div>
       </div>
 
-      {/* Mobile sticky action bar */}
+      {/* Mobile Sticky Action Bar Section */}
       <div className="hidden tablet-md:flex fixed bottom-0 left-0 right-0 z-20 gap-3 px-4 py-3 bg-background/95 backdrop-blur-sm border-t border-border [&>button]:flex-1">
         {!isFav && (
           <Button
@@ -626,6 +627,7 @@ export default function EmployeeDetailPage() {
         </Button>
       </div>
 
+      {/* Profile Popup Section */}
       <ImagePopup
         open={openProfilePopup}
         setOpen={setOpenProfilePopup}

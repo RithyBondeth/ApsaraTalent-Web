@@ -67,23 +67,14 @@ import { DetailCard } from "@/components/utils/detail-card";
 import { SectionTitle } from "@/components/utils/section-title";
 import { CompanyDetailPageLoadingSkeleton } from "@/components/company/skeleton";
 
-/* ── Main component ─────────────────────────────────────────────── */
 export default function CompanyDetailPage() {
+  /* ---------------------------------- Utils ---------------------------------- */
   const router = useRouter();
   const param = useParams<{ companyId: string }>();
   const id = param.companyId;
-
   const t = useTranslations("toast");
-  const currentUser = useGetCurrentUserStore((state) => state.user);
-  const { loading, companyData, queryOneCompany } = useGetOneCompanyStore();
 
-  const employeeLikeStore = useEmployeeLikeStore();
-  const queryCurrentEmployeeLiked = useGetCurrentEmployeeLikedStore();
-  const employeeFavCompanyStore = useEmployeeFavCompanyStore();
-  const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
-  const countCurrentEmployeeMatching = useCountCurrentEmployeeMatchingStore();
-  const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
-
+  /* -------------------------------- All States ------------------------------- */
   const [isInitialized, setIsInitialized] = useState(false);
   const [accessGranted, setAccessGranted] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
@@ -94,6 +85,17 @@ export default function CompanyDetailPage() {
   );
   const ignoreNextClick = useRef(false);
 
+  /* ------------------------------ API Integration ----------------------------- */
+  const currentUser = useGetCurrentUserStore((state) => state.user);
+  const { loading, companyData, queryOneCompany } = useGetOneCompanyStore();
+  const employeeLikeStore = useEmployeeLikeStore();
+  const queryCurrentEmployeeLiked = useGetCurrentEmployeeLikedStore();
+  const employeeFavCompanyStore = useEmployeeFavCompanyStore();
+  const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
+  const countCurrentEmployeeMatching = useCountCurrentEmployeeMatchingStore();
+  const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
+
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     if (typeof window !== "undefined") setIsInitialized(true);
   }, []);
@@ -140,6 +142,8 @@ export default function CompanyDetailPage() {
     }
   }, [openProfilePopup]);
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle Click Image Popup ─────────────────────────────────────────
   const handleClickImagePopup = () => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -148,6 +152,7 @@ export default function CompanyDetailPage() {
     setOpenImagePopup(true);
   };
 
+  // ── Handle Click Profile Popup ───────────────────────────────────────
   const handleClickProfilePopup = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -157,6 +162,7 @@ export default function CompanyDetailPage() {
     setOpenProfilePopup(true);
   };
 
+  // ── Handle Employee Like Company ──────────────────────────────────────
   const handleLike = async () => {
     if (currentUser?.employee) {
       const employeeId = currentUser.employee.id;
@@ -192,6 +198,7 @@ export default function CompanyDetailPage() {
     }
   };
 
+  // ── Handle Add Company To Favorite ──────────────────────────────────────
   const handleAddToFavorite = async () => {
     if (currentUser?.employee) {
       const employeeId = currentUser.employee.id;
@@ -215,6 +222,13 @@ export default function CompanyDetailPage() {
     }
   };
 
+  /* ------------------------------ Derived States ------------------------------ */
+  const isFav = employeeFavCompanyStore.isFavorite(id);
+  const likeDisabled = employeeLikeStore.loading || !currentUser?.employee?.id;
+  const favDisabled =
+    employeeFavCompanyStore.loading || !currentUser?.employee?.id;
+
+  /* ------------------------------- Loading State ------------------------------- */
   const isLoading = !isInitialized || !accessGranted || loading;
   if (isLoading)
     return (
@@ -223,6 +237,7 @@ export default function CompanyDetailPage() {
       </div>
     );
 
+  /* -------------------------------- Error State -------------------------------- */
   if (fetchError)
     return (
       <div className="flex h-[60vh] items-center justify-center animate-page-in">
@@ -238,6 +253,7 @@ export default function CompanyDetailPage() {
       </div>
     );
 
+  /* ------------------------------ Not Found State ------------------------------ */
   if (!companyData)
     return (
       <div className="flex h-[60vh] items-center justify-center animate-page-in">
@@ -250,14 +266,10 @@ export default function CompanyDetailPage() {
       </div>
     );
 
-  const isFav = employeeFavCompanyStore.isFavorite(id);
-  const likeDisabled = employeeLikeStore.loading || !currentUser?.employee?.id;
-  const favDisabled =
-    employeeFavCompanyStore.loading || !currentUser?.employee?.id;
-
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col gap-5 animate-page-in tablet-sm:pb-24">
-      {/* ── Back Navigation Header ── */}
+      {/* Back Navigation Header Section */}
       <header className="sticky top-0 z-10 border-b border-border/60 bg-background/95 backdrop-blur-sm -mx-4 sm:-mx-6 px-4 sm:px-6">
         <div className="flex items-center gap-4 py-3">
           <button
@@ -275,9 +287,9 @@ export default function CompanyDetailPage() {
         </div>
       </header>
 
-      {/* ── Hero Card ─────────────────────────────────────────────── */}
+      {/* Hero Card Section */}
       <DetailCard>
-        {/* Cover */}
+        {/* Cover Section */}
         <div
           className={`h-44 sm:h-56 rounded-t-2xl bg-cover bg-center bg-no-repeat ${
             !companyData.cover
@@ -291,10 +303,10 @@ export default function CompanyDetailPage() {
           }
         />
 
-        {/* Identity */}
+        {/* Identity Section */}
         <div className="px-4 sm:px-6 pb-5">
           <div className="flex items-start gap-4 tablet-md:flex-col tablet-md:items-center">
-            {/* Avatar — overlaps cover */}
+            {/* Avatar Section */}
             <Avatar
               className="size-20 sm:size-24 -mt-10 sm:-mt-12 ring-[3px] ring-card shadow-xl flex-shrink-0 cursor-pointer"
               rounded="md"
@@ -308,7 +320,7 @@ export default function CompanyDetailPage() {
               </AvatarFallback>
             </Avatar>
 
-            {/* Name + info */}
+            {/* Information Section: Name, Industry, Location, Company Size, Founded Year */}
             <div className="flex-1 min-w-0 pt-2 tablet-md:text-center tablet-md:pt-0 tablet-md:mt-1">
               <h1 className="text-xl sm:text-2xl font-bold leading-tight">
                 {companyData.name}
@@ -338,7 +350,7 @@ export default function CompanyDetailPage() {
               </div>
             </div>
 
-            {/* Desktop actions */}
+            {/* Desktop Action Buttons Section */}
             <div className="flex gap-2 flex-shrink-0 pt-2 tablet-md:hidden">
               {!isFav && (
                 <Button
@@ -358,11 +370,11 @@ export default function CompanyDetailPage() {
         </div>
       </DetailCard>
 
-      {/* ── Content Grid ──────────────────────────────────────────── */}
+      {/* Content Grid Section */}
       <div className="flex items-start gap-5 tablet-lg:flex-col">
-        {/* Left — main content */}
+        {/* Left Section */}
         <div className="flex-1 min-w-0 flex flex-col gap-5">
-          {/* About */}
+          {/* About Section */}
           {companyData.description && (
             <DetailCard className="p-5 sm:p-6">
               <SectionTitle
@@ -375,7 +387,7 @@ export default function CompanyDetailPage() {
             </DetailCard>
           )}
 
-          {/* Open Positions */}
+          {/* Open Positions Section */}
           {companyData.openPositions &&
             companyData.openPositions.length > 0 && (
               <DetailCard className="p-5 sm:p-6">
@@ -389,7 +401,7 @@ export default function CompanyDetailPage() {
                       key={item.id}
                       className="rounded-xl border border-border/60 p-4 hover:border-primary/40 hover:shadow-sm transition-all duration-200"
                     >
-                      {/* Position header */}
+                      {/* Position Header Section */}
                       <div className="flex items-start justify-between gap-3 tablet-md:flex-col">
                         <div className="space-y-2">
                           <p className="font-semibold text-sm">{item.title}</p>
@@ -424,7 +436,7 @@ export default function CompanyDetailPage() {
                         </div>
                       </div>
 
-                      {/* Position details */}
+                      {/* Position Details Section */}
                       {(item.description ||
                         item.education ||
                         item.skills ||
@@ -480,7 +492,7 @@ export default function CompanyDetailPage() {
               </DetailCard>
             )}
 
-          {/* Career Scope */}
+          {/* Career Scope Section */}
           {companyData.careerScopes && companyData.careerScopes.length > 0 && (
             <DetailCard className="p-5 sm:p-6">
               <SectionTitle icon={<LucideCompass />} title="Career Scope" />
@@ -501,7 +513,7 @@ export default function CompanyDetailPage() {
             </DetailCard>
           )}
 
-          {/* Life at Company */}
+          {/* Company Images Section */}
           {companyData.images && companyData.images.length > 0 && (
             <DetailCard className="p-5 sm:p-6">
               <SectionTitle
@@ -530,9 +542,9 @@ export default function CompanyDetailPage() {
           )}
         </div>
 
-        {/* Right — sidebar */}
+        {/* Right: Section Sidebar */}
         <div className="w-72 flex flex-col gap-5 tablet-lg:w-full">
-          {/* Company Info */}
+          {/* Company Information Section */}
           <DetailCard className="p-5">
             <SectionTitle
               icon={<LucideBuilding2 />}
@@ -592,7 +604,7 @@ export default function CompanyDetailPage() {
             </div>
           </DetailCard>
 
-          {/* Culture */}
+          {/* Values and Benefits Section */}
           {(companyData.values.length > 0 ||
             companyData.benefits.length > 0) && (
             <DetailCard className="p-5">
@@ -638,7 +650,7 @@ export default function CompanyDetailPage() {
             </DetailCard>
           )}
 
-          {/* Socials */}
+          {/* Social Section */}
           {companyData.socials && companyData.socials.length > 0 && (
             <DetailCard className="p-5">
               <SectionTitle icon={<LucideGlobe />} title="Social Links" />
@@ -661,7 +673,7 @@ export default function CompanyDetailPage() {
         </div>
       </div>
 
-      {/* Mobile sticky action bar */}
+      {/* Mobile Sticky Action Bar Section */}
       <div className="hidden tablet-md:flex fixed bottom-0 left-0 right-0 z-20 gap-3 px-4 py-3 bg-background/95 backdrop-blur-sm border-t border-border [&>button]:flex-1">
         {!isFav && (
           <Button
@@ -677,11 +689,14 @@ export default function CompanyDetailPage() {
         </Button>
       </div>
 
+      {/* Image Popup Section */}
       <ImagePopup
         open={openImagePopup}
         setOpen={setOpenImagePopup}
         image={currentCompanyImage!}
       />
+
+      {/* Profile Popup Section */}
       <ImagePopup
         open={openProfilePopup}
         setOpen={setOpenProfilePopup}

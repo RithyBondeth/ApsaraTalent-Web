@@ -12,18 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import Tag from "../../utils/tag";
 import { IFavoriteEmployeeCardProps } from "./props";
-
-/* ── Availability badge color ── */
-function availabilityClass(val: string) {
-  const v = val.toLowerCase().replace(/[_-]/g, "");
-  if (v.includes("fulltime"))
-    return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300";
-  if (v.includes("parttime"))
-    return "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300";
-  if (v.includes("freelance"))
-    return "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300";
-  return "bg-muted text-muted-foreground";
-}
+import { getAvailabilityStyleClass } from "@/utils/extensions/get-availability-class";
 
 export default function FavoriteEmployeeCard(
   props: IFavoriteEmployeeCardProps,
@@ -60,7 +49,7 @@ export default function FavoriteEmployeeCard(
               </p>
             </div>
             <span
-              className={`text-[11px] font-semibold px-2.5 py-1 rounded-full whitespace-nowrap flex-shrink-0 ${availabilityClass(props.availability)}`}
+              className={`text-[11px] font-semibold px-2.5 py-1 rounded-full whitespace-nowrap flex-shrink-0 ${getAvailabilityStyleClass(props.availability)}`}
             >
               {availLabel}
             </span>
