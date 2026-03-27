@@ -75,15 +75,15 @@ export default function CompanyDetailPage() {
   const t = useTranslations("toast");
 
   /* -------------------------------- All States ------------------------------- */
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [accessGranted, setAccessGranted] = useState(false);
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
+  const [accessGranted, setAccessGranted] = useState<boolean>(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
-  const [openImagePopup, setOpenImagePopup] = useState(false);
-  const [openProfilePopup, setOpenProfilePopup] = useState(false);
+  const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
+  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
   const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(
     null,
   );
-  const ignoreNextClick = useRef(false);
+  const ignoreNextClick = useRef<boolean>(false);
 
   /* ------------------------------ API Integration ----------------------------- */
   const currentUser = useGetCurrentUserStore((state) => state.user);

@@ -69,11 +69,11 @@ export default function EmployeeDetailPage() {
   const t = useTranslations("toast");
 
   /* -------------------------------- All States ------------------------------- */
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [accessGranted, setAccessGranted] = useState(false);
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
+  const [accessGranted, setAccessGranted] = useState<boolean>(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
-  const [openProfilePopup, setOpenProfilePopup] = useState(false);
-  const ignoreNextClick = useRef(false);
+  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
+  const ignoreNextClick = useRef<boolean>(false);
 
   /* ------------------------------ API Integration ---------------------------- */
   const currentUser = useGetCurrentUserStore((state) => state.user);

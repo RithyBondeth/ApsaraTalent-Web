@@ -38,38 +38,11 @@ import {
 import Image from "next/image";
 import { useCallback, useState } from "react";
 import InterviewLoadingSkeleton from "./loading";
-
-/* ---------------------------------- Utils --------------------------------- */
-function statusBadgeClass(status: string) {
-  switch (status) {
-    case "accepted":
-      return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800";
-    case "declined":
-      return "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 border-red-200 dark:border-red-800";
-    case "cancelled":
-      return "bg-gray-100 text-gray-600 dark:bg-gray-800/40 dark:text-gray-400 border-gray-200 dark:border-gray-700";
-    case "completed":
-      return "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border-blue-200 dark:border-blue-800";
-    default: // pending
-      return "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border-amber-200 dark:border-amber-800";
-  }
-}
-
-function formatDateTime(dateStr: string) {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString("en-US", {
-    weekday: "short",
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
+import { getStatusBadgeStyleClass } from "@/utils/extensions/get-interview-status-class";
+import { dateFormatter } from "@/utils/functions/dateformatter";
 
 export default function InterviewPage() {
   /* ----------------------------- API Integration ---------------------------- */
-
   const {
     interviews,
     creating,
@@ -83,10 +56,16 @@ export default function InterviewPage() {
     useGetCurrentCompanyMatchingStore();
 
   /* -------------------------------- All States ------------------------------ */
-
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
-  const [formData, setFormData] = useState({
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>("");
+  const [formData, setFormData] = useState<{
+    title: string;
+    description: string;
+    scheduledAt: string;
+    durationMinutes: number;
+    location: string;
+    meetingLink: string;
+  }>({
     title: "",
     description: "",
     scheduledAt: "",
@@ -96,7 +75,6 @@ export default function InterviewPage() {
   });
 
   /* --------------------------------- Effects --------------------------------- */
-
   const { isEmployee, isCompany, currentUser } = useFetchOnce({
     cacheKey: "interview-page",
     onEmployeeFetch: (employeeId) => fetchInterviews(employeeId, "employee"),
@@ -111,7 +89,7 @@ export default function InterviewPage() {
     : currentUser?.company?.id;
 
   /* --------------------------------- Methods --------------------------------- */
-
+  // ── Handle Create Interview ─────────────────────────────────────────
   const handleCreateInterview = useCallback(async () => {
     if (
       !currentId ||
@@ -146,28 +124,29 @@ export default function InterviewPage() {
     });
   }, [currentId, selectedEmployeeId, formData, createInterview]);
 
+  // ── Handle Accept Interview ─────────────────────────────────────────
   const handleAccept = useCallback(
     (interviewId: string) => updateStatus(interviewId, "accepted"),
     [updateStatus],
   );
 
+  // ── Handle Decline Interview ─────────────────────────────────────────
   const handleDecline = useCallback(
     (interviewId: string) => updateStatus(interviewId, "declined"),
     [updateStatus],
   );
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* ------------------------------ Laoding State ----------------------------- */
   if (interviews === null) return <InterviewLoadingSkeleton />;
 
-  /* ── Matched employees list for the select dropdown ── */
-  const matchedEmployees = currentCompanyMatching ?? [];
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col gap-4 px-2.5 sm:px-5 animate-page-in">
-      {/* Header */}
+      {/* Header Section */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <TypographyH2>Interviews</TypographyH2>
 
-        {/* Only companies can schedule interviews */}
+        {/* Schedule Interview Form Section  */}
         {isCompany && (
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
@@ -184,7 +163,8 @@ export default function InterviewPage() {
                 {/* Select matched employee */}
                 <div className="flex flex-col gap-1.5">
                   <Label>Select Employee *</Label>
-                  {matchedEmployees.length > 0 ? (
+                  {currentCompanyMatching &&
+                  currentCompanyMatching.length > 0 ? (
                     <Select
                       value={selectedEmployeeId}
                       onValueChange={setSelectedEmployeeId}
@@ -193,36 +173,39 @@ export default function InterviewPage() {
                         <SelectValue placeholder="Choose a matched employee" />
                       </SelectTrigger>
                       <SelectContent>
-                        {matchedEmployees.map((emp) => {
-                          const displayName =
-                            [emp.firstname, emp.lastname]
-                              .filter(Boolean)
-                              .join(" ")
-                              .trim() ||
-                            emp.username ||
-                            "Unknown";
-                          return (
-                            <SelectItem key={emp.id} value={emp.id}>
-                              <div className="flex items-center gap-2.5">
-                                <Avatar className="size-6">
-                                  <AvatarImage
-                                    src={emp.avatar}
-                                    alt={displayName}
-                                  />
-                                  <AvatarFallback className="text-[10px]">
-                                    {displayName.charAt(0).toUpperCase()}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <span className="truncate">{displayName}</span>
-                                {emp.job && (
-                                  <span className="text-xs text-muted-foreground ml-auto">
-                                    {emp.job}
+                        {currentCompanyMatching &&
+                          currentCompanyMatching.map((emp) => {
+                            const displayName =
+                              [emp.firstname, emp.lastname]
+                                .filter(Boolean)
+                                .join(" ")
+                                .trim() ||
+                              emp.username ||
+                              "Unknown";
+                            return (
+                              <SelectItem key={emp.id} value={emp.id}>
+                                <div className="flex items-center gap-2.5">
+                                  <Avatar className="size-6">
+                                    <AvatarImage
+                                      src={emp.avatar}
+                                      alt={displayName}
+                                    />
+                                    <AvatarFallback className="text-[10px]">
+                                      {displayName.charAt(0).toUpperCase()}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <span className="truncate">
+                                    {displayName}
                                   </span>
-                                )}
-                              </div>
-                            </SelectItem>
-                          );
-                        })}
+                                  {emp.job && (
+                                    <span className="text-xs text-muted-foreground ml-auto">
+                                      {emp.job}
+                                    </span>
+                                  )}
+                                </div>
+                              </SelectItem>
+                            );
+                          })}
                       </SelectContent>
                     </Select>
                   ) : (
@@ -376,7 +359,7 @@ export default function InterviewPage() {
                     </div>
                     <Badge
                       variant="outline"
-                      className={`text-[11px] font-semibold whitespace-nowrap ${statusBadgeClass(interview.status)}`}
+                      className={`text-[11px] font-semibold whitespace-nowrap ${getStatusBadgeStyleClass(interview.status)}`}
                     >
                       {interview.status.charAt(0).toUpperCase() +
                         interview.status.slice(1)}
@@ -394,7 +377,7 @@ export default function InterviewPage() {
                   <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
                     <span className="inline-flex items-center gap-1.5 bg-muted/70 px-3 py-1.5 rounded-full">
                       <LucideCalendarCheck className="size-3.5" />
-                      {formatDateTime(interview.scheduledAt)}
+                      {dateFormatter(interview.scheduledAt)}
                     </span>
                     <span className="inline-flex items-center gap-1.5 bg-muted/70 px-3 py-1.5 rounded-full">
                       <LucideClock className="size-3.5" />

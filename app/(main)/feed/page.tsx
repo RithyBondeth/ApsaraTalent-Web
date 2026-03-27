@@ -67,6 +67,21 @@ export default function FeedPage() {
   const { resolvedTheme } = useTheme();
   const t = useTranslations("toast");
 
+  /* -------------------------------- All States ------------------------------ */
+  const [mounted, setMounted] = useState<boolean>(false);
+
+  // Liked helper
+  const [likingId, setLikingId] = useState<string | null>(null);
+
+  // Pop up Dialog
+  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
+  const ignoreNextClick = useRef<boolean>(false);
+  const [currentProfileImage, setCurrentProfileImage] = useState<string | null>(
+    null,
+  );
+  const [openLikeSuccessDialog, setOpenLikeSuccessDialog] =
+    useState<boolean>(false);
+
   /* ----------------------------- API Integration ---------------------------- */
   // Current User
   const currentUser = useGetCurrentUserStore((s) => s.user);
@@ -133,21 +148,6 @@ export default function FeedPage() {
   const { countCurrentEmployeeMatching } =
     useCountCurrentEmployeeMatchingStore();
   const { countCurrentCompanyMatching } = useCountCurrentCompanyMatchingStore();
-
-  /* -------------------------------- All States ------------------------------- */
-  const [mounted, setMounted] = useState<boolean>(false);
-
-  // Liked helper
-  const [likingId, setLikingId] = useState<string | null>(null);
-
-  // Pop up Dialog
-  const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
-  const ignoreNextClick = useRef<boolean>(false);
-  const [currentProfileImage, setCurrentProfileImage] = useState<string | null>(
-    null,
-  );
-  const [openLikeSuccessDialog, setOpenLikeSuccessDialog] =
-    useState<boolean>(false);
 
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => setMounted(true), []);
