@@ -1,18 +1,14 @@
 "use client";
 
-import { TRecentMatch } from "@/stores/apis/matching/analytics.store";
 import CachedAvatar from "@/components/ui/cached-avatar";
 import { Handshake } from "lucide-react";
+import { IRecentMatchesListProps } from "./props";
 
-interface RecentMatchesListProps {
-  matches: TRecentMatch[];
-  isEmployee: boolean;
-}
+export function RecentMatchesList(props: IRecentMatchesListProps) {
+  /* -------------------------------- Props --------------------------------- */
+  const { matches, isEmployee } = props;
 
-export function RecentMatchesList({
-  matches,
-  isEmployee,
-}: RecentMatchesListProps) {
+  /* --------------------------- Empty List State --------------------------- */
   if (!matches || matches.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-8 text-center">
@@ -25,6 +21,7 @@ export function RecentMatchesList({
     );
   }
 
+  /* -------------------------- Render Component --------------------------- */
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
       {matches.map((match) => (
@@ -54,6 +51,7 @@ export function RecentMatchesList({
   );
 }
 
+/* --------------------------- Helper Functions --------------------------- */
 function formatTimeAgo(dateStr: string): string {
   const date = new Date(dateStr);
   const now = new Date();

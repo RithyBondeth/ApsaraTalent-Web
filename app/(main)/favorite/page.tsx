@@ -18,7 +18,10 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { FavoriteLoadingSkeleton } from "./skeleton";
-import { emptySvgImage, favoriteSvgImage } from "@/utils/constants/asset.constant";
+import {
+  emptySvgImage,
+  favoriteSvgImage,
+} from "@/utils/constants/asset.constant";
 
 export default function FavoritePage() {
   const t = useTranslations("toast");
@@ -39,7 +42,7 @@ export default function FavoritePage() {
   const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
   const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
 
-  /* -------------------------------- All States ------------------------------- */
+  /* -------------------------------- All States ------------------------------ */
   // Track IDs that are currently being removed (for animation)
   const [removingFavIds, setRemovingFavIds] = useState<Set<string>>(new Set());
 
@@ -50,9 +53,13 @@ export default function FavoritePage() {
   useEffect(() => {
     if (!currentUser) return;
     if (isEmployee && currentUser.employee?.id) {
-      getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(currentUser.employee.id);
+      getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
+        currentUser.employee.id,
+      );
     } else if (!isEmployee && currentUser.company?.id) {
-      getAllCompanyFavoritesStore.queryAllCompanyFavorites(currentUser.company.id);
+      getAllCompanyFavoritesStore.queryAllCompanyFavorites(
+        currentUser.company.id,
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser?.employee?.id, currentUser?.company?.id]);
@@ -102,8 +109,7 @@ export default function FavoritePage() {
           );
         } catch {
           const err =
-            employeeFavCompanyStore.empFavError ||
-            t("failedToRemoveFavorite");
+            employeeFavCompanyStore.empFavError || t("failedToRemoveFavorite");
           toast.error(err);
         }
       });
@@ -137,8 +143,7 @@ export default function FavoritePage() {
           await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyID);
         } catch {
           const err =
-            companyFavEmployeeStore.cmpFavError ||
-            t("failedToRemoveFavorite");
+            companyFavEmployeeStore.cmpFavError || t("failedToRemoveFavorite");
           toast.error(err);
         }
       });
@@ -151,7 +156,7 @@ export default function FavoritePage() {
     ],
   );
 
-  /* ----------------------------- Loading State ------------------------------- */
+  /* -------------------------------- Render UI -------------------------------- */
   const isLoadingForEmployee =
     isEmployee &&
     (getAllEmployeeFavoritesStore.loading ||
@@ -166,7 +171,6 @@ export default function FavoritePage() {
 
   if (isLoading) return <FavoriteLoadingSkeleton isEmployee={isEmployee} />;
 
-  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col px-2.5 sm:px-5 animate-page-in">
       {/* Banner Section */}
@@ -260,7 +264,13 @@ export default function FavoritePage() {
         ) : (
           /* Empty Favorite List */
           <div className="w-full flex flex-col items-center justify-center my-16">
-            <Image src={emptySvgImage} alt="empty" height={200} width={200} className="animate-float" />
+            <Image
+              src={emptySvgImage}
+              alt="empty"
+              height={200}
+              width={200}
+              className="animate-float"
+            />
             <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
               Favorite List Empty
             </TypographyP>

@@ -29,7 +29,7 @@ export default function ResumeBuilder() {
   const { templateData, queryAllTemplates } = useGetAllTemplateStore();
   const currentUser = useGetCurrentUserStore((state) => state.user);
 
-  /* -------------------------------- All States ------------------------------- */
+  /* -------------------------------- All States ------------------------------ */
   // Maps DB template titles → ResumeTemplate enum values
   const templateMap: Record<string, TResumeTemplate> = {
     "Modern Professional": "modern",

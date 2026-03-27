@@ -57,7 +57,7 @@ const MessagePageContent = () => {
   // Voice Call Initiation
   const initiateCall = useCallStore((s) => s.initiateCall);
 
-  /* -------------------------------- All States ------------------------------- */
+  /* -------------------------------- All States ------------------------------ */
   // Desktop: sidebar open by default (resizable). Mobile uses list → chat navigation.
   const [isSidebarOpen, setSidebarOpen] = useState<boolean>(true);
   const sidebarPanelRef = useRef<ImperativePanelHandle>(null);
@@ -217,12 +217,11 @@ const MessagePageContent = () => {
     router.push("/message");
   };
 
-  /* ------------------------------------ Loading State ------------------------------------ */
+  /* -------------------------------- Render UI -------------------------------- */
   const isLoading = (!isConnected || !isChatsLoaded) && !loadingTimedOut;
 
   if (isLoading) return <MessageLoadingSkeleton />;
 
-  /* -------------------------------------- Chat View -------------------------------------- */
   const chatView = activeChat ? (
     <div className="flex flex-col h-full min-h-0 min-w-0">
       <ChatHeader
@@ -256,7 +255,6 @@ const MessagePageContent = () => {
     </div>
   ) : null;
 
-  /* ------------------------------ Desktop Empty State View ------------------------------ */
   const desktopEmptyStateView = (
     <div className="flex flex-1 flex-col items-center justify-center p-8 text-center bg-muted/5">
       <div className="w-full flex flex-col items-center justify-center my-16">
@@ -274,7 +272,6 @@ const MessagePageContent = () => {
     </div>
   );
 
-  /* -------------------------------------- Render UI -------------------------------------- */
   return (
     <div className="w-full h-[calc(100dvh-4rem)] md:h-full min-h-0 flex bg-background overflow-hidden relative animate-page-in">
       {/* Call overlay + incoming modal — persists across chat switches */}

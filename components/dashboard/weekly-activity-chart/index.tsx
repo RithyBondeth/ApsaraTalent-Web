@@ -1,6 +1,5 @@
 "use client";
 
-import { TWeeklyActivity } from "@/stores/apis/matching/analytics.store";
 import {
   BarChart,
   Bar,
@@ -10,12 +9,10 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { IWeeklyActivityChartProps } from "./props";
 
-interface WeeklyActivityChartProps {
-  data: TWeeklyActivity[];
-}
-
-export function WeeklyActivityChart({ data }: WeeklyActivityChartProps) {
+export function WeeklyActivityChart({ data }: IWeeklyActivityChartProps) {
+  /* -------------------------- Empty List State -------------------------- */
   const hasData = data.some(
     (d) => d.likes > 0 || d.received > 0 || d.matches > 0,
   );
@@ -28,6 +25,7 @@ export function WeeklyActivityChart({ data }: WeeklyActivityChartProps) {
     );
   }
 
+  /* -------------------------- Render Component -------------------------- */
   return (
     <ResponsiveContainer width="100%" height={250}>
       <BarChart data={data} barGap={2} barCategoryGap="20%">

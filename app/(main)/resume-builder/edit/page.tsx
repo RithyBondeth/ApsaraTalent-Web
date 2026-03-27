@@ -20,19 +20,22 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
-import { DOWNLOAD_RESUME_STEPS, LIVE_RESUME_PREVIEW_DEBOUNCE_MS } from "@/utils/constants/resume.constant";
+import {
+  DOWNLOAD_RESUME_STEPS,
+  LIVE_RESUME_PREVIEW_DEBOUNCE_MS,
+} from "@/utils/constants/resume.constant";
 
 export default function ResumeEditorPage() {
   const t = useTranslations("toast");
 
-  /* ---------------------------------- Utils ---------------------------------- */
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const isMobile = useIsMobile();
 
   /* ----------------------------- API Integration ---------------------------- */
   const { payload, clearPayload } = useResumeEditStore();
 
-  /* -------------------------------- All States ------------------------------- */
+  /* -------------------------------- All States ------------------------------ */
   // Left panel (form) collapsed state
   const [formPanelOpen, setFormPanelOpen] = useState<boolean>(false);
 
@@ -50,14 +53,13 @@ export default function ResumeEditorPage() {
   const [dlProgress, setDlProgress] = useState<number>(0);
   const progressTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  /* ------------------------------- Profile Form ------------------------------- */
   const { register, control, getValues, setValue, reset } =
     useForm<IBuildResume>({
       defaultValues: payload ?? undefined,
     });
   const watchedValues = useWatch({ control }) as IBuildResume;
 
-  /* --------------------------------- Effects ---------------------------------- */
+  /* --------------------------------- Effects --------------------------------- */
   // Redirect if no payload in store
   useEffect(() => {
     if (!payload) router.replace("/resume-builder");
@@ -92,7 +94,7 @@ export default function ResumeEditorPage() {
     };
   }, [watchedValues]);
 
-  /* -------------------------------- Methods --------------------------------- */
+  /* --------------------------------- Methods --------------------------------- */
   // ── Download Progress ─────────────────────────────────────────
   const startProgress = (cap = 95) => {
     setDlProgress(0);

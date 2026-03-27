@@ -2,8 +2,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function DashboardSkeleton() {
   return (
-    <div className="flex flex-col gap-6">
-      {/* Stat cards */}
+    <div className="flex flex-col gap-6 p-4 md:p-6">
+      {/* Header Section */}
+      <div className="flex flex-col items-start gap-2">
+        <Skeleton className="h-8 w-48 rounded" />
+        <Skeleton className="h-6 w-64 rounded" />
+      </div>
+
+      {/* Statistic Card Section */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
           <div
@@ -20,9 +26,9 @@ export function DashboardSkeleton() {
         ))}
       </div>
 
-      {/* Charts row */}
+      {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Bar chart */}
+        {/* Bar Chart Section */}
         <div className="lg:col-span-2 bg-card rounded-2xl border border-border/60 p-5 sm:p-6 animate-pulse">
           <div className="flex items-center justify-between mb-4">
             <div>

@@ -58,7 +58,6 @@ export default function EmployeeSearchPage() {
   const [scopeNames, setScopeNames] = useState<string[]>([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
-  /* ------------------------------- Search Form ------------------------------ */
   // React Hook Form: Employee Search Form
   const { register, control, setValue, handleSubmit, watch } =
     useForm<TEmployeeSearchSchema>({
@@ -81,7 +80,7 @@ export default function EmployeeSearchPage() {
   const location = watch("location");
   const jobType = watch("jobType");
 
-  /* --------------------------------- Methods -------------------------------- */
+  /* --------------------------------- Methods --------------------------------- */
   // ── Real Search Function ────────────────────────────────────────
   const runSearch = useCallback(
     (data: TEmployeeSearchSchema) => {
@@ -113,6 +112,14 @@ export default function EmployeeSearchPage() {
     () => debounce(runSearch, SEARCH_DEBOUNCE_MS),
     [runSearch],
   );
+
+  // ── Handle Radio Change ─────────────────────────────────────────
+  const handleRadioChange = (
+    fieldName: keyof TEmployeeSearchSchema,
+    value: TEmployeeSearchSchema[keyof TEmployeeSearchSchema],
+  ) => {
+    setValue(fieldName, value, { shouldDirty: true });
+  };
 
   /* --------------------------------- Effects --------------------------------- */
   // Initial Search Effect (Once per mount / Per user ready)
@@ -158,15 +165,6 @@ export default function EmployeeSearchPage() {
   useEffect(() => {
     return () => debouncedRunSearch.cancel();
   }, [debouncedRunSearch]);
-
-  /* ----------------------------- Event Handlers ---------------------------- */
-  // ── Handle Radio Change ─────────────────────────────────────────
-  const handleRadioChange = (
-    fieldName: keyof TEmployeeSearchSchema,
-    value: TEmployeeSearchSchema[keyof TEmployeeSearchSchema],
-  ) => {
-    setValue(fieldName, value, { shouldDirty: true });
-  };
 
   /* -------------------------------- Render UI -------------------------------- */
   return (

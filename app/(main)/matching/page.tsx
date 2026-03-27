@@ -14,7 +14,10 @@ import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { initateChat } from "./_apis/initiate-chat.api";
 import MatchingLoadingSkeleton from "./skeleton";
-import { emptySvgImage, matchingSvgImage } from "@/utils/constants/asset.constant";
+import {
+  emptySvgImage,
+  matchingSvgImage,
+} from "@/utils/constants/asset.constant";
 
 export default function MatchingPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -24,7 +27,7 @@ export default function MatchingPage() {
   const getCurrentEmpStore = useGetCurrentEmployeeMatchingStore();
   const getCurrentCmpStore = useGetCurrentCompanyMatchingStore();
 
-  /* -------------------------------- All States ------------------------------- */
+  /* -------------------------------- All States ------------------------------ */
   // Track which card is in a loading state to prevent double-clicks
   const [chatLoadingId, setChatLoadingId] = useState<string | null>(null);
 
@@ -56,7 +59,7 @@ export default function MatchingPage() {
     [currentUser, chatLoadingId, router],
   );
 
-  /* ------------------------------ Loading State ------------------------------ */
+  /* -------------------------------- Render UI -------------------------------- */
   const isLoadingForEmployee =
     isEmployee &&
     (getCurrentEmpStore.loading ||
@@ -71,7 +74,6 @@ export default function MatchingPage() {
 
   if (isLoading) return <MatchingLoadingSkeleton isEmployee={isEmployee} />;
 
-  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col px-2.5 sm:px-5 animate-page-in">
       {/* Banner Section */}
@@ -153,7 +155,13 @@ export default function MatchingPage() {
         ) : (
           /* Empty Matching List Section */
           <div className="w-full flex flex-col items-center justify-center my-16">
-            <Image src={emptySvgImage} alt="empty" height={200} width={200} className="animate-float" />
+            <Image
+              src={emptySvgImage}
+              alt="empty"
+              height={200}
+              width={200}
+              className="animate-float"
+            />
             <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
               Matching List Empty
             </TypographyP>

@@ -40,8 +40,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import Link from "next/link";
 
-/* ─────────────────────── sub-components ─────────────────────── */
-
+/* ---------------------------------- Utils --------------------------------- */
 function SettingSection({
   icon,
   title,
@@ -194,7 +193,6 @@ function ThemeCard({
 }
 
 function LanguageCard({
-  value,
   flag,
   label,
   nativeLabel,
@@ -239,58 +237,22 @@ function LanguageCard({
   );
 }
 
-/* ───────────────────────── Page ───────────────────────────────── */
-
 export default function SettingPage() {
   const t = useTranslations("toast");
+
+  /* ----------------------------- API Integration ---------------------------- */
   const currentUser = useGetCurrentUserStore((s) => s.user);
   const { theme, setTheme: setStoreTheme } = useThemeStore();
   const { setTheme: setNextTheme } = useTheme();
   const { language, setLanguage } = useLanguageStore();
   const { forgotPassword } = useForgotPasswordStore();
 
+  /* -------------------------------- All States ------------------------------ */
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
 
-  /* ── theme ── */
-  const handleThemeChange = (t: TTheme) => {
-    setStoreTheme(t);
-    setNextTheme(t);
-    setCookie("theme", t);
-  };
-
-  /* ── language ── */
-  const handleLanguageChange = (l: TLanguage) => {
-    setLanguage(l);
-    setCookie("language", l);
-  };
-
-  /* ── reset password ──
-   * Read store state AFTER the awaited call resolves — no stale-state
-   * race condition, no useEffect needed.
-   */
-  const handleSendReset = async () => {
-    if (!currentUser?.email || sending) return;
-
-    // Clear any leftover message/error from a previous call
-    useForgotPasswordStore.setState({ message: null, error: null });
-    setSending(true);
-
-    await forgotPassword(currentUser.email);
-
-    const { error, message } = useForgotPasswordStore.getState();
-    setSending(false);
-
-    if (error) {
-      toast.error(t("failedToSendResetEmail"));
-    } else {
-      setSent(true);
-      toast.success(t("resetLinkSent"));
-    }
-  };
-
-  /* ── account helpers ── */
+  // account helpers
   const displayName =
     currentUser?.employee?.username ??
     currentUser?.company?.name ??
@@ -318,7 +280,39 @@ export default function SettingPage() {
       })
     : "—";
 
-  /* ─────────────────────── Render ──────────────────────────────── */
+  /* --------------------------------- Methods --------------------------------- */
+  const handleThemeChange = (t: TTheme) => {
+    setStoreTheme(t);
+    setNextTheme(t);
+    setCookie("theme", t);
+  };
+
+  const handleLanguageChange = (l: TLanguage) => {
+    setLanguage(l);
+    setCookie("language", l);
+  };
+
+  const handleSendReset = async () => {
+    if (!currentUser?.email || sending) return;
+
+    // Clear any leftover message/error from a previous call
+    useForgotPasswordStore.setState({ message: null, error: null });
+    setSending(true);
+
+    await forgotPassword(currentUser.email);
+
+    const { error } = useForgotPasswordStore.getState();
+    setSending(false);
+
+    if (error) {
+      toast.error(t("failedToSendResetEmail"));
+    } else {
+      setSent(true);
+      toast.success(t("resetLinkSent"));
+    }
+  };
+
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full max-w-2xl mx-auto flex flex-col gap-8 px-3 py-6 sm:px-5 sm:py-8 animate-page-in">
       {/* Page title */}
@@ -329,7 +323,7 @@ export default function SettingPage() {
         </p>
       </div>
 
-      {/* ══════════════ APPEARANCE ══════════════ */}
+      {/* ════ APPEARANCE ════ */}
       <SettingSection
         icon={<LucidePalette />}
         title="Appearance"
@@ -367,7 +361,7 @@ export default function SettingPage() {
         </div>
       </SettingSection>
 
-      {/* ══════════════ LANGUAGE ══════════════ */}
+      {/* ════ LANGUAGE ════ */}
       <SettingSection
         icon={<LucideGlobe />}
         title="Language"
@@ -393,7 +387,7 @@ export default function SettingPage() {
         </div>
       </SettingSection>
 
-      {/* ══════════════ ACCOUNT ══════════════ */}
+      {/* ════ ACCOUNT ════ */}
       <SettingSection
         icon={<LucideUser />}
         title="Account"
@@ -458,7 +452,7 @@ export default function SettingPage() {
           value={memberSince}
         />
 
-        {/* ── Reset Password row ── */}
+        {/* Reset Password row */}
         <div className="flex items-center justify-between gap-4 px-4 py-3">
           <div className="flex items-center gap-3 min-w-0">
             <span className="text-muted-foreground shrink-0 [&>svg]:size-4">
@@ -485,7 +479,7 @@ export default function SettingPage() {
         </div>
       </SettingSection>
 
-      {/* ══════════════ ABOUT ══════════════ */}
+      {/* ════ ABOUT ════ */}
       <SettingSection
         icon={<LucideInfo />}
         title="About"
@@ -504,7 +498,10 @@ export default function SettingPage() {
           icon={<LucideShieldCheck />}
           label="Privacy Policy"
           value={
-            <Link href="/privacy" className="text-xs text-primary hover:underline">
+            <Link
+              href="/privacy"
+              className="text-xs text-primary hover:underline"
+            >
               View →
             </Link>
           }
@@ -513,7 +510,10 @@ export default function SettingPage() {
           icon={<LucideInfo />}
           label="Terms of Service"
           value={
-            <Link href="/terms" className="text-xs text-primary hover:underline">
+            <Link
+              href="/terms"
+              className="text-xs text-primary hover:underline"
+            >
               View →
             </Link>
           }
@@ -521,7 +521,7 @@ export default function SettingPage() {
         />
       </SettingSection>
 
-      {/* ══════════════ RESET PASSWORD DIALOG ══════════════ */}
+      {/* ════ RESET PASSWORD DIALOG ════ */}
       <Dialog
         open={resetDialogOpen}
         onOpenChange={(o) => {
@@ -531,7 +531,6 @@ export default function SettingPage() {
       >
         <DialogContent className="max-w-sm rounded-2xl">
           <DialogHeader>
-            {/* Icon */}
             <div className="mx-auto mb-2 flex items-center justify-center size-14 rounded-2xl bg-primary/10 border border-primary/20">
               <LucideKeyRound className="size-6 text-primary" />
             </div>
@@ -541,7 +540,7 @@ export default function SettingPage() {
             <DialogDescription className="text-center text-sm leading-relaxed">
               {sent ? (
                 <>
-                  We've sent a reset link to{" "}
+                  We&apos;ve sent a reset link to{" "}
                   <span className="font-semibold text-foreground">
                     {currentUser?.email}
                   </span>
@@ -549,7 +548,7 @@ export default function SettingPage() {
                 </>
               ) : (
                 <>
-                  We'll send a password reset link to{" "}
+                  We&apos;ll send a password reset link to{" "}
                   <span className="font-semibold text-foreground">
                     {currentUser?.email}
                   </span>

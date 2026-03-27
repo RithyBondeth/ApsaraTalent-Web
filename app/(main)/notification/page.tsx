@@ -22,7 +22,7 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import NotificationCardSkeleton from "./skeleton";
 import { NotificationSvgImage } from "@/utils/constants/asset.constant";
 
-/* ------------------------------------- Utils ------------------------------------- */
+/* ---------------------------------- Utils --------------------------------- */
 /** Derive a display-friendly user object from a notification's title + data fields. */
 function resolveNotificationUser(notification: INotification) {
   return {
@@ -50,7 +50,7 @@ export default function NotificationPage() {
     markAllRead,
   } = useNotificationStore();
 
-  /* -------------------------------- All States ------------------------------- */
+  /* -------------------------------- All States ------------------------------ */
   const [notificationFilter, setNotificationFilter] =
     useState<TNotificationFilterType>("all");
 

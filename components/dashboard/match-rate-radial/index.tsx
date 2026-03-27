@@ -6,23 +6,19 @@ import {
   PolarAngleAxis,
   ResponsiveContainer,
 } from "recharts";
+import { IMatchRateRadialProps } from "./props";
 
-interface MatchRateRadialProps {
-  rate: number;
-}
-
-export function MatchRateRadial({ rate }: MatchRateRadialProps) {
+export function MatchRateRadial({ rate }: IMatchRateRadialProps) {
   const data = [{ value: rate, fill: "hsl(var(--primary))" }];
 
-  // Color based on rate
-  const getColor = (r: number) => {
+  const getColorBasedOnRate = (r: number) => {
     if (r >= 70) return "#10b981"; // emerald
     if (r >= 40) return "hsl(var(--primary))";
     if (r >= 20) return "#f59e0b"; // amber
     return "#ef4444"; // red
   };
 
-  const color = getColor(rate);
+  const color = getColorBasedOnRate(rate);
   data[0].fill = color;
 
   return (
@@ -52,7 +48,6 @@ export function MatchRateRadial({ rate }: MatchRateRadialProps) {
         </RadialBarChart>
       </ResponsiveContainer>
 
-      {/* Center text */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="text-3xl font-bold tracking-tight" style={{ color }}>
           {rate}%

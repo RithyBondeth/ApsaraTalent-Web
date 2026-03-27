@@ -39,7 +39,7 @@ import Image from "next/image";
 import { useCallback, useState } from "react";
 import InterviewLoadingSkeleton from "./skeleton";
 
-/* ── Status badge colors ── */
+/* ---------------------------------- Utils --------------------------------- */
 function statusBadgeClass(status: string) {
   switch (status) {
     case "accepted":
@@ -55,7 +55,6 @@ function statusBadgeClass(status: string) {
   }
 }
 
-/* ── Format date for display ── */
 function formatDateTime(dateStr: string) {
   const date = new Date(dateStr);
   return date.toLocaleDateString("en-US", {
@@ -69,10 +68,10 @@ function formatDateTime(dateStr: string) {
 }
 
 export default function InterviewPage() {
-  /* ── Stores ── */
+  /* ----------------------------- API Integration ---------------------------- */
+
   const {
     interviews,
-    loading,
     creating,
     error,
     fetchInterviews,
@@ -80,12 +79,11 @@ export default function InterviewPage() {
     updateStatus,
   } = useInterviewStore();
 
-  const {
-    currentCompanyMatching,
-    queryCurrentCompanyMatching,
-  } = useGetCurrentCompanyMatchingStore();
+  const { currentCompanyMatching, queryCurrentCompanyMatching } =
+    useGetCurrentCompanyMatchingStore();
 
-  /* ── Dialog state ── */
+  /* -------------------------------- All States ------------------------------ */
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
   const [formData, setFormData] = useState({
@@ -97,7 +95,8 @@ export default function InterviewPage() {
     meetingLink: "",
   });
 
-  /* ── Fetch interviews + matched employees (for company) ── */
+  /* --------------------------------- Effects --------------------------------- */
+
   const { isEmployee, isCompany, currentUser } = useFetchOnce({
     cacheKey: "interview-page",
     onEmployeeFetch: (employeeId) => fetchInterviews(employeeId, "employee"),
@@ -111,9 +110,16 @@ export default function InterviewPage() {
     ? currentUser?.employee?.id
     : currentUser?.company?.id;
 
-  /* ── Handlers ── */
+  /* --------------------------------- Methods --------------------------------- */
+
   const handleCreateInterview = useCallback(async () => {
-    if (!currentId || !selectedEmployeeId || !formData.title || !formData.scheduledAt) return;
+    if (
+      !currentId ||
+      !selectedEmployeeId ||
+      !formData.title ||
+      !formData.scheduledAt
+    )
+      return;
 
     const payload = {
       employeeId: selectedEmployeeId,
@@ -150,13 +156,11 @@ export default function InterviewPage() {
     [updateStatus],
   );
 
-  /* ── Loading ── */
-  if (loading || interviews === null) return <InterviewLoadingSkeleton />;
+  /* -------------------------------- Render UI -------------------------------- */
+  if (interviews === null) return <InterviewLoadingSkeleton />;
 
   /* ── Matched employees list for the select dropdown ── */
   const matchedEmployees = currentCompanyMatching ?? [];
-
-  /* ── Render ── */
   return (
     <div className="w-full flex flex-col gap-4 px-2.5 sm:px-5 animate-page-in">
       {/* Header */}
@@ -236,7 +240,10 @@ export default function InterviewPage() {
                     placeholder="e.g. Technical Interview Round 1"
                     value={formData.title}
                     onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, title: e.target.value }))
+                      setFormData((prev) => ({
+                        ...prev,
+                        title: e.target.value,
+                      }))
                     }
                   />
                 </div>
@@ -319,9 +326,7 @@ export default function InterviewPage() {
                   />
                 </div>
 
-                {error && (
-                  <p className="text-sm text-destructive">{error}</p>
-                )}
+                {error && <p className="text-sm text-destructive">{error}</p>}
 
                 <Button
                   onClick={handleCreateInterview}
@@ -344,11 +349,11 @@ export default function InterviewPage() {
       {interviews.length > 0 ? (
         <div className="flex flex-col gap-3 stagger-list">
           {interviews.map((interview) => {
-            const isCreator = interview.createdBy === (isEmployee ? "employee" : "company");
-            const showActions =
-              interview.status === "pending" && !isCreator;
+            const isCreator =
+              interview.createdBy === (isEmployee ? "employee" : "company");
+            const showActions = interview.status === "pending" && !isCreator;
             const otherPartyName = isEmployee
-              ? interview.company?.name ?? "Company"
+              ? (interview.company?.name ?? "Company")
               : `${interview.employee?.firstname ?? ""} ${interview.employee?.lastname ?? ""}`.trim() ||
                 interview.employee?.username ||
                 "Employee";
@@ -454,7 +459,7 @@ export default function InterviewPage() {
           <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
             {isEmployee
               ? "No interviews scheduled yet. Companies will schedule interviews with you after matching."
-              : "No interviews scheduled yet. Click \"Schedule Interview\" to get started."}
+              : 'No interviews scheduled yet. Click "Schedule Interview" to get started.'}
           </TypographyP>
         </div>
       )}
