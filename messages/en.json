@@ -132,5 +132,36 @@
     "likes": "Likes",
     "received": "Received",
     "matches": "Matches"
+  },
+  "interview": {
+    "title": "Interviews",
+    "scheduleInterview": "Schedule Interview",
+    "selectEmployee": "Select Employee",
+    "chooseMatchedEmployee": "Choose a matched employee",
+    "noMatchedEmployees": "No matched employees yet. You need to match with employees before scheduling interviews.",
+    "interviewTitle": "Title",
+    "interviewTitlePlaceholder": "e.g. Technical Interview Round 1",
+    "description": "Description",
+    "descriptionPlaceholder": "Interview details...",
+    "dateTime": "Date & Time",
+    "duration": "Duration (min)",
+    "location": "Location",
+    "locationPlaceholder": "Office address or room",
+    "meetingLink": "Meeting Link",
+    "meetingLinkPlaceholder": "https://meet.google.com/...",
+    "scheduling": "Scheduling...",
+    "with": "with {name}",
+    "joinMeeting": "Join Meeting",
+    "decline": "Decline",
+    "accept": "Accept",
+    "noInterviewsEmployee": "No interviews scheduled yet. Companies will schedule interviews with you after matching.",
+    "noInterviewsCompany": "No interviews scheduled yet. Click \"Schedule Interview\" to get started.",
+    "status": {
+      "pending": "Pending",
+      "accepted": "Accepted",
+      "declined": "Declined",
+      "cancelled": "Cancelled",
+      "completed": "Completed"
+    }
   }
 }
