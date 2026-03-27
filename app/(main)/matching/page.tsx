@@ -28,14 +28,12 @@ export default function MatchingPage() {
   const getCurrentCmpStore = useGetCurrentCompanyMatchingStore();
 
   /* -------------------------------- All States ------------------------------ */
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState<boolean>(false);
   // Track which card is in a loading state to prevent double-clicks
   const [chatLoadingId, setChatLoadingId] = useState<string | null>(null);
 
   /* --------------------------------- Effects --------------------------------- */
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => setMounted(true), []);
 
   // Use Custom Hook - Handles all ref logic and duplicate prevention for fetching favorites
   const { isEmployee, currentUser } = useFetchOnce({
@@ -64,7 +62,7 @@ export default function MatchingPage() {
     [currentUser, chatLoadingId, router],
   );
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* ------------------------------- Loading State ----------------------------- */
   const isLoadingForEmployee =
     isEmployee &&
     (getCurrentEmpStore.loading ||
@@ -80,6 +78,7 @@ export default function MatchingPage() {
 
   if (isLoading) return <MatchingLoadingSkeleton isEmployee={isEmployee} />;
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col px-2.5 sm:px-5 animate-page-in">
       {/* Banner Section */}

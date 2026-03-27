@@ -9,7 +9,6 @@ import {
 } from "@/components/message/message-page-skeleton";
 import ChatSidebar from "@/components/message/message-sidebar";
 import { CallOrchestrator } from "@/components/message/voicecall/call-orchestrator";
-import { ErrorBoundary } from "@/components/utils/error-boundary";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -19,7 +18,7 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 import { useChatStore } from "@/stores/features/chat.store";
 import { useCallStore } from "@/stores/features/call.store";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ImperativePanelHandle } from "react-resizable-panels";
 import { TypographyP } from "@/components/utils/typography/typography-p";
@@ -29,7 +28,7 @@ import { MessageSvgImage } from "@/utils/constants/asset.constant";
 import { CHAT_LOADING_TIMEOUT_MS } from "@/utils/constants/chat.constant";
 import { IMessage } from "@/components/message/props";
 
-const MessagePageContent = () => {
+export default function MessagePageContent() {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -216,11 +215,12 @@ const MessagePageContent = () => {
     router.push("/message");
   };
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* ------------------------------- Loading State ----------------------------- */
   const isLoading = (!isConnected || !isChatsLoaded) && !loadingTimedOut;
 
   if (isLoading) return <MessageLoadingSkeleton />;
 
+  /* -------------------------------- Render UI -------------------------------- */
   const chatView = activeChat ? (
     <div className="flex flex-col h-full min-h-0 min-w-0">
       <ChatHeader
@@ -273,10 +273,10 @@ const MessagePageContent = () => {
 
   return (
     <div className="w-full h-[calc(100dvh-4rem)] md:h-full min-h-0 flex bg-background overflow-hidden relative animate-page-in">
-      {/* Call overlay + incoming modal — persists across chat switches */}
+      {/* Call Overlay + Incoming Modal */}
       <CallOrchestrator />
 
-      {/* ── DESKTOP RESIZABLE LAYOUT ─────────────────────────────────────── */}
+      {/* Desktop Resizable Layout Section */}
       <div className="hidden lg:flex w-full h-full min-h-0">
         <ResizablePanelGroup
           direction="horizontal"
@@ -310,9 +310,9 @@ const MessagePageContent = () => {
         </ResizablePanelGroup>
       </div>
 
-      {/* ── MOBILE CONTENT AREA ──────────────────────────────────────────── */}
+      {/* Mobile Content Area */}
       <div className="lg:hidden flex-1 flex flex-col min-w-0 h-full min-h-0">
-        {/* Mobile: show full-height sidebar list when no chat is selected */}
+        {/* Mobile Section: show full-height sidebar list when no chat is selected */}
         {!chatId && (
           <div className="h-full min-h-0 flex flex-col">
             <ChatSidebar
@@ -327,7 +327,7 @@ const MessagePageContent = () => {
           </div>
         )}
 
-        {/* Chat View Section — Shown when a chatId is in the URL */}
+        {/* Chat View Section: shown when a chatId is in the URL */}
         {chatId && chatView}
         {chatId && !chatView && (
           <div className="flex-1 min-w-0 min-h-0">
@@ -336,15 +336,5 @@ const MessagePageContent = () => {
         )}
       </div>
     </div>
-  );
-};
-
-export default function MessagePage() {
-  return (
-    <ErrorBoundary>
-      <Suspense fallback={<MessageLoadingSkeleton />}>
-        <MessagePageContent />
-      </Suspense>
-    </ErrorBoundary>
   );
 }
