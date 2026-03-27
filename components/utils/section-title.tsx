@@ -1,28 +1,12 @@
-import MetaChip from "../utils/meta-chip";
+import React from "react";
+import { Skeleton } from "../ui/skeleton";
 
-export function DetailCard({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <div
-      className={`bg-card rounded-2xl border border-border/60 shadow-sm ${className ?? ""}`}
-    >
-      {children}
-    </div>
-  );
-}
-
-export function SectionTitle({
-  icon,
-  title,
-}: {
+interface SectionTitleProps {
   icon: React.ReactNode;
   title: string;
-}) {
+}
+
+export function SectionTitle({ icon, title }: SectionTitleProps) {
   return (
     <div className="flex items-center gap-2.5 mb-4 pb-3.5 border-b border-border/60">
       <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -35,4 +19,11 @@ export function SectionTitle({
   );
 }
 
-export { MetaChip };
+export function SectionTitleSkeleton() {
+  return (
+    <div className="flex items-center gap-2.5 mb-4 pb-3.5 border-b border-border/60">
+      <Skeleton className="size-8 rounded-lg shrink-0" />
+      <Skeleton className="h-5 w-32" />
+    </div>
+  );
+}

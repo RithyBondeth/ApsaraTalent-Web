@@ -6,7 +6,6 @@ import {
   LucideHeartHandshake,
   LucideMapPin,
 } from "lucide-react";
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "../../ui/button";
 import CachedAvatar from "../../ui/cached-avatar";
@@ -44,19 +43,22 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
     }
   }, [openProfileDialog]);
 
-  /* ─── Grid variant: flat card, top border divider, no vertical gap ─── */
+  /* ─── Grid variant: seamless card with divider, no vertical gap ─── */
   if (isGrid) {
     return (
       <>
-        <div className="group relative w-full flex flex-col rounded-xl border border-muted bg-card cursor-pointer transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_8px_30px_hsl(var(--foreground)/0.08)] hover:border-primary/20">
+        <div className="group relative w-full flex flex-col bg-card border border-muted/60 cursor-pointer transition-all duration-200 ease-out hover:bg-accent/40">
+          {/* Top accent bar on hover */}
+          <div className="absolute inset-x-0 top-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+
           {/* Main Content */}
-          <div className="flex flex-col gap-3 px-4 pt-4 pb-3">
+          <div className="flex flex-col gap-2.5 p-4">
             {/* Header: Avatar + Info + Actions */}
             <div className="flex items-start gap-3">
               <CachedAvatar
                 src={props.avatar}
                 alt={props.username ?? "Profile"}
-                className="size-12 shrink-0 ring-2 ring-background shadow-sm"
+                className="size-11 shrink-0 ring-1 ring-border"
                 rounded="md"
                 onClick={props.onProfileImageClick}
                 preload={true}
@@ -78,28 +80,18 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
                 </TypographySmall>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center gap-1 shrink-0">
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="size-8 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
-                  onClick={handleClickDialog}
-                >
-                  <LucideEye className="!size-4" />
-                </Button>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="size-8 rounded-full text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-all duration-200"
-                  onClick={props.onLikeClick}
-                  disabled={props.onLikeClickDisable}
-                >
-                  <LucideHeartHandshake
-                    className={`!size-4${props.onLikeClickDisable ? " animate-pop-shrink text-rose-500" : ""}`}
-                  />
-                </Button>
-              </div>
+              {/* Like Button */}
+              <Button
+                size="icon"
+                variant="ghost"
+                className="size-8 rounded-full text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-all duration-200 shrink-0"
+                onClick={props.onLikeClick}
+                disabled={props.onLikeClickDisable}
+              >
+                <LucideHeartHandshake
+                  className={`!size-4${props.onLikeClickDisable ? " animate-pop-shrink text-rose-500" : ""}`}
+                />
+              </Button>
             </div>
 
             {/* Skills Tags */}
@@ -124,50 +116,48 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
             {/* Experience & Availability */}
             <div className="flex flex-wrap gap-1.5 items-center">
               {props.educations.length > 0 &&
-                props.educations.slice(0, 2).map((edu, index) => (
-                  <Tag key={index} label={edu.degree} />
-                ))}
+                props.educations
+                  .slice(0, 2)
+                  .map((edu, index) => <Tag key={index} label={edu.degree} />)}
               <Tag label={props.yearsOfExperience} />
               <Tag label={props.availability} />
             </div>
-          </div>
 
-          {/* Footer: Buttons */}
-          <div className="flex items-center justify-end gap-2 px-4 pb-3 pt-0">
-            <Button
-              className={`text-xs h-7 px-3 rounded-full ${
-                props.hideSaveButton
-                  ? "animate-pop-shrink pointer-events-none"
-                  : "opacity-100 scale-100"
-              }`}
-              variant="outline"
-              size="sm"
-              onClick={props.onSaveClick}
-            >
-              <LucideBookmark className="!size-3" />
-              Save
-            </Button>
-            {props.viewHref ? (
+            {/* Footer: Actions */}
+            <div className="flex items-center justify-between pt-1 border-t border-muted/50">
               <Button
-                className="text-xs h-7 px-3 rounded-full"
-                size="sm"
-                asChild
+                size="icon"
+                variant="ghost"
+                className="size-8 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
+                onClick={handleClickDialog}
               >
-                <Link href={props.viewHref} prefetch={true}>
+                <LucideEye className="!size-4" />
+              </Button>
+
+              <div className="flex items-center gap-1.5">
+                <Button
+                  className={`text-[11px] h-7 px-2.5 rounded-full gap-1 ${
+                    props.hideSaveButton
+                      ? "animate-pop-shrink pointer-events-none"
+                      : "opacity-100 scale-100"
+                  }`}
+                  variant="ghost"
+                  size="sm"
+                  onClick={props.onSaveClick}
+                >
+                  <LucideBookmark className="!size-3" />
+                  Save
+                </Button>
+                <Button
+                  className="text-[11px] h-7 px-3 rounded-full gap-1"
+                  size="sm"
+                  onClick={props.onViewClick}
+                >
                   View
                   <LucideCircleArrowRight className="!size-3" />
-                </Link>
-              </Button>
-            ) : (
-              <Button
-                className="text-xs h-7 px-3 rounded-full"
-                size="sm"
-                onClick={props.onViewClick}
-              >
-                View
-                <LucideCircleArrowRight className="!size-3" />
-              </Button>
-            )}
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -250,7 +240,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
       </div>
 
       {/* button Section */}
-      <div className="bg-red-500 w-full flex items-center justify-end gap-2 sm:gap-3 tablet-lg:justify-stretch tablet-lg:[&>button]:flex-1 phone-xl:justify-stretch phone-xl:[&>button]:flex-1">
+      <div className="w-full flex items-center justify-end gap-2 sm:gap-3 tablet-lg:justify-stretch tablet-lg:[&>button]:flex-1 phone-xl:justify-stretch phone-xl:[&>button]:flex-1">
         <Button
           className={`text-sm ${
             props.hideSaveButton

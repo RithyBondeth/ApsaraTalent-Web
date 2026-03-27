@@ -1,5 +1,5 @@
-import EmployeeDetailPageSkeleton from "./skeleton";
+import { EmployeeDetailPageLoadingSkeleton } from "@/components/employee/skeleton/index";
 
 export default function EmployeeDetailLoading() {
-  return <EmployeeDetailPageSkeleton />;
+  return <EmployeeDetailPageLoadingSkeleton />;
 }

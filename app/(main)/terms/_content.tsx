@@ -354,8 +354,7 @@ const content = {
 
     s6: {
       title: "អាកប្បកិរិយាហាមឃាត់",
-      intro:
-        "អាកប្បកិរិយាខាងក្រោមត្រូវបានហាមឃាត់យ៉ាងតឹងរ៉ឹងនៅ Apsara Talent:",
+      intro: "អាកប្បកិរិយាខាងក្រោមត្រូវបានហាមឃាត់យ៉ាងតឹងរ៉ឹងនៅ Apsara Talent:",
       bullets: [
         "ក្លែងបន្លំជាបុគ្គល ក្រុមហ៊ុន ឬអង្គភាពផ្សេង",
         "ចុះផ្សាយការផ្សាយការងារ ឬប្រវត្តិរូបបេក្ខជនក្លែងបន្លំ បញ្ចោតបំភ្លៃ ឬក្លែងក្លាយ",
@@ -478,9 +477,11 @@ const content = {
    Main component
 ───────────────────────────────────────────────────────────── */
 export function TermsContent() {
+  /* -------------------------------- All States -------------------------------- */
   const { language, setLanguage } = useLanguageStore();
   const c = content[language];
 
+  /* -------------------------------- Render UI --------------------------------- */
   return (
     <div className="min-h-screen bg-background animate-page-in">
       {/* ── Top nav ── */}
@@ -564,11 +565,7 @@ export function TermsContent() {
           </div>
 
           {/* ─── 1. Acceptance ─── */}
-          <Section
-            id="acceptance"
-            icon={<LucideFileText />}
-            title={c.s1.title}
-          >
+          <Section id="acceptance" icon={<LucideFileText />} title={c.s1.title}>
             <p>
               {c.s1.p1}{" "}
               <Link href="/privacy" className="text-primary hover:underline">
@@ -595,19 +592,19 @@ export function TermsContent() {
           </Section>
 
           {/* ─── 3. Account types ─── */}
-          <Section
-            id="account-types"
-            icon={<LucideUsers />}
-            title={c.s3.title}
-          >
+          <Section id="account-types" icon={<LucideUsers />} title={c.s3.title}>
             <p>{c.s3.intro}</p>
             <div className="flex flex-col gap-3">
               <div className="rounded-xl border border-border bg-muted/20 p-4 flex flex-col gap-2">
-                <p className="font-semibold text-foreground">{c.s3.type1Title}</p>
+                <p className="font-semibold text-foreground">
+                  {c.s3.type1Title}
+                </p>
                 <p>{c.s3.type1}</p>
               </div>
               <div className="rounded-xl border border-border bg-muted/20 p-4 flex flex-col gap-2">
-                <p className="font-semibold text-foreground">{c.s3.type2Title}</p>
+                <p className="font-semibold text-foreground">
+                  {c.s3.type2Title}
+                </p>
                 <p>{c.s3.type2}</p>
               </div>
             </div>

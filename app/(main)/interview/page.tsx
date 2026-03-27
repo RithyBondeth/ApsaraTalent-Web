@@ -37,7 +37,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useState } from "react";
-import InterviewLoadingSkeleton from "./skeleton";
+import InterviewLoadingSkeleton from "./loading";
 
 /* ---------------------------------- Utils --------------------------------- */
 function statusBadgeClass(status: string) {

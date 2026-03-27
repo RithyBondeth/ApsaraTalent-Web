@@ -1,14 +1,6 @@
-"use client";
+import { IProfileProgressBarProps } from "./props";
 
-interface ProfileProgressBarProps {
-  percentage: number;
-}
-
-/**
- * Compact inline progress bar for use in dialogs and cards.
- * Shows a thin colored bar with percentage text.
- */
-export function ProfileProgressBar({ percentage }: ProfileProgressBarProps) {
+export function ProfileProgressBar({ percentage }: IProfileProgressBarProps) {
   const isComplete = percentage >= 100;
   const barColor = isComplete
     ? "bg-green-500"

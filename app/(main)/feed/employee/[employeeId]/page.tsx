@@ -54,13 +54,11 @@ import {
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
-import EmployeeDetailPageSkeleton from "./skeleton";
+import { EmployeeDetailPageLoadingSkeleton } from "@/components/employee/skeleton";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
-import {
-  DetailCard as Card,
-  SectionTitle,
-  MetaChip,
-} from "@/components/feed/detail-helpers";
+import MetaChip from "@/components/utils/meta-chip";
+import { DetailCard } from "@/components/utils/detail-card";
+import { SectionTitle } from "@/components/utils/section-title";
 
 /* ── Local helpers ──────────────────────────────────────────────── */
 function availabilityClass(availability: string) {
@@ -226,7 +224,7 @@ export default function EmployeeDetailPage() {
   if (isLoading)
     return (
       <div className="animate-page-in">
-        <EmployeeDetailPageSkeleton />
+        <EmployeeDetailPageLoadingSkeleton />
       </div>
     );
 
@@ -286,7 +284,7 @@ export default function EmployeeDetailPage() {
       </header>
 
       {/* ── Hero Card ─────────────────────────────────────────────── */}
-      <Card>
+      <DetailCard>
         {/* Gradient banner with decorative circles */}
         <div className="h-36 sm:h-44 rounded-t-2xl bg-gradient-to-r from-primary to-primary/50 relative overflow-hidden">
           <div className="absolute -top-6 right-10 size-36 rounded-full bg-white/5" />
@@ -378,7 +376,7 @@ export default function EmployeeDetailPage() {
             </div>
           </div>
         </div>
-      </Card>
+      </DetailCard>
 
       {/* ── Content Grid ──────────────────────────────────────────── */}
       <div className="flex items-start gap-5 tablet-xl:flex-col">
@@ -386,17 +384,17 @@ export default function EmployeeDetailPage() {
         <div className="flex-1 min-w-0 flex flex-col gap-5">
           {/* About */}
           {employeeData.description && (
-            <Card className="p-5 sm:p-6">
+            <DetailCard className="p-5 sm:p-6">
               <SectionTitle icon={<LucideUser />} title="About" />
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {employeeData.description}
               </p>
-            </Card>
+            </DetailCard>
           )}
 
           {/* Skills */}
           {employeeData.skills && employeeData.skills.length > 0 && (
-            <Card className="p-5 sm:p-6">
+            <DetailCard className="p-5 sm:p-6">
               <SectionTitle icon={<LucideZap />} title="Skills" />
               <div className="flex flex-wrap gap-2">
                 {employeeData.skills.map((item: ISkill) => (
@@ -415,12 +413,12 @@ export default function EmployeeDetailPage() {
                   </HoverCard>
                 ))}
               </div>
-            </Card>
+            </DetailCard>
           )}
 
           {/* Experience */}
           {employeeData.experiences && employeeData.experiences.length > 0 && (
-            <Card className="p-5 sm:p-6">
+            <DetailCard className="p-5 sm:p-6">
               <SectionTitle
                 icon={<LucideBriefcaseBusiness />}
                 title="Experience"
@@ -457,12 +455,12 @@ export default function EmployeeDetailPage() {
                   ),
                 )}
               </div>
-            </Card>
+            </DetailCard>
           )}
 
           {/* Education */}
           {employeeData.educations && employeeData.educations.length > 0 && (
-            <Card className="p-5 sm:p-6">
+            <DetailCard className="p-5 sm:p-6">
               <SectionTitle icon={<LucideGraduationCap />} title="Education" />
               <div className="flex flex-col gap-3">
                 {employeeData.educations.map((item: IEducation) => (
@@ -491,7 +489,7 @@ export default function EmployeeDetailPage() {
                   </div>
                 ))}
               </div>
-            </Card>
+            </DetailCard>
           )}
         </div>
 
@@ -499,7 +497,7 @@ export default function EmployeeDetailPage() {
         <div className="w-72 flex flex-col gap-5 tablet-xl:w-full">
           {/* Documents */}
           {(employeeData.resume || employeeData.coverLetter) && (
-            <Card className="p-5">
+            <DetailCard className="p-5">
               <SectionTitle icon={<LucideFileText />} title="Documents" />
               <div className="flex flex-col gap-2.5">
                 {[
@@ -548,11 +546,11 @@ export default function EmployeeDetailPage() {
                     </div>
                   ))}
               </div>
-            </Card>
+            </DetailCard>
           )}
 
           {/* Contact */}
-          <Card className="p-5">
+          <DetailCard className="p-5">
             <SectionTitle icon={<LucidePhone />} title="Contact" />
             <div className="space-y-3.5">
               {[
@@ -587,11 +585,11 @@ export default function EmployeeDetailPage() {
                   </div>
                 ))}
             </div>
-          </Card>
+          </DetailCard>
 
           {/* Socials */}
           {employeeData.socials && employeeData.socials.length > 0 && (
-            <Card className="p-5">
+            <DetailCard className="p-5">
               <SectionTitle icon={<LucideGlobe />} title="Social Links" />
               <div className="flex flex-wrap gap-2">
                 {employeeData.socials.map((item: ISocial) => (
@@ -607,7 +605,7 @@ export default function EmployeeDetailPage() {
                   </Link>
                 ))}
               </div>
-            </Card>
+            </DetailCard>
           )}
         </div>
       </div>

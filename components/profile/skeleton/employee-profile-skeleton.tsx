@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { SectionTitleSkeleton } from "@/components/utils/section-title";
 
 function SkeletonCard({
   children,
@@ -12,15 +13,6 @@ function SkeletonCard({
       className={`bg-card rounded-2xl border border-border/60 shadow-sm ${className ?? ""}`}
     >
       {children}
-    </div>
-  );
-}
-
-function SkeletonSectionTitle() {
-  return (
-    <div className="flex items-center gap-2.5 mb-4 pb-3.5 border-b border-border/60">
-      <Skeleton className="size-8 rounded-lg flex-shrink-0" />
-      <Skeleton className="h-5 w-32" />
     </div>
   );
 }
@@ -59,7 +51,7 @@ export default function EmployeeProfilePageLoadingSkeleton() {
         <div className="w-[60%] min-w-0 flex flex-col gap-5 tablet-lg:w-full">
           {/* Personal Information */}
           <SkeletonCard className="p-5 sm:p-6">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="flex flex-col gap-5">
               {/* Firstname / Lastname row */}
               <div className="flex gap-5 tablet-sm:flex-col">
@@ -103,7 +95,7 @@ export default function EmployeeProfilePageLoadingSkeleton() {
 
           {/* Professional Information */}
           <SkeletonCard className="p-5 sm:p-6">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="flex flex-col gap-5">
               {/* Job title */}
               <div className="space-y-1.5">
@@ -131,7 +123,7 @@ export default function EmployeeProfilePageLoadingSkeleton() {
 
           {/* Education Information */}
           <SkeletonCard className="p-5 sm:p-6">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="flex flex-col gap-4">
               {[...Array(2)].map((_, i) => (
                 <div
@@ -157,7 +149,7 @@ export default function EmployeeProfilePageLoadingSkeleton() {
 
           {/* Experience Information */}
           <SkeletonCard className="p-5 sm:p-6">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="flex flex-col gap-4">
               {[...Array(2)].map((_, i) => (
                 <div
@@ -192,7 +184,7 @@ export default function EmployeeProfilePageLoadingSkeleton() {
         <div className="w-[40%] min-w-0 flex flex-col gap-5 tablet-lg:w-full">
           {/* Skills */}
           <SkeletonCard className="p-5 sm:p-6">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="flex flex-wrap gap-2">
               {[...Array(6)].map((_, i) => (
                 <Skeleton
@@ -207,7 +199,7 @@ export default function EmployeeProfilePageLoadingSkeleton() {
 
           {/* Career Scopes */}
           <SkeletonCard className="p-5 sm:p-6">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="flex flex-wrap gap-2">
               {[...Array(4)].map((_, i) => (
                 <Skeleton key={i} className="h-8 w-24 rounded-full" />
@@ -218,7 +210,7 @@ export default function EmployeeProfilePageLoadingSkeleton() {
 
           {/* References */}
           <SkeletonCard className="p-5 sm:p-6">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="flex flex-col gap-2.5">
               {[...Array(2)].map((_, i) => (
                 <div
@@ -241,7 +233,7 @@ export default function EmployeeProfilePageLoadingSkeleton() {
 
           {/* Social Information */}
           <SkeletonCard className="p-5 sm:p-6">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="flex flex-wrap gap-2">
               {[...Array(3)].map((_, i) => (
                 <Skeleton key={i} className="h-8 w-24 rounded-full" />
@@ -252,7 +244,7 @@ export default function EmployeeProfilePageLoadingSkeleton() {
 
           {/* Authentication */}
           <SkeletonCard className="p-5 sm:p-6">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="flex flex-col gap-3">
               {[...Array(4)].map((_, i) => (
                 <div

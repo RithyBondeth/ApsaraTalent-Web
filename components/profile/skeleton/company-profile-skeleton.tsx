@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { SectionTitleSkeleton } from "@/components/utils/section-title";
 
 function SkeletonCard({
   children,
@@ -12,15 +13,6 @@ function SkeletonCard({
       className={`bg-card rounded-2xl border border-border/60 shadow-sm ${className ?? ""}`}
     >
       {children}
-    </div>
-  );
-}
-
-function SkeletonSectionTitle() {
-  return (
-    <div className="flex items-center gap-2.5 mb-4 pb-3.5 border-b border-border/60">
-      <Skeleton className="size-8 rounded-lg flex-shrink-0" />
-      <Skeleton className="h-5 w-32" />
     </div>
   );
 }
@@ -59,7 +51,7 @@ export function CompanyProfilePageLoadingSkeleton() {
         <div className="w-[60%] min-w-0 flex flex-col gap-5 tablet-lg:w-full">
           {/* Company Information */}
           <SkeletonCard className="p-5 sm:p-6">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="flex flex-col gap-5">
               {/* Company Name */}
               <div className="space-y-1.5">
@@ -102,7 +94,7 @@ export function CompanyProfilePageLoadingSkeleton() {
 
           {/* Open Positions */}
           <SkeletonCard className="p-5 sm:p-6">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="flex flex-col gap-4">
               {[...Array(2)].map((_, i) => (
                 <div
@@ -122,7 +114,7 @@ export function CompanyProfilePageLoadingSkeleton() {
 
           {/* Company Images */}
           <SkeletonCard className="p-5 sm:p-6">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="flex gap-3 overflow-hidden">
               {[...Array(3)].map((_, i) => (
                 <Skeleton
@@ -138,7 +130,7 @@ export function CompanyProfilePageLoadingSkeleton() {
         <div className="w-[40%] min-w-0 flex flex-col gap-5 tablet-lg:w-full">
           {/* Benefits */}
           <SkeletonCard className="p-5 sm:p-6">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="flex flex-wrap gap-2">
               {[...Array(4)].map((_, i) => (
                 <Skeleton key={i} className="h-8 w-24 rounded-full" />
@@ -149,7 +141,7 @@ export function CompanyProfilePageLoadingSkeleton() {
 
           {/* Values */}
           <SkeletonCard className="p-5 sm:p-6">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="flex flex-wrap gap-2">
               {[...Array(3)].map((_, i) => (
                 <Skeleton key={i} className="h-8 w-28 rounded-full" />
@@ -160,7 +152,7 @@ export function CompanyProfilePageLoadingSkeleton() {
 
           {/* Career Scopes */}
           <SkeletonCard className="p-5 sm:p-6">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="flex flex-wrap gap-2">
               {[...Array(5)].map((_, i) => (
                 <Skeleton key={i} className="h-8 w-28 rounded-full" />
@@ -171,7 +163,7 @@ export function CompanyProfilePageLoadingSkeleton() {
 
           {/* Social Information */}
           <SkeletonCard className="p-5 sm:p-6">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="flex flex-wrap gap-2">
               {[...Array(3)].map((_, i) => (
                 <Skeleton key={i} className="h-8 w-24 rounded-full" />
@@ -182,7 +174,7 @@ export function CompanyProfilePageLoadingSkeleton() {
 
           {/* Authentication */}
           <SkeletonCard className="p-5 sm:p-6">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="flex flex-col gap-3">
               {[...Array(4)].map((_, i) => (
                 <div

@@ -103,29 +103,11 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { companyFormSchema, TCompanyProfileForm } from "./validation";
-import { CompanyProfilePageLoadingSkeleton } from "./skeleton";
 import { emptySvgImage } from "@/utils/constants/asset.constant";
-import ProfileCompletionCard from "@/components/profile/profile-completion-card";
 import { getCompanyProfileCompletion } from "@/utils/functions/profile-completion";
-
-function SectionTitle({
-  icon,
-  title,
-}: {
-  icon: React.ReactNode;
-  title: string;
-}) {
-  return (
-    <div className="flex items-center gap-2.5 mb-4 pb-3.5 border-b border-border/60">
-      <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-        <span className="[&>svg]:size-[18px] [&>svg]:text-primary [&>svg]:stroke-[1.5]">
-          {icon}
-        </span>
-      </div>
-      <h3 className="font-semibold text-base">{title}</h3>
-    </div>
-  );
-}
+import { CompanyProfilePageLoadingSkeleton } from "@/components/profile/skeleton/company-profile-skeleton";
+import { SectionTitle } from "@/components/utils/section-title";
+import ProfileCompletionCard from "@/components/profile/profile-completion-card";
 
 export default function ProfilePage() {
   /* -------------------------------- All States -------------------------------- */

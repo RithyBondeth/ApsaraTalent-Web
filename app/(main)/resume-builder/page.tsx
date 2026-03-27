@@ -13,7 +13,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { buildResumePayloadFromUser } from "./_utils/build-payload";
 import { TResumeTemplate } from "@/utils/types/resume.type";
-import ResumeBuilderLoadingSkeleton from "./skeleton";
+import ResumeBuilderLoadingSkeleton from "@/components/resume-builder/skeleton";
 
 // Module-level flag so templates are only fetched once per app session
 let hasFetchedTemplates = false;

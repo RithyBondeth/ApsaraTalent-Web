@@ -16,7 +16,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from "../../ui/dialog";
-import { ProfileProgressBar } from "../../profile/profile-progress-bar";
+import { ProfileProgressBar } from "../../profile/profile-progress-bar/";
 import { getCompanyProfileCompletion } from "@/utils/functions/profile-completion";
 import { ICompanyDialogProps } from "./props";
 
@@ -44,7 +44,10 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
           )}
           {/* Avatar overlapping the cover */}
           <div className="absolute -bottom-9 left-4">
-            <Avatar className="!size-20 ring-4 ring-background shadow-lg" rounded="md">
+            <Avatar
+              className="!size-20 ring-4 ring-background shadow-lg"
+              rounded="md"
+            >
               <AvatarImage src={props.avatar!} />
               <AvatarFallback className="uppercase text-lg font-semibold">
                 {props.name.slice(0, 2)}

@@ -11,9 +11,9 @@ import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-cu
 import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
 import { initateChat } from "./_apis/initiate-chat.api";
-import MatchingLoadingSkeleton from "./skeleton";
+import MatchingLoadingSkeleton from "@/components/matching/skeleton";
+import { useCallback, useEffect, useState } from "react";
 import {
   emptySvgImage,
   matchingSvgImage,
@@ -28,10 +28,15 @@ export default function MatchingPage() {
   const getCurrentCmpStore = useGetCurrentCompanyMatchingStore();
 
   /* -------------------------------- All States ------------------------------ */
+  const [mounted, setMounted] = useState(false);
   // Track which card is in a loading state to prevent double-clicks
   const [chatLoadingId, setChatLoadingId] = useState<string | null>(null);
 
   /* --------------------------------- Effects --------------------------------- */
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Use Custom Hook - Handles all ref logic and duplicate prevention for fetching favorites
   const { isEmployee, currentUser } = useFetchOnce({
     cacheKey: "matching-page",
@@ -70,7 +75,8 @@ export default function MatchingPage() {
     (getCurrentCmpStore.loading ||
       getCurrentCmpStore.currentCompanyMatching === null);
 
-  const isLoading = isLoadingForEmployee || isLoadingForCompany;
+  const isLoading =
+    !mounted || !currentUser || isLoadingForEmployee || isLoadingForCompany;
 
   if (isLoading) return <MatchingLoadingSkeleton isEmployee={isEmployee} />;
 
@@ -95,14 +101,16 @@ export default function MatchingPage() {
         </div>
 
         {/* Image Poster Section */}
-        <Image
-          src={matchingSvgImage}
-          alt="matching"
-          height={250}
-          width={350}
-          className="h-auto max-w-[320px] tablet-xl:!w-full"
-          priority
-        />
+        {mounted && (
+          <Image
+            src={matchingSvgImage}
+            alt="matching"
+            height={250}
+            width={350}
+            className="h-auto max-w-[320px] tablet-xl:!w-full"
+            priority
+          />
+        )}
       </div>
 
       {/* Matching Card List Section */}

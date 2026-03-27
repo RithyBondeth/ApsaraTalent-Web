@@ -1,16 +1,10 @@
-"use client";
-
 import { LucideCircleCheck, LucideCircleAlert } from "lucide-react";
-
-interface ProfileCompletionCardProps {
-  percentage: number;
-  missingFields: string[];
-}
+import { IProfileCompletionCardProps } from "./props";
 
 export default function ProfileCompletionCard({
   percentage,
   missingFields,
-}: ProfileCompletionCardProps) {
+}: IProfileCompletionCardProps) {
   const isComplete = percentage >= 100;
 
   return (

@@ -3,13 +3,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function InterviewLoadingSkeleton() {
   return (
     <div className="w-full flex flex-col gap-4 px-2.5 sm:px-5">
-      {/* Header */}
+      {/* Header Section */}
       <div className="flex items-center justify-between">
         <Skeleton className="h-8 w-[200px]" />
         <Skeleton className="h-9 w-[160px] rounded-lg" />
       </div>
 
-      {/* Interview Cards */}
+      {/* Interview Cards Section */}
       {[...Array(3)].map((_, index) => (
         <div
           key={index}

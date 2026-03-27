@@ -1,5 +1,10 @@
-import { IMetaChipProps } from "./props";
 import { cn } from "@/lib/utils";
+
+interface IMetaChipProps {
+  icon: React.ReactNode;
+  text: string;
+  className?: string;
+}
 
 export default function MetaChip({ icon, text, className }: IMetaChipProps) {
   return (

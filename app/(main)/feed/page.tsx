@@ -1,7 +1,6 @@
 "use client";
 
-import CompanyCardSkeleton from "@/components/company/company-card/skeleton";
-import EmployeeCardSkeleton from "@/components/employee/employee-card/skeleton";
+import EmployeeCardSkeleton from "@/components/employee/skeleton";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -45,15 +44,16 @@ import React, {
   useRef,
   useState,
 } from "react";
-import BannerSkeleton from "./banner-skeleton";
-import { CompanyFeedCard } from "./_components/company-feed-card";
-import { EmployeeFeedCard } from "./_components/employee-feed-card";
 import {
   emptySvgImage,
   feedBlackSvg,
   feedCompanySvg,
   feedWhiteSvg,
 } from "@/utils/constants/asset.constant";
+import CompanyCardSkeleton from "@/components/company/skeleton";
+import FeedBannerSkeleton from "@/components/feed/skeleton";
+import { MemoCompanyFeedCard } from "@/components/feed/memo-company-feed-card";
+import { MemoEmployeeFeedCard } from "@/components/feed/memo-employee-feed-card";
 
 // Module-level Cache For Global Data (survives Strict Mode)
 const globalFetchCache = {
@@ -368,7 +368,7 @@ export default function FeedPage() {
     <div className="w-full flex flex-col items-start gap-4 sm:gap-5 animate-page-in">
       {/* Header Section */}
       {isLoading ? (
-        <BannerSkeleton />
+        <FeedBannerSkeleton />
       ) : isEmployee ? (
         <div className="w-full flex items-center justify-between gap-6 lg:gap-10 tablet-xl:flex-col tablet-xl:items-center">
           {/* Employee Banner - Content Section */}
@@ -450,7 +450,7 @@ export default function FeedPage() {
             allUsers.map((user) =>
               isEmployee ? (
                 // Company Card Section
-                <CompanyFeedCard
+                <MemoCompanyFeedCard
                   key={user.id}
                   company={user as ICompany}
                   employeeId={currentUser?.employee?.id ?? ""}
@@ -464,7 +464,7 @@ export default function FeedPage() {
                 />
               ) : (
                 // Employee Card Section
-                <EmployeeFeedCard
+                <MemoEmployeeFeedCard
                   key={user.id}
                   employee={user as IEmployee}
                   companyId={currentUser?.company?.id ?? ""}

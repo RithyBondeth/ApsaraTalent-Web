@@ -45,10 +45,15 @@ export default function FavoritePage() {
   const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
 
   /* -------------------------------- All States ------------------------------ */
+  const [mounted, setMounted] = useState(false);
   // Track IDs that are currently being removed (for animation)
   const [removingFavIds, setRemovingFavIds] = useState<Set<string>>(new Set());
 
   /* --------------------------------- Effects --------------------------------- */
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const isEmployee = currentUser?.role === "employee";
 
   // Always fetch fresh data on every mount so liked items are never stale
@@ -169,7 +174,8 @@ export default function FavoritePage() {
     (getAllCompanyFavoritesStore.loading ||
       getAllCompanyFavoritesStore.employeeData === null);
 
-  const isLoading = isLoadingForEmployee || isLoadingForCompany;
+  const isLoading =
+    !mounted || !currentUser || isLoadingForEmployee || isLoadingForCompany;
 
   if (isLoading) return <FavoriteLoadingSkeleton isEmployee={isEmployee} />;
 
@@ -195,13 +201,15 @@ export default function FavoritePage() {
         </div>
 
         {/* Image Poster Section */}
-        <Image
-          src={favoriteSvgImage}
-          alt="favorites"
-          height={250}
-          width={350}
-          className="h-auto max-w-[320px] tablet-xl:!w-full"
-        />
+        {mounted && (
+          <Image
+            src={favoriteSvgImage}
+            alt="favorites"
+            height={250}
+            width={350}
+            className="h-auto max-w-[320px] tablet-xl:!w-full"
+          />
+        )}
       </div>
 
       {/* Favorite Card List Section */}

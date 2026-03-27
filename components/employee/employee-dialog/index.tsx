@@ -15,7 +15,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from "../../ui/dialog";
-import { ProfileProgressBar } from "../../profile/profile-progress-bar";
+import { ProfileProgressBar } from "../../profile/profile-progress-bar/";
 import { getEmployeeProfileCompletion } from "@/utils/functions/profile-completion";
 import { IEmployeeDialogProps } from "./props";
 
@@ -40,7 +40,10 @@ function AvailabilityBadge({ availability }: { availability: string }) {
               "bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300",
             dot: "bg-purple-500",
           }
-        : { color: "bg-muted text-muted-foreground", dot: "bg-muted-foreground" };
+        : {
+            color: "bg-muted text-muted-foreground",
+            dot: "bg-muted-foreground",
+          };
 
   return (
     <span
@@ -58,7 +61,10 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
     props.username ||
     "Talent";
 
-  const completion = useMemo(() => getEmployeeProfileCompletion(props), [props]);
+  const completion = useMemo(
+    () => getEmployeeProfileCompletion(props),
+    [props],
+  );
 
   return (
     <Dialog open={props.open} onOpenChange={(isOpen) => props.setOpen(isOpen)}>
@@ -73,7 +79,10 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
           <div className="w-full h-24 bg-gradient-to-br from-primary/90 via-primary/60 to-primary/30" />
           {/* Avatar overlapping the gradient */}
           <div className="absolute -bottom-9 left-4">
-            <Avatar className="!size-20 ring-4 ring-background shadow-lg" rounded="md">
+            <Avatar
+              className="!size-20 ring-4 ring-background shadow-lg"
+              rounded="md"
+            >
               <AvatarImage src={props.avatar!} />
               <AvatarFallback className="uppercase text-lg font-semibold">
                 {fullName.slice(0, 2)}

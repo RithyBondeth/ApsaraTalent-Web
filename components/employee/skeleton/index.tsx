@@ -1,5 +1,57 @@
+import { SectionTitleSkeleton } from "@/components/utils/section-title";
 import { Skeleton } from "@/components/ui/skeleton";
 
+/* -------------------- Employee Card Skeleton -------------------- */
+export default function EmployeeCardSkeleton() {
+  return (
+    <div className="w-full flex flex-col rounded-xl border border-muted bg-card">
+      <div className="flex flex-col gap-3 px-4 pt-4 pb-3">
+        {/* Header */}
+        <div className="flex items-start gap-3">
+          <Skeleton className="size-12 rounded-md shrink-0" />
+          <div className="flex-1 flex flex-col gap-1.5">
+            <Skeleton className="h-4 w-24 rounded" />
+            <Skeleton className="h-3 w-20 rounded" />
+            <Skeleton className="h-3 w-16 rounded" />
+          </div>
+          <div className="flex gap-1">
+            <Skeleton className="size-8 rounded-full" />
+            <Skeleton className="size-8 rounded-full" />
+          </div>
+        </div>
+
+        {/* Skills */}
+        <div className="flex flex-wrap gap-1.5">
+          <Skeleton className="h-6 w-16 rounded-full" />
+          <Skeleton className="h-6 w-20 rounded-full" />
+          <Skeleton className="h-6 w-14 rounded-full" />
+          <Skeleton className="h-6 w-18 rounded-full" />
+        </div>
+
+        {/* Description */}
+        <div className="space-y-1.5">
+          <Skeleton className="h-3 w-full rounded" />
+          <Skeleton className="h-3 w-4/5 rounded" />
+        </div>
+
+        {/* Experience */}
+        <div className="flex flex-wrap gap-1.5">
+          <Skeleton className="h-6 w-20 rounded-full" />
+          <Skeleton className="h-6 w-16 rounded-full" />
+          <Skeleton className="h-6 w-18 rounded-full" />
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="flex justify-end gap-2 px-4 pb-3">
+        <Skeleton className="h-7 w-16 rounded-full" />
+        <Skeleton className="h-7 w-16 rounded-full" />
+      </div>
+    </div>
+  );
+}
+
+/* -------------------- Employee Detail Page Skeleton -------------------- */
 function SkeletonCard({
   children,
   className,
@@ -16,16 +68,7 @@ function SkeletonCard({
   );
 }
 
-function SkeletonSectionTitle() {
-  return (
-    <div className="flex items-center gap-2.5 mb-4 pb-3.5 border-b border-border/60">
-      <Skeleton className="size-8 rounded-lg flex-shrink-0" />
-      <Skeleton className="h-5 w-32" />
-    </div>
-  );
-}
-
-export default function EmployeeDetailPageSkeleton() {
+export function EmployeeDetailPageLoadingSkeleton() {
   return (
     <div className="flex flex-col gap-5">
       {/* ── Back Navigation Header ── */}
@@ -78,7 +121,7 @@ export default function EmployeeDetailPageSkeleton() {
         <div className="flex-1 min-w-0 flex flex-col gap-5">
           {/* About */}
           <SkeletonCard className="p-5 sm:p-6">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="space-y-2">
               <Skeleton className="h-4 w-full" />
               <Skeleton className="h-4 w-5/6" />
@@ -88,7 +131,7 @@ export default function EmployeeDetailPageSkeleton() {
 
           {/* Skills */}
           <SkeletonCard className="p-5 sm:p-6">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="flex flex-wrap gap-2">
               {[...Array(8)].map((_, i) => (
                 <Skeleton
@@ -102,7 +145,7 @@ export default function EmployeeDetailPageSkeleton() {
 
           {/* Experience (timeline) */}
           <SkeletonCard className="p-5 sm:p-6">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="flex flex-col gap-3">
               {[...Array(2)].map((_, i) => (
                 <div key={i} className="flex gap-3">
@@ -127,7 +170,7 @@ export default function EmployeeDetailPageSkeleton() {
 
           {/* Education */}
           <SkeletonCard className="p-5 sm:p-6">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="flex flex-col gap-3">
               {[...Array(2)].map((_, i) => (
                 <div
@@ -150,7 +193,7 @@ export default function EmployeeDetailPageSkeleton() {
         <div className="w-72 flex flex-col gap-5 tablet-xl:w-full">
           {/* Documents */}
           <SkeletonCard className="p-5">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="flex flex-col gap-2.5">
               {[...Array(2)].map((_, i) => (
                 <div
@@ -172,7 +215,7 @@ export default function EmployeeDetailPageSkeleton() {
 
           {/* Contact */}
           <SkeletonCard className="p-5">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="space-y-3.5">
               {[...Array(3)].map((_, i) => (
                 <div key={i} className="flex items-start gap-2.5">
@@ -188,7 +231,7 @@ export default function EmployeeDetailPageSkeleton() {
 
           {/* Social Links */}
           <SkeletonCard className="p-5">
-            <SkeletonSectionTitle />
+            <SectionTitleSkeleton />
             <div className="flex flex-wrap gap-2">
               {[...Array(3)].map((_, i) => (
                 <Skeleton key={i} className="h-8 w-24 rounded-full" />

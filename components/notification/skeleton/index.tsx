@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function NotificationCardSkeleton() {
+export function NotificationCardSkeleton() {
   return (
     <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-lg">
       {/* Icon Skeleton */}
@@ -28,11 +28,19 @@ export default function NotificationCardSkeleton() {
             </div>
             <Skeleton className="h-6 w-14 rounded-xl" />
           </div>
-
-          {/* Button Skeleton */}
           <Skeleton className="h-9 w-28" />
         </div>
       </div>
+    </div>
+  );
+}
+
+export default function NotificationLoadingSkeleton() {
+  return (
+    <div className="w-full flex flex-col gap-3 p-5">
+      {[...Array(5)].map((_, i) => (
+        <NotificationCardSkeleton key={i} />
+      ))}
     </div>
   );
 }

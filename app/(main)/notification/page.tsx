@@ -19,8 +19,8 @@ import { LucideCheckCheck } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import NotificationCardSkeleton from "./skeleton";
 import { NotificationSvgImage } from "@/utils/constants/asset.constant";
+import { NotificationCardSkeleton } from "@/components/notification/skeleton";
 
 /* ---------------------------------- Utils --------------------------------- */
 /** Derive a display-friendly user object from a notification's title + data fields. */

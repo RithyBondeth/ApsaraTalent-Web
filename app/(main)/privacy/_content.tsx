@@ -544,9 +544,11 @@ const content = {
    Main component
 ───────────────────────────────────────────────────────────── */
 export function PrivacyContent() {
+  /* -------------------------------- All States -------------------------------- */
   const { language, setLanguage } = useLanguageStore();
   const c = content[language];
 
+  /* -------------------------------- Render UI --------------------------------- */
   return (
     <div className="min-h-screen bg-background animate-page-in">
       {/* ── Top nav ── */}

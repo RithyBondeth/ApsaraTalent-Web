@@ -51,8 +51,6 @@ import {
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
-import { CompanyDetailPageSkeleton } from "./skeleton";
-
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useGetOneCompanyStore } from "@/stores/apis/company/get-one-cmp.store";
@@ -64,11 +62,10 @@ import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
-import {
-  DetailCard as Card,
-  SectionTitle,
-  MetaChip,
-} from "@/components/feed/detail-helpers";
+import MetaChip from "@/components/utils/meta-chip";
+import { DetailCard } from "@/components/utils/detail-card";
+import { SectionTitle } from "@/components/utils/section-title";
+import { CompanyDetailPageLoadingSkeleton } from "@/components/company/skeleton";
 
 /* ── Main component ─────────────────────────────────────────────── */
 export default function CompanyDetailPage() {
@@ -222,7 +219,7 @@ export default function CompanyDetailPage() {
   if (isLoading)
     return (
       <div className="animate-page-in">
-        <CompanyDetailPageSkeleton />
+        <CompanyDetailPageLoadingSkeleton />
       </div>
     );
 
@@ -279,7 +276,7 @@ export default function CompanyDetailPage() {
       </header>
 
       {/* ── Hero Card ─────────────────────────────────────────────── */}
-      <Card>
+      <DetailCard>
         {/* Cover */}
         <div
           className={`h-44 sm:h-56 rounded-t-2xl bg-cover bg-center bg-no-repeat ${
@@ -359,7 +356,7 @@ export default function CompanyDetailPage() {
             </div>
           </div>
         </div>
-      </Card>
+      </DetailCard>
 
       {/* ── Content Grid ──────────────────────────────────────────── */}
       <div className="flex items-start gap-5 tablet-lg:flex-col">
@@ -367,7 +364,7 @@ export default function CompanyDetailPage() {
         <div className="flex-1 min-w-0 flex flex-col gap-5">
           {/* About */}
           {companyData.description && (
-            <Card className="p-5 sm:p-6">
+            <DetailCard className="p-5 sm:p-6">
               <SectionTitle
                 icon={<LucideInfo />}
                 title={`About ${companyData.name}`}
@@ -375,13 +372,13 @@ export default function CompanyDetailPage() {
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {companyData.description}
               </p>
-            </Card>
+            </DetailCard>
           )}
 
           {/* Open Positions */}
           {companyData.openPositions &&
             companyData.openPositions.length > 0 && (
-              <Card className="p-5 sm:p-6">
+              <DetailCard className="p-5 sm:p-6">
                 <SectionTitle
                   icon={<LucideBriefcaseBusiness />}
                   title="Open Positions"
@@ -480,12 +477,12 @@ export default function CompanyDetailPage() {
                     </div>
                   ))}
                 </div>
-              </Card>
+              </DetailCard>
             )}
 
           {/* Career Scope */}
           {companyData.careerScopes && companyData.careerScopes.length > 0 && (
-            <Card className="p-5 sm:p-6">
+            <DetailCard className="p-5 sm:p-6">
               <SectionTitle icon={<LucideCompass />} title="Career Scope" />
               <div className="flex flex-wrap gap-2">
                 {companyData.careerScopes.map((career, i) => (
@@ -501,12 +498,12 @@ export default function CompanyDetailPage() {
                   </HoverCard>
                 ))}
               </div>
-            </Card>
+            </DetailCard>
           )}
 
           {/* Life at Company */}
           {companyData.images && companyData.images.length > 0 && (
-            <Card className="p-5 sm:p-6">
+            <DetailCard className="p-5 sm:p-6">
               <SectionTitle
                 icon={<LucideCamera />}
                 title={`Life at ${companyData.name}`}
@@ -529,14 +526,14 @@ export default function CompanyDetailPage() {
                 <CarouselPrevious className="ml-3" />
                 <CarouselNext className="mr-3" />
               </Carousel>
-            </Card>
+            </DetailCard>
           )}
         </div>
 
         {/* Right — sidebar */}
         <div className="w-72 flex flex-col gap-5 tablet-lg:w-full">
           {/* Company Info */}
-          <Card className="p-5">
+          <DetailCard className="p-5">
             <SectionTitle
               icon={<LucideBuilding2 />}
               title="Company Information"
@@ -593,12 +590,12 @@ export default function CompanyDetailPage() {
                   </div>
                 ))}
             </div>
-          </Card>
+          </DetailCard>
 
           {/* Culture */}
           {(companyData.values.length > 0 ||
             companyData.benefits.length > 0) && (
-            <Card className="p-5">
+            <DetailCard className="p-5">
               <SectionTitle icon={<LucideStar />} title="Culture & Benefits" />
               <div className="space-y-4">
                 {companyData.values.length > 0 && (
@@ -638,12 +635,12 @@ export default function CompanyDetailPage() {
                   </div>
                 )}
               </div>
-            </Card>
+            </DetailCard>
           )}
 
           {/* Socials */}
           {companyData.socials && companyData.socials.length > 0 && (
-            <Card className="p-5">
+            <DetailCard className="p-5">
               <SectionTitle icon={<LucideGlobe />} title="Social Links" />
               <div className="flex flex-wrap gap-2">
                 {companyData.socials.map((s: ISocial) => (
@@ -659,7 +656,7 @@ export default function CompanyDetailPage() {
                   </Link>
                 ))}
               </div>
-            </Card>
+            </DetailCard>
           )}
         </div>
       </div>

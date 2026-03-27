@@ -60,7 +60,12 @@ import { useUploadEmployeeCoverLetter } from "@/stores/apis/employee/upload-emp-
 import { useUploadEmployeeResumeStore } from "@/stores/apis/employee/upload-emp-resume.store";
 import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-scopes.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { genderConstant, locationConstant, loginMethodConstant, platformConstant } from "@/utils/constants/ui.constant";
+import {
+  genderConstant,
+  locationConstant,
+  loginMethodConstant,
+  platformConstant,
+} from "@/utils/constants/ui.constant";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { capitalizeWords } from "@/utils/functions/capitalize-words";
 import { isUuid } from "@/utils/extensions/check-uuid";
@@ -103,21 +108,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { employeeFormSchema, TEmployeeProfileForm } from "./validation";
-import EmployeeProfilePageLoadingSkeleton from "./skeleton";
-import { addNewEducationSvgImage, addNewExperienceSvgImage } from "@/utils/constants/asset.constant";
-import ProfileCompletionCard from "@/components/profile/profile-completion-card";
+import EmployeeProfilePageLoadingSkeleton from "@/components/profile/skeleton/employee-profile-skeleton";
+import {
+  addNewEducationSvgImage,
+  addNewExperienceSvgImage,
+} from "@/utils/constants/asset.constant";
 import { getEmployeeProfileCompletion } from "@/utils/functions/profile-completion";
-
-function SectionTitle({ icon, title }: { icon: React.ReactNode; title: string }) {
-  return (
-    <div className="flex items-center gap-2.5 mb-4 pb-3.5 border-b border-border/60">
-      <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-        <span className="[&>svg]:size-[18px] [&>svg]:text-primary [&>svg]:stroke-[1.5]">{icon}</span>
-      </div>
-      <h3 className="font-semibold text-base">{title}</h3>
-    </div>
-  );
-}
+import { SectionTitle } from "@/components/utils/section-title";
+import ProfileCompletionCard from "@/components/profile/profile-completion-card";
 
 export default function EmployeeProfilePage() {
   const t = useTranslations("toast");
@@ -1053,7 +1051,10 @@ export default function EmployeeProfilePage() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <form className="!min-w-full flex flex-col gap-5 overflow-x-hidden animate-page-in" onSubmit={handleSubmit}>
+    <form
+      className="!min-w-full flex flex-col gap-5 overflow-x-hidden animate-page-in"
+      onSubmit={handleSubmit}
+    >
       <LoadingDialog
         loading={updateProfileLoadingState}
         title={loadingMessage || "Updating employee profile..."}
@@ -1082,13 +1083,21 @@ export default function EmployeeProfilePage() {
                   {updateProfileLoadingState ? "Updating..." : "Save"}{" "}
                   <LucideCircleCheck />
                 </Button>
-                <Button type="button" className="text-xs" onClick={disableEditMode}>
+                <Button
+                  type="button"
+                  className="text-xs"
+                  onClick={disableEditMode}
+                >
                   Cancel
                   <LucideXCircle />
                 </Button>
               </>
             ) : (
-              <Button type="button" className="text-xs" onClick={enableEditMode}>
+              <Button
+                type="button"
+                className="text-xs"
+                onClick={enableEditMode}
+              >
                 Edit Profile
                 <LucideEdit />
               </Button>
@@ -1106,7 +1115,10 @@ export default function EmployeeProfilePage() {
                 if (!isEdit && employee.avatar) handleClickAvatarPopup(e);
               }}
             >
-              <Avatar className="size-20 sm:size-24 ring-[3px] ring-card shadow-xl" rounded="md">
+              <Avatar
+                className="size-20 sm:size-24 ring-[3px] ring-card shadow-xl"
+                rounded="md"
+              >
                 <AvatarImage src={avatarPreview} />
                 <AvatarFallback className="uppercase">
                   {employee.username?.slice(0, 3)}
@@ -1164,7 +1176,9 @@ export default function EmployeeProfilePage() {
 
             {/* Name + job title */}
             <div className="flex flex-col items-start gap-1 pt-2 tablet-md:items-center tablet-md:pt-0 flex-1">
-              <h2 className="text-xl font-bold leading-tight">{employee.username}</h2>
+              <h2 className="text-xl font-bold leading-tight">
+                {employee.username}
+              </h2>
               <p className="text-sm text-muted-foreground">{employee.job}</p>
             </div>
 
@@ -1176,13 +1190,21 @@ export default function EmployeeProfilePage() {
                     {updateProfileLoadingState ? "Updating..." : "Save"}{" "}
                     <LucideCircleCheck />
                   </Button>
-                  <Button type="button" className="text-xs" onClick={disableEditMode}>
+                  <Button
+                    type="button"
+                    className="text-xs"
+                    onClick={disableEditMode}
+                  >
                     Cancel
                     <LucideXCircle />
                   </Button>
                 </>
               ) : (
-                <Button type="button" className="text-xs" onClick={enableEditMode}>
+                <Button
+                  type="button"
+                  className="text-xs"
+                  onClick={enableEditMode}
+                >
                   Edit Profile
                   <LucideEdit />
                 </Button>
@@ -1351,7 +1373,10 @@ export default function EmployeeProfilePage() {
 
           {/* Professional Information Section */}
           <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
-            <SectionTitle icon={<LucideBriefcaseBusiness />} title="Professional Information" />
+            <SectionTitle
+              icon={<LucideBriefcaseBusiness />}
+              title="Professional Information"
+            />
 
             <div className="flex flex-col items-start gap-5">
               <LabelInput
@@ -1415,9 +1440,13 @@ export default function EmployeeProfilePage() {
               <div className="flex items-center justify-between gap-2.5 mb-0 pb-3.5 border-b border-border/60">
                 <div className="flex items-center gap-2.5">
                   <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <span className="[&>svg]:size-[18px] [&>svg]:text-primary [&>svg]:stroke-[1.5]"><LucideBriefcaseBusiness /></span>
+                    <span className="[&>svg]:size-[18px] [&>svg]:text-primary [&>svg]:stroke-[1.5]">
+                      <LucideBriefcaseBusiness />
+                    </span>
                   </div>
-                  <h3 className="font-semibold text-base">Experience Information</h3>
+                  <h3 className="font-semibold text-base">
+                    Experience Information
+                  </h3>
                 </div>
                 {isEdit && (
                   <div onClick={addNewExperience}>
@@ -1554,9 +1583,13 @@ export default function EmployeeProfilePage() {
               <div className="flex items-center justify-between gap-2.5 mb-0 pb-3.5 border-b border-border/60">
                 <div className="flex items-center gap-2.5">
                   <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <span className="[&>svg]:size-[18px] [&>svg]:text-primary [&>svg]:stroke-[1.5]"><LucideGraduationCap /></span>
+                    <span className="[&>svg]:size-[18px] [&>svg]:text-primary [&>svg]:stroke-[1.5]">
+                      <LucideGraduationCap />
+                    </span>
                   </div>
-                  <h3 className="font-semibold text-base">Education Information</h3>
+                  <h3 className="font-semibold text-base">
+                    Education Information
+                  </h3>
                 </div>
                 {isEdit && (
                   <div onClick={addNewEducation}>
@@ -1896,7 +1929,10 @@ export default function EmployeeProfilePage() {
 
           {/* References Section */}
           <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
-            <SectionTitle icon={<LucideFileText />} title="References Information" />
+            <SectionTitle
+              icon={<LucideFileText />}
+              title="References Information"
+            />
             <div className="w-full flex flex-col items-start gap-5 [&>div]:w-full">
               {/* Resume Section */}
               <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
@@ -2128,21 +2164,15 @@ export default function EmployeeProfilePage() {
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 rounded-full hover:underline max-w-[200px] sm:max-w-[260px] overflow-hidden"
                     >
                       <span className="flex-shrink-0">
-                        {getSocialPlatformTypeIcon(
-                          item.platform as TPlatform,
-                        )}
+                        {getSocialPlatformTypeIcon(item.platform as TPlatform)}
                       </span>
-                      <span className="text-sm truncate">
-                        {item.platform}
-                      </span>
+                      <span className="text-sm truncate">{item.platform}</span>
                     </Link>
                     {isEdit && (
                       <LucideXCircle
                         className="flex-shrink-0 cursor-pointer text-red-500 hover:text-red-600 transition-colors"
                         size={18}
-                        onClick={() =>
-                          removeSocial(item.platform as TPlatform)
-                        }
+                        onClick={() => removeSocial(item.platform as TPlatform)}
                       />
                     )}
                   </div>

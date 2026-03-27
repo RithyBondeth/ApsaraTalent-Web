@@ -24,8 +24,7 @@ import { useRouter } from "next/navigation";
 import type { ImperativePanelHandle } from "react-resizable-panels";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import Image from "next/image";
-
-import MessageLoadingSkeleton from "./skeleton";
+import MessageLoadingSkeleton from "@/components/message/skeleton/index";
 import { MessageSvgImage } from "@/utils/constants/asset.constant";
 import { CHAT_LOADING_TIMEOUT_MS } from "@/utils/constants/chat.constant";
 import { IMessage } from "@/components/message/props";
