@@ -36,6 +36,7 @@ interface FormPanelProps {
 
 /* ─── Small helper label ─────────────────────────────────────── */
 function FieldLabel({ children }: { children: React.ReactNode }) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <TypographyMuted className="text-xs font-medium mb-1">
       {children}
@@ -48,9 +49,12 @@ function PersonalInfoTab({
   register,
   control,
 }: Pick<FormPanelProps, "register" | "control">) {
+  /* -------------------------------- All States ------------------------------ */
   const socials = useWatch({ control, name: "personalInfo.socials" }) ?? {};
+  /* ---------------------------------- Utils --------------------------------- */
   const socialKeys = Object.keys(socials);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -168,6 +172,7 @@ function ExperienceCard({
   onRemove: () => void;
   showRemove: boolean;
 }) {
+  /* -------------------------------- All States ------------------------------ */
   const [open, setOpen] = useState(true);
   const position = useWatch({
     control,
@@ -175,13 +180,16 @@ function ExperienceCard({
   });
 
   // Achievements nested field array
+  /* ---------------------------------- Utils --------------------------------- */
   const achPath = `experience.${index}.achievements` as Path<IBuildResume>;
+  /* ----------------------------- API Integration ---------------------------- */
   const {
     fields: achFields,
     append: achAppend,
     remove: achRemove,
   } = useFieldArray({ control, name: achPath as "experience" });
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="border border-border rounded-lg overflow-hidden">
       {/* Card header */}
@@ -313,11 +321,14 @@ function ExperienceTab({
   register,
   control,
 }: Pick<FormPanelProps, "register" | "control">) {
+  /* ----------------------------- API Integration ---------------------------- */
   const { fields, append, remove } = useFieldArray({
     control,
     name: "experience",
   });
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Add Experience ─────────────────────────────────────────
   const addExperience = () => {
     append({
       company: "",
@@ -329,6 +340,7 @@ function ExperienceTab({
     } as Experience);
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col gap-3">
       {fields.map((f, i) => (
@@ -358,12 +370,15 @@ function ExperienceTab({
 
 /* ─── Skills & Education Tab ─────────────────────────────────── */
 function SkillsEducationTab({ register, control, setValue }: FormPanelProps) {
+  /* -------------------------------- All States ------------------------------ */
   const skills = (useWatch({ control, name: "skills" }) ?? []) as string[];
   const careerScopes = (useWatch({ control, name: "careerScopes" }) ??
     []) as string[];
   const [newSkill, setNewSkill] = useState("");
   const [newScope, setNewScope] = useState("");
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Add Skill ─────────────────────────────────────────
   const addSkill = () => {
     const trimmed = newSkill.trim();
     if (!trimmed) return;
@@ -396,6 +411,7 @@ function SkillsEducationTab({ register, control, setValue }: FormPanelProps) {
     );
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col gap-5">
       {/* Skills */}
@@ -510,6 +526,7 @@ function SkillsEducationTab({ register, control, setValue }: FormPanelProps) {
 
 /* ─── Main FormPanel ─────────────────────────────────────────── */
 export default function ResumeEditorFormPanel(props: FormPanelProps) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <Tabs defaultValue="personal" className="flex flex-col h-full">
       {/* Tab bar */}

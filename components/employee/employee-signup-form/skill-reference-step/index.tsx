@@ -4,9 +4,9 @@ import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import ErrorMessage from "@/components/utils/feedback/error-message";
 import LabelInput from "@/components/utils/forms/label-input";
@@ -28,15 +28,21 @@ export default function SkillReferenceStepForm({
   trigger,
 }: IStepFormProps<TEmployeeSignUp>) {
   // Utils
+  /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("toast");
 
   // Skill Helpers
+  /* -------------------------------- All States ------------------------------ */
   const [openPopOver, setOpenPopOver] = useState<boolean>(false);
   const [skillInput, setSkillInput] = useState<string>("");
+  /* ---------------------------------- Utils --------------------------------- */
   const initialSkills = getValues?.("skillAndReference.skills") || [];
+  /* -------------------------------- All States ------------------------------ */
   const [skills, setSkills] = useState<string[]>(initialSkills);
 
   // Handle Add New Skill
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Add Skill ─────────────────────────────────────────
   const addSkill = async () => {
     const trimmed = skillInput.trim();
     if (!trimmed) return;
@@ -72,6 +78,7 @@ export default function SkillReferenceStepForm({
     await trigger?.("skillAndReference.skills");
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col items-start gap-8">
       <div className="w-full flex flex-col items-start gap-3">

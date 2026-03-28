@@ -11,8 +11,10 @@ import { SettingWrapper } from "../setting-wrapper/setting-wrapper";
 import { IAppearanceSectionProps } from "./props";
 
 export function AppearanceSection(props: IAppearanceSectionProps) {
+  /* --------------------------------- Props --------------------------------- */
   const { theme, onThemeChange } = props;
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <SettingWrapper
       icon={<LucidePalette />}

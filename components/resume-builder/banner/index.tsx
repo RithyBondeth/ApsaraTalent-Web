@@ -1,4 +1,3 @@
-
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
@@ -6,6 +5,7 @@ import Image from "next/image";
 import { resumeBuilderImageSvg } from "@/utils/constants/asset.constant";
 
 export default function ResumeBuilderBanner() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
       <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center tablet-xl:mt-5">

@@ -6,9 +6,11 @@ export async function ThemeProvider({
 }: {
   children: React.ReactNode;
 }) {
+  /* ---------------------------------- Utils --------------------------------- */
   const theme = (await cookies()).get("theme")?.value || "system";
 
   // Passing the default theme as a prop to the client-side theme provider
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <ThemeProviderClient defaultTheme={theme}>{children}</ThemeProviderClient>
   );

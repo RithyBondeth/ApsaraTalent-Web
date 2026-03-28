@@ -16,7 +16,9 @@ interface IReactionPickerProps {
 }
 
 export const ReactionPicker = (props: IReactionPickerProps) => {
+  /* --------------------------------- Props --------------------------------- */
   const { onReact, currentReaction } = props;
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <Popover>
       <PopoverTrigger asChild>

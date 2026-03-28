@@ -11,6 +11,7 @@ export default function ImagePopup(props: {
   open: boolean;
   setOpen: (open: boolean) => void;
 }) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={props.open} onOpenChange={props.setOpen}>
       <DialogContent className="w-fit p-0 border-0">

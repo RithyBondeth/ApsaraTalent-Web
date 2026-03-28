@@ -3,9 +3,11 @@
 import CachedAvatar from "@/components/ui/cached-avatar";
 import { Handshake } from "lucide-react";
 import { IRecentMatchesListProps } from "./props";
+import { TypographyP } from "@/components/utils/typography/typography-p";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 export function RecentMatchesList(props: IRecentMatchesListProps) {
-  /* -------------------------------- Props --------------------------------- */
+  /* --------------------------------- Props --------------------------------- */
   const { matches, isEmployee } = props;
 
   /* --------------------------- Empty List State --------------------------- */
@@ -13,15 +15,15 @@ export function RecentMatchesList(props: IRecentMatchesListProps) {
     return (
       <div className="flex flex-col items-center justify-center py-8 text-center">
         <Handshake className="h-10 w-10 text-muted-foreground/30 mb-3" />
-        <p className="text-sm text-muted-foreground">
+        <TypographyMuted className="text-sm text-muted-foreground">
           No matches yet. Keep swiping to find your perfect{" "}
           {isEmployee ? "company" : "candidate"}!
-        </p>
+        </TypographyMuted>
       </div>
     );
   }
 
-  /* -------------------------- Render Component --------------------------- */
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
       {matches.map((match) => (
@@ -40,10 +42,12 @@ export function RecentMatchesList(props: IRecentMatchesListProps) {
             {match.name.slice(0, 2)}
           </CachedAvatar>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">{match.name}</p>
-            <p className="text-[11px] text-muted-foreground">
+            <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-medium truncate">
+              {match.name}
+            </TypographyP>
+            <TypographyMuted className="text-[11px] text-muted-foreground">
               {formatTimeAgo(match.matchedAt)}
-            </p>
+            </TypographyMuted>
           </div>
         </div>
       ))}

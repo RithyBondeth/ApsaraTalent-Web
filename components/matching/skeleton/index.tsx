@@ -9,6 +9,7 @@ export interface IMatchingLoadingSkeletonProps {
 export default function MatchingLoadingSkeleton({
   isEmployee,
 }: IMatchingLoadingSkeletonProps) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col px-2.5 sm:px-5">
       {/* Banner Section */}

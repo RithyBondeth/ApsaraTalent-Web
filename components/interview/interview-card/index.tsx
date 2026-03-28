@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { IInterviewCardProps } from "./props";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 export function InterviewCard({
   interview,
@@ -21,6 +22,7 @@ export function InterviewCard({
   onAccept,
   onDecline,
 }: IInterviewCardProps) {
+  /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("interview");
 
   const isCreator =
@@ -32,6 +34,7 @@ export function InterviewCard({
       interview.employee?.username ||
       "Employee";
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
       <div className="p-4 sm:p-5 flex flex-col gap-3">
@@ -41,9 +44,9 @@ export function InterviewCard({
             <h3 className="text-base font-bold leading-tight truncate">
               {interview.title}
             </h3>
-            <p className="text-sm text-muted-foreground mt-0.5">
+            <TypographyMuted className="text-sm text-muted-foreground mt-0.5">
               {t("with", { name: otherPartyName })}
-            </p>
+            </TypographyMuted>
           </div>
           <Badge
             variant="outline"
@@ -55,9 +58,9 @@ export function InterviewCard({
 
         {/* Description */}
         {interview.description && (
-          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+          <TypographyMuted className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
             {interview.description}
-          </p>
+          </TypographyMuted>
         )}
 
         {/* Meta */}

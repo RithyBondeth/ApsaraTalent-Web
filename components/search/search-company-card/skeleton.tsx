@@ -1,6 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function SearchEmployeeCardSkeleton() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
       <div className="p-4 sm:p-5 flex flex-col gap-3.5">

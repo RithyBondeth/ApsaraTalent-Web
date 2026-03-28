@@ -8,5 +8,6 @@ const ParticlesBackground = dynamic(
 );
 
 export function ParticlesWrapper() {
+  /* -------------------------------- Render UI -------------------------------- */
   return <ParticlesBackground />;
 }

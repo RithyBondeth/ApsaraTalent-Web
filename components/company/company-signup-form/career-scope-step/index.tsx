@@ -1,5 +1,3 @@
-"use client";
-
 import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
 import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { Button } from "@/components/ui/button";
@@ -38,18 +36,18 @@ export default function CompanyCareerScopeStepForm({
   setValue,
   errors,
 }: IStepFormProps<TCompanySignup>) {
-  // Utils
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
-  const hasMounted = useRef<boolean>(false);
-
-  // CareerScope Helpers
-  const [openSearchDialog, setOpenSearchDialog] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedCareers, setSelectedCareers] = useState<string[]>([]);
   const itemsPerPage = 10;
   const totalPages = Math.ceil(careerScopesListConstant.length / itemsPerPage);
 
-  // Register field and sync initial value ONCE
+  /* -------------------------------- All States ------------------------------ */
+  const hasMounted = useRef<boolean>(false);
+  const [openSearchDialog, setOpenSearchDialog] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [selectedCareers, setSelectedCareers] = useState<string[]>([]);
+
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     if (hasMounted.current) return;
     hasMounted.current = true;
@@ -61,7 +59,8 @@ export default function CompanyCareerScopeStepForm({
     }
   }, []);
 
-  // Handle Toggle Career
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Toggle Career ───────────────────────────────────────
   const toggleCareer = (career: string) => {
     setSelectedCareers((prev) => {
       const updated = prev.includes(career)
@@ -72,14 +71,10 @@ export default function CompanyCareerScopeStepForm({
     });
   };
 
-  // Handle Pagination
-  const paginatedCareers = careerScopesListConstant.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  );
-
+  // ── Go To Page ─────────────────────────────────────────
   const goToPage = (page: number) => setCurrentPage(page);
 
+  // ── Get Page Numbers ───────────────────────────────────
   const getPageNumbers = () => {
     const pages: (number | "...")[] = [];
     const maxVisiblePages = 1;
@@ -99,6 +94,13 @@ export default function CompanyCareerScopeStepForm({
     return pages;
   };
 
+  // ── Paginated Careers ───────────────────────────────────
+  const paginatedCareers = careerScopesListConstant.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
+
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col items-stretch gap-8">
       {/* Back Button Section */}
@@ -111,7 +113,7 @@ export default function CompanyCareerScopeStepForm({
         Back
       </Button>
 
-      {/* Title Section */}
+      {/* Title and SubTitle Section */}
       <div className="phone-xl:mt-10">
         <TypographyH4>Choose Your Career Opportunity</TypographyH4>
         <TypographyMuted className="text-md">
@@ -171,8 +173,6 @@ export default function CompanyCareerScopeStepForm({
           );
         })}
       </div>
-
-      {/* Validation Message Section */}
       {errors?.careerScopes && (
         <ErrorMessage>{errors.careerScopes.message}</ErrorMessage>
       )}

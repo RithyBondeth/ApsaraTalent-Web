@@ -17,13 +17,17 @@ import EmployeeDialog from "../employee-dialog";
 import { IEmployeeCardProps } from "./props";
 
 export default function EmployeeCard(props: IEmployeeCardProps) {
+  /* ---------------------------------- Utils --------------------------------- */
   const isGrid = props.variant === "grid";
 
   // Utils
+  /* -------------------------------- All States ------------------------------ */
   const [openProfileDialog, setOpenProfileDialog] = useState<boolean>(false);
   const ignoreNextClick = useRef<boolean>(false);
 
   // Handle Click Dialog
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle Click Dialog ─────────────────────────────────────────
   const handleClickDialog = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -34,6 +38,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
   };
 
   // Prevent reopening immediately after closing
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     if (!openProfileDialog) {
       ignoreNextClick.current = true;
@@ -44,6 +49,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
   }, [openProfileDialog]);
 
   /* ─── Grid variant: seamless card with divider, no vertical gap ─── */
+  /* -------------------------------- Render UI -------------------------------- */
   if (isGrid) {
     return (
       <>

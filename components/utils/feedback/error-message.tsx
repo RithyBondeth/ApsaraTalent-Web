@@ -7,6 +7,7 @@ interface IErrorMessageProps {
 }
 
 export default function ErrorMessage(props: IErrorMessageProps) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <TypographySmall className={cn("text-xs text-red-500", props.className)}>
       {props.children}

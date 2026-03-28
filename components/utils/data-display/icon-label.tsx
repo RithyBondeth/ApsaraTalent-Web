@@ -8,6 +8,7 @@ interface ILabelProps {
 }
 
 export default function IconLabel(props: ILabelProps) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className={cn("flex items-center gap-2", props.className)}>
       {props.icon && <span className="[&>svg]:!size-5">{props.icon}</span>}

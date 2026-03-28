@@ -3,7 +3,10 @@
 import { GripVertical } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { SectionId, useCanvasEditorStore } from "@/stores/features/canvas-editor.store";
+import {
+  SectionId,
+  useCanvasEditorStore,
+} from "@/stores/features/canvas-editor.store";
 
 interface SectionWrapperProps {
   sectionId: SectionId;
@@ -23,7 +26,9 @@ export function SectionWrapper({
   children,
   isDraggable = false,
 }: SectionWrapperProps) {
+  /* ----------------------------- API Integration ---------------------------- */
   const { selectedSection, setSelectedSection } = useCanvasEditorStore();
+  /* ---------------------------------- Utils --------------------------------- */
   const isSelected = selectedSection === sectionId;
 
   const {
@@ -35,6 +40,7 @@ export function SectionWrapper({
     isDragging,
   } = useSortable({ id: sectionId, disabled: !isDraggable });
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
       ref={setNodeRef}

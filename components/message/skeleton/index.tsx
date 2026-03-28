@@ -4,6 +4,7 @@ import {
 } from "@/components/message/message-page-skeleton";
 
 export default function MessageLoadingSkeleton() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full h-full flex bg-background overflow-hidden relative">
       <div className="hidden lg:flex w-full h-full">

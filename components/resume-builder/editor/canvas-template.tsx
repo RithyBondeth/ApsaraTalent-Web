@@ -30,7 +30,10 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { SectionWrapper } from "./section-wrapper";
-import { SectionId, useCanvasEditorStore } from "@/stores/features/canvas-editor.store";
+import {
+  SectionId,
+  useCanvasEditorStore,
+} from "@/stores/features/canvas-editor.store";
 
 /* ─── Types ─────────────────────────────────────────────────── */
 interface CanvasTemplateProps {
@@ -55,8 +58,11 @@ function Editable({
   multiline?: boolean;
   style?: React.CSSProperties;
 }) {
+  /* -------------------------------- All States ------------------------------ */
   const ref = useRef<HTMLSpanElement & HTMLDivElement>(null);
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle Blur ─────────────────────────────────────────
   const handleBlur = useCallback(() => {
     if (!ref.current) return;
     const text = ref.current.innerText.trim();
@@ -70,8 +76,10 @@ function Editable({
     }
   };
 
+  /* ---------------------------------- Utils --------------------------------- */
   const Tag = multiline ? "div" : "span";
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <Tag
       ref={ref as React.RefObject<HTMLDivElement & HTMLSpanElement>}
@@ -105,9 +113,12 @@ function InlineDateField({
   placeholder: string;
   onCommit: (v: string) => void;
 }) {
+  /* -------------------------------- All States ------------------------------ */
   const [open, setOpen] = useState(false);
 
   // Parse the stored "MMMM yyyy" or "Month YYYY" string to a Date
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Parse Date ─────────────────────────────────────────
   function parseDate(s: string): Date | undefined {
     if (!s || s.toLowerCase() === "present") return undefined;
     // Try "MMMM yyyy" (e.g. "January 2022")
@@ -121,6 +132,7 @@ function InlineDateField({
     return isValid(d3) ? d3 : undefined;
   }
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <span className="group/date inline-flex items-center gap-0.5">
       <Editable value={value} placeholder={placeholder} onCommit={onCommit} />
@@ -159,6 +171,7 @@ function InlineDateField({
 
 /* ─── Section heading ────────────────────────────────────────── */
 function SectionHeading({ children }: { children: React.ReactNode }) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
       style={{
@@ -186,6 +199,7 @@ function GhostAddButton({
   label: string;
   onClick: () => void;
 }) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <button
       onClick={(e) => {
@@ -219,8 +233,11 @@ function AvatarField({
   src?: string;
   onCommit: (dataUrl: string) => void;
 }) {
+  /* -------------------------------- All States ------------------------------ */
   const inputRef = useRef<HTMLInputElement>(null);
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle File Change ─────────────────────────────────────────
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -249,6 +266,7 @@ function AvatarField({
     reader.readAsDataURL(file);
   }
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
       className="group/avatar relative shrink-0 cursor-pointer"
@@ -344,6 +362,7 @@ function ExperienceEntry({
   getValues: UseFormGetValues<IBuildResume>;
   onDelete: () => void;
 }) {
+  /* ---------------------------------- Utils --------------------------------- */
   const {
     attributes,
     listeners,
@@ -353,6 +372,7 @@ function ExperienceEntry({
     isDragging,
   } = useSortable({ id: sortableId });
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
       ref={setNodeRef}
@@ -551,6 +571,7 @@ function SkillChip({
   setValue: UseFormSetValue<IBuildResume>;
   onDelete: () => void;
 }) {
+  /* ---------------------------------- Utils --------------------------------- */
   const {
     attributes,
     listeners,
@@ -560,6 +581,7 @@ function SkillChip({
     isDragging,
   } = useSortable({ id: sortableId });
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <span
       ref={setNodeRef}
@@ -612,6 +634,7 @@ export default function CanvasTemplate({
   setValue,
   getValues,
 }: CanvasTemplateProps) {
+  /* ---------------------------------- Utils --------------------------------- */
   const {
     personalInfo,
     summary,
@@ -622,9 +645,11 @@ export default function CanvasTemplate({
     availability,
   } = data;
 
+  /* ----------------------------- API Integration ---------------------------- */
   const { sectionOrder } = useCanvasEditorStore();
 
   // PointerSensor with distance constraint so a click doesn't start a drag
+  /* ---------------------------------- Utils --------------------------------- */
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   );
@@ -638,19 +663,25 @@ export default function CanvasTemplate({
   // Education stored as "|"-separated lines.
   // Use local state so add/delete/edit re-render immediately without waiting
   // for the 600 ms debounce on the parent's previewData.
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Parse Education Lines ─────────────────────────────────────────
   const parseEducationLines = (raw?: string): string[] =>
     raw ? raw.split("|").map((l) => l.trim()) : [];
 
+  /* -------------------------------- All States ------------------------------ */
   const [educationLines, setEducationLinesState] = useState<string[]>(() =>
     parseEducationLines(education),
   );
 
   // Sync from parent when the debounced data prop changes (e.g. form-panel edits)
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     setEducationLinesState(parseEducationLines(education));
   }, [education]);
 
   /** Commit an edited education line and write back to the "|"-separated string */
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Commit Education Line ─────────────────────────────────────────
   function commitEducationLine(idx: number, value: string) {
     const next = [...educationLines];
     next[idx] = value;
@@ -743,6 +774,7 @@ export default function CanvasTemplate({
   }
 
   /* ── Section content renderers ────────────────────────────── */
+  /* ---------------------------------- Utils --------------------------------- */
   const summarySection =
     summary !== undefined ? (
       <SectionWrapper sectionId="summary" isDraggable>
@@ -855,6 +887,7 @@ export default function CanvasTemplate({
     careerScopes: null, // hidden — not shown in canvas or PDF
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
       style={{

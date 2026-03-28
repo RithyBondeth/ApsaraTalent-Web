@@ -14,6 +14,7 @@ import { CallOverlay } from "../call-overlay";
  * This component is intentionally thin: all state lives in `call.store.ts`.
  */
 export function CallOrchestrator() {
+  /* ----------------------------- API Integration ---------------------------- */
   const {
     status,
     caller,
@@ -27,6 +28,7 @@ export function CallOrchestrator() {
     toggleMute,
   } = useCallStore();
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <>
       {/* Incoming call modal (receiver side) */}

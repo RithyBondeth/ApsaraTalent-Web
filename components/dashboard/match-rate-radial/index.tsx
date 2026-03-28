@@ -9,8 +9,11 @@ import {
 import { IMatchRateRadialProps } from "./props";
 
 export function MatchRateRadial({ rate }: IMatchRateRadialProps) {
+  /* ---------------------------------- Utils --------------------------------- */
   const data = [{ value: rate, fill: "hsl(var(--primary))" }];
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Get Color Based On Rate ─────────────────────────────────────────
   const getColorBasedOnRate = (r: number) => {
     if (r >= 70) return "#10b981"; // emerald
     if (r >= 40) return "hsl(var(--primary))";
@@ -18,9 +21,11 @@ export function MatchRateRadial({ rate }: IMatchRateRadialProps) {
     return "#ef4444"; // red
   };
 
+  /* ---------------------------------- Utils --------------------------------- */
   const color = getColorBasedOnRate(rate);
   data[0].fill = color;
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="relative flex flex-col items-center">
       <ResponsiveContainer width={180} height={180}>

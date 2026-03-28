@@ -13,10 +13,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import Tag from "@/components/utils/data-display/tag";
 import { IFavoriteCompanyCardProps } from "./props";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
       className={`bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20${props.isRemoving ? " animate-card-pop-shrink" : ""}`}
@@ -54,9 +57,9 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
 
           {/* Description Section */}
           {props.description && (
-            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+            <TypographyMuted className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
               {props.description}
-            </p>
+            </TypographyMuted>
           )}
 
           {/* OpenPositions Tags Section: OpenPosition Title Tags */}

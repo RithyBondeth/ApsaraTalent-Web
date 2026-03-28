@@ -30,6 +30,7 @@ export default function ResumeEditorPreviewPanel({
   getValues,
   updating,
 }: PreviewPanelProps) {
+  /* -------------------------------- All States ------------------------------ */
   const scrollWrapperRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
 
@@ -39,9 +40,10 @@ export default function ResumeEditorPreviewPanel({
   const [zoomMultiplier, setZoomMultiplier] = useState(1);
   const [scaledHeight, setScaledHeight] = useState(0);
 
+  /* ---------------------------------- Utils --------------------------------- */
   const scale = fitScale * zoomMultiplier;
+  const zoomPercent = Math.round(scale * 100);
 
-  /* ── Measure fit scale + shell height ────────────────────────── */
   const measure = useCallback(() => {
     const wrapper = scrollWrapperRef.current;
     const canvas = canvasRef.current;
@@ -59,6 +61,7 @@ export default function ResumeEditorPreviewPanel({
   }, [zoomMultiplier]);
 
   // Re-measure when container resizes or data changes
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     const raf = requestAnimationFrame(measure);
     const ro = new ResizeObserver(measure);
@@ -77,15 +80,15 @@ export default function ResumeEditorPreviewPanel({
     setScaledHeight(canvas.scrollHeight * fitScale * zoomMultiplier);
   }, [zoomMultiplier, fitScale]);
 
-  /* ── Zoom controls ───────────────────────────────────────────── */
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Zoom Controls ─────────────────────────────────────────────
   const zoomIn = () =>
     setZoomMultiplier((z) => Math.min(+(z + ZOOM_STEP).toFixed(2), ZOOM_MAX));
   const zoomOut = () =>
     setZoomMultiplier((z) => Math.max(+(z - ZOOM_STEP).toFixed(2), ZOOM_MIN));
   const zoomFit = () => setZoomMultiplier(1);
 
-  const zoomPercent = Math.round(scale * 100);
-
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col h-full">
       {/* ── Top bar ─────────────────────────────────────────────── */}

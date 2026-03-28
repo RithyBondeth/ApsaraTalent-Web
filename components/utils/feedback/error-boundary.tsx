@@ -1,6 +1,7 @@
 "use client";
 
 import { Component, ErrorInfo, ReactNode } from "react";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 interface Props {
   children: ReactNode;
@@ -39,9 +40,9 @@ export class ErrorBoundary extends Component<Props, State> {
           <h2 className="text-xl font-semibold text-destructive">
             Something went wrong
           </h2>
-          <p className="text-sm text-muted-foreground max-w-sm">
+          <TypographyMuted className="text-sm text-muted-foreground max-w-sm">
             {this.state.error?.message || "An unexpected error occurred."}
-          </p>
+          </TypographyMuted>
           <button
             onClick={this.handleReset}
             className="px-4 py-2 text-sm rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"

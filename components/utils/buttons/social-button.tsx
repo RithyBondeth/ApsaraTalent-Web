@@ -20,6 +20,7 @@ interface ISocialButtonProps {
 }
 
 export default function SocialButton(props: ISocialButtonProps) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <Button
       type="button"

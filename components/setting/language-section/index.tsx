@@ -22,6 +22,7 @@ function LanguageCard({
   active,
   onClick,
 }: LanguageCardProps) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <button
       onClick={onClick}
@@ -62,6 +63,7 @@ export function LanguageSection({
   language,
   onLanguageChange,
 }: LanguageSectionProps) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <SettingWrapper
       icon={<LucideGlobe />}

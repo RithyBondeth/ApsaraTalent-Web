@@ -1,12 +1,12 @@
 import { SectionTitleSkeleton } from "@/components/utils/layout/section-title";
 import { Skeleton } from "../../ui/skeleton";
 
-/* ----------------------- Company Card Skeleton ------------------------ */
+/* --------------------------- Company Card Skeleton ---------------------------- */
 export default function CompanyCardSkeleton() {
   return (
     <div className="w-full flex flex-col rounded-xl border border-muted bg-card">
       <div className="flex flex-col gap-3 px-4 pt-4 pb-3">
-        {/* Header */}
+        {/* Header Section */}
         <div className="flex items-start gap-3">
           <Skeleton className="size-12 rounded-md shrink-0" />
           <div className="flex-1 flex flex-col gap-1.5">
@@ -22,13 +22,13 @@ export default function CompanyCardSkeleton() {
           </div>
         </div>
 
-        {/* Description */}
+        {/* Description Section */}
         <div className="space-y-1.5">
           <Skeleton className="h-3 w-full rounded" />
           <Skeleton className="h-3 w-4/5 rounded" />
         </div>
 
-        {/* Tags */}
+        {/* Tags Section */}
         <div className="flex flex-wrap gap-1.5">
           <Skeleton className="h-6 w-20 rounded-full" />
           <Skeleton className="h-6 w-24 rounded-full" />
@@ -36,7 +36,7 @@ export default function CompanyCardSkeleton() {
         </div>
       </div>
 
-      {/* Footer */}
+      {/* Footer Section */}
       <div className="flex justify-end gap-2 px-4 pb-3">
         <Skeleton className="h-7 w-16 rounded-full" />
         <Skeleton className="h-7 w-16 rounded-full" />
@@ -45,7 +45,7 @@ export default function CompanyCardSkeleton() {
   );
 }
 
-/* ------------------- Company Detail Page Skeleton ------------------- */
+/* --------------------------- Skeleton Card ---------------------------- */
 function SkeletonCard({
   children,
   className,
@@ -62,10 +62,11 @@ function SkeletonCard({
   );
 }
 
+/* ------------------- Company Detail Page Skeleton ------------------- */
 export function CompanyDetailPageLoadingSkeleton() {
   return (
     <div className="flex flex-col gap-5">
-      {/* ── Back Navigation Header ── */}
+      {/* Back Navigation Header Section */}
       <div className="border-b border-border/60 -mx-4 sm:-mx-6 px-4 sm:px-6">
         <div className="flex items-center gap-4 py-3">
           <Skeleton className="h-4 w-12" />
@@ -74,18 +75,18 @@ export function CompanyDetailPageLoadingSkeleton() {
         </div>
       </div>
 
-      {/* ── Hero Card ── */}
+      {/* Hero Card Section */}
       <SkeletonCard>
-        {/* Cover */}
+        {/* Cover Section */}
         <Skeleton className="h-44 sm:h-56 rounded-t-2xl rounded-b-none w-full" />
 
-        {/* Identity */}
+        {/* Identity Section */}
         <div className="px-4 sm:px-6 pb-5">
           <div className="flex items-start gap-4">
-            {/* Avatar overlapping cover */}
+            {/* Avatar Overlapping Cover Section */}
             <Skeleton className="size-20 sm:size-24 -mt-10 sm:-mt-12 rounded-xl flex-shrink-0" />
 
-            {/* Name + chips */}
+            {/* Name and Chips Section */}
             <div className="flex-1 min-w-0 pt-2 space-y-2">
               <Skeleton className="h-7 w-48" />
               <Skeleton className="h-4 w-32" />
@@ -96,7 +97,7 @@ export function CompanyDetailPageLoadingSkeleton() {
               </div>
             </div>
 
-            {/* Action buttons */}
+            {/* Action Button Section */}
             <div className="flex gap-2 flex-shrink-0 pt-2">
               <Skeleton className="h-8 w-20 rounded-md" />
               <Skeleton className="h-8 w-16 rounded-md" />
@@ -105,11 +106,11 @@ export function CompanyDetailPageLoadingSkeleton() {
         </div>
       </SkeletonCard>
 
-      {/* ── Content Grid ── */}
+      {/* Content Grid Section */}
       <div className="flex items-start gap-5 tablet-lg:flex-col">
-        {/* Left — main */}
+        {/* Left: Main Section */}
         <div className="flex-1 min-w-0 flex flex-col gap-5">
-          {/* About */}
+          {/* About Section */}
           <SkeletonCard className="p-5 sm:p-6">
             <SectionTitleSkeleton />
             <div className="space-y-2">
@@ -121,7 +122,7 @@ export function CompanyDetailPageLoadingSkeleton() {
             </div>
           </SkeletonCard>
 
-          {/* Open Positions */}
+          {/* Open Positions Section */}
           <SkeletonCard className="p-5 sm:p-6">
             <SectionTitleSkeleton />
             <div className="flex flex-col gap-4">
@@ -159,7 +160,7 @@ export function CompanyDetailPageLoadingSkeleton() {
             </div>
           </SkeletonCard>
 
-          {/* Career Scope */}
+          {/* Career Scope Section */}
           <SkeletonCard className="p-5 sm:p-6">
             <SectionTitleSkeleton />
             <div className="flex flex-wrap gap-2">
@@ -169,7 +170,7 @@ export function CompanyDetailPageLoadingSkeleton() {
             </div>
           </SkeletonCard>
 
-          {/* Life at Company */}
+          {/* Company Images Section */}
           <SkeletonCard className="p-5 sm:p-6">
             <SectionTitleSkeleton />
             <div className="flex gap-3 overflow-hidden">
@@ -183,9 +184,9 @@ export function CompanyDetailPageLoadingSkeleton() {
           </SkeletonCard>
         </div>
 
-        {/* Right — sidebar */}
+        {/* Right: Sidebar Section */}
         <div className="w-72 flex flex-col gap-5 tablet-lg:w-full">
-          {/* Company Information */}
+          {/* Company Information Section */}
           <SkeletonCard className="p-5">
             <SectionTitleSkeleton />
             <div className="space-y-3.5">
@@ -201,7 +202,7 @@ export function CompanyDetailPageLoadingSkeleton() {
             </div>
           </SkeletonCard>
 
-          {/* Culture & Benefits */}
+          {/* Values & Benefits Section */}
           <SkeletonCard className="p-5">
             <SectionTitleSkeleton />
             <div className="space-y-4">
@@ -224,7 +225,7 @@ export function CompanyDetailPageLoadingSkeleton() {
             </div>
           </SkeletonCard>
 
-          {/* Social Links */}
+          {/* Social Links Section*/}
           <SkeletonCard className="p-5">
             <SectionTitleSkeleton />
             <div className="flex flex-wrap gap-2">

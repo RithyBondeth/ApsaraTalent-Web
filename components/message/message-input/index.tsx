@@ -24,6 +24,8 @@ import { useThemeStore } from "@/stores/themes/theme-store";
 import dynamic from "next/dynamic";
 import { getCookie } from "cookies-next";
 import { IMessage } from "../props";
+import { TypographyP } from "@/components/utils/typography/typography-p";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 // Lazy-load emoji-mart — ~90KB dataset + picker only needed when user opens the emoji popover
 const Picker = dynamic(() => import("@emoji-mart/react"), { ssr: false });
@@ -84,6 +86,7 @@ interface PendingFile {
  * inside the same container card.
  */
 export default function ChatInput(props: IChatInputProps) {
+  /* --------------------------------- Props --------------------------------- */
   const {
     onSendMessage,
     onTyping,
@@ -92,11 +95,14 @@ export default function ChatInput(props: IChatInputProps) {
     onCancelReply,
   } = props;
 
+  /* -------------------------------- All States ------------------------------ */
   const [newMessage, setNewMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
   const [isEmojiOpen, setEmojiOpen] = useState(false);
+  /* ----------------------------- API Integration ---------------------------- */
   const { theme, systemTheme } = useThemeStore();
+  /* ---------------------------------- Utils --------------------------------- */
   const resolvedTheme = theme === "system" ? systemTheme : theme;
 
   // ── Voice recorder ─────────────────────────────────────────────────────────
@@ -110,10 +116,12 @@ export default function ChatInput(props: IChatInputProps) {
   const isRecording = recordingState === "recording";
   const isVoiceUploading = recordingState === "uploading";
 
+  /* -------------------------------- All States ------------------------------ */
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  /* ---------------------------------- Utils --------------------------------- */
   const resolveReplyPreview = (target: IMessage) => {
     if (target.isDeleted) return "This message was deleted";
     const content = target.content?.trim();
@@ -139,6 +147,7 @@ export default function ChatInput(props: IChatInputProps) {
   };
 
   // Stop typing indicator on unmount
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(
     () => () => {
       if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
@@ -173,6 +182,8 @@ export default function ChatInput(props: IChatInputProps) {
     if (replyTarget) textareaRef.current?.focus();
   }, [replyTarget]);
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle Input Change ─────────────────────────────────────────
   const handleInputChange = (value: string) => {
     setNewMessage(value);
     if (!onTyping) return;
@@ -351,6 +362,7 @@ export default function ChatInput(props: IChatInputProps) {
   };
 
   // ── Derived flags ─────────────────────────────────────────────────────────
+  /* ---------------------------------- Utils --------------------------------- */
   const isUploadingAny = pendingFiles.some((f) => f.status === "uploading");
   const readyCount = pendingFiles.filter((f) => f.status === "ready").length;
   const errorCount = pendingFiles.filter((f) => f.status === "error").length;
@@ -360,23 +372,24 @@ export default function ChatInput(props: IChatInputProps) {
   const sendDisabled =
     inputDisabled || (!newMessage.trim() && readyCount === 0) || isUploadingAny;
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="px-2.5 py-2 md:px-4 md:py-3 bg-background border-t shrink-0 [padding-bottom:calc(env(safe-area-inset-bottom)+0.5rem)] md:[padding-bottom:0.75rem]">
       {/* ── Reply preview bar ───────────────────────────────────────────── */}
       {replyTarget && (
         <div className="mb-2 flex items-start gap-2 px-1">
           <div className="flex-1 border-l-2 border-primary pl-2 pr-1 py-0.5 rounded-sm bg-muted/40">
-            <p className="text-xs font-semibold text-primary leading-tight">
+            <TypographyP className="[&:not(:first-child)]:mt-0 text-xs font-semibold text-primary leading-tight">
               {replyTarget.isMe ? "You" : replyTarget.senderName || "Unknown"}
-            </p>
-            <p className="text-xs text-muted-foreground leading-snug truncate">
+            </TypographyP>
+            <TypographyMuted className="text-xs text-muted-foreground leading-snug truncate">
               {replyTarget.isDeleted
                 ? "🚫 This message was deleted"
                 : (() => {
                     const text = resolveReplyPreview(replyTarget);
                     return text.slice(0, 100) + (text.length > 100 ? "…" : "");
                   })()}
-            </p>
+            </TypographyMuted>
           </div>
           <Button
             variant="ghost"

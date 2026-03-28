@@ -1,8 +1,8 @@
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
@@ -13,6 +13,8 @@ export default function ReferencePreviewDialog(props: {
   previewRefType: "resume" | "coverletter";
   employeeName: string;
 }) {
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Get File Ext ─────────────────────────────────────────
   const getFileExt = (url: string) => {
     try {
       const clean = url.split("?")[0];
@@ -32,6 +34,7 @@ export default function ReferencePreviewDialog(props: {
     )}`;
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={props.openRefPreview} onOpenChange={props.setOpenRefPreview}>
       <DialogContent className="w-[95vw] sm:w-[85vw] lg:w-[60vw] max-w-5xl h-[85vh] p-0 overflow-hidden flex flex-col">

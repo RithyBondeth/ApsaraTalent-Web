@@ -27,9 +27,12 @@ type Props = {
 };
 
 export default function LoadingDialog(props: Props) {
+  /* --------------------------------- Props --------------------------------- */
   const { loading, title, subTitle, steps, progress = 0 } = props;
+  /* ---------------------------------- Utils --------------------------------- */
   const hasProgress = steps && steps.length > 0;
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={loading}>
       <DialogContent
@@ -60,9 +63,9 @@ export default function LoadingDialog(props: Props) {
               </div>
 
               {/* Percentage label */}
-              <p className="text-xs text-muted-foreground text-center tabular-nums">
+              <TypographyMuted className="text-xs text-muted-foreground text-center tabular-nums">
                 {Math.round(progress)}%
-              </p>
+              </TypographyMuted>
 
               {/* Step list */}
               <ul className="w-full flex flex-col gap-2 mt-1">

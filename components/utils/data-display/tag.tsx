@@ -8,8 +8,10 @@ interface ITagInterface {
 }
 
 export default function Tag(props: ITagInterface) {
+  /* ---------------------------------- Utils --------------------------------- */
   const { bg, text } = getRandomBadgeColor(props.label);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
       className={`w-fit flex items-center ${

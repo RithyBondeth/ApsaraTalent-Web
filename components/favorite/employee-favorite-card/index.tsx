@@ -13,13 +13,16 @@ import { Button } from "../../ui/button";
 import Tag from "@/components/utils/data-display/tag";
 import { IFavoriteEmployeeCardProps } from "./props";
 import { getAvailabilityStyleClass } from "@/utils/extensions/get-availability-class";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 export default function FavoriteEmployeeCard(
   props: IFavoriteEmployeeCardProps,
 ) {
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const availLabel = availabilityWordsFormat(props.availability);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
       className={`bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20${props.isRemoving ? " animate-card-pop-shrink" : ""}`}
@@ -44,9 +47,9 @@ export default function FavoriteEmployeeCard(
               <h3 className="text-base font-bold leading-tight truncate">
                 {props.name}
               </h3>
-              <p className="text-sm text-muted-foreground mt-0.5">
+              <TypographyMuted className="text-sm text-muted-foreground mt-0.5">
                 @{props.username}
-              </p>
+              </TypographyMuted>
             </div>
             <span
               className={`text-[11px] font-semibold px-2.5 py-1 rounded-full whitespace-nowrap flex-shrink-0 ${getAvailabilityStyleClass(props.availability)}`}
@@ -57,9 +60,9 @@ export default function FavoriteEmployeeCard(
 
           {/* Description */}
           {props.description && (
-            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+            <TypographyMuted className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
               {props.description}
-            </p>
+            </TypographyMuted>
           )}
 
           {/* Skills Tags */}

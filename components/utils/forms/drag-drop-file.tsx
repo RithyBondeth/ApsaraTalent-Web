@@ -40,6 +40,7 @@ export const DragDropFile = <T extends FieldValues>({
   setValue, // Assuming this is used to update the form state
   fileName, // Ensure this is passed correctly as 'avatar' or 'cover'
 }: IDragDropFileProps<T>) => {
+  /* -------------------------------- All States ------------------------------ */
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(
@@ -47,6 +48,8 @@ export const DragDropFile = <T extends FieldValues>({
   ); // Store the preview URL
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle Drag Enter ─────────────────────────────────────────
   const handleDragEnter = (e: DragEvent<HTMLDivElement>): void => {
     e.preventDefault();
     e.stopPropagation();
@@ -127,6 +130,7 @@ export const DragDropFile = <T extends FieldValues>({
     }
   };
 
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     return () => {
       if (filePreview) {
@@ -142,6 +146,7 @@ export const DragDropFile = <T extends FieldValues>({
     }
   }, [preview]);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
       className={`w-full h-60 flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-5 text-center cursor-pointer relative ${

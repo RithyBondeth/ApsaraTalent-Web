@@ -14,6 +14,7 @@ const ChatListItemSkeleton = () => (
 );
 
 export function ChatSidebarSkeleton() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col h-full border-r bg-background">
       <div className="px-4 pt-5 pb-3 flex items-center justify-between shrink-0">
@@ -33,6 +34,7 @@ export function ChatSidebarSkeleton() {
 }
 
 export function MessageThreadSkeleton() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex-1 px-3 py-4 md:px-4 overflow-hidden bg-muted/20 space-y-3">
       <div className="flex justify-start">
@@ -55,6 +57,7 @@ export function MessageThreadSkeleton() {
 }
 
 export function MessagePaneSkeleton() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col h-full min-w-0">
       <div className="px-3 md:px-4 py-3 border-b flex items-center justify-between bg-background shrink-0 gap-2">

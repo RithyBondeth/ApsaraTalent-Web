@@ -16,6 +16,7 @@ export const MemoCompanyFeedCard = React.memo(function CompanyFeedCard({
   onProfileImageClick,
   onSetProfileImage,
 }: IMemoCompanyFeedCardProps) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className={isLiking ? "animate-card-pop-shrink" : ""}>
       <CompanyCard

@@ -9,6 +9,7 @@ export default function LabelInput({
   input: React.ReactNode;
   className?: string;
 }) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className={`w-full flex flex-col items-start gap-2 ${className}`}>
       <TypographyMuted className="text-xs">{label}</TypographyMuted>

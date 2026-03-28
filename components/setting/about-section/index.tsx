@@ -6,6 +6,7 @@ import { SettingWrapper } from "../setting-wrapper/setting-wrapper";
 import { SettingRow } from "../setting-row";
 
 export function AboutSection() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <SettingWrapper
       icon={<LucideInfo />}

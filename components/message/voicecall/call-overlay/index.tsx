@@ -4,6 +4,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Mic, MicOff, PhoneOff } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ICallOverlayProps } from "./props";
+import { TypographyP } from "@/components/utils/typography/typography-p";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 // ── Helper: format elapsed call seconds as MM:SS ──────────────────────────────
 function formatCallDuration(seconds: number): string {
@@ -35,12 +37,14 @@ export function CallOverlay({
   onEnd,
 }: ICallOverlayProps) {
   // Duration timer — updates every second once connected
+  /* -------------------------------- All States ------------------------------ */
   const [elapsed, setElapsed] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Hidden audio element for remote stream playback
   const remoteAudioRef = useRef<HTMLAudioElement | null>(null);
 
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     if (status === "connected") {
       timerRef.current = setInterval(() => setElapsed((e) => e + 1), 1000);
@@ -65,6 +69,7 @@ export function CallOverlay({
     }
   }, [remoteStream]);
 
+  /* ---------------------------------- Utils --------------------------------- */
   const partner = caller ?? callee;
   if (!partner) return null;
 
@@ -86,6 +91,7 @@ export function CallOverlay({
             ? "Call ended"
             : "";
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <>
       {/* Hidden audio element for remote voice playback */}
@@ -103,10 +109,10 @@ export function CallOverlay({
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0">
-            <p className="font-semibold text-sm text-foreground truncate leading-tight">
+            <TypographyP className="[&:not(:first-child)]:mt-0 font-semibold text-sm text-foreground truncate leading-tight">
               {partner.name}
-            </p>
-            <p
+            </TypographyP>
+            <TypographyMuted
               className={`text-xs leading-tight tabular-nums ${
                 status === "connected"
                   ? "text-green-500"
@@ -116,7 +122,7 @@ export function CallOverlay({
               }`}
             >
               {statusLabel}
-            </p>
+            </TypographyMuted>
           </div>
         </div>
 

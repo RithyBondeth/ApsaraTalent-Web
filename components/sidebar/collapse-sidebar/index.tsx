@@ -36,6 +36,7 @@ import { SidebarDropdownFooterSkeleton } from "./sidebar-dropdown-footer/skeleto
    ───────────────────────────────────────────────────────────────────────── */
 const CountBadge = ({ count }: { count: number }) => {
   if (count === 0) return null;
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <span className="ml-auto flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-destructive px-1.5 text-[10px] font-bold leading-none text-destructive-foreground ring-[2px] ring-destructive/20">
       {count > 99 ? "99+" : count}
@@ -48,6 +49,7 @@ const CountBadge = ({ count }: { count: number }) => {
    ───────────────────────────────────────────────────────────────────────── */
 const FloatingBadge = ({ count }: { count: number }) => {
   if (count === 0) return null;
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <span className="pointer-events-none absolute -top-1.5 right-0.5 z-50">
       {/* Ping ring */}
@@ -108,12 +110,12 @@ const MENU_BTN_CLS = [
 export default function CollapseSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
+  /* ---------------------------------- Utils --------------------------------- */
   const pathname = usePathname();
   const { open, isMobile, setOpenMobile } = useSidebar();
   const t = useTranslations("sidebar");
   const isExpanded = isMobile ? true : open;
 
-  /* ── i18n map ─────────────────────────────── */
   const sidebarTitleMap = useMemo<Record<string, string>>(
     () => ({
       Dashboard: t("dashboard"),
@@ -127,13 +129,12 @@ export default function CollapseSidebar({
     }),
     [t],
   );
-
   const getSidebarTitle = useCallback(
     (title: string): string => sidebarTitleMap[title] ?? title,
     [sidebarTitleMap],
   );
 
-  /* ── API stores ───────────────────────────── */
+  /* ----------------------------- API Integration ---------------------------- */
   const { user, loading } = useGetCurrentUserStore();
   const { countCurrentEmployeeMatching, totalEmpMatching } =
     useCountCurrentEmployeeMatchingStore();
@@ -146,11 +147,6 @@ export default function CollapseSidebar({
   const { unreadCount: unreadNotifications, fetchUnreadCount } =
     useNotificationStore();
   const unreadMessages = useChatStore((s) => s.unreadCount);
-
-  useEffect(() => {
-    void fetchUnreadCount();
-  }, [fetchUnreadCount]);
-
   const { isEmployee, isCompany } = useFetchOnce({
     cacheKey: "sidebar-component",
     onEmployeeFetch: (employeeId) => {
@@ -163,11 +159,17 @@ export default function CollapseSidebar({
     },
   });
 
-  /* ── Hydration guard — defer role-dependent UI until client ── */
+  /* -------------------------------- All States ------------------------------ */
   const [mounted, setMounted] = useState(false);
+
+  /* --------------------------------- Effects --------------------------------- */
+  useEffect(() => {
+    void fetchUnreadCount();
+  }, [fetchUnreadCount]);
+
   useEffect(() => setMounted(true), []);
 
-  /* ── Derived counts ─────────────────────── */
+  /* ---------------------------------- Utils --------------------------------- */
   const matchingCount = useMemo(() => {
     if (isEmployee) return totalEmpMatching ?? 0;
     if (isCompany) return totalCmpMatching ?? 0;
@@ -178,28 +180,35 @@ export default function CollapseSidebar({
     if (isEmployee) return totalAllEmployeeFavorites ?? 0;
     if (isCompany) return totalAllCompanyFavorites ?? 0;
     return 0;
-  }, [isEmployee, isCompany, totalAllEmployeeFavorites, totalAllCompanyFavorites]);
+  }, [
+    isEmployee,
+    isCompany,
+    totalAllEmployeeFavorites,
+    totalAllCompanyFavorites,
+  ]);
 
-  const userData = useMemo(
-    (): { name: string; email: string; avatar: string } => {
-      if (isEmployee && user?.employee)
-        return {
-          name: user.employee.username ?? "",
-          email: user.email ?? user.phone ?? "",
-          avatar: user.employee.avatar ?? "",
-        };
-      if (isCompany && user?.company)
-        return {
-          name: user.company.name ?? "",
-          email: user.email ?? user.phone ?? "",
-          avatar: user.company.avatar ?? "",
-        };
-      return { name: "", email: "", avatar: "" };
-    },
-    [isEmployee, isCompany, user],
-  );
+  const userData = useMemo((): {
+    name: string;
+    email: string;
+    avatar: string;
+  } => {
+    if (isEmployee && user?.employee)
+      return {
+        name: user.employee.username ?? "",
+        email: user.email ?? user.phone ?? "",
+        avatar: user.employee.avatar ?? "",
+      };
+    if (isCompany && user?.company)
+      return {
+        name: user.company.name ?? "",
+        email: user.email ?? user.phone ?? "",
+        avatar: user.company.avatar ?? "",
+      };
+    return { name: "", email: "", avatar: "" };
+  }, [isEmployee, isCompany, user]);
 
-  /* ── Helpers ─────────────────────────────── */
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Resolve Navigation Helpers ─────────────────────────────────────────
   const getBadgeCount = useCallback(
     (url: string): number => {
       if (url === "/matching") return matchingCount;
@@ -225,7 +234,6 @@ export default function CollapseSidebar({
     if (isMobile) setOpenMobile(false);
   }, [isMobile, setOpenMobile]);
 
-  /* ── Nav item renderer ───────────────────── */
   const renderNavItem = (
     url: string,
     title: string,
@@ -281,9 +289,9 @@ export default function CollapseSidebar({
   };
 
   /* ── Render ──────────────────────────────── */
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <Sidebar collapsible="icon" {...props}>
-
       {/* ══ Logo / Header ══ */}
       <SidebarHeader className="pt-1 pb-3">
         {isExpanded ? (
@@ -310,7 +318,6 @@ export default function CollapseSidebar({
 
       {/* ══ Nav items ══ */}
       <SidebarContent className="pb-1">
-
         {/* Navigation group */}
         <SidebarGroup>
           <NavGroupLabel>{t("navigationGroup")}</NavGroupLabel>
@@ -326,11 +333,15 @@ export default function CollapseSidebar({
           <SidebarGroup>
             <NavGroupLabel>{t("toolsGroup")}</NavGroupLabel>
             <SidebarMenu>
-              {renderNavItem("/resume-builder", t("aiResumeBuilder"), LucideFileUser, 0)}
+              {renderNavItem(
+                "/resume-builder",
+                t("aiResumeBuilder"),
+                LucideFileUser,
+                0,
+              )}
             </SidebarMenu>
           </SidebarGroup>
         )}
-
       </SidebarContent>
 
       <Separator />
@@ -343,7 +354,6 @@ export default function CollapseSidebar({
           <SidebarDropdownFooter user={userData} />
         )}
       </SidebarFooter>
-
     </Sidebar>
   );
 }

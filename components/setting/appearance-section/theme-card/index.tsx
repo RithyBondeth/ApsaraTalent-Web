@@ -9,6 +9,7 @@ export function ThemeCard({
   active,
   onClick,
 }: IThemeCardProps) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <button
       onClick={onClick}

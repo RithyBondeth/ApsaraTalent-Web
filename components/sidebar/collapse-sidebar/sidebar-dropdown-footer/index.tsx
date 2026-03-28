@@ -1,40 +1,40 @@
 "use client";
 
 import {
-    ChevronsUpDown,
-    Globe,
-    LogOut,
-    LucideBookMarked,
-    LucideBuilding,
-    LucideInfo,
-    LucideMoon,
-    LucideSettings,
-    LucideSun,
-    LucideUser
+  ChevronsUpDown,
+  Globe,
+  LogOut,
+  LucideBookMarked,
+  LucideBuilding,
+  LucideInfo,
+  LucideMoon,
+  LucideSettings,
+  LucideSun,
+  LucideUser,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogFooter,
-    DialogTitle
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    useSidebar
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useLoginStore } from "@/stores/apis/auth/login.store";
@@ -49,8 +49,8 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 import { useLanguageStore } from "@/stores/languages/language-store";
 import { useThemeStore } from "@/stores/themes/theme-store";
 import {
-    clearAuthCookies,
-    clearAuthCookiesServerSide
+  clearAuthCookies,
+  clearAuthCookiesServerSide,
 } from "@/utils/auth/cookie-manager";
 import { setCookie } from "cookies-next/client";
 import { useTranslations } from "next-intl";
@@ -61,23 +61,15 @@ import { useEffect, useState } from "react";
 import { ISidebarDropdownFooterProps } from "./props";
 
 export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
+  /* ---------------------------------- Utils --------------------------------- */
   const { isMobile } = useSidebar();
-  const { theme, toggleTheme } = useThemeStore();
   const { resolvedTheme, setTheme } = useTheme();
   const router = useRouter();
-  const [openLogoutDialog, setOpenLogoutDialog] = useState<boolean>(false);
-  const { language, setLanguage } = useLanguageStore();
   const t = useTranslations("sidebarFooter");
 
-  useEffect(() => {
-    setTheme(theme);
-    setCookie("theme", theme);
-  }, [theme, setTheme]);
-
-  useEffect(() => {
-    setCookie("language", language);
-  }, [language]);
-
+  /* ----------------------------- API Integration ---------------------------- */
+  const { theme, toggleTheme } = useThemeStore();
+  const { language, setLanguage } = useLanguageStore();
   const currentUser = useGetCurrentUserStore((state) => state.user);
 
   const normalLogout = useLoginStore((state) => state.clearToken);
@@ -94,6 +86,21 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
     (state) => state.clearFavorite,
   );
 
+  /* -------------------------------- All States ------------------------------ */
+  const [openLogoutDialog, setOpenLogoutDialog] = useState<boolean>(false);
+
+  /* --------------------------------- Effects --------------------------------- */
+  useEffect(() => {
+    setTheme(theme);
+    setCookie("theme", theme);
+  }, [theme, setTheme]);
+
+  useEffect(() => {
+    setCookie("language", language);
+  }, [language]);
+
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle Logout ─────────────────────────────────────────
   const handleLogout = async () => {
     setOpenLogoutDialog(false);
 
@@ -123,6 +130,7 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
     window.location.reload();
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -168,7 +176,10 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <Link href={`/profile/${currentUser?.role ?? "employee"}`} prefetch={true}>
+                <Link
+                  href={`/profile/${currentUser?.role ?? "employee"}`}
+                  prefetch={true}
+                >
                   {currentUser?.role === "employee" ? (
                     <LucideUser className="text-violet-500" />
                   ) : (
@@ -187,9 +198,11 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={toggleTheme}>
-                {resolvedTheme === "dark"
-                  ? <LucideSun className="text-amber-400" />
-                  : <LucideMoon className="text-indigo-400" />}
+                {resolvedTheme === "dark" ? (
+                  <LucideSun className="text-amber-400" />
+                ) : (
+                  <LucideMoon className="text-indigo-400" />
+                )}
                 {t("appearance")}
               </DropdownMenuItem>
               <DropdownMenuItem

@@ -14,8 +14,10 @@ import { LucideKeyRound } from "lucide-react";
 import { IResetPasswordDialogProps } from "./props";
 
 export function ResetPasswordDialog(props: IResetPasswordDialogProps) {
+  /* --------------------------------- Props --------------------------------- */
   const { open, onOpenChange, email, sending, onSendReset, sent } = props;
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-sm rounded-2xl">

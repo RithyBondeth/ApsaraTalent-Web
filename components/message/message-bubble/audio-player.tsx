@@ -48,15 +48,18 @@ export function AudioPlayer({
   amplitude,
   isMe,
 }: AudioPlayerProps) {
+  /* -------------------------------- All States ------------------------------ */
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [audioDuration, setAudioDuration] = useState<number>(duration ?? 0);
 
+  /* ---------------------------------- Utils --------------------------------- */
   const bars =
     amplitude && amplitude.length === 30 ? amplitude : DEFAULT_AMPLITUDE;
 
   // ── Sync duration from <audio> metadata once it loads ────────────────────
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -90,6 +93,8 @@ export function AudioPlayer({
   }, [duration]);
 
   // ── Toggle play/pause ─────────────────────────────────────────────────────
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Toggle Play ─────────────────────────────────────────
   const togglePlay = () => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -114,6 +119,7 @@ export function AudioPlayer({
   };
 
   // ── Colour classes based on isMe ──────────────────────────────────────────
+  /* ---------------------------------- Utils --------------------------------- */
   const playedColor = isMe ? "bg-primary-foreground" : "bg-primary";
   const unplayedColor = isMe ? "bg-primary-foreground/30" : "bg-primary/30";
   const timeColor = isMe
@@ -127,6 +133,7 @@ export function AudioPlayer({
   const displayTime =
     isPlaying || currentTime > 0 ? currentTime : audioDuration;
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex items-center gap-2 mt-1 min-w-[150px] sm:min-w-[180px] max-w-xs">
       {/* Hidden native audio element */}

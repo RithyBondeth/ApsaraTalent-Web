@@ -1,6 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function InterviewLoadingSkeleton() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col gap-4 px-2.5 sm:px-5">
       {/* Header Section */}

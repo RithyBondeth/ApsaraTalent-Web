@@ -1,11 +1,13 @@
 import { TrendingUp } from "lucide-react";
 import { IStatisticCardProps } from "./props";
+import { TypographyP } from "@/components/utils/typography/typography-p";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 export default function StatisticCard(props: IStatisticCardProps) {
-  /* -------------------------------- Props --------------------------------- */
+  /* --------------------------------- Props --------------------------------- */
   const { icon: Icon, color, value, suffix, label, bgColor } = props;
 
-  /* --------------------------- Render Component --------------------------- */
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="group relative overflow-hidden bg-card rounded-2xl border border-border/60 p-4 sm:p-5 transition-all duration-300 hover:shadow-md hover:border-border">
       {/* Subtle Gradient bg on hover */}
@@ -22,13 +24,13 @@ export default function StatisticCard(props: IStatisticCardProps) {
           </div>
           <TrendingUp className="h-4 w-4 text-muted-foreground/40" />
         </div>
-        <p className="text-2xl sm:text-3xl font-bold tracking-tight">
+        <TypographyP className="[&:not(:first-child)]:mt-0 text-2xl sm:text-3xl font-bold tracking-tight">
           {typeof value === "number" ? value : 0}
           {suffix ?? ""}
-        </p>
-        <p className="text-xs sm:text-sm text-muted-foreground mt-1 font-medium">
+        </TypographyP>
+        <TypographyMuted className="text-xs sm:text-sm text-muted-foreground mt-1 font-medium">
           {label}
-        </p>
+        </TypographyMuted>
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ export default function ResumeBuilderGenerate(props: {
   onGenerateClick: () => void;
   disabled?: boolean;
 }) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full bg-primary text-secondary flex flex-col items-center justify-center rounded-md gap-3 p-5">
       <TypographyH4>Ready to create your perfect Resume?</TypographyH4>

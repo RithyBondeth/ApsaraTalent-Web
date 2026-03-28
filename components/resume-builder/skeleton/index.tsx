@@ -1,6 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ResumeBuilderLoadingSkeleton() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 p-5">
       {Array.from({ length: 12 }, (_, index) => (
@@ -11,6 +12,7 @@ export default function ResumeBuilderLoadingSkeleton() {
 }
 
 function TemplateCardSkeleton() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="h-fit w-full flex flex-col rounded-lg shadow-sm border border-muted overflow-hidden">
       {/* Preview area — matches the real card's h-48 */}
@@ -56,6 +58,7 @@ function TemplateCardSkeleton() {
 }
 
 export function ResumeEditorLoadingSkeleton() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col h-[calc(100dvh-4rem)] overflow-hidden">
       {/* ── Top Action Bar Skeleton ───────────────────────── */}

@@ -4,9 +4,11 @@ import { useState } from "react";
 import Cropper from "react-easy-crop";
 
 import {
-    Dialog,
-    DialogContent, DialogFooter, DialogHeader,
-    DialogTitle
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 
 import { Button } from "@/components/ui/button";
@@ -40,12 +42,15 @@ export default function AvatarCropDialog({
   cropShape = "round",
   fileName = "avatar.jpg",
 }: AvatarCropDialogProps) {
+  /* -------------------------------- All States ------------------------------ */
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<CropArea | null>(
     null,
   );
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle Crop Complete ─────────────────────────────────────────
   const handleCropComplete = (_: unknown, croppedPixels: CropArea) => {
     setCroppedAreaPixels(croppedPixels);
   };
@@ -94,6 +99,7 @@ export default function AvatarCropDialog({
     setOpen(false);
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-w-lg">

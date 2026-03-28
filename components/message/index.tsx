@@ -4,6 +4,7 @@ import MessageBubble from "./message-bubble";
 import { ChatTypingIndicator } from "./message-utils/typing-indicator";
 import { parseMessageDate } from "@/utils/date";
 import { IChatMessagesProps, IMessage } from "./props";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 /**
  * Extends the base IChatMessagesProps with:
@@ -22,6 +23,7 @@ export const ChatMessages = ({
   onReply,
   onEdit,
 }: ChatMessagesProps) => {
+  /* -------------------------------- All States ------------------------------ */
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const prevMessageCountRef = useRef(0);
 
@@ -31,6 +33,7 @@ export const ChatMessages = ({
   // of the top of a long conversation.
   // Use "smooth" only for incremental new messages (count goes up by 1-2) so the
   // scroll animation feels natural during live chat.
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     const prevCount = prevMessageCountRef.current;
     const currentCount = messages.length;
@@ -59,6 +62,8 @@ export const ChatMessages = ({
    * Returns true when the current message starts a new calendar day compared
    * to the previous message. Used to show the date divider ("Today", "Mon 12 Jan").
    */
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Should Show Divider ─────────────────────────────────────────
   const shouldShowDivider = (
     currentMsg: IMessage,
     prevMsg: IMessage | null,
@@ -71,6 +76,7 @@ export const ChatMessages = ({
     return currentDate !== prevDate;
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain bg-muted/20 px-2.5 py-3 sm:px-3 sm:py-4 md:px-4">
       {messages.length === 0 ? (
@@ -91,9 +97,9 @@ export const ChatMessages = ({
               />
             </svg>
           </div>
-          <p className="text-sm text-muted-foreground">
+          <TypographyMuted className="text-sm text-muted-foreground">
             No messages yet. Say hello! 👋
-          </p>
+          </TypographyMuted>
         </div>
       ) : (
         <>

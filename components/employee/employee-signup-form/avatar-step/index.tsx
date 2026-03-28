@@ -11,11 +11,14 @@ export default function AvatarStepForm({
   getValues,
   errors,
 }: IStepFormProps<TEmployeeSignUp>) {
+  /* -------------------------------- All States ------------------------------ */
   const [preview, setPreview] = useState<string | null>(null); // Preview state for image
   const [selectedImage, setSelectedImage] = useState<string | null>(null); // Original image for cropping
   const [cropDialogOpen, setCropDialogOpen] = useState(false); // Crop dialog open state
 
   // Handle file selection and open the crop dialog
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle Files Selected ─────────────────────────────────────────
   const handleFilesSelected = (files: File[]): void => {
     const file = files?.[0];
     if (file) {
@@ -33,6 +36,7 @@ export default function AvatarStepForm({
   };
 
   // Use effect to get the avatar value from form and set the preview when coming back to this step
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     const avatar = getValues?.("avatar");
     if (avatar) {
@@ -46,6 +50,7 @@ export default function AvatarStepForm({
     }
   }, [getValues]);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col items-center gap-5">
       <TypographyH4>Add your profile picture (Optional)</TypographyH4>

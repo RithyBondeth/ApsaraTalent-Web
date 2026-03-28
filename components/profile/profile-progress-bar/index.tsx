@@ -1,6 +1,7 @@
 import { IProfileProgressBarProps } from "./props";
 
 export function ProfileProgressBar({ percentage }: IProfileProgressBarProps) {
+  /* ---------------------------------- Utils --------------------------------- */
   const isComplete = percentage >= 100;
   const barColor = isComplete
     ? "bg-green-500"
@@ -18,6 +19,7 @@ export function ProfileProgressBar({ percentage }: IProfileProgressBarProps) {
         ? "text-amber-600 dark:text-amber-400"
         : "text-rose-600 dark:text-rose-400";
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex items-center gap-2.5 w-full">
       <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">

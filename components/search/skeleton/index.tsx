@@ -1,6 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function SearchCompanyLoadingSkeleton() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col gap-4 p-5">
       <Skeleton className="h-10 w-full max-w-md rounded-lg" />
@@ -37,6 +38,7 @@ export function SearchCompanyLoadingSkeleton() {
 }
 
 export function SearchEmployeeLoadingSkeleton() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col gap-4 p-5">
       <Skeleton className="h-10 w-full max-w-md rounded-lg" />

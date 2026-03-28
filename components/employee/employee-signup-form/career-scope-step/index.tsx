@@ -39,18 +39,18 @@ export default function EmployeeCareerScopeStepForm({
   setValue,
   errors,
 }: IStepFormProps<TEmployeeSignUp>) {
-  // Utils
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
-  const hasMounted = useRef<boolean>(false);
-
-  // CareerScope Helpers
-  const [openSearchDialog, setOpenSearchDialog] = useState<boolean>(false);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [selectedCareers, setSelectedCareers] = useState<string[]>([]);
   const itemsPerPage = 10;
   const totalPages = Math.ceil(careerScopesListConstant.length / itemsPerPage);
 
-  // Register field and sync initial value ONCE
+  /* -------------------------------- All States ------------------------------ */
+  const hasMounted = useRef<boolean>(false);
+  const [openSearchDialog, setOpenSearchDialog] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [selectedCareers, setSelectedCareers] = useState<string[]>([]);
+
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     if (hasMounted.current) return;
     hasMounted.current = true;
@@ -62,7 +62,8 @@ export default function EmployeeCareerScopeStepForm({
     }
   }, []);
 
-  // Handle Toggle Career
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Toggle Career ─────────────────────────────────────────
   const toggleCareer = (career: string) => {
     setSelectedCareers((prev) => {
       const updated = prev.includes(career)
@@ -72,12 +73,6 @@ export default function EmployeeCareerScopeStepForm({
       return updated;
     });
   };
-
-  // Handle Pagination
-  const paginatedCareers = careerScopesListConstant.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  );
 
   const goToPage = (page: number) => setCurrentPage(page);
 
@@ -100,6 +95,12 @@ export default function EmployeeCareerScopeStepForm({
     return pages;
   };
 
+  const paginatedCareers = careerScopesListConstant.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
+
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col items-stretch gap-8">
       {/* Back Button Section */}

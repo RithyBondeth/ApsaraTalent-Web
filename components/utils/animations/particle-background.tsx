@@ -7,18 +7,24 @@ import { loadFull } from "tsparticles";
 import { Engine, IOptions } from "tsparticles-engine";
 
 const ParticlesBackground = () => {
+  /* ----------------------------- API Integration ---------------------------- */
   const { theme, systemTheme } = useThemeStore();
+  /* -------------------------------- All States ------------------------------ */
   const [clientTheme, setClientTheme] = useState<string | null>(null);
 
   // Ensure the correct theme is used
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     setClientTheme(theme === "system" ? systemTheme : theme);
   }, [theme, systemTheme]);
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Particles Init ─────────────────────────────────────────
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadFull(engine);
   }, []);
 
+  /* ---------------------------------- Utils --------------------------------- */
   const particleOptions = useMemo(() => {
     if (!clientTheme) return {}; // Prevents hydration mismatch
 
@@ -90,6 +96,7 @@ const ParticlesBackground = () => {
 
   if (!clientTheme) return null; // Prevents flickering
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <Particles
       id="tsparticles"

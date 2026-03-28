@@ -4,8 +4,10 @@ import React from "react";
 import { ISettingWrapperProps } from "./props";
 
 export function SettingWrapper(props: ISettingWrapperProps) {
+  /* --------------------------------- Props --------------------------------- */
   const { icon, title, description, children } = props;
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-3">

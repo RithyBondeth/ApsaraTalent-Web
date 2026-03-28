@@ -5,8 +5,10 @@ export default function ProfileCompletionCard({
   percentage,
   missingFields,
 }: IProfileCompletionCardProps) {
+  /* ---------------------------------- Utils --------------------------------- */
   const isComplete = percentage >= 100;
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5">
       <div className="flex items-center justify-between mb-3">

@@ -13,17 +13,21 @@ import { INotificationMatchCardProps } from "./props";
 export default function NotificationMatchCard(
   props: INotificationMatchCardProps,
 ) {
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle View Profile ─────────────────────────────────────────
   const handleViewProfile = () => {
     if (props.onMarkRead && !props.seen) props.onMarkRead(props.id);
     router.push(`/feed/${props.role}/${props.user.id}`);
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex items-start gap-3 rounded-lg p-3 shadow-md sm:gap-5 sm:p-5">
       <div className="rounded-md bg-blue-100 p-2.5 text-blue-500 sm:p-3">
-        <LucideHeartHandshake className="size-6 sm:size-8" strokeWidth={1.5}/>
+        <LucideHeartHandshake className="size-6 sm:size-8" strokeWidth={1.5} />
       </div>
       <div className="w-full flex flex-col items-start gap-2">
         <div className="w-full flex items-center justify-between phone-xl:flex-col phone-xl:items-start">

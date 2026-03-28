@@ -7,6 +7,7 @@ export function FavoriteLoadingSkeleton({
 }: {
   isEmployee: boolean;
 }) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col px-2.5 sm:px-5">
       {/* Banner Section */}
@@ -28,6 +29,7 @@ export function FavoriteLoadingSkeleton({
 
 /* ----------------------- Skeleton for Company Card Loading ----------------------- */
 function FavoriteCompanyCardSkeleton() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
       <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
@@ -75,6 +77,7 @@ function FavoriteCompanyCardSkeleton() {
 
 /* ----------------------- Skeleton for Employee Card Loading ----------------------- */
 function FavoriteEmployeeCardSkeleton() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
       <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">

@@ -8,10 +8,10 @@ import LabelInput from "@/components/utils/forms/label-input";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import {
-    LucideGraduationCap,
-    LucidePlus,
-    LucideSchool,
-    LucideTrash2
+  LucideGraduationCap,
+  LucidePlus,
+  LucideSchool,
+  LucideTrash2,
 } from "lucide-react";
 import { Controller, useFieldArray, useWatch } from "react-hook-form";
 import { IStepFormProps } from "../props";
@@ -21,11 +21,14 @@ export default function EducationStepForm({
   errors,
   control,
 }: IStepFormProps<TEmployeeSignUp>) {
+  /* ----------------------------- API Integration ---------------------------- */
   const { fields, append, remove } = useFieldArray({
     control,
     name: "educations",
   });
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Add Education ─────────────────────────────────────────
   const addEducation = () => {
     append({
       school: "",
@@ -34,6 +37,7 @@ export default function EducationStepForm({
     });
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col gap-5 w-full max-h-[500px] overflow-y-auto">
       <TypographyH4>Add your education information</TypographyH4>
@@ -147,11 +151,13 @@ function IsStudyingWatcher({
   register,
   errors,
 }: IsStudyingWatcherProps) {
+  /* -------------------------------- All States ------------------------------ */
   const isStudying = useWatch({
     control,
     name: `educations.${index}.isStudying`,
   });
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col gap-3">
       {/* Degree */}

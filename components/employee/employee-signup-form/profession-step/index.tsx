@@ -7,7 +7,10 @@ import ErrorMessage from "@/components/utils/feedback/error-message";
 import LabelInput from "@/components/utils/forms/label-input";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { availabilityConstant, yearOfExperienceConstant } from "@/utils/constants/ui.constant";
+import {
+  availabilityConstant,
+  yearOfExperienceConstant,
+} from "@/utils/constants/ui.constant";
 import { Controller } from "react-hook-form";
 import { IStepFormProps } from "../props";
 
@@ -16,6 +19,7 @@ export default function ProfessionStepForm({
   control,
   errors,
 }: IStepFormProps<TEmployeeSignUp>) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col items-start gap-5">
       <TypographyH4>Add profession information</TypographyH4>

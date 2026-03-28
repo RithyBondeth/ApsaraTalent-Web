@@ -12,8 +12,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import Tag from "@/components/utils/data-display/tag";
 import { IMatchingCompanyCardProps } from "./props";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 export default function MatchingCompanyCard(props: IMatchingCompanyCardProps) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
       <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
@@ -49,9 +51,9 @@ export default function MatchingCompanyCard(props: IMatchingCompanyCardProps) {
 
           {/* Description */}
           {props.description && (
-            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+            <TypographyMuted className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
               {props.description}
-            </p>
+            </TypographyMuted>
           )}
 
           {/* Open Positions Tags */}

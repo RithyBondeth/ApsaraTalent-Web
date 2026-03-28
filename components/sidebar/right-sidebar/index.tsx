@@ -7,6 +7,7 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { TypographyP } from "@/components/utils/typography/typography-p";
 
 export default function RightSidebar({ className }: { className?: string }) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className={cn("flex flex-col items-start gap-5", className)}>
       {/* Applied Employees Section */}

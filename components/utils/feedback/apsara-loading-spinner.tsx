@@ -15,9 +15,11 @@ const ApsaraLoadingSpinner: React.FC<ApsaraLoadingProps> = ({
   className = "",
   onComplete,
 }) => {
+  /* -------------------------------- All States ------------------------------ */
   const [isAnimating, setIsAnimating] = useState(true);
   const [progress, setProgress] = useState(0);
 
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     let animationId: number;
 
@@ -59,6 +61,7 @@ const ApsaraLoadingSpinner: React.FC<ApsaraLoadingProps> = ({
     };
   }, [duration, loop, onComplete]);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className={`w-fit flex items-center justify-center ${className}`}>
       <svg

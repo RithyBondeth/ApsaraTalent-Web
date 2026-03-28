@@ -31,11 +31,14 @@ export function ThemeProviderClient({
   children: React.ReactNode;
   defaultTheme: string;
 }) {
+  /* ----------------------------- API Integration ---------------------------- */
   const theme = useThemeStore((state) => state.theme);
   const isHydrated = useThemeStore((state) => state.isHydrated);
+  /* ---------------------------------- Utils --------------------------------- */
   const fallbackTheme = normalizeTheme(defaultTheme);
   const activeTheme = isHydrated ? theme : fallbackTheme;
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <NextThemesProvider
       attribute="class"

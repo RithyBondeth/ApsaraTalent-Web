@@ -1,17 +1,19 @@
 import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
+import { ComponentPropsWithoutRef, forwardRef } from "react";
 
-export function TypographyP(props: {
-  children: ReactNode;
-  className?: string;
-  style?: React.CSSProperties;
-}) {
+export const TypographyP = forwardRef<
+  HTMLParagraphElement,
+  ComponentPropsWithoutRef<"p">
+>(({ className, children, ...props }, ref) => {
   return (
     <p
-      className={cn("leading-7 [&:not(:first-child)]:mt-6", props.className)}
-      style={props.style}
+      ref={ref}
+      className={cn("leading-7 [&:not(:first-child)]:mt-6", className)}
+      {...props}
     >
-      {props.children}
+      {children}
     </p>
   );
-}
+});
+
+TypographyP.displayName = "TypographyP";

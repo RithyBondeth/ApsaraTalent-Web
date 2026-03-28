@@ -6,6 +6,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function SidebarDropdownFooterSkeleton() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <SidebarMenu>
       <SidebarMenuItem>

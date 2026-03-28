@@ -30,6 +30,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useCallStore } from "@/stores/features/call/call.store";
 import { normalizeMediaUrl } from "@/utils/functions/normalize-media-url";
+import { TypographyP } from "@/components/utils/typography/typography-p";
 
 // ─── URL Detection ───────────────────────────────────────────────────────────
 const URL_REGEX = /(?:https?:\/\/|www\.)[^\s/$.?#].[^\s]*/gi;
@@ -71,6 +72,7 @@ function DeliveryIcon({
   status: "sending" | "sent" | "seen" | undefined;
 }) {
   if (!status) return null;
+  /* -------------------------------- Render UI -------------------------------- */
   if (status === "sending")
     return <Clock className="h-3 w-3 text-muted-foreground/60 inline-block" />;
   if (status === "seen")
@@ -112,9 +114,11 @@ function AttachmentBlock({
   duration?: number;
   amplitude?: number[];
 }) {
+  /* ---------------------------------- Utils --------------------------------- */
   const fullUrl = normalizeMediaUrl(url) || url;
 
   // ── Audio voice message ────────────────────────────────────────────────────
+  /* -------------------------------- Render UI -------------------------------- */
   if (type === "audio") {
     return (
       <AudioPlayer
@@ -161,21 +165,21 @@ function AttachmentBlock({
           }`}
         />
         <div className="min-w-0">
-          <p
-            className={`text-sm font-medium truncate leading-tight ${
+          <TypographyP
+            className={`[&:not(:first-child)]:mt-0 text-sm font-medium truncate leading-tight ${
               isMe ? "text-primary-foreground" : "text-foreground"
             }`}
           >
             {filename || "Document"}
-          </p>
+          </TypographyP>
           {fileSize && (
-            <p
+            <TypographyMuted
               className={`text-xs mt-0.5 ${
                 isMe ? "text-primary-foreground/60" : "text-muted-foreground"
               }`}
             >
               ({formatFileSize(fileSize)})
-            </p>
+            </TypographyMuted>
           )}
         </div>
       </div>
@@ -216,19 +220,41 @@ function AttachmentBlock({
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function MessageBubble(props: IMessageBubbleProps) {
+  /* --------------------------------- Props --------------------------------- */
   const { message, activeChat, isLastSeen, onReply, onEdit } = props;
 
+  /* ----------------------------- API Integration ---------------------------- */
   const { reactToMessage, deleteMessage } = useChatStore();
   const initiateCall = useCallStore((s) => s.initiateCall);
   const { user: currentUser } = useGetCurrentUserStore();
 
   // ── Inline edit state ─────────────────────────────────────────────────────
+  /* -------------------------------- All States ------------------------------ */
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editValue, setEditValue] = useState<string>(message.content);
   const editTextareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const [showDeliveryTime, setShowDeliveryTime] = useState<boolean>(false);
 
+  /* ---------------------------------- Utils --------------------------------- */
+  const myReaction = currentUser
+    ? message.reactions?.[currentUser.id]
+    : undefined;
+
+  const reactionsByEmoji = useMemo(() => {
+    const grouped: Record<string, string[]> = {};
+    Object.entries(message.reactions || {}).forEach(([userId, emoji]) => {
+      if (!grouped[emoji]) grouped[emoji] = [];
+      grouped[emoji].push(userId);
+    });
+    return grouped;
+  }, [message.reactions]);
+
+  const emojiList = Object.keys(reactionsByEmoji);
+  const totalReactionCount = Object.keys(message.reactions || {}).length;
+
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Start Editing ─────────────────────────────────────────
   const startEditing = () => {
     setEditValue(message.content);
     setIsEditing(true);
@@ -258,22 +284,6 @@ export default function MessageBubble(props: IMessageBubbleProps) {
     reactToMessage(message.id, activeChat.id, emoji);
   };
 
-  const myReaction = currentUser
-    ? message.reactions?.[currentUser.id]
-    : undefined;
-
-  const reactionsByEmoji = useMemo(() => {
-    const grouped: Record<string, string[]> = {};
-    Object.entries(message.reactions || {}).forEach(([userId, emoji]) => {
-      if (!grouped[emoji]) grouped[emoji] = [];
-      grouped[emoji].push(userId);
-    });
-    return grouped;
-  }, [message.reactions]);
-
-  const emojiList = Object.keys(reactionsByEmoji);
-  const totalReactionCount = Object.keys(message.reactions || {}).length;
-
   const getUserName = (userId: string) => {
     if (userId === currentUser?.id) return "You";
     return activeChat.name;
@@ -282,6 +292,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
   const handleDelete = () => deleteMessage(message.id, activeChat.id);
   const handleReply = () => onReply?.(message);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
       className={`mb-3 max-w-[85%] sm:max-w-[75%] md:max-w-[70%] group ${
@@ -342,15 +353,15 @@ export default function MessageBubble(props: IMessageBubbleProps) {
                     : "border-primary text-muted-foreground"
                 }`}
               >
-                <p className="font-semibold leading-tight mb-0.5">
+                <TypographyP className="[&:not(:first-child)]:mt-0 font-semibold leading-tight mb-0.5">
                   {message.replyTo.senderName}
-                </p>
-                <p className="leading-snug line-clamp-2">
+                </TypographyP>
+                <TypographyP className="[&:not(:first-child)]:mt-0 leading-snug line-clamp-2">
                   {message.replyTo.isDeleted
                     ? "🚫 This message was deleted"
                     : (message.replyTo.content ?? "").slice(0, 80) +
                       ((message.replyTo.content ?? "").length > 80 ? "…" : "")}
-                </p>
+                </TypographyP>
               </div>
             )}
 
@@ -599,16 +610,16 @@ export default function MessageBubble(props: IMessageBubbleProps) {
               onEdit &&
               !message.attachment &&
               message.messageType !== "call" && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground"
-                onClick={startEditing}
-                aria-label="Edit message"
-              >
-                <Pencil className="h-3.5 w-3.5" />
-              </Button>
-            )}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground"
+                  onClick={startEditing}
+                  aria-label="Edit message"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                </Button>
+              )}
 
             {message.isMe && (
               <Button

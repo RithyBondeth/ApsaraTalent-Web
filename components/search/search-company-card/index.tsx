@@ -13,10 +13,14 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { TSearchCompanyCardProps } from "./prop";
+import { TypographyP } from "@/components/utils/typography/typography-p";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
       <div className="p-4 sm:p-5 flex flex-col gap-3.5">
@@ -36,12 +40,12 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
             <h3 className="text-base font-bold leading-tight truncate">
               {props.title}
             </h3>
-            <p className="text-sm text-muted-foreground mt-0.5 truncate">
+            <TypographyMuted className="text-sm text-muted-foreground mt-0.5 truncate">
               {props.company.name}
-            </p>
-            <p className="text-xs text-primary font-medium mt-0.5">
+            </TypographyMuted>
+            <TypographyP className="[&:not(:first-child)]:mt-0 text-xs text-primary font-medium mt-0.5">
               {props.company.industry}
-            </p>
+            </TypographyP>
           </div>
         </div>
 
@@ -69,9 +73,9 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
 
         {/* Description */}
         {props.description && (
-          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+          <TypographyMuted className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
             {props.description}
-          </p>
+          </TypographyMuted>
         )}
 
         {/* Skills Tags */}

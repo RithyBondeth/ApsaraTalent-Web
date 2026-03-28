@@ -18,9 +18,12 @@ import {
 import { ProfileProgressBar } from "../../profile/profile-progress-bar/";
 import { getEmployeeProfileCompletion } from "@/utils/functions/profile-completion";
 import { IEmployeeDialogProps } from "./props";
+import { TypographyP } from "@/components/utils/typography/typography-p";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 /* ── Availability badge with color coding ─────────────────── */
 function AvailabilityBadge({ availability }: { availability: string }) {
+  /* ---------------------------------- Utils --------------------------------- */
   const lower = availability.toLowerCase();
   const config = lower.includes("full")
     ? {
@@ -45,6 +48,7 @@ function AvailabilityBadge({ availability }: { availability: string }) {
             dot: "bg-muted-foreground",
           };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <span
       className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full font-medium ${config.color}`}
@@ -56,6 +60,7 @@ function AvailabilityBadge({ availability }: { availability: string }) {
 }
 
 export default function EmployeeDialog(props: IEmployeeDialogProps) {
+  /* ---------------------------------- Utils --------------------------------- */
   const fullName =
     [props.firstname, props.lastname].filter(Boolean).join(" ") ||
     props.username ||
@@ -66,6 +71,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
     [props],
   );
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={props.open} onOpenChange={(isOpen) => props.setOpen(isOpen)}>
       <DialogContent className="p-0 gap-0 flex flex-col overflow-hidden sm:max-w-lg sm:rounded-xl max-h-[90dvh] tablet-sm:!left-0 tablet-sm:!translate-x-0 tablet-sm:!translate-y-0 tablet-sm:!top-auto tablet-sm:!bottom-0 tablet-sm:!w-full tablet-sm:!max-w-none tablet-sm:rounded-t-2xl tablet-sm:!rounded-b-none tablet-sm:max-h-[92dvh]">
@@ -129,17 +135,21 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
           {/* About */}
           {props.description && (
             <section>
-              <p className="text-sm font-semibold mb-1.5">About</p>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-semibold mb-1.5">
+                About
+              </TypographyP>
+              <TypographyMuted className="text-sm text-muted-foreground leading-relaxed">
                 {props.description}
-              </p>
+              </TypographyMuted>
             </section>
           )}
 
           {/* Skills */}
           {props.skills && props.skills.length > 0 && (
             <section>
-              <p className="text-sm font-semibold mb-2">Skills</p>
+              <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-semibold mb-2">
+                Skills
+              </TypographyP>
               <div className="flex flex-wrap gap-1.5">
                 {props.skills.map((skill) => (
                   <span
@@ -156,7 +166,9 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
           {/* Education */}
           {props.educations && props.educations.length > 0 && (
             <section>
-              <p className="text-sm font-semibold mb-2">Education</p>
+              <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-semibold mb-2">
+                Education
+              </TypographyP>
               <div className="space-y-2.5">
                 {props.educations.map((edu, index) => (
                   <div
@@ -169,16 +181,16 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
                       </div>
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium leading-tight truncate">
+                      <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-medium leading-tight truncate">
                         {edu.school}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-0.5">
+                      </TypographyP>
+                      <TypographyMuted className="text-xs text-muted-foreground mt-0.5">
                         {edu.degree}
-                      </p>
+                      </TypographyMuted>
                       {edu.year && (
-                        <p className="text-xs text-muted-foreground/70 mt-0.5">
+                        <TypographyMuted className="text-xs text-muted-foreground/70 mt-0.5">
                           {edu.year}
-                        </p>
+                        </TypographyMuted>
                       )}
                     </div>
                   </div>

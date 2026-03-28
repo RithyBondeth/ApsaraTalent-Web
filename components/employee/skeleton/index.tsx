@@ -3,6 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 /* -------------------- Employee Card Skeleton -------------------- */
 export default function EmployeeCardSkeleton() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col rounded-xl border border-muted bg-card">
       <div className="flex flex-col gap-3 px-4 pt-4 pb-3">
@@ -59,6 +60,7 @@ function SkeletonCard({
   children: React.ReactNode;
   className?: string;
 }) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
       className={`bg-card rounded-2xl border border-border/60 shadow-sm ${className ?? ""}`}
@@ -69,6 +71,7 @@ function SkeletonCard({
 }
 
 export function EmployeeDetailPageLoadingSkeleton() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col gap-5">
       {/* ── Back Navigation Header ── */}

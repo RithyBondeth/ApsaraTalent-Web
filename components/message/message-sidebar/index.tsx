@@ -13,6 +13,8 @@ import { cn } from "@/lib/utils";
 import { Check, CheckCheck, Plus, Search, Users, X } from "lucide-react";
 import { useState } from "react";
 import { IChatListProps, IChatSidebarProps } from "./props";
+import { TypographyP } from "@/components/utils/typography/typography-p";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 /**
  * Chat sidebar — conversation list with search and "New Chat" button.
@@ -26,6 +28,7 @@ import { IChatListProps, IChatSidebarProps } from "./props";
  *   - Collapsed mode: icon-only strip with tooltips
  */
 export default function ChatSidebar(props: IChatSidebarProps) {
+  /* --------------------------------- Props --------------------------------- */
   const {
     chats,
     activeChat,
@@ -38,8 +41,10 @@ export default function ChatSidebar(props: IChatSidebarProps) {
     onNewChat,
   } = props;
 
+  /* -------------------------------- All States ------------------------------ */
   const [searchQuery, setSearchQuery] = useState("");
 
+  /* ---------------------------------- Utils --------------------------------- */
   const filteredChats = searchQuery
     ? chats?.filter(
         (chat) =>
@@ -58,6 +63,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
       ? { minWidth: "var(--sidebar-closed-width, 4rem)" }
       : undefined;
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
       className={cn(
@@ -152,13 +158,17 @@ export default function ChatSidebar(props: IChatSidebarProps) {
 // ── Expanded chat list ────────────────────────────────────────────────────────
 
 const ExpandedChatList = (props: IChatListProps) => {
+  /* --------------------------------- Props --------------------------------- */
   const { chats, activeChat, currentUserId, onChatSelect } = props;
 
+  /* -------------------------------- Render UI -------------------------------- */
   if (!chats || chats.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center gap-2 p-8 text-center h-40">
         <Users className="h-8 w-8 text-muted-foreground/40" />
-        <p className="text-sm text-muted-foreground">No conversations yet</p>
+        <TypographyMuted className="text-sm text-muted-foreground">
+          No conversations yet
+        </TypographyMuted>
       </div>
     );
   }
@@ -239,7 +249,7 @@ const ExpandedChatList = (props: IChatListProps) => {
                 )}
 
                 {/* Preview text */}
-                <p
+                <TypographyMuted
                   className={cn(
                     "text-sm truncate flex-1",
                     isUnread
@@ -248,7 +258,7 @@ const ExpandedChatList = (props: IChatListProps) => {
                   )}
                 >
                   {chat.preview || "No messages yet"}
-                </p>
+                </TypographyMuted>
 
                 {/* Unread count badge — green circle */}
                 {chat.unread ? (
@@ -268,8 +278,10 @@ const ExpandedChatList = (props: IChatListProps) => {
 // ── Collapsed icon-only list (desktop only) ──────────────────────────────────
 
 const CollapsedChatList = (props: IChatListProps) => {
+  /* --------------------------------- Props --------------------------------- */
   const { chats, activeChat, currentUserId, onChatSelect } = props;
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col items-center gap-1 pt-2 px-1">
       {chats?.map((chat) => {
@@ -324,19 +336,23 @@ const CollapsedChatList = (props: IChatListProps) => {
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right" className="max-w-[180px]">
-                <p className={cn("font-medium", isUnread && "font-semibold")}>
+                <TypographyP
+                  className={cn("[&:not(:first-child)]:mt-0", cn("font-medium", isUnread && "font-semibold"))}
+                >
                   {chat.name}
                   {chat.isOnline && (
                     <span className="ml-1.5 text-green-500 text-xs">●</span>
                   )}
-                </p>
+                </TypographyP>
                 {chat.tag && (
-                  <p className="text-xs text-muted-foreground">{chat.tag}</p>
+                  <TypographyMuted className="text-xs text-muted-foreground">
+                    {chat.tag}
+                  </TypographyMuted>
                 )}
                 {chat.preview && (
-                  <p className="text-xs text-muted-foreground truncate">
+                  <TypographyMuted className="text-xs text-muted-foreground truncate">
                     {chat.preview}
-                  </p>
+                  </TypographyMuted>
                 )}
               </TooltipContent>
             </Tooltip>

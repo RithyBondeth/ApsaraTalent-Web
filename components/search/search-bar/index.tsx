@@ -6,7 +6,10 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
-import { availabilityConstant, locationConstant } from "@/utils/constants/ui.constant";
+import {
+  availabilityConstant,
+  locationConstant,
+} from "@/utils/constants/ui.constant";
 import { TLocations } from "@/utils/types/location.type";
 import { SelectValue } from "@radix-ui/react-select";
 import { useEffect, useState } from "react";
@@ -16,6 +19,7 @@ import { TSearchBarProps } from "./props";
 export default function SearchBar<T extends FieldValues>(
   props: TSearchBarProps<T>,
 ) {
+  /* -------------------------------- All States ------------------------------ */
   const [selectedLocation, setSelectionLocation] = useState<TLocations | "All">(
     props.initialLocation || "All",
   );
@@ -24,6 +28,7 @@ export default function SearchBar<T extends FieldValues>(
     props.initialJobType || "all",
   );
 
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     if (props.initialLocation) {
       setSelectionLocation(props.initialLocation);
@@ -36,6 +41,7 @@ export default function SearchBar<T extends FieldValues>(
     }
   }, [props.initialJobType]);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col items-start gap-2 p-2.5 sm:p-3 shadow-md rounded-md">
       <Input

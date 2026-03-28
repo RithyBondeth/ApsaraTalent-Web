@@ -1,13 +1,11 @@
-"use client";
-
 import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
 import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -23,22 +21,24 @@ export default function BenefitValueStepForm({
   trigger,
   errors,
 }: IStepFormProps<TCompanySignup>) {
-  // Utils
+  /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("toast");
 
-  // Benefit and Value Helpers
+  /* -------------------------------- All States ------------------------------ */
+  // Benefits
   const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
-  const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
-
   const [benefitInput, setBenefitInput] = useState<string>("");
   const initialBenefit = getValues?.("benefitsAndValues.benefits") || [];
   const [benefits, setBenefits] = useState<string[]>(initialBenefit);
 
+  // Values
   const [valueInput, setValueInput] = useState<string>("");
   const initialValue = getValues?.("benefitsAndValues.values") || [];
   const [values, setValues] = useState<string[]>(initialValue);
+  const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
 
-  // Handle Add Benefit
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Add Benefits ───────────────────────────────────────
   const addBenefits = async () => {
     const trimmed = benefitInput.trim();
     if (!trimmed) return;
@@ -65,7 +65,7 @@ export default function BenefitValueStepForm({
     setOpenBenefitPopOver(false);
   };
 
-  // Handle Add Value
+  // ── Add Values ─────────────────────────────────────────
   const addValues = async () => {
     const trimmed = valueInput.trim();
     if (!trimmed) return;
@@ -92,7 +92,7 @@ export default function BenefitValueStepForm({
     setOpenValuePopOver(false);
   };
 
-  // Handle Remove Benefit
+  // ── Remove Benefits ─────────────────────────────────────
   const removeBenefit = async (benefitToRemove: string) => {
     const updated = benefits.filter((bf) => bf !== benefitToRemove);
     setBenefits(updated);
@@ -101,7 +101,7 @@ export default function BenefitValueStepForm({
     await trigger?.("benefitsAndValues.benefits");
   };
 
-  // Handle Remove Value
+  // ── Remove Values ───────────────────────────────────────
   const removeValue = async (valueToRemove: string) => {
     const updated = values.filter((value) => value !== valueToRemove);
     setValues(updated);
@@ -110,11 +110,14 @@ export default function BenefitValueStepForm({
     await trigger?.("benefitsAndValues.values");
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col items-start gap-8">
+      {/* Benefit Section */}
       <div className="w-full flex flex-col items-start gap-3">
-        {/* Benefit Section */}
+        {/* Benefit Title Section */}
         <TypographyH4>Add company benefit information (Optional)</TypographyH4>
+        {/* Benefit List Section */}
         <div className="flex flex-wrap gap-2">
           {benefits.map((benefit) => (
             <div
@@ -133,7 +136,6 @@ export default function BenefitValueStepForm({
             </div>
           ))}
         </div>
-
         {/* Add Benefit Dialog Section */}
         <Popover open={openBenefitPopOver} onOpenChange={setOpenBenefitPopOver}>
           <PopoverTrigger asChild>
@@ -170,9 +172,12 @@ export default function BenefitValueStepForm({
           {errors?.benefitsAndValues?.benefits?.message}
         </ErrorMessage>
       </div>
+
+      {/* Value Section */}
       <div className="w-full flex flex-col items-start gap-3">
-        {/* Value Section */}
+        {/* Value Title Section */}
         <TypographyH4>Add company value information (Optional)</TypographyH4>
+        {/* Value List Section */}
         <div className="flex flex-wrap gap-2">
           {values.map((value) => (
             <div
@@ -191,7 +196,6 @@ export default function BenefitValueStepForm({
             </div>
           ))}
         </div>
-
         {/* Add Value Section */}
         <Popover open={openValuePopOver} onOpenChange={setOpenValuePopOver}>
           <PopoverTrigger asChild>

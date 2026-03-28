@@ -3,8 +3,10 @@ import { Separator } from "@/components/ui/separator";
 import { ISettingRowProps } from "./props";
 
 export function SettingRow(props: ISettingRowProps) {
+  /* --------------------------------- Props --------------------------------- */
   const { icon, label, value, last = false } = props;
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <>
       <div className="flex items-center justify-between gap-4 px-4 py-3.5">

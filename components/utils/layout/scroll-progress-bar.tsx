@@ -11,11 +11,15 @@ import { usePathname } from "next/navigation";
  * thread (GPU) — no layout recalculation, silky smooth even at 120 fps.
  */
 export function ScrollProgressBar() {
+  /* -------------------------------- All States ------------------------------ */
   const [progress, setProgress] = useState(0);
+  /* ---------------------------------- Utils --------------------------------- */
   const pathname = usePathname();
+  /* -------------------------------- All States ------------------------------ */
   const rafRef = useRef<number | null>(null);
 
   // Reset when the route changes
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     setProgress(0);
   }, [pathname]);
@@ -25,8 +29,7 @@ export function ScrollProgressBar() {
       if (rafRef.current !== null) return; // already scheduled
       rafRef.current = requestAnimationFrame(() => {
         rafRef.current = null;
-        const scrollTop =
-          window.scrollY || document.documentElement.scrollTop;
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
         const docHeight =
           document.documentElement.scrollHeight - window.innerHeight;
         setProgress(docHeight > 0 ? (scrollTop / docHeight) * 100 : 0);
@@ -40,6 +43,7 @@ export function ScrollProgressBar() {
     };
   }, []);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
       aria-hidden="true"
@@ -48,7 +52,8 @@ export function ScrollProgressBar() {
       <div
         className="h-full origin-left will-change-transform"
         style={{
-          background: "linear-gradient(90deg, hsl(var(--primary)) 0%, #7c3aed 55%, #ec4899 100%)",
+          background:
+            "linear-gradient(90deg, hsl(var(--primary)) 0%, #7c3aed 55%, #ec4899 100%)",
           transform: `scaleX(${progress / 100})`,
           transition: progress === 0 ? "none" : "transform 80ms linear",
         }}

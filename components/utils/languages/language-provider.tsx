@@ -6,8 +6,10 @@ export async function LanguageProvider({
 }: {
   children: React.ReactNode;
 }) {
+  /* ---------------------------------- Utils --------------------------------- */
   const language = (await cookies()).get("language")?.value || "en";
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <LanguageProviderClient defaultLanguage={language}>
       {children}

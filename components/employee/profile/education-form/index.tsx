@@ -10,13 +10,16 @@ import { IEmployeeEducationFormProps } from "./props";
 export default function EmployeeEducationForm(
   props: IEmployeeEducationFormProps,
 ) {
+  /* --------------------------------- Props --------------------------------- */
   const { register, control } = props.form;
 
+  /* -------------------------------- All States ------------------------------ */
   const isStudying = useWatch({
     control,
     name: `educations.${props.index}.isStudying`,
   });
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col items-start gap-3">
       {/* Header Section */}

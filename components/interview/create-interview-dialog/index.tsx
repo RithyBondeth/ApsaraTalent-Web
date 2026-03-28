@@ -24,14 +24,19 @@ import { useTranslations } from "next-intl";
 import { useState, useCallback } from "react";
 import { useInterviewStore } from "@/stores/apis/matching/interview.store";
 import { ICreateInterviewDialogProps } from "./props";
+import { TypographyP } from "@/components/utils/typography/typography-p";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 export function CreateInterviewDialog({
   currentId,
   currentCompanyMatching,
 }: ICreateInterviewDialogProps) {
+  /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("interview");
+  /* ----------------------------- API Integration ---------------------------- */
   const { creating, error, createInterview } = useInterviewStore();
 
+  /* -------------------------------- All States ------------------------------ */
   const [open, setOpen] = useState<boolean>(false);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>("");
   const [formData, setFormData] = useState<{
@@ -50,6 +55,8 @@ export function CreateInterviewDialog({
     meetingLink: "",
   });
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle Create ─────────────────────────────────────────
   const handleCreate = useCallback(async () => {
     if (
       !currentId ||
@@ -85,6 +92,7 @@ export function CreateInterviewDialog({
     });
   }, [currentId, selectedEmployeeId, formData, createInterview]);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -140,9 +148,9 @@ export function CreateInterviewDialog({
                 </SelectContent>
               </Select>
             ) : (
-              <p className="text-sm text-muted-foreground bg-muted/50 rounded-lg p-3">
+              <TypographyMuted className="text-sm text-muted-foreground bg-muted/50 rounded-lg p-3">
                 {t("noMatchedEmployees")}
-              </p>
+              </TypographyMuted>
             )}
           </div>
 
@@ -233,7 +241,11 @@ export function CreateInterviewDialog({
             />
           </div>
 
-          {error && <p className="text-sm text-destructive">{error}</p>}
+          {error && (
+            <TypographyP className="[&:not(:first-child)]:mt-0 text-sm text-destructive">
+              {error}
+            </TypographyP>
+          )}
 
           <Button
             onClick={handleCreate}

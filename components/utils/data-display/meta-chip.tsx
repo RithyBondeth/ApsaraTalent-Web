@@ -7,6 +7,7 @@ interface IMetaChipProps {
 }
 
 export default function MetaChip({ icon, text, className }: IMetaChipProps) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <span
       className={cn(

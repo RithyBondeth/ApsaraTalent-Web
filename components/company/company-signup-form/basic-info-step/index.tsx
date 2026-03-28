@@ -1,14 +1,12 @@
-"use client";
-
 import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
 import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import ErrorMessage from "@/components/utils/feedback/error-message";
@@ -23,9 +21,12 @@ export default function BasicInfoStepForm({
   control,
   errors,
 }: IStepFormProps<TCompanySignup>) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col items-start gap-5">
+      {/* Title Section */}
       <TypographyH4>Add Basic information</TypographyH4>
+      {/* Form Section */}
       <LabelInput
         label="Company Name"
         input={

@@ -5,8 +5,10 @@ export default function MessageTimeDivider({
 }: {
   timestamp: Date | string;
 }) {
+  /* ---------------------------------- Utils --------------------------------- */
   const label = getDateDividerLabel(timestamp);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex items-center gap-4 my-8">
       <div className="flex-1 h-[1px] bg-muted-foreground/10" />

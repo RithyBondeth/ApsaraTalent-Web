@@ -2,6 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import React from "react";
 
 export default function StaticContentLoadingSkeleton() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="min-h-screen bg-background">
       {/* ── Top nav skeleton ── */}

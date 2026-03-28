@@ -1,12 +1,13 @@
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyLead } from "@/components/utils/typography/typography-lead";
 import {
-    LucideChartSpline,
-    LucidePencilRuler,
-    LucideSearch
+  LucideChartSpline,
+  LucidePencilRuler,
+  LucideSearch,
 } from "lucide-react";
 
 export default function ResumeBuilderFeature() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col items-center gap-10 p-5 rounded-md shadow-md">
       <TypographyH4>AI-Powdered Features</TypographyH4>

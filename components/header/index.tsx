@@ -11,10 +11,14 @@ import { Button } from "../ui/button";
 import LogoComponent from "@/components/utils/brand/logo";
 
 export default function Header({ className }: { className?: string }) {
+  /* ----------------------------- API Integration ---------------------------- */
   const { theme, toggleTheme } = useThemeStore();
+  /* ---------------------------------- Utils --------------------------------- */
   const { resolvedTheme, setTheme } = useTheme();
+  /* -------------------------------- All States ------------------------------ */
   const [mounted, setMounted] = useState<boolean>(false);
 
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
@@ -22,6 +26,7 @@ export default function Header({ className }: { className?: string }) {
     setCookie("theme", theme);
   }, [theme, setTheme]);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <nav
       className={cn("flex justify-between items-center py-3 px-6", className)}

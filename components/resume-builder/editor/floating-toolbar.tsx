@@ -17,6 +17,7 @@ function ToolbarBtn({
   title: string;
   children: React.ReactNode;
 }) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <button
       title={title}
@@ -45,14 +46,19 @@ const FONT_SIZES = ["10", "11", "12", "13", "14", "16", "18", "20", "24"];
  * execCommand fires.
  */
 export default function FloatingToolbar() {
+  /* ---------------------------------- Utils --------------------------------- */
   const { isVisible, top, left, isBold, isItalic } = useTextSelection();
+  /* -------------------------------- All States ------------------------------ */
   const [mounted, setMounted] = useState(false);
 
   // Portal requires document to be available (client-only)
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => setMounted(true), []);
 
   if (!mounted || !isVisible) return null;
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Exec ─────────────────────────────────────────
   function exec(command: string, value?: string) {
     // styleWithCSS so browsers produce <span style="..."> instead of <b>/<i>
     document.execCommand("styleWithCSS", false, "true");
@@ -80,6 +86,7 @@ export default function FloatingToolbar() {
     }
   }
 
+  /* ---------------------------------- Utils --------------------------------- */
   const toolbarStyle: React.CSSProperties = {
     position: "fixed",
     top: Math.max(8, top),
@@ -89,6 +96,7 @@ export default function FloatingToolbar() {
     pointerEvents: "auto",
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return createPortal(
     <div
       style={toolbarStyle}

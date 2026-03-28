@@ -19,21 +19,25 @@ import {
 import { ProfileProgressBar } from "../../profile/profile-progress-bar/";
 import { getCompanyProfileCompletion } from "@/utils/functions/profile-completion";
 import { ICompanyDialogProps } from "./props";
+import { TypographyP } from "@/components/utils/typography/typography-p";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 export default function CompanyDialog(props: ICompanyDialogProps) {
+  /* ---------------------------------- Utils --------------------------------- */
   const completion = useMemo(() => getCompanyProfileCompletion(props), [props]);
+
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={props.open} onOpenChange={props.setOpen}>
       <DialogContent className="p-0 gap-0 flex flex-col overflow-hidden sm:max-w-lg sm:rounded-xl max-h-[90dvh] tablet-sm:!left-0 tablet-sm:!translate-x-0 tablet-sm:!translate-y-0 tablet-sm:!top-auto tablet-sm:!bottom-0 tablet-sm:!w-full tablet-sm:!max-w-none tablet-sm:rounded-t-2xl tablet-sm:!rounded-b-none tablet-sm:max-h-[92dvh]">
-        {/* Drag handle — mobile only */}
+        {/* Drag Handle — Mobile Only */}
         <div className="hidden tablet-sm:flex justify-center pt-3 pb-1 shrink-0">
           <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
         </div>
 
-        {/* Cover banner */}
+        {/* Cover Banner Section */}
         <div className="relative shrink-0">
           {props.cover ? (
-            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={props.cover}
               alt={`${props.name} cover`}
@@ -42,7 +46,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
           ) : (
             <div className="w-full h-28 bg-gradient-to-br from-primary/80 to-primary/30" />
           )}
-          {/* Avatar overlapping the cover */}
+          {/* Avatar Overlapping The Cover Section */}
           <div className="absolute -bottom-9 left-4">
             <Avatar
               className="!size-20 ring-4 ring-background shadow-lg"
@@ -56,7 +60,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
           </div>
         </div>
 
-        {/* Name + industry + meta chips */}
+        {/* Name, Industry, Location, CompanySize, FoundedYear, Progess Section  */}
         <div className="pt-12 px-4 shrink-0">
           <DialogTitle className="text-base font-bold leading-tight">
             {props.name}
@@ -86,28 +90,32 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
             )}
           </div>
 
-          {/* Profile Progress */}
+          {/* Profile Progress Section */}
           <div className="mt-3">
             <ProfileProgressBar percentage={completion.percentage} />
           </div>
         </div>
 
-        {/* Scrollable body */}
+        {/* Scrollable Body Section */}
         <div className="flex-1 overflow-y-auto min-h-0 px-4 py-4 space-y-5">
-          {/* About */}
+          {/* About Section: Name and Description */}
           {props.description && (
             <section>
-              <p className="text-sm font-semibold mb-1.5">About {props.name}</p>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-semibold mb-1.5">
+                About {props.name}
+              </TypographyP>
+              <TypographyMuted className="text-sm text-muted-foreground leading-relaxed">
                 {props.description}
-              </p>
+              </TypographyMuted>
             </section>
           )}
 
-          {/* Benefits */}
+          {/* Benefits Section */}
           {props.benefits && props.benefits.length > 0 && (
             <section>
-              <p className="text-sm font-semibold mb-2">Benefits</p>
+              <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-semibold mb-2">
+                Benefits
+              </TypographyP>
               <div className="flex flex-wrap gap-2">
                 {props.benefits.map((benefit, index) => (
                   <span
@@ -122,10 +130,12 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
             </section>
           )}
 
-          {/* Values */}
+          {/* Values Section */}
           {props.values && props.values.length > 0 && (
             <section>
-              <p className="text-sm font-semibold mb-2">Values</p>
+              <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-semibold mb-2">
+                Values
+              </TypographyP>
               <div className="flex flex-wrap gap-2">
                 {props.values.map((value, index) => (
                   <span
@@ -141,7 +151,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
           )}
         </div>
 
-        {/* Sticky CTA */}
+        {/* Sticky CTA Section */}
         <div className="shrink-0 px-4 pb-4 pt-2 border-t border-border/60 bg-background">
           <Link href={`/feed/company/${props.id}`} className="w-full">
             <Button className="w-full gap-2">

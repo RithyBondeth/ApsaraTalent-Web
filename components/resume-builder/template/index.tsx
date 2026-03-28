@@ -69,11 +69,14 @@ function getStyleBadge(title: string): { label: string; className: string } {
 }
 
 export default function TemplateCard(props: TTemplateCardProps) {
+  /* -------------------------------- All States ------------------------------ */
   const [popupResume, setPopupResume] = useState<boolean>(false);
+  /* ---------------------------------- Utils --------------------------------- */
   const gradient = getTemplateGradient(props.title);
   const styleBadge = getStyleBadge(props.title);
   const light = isLightTemplate(props.title);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
       className={`h-fit w-full flex flex-col rounded-lg cursor-pointer transition-all duration-200 shadow-sm border overflow-hidden ${
@@ -124,11 +127,21 @@ export default function TemplateCard(props: TTemplateCardProps) {
                   light ? "border-black/15" : "border-white/20"
                 }`}
               >
-                <div className={`h-1 w-full rounded ${light ? "bg-black/20" : "bg-white/30"}`} />
-                <div className={`h-1 w-4/5 rounded ${light ? "bg-black/15" : "bg-white/25"}`} />
-                <div className={`h-1 w-3/4 rounded ${light ? "bg-black/12" : "bg-white/20"}`} />
-                <div className={`h-1 w-full rounded mt-0.5 ${light ? "bg-black/20" : "bg-white/30"}`} />
-                <div className={`h-1 w-2/3 rounded ${light ? "bg-black/15" : "bg-white/25"}`} />
+                <div
+                  className={`h-1 w-full rounded ${light ? "bg-black/20" : "bg-white/30"}`}
+                />
+                <div
+                  className={`h-1 w-4/5 rounded ${light ? "bg-black/15" : "bg-white/25"}`}
+                />
+                <div
+                  className={`h-1 w-3/4 rounded ${light ? "bg-black/12" : "bg-white/20"}`}
+                />
+                <div
+                  className={`h-1 w-full rounded mt-0.5 ${light ? "bg-black/20" : "bg-white/30"}`}
+                />
+                <div
+                  className={`h-1 w-2/3 rounded ${light ? "bg-black/15" : "bg-white/25"}`}
+                />
               </div>
             </div>
           </div>

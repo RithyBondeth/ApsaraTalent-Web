@@ -19,6 +19,7 @@ export default function ExperienceStepForm({
   control,
   errors,
 }: IStepFormProps<TEmployeeSignUp>) {
+  /* ----------------------------- API Integration ---------------------------- */
   const { fields, append, remove } = useFieldArray({
     control,
     name: "experience",
@@ -26,7 +27,9 @@ export default function ExperienceStepForm({
 
   // Ensure at least one empty row is shown when the step mounts.
   // The ref guard prevents React StrictMode from appending twice.
+  /* -------------------------------- All States ------------------------------ */
   const initializedRef = useRef(false);
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     if (!initializedRef.current && fields.length === 0) {
       initializedRef.current = true;
@@ -40,6 +43,8 @@ export default function ExperienceStepForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Add Experience ─────────────────────────────────────────
   const addExperience = () => {
     append({
       title: "",
@@ -49,6 +54,7 @@ export default function ExperienceStepForm({
     });
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col gap-5 w-full max-h-[500px] overflow-y-auto">
       <TypographyH4>Add your experiences information</TypographyH4>

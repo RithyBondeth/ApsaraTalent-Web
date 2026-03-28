@@ -12,11 +12,13 @@ export default function CoverCompanyStepForm({
   getValues,
   errors,
 }: IStepFormProps<TCompanySignup>) {
-  const [preview, setPreview] = useState<string | null>(null); // Preview state for image
-  const [selectedImage, setSelectedImage] = useState<string | null>(null); // Original image for cropping
-  const [cropDialogOpen, setCropDialogOpen] = useState(false); // Crop dialog open state
+  /* -------------------------------- All States ------------------------------ */
+  const [preview, setPreview] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [cropDialogOpen, setCropDialogOpen] = useState<boolean>(false);
 
-  // Handle file selection and open the crop dialog
+  /* --------------------------------- Methods -------------------------------- */
+  // ── Handle Files Selected ────────────────────────────────────────
   const handleFilesSelected = (files: File[]): void => {
     const file = files?.[0];
     if (file) {
@@ -26,30 +28,31 @@ export default function CoverCompanyStepForm({
     }
   };
 
+  // ── Handle Crop Complete ────────────────────────────────────────
   const handleCropComplete = (croppedFile: File) => {
-    // Set the cropped file to the form field
     setValue?.("cover", croppedFile, { shouldValidate: true });
     const objectUrl = URL.createObjectURL(croppedFile);
-    setPreview(objectUrl); // Set preview for the cropped file
+    setPreview(objectUrl);
   };
 
-  // Use effect to get the cover value from form and set the preview when coming back to this step
+  /* --------------------------------- Effects -------------------------------- */
   useEffect(() => {
     const cover = getValues?.("cover");
     if (cover) {
       let objectUrl = "";
-      if (cover instanceof File) {
-        objectUrl = URL.createObjectURL(cover); // Create object URL for the file
-      } else if (typeof cover === "string") {
-        objectUrl = cover; // Use the cover URL directly if it's a string
-      }
-      setPreview(objectUrl); // Set the preview
+      if (cover instanceof File) objectUrl = URL.createObjectURL(cover);
+      else if (typeof cover === "string") objectUrl = cover;
+
+      setPreview(objectUrl);
     }
   }, [getValues]);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col items-center gap-5">
+      {/* Title Section */}
       <TypographyH4>Add your company cover picture (Optional)</TypographyH4>
+      {/* Form Section */}
       <div className="w-full flex justify-center">
         {setValue && (
           <DragDropFile<TCompanySignup>
@@ -69,10 +72,12 @@ export default function CoverCompanyStepForm({
         )}
       </div>
 
+      {/* Validation Message Section */}
       {errors?.cover?.message && (
         <ErrorMessage>{errors.cover.message as string}</ErrorMessage>
       )}
 
+      {/* Crop Avatar Dialog Section */}
       {selectedImage && (
         <AvatarCropDialog
           title="Crop Company Cover Picture"

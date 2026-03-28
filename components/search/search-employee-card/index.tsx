@@ -11,10 +11,14 @@ import {
 import { useRouter } from "next/navigation";
 import { TSearchEmployeeCardProps } from "./props";
 import { getAvailabilityStyleClass } from "@/utils/extensions/get-availability-class";
+import { TypographyP } from "@/components/utils/typography/typography-p";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
       <div className="p-4 sm:p-5 flex flex-col gap-3.5">
@@ -36,9 +40,9 @@ export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
                 <h3 className="text-base font-bold leading-tight truncate">
                   {props.firstname} {props.lastname}
                 </h3>
-                <p className="text-sm text-primary font-medium mt-0.5">
+                <TypographyP className="[&:not(:first-child)]:mt-0 text-sm text-primary font-medium mt-0.5">
                   {props.job}
-                </p>
+                </TypographyP>
               </div>
               <span
                 className={`text-[11px] font-semibold px-2.5 py-1 rounded-full whitespace-nowrap flex-shrink-0 ${getAvailabilityStyleClass(props.availability)}`}
@@ -62,9 +66,9 @@ export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
 
         {/* Description */}
         {props.description && (
-          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+          <TypographyMuted className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
             {props.description}
-          </p>
+          </TypographyMuted>
         )}
 
         {/* Skills Tags */}

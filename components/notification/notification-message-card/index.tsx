@@ -13,13 +13,17 @@ import { INotificationMessageCardProps } from "./props";
 export default function NotificationMessageCard(
   props: INotificationMessageCardProps,
 ) {
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle Reply ─────────────────────────────────────────
   const handleReply = () => {
     if (props.onMarkRead && !props.seen) props.onMarkRead(props.id);
     router.push(`/message?chat=${props.user.id}`);
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex items-start gap-3 rounded-lg p-3 shadow-md sm:gap-5 sm:p-5">
       <div className="rounded-md bg-green-100 p-2.5 text-green-500 sm:p-3">

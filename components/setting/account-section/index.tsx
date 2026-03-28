@@ -27,6 +27,7 @@ export function AccountSection({
   memberSince,
   onResetPassword,
 }: IAccountSectionProps) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <SettingWrapper
       icon={<LucideUser />}

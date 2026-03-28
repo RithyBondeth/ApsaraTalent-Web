@@ -20,17 +20,24 @@ interface ILogoProps {
 }
 
 export default function LogoComponent(props: ILogoProps) {
+  /* --------------------------------- Props --------------------------------- */
   const { height = 100, width = 200, className, priority = false } = props;
+  /* ---------------------------------- Utils --------------------------------- */
   const { resolvedTheme } = useTheme();
+  /* -------------------------------- All States ------------------------------ */
   const [mounted, setMounted] = useState(false);
 
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  /* ---------------------------------- Utils --------------------------------- */
   const currentTheme = mounted ? resolvedTheme : "light";
   const isBlackLogo = currentTheme === "light";
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Get Logo Source ─────────────────────────────────────────
   const getLogoSource = () => {
     if (props.withoutTitle) {
       return LogoWithoutTitle;
@@ -38,6 +45,7 @@ export default function LogoComponent(props: ILogoProps) {
     return isBlackLogo ? BlackLogo : WhiteLogo;
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <Image
       src={getLogoSource()}

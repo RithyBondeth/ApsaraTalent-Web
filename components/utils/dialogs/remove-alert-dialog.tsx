@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogTitle
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
 } from "@/components/ui/dialog";
 
 export default function RemoveAlertDialog(props: {
@@ -22,6 +22,7 @@ export default function RemoveAlertDialog(props: {
   onNoClick: () => void;
   onYesClick: () => void;
 }) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={props.openDialog} onOpenChange={props.setOpenDialog}>
       <DialogContent>

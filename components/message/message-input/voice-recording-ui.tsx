@@ -28,6 +28,7 @@ export function VoiceRecordingUI({
   onCancel,
   onStop,
 }: VoiceRecordingUIProps) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex items-center gap-3 px-3 py-2">
       {/* Cancel button */}

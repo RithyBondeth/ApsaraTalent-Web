@@ -1,5 +1,3 @@
-"use client";
-
 import { IJobPosition } from "@/utils/interfaces/user-interface/company.interface";
 import {
   LucideBookmark,
@@ -25,13 +23,15 @@ import CompanyDialog from "../company-dialog";
 import { ICompanyCardProps } from "./props";
 
 export default function CompanyCard(props: ICompanyCardProps) {
+  /* ---------------------------------- Utils --------------------------------- */
   const isGrid = props.variant === "grid";
 
-  // Utils
+  /* -------------------------------- All States ------------------------------ */
   const [openCompanyDialog, setOpenCompanyDialog] = useState<boolean>(false);
   const ignoreNextClick = useRef<boolean>(false);
 
-  // Handle Click Dialog
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle Click Dialog ─────────────────────────────────────────
   const handleClickDialog = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -41,7 +41,8 @@ export default function CompanyCard(props: ICompanyCardProps) {
     setOpenCompanyDialog(true);
   };
 
-  // Prevent reopening immediately after closing
+  /* --------------------------------- Effects --------------------------------- */
+  // ── Prevent Reopening Immediately After Closing ─────────────────────────
   useEffect(() => {
     if (!openCompanyDialog) {
       ignoreNextClick.current = true;
@@ -49,14 +50,15 @@ export default function CompanyCard(props: ICompanyCardProps) {
     }
   }, [openCompanyDialog]);
 
-  /* ─── Grid variant: flat card, top border divider, no vertical gap ─── */
+  /* -------------------------------- Render UI -------------------------------- */
+  // ── Grid variant: flat card, top border divider, no vertical gap ──────────
   if (isGrid) {
     return (
       <>
         <div className="group relative w-full flex flex-col rounded-xl border border-muted bg-card cursor-pointer transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_8px_30px_hsl(var(--foreground)/0.08)] hover:border-primary/20">
-          {/* Main Content */}
+          {/* Main Content  Section*/}
           <div className="flex flex-col gap-3 px-4 pt-4 pb-3">
-            {/* Header: Avatar + Info + Actions */}
+            {/* Header Section: Avatar + Info + Actions */}
             <div className="flex items-start gap-3">
               <CachedAvatar
                 src={props.avatar}
@@ -90,7 +92,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
                 </div>
               </div>
 
-              {/* Action Buttons */}
+              {/* Action Buttons Section */}
               <div className="flex items-center gap-1 shrink-0">
                 <Button
                   size="icon"
@@ -114,12 +116,12 @@ export default function CompanyCard(props: ICompanyCardProps) {
               </div>
             </div>
 
-            {/* Description */}
+            {/* Description Section */}
             <TypographyMuted className="text-xs leading-relaxed line-clamp-2">
               {props.description}
             </TypographyMuted>
 
-            {/* Open Positions Tags */}
+            {/* Open Positions Tags Section */}
             {props.openPositions.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
                 {props.openPositions
@@ -136,7 +138,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
             )}
           </div>
 
-          {/* Footer: Buttons */}
+          {/* Footer Section: Save, View Buttons */}
           <div className="flex items-center justify-end gap-2 px-4 pb-3 pt-0">
             <Button
               className={`text-xs h-7 px-3 rounded-full ${
@@ -175,6 +177,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
           </div>
         </div>
 
+        {/* Company Dialog Section */}
         <CompanyDialog
           open={openCompanyDialog}
           setOpen={setOpenCompanyDialog}
@@ -184,11 +187,12 @@ export default function CompanyCard(props: ICompanyCardProps) {
     );
   }
 
-  /* ─── Default variant: bordered card with shadow ─── */
+  // ── Default variant: bordered card with shadow ──────────
   return (
     <div className="h-fit w-full flex flex-col items-start gap-4 rounded-lg border border-muted p-3 shadow-sm cursor-pointer transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_8px_28px_hsl(var(--foreground)/0.1)] hover:border-primary/25">
-      {/* Profile Section */}
+      {/* Main Content Section */}
       <div className="w-full flex flex-wrap items-start justify-between gap-3">
+        {/* Header Section: Avatar + Info + Actions */}
         <div className="flex items-center gap-3">
           <CachedAvatar
             src={props.avatar}
@@ -219,6 +223,8 @@ export default function CompanyCard(props: ICompanyCardProps) {
             </TypographySmall>
           </div>
         </div>
+
+        {/* Action Buttons Section */}
         <div className="flex items-center gap-1 shrink-0">
           <Button
             className="size-10 sm:size-12 rounded-xl transition-all duration-300 ease-out hover:scale-110 active:scale-95"
@@ -238,7 +244,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
         </div>
       </div>
 
-      {/* Industry Section */}
+      {/* Industry and Description Section */}
       <div className="w-full flex flex-col gap-3">
         <IconLabel
           text="Industry"
@@ -250,7 +256,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
         </TypographyMuted>
       </div>
 
-      {/* Tag Section */}
+      {/* OpenPosition and Availability Tag Section */}
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-3">
           <IconLabel
@@ -268,7 +274,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
             ))}
           </div>
         </div>
-        {props.availableTimes && (
+        {props.availableTimes && props.availableTimes.length > 0 && (
           <div className="flex flex-col gap-3">
             <IconLabel
               text={
@@ -288,7 +294,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
         )}
       </div>
 
-      {/* button Section */}
+      {/* Footer Section: Save, View Buttons */}
       <div className="w-full flex items-center justify-end gap-2 sm:gap-3 tablet-lg:justify-stretch tablet-lg:[&>button]:flex-1 phone-xl:justify-stretch phone-xl:[&>button]:flex-1">
         <Button
           className={`text-xs ${
@@ -308,7 +314,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
         </Button>
       </div>
 
-      {/* Hidden Dialog Section */}
+      {/* Company Dialog Section */}
       <CompanyDialog
         open={openCompanyDialog}
         setOpen={setOpenCompanyDialog}

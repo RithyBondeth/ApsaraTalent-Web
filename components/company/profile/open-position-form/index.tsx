@@ -18,19 +18,22 @@ import { LucidePlus, LucideTrash2, LucideXCircle } from "lucide-react";
 import { useState } from "react";
 import { Controller } from "react-hook-form";
 import { IOpenPositionFormProps } from "./props";
+import { TypographyP } from "@/components/utils/typography/typography-p";
 
 export default function OpenPositionForm(props: IOpenPositionFormProps) {
-  // Utils
-  const t = useTranslations("toast");
   const { register, control, getValues, setValue } = props.form;
 
-  // Skill States
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("toast");
+
+  /* -------------------------------- All States ------------------------------ */
   const initialSkill = getValues(`openPositions.${props.index}.skills`) || "";
   const [skills, setSkills] = useState<string>(initialSkill);
   const [skillInput, setSkillInput] = useState<string | null>(null);
   const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
 
-  // Handle Add Skill
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Add Skill ─────────────────────────────────────────
   const addSkill = () => {
     const trimmed = skillInput?.trim();
     if (!trimmed) return;
@@ -64,7 +67,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
     setOpenSkillPopOver(false);
   };
 
-  // Handle Remove Skill
+  // ── Remove Skill ───────────────────────────────────────
   const removeSkill = (skillToRemove: string) => {
     const updatedSkillsArray = skills
       .split(", ")
@@ -78,9 +81,10 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
     });
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col items-start gap-3">
-      {/* Header Section */}
+      {/* Header With Remove Button Section */}
       <div className="w-full flex items-center justify-between">
         <TypographyMuted>Position {Number(props.index) + 1}</TypographyMuted>
         {props.isEdit && (
@@ -106,6 +110,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             />
           }
         />
+
         {/* Description Section */}
         <div className="w-full flex flex-col items-start gap-2">
           <TypographyMuted className="text-xs">Description</TypographyMuted>
@@ -122,6 +127,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             }
           />
         </div>
+
         {/* Availability Section */}
         <div className="w-full flex flex-col items-start gap-2">
           <TypographyMuted className="text-xs">Type</TypographyMuted>
@@ -138,6 +144,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             )}
           />
         </div>
+
         {/* Experience Requirement Section */}
         <LabelInput
           label="Experience Requirements"
@@ -168,6 +175,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             />
           }
         />
+
         {/* Skill Section */}
         <div className="w-full flex flex-col items-start gap-3">
           <TypographyMuted className="text-xs">
@@ -199,7 +207,6 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
           {/* Skill Poppver Section */}
           {props.isEdit && (
             <Popover open={openSkillPopOver} onOpenChange={setOpenSkillPopOver}>
-              {/* Add Skill Section */}
               <PopoverTrigger asChild>
                 <Button className="w-full text-xs" variant="secondary">
                   Add skill
@@ -224,6 +231,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             </Popover>
           )}
         </div>
+
         {/* Salary Range Section */}
         <LabelInput
           label="Salary Range"
@@ -236,6 +244,8 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             />
           }
         />
+
+        {/* Open Position ID Section: Hidden */}
         <LabelInput
           className="hidden"
           label="Open Position ID"
@@ -248,7 +258,8 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             />
           }
         />
-        {/* DeadlineDate Section */}
+
+        {/* Deadline Date Section */}
         <div className="w-full flex flex-col items-start gap-1">
           <TypographyMuted className="text-xs">Deadline Date</TypographyMuted>
           <Controller
@@ -262,9 +273,9 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
                   disabled={!props.isEdit}
                 />
                 {fieldState.error && (
-                  <p className="text-red-500 text-xs mt-1">
+                  <TypographyP className="[&:not(:first-child)]:mt-0 text-red-500 text-xs mt-1">
                     {fieldState.error.message}
-                  </p>
+                  </TypographyP>
                 )}
               </>
             )}

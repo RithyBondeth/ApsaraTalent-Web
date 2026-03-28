@@ -8,6 +8,7 @@ function SkeletonCard({
   children: React.ReactNode;
   className?: string;
 }) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
       className={`bg-card rounded-2xl border border-border/60 shadow-sm ${className ?? ""}`}
@@ -18,6 +19,7 @@ function SkeletonCard({
 }
 
 export function CompanyProfilePageLoadingSkeleton() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col gap-5">
       {/* ── Hero Card ── */}

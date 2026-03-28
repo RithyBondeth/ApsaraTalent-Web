@@ -3,6 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Phone, PhoneOff } from "lucide-react";
 import { IIncomingCallModalProps } from "./props";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 /**
  * Centered modal overlay shown when an incoming voice call arrives.
@@ -23,6 +24,7 @@ export function IncomingCallModal({
   onAccept,
   onDecline,
 }: IIncomingCallModalProps) {
+  /* ---------------------------------- Utils --------------------------------- */
   const initials = caller.name
     .split(" ")
     .map((n: string) => n[0])
@@ -30,6 +32,7 @@ export function IncomingCallModal({
     .slice(0, 2)
     .toUpperCase();
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     /* Backdrop */
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
@@ -37,9 +40,9 @@ export function IncomingCallModal({
       <div className="bg-background rounded-2xl shadow-2xl border border-border w-80 p-6 flex flex-col items-center gap-5 animate-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="text-center space-y-1">
-          <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium">
+          <TypographyMuted className="text-xs text-muted-foreground uppercase tracking-widest font-medium">
             Incoming Voice Call
-          </p>
+          </TypographyMuted>
         </div>
 
         {/* Avatar with pulsing ring */}
@@ -61,7 +64,9 @@ export function IncomingCallModal({
           <h3 className="font-semibold text-lg text-foreground leading-tight">
             {caller.name}
           </h3>
-          <p className="text-sm text-muted-foreground">Calling…</p>
+          <TypographyMuted className="text-sm text-muted-foreground">
+            Calling…
+          </TypographyMuted>
         </div>
 
         {/* Action buttons */}

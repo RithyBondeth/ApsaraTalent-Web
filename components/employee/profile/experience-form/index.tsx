@@ -6,12 +6,15 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { LucideBriefcaseBusiness, LucideTrash2 } from "lucide-react";
 import { Controller } from "react-hook-form";
 import { IEmployeeExperienceFormProps } from "./props";
+import { TypographyP } from "@/components/utils/typography/typography-p";
 
 export default function EmployeeExperienceForm(
   props: IEmployeeExperienceFormProps,
 ) {
+  /* --------------------------------- Props --------------------------------- */
   const { register, control } = props.form;
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col items-start gap-3">
       {/* Header Section */}
@@ -74,9 +77,9 @@ export default function EmployeeExperienceForm(
                     disabled={!props.isEdit}
                   />
                   {fieldState.error && (
-                    <p className="text-red-500 text-xs mt-1">
+                    <TypographyP className="[&:not(:first-child)]:mt-0 text-red-500 text-xs mt-1">
                       {fieldState.error.message}
-                    </p>
+                    </TypographyP>
                   )}
                 </>
               )}

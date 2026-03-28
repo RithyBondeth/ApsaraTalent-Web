@@ -1,6 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function NotificationCardSkeleton() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-lg">
       {/* Icon Skeleton */}
@@ -36,6 +37,7 @@ export function NotificationCardSkeleton() {
 }
 
 export default function NotificationLoadingSkeleton() {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col gap-3 p-5">
       {[...Array(5)].map((_, i) => (
