@@ -1,4 +1,4 @@
-import { ICallParticipant } from "@/stores/features/call.store";
+import { ICallParticipant } from "@/stores/features/call/call.store";
 
 export interface IIncomingCallModalProps {
   caller: ICallParticipant;
