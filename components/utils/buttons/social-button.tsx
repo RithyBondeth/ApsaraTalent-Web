@@ -1,3 +1,4 @@
+import { TypographyP } from "@/components/utils/typography/typography-p";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image, { StaticImageData } from "next/image";
@@ -33,7 +34,7 @@ export default function SocialButton(props: ISocialButtonProps) {
         width={30}
         className="rounded-full"
       />
-      <p>{props.label}</p>
+      <TypographyP>{props.label}</TypographyP>
     </Button>
   );
 }

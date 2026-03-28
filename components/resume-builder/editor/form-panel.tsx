@@ -1,5 +1,4 @@
-"use client";
-
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -38,7 +37,9 @@ interface FormPanelProps {
 /* ─── Small helper label ─────────────────────────────────────── */
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-xs font-medium text-muted-foreground mb-1">{children}</p>
+    <TypographyMuted className="text-xs font-medium mb-1">
+      {children}
+    </TypographyMuted>
   );
 }
 
@@ -295,9 +296,9 @@ function ExperienceCard({
                 </div>
               ))}
               {achFields.length === 0 && (
-                <p className="text-xs text-muted-foreground italic">
+                <TypographyMuted className="text-xs italic">
                   No achievements added.
-                </p>
+                </TypographyMuted>
               )}
             </div>
           </div>
@@ -452,10 +453,10 @@ function SkillsEducationTab({ register, control, setValue }: FormPanelProps) {
           className="min-h-[72px]"
           {...register("education")}
         />
-        <p className="text-xs text-muted-foreground mt-1">
+        <TypographyMuted className="text-xs mt-1">
           Separate multiple degrees with{" "}
           <code className="text-xs bg-muted px-1 rounded">|</code>
-        </p>
+        </TypographyMuted>
       </div>
 
       <Separator />

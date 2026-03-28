@@ -1,5 +1,5 @@
-"use client";
-
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -42,12 +42,12 @@ export function AccountSection({
           </AvatarFallback>
         </Avatar>
         <div className="flex flex-col gap-1 min-w-0">
-          <p className="font-semibold text-sm leading-none truncate">
+          <TypographySmall className="font-semibold leading-none truncate block">
             {displayName}
-          </p>
-          <p className="text-xs text-muted-foreground truncate">
+          </TypographySmall>
+          <TypographyMuted className="text-xs truncate">
             {email ?? "—"}
-          </p>
+          </TypographyMuted>
           <Badge
             variant="secondary"
             className="w-fit mt-0.5 text-[10px] capitalize"

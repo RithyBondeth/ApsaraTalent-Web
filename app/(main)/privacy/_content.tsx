@@ -14,6 +14,11 @@ import {
   LucideUser,
   LucideUserCheck,
 } from "lucide-react";
+import { TypographyH1 } from "@/components/utils/typography/typography-h1";
+import { TypographyH2 } from "@/components/utils/typography/typography-h2";
+import { TypographyP } from "@/components/utils/typography/typography-p";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useLanguageStore } from "@/stores/languages/language-store";
 
 /* ─────────────────────────────────────────────────────────────
@@ -36,7 +41,9 @@ function Section({
         <div className="flex items-center justify-center size-9 rounded-xl bg-primary/10 border border-primary/20 shrink-0">
           <span className="text-primary [&>svg]:size-4">{icon}</span>
         </div>
-        <h2 className="text-lg font-bold tracking-tight">{title}</h2>
+        <TypographyH2 className="text-lg font-bold tracking-tight">
+          {title}
+        </TypographyH2>
       </div>
       <div className="flex flex-col gap-3 text-sm text-muted-foreground leading-relaxed pl-0">
         {children}
@@ -594,9 +601,9 @@ export function PrivacyContent() {
         {/* ── Sticky TOC sidebar (desktop) ── */}
         <aside className="hidden lg:block w-56 shrink-0">
           <div className="sticky top-20 flex flex-col gap-1">
-            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
+            <TypographySmall className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
               {c.tocHeading}
-            </p>
+            </TypographySmall>
             {c.toc.map((item) => (
               <a
                 key={item.id}
@@ -617,8 +624,10 @@ export function PrivacyContent() {
               <LucideCalendar className="size-3.5" />
               <span>{c.lastUpdated}</span>
             </div>
-            <h1 className="text-3xl font-bold tracking-tight">{c.pageTitle}</h1>
-            <p className="text-muted-foreground text-sm leading-relaxed max-w-2xl">
+            <TypographyH1 className="text-3xl font-bold tracking-tight">
+              {c.pageTitle}
+            </TypographyH1>
+            <TypographyP className="text-muted-foreground text-sm leading-relaxed max-w-2xl">
               {language === "en" ? (
                 <>
                   At{" "}
@@ -633,7 +642,7 @@ export function PrivacyContent() {
                   {c.intro.replace("នៅ Apsara Talent ", "")}
                 </>
               )}
-            </p>
+            </TypographyP>
           </div>
 
           {/* ─── 1. Information we collect ─── */}
@@ -642,9 +651,11 @@ export function PrivacyContent() {
             icon={<LucideDatabase />}
             title={c.s1.title}
           >
-            <p>{c.s1.intro}</p>
+            <TypographyP>{c.s1.intro}</TypographyP>
             <div className="flex flex-col gap-2">
-              <p className="font-medium text-foreground">{c.s1.g1Title}</p>
+              <TypographySmall className="font-medium text-foreground">
+                {c.s1.g1Title}
+              </TypographySmall>
               <ul className="flex flex-col gap-1.5 ml-1">
                 {c.s1.g1.map((t, i) => (
                   <Bullet key={i}>{t}</Bullet>
@@ -652,7 +663,9 @@ export function PrivacyContent() {
               </ul>
             </div>
             <div className="flex flex-col gap-2">
-              <p className="font-medium text-foreground">{c.s1.g2Title}</p>
+              <TypographySmall className="font-medium text-foreground">
+                {c.s1.g2Title}
+              </TypographySmall>
               <ul className="flex flex-col gap-1.5 ml-1">
                 {c.s1.g2.map((t, i) => (
                   <Bullet key={i}>{t}</Bullet>
@@ -660,7 +673,9 @@ export function PrivacyContent() {
               </ul>
             </div>
             <div className="flex flex-col gap-2">
-              <p className="font-medium text-foreground">{c.s1.g3Title}</p>
+              <TypographySmall className="font-medium text-foreground">
+                {c.s1.g3Title}
+              </TypographySmall>
               <ul className="flex flex-col gap-1.5 ml-1">
                 {c.s1.g3.map((t, i) => (
                   <Bullet key={i}>{t}</Bullet>
@@ -668,7 +683,9 @@ export function PrivacyContent() {
               </ul>
             </div>
             <div className="flex flex-col gap-2">
-              <p className="font-medium text-foreground">{c.s1.g4Title}</p>
+              <TypographySmall className="font-medium text-foreground">
+                {c.s1.g4Title}
+              </TypographySmall>
               <ul className="flex flex-col gap-1.5 ml-1">
                 {c.s1.g4.map((t, i) => (
                   <Bullet key={i}>{t}</Bullet>
@@ -688,16 +705,16 @@ export function PrivacyContent() {
                 <Bullet key={i}>{t}</Bullet>
               ))}
             </ul>
-            <p>
+            <TypographyP>
               {c.s2.notePrefix}{" "}
               <strong className="text-foreground">{c.s2.noteStrong}</strong>{" "}
               {c.s2.noteSuffix}
-            </p>
+            </TypographyP>
           </Section>
 
           {/* ─── 3. How we share ─── */}
           <Section id="how-we-share" icon={<LucideShare2 />} title={c.s3.title}>
-            <p>{c.s3.intro}</p>
+            <TypographyP>{c.s3.intro}</TypographyP>
             <ul className="flex flex-col gap-1.5 ml-1">
               {c.s3.bullets.map((b, i) => (
                 <Bullet key={i}>
@@ -710,7 +727,7 @@ export function PrivacyContent() {
 
           {/* ─── 4. Third-party services ─── */}
           <Section id="third-party" icon={<LucideServer />} title={c.s4.title}>
-            <p>{c.s4.intro}</p>
+            <TypographyP>{c.s4.intro}</TypographyP>
             <ul className="flex flex-col gap-1.5 ml-1">
               {c.s4.bullets.map((b, i) => (
                 <Bullet key={i}>
@@ -727,7 +744,7 @@ export function PrivacyContent() {
             icon={<LucideDatabase />}
             title={c.s5.title}
           >
-            <p>{c.s5.intro}</p>
+            <TypographyP>{c.s5.intro}</TypographyP>
             <ul className="flex flex-col gap-1.5 ml-1">
               {c.s5.bullets.map((t, i) => (
                 <Bullet key={i}>{t}</Bullet>
@@ -737,13 +754,13 @@ export function PrivacyContent() {
 
           {/* ─── 6. Security ─── */}
           <Section id="security" icon={<LucideLock />} title={c.s6.title}>
-            <p>{c.s6.intro}</p>
+            <TypographyP>{c.s6.intro}</TypographyP>
             <ul className="flex flex-col gap-1.5 ml-1">
               {c.s6.bullets.map((t, i) => (
                 <Bullet key={i}>{t}</Bullet>
               ))}
             </ul>
-            <p>{c.s6.note}</p>
+            <TypographyP>{c.s6.note}</TypographyP>
           </Section>
 
           {/* ─── 7. Your rights ─── */}
@@ -752,7 +769,7 @@ export function PrivacyContent() {
             icon={<LucideShieldCheck />}
             title={c.s7.title}
           >
-            <p>{c.s7.intro}</p>
+            <TypographyP>{c.s7.intro}</TypographyP>
             <ul className="flex flex-col gap-1.5 ml-1">
               {c.s7.bullets.map((b, i) => (
                 <Bullet key={i}>
@@ -761,7 +778,7 @@ export function PrivacyContent() {
                 </Bullet>
               ))}
             </ul>
-            <p>
+            <TypographyP>
               {c.s7.note}{" "}
               <a
                 href={`mailto:${c.s7.email}`}
@@ -770,42 +787,44 @@ export function PrivacyContent() {
                 {c.s7.email}
               </a>
               {c.s7.noteSuffix}
-            </p>
+            </TypographyP>
           </Section>
 
           {/* ─── 8. Cookies ─── */}
           <Section id="cookies" icon={<LucideDatabase />} title={c.s8.title}>
-            <p>{c.s8.intro}</p>
+            <TypographyP>{c.s8.intro}</TypographyP>
             <ul className="flex flex-col gap-1.5 ml-1">
               {c.s8.bullets.map((t, i) => (
                 <Bullet key={i}>{t}</Bullet>
               ))}
             </ul>
-            <p>{c.s8.note}</p>
+            <TypographyP>{c.s8.note}</TypographyP>
           </Section>
 
           {/* ─── 9. Children ─── */}
           <Section id="children" icon={<LucideUser />} title={c.s9.title}>
-            <p>{c.s9.text}</p>
+            <TypographyP>{c.s9.text}</TypographyP>
           </Section>
 
           {/* ─── 10. Changes ─── */}
           <Section id="changes" icon={<LucideRefreshCw />} title={c.s10.title}>
-            <p>{c.s10.intro}</p>
+            <TypographyP>{c.s10.intro}</TypographyP>
             <ul className="flex flex-col gap-1.5 ml-1">
               {c.s10.bullets.map((t, i) => (
                 <Bullet key={i}>{t}</Bullet>
               ))}
             </ul>
-            <p>{c.s10.note}</p>
+            <TypographyP>{c.s10.note}</TypographyP>
           </Section>
 
           {/* ─── 11. Contact ─── */}
           <Section id="contact" icon={<LucideMail />} title={c.s11.title}>
-            <p>{c.s11.intro}</p>
+            <TypographyP>{c.s11.intro}</TypographyP>
             <div className="rounded-xl border border-border bg-muted/30 p-4 flex flex-col gap-1.5">
-              <p className="font-semibold text-foreground">Apsara Talent</p>
-              <p>
+              <TypographySmall className="font-semibold text-foreground">
+                Apsara Talent
+              </TypographySmall>
+              <TypographyP>
                 📧{" "}
                 <a
                   href="mailto:privacy@apsaratalent.com"
@@ -813,8 +832,8 @@ export function PrivacyContent() {
                 >
                   privacy@apsaratalent.com
                 </a>
-              </p>
-              <p>
+              </TypographyP>
+              <TypographyP>
                 🌐{" "}
                 <a
                   href="https://apsaratalent.com"
@@ -822,8 +841,8 @@ export function PrivacyContent() {
                 >
                   apsaratalent.com
                 </a>
-              </p>
-              <p>📍 {c.s11.address}</p>
+              </TypographyP>
+              <TypographyP>📍 {c.s11.address}</TypographyP>
             </div>
           </Section>
         </main>

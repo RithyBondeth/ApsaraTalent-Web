@@ -1,5 +1,8 @@
 "use client";
 
+import { TypographyH2 } from "@/components/utils/typography/typography-h2";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { TypographyP } from "@/components/utils/typography/typography-p";
 import { Button } from "@/components/ui/button";
 import { LucideRefreshCw, LucideTriangleAlert } from "lucide-react";
 import { useEffect } from "react";
@@ -26,16 +29,16 @@ export default function GlobalError({
           </div>
 
           <div className="flex flex-col gap-2">
-            <h2 className="text-2xl font-semibold tracking-tight">
+            <TypographyH2 className="text-2xl font-semibold tracking-tight">
               Application error
-            </h2>
-            <p className="text-gray-500 text-sm max-w-sm">
+            </TypographyH2>
+            <TypographyP className="text-gray-500 text-sm max-w-sm">
               A critical error occurred. Please try refreshing the page.
-            </p>
+            </TypographyP>
             {error.digest && (
-              <p className="text-xs text-gray-400 font-mono mt-1">
+              <TypographyMuted className="text-xs text-gray-400 font-mono mt-1">
                 Error ID: {error.digest}
-              </p>
+              </TypographyMuted>
             )}
           </div>
 

@@ -1,3 +1,4 @@
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import React from "react";
 import {
   LucideMonitor,
@@ -42,11 +43,11 @@ export function AppearanceSection(props: IAppearanceSectionProps) {
             onClick={() => onThemeChange("system")}
           />
         </div>
-        <p className="text-xs text-muted-foreground text-center">
+        <TypographyMuted className="text-xs text-center">
           {theme === "system"
             ? "Follows your device's system preference"
             : `Using ${theme} mode`}
-        </p>
+        </TypographyMuted>
       </div>
     </SettingWrapper>
   );
