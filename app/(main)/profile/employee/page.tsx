@@ -35,10 +35,10 @@ import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
 import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import ReferencePreviewDialog from "@/components/utils/dialogs/reference-preview-dialog";
 import RemoveAlertDialog from "@/components/utils/dialogs/remove-alert-dialog";
-import IconLabel from "@/components/utils/icon-label";
-import ImagePopup from "@/components/utils/image-popup";
-import LabelInput from "@/components/utils/label-input";
-import Tag from "@/components/utils/tag";
+import IconLabel from "@/components/utils/data-display/icon-label";
+import ImagePopup from "@/components/utils/data-display/image-popup";
+import LabelInput from "@/components/utils/forms/label-input";
+import Tag from "@/components/utils/data-display/tag";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useAvatarState } from "@/hooks/profile/employee/use-avatar-state";
@@ -114,7 +114,7 @@ import {
   addNewExperienceSvgImage,
 } from "@/utils/constants/asset.constant";
 import { getEmployeeProfileCompletion } from "@/utils/functions/profile-completion";
-import { SectionTitle } from "@/components/utils/section-title";
+import { SectionTitle } from "@/components/utils/layout/section-title";
 import ProfileCompletionCard from "@/components/profile/profile-completion-card";
 
 export default function EmployeeProfilePage() {

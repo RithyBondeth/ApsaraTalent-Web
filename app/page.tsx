@@ -3,7 +3,7 @@ import { TypographyH1 } from "@/components/utils/typography/typography-h1";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import Image from "next/image";
 import { landingSvg } from "@/utils/constants/asset.constant";
-import { ParticlesWrapper } from "@/components/utils/particles-wrapper";
+import { ParticlesWrapper } from "@/components/utils/animations/particles-wrapper";
 
 /*-------------------------------------------- Render UI --------------------------------------------*/
 export default function IndexPage() {

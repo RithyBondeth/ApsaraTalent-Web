@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import ImagePopup from "@/components/utils/image-popup";
+import ImagePopup from "@/components/utils/data-display/image-popup";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { Eye } from "lucide-react";

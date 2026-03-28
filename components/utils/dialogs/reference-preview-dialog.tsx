@@ -4,7 +4,7 @@ import {
     DialogHeader,
     DialogTitle
 } from "@/components/ui/dialog";
-import { TypographyMuted } from "../typography/typography-muted";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 export default function ReferencePreviewDialog(props: {
   referenceUrl: string;

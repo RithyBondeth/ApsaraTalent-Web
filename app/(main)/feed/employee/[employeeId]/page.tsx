@@ -7,8 +7,8 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import ImagePopup from "@/components/utils/image-popup";
-import Tag from "@/components/utils/tag";
+import ImagePopup from "@/components/utils/data-display/image-popup";
+import Tag from "@/components/utils/data-display/tag";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { toast } from "sonner";
@@ -56,9 +56,9 @@ import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { EmployeeDetailPageLoadingSkeleton } from "@/components/employee/skeleton";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
-import MetaChip from "@/components/utils/meta-chip";
-import { DetailCard } from "@/components/utils/detail-card";
-import { SectionTitle } from "@/components/utils/section-title";
+import MetaChip from "@/components/utils/data-display/meta-chip";
+import { DetailCard } from "@/components/utils/data-display/detail-card";
+import { SectionTitle } from "@/components/utils/layout/section-title";
 import { getAvailabilityStyleClass } from "@/utils/extensions/get-availability-class";
 
 export default function EmployeeDetailPage() {

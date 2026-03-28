@@ -1,4 +1,4 @@
-import MetaChip from "../../utils/meta-chip";
+import MetaChip from "@/components/utils/data-display/meta-chip";
 import {
   LucideArrowRight,
   LucideBookmarkX,
@@ -11,7 +11,7 @@ import {
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
-import Tag from "../../utils/tag";
+import Tag from "@/components/utils/data-display/tag";
 import { IFavoriteCompanyCardProps } from "./props";
 
 export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {

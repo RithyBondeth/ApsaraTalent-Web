@@ -27,7 +27,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "../../ui/sidebar";
-import LogoComponent from "../../utils/logo";
+import LogoComponent from "@/components/utils/brand/logo";
 import { SidebarDropdownFooter } from "./sidebar-dropdown-footer";
 import { SidebarDropdownFooterSkeleton } from "./sidebar-dropdown-footer/skeleton";
 

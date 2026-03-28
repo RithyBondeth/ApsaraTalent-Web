@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { LanguageProvider } from "@/components/utils/languages/language-provider";
 import { ThemeProvider } from "@/components/utils/themes/theme-provider";
-import { TitleSync } from "@/components/utils/title-sync";
+import { TitleSync } from "@/components/utils/seo/title-sync";
 import type { Metadata } from "next";
 import { Noto_Sans_Khmer, Ubuntu } from "next/font/google";
 import "./globals.css";

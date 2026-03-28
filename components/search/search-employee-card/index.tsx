@@ -1,7 +1,7 @@
-import MetaChip from "../../utils/meta-chip";
+import MetaChip from "@/components/utils/data-display/meta-chip";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import Tag from "@/components/utils/tag";
+import Tag from "@/components/utils/data-display/tag";
 import {
   LucideClock,
   LucideGraduationCap,

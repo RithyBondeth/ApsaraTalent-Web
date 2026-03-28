@@ -1,7 +1,7 @@
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import LabelInput from "@/components/utils/label-input";
+import LabelInput from "@/components/utils/forms/label-input";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { LucideBriefcaseBusiness, LucideTrash2 } from "lucide-react";
 import { Controller } from "react-hook-form";

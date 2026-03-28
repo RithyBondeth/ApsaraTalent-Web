@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/popover";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import ErrorMessage from "@/components/utils/error-message";
-import IconLabel from "@/components/utils/icon-label";
+import ErrorMessage from "@/components/utils/feedback/error-message";
+import IconLabel from "@/components/utils/data-display/icon-label";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { LucideCircleCheck, LucidePlus, LucideXCircle } from "lucide-react";
 import { useState } from "react";

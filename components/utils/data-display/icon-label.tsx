@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { TypographyMuted } from "./typography/typography-muted";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { ReactNode } from "react";
 interface ILabelProps {
   text: string;

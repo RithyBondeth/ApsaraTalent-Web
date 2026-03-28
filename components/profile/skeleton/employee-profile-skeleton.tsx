@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { SectionTitleSkeleton } from "@/components/utils/section-title";
+import { SectionTitleSkeleton } from "@/components/utils/layout/section-title";
 
 function SkeletonCard({
   children,

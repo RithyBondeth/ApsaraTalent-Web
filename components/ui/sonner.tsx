@@ -8,7 +8,7 @@ import {
 } from "lucide-react"
 import { useTheme } from "next-themes"
 import { Toaster as Sonner } from "sonner"
-import ApsaraLoadingSpinner from "@/components/utils/apsara-loading-spinner"
+import ApsaraLoadingSpinner from "@/components/utils/feedback/apsara-loading-spinner"
 
 type ToasterProps = React.ComponentProps<typeof Sonner>
 

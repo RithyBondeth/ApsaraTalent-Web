@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import * as React from "react";
 import type { FieldError, FieldErrorsImpl, Merge } from "react-hook-form";
-import { TypographySmall } from "../utils/typography/typography-small";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
 
 type TRHFMessage =
   | string

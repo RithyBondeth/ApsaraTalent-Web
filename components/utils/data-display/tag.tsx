@@ -1,5 +1,5 @@
 import { getRandomBadgeColor } from "@/utils/functions/get-random-badge-color";
-import { TypographyMuted } from "./typography/typography-muted";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 interface ITagInterface {
   label: string;

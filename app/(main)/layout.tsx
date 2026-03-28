@@ -7,7 +7,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { ScrollProgressBar } from "@/components/utils/scroll-progress-bar";
+import { ScrollProgressBar } from "@/components/utils/layout/scroll-progress-bar";
 import { ThemeProviderClient } from "@/components/utils/themes/theme-provider-client";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useChatConnection } from "@/hooks/chat/use-chat-connection";

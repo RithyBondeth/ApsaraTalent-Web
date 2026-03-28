@@ -1,7 +1,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { YearPicker } from "@/components/ui/year-picker";
-import LabelInput from "@/components/utils/label-input";
+import LabelInput from "@/components/utils/forms/label-input";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { LucideGraduationCap, LucideSchool, LucideTrash2 } from "lucide-react";
 import { Controller, useWatch } from "react-hook-form";

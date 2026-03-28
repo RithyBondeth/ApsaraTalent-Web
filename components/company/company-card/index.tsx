@@ -16,11 +16,11 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "../../ui/button";
 import CachedAvatar from "../../ui/cached-avatar";
-import IconLabel from "../../utils/icon-label";
-import Tag from "../../utils/tag";
-import { TypographyMuted } from "../../utils/typography/typography-muted";
-import { TypographyP } from "../../utils/typography/typography-p";
-import { TypographySmall } from "../../utils/typography/typography-small";
+import IconLabel from "@/components/utils/data-display/icon-label";
+import Tag from "@/components/utils/data-display/tag";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { TypographyP } from "@/components/utils/typography/typography-p";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
 import CompanyDialog from "../company-dialog";
 import { ICompanyCardProps } from "./props";
 

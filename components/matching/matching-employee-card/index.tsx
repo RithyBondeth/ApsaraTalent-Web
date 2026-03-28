@@ -1,4 +1,4 @@
-import MetaChip from "../../utils/meta-chip";
+import MetaChip from "@/components/utils/data-display/meta-chip";
 import { availabilityWordsFormat } from "@/utils/functions/availability-word-format";
 import {
   LucideBriefcaseBusiness,
@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
-import Tag from "../../utils/tag";
+import Tag from "@/components/utils/data-display/tag";
 import { IMatchingEmployeeCardProps } from "./props";
 import { getAvailabilityStyleClass } from "@/utils/extensions/get-availability-class";
 

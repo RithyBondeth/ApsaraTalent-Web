@@ -7,8 +7,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { CheckCircle2, Loader2 } from "lucide-react";
-import ApsaraLoadingSpinner from "../apsara-loading-spinner";
-import { TypographyMuted } from "../typography/typography-muted";
+import ApsaraLoadingSpinner from "@/components/utils/feedback/apsara-loading-spinner";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 export type TLoadingStep = {
   label: string;

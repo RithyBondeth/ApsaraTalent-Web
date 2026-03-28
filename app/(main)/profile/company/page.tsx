@@ -40,10 +40,10 @@ import { Textarea } from "@/components/ui/textarea";
 import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
 import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import RemoveAlertDialog from "@/components/utils/dialogs/remove-alert-dialog";
-import IconLabel from "@/components/utils/icon-label";
-import ImagePopup from "@/components/utils/image-popup";
-import LabelInput from "@/components/utils/label-input";
-import Tag from "@/components/utils/tag";
+import IconLabel from "@/components/utils/data-display/icon-label";
+import ImagePopup from "@/components/utils/data-display/image-popup";
+import LabelInput from "@/components/utils/forms/label-input";
+import Tag from "@/components/utils/data-display/tag";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useCmpAvatarCoverState } from "@/hooks/profile/company/use-cmp-avatar-cover-state";
@@ -106,7 +106,7 @@ import { companyFormSchema, TCompanyProfileForm } from "./validation";
 import { emptySvgImage } from "@/utils/constants/asset.constant";
 import { getCompanyProfileCompletion } from "@/utils/functions/profile-completion";
 import { CompanyProfilePageLoadingSkeleton } from "@/components/profile/skeleton/company-profile-skeleton";
-import { SectionTitle } from "@/components/utils/section-title";
+import { SectionTitle } from "@/components/utils/layout/section-title";
 import ProfileCompletionCard from "@/components/profile/profile-completion-card";
 
 export default function ProfilePage() {

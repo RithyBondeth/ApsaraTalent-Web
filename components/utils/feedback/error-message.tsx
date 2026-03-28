@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { TypographySmall } from "./typography/typography-small";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
 
 interface IErrorMessageProps {
   className?: string;

@@ -1,4 +1,4 @@
-import MetaChip from "../../utils/meta-chip";
+import MetaChip from "@/components/utils/data-display/meta-chip";
 import {
   LucideBriefcaseBusiness,
   LucideBuilding,
@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
-import Tag from "../../utils/tag";
+import Tag from "@/components/utils/data-display/tag";
 import { IMatchingCompanyCardProps } from "./props";
 
 export default function MatchingCompanyCard(props: IMatchingCompanyCardProps) {

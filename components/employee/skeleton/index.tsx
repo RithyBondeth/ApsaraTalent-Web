@@ -1,4 +1,4 @@
-import { SectionTitleSkeleton } from "@/components/utils/section-title";
+import { SectionTitleSkeleton } from "@/components/utils/layout/section-title";
 import { Skeleton } from "@/components/ui/skeleton";
 
 /* -------------------- Employee Card Skeleton -------------------- */

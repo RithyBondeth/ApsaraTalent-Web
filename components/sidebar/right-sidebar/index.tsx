@@ -2,9 +2,9 @@ import { cn } from "@/lib/utils";
 import { LucideChevronRight, LucideUserCheck, LucideUsers } from "lucide-react";
 import { Avatar, AvatarFallback } from "../../ui/avatar";
 import { Button } from "../../ui/button";
-import Divider from "../../utils/divider";
-import { TypographyMuted } from "../../utils/typography/typography-muted";
-import { TypographyP } from "../../utils/typography/typography-p";
+import Divider from "@/components/utils/layout/divider";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { TypographyP } from "@/components/utils/typography/typography-p";
 
 export default function RightSidebar({ className }: { className?: string }) {
   return (

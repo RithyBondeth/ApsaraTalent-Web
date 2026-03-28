@@ -8,7 +8,7 @@ import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import LogoComponent from "../utils/logo";
+import LogoComponent from "@/components/utils/brand/logo";
 
 export default function Header({ className }: { className?: string }) {
   const { theme, toggleTheme } = useThemeStore();

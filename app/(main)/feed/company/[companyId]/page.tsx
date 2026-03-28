@@ -14,8 +14,8 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import ImagePopup from "@/components/utils/image-popup";
-import Tag from "@/components/utils/tag";
+import ImagePopup from "@/components/utils/data-display/image-popup";
+import Tag from "@/components/utils/data-display/tag";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
@@ -62,9 +62,9 @@ import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
-import MetaChip from "@/components/utils/meta-chip";
-import { DetailCard } from "@/components/utils/detail-card";
-import { SectionTitle } from "@/components/utils/section-title";
+import MetaChip from "@/components/utils/data-display/meta-chip";
+import { DetailCard } from "@/components/utils/data-display/detail-card";
+import { SectionTitle } from "@/components/utils/layout/section-title";
 import { CompanyDetailPageLoadingSkeleton } from "@/components/company/skeleton";
 
 export default function CompanyDetailPage() {

@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import SocialButton from "@/components/utils/buttons/social-button";
 import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
-import LogoComponent from "@/components/utils/logo";
+import LogoComponent from "@/components/utils/brand/logo";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";

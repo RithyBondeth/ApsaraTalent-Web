@@ -2,7 +2,7 @@ import * as React from "react";
 import type { FieldError, FieldErrorsImpl, Merge } from "react-hook-form";
 
 import { cn } from "@/lib/utils";
-import { TypographySmall } from "../utils/typography/typography-small";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
 
 type RHFMessage = string | FieldError | Merge<FieldError, FieldErrorsImpl<Record<string, unknown>>>;
 
