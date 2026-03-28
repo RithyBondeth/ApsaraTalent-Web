@@ -1,15 +1,14 @@
-"use client";
-
 import CachedAvatar from "@/components/ui/cached-avatar";
 import { Handshake } from "lucide-react";
 import { IRecentMatchesListProps } from "./props";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { timeAgo } from "@/utils/functions/timeago-formatter";
 
-export function RecentMatchesList(props: IRecentMatchesListProps) {
-  /* --------------------------------- Props --------------------------------- */
-  const { matches, isEmployee } = props;
-
+export function RecentMatchesList({
+  matches,
+  isEmployee,
+}: IRecentMatchesListProps) {
   /* --------------------------- Empty List State --------------------------- */
   if (!matches || matches.length === 0) {
     return (
@@ -46,31 +45,11 @@ export function RecentMatchesList(props: IRecentMatchesListProps) {
               {match.name}
             </TypographyP>
             <TypographyMuted className="text-[11px] text-muted-foreground">
-              {formatTimeAgo(match.matchedAt)}
+              {timeAgo(match.matchedAt)}
             </TypographyMuted>
           </div>
         </div>
       ))}
     </div>
   );
-}
-
-/* --------------------------- Helper Functions --------------------------- */
-function formatTimeAgo(dateStr: string): string {
-  const date = new Date(dateStr);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffMs / 86400000);
-
-  if (diffMins < 1) return "Just now";
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
-
-  return date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
 }

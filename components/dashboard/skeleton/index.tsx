@@ -45,7 +45,7 @@ export function DashboardLoadingSkeleton() {
           <Skeleton className="h-[250px] w-full rounded-xl" />
         </div>
 
-        {/* Radial chart */}
+        {/* Radial Chart Section */}
         <div className="bg-card rounded-2xl border border-border/60 p-5 sm:p-6 animate-pulse flex flex-col">
           <Skeleton className="h-5 w-24 rounded mb-1.5" />
           <Skeleton className="h-3 w-44 rounded" />
@@ -55,7 +55,7 @@ export function DashboardLoadingSkeleton() {
         </div>
       </div>
 
-      {/* Recent matches */}
+      {/* Recent Matches Section */}
       <div className="bg-card rounded-2xl border border-border/60 p-5 sm:p-6 animate-pulse">
         <div className="flex items-center gap-2 mb-4">
           <Skeleton className="h-4.5 w-4.5 rounded" />

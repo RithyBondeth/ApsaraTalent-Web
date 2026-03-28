@@ -12,13 +12,12 @@ import {
 import { IWeeklyActivityChartProps } from "./props";
 
 export function WeeklyActivityChart({ data }: IWeeklyActivityChartProps) {
-  /* -------------------------- Empty List State -------------------------- */
-  /* ---------------------------------- Utils --------------------------------- */
+  /* -------------------------------- Utils ------------------------------- */
   const hasData = data.some(
     (d) => d.likes > 0 || d.received > 0 || d.matches > 0,
   );
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* -------------------------- Empty List State -------------------------- */
   if (!hasData) {
     return (
       <div className="flex items-center justify-center h-[250px] text-muted-foreground text-sm">
@@ -27,7 +26,7 @@ export function WeeklyActivityChart({ data }: IWeeklyActivityChartProps) {
     );
   }
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* ------------------------------ Render UI ------------------------------ */
   return (
     <ResponsiveContainer width="100%" height={250}>
       <BarChart data={data} barGap={2} barCategoryGap="20%">

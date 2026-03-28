@@ -1,5 +1,3 @@
-"use client";
-
 import {
   RadialBarChart,
   RadialBar,
@@ -10,18 +8,14 @@ import { IMatchRateRadialProps } from "./props";
 
 export function MatchRateRadial({ rate }: IMatchRateRadialProps) {
   /* ---------------------------------- Utils --------------------------------- */
-  const data = [{ value: rate, fill: "hsl(var(--primary))" }];
-
-  /* --------------------------------- Methods --------------------------------- */
-  // ── Get Color Based On Rate ─────────────────────────────────────────
   const getColorBasedOnRate = (r: number) => {
-    if (r >= 70) return "#10b981"; // emerald
+    if (r >= 70) return "#10b981";
     if (r >= 40) return "hsl(var(--primary))";
-    if (r >= 20) return "#f59e0b"; // amber
-    return "#ef4444"; // red
+    if (r >= 20) return "#f59e0b";
+    return "#ef4444";
   };
 
-  /* ---------------------------------- Utils --------------------------------- */
+  const data = [{ value: rate, fill: "hsl(var(--primary))" }];
   const color = getColorBasedOnRate(rate);
   data[0].fill = color;
 
