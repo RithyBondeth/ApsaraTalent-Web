@@ -1,27 +1,16 @@
-"use client";
-
 import Header from "@/components/header";
 import { TypographyH1 } from "@/components/utils/typography/typography-h1";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import Image from "next/image";
-import dynamic from "next/dynamic";
 import { landingSvg } from "@/utils/constants/asset.constant";
-
-/*
- - Lazy-load tsparticles — it's a ~250KB library only needed on the landing page
- - ssr: false prevents it from running during server-side rendering
-*/
-const ParticlesBackground = dynamic(
-  () => import("@/components/utils/particle-background"),
-  { ssr: false },
-);
+import { ParticlesWrapper } from "@/components/utils/particles-wrapper";
 
 /*-------------------------------------------- Render UI --------------------------------------------*/
 export default function IndexPage() {
   return (
     <div className="relative flex min-h-[100dvh] flex-col lg:flex-row lg:items-center lg:justify-between overflow-hidden">
       {/* Animation Background Section */}
-      <ParticlesBackground />
+      <ParticlesWrapper />
 
       {/* Header Section */}
       <Header className="absolute top-0 left-0 right-0 z-20" />

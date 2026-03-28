@@ -40,14 +40,11 @@ const roundedClasses = {
 export function CachedAvatar({
   src,
   alt = "Avatar",
-  fallback,
   className,
   rounded = "full",
   size = "md",
   onClick,
   children,
-  preload = true,
-  showLoadingState = false,
 }: CachedAvatarProps) {
   const avatarClasses = cn(
     sizeClasses[size],

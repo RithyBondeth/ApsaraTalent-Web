@@ -1,9 +1,7 @@
-"use client";
-
 import {
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 
