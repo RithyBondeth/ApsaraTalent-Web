@@ -173,6 +173,8 @@ export default function CompanyCareerScopeStepForm({
           );
         })}
       </div>
+
+      {/* Validation Message Section */}
       {errors?.careerScopes && (
         <ErrorMessage>{errors.careerScopes.message}</ErrorMessage>
       )}

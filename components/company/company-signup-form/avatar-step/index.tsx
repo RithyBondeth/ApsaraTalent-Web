@@ -51,7 +51,8 @@ export default function AvatarCompanyStepForm({
     <div className="w-full flex flex-col items-center gap-5">
       {/* Title Section */}
       <TypographyH4>Add your company profile picture (Optional)</TypographyH4>
-      {/* Form Section */}
+
+      {/* Drag Drop File Section */}
       <div className="w-full flex justify-center">
         {setValue && (
           <DragDropFile<TCompanySignup>

@@ -63,6 +63,7 @@ export default function EmployeeExperienceForm(
         </div>
         {/* StartDate and EndDate Section */}
         <div className="w-full flex justify-between items-center gap-5 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
+          {/* StartDate Section */}
           <div className="w-1/2 flex flex-col items-start gap-1">
             <TypographyMuted className="text-xs">Start Date</TypographyMuted>
             <Controller
@@ -85,6 +86,8 @@ export default function EmployeeExperienceForm(
               )}
             />
           </div>
+
+          {/* EndDate Section */}
           <div className="w-1/2 flex flex-col items-start gap-1">
             <TypographyMuted className="text-xs">End Date</TypographyMuted>
             <Controller

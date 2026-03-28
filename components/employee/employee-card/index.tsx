@@ -20,12 +20,10 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const isGrid = props.variant === "grid";
 
-  // Utils
   /* -------------------------------- All States ------------------------------ */
   const [openProfileDialog, setOpenProfileDialog] = useState<boolean>(false);
   const ignoreNextClick = useRef<boolean>(false);
 
-  // Handle Click Dialog
   /* --------------------------------- Methods --------------------------------- */
   // ── Handle Click Dialog ─────────────────────────────────────────
   const handleClickDialog = (e: React.MouseEvent) => {
@@ -37,7 +35,6 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
     setOpenProfileDialog(true);
   };
 
-  // Prevent reopening immediately after closing
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     if (!openProfileDialog) {
@@ -48,18 +45,18 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
     }
   }, [openProfileDialog]);
 
-  /* ─── Grid variant: seamless card with divider, no vertical gap ─── */
   /* -------------------------------- Render UI -------------------------------- */
+  // ─── Grid variant: seamless card with divider, no vertical gap ────────────
   if (isGrid) {
     return (
       <>
         <div className="group relative w-full flex flex-col bg-card border border-muted/60 cursor-pointer transition-all duration-200 ease-out hover:bg-accent/40">
-          {/* Top accent bar on hover */}
+          {/* Top Accent Bar On Hover Section */}
           <div className="absolute inset-x-0 top-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
 
-          {/* Main Content */}
+          {/* Main Content Section */}
           <div className="flex flex-col gap-2.5 p-4">
-            {/* Header: Avatar + Info + Actions */}
+            {/* Header Section: Avatar, Username, JobTitle, Location, Like Button */}
             <div className="flex items-start gap-3">
               <CachedAvatar
                 src={props.avatar}
@@ -100,7 +97,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
               </Button>
             </div>
 
-            {/* Skills Tags */}
+            {/* Skills Tags Section */}
             {props.skills.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
                 {props.skills.slice(0, 4).map((skill) => (
@@ -114,12 +111,12 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
               </div>
             )}
 
-            {/* Description */}
+            {/* Description Section */}
             <TypographyMuted className="text-xs leading-relaxed line-clamp-2">
               {props.description}
             </TypographyMuted>
 
-            {/* Experience & Availability */}
+            {/* Experience & Availability Section */}
             <div className="flex flex-wrap gap-1.5 items-center">
               {props.educations.length > 0 &&
                 props.educations
@@ -129,7 +126,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
               <Tag label={props.availability} />
             </div>
 
-            {/* Footer: Actions */}
+            {/* Footer Section: View and Save Buttons */}
             <div className="flex items-center justify-between pt-1 border-t border-muted/50">
               <Button
                 size="icon"
@@ -167,6 +164,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
           </div>
         </div>
 
+        {/* Employee Dialog Section */}
         <EmployeeDialog
           open={openProfileDialog}
           setOpen={setOpenProfileDialog}
@@ -176,11 +174,12 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
     );
   }
 
-  /* ─── Default variant: bordered card with shadow ─── */
+  // ─── Default variant: bordered card with shadow ────────────
   return (
     <div className="h-fit w-full flex flex-col items-start gap-4 rounded-lg border border-muted p-3 shadow-sm cursor-pointer transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_8px_28px_hsl(var(--foreground)/0.1)] hover:border-primary/25">
       {/* Profile Section */}
       <div className="w-full flex flex-wrap items-start justify-between gap-3">
+        {/* Avatar, Username, JobTitle and Location Section */}
         <div className="flex items-center gap-3">
           <CachedAvatar
             src={props.avatar}
@@ -204,6 +203,8 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
             </TypographySmall>
           </div>
         </div>
+
+        {/* Action Buttons Section: View and Like Button */}
         <div className="flex items-center gap-1 shrink-0">
           <Button
             className="size-10 sm:size-12 rounded-xl transition-all duration-300 ease-out hover:scale-110 active:scale-95"
@@ -223,7 +224,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
         </div>
       </div>
 
-      {/* Tag Section */}
+      {/* Skills Tags Section */}
       <div className="w-full flex flex-wrap gap-2">
         {props.skills.map((skill) => (
           <Tag key={skill.id} label={skill.name} />
@@ -235,7 +236,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
         {props.description}
       </TypographyP>
 
-      {/* Experience Section */}
+      {/* Experience & Availability Section */}
       <div className="flex flex-wrap gap-2 items-center">
         {props.educations.length > 0 &&
           props.educations.map((edu, index) => (
@@ -245,7 +246,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
         <Tag label={props.availability} />
       </div>
 
-      {/* button Section */}
+      {/* Action Buttons Section: View and Save Buttons */}
       <div className="w-full flex items-center justify-end gap-2 sm:gap-3 tablet-lg:justify-stretch tablet-lg:[&>button]:flex-1 phone-xl:justify-stretch phone-xl:[&>button]:flex-1">
         <Button
           className={`text-sm ${
@@ -264,6 +265,8 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
           <LucideCircleArrowRight />
         </Button>
       </div>
+
+      {/* Employee Dialog Section */}
       <EmployeeDialog
         open={openProfileDialog}
         setOpen={setOpenProfileDialog}

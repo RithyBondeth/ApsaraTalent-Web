@@ -20,44 +20,7 @@ import { getEmployeeProfileCompletion } from "@/utils/functions/profile-completi
 import { IEmployeeDialogProps } from "./props";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-
-/* ── Availability badge with color coding ─────────────────── */
-function AvailabilityBadge({ availability }: { availability: string }) {
-  /* ---------------------------------- Utils --------------------------------- */
-  const lower = availability.toLowerCase();
-  const config = lower.includes("full")
-    ? {
-        color:
-          "bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-300",
-        dot: "bg-green-500",
-      }
-    : lower.includes("part")
-      ? {
-          color:
-            "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300",
-          dot: "bg-blue-500",
-        }
-      : lower.includes("free")
-        ? {
-            color:
-              "bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300",
-            dot: "bg-purple-500",
-          }
-        : {
-            color: "bg-muted text-muted-foreground",
-            dot: "bg-muted-foreground",
-          };
-
-  /* -------------------------------- Render UI -------------------------------- */
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full font-medium ${config.color}`}
-    >
-      <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${config.dot}`} />
-      {availability}
-    </span>
-  );
-}
+import { AvailabilityBadge } from "@/components/utils/data-display/availability-badge";
 
 export default function EmployeeDialog(props: IEmployeeDialogProps) {
   /* ---------------------------------- Utils --------------------------------- */
@@ -75,15 +38,15 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
   return (
     <Dialog open={props.open} onOpenChange={(isOpen) => props.setOpen(isOpen)}>
       <DialogContent className="p-0 gap-0 flex flex-col overflow-hidden sm:max-w-lg sm:rounded-xl max-h-[90dvh] tablet-sm:!left-0 tablet-sm:!translate-x-0 tablet-sm:!translate-y-0 tablet-sm:!top-auto tablet-sm:!bottom-0 tablet-sm:!w-full tablet-sm:!max-w-none tablet-sm:rounded-t-2xl tablet-sm:!rounded-b-none tablet-sm:max-h-[92dvh]">
-        {/* Drag handle — mobile only */}
+        {/* Drag Handle — Mobile Only */}
         <div className="hidden tablet-sm:flex justify-center pt-3 pb-1 shrink-0">
           <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
         </div>
 
-        {/* Gradient header */}
+        {/* Gradient Header Section */}
         <div className="relative shrink-0">
           <div className="w-full h-24 bg-gradient-to-br from-primary/90 via-primary/60 to-primary/30" />
-          {/* Avatar overlapping the gradient */}
+          {/* Avatar Overlapping The Gradient */}
           <div className="absolute -bottom-9 left-4">
             <Avatar
               className="!size-20 ring-4 ring-background shadow-lg"
@@ -97,7 +60,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
           </div>
         </div>
 
-        {/* Name + job + meta chips */}
+        {/* Name, JobTitle, Location, Years of Experience, Availability and Profile Progress Section */}
         <div className="pt-12 px-4 shrink-0">
           <DialogTitle className="text-base font-bold leading-tight">
             {fullName}
@@ -124,15 +87,15 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
             )}
           </div>
 
-          {/* Profile Progress */}
+          {/* Profile Progress Section */}
           <div className="mt-3">
             <ProfileProgressBar percentage={completion.percentage} />
           </div>
         </div>
 
-        {/* Scrollable body */}
+        {/* Scrollable Body Section */}
         <div className="flex-1 overflow-y-auto min-h-0 px-4 py-4 space-y-5">
-          {/* About */}
+          {/* About Section */}
           {props.description && (
             <section>
               <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-semibold mb-1.5">
@@ -144,7 +107,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
             </section>
           )}
 
-          {/* Skills */}
+          {/* Skills Section */}
           {props.skills && props.skills.length > 0 && (
             <section>
               <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-semibold mb-2">
@@ -163,7 +126,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
             </section>
           )}
 
-          {/* Education */}
+          {/* Education Section */}
           {props.educations && props.educations.length > 0 && (
             <section>
               <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-semibold mb-2">
@@ -200,7 +163,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
           )}
         </div>
 
-        {/* Sticky CTA */}
+        {/* Sticky CTA Section */}
         <div className="shrink-0 px-4 pb-4 pt-2 border-t border-border/60 bg-background">
           <Link href={`/feed/employee/${props.id}`} className="w-full">
             <Button className="w-full gap-2">

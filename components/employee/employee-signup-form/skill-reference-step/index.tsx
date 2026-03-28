@@ -1,5 +1,3 @@
-"use client";
-
 import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,27 +25,21 @@ export default function SkillReferenceStepForm({
   getValues,
   trigger,
 }: IStepFormProps<TEmployeeSignUp>) {
-  // Utils
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("toast");
+  const initialSkills = getValues?.("skillAndReference.skills") || [];
 
-  // Skill Helpers
   /* -------------------------------- All States ------------------------------ */
   const [openPopOver, setOpenPopOver] = useState<boolean>(false);
   const [skillInput, setSkillInput] = useState<string>("");
-  /* ---------------------------------- Utils --------------------------------- */
-  const initialSkills = getValues?.("skillAndReference.skills") || [];
-  /* -------------------------------- All States ------------------------------ */
   const [skills, setSkills] = useState<string[]>(initialSkills);
 
-  // Handle Add New Skill
-  /* --------------------------------- Methods --------------------------------- */
+  /* --------------------------------- Methods -------------------------------- */
   // ── Add Skill ─────────────────────────────────────────
   const addSkill = async () => {
     const trimmed = skillInput.trim();
     if (!trimmed) return;
 
-    // Prevent duplicates (case-insensitive)
     const alreadyExists = skills.some(
       (skill) => skill.toLowerCase() === trimmed.toLowerCase(),
     );
@@ -63,14 +55,13 @@ export default function SkillReferenceStepForm({
     setSkills(updated);
     setValue?.("skillAndReference.skills", updated);
 
-    // Trigger validation for the skills field
     await trigger?.("skillAndReference.skills");
 
     setSkillInput("");
     setOpenPopOver(false);
   };
 
-  // Handle Remove Skill
+  // ── Remove Skill ─────────────────────────────────────────
   const removeSkill = async (skillToRemove: string) => {
     const updated = skills.filter((skill) => skill !== skillToRemove);
     setSkills(updated);
@@ -81,6 +72,7 @@ export default function SkillReferenceStepForm({
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col items-start gap-8">
+      {/* Skills Section */}
       <div className="w-full flex flex-col items-start gap-3">
         <TypographyH4>Add your skills</TypographyH4>
         <div className="flex flex-wrap gap-3">
@@ -101,6 +93,8 @@ export default function SkillReferenceStepForm({
             );
           })}
         </div>
+
+        {/* Add New Skill PopOver Section */}
         <Popover open={openPopOver} onOpenChange={setOpenPopOver}>
           <PopoverTrigger asChild>
             <Button className="w-full text-xs" variant="secondary">
@@ -128,9 +122,12 @@ export default function SkillReferenceStepForm({
           </ErrorMessage>
         )}
       </div>
+
+      {/* References Section */}
       <div className="w-full flex flex-col items-start gap-3">
         <TypographyH4>Add your references (Optional)</TypographyH4>
         <div className="w-full flex items-start gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
+          {/* Resume Section */}
           {getValues?.("skillAndReference.resume") ? (
             <div className="flex flex-col items-start gap-2">
               <TypographyMuted className="text-xs">Resume</TypographyMuted>
@@ -171,6 +168,8 @@ export default function SkillReferenceStepForm({
               }
             />
           )}
+
+          {/* CoverLetter Section */}
           {getValues?.("skillAndReference.coverLetter") ? (
             <div className="flex flex-col items-start gap-2">
               <TypographyMuted className="text-xs">

@@ -13,7 +13,7 @@ export default function EmployeeEducationForm(
   /* --------------------------------- Props --------------------------------- */
   const { register, control } = props.form;
 
-  /* -------------------------------- All States ------------------------------ */
+  /* ---------------------------------- Form --------------------------------- */
   const isStudying = useWatch({
     control,
     name: `educations.${props.index}.isStudying`,
@@ -51,7 +51,7 @@ export default function EmployeeEducationForm(
               />
             }
           />
-          {/* isStudying Checkbox */}
+          {/* isStudying Checkbox Section */}
           <div className="flex items-center space-x-2 mt-1">
             <Controller
               control={control}

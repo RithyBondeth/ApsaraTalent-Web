@@ -74,8 +74,10 @@ export default function EmployeeCareerScopeStepForm({
     });
   };
 
+  // ── Go To Page ─────────────────────────────────────────
   const goToPage = (page: number) => setCurrentPage(page);
 
+  // ── Get Page Numbers ───────────────────────────────────
   const getPageNumbers = () => {
     const pages: (number | "...")[] = [];
     const maxVisiblePages = 1;
@@ -95,6 +97,7 @@ export default function EmployeeCareerScopeStepForm({
     return pages;
   };
 
+  // ── Paginated Careers ───────────────────────────────────
   const paginatedCareers = careerScopesListConstant.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage,
@@ -113,7 +116,7 @@ export default function EmployeeCareerScopeStepForm({
         Back
       </Button>
 
-      {/* Title Section */}
+      {/* Title and SubTite Section */}
       <div className="phone-xl:mt-10">
         <TypographyH4>Choose Your Career Opportunity</TypographyH4>
         <TypographyMuted className="text-md">
