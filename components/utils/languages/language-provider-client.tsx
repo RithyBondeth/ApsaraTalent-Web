@@ -3,8 +3,8 @@
 import { useLanguageStore } from "@/stores/languages/language-store";
 import { NextIntlClientProvider } from "next-intl";
 import { useEffect, useState } from "react";
-import enMessages from "@/messages/en.json";
-import kmMessages from "@/messages/km.json";
+import enMessages from "@/language/en.json";
+import kmMessages from "@/language/km.json";
 
 const messages = {
   en: enMessages,
@@ -33,7 +33,10 @@ export function LanguageProviderClient({
   const activeLocale = mounted ? language : (defaultLanguage as "en" | "km");
 
   return (
-    <NextIntlClientProvider locale={activeLocale} messages={messages[activeLocale]}>
+    <NextIntlClientProvider
+      locale={activeLocale}
+      messages={messages[activeLocale]}
+    >
       {children}
     </NextIntlClientProvider>
   );
