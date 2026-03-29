@@ -1,19 +1,10 @@
 "use client";
 
+import { formatDurationClock } from "@/utils/functions/date";
 import { Pause, Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { IAudioPlayerProps } from "./props";
-
-function formatTime(seconds: number): string {
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = Math.floor(seconds % 60);
-  return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
-}
-
-const DEFAULT_AMPLITUDE = Array.from(
-  { length: 30 },
-  (_, index) => 0.2 + 0.4 * Math.sin((index / 30) * Math.PI),
-);
+import { CHAT_DEFAULT_AMPLITUDE_AUDIO } from "@/utils/constants/chat.constant";
 
 export function AudioPlayer(props: IAudioPlayerProps) {
   /* --------------------------------- Props --------------------------------- */
@@ -27,7 +18,9 @@ export function AudioPlayer(props: IAudioPlayerProps) {
 
   /* ---------------------------------- Utils --------------------------------- */
   const bars =
-    amplitude && amplitude.length === 30 ? amplitude : DEFAULT_AMPLITUDE;
+    amplitude && amplitude.length === 30
+      ? amplitude
+      : CHAT_DEFAULT_AMPLITUDE_AUDIO;
   const playedColor = isMe ? "bg-primary-foreground" : "bg-primary";
   const unplayedColor = isMe ? "bg-primary-foreground/30" : "bg-primary/30";
   const timeColor = isMe
@@ -150,7 +143,7 @@ export function AudioPlayer(props: IAudioPlayerProps) {
       <span
         className={`shrink-0 text-[11px] tabular-nums font-mono ${timeColor}`}
       >
-        {formatTime(displayTime)}
+        {formatDurationClock(displayTime)}
       </span>
     </div>
   );

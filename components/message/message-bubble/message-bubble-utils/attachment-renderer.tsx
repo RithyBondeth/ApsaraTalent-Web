@@ -1,16 +1,9 @@
+import { formatFileSize } from "@/utils/functions/file";
 import { normalizeMediaUrl } from "@/utils/functions/media";
 import { AudioPlayer } from "../audio-player";
 import { Download, ExternalLink, FileText } from "lucide-react";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-
-/* --------------------------------- Helper --------------------------------- */
-function formatFileSize(bytes?: number): string {
-  if (!bytes) return "";
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
 
 export default function AttachmentRender(props: {
   url: string;

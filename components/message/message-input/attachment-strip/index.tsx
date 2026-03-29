@@ -29,12 +29,14 @@ export function MessageAttachmentStrip(props: IMessageAttachmentStripProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="px-3 pt-2.5 pb-1">
+      {/* File Strip Section */}
       <div className="flex items-start gap-2 overflow-x-auto no-scrollbar pb-0.5">
         {pendingFiles.map((file) => (
           <div
             key={file.id}
             className="relative shrink-0 w-12 sm:w-14 flex flex-col items-center gap-0.5"
           >
+            {/* File Preview Section */}
             <div
               className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden bg-muted border flex items-center justify-center ${
                 file.status === "error"
@@ -71,6 +73,7 @@ export function MessageAttachmentStrip(props: IMessageAttachmentStripProps) {
               )}
             </div>
 
+            {/* File Name Section */}
             <span
               className={`text-[9px] truncate w-full text-center leading-tight ${
                 file.status === "error"
@@ -93,6 +96,7 @@ export function MessageAttachmentStrip(props: IMessageAttachmentStripProps) {
           </div>
         ))}
 
+        {/* Add More Files Section */}
         {!atFileLimit && (
           <button
             type="button"
@@ -109,6 +113,7 @@ export function MessageAttachmentStrip(props: IMessageAttachmentStripProps) {
         )}
       </div>
 
+      {/* Upload Status Section */}
       <div className="flex items-center justify-between mt-1">
         <span className="text-[10px] text-muted-foreground">
           {uploadStatusLabel}

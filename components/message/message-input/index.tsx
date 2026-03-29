@@ -24,9 +24,8 @@ import dynamic from "next/dynamic";
 import { getCookie } from "cookies-next";
 import { MessageReplyPreview } from "./reply-preview";
 import { API_BASE_URL } from "@/utils/constants/apis/base_url";
-import resolveReplyPreview from "./utils/resolve-reply-preview";
-import buildReplyTo from "./utils/build-reply-to";
 import type { IPendingFile } from "@/utils/interfaces/chat.interface";
+import { IMessage } from "../props";
 
 /* ------------------------------------- Handle Lazy Load ------------------------------------- */
 // Lazy-load emoji-mart — ~90KB dataset + picker only needed when user opens the emoji popover
@@ -37,6 +36,33 @@ if (typeof window !== "undefined") {
   import("@emoji-mart/data").then((mod) => {
     emojiData = mod.default;
   });
+}
+
+/* ------------------------------------------ Helpers ----------------------------------------- */
+function resolveReplyPreview(target: IMessage) {
+  if (target.isDeleted) return "This message was deleted";
+
+  const content = target.content?.trim();
+  if (content) return content;
+
+  const type = target.attachmentType;
+  if (type === "audio") return "Audio message";
+  if (type === "image") return "Photo";
+  if (type === "document") return "Attachment";
+  if (target.attachment) return "Attachment";
+
+  return "Message";
+}
+
+function buildReplyTo(target?: IMessage | null): IMessage["replyTo"] | null {
+  if (!target) return null;
+
+  return {
+    id: target.id,
+    content: resolveReplyPreview(target),
+    senderName: target.senderName || (target.isMe ? "You" : ""),
+    isDeleted: target.isDeleted,
+  };
 }
 
 export default function ChatInput(props: IChatInputProps) {

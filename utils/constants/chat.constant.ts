@@ -13,6 +13,11 @@ export const CHAT_TYPING_INDICATOR_STYLES = `
   .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 `;
 
+export const CHAT_DEFAULT_AMPLITUDE_AUDIO = Array.from(
+  { length: 30 },
+  (_, index) => 0.2 + 0.4 * Math.sin((index / 30) * Math.PI),
+);
+
 export const CHAT_MAX_FILE_SIZE_MB = 10;
 export const CHAT_MAX_FILE_SIZE_BYTES = CHAT_MAX_FILE_SIZE_MB * 1024 * 1024;
 export const CHAT_MAX_FILES = 10;

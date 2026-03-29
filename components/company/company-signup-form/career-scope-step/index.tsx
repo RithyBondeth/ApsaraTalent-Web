@@ -26,6 +26,7 @@ import ErrorMessage from "@/components/utils/feedback/error-message";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { careerScopesListConstant } from "@/utils/constants/ui.constant";
+import { getPaginationPages } from "@/utils/functions/ui";
 import { LucideArrowLeft, LucideSearch } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -46,6 +47,7 @@ export default function CompanyCareerScopeStepForm({
   const [openSearchDialog, setOpenSearchDialog] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedCareers, setSelectedCareers] = useState<string[]>([]);
+  const pageNumbers = getPaginationPages({ currentPage, totalPages });
 
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
@@ -73,26 +75,6 @@ export default function CompanyCareerScopeStepForm({
 
   // ── Go To Page ─────────────────────────────────────────
   const goToPage = (page: number) => setCurrentPage(page);
-
-  // ── Get Page Numbers ───────────────────────────────────
-  const getPageNumbers = () => {
-    const pages: (number | "...")[] = [];
-    const maxVisiblePages = 1;
-    const startPage = Math.max(1, currentPage);
-
-    for (
-      let i = startPage;
-      i < startPage + maxVisiblePages && i <= totalPages;
-      i++
-    ) {
-      pages.push(i);
-    }
-
-    if (startPage + maxVisiblePages < totalPages) pages.push("...");
-    if (!pages.includes(totalPages)) pages.push(totalPages);
-
-    return pages;
-  };
 
   // ── Paginated Careers ───────────────────────────────────
   const paginatedCareers = careerScopesListConstant.slice(
@@ -191,7 +173,7 @@ export default function CompanyCareerScopeStepForm({
             />
           </PaginationItem>
 
-          {getPageNumbers().map((page, index) => (
+          {pageNumbers.map((page, index) => (
             <PaginationItem key={index}>
               {page === "..." ? (
                 <PaginationEllipsis />

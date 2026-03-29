@@ -19,10 +19,14 @@ export function MessageReplyPreview(props: IMessageReplyPreviewProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="mb-2 flex items-start gap-2 px-1">
+      {/* Reply Preview Section */}
       <div className="flex-1 border-l-2 border-primary pl-2 pr-1 py-0.5 rounded-sm bg-muted/40">
+        {/* Reply Sender Section */}
         <TypographyP className="[&:not(:first-child)]:mt-0 text-xs font-semibold text-primary leading-tight">
           {replySenderLabel}
         </TypographyP>
+
+        {/* Reply Preview Text Section */}
         <TypographyMuted className="text-xs text-muted-foreground leading-snug truncate">
           {replyTarget.isDeleted
             ? "🚫 This message was deleted"
@@ -30,6 +34,7 @@ export function MessageReplyPreview(props: IMessageReplyPreviewProps) {
         </TypographyMuted>
       </div>
 
+      {/* Cancel Reply Button Section */}
       <Button
         variant="ghost"
         size="icon"

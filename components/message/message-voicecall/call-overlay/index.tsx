@@ -3,17 +3,10 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
+import { formatDurationClock } from "@/utils/functions/date";
 import { Mic, MicOff, PhoneOff } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ICallOverlayProps } from "./props";
-
-function formatCallDuration(seconds: number): string {
-  const minutes = Math.floor(seconds / 60)
-    .toString()
-    .padStart(2, "0");
-  const remainingSeconds = (seconds % 60).toString().padStart(2, "0");
-  return `${minutes}:${remainingSeconds}`;
-}
 
 export function CallOverlay(props: ICallOverlayProps) {
   /* --------------------------------- Props --------------------------------- */
@@ -69,7 +62,7 @@ export function CallOverlay(props: ICallOverlayProps) {
       : status === "connecting"
         ? "Connecting…"
         : status === "connected"
-          ? formatCallDuration(elapsed)
+          ? formatDurationClock(elapsed, { padMinutes: true })
           : status === "ended"
             ? "Call ended"
             : "";

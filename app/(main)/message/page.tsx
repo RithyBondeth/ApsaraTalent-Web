@@ -4,7 +4,7 @@ import { ChatMessages } from "@/components/message";
 import ChatHeader from "@/components/message/message-header";
 import ChatInput from "@/components/message/message-input";
 import ChatSidebar from "@/components/message/message-sidebar";
-import { CallOrchestrator } from "@/components/message/voicecall/call-orchestrator";
+import { CallOrchestrator } from "@/components/message/message-voicecall/call-orchestrator";
 import {
   ResizableHandle,
   ResizablePanel,

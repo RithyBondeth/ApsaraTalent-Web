@@ -1,19 +1,13 @@
+import { formatDurationClock } from "@/utils/functions/date";
 import { Check, Loader2, X } from "lucide-react";
 import { IVoiceRecordingUIProps } from "./props";
-
-/* --------------------------------- Helper ---------------------------------- */
-function formatDuration(seconds: number): string {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${m}:${s.toString().padStart(2, "0")}`;
-}
 
 export function VoiceRecordingUI(props: IVoiceRecordingUIProps) {
   /* --------------------------------- Props --------------------------------- */
   const { durationSeconds, isUploading, onCancel, onStop } = props;
 
   /* ---------------------------------- Utils --------------------------------- */
-  const durationLabel = formatDuration(durationSeconds);
+  const durationLabel = formatDurationClock(durationSeconds);
 
   /* --------------------------------- Methods -------------------------------- */
   // ── Handle Recording Actions ─────────────────────────────────────────
@@ -23,6 +17,7 @@ export function VoiceRecordingUI(props: IVoiceRecordingUIProps) {
   /* ------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex items-center gap-3 px-3 py-2">
+      {/* Cancel Recording Button Section */}
       <button
         type="button"
         onClick={handleCancelRecording}
@@ -33,6 +28,7 @@ export function VoiceRecordingUI(props: IVoiceRecordingUIProps) {
         <X className="h-4 w-4" />
       </button>
 
+      {/* Recording Duration Section */}
       <div className="flex-1 flex items-center gap-2">
         <span className="relative flex h-2.5 w-2.5 shrink-0">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
@@ -44,6 +40,7 @@ export function VoiceRecordingUI(props: IVoiceRecordingUIProps) {
         <span className="text-xs text-muted-foreground">Recording…</span>
       </div>
 
+      {/* Stop and Send Voice Message Button Section */}
       <button
         type="button"
         onClick={handleStopRecording}
