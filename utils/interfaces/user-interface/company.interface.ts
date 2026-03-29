@@ -1,3 +1,6 @@
+import { ICareerScope } from "@/utils/interfaces/career";
+import { ISocialLink } from "@/utils/interfaces/social";
+
 export interface ICompany {
   id: string;
   name: string;
@@ -15,8 +18,8 @@ export interface ICompany {
   availableTimes?: string[];
   values: IValues[];
   benefits: IBenefits[];
-  careerScopes: ICareerScopes[];
-  socials: ISocial[];
+  careerScopes: ICareerScope[];
+  socials: ISocialLink[];
   createdAt?: string;
 }
 
@@ -28,12 +31,6 @@ export interface IBenefits {
 export interface IValues {
   id?: number;
   label: string;
-}
-
-export interface ICareerScopes {
-  id?: string;
-  name: string;
-  description?: string;
 }
 
 export interface IJobPosition {
@@ -52,10 +49,4 @@ export interface IJobPosition {
 export interface IImage {
   id?: string;
   image: string;
-}
-
-export interface ISocial {
-  id?: string;
-  platform: string;
-  url: string;
 }

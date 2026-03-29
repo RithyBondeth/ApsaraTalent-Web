@@ -7,12 +7,10 @@ import {
 import { CHAT_REACTION_EMOJIS } from "@/utils/constants/chat.constant";
 import { Smile } from "lucide-react";
 
-interface IReactionPickerProps {
+export const ReactionPicker = (props: {
   onReact: (emoji: string | null) => void;
   currentReaction?: string;
-}
-
-export const ReactionPicker = (props: IReactionPickerProps) => {
+}) => {
   /* --------------------------------- Props --------------------------------- */
   const { onReact, currentReaction } = props;
 

@@ -1,4 +1,4 @@
-import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
+import { IEmployee } from "@/utils/interfaces/user";
 
 export interface IEmployeeCardProps extends IEmployee {
   onViewClick: () => void;

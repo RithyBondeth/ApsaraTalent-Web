@@ -8,8 +8,8 @@ export default function ExpandedChatList(props: IChatListProps) {
   /* --------------------------------- Props --------------------------------- */
   const { chats, activeChat, currentUserId, onChatSelect } = props;
 
-  /* -------------------------------- Render UI -------------------------------- */
-  if (!chats || chats.length === 0) {
+  /* ------------------------------ Empty State ------------------------------ */
+  if (!chats || chats.length === 0)
     return (
       <div className="flex flex-col items-center justify-center gap-2 p-8 text-center h-40">
         <Users className="h-8 w-8 text-muted-foreground/40" />
@@ -18,10 +18,11 @@ export default function ExpandedChatList(props: IChatListProps) {
         </TypographyMuted>
       </div>
     );
-  }
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="py-1">
+      {/* Chats List Section */}
       {chats.map((chat) => {
         const isLastFromMe = chat.lastMessageSenderId === currentUserId;
         const isUnread = chat.isRead === false && !isLastFromMe;
@@ -37,7 +38,7 @@ export default function ExpandedChatList(props: IChatListProps) {
             )}
             onClick={() => onChatSelect(chat)}
           >
-            {/* Avatar + online dot */}
+            {/* Avatar + Online Dot Section */}
             <div className="relative shrink-0">
               {chat.isGroup ? (
                 <div className="h-11 w-11 md:h-12 md:w-12 bg-muted rounded-full flex items-center justify-center border border-border">
@@ -57,15 +58,15 @@ export default function ExpandedChatList(props: IChatListProps) {
                 </Avatar>
               )}
 
-              {/* Online status dot — bottom-left of avatar */}
+              {/* Online Status Dot Section */}
               {chat.isOnline && (
                 <span className="absolute bottom-0.5 left-0.5 h-3 w-3 rounded-full bg-green-500 border-2 border-background" />
               )}
             </div>
 
-            {/* Text content */}
+            {/* Text Content Section */}
             <div className="flex-1 min-w-0">
-              {/* Row 1: name + time */}
+              {/* Name and Time Section */}
               <div className="flex items-center justify-between gap-2 mb-0.5">
                 <span
                   className={cn(
@@ -82,9 +83,9 @@ export default function ExpandedChatList(props: IChatListProps) {
                 </span>
               </div>
 
-              {/* Row 2: delivery tick + preview + unread badge */}
+              {/* Delivery Tick, Preview and Unread Badge Section */}
               <div className="flex items-center gap-1">
-                {/* Delivery checkmark */}
+                {/* Delivery Tick Section */}
                 {isLastFromMe && (
                   <span className="shrink-0">
                     {chat.isRead ? (
@@ -95,7 +96,7 @@ export default function ExpandedChatList(props: IChatListProps) {
                   </span>
                 )}
 
-                {/* Preview text */}
+                {/* Preview Text Section */}
                 <TypographyMuted
                   className={cn(
                     "text-sm truncate flex-1",
@@ -107,7 +108,7 @@ export default function ExpandedChatList(props: IChatListProps) {
                   {chat.preview || "No messages yet"}
                 </TypographyMuted>
 
-                {/* Unread count badge — green circle */}
+                {/* Unread Count Badge Section */}
                 {chat.unread ? (
                   <span className="shrink-0 h-5 min-w-5 px-1 rounded-full bg-green-500 text-white text-[11px] font-semibold flex items-center justify-center leading-none">
                     {chat.unread > 99 ? "99+" : chat.unread}

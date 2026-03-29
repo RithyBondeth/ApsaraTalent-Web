@@ -19,7 +19,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { IBuildResume } from "@/utils/interfaces/resume-interface/resume.interface";
+import { IBuildResume } from "@/utils/interfaces/resume";
 import {
   DOWNLOAD_RESUME_STEPS,
   LIVE_RESUME_PREVIEW_DEBOUNCE_MS,

@@ -70,7 +70,7 @@ export default function MatchingEmployeeCard(
             </div>
           )}
 
-          {/* Meta Chips Section */}
+          {/* Meta Chips Section: Position, Experience, Location */}
           <div className="flex flex-wrap gap-2">
             <MetaChip
               icon={<LucideBriefcaseBusiness />}

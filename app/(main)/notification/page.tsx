@@ -14,7 +14,7 @@ import {
   useNotificationStore,
 } from "@/stores/apis/notification/notification.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { TNotificationFilterType } from "@/utils/types/notification.type";
+import { TNotificationFilterType } from "@/utils/types/app";
 import { LucideCheckCheck } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
@@ -22,7 +22,7 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { NotificationSvgImage } from "@/utils/constants/asset.constant";
 import { NotificationCardSkeleton } from "@/components/notification/skeleton";
 
-/* ---------------------------------- Utils --------------------------------- */
+/* ---------------------------------- Helper --------------------------------- */
 /** Derive a display-friendly user object from a notification's title + data fields. */
 function resolveNotificationUser(notification: INotification) {
   return {

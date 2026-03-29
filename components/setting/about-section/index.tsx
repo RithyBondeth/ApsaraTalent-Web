@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { LucideInfo, LucideShieldCheck } from "lucide-react";
-import { SettingWrapper } from "../setting-wrapper/setting-wrapper";
+import { SettingWrapper } from "../setting-wrapper";
 import { SettingRow } from "../setting-row";
 
 export function AboutSection() {

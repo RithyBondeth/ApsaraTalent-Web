@@ -1,4 +1,4 @@
-import { IChatPreview } from "../props";
+import { IChatPreview } from "@/utils/interfaces/chat";
 
 export interface IChatHeaderProps {
   chat: IChatPreview;

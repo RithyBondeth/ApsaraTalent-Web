@@ -6,7 +6,6 @@ export default function NotFound() {
   /* ------------------------------- Render UI ------------------------------ */
   return (
     <div className="flex flex-col items-center justify-center min-h-screen gap-8 text-center px-4">
-
       {/* ── Animated icon ── */}
       <div className="relative flex items-center justify-center">
         {/* Outer slow-pulse ring */}
@@ -37,7 +36,6 @@ export default function NotFound() {
           Back to Feed
         </Link>
       </Button>
-
     </div>
   );
 }

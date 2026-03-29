@@ -1,8 +1,8 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { API_MATCHING_CMP_LIKE_URL } from "@/utils/constants/apis/matching_url";
-import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
-import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
+import { ICompany } from "@/utils/interfaces/user";
+import { IEmployee } from "@/utils/interfaces/user";
 import { create } from "zustand";
 
 type TCompanyLikeResponse = {

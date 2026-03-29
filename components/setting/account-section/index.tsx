@@ -13,20 +13,23 @@ import {
   LucideShieldCheck,
   LucideUser,
 } from "lucide-react";
-import { SettingWrapper } from "../setting-wrapper/setting-wrapper";
+import { SettingWrapper } from "../setting-wrapper";
 import { SettingRow } from "../setting-row";
 import { IAccountSectionProps } from "./props";
 
-export function AccountSection({
-  displayName,
-  avatarSrc,
-  email,
-  role,
-  isTwoFactorEnabled,
-  lastLogin,
-  memberSince,
-  onResetPassword,
-}: IAccountSectionProps) {
+export function AccountSection(props: IAccountSectionProps) {
+  /* --------------------------------- Props --------------------------------- */
+  const {
+    displayName,
+    avatarSrc,
+    email,
+    role,
+    isTwoFactorEnabled,
+    lastLogin,
+    memberSince,
+    onResetPassword,
+  } = props;
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <SettingWrapper

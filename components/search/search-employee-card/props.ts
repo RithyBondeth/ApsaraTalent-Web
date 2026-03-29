@@ -1,5 +1,5 @@
-import { TAvailability } from "@/utils/types/availability.type";
-import { TLocations } from "@/utils/types/location.type";
+import { TAvailability } from "@/utils/types/user";
+import { TLocations } from "@/utils/types/user";
 
 export interface ISearchEmployeeCardProps {
   id?: string;

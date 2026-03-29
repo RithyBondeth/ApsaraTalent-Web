@@ -1,11 +1,12 @@
 "use client";
 
 import { useThemeStore } from "@/stores/themes/theme-store";
-import { TTheme } from "@/utils/types/theme.type";
+import { TTheme } from "@/utils/types/app";
 import { setCookie } from "cookies-next/client";
 import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes";
 import { useEffect } from "react";
 
+/* --------------------------------- Helpers -------------------------------- */
 function normalizeTheme(theme: string): TTheme {
   if (theme === "light" || theme === "dark" || theme === "system") {
     return theme;
@@ -24,18 +25,16 @@ function ThemeSync({ theme }: { theme: TTheme }) {
   return null;
 }
 
-export function ThemeProviderClient({
-  children,
-  defaultTheme,
-}: {
+export function ThemeProviderClient(props: {
   children: React.ReactNode;
   defaultTheme: string;
 }) {
   /* ----------------------------- API Integration ---------------------------- */
   const theme = useThemeStore((state) => state.theme);
   const isHydrated = useThemeStore((state) => state.isHydrated);
+
   /* ---------------------------------- Utils --------------------------------- */
-  const fallbackTheme = normalizeTheme(defaultTheme);
+  const fallbackTheme = normalizeTheme(props.defaultTheme);
   const activeTheme = isHydrated ? theme : fallbackTheme;
 
   /* -------------------------------- Render UI -------------------------------- */
@@ -47,7 +46,7 @@ export function ThemeProviderClient({
       disableTransitionOnChange
     >
       <ThemeSync theme={activeTheme} />
-      {children}
+      {props.children}
     </NextThemesProvider>
   );
 }

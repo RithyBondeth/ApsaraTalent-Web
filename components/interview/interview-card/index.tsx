@@ -38,7 +38,7 @@ export function InterviewCard({
   return (
     <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
       <div className="p-4 sm:p-5 flex flex-col gap-3">
-        {/* Header row */}
+        {/* Header Row Section */}
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <h3 className="text-base font-bold leading-tight truncate">
@@ -56,14 +56,14 @@ export function InterviewCard({
           </Badge>
         </div>
 
-        {/* Description */}
+        {/* Description Section */}
         {interview.description && (
           <TypographyMuted className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
             {interview.description}
           </TypographyMuted>
         )}
 
-        {/* Meta */}
+        {/* ScheduleAt, Duration, Location, MeetingLink Section */}
         <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1.5 bg-muted/70 px-3 py-1.5 rounded-full">
             <LucideCalendarCheck className="size-3.5" />
@@ -93,7 +93,7 @@ export function InterviewCard({
         </div>
       </div>
 
-      {/* Action Bar */}
+      {/* Action Buttons Section: Decline and Accept Buttons */}
       {showActions && (
         <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end gap-2">
           <Button

@@ -1,4 +1,6 @@
-import { TGender } from "../../types/gender.type";
+import { ICareerScope } from "@/utils/interfaces/career";
+import { ISocialLink } from "@/utils/interfaces/social";
+import { TGender } from "@/utils/types/user";
 
 export interface IEmployee {
   id: string;
@@ -20,15 +22,9 @@ export interface IEmployee {
   skills: ISkill[];
   experiences: IExperience[];
   educations: IEducation[];
-  socials: ISocial[];
-  careerScopes: ICareerScopes[];
+  socials: ISocialLink[];
+  careerScopes: ICareerScope[];
   createdAt?: string;
-}
-
-export interface ICareerScopes {
-  id?: string;
-  name: string;
-  description?: string;
 }
 
 export interface ISkill {
@@ -50,9 +46,4 @@ export interface IEducation {
   school: string;
   degree: string;
   year: string;
-}
-export interface ISocial {
-  id?: string;
-  platform: string;
-  url: string;
 }

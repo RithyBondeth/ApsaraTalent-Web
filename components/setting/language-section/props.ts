@@ -1,4 +1,4 @@
-import { TLanguage } from "@/utils/types/language.type";
+import { TLanguage } from "@/utils/types/app";
 
 export interface ILanguageCardProps {
   value: TLanguage;

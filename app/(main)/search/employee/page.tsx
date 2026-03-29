@@ -24,8 +24,8 @@ import { useSearchJobStore } from "@/stores/apis/job/search-job.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { SEARCH_DEBOUNCE_MS } from "@/utils/constants/search.constant";
 import { yearOfExperienceConstant } from "@/utils/constants/ui.constant";
-import { TAvailability } from "@/utils/types/availability.type";
-import { TLocations } from "@/utils/types/location.type";
+import { TAvailability } from "@/utils/types/user";
+import { TLocations } from "@/utils/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import debounce from "lodash.debounce";
 import {

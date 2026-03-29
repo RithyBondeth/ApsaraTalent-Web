@@ -1,7 +1,7 @@
 import { EAuthLoginMethod } from "../../constants/auth.constant";
-import { TUserRole } from "../../types/role.type";
 import { ICompany } from "./company.interface";
 import { IEmployee } from "./employee.interface";
+import { TUserRole } from "@/utils/types/auth";
 
 export interface IUser {
   id: string;

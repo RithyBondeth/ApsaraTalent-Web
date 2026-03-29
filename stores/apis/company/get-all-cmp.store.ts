@@ -1,7 +1,7 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { API_GET_ALL_CMP_URL } from "@/utils/constants/apis/company_url";
-import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
+import { ICompany } from "@/utils/interfaces/user";
 import { create } from "zustand";
 
 type TGetAllCompanyState = {

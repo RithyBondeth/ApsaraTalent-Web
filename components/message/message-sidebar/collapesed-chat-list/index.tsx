@@ -18,6 +18,7 @@ export default function CollapsedChatList(props: IChatListProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col items-center gap-1 pt-2 px-1">
+      {/* Chats List Section */}
       {chats?.map((chat) => {
         const isLastFromMe = chat.lastMessageSenderId === currentUserId;
         const isUnread = chat.isRead === false && !isLastFromMe;
@@ -26,6 +27,7 @@ export default function CollapsedChatList(props: IChatListProps) {
         return (
           <TooltipProvider key={chat.id} delayDuration={200}>
             <Tooltip>
+              {/* Chat Tooltip Trigger Section */}
               <TooltipTrigger asChild>
                 <button
                   className={cn(
@@ -41,6 +43,7 @@ export default function CollapsedChatList(props: IChatListProps) {
                       <Users className="h-5 w-5 text-muted-foreground" />
                     </div>
                   ) : (
+                    /* Avatar Section */
                     <Avatar className="h-10 w-10">
                       <AvatarImage src={chat.avatar} alt={chat.name} />
                       <AvatarFallback className="text-xs font-medium">
@@ -54,7 +57,7 @@ export default function CollapsedChatList(props: IChatListProps) {
                     </Avatar>
                   )}
 
-                  {/* Unread badge */}
+                  {/* Unread Badge Section */}
                   {chat.unread ? (
                     <span className="absolute -top-0.5 -right-0.5 h-4 min-w-4 px-0.5 rounded-full bg-green-500 text-white text-[9px] font-semibold flex items-center justify-center">
                       {chat.unread > 9 ? "9+" : chat.unread}
@@ -63,12 +66,14 @@ export default function CollapsedChatList(props: IChatListProps) {
                     <span className="absolute top-1 right-1 h-2.5 w-2.5 rounded-full bg-green-500 border-2 border-background" />
                   ) : null}
 
-                  {/* Online dot */}
+                  {/* Online Dot Section */}
                   {chat.isOnline && (
                     <span className="absolute bottom-1.5 left-1.5 h-2.5 w-2.5 rounded-full bg-green-500 border-2 border-background" />
                   )}
                 </button>
               </TooltipTrigger>
+
+              {/* Chat Tooltip Content Section */}
               <TooltipContent side="right" className="max-w-[180px]">
                 <TypographyP
                   className={cn(
@@ -76,16 +81,19 @@ export default function CollapsedChatList(props: IChatListProps) {
                     cn("font-medium", isUnread && "font-semibold"),
                   )}
                 >
+                  {/* Chat Name Section */}
                   {chat.name}
                   {chat.isOnline && (
                     <span className="ml-1.5 text-green-500 text-xs">●</span>
                   )}
                 </TypographyP>
+                {/* Chat Tag Section */}
                 {chat.tag && (
                   <TypographyMuted className="text-xs text-muted-foreground">
                     {chat.tag}
                   </TypographyMuted>
                 )}
+                {/* Chat Preview Section */}
                 {chat.preview && (
                   <TypographyMuted className="text-xs text-muted-foreground truncate">
                     {chat.preview}

@@ -18,7 +18,7 @@ import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
 import { userRoleConstant } from "@/utils/constants/ui.constant";
-import { TUserRole } from "@/utils/types/role.type";
+import { TUserRole } from "@/utils/types/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LucideArrowLeft, LucideArrowRight, LucideUsers } from "lucide-react";
 import { useRouter } from "next/navigation";

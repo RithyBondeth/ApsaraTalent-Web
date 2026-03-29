@@ -1,4 +1,4 @@
-import { IChatPreview, IMessage } from "../props";
+import { IChatPreview, IMessage } from "@/utils/interfaces/chat";
 
 export interface IMessageBubbleProps {
   message: IMessage;

@@ -1,9 +1,9 @@
-import { ISocial } from "@/utils/interfaces/user-interface/employee.interface";
+import { ISocialLink } from "@/utils/interfaces/social";
 import { useRef, useState } from "react";
 
-export function useSocialsState(initialSocials: ISocial[] = []) {
-  const [socialInput, setSocialInput] = useState<ISocial | null>(null);
-  const [socials, setSocials] = useState<ISocial[]>(initialSocials);
+export function useSocialsState(initialSocials: ISocialLink[] = []) {
+  const [socialInput, setSocialInput] = useState<ISocialLink | null>(null);
+  const [socials, setSocials] = useState<ISocialLink[]>(initialSocials);
   const [deleteSocialIds, setDeleteSocialIds] = useState<string[]>([]);
   const socialSelectPlatformRef = useRef<HTMLButtonElement>(null);
 

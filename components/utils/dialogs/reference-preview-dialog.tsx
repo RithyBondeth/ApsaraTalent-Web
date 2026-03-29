@@ -6,13 +6,15 @@ import {
 } from "@/components/ui/dialog";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
-export default function ReferencePreviewDialog(props: {
+interface IReferencePreviewDialog {
   referenceUrl: string;
   openRefPreview: boolean;
   setOpenRefPreview: (openRefPreview: boolean) => void;
   previewRefType: "resume" | "coverletter";
   employeeName: string;
-}) {
+}
+
+export default function ReferencePreviewDialog(props: IReferencePreviewDialog) {
   /* --------------------------------- Methods --------------------------------- */
   // ── Get File Ext ─────────────────────────────────────────
   const getFileExt = (url: string) => {
@@ -24,6 +26,7 @@ export default function ReferencePreviewDialog(props: {
     }
   };
 
+  // ── Build Preview URL ───────────────────────────────────────
   const buildPreviewUrl = (url: string) => {
     const ext = getFileExt(url);
     // If it's a PDF, show directly
@@ -38,6 +41,7 @@ export default function ReferencePreviewDialog(props: {
   return (
     <Dialog open={props.openRefPreview} onOpenChange={props.setOpenRefPreview}>
       <DialogContent className="w-[95vw] sm:w-[85vw] lg:w-[60vw] max-w-5xl h-[85vh] p-0 overflow-hidden flex flex-col">
+        {/* Dialog Header Section: Title */}
         <DialogHeader className="px-4 py-3 border-b">
           <DialogTitle className="text-sm">
             {props.previewRefType === "resume"
@@ -46,6 +50,7 @@ export default function ReferencePreviewDialog(props: {
           </DialogTitle>
         </DialogHeader>
 
+        {/* Document Preview Section */}
         <div className="flex-1 min-h-0 w-full">
           {(() => {
             const url = props.referenceUrl;

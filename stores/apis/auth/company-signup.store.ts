@@ -1,8 +1,8 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { API_AUTH_SIGNUP_URL } from "@/utils/constants/apis/auth_url";
-import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
-import { IUser } from "@/utils/interfaces/user-interface/user.interface";
+import { ICompany } from "@/utils/interfaces/user";
+import { IUser } from "@/utils/interfaces/user";
 import { create } from "zustand";
 
 type TCompanySignupResponse = {

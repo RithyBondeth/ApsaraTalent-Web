@@ -28,9 +28,9 @@ import {
   IEducation,
   IExperience,
   ISkill,
-  ISocial,
-} from "@/utils/interfaces/user-interface/employee.interface";
-import { TPlatform } from "@/utils/types/platform.type";
+  ISocialLink,
+} from "@/utils/interfaces/user";
+import { TPlatform } from "@/utils/types/user";
 import {
   LucideArrowLeft,
   LucideAtSign,
@@ -593,7 +593,7 @@ export default function EmployeeDetailPage() {
             <DetailCard className="p-5">
               <SectionTitle icon={<LucideGlobe />} title="Social Links" />
               <div className="flex flex-wrap gap-2">
-                {employeeData.socials.map((item: ISocial) => (
+                {employeeData.socials.map((item: ISocialLink) => (
                   <Link
                     key={item.id}
                     href={item.url}

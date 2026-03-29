@@ -1,4 +1,5 @@
 export function AvailabilityBadge({ availability }: { availability: string }) {
+  /* ---------------------------------- Utils --------------------------------- */
   const lower = availability.toLowerCase();
   const config = lower.includes("full")
     ? {
@@ -23,11 +24,15 @@ export function AvailabilityBadge({ availability }: { availability: string }) {
             dot: "bg-muted-foreground",
           };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <span
       className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full font-medium ${config.color}`}
     >
+      {/* Availability Dot Section */}
       <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${config.dot}`} />
+
+      {/* Availability Label Section */}
       {availability}
     </span>
   );

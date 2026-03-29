@@ -43,7 +43,9 @@ export default function RootLayout({
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <body
         className={`${ubuntu.variable} ${notoSansKhmer.variable} antialiased`}
-        style={{ fontFamily: "var(--font-ubuntu), var(--font-khmer), sans-serif" }}
+        style={{
+          fontFamily: "var(--font-ubuntu), var(--font-khmer), sans-serif",
+        }}
         suppressHydrationWarning
       >
         {/* Language Provider */}

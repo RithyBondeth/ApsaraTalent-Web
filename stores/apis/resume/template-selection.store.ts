@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { TResumeTemplate } from "@/utils/types/resume.type";
+import { TResumeTemplate } from "@/utils/types/resume";
 
 interface TemplateSelectionState {
   selectedTemplate: TResumeTemplate | null;

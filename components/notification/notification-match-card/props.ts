@@ -1,4 +1,4 @@
-import { TUserRole } from "@/utils/types/role.type";
+import { TUserRole } from "@/utils/types/auth";
 
 export interface INotificationMatchCardProps {
   id: string;

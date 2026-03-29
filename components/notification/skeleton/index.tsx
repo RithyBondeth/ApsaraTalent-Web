@@ -15,12 +15,12 @@ export default function NotificationLoadingSkeleton() {
 export function NotificationCardSkeleton() {
   return (
     <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-lg">
-      {/* Icon Section */}
+      {/* Loading Skeleton for Icon Section */}
       <Skeleton className="rounded-md h-14 w-14 flex-shrink-0" />
 
-      {/* Content Section */}
+      {/* Loading Skeleton for Content Section */}
       <div className="w-full flex flex-col items-start gap-2">
-        {/* Header Section */}
+        {/* Loading Skeleton for Header Section */}
         <div className="w-full flex items-center justify-between phone-xl:flex-col phone-xl:items-start phone-xl:gap-2">
           <Skeleton className="h-6 w-40" />
           <div className="flex items-center gap-1">
@@ -28,12 +28,12 @@ export function NotificationCardSkeleton() {
           </div>
         </div>
 
-        {/* Description Section */}
+        {/* Loading Skeleton for Description Section */}
         <Skeleton className="h-4 w-full max-w-md" />
 
-        {/* Bottom Section */}
+        {/* Loading Skeleton for Bottom Section */}
         <div className="w-full flex items-center justify-between tablet-sm:mt-1 tablet-sm:justify-end">
-          {/* Avatar and Badge Section - Hidden on tablet-sm */}
+          {/* Loading Skeleton for Avatar and Badge Section - Hidden on tablet-sm */}
           <div className="flex items-center gap-3 tablet-sm:hidden">
             <div className="flex items-center gap-2">
               <Skeleton className="rounded-md h-8 w-8" />
@@ -42,7 +42,7 @@ export function NotificationCardSkeleton() {
             <Skeleton className="h-6 w-14 rounded-xl" />
           </div>
 
-          {/* Action Button Section */}
+          {/* Loading Skeleton for Action Button Section */}
           <Skeleton className="h-9 w-28" />
         </div>
       </div>

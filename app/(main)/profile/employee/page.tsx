@@ -71,12 +71,8 @@ import { capitalizeWords } from "@/utils/functions/text";
 import { isUuid } from "@/utils/extensions/check-uuid";
 import { extractCleanFilename } from "@/utils/functions/file";
 import { parseMaybeDate } from "@/utils/functions/date";
-import {
-  ICareerScopes,
-  ISkill,
-  ISocial,
-} from "@/utils/interfaces/user-interface/employee.interface";
-import { TPlatform } from "@/utils/types/platform.type";
+import { ICareerScope, ISkill, ISocialLink } from "@/utils/interfaces/user";
+import { TPlatform } from "@/utils/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ChevronDown,
@@ -843,7 +839,7 @@ export default function EmployeeProfilePage() {
       /* ------------------------ CAREER SCOPES ------------------------ */
       if (dirtyFields.careerScopes || deleteCareerScopeIds.length > 0) {
         updateBody.careerScopes = (data.careerScopes ?? [])
-          .filter((cs): cs is ICareerScopes => !!cs && !!cs.name?.trim())
+          .filter((cs): cs is ICareerScope => !!cs && !!cs.name?.trim())
           .map((cs) => ({
             id: cs.id ?? "",
             name: cs.name.trim(),
@@ -859,7 +855,8 @@ export default function EmployeeProfilePage() {
       if (dirtyFields.socials || deleteSocialIds.length > 0) {
         updateBody.socials = (data.socials ?? [])
           .filter(
-            (s): s is ISocial => !!s && !!s.platform?.trim() && !!s.url?.trim(),
+            (s): s is ISocialLink =>
+              !!s && !!s.platform?.trim() && !!s.url?.trim(),
           )
           .map((s) => ({
             id: s.id ?? "",

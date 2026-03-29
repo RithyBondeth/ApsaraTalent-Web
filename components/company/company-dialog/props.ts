@@ -1,4 +1,4 @@
-import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
+import { ICompany } from "@/utils/interfaces/user";
 
 export interface ICompanyDialogProps extends ICompany {
   open: boolean;

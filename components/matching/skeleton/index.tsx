@@ -12,7 +12,7 @@ export function MatchingLoadingSkeleton({
       {/* Banner Section */}
       <FeedBannerSkeleton />
 
-      {/* Card List */}
+      {/* Card List Section */}
       <div className="flex flex-col gap-3 mt-4">
         {[...Array(3)].map((_, index) =>
           isEmployee ? (
@@ -110,7 +110,7 @@ export function MatchingCompanyCardSkeleton() {
         </div>
       </div>
 
-      {/* Action Bar */}
+      {/* Action Bar Section */}
       <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end">
         <Skeleton className="h-8 w-24 rounded-md" />
       </div>

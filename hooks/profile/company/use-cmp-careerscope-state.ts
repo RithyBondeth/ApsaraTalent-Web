@@ -1,13 +1,14 @@
-import { ICareerScopes } from "@/utils/interfaces/user-interface/employee.interface";
+import { ICareerScope } from "@/utils/interfaces/career";
 import { useState } from "react";
 
 export function useCmpCareerScopesState(
-  initialCareerScopes: ICareerScopes[] = [],
+  initialCareerScopes: ICareerScope[] = [],
 ) {
-  const [careerScopeInput, setCareerScopeInput] =
-    useState<ICareerScopes | null>(null);
+  const [careerScopeInput, setCareerScopeInput] = useState<ICareerScope | null>(
+    null,
+  );
   const [careerScopes, setCareerScopes] =
-    useState<ICareerScopes[]>(initialCareerScopes);
+    useState<ICareerScope[]>(initialCareerScopes);
   const [deleteCareerScopeIds, setDeleteCareerScopeIds] = useState<string[]>(
     [],
   );

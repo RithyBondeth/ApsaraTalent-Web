@@ -20,12 +20,8 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { formatDisplayDate } from "@/utils/functions/date";
-import {
-  IBenefits,
-  IImage,
-  ISocial,
-} from "@/utils/interfaces/user-interface/company.interface";
-import { TPlatform } from "@/utils/types/platform.type";
+import { IBenefits, IImage, ISocialLink } from "@/utils/interfaces/user";
+import { TPlatform } from "@/utils/types/user";
 import {
   LucideAlarmClock,
   LucideArrowLeft,
@@ -656,7 +652,7 @@ export default function CompanyDetailPage() {
             <DetailCard className="p-5">
               <SectionTitle icon={<LucideGlobe />} title="Social Links" />
               <div className="flex flex-wrap gap-2">
-                {companyData.socials.map((s: ISocial) => (
+                {companyData.socials.map((s: ISocialLink) => (
                   <Link
                     key={s.id}
                     href={s.url}

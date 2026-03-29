@@ -1,13 +1,13 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { API_GET_ALL_CAREER_SCOPES_URL } from "@/utils/constants/apis/user_url";
-import { ICareerScopes } from "@/utils/interfaces/user-interface/company.interface";
+import { ICareerScope } from "@/utils/interfaces/career";
 import { create } from "zustand";
 
 type TGetAllCareerScopesStoreState = {
   error: string | null;
   loading: boolean;
-  careerScopes: ICareerScopes[] | null;
+  careerScopes: ICareerScope[] | null;
   getAllCareerScopes: () => Promise<void>;
 };
 

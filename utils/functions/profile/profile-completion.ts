@@ -1,9 +1,9 @@
-import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
-import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
+import { IEmployee } from "@/utils/interfaces/user";
+import { ICompany } from "@/utils/interfaces/user";
 import {
   IFieldCheck,
   IProfileCompletionResult,
-} from "@/utils/interfaces/user-interface/profile-completion.interface";
+} from "@/utils/interfaces/user";
 
 function isStringFilled(value: string | null | undefined): boolean {
   return typeof value === "string" && value.trim().length > 0;

@@ -7,7 +7,7 @@ import {
 import { IMatchRateRadialProps } from "./props";
 
 export function MatchRateRadial({ rate }: IMatchRateRadialProps) {
-  /* ---------------------------------- Utils --------------------------------- */
+  /* ---------------------------------- Helper --------------------------------- */
   const getColorBasedOnRate = (r: number) => {
     if (r >= 70) return "#10b981";
     if (r >= 40) return "hsl(var(--primary))";

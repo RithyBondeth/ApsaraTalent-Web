@@ -1,4 +1,4 @@
-import { IPendingFile } from "@/utils/interfaces/chat.interface";
+import { IPendingFile } from "@/utils/interfaces/chat";
 
 export interface IMessageAttachmentStripProps {
   pendingFiles: IPendingFile[];

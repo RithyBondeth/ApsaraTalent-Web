@@ -1,14 +1,13 @@
+import { WEB_URL_REGEX } from "@/utils/constants/chat.constant";
 import React from "react";
-
-const URL_REGEX = /(?:https?:\/\/|www\.)[^\s/$.?#].[^\s]*/gi;
 
 export default function renderTextWithLinks(text: string): React.ReactNode[] {
   const parts: React.ReactNode[] = [];
   let lastIndex = 0;
   let match: RegExpExecArray | null;
-  URL_REGEX.lastIndex = 0;
+  WEB_URL_REGEX.lastIndex = 0;
 
-  while ((match = URL_REGEX.exec(text)) !== null) {
+  while ((match = WEB_URL_REGEX.exec(text)) !== null) {
     const url = match[0];
     const start = match.index;
     if (start > lastIndex) parts.push(text.slice(lastIndex, start));

@@ -3,7 +3,7 @@ import { formatSidebarTime, parseMessageDate } from "@/utils/functions/date";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import axios from "@/lib/axios";
 import { getApiOrigin, normalizeMediaUrl } from "@/utils/functions/media";
-import { IMessage, IChatPreview } from "@/components/message/props";
+import { IChatPreview, IMessage } from "@/utils/interfaces/chat";
 
 // 1. Utils
 import { ChatState } from "./types";

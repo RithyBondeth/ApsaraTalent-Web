@@ -34,6 +34,7 @@ import { SidebarDropdownFooterSkeleton } from "../skeleton";
 import FloatingBadge from "./badge/floating-badge";
 import CountBadge from "./badge/count-badge";
 
+/* ---------------------------------- Helper --------------------------------- */
 /* ─────────────────────────────────────────────────────────────────────────
    Shared Button ClassName
    Active: Gradient fill + inset left glow accent + outer drop shadow
@@ -65,6 +66,18 @@ const MENU_BTN_CLS = [
   "hover:data-[active=true]:to-primary/80",
   "hover:data-[active=true]:text-primary-foreground",
 ].join(" ");
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Section Label with Coloured Dot Marker
+   ───────────────────────────────────────────────────────────────────────── */
+function NavGroupLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <SidebarGroupLabel className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
+      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary/50" />
+      {children}
+    </SidebarGroupLabel>
+  );
+}
 
 export default function CollapseSidebar({
   ...props
@@ -331,13 +344,3 @@ export default function CollapseSidebar({
     </Sidebar>
   );
 }
-
-/* ─────────────────────────────────────────────────────────────────────────
-   Section Label with Coloured Dot Marker
-   ───────────────────────────────────────────────────────────────────────── */
-const NavGroupLabel = ({ children }: { children: React.ReactNode }) => (
-  <SidebarGroupLabel className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
-    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary/50" />
-    {children}
-  </SidebarGroupLabel>
-);

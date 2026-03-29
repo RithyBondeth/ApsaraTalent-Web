@@ -1,4 +1,4 @@
-import { TTheme } from "@/utils/types/theme.type";
+import { TTheme } from "@/utils/types/app";
 
 export interface IThemeCardProps {
   value: TTheme;

@@ -25,7 +25,7 @@ export default function LogoComponent(props: ILogoProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const { resolvedTheme } = useTheme();
   /* -------------------------------- All States ------------------------------ */
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState<boolean>(false);
 
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {

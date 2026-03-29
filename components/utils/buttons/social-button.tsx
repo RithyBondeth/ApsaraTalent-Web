@@ -28,6 +28,7 @@ export default function SocialButton(props: ISocialButtonProps) {
       className={cn(props.className, "py-5 rounded-md")}
       onClick={props.onClick}
     >
+      {/* Social Image Section */}
       <Image
         src={props.image}
         alt="social"
@@ -35,6 +36,8 @@ export default function SocialButton(props: ISocialButtonProps) {
         width={30}
         className="rounded-full"
       />
+
+      {/* Social Label Section */}
       <TypographyP>{props.label}</TypographyP>
     </Button>
   );

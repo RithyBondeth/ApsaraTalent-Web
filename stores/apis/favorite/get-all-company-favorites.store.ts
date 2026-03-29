@@ -1,7 +1,7 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { API_FIND_ALL_COMPANY_FAVORITES } from "@/utils/constants/apis/favorite_url";
-import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
+import { IEmployee } from "@/utils/interfaces/user";
 import { create } from "zustand";
 
 export type TGetAllCompanyFavoritesResponse = {

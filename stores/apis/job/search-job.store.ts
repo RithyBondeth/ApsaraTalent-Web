@@ -1,7 +1,7 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { API_SEARCH_JOB_URL } from "@/utils/constants/apis/job_url";
-import { TLocations } from "@/utils/types/location.type";
+import { TLocations } from "@/utils/types/user";
 import { create } from "zustand";
 
 export type TSearchJobQuery = {

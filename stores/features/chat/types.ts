@@ -1,4 +1,4 @@
-import { IChatPreview, IMessage } from "@/components/message/props";
+import { IChatPreview, IMessage } from "@/utils/interfaces/chat";
 import io from "socket.io-client";
 
 export type SocketInstance = ReturnType<typeof io>;

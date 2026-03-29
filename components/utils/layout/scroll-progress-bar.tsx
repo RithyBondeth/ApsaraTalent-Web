@@ -3,22 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 
-/**
- * A fixed thin progress bar at the very top of the viewport that fills as
- * the user scrolls down the page. Resets to 0 on every navigation.
- *
- * Uses `scaleX` instead of `width` so the transform runs on the compositor
- * thread (GPU) — no layout recalculation, silky smooth even at 120 fps.
- */
 export function ScrollProgressBar() {
-  /* -------------------------------- All States ------------------------------ */
-  const [progress, setProgress] = useState(0);
   /* ---------------------------------- Utils --------------------------------- */
   const pathname = usePathname();
+
   /* -------------------------------- All States ------------------------------ */
+  const [progress, setProgress] = useState<number>(0);
   const rafRef = useRef<number | null>(null);
 
-  // Reset when the route changes
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     setProgress(0);
@@ -26,7 +18,7 @@ export function ScrollProgressBar() {
 
   useEffect(() => {
     const onScroll = () => {
-      if (rafRef.current !== null) return; // already scheduled
+      if (rafRef.current !== null) return;
       rafRef.current = requestAnimationFrame(() => {
         rafRef.current = null;
         const scrollTop = window.scrollY || document.documentElement.scrollTop;
@@ -49,6 +41,7 @@ export function ScrollProgressBar() {
       aria-hidden="true"
       className="fixed top-0 left-0 right-0 z-[9999] h-[3px] pointer-events-none"
     >
+      {/* Progress Bar Section */}
       <div
         className="h-full origin-left will-change-transform"
         style={{

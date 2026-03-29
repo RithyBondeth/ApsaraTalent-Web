@@ -1,9 +1,9 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { API_SEARCH_EMP_URL } from "@/utils/constants/apis/employee_url";
-import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
-import { TAvailability } from "@/utils/types/availability.type";
-import { TLocations } from "@/utils/types/location.type";
+import { IEmployee } from "@/utils/interfaces/user";
+import { TAvailability } from "@/utils/types/user";
+import { TLocations } from "@/utils/types/user";
 import { create } from "zustand";
 
 export type TSearchEmpQuery = {

@@ -1,7 +1,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { LucideCheck, LucideGlobe } from "lucide-react";
-import { SettingWrapper } from "../setting-wrapper/setting-wrapper";
+import { SettingWrapper } from "../setting-wrapper";
 import { ILanguageCardProps, ILanguageSectionProps } from "./props";
 
 export function LanguageSection(props: ILanguageSectionProps) {

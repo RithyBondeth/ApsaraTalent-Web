@@ -7,7 +7,7 @@ import {
   LucideSun,
 } from "lucide-react";
 import { ThemeCard } from "./theme-card";
-import { SettingWrapper } from "../setting-wrapper/setting-wrapper";
+import { SettingWrapper } from "../setting-wrapper";
 import { IAppearanceSectionProps } from "./props";
 
 export function AppearanceSection(props: IAppearanceSectionProps) {

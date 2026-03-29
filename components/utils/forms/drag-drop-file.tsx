@@ -36,16 +36,16 @@ export const DragDropFile = <T extends FieldValues>({
   boxText = "Drag and drop image here, or click to select",
   boxSubText = "JPG, PNG or WEBP files up to 5MB",
   icon = LucideUserCircle,
-  preview, // Receive the preview image as a prop
-  setValue, // Assuming this is used to update the form state
-  fileName, // Ensure this is passed correctly as 'avatar' or 'cover'
+  preview,
+  setValue,
+  fileName,
 }: IDragDropFileProps<T>) => {
   /* -------------------------------- All States ------------------------------ */
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(
     preview || null,
-  ); // Store the preview URL
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   /* --------------------------------- Methods --------------------------------- */
@@ -56,18 +56,21 @@ export const DragDropFile = <T extends FieldValues>({
     setIsDragging(true);
   };
 
+  // ── Handle Drag Leave ─────────────────────────────────────────
   const handleDragLeave = (e: DragEvent<HTMLDivElement>): void => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
   };
 
+  // ── Handle Drag Over ─────────────────────────────────────────
   const handleDragOver = (e: DragEvent<HTMLDivElement>): void => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
   };
 
+  // ── Handle Drop ─────────────────────────────────────────
   const handleDrop = (e: DragEvent<HTMLDivElement>): void => {
     e.preventDefault();
     e.stopPropagation();
@@ -80,6 +83,7 @@ export const DragDropFile = <T extends FieldValues>({
     }
   };
 
+  // ── Handle File Input ─────────────────────────────────────────
   const handleFileInput = (e: ChangeEvent<HTMLInputElement>): void => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
@@ -88,6 +92,7 @@ export const DragDropFile = <T extends FieldValues>({
     }
   };
 
+  // ── Process File ─────────────────────────────────────────
   const processFile = (file: File): void => {
     const validImageTypes = ["image/jpeg", "image/png", "image/webp"];
     const isValidType = validImageTypes.includes(file.type);
@@ -108,25 +113,24 @@ export const DragDropFile = <T extends FieldValues>({
     }
   };
 
+  // ── Handle File Box Click ─────────────────────────────────────────
   const handleFileBoxClick = (): void => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
 
+  // ── Remove File ─────────────────────────────────────────
   const removeFile = (): void => {
-    setFilePreview(null); // Clears the preview
-    setSelectedFileName(null); // Clears the selected file name
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ""; // Resets the file input
-    }
-    onFilesSelected([]); // Calls the callback to notify that no file is selected
+    setFilePreview(null);
+    setSelectedFileName(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
 
-    // Reset the preview if passed
+    onFilesSelected([]);
     if (setValue && fileName) {
       setValue(fileName as Path<T>, null as unknown as PathValue<T, Path<T>>, {
         shouldValidate: true,
-      }); // Use `null` to remove from form
+      });
     }
   };
 
@@ -134,12 +138,11 @@ export const DragDropFile = <T extends FieldValues>({
   useEffect(() => {
     return () => {
       if (filePreview) {
-        URL.revokeObjectURL(filePreview); // Clean up preview when component is unmounted
+        URL.revokeObjectURL(filePreview);
       }
     };
   }, [filePreview]);
 
-  // Ensure that the preview is set correctly when the component is re-rendered (e.g. stepping back)
   useEffect(() => {
     if (preview && preview !== filePreview) {
       setFilePreview(preview);
@@ -158,6 +161,7 @@ export const DragDropFile = <T extends FieldValues>({
       onDrop={handleDrop}
       onClick={handleFileBoxClick}
     >
+      {/* Hidden File Input Section */}
       <input
         type="file"
         ref={fileInputRef}
@@ -167,6 +171,7 @@ export const DragDropFile = <T extends FieldValues>({
         multiple={multiple}
       />
 
+      {/* File Preview Section */}
       {filePreview ? (
         <div className="absolute top-0 right-0 left-0 bottom-0">
           <LucideCircleX

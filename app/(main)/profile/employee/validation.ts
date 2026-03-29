@@ -1,4 +1,8 @@
-import { ACCEPTED_FILE_TYPES, DOCUMENT_SIZE, MAX_IMAGE_SIZE } from "@/utils/constants/config.constant";
+import {
+  ACCEPTED_FILE_TYPES,
+  DOCUMENT_SIZE,
+  MAX_IMAGE_SIZE,
+} from "@/utils/constants/config.constant";
 import {
   dateValidation,
   emailValidation,

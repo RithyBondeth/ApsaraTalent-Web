@@ -1,4 +1,4 @@
-import { TLanguage } from "@/utils/types/language.type";
+import { TLanguage } from "@/utils/types/app";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { STORE_PERSIST_KEYS } from "../_shared/persist-keys";

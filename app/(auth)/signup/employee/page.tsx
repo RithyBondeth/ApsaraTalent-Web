@@ -16,7 +16,7 @@ import { useUploadEmployeeCoverLetter } from "@/stores/apis/employee/upload-emp-
 import { useUploadEmployeeResumeStore } from "@/stores/apis/employee/upload-emp-resume.store";
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
-import { TGender } from "@/utils/types/gender.type";
+import { TGender } from "@/utils/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
 import { toast } from "sonner";

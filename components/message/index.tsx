@@ -3,7 +3,8 @@ import MessageTimeDivider from "./message-utils/message-time-divider";
 import MessageBubble from "./message-bubble";
 import { ChatTypingIndicator } from "./message-utils/typing-indicator";
 import { parseMessageDate } from "@/utils/functions/date";
-import { IChatMessagesProps, IMessage } from "./props";
+import { IMessage } from "@/utils/interfaces/chat";
+import { IChatMessagesProps } from "./props";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 /* --------------------------------- Helper --------------------------------- */

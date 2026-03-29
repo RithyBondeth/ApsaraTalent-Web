@@ -1,4 +1,4 @@
-import { TLoadingStep } from "@/components/utils/dialogs/loading-dialog";
+import { TLoadingStep } from "@/utils/interfaces/ui";
 
 export const LIVE_RESUME_PREVIEW_DEBOUNCE_MS = 600;
 
