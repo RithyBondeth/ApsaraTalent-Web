@@ -1,19 +1,7 @@
-import { PendingFile } from "./types";
 import { FileText, ImageIcon, Paperclip, X } from "lucide-react";
+import { IMessageAttachmentStripProps } from "./props";
 
-interface MessageAttachmentStripProps {
-  pendingFiles: PendingFile[];
-  atFileLimit: boolean;
-  inputDisabled: boolean;
-  isUploadingAny: boolean;
-  readyCount: number;
-  errorCount: number;
-  onAddMoreFiles: () => void;
-  onClearAll: () => void;
-  onRemoveFile: (id: string) => void;
-}
-
-export function MessageAttachmentStrip(props: MessageAttachmentStripProps) {
+export function MessageAttachmentStrip(props: IMessageAttachmentStripProps) {
   /* --------------------------------- Props --------------------------------- */
   const {
     pendingFiles,
@@ -67,7 +55,6 @@ export function MessageAttachmentStrip(props: MessageAttachmentStripProps) {
               )}
 
               {file.preview ? (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={file.preview}
                   alt={file.filename}

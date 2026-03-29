@@ -5,66 +5,23 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { IMessageBubbleProps } from "./props";
 import { formatMessageTime } from "../../../utils/date";
-import {
-  Check,
-  CheckCheck,
-  Clock,
-  Download,
-  ExternalLink,
-  FileText,
-  Phone,
-  X,
-} from "lucide-react";
-import { AudioPlayer } from "./audio-player";
+import { Check, CheckCheck, Clock, Phone, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { MessageBubbleActions } from "./message-actions";
-import { MessageReactionSummary } from "./reaction-summary";
+import { MessageBubbleActions } from "./message-bubble-action";
 import { Textarea } from "@/components/ui/textarea";
 import { useCallStore } from "@/stores/features/call/call.store";
-import { normalizeMediaUrl } from "@/utils/functions/normalize-media-url";
 import { TypographyP } from "@/components/utils/typography/typography-p";
+import renderTextWithLinks from "./message-bubble-utils/render-text-with-link";
+import AttachmentRender from "./message-bubble-utils/attachment-renderer";
+import ReactionSummary from "./message-bubble-utils/reaction-summary";
 
-// ─── URL Detection ───────────────────────────────────────────────────────────
-const URL_REGEX = /(?:https?:\/\/|www\.)[^\s/$.?#].[^\s]*/gi;
-
-function renderTextWithLinks(text: string): React.ReactNode[] {
-  const parts: React.ReactNode[] = [];
-  let lastIndex = 0;
-  let match: RegExpExecArray | null;
-  URL_REGEX.lastIndex = 0;
-
-  while ((match = URL_REGEX.exec(text)) !== null) {
-    const url = match[0];
-    const start = match.index;
-    if (start > lastIndex) parts.push(text.slice(lastIndex, start));
-    const href = url.startsWith("www.") ? `https://${url}` : url;
-    parts.push(
-      <a
-        key={start}
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="underline underline-offset-2 break-all hover:opacity-80"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {url}
-      </a>,
-    );
-    lastIndex = start + url.length;
-  }
-
-  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
-  return parts.length > 0 ? parts : [text];
-}
-
-// ─── Delivery Status Icon ────────────────────────────────────────────────────
-function DeliveryIcon({
+/* --------------------------------- Helper --------------------------------- */
+function DeliveryStatusIcon({
   status,
 }: {
   status: "sending" | "sent" | "seen" | undefined;
 }) {
   if (!status) return null;
-  /* -------------------------------- Render UI -------------------------------- */
   if (status === "sending")
     return <Clock className="h-3 w-3 text-muted-foreground/60 inline-block" />;
   if (status === "seen")
@@ -72,145 +29,6 @@ function DeliveryIcon({
   return <Check className="h-3 w-3 text-muted-foreground/60 inline-block" />;
 }
 
-// ─── Format file size ────────────────────────────────────────────────────────
-function formatFileSize(bytes?: number): string {
-  if (!bytes) return "";
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-// ─── Attachment Renderer ─────────────────────────────────────────────────────
-/**
- * Renders the file attached to a message.
- *
- * Image    → inline <img> preview with click-to-open.
- * Document → rich card matching shadcnuikit:
- *            [icon] filename (size)
- *            [ Download ]  [ Preview ]
- */
-function AttachmentBlock({
-  url,
-  type,
-  filename,
-  fileSize,
-  isMe,
-  duration,
-  amplitude,
-}: {
-  url: string;
-  type: "image" | "document" | "audio";
-  filename?: string;
-  fileSize?: number;
-  isMe?: boolean;
-  duration?: number;
-  amplitude?: number[];
-}) {
-  /* ---------------------------------- Utils --------------------------------- */
-  const fullUrl = normalizeMediaUrl(url) || url;
-
-  // ── Audio voice message ────────────────────────────────────────────────────
-  /* -------------------------------- Render UI -------------------------------- */
-  if (type === "audio") {
-    return (
-      <AudioPlayer
-        url={fullUrl}
-        duration={duration}
-        amplitude={amplitude}
-        isMe={isMe}
-      />
-    );
-  }
-
-  if (type === "image") {
-    return (
-      <a
-        href={fullUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block mt-1"
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={fullUrl}
-          alt={filename || "Image attachment"}
-          className="max-w-full rounded-xl max-h-64 object-cover cursor-pointer hover:opacity-90 transition-opacity"
-        />
-      </a>
-    );
-  }
-
-  // ── Document card (shadcnuikit style) ─────────────────────────────────────
-  return (
-    <div
-      className={`mt-2 rounded-2xl border overflow-hidden ${
-        isMe
-          ? "border-primary-foreground/20 bg-primary-foreground/10"
-          : "border-border bg-background"
-      }`}
-    >
-      {/* File info row */}
-      <div className="flex items-center gap-3 px-4 py-3">
-        <FileText
-          className={`h-8 w-8 shrink-0 ${
-            isMe ? "text-primary-foreground/70" : "text-muted-foreground/60"
-          }`}
-        />
-        <div className="min-w-0">
-          <TypographyP
-            className={`[&:not(:first-child)]:mt-0 text-sm font-medium truncate leading-tight ${
-              isMe ? "text-primary-foreground" : "text-foreground"
-            }`}
-          >
-            {filename || "Document"}
-          </TypographyP>
-          {fileSize && (
-            <TypographyMuted
-              className={`text-xs mt-0.5 ${
-                isMe ? "text-primary-foreground/60" : "text-muted-foreground"
-              }`}
-            >
-              ({formatFileSize(fileSize)})
-            </TypographyMuted>
-          )}
-        </div>
-      </div>
-
-      {/* Action buttons row */}
-      <div className={`flex gap-2 px-4 pb-3`}>
-        <a
-          href={fullUrl}
-          download={filename}
-          className={`flex-1 h-8 flex items-center justify-center gap-1.5 rounded-lg border text-xs font-medium transition-colors ${
-            isMe
-              ? "border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
-              : "border-border text-foreground hover:bg-muted"
-          }`}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <Download className="h-3 w-3" />
-          Download
-        </a>
-        <a
-          href={fullUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`flex-1 h-8 flex items-center justify-center gap-1.5 rounded-lg border text-xs font-medium transition-colors ${
-            isMe
-              ? "border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
-              : "border-border text-foreground hover:bg-muted"
-          }`}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <ExternalLink className="h-3 w-3" />
-          Preview
-        </a>
-      </div>
-    </div>
-  );
-}
-
-// ─── Main Component ──────────────────────────────────────────────────────────
 export default function MessageBubble(props: IMessageBubbleProps) {
   /* --------------------------------- Props --------------------------------- */
   const { message, activeChat, isLastSeen, onReply, onEdit } = props;
@@ -220,12 +38,10 @@ export default function MessageBubble(props: IMessageBubbleProps) {
   const initiateCall = useCallStore((s) => s.initiateCall);
   const { user: currentUser } = useGetCurrentUserStore();
 
-  // ── Inline edit state ─────────────────────────────────────────────────────
   /* -------------------------------- All States ------------------------------ */
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editValue, setEditValue] = useState<string>(message.content);
   const editTextareaRef = useRef<HTMLTextAreaElement | null>(null);
-
   const [showDeliveryTime, setShowDeliveryTime] = useState<boolean>(false);
 
   /* ---------------------------------- Utils --------------------------------- */
@@ -276,12 +92,12 @@ export default function MessageBubble(props: IMessageBubbleProps) {
     setIsEditing(false);
   };
 
-  // ── Handle Delivery Details ─────────────────────────────────────────
+  // ── Handle Delivery Details ────────────────────────────────────────
   const toggleDeliveryTime = () => {
     setShowDeliveryTime((previousValue) => !previousValue);
   };
 
-  // ── Handle Call Actions ─────────────────────────────────────────
+  // ── Handle Call Actions ────────────────────────────────────────────
   const handleCallAgain = () => {
     initiateCall({
       userId: activeChat.id,
@@ -300,7 +116,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
     return activeChat.name;
   };
 
-  // ── Handle Message Actions ─────────────────────────────────────────
+  // ── Handle Message Actions ────────────────────────────────────────────
   const handleDelete = () => deleteMessage(message.id, activeChat.id);
   const handleReply = () => onReply?.(message);
 
@@ -311,7 +127,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
         message.isMe ? "ml-auto" : ""
       }`}
     >
-      {/* ── Sender label (partner messages only) ──────────────────────────── */}
+      {/* Sender Label Section (Partner Message Only) */}
       {!message.isMe && (
         <div className="flex items-center mb-1">
           <Avatar className="h-6 w-6 mr-2">
@@ -338,13 +154,13 @@ export default function MessageBubble(props: IMessageBubbleProps) {
         </div>
       )}
 
-      {/* ── Bubble row: bubble + action buttons ───────────────────────────── */}
+      {/* Bubble Row Section: Bubble + Action Buttons */}
       <div
         className={`flex items-center gap-2 ${
           message.isMe ? "flex-row-reverse" : ""
         }`}
       >
-        {/* ── Bubble ────────────────────────────────────────────────────── */}
+        {/* Message Bubble Section */}
         <div className="relative" onClick={toggleDeliveryTime}>
           <div
             className={`rounded-2xl text-sm transition-all ${
@@ -353,7 +169,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
                 : "bg-muted text-foreground"
             } ${message.isDeleted ? "px-3 py-2 opacity-60" : "p-3"}`}
           >
-            {/* ── Reply / Quote block ──────────────────────────────────── */}
+            {/* Reply / Quote block Section */}
             {message.replyTo && !message.isDeleted && (
               <div
                 className={`mb-2 pl-2 border-l-2 text-xs opacity-80 rounded-sm py-0.5 ${
@@ -374,12 +190,14 @@ export default function MessageBubble(props: IMessageBubbleProps) {
               </div>
             )}
 
-            {/* ── Message content ──────────────────────────────────────── */}
+            {/* Message Content Section */}
             {message.isDeleted ? (
+              /* Deleted Message Section */
               <span className="italic text-muted-foreground text-xs">
                 🚫 This message was deleted
               </span>
             ) : message.messageType === "call" ? (
+              /* Call Section */
               <div className="flex flex-col gap-2 min-w-[150px] sm:min-w-[180px]">
                 <div className="flex items-center gap-2 text-sm font-medium">
                   <Phone className="h-4 w-4" />
@@ -398,6 +216,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
                 </Button>
               </div>
             ) : isEditing ? (
+              /* Edit Message Section */
               <div className="flex flex-col gap-1.5 min-w-[160px] sm:min-w-[200px]">
                 <Textarea
                   ref={editTextareaRef}
@@ -416,6 +235,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
                   rows={1}
                 />
                 <div className="flex gap-1 justify-end">
+                  {/* Cancel Edit Button */}
                   <Button
                     variant="ghost"
                     size="icon"
@@ -425,6 +245,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
                   >
                     <X className="h-3.5 w-3.5" />
                   </Button>
+                  {/* Confirm Edit Button */}
                   <Button
                     variant="ghost"
                     size="icon"
@@ -438,14 +259,16 @@ export default function MessageBubble(props: IMessageBubbleProps) {
               </div>
             ) : (
               <>
+                {/* Message Content Section */}
                 {message.content && (
                   <span className="whitespace-pre-wrap break-words">
                     {renderTextWithLinks(message.content)}
                   </span>
                 )}
 
+                {/* Attachment Section */}
                 {message.attachment && (
-                  <AttachmentBlock
+                  <AttachmentRender
                     url={message.attachment}
                     type={message.attachmentType ?? "document"}
                     filename={message.attachmentFilename}
@@ -455,6 +278,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
                   />
                 )}
 
+                {/* Edited Message Section */}
                 {message.isEdited && (
                   <span className="text-[10px] opacity-60 ml-1 italic">
                     (edited)
@@ -464,8 +288,8 @@ export default function MessageBubble(props: IMessageBubbleProps) {
             )}
           </div>
 
-          {/* ── Reaction display badge ──────────────────────────────────── */}
-          <MessageReactionSummary
+          {/* Reaction Display Badge Section */}
+          <ReactionSummary
             isVisible={showReactionBadge}
             isMe={isMyMessage}
             totalReactionCount={totalReactionCount}
@@ -480,7 +304,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
           />
         </div>
 
-        {/* ── Action buttons (hover reveal) ───────────────────────────────── */}
+        {/* Action Buttons Section (Hover Reveal) */}
         <MessageBubbleActions
           isVisible={canShowActionButtons}
           canReply={canReply}
@@ -494,7 +318,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
         />
       </div>
 
-      {/* ── Timestamp + delivery state (click to show) ────────────────────── */}
+      {/* Timestamp + Delivery State Section (Click to Show) */}
       {(message.deliveryStatus === "sending" || showDeliveryTime) && (
         <div
           className={`flex items-center gap-1 text-[10px] text-muted-foreground mt-1 ${
@@ -502,11 +326,13 @@ export default function MessageBubble(props: IMessageBubbleProps) {
           } ${showReactionBadge ? "mb-3" : ""}`}
         >
           {formatMessageTime(message.timestamp)}
-          {message.isMe && <DeliveryIcon status={message.deliveryStatus} />}
+          {message.isMe && (
+            <DeliveryStatusIcon status={message.deliveryStatus} />
+          )}
         </div>
       )}
 
-      {/* ── "Seen" avatar indicator (last read message) ───────────────────── */}
+      {/* "Seen" Avatar Indicator (Last Read Message) Section */}
       {isLastSeen && (
         <div className="flex items-center justify-end gap-1 mt-0.5">
           <Avatar className="h-4 w-4">

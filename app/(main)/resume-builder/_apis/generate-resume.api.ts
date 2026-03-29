@@ -1,6 +1,6 @@
 import { RESUME_GENERATION_TIMEOUT_MS } from "@/utils/constants/config.constant";
 import { API_RESUME_BUILDER_URL } from "@/utils/constants/apis/resume_url";
-import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
+import { IBuildResume } from "@/utils/interfaces/resume-interface/resume.interface";
 import axios from "@/lib/axios";
 
 export async function generateResumeAPI(payload: IBuildResume) {

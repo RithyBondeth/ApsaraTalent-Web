@@ -9,17 +9,26 @@ import {
 import { LucideSendHorizonal, Mic, Paperclip, SmilePlus } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { IChatInputProps } from "./props";
-import { CHAT_TYPING_DEBOUNCE_MS } from "@/utils/constants/chat.constant";
+import {
+  CHAT_ACCEPTED_MIME_TYPES,
+  CHAT_MAX_FILE_SIZE_BYTES,
+  CHAT_MAX_FILE_SIZE_MB,
+  CHAT_MAX_FILES,
+  CHAT_TYPING_DEBOUNCE_MS,
+} from "@/utils/constants/chat.constant";
 import { useVoiceRecorder } from "@/hooks/chat/use-voice-recorder";
 import { MessageAttachmentStrip } from "./attachment-strip";
-import { MessageReplyPreview } from "./reply-preview";
-import { PendingFile } from "./types";
-import { VoiceRecordingUI } from "./voice-recording-ui";
+import { VoiceRecordingUI } from "./voice-recording";
 import { useThemeStore } from "@/stores/themes/theme-store";
 import dynamic from "next/dynamic";
 import { getCookie } from "cookies-next";
-import { IMessage } from "../props";
+import { MessageReplyPreview } from "./reply-preview";
+import { API_BASE_URL } from "@/utils/constants/apis/base_url";
+import resolveReplyPreview from "./utils/resolve-reply-preview";
+import buildReplyTo from "./utils/build-reply-to";
+import type { IPendingFile } from "@/utils/interfaces/chat.interface";
 
+/* ------------------------------------- Handle Lazy Load ------------------------------------- */
 // Lazy-load emoji-mart — ~90KB dataset + picker only needed when user opens the emoji popover
 const Picker = dynamic(() => import("@emoji-mart/react"), { ssr: false });
 // Lazy-load emoji data alongside the picker to avoid blocking initial bundle
@@ -30,66 +39,8 @@ if (typeof window !== "undefined") {
   });
 }
 
-// ── Constants ─────────────────────────────────────────────────────────────────
-const API_BASE =
-  typeof window !== "undefined"
-    ? process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
-    : "http://localhost:3000";
-
-const MAX_FILE_SIZE_MB = 10;
-const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
-const MAX_FILES = 10;
-
-const ACCEPTED_MIME_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "image/gif",
-  "image/webp",
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  "text/plain",
-].join(",");
-
-function resolveReplyPreview(target: IMessage) {
-  if (target.isDeleted) return "This message was deleted";
-
-  const content = target.content?.trim();
-  if (content) return content;
-
-  const type = target.attachmentType;
-  if (type === "audio") return "Audio message";
-  if (type === "image") return "Photo";
-  if (type === "document") return "Attachment";
-  if (target.attachment) return "Attachment";
-
-  return "Message";
-}
-
-function buildReplyTo(target?: IMessage | null): IMessage["replyTo"] | null {
-  if (!target) return null;
-
-  return {
-    id: target.id,
-    content: resolveReplyPreview(target),
-    senderName: target.senderName || (target.isMe ? "You" : ""),
-    isDeleted: target.isDeleted,
-  };
-}
-
-/**
- * Chat input bar — redesigned to match shadcnuikit reference.
- *
- * Layout (idle):
- *   ┌──────────────────────────────────────────────────────┐  ┌──────┐
- *   │  😊  📎  🎤   Enter message...                       │  │ Send │
- *   └──────────────────────────────────────────────────────┘  └──────┘
- *
- * When files are pending, a compact thumbnail strip appears above the input
- * inside the same container card.
- */
 export default function ChatInput(props: IChatInputProps) {
-  /* --------------------------------- Props --------------------------------- */
+  /* ----------------------------------------- Props ----------------------------------------- */
   const {
     onSendMessage,
     onTyping,
@@ -98,7 +49,7 @@ export default function ChatInput(props: IChatInputProps) {
     onCancelReply,
   } = props;
 
-  /* ----------------------------- API Integration ---------------------------- */
+  /* ------------------------------------- API Integration ------------------------------------ */
   const { theme, systemTheme } = useThemeStore();
   const {
     recordingState,
@@ -108,11 +59,11 @@ export default function ChatInput(props: IChatInputProps) {
     cancelRecording,
   } = useVoiceRecorder();
 
-  /* -------------------------------- All States ------------------------------ */
-  const [newMessage, setNewMessage] = useState("");
-  const [isSending, setIsSending] = useState(false);
-  const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
-  const [isEmojiOpen, setEmojiOpen] = useState(false);
+  /* ---------------------------------------- All States -------------------------------------- */
+  const [newMessage, setNewMessage] = useState<string>("");
+  const [isSending, setIsSending] = useState<boolean>(false);
+  const [pendingFiles, setPendingFiles] = useState<IPendingFile[]>([]);
+  const [isEmojiOpen, setEmojiOpen] = useState<boolean>(false);
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -134,19 +85,18 @@ export default function ChatInput(props: IChatInputProps) {
     (file) => file.status === "error",
   ).length;
   const hasAnyFiles = pendingFiles.length > 0;
-  const atFileLimit = pendingFiles.length >= MAX_FILES;
+  const atFileLimit = pendingFiles.length >= CHAT_MAX_FILES;
   const inputDisabled = isSending || isDisabled;
   const sendDisabled =
     inputDisabled || (!newMessage.trim() && readyCount === 0) || isUploadingAny;
 
-  // Stop typing indicator on unmount
   /* --------------------------------- Effects --------------------------------- */
+  // Stop typing indicator on unmount
   useEffect(
     () => () => {
       if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
       onTyping?.(false);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
@@ -218,17 +168,17 @@ export default function ChatInput(props: IChatInputProps) {
     e.target.value = "";
     if (!selected.length) return;
 
-    const slots = MAX_FILES - pendingFiles.length;
+    const slots = CHAT_MAX_FILES - pendingFiles.length;
     const toProcess = selected.slice(0, slots);
 
-    const newEntries: PendingFile[] = toProcess.map((file) => {
+    const newEntries: IPendingFile[] = toProcess.map((file) => {
       const id = Math.random().toString(36).slice(2);
-      if (file.size > MAX_FILE_SIZE_BYTES) {
+      if (file.size > CHAT_MAX_FILE_SIZE_BYTES) {
         return {
           id,
           preview: null,
           status: "error" as const,
-          error: `${file.name}: exceeds ${MAX_FILE_SIZE_MB} MB`,
+          error: `${file.name}: exceeds ${CHAT_MAX_FILE_SIZE_MB} MB`,
           filename: file.name,
         };
       }
@@ -248,7 +198,7 @@ export default function ChatInput(props: IChatInputProps) {
           const formData = new FormData();
           formData.append("file", file);
           const accessToken = getCookie("auth-token");
-          const res = await fetch(`${API_BASE}/chat/upload`, {
+          const res = await fetch(`${API_BASE_URL}/chat/upload`, {
             method: "POST",
             body: formData,
             credentials: "include",
@@ -318,7 +268,7 @@ export default function ChatInput(props: IChatInputProps) {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  // ── Handle File Picker ─────────────────────────────────────────
+  // ── Handle File Picker ──────────────────────────────────────────────────
   const openFilePicker = () => {
     fileInputRef.current?.click();
   };
@@ -345,7 +295,7 @@ export default function ChatInput(props: IChatInputProps) {
       ]);
     });
 
-  // ── Handle Message Send ─────────────────────────────────────────
+  // ── Handle Message Send ─────────────────────────────────────────────────
   const handleSend = async () => {
     const hasText = newMessage.trim() !== "";
     const readyFiles = pendingFiles.filter((f) => f.status === "ready");
@@ -386,7 +336,7 @@ export default function ChatInput(props: IChatInputProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="px-2.5 py-2 md:px-4 md:py-3 bg-background border-t shrink-0 [padding-bottom:calc(env(safe-area-inset-bottom)+0.5rem)] md:[padding-bottom:0.75rem]">
-      {/* ── Reply preview bar ───────────────────────────────────────────── */}
+      {/* Reply Preview Bar Section */}
       {replyTarget && (
         <MessageReplyPreview
           replyTarget={replyTarget}
@@ -395,22 +345,22 @@ export default function ChatInput(props: IChatInputProps) {
         />
       )}
 
-      {/* ── Main input container ────────────────────────────────────────── */}
+      {/* Main Input Container Section */}
       <div className="flex items-end justify-between gap-1.5 sm:gap-2">
-        {/* Hidden file input */}
+        {/* Hidden File Input Section */}
         <input
           ref={fileInputRef}
           type="file"
-          accept={ACCEPTED_MIME_TYPES}
+          accept={CHAT_ACCEPTED_MIME_TYPES}
           multiple
           className="hidden"
           onChange={handleFileSelect}
           aria-label="Attach files"
         />
 
-        {/* ── Input pill ─────────────────────────────────────────────────── */}
+        {/* Input Pill Section */}
         <div className="flex-1 rounded-2xl border border-border bg-muted/30 focus-within:border-primary/40 focus-within:bg-background transition-colors overflow-hidden">
-          {/* Attachment thumbnail strip (inside the pill, above the textarea) */}
+          {/* Attachment Thumbnail Strip Section (inside the pill, above the textarea) */}
           {hasAnyFiles && (
             <MessageAttachmentStrip
               pendingFiles={pendingFiles}
@@ -425,7 +375,7 @@ export default function ChatInput(props: IChatInputProps) {
             />
           )}
 
-          {/* ── Input row: recording UI OR textarea + icons ──────────────── */}
+          {/* Input Row Section (voice recording ui or textarea + icons) */}
           {isRecording || isVoiceUploading ? (
             <VoiceRecordingUI
               durationSeconds={durationSeconds}
@@ -435,7 +385,7 @@ export default function ChatInput(props: IChatInputProps) {
             />
           ) : (
             <div className="flex items-end px-2.5 sm:px-3 py-1.5 sm:py-2 gap-0.5 sm:gap-1">
-              {/* Textarea */}
+              {/* Textarea Section */}
               <textarea
                 ref={textareaRef}
                 placeholder={isDisabled ? "Loading..." : "Enter message..."}
@@ -452,7 +402,7 @@ export default function ChatInput(props: IChatInputProps) {
                 disabled={inputDisabled}
               />
 
-              {/* Emoji */}
+              {/* Emoji Section */}
               <Popover open={isEmojiOpen} onOpenChange={setEmojiOpen}>
                 <PopoverTrigger asChild>
                   <button
@@ -486,7 +436,7 @@ export default function ChatInput(props: IChatInputProps) {
                 </PopoverContent>
               </Popover>
 
-              {/* Attach */}
+              {/* Attachment Section */}
               <button
                 type="button"
                 disabled={inputDisabled || atFileLimit}
@@ -494,19 +444,19 @@ export default function ChatInput(props: IChatInputProps) {
                 className="shrink-0 h-8 w-8 flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors disabled:opacity-40 disabled:pointer-events-none"
                 aria-label={
                   atFileLimit
-                    ? `Maximum ${MAX_FILES} files reached`
+                    ? `Maximum ${CHAT_MAX_FILES} files reached`
                     : "Attach files"
                 }
                 title={
                   atFileLimit
-                    ? `Maximum ${MAX_FILES} files reached`
+                    ? `Maximum ${CHAT_MAX_FILES} files reached`
                     : "Attach files"
                 }
               >
                 <Paperclip className="h-4 w-4" />
               </button>
 
-              {/* Mic — toggle recording on click */}
+              {/* Microphone Section (toggle recording on click) */}
               <button
                 type="button"
                 disabled={inputDisabled}
@@ -520,7 +470,7 @@ export default function ChatInput(props: IChatInputProps) {
           )}
         </div>
 
-        {/* ── Send button — hidden while voice recording/uploading ───────── */}
+        {/* Send Button Section (hidden while voice recording/uploading) */}
         {!isRecording && !isVoiceUploading && (
           <Button
             variant="default"

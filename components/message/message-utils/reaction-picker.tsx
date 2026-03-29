@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -27,6 +25,7 @@ export const ReactionPicker = (props: IReactionPickerProps) => {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Popover>
+      {/* Reaction Picker Trigger Section */}
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
@@ -36,11 +35,13 @@ export const ReactionPicker = (props: IReactionPickerProps) => {
           <Smile className="h-4 w-4 text-muted-foreground" />
         </Button>
       </PopoverTrigger>
+      {/* Reaction Picker Section */}
       <PopoverContent
         side="top"
         align="center"
         className="w-fit p-1 rounded-full shadow-lg border-muted bg-background/95 backdrop-blur-md"
       >
+        {/* Emoji List Section */}
         <div className="flex gap-1">
           {CHAT_REACTION_EMOJIS.map((emoji) => (
             <button

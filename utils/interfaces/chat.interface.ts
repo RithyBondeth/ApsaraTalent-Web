@@ -1,4 +1,4 @@
-export interface PendingFile {
+export interface IPendingFile {
   id: string;
   preview: string | null;
   status: "uploading" | "ready" | "error";

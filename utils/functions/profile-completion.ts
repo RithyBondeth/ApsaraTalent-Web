@@ -1,17 +1,9 @@
 import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
 import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
-
-export interface ProfileCompletionResult {
-  percentage: number;
-  missingFields: string[];
-  completedFields: string[];
-}
-
-interface FieldCheck {
-  label: string;
-  weight: number;
-  isFilled: boolean;
-}
+import {
+  IFieldCheck,
+  IProfileCompletionResult,
+} from "../interfaces/user-interface/profile-completion.interface";
 
 function isStringFilled(value: string | null | undefined): boolean {
   return typeof value === "string" && value.trim().length > 0;
@@ -25,7 +17,7 @@ function isNumberFilled(value: number | undefined): boolean {
   return typeof value === "number" && value > 0;
 }
 
-function calculateCompletion(fields: FieldCheck[]): ProfileCompletionResult {
+function calculateCompletion(fields: IFieldCheck[]): IProfileCompletionResult {
   let percentage = 0;
   const missingFields: string[] = [];
   const completedFields: string[] = [];
@@ -60,8 +52,8 @@ function calculateCompletion(fields: FieldCheck[]): ProfileCompletionResult {
  */
 export function getEmployeeProfileCompletion(
   employee: IEmployee,
-): ProfileCompletionResult {
-  const fields: FieldCheck[] = [
+): IProfileCompletionResult {
+  const fields: IFieldCheck[] = [
     // Core identity — 20%
     {
       label: "First Name",
@@ -159,8 +151,8 @@ export function getEmployeeProfileCompletion(
  */
 export function getCompanyProfileCompletion(
   company: ICompany,
-): ProfileCompletionResult {
-  const fields: FieldCheck[] = [
+): IProfileCompletionResult {
+  const fields: IFieldCheck[] = [
     // Core identity — 22%
     {
       label: "Company Name",

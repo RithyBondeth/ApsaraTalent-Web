@@ -1,6 +1,6 @@
 "use client";
 
-import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
+import { IBuildResume } from "@/utils/interfaces/resume-interface/resume.interface";
 import CanvasTemplate from "./canvas-template";
 import FloatingToolbar from "./floating-toolbar";
 import { Eye, RefreshCw, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";

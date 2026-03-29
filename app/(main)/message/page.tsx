@@ -3,10 +3,6 @@
 import { ChatMessages } from "@/components/message";
 import ChatHeader from "@/components/message/message-header";
 import ChatInput from "@/components/message/message-input";
-import {
-  MessagePaneSkeleton,
-  MessageThreadSkeleton,
-} from "@/components/message/message-page-skeleton";
 import ChatSidebar from "@/components/message/message-sidebar";
 import { CallOrchestrator } from "@/components/message/voicecall/call-orchestrator";
 import {
@@ -23,7 +19,10 @@ import { useRouter } from "next/navigation";
 import type { ImperativePanelHandle } from "react-resizable-panels";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import Image from "next/image";
-import MessageLoadingSkeleton from "@/components/message/skeleton/index";
+import MessageLoadingSkeleton, {
+  MessagePaneSkeleton,
+  MessageThreadSkeleton,
+} from "@/components/message/skeleton/index";
 import { MessageSvgImage } from "@/utils/constants/asset.constant";
 import { CHAT_LOADING_TIMEOUT_MS } from "@/utils/constants/chat.constant";
 import { IMessage } from "@/components/message/props";

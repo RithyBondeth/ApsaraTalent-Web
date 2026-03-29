@@ -1,4 +1,4 @@
-import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
+import { IBuildResume } from "@/utils/interfaces/resume-interface/resume.interface";
 import { create } from "zustand";
 
 interface ResumeEditState {

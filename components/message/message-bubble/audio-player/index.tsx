@@ -2,6 +2,7 @@
 
 import { Pause, Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { IAudioPlayerProps } from "./props";
 
 function formatTime(seconds: number): string {
   const minutes = Math.floor(seconds / 60);
@@ -14,34 +15,14 @@ const DEFAULT_AMPLITUDE = Array.from(
   (_, index) => 0.2 + 0.4 * Math.sin((index / 30) * Math.PI),
 );
 
-interface AudioPlayerProps {
-  url: string;
-  duration?: number;
-  amplitude?: number[];
-  isMe?: boolean;
-}
-
-/**
- * Compact audio message player with waveform visualisation.
- *
- * Layout:
- *   [▶/❚❚]  ████░░░░░░░░░░░░░░░░░  0:23
- *
- * The waveform is rendered as 30 CSS div bars whose heights come from the
- * `amplitude` array. The playback progress is shown by colouring the bars
- * left of the current position more prominently.
- *
- * A hidden native <audio> element handles actual playback without adding a
- * heavier media-player dependency.
- */
-export function AudioPlayer(props: AudioPlayerProps) {
+export function AudioPlayer(props: IAudioPlayerProps) {
   /* --------------------------------- Props --------------------------------- */
   const { url, duration, amplitude, isMe } = props;
 
   /* -------------------------------- All States ------------------------------ */
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [currentTime, setCurrentTime] = useState<number>(0);
   const [audioDuration, setAudioDuration] = useState<number>(duration ?? 0);
 
   /* ---------------------------------- Utils --------------------------------- */
@@ -123,8 +104,10 @@ export function AudioPlayer(props: AudioPlayerProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex items-center gap-2 mt-1 min-w-[150px] sm:min-w-[180px] max-w-xs">
+      {/* Hidden Audio Element for Playback Section */}
       <audio ref={audioRef} src={url} preload="metadata" />
 
+      {/* Play/Pause Button Section */}
       <button
         type="button"
         onClick={handlePlaybackToggle}
@@ -138,6 +121,7 @@ export function AudioPlayer(props: AudioPlayerProps) {
         )}
       </button>
 
+      {/* Waveform Section */}
       <div
         className="flex-1 flex items-center gap-[2px] cursor-pointer h-8 py-1"
         onClick={handleWaveformClick}
@@ -147,6 +131,7 @@ export function AudioPlayer(props: AudioPlayerProps) {
         aria-valuemin={0}
         aria-valuemax={100}
       >
+        {/* Waveform Bars Section */}
         {bars.map((amplitudeValue, index) => {
           const isPlayed = index / bars.length < progress;
           return (
@@ -161,6 +146,7 @@ export function AudioPlayer(props: AudioPlayerProps) {
         })}
       </div>
 
+      {/* Time Section */}
       <span
         className={`shrink-0 text-[11px] tabular-nums font-mono ${timeColor}`}
       >

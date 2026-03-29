@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useGetOneEmployeeStore } from "@/stores/apis/employee/get-one-emp.store";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
-import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
+import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 import { useCompanyLikeStore } from "@/stores/apis/matching/company-like.store";
 import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
@@ -83,7 +83,7 @@ export default function EmployeeDetailPage() {
   const companyFavEmployeeStore = useCompanyFavEmployeeStore();
   const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
   const countCurrentCompanyMatching = useCountCurrentCompanyMatchingStore();
-  const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
+  const countAllCompanyFavoritesStore = useCountCurrentCompanyFavoritesStore();
 
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
@@ -151,7 +151,7 @@ export default function EmployeeDetailPage() {
             toast.success(t("itsAMatch"), {
               description: t("yourCompanyLikedEachOther", { name }),
             });
-            countCurrentCompanyMatching.countCurrentCompanyMatching(companyId);
+            countCurrentCompanyMatching.countCurrentCmpMatching(companyId);
             setTimeout(
               () => router.push("/matching"),
               DEFAULT_REDIRECT_DELAY_MS,
@@ -165,7 +165,7 @@ export default function EmployeeDetailPage() {
         toast.error(companyLikeStore.error || t("failedToLikeEmployee"));
       } finally {
         queryCurrentCompanyLiked.queryCurrentCompanyLiked(companyId);
-        countAllCompanyFavoritesStore.countAllCompanyFavorites(companyId);
+        countAllCompanyFavoritesStore.countCurrentCmpFavorites(companyId);
       }
     }
   };
@@ -184,7 +184,7 @@ export default function EmployeeDetailPage() {
           companyId,
           employeeId,
         );
-        countAllCompanyFavoritesStore.countAllCompanyFavorites(companyId);
+        countAllCompanyFavoritesStore.countCurrentCmpFavorites(companyId);
         toast.success(t("addedToFavorites", { name }));
         getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyId);
       } catch {

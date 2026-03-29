@@ -10,8 +10,6 @@ import FavoriteCompanyCard from "@/components/favorite/company-favorite-card";
 import FavoriteEmployeeCard from "@/components/favorite/employee-favorite-card";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
-import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
-import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
 import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useCallback, useEffect, useState } from "react";
@@ -23,6 +21,8 @@ import {
   favoriteSvgImage,
 } from "@/utils/constants/asset.constant";
 import { FavoriteLoadingSkeleton } from "@/components/favorite/skeleton";
+import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
+import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
 
 export default function FavoritePage() {
   /* --------------------------------- Utils ---------------------------------- */
@@ -41,8 +41,8 @@ export default function FavoritePage() {
   const companyFavEmployeeStore = useCompanyFavEmployeeStore();
 
   // Count All Employee and Company Favorites
-  const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
-  const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
+  const countCurrentCmpFavoritesStore = useCountCurrentCompanyFavoritesStore();
+  const countCurrentEmpFavoritesStore = useCountCurrentEmployeeFavoritesStore();
 
   /* -------------------------------- All States ------------------------------ */
   const [mounted, setMounted] = useState(false);
@@ -109,7 +109,7 @@ export default function FavoritePage() {
             companyID,
             favoriteID,
           );
-          countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeID);
+          countCurrentEmpFavoritesStore.countCurrentEmpFavorites(employeeID);
           toast.success(t("removedFromFavorites", { name: companyName }));
           await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
             employeeID,
@@ -124,7 +124,7 @@ export default function FavoritePage() {
     [
       animateThenRemove,
       employeeFavCompanyStore,
-      countAllEmployeeFavoritesStore,
+      countCurrentEmpFavoritesStore,
       getAllEmployeeFavoritesStore,
     ],
   );
@@ -145,7 +145,7 @@ export default function FavoritePage() {
             employeeID,
             favoriteID,
           );
-          countAllCompanyFavoritesStore.countAllCompanyFavorites(companyID);
+          countCurrentCmpFavoritesStore.countCurrentCmpFavorites(companyID);
           toast.success(t("removedFromFavorites", { name: employeeName }));
           await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyID);
         } catch {
@@ -158,7 +158,7 @@ export default function FavoritePage() {
     [
       animateThenRemove,
       companyFavEmployeeStore,
-      countAllCompanyFavoritesStore,
+      countCurrentCmpFavoritesStore,
       getAllCompanyFavoritesStore,
     ],
   );

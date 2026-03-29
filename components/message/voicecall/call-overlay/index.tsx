@@ -15,25 +15,13 @@ function formatCallDuration(seconds: number): string {
   return `${minutes}:${remainingSeconds}`;
 }
 
-/**
- * Floating in-call card — displayed while a call is active (connecting or connected).
- *
- * Layout (fixed, bottom-right corner):
- *   ┌─────────────────────────────┐
- *   │  [Avatar]  Alice Chen       │
- *   │            Connecting…      │
- *   │      [🎤 Mute]  [📞 End]   │
- *   └─────────────────────────────┘
- *
- * The remote audio is played through a hidden <audio> element driven by `remoteStream`.
- */
 export function CallOverlay(props: ICallOverlayProps) {
   /* --------------------------------- Props --------------------------------- */
   const { status, caller, callee, isMuted, remoteStream, onMute, onEnd } =
     props;
 
   /* -------------------------------- All States ------------------------------ */
-  const [elapsed, setElapsed] = useState(0);
+  const [elapsed, setElapsed] = useState<number>(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const remoteAudioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -97,10 +85,13 @@ export function CallOverlay(props: ICallOverlayProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <>
+      {/* Hidden Audio Section */}
       <audio ref={remoteAudioRef} autoPlay playsInline className="hidden" />
 
+      {/* Call Overlay Section */}
       <div className="fixed bottom-6 right-6 z-50 w-72 bg-background border border-border rounded-2xl shadow-2xl p-4 animate-in slide-in-from-bottom-4 duration-200">
         <div className="flex items-center gap-3 mb-4">
+          {/* Partner Avatar Section */}
           <Avatar className="h-10 w-10 shrink-0">
             <AvatarImage src={partner.avatar} alt={partner.name} />
             <AvatarFallback className="text-sm font-medium">
@@ -108,6 +99,7 @@ export function CallOverlay(props: ICallOverlayProps) {
             </AvatarFallback>
           </Avatar>
 
+          {/* Partner Name and Status Label Section */}
           <div className="min-w-0">
             <TypographyP className="[&:not(:first-child)]:mt-0 font-semibold text-sm text-foreground truncate leading-tight">
               {partner.name}
@@ -126,7 +118,9 @@ export function CallOverlay(props: ICallOverlayProps) {
           </div>
         </div>
 
+        {/* Call Actions Section */}
         <div className="flex items-center justify-center gap-4">
+          {/* Mute Button Section */}
           <div className="flex flex-col items-center gap-1">
             <button
               type="button"
@@ -150,6 +144,7 @@ export function CallOverlay(props: ICallOverlayProps) {
             </span>
           </div>
 
+          {/* End Call Button Section */}
           <div className="flex flex-col items-center gap-1">
             <button
               type="button"

@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import {
   IBuildResume,
   IExperience as Experience,
-} from "@/utils/interfaces/resume/resume.interface";
+} from "@/utils/interfaces/resume-interface/resume.interface";
 import {
   UseFormRegister,
   UseFormSetValue,

@@ -20,8 +20,6 @@ import { useTranslations } from "next-intl";
 import { useGetAllCompanyStore } from "@/stores/apis/company/get-all-cmp.store";
 import { useGetAllEmployeeStore } from "@/stores/apis/employee/get-all-emp.store";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
-import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
-import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
 import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
@@ -54,6 +52,8 @@ import CompanyCardSkeleton from "@/components/company/skeleton";
 import FeedBannerSkeleton from "@/components/feed/skeleton";
 import { MemoCompanyFeedCard } from "@/components/feed/memo-company-feed-card";
 import { MemoEmployeeFeedCard } from "@/components/feed/memo-employee-feed-card";
+import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
+import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
 
 // Module-level Cache For Global Data (survives Strict Mode)
 const globalFetchCache = {
@@ -141,13 +141,12 @@ export default function FeedPage() {
   const { queryAllCompanyFavorites } = useGetAllCompanyFavoritesStore();
 
   // Count All Current Employee/Company Favorite APIs
-  const { countAllEmployeeFavorites } = useCountAllEmployeeFavoritesStore();
-  const { countAllCompanyFavorites } = useCountAllCompanyFavoritesStore();
+  const { countCurrentEmpFavorites } = useCountCurrentEmployeeFavoritesStore();
+  const { countCurrentCmpFavorites } = useCountCurrentCompanyFavoritesStore();
 
   // Count Current Employee/Company Matching APIs
-  const { countCurrentEmployeeMatching } =
-    useCountCurrentEmployeeMatchingStore();
-  const { countCurrentCompanyMatching } = useCountCurrentCompanyMatchingStore();
+  const { countCurrentEmpMatching } = useCountCurrentEmployeeMatchingStore();
+  const { countCurrentCmpMatching } = useCountCurrentCompanyMatchingStore();
 
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => setMounted(true), []);
@@ -242,7 +241,7 @@ export default function FeedPage() {
 
       try {
         await employeeLike(employeeID, companyID);
-        countCurrentEmployeeMatching(employeeID);
+        countCurrentEmpMatching(employeeID);
         setOpenLikeSuccessDialog(true);
         // Sync with server to confirm (replaces optimistic state)
         await queryCurrentEmployeeLiked(employeeID);
@@ -252,7 +251,7 @@ export default function FeedPage() {
     },
     [
       employeeLike,
-      countCurrentEmployeeMatching,
+      countCurrentEmpMatching,
       queryCurrentEmployeeLiked,
       optimisticAddEmployeeLiked,
       companyData,
@@ -271,7 +270,7 @@ export default function FeedPage() {
 
       try {
         await companyLike(companyID, employeeID);
-        countCurrentCompanyMatching(companyID);
+        countCurrentCmpMatching(companyID);
         setOpenLikeSuccessDialog(true);
         // Sync with server to confirm (replaces optimistic state)
         await queryCurrentCompanyLiked(companyID);
@@ -281,7 +280,7 @@ export default function FeedPage() {
     },
     [
       companyLike,
-      countCurrentCompanyMatching,
+      countCurrentCmpMatching,
       queryCurrentCompanyLiked,
       optimisticAddCompanyLiked,
       employeesData,
@@ -294,7 +293,7 @@ export default function FeedPage() {
       if (!employeeID || !companyID) return;
       try {
         await addCompanyToFavorite(employeeID, companyID);
-        countAllEmployeeFavorites(employeeID);
+        countCurrentEmpFavorites(employeeID);
         toast.success(t("addedToFavorites", { name: companyName }));
         await queryAllEmployeeFavorites(employeeID);
       } catch {
@@ -303,7 +302,7 @@ export default function FeedPage() {
     },
     [
       addCompanyToFavorite,
-      countAllEmployeeFavorites,
+      countCurrentEmpFavorites,
       queryAllEmployeeFavorites,
       empFavError,
     ],
@@ -315,7 +314,7 @@ export default function FeedPage() {
       if (!companyID || !employeeID) return;
       try {
         await addEmployeeToFavorite(companyID, employeeID);
-        countAllCompanyFavorites(companyID);
+        countCurrentCmpFavorites(companyID);
         toast.success(t("addedToFavorites", { name: employeeName }));
         await queryAllCompanyFavorites(companyID);
       } catch {
@@ -324,7 +323,7 @@ export default function FeedPage() {
     },
     [
       addEmployeeToFavorite,
-      countAllCompanyFavorites,
+      countCurrentCmpFavorites,
       queryAllCompanyFavorites,
       cmpFavError,
     ],

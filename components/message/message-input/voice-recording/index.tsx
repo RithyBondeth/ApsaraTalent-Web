@@ -1,39 +1,26 @@
-"use client";
-
 import { Check, Loader2, X } from "lucide-react";
+import { IVoiceRecordingUIProps } from "./props";
 
+/* --------------------------------- Helper ---------------------------------- */
 function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
-interface VoiceRecordingUIProps {
-  durationSeconds: number;
-  isUploading: boolean;
-  onCancel: () => void;
-  onStop: () => void;
-}
-
-/**
- * Renders the voice-recording state inside the chat input pill.
- *
- * Layout:
- *   [✕ Cancel]   ● 0:23   [✓ Stop & Send / spinner]
- */
-export function VoiceRecordingUI(props: VoiceRecordingUIProps) {
+export function VoiceRecordingUI(props: IVoiceRecordingUIProps) {
   /* --------------------------------- Props --------------------------------- */
   const { durationSeconds, isUploading, onCancel, onStop } = props;
 
   /* ---------------------------------- Utils --------------------------------- */
   const durationLabel = formatDuration(durationSeconds);
 
-  /* --------------------------------- Methods --------------------------------- */
+  /* --------------------------------- Methods -------------------------------- */
   // ── Handle Recording Actions ─────────────────────────────────────────
   const handleCancelRecording = () => onCancel();
   const handleStopRecording = () => onStop();
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* ------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex items-center gap-3 px-3 py-2">
       <button

@@ -1,5 +1,5 @@
 import { TResumeTemplate } from "@/utils/types/resume.type";
-import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
+import { IBuildResume } from "@/utils/interfaces/resume-interface/resume.interface";
 import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 
 /**

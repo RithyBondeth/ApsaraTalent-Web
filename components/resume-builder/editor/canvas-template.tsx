@@ -3,7 +3,7 @@
 import {
   IBuildResume,
   IExperience as Experience,
-} from "@/utils/interfaces/resume/resume.interface";
+} from "@/utils/interfaces/resume-interface/resume.interface";
 import { UseFormSetValue, UseFormGetValues } from "react-hook-form";
 import { useRef, useCallback, useState, useEffect } from "react";
 import {

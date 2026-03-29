@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-interface MessageReactionSummaryProps {
+export default function ReactionSummary(props: {
   isVisible: boolean;
   isMe: boolean;
   totalReactionCount: number;
@@ -18,9 +18,7 @@ interface MessageReactionSummaryProps {
   activeChatAvatar: string;
   activeChatName: string;
   getUserName: (userId: string) => string;
-}
-
-export function MessageReactionSummary(props: MessageReactionSummaryProps) {
+}) {
   /* --------------------------------- Props --------------------------------- */
   const {
     isVisible,
@@ -40,12 +38,15 @@ export function MessageReactionSummary(props: MessageReactionSummaryProps) {
   const badgePositionClass = isMe ? "right-0" : "left-0";
   const activeChatInitial = activeChatName[0] ?? "?";
 
+  /* -------------------------------- Null State ------------------------------- */
   if (!isVisible) return null;
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Popover>
+      {/* Trigger Reaction Section */}
       <PopoverTrigger asChild>
+        {/* Reaction Badge Section */}
         <div
           className={`absolute -bottom-2 flex gap-1 bg-background/80 backdrop-blur-sm border shadow-sm rounded-full px-1.5 py-0.5 z-10 cursor-pointer hover:bg-muted transition-colors ${badgePositionClass}`}
         >
@@ -62,8 +63,10 @@ export function MessageReactionSummary(props: MessageReactionSummaryProps) {
         </div>
       </PopoverTrigger>
 
+      {/* Content Reaction Section */}
       <PopoverContent className="w-64 p-0 overflow-hidden" side="top">
         <Tabs defaultValue="all" className="w-full">
+          {/* Tabs List Section */}
           <TabsList className="w-full justify-start h-10 bg-muted/50 rounded-none border-b px-2 gap-2 overflow-x-auto no-scrollbar">
             <TabsTrigger
               value="all"
@@ -82,9 +85,11 @@ export function MessageReactionSummary(props: MessageReactionSummaryProps) {
             ))}
           </TabsList>
 
+          {/* Tabs Content Section */}
           <div className="max-h-48 overflow-y-auto p-2">
             <TabsContent value="all" className="mt-0 outline-none">
               <div className="space-y-2">
+                {/* All Reaction Entries Section */}
                 {reactionEntries.map(([userId, emoji]) => (
                   <div
                     key={userId}
@@ -118,6 +123,7 @@ export function MessageReactionSummary(props: MessageReactionSummaryProps) {
               </div>
             </TabsContent>
 
+            {/* Emoji Tabs Content Section */}
             {emojiList.map((emoji) => (
               <TabsContent
                 key={emoji}

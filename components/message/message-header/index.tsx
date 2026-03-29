@@ -12,19 +12,6 @@ import {
 } from "lucide-react";
 import { IChatHeaderProps } from "./props";
 
-/**
- * Chat conversation header.
- *
- * Layout:
- *   [Back (mobile)] [Sidebar toggle (desktop)] [Avatar + Online dot] [Name + status]
- *   ···  [Video call] [Phone call] [Hamburger (mobile)] [⋮]
- *
- * Online dot logic:
- *   - The `chat.isOnline` field comes from the Zustand store (useChatStore.activeChat).
- *   - The store listens to 'userStatus' socket events and sets
- *     activeChat.isOnline = true/false in real time.
- *   - Green dot = online. No dot = offline.
- */
 export default function ChatHeader(props: IChatHeaderProps) {
   /* --------------------------------- Props --------------------------------- */
   const {
@@ -53,8 +40,9 @@ export default function ChatHeader(props: IChatHeaderProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="px-2.5 sm:px-3 md:px-4 py-2.5 md:py-3 border-b flex items-center justify-between bg-background shrink-0 gap-1.5 sm:gap-2 min-h-14">
-      {/* ── Header Identity Section ───────────────────────────────────────── */}
+      {/* Header Identity Section */}
       <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
+        {/* Back Button (Mobile) */}
         {onBack && (
           <Button
             variant="ghost"
@@ -67,6 +55,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
           </Button>
         )}
 
+        {/* Sidebar Toggle Button (Desktop) */}
         <Button
           variant="ghost"
           size="icon"
@@ -81,6 +70,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
           )}
         </Button>
 
+        {/* Avatar and Online Status Section */}
         <div className="relative shrink-0">
           <Avatar className="h-8 w-8 sm:h-9 sm:w-9">
             {chat.isGroup ? (
@@ -105,6 +95,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
           )}
         </div>
 
+        {/* Chat Name and Status Section */}
         <div className="min-w-0 max-w-[52vw] sm:max-w-none">
           <h2 className="font-semibold text-sm text-foreground truncate leading-tight">
             {chat.name}
@@ -119,8 +110,9 @@ export default function ChatHeader(props: IChatHeaderProps) {
         </div>
       </div>
 
-      {/* ── Header Actions Section ────────────────────────────────────────── */}
+      {/* Header Actions Section */}
       <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
+        {/* Video Call Button (Desktop) */}
         <Button
           variant="outline"
           size="icon"
@@ -131,6 +123,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
           <Video className="h-4 w-4" />
         </Button>
 
+        {/* Voice Call Button */}
         <Button
           variant="outline"
           size="icon"
@@ -141,6 +134,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
           <Phone className="h-4 w-4" />
         </Button>
 
+        {/* Mobile Conversations Button */}
         {onOpenMobileSidebar && (
           <Button
             variant="ghost"
@@ -165,6 +159,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
           </Button>
         )}
 
+        {/* More Options Button */}
         <Button
           variant="ghost"
           size="icon"

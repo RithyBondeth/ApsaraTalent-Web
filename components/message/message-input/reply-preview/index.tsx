@@ -1,16 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { IMessage } from "../props";
 import { X } from "lucide-react";
+import { IMessageReplyPreviewProps } from "./props";
 
-interface MessageReplyPreviewProps {
-  replyTarget: IMessage;
-  replyPreviewText: string;
-  onCancelReply?: () => void;
-}
-
-export function MessageReplyPreview(props: MessageReplyPreviewProps) {
+export function MessageReplyPreview(props: IMessageReplyPreviewProps) {
   /* --------------------------------- Props --------------------------------- */
   const { replyTarget, replyPreviewText, onCancelReply } = props;
 

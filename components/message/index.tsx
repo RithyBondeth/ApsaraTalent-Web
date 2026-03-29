@@ -6,16 +6,8 @@ import { parseMessageDate } from "@/utils/date";
 import { IChatMessagesProps, IMessage } from "./props";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
-/**
- * Extends the base IChatMessagesProps with:
- *  - onReply: callback the parent uses to capture which message is being replied to
- *  - onEdit:  callback the parent uses to save an inline edit (messageId, newContent)
- */
-interface ChatMessagesProps extends IChatMessagesProps {
-  onReply?: (message: IMessage) => void;
-  onEdit?: (messageId: string, newContent: string) => void;
-}
-
+/* --------------------------------- Helper --------------------------------- */
+// Resolve last seen message index
 function resolveLastSeenMessageIndex(messages: IMessage[]): number {
   for (let index = messages.length - 1; index >= 0; index--) {
     if (messages[index].isMe && messages[index].isRead) return index;
@@ -24,7 +16,7 @@ function resolveLastSeenMessageIndex(messages: IMessage[]): number {
   return -1;
 }
 
-export const ChatMessages = (props: ChatMessagesProps) => {
+export const ChatMessages = (props: IChatMessagesProps) => {
   /* --------------------------------- Props --------------------------------- */
   const { messages, activeChat, isTyping, onReply, onEdit } = props;
 
@@ -66,10 +58,6 @@ export const ChatMessages = (props: ChatMessagesProps) => {
     }
   }, [messages, isTyping]);
 
-  /**
-   * Returns true when the current message starts a new calendar day compared
-   * to the previous message. Used to show the date divider ("Today", "Mon 12 Jan").
-   */
   /* --------------------------------- Methods --------------------------------- */
   // ── Resolve Date Divider Visibility ─────────────────────────────────────────
   const shouldShowDivider = (
@@ -88,7 +76,7 @@ export const ChatMessages = (props: ChatMessagesProps) => {
   return (
     <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain bg-muted/20 px-2.5 py-3 sm:px-3 sm:py-4 md:px-4">
       {messages.length === 0 ? (
-        /* Empty state */
+        /* Empty State Section */
         <div className="h-full flex flex-col items-center justify-center gap-2 text-center px-4">
           <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
             <svg
@@ -110,6 +98,7 @@ export const ChatMessages = (props: ChatMessagesProps) => {
           </TypographyMuted>
         </div>
       ) : (
+        /* Messages Section */
         <>
           {messages.map((message, index) => {
             const previousMessage = index > 0 ? messages[index - 1] : null;
