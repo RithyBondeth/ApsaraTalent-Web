@@ -12,7 +12,7 @@ import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-c
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { initateChat } from "./_apis/initiate-chat.api";
-import MatchingLoadingSkeleton from "@/components/matching/skeleton";
+import { MatchingLoadingSkeleton } from "@/components/matching/skeleton";
 import { useCallback, useEffect, useState } from "react";
 import {
   emptySvgImage,

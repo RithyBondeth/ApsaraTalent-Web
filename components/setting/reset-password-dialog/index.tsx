@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,10 +20,15 @@ export function ResetPasswordDialog(props: IResetPasswordDialogProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-sm rounded-2xl">
         <DialogHeader>
+          {/* Reset Password Icon Header Section */}
           <div className="mx-auto mb-2 flex items-center justify-center size-14 rounded-2xl bg-primary/10 border border-primary/20">
             <LucideKeyRound className="size-6 text-primary" />
           </div>
+
+          {/* Reset Password Title Section */}
           <DialogTitle className="text-center">Reset your password</DialogTitle>
+
+          {/* Reset Password Description Section */}
           <DialogDescription className="text-center text-sm leading-relaxed">
             {sent ? (
               <>
@@ -42,6 +45,7 @@ export function ResetPasswordDialog(props: IResetPasswordDialogProps) {
           </DialogDescription>
         </DialogHeader>
 
+        {/* Reset Password Footer Section: Done, Send Reset Link, Cancel Buttons */}
         <DialogFooter className="flex-col gap-2 sm:flex-col">
           {sent ? (
             <Button

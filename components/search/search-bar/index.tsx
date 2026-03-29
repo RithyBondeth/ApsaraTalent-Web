@@ -23,7 +23,6 @@ export default function SearchBar<T extends FieldValues>(
   const [selectedLocation, setSelectionLocation] = useState<TLocations | "All">(
     props.initialLocation || "All",
   );
-
   const [selectedJobType, setSelectionJobType] = useState<string>(
     props.initialJobType || "all",
   );
@@ -44,6 +43,7 @@ export default function SearchBar<T extends FieldValues>(
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col items-start gap-2 p-2.5 sm:p-3 shadow-md rounded-md">
+      {/* SeachBar Input Section */}
       <Input
         placeholder={
           props.isEmployee ? "Job title, keywords" : "Position title, keywords"
@@ -51,7 +51,9 @@ export default function SearchBar<T extends FieldValues>(
         className="h-10 sm:h-11"
         {...props.register("keyword" as Path<T>)}
       />
+      {/* Location and Job Type Section */}
       <div className="w-full flex flex-col gap-2.5 sm:flex-row sm:items-center sm:gap-3 sm:[&>div]:w-1/2">
+        {/* Location Section */}
         <Select
           onValueChange={(value: TLocations) => {
             setSelectionLocation(value);
@@ -73,6 +75,8 @@ export default function SearchBar<T extends FieldValues>(
             ))}
           </SelectContent>
         </Select>
+
+        {/* Job Type Section */}
         <CreatableCombobox
           value={selectedJobType}
           onChange={(value) => {

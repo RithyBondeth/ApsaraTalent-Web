@@ -13,6 +13,7 @@ export function AboutSection() {
       title="About"
       description="App information"
     >
+      {/* Version Section */}
       <SettingRow
         icon={<LucideInfo />}
         label="Version"
@@ -22,6 +23,8 @@ export function AboutSection() {
           </Badge>
         }
       />
+
+      {/* Privacy Policy Section */}
       <SettingRow
         icon={<LucideShieldCheck />}
         label="Privacy Policy"
@@ -34,6 +37,8 @@ export function AboutSection() {
           </Link>
         }
       />
+
+      {/* Terms of Service Section */}
       <SettingRow
         icon={<LucideInfo />}
         label="Terms of Service"

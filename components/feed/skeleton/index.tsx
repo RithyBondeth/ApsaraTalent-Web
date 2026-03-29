@@ -1,10 +1,12 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
+/* ------------------------- Feed Page Loading Skeleton ------------------------- */
 export default function FeedPageLoadingSkeleton() {
-  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="mt-3 flex w-full flex-col px-2.5 sm:px-5">
+      {/* Banner Section */}
       <FeedBannerSkeleton />
+      {/* Card List Section */}
       <div className="flex flex-col items-start gap-3 p-2 sm:p-3 mt-3">
         {[...Array(4)].map((_, i) => (
           <div
@@ -28,33 +30,33 @@ export default function FeedPageLoadingSkeleton() {
   );
 }
 
+/* ------------------------ Feed Banner Loading Skeleton ------------------------ */
 export function FeedBannerSkeleton() {
-  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex items-center justify-between gap-4 sm:gap-5 tablet-xl:flex-col tablet-xl:items-center">
       <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
-        {/* Main Heading Skeleton */}
+        {/* Main Heading Section */}
         <div className="tablet-xl:text-center w-full tablet-xl:flex tablet-xl:justify-center">
           <Skeleton className="h-8 w-96 tablet-xl:w-80" />
         </div>
 
-        {/* First Subheading Skeleton */}
+        {/* First Subheading Section */}
         <div className="tablet-xl:text-center w-full tablet-xl:flex tablet-xl:justify-center">
           <Skeleton className="h-8 w-72 tablet-xl:w-64" />
         </div>
 
-        {/* Second Subheading Skeleton */}
+        {/* Second Subheading Section */}
         <div className="tablet-xl:text-center w-full tablet-xl:flex tablet-xl:justify-center">
           <Skeleton className="h-6 w-80 tablet-xl:w-72" />
         </div>
 
-        {/* Muted Text Skeleton */}
+        {/* Muted Text Section */}
         <div className="tablet-xl:text-center w-full tablet-xl:flex tablet-xl:justify-center">
           <Skeleton className="h-4 w-64 tablet-xl:w-56" />
         </div>
       </div>
 
-      {/* Image Skeleton */}
+      {/* Image Section */}
       <Skeleton className="h-[220px] w-[300px] sm:h-[250px] sm:w-[350px] tablet-xl:!w-full rounded-lg" />
     </div>
   );

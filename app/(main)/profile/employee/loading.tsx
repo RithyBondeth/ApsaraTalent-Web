@@ -1,4 +1,4 @@
-import EmployeeProfilePageLoadingSkeleton from "@/components/profile/skeleton/employee-profile-skeleton";
+import { EmployeeProfilePageLoadingSkeleton } from "@/components/profile/skeleton";
 
 export default function EmployeeProfileLoading() {
   return <EmployeeProfilePageLoadingSkeleton />;

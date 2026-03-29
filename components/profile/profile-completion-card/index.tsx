@@ -11,6 +11,7 @@ export default function ProfileCompletionCard({
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5">
+      {/* Header Section */}
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold">Profile Completion</h3>
         <span className="text-sm font-medium text-muted-foreground">
@@ -18,7 +19,7 @@ export default function ProfileCompletionCard({
         </span>
       </div>
 
-      {/* Progress Bar */}
+      {/* Progress Bar Section */}
       <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
         <div
           className={`h-full rounded-full transition-all duration-500 ${
@@ -28,7 +29,7 @@ export default function ProfileCompletionCard({
         />
       </div>
 
-      {/* Status */}
+      {/* Status Section */}
       {isComplete ? (
         <div className="flex items-center gap-2 mt-3 text-green-500">
           <LucideCircleCheck className="size-4" />

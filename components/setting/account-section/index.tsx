@@ -34,7 +34,7 @@ export function AccountSection({
       title="Account"
       description="Your account details and security"
     >
-      {/* Avatar header */}
+      {/* Header Section: Avatar, DisplayName, Email, Role */}
       <div className="flex items-center gap-4 px-4 py-4 bg-muted/30">
         <Avatar className="size-14 rounded-xl shrink-0">
           <AvatarImage src={avatarSrc} alt={displayName} />
@@ -59,7 +59,10 @@ export function AccountSection({
       </div>
       <Separator />
 
+      {/* Email Section */}
       <SettingRow icon={<LucideMail />} label="Email" value={email ?? "—"} />
+
+      {/* Two-Factor Auth Section */}
       <SettingRow
         icon={<LucideShieldCheck />}
         label="Two-Factor Auth"
@@ -78,14 +81,18 @@ export function AccountSection({
           )
         }
       />
+
+      {/* Last Login Section */}
       <SettingRow icon={<LucideLogIn />} label="Last Login" value={lastLogin} />
+
+      {/* Member Since Section */}
       <SettingRow
         icon={<LucideInfo />}
         label="Member Since"
         value={memberSince}
       />
 
-      {/* Reset Password row */}
+      {/* Reset Password Section */}
       <div className="flex items-center justify-between gap-4 px-4 py-3">
         <div className="flex items-center gap-3 min-w-0">
           <span className="text-muted-foreground shrink-0 [&>svg]:size-4">

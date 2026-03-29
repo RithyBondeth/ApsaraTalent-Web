@@ -108,7 +108,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { employeeFormSchema, TEmployeeProfileForm } from "./validation";
-import EmployeeProfilePageLoadingSkeleton from "@/components/profile/skeleton/employee-profile-skeleton";
 import {
   addNewEducationSvgImage,
   addNewExperienceSvgImage,
@@ -116,6 +115,7 @@ import {
 import { getEmployeeProfileCompletion } from "@/utils/functions/profile-completion";
 import { SectionTitle } from "@/components/utils/layout/section-title";
 import ProfileCompletionCard from "@/components/profile/profile-completion-card";
+import { EmployeeProfilePageLoadingSkeleton } from "@/components/profile/skeleton";
 
 export default function EmployeeProfilePage() {
   /* ----------------------------------- Utils ---------------------------------- */

@@ -1,7 +1,7 @@
 import { TAvailability } from "@/utils/types/availability.type";
 import { TLocations } from "@/utils/types/location.type";
 
-export type TSearchEmployeeCardProps = {
+export interface ISearchEmployeeCardProps {
   id?: string;
   firstname: string;
   lastname: string;
@@ -14,4 +14,4 @@ export type TSearchEmployeeCardProps = {
   location: TLocations;
   skills: string[];
   education: string;
-};
+}

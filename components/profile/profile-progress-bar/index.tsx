@@ -22,12 +22,14 @@ export function ProfileProgressBar({ percentage }: IProfileProgressBarProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex items-center gap-2.5 w-full">
+      {/* ProgressBar Section */}
       <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
         <div
           className={`h-full rounded-full transition-all duration-500 ${barColor}`}
           style={{ width: `${percentage}%` }}
         />
       </div>
+      {/* Label Section */}
       <span className={`text-[11px] font-semibold shrink-0 ${textColor}`}>
         {percentage}%
       </span>

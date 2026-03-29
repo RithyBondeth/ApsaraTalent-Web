@@ -1,7 +1,6 @@
 "use client";
 
 import SearchBar from "@/components/search/search-bar";
-import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
 import SearchEmployeeCard from "@/components/search/search-employee-card";
 import { SearchErrorCard } from "@/components/search/search-error-card";
 import { Button } from "@/components/ui/button";
@@ -40,6 +39,7 @@ import { Controller, useForm } from "react-hook-form";
 import { companySearchSchema, TCompanySearchSchema } from "./validation";
 import { CompanySearchSvg } from "@/utils/constants/asset.constant";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { SearchEmployeeCardSkeleton } from "@/components/search/skeleton";
 
 export default function CompanySearchPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -434,8 +434,8 @@ export default function CompanySearchPage() {
               /* Error State Section */
               <div className="w-full mb-3">
                 <SearchErrorCard
-                  error={error}
-                  errorDescription="Try adjusting your filters or search terms and try again."
+                  title={error}
+                  description="Try adjusting your filters or search terms and try again."
                 />
               </div>
             ) : employees && employees.length > 0 ? (

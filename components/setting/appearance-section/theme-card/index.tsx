@@ -2,13 +2,10 @@ import { cn } from "@/lib/utils";
 import { IThemeCardProps } from "./props";
 import { LucideCheck } from "lucide-react";
 
-export function ThemeCard({
-  value,
-  label,
-  icon,
-  active,
-  onClick,
-}: IThemeCardProps) {
+export function ThemeCard(props: IThemeCardProps) {
+  /* ---------------------------------- Props ---------------------------------- */
+  const { value, label, icon, active, onClick } = props;
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <button
@@ -20,7 +17,7 @@ export function ThemeCard({
           : "border-border bg-card hover:border-primary/40 hover:bg-accent/50",
       )}
     >
-      {/* Mini window preview */}
+      {/* Mini Window Preview Section */}
       <div
         className={cn(
           "w-full h-14 rounded-lg overflow-hidden border flex flex-col gap-1 p-1.5",
@@ -59,7 +56,7 @@ export function ThemeCard({
         </div>
       </div>
 
-      {/* Label */}
+      {/* Label Section */}
       <div className="flex items-center gap-1.5 justify-center">
         <span
           className={cn(
@@ -79,7 +76,7 @@ export function ThemeCard({
         </span>
       </div>
 
-      {/* Active checkmark */}
+      {/* Active Checkmark Section */}
       {active && (
         <span className="absolute top-2 right-2 flex items-center justify-center size-4 rounded-full bg-primary">
           <LucideCheck

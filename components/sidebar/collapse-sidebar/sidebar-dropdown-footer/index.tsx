@@ -12,7 +12,6 @@ import {
   LucideSun,
   LucideUser,
 } from "lucide-react";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -67,27 +66,33 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
   const router = useRouter();
   const t = useTranslations("sidebarFooter");
 
+  /* -------------------------------- All States ------------------------------ */
+  const [openLogoutDialog, setOpenLogoutDialog] = useState<boolean>(false);
+
   /* ----------------------------- API Integration ---------------------------- */
+  // Current User and App Settings
+  const currentUser = useGetCurrentUserStore((state) => state.user);
   const { theme, toggleTheme } = useThemeStore();
   const { language, setLanguage } = useLanguageStore();
-  const currentUser = useGetCurrentUserStore((state) => state.user);
 
+  // Logout
   const normalLogout = useLoginStore((state) => state.clearToken);
   const otpLogout = useVerifyOTPStore((state) => state.clearToken);
   const googleLogout = useGoogleLoginStore((state) => state.clearToken);
   const githubLogout = useGithubLoginStore((state) => state.clearToken);
   const linkedInLogout = useLinkedInLoginStore((state) => state.clearToken);
   const facebookLogout = useFacebookLoginStore((state) => state.clearToken);
+
+  // Clear Current User Token
   const clearCurrentUser = useGetCurrentUserStore((state) => state.clearUser);
+
+  // Clear Favorites ID
   const clearEmployeeFavorites = useEmployeeFavCompanyStore(
     (state) => state.clearFavorites,
   );
   const clearCompanyFavorites = useCompanyFavEmployeeStore(
     (state) => state.clearFavorite,
   );
-
-  /* -------------------------------- All States ------------------------------ */
-  const [openLogoutDialog, setOpenLogoutDialog] = useState<boolean>(false);
 
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
@@ -136,29 +141,38 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
+            {/* User Info Section: Avatar, Name and Email */}
             <SidebarMenuButton
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
+              {/* Avatar Section */}
               <Avatar className="h-8 w-8 rounded-lg shrink-0">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="rounded-lg">
                   {user.name.slice(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
+
+              {/* Name and Email Section */}
               <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
                 <span className="truncate font-semibold">{user.name}</span>
                 <span className="truncate text-xs">{user.email}</span>
               </div>
+
+              {/* Chevron Icon Section */}
               <ChevronsUpDown className="ml-auto size-4 group-data-[collapsible=icon]:hidden" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
+
+          {/* Dropdown Content Section */}
           <DropdownMenuContent
             className="max-h-[min(70vh,32rem)] w-[--radix-dropdown-menu-trigger-width] min-w-56 overflow-y-auto rounded-lg"
             side={isMobile ? "top" : "right"}
             align="end"
             sideOffset={4}
           >
+            {/* Dropdown Header Section: Avatar, Name and Email */}
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
@@ -174,7 +188,10 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+
+            {/* Dropdown Menu Group Section */}
             <DropdownMenuGroup>
+              {/* My Profile Section */}
               <DropdownMenuItem asChild>
                 <Link
                   href={`/profile/${currentUser?.role ?? "employee"}`}
@@ -190,13 +207,18 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
+
+            {/* Dropdown Menu Group Section */}
             <DropdownMenuGroup>
+              {/* Settings Section */}
               <DropdownMenuItem asChild>
                 <Link href="/setting" prefetch={true}>
                   <LucideSettings className="text-slate-500" />
                   {t("settings")}
                 </Link>
               </DropdownMenuItem>
+
+              {/* Appearance Section */}
               <DropdownMenuItem onClick={toggleTheme}>
                 {resolvedTheme === "dark" ? (
                   <LucideSun className="text-amber-400" />
@@ -205,24 +227,32 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
                 )}
                 {t("appearance")}
               </DropdownMenuItem>
+
+              {/* Language Section */}
               <DropdownMenuItem
                 onClick={() => setLanguage(language === "en" ? "km" : "en")}
               >
                 <Globe className="text-emerald-500" />
                 {t("language")}: {language === "en" ? "English" : "ខ្មែរ"}
               </DropdownMenuItem>
+
+              {/* Favorite Section */}
               <DropdownMenuItem asChild>
                 <Link href="/favorite" prefetch={true}>
                   <LucideBookMarked className="text-pink-500" />
                   {t("favorite")}
                 </Link>
               </DropdownMenuItem>
+
+              {/* Report Problem Section */}
               <DropdownMenuItem>
                 <LucideInfo className="text-orange-400" />
                 {t("reportProblem")}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
+
+            {/* Logout Section */}
             <DropdownMenuItem onClick={() => setOpenLogoutDialog(true)}>
               <LogOut className="text-destructive" />
               <span className="text-destructive">{t("logOut")}</span>
@@ -230,6 +260,8 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
+
+      {/* Logout Dialog Section */}
       <Dialog open={openLogoutDialog} onOpenChange={setOpenLogoutDialog}>
         <DialogContent>
           <DialogTitle>{t("confirmLogout")}</DialogTitle>

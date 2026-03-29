@@ -10,10 +10,14 @@ export function SettingWrapper(props: ISettingWrapperProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col gap-4">
+      {/* Setting Wrapper Header Section */}
       <div className="flex items-center gap-3">
+        {/* Setting Wrapper Icon Section */}
         <div className="flex items-center justify-center size-9 rounded-xl bg-primary/10 border border-primary/20 shrink-0">
           <span className="text-primary [&>svg]:size-4">{icon}</span>
         </div>
+
+        {/* Setting Wrapper Title and Description Section */}
         <div className="flex flex-col">
           <TypographySmall className="font-semibold leading-none">
             {title}
@@ -23,6 +27,8 @@ export function SettingWrapper(props: ISettingWrapperProps) {
           </TypographyMuted>
         </div>
       </div>
+
+      {/* Setting Wrapper Content Section */}
       <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
         {children}
       </div>

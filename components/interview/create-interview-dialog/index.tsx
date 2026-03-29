@@ -1,5 +1,3 @@
-"use client";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,7 +31,8 @@ export function CreateInterviewDialog({
 }: ICreateInterviewDialogProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("interview");
-  /* ----------------------------- API Integration ---------------------------- */
+
+  /* ----------------------------------- Form --------------------------------- */
   const { creating, error, createInterview } = useInterviewStore();
 
   /* -------------------------------- All States ------------------------------ */
@@ -56,7 +55,7 @@ export function CreateInterviewDialog({
   });
 
   /* --------------------------------- Methods --------------------------------- */
-  // ── Handle Create ─────────────────────────────────────────
+  // ── Handle Create Interview ─────────────────────────────────────────
   const handleCreate = useCallback(async () => {
     if (
       !currentId ||
@@ -95,18 +94,21 @@ export function CreateInterviewDialog({
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={open} onOpenChange={setOpen}>
+      {/* Dialog Trigger Section */}
       <DialogTrigger asChild>
         <Button size="sm">
           <LucidePlus className="size-4" />
           {t("scheduleInterview")}
         </Button>
       </DialogTrigger>
+
+      {/* Dialog Content Section */}
       <DialogContent className="sm:max-w-[480px]">
         <DialogHeader>
           <DialogTitle>{t("scheduleInterview")}</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col gap-4 py-2">
-          {/* Select matched employee */}
+          {/* Select Matched Employee Section */}
           <div className="flex flex-col gap-1.5">
             <Label>{t("selectEmployee")} *</Label>
             {currentCompanyMatching && currentCompanyMatching.length > 0 ? (
@@ -154,6 +156,7 @@ export function CreateInterviewDialog({
             )}
           </div>
 
+          {/* Title Section */}
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="title">{t("interviewTitle")} *</Label>
             <Input
@@ -166,6 +169,7 @@ export function CreateInterviewDialog({
             />
           </div>
 
+          {/* Description Section */}
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="description">{t("description")}</Label>
             <Textarea
@@ -181,7 +185,9 @@ export function CreateInterviewDialog({
             />
           </div>
 
+          {/* Date Time and Duration Section */}
           <div className="grid grid-cols-2 gap-3">
+            {/* Date Time Section */}
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="scheduledAt">{t("dateTime")} *</Label>
               <Input
@@ -196,6 +202,8 @@ export function CreateInterviewDialog({
                 }
               />
             </div>
+
+            {/* Duration Section */}
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="duration">{t("duration")}</Label>
               <Input
@@ -214,6 +222,7 @@ export function CreateInterviewDialog({
             </div>
           </div>
 
+          {/* Location Section */}
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="location">{t("location")}</Label>
             <Input
@@ -226,6 +235,7 @@ export function CreateInterviewDialog({
             />
           </div>
 
+          {/* Meeting Link Section */}
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="meetingLink">{t("meetingLink")}</Label>
             <Input
@@ -241,12 +251,14 @@ export function CreateInterviewDialog({
             />
           </div>
 
+          {/* Error Section */}
           {error && (
             <TypographyP className="[&:not(:first-child)]:mt-0 text-sm text-destructive">
               {error}
             </TypographyP>
           )}
 
+          {/* Create Button Section */}
           <Button
             onClick={handleCreate}
             disabled={

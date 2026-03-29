@@ -10,7 +10,7 @@ type TCountCurrentCompanyMatchingState = {
   totalCmpMatching: number | null;
   loading: boolean;
   error: string | null;
-  countCurrentCompanyMatching: (companyId: string) => Promise<void>;
+  countCurrentCmpMatching: (companyId: string) => Promise<void>;
 };
 
 export const useCountCurrentCompanyMatchingStore =
@@ -18,7 +18,7 @@ export const useCountCurrentCompanyMatchingStore =
     totalCmpMatching: null,
     loading: false,
     error: null,
-    countCurrentCompanyMatching: async (companyId: string) => {
+    countCurrentCmpMatching: async (companyId: string) => {
       set({ loading: true, error: null });
 
       try {

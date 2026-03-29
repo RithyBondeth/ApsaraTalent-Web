@@ -19,7 +19,7 @@ export default function MatchingCompanyCard(props: IMatchingCompanyCardProps) {
   return (
     <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
       <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
-        {/* Avatar */}
+        {/* Avatar Section */}
         <Avatar
           rounded="md"
           className="size-16 sm:size-20 flex-shrink-0 ring-[2px] ring-border/40"
@@ -30,9 +30,9 @@ export default function MatchingCompanyCard(props: IMatchingCompanyCardProps) {
           <AvatarImage src={props.avatar} />
         </Avatar>
 
-        {/* Content */}
+        {/* Content Section */}
         <div className="flex-1 min-w-0 flex flex-col gap-3">
-          {/* Header */}
+          {/* Header Section: Name, Industry and Founded Year */}
           <div>
             <h3 className="text-base font-bold leading-tight truncate">
               {props.name}
@@ -49,14 +49,14 @@ export default function MatchingCompanyCard(props: IMatchingCompanyCardProps) {
             </div>
           </div>
 
-          {/* Description */}
+          {/* Description Section */}
           {props.description && (
             <TypographyMuted className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
               {props.description}
             </TypographyMuted>
           )}
 
-          {/* Open Positions Tags */}
+          {/* Open Positions Tags Section */}
           {props.openPosition.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {props.openPosition.map((op) => (
@@ -65,7 +65,7 @@ export default function MatchingCompanyCard(props: IMatchingCompanyCardProps) {
             </div>
           )}
 
-          {/* Meta Chips */}
+          {/* Meta Chips Section */}
           <div className="flex flex-wrap gap-2">
             <MetaChip
               icon={<LucideUsers />}
@@ -88,7 +88,7 @@ export default function MatchingCompanyCard(props: IMatchingCompanyCardProps) {
         </div>
       </div>
 
-      {/* Action Bar */}
+      {/* Action Bar Section: Schedule and Chat Now Buttons */}
       <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end gap-2">
         {props.onScheduleClick && (
           <Button

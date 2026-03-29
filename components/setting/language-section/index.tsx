@@ -1,27 +1,49 @@
-"use client";
-
 import React from "react";
 import { cn } from "@/lib/utils";
-import { TLanguage } from "@/utils/types/language.type";
 import { LucideCheck, LucideGlobe } from "lucide-react";
 import { SettingWrapper } from "../setting-wrapper/setting-wrapper";
+import { ILanguageCardProps, ILanguageSectionProps } from "./props";
 
-interface LanguageCardProps {
-  value: TLanguage;
-  flag: string;
-  label: string;
-  nativeLabel: string;
-  active: boolean;
-  onClick: () => void;
+export function LanguageSection(props: ILanguageSectionProps) {
+  /* -------------------------------- Props -------------------------------- */
+  const { language, onLanguageChange } = props;
+
+  /* -------------------------------- Render UI -------------------------------- */
+  return (
+    <SettingWrapper
+      icon={<LucideGlobe />}
+      title="Language"
+      description="Select the language used throughout the app"
+    >
+      <div className="flex flex-col gap-3 p-4">
+        {/* English Language Card Section */}
+        <LanguageCard
+          value="en"
+          flag="🇬🇧"
+          label="English"
+          nativeLabel="English"
+          active={language === "en"}
+          onClick={() => onLanguageChange("en")}
+        />
+
+        {/* Khmer Language Card Section */}
+        <LanguageCard
+          value="km"
+          flag="🇰🇭"
+          label="Khmer"
+          nativeLabel="ភាសាខ្មែរ"
+          active={language === "km"}
+          onClick={() => onLanguageChange("km")}
+        />
+      </div>
+    </SettingWrapper>
+  );
 }
 
-function LanguageCard({
-  flag,
-  label,
-  nativeLabel,
-  active,
-  onClick,
-}: LanguageCardProps) {
+function LanguageCard(props: ILanguageCardProps) {
+  /* -------------------------------- Props -------------------------------- */
+  const { flag, label, nativeLabel, active, onClick } = props;
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <button
@@ -33,7 +55,10 @@ function LanguageCard({
           : "border-border bg-card hover:border-primary/40 hover:bg-accent/50",
       )}
     >
+      {/* Flag Section */}
       <span className="text-2xl shrink-0">{flag}</span>
+
+      {/* Label Section */}
       <div className="flex flex-col flex-1 min-w-0">
         <span
           className={cn("text-sm font-semibold", active ? "text-primary" : "")}
@@ -42,6 +67,8 @@ function LanguageCard({
         </span>
         <span className="text-xs text-muted-foreground">{nativeLabel}</span>
       </div>
+
+      {/* Active Checkmark Section */}
       {active && (
         <span className="flex items-center justify-center size-5 rounded-full bg-primary shrink-0">
           <LucideCheck
@@ -51,43 +78,5 @@ function LanguageCard({
         </span>
       )}
     </button>
-  );
-}
-
-interface LanguageSectionProps {
-  language: TLanguage;
-  onLanguageChange: (language: TLanguage) => void;
-}
-
-export function LanguageSection({
-  language,
-  onLanguageChange,
-}: LanguageSectionProps) {
-  /* -------------------------------- Render UI -------------------------------- */
-  return (
-    <SettingWrapper
-      icon={<LucideGlobe />}
-      title="Language"
-      description="Select the language used throughout the app"
-    >
-      <div className="flex flex-col gap-3 p-4">
-        <LanguageCard
-          value="en"
-          flag="🇬🇧"
-          label="English"
-          nativeLabel="English"
-          active={language === "en"}
-          onClick={() => onLanguageChange("en")}
-        />
-        <LanguageCard
-          value="km"
-          flag="🇰🇭"
-          label="Khmer"
-          nativeLabel="ភាសាខ្មែរ"
-          active={language === "km"}
-          onClick={() => onLanguageChange("km")}
-        />
-      </div>
-    </SettingWrapper>
   );
 }

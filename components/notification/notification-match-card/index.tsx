@@ -26,9 +26,12 @@ export default function NotificationMatchCard(
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex items-start gap-3 rounded-lg p-3 shadow-md sm:gap-5 sm:p-5">
+      {/* Matched Icon Section */}
       <div className="rounded-md bg-blue-100 p-2.5 text-blue-500 sm:p-3">
         <LucideHeartHandshake className="size-6 sm:size-8" strokeWidth={1.5} />
       </div>
+
+      {/* Content Section */}
       <div className="w-full flex flex-col items-start gap-2">
         <div className="w-full flex items-center justify-between phone-xl:flex-col phone-xl:items-start">
           <TypographyLead className="text-md font-semibold text-primary">
@@ -41,12 +44,16 @@ export default function NotificationMatchCard(
             {!props.seen && <div className="size-2 rounded-full bg-blue-500" />}
           </div>
         </div>
+
+        {/* Description Section */}
         <TypographyMuted>
           You matched with {props.user.name}
           {props.role === "employee"
             ? `, A ${props.user.position}.`
             : `, ${props.user.industry} Company.`}
         </TypographyMuted>
+
+        {/* Action Section */}
         <div className="w-full flex items-center justify-between gap-2 tablet-sm:mt-1 tablet-sm:justify-end">
           <div className="flex items-center gap-3 tablet-sm:hidden">
             <div className="flex items-center gap-2">
@@ -58,10 +65,14 @@ export default function NotificationMatchCard(
               </Avatar>
               <TypographySmall>{props.user.name}</TypographySmall>
             </div>
+
+            {/* Match Badge Section */}
             <div className="px-3 py-1 rounded-xl text-xs font-medium text-blue-500 bg-blue-100">
               match
             </div>
           </div>
+
+          {/* View Profile Button Section */}
           <Button
             className="h-8 text-xs tablet-sm:h-9 tablet-sm:w-full tablet-sm:text-xs"
             onClick={handleViewProfile}

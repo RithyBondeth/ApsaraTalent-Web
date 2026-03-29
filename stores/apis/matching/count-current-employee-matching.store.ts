@@ -10,7 +10,7 @@ type TCountCurrentEmployeeMatchingState = {
   totalEmpMatching: number | null;
   loading: boolean;
   error: string | null;
-  countCurrentEmployeeMatching: (employeeId: string) => Promise<void>;
+  countCurrentEmpMatching: (employeeId: string) => Promise<void>;
 };
 
 export const useCountCurrentEmployeeMatchingStore =
@@ -18,7 +18,7 @@ export const useCountCurrentEmployeeMatchingStore =
     totalEmpMatching: null,
     loading: false,
     error: null,
-    countCurrentEmployeeMatching: async (employeeId: string) => {
+    countCurrentEmpMatching: async (employeeId: string) => {
       set({ loading: true, error: null });
 
       try {

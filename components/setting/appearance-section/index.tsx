@@ -21,7 +21,9 @@ export function AppearanceSection(props: IAppearanceSectionProps) {
       title="Appearance"
       description="Choose how Apsara Talent looks for you"
     >
+      {/* Theme Section */}
       <div className="flex flex-col gap-4 p-4">
+        {/* Theme Cards List Section */}
         <div className="grid grid-cols-3 gap-3">
           <ThemeCard
             value="light"
@@ -45,6 +47,7 @@ export function AppearanceSection(props: IAppearanceSectionProps) {
             onClick={() => onThemeChange("system")}
           />
         </div>
+        {/* Theme Description Section */}
         <TypographyMuted className="text-xs text-center">
           {theme === "system"
             ? "Follows your device's system preference"

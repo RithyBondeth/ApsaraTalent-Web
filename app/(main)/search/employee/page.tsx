@@ -2,7 +2,6 @@
 
 import SearchBar from "@/components/search/search-bar";
 import SearchCompanyCard from "@/components/search/search-company-card";
-import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
 import { SearchErrorCard } from "@/components/search/search-error-card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -44,6 +43,7 @@ import { Controller, useForm } from "react-hook-form";
 import { employeeSearchSchema, TEmployeeSearchSchema } from "./validation";
 import { EmployeeSearchSvg } from "@/utils/constants/asset.constant";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { SearchEmployeeCardSkeleton } from "@/components/search/skeleton";
 
 export default function EmployeeSearchPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -616,8 +616,8 @@ export default function EmployeeSearchPage() {
             ) : error ? (
               <div className="w-full mb-3">
                 <SearchErrorCard
-                  error={error}
-                  errorDescription="Try adjusting your filters or search terms and try again."
+                  title={error}
+                  description="Try adjusting your filters or search terms and try again."
                 />
               </div>
             ) : jobs && jobs.length > 0 ? (

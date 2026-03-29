@@ -3,31 +3,31 @@ import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
 import { create } from "zustand";
 
-type TCountAllEmployeeFavoriteResponse = {
+type TCountCurrentEmployeeFavoriteResponse = {
   totalFavorites: number;
 };
-type TCountAllEmployeeFavoriteState = {
-  totalAllEmployeeFavorites: number | null;
+type TCountCurrentEmployeeFavoriteState = {
+  totalEmpFavorites: number | null;
   loading: boolean;
   error: string | null;
-  countAllEmployeeFavorites: (employeeId: string) => Promise<void>;
+  countCurrentEmpFavorites: (employeeId: string) => Promise<void>;
 };
 
-export const useCountAllEmployeeFavoritesStore =
-  create<TCountAllEmployeeFavoriteState>((set) => ({
-    totalAllEmployeeFavorites: null,
+export const useCountCurrentEmployeeFavoritesStore =
+  create<TCountCurrentEmployeeFavoriteState>((set) => ({
+    totalEmpFavorites: null,
     loading: false,
     error: null,
-    countAllEmployeeFavorites: async (employeeId: string) => {
+    countCurrentEmpFavorites: async (employeeId: string) => {
       set({ loading: true, error: null });
 
       try {
-        const response = await axios.get<TCountAllEmployeeFavoriteResponse>(
+        const response = await axios.get<TCountCurrentEmployeeFavoriteResponse>(
           API_COUNT_ALL_EMPLOYEE_FAVORITES(employeeId),
         );
 
         set({
-          totalAllEmployeeFavorites: response.data.totalFavorites,
+          totalEmpFavorites: response.data.totalFavorites,
           loading: false,
           error: null,
         });
@@ -38,7 +38,7 @@ export const useCountAllEmployeeFavoritesStore =
             "Failed to count all employee favorites",
           ),
           loading: false,
-          totalAllEmployeeFavorites: null,
+          totalEmpFavorites: null,
         });
       }
     },

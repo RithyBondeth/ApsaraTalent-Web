@@ -12,11 +12,11 @@ import {
   LucideUsers,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { TSearchCompanyCardProps } from "./prop";
+import { ISearchCompanyCardProps } from "./prop";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
-export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
+export default function SearchCompanyCard(props: ISearchCompanyCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
 
@@ -24,7 +24,7 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
   return (
     <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
       <div className="p-4 sm:p-5 flex flex-col gap-3.5">
-        {/* Header Row: Avatar + Title */}
+        {/* Header Section: Avatar, Title, Name and Industry */}
         <div className="flex gap-4">
           <Avatar
             rounded="md"
@@ -49,7 +49,7 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
           </div>
         </div>
 
-        {/* Company Meta */}
+        {/* CompanySize Section */}
         <div className="flex flex-wrap gap-2">
           <MetaChip
             icon={<LucideUsers />}
@@ -59,7 +59,7 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
           <MetaChip icon={<LucideBriefcaseBusiness />} text={props.type} />
         </div>
 
-        {/* Requirements */}
+        {/* Education & Experience Requirements Section */}
         <div className="flex flex-wrap gap-2">
           <MetaChip
             icon={<LucideGraduationCap />}
@@ -71,14 +71,14 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
           />
         </div>
 
-        {/* Description */}
+        {/* Description Section */}
         {props.description && (
           <TypographyMuted className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
             {props.description}
           </TypographyMuted>
         )}
 
-        {/* Skills Tags */}
+        {/* Skills Tags Section */}
         {props.skills.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {props.skills.map((item, index) => (
@@ -88,7 +88,7 @@ export default function SearchCompanyCard(props: TSearchCompanyCardProps) {
         )}
       </div>
 
-      {/* Action Bar */}
+      {/* Action Bar Section */}
       <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2 min-w-0">
           <MetaChip icon={<LucideCircleDollarSign />} text={props.salary} />

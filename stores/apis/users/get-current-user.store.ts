@@ -35,7 +35,10 @@ export const useGetCurrentUserStore = create<TGetCurrentUserState>()(
           set({
             user: null,
             loading: false,
-            error: extractApiErrorMessage(error, "Failed to fetch current user"),
+            error: extractApiErrorMessage(
+              error,
+              "Failed to fetch current user",
+            ),
           });
         }
       },

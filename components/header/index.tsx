@@ -13,9 +13,7 @@ import LogoComponent from "@/components/utils/brand/logo";
 export default function Header({ className }: { className?: string }) {
   /* ----------------------------- API Integration ---------------------------- */
   const { theme, toggleTheme } = useThemeStore();
-  /* ---------------------------------- Utils --------------------------------- */
   const { resolvedTheme, setTheme } = useTheme();
-  /* -------------------------------- All States ------------------------------ */
   const [mounted, setMounted] = useState<boolean>(false);
 
   /* --------------------------------- Effects --------------------------------- */

@@ -9,12 +9,12 @@ import {
   LucideUser,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { TSearchEmployeeCardProps } from "./props";
+import { ISearchEmployeeCardProps } from "./props";
 import { getAvailabilityStyleClass } from "@/utils/extensions/get-availability-class";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
-export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
+export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
 
@@ -22,7 +22,7 @@ export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
   return (
     <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
       <div className="p-4 sm:p-5 flex flex-col gap-3.5">
-        {/* Header Row: Avatar + Info */}
+        {/* Header Section: Avatar, Name, Job and Availability */}
         <div className="flex gap-4">
           <Avatar
             rounded="md"
@@ -53,7 +53,7 @@ export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
           </div>
         </div>
 
-        {/* Meta Chips */}
+        {/* YearOfExperience, Location, Availability and Education Section */}
         <div className="flex flex-wrap gap-2">
           <MetaChip
             icon={<LucideUser />}
@@ -64,14 +64,14 @@ export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
           <MetaChip icon={<LucideGraduationCap />} text={props.education} />
         </div>
 
-        {/* Description */}
+        {/* Description Section */}
         {props.description && (
           <TypographyMuted className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
             {props.description}
           </TypographyMuted>
         )}
 
-        {/* Skills Tags */}
+        {/* Skills Tags Section */}
         {props.skills.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {props.skills.map((item, index) => (
@@ -81,7 +81,7 @@ export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
         )}
       </div>
 
-      {/* Action Bar */}
+      {/* Action Bar Section */}
       <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end">
         <Button
           size="sm"

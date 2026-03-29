@@ -34,6 +34,16 @@ export default function MessagePageContent() {
   const searchParams = useSearchParams();
   const chatId = searchParams.get("chatId");
 
+  /* -------------------------------- All States ------------------------------ */
+  const [isSidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const sidebarPanelRef = useRef<ImperativePanelHandle>(null);
+
+  // Reply target — when set, the input bar shows a quote preview.
+  const [replyTarget, setReplyTarget] = useState<IMessage | null>(null);
+
+  // Loading timeout flag
+  const [loadingTimedOut, setLoadingTimedOut] = useState<boolean>(false);
+
   /* ----------------------------- API Integration ---------------------------- */
   // Current User
   const currentUser = useGetCurrentUserStore((state) => state.user);
@@ -54,17 +64,6 @@ export default function MessagePageContent() {
 
   // Voice Call Initiation
   const initiateCall = useCallStore((s) => s.initiateCall);
-
-  /* -------------------------------- All States ------------------------------ */
-  // Desktop: sidebar open by default (resizable). Mobile uses list → chat navigation.
-  const [isSidebarOpen, setSidebarOpen] = useState<boolean>(true);
-  const sidebarPanelRef = useRef<ImperativePanelHandle>(null);
-
-  // Reply target — when set, the input bar shows a quote preview.
-  const [replyTarget, setReplyTarget] = useState<IMessage | null>(null);
-
-  // Loading timeout flag
-  const [loadingTimedOut, setLoadingTimedOut] = useState<boolean>(false);
 
   /* --------------------------------- Effects --------------------------------- */
   // Keep resizable panel state in sync with the sidebar toggle (avoid calling
@@ -147,10 +146,10 @@ export default function MessagePageContent() {
   }, [isConnected, isChatsLoaded]);
 
   /* --------------------------------- Methods --------------------------------- */
-  // ── 1. Toggle Sidebar ────────────────────────────────────────
+  // ── Toggle Sidebar ────────────────────────────────────────
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
-  // ── 2. Handle Start Voice Call ───────────────────────────────
+  // ── Handle Start Voice Call ───────────────────────────────
   const handleStartVoiceCall = () => {
     if (!activeChat) return;
     initiateCall({
@@ -160,7 +159,7 @@ export default function MessagePageContent() {
     });
   };
 
-  // ── 3. Send Message ─────────────────────────────────────────
+  // ── Send Message ─────────────────────────────────────────
   const handleSendMessage = (
     text: string,
     replyTo?: IMessage["replyTo"] | null,
@@ -193,23 +192,23 @@ export default function MessagePageContent() {
     return true;
   };
 
-  // ── 4. Edit Message ─────────────────────────────────────────
+  // ── Edit Message ─────────────────────────────────────────
   const handleEditMessage = (messageId: string, newContent: string) => {
     if (chatId) editMessageAction(messageId, chatId, newContent);
   };
 
-  // ── 5. Handle Typing ─────────────────────────────────────────
+  // ── Handle Typing ─────────────────────────────────────────
   const handleTyping = (typing: boolean) => {
     if (chatId) setTyping(chatId, typing);
   };
 
-  // ── 6. Handle Chat Select ─────────────────────────────────────
+  // ── Handle Chat Select ─────────────────────────────────────
   const handleChatSelect = (chat: { id: string }) => {
     setReplyTarget(null);
     router.push(`/message?chatId=${chat.id}`);
   };
 
-  // ── 7. Handle Back ────────────────────────────────────────────
+  // ── Handle Back ────────────────────────────────────────────
   const handleBack = () => {
     setReplyTarget(null);
     router.push("/message");
@@ -221,8 +220,10 @@ export default function MessagePageContent() {
   if (isLoading) return <MessageLoadingSkeleton />;
 
   /* -------------------------------- Render UI -------------------------------- */
+  // Chat View Section
   const chatView = activeChat ? (
     <div className="flex flex-col h-full min-h-0 min-w-0">
+      {/* Chat Header Section */}
       <ChatHeader
         chat={activeChat}
         isSidebarOpen={isSidebarOpen}
@@ -231,7 +232,7 @@ export default function MessagePageContent() {
         onStartVoiceCall={handleStartVoiceCall}
       />
 
-      {/* Message area — spinner while history is loading */}
+      {/* Message Area Section — Spinner while history is loading */}
       {isHistoryLoading ? (
         <MessageThreadSkeleton />
       ) : (
@@ -244,7 +245,7 @@ export default function MessagePageContent() {
         />
       )}
 
-      {/* Input bar — shows quote preview when replyTarget is set */}
+      {/* Input Bar Section — Shows quote preview when replyTarget is set */}
       <ChatInput
         onSendMessage={handleSendMessage}
         onTyping={handleTyping}
@@ -254,6 +255,7 @@ export default function MessagePageContent() {
     </div>
   ) : null;
 
+  // Desktop Empty State View Section
   const desktopEmptyStateView = (
     <div className="flex flex-1 flex-col items-center justify-center p-8 text-center bg-muted/5">
       <div className="w-full flex flex-col items-center justify-center my-16">
@@ -273,7 +275,7 @@ export default function MessagePageContent() {
 
   return (
     <div className="w-full h-[calc(100dvh-4rem)] md:h-full min-h-0 flex bg-background overflow-hidden relative animate-page-in">
-      {/* Call Overlay + Incoming Modal */}
+      {/* Call Overlay + Incoming Modal Section */}
       <CallOrchestrator />
 
       {/* Desktop Resizable Layout Section */}
@@ -310,7 +312,7 @@ export default function MessagePageContent() {
         </ResizablePanelGroup>
       </div>
 
-      {/* Mobile Content Area */}
+      {/* Mobile Content Area Section */}
       <div className="lg:hidden flex-1 flex flex-col min-w-0 h-full min-h-0">
         {/* Mobile Section: show full-height sidebar list when no chat is selected */}
         {!chatId && (

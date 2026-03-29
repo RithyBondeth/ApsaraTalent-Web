@@ -26,9 +26,12 @@ export default function NotificationMessageCard(
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex items-start gap-3 rounded-lg p-3 shadow-md sm:gap-5 sm:p-5">
+      {/* Message Icon Section */}
       <div className="rounded-md bg-green-100 p-2.5 text-green-500 sm:p-3">
         <LucideMail className="size-6 sm:size-8" strokeWidth={1.5} />
       </div>
+
+      {/* Content Section */}
       <div className="w-full flex flex-col items-start gap-2">
         <div className="w-full flex items-center justify-between phone-xl:flex-col phone-xl:items-start">
           <TypographyLead className="text-md font-semibold text-primary">
@@ -43,11 +46,15 @@ export default function NotificationMessageCard(
             )}
           </div>
         </div>
+
+        {/* Description Section */}
         <TypographyMuted>
           <span className="font-medium">{props.user.name}</span>
           {" — "}
           {props.preview}
         </TypographyMuted>
+
+        {/* Action Section */}
         <div className="w-full flex items-center justify-between gap-2 tablet-sm:mt-1 tablet-sm:justify-end">
           <div className="flex items-center gap-3 tablet-sm:hidden">
             <div className="flex items-center gap-2">
@@ -59,10 +66,14 @@ export default function NotificationMessageCard(
               </Avatar>
               <TypographySmall>{props.user.name}</TypographySmall>
             </div>
+
+            {/* Message Badge Section */}
             <div className="px-3 py-1 rounded-xl text-xs font-medium text-green-500 bg-green-100">
               message
             </div>
           </div>
+
+          {/* Reply Button Section */}
           <Button
             className="h-8 text-xs tablet-sm:h-9 tablet-sm:w-full tablet-sm:text-xs"
             onClick={handleReply}
