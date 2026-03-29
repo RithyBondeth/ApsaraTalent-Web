@@ -1,14 +1,13 @@
 "use client";
 
-import React from "react";
+import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { Smile } from "lucide-react";
 import { CHAT_REACTION_EMOJIS } from "@/utils/constants/chat.constant";
+import { Smile } from "lucide-react";
 
 interface IReactionPickerProps {
   onReact: (emoji: string | null) => void;
@@ -18,6 +17,13 @@ interface IReactionPickerProps {
 export const ReactionPicker = (props: IReactionPickerProps) => {
   /* --------------------------------- Props --------------------------------- */
   const { onReact, currentReaction } = props;
+
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle Reaction Select ─────────────────────────────────────────
+  const handleReactionSelect = (emoji: string) => {
+    onReact(emoji === currentReaction ? null : emoji);
+  };
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Popover>
@@ -39,7 +45,7 @@ export const ReactionPicker = (props: IReactionPickerProps) => {
           {CHAT_REACTION_EMOJIS.map((emoji) => (
             <button
               key={emoji}
-              onClick={() => onReact(emoji === currentReaction ? null : emoji)}
+              onClick={() => handleReactionSelect(emoji)}
               className={`p-2 transition-all hover:scale-125 rounded-full hover:bg-muted ${
                 currentReaction === emoji ? "bg-primary/20 scale-110" : ""
               }`}

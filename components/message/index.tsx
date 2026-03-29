@@ -16,16 +16,24 @@ interface ChatMessagesProps extends IChatMessagesProps {
   onEdit?: (messageId: string, newContent: string) => void;
 }
 
-export const ChatMessages = ({
-  messages,
-  activeChat,
-  isTyping,
-  onReply,
-  onEdit,
-}: ChatMessagesProps) => {
+function resolveLastSeenMessageIndex(messages: IMessage[]): number {
+  for (let index = messages.length - 1; index >= 0; index--) {
+    if (messages[index].isMe && messages[index].isRead) return index;
+  }
+
+  return -1;
+}
+
+export const ChatMessages = (props: ChatMessagesProps) => {
+  /* --------------------------------- Props --------------------------------- */
+  const { messages, activeChat, isTyping, onReply, onEdit } = props;
+
   /* -------------------------------- All States ------------------------------ */
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const prevMessageCountRef = useRef(0);
+
+  /* ---------------------------------- Utils --------------------------------- */
+  const lastSeenMessageIndex = resolveLastSeenMessageIndex(messages);
 
   // Auto-scroll to the bottom whenever messages change or typing indicator toggles.
   // Use "instant" on initial load (first paint of the full history) so the browser
@@ -63,7 +71,7 @@ export const ChatMessages = ({
    * to the previous message. Used to show the date divider ("Today", "Mon 12 Jan").
    */
   /* --------------------------------- Methods --------------------------------- */
-  // ── Should Show Divider ─────────────────────────────────────────
+  // ── Resolve Date Divider Visibility ─────────────────────────────────────────
   const shouldShowDivider = (
     currentMsg: IMessage,
     prevMsg: IMessage | null,
@@ -103,37 +111,25 @@ export const ChatMessages = ({
         </div>
       ) : (
         <>
-          {(() => {
-            // Find the index of the last outgoing message that has been read.
-            // We only show the "Seen" avatar indicator on the very last seen message
-            // to avoid cluttering the chat with multiple "Seen" indicators.
-            let lastSeenIdx = -1;
-            for (let i = messages.length - 1; i >= 0; i--) {
-              if (messages[i].isMe && messages[i].isRead) {
-                lastSeenIdx = i;
-                break;
-              }
-            }
-            return messages.map((message, idx) => {
-              const prevMessage = idx > 0 ? messages[idx - 1] : null;
-              const showDivider = shouldShowDivider(message, prevMessage);
+          {messages.map((message, index) => {
+            const previousMessage = index > 0 ? messages[index - 1] : null;
+            const showDivider = shouldShowDivider(message, previousMessage);
 
-              return (
-                <React.Fragment key={message.id}>
-                  {showDivider && (
-                    <MessageTimeDivider timestamp={message.timestamp} />
-                  )}
-                  <MessageBubble
-                    message={message}
-                    activeChat={activeChat}
-                    isLastSeen={idx === lastSeenIdx}
-                    onReply={onReply} // Pass reply handler so each bubble can trigger it
-                    onEdit={onEdit} // Pass edit handler so each bubble can confirm edits
-                  />
-                </React.Fragment>
-              );
-            });
-          })()}
+            return (
+              <React.Fragment key={message.id}>
+                {showDivider && (
+                  <MessageTimeDivider timestamp={message.timestamp} />
+                )}
+                <MessageBubble
+                  message={message}
+                  activeChat={activeChat}
+                  isLastSeen={index === lastSeenMessageIndex}
+                  onReply={onReply}
+                  onEdit={onEdit}
+                />
+              </React.Fragment>
+            );
+          })}
 
           {/* Typing indicator — shown below messages when partner is typing */}
           {isTyping && <ChatTypingIndicator activeChat={activeChat} />}

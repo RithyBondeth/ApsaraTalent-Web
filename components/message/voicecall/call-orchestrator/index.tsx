@@ -1,15 +1,15 @@
 "use client";
 
 import { useCallStore } from "@/stores/features/call/call.store";
-import { IncomingCallModal } from "../incoming-call-modal";
 import { CallOverlay } from "../call-overlay";
+import { IncomingCallModal } from "../incoming-call-modal";
 
 /**
  * Call Orchestrator — mounts once in the message page layout.
  *
  * Reads `useCallStore` and conditionally renders:
- *   • `IncomingCallModal`  when status === "ringing"
- *   • `CallOverlay`        when status is "calling" | "connecting" | "connected" | "ended"
+ *   • `IncomingCallModal` when status === "ringing"
+ *   • `CallOverlay` when status is "calling" | "connecting" | "connected" | "ended"
  *
  * This component is intentionally thin: all state lives in `call.store.ts`.
  */
@@ -28,11 +28,18 @@ export function CallOrchestrator() {
     toggleMute,
   } = useCallStore();
 
+  /* ---------------------------------- Utils --------------------------------- */
+  const showIncomingCall = status === "ringing" && Boolean(caller);
+  const showCallOverlay =
+    status === "calling" ||
+    status === "connecting" ||
+    status === "connected" ||
+    status === "ended";
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <>
-      {/* Incoming call modal (receiver side) */}
-      {status === "ringing" && caller && (
+      {showIncomingCall && caller && (
         <IncomingCallModal
           caller={caller}
           onAccept={answerCall}
@@ -40,11 +47,7 @@ export function CallOrchestrator() {
         />
       )}
 
-      {/* In-call / calling / connecting / ended overlay (both sides) */}
-      {(status === "calling" ||
-        status === "connecting" ||
-        status === "connected" ||
-        status === "ended") && (
+      {showCallOverlay && (
         <CallOverlay
           status={status}
           caller={caller}

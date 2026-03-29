@@ -3,32 +3,24 @@
 import { Pause, Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
 function formatTime(seconds: number): string {
-  const m = Math.floor(seconds / 60);
-  const s = Math.floor(seconds % 60);
-  return `${m}:${s.toString().padStart(2, "0")}`;
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+  return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
 }
 
-// Default waveform when no amplitude data is available (flat mid-level bars)
 const DEFAULT_AMPLITUDE = Array.from(
   { length: 30 },
-  (_, i) => 0.2 + 0.4 * Math.sin((i / 30) * Math.PI),
+  (_, index) => 0.2 + 0.4 * Math.sin((index / 30) * Math.PI),
 );
 
-// ── Props ──────────────────────────────────────────────────────────────────────
 interface AudioPlayerProps {
-  /** Full URL to the audio file. */
   url: string;
-  /** Duration in seconds (may be approximate). */
   duration?: number;
-  /** 30-point normalised waveform amplitude array (values 0–1). */
   amplitude?: number[];
-  /** True when the player is inside an outgoing (isMe) message bubble. */
   isMe?: boolean;
 }
 
-// ── Component ──────────────────────────────────────────────────────────────────
 /**
  * Compact audio message player with waveform visualisation.
  *
@@ -36,18 +28,16 @@ interface AudioPlayerProps {
  *   [▶/❚❚]  ████░░░░░░░░░░░░░░░░░  0:23
  *
  * The waveform is rendered as 30 CSS div bars whose heights come from the
- * `amplitude` array.  The playback progress is shown by colouring the bars
+ * `amplitude` array. The playback progress is shown by colouring the bars
  * left of the current position more prominently.
  *
- * A hidden native <audio> element handles actual playback — this lets us keep
- * full browser codec compatibility without pulling in a heavy library.
+ * A hidden native <audio> element handles actual playback without adding a
+ * heavier media-player dependency.
  */
-export function AudioPlayer({
-  url,
-  duration,
-  amplitude,
-  isMe,
-}: AudioPlayerProps) {
+export function AudioPlayer(props: AudioPlayerProps) {
+  /* --------------------------------- Props --------------------------------- */
+  const { url, duration, amplitude, isMe } = props;
+
   /* -------------------------------- All States ------------------------------ */
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -57,93 +47,88 @@ export function AudioPlayer({
   /* ---------------------------------- Utils --------------------------------- */
   const bars =
     amplitude && amplitude.length === 30 ? amplitude : DEFAULT_AMPLITUDE;
+  const playedColor = isMe ? "bg-primary-foreground" : "bg-primary";
+  const unplayedColor = isMe ? "bg-primary-foreground/30" : "bg-primary/30";
+  const timeColor = isMe
+    ? "text-primary-foreground/70"
+    : "text-muted-foreground";
+  const buttonClass = isMe
+    ? "text-primary-foreground hover:bg-primary-foreground/10"
+    : "text-primary hover:bg-primary/10";
+  const progress = audioDuration > 0 ? currentTime / audioDuration : 0;
+  const displayTime =
+    isPlaying || currentTime > 0 ? currentTime : audioDuration;
 
-  // ── Sync duration from <audio> metadata once it loads ────────────────────
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    const onLoaded = () => {
+    const handleLoadedMetadata = () => {
       if (isFinite(audio.duration)) setAudioDuration(audio.duration);
     };
-    const onTimeUpdate = () => setCurrentTime(audio.currentTime);
-    const onEnded = () => {
+    const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
+    const handleEnded = () => {
       setIsPlaying(false);
       setCurrentTime(0);
-      if (audio) audio.currentTime = 0;
+      audio.currentTime = 0;
     };
 
-    audio.addEventListener("loadedmetadata", onLoaded);
-    audio.addEventListener("timeupdate", onTimeUpdate);
-    audio.addEventListener("ended", onEnded);
+    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+    audio.addEventListener("timeupdate", handleTimeUpdate);
+    audio.addEventListener("ended", handleEnded);
+
     return () => {
-      audio.removeEventListener("loadedmetadata", onLoaded);
-      audio.removeEventListener("timeupdate", onTimeUpdate);
-      audio.removeEventListener("ended", onEnded);
+      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      audio.removeEventListener("timeupdate", handleTimeUpdate);
+      audio.removeEventListener("ended", handleEnded);
     };
   }, []);
 
-  // If the parent provides a duration (e.g., from recorder metadata),
-  // prefer it over 0 so the UI doesn't show 0:00 while metadata loads.
   useEffect(() => {
     if (typeof duration === "number" && duration > 0) {
       setAudioDuration(duration);
     }
   }, [duration]);
 
-  // ── Toggle play/pause ─────────────────────────────────────────────────────
   /* --------------------------------- Methods --------------------------------- */
-  // ── Toggle Play ─────────────────────────────────────────
-  const togglePlay = () => {
+  // ── Handle Playback Toggle ─────────────────────────────────────────
+  const handlePlaybackToggle = () => {
     const audio = audioRef.current;
     if (!audio) return;
+
     if (isPlaying) {
       audio.pause();
       setIsPlaying(false);
-    } else {
-      audio.play().catch(() => {});
-      setIsPlaying(true);
+      return;
     }
+
+    audio.play().catch(() => {});
+    setIsPlaying(true);
   };
 
-  // ── Waveform seek on click ────────────────────────────────────────────────
-  const handleWaveformClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  // ── Handle Waveform Seek ─────────────────────────────────────────
+  const handleWaveformClick = (event: React.MouseEvent<HTMLDivElement>) => {
     const audio = audioRef.current;
     if (!audio || !audioDuration) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const ratio = (e.clientX - rect.left) / rect.width;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const ratio = (event.clientX - rect.left) / rect.width;
     const seekTo = ratio * audioDuration;
+
     audio.currentTime = seekTo;
     setCurrentTime(seekTo);
   };
 
-  // ── Colour classes based on isMe ──────────────────────────────────────────
-  /* ---------------------------------- Utils --------------------------------- */
-  const playedColor = isMe ? "bg-primary-foreground" : "bg-primary";
-  const unplayedColor = isMe ? "bg-primary-foreground/30" : "bg-primary/30";
-  const timeColor = isMe
-    ? "text-primary-foreground/70"
-    : "text-muted-foreground";
-  const btnClass = isMe
-    ? "text-primary-foreground hover:bg-primary-foreground/10"
-    : "text-primary hover:bg-primary/10";
-
-  const progress = audioDuration > 0 ? currentTime / audioDuration : 0;
-  const displayTime =
-    isPlaying || currentTime > 0 ? currentTime : audioDuration;
-
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex items-center gap-2 mt-1 min-w-[150px] sm:min-w-[180px] max-w-xs">
-      {/* Hidden native audio element */}
       <audio ref={audioRef} src={url} preload="metadata" />
 
-      {/* Play / Pause button */}
       <button
         type="button"
-        onClick={togglePlay}
-        className={`shrink-0 h-8 w-8 flex items-center justify-center rounded-full transition-colors ${btnClass}`}
+        onClick={handlePlaybackToggle}
+        className={`shrink-0 h-8 w-8 flex items-center justify-center rounded-full transition-colors ${buttonClass}`}
         aria-label={isPlaying ? "Pause" : "Play"}
       >
         {isPlaying ? (
@@ -153,7 +138,6 @@ export function AudioPlayer({
         )}
       </button>
 
-      {/* Waveform bars */}
       <div
         className="flex-1 flex items-center gap-[2px] cursor-pointer h-8 py-1"
         onClick={handleWaveformClick}
@@ -163,19 +147,20 @@ export function AudioPlayer({
         aria-valuemin={0}
         aria-valuemax={100}
       >
-        {bars.map((amp, i) => {
-          const isPlayed = i / bars.length < progress;
+        {bars.map((amplitudeValue, index) => {
+          const isPlayed = index / bars.length < progress;
           return (
             <div
-              key={i}
-              style={{ height: `${Math.max(3, amp * 24)}px` }}
-              className={`flex-1 rounded-full transition-colors ${isPlayed ? playedColor : unplayedColor}`}
+              key={index}
+              style={{ height: `${Math.max(3, amplitudeValue * 24)}px` }}
+              className={`flex-1 rounded-full transition-colors ${
+                isPlayed ? playedColor : unplayedColor
+              }`}
             />
           );
         })}
       </div>
 
-      {/* Current time / total duration */}
       <span
         className={`shrink-0 text-[11px] tabular-nums font-mono ${timeColor}`}
       >

@@ -1,10 +1,3 @@
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ReactionPicker } from "../message-utils/reaction-picker";
 import { useChatStore } from "@/stores/features/chat/chat.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useMemo, useRef, useState } from "react";
@@ -19,14 +12,13 @@ import {
   Download,
   ExternalLink,
   FileText,
-  Pencil,
   Phone,
-  Reply,
-  Trash2,
   X,
 } from "lucide-react";
 import { AudioPlayer } from "./audio-player";
 import { Button } from "@/components/ui/button";
+import { MessageBubbleActions } from "./message-actions";
+import { MessageReactionSummary } from "./reaction-summary";
 import { Textarea } from "@/components/ui/textarea";
 import { useCallStore } from "@/stores/features/call/call.store";
 import { normalizeMediaUrl } from "@/utils/functions/normalize-media-url";
@@ -250,11 +242,24 @@ export default function MessageBubble(props: IMessageBubbleProps) {
     return grouped;
   }, [message.reactions]);
 
+  const reactionEntries = Object.entries(message.reactions || {});
   const emojiList = Object.keys(reactionsByEmoji);
-  const totalReactionCount = Object.keys(message.reactions || {}).length;
+  const totalReactionCount = reactionEntries.length;
+  const isMyMessage = Boolean(message.isMe);
+  const showReactionBadge = totalReactionCount > 0 && !message.isDeleted;
+  const canEditMessage =
+    isMyMessage &&
+    Boolean(onEdit) &&
+    !message.attachment &&
+    message.messageType !== "call";
+  const canShowActionButtons = !message.isDeleted && !isEditing;
+  const canReply = Boolean(onReply);
+  const canDelete = isMyMessage;
+  const currentUserAvatar =
+    currentUser?.employee?.avatar || currentUser?.company?.avatar;
 
   /* --------------------------------- Methods --------------------------------- */
-  // ── Start Editing ─────────────────────────────────────────
+  // ── Handle Inline Editing ─────────────────────────────────────────
   const startEditing = () => {
     setEditValue(message.content);
     setIsEditing(true);
@@ -271,6 +276,12 @@ export default function MessageBubble(props: IMessageBubbleProps) {
     setIsEditing(false);
   };
 
+  // ── Handle Delivery Details ─────────────────────────────────────────
+  const toggleDeliveryTime = () => {
+    setShowDeliveryTime((previousValue) => !previousValue);
+  };
+
+  // ── Handle Call Actions ─────────────────────────────────────────
   const handleCallAgain = () => {
     initiateCall({
       userId: activeChat.id,
@@ -279,7 +290,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
     });
   };
 
-  // ── Reaction helpers ──────────────────────────────────────────────────────
+  // ── Handle Message Reactions ─────────────────────────────────────────
   const handleReact = (emoji: string | null) => {
     reactToMessage(message.id, activeChat.id, emoji);
   };
@@ -289,6 +300,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
     return activeChat.name;
   };
 
+  // ── Handle Message Actions ─────────────────────────────────────────
   const handleDelete = () => deleteMessage(message.id, activeChat.id);
   const handleReply = () => onReply?.(message);
 
@@ -333,10 +345,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
         }`}
       >
         {/* ── Bubble ────────────────────────────────────────────────────── */}
-        <div
-          className="relative"
-          onClick={() => setShowDeliveryTime(!showDeliveryTime)}
-        >
+        <div className="relative" onClick={toggleDeliveryTime}>
           <div
             className={`rounded-2xl text-sm transition-all ${
               message.isMe
@@ -456,184 +465,33 @@ export default function MessageBubble(props: IMessageBubbleProps) {
           </div>
 
           {/* ── Reaction display badge ──────────────────────────────────── */}
-          {totalReactionCount > 0 && !message.isDeleted && (
-            <Popover>
-              <PopoverTrigger asChild>
-                <div
-                  className={`absolute -bottom-2 flex gap-1 bg-background/80 backdrop-blur-sm border shadow-sm rounded-full px-1.5 py-0.5 z-10 cursor-pointer hover:bg-muted transition-colors ${
-                    message.isMe ? "right-0" : "left-0"
-                  }`}
-                >
-                  {Object.entries(reactionsByEmoji).map(([emoji, userIds]) => (
-                    <div key={emoji} className="flex items-center gap-0.5">
-                      <span className="text-xs leading-none">{emoji}</span>
-                      {userIds.length > 1 && (
-                        <span className="text-[10px] text-muted-foreground font-medium">
-                          {userIds.length}
-                        </span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </PopoverTrigger>
-              <PopoverContent className="w-64 p-0 overflow-hidden" side="top">
-                <Tabs defaultValue="all" className="w-full">
-                  <TabsList className="w-full justify-start h-10 bg-muted/50 rounded-none border-b px-2 gap-2 overflow-x-auto no-scrollbar">
-                    <TabsTrigger
-                      value="all"
-                      className="text-xs h-7 px-2 data-[state=active]:bg-background"
-                    >
-                      All {totalReactionCount}
-                    </TabsTrigger>
-                    {emojiList.map((emoji) => (
-                      <TabsTrigger
-                        key={emoji}
-                        value={emoji}
-                        className="text-xs h-7 px-2 data-[state=active]:bg-background"
-                      >
-                        {emoji} {reactionsByEmoji[emoji].length}
-                      </TabsTrigger>
-                    ))}
-                  </TabsList>
-                  <div className="max-h-48 overflow-y-auto p-2">
-                    <TabsContent value="all" className="mt-0 outline-none">
-                      <div className="space-y-2">
-                        {Object.entries(message.reactions || {}).map(
-                          ([userId, emoji]) => (
-                            <div
-                              key={userId}
-                              className="flex items-center justify-between"
-                            >
-                              <div className="flex items-center gap-2">
-                                <Avatar className="h-6 w-6">
-                                  {userId === currentUser?.id ? (
-                                    <>
-                                      <AvatarImage
-                                        src={
-                                          currentUser?.employee?.avatar ||
-                                          currentUser?.company?.avatar
-                                        }
-                                      />
-                                      <AvatarFallback className="text-[10px]">
-                                        ME
-                                      </AvatarFallback>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <AvatarImage src={activeChat.avatar} />
-                                      <AvatarFallback className="text-[10px]">
-                                        {activeChat.name[0]}
-                                      </AvatarFallback>
-                                    </>
-                                  )}
-                                </Avatar>
-                                <span className="text-sm font-medium">
-                                  {getUserName(userId)}
-                                </span>
-                              </div>
-                              <span className="text-lg">{emoji}</span>
-                            </div>
-                          ),
-                        )}
-                      </div>
-                    </TabsContent>
-                    {emojiList.map((emoji) => (
-                      <TabsContent
-                        key={emoji}
-                        value={emoji}
-                        className="mt-0 outline-none"
-                      >
-                        <div className="space-y-2">
-                          {reactionsByEmoji[emoji].map((userId) => (
-                            <div
-                              key={userId}
-                              className="flex items-center gap-2"
-                            >
-                              <Avatar className="h-6 w-6">
-                                {userId === currentUser?.id ? (
-                                  <>
-                                    <AvatarImage
-                                      src={
-                                        currentUser?.employee?.avatar ||
-                                        currentUser?.company?.avatar
-                                      }
-                                    />
-                                    <AvatarFallback className="text-[10px]">
-                                      ME
-                                    </AvatarFallback>
-                                  </>
-                                ) : (
-                                  <>
-                                    <AvatarImage src={activeChat.avatar} />
-                                    <AvatarFallback className="text-[10px]">
-                                      {activeChat.name[0]}
-                                    </AvatarFallback>
-                                  </>
-                                )}
-                              </Avatar>
-                              <span className="text-sm font-medium">
-                                {getUserName(userId)}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </TabsContent>
-                    ))}
-                  </div>
-                </Tabs>
-              </PopoverContent>
-            </Popover>
-          )}
+          <MessageReactionSummary
+            isVisible={showReactionBadge}
+            isMe={isMyMessage}
+            totalReactionCount={totalReactionCount}
+            emojiList={emojiList}
+            reactionsByEmoji={reactionsByEmoji}
+            reactionEntries={reactionEntries}
+            currentUserId={currentUser?.id}
+            currentUserAvatar={currentUserAvatar}
+            activeChatAvatar={activeChat.avatar}
+            activeChatName={activeChat.name}
+            getUserName={getUserName}
+          />
         </div>
 
         {/* ── Action buttons (hover reveal) ───────────────────────────────── */}
-        {!message.isDeleted && !isEditing && (
-          <div className="opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity flex items-center gap-0.5">
-            {onReply && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground"
-                onClick={handleReply}
-                aria-label="Reply to message"
-              >
-                <Reply className="h-3.5 w-3.5" />
-              </Button>
-            )}
-
-            <ReactionPicker
-              onReact={handleReact}
-              currentReaction={myReaction}
-            />
-
-            {message.isMe &&
-              onEdit &&
-              !message.attachment &&
-              message.messageType !== "call" && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground"
-                  onClick={startEditing}
-                  aria-label="Edit message"
-                >
-                  <Pencil className="h-3.5 w-3.5" />
-                </Button>
-              )}
-
-            {message.isMe && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7 rounded-full text-muted-foreground hover:text-destructive"
-                onClick={handleDelete}
-                aria-label="Delete message"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </Button>
-            )}
-          </div>
-        )}
+        <MessageBubbleActions
+          isVisible={canShowActionButtons}
+          canReply={canReply}
+          canEdit={Boolean(canEditMessage)}
+          canDelete={Boolean(canDelete)}
+          currentReaction={myReaction}
+          onReply={handleReply}
+          onReact={handleReact}
+          onEdit={startEditing}
+          onDelete={handleDelete}
+        />
       </div>
 
       {/* ── Timestamp + delivery state (click to show) ────────────────────── */}
@@ -641,7 +499,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
         <div
           className={`flex items-center gap-1 text-[10px] text-muted-foreground mt-1 ${
             message.isMe ? "justify-end" : ""
-          } ${totalReactionCount > 0 ? "mb-3" : ""}`}
+          } ${showReactionBadge ? "mb-3" : ""}`}
         >
           {formatMessageTime(message.timestamp)}
           {message.isMe && <DeliveryIcon status={message.deliveryStatus} />}

@@ -45,11 +45,12 @@ export default function ChatSidebar(props: IChatSidebarProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   /* ---------------------------------- Utils --------------------------------- */
-  const filteredChats = searchQuery
+  const normalizedSearchQuery = searchQuery.trim().toLowerCase();
+  const filteredChats = normalizedSearchQuery
     ? chats?.filter(
         (chat) =>
-          chat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          chat.preview?.toLowerCase().includes(searchQuery.toLowerCase()),
+          chat.name.toLowerCase().includes(normalizedSearchQuery) ||
+          chat.preview?.toLowerCase().includes(normalizedSearchQuery),
       )
     : chats;
 
@@ -62,6 +63,12 @@ export default function ChatSidebar(props: IChatSidebarProps) {
     !isResizable && !isOpen
       ? { minWidth: "var(--sidebar-closed-width, 4rem)" }
       : undefined;
+
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle Chat Search ─────────────────────────────────────────
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+  };
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -127,7 +134,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
               placeholder="Chats search..."
               className="pl-9 h-10 rounded-full bg-muted/40 border-muted focus-visible:ring-1"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
             />
           </div>
         </div>
@@ -337,7 +344,10 @@ const CollapsedChatList = (props: IChatListProps) => {
               </TooltipTrigger>
               <TooltipContent side="right" className="max-w-[180px]">
                 <TypographyP
-                  className={cn("[&:not(:first-child)]:mt-0", cn("font-medium", isUnread && "font-semibold"))}
+                  className={cn(
+                    "[&:not(:first-child)]:mt-0",
+                    cn("font-medium", isUnread && "font-semibold"),
+                  )}
                 >
                   {chat.name}
                   {chat.isOnline && (

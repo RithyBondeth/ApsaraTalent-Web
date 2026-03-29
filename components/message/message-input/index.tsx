@@ -6,26 +6,19 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  FileText,
-  ImageIcon,
-  LucideSendHorizonal,
-  Mic,
-  Paperclip,
-  SmilePlus,
-  X,
-} from "lucide-react";
+import { LucideSendHorizonal, Mic, Paperclip, SmilePlus } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { IChatInputProps } from "./props";
 import { CHAT_TYPING_DEBOUNCE_MS } from "@/utils/constants/chat.constant";
 import { useVoiceRecorder } from "@/hooks/chat/use-voice-recorder";
+import { MessageAttachmentStrip } from "./attachment-strip";
+import { MessageReplyPreview } from "./reply-preview";
+import { PendingFile } from "./types";
 import { VoiceRecordingUI } from "./voice-recording-ui";
 import { useThemeStore } from "@/stores/themes/theme-store";
 import dynamic from "next/dynamic";
 import { getCookie } from "cookies-next";
 import { IMessage } from "../props";
-import { TypographyP } from "@/components/utils/typography/typography-p";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 // Lazy-load emoji-mart — ~90KB dataset + picker only needed when user opens the emoji popover
 const Picker = dynamic(() => import("@emoji-mart/react"), { ssr: false });
@@ -58,20 +51,30 @@ const ACCEPTED_MIME_TYPES = [
   "text/plain",
 ].join(",");
 
-// ── Per-file state ─────────────────────────────────────────────────────────────
-interface PendingFile {
-  id: string;
-  preview: string | null;
-  status: "uploading" | "ready" | "error";
-  error?: string;
-  uploaded?: {
-    url: string;
-    type: "image" | "document" | "audio";
-    filename: string;
-    duration?: number;
-    amplitude?: number[];
+function resolveReplyPreview(target: IMessage) {
+  if (target.isDeleted) return "This message was deleted";
+
+  const content = target.content?.trim();
+  if (content) return content;
+
+  const type = target.attachmentType;
+  if (type === "audio") return "Audio message";
+  if (type === "image") return "Photo";
+  if (type === "document") return "Attachment";
+  if (target.attachment) return "Attachment";
+
+  return "Message";
+}
+
+function buildReplyTo(target?: IMessage | null): IMessage["replyTo"] | null {
+  if (!target) return null;
+
+  return {
+    id: target.id,
+    content: resolveReplyPreview(target),
+    senderName: target.senderName || (target.isMe ? "You" : ""),
+    isDeleted: target.isDeleted,
   };
-  filename: string;
 }
 
 /**
@@ -95,17 +98,8 @@ export default function ChatInput(props: IChatInputProps) {
     onCancelReply,
   } = props;
 
-  /* -------------------------------- All States ------------------------------ */
-  const [newMessage, setNewMessage] = useState("");
-  const [isSending, setIsSending] = useState(false);
-  const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
-  const [isEmojiOpen, setEmojiOpen] = useState(false);
   /* ----------------------------- API Integration ---------------------------- */
   const { theme, systemTheme } = useThemeStore();
-  /* ---------------------------------- Utils --------------------------------- */
-  const resolvedTheme = theme === "system" ? systemTheme : theme;
-
-  // ── Voice recorder ─────────────────────────────────────────────────────────
   const {
     recordingState,
     durationSeconds,
@@ -113,38 +107,37 @@ export default function ChatInput(props: IChatInputProps) {
     stopRecording,
     cancelRecording,
   } = useVoiceRecorder();
-  const isRecording = recordingState === "recording";
-  const isVoiceUploading = recordingState === "uploading";
 
   /* -------------------------------- All States ------------------------------ */
+  const [newMessage, setNewMessage] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
+  const [isEmojiOpen, setEmojiOpen] = useState(false);
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   /* ---------------------------------- Utils --------------------------------- */
-  const resolveReplyPreview = (target: IMessage) => {
-    if (target.isDeleted) return "This message was deleted";
-    const content = target.content?.trim();
-    if (content) return content;
-    const type = target.attachmentType;
-    if (type === "audio") return "Audio message";
-    if (type === "image") return "Photo";
-    if (type === "document") return "Attachment";
-    if (target.attachment) return "Attachment";
-    return "Message";
-  };
-
-  const buildReplyTo = (
-    target?: IMessage | null,
-  ): IMessage["replyTo"] | null => {
-    if (!target) return null;
-    return {
-      id: target.id,
-      content: resolveReplyPreview(target),
-      senderName: target.senderName || (target.isMe ? "You" : ""),
-      isDeleted: target.isDeleted,
-    };
-  };
+  const resolvedTheme = theme === "system" ? systemTheme : theme;
+  const isRecording = recordingState === "recording";
+  const isVoiceUploading = recordingState === "uploading";
+  const replyPreviewText = replyTarget
+    ? resolveReplyPreview(replyTarget)
+    : null;
+  const isUploadingAny = pendingFiles.some(
+    (file) => file.status === "uploading",
+  );
+  const readyCount = pendingFiles.filter(
+    (file) => file.status === "ready",
+  ).length;
+  const errorCount = pendingFiles.filter(
+    (file) => file.status === "error",
+  ).length;
+  const hasAnyFiles = pendingFiles.length > 0;
+  const atFileLimit = pendingFiles.length >= MAX_FILES;
+  const inputDisabled = isSending || isDisabled;
+  const sendDisabled =
+    inputDisabled || (!newMessage.trim() && readyCount === 0) || isUploadingAny;
 
   // Stop typing indicator on unmount
   /* --------------------------------- Effects --------------------------------- */
@@ -183,7 +176,7 @@ export default function ChatInput(props: IChatInputProps) {
   }, [replyTarget]);
 
   /* --------------------------------- Methods --------------------------------- */
-  // ── Handle Input Change ─────────────────────────────────────────
+  // ── Handle Text Input ─────────────────────────────────────────
   const handleInputChange = (value: string) => {
     setNewMessage(value);
     if (!onTyping) return;
@@ -200,6 +193,7 @@ export default function ChatInput(props: IChatInputProps) {
     }
   };
 
+  // ── Handle Emoji Insert ─────────────────────────────────────────
   const insertEmoji = (emoji: string) => {
     if (inputDisabled || !emoji) return;
     const el = textareaRef.current;
@@ -218,7 +212,7 @@ export default function ChatInput(props: IChatInputProps) {
     });
   };
 
-  // ── File selection & upload ───────────────────────────────────────────────
+  // ── Handle File Upload ─────────────────────────────────────────
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = Array.from(e.target.files ?? []);
     e.target.value = "";
@@ -305,6 +299,7 @@ export default function ChatInput(props: IChatInputProps) {
     );
   };
 
+  // ── Handle Attachment Cleanup ─────────────────────────────────────────
   const removeFile = (id: string) => {
     setPendingFiles((prev) => {
       const target = prev.find((f) => f.id === id);
@@ -323,7 +318,34 @@ export default function ChatInput(props: IChatInputProps) {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  // ── Send ──────────────────────────────────────────────────────────────────
+  // ── Handle File Picker ─────────────────────────────────────────
+  const openFilePicker = () => {
+    fileInputRef.current?.click();
+  };
+
+  // ── Handle Voice Recording Send ─────────────────────────────────────────
+  const handleVoiceRecordingStop = () =>
+    stopRecording((attachment) => {
+      const replyTo = buildReplyTo(replyTarget);
+      const sent = onSendMessage("", replyTo, [attachment]);
+      if (sent) {
+        if (replyTarget) onCancelReply?.();
+        return;
+      }
+
+      setPendingFiles((prev) => [
+        ...prev,
+        {
+          id: Math.random().toString(36).slice(2),
+          preview: null,
+          status: "ready",
+          uploaded: attachment,
+          filename: attachment.filename,
+        },
+      ]);
+    });
+
+  // ── Handle Message Send ─────────────────────────────────────────
   const handleSend = async () => {
     const hasText = newMessage.trim() !== "";
     const readyFiles = pendingFiles.filter((f) => f.status === "ready");
@@ -361,46 +383,16 @@ export default function ChatInput(props: IChatInputProps) {
     }
   };
 
-  // ── Derived flags ─────────────────────────────────────────────────────────
-  /* ---------------------------------- Utils --------------------------------- */
-  const isUploadingAny = pendingFiles.some((f) => f.status === "uploading");
-  const readyCount = pendingFiles.filter((f) => f.status === "ready").length;
-  const errorCount = pendingFiles.filter((f) => f.status === "error").length;
-  const hasAnyFiles = pendingFiles.length > 0;
-  const atFileLimit = pendingFiles.length >= MAX_FILES;
-  const inputDisabled = isSending || isDisabled;
-  const sendDisabled =
-    inputDisabled || (!newMessage.trim() && readyCount === 0) || isUploadingAny;
-
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="px-2.5 py-2 md:px-4 md:py-3 bg-background border-t shrink-0 [padding-bottom:calc(env(safe-area-inset-bottom)+0.5rem)] md:[padding-bottom:0.75rem]">
       {/* ── Reply preview bar ───────────────────────────────────────────── */}
       {replyTarget && (
-        <div className="mb-2 flex items-start gap-2 px-1">
-          <div className="flex-1 border-l-2 border-primary pl-2 pr-1 py-0.5 rounded-sm bg-muted/40">
-            <TypographyP className="[&:not(:first-child)]:mt-0 text-xs font-semibold text-primary leading-tight">
-              {replyTarget.isMe ? "You" : replyTarget.senderName || "Unknown"}
-            </TypographyP>
-            <TypographyMuted className="text-xs text-muted-foreground leading-snug truncate">
-              {replyTarget.isDeleted
-                ? "🚫 This message was deleted"
-                : (() => {
-                    const text = resolveReplyPreview(replyTarget);
-                    return text.slice(0, 100) + (text.length > 100 ? "…" : "");
-                  })()}
-            </TypographyMuted>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6 shrink-0 text-muted-foreground hover:text-foreground"
-            onClick={onCancelReply}
-            aria-label="Cancel reply"
-          >
-            <X className="h-3.5 w-3.5" />
-          </Button>
-        </div>
+        <MessageReplyPreview
+          replyTarget={replyTarget}
+          replyPreviewText={replyPreviewText ?? ""}
+          onCancelReply={onCancelReply}
+        />
       )}
 
       {/* ── Main input container ────────────────────────────────────────── */}
@@ -420,114 +412,17 @@ export default function ChatInput(props: IChatInputProps) {
         <div className="flex-1 rounded-2xl border border-border bg-muted/30 focus-within:border-primary/40 focus-within:bg-background transition-colors overflow-hidden">
           {/* Attachment thumbnail strip (inside the pill, above the textarea) */}
           {hasAnyFiles && (
-            <div className="px-3 pt-2.5 pb-1">
-              <div className="flex items-start gap-2 overflow-x-auto no-scrollbar pb-0.5">
-                {pendingFiles.map((file) => (
-                  <div
-                    key={file.id}
-                    className="relative shrink-0 w-12 sm:w-14 flex flex-col items-center gap-0.5"
-                  >
-                    {/* Thumbnail */}
-                    <div
-                      className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden bg-muted border flex items-center justify-center ${
-                        file.status === "error"
-                          ? "border-destructive/50"
-                          : "border-border/50"
-                      }`}
-                    >
-                      {file.status === "uploading" && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm z-10">
-                          <div className="h-5 w-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-                        </div>
-                      )}
-                      {file.status === "error" && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-destructive/15 z-10">
-                          <X className="h-5 w-5 text-destructive" />
-                        </div>
-                      )}
-                      {file.preview ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={file.preview}
-                          alt={file.filename}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="flex items-center justify-center p-2">
-                          {file.filename.match(/\.(jpe?g|png|gif|webp)$/i) ? (
-                            <ImageIcon className="h-6 w-6 text-muted-foreground" />
-                          ) : (
-                            <FileText className="h-6 w-6 text-muted-foreground" />
-                          )}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Filename label */}
-                    <span
-                      className={`text-[9px] truncate w-full text-center leading-tight ${
-                        file.status === "error"
-                          ? "text-destructive"
-                          : "text-muted-foreground"
-                      }`}
-                      title={
-                        file.status === "error" ? file.error : file.filename
-                      }
-                    >
-                      {file.status === "error" ? "Failed" : file.filename}
-                    </span>
-
-                    {/* Remove button */}
-                    <button
-                      type="button"
-                      onClick={() => removeFile(file.id)}
-                      className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-background border border-border shadow-sm flex items-center justify-center hover:bg-muted transition-colors z-20"
-                      aria-label={`Remove ${file.filename}`}
-                    >
-                      <X className="h-2 w-2 text-muted-foreground" />
-                    </button>
-                  </div>
-                ))}
-
-                {/* Add more tile */}
-                {!atFileLimit && (
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={inputDisabled}
-                    className="shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-lg border border-dashed border-border/70 bg-muted/30 flex flex-col items-center justify-center gap-0.5 hover:bg-muted/60 hover:border-border transition-colors disabled:opacity-40 disabled:pointer-events-none"
-                    aria-label="Add more files"
-                  >
-                    <Paperclip className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-[9px] text-muted-foreground leading-none">
-                      Add
-                    </span>
-                  </button>
-                )}
-              </div>
-
-              {/* Upload status bar */}
-              <div className="flex items-center justify-between mt-1">
-                <span className="text-[10px] text-muted-foreground">
-                  {isUploadingAny
-                    ? "Uploading…"
-                    : [
-                        readyCount > 0 &&
-                          `${readyCount} file${readyCount !== 1 ? "s" : ""} ready`,
-                        errorCount > 0 && `${errorCount} failed`,
-                      ]
-                        .filter(Boolean)
-                        .join(" · ")}
-                </span>
-                <button
-                  type="button"
-                  onClick={clearAllAttachments}
-                  className="text-[10px] text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Clear all
-                </button>
-              </div>
-            </div>
+            <MessageAttachmentStrip
+              pendingFiles={pendingFiles}
+              atFileLimit={atFileLimit}
+              inputDisabled={inputDisabled}
+              isUploadingAny={isUploadingAny}
+              readyCount={readyCount}
+              errorCount={errorCount}
+              onAddMoreFiles={openFilePicker}
+              onClearAll={clearAllAttachments}
+              onRemoveFile={removeFile}
+            />
           )}
 
           {/* ── Input row: recording UI OR textarea + icons ──────────────── */}
@@ -536,29 +431,7 @@ export default function ChatInput(props: IChatInputProps) {
               durationSeconds={durationSeconds}
               isUploading={isVoiceUploading}
               onCancel={cancelRecording}
-              onStop={() =>
-                stopRecording((attachment) => {
-                  const replyTo = buildReplyTo(replyTarget);
-                  const sent = onSendMessage("", replyTo, [attachment]);
-                  if (sent) {
-                    if (replyTarget) onCancelReply?.();
-                    return;
-                  }
-
-                  // If real-time send failed (e.g., temporary socket disconnect),
-                  // keep the uploaded voice file as a ready attachment so user can retry.
-                  setPendingFiles((prev) => [
-                    ...prev,
-                    {
-                      id: Math.random().toString(36).slice(2),
-                      preview: null,
-                      status: "ready",
-                      uploaded: attachment,
-                      filename: attachment.filename,
-                    },
-                  ]);
-                })
-              }
+              onStop={handleVoiceRecordingStop}
             />
           ) : (
             <div className="flex items-end px-2.5 sm:px-3 py-1.5 sm:py-2 gap-0.5 sm:gap-1">
@@ -617,7 +490,7 @@ export default function ChatInput(props: IChatInputProps) {
               <button
                 type="button"
                 disabled={inputDisabled || atFileLimit}
-                onClick={() => fileInputRef.current?.click()}
+                onClick={openFilePicker}
                 className="shrink-0 h-8 w-8 flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors disabled:opacity-40 disabled:pointer-events-none"
                 aria-label={
                   atFileLimit
