@@ -67,10 +67,10 @@ import {
   platformConstant,
 } from "@/utils/constants/ui.constant";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
-import { capitalizeWords } from "@/utils/functions/capitalize-words";
+import { capitalizeWords } from "@/utils/functions/text";
 import { isUuid } from "@/utils/extensions/check-uuid";
-import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
-import { parseMaybeDate } from "@/utils/functions/parse-maybe-date";
+import { extractCleanFilename } from "@/utils/functions/file";
+import { parseMaybeDate } from "@/utils/functions/date";
 import {
   ICareerScopes,
   ISkill,
@@ -112,7 +112,7 @@ import {
   addNewEducationSvgImage,
   addNewExperienceSvgImage,
 } from "@/utils/constants/asset.constant";
-import { getEmployeeProfileCompletion } from "@/utils/functions/profile-completion";
+import { getEmployeeProfileCompletion } from "@/utils/functions/profile";
 import { SectionTitle } from "@/components/utils/layout/section-title";
 import ProfileCompletionCard from "@/components/profile/profile-completion-card";
 import { EmployeeProfilePageLoadingSkeleton } from "@/components/profile/skeleton";

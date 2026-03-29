@@ -42,7 +42,7 @@ import {
   TBasicSignupCompanySchema,
   TBasicSignupEmployeeSchema,
 } from "./validation";
-import { formatDateForField } from "@/utils/functions/datebformatter-for-field";
+import { formatDateForField } from "@/utils/functions/date";
 
 export default function SignupPage() {
   /* --------------------------------- Utils --------------------------------- */

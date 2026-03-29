@@ -1,4 +1,4 @@
-export function availabilityWordsFormat(value: string): string {
+export function formatAvailabilityWords(value: string): string {
   if (!value) return "";
 
   return value
@@ -6,3 +6,5 @@ export function availabilityWordsFormat(value: string): string {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
 }
+
+export const availabilityWordsFormat = formatAvailabilityWords;

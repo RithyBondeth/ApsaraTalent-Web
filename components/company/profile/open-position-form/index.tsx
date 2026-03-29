@@ -12,7 +12,7 @@ import LabelInput from "@/components/utils/forms/label-input";
 import Tag from "@/components/utils/data-display/tag";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { availabilityConstant } from "@/utils/constants/ui.constant";
-import { getRandomBadgeColor } from "@/utils/functions/get-random-badge-color";
+import { getRandomBadgeColor } from "@/utils/functions/ui";
 import { Popover } from "@radix-ui/react-popover";
 import { LucidePlus, LucideTrash2, LucideXCircle } from "lucide-react";
 import { useState } from "react";

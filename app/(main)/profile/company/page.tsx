@@ -72,9 +72,9 @@ import {
   platformConstant,
 } from "@/utils/constants/ui.constant";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
-import { capitalizeWords } from "@/utils/functions/capitalize-words";
+import { capitalizeWords } from "@/utils/functions/text";
 import { isUuid } from "@/utils/extensions/check-uuid";
-import { parseMaybeDate } from "@/utils/functions/parse-maybe-date";
+import { parseMaybeDate } from "@/utils/functions/date";
 import {
   IBenefits,
   IValues,
@@ -104,7 +104,7 @@ import React, { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { companyFormSchema, TCompanyProfileForm } from "./validation";
 import { emptySvgImage } from "@/utils/constants/asset.constant";
-import { getCompanyProfileCompletion } from "@/utils/functions/profile-completion";
+import { getCompanyProfileCompletion } from "@/utils/functions/profile";
 import { CompanyProfilePageLoadingSkeleton } from "@/components/profile/skeleton";
 import { SectionTitle } from "@/components/utils/layout/section-title";
 import ProfileCompletionCard from "@/components/profile/profile-completion-card";

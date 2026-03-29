@@ -1,4 +1,4 @@
-import { normalizeMediaUrl } from "@/utils/functions/normalize-media-url";
+import { normalizeMediaUrl } from "@/utils/functions/media";
 import { AudioPlayer } from "../audio-player";
 import { Download, ExternalLink, FileText } from "lucide-react";
 import { TypographyP } from "@/components/utils/typography/typography-p";

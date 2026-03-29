@@ -1,4 +1,4 @@
-export function dateFormatterv2(dateString: string): string {
+export function formatDisplayDate(dateString: string): string {
   if (!dateString || dateString.trim() === "") {
     return "Not specified";
   }
@@ -75,3 +75,5 @@ export function dateFormatterv2(dateString: string): string {
   // Format the final string
   return `${monthName} ${dayWithSuffix}, ${date.getFullYear()}`;
 }
+
+export const dateFormatterv2 = formatDisplayDate;

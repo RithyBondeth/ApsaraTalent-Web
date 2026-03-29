@@ -1,7 +1,4 @@
-import {
-  getApiOrigin,
-  normalizeMediaUrl,
-} from "@/utils/functions/normalize-media-url";
+import { getApiOrigin, normalizeMediaUrl } from "@/utils/functions/media";
 import { ICallParticipant } from "./types";
 
 export const FALLBACK_ICE_SERVERS: RTCIceServer[] = [

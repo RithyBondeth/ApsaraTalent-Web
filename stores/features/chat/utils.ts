@@ -1,5 +1,4 @@
-import { normalizeMediaUrl } from "@/utils/functions/normalize-media-url";
-import { formatSidebarTime } from "@/utils/date";
+import { normalizeMediaUrl } from "@/utils/functions/media";
 
 // Helper to resolve display name and avatar from user object
 export const resolveProfile = (user: any) => {

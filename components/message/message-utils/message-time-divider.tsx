@@ -1,4 +1,4 @@
-import { getDateDividerLabel } from "../../../utils/date";
+import { getDateDividerLabel } from "@/utils/functions/date";
 
 export default function MessageTimeDivider({
   timestamp,

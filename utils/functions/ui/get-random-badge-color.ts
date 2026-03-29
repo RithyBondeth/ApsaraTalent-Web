@@ -1,4 +1,4 @@
-import { badgeRandomColorsClass } from "../constants/ui.constant";
+import { badgeRandomColorsClass } from "@/utils/constants/ui.constant";
 
 export function getRandomBadgeColor(label: string) {
   const index =

@@ -1,5 +1,5 @@
 import MetaChip from "@/components/utils/data-display/meta-chip";
-import { availabilityWordsFormat } from "@/utils/functions/availability-word-format";
+import { formatAvailabilityWords } from "@/utils/functions/text";
 import {
   LucideBriefcaseBusiness,
   LucideCalendarCheck,
@@ -18,7 +18,7 @@ export default function MatchingEmployeeCard(
   props: IMatchingEmployeeCardProps,
 ) {
   /* ---------------------------------- Utils --------------------------------- */
-  const availLabel = availabilityWordsFormat(props.availability);
+  const availLabel = formatAvailabilityWords(props.availability);
 
   /* -------------------------------- Render UI -------------------------------- */
   return (

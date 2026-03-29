@@ -1,11 +1,8 @@
 import { create } from "zustand";
-import { formatSidebarTime, parseMessageDate } from "@/utils/date";
+import { formatSidebarTime, parseMessageDate } from "@/utils/functions/date";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import axios from "@/lib/axios";
-import {
-  getApiOrigin,
-  normalizeMediaUrl,
-} from "@/utils/functions/normalize-media-url";
+import { getApiOrigin, normalizeMediaUrl } from "@/utils/functions/media";
 import { IMessage, IChatPreview } from "@/components/message/props";
 
 // 1. Utils

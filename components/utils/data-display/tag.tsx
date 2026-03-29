@@ -1,4 +1,4 @@
-import { getRandomBadgeColor } from "@/utils/functions/get-random-badge-color";
+import { getRandomBadgeColor } from "@/utils/functions/ui";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 interface ITagInterface {

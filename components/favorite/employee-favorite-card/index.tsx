@@ -1,5 +1,5 @@
 import MetaChip from "@/components/utils/data-display/meta-chip";
-import { availabilityWordsFormat } from "@/utils/functions/availability-word-format";
+import { formatAvailabilityWords } from "@/utils/functions/text";
 import {
   LucideArrowRight,
   LucideBookmarkX,
@@ -20,7 +20,7 @@ export default function FavoriteEmployeeCard(
 ) {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
-  const availLabel = availabilityWordsFormat(props.availability);
+  const availLabel = formatAvailabilityWords(props.availability);
 
   /* -------------------------------- Render UI -------------------------------- */
   return (

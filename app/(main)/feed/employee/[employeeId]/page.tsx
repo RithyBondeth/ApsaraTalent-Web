@@ -22,8 +22,8 @@ import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/coun
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
-import { dateFormatter } from "@/utils/functions/dateformatter";
-import { extractCleanFilename } from "@/utils/functions/extract-clean-filename";
+import { formatShortDate } from "@/utils/functions/date";
+import { extractCleanFilename } from "@/utils/functions/file";
 import {
   IEducation,
   IExperience,
@@ -442,8 +442,8 @@ export default function EmployeeDetailPage() {
                         <div className="rounded-xl border border-border/60 p-4 hover:border-primary/30 hover:shadow-sm transition-all duration-200">
                           <p className="font-semibold text-sm">{item.title}</p>
                           <p className="text-xs text-muted-foreground mt-0.5">
-                            {dateFormatter(item.startDate)} —{" "}
-                            {dateFormatter(item.endDate)}
+                            {formatShortDate(item.startDate)} —{" "}
+                            {formatShortDate(item.endDate)}
                           </p>
                           {item.description && (
                             <TypographyMuted className="text-sm leading-relaxed mt-2">
@@ -483,7 +483,7 @@ export default function EmployeeDetailPage() {
                       {item.year && (
                         <p className="text-xs text-muted-foreground/70 mt-0.5 flex items-center gap-1">
                           <LucideCalendar className="size-3" />
-                          {dateFormatter(item.year)}
+                          {formatShortDate(item.year)}
                         </p>
                       )}
                     </div>

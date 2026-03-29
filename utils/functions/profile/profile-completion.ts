@@ -3,7 +3,7 @@ import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
 import {
   IFieldCheck,
   IProfileCompletionResult,
-} from "../interfaces/user-interface/profile-completion.interface";
+} from "@/utils/interfaces/user-interface/profile-completion.interface";
 
 function isStringFilled(value: string | null | undefined): boolean {
   return typeof value === "string" && value.trim().length > 0;

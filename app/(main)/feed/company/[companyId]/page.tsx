@@ -19,7 +19,7 @@ import Tag from "@/components/utils/data-display/tag";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
-import { dateFormatterv2 } from "@/utils/functions/dateformatter-v2";
+import { formatDisplayDate } from "@/utils/functions/date";
 import {
   IBenefits,
   IImage,
@@ -423,12 +423,14 @@ export default function CompanyDetailPage() {
                           <span className="flex items-center gap-1">
                             <LucideCalendarDays className="size-3" />
                             Posted{" "}
-                            {dateFormatterv2(item.postedDate?.toString() ?? "")}
+                            {formatDisplayDate(
+                              item.postedDate?.toString() ?? "",
+                            )}
                           </span>
                           <span className="flex items-center gap-1">
                             <LucideCalendarDays className="size-3" />
                             Deadline{" "}
-                            {dateFormatterv2(
+                            {formatDisplayDate(
                               item.deadlineDate?.toString() ?? "",
                             )}
                           </span>

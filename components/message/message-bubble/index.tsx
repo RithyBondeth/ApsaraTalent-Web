@@ -4,7 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { IMessageBubbleProps } from "./props";
-import { formatMessageTime } from "../../../utils/date";
+import { formatMessageTime } from "@/utils/functions/date";
 import { Check, CheckCheck, Clock, Phone, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MessageBubbleActions } from "./message-bubble-action";

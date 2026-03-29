@@ -1,6 +1,6 @@
 import io from "socket.io-client";
 import { SocketInstance } from "./types";
-import { getApiOrigin } from "@/utils/functions/normalize-media-url";
+import { getApiOrigin } from "@/utils/functions/media";
 import { getCookie } from "cookies-next";
 
 // ── Module-level socket singleton ───────────────────────────────────────────

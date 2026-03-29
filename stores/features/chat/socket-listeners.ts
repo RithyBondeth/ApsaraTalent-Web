@@ -1,9 +1,9 @@
 import { ChatState, SocketInstance } from "./types";
 import { IMessage } from "@/components/message/props";
 import { resolveMessageSnippet } from "./utils";
-import { formatSidebarTime, parseMessageDate } from "@/utils/date";
+import { formatSidebarTime, parseMessageDate } from "@/utils/functions/date";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
-import { normalizeMediaUrl } from "@/utils/functions/normalize-media-url";
+import { normalizeMediaUrl } from "@/utils/functions/media";
 
 export const registerSocketListeners = (
   socket: SocketInstance,

@@ -17,7 +17,7 @@ import {
   DialogTitle,
 } from "../../ui/dialog";
 import { ProfileProgressBar } from "../../profile/profile-progress-bar/";
-import { getCompanyProfileCompletion } from "@/utils/functions/profile-completion";
+import { getCompanyProfileCompletion } from "@/utils/functions/profile";
 import { ICompanyDialogProps } from "./props";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";

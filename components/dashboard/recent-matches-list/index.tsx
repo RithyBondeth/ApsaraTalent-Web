@@ -3,7 +3,7 @@ import { Handshake } from "lucide-react";
 import { IRecentMatchesListProps } from "./props";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { timeAgo } from "@/utils/functions/timeago-formatter";
+import { timeAgo } from "@/utils/functions/date";
 
 export function RecentMatchesList({
   matches,

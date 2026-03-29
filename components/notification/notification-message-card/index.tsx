@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { TypographyLead } from "@/components/utils/typography/typography-lead";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { timeAgo } from "@/utils/functions/timeago-formatter";
+import { timeAgo } from "@/utils/functions/date";
 import { LucideMail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { INotificationMessageCardProps } from "./props";

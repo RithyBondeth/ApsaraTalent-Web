@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { normalizeMediaUrl } from "@/utils/functions/normalize-media-url";
+import { normalizeMediaUrl } from "@/utils/functions/media";
 
 // 1. Utils
 import {
