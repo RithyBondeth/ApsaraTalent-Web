@@ -6,62 +6,32 @@ import {
   API_GET_INTERVIEWS_BY_EMPLOYEE_URL,
   API_UPDATE_INTERVIEW_STATUS_URL,
 } from "@/utils/constants/apis/matching_url";
+import {
+  ICreateInterviewPayload,
+  IInterview,
+} from "@/utils/interfaces/interview.interface";
 import { create } from "zustand";
 
-export interface IInterview {
-  id: string;
-  employee: {
-    id: string;
-    firstname: string;
-    lastname: string;
-    username: string;
-    avatar?: string;
-  };
-  company: {
-    id: string;
-    name: string;
-    avatar?: string;
-  };
-  title: string;
-  description?: string;
-  scheduledAt: string;
-  durationMinutes: number;
-  location?: string;
-  meetingLink?: string;
-  status: string;
-  createdBy: string;
-  createdAt: string;
-}
-
-interface CreateInterviewPayload {
-  employeeId: string;
-  companyId: string;
-  title: string;
-  description?: string;
-  scheduledAt: string;
-  durationMinutes?: number;
-  location?: string;
-  meetingLink?: string;
-  createdBy: string;
-}
-
+/* ---------------------------------- States --------------------------------- */
+// ── Interview State ───────────────────────────────────────────────────
 type InterviewStoreState = {
   interviews: IInterview[];
   loading: boolean;
   error: string | null;
   creating: boolean;
-  fetchInterviews: (id: string, role: string) => Promise<void>;
-  createInterview: (data: CreateInterviewPayload) => Promise<void>;
-  updateStatus: (interviewId: string, status: string) => Promise<void>;
+  queryInterviews: (id: string, role: string) => Promise<void>;
+  createInterview: (data: ICreateInterviewPayload) => Promise<void>;
+  updateStatus: (interviewID: string, status: string) => Promise<void>;
 };
 
-export const useInterviewStore = create<InterviewStoreState>((set, get) => ({
+/* ---------------------------------- Store --------------------------------- */
+export const useInterviewStore = create<InterviewStoreState>((set) => ({
   interviews: [],
   loading: false,
   error: null,
   creating: false,
 
-  fetchInterviews: async (id: string, role: string) => {
+  queryInterviews: async (id: string, role: string) => {
     set({ loading: true, error: null });
 
     try {
@@ -86,7 +56,7 @@ export const useInterviewStore = create<InterviewStoreState>((set, get) => ({
     }
   },
 
-  createInterview: async (data: CreateInterviewPayload) => {
+  createInterview: async (data: ICreateInterviewPayload) => {
     set({ creating: true, error: null });
 
     try {
@@ -108,18 +78,18 @@ export const useInterviewStore = create<InterviewStoreState>((set, get) => ({
     }
   },
 
-  updateStatus: async (interviewId: string, status: string) => {
+  updateStatus: async (interviewID: string, status: string) => {
     set({ error: null });
 
     try {
       const response = await axios.patch<IInterview>(
         API_UPDATE_INTERVIEW_STATUS_URL,
-        { interviewId, status },
+        { interviewID, status },
       );
 
       set((state) => ({
         interviews: state.interviews.map((i) =>
-          i.id === interviewId ? { ...i, status: response.data.status } : i,
+          i.id === interviewID ? { ...i, status: response.data.status } : i,
         ),
         error: null,
       }));

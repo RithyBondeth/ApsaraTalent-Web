@@ -5,24 +5,29 @@ import { IEmployee } from "@/utils/interfaces/user";
 import { IUser } from "@/utils/interfaces/user";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Employee Signup API Response ─────────────────────────────────
 type TEmployeeSignupResponse = {
   accessToken: string | null;
   refreshToken: string | null;
   message: string | null;
 };
 
+// ── Employee Signup API Request ─────────────────────────────────
 type TEmployeeSignupBody = Omit<IEmployee, "id"> & {
   email: string | null;
   password: string | null;
   authEmail: boolean;
 };
 
+// ── Employee Signup State ────────────────────────────────────────
 type TEmployeeSignupState = TEmployeeSignupResponse & {
   loading: boolean;
   error: string | null;
   signup: (body: TEmployeeSignupBody) => Promise<string | undefined>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useEmployeeSignupStore = create<TEmployeeSignupState>()((set) => ({
   accessToken: null,
   refreshToken: null,

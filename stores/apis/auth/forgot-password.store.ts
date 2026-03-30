@@ -3,16 +3,20 @@ import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import axios from "axios";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Forgot Password API Response ─────────────────────────────────
 type TForgotPasswordResponse = {
   message: string | null;
 };
 
+// ── Forgot Password State ────────────────────────────────────────
 type TForgotPasswordState = TForgotPasswordResponse & {
   loading: boolean;
   error: string | null;
   forgotPassword: (identifier: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useForgotPasswordStore = create<TForgotPasswordState>()((set) => ({
   message: null,
   loading: false,

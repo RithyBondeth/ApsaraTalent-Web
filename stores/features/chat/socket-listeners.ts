@@ -73,7 +73,7 @@ export const registerSocketListeners = (
     if (!isFromMe && isForMe && !isActiveChatOpen) {
       useNotificationStore.getState().incrementUnreadCount();
     } else {
-      void useNotificationStore.getState().fetchUnreadCount();
+      void useNotificationStore.getState().queryUnreadCount();
     }
 
     const isForActiveChat =

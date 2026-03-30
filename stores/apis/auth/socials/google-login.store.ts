@@ -5,8 +5,9 @@ import { TUserRole } from "@/utils/types/auth";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../../users/get-current-user.store";
 
-// Updated response type - NO TOKENS
-export type TGoogleLoginResponse = {
+/* ---------------------------------- States --------------------------------- */
+// ── Google Login Response ──────────────────────────────────────
+type TGoogleLoginResponse = {
   type: "GOOGLE_AUTH_SUCCESS" | "GOOGLE_AUTH_ERROR";
   error?: string;
   newUser?: boolean;
@@ -25,7 +26,8 @@ export type TGoogleLoginResponse = {
   };
 };
 
-export type TGoogleLoginState = {
+// ── Google Login State ───────────────────────────────────────
+type TGoogleLoginState = {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
@@ -44,6 +46,8 @@ export type TGoogleLoginState = {
   clearToken: () => void;
 };
 
+/* ---------------------------------- Utils --------------------------------- */
+// Backend origin (SAFE)
 const BACKEND_ORIGIN = new URL(API_AUTH_SOCIAL_GOOGLE_URL).origin;
 
 const FINISH_LOGIN = (data: TGoogleLoginResponse) => {
@@ -80,6 +84,7 @@ const FINISH_LOGIN = (data: TGoogleLoginResponse) => {
   });
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
   loading: false,
   error: null,
@@ -172,6 +177,7 @@ export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
     }, 500);
   },
 
+  // Clear token
   clearToken: () => {
     // Use centralized cookie clearing
     clearAuthCookies();

@@ -4,16 +4,20 @@ import { API_UPLOAD_CMP_COVER_URL } from "@/utils/constants/apis/company_url";
 import { create } from "zustand";
 import { useCompanySignupStore } from "../auth/company-signup.store";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Upload Company Cover API Response ─────────────────────────────────
 type TUploadCompanyCoverResponse = {
   message: string | null;
 };
 
+// ── Upload Company Cover State ────────────────────────────────────────
 type TUploadCompanyCoverState = TUploadCompanyCoverResponse & {
   loading: boolean;
   error: string | null;
   uploadCover: (companyID: string, cover: File) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useUploadCompanyCoverStore = create<TUploadCompanyCoverState>(
   (set) => ({
     message: null,

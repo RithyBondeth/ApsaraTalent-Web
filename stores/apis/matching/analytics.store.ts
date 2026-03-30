@@ -2,47 +2,41 @@ import { API_GET_ANALYTICS_URL } from "@/utils/constants/apis/matching_url";
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { create } from "zustand";
+import {
+  IRecentMatch,
+  IWeeklyActivity,
+} from "@/utils/interfaces/analytics.interface";
 
-export type TWeeklyActivity = {
-  day: string;
-  likes: number;
-  received: number;
-  matches: number;
-};
-
-export type TRecentMatch = {
-  id: string;
-  name: string;
-  avatar: string | null;
-  matchedAt: string;
-};
-
-export type TAnalyticsData = {
+/* ---------------------------------- States --------------------------------- */
+// ── Analytics API Response ──────────────────────────────────
+export type TAnalyticsResponse = {
   totalLikesGiven: number;
   totalLikesReceived: number;
   totalMatches: number;
   matchRate: number;
   totalFavorites: number;
-  weeklyActivity: TWeeklyActivity[];
-  recentMatches: TRecentMatch[];
+  weeklyActivity: IWeeklyActivity[];
+  recentMatches: IRecentMatch[];
 };
 
+// ── Analytics State ────────────────────────────────────────
 type TAnalyticsState = {
-  data: TAnalyticsData | null;
+  data: TAnalyticsResponse | null;
   loading: boolean;
   error: string | null;
-  fetchAnalytics: (id: string, role: string) => Promise<void>;
+  queryAnalytics: (id: string, role: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useAnalyticsStore = create<TAnalyticsState>((set) => ({
   data: null,
   loading: false,
   error: null,
-  fetchAnalytics: async (id: string, role: string) => {
+  queryAnalytics: async (id: string, role: string) => {
     set({ loading: true, error: null });
 
     try {
-      const response = await axios.get<TAnalyticsData>(
+      const response = await axios.get<TAnalyticsResponse>(
         API_GET_ANALYTICS_URL(id, role),
       );
 

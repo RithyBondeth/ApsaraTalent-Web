@@ -7,6 +7,8 @@ import { create } from "zustand";
 import { useGetCurrentUserStore } from "../users/get-current-user.store";
 import { IUserAuthResponse } from "@/utils/interfaces/auth";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Verify OTP API Response ─────────────────────────────────
 type TVerifyOTPResponse = {
   message: string | null;
   accessToken: string | null;
@@ -14,6 +16,7 @@ type TVerifyOTPResponse = {
   user: IUserAuthResponse | null;
 };
 
+// ── Verify OTP State ────────────────────────────────────────
 type TVerifyOTPStoreState = TVerifyOTPResponse & {
   loading: boolean;
   error: string | null;
@@ -28,6 +31,7 @@ type TVerifyOTPStoreState = TVerifyOTPResponse & {
   clearToken: () => void;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
   loading: false,
   error: null,
@@ -86,6 +90,7 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
       });
     }
   },
+  // Clear Token
   clearToken: () => {
     try {
       // Use centralized cookie clearing

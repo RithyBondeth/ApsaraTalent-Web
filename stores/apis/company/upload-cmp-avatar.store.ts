@@ -4,16 +4,20 @@ import { API_UPLOAD_CMP_AVATAR_URL } from "@/utils/constants/apis/company_url";
 import { create } from "zustand";
 import { useCompanySignupStore } from "../auth/company-signup.store";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Upload Company Avatar API Response ─────────────────────────────────
 type TUploadCompanyAvatarResponse = {
   message: string | null;
 };
 
+// ── Upload Company Avatar State ────────────────────────────────────────
 type TUploadCompanyAvatarState = TUploadCompanyAvatarResponse & {
   loading: boolean;
   error: string | null;
   uploadAvatar: (companyID: string, avatar: File) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useUploadCompanyAvatarStore = create<TUploadCompanyAvatarState>(
   (set) => ({
     message: null,

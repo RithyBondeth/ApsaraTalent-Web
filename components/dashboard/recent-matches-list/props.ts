@@ -1,6 +1,6 @@
-import { TRecentMatch } from "@/stores/apis/matching/analytics.store";
+import { IRecentMatch } from "@/utils/interfaces/analytics.interface";
 
 export interface IRecentMatchesListProps {
-  matches: TRecentMatch[];
+  matches: IRecentMatch[];
   isEmployee: boolean;
 }

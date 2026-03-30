@@ -3,27 +3,32 @@ import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Count Current Employee Matching API Response ─────────────────
 type TCountCurrentEmployeeMatchingResponse = {
   totalMatching: number;
 };
+
+// ── Count Current Employee Matching State ────────────────────────
 type TCountCurrentEmployeeMatchingState = {
   totalEmpMatching: number | null;
   loading: boolean;
   error: string | null;
-  countCurrentEmpMatching: (employeeId: string) => Promise<void>;
+  countCurrentEmpMatching: (employeeID: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useCountCurrentEmployeeMatchingStore =
   create<TCountCurrentEmployeeMatchingState>((set) => ({
     totalEmpMatching: null,
     loading: false,
     error: null,
-    countCurrentEmpMatching: async (employeeId: string) => {
+    countCurrentEmpMatching: async (employeeID: string) => {
       set({ loading: true, error: null });
 
       try {
         const response = await axios.get<TCountCurrentEmployeeMatchingResponse>(
-          API_COUNT_CURRENT_EMPLOYEE_MATCHING_URL(employeeId),
+          API_COUNT_CURRENT_EMPLOYEE_MATCHING_URL(employeeID),
         );
 
         set({

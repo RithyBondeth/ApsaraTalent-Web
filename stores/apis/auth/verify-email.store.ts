@@ -3,16 +3,20 @@ import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import axios from "axios";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Verify Email API Response ─────────────────────────────────
 type TVerifyEmailResponse = {
   message: string | null;
 };
 
+// ── Verify Email State ────────────────────────────────────────
 type TVerifyEmailState = TVerifyEmailResponse & {
   loading: boolean;
   error: null | string;
   verifyEmail: (emailVerificationToken: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useVerifyEmailStore = create<TVerifyEmailState>((set) => ({
   message: null,
   loading: false,

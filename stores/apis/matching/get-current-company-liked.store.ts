@@ -4,16 +4,21 @@ import { API_GET_CURRENT_COMPANY_LIKED_URL } from "@/utils/constants/apis/matchi
 import { IEmployee } from "@/utils/interfaces/user";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Get Current Company Liked API Response ────────────────────────
 type TGetCurrentCompanyLikedResponse = IEmployee[];
+
+// ── Get Current Company Liked State ───────────────────────────────
 type TGetCurrentCompanyLikedState = {
   currentCompanyLiked: TGetCurrentCompanyLikedResponse | null;
   loading: boolean;
   error: string | null;
-  queryCurrentCompanyLiked: (companyId: string) => Promise<void>;
-  /** Optimistically add an employee to the liked list so the card disappears instantly */
+  queryCurrentCompanyLiked: (companyID: string) => Promise<void>;
+  /** Optimistically add an employee to the liked list so the card disappears instantly **/
   optimisticAddLiked: (employee: IEmployee) => void;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useGetCurrentCompanyLikedStore =
   create<TGetCurrentCompanyLikedState>((set, get) => ({
     currentCompanyLiked: null,
@@ -25,12 +30,13 @@ export const useGetCurrentCompanyLikedStore =
         set({ currentCompanyLiked: [...current, employee] });
       }
     },
-    queryCurrentCompanyLiked: async (companyId: string) => {
+
+    queryCurrentCompanyLiked: async (companyID: string) => {
       set({ loading: true, error: null });
 
       try {
         const response = await axios.get<TGetCurrentCompanyLikedResponse>(
-          API_GET_CURRENT_COMPANY_LIKED_URL(companyId),
+          API_GET_CURRENT_COMPANY_LIKED_URL(companyID),
         );
 
         set({

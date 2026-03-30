@@ -9,10 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  INotification,
-  useNotificationStore,
-} from "@/stores/apis/notification/notification.store";
+import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { TNotificationFilterType } from "@/utils/types/app";
 import { LucideCheckCheck } from "lucide-react";
@@ -21,6 +18,7 @@ import { useEffect, useMemo, useState } from "react";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { NotificationSvgImage } from "@/utils/constants/asset.constant";
 import { NotificationCardSkeleton } from "@/components/notification/skeleton";
+import { INotification } from "@/utils/interfaces/notificationn.interface";
 
 /* ---------------------------------- Helper --------------------------------- */
 /** Derive a display-friendly user object from a notification's title + data fields. */
@@ -44,8 +42,8 @@ export default function NotificationPage() {
   const {
     notifications,
     loading,
-    fetchNotifications,
-    fetchUnreadCount,
+    queryNotifications,
+    queryUnreadCount,
     markRead,
     markAllRead,
   } = useNotificationStore();
@@ -57,18 +55,18 @@ export default function NotificationPage() {
   /* --------------------------------- Effects --------------------------------- */
   // Fetch on mount
   useEffect(() => {
-    void fetchNotifications({ page: 1, limit: 50 });
-    void fetchUnreadCount();
-  }, [fetchNotifications, fetchUnreadCount]);
+    void queryNotifications({ page: 1, limit: 50 });
+    void queryUnreadCount();
+  }, [queryNotifications, queryUnreadCount]);
 
   // Re-fetch when switching to "unread" filter
   useEffect(() => {
     if (notificationFilter === "unread") {
-      void fetchNotifications({ page: 1, limit: 50, unreadOnly: true });
+      void queryNotifications({ page: 1, limit: 50, unreadOnly: true });
     } else {
-      void fetchNotifications({ page: 1, limit: 50, unreadOnly: false });
+      void queryNotifications({ page: 1, limit: 50, unreadOnly: false });
     }
-  }, [notificationFilter, fetchNotifications]);
+  }, [notificationFilter, queryNotifications]);
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Filter notifications based on the current filter ──────────────
@@ -89,7 +87,7 @@ export default function NotificationPage() {
   // ── Handle mark all read ─────────────────────────────────────────
   const handleMarkAllRead = async () => {
     await markAllRead();
-    void fetchUnreadCount();
+    void queryUnreadCount();
   };
 
   /* -------------------------------- Render UI -------------------------------- */

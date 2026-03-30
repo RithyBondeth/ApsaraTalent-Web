@@ -4,6 +4,8 @@ import { API_GET_ONE_USER_URL } from "@/utils/constants/apis/user_url";
 import { IUser } from "@/utils/interfaces/user";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Get One User State ───────────────────────────────────────
 type TGetOneUserState = {
   error: string | null;
   loading: boolean;
@@ -11,6 +13,7 @@ type TGetOneUserState = {
   getOneUerByID: (userID: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store ---------------------------------- */
 export const useGetOneUserStore = create<TGetOneUserState>((set) => ({
   error: null,
   loading: false,

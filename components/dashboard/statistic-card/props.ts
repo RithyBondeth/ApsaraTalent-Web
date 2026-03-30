@@ -1,12 +1,12 @@
 import {
-  TRecentMatch,
-  TWeeklyActivity,
-} from "@/stores/apis/matching/analytics.store";
+  IRecentMatch,
+  IWeeklyActivity,
+} from "@/utils/interfaces/analytics.interface";
 import { ElementType } from "react";
 
 export interface IStatisticCardProps {
   icon: ElementType;
-  value: number | TWeeklyActivity[] | TRecentMatch[];
+  value: number | IWeeklyActivity[] | IRecentMatch[];
   label: string;
   suffix?: string;
   color: string;

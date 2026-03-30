@@ -108,7 +108,7 @@ export default function CollapseSidebar({
     useCountCurrentCompanyFavoritesStore();
 
   // Count Unread Notification
-  const { unreadCount: unreadNotifications, fetchUnreadCount } =
+  const { unreadCount: unreadNotifications, queryUnreadCount } =
     useNotificationStore();
 
   // Count Unread Message
@@ -129,8 +129,8 @@ export default function CollapseSidebar({
   });
 
   useEffect(() => {
-    void fetchUnreadCount();
-  }, [fetchUnreadCount]);
+    void queryUnreadCount();
+  }, [queryUnreadCount]);
 
   useEffect(() => setMounted(true), []);
 

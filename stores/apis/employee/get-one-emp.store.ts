@@ -4,6 +4,8 @@ import { API_GET_ONE_EMP_URL } from "@/utils/constants/apis/employee_url";
 import { IEmployee } from "@/utils/interfaces/user";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Get One Employee State ───────────────────────────────────
 type TGetOneEmployeeState = {
   employeeData: IEmployee | null;
   loading: boolean;
@@ -11,6 +13,7 @@ type TGetOneEmployeeState = {
   queryOneEmployee: (employeeID: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useGetOneEmployeeStore = create<TGetOneEmployeeState>((set) => ({
   employeeData: null,
   loading: false,

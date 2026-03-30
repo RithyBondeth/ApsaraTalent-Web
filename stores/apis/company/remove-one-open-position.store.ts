@@ -3,10 +3,13 @@ import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_REMOVE_ONE_OPEN_POSITION } from "@/utils/constants/apis/company_url";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Remove One Open Position API Response ─────────────────────────────────
 type TRemoveOneOpenPositionResponse = {
   message: string | null;
 };
 
+// ── Remove One Open Position State ────────────────────────────────────────
 type TRemoveOneOpenPositionState = TRemoveOneOpenPositionResponse & {
   loading: boolean;
   error: string | null;
@@ -16,6 +19,7 @@ type TRemoveOneOpenPositionState = TRemoveOneOpenPositionResponse & {
   ) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useRemoveOneOpenPositionStore =
   create<TRemoveOneOpenPositionState>((set) => ({
     message: null,

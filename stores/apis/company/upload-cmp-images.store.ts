@@ -3,16 +3,20 @@ import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_UPLOAD_CMP_IMAGES_URL } from "@/utils/constants/apis/company_url";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Upload Company Images API Response ─────────────────────────────────
 type TUploadCompanyImagesResponse = {
   message: string | null;
 };
 
+// ── Upload Company Images State ────────────────────────────────────────
 type TUploadCompanyImagesState = TUploadCompanyImagesResponse & {
   loading: boolean;
   error: string | null;
   uploadImages: (companyID: string, images: File[]) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useUploadCompanyImagesStore = create<TUploadCompanyImagesState>(
   (set) => ({
     message: null,

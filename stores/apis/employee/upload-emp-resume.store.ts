@@ -4,17 +4,21 @@ import { API_UPLOAD_EMP_RESUME_URL } from "@/utils/constants/apis/employee_url";
 import { create } from "zustand";
 import { useEmployeeSignupStore } from "../auth/employee-signup.store";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Upload Employee Resume API Response ──────────────────────────────────
 type TUploadEmployeeResumeResponse = {
   message: string | null;
 };
 
-type TUploadEmployeeAvatarState = TUploadEmployeeResumeResponse & {
+// ── Upload Employee Resume State ────────────────────────────────────────
+type TUploadEmployeeResumeState = TUploadEmployeeResumeResponse & {
   loading: boolean;
   error: string | null;
   uploadResume: (employeeID: string, resume: File) => Promise<void>;
 };
 
-export const useUploadEmployeeResumeStore = create<TUploadEmployeeAvatarState>(
+/* ---------------------------------- Store --------------------------------- */
+export const useUploadEmployeeResumeStore = create<TUploadEmployeeResumeState>(
   (set) => ({
     message: null,
     loading: false,

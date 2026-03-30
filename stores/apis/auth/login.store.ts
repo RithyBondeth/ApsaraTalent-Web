@@ -6,6 +6,16 @@ import { create } from "zustand";
 import { useGetCurrentUserStore } from "../users/get-current-user.store";
 import { IUserAuthResponse } from "@/utils/interfaces/auth";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Login API Response ─────────────────────────────────
+type TLoginResponse = {
+  accessToken: string;
+  refreshToken: string;
+  message: string;
+  user: IUserAuthResponse;
+};
+
+// ── Login State ────────────────────────────────────────
 type TLoginState = {
   loading: boolean;
   error: string | null;
@@ -20,6 +30,7 @@ type TLoginState = {
   clearToken: () => void;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useLoginStore = create<TLoginState>((set) => ({
   loading: false,
   error: null,
@@ -30,7 +41,7 @@ export const useLoginStore = create<TLoginState>((set) => ({
     set({ loading: true, error: null });
 
     try {
-      const response = await axios.post(API_AUTH_LOGIN_URL, {
+      const response = await axios.post<TLoginResponse>(API_AUTH_LOGIN_URL, {
         identifier: identifier,
         password: password,
       });

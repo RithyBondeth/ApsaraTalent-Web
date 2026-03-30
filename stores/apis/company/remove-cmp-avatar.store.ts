@@ -3,16 +3,20 @@ import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_REMOVE_CMP_AVATAR_URL } from "@/utils/constants/apis/company_url";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Remove Cmp Avatar API Response ─────────────────────────────────
 type TRemoveCmpAvatarResponse = {
   message: string | null;
 };
 
+// ── Remove Cmp Avatar State ────────────────────────────────────────
 type TRemoveCmpAvatarStoreState = TRemoveCmpAvatarResponse & {
   loading: boolean;
   error: string | null;
   removeCmpAvatar: (companyID: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useRemoveCmpAvatarStore = create<TRemoveCmpAvatarStoreState>(
   (set) => ({
     message: null,

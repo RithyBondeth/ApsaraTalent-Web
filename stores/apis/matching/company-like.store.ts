@@ -5,6 +5,8 @@ import { ICompany } from "@/utils/interfaces/user";
 import { IEmployee } from "@/utils/interfaces/user";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Company Like API Response ────────────────────────────
 type TCompanyLikeResponse = {
   employeeLiked: boolean;
   companyLiked: boolean;
@@ -13,6 +15,7 @@ type TCompanyLikeResponse = {
   company: ICompany;
 };
 
+// ── Company Like State ──────────────────────────────────
 type TCompanyLikeState = {
   loading: boolean;
   error: string | null;
@@ -20,6 +23,7 @@ type TCompanyLikeState = {
   companyLike: (companyID: string, employeeID: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useCompanyLikeStore = create<TCompanyLikeState>((set) => ({
   loading: false,
   error: null,

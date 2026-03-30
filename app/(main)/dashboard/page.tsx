@@ -19,7 +19,7 @@ export default function DashboardPage() {
   /* ----------------------------- API Integration ---------------------------- */
   const t = useTranslations("dashboard");
   const { user } = useGetCurrentUserStore();
-  const { data, loading, error, fetchAnalytics } = useAnalyticsStore();
+  const { data, loading, error, queryAnalytics } = useAnalyticsStore();
 
   /* -------------------------------- All States ------------------------------ */
   const hasFetched = useRef<boolean>(false);
@@ -38,9 +38,9 @@ export default function DashboardPage() {
 
     if (id && role) {
       hasFetched.current = true;
-      fetchAnalytics(id, role);
+      queryAnalytics(id, role);
     }
-  }, [user, fetchAnalytics]);
+  }, [user, queryAnalytics]);
 
   const isEmployee = user?.role === "employee";
 

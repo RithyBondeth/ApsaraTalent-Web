@@ -5,8 +5,9 @@ import { TUserRole } from "@/utils/types/auth";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../../users/get-current-user.store";
 
-// Updated response type - NO TOKENS
-export type TGithubLoginResponse = {
+/* ---------------------------------- States --------------------------------- */
+// ── Github Login Response ──────────────────────────────────────
+type TGithubLoginResponse = {
   type: "GITHUB_AUTH_SUCCESS" | "GITHUB_AUTH_ERROR";
   error?: string;
   newUser?: boolean;
@@ -24,7 +25,8 @@ export type TGithubLoginResponse = {
   };
 };
 
-export type TGithubLoginState = {
+// ── Github Login State ───────────────────────────────────────
+type TGithubLoginState = {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
@@ -42,6 +44,7 @@ export type TGithubLoginState = {
   clearToken: () => void;
 };
 
+/* ---------------------------------- Utils --------------------------------- */
 // Backend origin (SAFE)
 const BACKEND_ORIGIN = new URL(API_AUTH_SOCIAL_GITHUB_URL).origin;
 
@@ -79,7 +82,7 @@ const FINISH_LOGIN = (data: TGithubLoginResponse) => {
   });
 };
 
-// Zustand Store
+/* ---------------------------------- Store --------------------------------- */
 export const useGithubLoginStore = create<TGithubLoginState>((set) => ({
   loading: false,
   error: null,

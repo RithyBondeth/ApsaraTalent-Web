@@ -1,8 +1,11 @@
-import { TAnalyticsData } from "@/stores/apis/matching/analytics.store";
+import { TAnalyticsResponse } from "@/stores/apis/matching/analytics.store";
 import { Bookmark, Handshake, Heart, HeartHandshake } from "lucide-react";
 
 type TStatisticCardConfig = {
-  key: keyof TAnalyticsData;
+  key: Extract<
+    keyof TAnalyticsResponse,
+    "totalLikesGiven" | "totalLikesReceived" | "totalMatches" | "totalFavorites"
+  >;
   translationKey: string;
   icon: React.ElementType;
   color: string;

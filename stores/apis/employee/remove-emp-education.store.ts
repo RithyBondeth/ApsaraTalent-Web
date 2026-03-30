@@ -3,16 +3,20 @@ import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import axios from "axios";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Remove Employee Education API Response ──────────────────────────────
 type TRemoveEmpEducationResponse = {
   message: string | null;
 };
 
+// ── Remove Employee Education State ──────────────────────────────────────
 type TRemoveEducationStoreState = TRemoveEmpEducationResponse & {
   loading: boolean;
   error: string | null;
   removeEducation: (employeeID: string, educationID: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useRemoveEmpEducationStore = create<TRemoveEducationStoreState>(
   (set) => ({
     message: null,

@@ -31,12 +31,12 @@ export const usePushNotifications = () => {
     let unsubscribeForegroundMessage: (() => void) | undefined;
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
-        void useNotificationStore.getState().fetchUnreadCount();
+        void useNotificationStore.getState().queryUnreadCount();
       }
     };
     const handleSwMessage = (event: MessageEvent) => {
       if (event.data?.type === "NOTIFICATION_RECEIVED") {
-        void useNotificationStore.getState().fetchUnreadCount();
+        void useNotificationStore.getState().queryUnreadCount();
       }
     };
 

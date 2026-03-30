@@ -3,16 +3,20 @@ import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_REMOVE_CMP_COVER_URL } from "@/utils/constants/apis/company_url";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Remove Cmp Cover API Response ─────────────────────────────────
 type TRemoveCmpCoverResponse = {
   message: string | null;
 };
 
+// ── Remove Cmp Cover State ────────────────────────────────────────
 type TRemoveCmpCoverStoreState = TRemoveCmpCoverResponse & {
   loading: boolean;
   error: string | null;
   removeCmpCover: (companyID: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useRemoveCmpCoverStore = create<TRemoveCmpCoverStoreState>(
   (set) => ({
     message: null,

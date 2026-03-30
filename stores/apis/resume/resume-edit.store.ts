@@ -1,14 +1,17 @@
 import { IBuildResume } from "@/utils/interfaces/resume";
 import { create } from "zustand";
 
-interface ResumeEditState {
+/* ---------------------------------- States --------------------------------- */
+// ── Resume Edit State ────────────────────────────────────────
+type TResumeEditState = {
   payload: IBuildResume | null;
   setPayload: (payload: IBuildResume) => void;
   clearPayload: () => void;
-}
+};
 
-export const useResumeEditStore = create<ResumeEditState>()((set) => ({
+/* ---------------------------------- Store --------------------------------- */
+export const useResumeEditStore = create<TResumeEditState>()((set) => ({
   payload: null,
-  setPayload: (payload) => set({ payload }),
+  setPayload: (payload: IBuildResume) => set({ payload }),
   clearPayload: () => set({ payload: null }),
 }));

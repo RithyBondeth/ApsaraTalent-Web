@@ -4,16 +4,20 @@ import { API_UPLOAD_EMP_COVER_LETTER_URL } from "@/utils/constants/apis/employee
 import { create } from "zustand";
 import { useEmployeeSignupStore } from "../auth/employee-signup.store";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Upload Employee Cover Letter API Response ──────────────────────────────
 type TUploadEmployeeCoverLetterResponse = {
   message: string | null;
 };
 
+// ── Upload Employee Cover Letter State ──────────────────────────────────────
 type TUploadEmployeeCoverLetterState = TUploadEmployeeCoverLetterResponse & {
   loading: boolean;
   error: string | null;
   uploadCoverLetter: (employeeID: string, coverLetter: File) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useUploadEmployeeCoverLetter =
   create<TUploadEmployeeCoverLetterState>((set) => ({
     message: null,

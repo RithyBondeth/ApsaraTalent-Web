@@ -4,6 +4,8 @@ import { API_GET_ONE_CMP_URL } from "@/utils/constants/apis/company_url";
 import { ICompany } from "@/utils/interfaces/user";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Get One Company State ───────────────────────────────────
 type TGetOneCompanyState = {
   companyData: ICompany | null;
   loading: boolean;
@@ -11,6 +13,7 @@ type TGetOneCompanyState = {
   queryOneCompany: (companyID: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useGetOneCompanyStore = create<TGetOneCompanyState>((set) => ({
   companyData: null,
   loading: false,

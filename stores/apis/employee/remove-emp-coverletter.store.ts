@@ -3,16 +3,20 @@ import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import axios from "axios";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Remove Employee Cover Letter API Response ─────────────────────────────
 type TRemoveEmpCoverLetterResponse = {
   message: string | null;
 };
 
+// ── Remove Employee Cover Letter State ──────────────────────────────────────
 type TRemoveEmpCoverLetterStoreState = TRemoveEmpCoverLetterResponse & {
   loading: boolean;
   error: string | null;
   removeEmpCoverLetter: (employeeID: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useRemoveEmpCoverLetterStore =
   create<TRemoveEmpCoverLetterStoreState>((set) => ({
     message: null,

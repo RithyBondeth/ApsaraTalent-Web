@@ -3,9 +3,13 @@ import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Count Current Employee Favorites API Response ─────────────────────────
 type TCountCurrentEmployeeFavoriteResponse = {
   totalFavorites: number;
 };
+
+// ── Count Current Employee Favorites State ────────────────────────────────
 type TCountCurrentEmployeeFavoriteState = {
   totalEmpFavorites: number | null;
   loading: boolean;
@@ -13,6 +17,7 @@ type TCountCurrentEmployeeFavoriteState = {
   countCurrentEmpFavorites: (employeeId: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useCountCurrentEmployeeFavoritesStore =
   create<TCountCurrentEmployeeFavoriteState>((set) => ({
     totalEmpFavorites: null,

@@ -4,13 +4,19 @@ import { API_GET_ALL_TEMPLATE_URL } from "@/utils/constants/apis/resume_url";
 import { IResumeTemplate } from "@/utils/interfaces/resume";
 import { create } from "zustand";
 
+/* ---------------------------- States ----------------------------------- */
+// ── Get All Template Response ────────────────────────────────
+type TGetAllTemplateResponse = IResumeTemplate[];
+
+// ── Get All Template State ───────────────────────────────────
 type TGetAllTemplateState = {
-  templateData: IResumeTemplate[] | null;
+  templateData: TGetAllTemplateResponse | null;
   error: string | null;
   loading: boolean;
   queryAllTemplates: () => Promise<void>;
 };
 
+/* --------------------------------- Store ---------------------------------- */
 export const useGetAllTemplateStore = create<TGetAllTemplateState>((set) => ({
   templateData: null,
   loading: false,
@@ -19,7 +25,7 @@ export const useGetAllTemplateStore = create<TGetAllTemplateState>((set) => ({
     set({ loading: true, error: null });
 
     try {
-      const response = await axios.get<IResumeTemplate[]>(
+      const response = await axios.get<TGetAllTemplateResponse>(
         API_GET_ALL_TEMPLATE_URL,
       );
       set({ loading: false, error: null, templateData: response.data });

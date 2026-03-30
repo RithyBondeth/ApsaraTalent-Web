@@ -6,6 +6,8 @@ import { persist } from "zustand/middleware";
 import { extractApiErrorMessage } from "../../shared/api-error-message";
 import { STORE_PERSIST_KEYS } from "../../shared/persist-keys";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Get Current User State ───────────────────────────────────
 type TGetCurrentUserState = {
   loading: boolean;
   error: string | null;
@@ -14,6 +16,7 @@ type TGetCurrentUserState = {
   clearUser: () => void;
 };
 
+/* ---------------------------------- Store ---------------------------------- */
 export const useGetCurrentUserStore = create<TGetCurrentUserState>()(
   persist(
     (set) => ({

@@ -3,16 +3,20 @@ import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_REMOVE_ONE_CMP_IMAGE_URL } from "@/utils/constants/apis/company_url";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Remove One Cmp Image API Response ─────────────────────────────────
 type TRemoveOneCmpImageResponse = {
   message: string | null;
 };
 
+// ── Remove One Cmp Image State ────────────────────────────────────────
 type TRemoveOneCmpImageState = TRemoveOneCmpImageResponse & {
   loading: boolean;
   error: string | null;
   removeOneCmpImage: (companyID: string, imageID: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useRemoveOneCmpImageStore = create<TRemoveOneCmpImageState>(
   (set) => ({
     message: null,

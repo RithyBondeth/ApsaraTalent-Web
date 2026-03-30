@@ -6,26 +6,24 @@ import {
   API_MARK_ALL_NOTIFICATIONS_READ_URL,
   API_MARK_NOTIFICATION_READ_URL,
 } from "@/utils/constants/apis/notification_url";
+import { INotification } from "@/utils/interfaces/notificationn.interface";
 import { create } from "zustand";
 
-export interface INotification {
-  id: string;
-  title: string;
-  message: string;
-  type: "chat" | "match" | string | null;
-  data: Record<string, unknown> | null;
-  isRead: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface NotificationListResponse {
+/* ---------------------------- States ----------------------------------- */
+// ── Notification List Response ────────────────────────────────
+type TNotificationListResponse = {
   items: INotification[];
   total: number;
   page: number;
   limit: number;
-}
+};
 
+// ── Unread Notification Count Response ─────────────────────────
+type TUnreadNotificationCountResponse = {
+  unreadCount: number;
+};
+
+// ── Notification State ─────────────────────────────────────────
 type TNotificationState = {
   loading: boolean;
   error: string | null;
@@ -34,14 +32,12 @@ type TNotificationState = {
   page: number;
   limit: number;
   unreadCount: number;
-
-  // Actions
-  fetchNotifications: (params?: {
+  queryNotifications: (params?: {
     page?: number;
     limit?: number;
     unreadOnly?: boolean;
   }) => Promise<void>;
-  fetchUnreadCount: () => Promise<void>;
+  queryUnreadCount: () => Promise<void>;
   /** Instantly bump unreadCount by 1 (used when a foreground push arrives) */
   incrementUnreadCount: () => void;
   markRead: (notificationId: string) => Promise<void>;
@@ -50,6 +46,7 @@ type TNotificationState = {
   markReadByChatMessageId: (messageId: string) => void;
 };
 
+/* --------------------------------- Store ---------------------------------- */
 export const useNotificationStore = create<TNotificationState>((set, get) => ({
   loading: false,
   error: null,
@@ -59,11 +56,11 @@ export const useNotificationStore = create<TNotificationState>((set, get) => ({
   limit: 20,
   unreadCount: 0,
 
-  fetchNotifications: async (params = {}) => {
+  queryNotifications: async (params = {}) => {
     set({ loading: true, error: null });
     try {
       const { page = 1, limit = 20, unreadOnly = false } = params;
-      const response = await axios.get<NotificationListResponse>(
+      const response = await axios.get<TNotificationListResponse>(
         API_GET_NOTIFICATIONS_URL,
         { params: { page, limit, unreadOnly } },
       );
@@ -83,15 +80,13 @@ export const useNotificationStore = create<TNotificationState>((set, get) => ({
     }
   },
 
-  fetchUnreadCount: async () => {
+  queryUnreadCount: async () => {
     try {
-      const response = await axios.get<{ unreadCount: number }>(
+      const response = await axios.get<TUnreadNotificationCountResponse>(
         API_GET_UNREAD_NOTIFICATION_COUNT_URL,
       );
       set({ unreadCount: response.data.unreadCount });
-    } catch {
-      // Silently fail — unread count is non-critical
-    }
+    } catch {}
   },
 
   incrementUnreadCount: () => {

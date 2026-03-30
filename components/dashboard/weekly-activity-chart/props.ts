@@ -1,5 +1,5 @@
-import { TWeeklyActivity } from "@/stores/apis/matching/analytics.store";
+import { IWeeklyActivity } from "@/utils/interfaces/analytics.interface";
 
 export interface IWeeklyActivityChartProps {
-  data: TWeeklyActivity[];
+  data: IWeeklyActivity[];
 }

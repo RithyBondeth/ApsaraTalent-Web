@@ -18,16 +18,16 @@ export default function InterviewPage() {
   const t = useTranslations("interview");
 
   /* ----------------------------- API Integration ---------------------------- */
-  const { interviews, fetchInterviews, updateStatus } = useInterviewStore();
+  const { interviews, queryInterviews, updateStatus } = useInterviewStore();
   const { currentCompanyMatching, queryCurrentCompanyMatching } =
     useGetCurrentCompanyMatchingStore();
 
   /* --------------------------------- Effects --------------------------------- */
   const { isEmployee, isCompany, currentUser } = useFetchOnce({
     cacheKey: "interview-page",
-    onEmployeeFetch: (employeeId) => fetchInterviews(employeeId, "employee"),
+    onEmployeeFetch: (employeeId) => queryInterviews(employeeId, "employee"),
     onCompanyFetch: (companyId) => {
-      fetchInterviews(companyId, "company");
+      queryInterviews(companyId, "company");
       queryCurrentCompanyMatching(companyId);
     },
   });

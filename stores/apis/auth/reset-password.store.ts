@@ -3,10 +3,13 @@ import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import axios from "axios";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Reset Password API Response ─────────────────────────────────
 type TResetPasswordResponse = {
   message: string | null;
 };
 
+// ── Reset Password State ────────────────────────────────────────
 type TResetPasswordState = TResetPasswordResponse & {
   loading: boolean;
   error: string | null;
@@ -17,6 +20,7 @@ type TResetPasswordState = TResetPasswordResponse & {
   ) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useResetPasswordStore = create<TResetPasswordState>()((set) => ({
   message: null,
   loading: false,

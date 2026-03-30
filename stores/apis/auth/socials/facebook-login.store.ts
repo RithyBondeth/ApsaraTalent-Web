@@ -5,8 +5,9 @@ import { TUserRole } from "@/utils/types/auth";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../../users/get-current-user.store";
 
-// Updated response type - NO TOKENS
-export type TFacebookLoginResponse = {
+/* ---------------------------------- States --------------------------------- */
+// ── Facebook Login Response ────────────────────────────────────
+type TFacebookLoginResponse = {
   type: "FACEBOOK_AUTH_SUCCESS" | "FACEBOOK_AUTH_ERROR";
   error?: string;
   newUser?: boolean;
@@ -25,7 +26,8 @@ export type TFacebookLoginResponse = {
   };
 };
 
-export type TFacebookLoginState = {
+// ── Facebook Login State ───────────────────────────────────────
+type TFacebookLoginState = {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
@@ -44,6 +46,7 @@ export type TFacebookLoginState = {
   clearToken: () => void;
 };
 
+/* ---------------------------------- Utils --------------------------------- */
 // Backend origin (SAFE)
 const BACKEND_ORIGIN = new URL(API_AUTH_SOCIAL_FACEBOOK_URL).origin;
 
@@ -82,6 +85,7 @@ const FINISH_LOGIN = (data: TFacebookLoginResponse) => {
   });
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useFacebookLoginStore = create<TFacebookLoginState>((set) => ({
   loading: false,
   error: null,

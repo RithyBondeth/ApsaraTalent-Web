@@ -3,16 +3,20 @@ import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import axios from "axios";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Remove Employee Experience API Response ─────────────────────────────
 type TRemoveEmpExperienceResponse = {
   message: string | null;
 };
 
+// ── Remove Employee Experience State ──────────────────────────────────────
 type TRemoveEmpExperienceStoreState = TRemoveEmpExperienceResponse & {
   loading: boolean;
   error: string | null;
   removeExperience: (employeeID: string, experienceID: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useRemoveEmpExperienceStore =
   create<TRemoveEmpExperienceStoreState>((set) => ({
     message: null,

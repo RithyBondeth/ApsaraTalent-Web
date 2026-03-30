@@ -4,20 +4,24 @@ import { API_FIND_ALL_EMPLOYEE_FAVORITES } from "@/utils/constants/apis/favorite
 import { ICompany } from "@/utils/interfaces/user";
 import { create } from "zustand";
 
-export type TGetAllEmployeeFavoritesResponse = {
+/* ---------------------------------- States --------------------------------- */
+// ── Get All Employee Favorites API Response ────────────────────────────
+type TGetAllEmployeeFavoritesResponse = {
   id: string;
   createdAt: string;
   userId: string;
   company: ICompany;
 };
 
-export type TGetAllEmployeeFavoritesState = {
+// ── Get All Employee Favorites State ───────────────────────────────────
+type TGetAllEmployeeFavoritesState = {
   companyData: TGetAllEmployeeFavoritesResponse[] | null;
   loading: boolean;
   error: string | null;
   queryAllEmployeeFavorites: (employeeID: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useGetAllEmployeeFavoritesStore =
   create<TGetAllEmployeeFavoritesState>((set) => ({
     companyData: null,
@@ -33,7 +37,7 @@ export const useGetAllEmployeeFavoritesStore =
         set({ loading: false, error: null, companyData: response.data });
 
         // Sync the persisted favoriteCompanyIds Set so isFavorite() is accurate
-        // on page load without requiring the user to re-save each item.
+        // On page load without requiring the user to re-save each item.
         const { useEmployeeFavCompanyStore } =
           await import("@/stores/apis/favorite/employee-fav-company.store");
         useEmployeeFavCompanyStore.setState({

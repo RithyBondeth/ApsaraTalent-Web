@@ -4,13 +4,19 @@ import { API_GET_ALL_EMP_URL } from "@/utils/constants/apis/employee_url";
 import { IEmployee } from "@/utils/interfaces/user";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Get All Employee Response ───────────────────────────────────
+type TGetAllEmployeeResponse = IEmployee[];
+
+// ── Get All Employee State ──────────────────────────────────────
 type TGetAllEmployeeState = {
-  employeesData: IEmployee[] | null;
+  employeesData: TGetAllEmployeeResponse | null;
   loading: boolean;
   error: string | null;
   queryEmployee: () => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useGetAllEmployeeStore = create<TGetAllEmployeeState>((set) => ({
   employeesData: null,
   loading: false,
@@ -19,7 +25,8 @@ export const useGetAllEmployeeStore = create<TGetAllEmployeeState>((set) => ({
     set({ loading: true, error: null });
 
     try {
-      const response = await axios.get<IEmployee[]>(API_GET_ALL_EMP_URL);
+      const response =
+        await axios.get<TGetAllEmployeeResponse>(API_GET_ALL_EMP_URL);
       set({ loading: false, error: null, employeesData: response.data });
     } catch (error) {
       set({

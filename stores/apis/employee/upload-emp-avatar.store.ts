@@ -4,16 +4,20 @@ import { API_UPLOAD_EMP_AVATAR_URL } from "@/utils/constants/apis/employee_url";
 import { create } from "zustand";
 import { useEmployeeSignupStore } from "../auth/employee-signup.store";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Upload Employee Avatar API Response ──────────────────────────────────
 type TUploadEmployeeAvatarResponse = {
   message: string | null;
 };
 
+// ── Upload Employee Avatar State ────────────────────────────────────────
 type TUploadEmployeeAvatarState = TUploadEmployeeAvatarResponse & {
   loading: boolean;
   error: string | null;
   uploadAvatar: (employeeID: string, avatar: File) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useUploadEmployeeAvatarStore = create<TUploadEmployeeAvatarState>(
   (set) => ({
     message: null,

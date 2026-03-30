@@ -45,7 +45,7 @@ export function RecentMatchesList({
               {match.name}
             </TypographyP>
             <TypographyMuted className="text-[11px] text-muted-foreground">
-              {timeAgo(match.matchedAt)}
+              {timeAgo(match.matchDate)}
             </TypographyMuted>
           </div>
         </div>

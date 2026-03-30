@@ -3,16 +3,20 @@ import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import axios from "axios";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Remove Employee Avatar API Response ─────────────────────────────────
 type TRemoveEmpAvatarResponse = {
   message: string | null;
 };
 
+// ── Remove Employee Avatar State ────────────────────────────────────────
 type TRemoveEmpAvatarStoreState = TRemoveEmpAvatarResponse & {
   loading: boolean;
   error: string | null;
   removeEmpAvatar: (employeeID: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useRemoveEmpAvatarStore = create<TRemoveEmpAvatarStoreState>(
   (set) => ({
     message: null,

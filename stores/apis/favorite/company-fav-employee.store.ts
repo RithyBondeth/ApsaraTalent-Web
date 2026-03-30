@@ -8,9 +8,15 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { STORE_PERSIST_KEYS } from "../../shared/persist-keys";
 
-export type TCompanyFavEmployeeState = {
-  favoriteEmployeeIds: Set<string>;
+/* ---------------------------------- States --------------------------------- */
+// ── Company Favorite Employee API Response ─────────────────────────────
+type TCompanyFavEmployeeResponse = {
   message: string | null;
+};
+
+// ── Company Favorite Employee State ────────────────────────────────────
+type TCompanyFavEmployeeState = TCompanyFavEmployeeResponse & {
+  favoriteEmployeeIds: Set<string>;
   loading: boolean;
   cmpFavError: string | null;
   isFavorite: (employeeID: string) => boolean;
@@ -24,9 +30,9 @@ export type TCompanyFavEmployeeState = {
     favoriteID: string,
   ) => Promise<void>;
   clearFavorite: () => void;
-  clearFavorites: () => void;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
   persist(
     (set, get) => ({
@@ -40,7 +46,7 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
       },
 
       addEmployeeToFavorite: async (companyID: string, employeeID: string) => {
-        // Optimistic update — hide the save button immediately
+        // Optimistic Update: Hide the save button immediately
         set((state) => ({
           favoriteEmployeeIds: new Set(state.favoriteEmployeeIds).add(
             employeeID,
@@ -50,7 +56,7 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
         }));
 
         try {
-          const response = await axios.post<{ message: string }>(
+          const response = await axios.post<TCompanyFavEmployeeResponse>(
             API_COMPANY_FAVORITE_EMPLOYEE_URL(companyID, employeeID),
           );
           set({
@@ -85,7 +91,7 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
         employeeID: string,
         favoriteID: string,
       ) => {
-        // Optimistic update — remove immediately from Set
+        // Optimistic Update: Remove immediately from Set
         set((state) => {
           const updated = new Set(state.favoriteEmployeeIds);
           updated.delete(employeeID);
@@ -97,7 +103,7 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
         });
 
         try {
-          const response = await axios.post<{ message: string }>(
+          const response = await axios.post<TCompanyFavEmployeeResponse>(
             API_COMPANY_UNFAVORITE_EMPLOYEE_URL(
               companyID,
               employeeID,
@@ -110,7 +116,7 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
             cmpFavError: null,
           });
         } catch (error) {
-          // Roll back — add ID back to Set
+          // Roll back: add ID back to Set
           let errorMessage = "Failed to remove employee from favorite";
           set((state) => {
             const rolledBack = new Set(state.favoriteEmployeeIds).add(
@@ -132,13 +138,6 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
       },
 
       clearFavorite: () => {
-        set({
-          favoriteEmployeeIds: new Set(),
-          message: null,
-          cmpFavError: null,
-        });
-      },
-      clearFavorites: () => {
         set({
           favoriteEmployeeIds: new Set(),
           message: null,

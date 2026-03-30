@@ -6,7 +6,9 @@ import { TAvailability } from "@/utils/types/user";
 import { TLocations } from "@/utils/types/user";
 import { create } from "zustand";
 
-export type TSearchEmpQuery = {
+/* ---------------------------------- States --------------------------------- */
+// ── Search Employee Query Params ──────────────────────────────────────
+type TSearchEmpQueryParams = {
   keyword?: string;
   location?: TLocations;
   careerScopes?: string[];
@@ -17,21 +19,23 @@ export type TSearchEmpQuery = {
   sortOrder?: "ASC" | "DESC";
 };
 
-type TSearchEmployee = IEmployee;
+// ── Search Employee API Response ──────────────────────────────────────
+type TSearchEmployeeResponse = IEmployee[];
 
+// ── Search Employee State ──────────────────────────────────────────────
 type TSearchEmployeeState = {
-  employees: TSearchEmployee[] | null;
+  employees: TSearchEmployeeResponse | null;
   error: string | null;
   loading: boolean;
-  querySearchEmployee: (query: TSearchEmpQuery) => Promise<void>;
+  querySearchEmployee: (query: TSearchEmpQueryParams) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useSearchEmployeeStore = create<TSearchEmployeeState>((set) => ({
   employees: null,
   loading: false,
-  message: null,
   error: null,
-  querySearchEmployee: async (query: TSearchEmpQuery) => {
+  querySearchEmployee: async (query: TSearchEmpQueryParams) => {
     set({ loading: true, error: null });
 
     try {
@@ -49,7 +53,7 @@ export const useSearchEmployeeStore = create<TSearchEmployeeState>((set) => ({
       const queryString = queryParams.toString();
       const url = `${API_SEARCH_EMP_URL}?${queryString}`;
 
-      const response = await axios.get(url);
+      const response = await axios.get<TSearchEmployeeResponse>(url);
 
       set({
         employees: response.data,

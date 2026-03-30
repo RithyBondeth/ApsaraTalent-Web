@@ -5,8 +5,9 @@ import { TUserRole } from "@/utils/types/auth";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../../users/get-current-user.store";
 
-// Updated response type - NO TOKENS
-export type TLinkedInLoginResponse = {
+/* ---------------------------------- States --------------------------------- */
+// ── LinkedIn Login Response ────────────────────────────────────
+type TLinkedInLoginResponse = {
   type: "LINKEDIN_AUTH_SUCCESS" | "LINKEDIN_AUTH_ERROR";
   error?: string;
   newUser?: boolean;
@@ -25,7 +26,8 @@ export type TLinkedInLoginResponse = {
   };
 };
 
-export type TLinkedInLoginState = {
+// ── LinkedIn Login State ───────────────────────────────────────
+type TLinkedInLoginState = {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
@@ -44,6 +46,7 @@ export type TLinkedInLoginState = {
   clearToken: () => void;
 };
 
+/* ---------------------------------- Utils --------------------------------- */
 // Backend origin (SAFE)
 const BACKEND_ORIGIN = new URL(API_AUTH_SOCIAL_LINKEDIN_URL).origin;
 
@@ -82,7 +85,7 @@ const FINISH_LOGIN = (data: TLinkedInLoginResponse) => {
   });
 };
 
-// Zustand Store
+/* ---------------------------------- Store --------------------------------- */
 export const useLinkedInLoginStore = create<TLinkedInLoginState>((set) => ({
   loading: false,
   error: null,

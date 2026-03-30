@@ -5,24 +5,29 @@ import { ICompany } from "@/utils/interfaces/user";
 import { IUser } from "@/utils/interfaces/user";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Company Signup API Response ─────────────────────────────────
 type TCompanySignupResponse = {
   accessToken: string | null;
   refreshToken: string | null;
   message: string | null;
 };
 
+// ── Company Signup API Request ─────────────────────────────────
 type TCompanySignupBody = Omit<ICompany, "id"> & {
   email: string | null;
   password: string | null;
   authEmail: boolean;
 };
 
+// ── Company Signup State ────────────────────────────────────────
 type TCompanySignupState = TCompanySignupResponse & {
   loading: boolean;
   error: string | null;
   signup: (body: TCompanySignupBody) => Promise<string | undefined>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useCompanySignupStore = create<TCompanySignupState>()((set) => ({
   accessToken: null,
   refreshToken: null,

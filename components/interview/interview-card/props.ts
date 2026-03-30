@@ -1,4 +1,4 @@
-import { IInterview } from "../../../stores/apis/matching/interview.store";
+import { IInterview } from "@/utils/interfaces/interview.interface";
 
 export interface IInterviewCardProps {
   interview: IInterview;
