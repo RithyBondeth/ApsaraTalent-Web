@@ -1,5 +1,5 @@
 import axios from "@/lib/axios";
-import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_FIND_ALL_EMPLOYEE_FAVORITES } from "@/utils/constants/apis/favorite_url";
 import { ICompany } from "@/utils/interfaces/user";
 import { create } from "zustand";
@@ -34,9 +34,8 @@ export const useGetAllEmployeeFavoritesStore =
 
         // Sync the persisted favoriteCompanyIds Set so isFavorite() is accurate
         // on page load without requiring the user to re-save each item.
-        const { useEmployeeFavCompanyStore } = await import(
-          "@/stores/apis/favorite/employee-fav-company.store"
-        );
+        const { useEmployeeFavCompanyStore } =
+          await import("@/stores/apis/favorite/employee-fav-company.store");
         useEmployeeFavCompanyStore.setState({
           favoriteCompanyIds: new Set(response.data.map((f) => f.company.id)),
         });

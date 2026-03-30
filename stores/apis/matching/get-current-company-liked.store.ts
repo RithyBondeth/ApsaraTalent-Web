@@ -1,5 +1,5 @@
 import axios from "@/lib/axios";
-import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_GET_CURRENT_COMPANY_LIKED_URL } from "@/utils/constants/apis/matching_url";
 import { IEmployee } from "@/utils/interfaces/user";
 import { create } from "zustand";
@@ -40,7 +40,10 @@ export const useGetCurrentCompanyLikedStore =
         });
       } catch (error) {
         set({
-          error: extractApiErrorMessage(error, "Failed to get current company liked"),
+          error: extractApiErrorMessage(
+            error,
+            "Failed to get current company liked",
+          ),
           loading: false,
           currentCompanyLiked: null,
         });

@@ -1,5 +1,5 @@
 import axios from "@/lib/axios";
-import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_MATCHING_CMP_LIKE_URL } from "@/utils/constants/apis/matching_url";
 import { ICompany } from "@/utils/interfaces/user";
 import { IEmployee } from "@/utils/interfaces/user";
@@ -34,7 +34,10 @@ export const useCompanyLikeStore = create<TCompanyLikeState>((set) => ({
 
       set({ loading: false, error: null, data: response.data });
     } catch (error) {
-      const errorMessage = extractApiErrorMessage(error, "Failed to like company");
+      const errorMessage = extractApiErrorMessage(
+        error,
+        "Failed to like company",
+      );
       set({
         error: errorMessage,
         loading: false,

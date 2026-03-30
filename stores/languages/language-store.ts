@@ -1,18 +1,20 @@
 import { TLanguage } from "@/utils/types/app";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { STORE_PERSIST_KEYS } from "../_shared/persist-keys";
+import { STORE_PERSIST_KEYS } from "../shared/persist-keys";
 
-interface LanguageState {
+/* ----------------------------- Store State ----------------------------- */
+type TLanguageState = {
   language: TLanguage;
   setLanguage: (language: TLanguage) => void;
-}
+};
 
-export const useLanguageStore = create<LanguageState>()(
+/* -------------------------------- Store -------------------------------- */
+export const useLanguageStore = create<TLanguageState>()(
   persist(
     (set) => ({
       language: "en",
-      setLanguage: (language) => set({ language }),
+      setLanguage: (language: TLanguage) => set({ language }),
     }),
     { name: STORE_PERSIST_KEYS.language },
   ),

@@ -1,7 +1,7 @@
 import { clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-manager";
 import { API_AUTH_VERIFY_OTP_URL } from "@/utils/constants/apis/auth_url";
 import { IUser } from "@/utils/interfaces/user";
-import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import axios from "axios";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../users/get-current-user.store";

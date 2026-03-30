@@ -1,12 +1,12 @@
 import axios from "@/lib/axios";
-import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import {
   API_EMPLOYEE_FAVORITE_COMPANY_URL,
   API_EMPLOYEE_UNFAVORITE_COMPANY_URL,
 } from "@/utils/constants/apis/favorite_url";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { STORE_PERSIST_KEYS } from "../../_shared/persist-keys";
+import { STORE_PERSIST_KEYS } from "../../shared/persist-keys";
 
 export type TEmployeeFavCompanyState = {
   favoriteCompanyIds: Set<string>;
@@ -58,7 +58,10 @@ export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>()(
           set((state) => {
             const rolled = new Set(state.favoriteCompanyIds);
             rolled.delete(companyID);
-            errorMessage = extractApiErrorMessage(error, "Failed to add favorite");
+            errorMessage = extractApiErrorMessage(
+              error,
+              "Failed to add favorite",
+            );
             return {
               favoriteCompanyIds: rolled,
               loading: false,

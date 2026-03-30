@@ -1,5 +1,5 @@
 import axios from "@/lib/axios";
-import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_GET_CURRENT_EMPLOYEE_LIKED_URL } from "@/utils/constants/apis/matching_url";
 import { ICompany } from "@/utils/interfaces/user";
 import { create } from "zustand";

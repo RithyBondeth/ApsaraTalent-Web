@@ -1,12 +1,12 @@
 import axios from "@/lib/axios";
-import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import {
   API_COMPANY_FAVORITE_EMPLOYEE_URL,
   API_COMPANY_UNFAVORITE_EMPLOYEE_URL,
 } from "@/utils/constants/apis/favorite_url";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { STORE_PERSIST_KEYS } from "../../_shared/persist-keys";
+import { STORE_PERSIST_KEYS } from "../../shared/persist-keys";
 
 export type TCompanyFavEmployeeState = {
   favoriteEmployeeIds: Set<string>;
@@ -60,7 +60,8 @@ export const useCompanyFavEmployeeStore = create<TCompanyFavEmployeeState>()(
           });
         } catch (error) {
           // Roll back optimistic update on failure
-          let errorMessage = "An error occurred while adding employee to favorite";
+          let errorMessage =
+            "An error occurred while adding employee to favorite";
           set((state) => {
             const rolled = new Set(state.favoriteEmployeeIds);
             rolled.delete(employeeID);

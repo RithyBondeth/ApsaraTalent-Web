@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
 export function useCmpAvatarCoverState() {
-  // Avatar States
+  /* --------------------------------- All States -------------------------------- */
+  // ── Avatar States ─────────────────────────────────────────
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [openAvatarPopup, setOpenAvatarPopup] = useState<boolean>(false);
   const [openRemoveAvatarDialog, setOpenRemoveAvatarDialog] =
@@ -10,7 +11,7 @@ export function useCmpAvatarCoverState() {
   const [openCropDialog, setOpenCropDialog] = useState<boolean>(false);
   const [cropImageUrl, setCropImageUrl] = useState<string>("");
 
-  // Cover States
+  // ── Cover States ─────────────────────────────────────────
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const coverInputRef = useRef<HTMLInputElement | null>(null);
   const [openRemoveCoverDialog, setOpenRemoveCoverDialog] =
@@ -19,9 +20,10 @@ export function useCmpAvatarCoverState() {
     useState<boolean>(false);
   const [coverCropImageUrl, setCoverCropImageUrl] = useState<string>("");
 
-  // Both Avatar and Cover
+  // ── Shared States ─────────────────────────────────────────
   const ignoreNextClick = useRef<boolean>(false);
 
+  /* ---------------------------------- Effects --------------------------------- */
   useEffect(() => {
     return () => {
       if (cropImageUrl?.startsWith("blob:")) URL.revokeObjectURL(cropImageUrl);
@@ -30,6 +32,7 @@ export function useCmpAvatarCoverState() {
     };
   }, [cropImageUrl, coverCropImageUrl]);
 
+  /* ---------------------------------- Return ---------------------------------- */
   return {
     avatarFile,
     setAvatarFile,

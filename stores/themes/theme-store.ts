@@ -1,18 +1,20 @@
 import { TTheme } from "@/utils/types/app";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { STORE_PERSIST_KEYS } from "../_shared/persist-keys";
+import { STORE_PERSIST_KEYS } from "../shared/persist-keys";
 
-interface ThemeState {
+/* ----------------------------- Store State ----------------------------- */
+type TThemeState = {
   theme: TTheme;
   setTheme: (theme: TTheme) => void;
   toggleTheme: () => void;
-  systemTheme: "light" | "dark"; // Track system preference
+  systemTheme: "light" | "dark";
   isHydrated: boolean;
   setHydrated: (hydrated: boolean) => void;
-}
+};
 
-export const useThemeStore = create<ThemeState>()(
+/* -------------------------------- Store -------------------------------- */
+export const useThemeStore = create<TThemeState>()(
   persist(
     (set, get) => {
       // Function to detect system dark mode (only on client-side)
@@ -22,16 +24,16 @@ export const useThemeStore = create<ThemeState>()(
             ? "dark"
             : "light";
         }
-        return "light"; // Default to light theme server-side
+        return "light";
       };
 
       return {
-        theme: "system", // Default theme
+        theme: "system",
         systemTheme: getSystemTheme(),
         isHydrated: false,
         setHydrated: (hydrated: boolean) => set({ isHydrated: hydrated }),
 
-        setTheme: (theme) => set({ theme }),
+        setTheme: (theme: TTheme) => set({ theme }),
 
         toggleTheme: () => {
           const currentTheme = get().theme;
@@ -52,7 +54,7 @@ export const useThemeStore = create<ThemeState>()(
   ),
 );
 
-// Listen for system theme changes (only in client-side)
+/* ----------------------------- System Theme Listener ----------------------------- */
 if (typeof window !== "undefined") {
   const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
   const updateSystemTheme = () => {

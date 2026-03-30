@@ -4,6 +4,7 @@ import { useState } from "react";
 export function useCmpCareerScopesState(
   initialCareerScopes: ICareerScope[] = [],
 ) {
+  /* --------------------------------- All States -------------------------------- */
   const [careerScopeInput, setCareerScopeInput] = useState<ICareerScope | null>(
     null,
   );
@@ -15,6 +16,7 @@ export function useCmpCareerScopesState(
   const [openCareerScopePopOver, setOpenCareerScopePopOver] =
     useState<boolean>(false);
 
+  /* ---------------------------------- Return ---------------------------------- */
   return {
     careerScopeInput,
     setCareerScopeInput,

@@ -1,12 +1,13 @@
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { IUser } from "@/utils/interfaces/user-interface/user.interface";
+import { IUser } from "@/utils/interfaces/user";
 import { useEffect, useMemo, useRef } from "react";
 
+/* ----------------------------------- Types ---------------------------------- */
 interface UseFetchOnceOptions {
   onEmployeeFetch?: (employeeId: string) => void;
   onCompanyFetch?: (companyId: string) => void;
   enabled?: boolean;
-  cacheKey?: string; // Unique key per usage
+  cacheKey?: string;
 }
 
 interface UseFetchOnceReturn {
@@ -18,9 +19,10 @@ interface UseFetchOnceReturn {
   currentUser: IUser | null;
 }
 
-// Module-level cache that tracks: cacheKey + userId
+/* ----------------------------------- Utils ---------------------------------- */
 const fetchCache = new Map<string, Set<string>>();
 
+/* ----------------------------------- Hook ----------------------------------- */
 export function useFetchOnce(
   options: UseFetchOnceOptions = {},
 ): UseFetchOnceReturn {
@@ -31,17 +33,12 @@ export function useFetchOnce(
     cacheKey = "default",
   } = options;
 
+  /* --------------------------------- All States -------------------------------- */
   const currentUser = useGetCurrentUserStore((s) => s.user);
   const lastUserIdRef = useRef<string | null>(null);
 
-  // Stable refs for callbacks — prevents the effect from re-running when
-  // parent re-renders create new inline function references
   const onEmployeeFetchRef = useRef(onEmployeeFetch);
   const onCompanyFetchRef = useRef(onCompanyFetch);
-  useEffect(() => {
-    onEmployeeFetchRef.current = onEmployeeFetch;
-    onCompanyFetchRef.current = onCompanyFetch;
-  });
 
   const userData = useMemo(() => {
     const employee =
@@ -61,37 +58,42 @@ export function useFetchOnce(
     };
   }, [currentUser]);
 
-  // Initialize cache for this cacheKey if it doesn't exist
-  if (!fetchCache.has(cacheKey)) {
-    fetchCache.set(cacheKey, new Set<string>());
-  }
+  const cacheEntry = useMemo(() => {
+    if (!fetchCache.has(cacheKey)) {
+      fetchCache.set(cacheKey, new Set<string>());
+    }
 
-  // Stable ref to the cache Set — avoids the Set reference being a dep
-  const cacheRef = useRef(fetchCache.get(cacheKey)!);
-  useEffect(() => {
-    cacheRef.current = fetchCache.get(cacheKey) ?? new Set();
+    return fetchCache.get(cacheKey)!;
   }, [cacheKey]);
 
-  // Clear cache entry when user changes
+  /* ---------------------------------- Effects --------------------------------- */
+  // Keep callback refs fresh without forcing the fetch effect to rerun
+  // whenever parent components recreate inline callbacks.
+  useEffect(() => {
+    onEmployeeFetchRef.current = onEmployeeFetch;
+    onCompanyFetchRef.current = onCompanyFetch;
+  }, [onEmployeeFetch, onCompanyFetch]);
+
   useEffect(() => {
     if (userData.currentUserId !== lastUserIdRef.current) {
       if (lastUserIdRef.current) {
-        cacheRef.current.delete(lastUserIdRef.current);
+        cacheEntry.delete(lastUserIdRef.current);
       }
+
       lastUserIdRef.current = userData.currentUserId ?? null;
     }
-  }, [userData.currentUserId]);
+  }, [cacheEntry, userData.currentUserId]);
 
   useEffect(() => {
-    if (!enabled || !userData.currentUserId) return;
-
-    // Check if already fetched for THIS specific cache key + user
-    if (cacheRef.current.has(userData.currentUserId)) {
+    if (!enabled || !userData.currentUserId) {
       return;
     }
 
-    // Mark as fetched BEFORE calling (prevents race conditions)
-    cacheRef.current.add(userData.currentUserId);
+    if (cacheEntry.has(userData.currentUserId)) {
+      return;
+    }
+
+    cacheEntry.add(userData.currentUserId);
 
     if (
       userData.isEmployee &&
@@ -105,6 +107,7 @@ export function useFetchOnce(
       onCompanyFetchRef.current(userData.companyId);
     }
   }, [
+    cacheEntry,
     enabled,
     userData.currentUserId,
     userData.isEmployee,
@@ -113,5 +116,6 @@ export function useFetchOnce(
     userData.companyId,
   ]);
 
+  /* ---------------------------------- Return ---------------------------------- */
   return userData;
 }

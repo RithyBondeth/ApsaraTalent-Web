@@ -1,5 +1,5 @@
 import axios from "@/lib/axios";
-import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_UPLOAD_EMP_RESUME_URL } from "@/utils/constants/apis/employee_url";
 import { create } from "zustand";
 import { useEmployeeSignupStore } from "../auth/employee-signup.store";

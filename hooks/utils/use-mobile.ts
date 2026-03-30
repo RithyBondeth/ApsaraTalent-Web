@@ -3,10 +3,12 @@ import * as React from "react";
 const MOBILE_BREAKPOINT = 768;
 
 export function useIsMobile() {
+  /* --------------------------------- All States -------------------------------- */
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(
     undefined,
   );
 
+  /* ---------------------------------- Effects --------------------------------- */
   React.useEffect(() => {
     const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
     const onChange = () => {
@@ -17,5 +19,6 @@ export function useIsMobile() {
     return () => mql.removeEventListener("change", onChange);
   }, []);
 
+  /* ---------------------------------- Return ---------------------------------- */
   return !!isMobile;
 }

@@ -16,10 +16,14 @@ import { useEffect } from "react";
  * message/page.tsx causes no double-connect.
  */
 export function useChatConnection() {
+  /* --------------------------------- All States -------------------------------- */
   const user = useGetCurrentUserStore((s) => s.user);
 
+  /* ---------------------------------- Effects --------------------------------- */
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     const { connect, disconnect } = useChatStore.getState();
     connect(user);

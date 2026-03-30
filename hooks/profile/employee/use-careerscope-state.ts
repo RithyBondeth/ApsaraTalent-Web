@@ -2,6 +2,7 @@ import { ICareerScope } from "@/utils/interfaces/career";
 import { useState } from "react";
 
 export function useCareerScopesState(initialCareerScopes: ICareerScope[] = []) {
+  /* --------------------------------- All States -------------------------------- */
   const [careerScopeInput, setCareerScopeInput] = useState<ICareerScope | null>(
     null,
   );
@@ -13,6 +14,7 @@ export function useCareerScopesState(initialCareerScopes: ICareerScope[] = []) {
   const [openCareerScopePopOver, setOpenCareerScopePopOver] =
     useState<boolean>(false);
 
+  /* ---------------------------------- Return ---------------------------------- */
   return {
     careerScopeInput,
     setCareerScopeInput,

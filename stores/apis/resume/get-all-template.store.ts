@@ -1,5 +1,5 @@
 import axios from "@/lib/axios";
-import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_GET_ALL_TEMPLATE_URL } from "@/utils/constants/apis/resume_url";
 import { IResumeTemplate } from "@/utils/interfaces/resume";
 import { create } from "zustand";

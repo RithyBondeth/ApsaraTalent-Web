@@ -1,5 +1,5 @@
 import { API_AUTH_RESET_PASSWORD_URL } from "@/utils/constants/apis/auth_url";
-import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import axios from "axios";
 import { create } from "zustand";
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 export default function useCmpImageState() {
+  /* --------------------------------- All States -------------------------------- */
   const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
   const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(
     null,
@@ -12,6 +13,7 @@ export default function useCmpImageState() {
     index: number;
   } | null>(null);
 
+  /* ---------------------------------- Return ---------------------------------- */
   return {
     openImagePopup,
     setOpenImagePopup,

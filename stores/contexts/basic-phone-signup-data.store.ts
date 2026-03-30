@@ -1,5 +1,6 @@
 import { create } from "zustand";
 
+/* ----------------------------- Store State ----------------------------- */
 type TBasicPhoneSignupData = {
   phone?: string;
   rememberMe?: boolean;
@@ -12,6 +13,7 @@ type TBasicPhoneSignupDataState = {
   clearSetupBasicSignupData: () => void;
 };
 
+/* -------------------------------- Store -------------------------------- */
 export const useBasicPhoneSignupDataStore = create<TBasicPhoneSignupDataState>(
   (set) => ({
     basicPhoneSignupData: null,

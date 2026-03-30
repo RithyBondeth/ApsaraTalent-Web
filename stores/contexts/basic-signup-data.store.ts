@@ -1,5 +1,6 @@
 import { create } from "zustand";
 
+/* ----------------------------- Store State ----------------------------- */
 type TBasicSignupData = {
   firstName?: string;
   lastName?: string;
@@ -20,6 +21,7 @@ type TBasicSignupDataState = {
   clearSignupData: () => void;
 };
 
+/* -------------------------------- Store -------------------------------- */
 export const useBasicSignupDataStore = create<TBasicSignupDataState>((set) => ({
   basicSignupData: null,
   setBasicSignupData: (data: TBasicSignupData) =>

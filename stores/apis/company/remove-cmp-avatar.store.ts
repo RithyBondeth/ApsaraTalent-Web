@@ -1,5 +1,5 @@
 import axios from "@/lib/axios";
-import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_REMOVE_CMP_AVATAR_URL } from "@/utils/constants/apis/company_url";
 import { create } from "zustand";
 

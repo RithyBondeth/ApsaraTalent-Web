@@ -3,8 +3,8 @@ import { API_GET_CURRENT_USER_URL } from "@/utils/constants/apis/user_url";
 import { IUser } from "@/utils/interfaces/user";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { extractApiErrorMessage } from "../../_shared/api-error-message";
-import { STORE_PERSIST_KEYS } from "../../_shared/persist-keys";
+import { extractApiErrorMessage } from "../../shared/api-error-message";
+import { STORE_PERSIST_KEYS } from "../../shared/persist-keys";
 
 type TGetCurrentUserState = {
   loading: boolean;

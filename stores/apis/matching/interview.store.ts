@@ -1,5 +1,5 @@
 import axios from "@/lib/axios";
-import { extractApiErrorMessage } from "@/stores/_shared/api-error-message";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import {
   API_CREATE_INTERVIEW_URL,
   API_GET_INTERVIEWS_BY_COMPANY_URL,

@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef } from "react";
 import {
   getMessaging,
@@ -14,13 +16,29 @@ import { useNotificationStore } from "@/stores/apis/notification/notification.st
 const PUSH_TOKEN_STORAGE_KEY = "apsara-push-token";
 
 export const usePushNotifications = () => {
+  /* --------------------------------- All States -------------------------------- */
   const userId = useGetCurrentUserStore((s) => s.user?.id);
   const initializedRef = useRef(false);
 
+  /* ---------------------------------- Effects --------------------------------- */
   useEffect(() => {
-    if (!userId) return;
-    if (initializedRef.current) return;
+    if (!userId || initializedRef.current) {
+      return;
+    }
+
     initializedRef.current = true;
+    let isCancelled = false;
+    let unsubscribeForegroundMessage: (() => void) | undefined;
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        void useNotificationStore.getState().fetchUnreadCount();
+      }
+    };
+    const handleSwMessage = (event: MessageEvent) => {
+      if (event.data?.type === "NOTIFICATION_RECEIVED") {
+        void useNotificationStore.getState().fetchUnreadCount();
+      }
+    };
 
     const setupPushNotifications = async () => {
       if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
@@ -58,6 +76,10 @@ export const usePushNotifications = () => {
         return;
       }
 
+      if (isCancelled) {
+        return;
+      }
+
       const readyRegistration =
         (await navigator.serviceWorker.ready.catch(() => null)) || registration;
 
@@ -70,6 +92,10 @@ export const usePushNotifications = () => {
         });
       } catch (error) {
         console.error("[Push] Failed to get token:", error);
+      }
+
+      if (isCancelled) {
+        return;
       }
 
       if (token) {
@@ -88,7 +114,7 @@ export const usePushNotifications = () => {
       // Foreground message handler — fires when the app tab is focused.
       // Chrome blocks `new Notification()` in foreground contexts, so we
       // route through the service worker's showNotification() instead.
-      onMessage(messaging, (payload) => {
+      unsubscribeForegroundMessage = onMessage(messaging, (payload) => {
         if (Notification.permission !== "granted") return;
 
         const title =
@@ -112,6 +138,10 @@ export const usePushNotifications = () => {
         const url = payload.data?.url || "/notification";
 
         navigator.serviceWorker.ready.then((reg) => {
+          if (isCancelled) {
+            return;
+          }
+
           reg.showNotification(title, {
             body,
             icon,
@@ -132,37 +162,22 @@ export const usePushNotifications = () => {
         useNotificationStore.getState().incrementUnreadCount();
       });
 
-      // ── Real-time badge update (background → foreground) ─────────────────
-      // When a push arrives while the tab is hidden (background/minimised),
-      // the service worker handles it.  When the user switches back to the tab
-      // we re-fetch the true count from the API so the badge is always accurate.
-      const handleVisibilityChange = () => {
-        if (document.visibilityState === "visible") {
-          void useNotificationStore.getState().fetchUnreadCount();
-        }
-      };
       document.addEventListener("visibilitychange", handleVisibilityChange);
 
       // The service worker also posts a 'NOTIFICATION_RECEIVED' message to all
       // clients when it handles a background push. This lets us update the badge
       // even if the tab is visible but was somehow out of sync.
-      const handleSwMessage = (event: MessageEvent) => {
-        if (event.data?.type === "NOTIFICATION_RECEIVED") {
-          void useNotificationStore.getState().fetchUnreadCount();
-        }
-      };
       navigator.serviceWorker.addEventListener("message", handleSwMessage);
-
-      // Cleanup listeners on hook unmount
-      return () => {
-        document.removeEventListener(
-          "visibilitychange",
-          handleVisibilityChange,
-        );
-        navigator.serviceWorker.removeEventListener("message", handleSwMessage);
-      };
     };
 
     void setupPushNotifications();
+
+    return () => {
+      isCancelled = true;
+      initializedRef.current = false;
+      unsubscribeForegroundMessage?.();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      navigator.serviceWorker.removeEventListener("message", handleSwMessage);
+    };
   }, [userId]);
 };
