@@ -29,7 +29,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { SectionWrapper } from "./section-wrapper";
+import { SectionWrapper } from "../section-wrapper";
 import { TResumeSectionID } from "@/utils/types/resume/resume-section-id.type";
 import { useResumeCanvasEditorStore } from "@/stores/apis/resume/resume-canvas-editor.store";
 
