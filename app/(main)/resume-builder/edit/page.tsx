@@ -1,6 +1,6 @@
 "use client";
 
-import ResumeEditorFormPanel from "@/components/resume-builder/editor/form-panel";
+import ResumeEditorFormPanel from "@/components/resume-builder/editor/form-panel/form-panel";
 import ResumeEditorPreviewPanel from "@/components/resume-builder/editor/preview-panel";
 import { Button } from "@/components/ui/button";
 import LoadingDialog from "@/components/utils/dialogs/loading-dialog";

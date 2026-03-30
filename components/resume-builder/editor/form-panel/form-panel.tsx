@@ -10,7 +10,6 @@ import {
 } from "@/utils/interfaces/resume";
 import {
   UseFormRegister,
-  UseFormSetValue,
   Control,
   useFieldArray,
   useWatch,
@@ -26,15 +25,9 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { useState } from "react";
+import { IFormPanelProps } from "./props";
 
-/* ─── Types ─────────────────────────────────────────────────── */
-interface FormPanelProps {
-  register: UseFormRegister<IBuildResume>;
-  control: Control<IBuildResume>;
-  setValue: UseFormSetValue<IBuildResume>;
-}
-
-/* ─── Small helper label ─────────────────────────────────────── */
+/* -------------------------------- Component ------------------------------- */
 function FieldLabel({ children }: { children: React.ReactNode }) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -44,11 +37,11 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* ─── Personal Info Tab ──────────────────────────────────────── */
+/* -------------------------------- Component ------------------------------- */
 function PersonalInfoTab({
   register,
   control,
-}: Pick<FormPanelProps, "register" | "control">) {
+}: Pick<IFormPanelProps, "register" | "control">) {
   /* -------------------------------- All States ------------------------------ */
   const socials = useWatch({ control, name: "personalInfo.socials" }) ?? {};
   /* ---------------------------------- Utils --------------------------------- */
@@ -158,7 +151,7 @@ function PersonalInfoTab({
   );
 }
 
-/* ─── Single Experience Card ─────────────────────────────────── */
+/* -------------------------------- Component ------------------------------- */
 function ExperienceCard({
   index,
   register,
@@ -316,11 +309,11 @@ function ExperienceCard({
   );
 }
 
-/* ─── Experience Tab ─────────────────────────────────────────── */
+/* -------------------------------- Component ------------------------------- */
 function ExperienceTab({
   register,
   control,
-}: Pick<FormPanelProps, "register" | "control">) {
+}: Pick<IFormPanelProps, "register" | "control">) {
   /* ----------------------------- API Integration ---------------------------- */
   const { fields, append, remove } = useFieldArray({
     control,
@@ -368,8 +361,8 @@ function ExperienceTab({
   );
 }
 
-/* ─── Skills & Education Tab ─────────────────────────────────── */
-function SkillsEducationTab({ register, control, setValue }: FormPanelProps) {
+/* -------------------------------- Component ------------------------------- */
+function SkillsEducationTab({ register, control, setValue }: IFormPanelProps) {
   /* -------------------------------- All States ------------------------------ */
   const skills = (useWatch({ control, name: "skills" }) ?? []) as string[];
   const careerScopes = (useWatch({ control, name: "careerScopes" }) ??
@@ -524,8 +517,8 @@ function SkillsEducationTab({ register, control, setValue }: FormPanelProps) {
   );
 }
 
-/* ─── Main FormPanel ─────────────────────────────────────────── */
-export default function ResumeEditorFormPanel(props: FormPanelProps) {
+/* -------------------------------- Component ------------------------------- */
+export default function ResumeEditorFormPanel(props: IFormPanelProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Tabs defaultValue="personal" className="flex flex-col h-full">
@@ -573,6 +566,7 @@ export default function ResumeEditorFormPanel(props: FormPanelProps) {
   );
 }
 
+/* ---------------------------------- Utils --------------------------------- */
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }

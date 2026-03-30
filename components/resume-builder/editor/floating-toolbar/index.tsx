@@ -5,7 +5,8 @@ import { Bold, Italic, ChevronDown } from "lucide-react";
 import { useTextSelection } from "@/hooks/utils/use-text-selection";
 import { useEffect, useState } from "react";
 
-/* ─── Toolbar button ─────────────────────────────────────────── */
+/* ------------------------------------ Helpers ---------------------------------- */
+// ─── Toolbar Button ─────────────────────────────
 function ToolbarBtn({
   active,
   onClick,
@@ -17,7 +18,6 @@ function ToolbarBtn({
   title: string;
   children: React.ReactNode;
 }) {
-  /* -------------------------------- Render UI -------------------------------- */
   return (
     <button
       title={title}
@@ -32,27 +32,36 @@ function ToolbarBtn({
   );
 }
 
-/* ─── Font-size options ──────────────────────────────────────── */
-const FONT_SIZES = ["10", "11", "12", "13", "14", "16", "18", "20", "24"];
+// ─── Font-Size Options ─────────────────────────────
+const FONT_SIZES: string[] = [
+  "10",
+  "11",
+  "12",
+  "13",
+  "14",
+  "16",
+  "18",
+  "20",
+  "24",
+];
 
-/* ─── Floating toolbar ───────────────────────────────────────── */
-/**
- * Portalled to document.body so it sits above the CSS-scaled canvas.
- * Reads window.getSelection() through useTextSelection() to know when
- * and where to appear.
- *
- * IMPORTANT: every interactive child must call e.preventDefault() on
- * mouseDown so the contentEditable field doesn't lose focus before
- * execCommand fires.
- */
 export default function FloatingToolbar() {
   /* ---------------------------------- Utils --------------------------------- */
   const { isVisible, top, left, isBold, isItalic } = useTextSelection();
-  /* -------------------------------- All States ------------------------------ */
-  const [mounted, setMounted] = useState(false);
+  const toolbarStyle: React.CSSProperties = {
+    position: "fixed",
+    top: Math.max(8, top),
+    left,
+    transform: "translateX(-50%)",
+    zIndex: 9999,
+    pointerEvents: "auto",
+  };
 
-  // Portal requires document to be available (client-only)
+  /* -------------------------------- All States ------------------------------ */
+  const [mounted, setMounted] = useState<boolean>(false);
+
   /* --------------------------------- Effects --------------------------------- */
+  // Portal requires document to be available (client-only)
   useEffect(() => setMounted(true), []);
 
   if (!mounted || !isVisible) return null;
@@ -65,6 +74,7 @@ export default function FloatingToolbar() {
     document.execCommand(command, false, value);
   }
 
+  // ── Apply Font Size ─────────────────────────────
   function applyFontSize(px: string) {
     // execCommand fontSize uses a 1-7 scale, so we first insert a marker
     // then replace the font element with a span that has the exact px size
@@ -86,24 +96,14 @@ export default function FloatingToolbar() {
     }
   }
 
-  /* ---------------------------------- Utils --------------------------------- */
-  const toolbarStyle: React.CSSProperties = {
-    position: "fixed",
-    top: Math.max(8, top),
-    left,
-    transform: "translateX(-50%)",
-    zIndex: 9999,
-    pointerEvents: "auto",
-  };
-
   /* -------------------------------- Render UI -------------------------------- */
   return createPortal(
     <div
       style={toolbarStyle}
-      onMouseDown={(e) => e.preventDefault()} // keep selection alive
+      onMouseDown={(e) => e.preventDefault()}
       className="flex items-center gap-0.5 bg-gray-900 border border-gray-700 rounded-lg shadow-2xl px-1.5 py-1"
     >
-      {/* Bold */}
+      {/* Bold Button Section */}
       <ToolbarBtn
         active={isBold}
         onClick={() => exec("bold")}
@@ -112,7 +112,7 @@ export default function FloatingToolbar() {
         <Bold size={13} strokeWidth={2.5} />
       </ToolbarBtn>
 
-      {/* Italic */}
+      {/* Italic Button Section */}
       <ToolbarBtn
         active={isItalic}
         onClick={() => exec("italic")}
@@ -121,10 +121,10 @@ export default function FloatingToolbar() {
         <Italic size={13} strokeWidth={2.5} />
       </ToolbarBtn>
 
-      {/* Divider */}
+      {/* Divider Section */}
       <div className="w-px h-4 bg-gray-600 mx-0.5" />
 
-      {/* Font size */}
+      {/* Font size Section */}
       <div
         className="relative flex items-center gap-0.5 text-white text-xs px-1.5 h-7 rounded hover:bg-white/15 cursor-pointer"
         title="Font size"

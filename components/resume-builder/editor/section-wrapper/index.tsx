@@ -3,31 +3,16 @@
 import { GripVertical } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import {
-  SectionId,
-  useCanvasEditorStore,
-} from "@/stores/apis/resume/resume-canvas-editor.store";
+import { useResumeCanvasEditorStore } from "@/stores/apis/resume/resume-canvas-editor.store";
+import { ISectionWrapperProps } from "./props";
 
-interface SectionWrapperProps {
-  sectionId: SectionId;
-  children: React.ReactNode;
-  /** When true the section participates in the section-level DnD context */
-  isDraggable?: boolean;
-}
+export function SectionWrapper(props: ISectionWrapperProps) {
+  /* ---------------------------------- Props --------------------------------- */
+  const { sectionId, children, isDraggable = false } = props;
 
-/**
- * Wraps each resume section with:
- * - Click-to-select → blue outline ring
- * - Hover drag handle (GripVertical) when `isDraggable`
- * - @dnd-kit sortable integration (disabled when !isDraggable)
- */
-export function SectionWrapper({
-  sectionId,
-  children,
-  isDraggable = false,
-}: SectionWrapperProps) {
   /* ----------------------------- API Integration ---------------------------- */
-  const { selectedSection, setSelectedSection } = useCanvasEditorStore();
+  const { selectedSection, setSelectedSection } = useResumeCanvasEditorStore();
+
   /* ---------------------------------- Utils --------------------------------- */
   const isSelected = selectedSection === sectionId;
 
@@ -60,7 +45,7 @@ export function SectionWrapper({
           : "ring-0 hover:ring-1 hover:ring-blue-300/60 hover:ring-offset-1",
       ].join(" ")}
     >
-      {/* Drag handle — only rendered for draggable sections */}
+      {/* Drag Handle Section: Only rendered for draggable sections */}
       {isDraggable && (
         <div
           {...attributes}

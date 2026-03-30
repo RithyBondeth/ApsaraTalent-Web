@@ -10,8 +10,10 @@ export default function ResumeBuilderFeature() {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col items-center gap-10 p-5 rounded-md shadow-md">
-      <TypographyH4>AI-Powdered Features</TypographyH4>
+      {/* Title Section */}
+      <TypographyH4>AI-Powered Features</TypographyH4>
       <div className="flex justify-between items-start gap-5 tablet-lg:flex-col">
+        {/* Feature 1 Card Section */}
         <div className="flex flex-col items-center gap-2">
           <div className="p-5 rounded-full bg-blue-100">
             <LucidePencilRuler
@@ -27,6 +29,8 @@ export default function ResumeBuilderFeature() {
             impact
           </TypographyLead>
         </div>
+
+        {/* Feature 2 Card Section */}
         <div className="flex flex-col items-center gap-2">
           <div className="p-5 rounded-full bg-green-100">
             <LucideSearch
@@ -42,6 +46,8 @@ export default function ResumeBuilderFeature() {
             impact
           </TypographyLead>
         </div>
+
+        {/* Feature 3 Card Section */}
         <div className="flex flex-col items-center gap-2">
           <div className="p-5 rounded-full bg-purple-100">
             <LucideChartSpline
