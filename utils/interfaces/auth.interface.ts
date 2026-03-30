@@ -1,5 +1,5 @@
 import { EAuthLoginMethod } from "../constants/auth.constant";
-import { TUserRole } from "@/utils/types/auth";
+import { TUserRole } from "@/utils/types/auth/role.type";
 
 export interface IUserAuthResponse {
   id: string;

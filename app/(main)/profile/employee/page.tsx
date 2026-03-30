@@ -71,8 +71,10 @@ import { capitalizeWords } from "@/utils/functions/text";
 import { isUuid } from "@/utils/extensions/check-uuid";
 import { extractCleanFilename } from "@/utils/functions/file";
 import { parseMaybeDate } from "@/utils/functions/date";
-import { ICareerScope, ISkill, ISocialLink } from "@/utils/interfaces/user";
-import { TPlatform } from "@/utils/types/user";
+import { ICareerScope } from "@/utils/interfaces/career-option.interface";
+import { ISkill } from "@/utils/interfaces/user-interface/employee.interface";
+import { ISocialLink } from "@/utils/interfaces/social.interface";
+import { TPlatform } from "@/utils/types/user/platform.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ChevronDown,

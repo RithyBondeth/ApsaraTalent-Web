@@ -1,4 +1,4 @@
-import { IMessage } from "@/utils/interfaces/chat";
+import { IMessage } from "@/utils/interfaces/chat.interface";
 
 export interface IMessageReplyPreviewProps {
   replyTarget: IMessage;

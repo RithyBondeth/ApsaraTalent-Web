@@ -9,7 +9,7 @@ import {
 import { CheckCircle2, Loader2 } from "lucide-react";
 import ApsaraLoadingSpinner from "@/components/utils/feedback/apsara-loading-spinner";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { TLoadingStep } from "@/utils/interfaces/ui";
+import { TLoadingStep } from "@/utils/interfaces/ui/loading.interface";
 
 /* --------------------------------- Helper --------------------------------- */
 interface ILoadingDialogProps {

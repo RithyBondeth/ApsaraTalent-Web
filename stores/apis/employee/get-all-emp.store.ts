@@ -1,7 +1,7 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_GET_ALL_EMP_URL } from "@/utils/constants/apis/employee_url";
-import { IEmployee } from "@/utils/interfaces/user";
+import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
 import { create } from "zustand";
 
 /* ---------------------------------- States --------------------------------- */

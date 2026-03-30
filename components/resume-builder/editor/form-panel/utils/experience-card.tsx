@@ -2,10 +2,8 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import {
-  IBuildResume,
-  IExperience as Experience,
-} from "@/utils/interfaces/resume";
+import { IBuildResume } from "@/utils/interfaces/resume-interface/resume.interface";
+import { IExperience as Experience } from "@/utils/interfaces/resume-interface/resume.interface";
 import {
   UseFormRegister,
   Control,

@@ -1,4 +1,4 @@
-import { TResumeTemplate } from "@/utils/types/resume";
+import { TResumeTemplate } from "@/utils/types/resume/resume.type";
 
 export interface IPersonalInfo {
   fullName: string;

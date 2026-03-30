@@ -1,6 +1,6 @@
-import { ICareerScope } from "@/utils/interfaces/career";
-import { ISocialLink } from "@/utils/interfaces/social";
-import { TGender } from "@/utils/types/user";
+import { ICareerScope } from "@/utils/interfaces/career-option.interface";
+import { ISocialLink } from "@/utils/interfaces/social.interface";
+import { TGender } from "@/utils/types/user/gender.type";
 
 export interface IEmployee {
   id: string;

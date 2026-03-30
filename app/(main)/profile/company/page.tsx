@@ -75,8 +75,9 @@ import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
 import { capitalizeWords } from "@/utils/functions/text";
 import { isUuid } from "@/utils/extensions/check-uuid";
 import { parseMaybeDate } from "@/utils/functions/date";
-import { IBenefits, IValues } from "@/utils/interfaces/user";
-import { TPlatform } from "@/utils/types/user";
+import { IBenefits } from "@/utils/interfaces/user-interface/company.interface";
+import { IValues } from "@/utils/interfaces/user-interface/company.interface";
+import { TPlatform } from "@/utils/types/user/platform.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ChevronDown,

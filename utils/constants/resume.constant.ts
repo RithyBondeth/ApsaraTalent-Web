@@ -1,4 +1,4 @@
-import { TLoadingStep } from "@/utils/interfaces/ui";
+import { TLoadingStep } from "@/utils/interfaces/ui/loading.interface";
 import { TResumeSectionID } from "../types/resume/resume-section-id.type";
 
 export const LIVE_RESUME_PREVIEW_DEBOUNCE_MS = 600;

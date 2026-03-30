@@ -1,4 +1,4 @@
-import { IJobPosition } from "@/utils/interfaces/user";
+import { IJobPosition } from "@/utils/interfaces/user-interface/company.interface";
 
 export interface IFavoriteCompanyCardProps {
   id: string;

@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { IBuildResume } from "@/utils/interfaces/resume";
+import { IBuildResume } from "@/utils/interfaces/resume-interface/resume.interface";
 import { useWatch, Path } from "react-hook-form";
 import { IFormPanelProps } from "../props";
 import { FieldLabel } from "./field-label";

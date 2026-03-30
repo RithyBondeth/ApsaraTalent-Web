@@ -12,7 +12,7 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { buildResumePayloadFromUser } from "./_utils/build-payload";
-import { TResumeTemplate } from "@/utils/types/resume";
+import { TResumeTemplate } from "@/utils/types/resume/resume.type";
 import ResumeBuilderLoadingSkeleton from "@/components/resume-builder/skeleton";
 
 // Module-level flag so templates are only fetched once per app session

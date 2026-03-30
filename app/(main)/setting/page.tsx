@@ -4,8 +4,8 @@ import { useForgotPasswordStore } from "@/stores/apis/auth/forgot-password.store
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useLanguageStore } from "@/stores/languages/language-store";
 import { useThemeStore } from "@/stores/themes/theme-store";
-import { TLanguage } from "@/utils/types/app";
-import { TTheme } from "@/utils/types/app";
+import { TLanguage } from "@/utils/types/app/language.type";
+import { TTheme } from "@/utils/types/app/theme.type";
 import { useTheme } from "next-themes";
 import { setCookie } from "cookies-next";
 import { useState } from "react";

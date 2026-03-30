@@ -1,7 +1,5 @@
-import {
-  IBuildResume,
-  IExperience as Experience,
-} from "@/utils/interfaces/resume";
+import { IBuildResume } from "@/utils/interfaces/resume-interface/resume.interface";
+import { IExperience as Experience } from "@/utils/interfaces/resume-interface/resume.interface";
 import { UseFormSetValue, UseFormGetValues } from "react-hook-form";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";

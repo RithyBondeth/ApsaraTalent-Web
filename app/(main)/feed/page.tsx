@@ -29,8 +29,8 @@ import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { ICompany } from "@/utils/interfaces/user";
-import { IEmployee } from "@/utils/interfaces/user";
+import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
+import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useRouter } from "next/navigation";

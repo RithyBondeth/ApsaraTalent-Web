@@ -1,5 +1,5 @@
-import { TAvailability } from "@/utils/types/user";
-import { TLocations } from "@/utils/types/user";
+import { TAvailability } from "@/utils/types/user/availability.type";
+import { TLocations } from "@/utils/types/user/location.type";
 import {
   FieldErrors,
   FieldValues,

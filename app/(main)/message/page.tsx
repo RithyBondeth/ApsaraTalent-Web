@@ -25,7 +25,7 @@ import MessageLoadingSkeleton, {
 } from "@/components/message/skeleton/index";
 import { MessageSvgImage } from "@/utils/constants/asset.constant";
 import { CHAT_LOADING_TIMEOUT_MS } from "@/utils/constants/chat.constant";
-import { IMessage } from "@/utils/interfaces/chat";
+import { IMessage } from "@/utils/interfaces/chat.interface";
 
 export default function MessagePageContent() {
   /* ---------------------------------- Utils --------------------------------- */

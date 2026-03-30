@@ -23,8 +23,8 @@ import { useSearchEmployeeStore } from "@/stores/apis/employee/search-emp.store"
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { SEARCH_DEBOUNCE_MS } from "@/utils/constants/search.constant";
 import { yearOfExperienceConstant } from "@/utils/constants/ui.constant";
-import { TAvailability } from "@/utils/types/user";
-import { TLocations } from "@/utils/types/user";
+import { TAvailability } from "@/utils/types/user/availability.type";
+import { TLocations } from "@/utils/types/user/location.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import debounce from "lodash.debounce";
 import {

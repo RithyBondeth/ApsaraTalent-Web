@@ -1,7 +1,7 @@
 import { clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-manager";
 import { API_AUTH_SOCIAL_FACEBOOK_URL } from "@/utils/constants/apis/auth_url";
 import { EAuthLoginMethod } from "@/utils/constants/auth.constant";
-import { TUserRole } from "@/utils/types/auth";
+import { TUserRole } from "@/utils/types/auth/role.type";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../../users/get-current-user.store";
 

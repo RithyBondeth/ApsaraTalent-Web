@@ -1,4 +1,4 @@
-import { TTheme } from "@/utils/types/app";
+import { TTheme } from "@/utils/types/app/theme.type";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { STORE_PERSIST_KEYS } from "../shared/persist-keys";

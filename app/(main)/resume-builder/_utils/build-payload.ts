@@ -1,6 +1,6 @@
-import { TResumeTemplate } from "@/utils/types/resume";
-import { IBuildResume } from "@/utils/interfaces/resume";
-import { IUser } from "@/utils/interfaces/user";
+import { TResumeTemplate } from "@/utils/types/resume/resume.type";
+import { IBuildResume } from "@/utils/interfaces/resume-interface/resume.interface";
+import { IUser } from "@/utils/interfaces/user-interface/user.interface";
 
 /**
  * Formats a date string to "Month YYYY" (e.g. "January 2022").

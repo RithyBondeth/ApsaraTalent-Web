@@ -1,4 +1,4 @@
-import { TLocations } from "@/utils/types/user";
+import { TLocations } from "@/utils/types/user/location.type";
 
 export interface ISearchCompanyCardProps {
   id?: string;

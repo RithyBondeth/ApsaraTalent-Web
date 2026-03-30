@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { TResumeTemplate } from "@/utils/types/resume";
+import { TResumeTemplate } from "@/utils/types/resume/resume.type";
 
 /* ---------------------------------- States --------------------------------- */
 // ── Template Selection State ─────────────────────────────────

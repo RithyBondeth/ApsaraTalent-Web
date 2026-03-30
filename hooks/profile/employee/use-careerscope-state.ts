@@ -1,4 +1,4 @@
-import { ICareerScope } from "@/utils/interfaces/career";
+import { ICareerScope } from "@/utils/interfaces/career-option.interface";
 import { useState } from "react";
 
 export function useCareerScopesState(initialCareerScopes: ICareerScope[] = []) {

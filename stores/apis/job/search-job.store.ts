@@ -1,7 +1,7 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_SEARCH_JOB_URL } from "@/utils/constants/apis/job_url";
-import { TLocations } from "@/utils/types/user";
+import { TLocations } from "@/utils/types/user/location.type";
 import { create } from "zustand";
 
 /* ---------------------------------- States --------------------------------- */

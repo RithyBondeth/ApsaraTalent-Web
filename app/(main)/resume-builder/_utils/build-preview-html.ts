@@ -1,4 +1,4 @@
-import { IBuildResume } from "@/utils/interfaces/resume";
+import { IBuildResume } from "@/utils/interfaces/resume-interface/resume.interface";
 
 /**
  * Generates a clean, professional HTML string from a BuildResume payload.

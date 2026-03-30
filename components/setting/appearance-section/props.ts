@@ -1,4 +1,4 @@
-import { TTheme } from "@/utils/types/app";
+import { TTheme } from "@/utils/types/app/theme.type";
 
 export interface IAppearanceSectionProps {
   theme: TTheme;

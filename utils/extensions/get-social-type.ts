@@ -9,7 +9,7 @@ import {
   TwitterIcon,
 } from "lucide-react";
 import React from "react";
-import { TPlatform } from "@/utils/types/user";
+import { TPlatform } from "@/utils/types/user/platform.type";
 
 export const getSocialPlatformTypeIcon = (
   platform: TPlatform,

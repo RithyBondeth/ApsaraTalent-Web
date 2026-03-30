@@ -1,7 +1,7 @@
 "use client";
 
 import { useThemeStore } from "@/stores/themes/theme-store";
-import { TTheme } from "@/utils/types/app";
+import { TTheme } from "@/utils/types/app/theme.type";
 import { setCookie } from "cookies-next/client";
 import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes";
 import { useEffect } from "react";

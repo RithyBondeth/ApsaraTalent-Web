@@ -1,4 +1,5 @@
-import { IChatPreview, IMessage } from "@/utils/interfaces/chat";
+import { IChatPreview } from "@/utils/interfaces/chat.interface";
+import { IMessage } from "@/utils/interfaces/chat.interface";
 
 export interface IChatMessagesProps {
   messages: IMessage[];

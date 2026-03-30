@@ -10,7 +10,7 @@ import {
   availabilityConstant,
   locationConstant,
 } from "@/utils/constants/ui.constant";
-import { TLocations } from "@/utils/types/user";
+import { TLocations } from "@/utils/types/user/location.type";
 import { SelectValue } from "@radix-ui/react-select";
 import { useEffect, useState } from "react";
 import { FieldValues, Path } from "react-hook-form";

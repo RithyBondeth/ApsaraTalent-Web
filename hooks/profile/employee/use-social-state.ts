@@ -1,4 +1,4 @@
-import { ISocialLink } from "@/utils/interfaces/social";
+import { ISocialLink } from "@/utils/interfaces/social.interface";
 import { useRef, useState } from "react";
 
 export function useSocialsState(initialSocials: ISocialLink[] = []) {

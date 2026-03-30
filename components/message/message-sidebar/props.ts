@@ -1,4 +1,4 @@
-import { IChatPreview } from "@/utils/interfaces/chat";
+import { IChatPreview } from "@/utils/interfaces/chat.interface";
 
 export interface IChatSidebarProps {
   chats: IChatPreview[] | undefined;

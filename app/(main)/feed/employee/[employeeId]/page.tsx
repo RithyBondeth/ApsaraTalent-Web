@@ -26,11 +26,11 @@ import { formatShortDate } from "@/utils/functions/date";
 import { extractCleanFilename } from "@/utils/functions/file";
 import {
   IEducation,
-  IExperience,
   ISkill,
-  ISocialLink,
-} from "@/utils/interfaces/user";
-import { TPlatform } from "@/utils/types/user";
+  IExperience,
+} from "@/utils/interfaces/user-interface/employee.interface";
+import { ISocialLink } from "@/utils/interfaces/social.interface";
+import { TPlatform } from "@/utils/types/user/platform.type";
 import {
   LucideArrowLeft,
   LucideAtSign,

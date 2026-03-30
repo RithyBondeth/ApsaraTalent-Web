@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { TNotificationFilterType } from "@/utils/types/app";
+import { TNotificationFilterType } from "@/utils/types/app/notification.type";
 import { LucideCheckCheck } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
