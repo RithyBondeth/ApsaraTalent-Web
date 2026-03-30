@@ -21,7 +21,7 @@ import { useCompanyLikeStore } from "@/stores/apis/matching/company-like.store";
 import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
+import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type";
 import { formatShortDate } from "@/utils/functions/date";
 import { extractCleanFilename } from "@/utils/functions/file";
 import {
@@ -59,7 +59,7 @@ import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 import MetaChip from "@/components/utils/data-display/meta-chip";
 import { DetailCard } from "@/components/utils/data-display/detail-card";
 import { SectionTitle } from "@/components/utils/layout/section-title";
-import { getAvailabilityStyleClass } from "@/utils/extensions/get-availability-class";
+import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
 
 export default function EmployeeDetailPage() {
   /* ---------------------------------- Utils ---------------------------------- */

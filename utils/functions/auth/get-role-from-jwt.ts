@@ -5,8 +5,7 @@ export function getRoleFromJwt(token: string): string | null {
 
     // Use Web APIs so it works in Next middleware (Edge runtime)
     const base64 = payloadPart.replace(/-/g, "+").replace(/_/g, "/");
-    const padded =
-      base64 + "=".repeat((4 - (base64.length % 4)) % 4);
+    const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
     if (typeof atob !== "function") return null;
 
     const binary = atob(padded);

@@ -13,7 +13,7 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { getErrorMessage } from "@/utils/extensions/get-error-message";
+import { getErrorMessage } from "@/utils/functions/error/get-error-message";
 import { getRandomBadgeColor } from "@/utils/functions/ui";
 import { LucidePlus, LucideXCircle } from "lucide-react";
 import { useState } from "react";

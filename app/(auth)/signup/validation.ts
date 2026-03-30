@@ -4,7 +4,7 @@ import {
   passwordValidation,
   selectedValidation,
   textValidation,
-} from "@/utils/extensions/validations";
+} from "@/utils/functions/validation/form-schemas";
 import * as z from "zod";
 
 // Sign up as Employee Schema

@@ -18,7 +18,7 @@ import ImagePopup from "@/components/utils/data-display/image-popup";
 import Tag from "@/components/utils/data-display/tag";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
+import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type";
 import { formatDisplayDate } from "@/utils/functions/date";
 import { IBenefits } from "@/utils/interfaces/user-interface/company.interface";
 import { IImage } from "@/utils/interfaces/user-interface/company.interface";

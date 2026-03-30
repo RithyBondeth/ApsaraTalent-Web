@@ -4,7 +4,7 @@ import {
   optionalImageValidation,
   selectedValidation,
   textValidation,
-} from "@/utils/extensions/validations";
+} from "@/utils/functions/validation/form-schemas";
 import * as z from "zod";
 
 // Define schema for step 1: Professtion

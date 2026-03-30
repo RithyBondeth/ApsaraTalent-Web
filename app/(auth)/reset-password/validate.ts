@@ -1,7 +1,7 @@
 import {
   passwordValidation,
   textValidation,
-} from "@/utils/extensions/validations";
+} from "@/utils/functions/validation/form-schemas";
 import * as z from "zod";
 
 export const resetPasswordSchema = z

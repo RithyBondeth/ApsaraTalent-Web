@@ -5,8 +5,8 @@ import { Input } from "@/components/ui/input";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useForgotPasswordStore } from "@/stores/apis/auth/forgot-password.store";
-import { isEmailInput } from "@/utils/extensions/check-email-input";
-import { isNumberPhoneInput } from "@/utils/extensions/check-phone-input";
+import { isEmailInput } from "@/utils/functions/validation/check-email-input";
+import { isNumberPhoneInput } from "@/utils/functions/validation/check-phone-input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   LucideArrowLeft,

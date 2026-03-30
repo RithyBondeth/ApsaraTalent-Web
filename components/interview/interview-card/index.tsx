@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getStatusBadgeStyleClass } from "@/utils/extensions/get-interview-status-class";
+import { getStatusBadgeStyleClass } from "@/utils/functions/ui/get-interview-status-class";
 import { formatShortDate } from "@/utils/functions/date";
 import {
   LucideCalendarCheck,

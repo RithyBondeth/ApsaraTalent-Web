@@ -1,7 +1,7 @@
 import {
   emailValidation,
   passwordValidation,
-} from "@/utils/extensions/validations";
+} from "@/utils/functions/validation/form-schemas";
 import * as z from "zod";
 
 export const loginSchema = z.object({

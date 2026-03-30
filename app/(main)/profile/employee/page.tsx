@@ -66,9 +66,9 @@ import {
   loginMethodConstant,
   platformConstant,
 } from "@/utils/constants/ui.constant";
-import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
+import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type";
 import { capitalizeWords } from "@/utils/functions/text";
-import { isUuid } from "@/utils/extensions/check-uuid";
+import { isUuid } from "@/utils/functions/validation/check-uuid";
 import { extractCleanFilename } from "@/utils/functions/file";
 import { parseMaybeDate } from "@/utils/functions/date";
 import { ICareerScope } from "@/utils/interfaces/career-option.interface";

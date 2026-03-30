@@ -12,7 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import Tag from "@/components/utils/data-display/tag";
 import { IFavoriteEmployeeCardProps } from "./props";
-import { getAvailabilityStyleClass } from "@/utils/extensions/get-availability-class";
+import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 export default function FavoriteEmployeeCard(
