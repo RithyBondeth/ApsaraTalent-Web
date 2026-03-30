@@ -4,6 +4,7 @@ import { persist } from "zustand/middleware";
 import { STORE_PERSIST_KEYS } from "../shared/persist-keys";
 
 /* ----------------------------- Store State ----------------------------- */
+// ── Language State ───────────────────────────────────────────
 type TLanguageState = {
   language: TLanguage;
   setLanguage: (language: TLanguage) => void;

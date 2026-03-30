@@ -1,4 +1,4 @@
-import { ChatState, SocketInstance } from "./types";
+import { TChatState, SocketInstance } from "./types";
 import { IMessage } from "@/utils/interfaces/chat";
 import { resolveMessageSnippet } from "./utils";
 import { formatSidebarTime, parseMessageDate } from "@/utils/functions/date";
@@ -8,12 +8,13 @@ import { normalizeMediaUrl } from "@/utils/functions/media";
 export const registerSocketListeners = (
   socket: SocketInstance,
   set: (partial: any) => void,
-  get: () => ChatState,
+  get: () => TChatState,
 ) => {
-  // ── Incoming new message ────────────────────────────────────────────────
+  // ── Incoming New Message ────────────────────────────────────────────────
   socket.on("newMessage", (message: any) => {
     const { activeChat, currentMessages, getRecentChats, me } = get();
 
+    // ── Resolve Reply To ────
     const resolveReplyTo = (
       replyToId: string | null | undefined,
     ): IMessage["replyTo"] => {
@@ -33,6 +34,7 @@ export const registerSocketListeners = (
       return { id: replyToId, content: "", senderName: "", isDeleted: false };
     };
 
+    // ── Resolve Message ────
     const isFromMe = message.senderId === me?.id;
     const isForMe = message.receiverId === me?.id;
     const isActiveChatOpen =
@@ -48,7 +50,8 @@ export const registerSocketListeners = (
     );
     const isNewUnread = !isFromMe && isForMe && !isActiveChatOpen;
 
-    set((state: ChatState) => {
+    // ── Update Active Chats ────
+    set((state: TChatState) => {
       const exists = state.activeChats.some((c) => c.id === partnerId);
       if (exists) {
         return {
@@ -70,12 +73,14 @@ export const registerSocketListeners = (
       return {};
     });
 
+    // ── Update Unread Count ────
     if (!isFromMe && isForMe && !isActiveChatOpen) {
       useNotificationStore.getState().incrementUnreadCount();
     } else {
       void useNotificationStore.getState().queryUnreadCount();
     }
 
+    // ── Update Current Messages ────
     const isForActiveChat =
       activeChat &&
       (message.senderId === activeChat.id ||
@@ -166,14 +171,14 @@ export const registerSocketListeners = (
     }
   });
 
-  // ── Typing indicator ────────────────────────────────────────────────────
+  // ── Typing Indicator ────────────────────────────────────────────────────
   socket.on("userTyping", (data: { userId: string; isTyping: boolean }) => {
-    set((state: ChatState) => ({
+    set((state: TChatState) => ({
       isTyping: { ...state.isTyping, [data.userId]: data.isTyping },
     }));
   });
 
-  // ── Reaction update ─────────────────────────────────────────────────────
+  // ── Reaction Update ─────────────────────────────────────────────────────
   socket.on(
     "messageReaction",
     (data: { messageId: string; reactions: Record<string, string> }) => {
@@ -189,7 +194,7 @@ export const registerSocketListeners = (
     },
   );
 
-  // ── Message read receipt ────────────────────────────────────────────────
+  // ── Message Read Receipt ────────────────────────────────────────────────
   socket.on("messageRead", (data: { messageId: string; readerId?: string }) => {
     const { currentMessages, activeChat } = get();
     const msg = currentMessages.find((m) => m.id === data.messageId);
@@ -205,7 +210,7 @@ export const registerSocketListeners = (
 
     const readerId = data.readerId ?? activeChat?.id;
     if (readerId) {
-      set((state: ChatState) => ({
+      set((state: TChatState) => ({
         activeChats: state.activeChats.map((c) =>
           c.id === readerId ? { ...c, isRead: true, unread: 0 } : c,
         ),
@@ -213,10 +218,10 @@ export const registerSocketListeners = (
     }
   });
 
-  // ── Online / offline status ─────────────────────────────────────────────
+  // ── Online and Offline Status ─────────────────────────────────────────────
   socket.on("userStatus", (data: { userId: string; status: string }) => {
     const isOnline = data.status === "online";
-    set((state: ChatState) => ({
+    set((state: TChatState) => ({
       onlineUsers: { ...state.onlineUsers, [data.userId]: isOnline },
       activeChats: state.activeChats.map((chat) =>
         chat.id === data.userId ? { ...chat, isOnline } : chat,
@@ -228,7 +233,7 @@ export const registerSocketListeners = (
     }));
   });
 
-  // ── Soft-delete broadcast ───────────────────────────────────────────────
+  // ── Soft-Delete Broadcast ───────────────────────────────────────────────
   socket.on("messageDeleted", (data: { messageId: string }) => {
     const { currentMessages } = get();
     const exists = currentMessages.some((m) => m.id === data.messageId);
@@ -241,7 +246,7 @@ export const registerSocketListeners = (
     }
   });
 
-  // ── Edit broadcast ───────────────────────────────────────────────────────
+  // ── Edit Broadcast ───────────────────────────────────────────────────────
   socket.on(
     "messageEdited",
     (data: { messageId: string; newContent: string; isEdited: boolean }) => {

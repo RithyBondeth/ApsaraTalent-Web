@@ -37,8 +37,8 @@ export interface IIceCandidatePayload {
   candidate: RTCIceCandidateInit;
 }
 
-// ── Store interface ───────────────────────────────────────────────────────────
-export interface ICallState {
+// ── Call State ───────────────────────────────────────────────────────────
+export type TCallState = {
   status: TCallStatus;
   callId: string | null;
   localStream: MediaStream | null;
@@ -89,4 +89,4 @@ export interface ICallState {
   _handleAnswer: (data: ICallAnswerPayload) => void;
   _handleIceCandidate: (data: IIceCandidatePayload) => void;
   _handleCallEnd: (data: { callId: string; reason?: CallEndReason }) => void;
-}
+};

@@ -1,5 +1,6 @@
 import { normalizeMediaUrl } from "@/utils/functions/media";
 
+// ── Resolve Profile ──────────────────────────────────────────────────────────
 // Helper to resolve display name and avatar from user object
 export const resolveProfile = (user: any) => {
   if (!user) return { name: "Unknown", avatar: "/avatars/default.png" };
@@ -17,6 +18,7 @@ export const resolveProfile = (user: any) => {
   return { name, avatar };
 };
 
+// ── Resolve Message Snippet ──────────────────────────────────────────────────
 // Build a short message snippet for previews (text or attachment labels).
 export const resolveMessageSnippet = (message: {
   content?: string | null;
@@ -39,6 +41,7 @@ export const resolveMessageSnippet = (message: {
   return "";
 };
 
+// ── Resolve Preview ────────────────────────────────────────────────────────────
 // Build sidebar preview text for last message, including attachment-only messages.
 export const resolvePreview = (chat: any, currentUserId: string) => {
   const senderId =

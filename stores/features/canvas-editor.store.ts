@@ -17,8 +17,9 @@ export const DEFAULT_SECTION_ORDER: SectionId[] = [
   "education",
 ];
 
-/* ─── Store ──────────────────────────────────────────────────── */
-interface CanvasEditorState {
+/* ---------------------------------- States --------------------------------- */
+// ── Canvas Editor State ──────────────────────────────────────
+type TCanvasEditorState = {
   /** Which section block is currently selected (shows blue ring) */
   selectedSection: SectionId | null;
   /** Ordered list of sections below the header */
@@ -30,9 +31,10 @@ interface CanvasEditorState {
   reorderSections: (from: number, to: number) => void;
   /** Reset order to default (useful when navigating away) */
   resetOrder: () => void;
-}
+};
 
-export const useCanvasEditorStore = create<CanvasEditorState>()((set) => ({
+/* ---------------------------------- Store ---------------------------------- */
+export const useCanvasEditorStore = create<TCanvasEditorState>()((set) => ({
   selectedSection: null,
   sectionOrder: [...DEFAULT_SECTION_ORDER],
 

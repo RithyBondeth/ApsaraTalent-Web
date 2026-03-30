@@ -4,9 +4,6 @@ import { useNotificationStore } from "@/stores/apis/notification/notification.st
 import axios from "@/lib/axios";
 import { getApiOrigin, normalizeMediaUrl } from "@/utils/functions/media";
 import { IChatPreview, IMessage } from "@/utils/interfaces/chat";
-
-// 1. Utils
-import { ChatState } from "./types";
 import { resolveProfile, resolveMessageSnippet, resolvePreview } from "./utils";
 import {
   getSocket,
@@ -16,11 +13,15 @@ import {
   createSocket,
 } from "./socket-manager";
 import { registerSocketListeners } from "./socket-listeners";
+import { TChatState } from "./types";
 
-export const useChatStore = create<ChatState>((set, get) => ({
-  // 3. All States
+/* ---------------------------------- Store ────────────────────────────────-- */
+export const useChatStore = create<TChatState>((set, get) => ({
+  // ── Socket ───────────────────────────────
   socket: null,
   isConnected: false,
+
+  // ── Chats ────────────────────────────────
   isChatsLoaded: false,
   isHistoryLoading: false,
   me: null,
@@ -28,10 +29,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
   activeChats: [],
   currentMessages: [],
   unreadCount: 0,
+
+  // ── UI ───────────────────────────────────
   isTyping: {},
   onlineUsers: {},
 
-  // 2. API Integration (Actions with side effects)
+  // ── API Integration ──────────────────────
+  // ── Get Recent Chats ────
   getRecentChats: () => {
     const { socket, me } = get();
     if (!socket?.connected || !me) {
@@ -158,6 +162,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       });
   },
 
+  // ── Get Chat History ────
   getChatHistory: (userId2: string) => {
     const { socket, me } = get();
     if (!socket?.connected || !me) return;
@@ -267,6 +272,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     );
   },
 
+  // ── Get Unread Count ────
   getUnreadCount: () => {
     const { socket } = get();
     if (socket?.connected) {
@@ -278,7 +284,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
   },
 
-  // 4. Effects (Lifecycle & Socket Handlers)
+  // ── Connect ────
   connect: (user?: any) => {
     if (user) set({ me: user });
 
@@ -334,6 +340,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     set({ socket });
   },
 
+  // ── Disconnect ────
   disconnect: () => {
     scheduleDisconnect(() => {
       const socketToClose = getSocket();
@@ -351,9 +358,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
     });
   },
 
-  // 5. Methods (Actions)
+  // ── Set Me ────
   setMe: (user: any) => set({ me: user }),
 
+  // ── Send Message ────
   sendMessage: (receiverId, content, type = "text", replyTo, attachment) => {
     const { socket, currentMessages, me } = get();
     if (!socket?.connected) return false;
@@ -420,6 +428,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     return true;
   },
 
+  // ── Set Active Chat ────
   setActiveChat: (chat) => {
     const prevChat = get().activeChat;
     const isSameChat =
@@ -463,6 +472,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
   },
 
+  // ── Mark As Read ────
   markAsRead: (messageId, senderId) => {
     const { socket, activeChat, me } = get();
     if (socket?.connected) {
@@ -487,17 +497,20 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
   },
 
+  // ── React To Message ────
   reactToMessage: (messageId, receiverId, emoji) => {
     const { socket } = get();
     if (socket?.connected)
       socket.emit("react", { messageId, receiverId, emoji });
   },
 
+  // ── Set Typing ────
   setTyping: (receiverId, isTyping) => {
     const { socket } = get();
     if (socket?.connected) socket.emit("typing", { receiverId, isTyping });
   },
 
+  // ── Delete Message ────
   deleteMessage: (messageId, receiverId) => {
     const { socket, currentMessages } = get();
     if (!socket?.connected) return;
@@ -509,6 +522,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     socket.emit("deleteMessage", { messageId, receiverId });
   },
 
+  // ── Edit Message ────
   editMessage: (messageId, receiverId, newContent) => {
     const { socket, currentMessages } = get();
     if (!socket?.connected) return;

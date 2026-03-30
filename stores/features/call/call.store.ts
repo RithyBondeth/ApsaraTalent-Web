@@ -8,7 +8,7 @@ import {
   ICallOfferPayload,
   ICallAnswerPayload,
   IIceCandidatePayload,
-  ICallState,
+  TCallState,
   CallEndReason,
   TCallStatus, // Add this
 } from "./types";
@@ -19,7 +19,7 @@ export type {
   ICallOfferPayload,
   ICallAnswerPayload,
   IIceCandidatePayload,
-  ICallState,
+  TCallState,
   CallEndReason,
 };
 import {
@@ -52,7 +52,8 @@ function getSocketInstance(): SocketInstance | null {
   return useChatStore.getState().socket;
 }
 
-export const useCallStore = create<ICallState>((set, get) => ({
+/* ---------------------------------- Store ---------------------------------- */
+export const useCallStore = create<TCallState>((set, get) => ({
   // 3. All States
   status: "idle",
   callId: null,

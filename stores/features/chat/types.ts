@@ -3,9 +3,14 @@ import io from "socket.io-client";
 
 export type SocketInstance = ReturnType<typeof io>;
 
-export interface ChatState {
+/* ---------------------------------- States ────────────────────────────────- */
+// ── Chat State ────────────────────────────────────────────────────────
+export type TChatState = {
+  // ── Socket ────
   socket: SocketInstance | null;
   isConnected: boolean;
+
+  // ── Chats ────
   isChatsLoaded: boolean;
   isHistoryLoading: boolean;
   me: any | null;
@@ -13,10 +18,12 @@ export interface ChatState {
   activeChats: IChatPreview[];
   currentMessages: IMessage[];
   unreadCount: number;
+
+  // ── UI ────
   isTyping: Record<string, boolean>;
   onlineUsers: Record<string, boolean>;
 
-  // Actions
+  // ── Actions ───
   connect: (user?: any) => void;
   disconnect: () => void;
   setMe: (user: any) => void;
@@ -50,4 +57,4 @@ export interface ChatState {
     receiverId: string,
     newContent: string,
   ) => void;
-}
+};
