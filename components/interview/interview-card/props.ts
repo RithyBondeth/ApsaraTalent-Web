@@ -1,4 +1,4 @@
-import { IInterview } from "@/utils/interfaces/interview.interface";
+import { IInterview } from "@/utils/interfaces/interview/interview.interface";
 
 export interface IInterviewCardProps {
   interview: IInterview;

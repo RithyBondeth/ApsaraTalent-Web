@@ -1,4 +1,4 @@
-import { EAuthLoginMethod } from "../../constants/auth.constant";
+import { EAuthLoginMethod } from "@/utils/constants/auth.constant";
 import { ICompany } from "./company.interface";
 import { IEmployee } from "./employee.interface";
 import { TUserRole } from "@/utils/types/auth/role.type";

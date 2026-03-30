@@ -28,8 +28,8 @@ import {
   IEducation,
   ISkill,
   IExperience,
-} from "@/utils/interfaces/user-interface/employee.interface";
-import { ISocialLink } from "@/utils/interfaces/social.interface";
+} from "@/utils/interfaces/user/employee.interface";
+import { ISocialLink } from "@/utils/interfaces/user/social.interface";
 import { TPlatform } from "@/utils/types/user/platform.type";
 import {
   LucideArrowLeft,

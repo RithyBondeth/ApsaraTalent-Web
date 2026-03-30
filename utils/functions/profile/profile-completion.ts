@@ -1,7 +1,7 @@
-import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
-import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
-import { IFieldCheck } from "@/utils/interfaces/user-interface/profile-completion.interface";
-import { IProfileCompletionResult } from "@/utils/interfaces/user-interface/profile-completion.interface";
+import { IEmployee } from "@/utils/interfaces/user/employee.interface";
+import { ICompany } from "@/utils/interfaces/user/company.interface";
+import { IFieldCheck } from "@/utils/interfaces/user/profile-completion.interface";
+import { IProfileCompletionResult } from "@/utils/interfaces/user/profile-completion.interface";
 
 function isStringFilled(value: string | null | undefined): boolean {
   return typeof value === "string" && value.trim().length > 0;

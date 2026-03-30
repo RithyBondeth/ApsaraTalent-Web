@@ -1,5 +1,5 @@
-import { ICareerScope } from "@/utils/interfaces/career-option.interface";
-import { ISocialLink } from "@/utils/interfaces/social.interface";
+import { ICareerScope } from "./career.interface";
+import { ISocialLink } from "./social.interface";
 
 export interface ICompany {
   id: string;

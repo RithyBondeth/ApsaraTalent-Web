@@ -1,4 +1,4 @@
-import { ICareerScope } from "@/utils/interfaces/career-option.interface";
+import { ICareerScope } from "@/utils/interfaces/user/career.interface";
 import { useState } from "react";
 
 export function useCmpCareerScopesState(

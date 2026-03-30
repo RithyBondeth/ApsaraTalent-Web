@@ -1,4 +1,4 @@
-import { IWeeklyActivity } from "@/utils/interfaces/analytics.interface";
+import { IWeeklyActivity } from "@/utils/interfaces/analytics/analytics.interface";
 
 export interface IWeeklyActivityChartProps {
   data: IWeeklyActivity[];

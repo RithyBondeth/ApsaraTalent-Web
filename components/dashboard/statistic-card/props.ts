@@ -1,7 +1,7 @@
 import {
   IRecentMatch,
   IWeeklyActivity,
-} from "@/utils/interfaces/analytics.interface";
+} from "@/utils/interfaces/analytics/analytics.interface";
 import { ElementType } from "react";
 
 export interface IStatisticCardProps {

@@ -9,7 +9,7 @@ import {
 import {
   ICreateInterviewPayload,
   IInterview,
-} from "@/utils/interfaces/interview.interface";
+} from "@/utils/interfaces/interview/interview.interface";
 import { create } from "zustand";
 
 /* ---------------------------------- States --------------------------------- */

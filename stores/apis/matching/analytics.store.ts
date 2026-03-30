@@ -5,7 +5,7 @@ import { create } from "zustand";
 import {
   IRecentMatch,
   IWeeklyActivity,
-} from "@/utils/interfaces/analytics.interface";
+} from "@/utils/interfaces/analytics/analytics.interface";
 
 /* ---------------------------------- States --------------------------------- */
 // ── Analytics API Response ──────────────────────────────────

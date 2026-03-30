@@ -1,4 +1,4 @@
-import { ISkill } from "@/utils/interfaces/user-interface/employee.interface";
+import { ISkill } from "@/utils/interfaces/user/employee.interface";
 import { useState } from "react";
 
 export function useSkillsState(initialSkills: ISkill[] = []) {

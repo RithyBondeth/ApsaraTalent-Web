@@ -3,8 +3,8 @@ import { formatSidebarTime, parseMessageDate } from "@/utils/functions/date";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import axios from "@/lib/axios";
 import { getApiOrigin, normalizeMediaUrl } from "@/utils/functions/media";
-import { IChatPreview } from "@/utils/interfaces/chat.interface";
-import { IMessage } from "@/utils/interfaces/chat.interface";
+import { IChatPreview } from "@/utils/interfaces/chat/chat.interface";
+import { IMessage } from "@/utils/interfaces/chat/chat.interface";
 import { resolveProfile, resolveMessageSnippet, resolvePreview } from "./utils";
 import {
   getSocket,

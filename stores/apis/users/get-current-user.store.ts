@@ -1,6 +1,6 @@
 import axios from "@/lib/axios";
 import { API_GET_CURRENT_USER_URL } from "@/utils/constants/apis/user_url";
-import { IUser } from "@/utils/interfaces/user-interface/user.interface";
+import { IUser } from "@/utils/interfaces/user/user.interface";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { extractApiErrorMessage } from "../../shared/api-error-message";

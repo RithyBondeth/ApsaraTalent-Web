@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { IExperience as Experience } from "@/utils/interfaces/resume-interface/resume.interface";
+import { IExperience as Experience } from "@/utils/interfaces/resume/resume.interface";
 import { useFieldArray } from "react-hook-form";
 import { PlusCircle } from "lucide-react";
 import { IFormPanelProps } from "../props";

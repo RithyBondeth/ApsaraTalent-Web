@@ -6,7 +6,7 @@ import {
   API_MARK_ALL_NOTIFICATIONS_READ_URL,
   API_MARK_NOTIFICATION_READ_URL,
 } from "@/utils/constants/apis/notification_url";
-import { INotification } from "@/utils/interfaces/notificationn.interface";
+import { INotification } from "@/utils/interfaces/notification/notification.interface";
 import { create } from "zustand";
 
 /* ---------------------------- States ----------------------------------- */

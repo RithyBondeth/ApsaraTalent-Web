@@ -18,7 +18,7 @@ import { useEffect, useMemo, useState } from "react";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { NotificationSvgImage } from "@/utils/constants/asset.constant";
 import { NotificationCardSkeleton } from "@/components/notification/skeleton";
-import { INotification } from "@/utils/interfaces/notificationn.interface";
+import { INotification } from "@/utils/interfaces/notification/notification.interface";
 
 /* ---------------------------------- Helper --------------------------------- */
 /** Derive a display-friendly user object from a notification's title + data fields. */

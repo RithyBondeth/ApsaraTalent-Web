@@ -1,7 +1,7 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_GET_ALL_CAREER_SCOPES_URL } from "@/utils/constants/apis/user_url";
-import { ICareerScope } from "@/utils/interfaces/career-option.interface";
+import { ICareerScope } from "@/utils/interfaces/user/career.interface";
 import { create } from "zustand";
 
 /* ---------------------------------- States --------------------------------- */

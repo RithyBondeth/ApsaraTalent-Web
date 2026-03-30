@@ -1,5 +1,5 @@
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { IUser } from "@/utils/interfaces/user-interface/user.interface";
+import { IUser } from "@/utils/interfaces/user/user.interface";
 import { useEffect, useMemo, useRef } from "react";
 
 /* ----------------------------------- Types ---------------------------------- */

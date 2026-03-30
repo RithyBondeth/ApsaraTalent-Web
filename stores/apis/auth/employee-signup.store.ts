@@ -1,8 +1,8 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_AUTH_SIGNUP_URL } from "@/utils/constants/apis/auth_url";
-import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
-import { IUser } from "@/utils/interfaces/user-interface/user.interface";
+import { IEmployee } from "@/utils/interfaces/user/employee.interface";
+import { IUser } from "@/utils/interfaces/user/user.interface";
 import { create } from "zustand";
 
 /* ---------------------------------- States --------------------------------- */

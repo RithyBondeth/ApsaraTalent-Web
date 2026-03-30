@@ -1,5 +1,5 @@
-import { IBenefits } from "@/utils/interfaces/user-interface/company.interface";
-import { IValues } from "@/utils/interfaces/user-interface/company.interface";
+import { IBenefits } from "@/utils/interfaces/user/company.interface";
+import { IValues } from "@/utils/interfaces/user/company.interface";
 import { useState } from "react";
 
 export default function useCmpBenefitValueState() {

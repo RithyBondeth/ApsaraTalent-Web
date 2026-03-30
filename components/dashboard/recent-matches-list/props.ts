@@ -1,4 +1,4 @@
-import { IRecentMatch } from "@/utils/interfaces/analytics.interface";
+import { IRecentMatch } from "@/utils/interfaces/analytics/analytics.interface";
 
 export interface IRecentMatchesListProps {
   matches: IRecentMatch[];

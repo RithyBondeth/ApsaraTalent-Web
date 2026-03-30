@@ -1,4 +1,4 @@
-import { IBuildResume } from "@/utils/interfaces/resume-interface/resume.interface";
+import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
 import { UseFormGetValues, UseFormSetValue } from "react-hook-form";
 
 export interface IPreviewPanelProps {

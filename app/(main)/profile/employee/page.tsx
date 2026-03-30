@@ -71,9 +71,9 @@ import { capitalizeWords } from "@/utils/functions/text";
 import { isUuid } from "@/utils/functions/validation/check-uuid";
 import { extractCleanFilename } from "@/utils/functions/file";
 import { parseMaybeDate } from "@/utils/functions/date";
-import { ICareerScope } from "@/utils/interfaces/career-option.interface";
-import { ISkill } from "@/utils/interfaces/user-interface/employee.interface";
-import { ISocialLink } from "@/utils/interfaces/social.interface";
+import { ICareerScope } from "@/utils/interfaces/user/career.interface";
+import { ISkill } from "@/utils/interfaces/user/employee.interface";
+import { ISocialLink } from "@/utils/interfaces/user/social.interface";
 import { TPlatform } from "@/utils/types/user/platform.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {

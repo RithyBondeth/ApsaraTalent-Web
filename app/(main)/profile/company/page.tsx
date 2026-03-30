@@ -75,8 +75,8 @@ import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type"
 import { capitalizeWords } from "@/utils/functions/text";
 import { isUuid } from "@/utils/functions/validation/check-uuid";
 import { parseMaybeDate } from "@/utils/functions/date";
-import { IBenefits } from "@/utils/interfaces/user-interface/company.interface";
-import { IValues } from "@/utils/interfaces/user-interface/company.interface";
+import { IBenefits } from "@/utils/interfaces/user/company.interface";
+import { IValues } from "@/utils/interfaces/user/company.interface";
 import { TPlatform } from "@/utils/types/user/platform.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {

@@ -1,5 +1,5 @@
-import { IChatPreview } from "@/utils/interfaces/chat.interface";
-import { IMessage } from "@/utils/interfaces/chat.interface";
+import { IChatPreview } from "@/utils/interfaces/chat/chat.interface";
+import { IMessage } from "@/utils/interfaces/chat/chat.interface";
 import io from "socket.io-client";
 
 export type SocketInstance = ReturnType<typeof io>;

@@ -1,4 +1,4 @@
-import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
+import { IEmployee } from "@/utils/interfaces/user/employee.interface";
 
 export interface ICreateInterviewDialogProps {
   currentId: string;

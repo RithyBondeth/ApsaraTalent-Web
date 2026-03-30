@@ -1,6 +1,6 @@
 import axiosInstance from "@/lib/axios";
 import { API_CHAT_INITIATE_URL } from "@/utils/constants/apis/chat_url";
-import { IInitiateChatResponse } from "@/utils/interfaces/chat.interface";
+import { IInitiateChatResponse } from "@/utils/interfaces/chat/chat.interface";
 
 export const initateChat = async (
   senderId: string,

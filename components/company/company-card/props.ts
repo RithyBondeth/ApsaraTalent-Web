@@ -1,4 +1,4 @@
-import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
+import { ICompany } from "@/utils/interfaces/user/company.interface";
 import React from "react";
 
 export interface ICompanyCardProps extends ICompany {

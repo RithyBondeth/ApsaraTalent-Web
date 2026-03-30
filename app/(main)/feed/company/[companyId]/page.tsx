@@ -20,9 +20,9 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type";
 import { formatDisplayDate } from "@/utils/functions/date";
-import { IBenefits } from "@/utils/interfaces/user-interface/company.interface";
-import { IImage } from "@/utils/interfaces/user-interface/company.interface";
-import { ISocialLink } from "@/utils/interfaces/social.interface";
+import { IBenefits } from "@/utils/interfaces/user/company.interface";
+import { IImage } from "@/utils/interfaces/user/company.interface";
+import { ISocialLink } from "@/utils/interfaces/user/social.interface";
 import { TPlatform } from "@/utils/types/user/platform.type";
 import {
   LucideAlarmClock,

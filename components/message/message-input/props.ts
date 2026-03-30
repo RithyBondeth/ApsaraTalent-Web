@@ -1,4 +1,4 @@
-import { IMessage } from "@/utils/interfaces/chat.interface";
+import { IMessage } from "@/utils/interfaces/chat/chat.interface";
 
 export interface IChatInputProps {
   onSendMessage: (

@@ -24,8 +24,8 @@ import dynamic from "next/dynamic";
 import { getCookie } from "cookies-next";
 import { MessageReplyPreview } from "./reply-preview";
 import { API_BASE_URL } from "@/utils/constants/apis/base_url";
-import type { IPendingFile } from "@/utils/interfaces/chat.interface";
-import { IMessage } from "@/utils/interfaces/chat.interface";
+import type { IPendingFile } from "@/utils/interfaces/chat/chat.interface";
+import { IMessage } from "@/utils/interfaces/chat/chat.interface";
 
 /* ------------------------------------- Handle Lazy Load ------------------------------------- */
 // Lazy-load emoji-mart — ~90KB dataset + picker only needed when user opens the emoji popover

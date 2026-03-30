@@ -1,7 +1,7 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_FIND_ALL_EMPLOYEE_FAVORITES } from "@/utils/constants/apis/favorite_url";
-import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
+import { ICompany } from "@/utils/interfaces/user/company.interface";
 import { create } from "zustand";
 
 /* ---------------------------------- States --------------------------------- */

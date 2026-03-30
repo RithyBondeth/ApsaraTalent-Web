@@ -1,5 +1,5 @@
 import { TChatState, SocketInstance } from "./types";
-import { IMessage } from "@/utils/interfaces/chat.interface";
+import { IMessage } from "@/utils/interfaces/chat/chat.interface";
 import { resolveMessageSnippet } from "./utils";
 import { formatSidebarTime, parseMessageDate } from "@/utils/functions/date";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";

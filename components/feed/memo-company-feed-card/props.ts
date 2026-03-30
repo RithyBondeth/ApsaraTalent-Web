@@ -1,4 +1,4 @@
-import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
+import { ICompany } from "@/utils/interfaces/user/company.interface";
 
 export interface IMemoCompanyFeedCardProps {
   company: ICompany;
