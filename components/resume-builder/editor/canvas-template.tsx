@@ -30,10 +30,8 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { SectionWrapper } from "./section-wrapper";
-import {
-  SectionId,
-  useCanvasEditorStore,
-} from "@/stores/features/canvas-editor.store";
+import { TResumeSectionID } from "@/utils/types/resume/resume-section-id.type";
+import { useResumeCanvasEditorStore } from "@/stores/apis/resume/resume-canvas-editor.store";
 
 /* ─── Types ─────────────────────────────────────────────────── */
 interface CanvasTemplateProps {
@@ -646,7 +644,7 @@ export default function CanvasTemplate({
   } = data;
 
   /* ----------------------------- API Integration ---------------------------- */
-  const { sectionOrder } = useCanvasEditorStore();
+  const { sectionOrder } = useResumeCanvasEditorStore();
 
   // PointerSensor with distance constraint so a click doesn't start a drag
   /* ---------------------------------- Utils --------------------------------- */
@@ -766,9 +764,9 @@ export default function CanvasTemplate({
   function handleSectionDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
-    const store = useCanvasEditorStore.getState();
-    const from = store.sectionOrder.indexOf(active.id as SectionId);
-    const to = store.sectionOrder.indexOf(over.id as SectionId);
+    const store = useResumeCanvasEditorStore.getState();
+    const from = store.sectionOrder.indexOf(active.id as TResumeSectionID);
+    const to = store.sectionOrder.indexOf(over.id as TResumeSectionID);
     if (from === -1 || to === -1) return;
     store.reorderSections(from, to);
   }
@@ -878,7 +876,7 @@ export default function CanvasTemplate({
     </SectionWrapper>
   );
 
-  const sectionMap: Record<SectionId, React.ReactNode> = {
+  const sectionMap: Record<TResumeSectionID, React.ReactNode> = {
     header: null, // header is always rendered first, not in sectionOrder
     summary: summarySection,
     experience: experienceSection,

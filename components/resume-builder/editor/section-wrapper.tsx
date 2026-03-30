@@ -6,7 +6,7 @@ import { CSS } from "@dnd-kit/utilities";
 import {
   SectionId,
   useCanvasEditorStore,
-} from "@/stores/features/canvas-editor.store";
+} from "@/stores/apis/resume/resume-canvas-editor.store";
 
 interface SectionWrapperProps {
   sectionId: SectionId;
