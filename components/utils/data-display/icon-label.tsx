@@ -1,6 +1,8 @@
 import { cn } from "@/lib/utils";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { ReactNode } from "react";
+
+/* ----------------------------------- Helper ---------------------------------- */
 interface ILabelProps {
   text: string;
   icon?: ReactNode;

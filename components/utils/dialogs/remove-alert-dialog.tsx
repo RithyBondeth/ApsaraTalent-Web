@@ -7,6 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+/* ----------------------------------- Helper ---------------------------------- */
 interface IRemoveAlertDialog {
   type:
     | "experience"

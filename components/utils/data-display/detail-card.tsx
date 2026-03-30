@@ -1,11 +1,12 @@
 import React from "react";
 
-interface DetailCardProps {
+/* ----------------------------------- Helper ---------------------------------- */
+interface IDetailCardProps {
   children: React.ReactNode;
   className?: string;
 }
 
-export function DetailCard({ children, className }: DetailCardProps) {
+export function DetailCard({ children, className }: IDetailCardProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div

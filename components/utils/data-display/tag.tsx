@@ -1,6 +1,7 @@
 import { getRandomBadgeColor } from "@/utils/functions/ui";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
+/* ----------------------------------- Helper ---------------------------------- */
 interface ITagInterface {
   label: string;
   icon?: React.ReactNode;

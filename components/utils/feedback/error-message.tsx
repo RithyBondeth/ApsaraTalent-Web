@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 
+/* ----------------------------------- Helper ---------------------------------- */
 interface IErrorMessageProps {
   className?: string;
   children: React.ReactNode;

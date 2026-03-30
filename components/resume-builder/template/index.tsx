@@ -9,7 +9,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { ITemplateCardProps } from "./props";
 
-/* -------------------------------- Helpers -------------------------------- */
+/* ------------------------------- Helpers ------------------------------ */
 /** Maps template title keywords to a gradient for the preview placeholder */
 function getTemplateGradient(title: string): string {
   const t = title.toLowerCase();

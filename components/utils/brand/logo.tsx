@@ -10,6 +10,7 @@ import {
   LogoWithoutTitle,
 } from "@/utils/constants/asset.constant";
 
+/* ----------------------------------- Helper ---------------------------------- */
 interface ILogoProps {
   isBlackLogo?: boolean;
   withoutTitle?: boolean;

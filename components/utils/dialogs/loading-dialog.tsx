@@ -11,6 +11,7 @@ import ApsaraLoadingSpinner from "@/components/utils/feedback/apsara-loading-spi
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TLoadingStep } from "@/utils/interfaces/ui";
 
+/* --------------------------------- Helper --------------------------------- */
 interface ILoadingDialogProps {
   loading: boolean;
   title: string;
@@ -22,10 +23,10 @@ interface ILoadingDialogProps {
 export default function LoadingDialog(props: ILoadingDialogProps) {
   /* --------------------------------- Props --------------------------------- */
   const { loading, title, subTitle, steps, progress = 0 } = props;
-  /* ---------------------------------- Utils --------------------------------- */
+  /* ---------------------------------- Utils -------------------------------- */
   const hasProgress = steps && steps.length > 0;
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* -------------------------------- Render UI ------------------------------ */
   return (
     <Dialog open={loading}>
       <DialogContent

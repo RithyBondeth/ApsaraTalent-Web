@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/dialog";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
+/* ----------------------------------- Helper ---------------------------------- */
 interface IReferencePreviewDialog {
   referenceUrl: string;
   openRefPreview: boolean;

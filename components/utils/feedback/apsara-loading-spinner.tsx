@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 
+/* ----------------------------------- Helper ---------------------------------- */
 interface IApsaraLoadingProps {
   size?: number;
   duration?: number;

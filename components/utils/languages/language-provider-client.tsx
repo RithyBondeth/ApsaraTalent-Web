@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import enMessages from "@/language/en.json";
 import kmMessages from "@/language/km.json";
 
+/* ----------------------------------- Helper ---------------------------------- */
 const messages = {
   en: enMessages,
   km: kmMessages,

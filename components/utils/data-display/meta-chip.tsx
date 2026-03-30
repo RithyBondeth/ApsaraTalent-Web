@@ -1,12 +1,16 @@
 import { cn } from "@/lib/utils";
 
+/* ----------------------------------- Helper ---------------------------------- */
 interface IMetaChipProps {
   icon: React.ReactNode;
   text: string;
   className?: string;
 }
 
-export default function MetaChip({ icon, text, className }: IMetaChipProps) {
+export default function MetaChip(props: IMetaChipProps) {
+  /* ---------------------------------- Props --------------------------------- */
+  const { icon, text, className } = props;
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <span

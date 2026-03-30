@@ -14,7 +14,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 
-type CropArea = {
+/* ------------------------------- Helpers ------------------------------ */
+type TCropArea = {
   x: number;
   y: number;
   width: number;
@@ -32,33 +33,36 @@ interface IAvatarCropDialogProps {
   fileName?: string;
 }
 
-export default function AvatarCropDialog({
-  title,
-  open,
-  setOpen,
-  image,
-  onCropComplete,
-  aspect = 1,
-  cropShape = "round",
-  fileName = "avatar.jpg",
-}: IAvatarCropDialogProps) {
+export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
+  /* -------------------------------- Props -------------------------------- */
+  const {
+    title,
+    open,
+    setOpen,
+    image,
+    onCropComplete,
+    aspect = 1,
+    cropShape = "round",
+    fileName = "avatar.jpg",
+  } = props;
+
   /* -------------------------------- All States ------------------------------ */
   const [crop, setCrop] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState<number>(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<CropArea | null>(
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<TCropArea | null>(
     null,
   );
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Handle Crop Complete ─────────────────────────────────────────
-  const handleCropComplete = (_: unknown, croppedPixels: CropArea): void => {
+  const handleCropComplete = (_: unknown, croppedPixels: TCropArea): void => {
     setCroppedAreaPixels(croppedPixels);
   };
 
   // ── Get Cropped Image ─────────────────────────────────────────────
   async function getCroppedImage(
     imageSrc: string,
-    crop: CropArea,
+    crop: TCropArea,
   ): Promise<Blob> {
     const image = new Image();
     image.src = imageSrc;

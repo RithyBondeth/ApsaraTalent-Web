@@ -10,6 +10,7 @@ import React, {
 import { FieldValues, Path, PathValue, UseFormSetValue } from "react-hook-form";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
+/* ----------------------------------- Helper ---------------------------------- */
 interface IDragDropFileProps<T extends FieldValues> {
   onFilesSelected: (files: File[]) => void;
   onEdit?: () => void;
