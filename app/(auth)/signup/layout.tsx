@@ -1,25 +1,11 @@
-"use client";
-
-import { useTheme } from "next-themes";
 import Image from "next/image";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode } from "react";
 import {
   signupBlackSvg,
   signupWhiteSvg,
 } from "@/utils/constants/asset.constant";
 
 export default function SignupLayout({ children }: { children: ReactNode }) {
-  /* --------------------------------- Utils --------------------------------- */
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState<boolean>(false);
-  useEffect(() => setMounted(true), []);
-
-  /* ------------------- Get Current Image Based on Theme -------------------- */
-  // Only resolve the theme after mounting — avoids SSR/client hydration mismatch
-  // Because resolvedTheme is undefined on the server.
-  const currentTheme = mounted ? resolvedTheme : "light";
-  const signupImage = currentTheme === "dark" ? signupBlackSvg : signupWhiteSvg;
-
   /* ------------------------------- Render UI ------------------------------- */
   return (
     <div className="min-h-screen w-full flex items-stretch overflow-x-hidden">
@@ -35,10 +21,17 @@ export default function SignupLayout({ children }: { children: ReactNode }) {
         <div className="absolute -top-20 -right-20 size-64 rounded-full bg-white/5" />
         <div className="absolute -bottom-10 -left-10 size-48 rounded-full bg-white/5" />
         <div className="absolute top-1/3 left-10 size-32 rounded-full bg-white/[0.03]" />
+
         <Image
-          src={signupImage}
+          src={signupWhiteSvg}
           alt="signup"
-          className="h-auto w-full max-w-[620px] relative z-10"
+          className="h-auto w-full max-w-[620px] relative z-10 dark:hidden"
+          priority
+        />
+        <Image
+          src={signupBlackSvg}
+          alt="signup"
+          className="hidden h-auto w-full max-w-[620px] relative z-10 dark:block"
           priority
         />
       </div>
