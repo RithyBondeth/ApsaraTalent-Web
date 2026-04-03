@@ -4,6 +4,7 @@ import { AudioPlayer } from "../audio-player";
 import { Download, ExternalLink, FileText } from "lucide-react";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import Image from "next/image";
 
 export default function AttachmentRender(props: {
   url: string;
@@ -41,10 +42,13 @@ export default function AttachmentRender(props: {
         rel="noopener noreferrer"
         className="block mt-1"
       >
-        <img
+        <Image
           src={fullUrl}
           alt={filename || "Image attachment"}
+          width={960}
+          height={720}
           className="max-w-full rounded-xl max-h-64 object-cover cursor-pointer hover:opacity-90 transition-opacity"
+          unoptimized
         />
       </a>
     );

@@ -79,7 +79,7 @@ export default function ForgotPasswordPage() {
         DEFAULT_REDIRECT_DELAY_MS,
       );
     }
-  }, [error, message, loading, isSubmitted]);
+  }, [error, isSubmitted, loading, message, reset, router, t]);
 
   /* -------------------------------- Render UI -------------------------------- */
   return (

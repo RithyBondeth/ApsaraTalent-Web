@@ -7,6 +7,7 @@ import {
   LucideUsers,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useMemo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
@@ -38,10 +39,13 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
         {/* Cover Banner Section */}
         <div className="relative shrink-0">
           {props.cover ? (
-            <img
+            <Image
               src={props.cover}
               alt={`${props.name} cover`}
+              width={1200}
+              height={224}
               className="w-full h-28 object-cover"
+              unoptimized
             />
           ) : (
             <div className="w-full h-28 bg-gradient-to-br from-primary/80 to-primary/30" />

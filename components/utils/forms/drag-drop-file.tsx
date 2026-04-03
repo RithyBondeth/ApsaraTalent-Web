@@ -148,7 +148,7 @@ export const DragDropFile = <T extends FieldValues>({
     if (preview && preview !== filePreview) {
       setFilePreview(preview);
     }
-  }, [preview]);
+  }, [filePreview, preview]);
 
   /* -------------------------------- Render UI -------------------------------- */
   return (

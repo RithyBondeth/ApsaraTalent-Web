@@ -28,7 +28,7 @@ export function LanguageProviderClient({
   useEffect(() => {
     setLanguage(defaultLanguage as "en" | "km");
     setMounted(true);
-  }, []);
+  }, [defaultLanguage, setLanguage]);
 
   /* ---------------------------------- Utils --------------------------------- */
   const activeLocale = mounted ? language : (defaultLanguage as "en" | "km");

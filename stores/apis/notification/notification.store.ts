@@ -40,6 +40,8 @@ type TNotificationState = {
   queryUnreadCount: () => Promise<void>;
   /** Instantly bump unreadCount by 1 (used when a foreground push arrives) */
   incrementUnreadCount: () => void;
+  /** Prepend a confirmed notification from the socket event to the list and bump the badge */
+  addNotification: (notification: INotification) => void;
   markRead: (notificationId: string) => Promise<void>;
   markAllRead: () => Promise<void>;
   /** Optimistically mark a notification as read by its chat messageId (from data.messageId) */
@@ -91,6 +93,16 @@ export const useNotificationStore = create<TNotificationState>((set, get) => ({
 
   incrementUnreadCount: () => {
     set((state) => ({ unreadCount: state.unreadCount + 1 }));
+  },
+
+  addNotification: (notification: INotification) => {
+    set((state) => ({
+      // Prepend so newest appears first; skip if already in the list
+      notifications: state.notifications.some((n) => n.id === notification.id)
+        ? state.notifications
+        : [notification, ...state.notifications],
+      unreadCount: state.unreadCount + 1,
+    }));
   },
 
   markRead: async (notificationId: string) => {

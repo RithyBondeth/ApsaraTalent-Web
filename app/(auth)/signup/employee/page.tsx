@@ -319,7 +319,7 @@ export default function EmployeeSignup() {
       { error: uploadCoverLetter.error, message: uploadCoverLetter.message },
     ];
 
-    errorList.forEach(({ error, message }) => {
+    errorList.forEach(({ error }) => {
       if (error) {
         toast.dismiss();
         toast.error(t("anErrorOccurred"), {
@@ -328,6 +328,7 @@ export default function EmployeeSignup() {
       }
     });
   }, [
+    t,
     empSignup.loading,
     uploadAvatar.loading,
     uploadCoverLetter.loading,

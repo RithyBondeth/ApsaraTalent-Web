@@ -55,7 +55,7 @@ export default function EmailVerificationPage() {
       toast.success(t("emailVerifiedSuccess"), { duration: 1500 });
       setTimeout(() => router.push("/login"), DEFAULT_REDIRECT_DELAY_MS);
     }
-  }, [error, loading, message, isSubmitted]);
+  }, [error, isSubmitted, loading, message, router, t]);
 
   // ── Get Current Image Based on Theme ─────────────────────────────
   const currentTheme = resolvedTheme || "light";

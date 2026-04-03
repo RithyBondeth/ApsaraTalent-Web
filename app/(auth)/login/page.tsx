@@ -50,7 +50,7 @@ import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { loginSchema, TLoginForm } from "./validation";
 import { loginBlackSvg, loginWhiteSvg } from "@/utils/constants/asset.constant";
@@ -115,7 +115,7 @@ function LoginPage() {
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Preload User Data ────────────────────────────────────────
-  const preloadUserData = async () => {
+  const preloadUserData = useCallback(async () => {
     try {
       // First get current user data
       await getCurrentUser();
@@ -163,7 +163,15 @@ function LoginPage() {
       console.error("Error preloading user data:", error);
       throw error;
     }
-  };
+  }, [
+    getAllCompanyFavoritesStore,
+    getAllEmployeeFavoritesStore,
+    getCurrentCompanyLikedStore,
+    getCurrentEmployeeLikedStore,
+    getCurrentUser,
+    queryCompany,
+    queryEmployee,
+  ]);
 
   // ── Login Function ───────────────────────────────────────
   const onSubmit = async (data: TLoginForm) => {
@@ -230,7 +238,17 @@ function LoginPage() {
         },
       });
     }
-  }, [isAuthenticated, error, message, loading, loginInitiated]);
+  }, [
+    error,
+    isAuthenticated,
+    loading,
+    loginInitiated,
+    message,
+    preloadUserData,
+    reset,
+    router,
+    t,
+  ]);
 
   // Social Login Function
   const handleSocialLogin = (rememberMe: "true" | "false") => {
@@ -345,10 +363,12 @@ function LoginPage() {
       });
     }
   }, [
+    facebookLoginStore,
     googleLoginStore.isAuthenticated,
     googleLoginStore.newUser,
     googleLoginStore.loading,
     googleLoginStore.error,
+    githubLoginStore,
     linkedInLoginStore.isAuthenticated,
     linkedInLoginStore.newUser,
     linkedInLoginStore.loading,
@@ -357,12 +377,16 @@ function LoginPage() {
     githubLoginStore.newUser,
     githubLoginStore.loading,
     githubLoginStore.error,
+    googleLoginStore,
     facebookLoginStore.isAuthenticated,
     facebookLoginStore.newUser,
     facebookLoginStore.loading,
     facebookLoginStore.error,
+    linkedInLoginStore,
+    preloadUserData,
+    router,
     socialLoginInitiated,
-    isPreloadingData,
+    t,
   ]);
 
   /* -------------------------------- Loading State -------------------------------- */

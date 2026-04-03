@@ -82,7 +82,7 @@ export default function ResetPasswordPage() {
       toast.success(t("resetPasswordSuccess"), { duration: 1500 });
       setTimeout(() => router.push("/login"), DEFAULT_REDIRECT_DELAY_MS);
     }
-  }, [error, loading, message, isSubmitted]);
+  }, [error, isSubmitted, loading, message, reset, router, t]);
 
   /* ---------------------------------- Render UI -------------------------------- */
   return (

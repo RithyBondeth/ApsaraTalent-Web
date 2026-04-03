@@ -59,7 +59,7 @@ export default function CompanyCareerScopeStepForm({
     if (Array.isArray(initial)) {
       setSelectedCareers(initial);
     }
-  }, []);
+  }, [getValues, register]);
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Toggle Career ───────────────────────────────────────

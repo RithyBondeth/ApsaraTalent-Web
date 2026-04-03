@@ -53,18 +53,21 @@ export function AvatarField(props: {
     >
       {/* Avatar Image or Placeholder Section */}
       {src ? (
-        <img
-          src={src}
-          alt="Profile"
-          style={{
-            width: 72,
-            height: 72,
-            borderRadius: "50%",
-            objectFit: "cover",
-            display: "block",
-            border: "2px solid #e5e7eb",
-          }}
-        />
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element -- avatar preview may be a base64 data URL generated on the client */}
+          <img
+            src={src}
+            alt="Profile"
+            style={{
+              width: 72,
+              height: 72,
+              borderRadius: "50%",
+              objectFit: "cover",
+              display: "block",
+              border: "2px solid #e5e7eb",
+            }}
+          />
+        </>
       ) : (
         <div
           style={{

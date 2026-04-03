@@ -57,11 +57,14 @@ export function MessageAttachmentStrip(props: IMessageAttachmentStripProps) {
               )}
 
               {file.preview ? (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element -- object URL previews are generated client-side for local files */}
                 <img
                   src={file.preview}
                   alt={file.filename}
                   className="w-full h-full object-cover"
                 />
+                </>
               ) : (
                 <div className="flex items-center justify-center p-2">
                   {file.filename.match(/\.(jpe?g|png|gif|webp)$/i) ? (

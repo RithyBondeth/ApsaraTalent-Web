@@ -93,6 +93,7 @@ export default function CompanyDetailPage() {
   const countCurrentEmployeeMatching = useCountCurrentEmployeeMatchingStore();
   const countAllEmployeeFavoritesStore =
     useCountCurrentEmployeeFavoritesStore();
+  const currentEmployeeId = currentUser?.employee?.id;
 
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
@@ -102,14 +103,14 @@ export default function CompanyDetailPage() {
   // Block access if this company was already liked by the current employee
   useEffect(() => {
     if (!isInitialized) return;
-    if (!currentUser?.employee?.id) {
+    if (!currentEmployeeId) {
       setAccessGranted(true);
       return;
     }
     (async () => {
       await useGetCurrentEmployeeLikedStore
         .getState()
-        .queryCurrentEmployeeLiked(currentUser.employee!.id);
+        .queryCurrentEmployeeLiked(currentEmployeeId);
       const liked =
         useGetCurrentEmployeeLikedStore.getState().currentEmployeeLiked;
       if (liked?.some((c) => c.id === id)) {
@@ -118,7 +119,7 @@ export default function CompanyDetailPage() {
         setAccessGranted(true);
       }
     })();
-  }, [isInitialized, id, currentUser?.employee?.id, router]);
+  }, [currentEmployeeId, id, isInitialized, router]);
 
   useEffect(() => {
     const fetch = async () => {

@@ -126,6 +126,7 @@ export default function FavoritePage() {
       employeeFavCompanyStore,
       countCurrentEmpFavoritesStore,
       getAllEmployeeFavoritesStore,
+      t,
     ],
   );
 
@@ -160,6 +161,7 @@ export default function FavoritePage() {
       companyFavEmployeeStore,
       countCurrentCmpFavoritesStore,
       getAllCompanyFavoritesStore,
+      t,
     ],
   );
 

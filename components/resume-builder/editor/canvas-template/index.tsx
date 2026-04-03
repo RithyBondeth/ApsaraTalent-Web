@@ -25,6 +25,8 @@ import { GhostAddButton } from "./utils/ghost-add-button";
 import { AvatarField } from "./utils/avatar-field";
 import { ExperienceEntry } from "./utils/experience-entry";
 import { SkillChips } from "./utils/skill-chip";
+import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
+import { Path, PathValue } from "react-hook-form";
 
 export default function CanvasTemplate(props: ICanvasTemplateProps) {
   /* ----------------------------------- Props -------------------------------- */
@@ -453,25 +455,30 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
           {personalInfo.socials &&
             Object.keys(personalInfo.socials).length > 0 && (
               <div style={{ marginTop: 6 }}>
-                {Object.entries(personalInfo.socials).map(([key, url]) => (
-                  <span key={key} style={{ marginRight: 10, fontSize: 11 }}>
-                    <span style={{ color: "#9ca3af" }}>
-                      {key.charAt(0).toUpperCase() + key.slice(1)}:
-                    </span>{" "}
-                    <Editable
-                      value={url || ""}
-                      placeholder={`https://${key}.com/...`}
-                      onCommit={(v) =>
-                        setValue(
-                          `personalInfo.socials.${key}` as "personalInfo.socials",
-                          v as any,
-                          { shouldDirty: true },
-                        )
-                      }
-                      style={{ color: "#4f46e5" }}
-                    />
-                  </span>
-                ))}
+                {Object.entries(personalInfo.socials).map(([key, url]) => {
+                  const socialPath =
+                    `personalInfo.socials.${key}` as Path<IBuildResume>;
+
+                  return (
+                    <span key={key} style={{ marginRight: 10, fontSize: 11 }}>
+                      <span style={{ color: "#9ca3af" }}>
+                        {key.charAt(0).toUpperCase() + key.slice(1)}:
+                      </span>{" "}
+                      <Editable
+                        value={url || ""}
+                        placeholder={`https://${key}.com/...`}
+                        onCommit={(v) =>
+                          setValue(
+                            socialPath,
+                            v as PathValue<IBuildResume, typeof socialPath>,
+                            { shouldDirty: true },
+                          )
+                        }
+                        style={{ color: "#4f46e5" }}
+                      />
+                    </span>
+                  );
+                })}
               </div>
             )}
         </div>

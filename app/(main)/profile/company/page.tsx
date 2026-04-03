@@ -264,7 +264,7 @@ export default function ProfilePage() {
   // Get Current User Effect
   useEffect(() => {
     getCurrentUser();
-  }, []);
+  }, [getCurrentUser]);
 
   useEffect(() => {
     let avatarUrl: string | undefined;
@@ -356,7 +356,7 @@ export default function ProfilePage() {
       setValues(company.values ?? []);
       setCareerScopes(company.careerScopes ?? []);
     }
-  }, [user, company, form]);
+  }, [company, form, setBenefits, setCareerScopes, setSocials, setValues, user]);
 
   /* -------------------------------- Methods --------------------------------- */
   // ── Edit Mode Methods ────────────────────────────────────────────────────

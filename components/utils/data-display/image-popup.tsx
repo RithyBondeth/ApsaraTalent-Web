@@ -5,6 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import Image from "next/image";
 
 export default function ImagePopup(props: {
   image: string;
@@ -19,7 +20,14 @@ export default function ImagePopup(props: {
           <DialogTitle />
           <DialogDescription />
         </DialogHeader>
-        <img src={props.image} alt="Image" className="rounded-lg" />
+        <Image
+          src={props.image}
+          alt="Image"
+          width={1600}
+          height={1200}
+          className="rounded-lg h-auto w-auto max-h-[85vh] max-w-[90vw]"
+          unoptimized
+        />
       </DialogContent>
     </Dialog>
   );

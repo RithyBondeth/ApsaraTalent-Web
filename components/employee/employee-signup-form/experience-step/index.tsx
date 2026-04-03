@@ -37,7 +37,7 @@ export default function ExperienceStepForm({
         endDate: "" as unknown as Date,
       });
     }
-  }, []);
+  }, [append, fields.length]);
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Add Experience ─────────────────────────────────────────

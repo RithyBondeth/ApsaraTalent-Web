@@ -24,7 +24,7 @@ import { toast } from "sonner";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { phoneOTPWhiteSvg } from "@/utils/constants/asset.constant";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
@@ -56,7 +56,7 @@ export default function PhoneOTPPage() {
 
   /* -------------------------------- Methods --------------------------------- */
   // ── Preload User Data ─────────────────────────────────────────
-  const preloadUserData = async () => {
+  const preloadUserData = useCallback(async () => {
     try {
       // Fist load current user
       await getCurrentUser();
@@ -104,7 +104,15 @@ export default function PhoneOTPPage() {
       console.error("Error preloading data: ", error);
       throw error;
     }
-  };
+  }, [
+    getAllCompanyFavoriteStore,
+    getAllEmployeeFavoriteStore,
+    getCurrentCompanyLikedStore,
+    getCurrentEmployeeLikedStore,
+    getCurrentUser,
+    queryCompany,
+    queryEmployee,
+  ]);
 
   /* ---------------------- React Hook Form: Verify OTP Form -------------------- */
   const {
@@ -183,12 +191,16 @@ export default function PhoneOTPPage() {
       });
     }
   }, [
-    verifyOTPStore.loading,
     verifyOTPStore.error,
-    verifyOTPStore.message,
-    loginInitiated,
     verifyOTPStore.isAuthenticated,
+    verifyOTPStore.loading,
+    verifyOTPStore.message,
     verifyOTPStore.role,
+    loginInitiated,
+    preloadUserData,
+    reset,
+    router,
+    t,
   ]);
 
   /* -------------------------------- Render UI -------------------------------- */

@@ -304,6 +304,7 @@ export default function FeedPage() {
       countCurrentEmpFavorites,
       queryAllEmployeeFavorites,
       empFavError,
+      t,
     ],
   );
 
@@ -325,6 +326,7 @@ export default function FeedPage() {
       countCurrentCmpFavorites,
       queryAllCompanyFavorites,
       cmpFavError,
+      t,
     ],
   );
 

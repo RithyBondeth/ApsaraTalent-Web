@@ -264,7 +264,7 @@ export default function CompanySignup() {
       { error: uploadCover.error, message: uploadCover.message },
     ];
 
-    errorList.forEach(({ error, message }) => {
+    errorList.forEach(({ error }) => {
       if (error) {
         toast.dismiss();
         toast.error(t("anErrorOccurred"), {
@@ -273,20 +273,18 @@ export default function CompanySignup() {
       }
     });
   }, [
+    t,
     cmpSignup.loading,
     cmpSignup.error,
     cmpSignup.message,
     cmpSignup.refreshToken,
     cmpSignup.accessToken,
-    cmpSignup.signup,
     uploadAvatar.loading,
     uploadAvatar.error,
     uploadAvatar.message,
-    uploadAvatar.uploadAvatar,
     uploadCover.loading,
     uploadCover.error,
     uploadCover.message,
-    uploadCover.uploadCover,
     uploadsComplete,
     router,
   ]);

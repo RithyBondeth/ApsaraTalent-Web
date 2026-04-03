@@ -74,8 +74,11 @@ export const registerSocketListeners = (
     });
 
     // ── Update Unread Count ────
+    // Note: notification badge is updated via the 'newNotification' socket event
+    // (emitted after the DB record is confirmed) — NOT here. Doing it here caused
+    // a race condition where the badge incremented before the notification existed in DB.
     if (!isFromMe && isForMe && !isActiveChatOpen) {
-      useNotificationStore.getState().incrementUnreadCount();
+      // No-op: badge will increment when 'newNotification' arrives
     } else {
       void useNotificationStore.getState().queryUnreadCount();
     }
@@ -263,6 +266,15 @@ export const registerSocketListeners = (
       }
     },
   );
+
+  // ── New Notification ─────────────────────────────────────────────────────
+  // Fired by the server AFTER the notification record is confirmed saved in DB.
+  // This is the single source of truth for badge + list updates — no race condition.
+  socket.on("newNotification", (notification: any) => {
+    if (notification?.id) {
+      useNotificationStore.getState().addNotification(notification);
+    }
+  });
 
   socket.on("error", (error: any) => {
     console.error("Socket error:", error?.message || error || "Unknown");

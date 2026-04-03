@@ -123,7 +123,7 @@ export default function ChatInput(props: IChatInputProps) {
       if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
       onTyping?.(false);
     },
-    [],
+    [onTyping],
   );
 
   // Revoke all object URLs on unmount

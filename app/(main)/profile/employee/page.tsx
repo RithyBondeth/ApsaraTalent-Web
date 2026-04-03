@@ -369,7 +369,7 @@ export default function EmployeeProfilePage() {
         description: cs.description ?? "",
       })),
     );
-  }, [user, employee, form]);
+  }, [employee, form, setCareerScopes, setSkills, setSocials, user]);
 
   /* -------------------------------- Methods --------------------------------- */
   // ── Edit Mode Methods ──────────────────────────────────────────

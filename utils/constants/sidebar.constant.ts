@@ -11,13 +11,6 @@ import {
 
 export const sidebarList = [
   {
-    title: "Dashboard",
-    description: "View your analytics",
-    url: "/dashboard",
-    icon: BarChart3,
-    badge: 0,
-  },
-  {
     title: "Feed",
     description: "Explore your connections",
     url: "/feed",
@@ -65,6 +58,13 @@ export const sidebarList = [
     description: "Stay updated with matches and messages",
     url: "/notification",
     icon: BellRing,
+    badge: 0,
+  },
+  {
+    title: "Dashboard",
+    description: "View your analytics",
+    url: "/dashboard",
+    icon: BarChart3,
     badge: 0,
   },
 ] as const;

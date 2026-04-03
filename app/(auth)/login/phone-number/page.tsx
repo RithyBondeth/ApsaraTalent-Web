@@ -79,7 +79,7 @@ export default function PhoneNumberPage() {
         action: { label: t("retry"), onClick: () => reset() },
       });
     }
-  }, [error, loading, isSuccess, message, isSubmitted]);
+  }, [error, isSubmitted, isSuccess, loading, message, reset, router, t]);
 
   return (
     /* -------------------------------- Render UI -------------------------------- */

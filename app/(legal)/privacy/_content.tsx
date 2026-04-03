@@ -17,7 +17,6 @@ import {
 import { TypographyH1 } from "@/components/utils/typography/typography-h1";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useLanguageStore } from "@/stores/languages/language-store";
 
