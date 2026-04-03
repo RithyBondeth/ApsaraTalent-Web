@@ -128,14 +128,22 @@ export default function FeedPage() {
   );
 
   // All Employee Favorite APIs
-  const { addCompanyToFavorite, favoriteCompanyIds, empFavError } =
-    useEmployeeFavCompanyStore();
+  const {
+    addCompanyToFavorite,
+    favoriteCompanyIds,
+    empFavError,
+    optimisticRemove: optimisticRemoveEmpFav,
+  } = useEmployeeFavCompanyStore();
   const isEmpFavorite = (id: string) => favoriteCompanyIds.has(id);
   const { queryAllEmployeeFavorites } = useGetAllEmployeeFavoritesStore();
 
   // All Company Favorite APIs
-  const { addEmployeeToFavorite, favoriteEmployeeIds, cmpFavError } =
-    useCompanyFavEmployeeStore();
+  const {
+    addEmployeeToFavorite,
+    favoriteEmployeeIds,
+    cmpFavError,
+    optimisticRemove: optimisticRemoveCmpFav,
+  } = useCompanyFavEmployeeStore();
   const isCmpFavorite = (id: string) => favoriteEmployeeIds.has(id);
   const { queryAllCompanyFavorites } = useGetAllCompanyFavoritesStore();
 
@@ -238,9 +246,13 @@ export default function FeedPage() {
       const company = companyData?.find((c) => c.id === companyID);
       if (company) optimisticAddEmployeeLiked(company);
 
+      // Backend auto-removes favorite on like — sync the local Set immediately
+      optimisticRemoveEmpFav(companyID);
+
       try {
         await employeeLike(employeeID, companyID);
         countCurrentEmpMatching(employeeID);
+        countCurrentEmpFavorites(employeeID);
         setOpenLikeSuccessDialog(true);
         // Sync with server to confirm (replaces optimistic state)
         await queryCurrentEmployeeLiked(employeeID);
@@ -251,8 +263,10 @@ export default function FeedPage() {
     [
       employeeLike,
       countCurrentEmpMatching,
+      countCurrentEmpFavorites,
       queryCurrentEmployeeLiked,
       optimisticAddEmployeeLiked,
+      optimisticRemoveEmpFav,
       companyData,
     ],
   );
@@ -267,9 +281,13 @@ export default function FeedPage() {
       const employee = employeesData?.find((e) => e.id === employeeID);
       if (employee) optimisticAddCompanyLiked(employee);
 
+      // Backend auto-removes favorite on like — sync the local Set immediately
+      optimisticRemoveCmpFav(employeeID);
+
       try {
         await companyLike(companyID, employeeID);
         countCurrentCmpMatching(companyID);
+        countCurrentCmpFavorites(companyID);
         setOpenLikeSuccessDialog(true);
         // Sync with server to confirm (replaces optimistic state)
         await queryCurrentCompanyLiked(companyID);
@@ -280,8 +298,10 @@ export default function FeedPage() {
     [
       companyLike,
       countCurrentCmpMatching,
+      countCurrentCmpFavorites,
       queryCurrentCompanyLiked,
       optimisticAddCompanyLiked,
+      optimisticRemoveCmpFav,
       employeesData,
     ],
   );

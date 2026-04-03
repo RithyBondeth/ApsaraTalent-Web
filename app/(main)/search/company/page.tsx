@@ -20,6 +20,7 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useSearchEmployeeStore } from "@/stores/apis/employee/search-emp.store";
+import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { SEARCH_DEBOUNCE_MS } from "@/utils/constants/search.constant";
 import { yearOfExperienceConstant } from "@/utils/constants/ui.constant";
@@ -50,6 +51,8 @@ export default function CompanySearchPage() {
   const { error, loading, employees, querySearchEmployee } =
     useSearchEmployeeStore();
   const { user } = useGetCurrentUserStore();
+  const { currentCompanyLiked, queryCurrentCompanyLiked } =
+    useGetCurrentCompanyLikedStore();
 
   /* -------------------------------- All States ------------------------------ */
   // Company Search For Employee Helper
@@ -162,6 +165,22 @@ export default function CompanySearchPage() {
   useEffect(() => {
     return () => debouncedRunSearch.cancel();
   }, [debouncedRunSearch]);
+
+  // Fetch Liked Employees (So We Can Filter Them Out of Results)
+  useEffect(() => {
+    if (!user?.company?.id) return;
+    if (currentCompanyLiked !== null) return;
+    queryCurrentCompanyLiked(user.company.id);
+  }, [user?.company?.id, currentCompanyLiked, queryCurrentCompanyLiked]);
+
+  // Filter Out Employees The Company Has Already Liked
+  const filteredEmployees = useMemo(() => {
+    if (!employees) return null;
+    if (!currentCompanyLiked || currentCompanyLiked.length === 0)
+      return employees;
+    const likedEmployeeIds = new Set(currentCompanyLiked.map((e) => e.id));
+    return employees.filter((emp) => !likedEmployeeIds.has(emp.id));
+  }, [employees, currentCompanyLiked]);
 
   /* ----------------------------- Event Handlers ---------------------------- */
   // ── Handle Radio Change ─────────────────────────────────────────
@@ -366,8 +385,8 @@ export default function CompanySearchPage() {
                 <TypographySmall className="text-destructive">
                   0 Employee Found
                 </TypographySmall>
-              ) : employees && employees.length > 0 ? (
-                `${employees.length} Employee${employees.length > 1 ? "s" : ""} Found`
+              ) : filteredEmployees && filteredEmployees.length > 0 ? (
+                `${filteredEmployees.length} Employee${filteredEmployees.length > 1 ? "s" : ""} Found`
               ) : (
                 "No employees found"
               )}
@@ -438,9 +457,9 @@ export default function CompanySearchPage() {
                   description="Try adjusting your filters or search terms and try again."
                 />
               </div>
-            ) : employees && employees.length > 0 ? (
+            ) : filteredEmployees && filteredEmployees.length > 0 ? (
               /* Employee Search Card Section */
-              employees.map((item) => (
+              filteredEmployees.map((item) => (
                 <SearchEmployeeCard
                   key={item.id}
                   id={item.id}

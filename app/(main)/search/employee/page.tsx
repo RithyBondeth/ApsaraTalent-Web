@@ -21,6 +21,7 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useSearchJobStore } from "@/stores/apis/job/search-job.store";
+import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { SEARCH_DEBOUNCE_MS } from "@/utils/constants/search.constant";
 import { yearOfExperienceConstant } from "@/utils/constants/ui.constant";
@@ -53,6 +54,8 @@ export default function EmployeeSearchPage() {
   /* ----------------------------- API Integration ---------------------------- */
   const { error, loading, jobs, querySearchJobs } = useSearchJobStore();
   const { user } = useGetCurrentUserStore();
+  const { currentEmployeeLiked, queryCurrentEmployeeLiked } =
+    useGetCurrentEmployeeLikedStore();
 
   /* -------------------------------- All States ------------------------------ */
   // Employee Search for Company Helper
@@ -159,6 +162,21 @@ export default function EmployeeSearchPage() {
   useEffect(() => {
     return () => debouncedRunSearch.cancel();
   }, [debouncedRunSearch]);
+
+  // Fetch Liked Companies (So We Can Filter Them Out of Results)
+  useEffect(() => {
+    if (!user?.employee?.id) return;
+    if (currentEmployeeLiked !== null) return;
+    queryCurrentEmployeeLiked(user.employee.id);
+  }, [user?.employee?.id, currentEmployeeLiked, queryCurrentEmployeeLiked]);
+
+  // Filter Out Jobs From Companies The Employee Has Already Liked
+  const filteredJobs = useMemo(() => {
+    if (!jobs) return null;
+    if (!currentEmployeeLiked || currentEmployeeLiked.length === 0) return jobs;
+    const likedCompanyIds = new Set(currentEmployeeLiked.map((c) => c.id));
+    return jobs.filter((job) => !likedCompanyIds.has(job.company.id!));
+  }, [jobs, currentEmployeeLiked]);
 
   /* ----------------------------- Event Handlers ---------------------------- */
   // ── Handle Radio Change ─────────────────────────────────────────
@@ -549,8 +567,8 @@ export default function EmployeeSearchPage() {
                 <TypographySmall className="text-destructive">
                   0 Job is listing
                 </TypographySmall>
-              ) : jobs && jobs.length > 0 ? (
-                `${jobs.length} Job${jobs.length === 1 ? "" : "s"} listed`
+              ) : filteredJobs && filteredJobs.length > 0 ? (
+                `${filteredJobs.length} Job${filteredJobs.length === 1 ? "" : "s"} listed`
               ) : (
                 "No jobs found"
               )}
@@ -620,9 +638,9 @@ export default function EmployeeSearchPage() {
                   description="Try adjusting your filters or search terms and try again."
                 />
               </div>
-            ) : jobs && jobs.length > 0 ? (
+            ) : filteredJobs && filteredJobs.length > 0 ? (
               /* Search Company Card Section */
-              jobs.map((item, index) => (
+              filteredJobs.map((item, index) => (
                 <SearchCompanyCard
                   key={item.id || index}
                   id={item.company.id}

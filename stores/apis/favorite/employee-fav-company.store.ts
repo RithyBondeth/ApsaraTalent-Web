@@ -29,6 +29,8 @@ type TEmployeeFavCompanyState = TEmployeeFavCompanyResponse & {
     companyID: string,
     favoriteID: string,
   ) => Promise<void>;
+  /** Remove a company ID from the local Set without an API call (e.g. after a like auto-removes the favorite on the backend) */
+  optimisticRemove: (companyID: string) => void;
   clearFavorites: () => void;
 };
 
@@ -123,6 +125,14 @@ export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>()(
           });
           throw new Error(errorMessage);
         }
+      },
+
+      optimisticRemove: (companyID: string) => {
+        set((state) => {
+          const updated = new Set(state.favoriteCompanyIds);
+          updated.delete(companyID);
+          return { favoriteCompanyIds: updated };
+        });
       },
 
       clearFavorites: () => {

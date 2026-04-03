@@ -11,8 +11,10 @@ import FavoriteEmployeeCard from "@/components/favorite/employee-favorite-card";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
 import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
+import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
+import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
@@ -44,6 +46,10 @@ export default function FavoritePage() {
   const countCurrentCmpFavoritesStore = useCountCurrentCompanyFavoritesStore();
   const countCurrentEmpFavoritesStore = useCountCurrentEmployeeFavoritesStore();
 
+  // Liked Users (To Filter Out From Favorites — Backend Auto-Removes But This Is A Safety Net)
+  const { currentEmployeeLiked } = useGetCurrentEmployeeLikedStore();
+  const { currentCompanyLiked } = useGetCurrentCompanyLikedStore();
+
   /* -------------------------------- All States ------------------------------ */
   const [mounted, setMounted] = useState(false);
   // Track IDs that are currently being removed (for animation)
@@ -70,6 +76,23 @@ export default function FavoritePage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser?.employee?.id, currentUser?.company?.id]);
+
+  // Filter Out Liked Users From Favorites (Safety Net For Stale Data)
+  const filteredEmployeeFavorites = useMemo(() => {
+    const data = getAllEmployeeFavoritesStore.companyData;
+    if (!data) return null;
+    if (!currentEmployeeLiked || currentEmployeeLiked.length === 0) return data;
+    const likedIds = new Set(currentEmployeeLiked.map((c) => c.id));
+    return data.filter((fav) => !likedIds.has(fav.company.id));
+  }, [getAllEmployeeFavoritesStore.companyData, currentEmployeeLiked]);
+
+  const filteredCompanyFavorites = useMemo(() => {
+    const data = getAllCompanyFavoritesStore.employeeData;
+    if (!data) return null;
+    if (!currentCompanyLiked || currentCompanyLiked.length === 0) return data;
+    const likedIds = new Set(currentCompanyLiked.map((e) => e.id));
+    return data.filter((fav) => !likedIds.has(fav.employee.id));
+  }, [getAllCompanyFavoritesStore.employeeData, currentCompanyLiked]);
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Load Remove Animation Then Remove ─────────────────────────────────────────
@@ -217,9 +240,9 @@ export default function FavoritePage() {
       {/* Favorite Card List Section */}
       <div className="flex flex-col items-start gap-3 stagger-list">
         {isEmployee &&
-        getAllEmployeeFavoritesStore.companyData &&
-        getAllEmployeeFavoritesStore.companyData.length > 0 ? (
-          getAllEmployeeFavoritesStore.companyData.map((fav) => (
+        filteredEmployeeFavorites &&
+        filteredEmployeeFavorites.length > 0 ? (
+          filteredEmployeeFavorites.map((fav) => (
             <FavoriteCompanyCard
               key={fav.id}
               id={fav.company.id}
@@ -245,9 +268,9 @@ export default function FavoritePage() {
             />
           ))
         ) : !isEmployee &&
-          getAllCompanyFavoritesStore.employeeData &&
-          getAllCompanyFavoritesStore.employeeData.length > 0 ? (
-          getAllCompanyFavoritesStore.employeeData.map((fav) => (
+          filteredCompanyFavorites &&
+          filteredCompanyFavorites.length > 0 ? (
+          filteredCompanyFavorites.map((fav) => (
             <FavoriteEmployeeCard
               key={fav.id}
               id={fav.employee.id}
