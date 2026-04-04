@@ -7,61 +7,11 @@ import { Suspense, useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 
 /* -------------------------------- Helpers ------------------------------- */
-// ── GlowParticles — Floating particles around the model ────────────
-function GlowParticles({
-  color,
-  count = 40,
-}: {
-  color: string;
-  count?: number;
-}) {
-  const meshRef = useRef<THREE.InstancedMesh>(null);
-  const dummy = useMemo(() => new THREE.Object3D(), []);
-
-  const particles = useMemo(() => {
-    return Array.from({ length: count }, () => ({
-      position: [
-        (Math.random() - 0.5) * 14,
-        Math.random() * 7 - 1,
-        (Math.random() - 0.5) * 14,
-      ] as [number, number, number],
-      speed: 0.15 + Math.random() * 0.4,
-      offset: Math.random() * Math.PI * 2,
-      scale: 0.02 + Math.random() * 0.05,
-    }));
-  }, [count]);
-
-  useFrame(({ clock }) => {
-    if (!meshRef.current) return;
-    const t = clock.getElapsedTime();
-
-    particles.forEach((p, i) => {
-      dummy.position.set(
-        p.position[0] + Math.sin(t * p.speed + p.offset) * 0.6,
-        p.position[1] + Math.sin(t * p.speed * 0.7 + p.offset) * 0.4,
-        p.position[2] + Math.cos(t * p.speed + p.offset) * 0.6,
-      );
-      dummy.scale.setScalar(p.scale * (1 + Math.sin(t * 2 + p.offset) * 0.4));
-      dummy.updateMatrix();
-      meshRef.current!.setMatrixAt(i, dummy.matrix);
-    });
-
-    meshRef.current.instanceMatrix.needsUpdate = true;
-  });
-
-  return (
-    <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
-      <sphereGeometry args={[1, 8, 8]} />
-      <meshBasicMaterial color={color} transparent opacity={0.5} />
-    </instancedMesh>
-  );
-}
-
 // ── AngkorWatModel — Loads and displays the .glb model ────────────
 function AngkorWatModel({ isDark }: { isDark: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF("/models/angkor_wat_optimized.glb", false, true);
-  const { camera, size: viewportSize } = useThree();
+  const { camera } = useThree();
 
   const clonedScene = useMemo(() => {
     const clone = scene.clone(true);
@@ -73,7 +23,7 @@ function AngkorWatModel({ isDark }: { isDark: boolean }) {
       }
     });
 
-    // Normalize model scale so camera fitting remains stable even if source GLB uses huge world units.
+    // Normalize model scale
     const initialBox = new THREE.Box3().setFromObject(clone);
     const initialSize = initialBox.getSize(new THREE.Vector3());
     const initialMaxDim = Math.max(initialSize.x, initialSize.y, initialSize.z);
@@ -117,22 +67,13 @@ function AngkorWatModel({ isDark }: { isDark: boolean }) {
       camera.updateProjectionMatrix();
     }
 
-    const isDesktop = viewportSize.width >= 1024;
-    const viewportAspect =
-      viewportSize.width / Math.max(viewportSize.height, 1);
-    const isUltraWide = viewportAspect >= 1.9;
-    const horizontalFactor = isDesktop ? 0.68 : 0.82;
-    const verticalFactor = isDesktop ? 0.45 : 0.5;
-    const distanceScale = isUltraWide ? 0.88 : isDesktop ? 0.95 : 1;
-    const targetX = isDesktop ? (isUltraWide ? 0.95 : 0.72) : 0;
-
     camera.position.set(
-      distance * horizontalFactor * distanceScale,
-      distance * verticalFactor * distanceScale,
-      distance * horizontalFactor * distanceScale,
+      distance * 0.75,
+      distance * 0.45,
+      distance * 0.75,
     );
-    camera.lookAt(targetX, 0, 0);
-  }, [clonedScene, camera, viewportSize.width, viewportSize.height]);
+    camera.lookAt(0, 0, 0);
+  }, [clonedScene, camera]);
 
   useFrame(({ clock }) => {
     if (groupRef.current) {
@@ -149,12 +90,6 @@ function AngkorWatModel({ isDark }: { isDark: boolean }) {
 
 // ── SceneControls — Orbit controls for the 3D scene ────────────
 function SceneControls() {
-  const { size } = useThree();
-  const isDesktop = size.width >= 1024;
-  const viewportAspect = size.width / Math.max(size.height, 1);
-  const isUltraWide = viewportAspect >= 1.9;
-  const targetX = isDesktop ? (isUltraWide ? 0.95 : 0.72) : 0;
-
   return (
     <OrbitControls
       enableZoom={false}
@@ -164,7 +99,7 @@ function SceneControls() {
       rotateSpeed={0.6}
       minPolarAngle={Math.PI / 3.2}
       maxPolarAngle={Math.PI / 1.9}
-      target={[targetX, 0, 0]}
+      target={[0, 0, 0]}
     />
   );
 }
@@ -197,7 +132,6 @@ export default function AngkorWatScene() {
   const { theme, systemTheme } = useThemeStore();
   const resolvedTheme = theme === "system" ? systemTheme : theme;
   const isDark = resolvedTheme === "dark";
-  const particleColor = isDark ? "#d4a853" : "#8b6914";
 
   /* ------------------------------- Render UI -------------------------------- */
   return (
@@ -230,8 +164,6 @@ export default function AngkorWatScene() {
             <AngkorWatModel isDark={isDark} />
           </Float>
         </Suspense>
-
-        <GlowParticles color={particleColor} count={20} />
 
         <SceneControls />
       </Canvas>

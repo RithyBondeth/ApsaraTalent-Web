@@ -1,134 +1,215 @@
+"use client";
+
 import Header from "@/components/header";
-import { TypographyH1 } from "@/components/utils/typography/typography-h1";
+import { LandingLiveStats } from "@/components/landing/landing-live-stats";
+import { LandingFeatures } from "@/components/landing/landing-features";
+import { LandingHowItWorks } from "@/components/landing/landing-how-it-works";
+import { LandingFooter } from "@/components/landing/landing-footer";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { AngkorWatWrapper } from "@/components/utils/animations/angkor-wat-wrapper";
 import { Button } from "@/components/ui/button";
-import { LucideArrowRight, LucideSparkles } from "lucide-react";
+import {
+  LucideArrowRight,
+  LucideChevronDown,
+  LucideSparkles,
+} from "lucide-react";
 import Link from "next/link";
+import {
+  useGsapHeroAnimation,
+  useGsapScrollAnimation,
+} from "@/hooks/utils/use-gsap-animation";
 
 export default function IndexPage() {
+  const heroRef = useGsapHeroAnimation<HTMLElement>();
+  const ctaRef = useGsapScrollAnimation<HTMLElement>();
+
   /* --------------------------------- Render UI -------------------------------- */
   return (
-    <div className="relative h-[100dvh] min-h-0 overflow-hidden overscroll-none bg-background">
+    <div className="relative bg-background">
       {/* Header Section */}
-      <Header className="absolute top-0 left-0 right-0 z-20" />
+      <Header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/40" />
 
-      {/* Mobile Section: use 3D model as full-page background */}
-      <div className="absolute inset-0 z-[1] pointer-events-none lg:hidden">
-        <div className="absolute inset-0 opacity-70">
-          <AngkorWatWrapper />
+      {/* ═══════════════ Section 1: Hero ═══════════════ */}
+      <section
+        ref={heroRef}
+        className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden"
+      >
+        {/* Atmosphere Background */}
+        <div className="pointer-events-none absolute inset-0 z-0">
+          <div className="absolute -left-32 top-20 h-[400px] w-[400px] rounded-full bg-amber-500/20 blur-[140px] dark:bg-amber-400/15" />
+          <div className="absolute right-[-100px] top-[-60px] h-[500px] w-[500px] rounded-full bg-amber-600/10 blur-[160px] dark:bg-indigo-400/20" />
+          <div className="absolute right-[15%] bottom-[-100px] h-[400px] w-[400px] rounded-full bg-amber-400/10 blur-[140px] dark:bg-amber-300/8" />
+          <div className="absolute inset-0 opacity-[0.04] dark:opacity-[0.08] [background-image:radial-gradient(circle,hsl(var(--foreground))_1px,transparent_1px)] [background-size:24px_24px]" />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-background/55 via-background/40 to-background/95" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/65 via-transparent to-background/50" />
-      </div>
 
-      {/* Atmosphere Background Section (matched with 3D scene tones) */}
-      <div className="pointer-events-none absolute inset-0 z-0">
-        <div className="absolute -left-24 top-16 h-[380px] w-[380px] rounded-full bg-amber-500/25 blur-[120px] dark:bg-amber-400/20" />
-        <div className="absolute right-[-120px] top-[-40px] h-[460px] w-[460px] rounded-full bg-indigo-500/20 blur-[150px] dark:bg-indigo-400/25" />
-        <div className="absolute right-[18%] bottom-[-140px] h-[420px] w-[420px] rounded-full bg-amber-400/15 blur-[140px] dark:bg-amber-300/10" />
-        <div className="absolute inset-0 opacity-[0.05] [background-image:radial-gradient(circle_at_1px_1px,hsl(var(--foreground))_1px,transparent_0)] [background-size:28px_28px]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/20 to-background/90" />
-      </div>
+        {/* Hero Content */}
+        <div className="relative z-10 mx-auto w-full max-w-4xl px-6 sm:px-8 pt-28 pb-20 text-center">
+          <div className="flex flex-col items-center gap-6">
+            {/* Badge */}
+            <div
+              data-hero="badge"
+              className="inline-flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/5 px-4 py-1.5 backdrop-blur-sm opacity-0 dark:border-amber-400/20 dark:bg-amber-400/5"
+            >
+              <LucideSparkles className="size-3.5 text-amber-600 dark:text-amber-400" />
+              <span className="text-xs font-medium text-amber-700 dark:text-amber-400">
+                Cambodia&apos;s Premier Talent Platform
+              </span>
+            </div>
 
-      {/* Main Content */}
-      <div className="relative z-10 mx-auto flex h-full w-full max-w-[1920px] flex-col lg:flex-row">
-        {/* Left: Text Content */}
-        <div className="z-10 flex h-full min-h-0 w-full items-center justify-center pb-6 pt-32 sm:pb-8 sm:pt-36 lg:w-[48%] xl:w-[45%] 2xl:w-[43%] lg:items-start lg:justify-start lg:pb-0 lg:pt-28 xl:pt-32">
-          <div className="w-full max-w-2xl px-6 sm:px-8 lg:px-12 xl:px-16 2xl:px-20">
-            <div className="flex flex-col items-start gap-4 sm:gap-5">
-              {/* Badge Section */}
-              <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 animate-in fade-in-0 slide-in-from-bottom-2 duration-500 fill-mode-both">
-                <LucideSparkles className="size-3.5 text-primary" />
-                <TypographySmall className="text-xs text-primary font-medium">
-                  Cambodia&apos;s Premier Talent Platform
-                </TypographySmall>
-              </div>
+            {/* Heading */}
+            <h1
+              data-hero="heading"
+              className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl !leading-[1.08] opacity-0"
+            >
+              Empowering Connections{" "}
+              <br className="hidden sm:block" />
+              Between{" "}
+              <span className="bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 bg-clip-text text-transparent dark:from-amber-400 dark:via-amber-300 dark:to-yellow-300">
+                Talent
+              </span>{" "}
+              and{" "}
+              <span className="bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 bg-clip-text text-transparent dark:from-amber-400 dark:via-amber-300 dark:to-yellow-300">
+                Opportunity
+              </span>
+            </h1>
 
-              {/* Heading Section */}
-              <TypographyH1 className="!leading-[1.12] text-3xl sm:text-4xl md:text-5xl lg:text-[3.2rem] 2xl:text-[3.6rem] animate-in fade-in-0 slide-in-from-bottom-3 duration-700 delay-100 fill-mode-both">
-                Empowering Connections Between{" "}
-                <span className="text-primary">Talent</span> and{" "}
-                <span className="text-primary">Opportunity</span>
-              </TypographyH1>
+            {/* Description */}
+            <TypographyMuted
+              data-hero="description"
+              className="!leading-relaxed text-base sm:text-lg md:text-xl max-w-[640px] opacity-0"
+            >
+              Whether you&apos;re a freelancer seeking new opportunities or a
+              professional advancing your career, our platform connects you with
+              the right opportunities.
+            </TypographyMuted>
 
-              {/* Description Section */}
-              <TypographyMuted className="!leading-relaxed text-base sm:text-lg 2xl:text-[1.16rem] max-w-[620px] animate-in fade-in-0 slide-in-from-bottom-3 duration-700 delay-200 fill-mode-both">
-                Whether you&apos;re a freelancer seeking new opportunities or a
-                professional advancing your career, our platform connects you
-                with the right opportunities.
-                <span className="tablet-md:hidden">
-                  {" "}
-                  For businesses and employers, find top-tier talent to drive
-                  success and innovation.
-                </span>
-              </TypographyMuted>
+            {/* CTA Buttons */}
+            <div
+              data-hero="cta"
+              className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-2 opacity-0"
+            >
+              <Link href="/signup/option">
+                <Button
+                  size="lg"
+                  className="rounded-full px-8 gap-2 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 text-white shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 transition-all dark:from-amber-500 dark:to-amber-400 dark:hover:from-amber-600 dark:hover:to-amber-500 dark:text-black"
+                >
+                  Get Started
+                  <LucideArrowRight className="size-4" />
+                </Button>
+              </Link>
+              <Link href="/login">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="rounded-full px-8 border-amber-300/50 hover:bg-amber-50 hover:border-amber-400/50 dark:border-amber-500/30 dark:hover:bg-amber-500/10 dark:hover:border-amber-400/40 transition-all"
+                >
+                  Sign In
+                </Button>
+              </Link>
+            </div>
 
-              {/* CTA Buttons Section */}
-              <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-2 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 delay-300 fill-mode-both">
-                <Link href="/signup/option">
-                  <Button
-                    size="lg"
-                    className="rounded-full px-7 gap-2 shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
-                  >
-                    Get Started
-                    <LucideArrowRight className="size-4" />
-                  </Button>
-                </Link>
-                <Link href="/login">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="rounded-full px-7"
-                  >
-                    Sign In
-                  </Button>
-                </Link>
-              </div>
-
-              {/* Stats Section */}
-              <div className="flex items-center gap-6 2xl:gap-8 pt-2 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 delay-500 fill-mode-both">
-                <div className="flex flex-col">
-                  <span className="text-2xl font-bold text-foreground">
-                    1K+
-                  </span>
-                  <TypographyMuted className="text-xs">
-                    Active Users
-                  </TypographyMuted>
-                </div>
-                <div className="h-8 w-px bg-border" />
-                <div className="flex flex-col">
-                  <span className="text-2xl font-bold text-foreground">
-                    500+
-                  </span>
-                  <TypographyMuted className="text-xs">
-                    Companies
-                  </TypographyMuted>
-                </div>
-                <div className="h-8 w-px bg-border" />
-                <div className="flex flex-col">
-                  <span className="text-2xl font-bold text-foreground">
-                    98%
-                  </span>
-                  <TypographyMuted className="text-xs">
-                    Satisfaction
-                  </TypographyMuted>
-                </div>
-              </div>
+            {/* Stats */}
+            <div data-hero="stats" className="flex justify-center opacity-0">
+              <LandingLiveStats />
             </div>
           </div>
-        </div>
 
-        {/* Right Section: 3D Angkor Wat Scene */}
-        <div className="relative hidden h-full w-full lg:block lg:w-[52%] xl:w-[55%] 2xl:w-[57%]">
-          <div className="pointer-events-none absolute -right-12 top-16 h-[420px] w-[420px] rounded-full bg-amber-400/20 blur-[140px] dark:bg-amber-300/15" />
-          <div className="pointer-events-none absolute right-28 bottom-10 h-[360px] w-[360px] rounded-full bg-indigo-500/20 blur-[140px] dark:bg-indigo-400/20" />
-          <div className="absolute inset-0 -translate-x-[6%] xl:-translate-x-[8%] 2xl:-translate-x-[10%]">
-            <AngkorWatWrapper />
+          {/* Scroll Indicator */}
+          <div
+            data-hero="scroll"
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce opacity-0"
+          >
+            <LucideChevronDown className="size-6 text-muted-foreground/50" />
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* ═══════════════ Section 2: 3D Angkor Wat ═══════════════ */}
+      <section className="relative h-[80dvh] sm:h-[85dvh] overflow-hidden">
+        {/* Dotted background pattern */}
+        <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.07] dark:opacity-[0.12] [background-image:radial-gradient(circle,hsl(var(--foreground))_1px,transparent_1px)] [background-size:24px_24px]" />
+
+        {/* Soft top blend */}
+        <div className="pointer-events-none absolute top-0 left-0 right-0 h-20 z-10 bg-gradient-to-b from-background to-transparent" />
+
+        {/* 3D Scene */}
+        <div className="absolute inset-0 z-[1]">
+          <AngkorWatWrapper />
+        </div>
+
+        {/* Caption overlay at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-background via-background/80 to-transparent pt-20 pb-10">
+          <div className="mx-auto max-w-2xl text-center px-6">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-3">
+              Inspired by{" "}
+              <span className="bg-gradient-to-r from-amber-600 to-yellow-500 bg-clip-text text-transparent dark:from-amber-400 dark:to-yellow-300">
+                Angkor Wat
+              </span>
+            </h2>
+            <TypographyMuted className="text-sm sm:text-base max-w-lg mx-auto">
+              Like the timeless wonder of Angkor Wat, we build lasting
+              connections between exceptional talent and great companies across
+              Cambodia.
+            </TypographyMuted>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════ Section 3: Features ═══════════════ */}
+      <LandingFeatures />
+
+      {/* ═══════════════ Section 4: How It Works ═══════════════ */}
+      <LandingHowItWorks />
+
+      {/* ═══════════════ Section 5: Final CTA ═══════════════ */}
+      <section ref={ctaRef} className="relative py-24 sm:py-32 overflow-hidden">
+        {/* Dotted background */}
+        <div className="pointer-events-none absolute inset-0 opacity-[0.04] dark:opacity-[0.08] [background-image:radial-gradient(circle,hsl(var(--foreground))_1px,transparent_1px)] [background-size:24px_24px]" />
+
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[500px] rounded-full bg-amber-500/15 blur-[160px] dark:bg-amber-400/10" />
+        </div>
+
+        <div className="relative z-10 mx-auto max-w-3xl text-center px-6">
+          <h2
+            data-gsap="split-words"
+            className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-5 !leading-[1.15] [perspective:800px]"
+          >
+            Ready to Find Your{" "}
+            <span className="bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 bg-clip-text text-transparent dark:from-amber-400 dark:via-amber-300 dark:to-yellow-300">
+              Perfect Match
+            </span>
+            ?
+          </h2>
+          <TypographyMuted data-gsap="fade-up" className="text-base sm:text-lg max-w-xl mx-auto mb-8">
+            Join thousands of professionals and companies already using Apsara
+            Talent to build their future.
+          </TypographyMuted>
+          <div data-gsap="fade-up" className="flex flex-wrap items-center justify-center gap-4">
+            <Link href="/signup/option">
+              <Button
+                size="lg"
+                className="rounded-full px-10 gap-2 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 text-white shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 transition-all dark:from-amber-500 dark:to-amber-400 dark:hover:from-amber-600 dark:hover:to-amber-500 dark:text-black"
+              >
+                Get Started for Free
+                <LucideArrowRight className="size-4" />
+              </Button>
+            </Link>
+            <Link href="/login">
+              <Button
+                size="lg"
+                variant="outline"
+                className="rounded-full px-10 border-amber-300/50 hover:bg-amber-50 hover:border-amber-400/50 dark:border-amber-500/30 dark:hover:bg-amber-500/10 dark:hover:border-amber-400/40 transition-all"
+              >
+                Sign In
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════ Footer ═══════════════ */}
+      <LandingFooter />
     </div>
   );
 }
