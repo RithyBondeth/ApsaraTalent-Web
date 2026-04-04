@@ -226,6 +226,7 @@ export default function EmployeeSearchPage() {
           height={300}
           width={400}
           className="laptop-sm:hidden"
+          priority
         />
       </div>
 
@@ -652,14 +653,7 @@ export default function EmployeeSearchPage() {
                   education={item.education}
                   skills={item.skills}
                   postedDate={item.postedDate!}
-                  company={{
-                    id: item.company.id,
-                    name: item.company.name,
-                    avatar: item.company.avatar,
-                    companySize: item.company.companySize,
-                    industry: item.company.industry,
-                    location: item.company.location,
-                  }}
+                  company={item.company}
                 />
               ))
             ) : (

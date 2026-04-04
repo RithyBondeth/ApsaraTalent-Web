@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Cropper from "react-easy-crop";
+import dynamic from "next/dynamic";
+
+const Cropper = dynamic(() => import("react-easy-crop"), { ssr: false });
 
 import {
   Dialog,
@@ -128,6 +130,16 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
               onCropChange={setCrop}
               onZoomChange={setZoom}
               onCropComplete={handleCropComplete}
+              rotation={0}
+              minZoom={1}
+              maxZoom={3}
+              zoomSpeed={1}
+              restrictPosition={true}
+              keyboardStep={10}
+              style={{}}
+              classes={{}}
+              mediaProps={{}}
+              cropperProps={{}}
             />
           )}
         </div>

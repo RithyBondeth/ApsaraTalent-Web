@@ -9,7 +9,7 @@ import {
 } from "firebase/messaging";
 import axios from "@/lib/axios";
 import { API_UPDATE_PUSH_TOKEN_URL } from "@/utils/constants/apis/user_url";
-import { firebaseApp } from "@/lib/firebase";
+import { getFirebaseApp } from "@/lib/firebase";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 
@@ -83,7 +83,7 @@ export const usePushNotifications = () => {
       const readyRegistration =
         (await navigator.serviceWorker.ready.catch(() => null)) || registration;
 
-      const messaging = getMessaging(firebaseApp);
+      const messaging = getMessaging(getFirebaseApp());
       let token: string | null = null;
       try {
         token = await getToken(messaging, {

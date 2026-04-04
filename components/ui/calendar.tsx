@@ -2,12 +2,19 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import * as React from "react";
-import { DayPicker } from "react-day-picker";
+import dynamic from "next/dynamic";
+import type { DayPickerProps } from "react-day-picker";
 
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export type CalendarProps = React.ComponentProps<typeof DayPicker>;
+// Lazy-load react-day-picker — only needed when a date filter/picker is open
+const DayPicker = dynamic(
+  () => import("react-day-picker").then((m) => m.DayPicker),
+  { ssr: false, loading: () => null },
+);
+
+export type CalendarProps = DayPickerProps;
 
 function Calendar({
   className,

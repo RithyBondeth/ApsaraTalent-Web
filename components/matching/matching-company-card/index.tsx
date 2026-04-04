@@ -13,8 +13,9 @@ import { Button } from "../../ui/button";
 import Tag from "@/components/utils/data-display/tag";
 import { IMatchingCompanyCardProps } from "./props";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { memo } from "react";
 
-export default function MatchingCompanyCard(props: IMatchingCompanyCardProps) {
+const MatchingCompanyCard = memo(function MatchingCompanyCard(props: IMatchingCompanyCardProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
@@ -108,4 +109,6 @@ export default function MatchingCompanyCard(props: IMatchingCompanyCardProps) {
       </div>
     </div>
   );
-}
+});
+
+export default MatchingCompanyCard;

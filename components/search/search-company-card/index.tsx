@@ -15,8 +15,9 @@ import { useRouter } from "next/navigation";
 import { ISearchCompanyCardProps } from "./prop";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { memo } from "react";
 
-export default function SearchCompanyCard(props: ISearchCompanyCardProps) {
+const SearchCompanyCard = memo(function SearchCompanyCard(props: ISearchCompanyCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
 
@@ -105,4 +106,6 @@ export default function SearchCompanyCard(props: ISearchCompanyCardProps) {
       </div>
     </div>
   );
-}
+});
+
+export default SearchCompanyCard;

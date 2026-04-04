@@ -5,8 +5,24 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 import { LucideUsers } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { statisticCardConstants } from "@/utils/constants/dashboard.constant";
-import { WeeklyActivityChart } from "@/components/dashboard/weekly-activity-chart";
-import { MatchRateRadial } from "@/components/dashboard/match-rate-radial";
+import dynamic from "next/dynamic";
+import { DashboardChartSkeleton } from "@/components/dashboard/skeleton";
+
+const WeeklyActivityChart = dynamic(
+  () =>
+    import("@/components/dashboard/weekly-activity-chart").then(
+      (m) => m.WeeklyActivityChart,
+    ),
+  { loading: () => <DashboardChartSkeleton />, ssr: false },
+);
+
+const MatchRateRadial = dynamic(
+  () =>
+    import("@/components/dashboard/match-rate-radial").then(
+      (m) => m.MatchRateRadial,
+    ),
+  { loading: () => <DashboardChartSkeleton />, ssr: false },
+);
 import { RecentMatchesList } from "@/components/dashboard/recent-matches-list";
 import { TypographyH3 } from "@/components/utils/typography/typography-h3";
 import { TypographyP } from "@/components/utils/typography/typography-p";

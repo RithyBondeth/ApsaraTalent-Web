@@ -1,5 +1,5 @@
 import { getApp, getApps, initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import type { FirebaseApp } from "firebase/app";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -11,8 +11,13 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+// Lazy singleton — Firebase is only initialized the first time getFirebaseApp()
+// is called (inside a useEffect), not at module parse time.
+let _app: FirebaseApp | null = null;
 
-const chatDatabase = getFirestore(app);
-
-export { chatDatabase, app as firebaseApp };
+export function getFirebaseApp(): FirebaseApp {
+  if (!_app) {
+    _app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+  }
+  return _app;
+}

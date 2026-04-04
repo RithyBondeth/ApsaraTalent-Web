@@ -13,8 +13,9 @@ import Tag from "@/components/utils/data-display/tag";
 import { IMatchingEmployeeCardProps } from "./props";
 import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { memo } from "react";
 
-export default function MatchingEmployeeCard(
+const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
   props: IMatchingEmployeeCardProps,
 ) {
   /* ---------------------------------- Utils --------------------------------- */
@@ -102,4 +103,6 @@ export default function MatchingEmployeeCard(
       </div>
     </div>
   );
-}
+});
+
+export default MatchingEmployeeCard;

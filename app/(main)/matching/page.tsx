@@ -13,7 +13,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { initateChat } from "./_apis/initiate-chat.api";
 import { MatchingLoadingSkeleton } from "@/components/matching/skeleton";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   emptySvgImage,
   matchingSvgImage,
@@ -43,6 +43,12 @@ export default function MatchingPage() {
   });
 
   /* --------------------------------- Methods --------------------------------- */
+  // Stable senderId — avoids recomputing inside every card's inline callback
+  const senderId = useMemo(
+    () => currentUser?.employee?.id ?? currentUser?.company?.id ?? "",
+    [currentUser],
+  );
+
   // ── Chat Handler ─────────────────────────────────────────
   const handleChatNow = useCallback(
     async (senderId: string, receiverId: string) => {
@@ -128,11 +134,7 @@ export default function MatchingPage() {
               foundedYear={cmp.foundedYear}
               openPosition={cmp.openPositions}
               location={cmp.location}
-              onChatNowClick={() => {
-                const senderId =
-                  currentUser?.employee?.id ?? currentUser?.company?.id ?? "";
-                handleChatNow(senderId, cmp.id);
-              }}
+              onChatNowClick={() => handleChatNow(senderId, cmp.id)}
               onScheduleClick={() => router.push(`/interview?with=${cmp.id}`)}
             />
           ))
@@ -151,11 +153,7 @@ export default function MatchingPage() {
               availability={emp.availability}
               location={emp.location ?? ""}
               skills={emp.skills.map((skill) => skill.name)}
-              onChatNowClick={() => {
-                const senderId =
-                  currentUser?.employee?.id ?? currentUser?.company?.id ?? "";
-                handleChatNow(senderId, emp.id);
-              }}
+              onChatNowClick={() => handleChatNow(senderId, emp.id)}
               onScheduleClick={() => router.push(`/interview?with=${emp.id}`)}
             />
           ))

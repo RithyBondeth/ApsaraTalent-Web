@@ -8,7 +8,7 @@ import "./globals.css";
 
 const ubuntu = Ubuntu({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "700"],
+  weight: ["400", "700"],
   display: "swap",
   variable: "--font-ubuntu",
 });
@@ -16,7 +16,7 @@ const ubuntu = Ubuntu({
 /* Noto Sans Khmer — same font used by Google Gemini for Khmer script */
 const notoSansKhmer = Noto_Sans_Khmer({
   subsets: ["khmer"],
-  weight: ["300", "400", "500", "700"],
+  weight: ["400", "700"],
   display: "swap",
   variable: "--font-khmer",
 });

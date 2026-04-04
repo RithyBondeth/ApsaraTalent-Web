@@ -1,4 +1,9 @@
 import type { NextConfig } from "next";
+import bundleAnalyzer from "@next/bundle-analyzer";
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
 
 const nextConfig: NextConfig = {
   output: "standalone",
@@ -19,8 +24,8 @@ const nextConfig: NextConfig = {
         hostname: "**", // Allows images from all domains
       },
     ],
-    // Optimize image caching and performance
-    minimumCacheTTL: 3600, // Cache images for 1 hour minimum
+    // Cache images for 7 days — profile/avatar images rarely change
+    minimumCacheTTL: 604800,
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     formats: ["image/avif", "image/webp"], // Use modern formats for better compression
@@ -36,7 +41,7 @@ const nextConfig: NextConfig = {
           {
             key: "Cache-Control",
             value:
-              "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
+              "public, max-age=604800, s-maxage=604800, stale-while-revalidate=86400",
           },
         ],
       },
@@ -44,4 +49,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);
