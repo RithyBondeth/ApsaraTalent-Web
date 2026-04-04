@@ -10,7 +10,7 @@ import { useNotificationStore } from "@/stores/apis/notification/notification.st
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useChatStore } from "@/stores/features/chat/chat.store";
 import { sidebarList } from "@/utils/constants/sidebar.constant";
-import { LucideFileUser } from "lucide-react";
+import { LucideFileUser, type LucideIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -224,7 +224,7 @@ export default function CollapseSidebar({
   const renderNavItem = (
     url: string,
     title: string,
-    Icon: React.ElementType,
+    Icon: LucideIcon,
     badgeCount?: number,
   ) => {
     const count = badgeCount ?? getBadgeCount(url);

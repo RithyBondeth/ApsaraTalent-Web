@@ -8,5 +8,6 @@ const AngkorWatScene = dynamic(
 );
 
 export function AngkorWatWrapper() {
+  /* --------------------------------- Render UI -------------------------------- */
   return <AngkorWatScene />;
 }

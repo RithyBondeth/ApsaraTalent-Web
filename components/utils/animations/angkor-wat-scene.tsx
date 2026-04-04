@@ -6,9 +6,8 @@ import { Float, OrbitControls, useGLTF } from "@react-three/drei";
 import { Suspense, useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 
-/* ═══════════════════════════════════════════════════════════════
-   GlowParticles — Floating particles around the model
-   ═══════════════════════════════════════════════════════════════ */
+/* -------------------------------- Helpers ------------------------------- */
+// ── GlowParticles — Floating particles around the model ────────────
 function GlowParticles({
   color,
   count = 40,
@@ -58,12 +57,11 @@ function GlowParticles({
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   AngkorWatModel — Loads and displays the .glb model
-   ═══════════════════════════════════════════════════════════════ */
+// ── AngkorWatModel — Loads and displays the .glb model ────────────
 function AngkorWatModel({ isDark }: { isDark: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF("/models/angkor_wat_optimized.glb", false, true);
+  const { camera, size: viewportSize } = useThree();
 
   const clonedScene = useMemo(() => {
     const clone = scene.clone(true);
@@ -102,17 +100,15 @@ function AngkorWatModel({ isDark }: { isDark: boolean }) {
   }, [clonedScene, isDark]);
 
   // Auto-fit the model to view
-  const { camera } = useThree();
   useEffect(() => {
     const box = new THREE.Box3().setFromObject(clonedScene);
-    const size = box.getSize(new THREE.Vector3());
+    const boxSize = box.getSize(new THREE.Vector3());
     const center = box.getCenter(new THREE.Vector3());
 
     clonedScene.position.sub(center);
 
-    const maxDim = Math.max(size.x, size.y, size.z);
-    const fov =
-      camera instanceof THREE.PerspectiveCamera ? camera.fov : 45;
+    const maxDim = Math.max(boxSize.x, boxSize.y, boxSize.z);
+    const fov = camera instanceof THREE.PerspectiveCamera ? camera.fov : 45;
     const distance = maxDim / (2 * Math.tan((fov * Math.PI) / 360));
 
     if (camera instanceof THREE.PerspectiveCamera) {
@@ -121,9 +117,22 @@ function AngkorWatModel({ isDark }: { isDark: boolean }) {
       camera.updateProjectionMatrix();
     }
 
-    camera.position.set(distance * 0.8, distance * 0.5, distance * 0.8);
-    camera.lookAt(0, 0, 0);
-  }, [clonedScene, camera]);
+    const isDesktop = viewportSize.width >= 1024;
+    const viewportAspect =
+      viewportSize.width / Math.max(viewportSize.height, 1);
+    const isUltraWide = viewportAspect >= 1.9;
+    const horizontalFactor = isDesktop ? 0.68 : 0.82;
+    const verticalFactor = isDesktop ? 0.45 : 0.5;
+    const distanceScale = isUltraWide ? 0.88 : isDesktop ? 0.95 : 1;
+    const targetX = isDesktop ? (isUltraWide ? 0.95 : 0.72) : 0;
+
+    camera.position.set(
+      distance * horizontalFactor * distanceScale,
+      distance * verticalFactor * distanceScale,
+      distance * horizontalFactor * distanceScale,
+    );
+    camera.lookAt(targetX, 0, 0);
+  }, [clonedScene, camera, viewportSize.width, viewportSize.height]);
 
   useFrame(({ clock }) => {
     if (groupRef.current) {
@@ -138,9 +147,29 @@ function AngkorWatModel({ isDark }: { isDark: boolean }) {
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   LoadingFallback — Spinner while model loads
-   ═══════════════════════════════════════════════════════════════ */
+// ── SceneControls — Orbit controls for the 3D scene ────────────
+function SceneControls() {
+  const { size } = useThree();
+  const isDesktop = size.width >= 1024;
+  const viewportAspect = size.width / Math.max(size.height, 1);
+  const isUltraWide = viewportAspect >= 1.9;
+  const targetX = isDesktop ? (isUltraWide ? 0.95 : 0.72) : 0;
+
+  return (
+    <OrbitControls
+      enableZoom={false}
+      enablePan={false}
+      enableDamping
+      dampingFactor={0.08}
+      rotateSpeed={0.6}
+      minPolarAngle={Math.PI / 3.2}
+      maxPolarAngle={Math.PI / 1.9}
+      target={[targetX, 0, 0]}
+    />
+  );
+}
+
+// ── LoadingFallback — Spinner while model loads ────────────
 function LoadingFallback({ isDark }: { isDark: boolean }) {
   const meshRef = useRef<THREE.Mesh>(null);
 
@@ -163,15 +192,14 @@ function LoadingFallback({ isDark }: { isDark: boolean }) {
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   AngkorWatScene — Main exported component
-   ═══════════════════════════════════════════════════════════════ */
 export default function AngkorWatScene() {
+  /* --------------------------------- Utils ---------------------------------- */
   const { theme, systemTheme } = useThemeStore();
   const resolvedTheme = theme === "system" ? systemTheme : theme;
   const isDark = resolvedTheme === "dark";
   const particleColor = isDark ? "#d4a853" : "#8b6914";
 
+  /* ------------------------------- Render UI -------------------------------- */
   return (
     <div className="absolute inset-0 w-full h-full">
       <Canvas
@@ -180,7 +208,10 @@ export default function AngkorWatScene() {
         dpr={[1, 1.5]}
       >
         <ambientLight intensity={isDark ? 0.4 : 0.6} />
-        <directionalLight position={[8, 10, 5]} intensity={isDark ? 1.0 : 1.5} />
+        <directionalLight
+          position={[8, 10, 5]}
+          intensity={isDark ? 1.0 : 1.5}
+        />
         <pointLight
           position={[0, 5, 0]}
           intensity={isDark ? 0.8 : 0.4}
@@ -202,15 +233,7 @@ export default function AngkorWatScene() {
 
         <GlowParticles color={particleColor} count={20} />
 
-        <OrbitControls
-          enableZoom={false}
-          enablePan={false}
-          enableDamping
-          dampingFactor={0.08}
-          rotateSpeed={0.6}
-          minPolarAngle={Math.PI / 3.2}
-          maxPolarAngle={Math.PI / 1.9}
-        />
+        <SceneControls />
       </Canvas>
     </div>
   );

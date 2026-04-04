@@ -26,25 +26,25 @@ export default function Header({ className }: { className?: string }) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <nav
-      className={cn("flex justify-between items-center py-3 px-6", className)}
-    >
+    <nav className={cn("mx-auto flex w-full max-w-[1920px] items-center justify-between px-4 py-3 sm:px-6 lg:px-10", className)}>
       {/* Left Menu Section */}
-      <div className="flex items-center tablet-lg:[&>button]:hidden">
-        <LogoComponent className="mr-3 !h-20 w-auto" />
-        <Button variant="ghost">Products</Button>
-        <Button variant="ghost">Learn</Button>
-        <Button variant="ghost">Safety</Button>
-        <Button variant="ghost">Support</Button>
+      <div className="flex items-center gap-2 sm:gap-3">
+        <LogoComponent className="!h-14 sm:!h-16 xl:!h-20 w-auto shrink-0" />
+        <div className="hidden xl:flex items-center gap-1.5 2xl:gap-2.5">
+          <Button variant="ghost">Products</Button>
+          <Button variant="ghost">Learn</Button>
+          <Button variant="ghost">Safety</Button>
+          <Button variant="ghost">Support</Button>
+        </div>
       </div>
 
       {/* Right Menu Section */}
-      <div className="flex items-center gap-5 tablet-sm:gap-2">
+      <div className="flex items-center gap-2 sm:gap-3 lg:gap-5 shrink-0">
         <Button variant="outline" onClick={toggleTheme}>
           {mounted && resolvedTheme === "dark" ? <LucideSun /> : <LucideMoon />}
         </Button>
         <Link href="/login">
-          <Button className="tablet-sm:text-xs">
+          <Button className="text-xs sm:text-sm">
             Login
             <LucideLogIn />
           </Button>

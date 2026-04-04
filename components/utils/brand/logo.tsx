@@ -53,8 +53,7 @@ export default function LogoComponent(props: ILogoProps) {
       alt="logo"
       height={height}
       width={width}
-      className={cn(className)}
-      style={{ width: "auto", height: "auto" }}
+      className={cn("h-auto w-auto", className)}
       priority={priority}
     />
   );
