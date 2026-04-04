@@ -7,3 +7,6 @@ export const API_MARK_NOTIFICATION_READ_URL = (id: string) =>
   API_BASE_URL + `/notification/${id}/read`;
 export const API_MARK_ALL_NOTIFICATIONS_READ_URL =
   API_BASE_URL + "/notification/read-all";
+export const API_DELETE_NOTIFICATION_URL = (id: string) =>
+  API_BASE_URL + `/notification/${id}`;
+export const API_DELETE_ALL_NOTIFICATIONS_URL = API_BASE_URL + "/notification";

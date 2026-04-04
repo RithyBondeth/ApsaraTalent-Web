@@ -1,6 +1,6 @@
 import { TUserRole } from "@/utils/types/auth/role.type";
 
-export interface INotificationMatchCardProps {
+export interface INotificationLikeCardProps {
   id: string;
   seen: boolean;
   timestamp: string;
@@ -12,6 +12,7 @@ export interface INotificationMatchCardProps {
     industry: string | null;
     avatar: string;
   };
+  message: string;
   onMarkRead?: (id: string) => void;
   onDelete?: (id: string) => void;
 }

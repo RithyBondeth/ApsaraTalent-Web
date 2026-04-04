@@ -1,5 +1,6 @@
 "use client";
 
+import NotificationLikeCard from "@/components/notification/notification-like-card";
 import NotificationMatchCard from "@/components/notification/notification-match-card";
 import NotificationMessageCard from "@/components/notification/notification-message-card";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,7 @@ import {
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { TNotificationFilterType } from "@/utils/types/app/notification.type";
-import { LucideCheckCheck } from "lucide-react";
+import { LucideCheckCheck, LucideTrash2 } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { TypographyP } from "@/components/utils/typography/typography-p";
@@ -22,9 +23,19 @@ import { INotification } from "@/utils/interfaces/notification/notification.inte
 
 /* ---------------------------------- Helper --------------------------------- */
 /** Derive a display-friendly user object from a notification's title + data fields. */
-function resolveNotificationUser(notification: INotification) {
+function resolveNotificationUser(notification: INotification, role: string) {
+  // For "like" notifications the relevant ID is the OTHER party:
+  // if the current user is an employee → the liker is the company (companyId)
+  // if the current user is a company → the liker is the employee (employeeId)
+  const id =
+    (notification.data?.senderId as string) ??
+    (role === "employee"
+      ? (notification.data?.companyId as string)
+      : (notification.data?.employeeId as string)) ??
+    "";
+
   return {
-    id: (notification.data?.senderId as string) ?? "",
+    id,
     name: notification.title,
     position: (notification.data?.position as string | null) ?? null,
     industry: (notification.data?.industry as string | null) ?? null,
@@ -46,6 +57,8 @@ export default function NotificationPage() {
     queryUnreadCount,
     markRead,
     markAllRead,
+    deleteNotification,
+    deleteAllNotifications,
   } = useNotificationStore();
 
   /* -------------------------------- All States ------------------------------ */
@@ -76,6 +89,7 @@ export default function NotificationPage() {
       if (notificationFilter === "unread") return !n.isRead;
       if (notificationFilter === "match") return n.type === "match";
       if (notificationFilter === "message") return n.type === "chat";
+      if (notificationFilter === "like") return n.type === "like";
       return true;
     });
   }, [notifications, notificationFilter]);
@@ -115,6 +129,12 @@ export default function NotificationPage() {
             Messages
           </Button>
           <Button
+            variant={notificationButtonVariant("like")}
+            onClick={() => setNotificationFilter("like")}
+          >
+            Likes
+          </Button>
+          <Button
             variant={notificationButtonVariant("unread")}
             onClick={() => setNotificationFilter("unread")}
           >
@@ -141,21 +161,35 @@ export default function NotificationPage() {
             <DropdownMenuItem onClick={() => setNotificationFilter("message")}>
               Messages
             </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setNotificationFilter("like")}>
+              Likes
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setNotificationFilter("unread")}>
               Unread
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Mark All As Read Button Section */}
-        <Button
-          className="h-9 w-full text-xs sm:w-auto"
-          variant="outline"
-          onClick={handleMarkAllRead}
-        >
-          <LucideCheckCheck />
-          Mark All As Read
-        </Button>
+        {/* Action Buttons Section */}
+        <div className="flex items-center gap-2 tablet-sm:flex-col tablet-sm:w-full">
+          <Button
+            className="h-9 w-full text-xs sm:w-auto"
+            variant="outline"
+            onClick={handleMarkAllRead}
+          >
+            <LucideCheckCheck />
+            Mark All As Read
+          </Button>
+          <Button
+            className="h-9 w-full text-xs sm:w-auto"
+            variant="outline"
+            onClick={deleteAllNotifications}
+            disabled={notifications.length === 0}
+          >
+            <LucideTrash2 />
+            Delete All
+          </Button>
+        </div>
       </div>
 
       {/* Notification List Section */}
@@ -188,7 +222,7 @@ export default function NotificationPage() {
         {/* Notification Cards Section */}
         {!loading &&
           filteredNotifications.map((notification: INotification) => {
-            const notifUser = resolveNotificationUser(notification);
+            const notifUser = resolveNotificationUser(notification, role);
 
             if (notification.type === "chat") {
               return (
@@ -201,6 +235,7 @@ export default function NotificationPage() {
                   user={notifUser}
                   preview={notification.message}
                   onMarkRead={markRead}
+                  onDelete={deleteNotification}
                 />
               );
             }
@@ -215,12 +250,41 @@ export default function NotificationPage() {
                   role={role}
                   user={notifUser}
                   onMarkRead={markRead}
+                  onDelete={deleteNotification}
                 />
               );
             }
 
-            // Fallback: unknown type — skip
-            return null;
+            if (notification.type === "like") {
+              return (
+                <NotificationLikeCard
+                  key={notification.id}
+                  id={notification.id}
+                  seen={notification.isRead}
+                  timestamp={notification.createdAt}
+                  role={role}
+                  user={notifUser}
+                  message={notification.message}
+                  onMarkRead={markRead}
+                  onDelete={deleteNotification}
+                />
+              );
+            }
+
+            // Fallback: unknown type — render as a generic like card
+            return (
+              <NotificationLikeCard
+                key={notification.id}
+                id={notification.id}
+                seen={notification.isRead}
+                timestamp={notification.createdAt}
+                role={role}
+                user={notifUser}
+                message={notification.message}
+                onMarkRead={markRead}
+                onDelete={deleteNotification}
+              />
+            );
           })}
       </div>
     </div>

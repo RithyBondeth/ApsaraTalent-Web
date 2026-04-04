@@ -1,6 +1,8 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import {
+  API_DELETE_ALL_NOTIFICATIONS_URL,
+  API_DELETE_NOTIFICATION_URL,
   API_GET_NOTIFICATIONS_URL,
   API_GET_UNREAD_NOTIFICATION_COUNT_URL,
   API_MARK_ALL_NOTIFICATIONS_READ_URL,
@@ -46,6 +48,8 @@ type TNotificationState = {
   markAllRead: () => Promise<void>;
   /** Optimistically mark a notification as read by its chat messageId (from data.messageId) */
   markReadByChatMessageId: (messageId: string) => void;
+  deleteNotification: (notificationId: string) => Promise<void>;
+  deleteAllNotifications: () => Promise<void>;
 };
 
 /* --------------------------------- Store ---------------------------------- */
@@ -152,6 +156,41 @@ export const useNotificationStore = create<TNotificationState>((set, get) => ({
     );
     if (match) {
       void markRead(match.id);
+    }
+  },
+
+  deleteNotification: async (notificationId: string) => {
+    const prev = get().notifications;
+    const wasUnread = prev.find((n) => n.id === notificationId && !n.isRead);
+    // Optimistic update
+    set((state) => ({
+      notifications: state.notifications.filter((n) => n.id !== notificationId),
+      unreadCount: wasUnread
+        ? Math.max(0, state.unreadCount - 1)
+        : state.unreadCount,
+    }));
+    try {
+      await axios.delete(API_DELETE_NOTIFICATION_URL(notificationId));
+    } catch {
+      // Revert on failure
+      set({ notifications: prev });
+      void get().queryUnreadCount();
+    }
+  },
+
+  deleteAllNotifications: async () => {
+    const prevNotifications = get().notifications;
+    const prevUnreadCount = get().unreadCount;
+    // Optimistic update
+    set({ notifications: [], unreadCount: 0 });
+    try {
+      await axios.delete(API_DELETE_ALL_NOTIFICATIONS_URL);
+    } catch {
+      // Revert on failure
+      set({
+        notifications: prevNotifications,
+        unreadCount: prevUnreadCount,
+      });
     }
   },
 }));

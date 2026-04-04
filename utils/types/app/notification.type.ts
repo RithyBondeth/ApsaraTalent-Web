@@ -1,1 +1,6 @@
-export type TNotificationFilterType = "all" | "match" | "message" | "unread";
+export type TNotificationFilterType =
+  | "all"
+  | "match"
+  | "message"
+  | "like"
+  | "unread";

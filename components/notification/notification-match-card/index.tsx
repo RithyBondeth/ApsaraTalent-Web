@@ -6,7 +6,7 @@ import { TypographyLead } from "@/components/utils/typography/typography-lead";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { timeAgo } from "@/utils/functions/date";
-import { LucideHeartHandshake } from "lucide-react";
+import { LucideHeartHandshake, LucideX } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { INotificationMatchCardProps } from "./props";
 
@@ -25,7 +25,17 @@ export default function NotificationMatchCard(
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex items-start gap-3 rounded-lg p-3 shadow-md sm:gap-5 sm:p-5">
+    <div className="group/card relative w-full flex items-start gap-3 rounded-lg p-3 shadow-md sm:gap-5 sm:p-5">
+      {/* Delete Button Section */}
+      {props.onDelete && (
+        <button
+          onClick={() => props.onDelete!(props.id)}
+          className="absolute right-2 top-2 rounded-full p-1 text-muted-foreground opacity-0 transition-opacity hover:bg-destructive/10 hover:text-destructive group-hover/card:opacity-100"
+        >
+          <LucideX className="size-4" />
+        </button>
+      )}
+
       {/* Matched Icon Section */}
       <div className="rounded-md bg-blue-100 p-2.5 text-blue-500 sm:p-3">
         <LucideHeartHandshake className="size-6 sm:size-8" strokeWidth={1.5} />
