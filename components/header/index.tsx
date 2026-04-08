@@ -50,10 +50,18 @@ export default function Header({ className }: { className?: string }) {
       <div className="flex items-center gap-2 sm:gap-3">
         <LogoComponent className="!h-14 sm:!h-16 xl:!h-20 w-auto shrink-0" />
         <div className="hidden xl:flex items-center gap-1.5 2xl:gap-2.5">
-          <Button variant="ghost">{t("products")}</Button>
-          <Button variant="ghost">{t("learn")}</Button>
-          <Button variant="ghost">{t("safety")}</Button>
-          <Button variant="ghost">{t("support")}</Button>
+          <Link href="/product">
+            <Button variant="ghost">{t("products")}</Button>
+          </Link>
+          <Link href="/learn">
+            <Button variant="ghost">{t("learn")}</Button>
+          </Link>
+          <Link href="/safety">
+            <Button variant="ghost">{t("safety")}</Button>
+          </Link>
+          <Link href="/support">
+            <Button variant="ghost">{t("support")}</Button>
+          </Link>
         </div>
       </div>
 
