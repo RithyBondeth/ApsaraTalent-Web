@@ -99,7 +99,7 @@ export default function Header({ className }: { className?: string }) {
         </Button>
 
         {/* Login Section */}
-        <Link href="/auth/login">
+        <Link href="/login">
           <Button className="text-xs sm:text-sm">
             {t("login")}
             <LucideLogIn />

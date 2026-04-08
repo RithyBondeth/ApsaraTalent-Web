@@ -205,6 +205,7 @@ export function useGsapScrollAnimation<T extends HTMLElement>() {
 
 /**
  * Hero-specific entrance animation with word-by-word heading reveal.
+ * Plays on every mount (including language-switch remounts via key={language}).
  */
 export function useGsapHeroAnimation<T extends HTMLElement>() {
   const containerRef = useRef<T>(null);
@@ -215,7 +216,6 @@ export function useGsapHeroAnimation<T extends HTMLElement>() {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      // Badge — scale + fade
       tl.fromTo(
         "[data-hero='badge']",
         { opacity: 0, y: 20, scale: 0.95 },
@@ -223,7 +223,6 @@ export function useGsapHeroAnimation<T extends HTMLElement>() {
         0.2,
       );
 
-      // Heading — split into words and animate each
       const headingEl = containerRef.current?.querySelector(
         "[data-hero='heading']",
       ) as HTMLElement | null;
@@ -253,7 +252,6 @@ export function useGsapHeroAnimation<T extends HTMLElement>() {
         );
       }
 
-      // Description — fade up
       tl.fromTo(
         "[data-hero='description']",
         { opacity: 0, y: 30 },
@@ -261,7 +259,6 @@ export function useGsapHeroAnimation<T extends HTMLElement>() {
         0.85,
       );
 
-      // CTA buttons — fade up
       tl.fromTo(
         "[data-hero='cta']",
         { opacity: 0, y: 25 },
@@ -269,7 +266,6 @@ export function useGsapHeroAnimation<T extends HTMLElement>() {
         1.05,
       );
 
-      // Stats — fade up
       tl.fromTo(
         "[data-hero='stats']",
         { opacity: 0, y: 20 },
@@ -277,7 +273,6 @@ export function useGsapHeroAnimation<T extends HTMLElement>() {
         1.25,
       );
 
-      // Scroll indicator — fade in
       tl.fromTo(
         "[data-hero='scroll']",
         { opacity: 0 },

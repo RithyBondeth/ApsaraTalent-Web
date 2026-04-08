@@ -43,12 +43,12 @@ export default function LandingFooter() {
             </div>
             <div className="flex flex-col gap-3">
               <span className="text-sm font-semibold">{t("footerLegal")}</span>
-              <Link href="/privacy-policy">
+              <Link href="/privacy">
                 <TypographyMuted className="!text-xs hover:text-foreground transition-colors cursor-pointer">
                   {t("footerPrivacy")}
                 </TypographyMuted>
               </Link>
-              <Link href="/terms-of-service">
+              <Link href="/terms">
                 <TypographyMuted className="!text-xs hover:text-foreground transition-colors cursor-pointer">
                   {t("footerTerms")}
                 </TypographyMuted>
