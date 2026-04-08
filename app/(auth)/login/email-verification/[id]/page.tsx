@@ -95,7 +95,7 @@ export default function EmailVerificationPage() {
           <Button
             variant="link"
             className="w-fit mx-auto"
-            onClick={() => router.push("/login")}
+            onClick={() => router.back()}
           >
             {t("backToLogin")}
           </Button>

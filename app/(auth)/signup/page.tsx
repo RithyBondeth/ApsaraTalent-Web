@@ -520,7 +520,7 @@ export default function SignupPage() {
             type="button"
             className="flex-1 tablet-sm:w-full"
             variant="outline"
-            onClick={() => router.push("/signup/option")}
+            onClick={() => router.back()}
           >
             <LucideArrowLeft />
             {t("back")}

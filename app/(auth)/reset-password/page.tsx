@@ -162,12 +162,12 @@ export default function ResetPasswordPage() {
 
           {/* Back to Login Link */}
           <div className="w-full flex justify-center">
-            <Link
-              href="/login"
+            <button
+              onClick={() => router.back()}
               className="underline text-sm text-primary hover:text-primary/80 transition-colors text-center"
             >
               {`\u2190 ${t("backToLogin")}`}
-            </Link>
+            </button>
           </div>
         </div>
       </div>

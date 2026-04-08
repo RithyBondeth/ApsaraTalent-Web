@@ -181,7 +181,7 @@ export default function SingUpOption() {
             className="flex-1"
             variant="outline"
             type="button"
-            onClick={() => router.push("/login")}
+            onClick={() => router.back()}
           >
             <LucideArrowLeft />
             {t("back")}

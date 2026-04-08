@@ -124,7 +124,7 @@ export default function ForgotPasswordPage() {
               validationMessage={errors.forgotPassword?.message}
             />
             <div className="flex items-center justify-stretch gap-3 [&>button]:w-1/2">
-              <Button type="button" onClick={() => router.push("/login")}>
+              <Button type="button" onClick={() => router.back()}>
                 <LucideArrowLeft />
                 {t("back")}
               </Button>

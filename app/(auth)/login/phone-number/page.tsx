@@ -131,12 +131,12 @@ export default function PhoneNumberPage() {
           </form>
 
           {/* Back to login link */}
-          <Link
-            href="/login"
+          <button
+            onClick={() => router.back()}
             className="underline text-sm text-primary hover:text-primary/80 transition-colors text-center"
           >
             {t("backToEmailLogin")}
-          </Link>
+          </button>
         </div>
       </div>
 
