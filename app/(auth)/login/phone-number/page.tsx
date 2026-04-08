@@ -93,10 +93,10 @@ export default function PhoneNumberPage() {
           {/* Title Section */}
           <div className="flex flex-col items-start">
             <TypographyH2 className="phone-xl:text-xl">
-              Sign in with Your Phone Number
+              {t("phoneLoginTitle")}
             </TypographyH2>
             <TypographyMuted className="text-md phone-xl:text-sm">
-              Enter your phone number and password to access your account.
+              {t("phoneLoginSubtitle")}
             </TypographyMuted>
           </div>
 
@@ -109,7 +109,7 @@ export default function PhoneNumberPage() {
             <Input
               prefix={<LucidePhone />}
               type="number"
-              placeholder="Phone Number"
+              placeholder={t("phoneNumber")}
               {...register("phone")}
               validationMessage={errors.phone?.message}
             />
@@ -125,9 +125,9 @@ export default function PhoneNumberPage() {
                   />
                 )}
               />
-              <TypographyMuted className="text-xs">Remember me</TypographyMuted>
+              <TypographyMuted className="text-xs">{t("rememberMeLabel")}</TypographyMuted>
             </div>
-            <Button>Login</Button>
+            <Button>{t("loginButton")}</Button>
           </form>
 
           {/* Back to login link */}
@@ -135,7 +135,7 @@ export default function PhoneNumberPage() {
             href="/login"
             className="underline text-sm text-primary hover:text-primary/80 transition-colors text-center"
           >
-            ← Back to email login
+            {t("backToEmailLogin")}
           </Link>
         </div>
       </div>

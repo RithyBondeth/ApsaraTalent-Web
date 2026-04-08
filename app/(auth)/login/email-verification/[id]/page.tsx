@@ -78,17 +78,17 @@ export default function EmailVerificationPage() {
           {/* Title Section */}
           <div className="flex flex-col items-start">
             <TypographyH2 className="tablet-sm:text-2xl">
-              Email Verification
+              {t("emailVerificationTitle")}
             </TypographyH2>
             <TypographyMuted className="text-md tablet-sm:text-sm">
-              Please verify you email by clicking the verify button below.
+              {t("emailVerificationSubtitle")}
             </TypographyMuted>
           </div>
 
           {/* Button Section */}
           <Button className="w-full" onClick={() => handleVerifyEmail()}>
             <LucideMail />
-            Verify
+            {t("verify")}
           </Button>
 
           {/* Back to Login Link */}
@@ -97,7 +97,7 @@ export default function EmailVerificationPage() {
             className="w-fit mx-auto"
             onClick={() => router.push("/login")}
           >
-            Back to Login
+            {t("backToLogin")}
           </Button>
         </div>
       </div>

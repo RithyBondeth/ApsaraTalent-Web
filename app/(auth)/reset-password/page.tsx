@@ -98,12 +98,12 @@ export default function ResetPasswordPage() {
           {/* Title Section */}
           <div className="flex flex-col items-start">
             <TypographyH2 className="phone-xl:text-2xl">
-              Set Up Your New Password
+              {t("resetPageTitle")}
             </TypographyH2>
             <TypographyMuted className="text-md phone-xl:text-sm">
               {tokenFromUrl
-                ? "Create a strong password to keep your account safe."
-                : "Paste the token from your email, then enter a new password."}
+                ? t("resetSubtitleWithToken")
+                : t("resetSubtitleWithoutToken")}
             </TypographyMuted>
           </div>
 
@@ -117,7 +117,7 @@ export default function ResetPasswordPage() {
               <Input
                 prefix={<LucideKey />}
                 type="text"
-                placeholder="Token (from your email)"
+                placeholder={t("tokenPlaceholder")}
                 {...register("token")}
                 validationMessage={errors.token?.message}
               />
@@ -135,7 +135,7 @@ export default function ResetPasswordPage() {
                 )
               }
               type={passwordVisibility ? "text" : "password"}
-              placeholder="New Password"
+              placeholder={t("newPassword")}
               {...register("password")}
               validationMessage={errors.password?.message}
             />
@@ -151,7 +151,7 @@ export default function ResetPasswordPage() {
                 )
               }
               type={confirmPassVisibility ? "text" : "password"}
-              placeholder="Confirm Password"
+              placeholder={t("confirmPassword")}
               {...register("confirmPassword")}
               validationMessage={errors.confirmPassword?.message}
             />
@@ -166,7 +166,7 @@ export default function ResetPasswordPage() {
               href="/login"
               className="underline text-sm text-primary hover:text-primary/80 transition-colors text-center"
             >
-              ← Back to login
+              {`\u2190 ${t("backToLogin")}`}
             </Link>
           </div>
         </div>

@@ -212,10 +212,10 @@ export default function PhoneOTPPage() {
           {/* Title Section */}
           <div className="flex flex-col items-start">
             <TypographyH2 className="phone-xl:text-2xl">
-              OTP Verification
+              {t("otpTitle")}
             </TypographyH2>
             <TypographyMuted className="text-md phone-xl:text-sm">
-              We will sent you an one time password code on your phone number.
+              {t("otpSubtitle")}
             </TypographyMuted>
           </div>
 
@@ -230,10 +230,10 @@ export default function PhoneOTPPage() {
               control={control}
               defaultValue=""
               rules={{
-                required: "OTP Code is required",
+                required: t("otpRequired"),
                 minLength: {
                   value: 6,
-                  message: "OTP must be 6 digits",
+                  message: t("otpLength"),
                 },
               }}
               render={({ field }) => (
@@ -274,7 +274,7 @@ export default function PhoneOTPPage() {
                     </InputOTPGroup>
                   </InputOTP>
                   <TypographySmall className="text-muted-foreground phone-xl:text-sm">
-                    Enter your one time password code here.
+                    {t("otpInstructions")}
                   </TypographySmall>
                   {errors.otp && (
                     <ErrorMessage>{errors.otp.message}</ErrorMessage>
@@ -282,14 +282,14 @@ export default function PhoneOTPPage() {
                 </div>
               )}
             />
-            <Button type="submit">Continue</Button>
+            <Button type="submit">{t("continue")}</Button>
           </form>
 
           {/* Resend code text */}
           <TypographyMuted className="text-center">
-            Didn&apos;t receive code?{" "}
+            {t("didntReceiveCode")}{" "}
             <TypographySmall className="text-foreground font-medium cursor-pointer">
-              Resend
+              {t("resend")}
             </TypographySmall>
           </TypographyMuted>
         </div>

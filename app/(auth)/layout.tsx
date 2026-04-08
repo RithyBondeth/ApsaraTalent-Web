@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
+import LanguageSwitcher from "@/components/utils/language-switcher";
 
 export async function generateMetadata(): Promise<Metadata> {
   const lang = (await cookies()).get("language")?.value ?? "en";
@@ -7,5 +8,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return (
+    <>
+      <LanguageSwitcher />
+      {children}
+    </>
+  );
 }

@@ -95,10 +95,10 @@ export default function ForgotPasswordPage() {
           {/* Title Section */}
           <div className="flex flex-col items-start">
             <TypographyH2 className="tablet-sm:text-2xl">
-              Forgot your Password?
+              {t("forgotPageTitle")}
             </TypographyH2>
             <TypographyMuted className="text-md tablet-sm:text-sm">
-              Enter your Email or Mobile. We will help you reset your password.
+              {t("forgotSubtitle")}
             </TypographyMuted>
           </div>
 
@@ -110,7 +110,7 @@ export default function ForgotPasswordPage() {
           >
             <Input
               type="text"
-              placeholder="Email or Mobile"
+              placeholder={t("emailOrMobile")}
               value={inputValue}
               prefix={
                 isEmailInput(inputValue) ? (
@@ -126,9 +126,9 @@ export default function ForgotPasswordPage() {
             <div className="flex items-center justify-stretch gap-3 [&>button]:w-1/2">
               <Button type="button" onClick={() => router.push("/login")}>
                 <LucideArrowLeft />
-                Back
+                {t("back")}
               </Button>
-              <Button type="submit">Continue</Button>
+              <Button type="submit">{t("continue")}</Button>
             </div>
           </form>
         </div>

@@ -33,6 +33,7 @@ import {
   LucideLockKeyhole,
   LucideMail,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, FieldErrors, useForm } from "react-hook-form";
@@ -47,6 +48,7 @@ import { formatDateForField } from "@/utils/functions/date";
 export default function SignupPage() {
   /* --------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("auth");
   const { theme } = useThemeStore();
 
   /* -------------------------------- All States ------------------------------ */
@@ -241,9 +243,9 @@ export default function SignupPage() {
 
       {/* Title Section */}
       <div className="flex flex-col items-start">
-        <TypographyH2>Welcome to Apsara Talent</TypographyH2>
+        <TypographyH2>{t("signupPageTitle")}</TypographyH2>
         <TypographyMuted className="text-md">
-          Connect with professional community around the world.
+          {t("signupSubtitle")}
         </TypographyMuted>
       </div>
 
@@ -260,13 +262,13 @@ export default function SignupPage() {
         {isEmployeeForm && (
           <div className="flex items-center gap-3 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
             <Input
-              placeholder="Firstname"
+              placeholder={t("firstname")}
               type="text"
               {...empForm.register("firstName")}
               validationMessage={employeeErrors.firstName?.message}
             />
             <Input
-              placeholder="Lastname"
+              placeholder={t("lastname")}
               type="text"
               {...empForm.register("lastName")}
               validationMessage={employeeErrors.lastName?.message}
@@ -292,7 +294,7 @@ export default function SignupPage() {
 
                 return (
                   <DatePicker
-                    placeholder="Date of Birth"
+                    placeholder={t("dateOfBirth")}
                     date={safeDate}
                     onDateChange={(date) =>
                       field.onChange(date ? formatDateForField(date) : "")
@@ -311,7 +313,7 @@ export default function SignupPage() {
           {isEmployeeForm && (
             <Input
               type="text"
-              placeholder="Username"
+              placeholder={t("username")}
               className="w-full"
               {...empForm.register("username")}
               validationMessage={employeeErrors.username?.message}
@@ -328,7 +330,7 @@ export default function SignupPage() {
                     value={field.value || ""}
                   >
                     <SelectTrigger className="h-12 text-muted-foreground">
-                      <SelectValue placeholder="Location" />
+                      <SelectValue placeholder={t("location")} />
                     </SelectTrigger>
                     <SelectContent>
                       {locationConstant.map((location, index) => (
@@ -363,7 +365,7 @@ export default function SignupPage() {
                       value={field.value || ""}
                     >
                       <SelectTrigger className="h-12 text-muted-foreground">
-                        <SelectValue placeholder="Gender" />
+                        <SelectValue placeholder={t("gender")} />
                       </SelectTrigger>
                       <SelectContent>
                         {genderConstant.map((gender) => (
@@ -386,7 +388,7 @@ export default function SignupPage() {
             {isEmployeeForm ? (
               <Input
                 type="number"
-                placeholder="Mobile"
+                placeholder={t("mobile")}
                 className="w-full"
                 {...empForm.register("phone")}
                 validationMessage={employeeErrors.phone?.message}
@@ -394,7 +396,7 @@ export default function SignupPage() {
             ) : (
               <Input
                 type="number"
-                placeholder="Mobile"
+                placeholder={t("mobile")}
                 className="w-full"
                 {...cmpForm.register("phone")}
                 validationMessage={companyErrors.phone?.message}
@@ -407,7 +409,7 @@ export default function SignupPage() {
             <Input
               prefix={<LucideMail strokeWidth={"1.3px"} />}
               type="email"
-              placeholder="Email"
+              placeholder={t("email")}
               {...empForm.register("email")}
               validationMessage={employeeErrors.email?.message}
             />
@@ -415,7 +417,7 @@ export default function SignupPage() {
             <Input
               prefix={<LucideMail strokeWidth={"1.3px"} />}
               type="email"
-              placeholder="Email"
+              placeholder={t("email")}
               {...cmpForm.register("email")}
               validationMessage={companyErrors.email?.message}
             />
@@ -439,7 +441,7 @@ export default function SignupPage() {
                 )
               }
               type={passwordVisibility ? "text" : "password"}
-              placeholder="Password"
+              placeholder={t("password")}
               {...empForm.register("password")}
               validationMessage={employeeErrors.password?.message}
             />
@@ -460,7 +462,7 @@ export default function SignupPage() {
                 )
               }
               type={passwordVisibility ? "text" : "password"}
-              placeholder="Password"
+              placeholder={t("password")}
               {...cmpForm.register("password")}
               validationMessage={companyErrors.password?.message}
             />
@@ -484,7 +486,7 @@ export default function SignupPage() {
                 )
               }
               type={confirmPassVisibility ? "text" : "password"}
-              placeholder="Confirm Password"
+              placeholder={t("confirmPassword")}
               {...empForm.register("confirmPassword")}
               validationMessage={employeeErrors.confirmPassword?.message}
             />
@@ -505,7 +507,7 @@ export default function SignupPage() {
                 )
               }
               type={confirmPassVisibility ? "text" : "password"}
-              placeholder="Confirm Password"
+              placeholder={t("confirmPassword")}
               {...cmpForm.register("confirmPassword")}
               validationMessage={companyErrors.confirmPassword?.message}
             />
@@ -521,11 +523,11 @@ export default function SignupPage() {
             onClick={() => router.push("/signup/option")}
           >
             <LucideArrowLeft />
-            Back
+            {t("back")}
           </Button>
           <Button className="flex-1 tablet-sm:w-full" type="submit">
             <LucideArrowRight />
-            Next
+            {t("next")}
           </Button>
         </div>
       </form>

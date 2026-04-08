@@ -421,10 +421,10 @@ function LoginPage() {
           <div className="flex flex-col items-start gap-1">
             <LogoComponent className="!h-16 w-auto self-start" withoutTitle />
             <TypographyH2 className="phone-xl:text-2xl">
-              Log in to your Account
+              {t("loginPageTitle")}
             </TypographyH2>
             <TypographyMuted className="text-md phone-xl:text-sm">
-              Welcome to Apsara Talent! Select method to log in
+              {t("loginSubtitle")}
             </TypographyMuted>
           </div>
 
@@ -478,7 +478,7 @@ function LoginPage() {
               onClick={() => router.push("login/phone-number")}
             >
               <LucidePhone />
-              Phone Number
+              {t("phoneNumber")}
             </Button>
           </div>
 
@@ -486,7 +486,7 @@ function LoginPage() {
           <div className="w-full flex items-center gap-3">
             <Separator className="flex-1" />
             <TypographyMuted className="text-xs whitespace-nowrap">
-              or continue with email
+              {t("orContinueWithEmail")}
             </TypographyMuted>
             <Separator className="flex-1" />
           </div>
@@ -499,7 +499,7 @@ function LoginPage() {
             <div className="flex flex-col gap-3">
               <Input
                 prefix={<LucideMail strokeWidth={"1.3px"} />}
-                placeholder="Email"
+                placeholder={t("email")}
                 type="email"
                 {...register("email")}
                 validationMessage={errors.email?.message}
@@ -519,7 +519,7 @@ function LoginPage() {
                     />
                   )
                 }
-                placeholder="Password"
+                placeholder={t("password")}
                 type={passwordVisibility ? "text" : "password"}
                 {...register("password")}
                 validationMessage={errors.password?.message}
@@ -539,21 +539,21 @@ function LoginPage() {
                   )}
                 />
                 <TypographyMuted className="text-xs">
-                  Remember me
+                  {t("rememberMeLabel")}
                 </TypographyMuted>
               </div>
               <TypographySmall className="text-xs cursor-pointer hover:text-muted-foreground transition-colors">
-                <Link href="/forgot-password">Forgot Password?</Link>
+                <Link href="/forgot-password">{t("forgotPasswordLink")}</Link>
               </TypographySmall>
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              Login
+              {t("loginButton")}
             </Button>
             <div className="flex items-center justify-center gap-2">
-              <TypographyMuted>Do not have account?</TypographyMuted>
+              <TypographyMuted>{t("noAccount")}</TypographyMuted>
               <Link href="/signup/option">
                 <TypographySmall className="text-xs cursor-pointer hover:text-muted-foreground transition-colors">
-                  Create account
+                  {t("createAccount")}
                 </TypographySmall>
               </Link>
             </div>

@@ -21,6 +21,7 @@ import { userRoleConstant } from "@/utils/constants/ui.constant";
 import { TUserRole } from "@/utils/types/auth/role.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LucideArrowLeft, LucideArrowRight, LucideUsers } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { signupOptionSchema, TSignupOptionSchema } from "./validation";
@@ -28,6 +29,7 @@ import { signupOptionSchema, TSignupOptionSchema } from "./validation";
 export default function SingUpOption() {
   /* ---------------------------------- Utils ---------------------------------- */
   const router = useRouter();
+  const t = useTranslations("auth");
 
   /* -------------------------------- All States ------------------------------- */
   // Signup Option Helpers
@@ -142,11 +144,11 @@ export default function SingUpOption() {
       </div>
 
       {/* Title Section */}
-      <TypographyH2>Who do you wanna be in our platform?</TypographyH2>
+      <TypographyH2>{t("signupOptionTitle")}</TypographyH2>
 
       {/* Subtitle Section */}
       <TypographyMuted>
-        Choose your role to get started with Apsara Talent.
+        {t("signupOptionSubtitle")}
       </TypographyMuted>
 
       <form className="w-full flex flex-col" onSubmit={handleSubmit(onSubmit)}>
@@ -158,7 +160,7 @@ export default function SingUpOption() {
             render={({ field }) => (
               <Select onValueChange={field.onChange} value={field.value || ""}>
                 <SelectTrigger className="h-12 text-muted-foreground">
-                  <SelectValue placeholder="Who do you wanna be?" />
+                  <SelectValue placeholder={t("signupOptionPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
                   {userRoleConstant.map((role) => (
@@ -182,10 +184,10 @@ export default function SingUpOption() {
             onClick={() => router.push("/login")}
           >
             <LucideArrowLeft />
-            Back
+            {t("back")}
           </Button>
           <Button className="flex-1" type="submit">
-            Next
+            {t("next")}
             <LucideArrowRight />
           </Button>
         </div>
@@ -194,7 +196,7 @@ export default function SingUpOption() {
       {/* Note Section */}
       <div className="w-full flex items-center justify-center">
         <TypographyMuted className="text-xs">
-          You can always update your profile later.
+          {t("signupOptionNote")}
         </TypographyMuted>
       </div>
     </div>
