@@ -1,59 +1,67 @@
+"use client";
+
 import LogoComponent from "@/components/utils/brand/logo";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
-export function LandingFooter() {
+export default function LandingFooter() {
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("landing");
+
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <footer className="relative border-t border-border/60 bg-card/30">
-      {/* Dotted background */}
+      {/* Dotted Background Section */}
       <div className="pointer-events-none absolute inset-0 opacity-[0.03] dark:opacity-[0.06] [background-image:radial-gradient(circle,hsl(var(--foreground))_1px,transparent_1px)] [background-size:24px_24px]" />
-      <div className="mx-auto max-w-6xl px-6 sm:px-8 py-12 sm:py-16">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-8 py-10 sm:py-12 md:py-16">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-10">
-          {/* Brand */}
+          {/* Brand Section */}
           <div className="flex flex-col gap-3 max-w-xs">
             <LogoComponent className="!h-14 w-auto self-start" />
             <TypographyMuted className="!text-xs !leading-relaxed">
-              Cambodia&apos;s leading talent platform connecting professionals
-              and companies for a brighter future.
+              {t("angkorWatDescription")}
             </TypographyMuted>
           </div>
 
-          {/* Links */}
-          <div className="flex flex-wrap gap-12 sm:gap-16">
+          {/* Links Section */}
+          <div className="flex flex-wrap gap-8 sm:gap-12 md:gap-16">
             <div className="flex flex-col gap-3">
-              <span className="text-sm font-semibold">Platform</span>
+              <span className="text-sm font-semibold">
+                {t("footerPlatform")}
+              </span>
               <Link href="/login">
                 <TypographyMuted className="!text-xs hover:text-foreground transition-colors cursor-pointer">
-                  Login
+                  {t("login")}
                 </TypographyMuted>
               </Link>
               <Link href="/signup/option">
                 <TypographyMuted className="!text-xs hover:text-foreground transition-colors cursor-pointer">
-                  Sign Up
+                  {t("getStarted")}
                 </TypographyMuted>
               </Link>
             </div>
             <div className="flex flex-col gap-3">
-              <span className="text-sm font-semibold">Legal</span>
+              <span className="text-sm font-semibold">{t("footerLegal")}</span>
               <Link href="/privacy-policy">
                 <TypographyMuted className="!text-xs hover:text-foreground transition-colors cursor-pointer">
-                  Privacy Policy
+                  {t("footerPrivacy")}
                 </TypographyMuted>
               </Link>
               <Link href="/terms-of-service">
                 <TypographyMuted className="!text-xs hover:text-foreground transition-colors cursor-pointer">
-                  Terms of Service
+                  {t("footerTerms")}
                 </TypographyMuted>
               </Link>
             </div>
           </div>
         </div>
 
-        {/* Bottom bar */}
+        {/* Bottom Bar Section */}
         <div className="mt-10 pt-6 border-t border-border/40">
           <TypographyMuted className="!text-xs text-center">
-            &copy; {new Date().getFullYear()} Apsara Talent. All rights
-            reserved.
+            &copy; {new Date().getFullYear()} Apsara Talent.{" "}
+            {t("footerAllRightsReserved")}
           </TypographyMuted>
         </div>
       </div>

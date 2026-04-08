@@ -6,8 +6,8 @@ import { Float, OrbitControls, useGLTF } from "@react-three/drei";
 import { Suspense, useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 
-/* -------------------------------- Helpers ------------------------------- */
-// ── AngkorWatModel — Loads and displays the .glb model ────────────
+/* ------------------------------------- Helpers ------------------------------------ */
+// ── AngkorWatModel — Loads and displays the .glb model ────────────────────────
 function AngkorWatModel({ isDark }: { isDark: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF("/models/angkor_wat_optimized.glb", false, true);
@@ -67,11 +67,7 @@ function AngkorWatModel({ isDark }: { isDark: boolean }) {
       camera.updateProjectionMatrix();
     }
 
-    camera.position.set(
-      distance * 0.75,
-      distance * 0.45,
-      distance * 0.75,
-    );
+    camera.position.set(distance * 0.75, distance * 0.45, distance * 0.75);
     camera.lookAt(0, 0, 0);
   }, [clonedScene, camera]);
 
@@ -88,7 +84,7 @@ function AngkorWatModel({ isDark }: { isDark: boolean }) {
   );
 }
 
-// ── SceneControls — Orbit controls for the 3D scene ────────────
+// ── SceneControls — Orbit controls for the 3D scene ────────────────────────
 function SceneControls() {
   return (
     <OrbitControls
@@ -104,7 +100,7 @@ function SceneControls() {
   );
 }
 
-// ── LoadingFallback — Spinner while model loads ────────────
+// ── LoadingFallback — Spinner while model loads ────────────────────────
 function LoadingFallback({ isDark }: { isDark: boolean }) {
   const meshRef = useRef<THREE.Mesh>(null);
 
