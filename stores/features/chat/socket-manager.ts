@@ -32,26 +32,18 @@ export const scheduleDisconnect = (callback: () => void) => {
   }, 80);
 };
 
-// ── Normalize Any URL Into Origin ──────────────────────────────
-const toOrigin = (rawUrl: string): string => {
-  const raw = rawUrl.trim();
-  if (!raw) return "";
-
-  try {
-    return new URL(raw).origin;
-  } catch {
-    // Fallback for malformed env values:
-    // remove trailing slash and optional API prefix suffix.
-    return raw
-      .replace(/\/+$/, "")
-      .replace(/\/api(?:\/v\d+)?\/?$/i, "");
-  }
-};
-
-// ── Resolve Socket Origin (from API URL) ────────────────────────
+// ── Resolve Socket Origin (without /api/v1) ─────────────────
 const resolveSocketOrigin = (): string => {
-  const apiOrigin = toOrigin(process.env.NEXT_PUBLIC_API_URL || "");
-  if (apiOrigin) return apiOrigin;
+  const raw = (process.env.NEXT_PUBLIC_API_URL || "").trim();
+  if (raw) {
+    try {
+      return new URL(raw).origin;
+    } catch {
+      // Fallback for malformed env values:
+      // remove trailing slash and optional API prefix suffix.
+      return raw.replace(/\/+$/, "").replace(/\/api(?:\/v\d+)?\/?$/i, "");
+    }
+  }
 
   // Fallback to existing helper then strip optional API prefix if present.
   return getApiOrigin().replace(/\/api(?:\/v\d+)?\/?$/i, "");
@@ -66,7 +58,7 @@ export const createSocket = () => {
     withCredentials: true,
     transports: ["websocket", "polling"],
     auth: socketToken ? { token: String(socketToken) } : undefined,
-  });
+  } as any);
 
   return socket;
 };
