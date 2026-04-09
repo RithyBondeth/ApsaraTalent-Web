@@ -32,26 +32,9 @@ export const scheduleDisconnect = (callback: () => void) => {
   }, 80);
 };
 
-// ── Resolve Socket Origin (without /api/v1) ─────────────────
-const resolveSocketOrigin = (): string => {
-  const raw = (process.env.NEXT_PUBLIC_API_URL || "").trim();
-  if (raw) {
-    try {
-      return new URL(raw).origin;
-    } catch {
-      // Fallback for malformed env values:
-      // remove trailing slash and optional API prefix suffix.
-      return raw.replace(/\/+$/, "").replace(/\/api(?:\/v\d+)?\/?$/i, "");
-    }
-  }
-
-  // Fallback to existing helper then strip optional API prefix if present.
-  return getApiOrigin().replace(/\/api(?:\/v\d+)?\/?$/i, "");
-};
-
 // ── Create Socket ───────────────────────────────────────────
 export const createSocket = () => {
-  const socketUrl = resolveSocketOrigin();
+  const socketUrl = getApiOrigin();
   const socketToken = getCookie("auth-token");
 
   const socket: SocketInstance = io(`${socketUrl}/chat`, {
