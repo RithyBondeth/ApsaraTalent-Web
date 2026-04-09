@@ -2,12 +2,10 @@
 
 import { useCallback, useRef, useState } from "react";
 import { getCookie } from "cookies-next";
+import { API_BASE_URL } from "@/utils/constants/apis/base_url";
 
 // ── Constants ──────────────────────────────────────────────────────────────────
-const API_BASE =
-  typeof window !== "undefined"
-    ? process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
-    : "http://localhost:3000";
+const API_BASE = API_BASE_URL || "http://localhost:3000";
 
 /** Maximum recording duration in milliseconds (5 minutes). */
 export const VOICE_RECORDING_MAX_DURATION_MS = 5 * 60 * 1000;

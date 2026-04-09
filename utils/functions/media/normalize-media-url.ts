@@ -10,7 +10,7 @@ const isPlainObject = (value: unknown): value is Record<string, unknown> =>
 
 export const getApiOrigin = (): string => {
   const raw = process.env.NEXT_PUBLIC_API_URL || API_ORIGIN_FALLBACK;
-  return raw.replace(/\/api\/?$/i, "").replace(/\/+$/, "");
+  return raw.replace(/\/api(?:\/v\d+)?\/?$/i, "").replace(/\/+$/, "");
 };
 
 export const normalizeMediaUrl = (
