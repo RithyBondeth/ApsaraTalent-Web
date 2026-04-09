@@ -252,6 +252,13 @@ function LoginPage() {
 
   // Social Login Function
   const handleSocialLogin = (rememberMe: "true" | "false") => {
+    // Reset all social store states to avoid stale errors triggering the effect
+    useGoogleLoginStore.setState({ error: null, loading: false, isAuthenticated: false, newUser: null });
+    useLinkedInLoginStore.setState({ error: null, loading: false, isAuthenticated: false, newUser: null });
+    useGithubLoginStore.setState({ error: null, loading: false, isAuthenticated: false, newUser: null });
+    useFacebookLoginStore.setState({ error: null, loading: false, isAuthenticated: false, newUser: null });
+
+    toast.dismiss();
     setSocialLoginInitiated(true);
     isProcessingSocialLogin.current = false; // Reset flag
     switch (socialTypeIdentifier) {
@@ -362,13 +369,12 @@ function LoginPage() {
         },
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    facebookLoginStore,
     googleLoginStore.isAuthenticated,
     googleLoginStore.newUser,
     googleLoginStore.loading,
     googleLoginStore.error,
-    githubLoginStore,
     linkedInLoginStore.isAuthenticated,
     linkedInLoginStore.newUser,
     linkedInLoginStore.loading,
@@ -377,12 +383,10 @@ function LoginPage() {
     githubLoginStore.newUser,
     githubLoginStore.loading,
     githubLoginStore.error,
-    googleLoginStore,
     facebookLoginStore.isAuthenticated,
     facebookLoginStore.newUser,
     facebookLoginStore.loading,
     facebookLoginStore.error,
-    linkedInLoginStore,
     preloadUserData,
     router,
     socialLoginInitiated,

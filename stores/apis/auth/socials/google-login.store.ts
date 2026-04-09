@@ -47,8 +47,11 @@ type TGoogleLoginState = {
 };
 
 /* ---------------------------------- Utils --------------------------------- */
-// Backend origin (SAFE)
+// Allowed origins: backend (where callback page lives) + frontend (where app runs)
 const BACKEND_ORIGIN = new URL(API_AUTH_SOCIAL_GOOGLE_URL).origin;
+const FRONTEND_ORIGIN =
+  typeof window !== "undefined" ? window.location.origin : "";
+const ALLOWED_ORIGINS = new Set([BACKEND_ORIGIN, FRONTEND_ORIGIN]);
 
 const FINISH_LOGIN = (data: TGoogleLoginResponse) => {
   if (!data || data.type !== "GOOGLE_AUTH_SUCCESS") {
@@ -131,8 +134,8 @@ export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
     let messageReceived = false;
 
     const handleMessage = (ev: MessageEvent<TGoogleLoginResponse>) => {
-      // Strict origin check
-      if (ev.origin !== BACKEND_ORIGIN) {
+      // Origin check: accept messages from backend or frontend
+      if (!ALLOWED_ORIGINS.has(ev.origin)) {
         console.warn("Ignored message from unexpected origin:", ev.origin);
         return;
       }

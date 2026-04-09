@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LucidePhone } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
-import Link from "next/link";
+
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";

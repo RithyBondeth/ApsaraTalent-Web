@@ -21,7 +21,7 @@ import { useForm } from "react-hook-form";
 import { resetPasswordSchema, TResetPasswordForm } from "./validate";
 import { resetPasswordWhiteSvg } from "@/utils/constants/asset.constant";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
-import Link from "next/link";
+
 
 export default function ResetPasswordPage() {
   /* ---------------------------------- Utils --------------------------------- */
