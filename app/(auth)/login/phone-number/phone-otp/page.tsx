@@ -24,7 +24,7 @@ import { toast } from "sonner";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { phoneOTPWhiteSvg } from "@/utils/constants/asset.constant";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
@@ -38,6 +38,8 @@ export default function PhoneOTPPage() {
 
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
   const [loginInitiated, setLoginInitiated] = useState<boolean>(false);
+  const isProcessingOtpLogin = useRef<boolean>(false);
+  const loadingToastIdRef = useRef<string | number | null>(null);
 
   /* ------------------------------ API Integration --------------------------- */
   // Current User, Get All Employees and Get All Companies
@@ -46,13 +48,26 @@ export default function PhoneOTPPage() {
   const { queryCompany } = useGetAllCompanyStore();
 
   // Employee and Company Liked and Favorited
-  const getCurrentCompanyLikedStore = useGetCurrentCompanyLikedStore();
-  const getAllCompanyFavoriteStore = useGetAllCompanyFavoritesStore();
-  const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore();
-  const getAllEmployeeFavoriteStore = useGetAllEmployeeFavoritesStore();
+  const queryCurrentCompanyLiked = useGetCurrentCompanyLikedStore(
+    (s) => s.queryCurrentCompanyLiked,
+  );
+  const queryAllCompanyFavorites = useGetAllCompanyFavoritesStore(
+    (s) => s.queryAllCompanyFavorites,
+  );
+  const queryCurrentEmployeeLiked = useGetCurrentEmployeeLikedStore(
+    (s) => s.queryCurrentEmployeeLiked,
+  );
+  const queryAllEmployeeFavorites = useGetAllEmployeeFavoritesStore(
+    (s) => s.queryAllEmployeeFavorites,
+  );
 
   // Verify OTP Authentication
-  const verifyOTPStore = useVerifyOTPStore();
+  const verifyOtp = useVerifyOTPStore((s) => s.verifyOtp);
+  const otpError = useVerifyOTPStore((s) => s.error);
+  const otpLoading = useVerifyOTPStore((s) => s.loading);
+  const otpMessage = useVerifyOTPStore((s) => s.message);
+  const otpRole = useVerifyOTPStore((s) => s.role);
+  const otpAuthenticated = useVerifyOTPStore((s) => s.isAuthenticated);
 
   /* -------------------------------- Methods --------------------------------- */
   // ── Preload User Data ─────────────────────────────────────────
@@ -73,12 +88,8 @@ export default function PhoneOTPPage() {
                 "Querying all companies, employee liked, and employee favorite inside Login OTP Page!!",
               );
               await Promise.all([
-                getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(
-                  userData.employee.id,
-                ),
-                getAllEmployeeFavoriteStore.queryAllEmployeeFavorites(
-                  userData.employee.id,
-                ),
+                queryCurrentEmployeeLiked(userData.employee.id),
+                queryAllEmployeeFavorites(userData.employee.id),
                 queryCompany(),
               ]);
             } else if (userData.role === "company" && userData.company?.id) {
@@ -87,12 +98,8 @@ export default function PhoneOTPPage() {
                 "Querying all employees, companies liked, and company favorite inside Login OTP Page!!",
               );
               await Promise.all([
-                getCurrentCompanyLikedStore.queryCurrentCompanyLiked(
-                  userData.company.id,
-                ),
-                getAllCompanyFavoriteStore.queryAllCompanyFavorites(
-                  userData.company.id,
-                ),
+                queryCurrentCompanyLiked(userData.company.id),
+                queryAllCompanyFavorites(userData.company.id),
                 queryEmployee(),
               ]);
             }
@@ -105,11 +112,11 @@ export default function PhoneOTPPage() {
       throw error;
     }
   }, [
-    getAllCompanyFavoriteStore,
-    getAllEmployeeFavoriteStore,
-    getCurrentCompanyLikedStore,
-    getCurrentEmployeeLikedStore,
     getCurrentUser,
+    queryAllCompanyFavorites,
+    queryAllEmployeeFavorites,
+    queryCurrentCompanyLiked,
+    queryCurrentEmployeeLiked,
     queryCompany,
     queryEmployee,
   ]);
@@ -122,9 +129,10 @@ export default function PhoneOTPPage() {
     reset,
   } = useForm<{ otp: string }>();
   const onSubmit = async (data: { otp: string }) => {
+    isProcessingOtpLogin.current = false;
     setLoginInitiated(true);
     const phone = basicPhoneSignupData?.phone?.replace("0", "+855") ?? "";
-    await verifyOTPStore.verifyOtp(
+    await verifyOtp(
       phone,
       data.otp,
       basicPhoneSignupData?.rememberMe ?? true,
@@ -137,15 +145,47 @@ export default function PhoneOTPPage() {
     if (!loginInitiated) return;
 
     // Option A: If the role of user is none, navigate user to signup first
-    if (verifyOTPStore.role === "none") {
+    if (otpRole === "none") {
       toast.dismiss();
       setLoginInitiated(false);
       router.replace("/signup/option");
       return;
     }
 
+    if (otpLoading) {
+      if (!loadingToastIdRef.current) {
+        loadingToastIdRef.current = toast.loading(t("verifyingOtp"));
+      }
+      return;
+    }
+
+    if (loadingToastIdRef.current) {
+      toast.dismiss(loadingToastIdRef.current);
+      loadingToastIdRef.current = null;
+    }
+
+    if (otpError) {
+      toast.dismiss();
+      toast.error(otpError, {
+        action: {
+          label: t("retry"),
+          onClick: () => {
+            reset();
+            setLoginInitiated(false);
+            isProcessingOtpLogin.current = false;
+          },
+        },
+      });
+      setLoginInitiated(false);
+      isProcessingOtpLogin.current = false;
+      return;
+    }
+
     // Option B: If user is authenticated, navigate user to feed page
-    if (verifyOTPStore.isAuthenticated && loginInitiated) {
+    if (!otpAuthenticated || isProcessingOtpLogin.current) return;
+
+    isProcessingOtpLogin.current = true;
+    if (otpAuthenticated && loginInitiated) {
       toast.dismiss();
       const loadingId = toast.loading(t("authenticating"));
 
@@ -161,7 +201,7 @@ export default function PhoneOTPPage() {
         .catch((error) => {
           console.error("Error preloading user data: ", error);
           toast.dismiss(loadingId);
-          toast.error(verifyOTPStore.message ?? String(error), {
+          toast.error(otpMessage ?? String(error), {
             duration: 1000,
           });
         })
@@ -170,33 +210,18 @@ export default function PhoneOTPPage() {
           setTimeout(() => {
             toast.dismiss();
             setLoginInitiated(false);
-            router.push("/feed");
+            isProcessingOtpLogin.current = false;
+            router.replace("/feed");
           }, DEFAULT_REDIRECT_DELAY_MS);
         });
     }
-
-    if (verifyOTPStore.loading && loginInitiated)
-      toast.loading(t("verifyingOtp"));
-
-    if (verifyOTPStore.error && loginInitiated) {
-      toast.dismiss();
-      toast.error(verifyOTPStore.error, {
-        action: {
-          label: t("retry"),
-          onClick: () => {
-            reset();
-            setLoginInitiated(false);
-          },
-        },
-      });
-    }
   }, [
-    verifyOTPStore.error,
-    verifyOTPStore.isAuthenticated,
-    verifyOTPStore.loading,
-    verifyOTPStore.message,
-    verifyOTPStore.role,
     loginInitiated,
+    otpAuthenticated,
+    otpError,
+    otpLoading,
+    otpMessage,
+    otpRole,
     preloadUserData,
     reset,
     router,

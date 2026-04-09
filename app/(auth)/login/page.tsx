@@ -74,6 +74,7 @@ function LoginPage() {
   const [socialLoginInitiated, setSocialLoginInitiated] =
     useState<boolean>(false);
   const isProcessingSocialLogin = useRef<boolean>(false);
+  const isProcessingRegularLogin = useRef<boolean>(false);
   const [loginInitiated, setLoginInitiated] = useState<boolean>(false);
   const [isPreloadingData, setIsPreloadingData] = useState<boolean>(false);
 
@@ -83,14 +84,22 @@ function LoginPage() {
   const { queryCompany } = useGetAllCompanyStore();
   const { queryEmployee } = useGetAllEmployeeStore();
   // User Liked Store
-  const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore(); // Companies liked by current employee
-  const getCurrentCompanyLikedStore = useGetCurrentCompanyLikedStore(); // Employees liked by current company
+  const queryCurrentEmployeeLiked = useGetCurrentEmployeeLikedStore(
+    (s) => s.queryCurrentEmployeeLiked,
+  ); // Companies liked by current employee
+  const queryCurrentCompanyLiked = useGetCurrentCompanyLikedStore(
+    (s) => s.queryCurrentCompanyLiked,
+  ); // Employees liked by current company
   // User Favorited Store
-  const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore(); // Companies favorited by current employee
-  const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore(); // Employees favorited by current company
+  const queryAllEmployeeFavorites = useGetAllEmployeeFavoritesStore(
+    (s) => s.queryAllEmployeeFavorites,
+  ); // Companies favorited by current employee
+  const queryAllCompanyFavorites = useGetAllCompanyFavoritesStore(
+    (s) => s.queryAllCompanyFavorites,
+  ); // Employees favorited by current company
 
   // Regular Email-Password Authentication Store
-  const { isAuthenticated, message, login, error, loading } = useLoginStore();
+  const { isAuthenticated, login, error, loading } = useLoginStore();
 
   // Social Authentication Stores
   const googleLoginStore = useGoogleLoginStore();
@@ -132,12 +141,8 @@ function LoginPage() {
                 "Querying all companies, employee liked, and employee favorite inside Login Page!!!",
               );
               await Promise.all([
-                getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(
-                  userData.employee.id,
-                ),
-                getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
-                  userData.employee.id,
-                ),
+                queryCurrentEmployeeLiked(userData.employee.id),
+                queryAllEmployeeFavorites(userData.employee.id),
                 queryCompany(),
               ]);
             } else if (userData.role === "company" && userData.company?.id) {
@@ -146,12 +151,8 @@ function LoginPage() {
                 "Querying all employees, company liked, and company favorite inside Login Page!!!",
               );
               await Promise.all([
-                getCurrentCompanyLikedStore.queryCurrentCompanyLiked(
-                  userData.company.id,
-                ),
-                getAllCompanyFavoritesStore.queryAllCompanyFavorites(
-                  userData.company.id,
-                ),
+                queryCurrentCompanyLiked(userData.company.id),
+                queryAllCompanyFavorites(userData.company.id),
                 queryEmployee(),
               ]);
             }
@@ -164,17 +165,18 @@ function LoginPage() {
       throw error;
     }
   }, [
-    getAllCompanyFavoritesStore,
-    getAllEmployeeFavoritesStore,
-    getCurrentCompanyLikedStore,
-    getCurrentEmployeeLikedStore,
     getCurrentUser,
+    queryAllCompanyFavorites,
+    queryAllEmployeeFavorites,
+    queryCurrentCompanyLiked,
+    queryCurrentEmployeeLiked,
     queryCompany,
     queryEmployee,
   ]);
 
   // ── Login Function ───────────────────────────────────────
   const onSubmit = async (data: TLoginForm) => {
+    isProcessingRegularLogin.current = false;
     setLoginInitiated(true);
     await login(data.email, data.password, data.rememberMe!);
   };
@@ -200,33 +202,9 @@ function LoginPage() {
   // Regular Email-Password Login Effect
   useEffect(() => {
     if (!loginInitiated) return;
+    if (loading) return;
 
-    if (isAuthenticated && loginInitiated) {
-      setIsPreloadingData(true);
-
-      // Preload all user data while showing loading message
-      preloadUserData()
-        .then(() => {
-          console.log("User data preloaded successfully in loin page");
-          toast.success(t("successLoggedIn"), {
-            duration: 1000,
-          });
-        })
-        .catch((error) => {
-          console.error("Error preloading user data: ", error);
-          toast.error(String(error), { duration: 1000 });
-        })
-        .finally(() => {
-          setTimeout(() => {
-            toast.dismiss();
-            setIsPreloadingData(false);
-            setLoginInitiated(false);
-            router.push("/feed");
-          }, DEFAULT_REDIRECT_DELAY_MS);
-        });
-    }
-
-    if (error && loginInitiated) {
+    if (error) {
       toast.dismiss();
       toast.error(t("loginFailed"), {
         action: {
@@ -234,16 +212,46 @@ function LoginPage() {
           onClick: () => {
             reset();
             setLoginInitiated(false);
+            isProcessingRegularLogin.current = false;
           },
         },
       });
+      setLoginInitiated(false);
+      isProcessingRegularLogin.current = false;
+      return;
     }
+
+    if (!isAuthenticated || isProcessingRegularLogin.current) return;
+
+    isProcessingRegularLogin.current = true;
+    setIsPreloadingData(true);
+
+    // Preload all user data while showing loading message
+    preloadUserData()
+      .then(() => {
+        console.log("User data preloaded successfully in login page");
+        toast.success(t("successLoggedIn"), {
+          duration: 1000,
+        });
+      })
+      .catch((error) => {
+        console.error("Error preloading user data: ", error);
+        toast.error(String(error), { duration: 1000 });
+      })
+      .finally(() => {
+        setTimeout(() => {
+          toast.dismiss();
+          setIsPreloadingData(false);
+          setLoginInitiated(false);
+          isProcessingRegularLogin.current = false;
+          router.replace("/feed");
+        }, DEFAULT_REDIRECT_DELAY_MS);
+      });
   }, [
     error,
     isAuthenticated,
     loading,
     loginInitiated,
-    message,
     preloadUserData,
     reset,
     router,
@@ -334,7 +342,7 @@ function LoginPage() {
             setIsPreloadingData(false);
             setSocialLoginInitiated(false);
             isProcessingSocialLogin.current = false;
-            router.push("/feed");
+            router.replace("/feed");
           }, DEFAULT_REDIRECT_DELAY_MS);
         });
 
@@ -345,12 +353,12 @@ function LoginPage() {
     if (newUserStore && !socialLoadingState) {
       setIsPreloadingData(false);
       toast.dismiss();
+      setSocialLoginInitiated(false);
       toast.info(t("pleaseRegisterFirst"), { duration: 1500 });
 
       setTimeout(() => {
         toast.dismiss();
-        setSocialLoginInitiated(false);
-        router.push("/signup/option");
+        router.replace("/signup/option");
       }, DEFAULT_REDIRECT_DELAY_MS);
 
       return;
@@ -360,6 +368,8 @@ function LoginPage() {
     if (errorStore && !socialLoadingState) {
       setIsPreloadingData(false);
       toast.dismiss();
+      setSocialLoginInitiated(false);
+      isProcessingSocialLogin.current = false;
       toast.error(errorStore.store.error || t("socialLoginFailed"), {
         action: {
           label: t("retry"),
