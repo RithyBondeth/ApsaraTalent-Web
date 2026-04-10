@@ -1,20 +1,22 @@
 import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
+import { ComponentPropsWithoutRef, forwardRef } from "react";
 
-export function TypographyH2(props: {
-  children: ReactNode;
-  className?: string;
-  style?: React.CSSProperties;
-}) {
+export const TypographyH2 = forwardRef<
+  HTMLHeadingElement,
+  ComponentPropsWithoutRef<"h2">
+>(({ className, children, ...props }, ref) => {
   return (
     <h2
+      ref={ref}
       className={cn(
         "scroll-m-20 pb-2 text-2xl sm:text-3xl font-semibold tracking-tight first:mt-0",
-        props.className,
+        className,
       )}
-      style={props.style}
+      {...props}
     >
-      {props.children}
+      {children}
     </h2>
   );
-}
+});
+
+TypographyH2.displayName = "TypographyH2";

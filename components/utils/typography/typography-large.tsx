@@ -1,17 +1,19 @@
 import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
+import { ComponentPropsWithoutRef, forwardRef } from "react";
 
-export function TypographyLarge(props: {
-  children: ReactNode;
-  className?: string;
-  style?: React.CSSProperties;
-}) {
+export const TypographyLarge = forwardRef<
+  HTMLDivElement,
+  ComponentPropsWithoutRef<"div">
+>(({ className, children, ...props }, ref) => {
   return (
     <div
-      className={cn("text-lg font-semibold", props.className)}
-      style={props.style}
+      ref={ref}
+      className={cn("text-lg font-semibold", className)}
+      {...props}
     >
-      {props.children}
+      {children}
     </div>
   );
-}
+});
+
+TypographyLarge.displayName = "TypographyLarge";

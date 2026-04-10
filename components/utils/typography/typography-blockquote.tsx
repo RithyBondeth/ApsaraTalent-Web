@@ -1,17 +1,22 @@
 import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
+import { ComponentPropsWithoutRef, forwardRef } from "react";
 
-export function TypographyBlackqoute(props: {
-  children: ReactNode;
-  className?: string;
-  style?: React.CSSProperties;
-}) {
+export const TypographyBlockquote = forwardRef<
+  HTMLQuoteElement,
+  ComponentPropsWithoutRef<"blockquote">
+>(({ className, children, ...props }, ref) => {
   return (
-    <p
-      className={cn("mt-6 border-l-2 pl-6 italic", props.className)}
-      style={props.style}
+    <blockquote
+      ref={ref}
+      className={cn("mt-6 border-l-2 pl-6 italic", className)}
+      {...props}
     >
-      {props.children}
-    </p>
+      {children}
+    </blockquote>
   );
-}
+});
+
+TypographyBlockquote.displayName = "TypographyBlockquote";
+
+// Alias for backwards compatibility if needed, but we should fix the typo where used
+export const TypographyBlackqoute = TypographyBlockquote;

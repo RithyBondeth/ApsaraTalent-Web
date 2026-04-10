@@ -1,14 +1,19 @@
 import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
+import { ComponentPropsWithoutRef, forwardRef } from "react";
 
-export function TypographySmall(props: {
-  children: ReactNode;
-  className?: string;
-  style?: React.CSSProperties;
-}) {
+export const TypographySmall = forwardRef<
+  HTMLElement,
+  ComponentPropsWithoutRef<"small">
+>(({ className, children, ...props }, ref) => {
   return (
-    <small className={cn("text-sm", props.className)} style={props.style}>
-      {props.children}
+    <small
+      ref={ref}
+      className={cn("text-sm transition-all", className)}
+      {...props}
+    >
+      {children}
     </small>
   );
-}
+});
+
+TypographySmall.displayName = "TypographySmall";
