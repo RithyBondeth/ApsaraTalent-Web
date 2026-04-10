@@ -6,25 +6,29 @@ import { LucideArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useGsapScrollAnimation } from "@/hooks/utils/use-gsap-animation";
 import { useTranslations } from "next-intl";
+import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 
 export default function LandingCta() {
+  /* ---------------------------------- Utils --------------------------------- */
   const ctaRef = useGsapScrollAnimation<HTMLElement>();
   const t = useTranslations("landing");
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <section
       ref={ctaRef}
       className="relative py-16 sm:py-24 md:py-32 overflow-hidden"
     >
-      {/* Dotted Background */}
+      {/* Dotted Background Section */}
       <div className="pointer-events-none absolute inset-0 opacity-[0.04] dark:opacity-[0.08] [background-image:radial-gradient(circle,hsl(var(--foreground))_1px,transparent_1px)] [background-size:24px_24px]" />
-
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[500px] rounded-full bg-amber-500/15 blur-[160px] dark:bg-amber-400/10" />
       </div>
 
+      {/* CTA Section */}
       <div className="relative z-10 mx-auto max-w-3xl text-center px-4 sm:px-6">
-        <h2
+        {/* CTA Heading Section */}
+        <TypographyH2
           data-gsap="split-words"
           className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-5 !leading-[1.15] [perspective:800px]"
         >
@@ -33,13 +37,17 @@ export default function LandingCta() {
             {t("ctaHeadingHighlight")}
           </span>
           ?
-        </h2>
+        </TypographyH2>
+
+        {/* CTA Description Section */}
         <TypographyMuted
           data-gsap="fade-up"
           className="text-base sm:text-lg max-w-xl mx-auto mb-8"
         >
           {t("ctaDescription")}
         </TypographyMuted>
+
+        {/* CTA Button Section */}
         <div
           data-gsap="fade-up"
           className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto"

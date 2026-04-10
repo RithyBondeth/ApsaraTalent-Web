@@ -1,5 +1,7 @@
 "use client";
 
+import { TypographyH2 } from "@/components/utils/typography/typography-h2";
+import { TypographyH3 } from "@/components/utils/typography/typography-h3";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useGsapScrollAnimation } from "@/hooks/utils/use-gsap-animation";
 import { landingStepKeys } from "@/utils/constants/landing.constant";
@@ -34,7 +36,7 @@ export function LandingHowItWorks() {
           >
             How It Works
           </span>
-          <h2
+          <TypographyH2
             data-gsap="split-words"
             className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-4 [perspective:800px]"
           >
@@ -42,7 +44,7 @@ export function LandingHowItWorks() {
             <span className="bg-gradient-to-r from-amber-600 to-yellow-500 bg-clip-text text-transparent dark:from-amber-400 dark:to-yellow-300">
               {t("howItWorksHeadingHighlight")}
             </span>
-          </h2>
+          </TypographyH2>
           <TypographyMuted
             data-gsap="fade-up"
             className="text-base sm:text-lg max-w-lg mx-auto"
@@ -73,7 +75,9 @@ export function LandingHowItWorks() {
                 </span>
               </div>
 
-              <h3 className="text-xl font-semibold mb-2">{t(step.titleKey)}</h3>
+              <TypographyH3 className="text-xl font-semibold mb-2">
+                {t(step.titleKey)}
+              </TypographyH3>
               <TypographyMuted className="!text-sm !leading-relaxed max-w-xs mx-auto md:mx-0">
                 {t(step.descKey)}
               </TypographyMuted>

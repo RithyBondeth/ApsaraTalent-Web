@@ -4,6 +4,8 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { useGsapScrollAnimation } from "@/hooks/utils/use-gsap-animation";
 import { useTranslations } from "next-intl";
 import { landingFeatureKeys } from "@/utils/constants/landing.constant";
+import { TypographyH2 } from "@/components/utils/typography/typography-h2";
+import { TypographyH3 } from "@/components/utils/typography/typography-h3";
 
 export default function LandingFeatures() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -16,6 +18,7 @@ export default function LandingFeatures() {
       {/* Dotted Background Section */}
       <div className="pointer-events-none absolute inset-0 opacity-[0.04] dark:opacity-[0.08] [background-image:radial-gradient(circle,hsl(var(--foreground))_1px,transparent_1px)] [background-size:24px_24px]" />
 
+      {/* Features Section */}
       <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 md:px-8">
         {/* Header Section */}
         <div className="text-center mb-10 sm:mb-16">
@@ -25,7 +28,7 @@ export default function LandingFeatures() {
           >
             Features
           </span>
-          <h2
+          <TypographyH2
             data-gsap="split-words"
             className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-4 [perspective:800px]"
           >
@@ -33,7 +36,7 @@ export default function LandingFeatures() {
             <span className="bg-gradient-to-r from-amber-600 to-yellow-500 bg-clip-text text-transparent dark:from-amber-400 dark:to-yellow-300">
               {t("featuresHeadingHighlight")}
             </span>
-          </h2>
+          </TypographyH2>
           <TypographyMuted
             data-gsap="fade-up"
             className="text-base sm:text-lg max-w-xl mx-auto"
@@ -55,9 +58,9 @@ export default function LandingFeatures() {
               <div className="mb-4 inline-flex items-center justify-center size-11 rounded-xl bg-amber-500/10 text-amber-600 dark:bg-amber-400/10 dark:text-amber-400 transition-colors group-hover:bg-amber-500/15">
                 <feature.icon className="size-5" strokeWidth={1.8} />
               </div>
-              <h3 className="text-lg font-semibold mb-2">
+              <TypographyH3 className="text-lg font-semibold mb-2">
                 {t(feature.titleKey)}
-              </h3>
+              </TypographyH3>
               <TypographyMuted className="!text-sm !leading-relaxed">
                 {t(feature.descKey)}
               </TypographyMuted>

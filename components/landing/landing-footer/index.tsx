@@ -26,6 +26,7 @@ export default function LandingFooter() {
 
           {/* Links Section */}
           <div className="flex flex-wrap gap-8 sm:gap-12 md:gap-16">
+            {/* Platform Section */}
             <div className="flex flex-col gap-3">
               <span className="text-sm font-semibold">
                 {t("footerPlatform")}
@@ -41,6 +42,8 @@ export default function LandingFooter() {
                 </TypographyMuted>
               </Link>
             </div>
+
+            {/* Products Section */}
             <div className="flex flex-col gap-3">
               <span className="text-sm font-semibold">{t("products")}</span>
               <Link href="/product">
@@ -64,6 +67,8 @@ export default function LandingFooter() {
                 </TypographyMuted>
               </Link>
             </div>
+
+            {/* Legal Section */}
             <div className="flex flex-col gap-3">
               <span className="text-sm font-semibold">{t("footerLegal")}</span>
               <Link href="/privacy">

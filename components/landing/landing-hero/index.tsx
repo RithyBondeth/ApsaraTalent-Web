@@ -11,17 +11,20 @@ import {
 import Link from "next/link";
 import { useGsapHeroAnimation } from "@/hooks/utils/use-gsap-animation";
 import { useTranslations } from "next-intl";
+import { TypographyH1 } from "@/components/utils/typography/typography-h1";
 
 export default function LandingHero() {
+  /* ---------------------------------- Utils --------------------------------- */
   const heroRef = useGsapHeroAnimation<HTMLElement>();
   const t = useTranslations("landing");
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <section
       ref={heroRef}
       className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden"
     >
-      {/* Atmosphere Background */}
+      {/* Atmosphere Background Section */}
       <div className="pointer-events-none absolute inset-0 z-0">
         <div className="absolute -left-32 top-20 h-[400px] w-[400px] rounded-full bg-amber-500/20 blur-[140px] dark:bg-amber-400/15" />
         <div className="absolute right-[-100px] top-[-60px] h-[500px] w-[500px] rounded-full bg-amber-600/10 blur-[160px] dark:bg-indigo-400/20" />
@@ -29,10 +32,10 @@ export default function LandingHero() {
         <div className="absolute inset-0 opacity-[0.04] dark:opacity-[0.08] [background-image:radial-gradient(circle,hsl(var(--foreground))_1px,transparent_1px)] [background-size:24px_24px]" />
       </div>
 
-      {/* Hero Content */}
+      {/* Hero Content Section */}
       <div className="relative z-10 mx-auto w-full max-w-4xl px-4 sm:px-8 pt-24 sm:pt-28 pb-16 sm:pb-20 text-center">
         <div className="flex flex-col items-center gap-6">
-          {/* Badge */}
+          {/* Badge Section */}
           <div
             data-hero="badge"
             className="inline-flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/5 px-4 py-1.5 backdrop-blur-sm opacity-0 dark:border-amber-400/20 dark:bg-amber-400/5"
@@ -43,8 +46,8 @@ export default function LandingHero() {
             </span>
           </div>
 
-          {/* Heading */}
-          <h1
+          {/* Heading Section */}
+          <TypographyH1
             data-hero="heading"
             className="text-3xl phone-xl:text-2xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl !leading-[1.08] opacity-0"
           >
@@ -57,9 +60,9 @@ export default function LandingHero() {
             <span className="bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 bg-clip-text text-transparent dark:from-amber-400 dark:via-amber-300 dark:to-yellow-300">
               {t("heroHeadingOpportunity")}
             </span>
-          </h1>
+          </TypographyH1>
 
-          {/* Description */}
+          {/* Description Section */}
           <TypographyMuted
             data-hero="description"
             className="!leading-relaxed text-base sm:text-lg md:text-xl max-w-[640px] opacity-0"
@@ -67,7 +70,7 @@ export default function LandingHero() {
             {t("heroDescription")}
           </TypographyMuted>
 
-          {/* CTA Buttons */}
+          {/* CTA Buttons Section */}
           <div
             data-hero="cta"
             className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 sm:gap-4 pt-2 w-full sm:w-auto opacity-0"
@@ -92,13 +95,13 @@ export default function LandingHero() {
             </Link>
           </div>
 
-          {/* Stats */}
+          {/* Statistics Section */}
           <div data-hero="stats" className="flex justify-center opacity-0">
             <LandingLiveStats />
           </div>
         </div>
 
-        {/* Scroll Indicator */}
+        {/* Scroll Indicator Section */}
         <div
           data-hero="scroll"
           className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce opacity-0"
