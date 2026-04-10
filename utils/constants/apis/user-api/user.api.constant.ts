@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./base_url";
+import { API_BASE_URL } from "../base.api.constant";
 
 export const API_GET_ALL_USERS_URL = API_BASE_URL + "/user/all";
 export const API_GET_LANDING_STATS_URL =
@@ -8,5 +8,4 @@ export const API_GET_ONE_USER_URL = (userID: string) =>
 export const API_GET_CURRENT_USER_URL = API_BASE_URL + "/user/current-user";
 export const API_GET_ALL_CAREER_SCOPES_URL =
   API_BASE_URL + "/user/find-all-career-scopes";
-export const API_UPDATE_PUSH_TOKEN_URL =
-  API_BASE_URL + "/user/push-token";
+export const API_UPDATE_PUSH_TOKEN_URL = API_BASE_URL + "/user/push-token";

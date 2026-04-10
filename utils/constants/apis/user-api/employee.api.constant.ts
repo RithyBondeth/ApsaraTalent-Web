@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./base_url";
+import { API_BASE_URL } from "../base.api.constant";
 
 export const API_EMP_BASE_URL = `${API_BASE_URL}/user/employee`;
 

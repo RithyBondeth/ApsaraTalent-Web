@@ -1,4 +1,4 @@
-import { API_REMOVE_EMP_RESUME_URL } from "@/utils/constants/apis/employee_url";
+import { API_REMOVE_EMP_RESUME_URL } from "@/utils/constants/apis/user-api/employee.api.constant";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import axios from "axios";
 import { create } from "zustand";

@@ -7,7 +7,7 @@ import {
   API_GET_UNREAD_NOTIFICATION_COUNT_URL,
   API_MARK_ALL_NOTIFICATIONS_READ_URL,
   API_MARK_NOTIFICATION_READ_URL,
-} from "@/utils/constants/apis/notification_url";
+} from "@/utils/constants/apis/notification.api.constant";
 import { INotification } from "@/utils/interfaces/notification/notification.interface";
 import { create } from "zustand";
 

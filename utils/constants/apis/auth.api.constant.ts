@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./base_url";
+import { API_BASE_URL } from "./base.api.constant";
 
 export const API_AUTH_URL = API_BASE_URL + "/auth";
 export const API_AUTH_LOGIN_URL = API_AUTH_URL + "/login";

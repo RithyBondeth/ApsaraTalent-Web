@@ -1,6 +1,6 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
-import { API_FIND_ALL_COMPANY_FAVORITES } from "@/utils/constants/apis/favorite_url";
+import { API_FIND_ALL_COMPANY_FAVORITES } from "@/utils/constants/apis/favorite.api.constant";
 import { IEmployee } from "@/utils/interfaces/user/employee.interface";
 import { create } from "zustand";
 

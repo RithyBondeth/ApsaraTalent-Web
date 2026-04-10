@@ -1,6 +1,6 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
-import { API_GET_LANDING_STATS_URL } from "@/utils/constants/apis/user_url";
+import { API_GET_LANDING_STATS_URL } from "@/utils/constants/apis/user-api/user.api.constant";
 import { create } from "zustand";
 
 /* ---------------------------------- States --------------------------------- */

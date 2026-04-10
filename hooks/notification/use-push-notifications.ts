@@ -8,7 +8,7 @@ import {
   onMessage,
 } from "firebase/messaging";
 import axios from "@/lib/axios";
-import { API_UPDATE_PUSH_TOKEN_URL } from "@/utils/constants/apis/user_url";
+import { API_UPDATE_PUSH_TOKEN_URL } from "@/utils/constants/apis/user-api/user.api.constant";
 import { getFirebaseApp } from "@/lib/firebase";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";

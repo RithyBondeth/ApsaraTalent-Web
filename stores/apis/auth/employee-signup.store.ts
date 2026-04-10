@@ -1,6 +1,6 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
-import { API_AUTH_SIGNUP_URL } from "@/utils/constants/apis/auth_url";
+import { API_AUTH_SIGNUP_URL } from "@/utils/constants/apis/auth.api.constant";
 import { IEmployee } from "@/utils/interfaces/user/employee.interface";
 import { IUser } from "@/utils/interfaces/user/user.interface";
 import { create } from "zustand";

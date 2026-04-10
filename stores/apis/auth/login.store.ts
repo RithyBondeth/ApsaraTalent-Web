@@ -1,7 +1,7 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-manager";
-import { API_AUTH_LOGIN_URL } from "@/utils/constants/apis/auth_url";
+import { API_AUTH_LOGIN_URL } from "@/utils/constants/apis/auth.api.constant";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../users/get-current-user.store";
 import { IUserAuthResponse } from "@/utils/interfaces/auth/auth.interface";

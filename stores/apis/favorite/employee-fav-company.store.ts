@@ -3,7 +3,7 @@ import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import {
   API_EMPLOYEE_FAVORITE_COMPANY_URL,
   API_EMPLOYEE_UNFAVORITE_COMPANY_URL,
-} from "@/utils/constants/apis/favorite_url";
+} from "@/utils/constants/apis/favorite.api.constant";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { STORE_PERSIST_KEYS } from "../../shared/persist-keys";

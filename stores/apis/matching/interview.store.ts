@@ -5,7 +5,7 @@ import {
   API_GET_INTERVIEWS_BY_COMPANY_URL,
   API_GET_INTERVIEWS_BY_EMPLOYEE_URL,
   API_UPDATE_INTERVIEW_STATUS_URL,
-} from "@/utils/constants/apis/matching_url";
+} from "@/utils/constants/apis/matching.api.constant";
 import {
   ICreateInterviewPayload,
   IInterview,

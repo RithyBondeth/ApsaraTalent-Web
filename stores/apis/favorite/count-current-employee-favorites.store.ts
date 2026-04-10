@@ -1,4 +1,4 @@
-import { API_COUNT_ALL_EMPLOYEE_FAVORITES } from "@/utils/constants/apis/favorite_url";
+import { API_COUNT_ALL_EMPLOYEE_FAVORITES } from "@/utils/constants/apis/favorite.api.constant";
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { create } from "zustand";

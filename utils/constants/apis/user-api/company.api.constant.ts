@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./base_url";
+import { API_BASE_URL } from "../base.api.constant";
 
 export const API_CMP_BASE_URL = `${API_BASE_URL}/user/company`;
 
@@ -24,10 +24,10 @@ export const API_REMOVE_CMP_IMAGES_URL = (companyID: string) =>
 
 export const API_REMOVE_ONE_OPEN_POSITION = (
   companyID: string,
-  openPositionID: string
+  openPositionID: string,
 ) => `${API_CMP_BASE_URL}/remove-open-position/${companyID}/${openPositionID}`;
 
 export const API_REMOVE_ONE_CMP_IMAGE_URL = (
   companyID: string,
-  imageID: string
+  imageID: string,
 ) => `${API_CMP_BASE_URL}/remove-images/${companyID}/${imageID}`;

@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./base_url";
+import { API_BASE_URL } from "./base.api.constant";
 
 export const API_GET_NOTIFICATIONS_URL = API_BASE_URL + "/notification";
 export const API_GET_UNREAD_NOTIFICATION_COUNT_URL =

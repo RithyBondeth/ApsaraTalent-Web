@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useState } from "react";
 import { getCookie } from "cookies-next";
-import { API_BASE_URL } from "@/utils/constants/apis/base_url";
+import { API_BASE_URL } from "@/utils/constants/apis/base.api.constant";
 import { IVoiceRecorderResult } from "@/utils/interfaces/chat/chat.interface";
 import {
   AMPLITUDE_SAMPLE_INTERVAL_MS,

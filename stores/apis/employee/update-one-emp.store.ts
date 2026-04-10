@@ -1,6 +1,6 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
-import { API_UPDATE_EMP_INFO_URL } from "@/utils/constants/apis/employee_url";
+import { API_UPDATE_EMP_INFO_URL } from "@/utils/constants/apis/user-api/employee.api.constant";
 import { IEmployee } from "@/utils/interfaces/user/employee.interface";
 import { create } from "zustand";
 
