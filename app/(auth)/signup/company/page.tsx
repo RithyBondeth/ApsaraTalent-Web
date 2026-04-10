@@ -29,9 +29,10 @@ export default function CompanySignup() {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const t = useTranslations("auth");
-
-  const [step, setStep] = useState<number>(1);
   const totalSteps = 6;
+
+  /* ------------------------------ All States -------------------------------- */
+  const [step, setStep] = useState<number>(1);
   const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
 
   /* ----------------------------- API Integration ---------------------------- */
@@ -101,6 +102,7 @@ export default function CompanySignup() {
     6: ["careerScopes"],
   };
 
+  /* --------------------------------- Methods --------------------------------- */
   // ── Navigation Helpers ─────────────────────────────────────────
   // Handle Previous Step
   const prevStep = () => setStep((prev) => prev - 1);
@@ -113,7 +115,6 @@ export default function CompanySignup() {
 
     if (isValid) {
       if (step === totalSteps) {
-        /* --------------------------------- Methods --------------------------------- */
         // ── Final Submit: Company Registration ────────────────────
         handleSubmit(async (data) => {
           // Register with regular email-password
@@ -302,7 +303,7 @@ export default function CompanySignup() {
         ? t("uploadingCompanyCover")
         : t("processingRequest");
 
-  /* ---------------------------------- Render UI ---------------------------------- */
+  /* -------------------------------------------- Render UI -------------------------------------------- */
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col gap-5 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
       {/* Navigate Back Button Section */}
@@ -339,7 +340,7 @@ export default function CompanySignup() {
                 >
                   {st}
                 </div>
-                {/* Line Between Steps (Only Render Before Last Step) */}
+                {/* Line Between Steps Section (Only Render Before Last Step) */}
                 {index < totalSteps - 1 && (
                   <div className="flex-1 h-1 bg-muted rounded-full relative">
                     <div

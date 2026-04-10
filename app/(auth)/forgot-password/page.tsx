@@ -25,12 +25,11 @@ import { forgotPasswordWhiteSvg } from "@/utils/constants/asset.constant";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 export default function ForgotPasswordPage() {
-  /* ------------------------------- All States ------------------------------ */
-  // Utils
+  /* ---------------------------------- Utils -------------------------------- */
   const router = useRouter();
   const t = useTranslations("auth");
 
-  // Forgot Password Helpers
+  /* ------------------------------- All States ------------------------------ */
   const [inputValue, setInputValue] = useState<string>("");
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
@@ -87,7 +86,7 @@ export default function ForgotPasswordPage() {
       {/* Left Section */}
       <div className="w-1/2 min-h-screen flex items-center justify-center bg-background p-6 sm:p-10 tablet-md:w-full tablet-md:min-h-0 tablet-md:py-16">
         <div className="w-full max-w-[440px] flex flex-col items-start gap-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
-          {/* Icon Badge */}
+          {/* Icon Badge Section */}
           <div className="size-16 rounded-2xl bg-primary/10 flex items-center justify-center">
             <LucideLock className="size-7 text-primary" />
           </div>
@@ -136,7 +135,7 @@ export default function ForgotPasswordPage() {
 
       {/* Right Section: Image Poster Section */}
       <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary relative overflow-hidden tablet-md:hidden">
-        {/* Decorative Circles */}
+        {/* Decorative Circles Section */}
         <div className="absolute -top-20 -right-20 size-72 rounded-full bg-white/5" />
         <div className="absolute -bottom-32 -left-32 size-96 rounded-full bg-white/5" />
 

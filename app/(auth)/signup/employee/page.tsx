@@ -31,9 +31,10 @@ export default function EmployeeSignup() {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const t = useTranslations("auth");
-
-  const [step, setStep] = useState<number>(1);
   const totalSteps = 6;
+
+  /* ------------------------------ All States -------------------------------- */
+  const [step, setStep] = useState<number>(1);
   const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
 
   /* ----------------------------- API Integration ---------------------------- */
@@ -98,6 +99,7 @@ export default function EmployeeSignup() {
     6: ["careerScopes"],
   };
 
+  /* --------------------------------- Methods --------------------------------- */
   // ── Navigation Helpers ─────────────────────────────────────────
   // Check if user has no experience (to skip step 2)
   const hasNoExperience = () =>
@@ -133,7 +135,6 @@ export default function EmployeeSignup() {
       return;
     }
 
-    /* --------------------------------- Methods --------------------------------- */
     // ── Final Submit: Employee Registration ────────────────────────────
     handleSubmit(async (data) => {
       try {

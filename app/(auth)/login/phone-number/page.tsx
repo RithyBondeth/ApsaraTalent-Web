@@ -87,7 +87,7 @@ export default function PhoneNumberPage() {
       {/* Left Section */}
       <div className="w-1/2 min-h-screen flex items-center justify-center bg-background p-6 sm:p-10 tablet-md:w-full tablet-md:min-h-0 tablet-md:py-12">
         <div className="w-full max-w-[440px] flex flex-col gap-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
-          {/* Logo */}
+          {/* Logo Section */}
           <LogoComponent className="!h-24 w-auto self-start" withoutTitle />
 
           {/* Title Section */}
@@ -125,12 +125,14 @@ export default function PhoneNumberPage() {
                   />
                 )}
               />
-              <TypographyMuted className="text-xs">{t("rememberMeLabel")}</TypographyMuted>
+              <TypographyMuted className="text-xs">
+                {t("rememberMeLabel")}
+              </TypographyMuted>
             </div>
             <Button>{t("loginButton")}</Button>
           </form>
 
-          {/* Back to login link */}
+          {/* Navigate Back Button Section */}
           <button
             onClick={() => router.back()}
             className="underline text-sm text-primary hover:text-primary/80 transition-colors text-center"
@@ -140,7 +142,7 @@ export default function PhoneNumberPage() {
         </div>
       </div>
 
-      {/* Right Section: Image Poster Section */}
+      {/* Right Section: Image Poster */}
       <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary relative overflow-hidden tablet-md:hidden">
         <Image
           src={phoneNumberWhiteSvg}

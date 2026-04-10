@@ -132,11 +132,7 @@ export default function PhoneOTPPage() {
     isProcessingOtpLogin.current = false;
     setLoginInitiated(true);
     const phone = basicPhoneSignupData?.phone?.replace("0", "+855") ?? "";
-    await verifyOtp(
-      phone,
-      data.otp,
-      basicPhoneSignupData?.rememberMe ?? true,
-    );
+    await verifyOtp(phone, data.otp, basicPhoneSignupData?.rememberMe ?? true);
   };
 
   /* --------------------------------- Effects --------------------------------- */
@@ -228,7 +224,7 @@ export default function PhoneOTPPage() {
     t,
   ]);
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* --------------------------------------------- Render UI ---------------------------------------------- */
   return (
     <div className="min-h-screen w-full flex tablet-md:flex-col">
       {/* Left Section */}
@@ -310,7 +306,7 @@ export default function PhoneOTPPage() {
             <Button type="submit">{t("continue")}</Button>
           </form>
 
-          {/* Resend code text */}
+          {/* Resend Code Text Section */}
           <TypographyMuted className="text-center">
             {t("didntReceiveCode")}{" "}
             <TypographySmall className="text-foreground font-medium cursor-pointer">
@@ -320,7 +316,7 @@ export default function PhoneOTPPage() {
         </div>
       </div>
 
-      {/* Right Section: Image Poster Section */}
+      {/* Right Section: Image Poster */}
       <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary relative overflow-hidden tablet-md:hidden">
         <Image
           src={phoneOTPWhiteSvg}

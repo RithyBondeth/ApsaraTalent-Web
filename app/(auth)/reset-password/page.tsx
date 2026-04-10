@@ -22,7 +22,6 @@ import { resetPasswordSchema, TResetPasswordForm } from "./validate";
 import { resetPasswordWhiteSvg } from "@/utils/constants/asset.constant";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
-
 export default function ResetPasswordPage() {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
@@ -53,11 +52,6 @@ export default function ResetPasswordPage() {
     defaultValues: { token: tokenFromUrl },
   });
 
-  /* ── Pre-fill token whenever URL param is available ── */
-  useEffect(() => {
-    if (tokenFromUrl) setValue("token", tokenFromUrl);
-  }, [tokenFromUrl, setValue]);
-
   /* --------------------------------- Methods ---------------------------------- */
   const onSubmit = async (data: TResetPasswordForm) => {
     setIsSubmitted(true);
@@ -65,6 +59,11 @@ export default function ResetPasswordPage() {
   };
 
   /* --------------------------------- Effects ---------------------------------- */
+  /* ── Pre-fill token whenever URL param is available ── */
+  useEffect(() => {
+    if (tokenFromUrl) setValue("token", tokenFromUrl);
+  }, [tokenFromUrl, setValue]);
+
   useEffect(() => {
     if (!isSubmitted) return;
 
@@ -84,7 +83,7 @@ export default function ResetPasswordPage() {
     }
   }, [error, isSubmitted, loading, message, reset, router, t]);
 
-  /* ---------------------------------- Render UI -------------------------------- */
+  /* --------------------------------------------- Render UI ------------------------------------------- */
   return (
     <div className="min-h-screen w-full flex tablet-md:flex-col">
       {/* Left Section */}
@@ -112,7 +111,7 @@ export default function ResetPasswordPage() {
             className="w-full flex flex-col gap-3"
             onSubmit={handleSubmit(onSubmit)}
           >
-            {/* Token Field Section — hidden when auto-filled from URL query param */}
+            {/* Token Field Section: Hidden when auto-filled from URL query param */}
             {!tokenFromUrl && (
               <Input
                 prefix={<LucideKey />}
@@ -160,7 +159,7 @@ export default function ResetPasswordPage() {
             </Button>
           </form>
 
-          {/* Back to Login Link */}
+          {/* Navigate Back Button Section */}
           <div className="w-full flex justify-center">
             <button
               onClick={() => router.back()}

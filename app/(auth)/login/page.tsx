@@ -261,10 +261,30 @@ function LoginPage() {
   // Social Login Function
   const handleSocialLogin = (rememberMe: "true" | "false") => {
     // Reset all social store states to avoid stale errors triggering the effect
-    useGoogleLoginStore.setState({ error: null, loading: false, isAuthenticated: false, newUser: null });
-    useLinkedInLoginStore.setState({ error: null, loading: false, isAuthenticated: false, newUser: null });
-    useGithubLoginStore.setState({ error: null, loading: false, isAuthenticated: false, newUser: null });
-    useFacebookLoginStore.setState({ error: null, loading: false, isAuthenticated: false, newUser: null });
+    useGoogleLoginStore.setState({
+      error: null,
+      loading: false,
+      isAuthenticated: false,
+      newUser: null,
+    });
+    useLinkedInLoginStore.setState({
+      error: null,
+      loading: false,
+      isAuthenticated: false,
+      newUser: null,
+    });
+    useGithubLoginStore.setState({
+      error: null,
+      loading: false,
+      isAuthenticated: false,
+      newUser: null,
+    });
+    useFacebookLoginStore.setState({
+      error: null,
+      loading: false,
+      isAuthenticated: false,
+      newUser: null,
+    });
 
     toast.dismiss();
     setSocialLoginInitiated(true);
@@ -321,7 +341,7 @@ function LoginPage() {
       !socialLoadingState &&
       !isProcessingSocialLogin.current
     ) {
-      isProcessingSocialLogin.current = true; // Prevent duplicate execution
+      isProcessingSocialLogin.current = true;
       toast.dismiss();
 
       setIsPreloadingData(true);
@@ -379,7 +399,6 @@ function LoginPage() {
         },
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     googleLoginStore.isAuthenticated,
     googleLoginStore.newUser,
@@ -577,7 +596,7 @@ function LoginPage() {
 
       {/* Right Section: Image Poster Section */}
       <div className="w-1/2 h-full flex items-center justify-center bg-primary relative overflow-hidden tablet-lg:hidden">
-        {/* Decorative circles */}
+        {/* Decorative circles Section */}
         <div className="absolute -top-20 -right-20 size-64 rounded-full bg-white/5" />
         <div className="absolute -bottom-16 -left-16 size-48 rounded-full bg-white/5" />
         <div className="absolute top-1/4 -left-10 size-32 rounded-full bg-white/[0.03]" />

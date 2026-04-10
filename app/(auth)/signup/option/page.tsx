@@ -147,9 +147,7 @@ export default function SingUpOption() {
       <TypographyH2>{t("signupOptionTitle")}</TypographyH2>
 
       {/* Subtitle Section */}
-      <TypographyMuted>
-        {t("signupOptionSubtitle")}
-      </TypographyMuted>
+      <TypographyMuted>{t("signupOptionSubtitle")}</TypographyMuted>
 
       <form className="w-full flex flex-col" onSubmit={handleSubmit(onSubmit)}>
         {/* Role Selection Section */}
@@ -175,7 +173,7 @@ export default function SingUpOption() {
           <ErrorMessage>{errors.selectedRole?.message}</ErrorMessage>
         </div>
 
-        {/* Button Section */}
+        {/* Navigate Back Button Section */}
         <div className="w-full flex items-center gap-3">
           <Button
             className="flex-1"
