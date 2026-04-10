@@ -1,6 +1,6 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
-import { API_REMOVE_ONE_CMP_IMAGE_URL } from "@/utils/constants/apis/company.api.constant";
+import { API_REMOVE_ONE_CMP_IMAGE_URL } from "@/utils/constants/apis/user-api/company.api.constant";
 import { create } from "zustand";
 
 /* ---------------------------------- States --------------------------------- */
