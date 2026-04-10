@@ -27,9 +27,10 @@ const HIDDEN: TextSelectionState = {
  * state whenever text inside `[data-canvas-editable]` is selected.
  */
 export function useTextSelection(): TextSelectionState {
+  /* --------------------------------- All States -------------------------------- */
   const [state, setState] = useState<TextSelectionState>(HIDDEN);
 
-  useEffect(() => {
+  /* ---------------------------------- Effects --------------------------------- */ useEffect(() => {
     function handleSelectionChange() {
       const sel = window.getSelection();
 
@@ -69,5 +70,6 @@ export function useTextSelection(): TextSelectionState {
       document.removeEventListener("selectionchange", handleSelectionChange);
   }, []);
 
+  /* ---------------------------------- Return ---------------------------------- */
   return state;
 }

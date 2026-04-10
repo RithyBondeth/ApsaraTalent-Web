@@ -60,7 +60,7 @@ function getSupportedMimeType(): string {
       return mime;
     }
   }
-  return "audio/webm"; // fallback — let the browser sort it out
+  return "audio/webm";
 }
 
 // ── Helper: downsample amplitude array to WAVEFORM_POINTS ─────────────────────
@@ -88,6 +88,7 @@ function downsampleAmplitude(
 
 // ── Hook ───────────────────────────────────────────────────────────────────────
 export function useVoiceRecorder(): VoiceRecorderResult {
+  /* --------------------------------- All States -------------------------------- */
   const [recordingState, setRecordingState] = useState<RecordingState>("idle");
   const [durationSeconds, setDurationSeconds] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -311,6 +312,7 @@ export function useVoiceRecorder(): VoiceRecorderResult {
     setErrorMessage(null);
   }, [cleanupRefs]);
 
+  /* ---------------------------------- Return ---------------------------------- */
   return {
     recordingState,
     durationSeconds,

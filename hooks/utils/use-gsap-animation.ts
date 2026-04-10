@@ -44,134 +44,147 @@ function splitTextIntoWords(el: HTMLElement) {
  * Variants: fade-up, fade-down, fade-left, fade-right, scale-up, stagger-children, split-words
  */
 export function useGsapScrollAnimation<T extends HTMLElement>() {
+  /* --------------------------------- All States -------------------------------- */
   const containerRef = useRef<T>(null);
 
-  useEffect(() => {
+  /* ---------------------------------- Effects --------------------------------- */ useEffect(() => {
     if (!containerRef.current) return;
 
     const ctx = gsap.context(() => {
       // ── fade-up ────────────────────────────────────────────
-      gsap.utils.toArray<HTMLElement>("[data-gsap='fade-up']").forEach((el, i) => {
-        gsap.fromTo(
-          el,
-          { opacity: 0, y: 40 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            delay: i * 0.1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 90%",
-              toggleActions: "play none none none",
+      gsap.utils
+        .toArray<HTMLElement>("[data-gsap='fade-up']")
+        .forEach((el, i) => {
+          gsap.fromTo(
+            el,
+            { opacity: 0, y: 40 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.8,
+              delay: i * 0.1,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: el,
+                start: "top 90%",
+                toggleActions: "play none none none",
+              },
             },
-          },
-        );
-      });
+          );
+        });
 
       // ── fade-down ──────────────────────────────────────────
-      gsap.utils.toArray<HTMLElement>("[data-gsap='fade-down']").forEach((el, i) => {
-        gsap.fromTo(
-          el,
-          { opacity: 0, y: -30 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            delay: i * 0.1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 90%",
-              toggleActions: "play none none none",
+      gsap.utils
+        .toArray<HTMLElement>("[data-gsap='fade-down']")
+        .forEach((el, i) => {
+          gsap.fromTo(
+            el,
+            { opacity: 0, y: -30 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.8,
+              delay: i * 0.1,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: el,
+                start: "top 90%",
+                toggleActions: "play none none none",
+              },
             },
-          },
-        );
-      });
+          );
+        });
 
       // ── fade-left ──────────────────────────────────────────
-      gsap.utils.toArray<HTMLElement>("[data-gsap='fade-left']").forEach((el, i) => {
-        gsap.fromTo(
-          el,
-          { opacity: 0, x: -50 },
-          {
-            opacity: 1,
-            x: 0,
-            duration: 0.8,
-            delay: i * 0.12,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 90%",
-              toggleActions: "play none none none",
+      gsap.utils
+        .toArray<HTMLElement>("[data-gsap='fade-left']")
+        .forEach((el, i) => {
+          gsap.fromTo(
+            el,
+            { opacity: 0, x: -50 },
+            {
+              opacity: 1,
+              x: 0,
+              duration: 0.8,
+              delay: i * 0.12,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: el,
+                start: "top 90%",
+                toggleActions: "play none none none",
+              },
             },
-          },
-        );
-      });
+          );
+        });
 
       // ── fade-right ─────────────────────────────────────────
-      gsap.utils.toArray<HTMLElement>("[data-gsap='fade-right']").forEach((el, i) => {
-        gsap.fromTo(
-          el,
-          { opacity: 0, x: 50 },
-          {
-            opacity: 1,
-            x: 0,
-            duration: 0.8,
-            delay: i * 0.12,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 90%",
-              toggleActions: "play none none none",
+      gsap.utils
+        .toArray<HTMLElement>("[data-gsap='fade-right']")
+        .forEach((el, i) => {
+          gsap.fromTo(
+            el,
+            { opacity: 0, x: 50 },
+            {
+              opacity: 1,
+              x: 0,
+              duration: 0.8,
+              delay: i * 0.12,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: el,
+                start: "top 90%",
+                toggleActions: "play none none none",
+              },
             },
-          },
-        );
-      });
+          );
+        });
 
       // ── scale-up ───────────────────────────────────────────
-      gsap.utils.toArray<HTMLElement>("[data-gsap='scale-up']").forEach((el) => {
-        gsap.fromTo(
-          el,
-          { opacity: 0, scale: 0.9 },
-          {
-            opacity: 1,
-            scale: 1,
-            duration: 0.8,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 90%",
-              toggleActions: "play none none none",
+      gsap.utils
+        .toArray<HTMLElement>("[data-gsap='scale-up']")
+        .forEach((el) => {
+          gsap.fromTo(
+            el,
+            { opacity: 0, scale: 0.9 },
+            {
+              opacity: 1,
+              scale: 1,
+              duration: 0.8,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: el,
+                start: "top 90%",
+                toggleActions: "play none none none",
+              },
             },
-          },
-        );
-      });
+          );
+        });
 
       // ── split-words — animate each word individually ───────
-      gsap.utils.toArray<HTMLElement>("[data-gsap='split-words']").forEach((el) => {
-        splitTextIntoWords(el);
-        const words = el.querySelectorAll(".gsap-word");
+      gsap.utils
+        .toArray<HTMLElement>("[data-gsap='split-words']")
+        .forEach((el) => {
+          splitTextIntoWords(el);
+          const words = el.querySelectorAll(".gsap-word");
 
-        gsap.fromTo(
-          words,
-          { opacity: 0, y: 20, rotateX: -40 },
-          {
-            opacity: 1,
-            y: 0,
-            rotateX: 0,
-            duration: 0.6,
-            stagger: 0.04,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 88%",
-              toggleActions: "play none none none",
+          gsap.fromTo(
+            words,
+            { opacity: 0, y: 20, rotateX: -40 },
+            {
+              opacity: 1,
+              y: 0,
+              rotateX: 0,
+              duration: 0.6,
+              stagger: 0.04,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: el,
+                start: "top 88%",
+                toggleActions: "play none none none",
+              },
             },
-          },
-        );
-      });
+          );
+        });
 
       // ── stagger-children ───────────────────────────────────
       gsap.utils
@@ -200,6 +213,7 @@ export function useGsapScrollAnimation<T extends HTMLElement>() {
     return () => ctx.revert();
   }, []);
 
+  /* ---------------------------------- Return ---------------------------------- */
   return containerRef;
 }
 
@@ -208,9 +222,10 @@ export function useGsapScrollAnimation<T extends HTMLElement>() {
  * Plays on every mount (including language-switch remounts via key={language}).
  */
 export function useGsapHeroAnimation<T extends HTMLElement>() {
+  /* --------------------------------- All States -------------------------------- */
   const containerRef = useRef<T>(null);
 
-  useEffect(() => {
+  /* ---------------------------------- Effects --------------------------------- */ useEffect(() => {
     if (!containerRef.current) return;
 
     const ctx = gsap.context(() => {
@@ -284,5 +299,6 @@ export function useGsapHeroAnimation<T extends HTMLElement>() {
     return () => ctx.revert();
   }, []);
 
+  /* ---------------------------------- Return ---------------------------------- */
   return containerRef;
 }
