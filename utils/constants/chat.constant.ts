@@ -34,3 +34,12 @@ export const CHAT_ACCEPTED_MIME_TYPES = [
 ].join(",");
 
 export const WEB_URL_REGEX = /(?:https?:\/\/|www\.)[^\s/$.?#].[^\s]*/gi;
+
+/** Maximum recording duration in milliseconds (5 minutes). */
+export const VOICE_RECORDING_MAX_DURATION_MS = 5 * 60 * 1000;
+
+/** How often (ms) we sample amplitude data during recording. */
+export const AMPLITUDE_SAMPLE_INTERVAL_MS = 100;
+
+/** Target number of amplitude bars in the waveform visualization. */
+export const WAVEFORM_POINTS = 30;

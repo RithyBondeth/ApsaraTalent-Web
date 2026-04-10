@@ -172,6 +172,7 @@ export const usePushNotifications = () => {
 
     void setupPushNotifications();
 
+    /* --------------------------------- Cleanup --------------------------------- */
     return () => {
       isCancelled = true;
       initializedRef.current = false;

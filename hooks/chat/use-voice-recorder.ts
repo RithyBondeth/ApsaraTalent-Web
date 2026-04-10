@@ -3,47 +3,16 @@
 import { useCallback, useRef, useState } from "react";
 import { getCookie } from "cookies-next";
 import { API_BASE_URL } from "@/utils/constants/apis/base_url";
+import { IVoiceRecorderResult } from "@/utils/interfaces/chat/chat.interface";
+import {
+  AMPLITUDE_SAMPLE_INTERVAL_MS,
+  VOICE_RECORDING_MAX_DURATION_MS,
+  WAVEFORM_POINTS,
+} from "@/utils/constants/chat.constant";
+import { TChatRecordingState } from "@/utils/types/chat/chat.type";
 
-// ── Constants ──────────────────────────────────────────────────────────────────
-const API_BASE = API_BASE_URL || "http://localhost:3000";
-
-/** Maximum recording duration in milliseconds (5 minutes). */
-export const VOICE_RECORDING_MAX_DURATION_MS = 5 * 60 * 1000;
-
-/** How often (ms) we sample amplitude data during recording. */
-const AMPLITUDE_SAMPLE_INTERVAL_MS = 100;
-
-/** Target number of amplitude bars in the waveform visualization. */
-const WAVEFORM_POINTS = 30;
-
-// ── Types ──────────────────────────────────────────────────────────────────────
-export type RecordingState = "idle" | "recording" | "uploading";
-
-export interface VoiceRecorderResult {
-  recordingState: RecordingState;
-  /** Elapsed recording time in whole seconds. */
-  durationSeconds: number;
-  /** Error message if getUserMedia or upload failed. */
-  errorMessage: string | null;
-  startRecording: () => Promise<void>;
-  /**
-   * Stops recording, uploads the audio blob, then calls `onSend` with the result.
-   * Returns false if nothing was recorded.
-   */
-  stopRecording: (
-    onSend: (attachment: {
-      url: string;
-      type: "audio";
-      filename: string;
-      duration: number;
-      amplitude: number[];
-    }) => void,
-  ) => Promise<boolean>;
-  /** Discards the in-progress recording without sending. */
-  cancelRecording: () => void;
-}
-
-// ── Helper: pick supported MIME type ──────────────────────────────────────────
+/* ------------------------------------ Helpers ---------------------------------- */
+// ── Pick supported MIME type ──────────────────────────────────────────
 function getSupportedMimeType(): string {
   const candidates = [
     "audio/webm;codecs=opus",
@@ -63,7 +32,7 @@ function getSupportedMimeType(): string {
   return "audio/webm";
 }
 
-// ── Helper: downsample amplitude array to WAVEFORM_POINTS ─────────────────────
+// ── Downsample amplitude array to WAVEFORM_POINTS ─────────────────────
 function downsampleAmplitude(
   samples: number[],
   targetPoints: number,
@@ -86,11 +55,12 @@ function downsampleAmplitude(
   });
 }
 
-// ── Hook ───────────────────────────────────────────────────────────────────────
-export function useVoiceRecorder(): VoiceRecorderResult {
+/* ------------------------------------- Hook ------------------------------------ */
+export function useVoiceRecorder(): IVoiceRecorderResult {
   /* --------------------------------- All States -------------------------------- */
-  const [recordingState, setRecordingState] = useState<RecordingState>("idle");
-  const [durationSeconds, setDurationSeconds] = useState(0);
+  const [recordingState, setRecordingState] =
+    useState<TChatRecordingState>("idle");
+  const [durationSeconds, setDurationSeconds] = useState<number>(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // All mutable recording objects live in refs to avoid re-renders during recording
@@ -105,8 +75,9 @@ export function useVoiceRecorder(): VoiceRecorderResult {
   const maxDurationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
-  const durationSecondsRef = useRef(0);
+  const durationSecondsRef = useRef<number>(0);
 
+  /* --------------------------------- Methods ---------------------------------- */
   // ── Cleanup helper ─────────────────────────────────────────────────────────
   const cleanupRefs = useCallback(() => {
     if (durationTimerRef.current) clearInterval(durationTimerRef.current);
@@ -256,7 +227,7 @@ export function useVoiceRecorder(): VoiceRecorderResult {
             const formData = new FormData();
             formData.append("file", blob, filename);
             const accessToken = getCookie("auth-token");
-            const res = await fetch(`${API_BASE}/chat/upload`, {
+            const res = await fetch(`${API_BASE_URL}/chat/upload`, {
               method: "POST",
               body: formData,
               credentials: "include",

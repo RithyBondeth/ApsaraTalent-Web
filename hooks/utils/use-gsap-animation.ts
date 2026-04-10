@@ -3,9 +3,9 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-
 gsap.registerPlugin(ScrollTrigger);
 
+/* --------------------------------- Helpers -------------------------------- */
 /**
  * Splits an element's text into individual word spans for animation.
  * Preserves child elements (like gradient spans) as-is.
@@ -47,7 +47,8 @@ export function useGsapScrollAnimation<T extends HTMLElement>() {
   /* --------------------------------- All States -------------------------------- */
   const containerRef = useRef<T>(null);
 
-  /* ---------------------------------- Effects --------------------------------- */ useEffect(() => {
+  /* ---------------------------------- Effects --------------------------------- */
+  useEffect(() => {
     if (!containerRef.current) return;
 
     const ctx = gsap.context(() => {

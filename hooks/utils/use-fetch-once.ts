@@ -33,7 +33,7 @@ export function useFetchOnce(
     cacheKey = "default",
   } = options;
 
-  /* --------------------------------- All States -------------------------------- */
+  /* --------------------------------- All States ------------------------------- */
   const currentUser = useGetCurrentUserStore((s) => s.user);
   const lastUserIdRef = useRef<string | null>(null);
 

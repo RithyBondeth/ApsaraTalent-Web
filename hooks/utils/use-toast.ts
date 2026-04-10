@@ -1,24 +1,15 @@
 "use client";
-import * as React from "react";
 
+import * as React from "react";
 import type { ToastActionElement, ToastProps } from "@/components/ui/toast";
 
-const TOAST_LIMIT = 1;
-const TOAST_REMOVE_DELAY = 1000000;
-
+/* ----------------------------------- Types ---------------------------------- */
 type ToasterToast = ToastProps & {
   id: string;
   title?: React.ReactNode;
   description?: React.ReactNode;
   action?: ToastActionElement;
 };
-
-let count = 0;
-
-function genId() {
-  count = (count + 1) % Number.MAX_SAFE_INTEGER;
-  return count.toString();
-}
 
 type Action =
   | {
@@ -42,7 +33,23 @@ interface State {
   toasts: ToasterToast[];
 }
 
+type Toast = Omit<ToasterToast, "id">;
+
+/* --------------------------------- Constants -------------------------------- */
+const TOAST_LIMIT = 1;
+const TOAST_REMOVE_DELAY = 1000000;
+
+/* ---------------------------------- States ---------------------------------- */
+let count = 0;
 const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>();
+const listeners: Array<(state: State) => void> = [];
+let memoryState: State = { toasts: [] };
+
+/* --------------------------------- Helpers ---------------------------------- */
+function genId() {
+  count = (count + 1) % Number.MAX_SAFE_INTEGER;
+  return count.toString();
+}
 
 const addToRemoveQueue = (toastId: string) => {
   if (toastTimeouts.has(toastId)) {
@@ -78,9 +85,6 @@ export const reducer = (state: State, action: Action): State => {
 
     case "DISMISS_TOAST": {
       const { toastId } = action;
-
-      // ! Side effects ! - This could be extracted into a dismissToast() action,
-      // but I'll keep it here for simplicity
       if (toastId) {
         addToRemoveQueue(toastId);
       } else {
@@ -115,18 +119,13 @@ export const reducer = (state: State, action: Action): State => {
   }
 };
 
-const listeners: Array<(state: State) => void> = [];
-
-let memoryState: State = { toasts: [] };
-
+/* --------------------------------- Methods ---------------------------------- */
 function dispatch(action: Action) {
   memoryState = reducer(memoryState, action);
   listeners.forEach((listener) => {
     listener(memoryState);
   });
 }
-
-type Toast = Omit<ToasterToast, "id">;
 
 function toast({ ...props }: Toast) {
   const id = genId();
@@ -157,9 +156,12 @@ function toast({ ...props }: Toast) {
   };
 }
 
+/* ------------------------------------ Hook ------------------------------------ */
 function useToast() {
+  /* -------------------------------- All States -------------------------------- */
   const [state, setState] = React.useState<State>(memoryState);
 
+  /* --------------------------------- Effects ---------------------------------- */
   React.useEffect(() => {
     listeners.push(setState);
     return () => {

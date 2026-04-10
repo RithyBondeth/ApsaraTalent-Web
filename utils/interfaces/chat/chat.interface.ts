@@ -1,3 +1,5 @@
+import { TChatRecordingState } from "@/utils/types/chat/chat.type";
+
 export interface IChatReplyTo {
   id: string;
   content: string;
@@ -62,4 +64,28 @@ export interface IPendingFile {
   error?: string;
   uploaded?: IChatUploadedFile;
   filename: string;
+}
+
+export interface IVoiceRecorderResult {
+  recordingState: TChatRecordingState;
+  /** Elapsed recording time in whole seconds. */
+  durationSeconds: number;
+  /** Error message if getUserMedia or upload failed. */
+  errorMessage: string | null;
+  startRecording: () => Promise<void>;
+  /**
+   * Stops recording, uploads the audio blob, then calls `onSend` with the result.
+   * Returns false if nothing was recorded.
+   */
+  stopRecording: (
+    onSend: (attachment: {
+      url: string;
+      type: "audio";
+      filename: string;
+      duration: number;
+      amplitude: number[];
+    }) => void,
+  ) => Promise<boolean>;
+  /** Discards the in-progress recording without sending. */
+  cancelRecording: () => void;
 }

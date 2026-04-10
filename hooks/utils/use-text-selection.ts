@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-/* ─── Types ─────────────────────────────────────────────────── */
+/* ---------------------------------- Helper --------------------------------- */
 export interface TextSelectionState {
   isVisible: boolean;
   /** screen-space top in px — place toolbar above selection */
@@ -27,10 +27,11 @@ const HIDDEN: TextSelectionState = {
  * state whenever text inside `[data-canvas-editable]` is selected.
  */
 export function useTextSelection(): TextSelectionState {
-  /* --------------------------------- All States -------------------------------- */
+  /* --------------------------------- All States ------------------------------- */
   const [state, setState] = useState<TextSelectionState>(HIDDEN);
 
-  /* ---------------------------------- Effects --------------------------------- */ useEffect(() => {
+  /* ---------------------------------- Effects --------------------------------- */
+  useEffect(() => {
     function handleSelectionChange() {
       const sel = window.getSelection();
 
