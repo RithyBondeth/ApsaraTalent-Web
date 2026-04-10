@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
 
+/* ----------------------------------- Hook ----------------------------------- */
 export function useReferenceFilesState() {
-  /* --------------------------------- All States -------------------------------- */
+  /* -------------------------------- All States -------------------------------- */
   // ── Resume States ─────────────────────────────────────────
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const resumeInputRef = useRef<HTMLInputElement | null>(null);
@@ -21,7 +22,7 @@ export function useReferenceFilesState() {
   >("resume");
   const [previewReferenceUrl, setPreviewReferenceUrl] = useState<string>("");
 
-  /* ---------------------------------- Return ---------------------------------- */
+  /* --------------------------------- Methods ---------------------------------- */
   return {
     resumeFile,
     setResumeFile,

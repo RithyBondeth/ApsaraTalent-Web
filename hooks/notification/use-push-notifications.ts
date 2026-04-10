@@ -12,15 +12,15 @@ import { API_UPDATE_PUSH_TOKEN_URL } from "@/utils/constants/apis/user_url";
 import { getFirebaseApp } from "@/lib/firebase";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
+import { PUSH_TOKEN_STORAGE_KEY } from "@/utils/constants/cookie.constant";
 
-const PUSH_TOKEN_STORAGE_KEY = "apsara-push-token";
-
+/* ----------------------------------- Hook ----------------------------------- */
 export const usePushNotifications = () => {
-  /* --------------------------------- All States -------------------------------- */
+  /* -------------------------------- All States -------------------------------- */
   const userId = useGetCurrentUserStore((s) => s.user?.id);
   const initializedRef = useRef(false);
 
-  /* ---------------------------------- Effects --------------------------------- */
+  /* --------------------------------- Effects ---------------------------------- */
   useEffect(() => {
     if (!userId || initializedRef.current) {
       return;

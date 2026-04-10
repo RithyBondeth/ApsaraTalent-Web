@@ -33,7 +33,7 @@ export function useFetchOnce(
     cacheKey = "default",
   } = options;
 
-  /* --------------------------------- All States ------------------------------- */
+  /* -------------------------------- All States -------------------------------- */
   const currentUser = useGetCurrentUserStore((s) => s.user);
   const lastUserIdRef = useRef<string | null>(null);
 
@@ -66,7 +66,7 @@ export function useFetchOnce(
     return fetchCache.get(cacheKey)!;
   }, [cacheKey]);
 
-  /* ---------------------------------- Effects --------------------------------- */
+  /* --------------------------------- Effects ---------------------------------- */
   // Keep callback refs fresh without forcing the fetch effect to rerun
   // whenever parent components recreate inline callbacks.
   useEffect(() => {
@@ -116,6 +116,6 @@ export function useFetchOnce(
     userData.companyId,
   ]);
 
-  /* ---------------------------------- Return ---------------------------------- */
+  /* --------------------------------- Methods ---------------------------------- */
   return userData;
 }

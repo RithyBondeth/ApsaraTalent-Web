@@ -17,3 +17,5 @@ export const COOKIE_CONFIG = {
   SAME_SITE: "strict" as const,
   PATH: "/",
 } as const;
+
+export const PUSH_TOKEN_STORAGE_KEY = "apsara-push-token";

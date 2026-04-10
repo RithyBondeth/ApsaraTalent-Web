@@ -2,8 +2,9 @@ import { IBenefits } from "@/utils/interfaces/user/company.interface";
 import { IValues } from "@/utils/interfaces/user/company.interface";
 import { useState } from "react";
 
+/* ----------------------------------- Hook ----------------------------------- */
 export default function useCmpBenefitValueState() {
-  /* --------------------------------- All States -------------------------------- */
+  /* -------------------------------- All States -------------------------------- */
   // ── Benefit States ─────────────────────────────────────────
   const [benefitInput, setBenefitInput] = useState<IBenefits | null>(null);
   const [benefits, setBenefits] = useState<IBenefits[]>([]);
@@ -16,7 +17,7 @@ export default function useCmpBenefitValueState() {
   const [deletedValueIds, setDeletedValueIds] = useState<number[]>([]);
   const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
 
-  /* ---------------------------------- Return ---------------------------------- */
+  /* --------------------------------- Methods ---------------------------------- */
   return {
     benefitInput,
     setBenefitInput,

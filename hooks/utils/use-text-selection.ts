@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { HOOK_TEXT_SELECTION_HIDDEN_STATE } from "@/utils/constants/ui.constant";
 
-/* ---------------------------------- Helper --------------------------------- */
+/* ----------------------------------- Types ---------------------------------- */
 export interface TextSelectionState {
   isVisible: boolean;
   /** screen-space top in px — place toolbar above selection */
@@ -13,38 +14,32 @@ export interface TextSelectionState {
   isItalic: boolean;
 }
 
-const HIDDEN: TextSelectionState = {
-  isVisible: false,
-  top: 0,
-  left: 0,
-  isBold: false,
-  isItalic: false,
-};
-
-/* ─── Hook ──────────────────────────────────────────────────── */
+/* ----------------------------------- Hook ----------------------------------- */
 /**
  * Tracks `window.getSelection()` and returns position + formatting
  * state whenever text inside `[data-canvas-editable]` is selected.
  */
 export function useTextSelection(): TextSelectionState {
-  /* --------------------------------- All States ------------------------------- */
-  const [state, setState] = useState<TextSelectionState>(HIDDEN);
+  /* -------------------------------- All States -------------------------------- */
+  const [state, setState] = useState<TextSelectionState>(
+    HOOK_TEXT_SELECTION_HIDDEN_STATE,
+  );
 
-  /* ---------------------------------- Effects --------------------------------- */
+  /* --------------------------------- Effects ---------------------------------- */
   useEffect(() => {
     function handleSelectionChange() {
       const sel = window.getSelection();
 
       // No selection or collapsed (just a cursor)
       if (!sel || sel.isCollapsed || sel.rangeCount === 0) {
-        setState(HIDDEN);
+        setState(HOOK_TEXT_SELECTION_HIDDEN_STATE);
         return;
       }
 
       // Only activate when inside a canvas-editable element
       const anchor = sel.anchorNode?.parentElement;
       if (!anchor?.closest("[data-canvas-editable]")) {
-        setState(HIDDEN);
+        setState(HOOK_TEXT_SELECTION_HIDDEN_STATE);
         return;
       }
 
@@ -52,7 +47,7 @@ export function useTextSelection(): TextSelectionState {
       const rect = range.getBoundingClientRect();
 
       if (rect.width === 0) {
-        setState(HIDDEN);
+        setState(HOOK_TEXT_SELECTION_HIDDEN_STATE);
         return;
       }
 
@@ -71,6 +66,6 @@ export function useTextSelection(): TextSelectionState {
       document.removeEventListener("selectionchange", handleSelectionChange);
   }, []);
 
-  /* ---------------------------------- Return ---------------------------------- */
+  /* --------------------------------- Methods ---------------------------------- */
   return state;
 }

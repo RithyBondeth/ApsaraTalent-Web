@@ -4,6 +4,7 @@ import { useChatStore } from "@/stores/features/chat/chat.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useEffect } from "react";
 
+/* ----------------------------------- Hook ----------------------------------- */
 /**
  * Establishes (and tears down) the global chat socket connection.
  *
@@ -16,10 +17,10 @@ import { useEffect } from "react";
  * message/page.tsx causes no double-connect.
  */
 export function useChatConnection() {
-  /* --------------------------------- All States -------------------------------- */
+  /* -------------------------------- All States -------------------------------- */
   const user = useGetCurrentUserStore((s) => s.user);
 
-  /* ---------------------------------- Effects --------------------------------- */
+  /* --------------------------------- Effects ---------------------------------- */
   useEffect(() => {
     if (!user) {
       return;

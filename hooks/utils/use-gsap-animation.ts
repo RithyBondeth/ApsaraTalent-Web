@@ -43,11 +43,12 @@ function splitTextIntoWords(el: HTMLElement) {
  *
  * Variants: fade-up, fade-down, fade-left, fade-right, scale-up, stagger-children, split-words
  */
+/* ----------------------------------- Hook ----------------------------------- */
 export function useGsapScrollAnimation<T extends HTMLElement>() {
-  /* --------------------------------- All States -------------------------------- */
+  /* -------------------------------- All States -------------------------------- */
   const containerRef = useRef<T>(null);
 
-  /* ---------------------------------- Effects --------------------------------- */
+  /* --------------------------------- Effects ---------------------------------- */
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -214,7 +215,7 @@ export function useGsapScrollAnimation<T extends HTMLElement>() {
     return () => ctx.revert();
   }, []);
 
-  /* ---------------------------------- Return ---------------------------------- */
+  /* --------------------------------- Methods ---------------------------------- */
   return containerRef;
 }
 
@@ -222,11 +223,13 @@ export function useGsapScrollAnimation<T extends HTMLElement>() {
  * Hero-specific entrance animation with word-by-word heading reveal.
  * Plays on every mount (including language-switch remounts via key={language}).
  */
+/* ----------------------------------- Hook ----------------------------------- */
 export function useGsapHeroAnimation<T extends HTMLElement>() {
-  /* --------------------------------- All States -------------------------------- */
+  /* -------------------------------- All States -------------------------------- */
   const containerRef = useRef<T>(null);
 
-  /* ---------------------------------- Effects --------------------------------- */ useEffect(() => {
+  /* --------------------------------- Effects ---------------------------------- */
+  useEffect(() => {
     if (!containerRef.current) return;
 
     const ctx = gsap.context(() => {
@@ -300,6 +303,6 @@ export function useGsapHeroAnimation<T extends HTMLElement>() {
     return () => ctx.revert();
   }, []);
 
-  /* ---------------------------------- Return ---------------------------------- */
+  /* --------------------------------- Methods ---------------------------------- */
   return containerRef;
 }

@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
+/* ----------------------------------- Hook ----------------------------------- */
 export function useCmpAvatarCoverState() {
-  /* --------------------------------- All States -------------------------------- */
+  /* -------------------------------- All States -------------------------------- */
   // ── Avatar States ─────────────────────────────────────────
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [openAvatarPopup, setOpenAvatarPopup] = useState<boolean>(false);
@@ -23,7 +24,7 @@ export function useCmpAvatarCoverState() {
   // ── Shared States ─────────────────────────────────────────
   const ignoreNextClick = useRef<boolean>(false);
 
-  /* ---------------------------------- Effects --------------------------------- */
+  /* --------------------------------- Effects ---------------------------------- */
   useEffect(() => {
     return () => {
       if (cropImageUrl?.startsWith("blob:")) URL.revokeObjectURL(cropImageUrl);
@@ -32,7 +33,7 @@ export function useCmpAvatarCoverState() {
     };
   }, [cropImageUrl, coverCropImageUrl]);
 
-  /* ---------------------------------- Return ---------------------------------- */
+  /* --------------------------------- Methods ---------------------------------- */
   return {
     avatarFile,
     setAvatarFile,

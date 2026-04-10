@@ -722,3 +722,16 @@ export const careerScopesListConstant: {
     description: "Non-existent locally as a career path.",
   },
 ] as const;
+
+export const MOBILE_BREAKPOINT = 768;
+
+export const HOOK_TEXT_SELECTION_HIDDEN_STATE = {
+  isVisible: false,
+  top: 0,
+  left: 0,
+  isBold: false,
+  isItalic: false,
+};
+
+export const TOAST_LIMIT = 1;
+export const TOAST_REMOVE_DELAY = 1000000;
