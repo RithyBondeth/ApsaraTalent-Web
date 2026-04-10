@@ -1,3 +1,4 @@
+/* --------------------------------- Methods ---------------------------------- */
 /**
  * Converts a timestamp string to a human-readable "time ago" format
  * @param timestamp - Date string in format "YYYY-MM-DD HH:mm:ss.SSSSSS"

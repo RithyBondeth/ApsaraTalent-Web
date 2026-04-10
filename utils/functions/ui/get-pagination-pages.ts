@@ -1,3 +1,4 @@
+/* ----------------------------------- Types ---------------------------------- */
 export type TPaginationPageItem = number | "...";
 
 type TGetPaginationPagesOptions = {
@@ -6,6 +7,7 @@ type TGetPaginationPagesOptions = {
   maxVisiblePages?: number;
 };
 
+/* --------------------------------- Methods ---------------------------------- */
 export function getPaginationPages(
   options: TGetPaginationPagesOptions,
 ): TPaginationPageItem[] {

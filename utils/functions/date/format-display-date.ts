@@ -1,3 +1,4 @@
+/* --------------------------------- Methods ---------------------------------- */
 export function formatDisplayDate(dateString: string): string {
   if (!dateString || dateString.trim() === "") {
     return "Not specified";

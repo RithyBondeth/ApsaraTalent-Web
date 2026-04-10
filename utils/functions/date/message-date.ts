@@ -1,3 +1,4 @@
+/* --------------------------------- Methods ---------------------------------- */
 /**
  * Safely parses any date input (string, Date, or number) into a valid JS Date object.
  * Returns current Date if parsing fails.

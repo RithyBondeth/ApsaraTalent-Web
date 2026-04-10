@@ -1,1 +1,3 @@
-export const isEmailInput = (inputValue: string) => /^[a-zA-Z@.\-_]+$/.test(inputValue) || inputValue.includes("@");
+/* --------------------------------- Methods ---------------------------------- */
+export const isEmailInput = (inputValue: string) =>
+  /^[a-zA-Z@.\-_]+$/.test(inputValue) || inputValue.includes("@");

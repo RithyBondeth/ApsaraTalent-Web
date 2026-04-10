@@ -1,3 +1,4 @@
+/* --------------------------------- Methods ---------------------------------- */
 export function parseMaybeDate(input?: string | null): Date | undefined {
   if (!input || typeof input !== "string") return undefined;
 

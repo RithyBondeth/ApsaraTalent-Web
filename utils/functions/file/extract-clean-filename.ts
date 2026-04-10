@@ -1,3 +1,4 @@
+/* --------------------------------- Methods ---------------------------------- */
 export function extractCleanFilename(url: string): string {
   try {
     const filename = url.split("/").pop() || "";

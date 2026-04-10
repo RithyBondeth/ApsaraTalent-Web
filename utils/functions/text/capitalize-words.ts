@@ -1,3 +1,4 @@
+/* --------------------------------- Methods ---------------------------------- */
 export const capitalizeWords = (str: string): string => {
   return str
     .split(" ")

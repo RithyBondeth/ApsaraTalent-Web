@@ -5,6 +5,7 @@ import {
   MAX_IMAGE_SIZE,
 } from "@/utils/constants/config.constant";
 
+/* --------------------------------- Methods ---------------------------------- */
 export const fileValidation = (label: string) =>
   z
     .any()

@@ -1,3 +1,4 @@
+/* --------------------------------- Methods ---------------------------------- */
 export function formatAvailabilityWords(value: string): string {
   if (!value) return "";
 

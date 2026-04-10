@@ -1,3 +1,4 @@
+/* --------------------------------- Methods ---------------------------------- */
 export function getStatusBadgeStyleClass(status: string) {
   switch (status) {
     case "accepted":

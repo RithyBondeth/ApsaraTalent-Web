@@ -1,7 +1,9 @@
+/* ----------------------------------- Types ---------------------------------- */
 type TFormatDurationClockOptions = {
   padMinutes?: boolean;
 };
 
+/* --------------------------------- Methods ---------------------------------- */
 export function formatDurationClock(
   seconds: number,
   options: TFormatDurationClockOptions = {},

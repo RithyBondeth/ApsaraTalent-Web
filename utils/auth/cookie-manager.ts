@@ -1,6 +1,7 @@
 import { deleteCookie, setCookie, getCookie } from "cookies-next";
 import { COOKIE_CONFIG } from "../constants/cookie.constant";
 
+/* --------------------------------- Methods ---------------------------------- */
 // Set Authentication Cookies with Proper Security Settings
 export const setAuthCookies = (
   accessToken: string,

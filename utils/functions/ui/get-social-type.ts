@@ -11,6 +11,7 @@ import {
 import React from "react";
 import { TPlatform } from "@/utils/types/user/platform.type";
 
+/* --------------------------------- Methods ---------------------------------- */
 export const getSocialPlatformTypeIcon = (
   platform: TPlatform,
 ): React.ReactNode => {

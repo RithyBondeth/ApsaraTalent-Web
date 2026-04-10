@@ -1,5 +1,6 @@
 import { FieldError, FieldErrorsImpl, Merge } from "react-hook-form";
 
+/* ----------------------------------- Types ---------------------------------- */
 // error handling utility
 type ErrorLike =
   | FieldError
@@ -9,6 +10,7 @@ type ErrorLike =
   | (FieldError | undefined)[]
   | undefined;
 
+/* --------------------------------- Methods ---------------------------------- */
 export const getErrorMessage = (field: ErrorLike): string | undefined => {
   if (Array.isArray(field)) {
     for (const err of field) {

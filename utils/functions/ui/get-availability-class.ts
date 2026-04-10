@@ -1,3 +1,4 @@
+/* --------------------------------- Methods ---------------------------------- */
 export function getAvailabilityStyleClass(availability: string) {
   const s = availability.toLowerCase();
   if (s.includes("full"))

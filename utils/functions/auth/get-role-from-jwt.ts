@@ -1,3 +1,4 @@
+/* --------------------------------- Methods ---------------------------------- */
 export function getRoleFromJwt(token: string): string | null {
   try {
     const payloadPart = token.split(".")[1];

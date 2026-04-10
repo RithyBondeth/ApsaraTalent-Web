@@ -3,6 +3,7 @@ import { ICompany } from "@/utils/interfaces/user/company.interface";
 import { IFieldCheck } from "@/utils/interfaces/user/profile-completion.interface";
 import { IProfileCompletionResult } from "@/utils/interfaces/user/profile-completion.interface";
 
+/* --------------------------------- Helpers ---------------------------------- */
 function isStringFilled(value: string | null | undefined): boolean {
   return typeof value === "string" && value.trim().length > 0;
 }
@@ -48,6 +49,7 @@ function calculateCompletion(fields: IFieldCheck[]): IProfileCompletionResult {
  *
  * Total = 100%  (round-safe with Math.round)
  */
+/* --------------------------------- Methods ---------------------------------- */
 export function getEmployeeProfileCompletion(
   employee: IEmployee,
 ): IProfileCompletionResult {
