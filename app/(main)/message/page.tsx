@@ -36,11 +36,7 @@ export default function MessagePageContent() {
   /* -------------------------------- All States ------------------------------ */
   const [isSidebarOpen, setSidebarOpen] = useState<boolean>(true);
   const sidebarPanelRef = useRef<ImperativePanelHandle>(null);
-
-  // Reply target — when set, the input bar shows a quote preview.
   const [replyTarget, setReplyTarget] = useState<IMessage | null>(null);
-
-  // Loading timeout flag
   const [loadingTimedOut, setLoadingTimedOut] = useState<boolean>(false);
 
   /* ----------------------------- API Integration ---------------------------- */

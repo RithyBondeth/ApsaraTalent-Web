@@ -483,14 +483,14 @@ const content = {
    Main component
 ───────────────────────────────────────────────────────────── */
 export function TermsContent() {
-  /* -------------------------------- All States -------------------------------- */
+  /* ----------------------------------- Utils ---------------------------------- */
   const { language, setLanguage } = useLanguageStore();
   const c = content[language];
 
   /* -------------------------------- Render UI --------------------------------- */
   return (
     <div className="min-h-screen bg-background animate-page-in">
-      {/* ── Top nav ── */}
+      {/* Top Nav Section */}
       <header className="sticky top-0 z-10 border-b border-border/60 bg-background/95 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto flex items-center gap-4 px-4 py-3 sm:px-6">
           <Link
@@ -503,7 +503,7 @@ export function TermsContent() {
           <span className="text-border">|</span>
           <span className="text-sm font-semibold truncate">{c.pageTitle}</span>
 
-          {/* Language toggle */}
+          {/* Language Toggle Section */}
           <div className="ml-auto flex items-center gap-1 rounded-lg border border-border bg-muted/40 p-0.5">
             <button
               onClick={() => setLanguage("en")}
@@ -530,7 +530,7 @@ export function TermsContent() {
       </header>
 
       <div className="max-w-5xl mx-auto px-4 py-10 sm:px-6 lg:flex lg:gap-12">
-        {/* ── Sticky TOC sidebar (desktop) ── */}
+        {/* Sticky TOC Sidebar Section (Desktop) */}
         <aside className="hidden lg:block w-56 shrink-0">
           <div className="sticky top-20 flex flex-col gap-1">
             <TypographySmall className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
@@ -548,9 +548,9 @@ export function TermsContent() {
           </div>
         </aside>
 
-        {/* ── Main content ── */}
+        {/* Main Content Section */}
         <main className="flex-1 flex flex-col gap-10 min-w-0">
-          {/* Hero header */}
+          {/* Hero Header Section */}
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <LucideCalendar className="size-3.5" />
@@ -563,7 +563,7 @@ export function TermsContent() {
               {c.intro}
             </TypographyP>
 
-            {/* Callout */}
+            {/* Callout Section */}
             <div className="rounded-xl border border-amber-200/70 bg-amber-50/60 dark:border-amber-800/40 dark:bg-amber-950/30 px-4 py-3 flex items-start gap-3">
               <LucideAlertTriangle className="size-4 text-amber-500 mt-0.5 shrink-0" />
               <TypographySmall className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed">
@@ -572,7 +572,7 @@ export function TermsContent() {
             </div>
           </div>
 
-          {/* ─── 1. Acceptance ─── */}
+          {/* 1. Acceptance Section */}
           <Section id="acceptance" icon={<LucideFileText />} title={c.s1.title}>
             <TypographyP>
               {c.s1.p1}{" "}
@@ -584,7 +584,7 @@ export function TermsContent() {
             <TypographyP>{c.s1.p2}</TypographyP>
           </Section>
 
-          {/* ─── 2. Eligibility ─── */}
+          {/* 2. Eligibility Section */}
           <Section
             id="eligibility"
             icon={<LucideUserCheck />}
@@ -599,7 +599,7 @@ export function TermsContent() {
             <TypographyP>{c.s2.note}</TypographyP>
           </Section>
 
-          {/* ─── 3. Account types ─── */}
+          {/* 3. Account Types Section */}
           <Section id="account-types" icon={<LucideUsers />} title={c.s3.title}>
             <TypographyP>{c.s3.intro}</TypographyP>
             <div className="flex flex-col gap-3">
@@ -619,7 +619,7 @@ export function TermsContent() {
             <TypographyP>{c.s3.note}</TypographyP>
           </Section>
 
-          {/* ─── 4. Registration ─── */}
+          {/* 4. Registration Section */}
           <Section id="registration" icon={<LucideUser />} title={c.s4.title}>
             <TypographyP>{c.s4.intro}</TypographyP>
             <ul className="flex flex-col gap-1.5 ml-1">
@@ -630,7 +630,7 @@ export function TermsContent() {
             <TypographyP>{c.s4.note}</TypographyP>
           </Section>
 
-          {/* ─── 5. Acceptable use ─── */}
+          {/* 5. Acceptable Use Section */}
           <Section
             id="acceptable-use"
             icon={<LucideShieldCheck />}
@@ -644,7 +644,7 @@ export function TermsContent() {
             </ul>
           </Section>
 
-          {/* ─── 6. Prohibited ─── */}
+          {/* 6. Prohibited Section */}
           <Section id="prohibited" icon={<LucideX />} title={c.s6.title}>
             <TypographyP>{c.s6.intro}</TypographyP>
             <ul className="flex flex-col gap-1.5 ml-1">
@@ -655,7 +655,7 @@ export function TermsContent() {
             <TypographyP>{c.s6.note}</TypographyP>
           </Section>
 
-          {/* ─── 7. Content ─── */}
+          {/* 7. Content Section */}
           <Section id="content" icon={<LucideFileText />} title={c.s7.title}>
             <TypographyP>{c.s7.p1}</TypographyP>
             <TypographyP>{c.s7.p2}</TypographyP>
@@ -667,7 +667,7 @@ export function TermsContent() {
             </ul>
           </Section>
 
-          {/* ─── 8. AI features ─── */}
+          {/* 8. AI Features Section */}
           <Section
             id="ai-features"
             icon={<LucideShieldCheck />}
@@ -681,13 +681,13 @@ export function TermsContent() {
             </ul>
           </Section>
 
-          {/* ─── 9. IP ─── */}
+          {/* 9. IP Section */}
           <Section id="ip" icon={<LucideLock />} title={c.s9.title}>
             <TypographyP>{c.s9.p1}</TypographyP>
             <TypographyP>{c.s9.p2}</TypographyP>
           </Section>
 
-          {/* ─── 10. Privacy ─── */}
+          {/* 10. Privacy Section */}
           <Section id="privacy" icon={<LucideLock />} title={c.s10.title}>
             <TypographyP>
               {c.s10.p1}{" "}
@@ -698,7 +698,7 @@ export function TermsContent() {
             </TypographyP>
           </Section>
 
-          {/* ─── 11. Disclaimers ─── */}
+          {/* 11. Disclaimers Section */}
           <Section
             id="disclaimers"
             icon={<LucideAlertTriangle />}
@@ -712,7 +712,7 @@ export function TermsContent() {
             </ul>
           </Section>
 
-          {/* ─── 12. Liability ─── */}
+          {/* 12. Liability Section */}
           <Section id="liability" icon={<LucideGavel />} title={c.s12.title}>
             <TypographyP>{c.s12.intro}</TypographyP>
             <ul className="flex flex-col gap-1.5 ml-1">
@@ -723,7 +723,7 @@ export function TermsContent() {
             <TypographyP>{c.s12.note}</TypographyP>
           </Section>
 
-          {/* ─── 13. Termination ─── */}
+          {/* 13. Termination Section */}
           <Section id="termination" icon={<LucideX />} title={c.s13.title}>
             <TypographyP>
               <strong className="text-foreground">{c.s13.byYouStrong}</strong>{" "}
@@ -741,7 +741,7 @@ export function TermsContent() {
             <TypographyP>{c.s13.note}</TypographyP>
           </Section>
 
-          {/* ─── 14. Governing law ─── */}
+          {/* 14. Governing Law Section */}
           <Section
             id="governing-law"
             icon={<LucideGavel />}
@@ -756,13 +756,13 @@ export function TermsContent() {
             <TypographyP>{c.s14.p2}</TypographyP>
           </Section>
 
-          {/* ─── 15. Changes ─── */}
+          {/* 15. Changes Section */}
           <Section id="changes" icon={<LucideRefreshCw />} title={c.s15.title}>
             <TypographyP>{c.s15.p1}</TypographyP>
             <TypographyP>{c.s15.p2}</TypographyP>
           </Section>
 
-          {/* ─── 16. Contact ─── */}
+          {/* 16. Contact Section */}
           <Section id="contact" icon={<LucideMail />} title={c.s16.title}>
             <TypographyP>{c.s16.intro}</TypographyP>
             <div className="rounded-xl border border-border bg-muted/30 p-4 flex flex-col gap-1.5">

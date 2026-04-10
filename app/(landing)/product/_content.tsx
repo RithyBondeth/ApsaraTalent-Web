@@ -13,7 +13,6 @@ import {
   LucideBriefcase,
   LucideSparkles,
   LucideDownload,
-  LucideApple,
   LucideMonitor,
 } from "lucide-react";
 import { TypographyH1 } from "@/components/utils/typography/typography-h1";
@@ -271,12 +270,14 @@ const featureIcons = [
    Main component
 ───────────────────────────────────────────────────────────── */
 export function ProductContent() {
+  /* ----------------------------------- Utils ----------------------------------- */
   const { language } = useLanguageStore();
   const t = content[language] ?? content.en;
 
+  /* --------------------------------- Render UI ---------------------------------- */
   return (
     <div className="min-h-screen bg-background">
-      {/* Top Navigation */}
+      {/* Top Navigation Section */}
       <header className="sticky top-0 z-10 border-b border-border/60 bg-background/95 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto flex items-center gap-4 px-4 py-3 sm:px-6">
           <Link
@@ -292,7 +293,7 @@ export function ProductContent() {
       </header>
 
       <div className="max-w-5xl mx-auto px-4 py-10 sm:px-6 lg:flex lg:gap-12">
-        {/* Sticky TOC Sidebar (Desktop) */}
+        {/* Sticky TOC Sidebar (Desktop) Section */}
         <aside className="hidden lg:block w-56 shrink-0">
           <nav className="sticky top-20 flex flex-col gap-2">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
@@ -310,9 +311,9 @@ export function ProductContent() {
           </nav>
         </aside>
 
-        {/* Main Content */}
+        {/* Main Content Section */}
         <main className="flex-1 flex flex-col gap-10 min-w-0">
-          {/* Hero Header */}
+          {/* Hero Header Section */}
           <div className="flex flex-col gap-4">
             <TypographyH1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
               {t.pageTitle}
@@ -357,11 +358,7 @@ export function ProductContent() {
           </Section>
 
           {/* Apsara Agentic AI Section */}
-          <Section
-            id="agentic-ai"
-            icon={<LucideBrain />}
-            title={t.aiTitle}
-          >
+          <Section id="agentic-ai" icon={<LucideBrain />} title={t.aiTitle}>
             <TypographyP>{t.aiIntro}</TypographyP>
             <ul className="flex flex-col gap-2 mt-1">
               {t.aiBullets.map((b, i) => (
@@ -376,7 +373,7 @@ export function ProductContent() {
             </div>
           </Section>
 
-          {/* Key Features Grid */}
+          {/* Key Features Grid Section */}
           <Section
             id="key-features"
             icon={<LucideGlobe />}

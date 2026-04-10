@@ -108,9 +108,10 @@ import { SectionTitle } from "@/components/utils/layout/section-title";
 import ProfileCompletionCard from "@/components/profile/profile-completion-card";
 
 export default function ProfilePage() {
-  /* -------------------------------- All States -------------------------------- */
-  // Utils
+  /* ---------------------------------- Utils ----------------------------------- */
   const t = useTranslations("toast");
+
+  /* -------------------------------- All States -------------------------------- */
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
   // Image States
@@ -356,7 +357,15 @@ export default function ProfilePage() {
       setValues(company.values ?? []);
       setCareerScopes(company.careerScopes ?? []);
     }
-  }, [company, form, setBenefits, setCareerScopes, setSocials, setValues, user]);
+  }, [
+    company,
+    form,
+    setBenefits,
+    setCareerScopes,
+    setSocials,
+    setValues,
+    user,
+  ]);
 
   /* -------------------------------- Methods --------------------------------- */
   // ── Edit Mode Methods ────────────────────────────────────────────────────
@@ -1723,13 +1732,13 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Career Scopes Section*/}
+          {/* Career Scopes Section */}
           <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
             <div className="w-full">
               <SectionTitle icon={<LucideCompass />} title="Career Scopes" />
             </div>
 
-            {/* Career Scopes List Section*/}
+            {/* Career Scopes List Section */}
             <div className="w-full flex flex-wrap gap-3">
               {careerScopes.length > 0 ? (
                 careerScopes.map((career, index) => (
@@ -2010,7 +2019,7 @@ export default function ProfilePage() {
             )}
           </div>
 
-          {/* Authentication Section*/}
+          {/* Authentication Section */}
           <div className="flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
             <SectionTitle icon={<LucideSettings />} title="Authentication" />
 

@@ -10,11 +10,13 @@ import LandingFooter from "@/components/landing/landing-footer";
 import { useLanguageStore } from "@/stores/languages/language-store";
 
 export default function IndexPage() {
+  /* ----------------------------------- Utils ---------------------------------- */
   const language = useLanguageStore((s) => s.language);
 
+  /* --------------------------------- Render UI -------------------------------- */
   return (
     <div className="relative bg-background">
-      {/* Header */}
+      {/* Header Section */}
       <Header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/40" />
 
       {/* Section 1: Hero */}

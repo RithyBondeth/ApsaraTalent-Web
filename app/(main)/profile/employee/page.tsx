@@ -1101,7 +1101,7 @@ export default function EmployeeProfilePage() {
         {/* Avatar, Name, Job Title Section */}
         <div className="px-4 sm:px-6 pb-5">
           <div className="flex items-start gap-4 tablet-md:flex-col tablet-md:items-center">
-            {/* Avatar with Overlap Secrion */}
+            {/* Avatar with Overlap Section */}
             <div
               className="relative -mt-10 sm:-mt-12 flex-shrink-0"
               onClick={(e) => {
@@ -1176,7 +1176,7 @@ export default function EmployeeProfilePage() {
               <p className="text-sm text-muted-foreground">{employee.job}</p>
             </div>
 
-            {/* Edit/Save/Cancel Button Section — visible only on mobile (stacked below name) */}
+            {/* Edit/Save/Cancel Button Section: visible only on mobile (stacked below name) */}
             <div className="flex sm:hidden items-center gap-3 tablet-md:w-full tablet-md:justify-center">
               {isEdit ? (
                 <>
@@ -1784,13 +1784,13 @@ export default function EmployeeProfilePage() {
             )}
           </div>
 
-          {/* Career Scopes Section*/}
+          {/* Career Scopes Section */}
           <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
             <div className="w-full">
               <SectionTitle icon={<LucideCompass />} title="Career Scopes" />
             </div>
 
-            {/* Career Scopes List Section*/}
+            {/* Career Scopes List Section */}
             <div className="w-full flex flex-wrap gap-3">
               {careerScopes.length > 0 ? (
                 careerScopes.map((career, index) => (
@@ -2292,7 +2292,7 @@ export default function EmployeeProfilePage() {
             )}
           </div>
 
-          {/* Authentication Section*/}
+          {/* Authentication Section */}
           <div className="flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
             <SectionTitle icon={<LucideSettings />} title="Authentication" />
 

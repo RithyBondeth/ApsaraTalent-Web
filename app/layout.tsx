@@ -13,7 +13,6 @@ const ubuntu = Ubuntu({
   variable: "--font-ubuntu",
 });
 
-/* Noto Sans Khmer — same font used by Google Gemini for Khmer script */
 const notoSansKhmer = Noto_Sans_Khmer({
   subsets: ["khmer"],
   weight: ["400", "700"],
@@ -48,14 +47,14 @@ export default function RootLayout({
         }}
         suppressHydrationWarning
       >
-        {/* Language Provider */}
+        {/* Language Provider Section */}
         <LanguageProvider>
-          {/* Theme Provider */}
+          {/* Theme Provider Section */}
           <ThemeProvider>{children}</ThemeProvider>
         </LanguageProvider>
-        {/* Sync document.title on client-side language toggle */}
+        {/* Title Section: Sync document.title on client-side language toggle */}
         <TitleSync />
-        {/* Toast Container */}
+        {/* Toast Container Section */}
         <Toaster />
       </body>
     </html>

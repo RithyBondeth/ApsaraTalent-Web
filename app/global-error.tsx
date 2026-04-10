@@ -24,10 +24,12 @@ export default function GlobalError({
     <html lang="en">
       <body className="antialiased">
         <div className="flex flex-col items-center justify-center min-h-screen gap-6 text-center px-4 bg-background text-foreground">
+          {/* Alert Icon Section */}
           <div className="flex items-center justify-center size-20 rounded-full bg-red-100 dark:bg-red-950">
             <LucideTriangleAlert className="size-10 text-red-600 dark:text-red-400" />
           </div>
 
+          {/* Error Message Section */}
           <div className="flex flex-col gap-2">
             <TypographyH2 className="text-2xl font-semibold tracking-tight">
               Application error
@@ -42,6 +44,7 @@ export default function GlobalError({
             )}
           </div>
 
+          {/* Refresh Button Section */}
           <Button onClick={reset} className="gap-2">
             <LucideRefreshCw className="size-4" />
             Refresh page

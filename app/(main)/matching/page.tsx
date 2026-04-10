@@ -44,6 +44,7 @@ export default function MatchingPage() {
 
   /* --------------------------------- Methods --------------------------------- */
   // Stable senderId — avoids recomputing inside every card's inline callback
+  // ── Sender ID ────────────────────────────────────────────
   const senderId = useMemo(
     () => currentUser?.employee?.id ?? currentUser?.company?.id ?? "",
     [currentUser],

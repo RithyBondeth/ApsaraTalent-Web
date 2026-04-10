@@ -104,7 +104,7 @@ function StepCard({
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Content helpers
+   Content types & data
 ───────────────────────────────────────────────────────────── */
 type TocItem = { id: string; label: string };
 type TitleDesc = { title: string; description: string };
@@ -388,12 +388,14 @@ const guideIcons = [
    Main component
 ───────────────────────────────────────────────────────────── */
 export function LearnContent() {
+  /* ----------------------------------- Utils ----------------------------------- */
   const { language } = useLanguageStore();
   const t = content[language] ?? content.en;
 
+  /* --------------------------------- Render UI ---------------------------------- */
   return (
     <div className="min-h-screen bg-background">
-      {/* Top Navigation */}
+      {/* Top Navigation Section */}
       <header className="sticky top-0 z-10 border-b border-border/60 bg-background/95 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto flex items-center gap-4 px-4 py-3 sm:px-6">
           <Link
@@ -409,7 +411,7 @@ export function LearnContent() {
       </header>
 
       <div className="max-w-5xl mx-auto px-4 py-10 sm:px-6 lg:flex lg:gap-12">
-        {/* Sticky TOC Sidebar (Desktop) */}
+        {/* Sticky TOC Sidebar (Desktop) Section */}
         <aside className="hidden lg:block w-56 shrink-0">
           <nav className="sticky top-20 flex flex-col gap-2">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
@@ -427,9 +429,9 @@ export function LearnContent() {
           </nav>
         </aside>
 
-        {/* Main Content */}
+        {/* Main Content Section */}
         <main className="flex-1 flex flex-col gap-10 min-w-0">
-          {/* Hero Header */}
+          {/* Hero Header Section */}
           <div className="flex flex-col gap-4">
             <TypographyH1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
               {t.pageTitle}
@@ -439,7 +441,7 @@ export function LearnContent() {
             </TypographyP>
           </div>
 
-          {/* Getting Started */}
+          {/* Getting Started Section */}
           <Section
             id="getting-started"
             icon={<LucideRocket />}
@@ -458,7 +460,7 @@ export function LearnContent() {
             </div>
           </Section>
 
-          {/* For Job Seekers */}
+          {/* For Job Seekers Section */}
           <Section
             id="for-job-seekers"
             icon={<LucideUsers />}
@@ -472,7 +474,7 @@ export function LearnContent() {
             </ul>
           </Section>
 
-          {/* For Employers */}
+          {/* For Employers Section */}
           <Section
             id="for-employers"
             icon={<LucideBriefcase />}
@@ -486,7 +488,7 @@ export function LearnContent() {
             </ul>
           </Section>
 
-          {/* Using AI Features */}
+          {/* Using AI Features Section */}
           <Section id="using-ai" icon={<LucideSparkles />} title={t.aiTitle}>
             <TypographyP>{t.aiIntro}</TypographyP>
             <ul className="flex flex-col gap-2 mt-1">
@@ -496,7 +498,7 @@ export function LearnContent() {
             </ul>
           </Section>
 
-          {/* Guides & Tutorials */}
+          {/* Guides & Tutorials Section */}
           <Section id="guides" icon={<LucideBookOpen />} title={t.guidesTitle}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
               {t.guides.map((g, i) => (

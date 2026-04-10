@@ -40,7 +40,7 @@ export default function SettingPage() {
   const [sending, setSending] = useState<boolean>(false);
   const [sent, setSent] = useState<boolean>(false);
 
-  // account helpers
+  // Account helpers
   const displayName =
     currentUser?.employee?.username ??
     currentUser?.company?.name ??

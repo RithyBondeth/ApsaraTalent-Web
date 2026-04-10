@@ -7,6 +7,13 @@ import { useEffect, useRef } from "react";
 import { statisticCardConstants } from "@/utils/constants/dashboard.constant";
 import dynamic from "next/dynamic";
 import { DashboardChartSkeleton } from "@/components/dashboard/skeleton";
+import { RecentMatchesList } from "@/components/dashboard/recent-matches-list";
+import { TypographyH3 } from "@/components/utils/typography/typography-h3";
+import { TypographyP } from "@/components/utils/typography/typography-p";
+import StatisticCard from "@/components/dashboard/statistic-card";
+import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { DashboardLoadingSkeleton } from "@/components/dashboard/skeleton";
+import { useTranslations } from "next-intl";
 
 const WeeklyActivityChart = dynamic(
   () =>
@@ -23,17 +30,12 @@ const MatchRateRadial = dynamic(
     ),
   { loading: () => <DashboardChartSkeleton />, ssr: false },
 );
-import { RecentMatchesList } from "@/components/dashboard/recent-matches-list";
-import { TypographyH3 } from "@/components/utils/typography/typography-h3";
-import { TypographyP } from "@/components/utils/typography/typography-p";
-import StatisticCard from "@/components/dashboard/statistic-card";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { DashboardLoadingSkeleton } from "@/components/dashboard/skeleton";
-import { useTranslations } from "next-intl";
 
 export default function DashboardPage() {
-  /* ----------------------------- API Integration ---------------------------- */
+  /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("dashboard");
+
+  /* ----------------------------- API Integration ---------------------------- */
   const { user } = useGetCurrentUserStore();
   const { data, loading, error, queryAnalytics } = useAnalyticsStore();
 

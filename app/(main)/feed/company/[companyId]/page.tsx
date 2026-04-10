@@ -542,7 +542,7 @@ export default function CompanyDetailPage() {
           )}
         </div>
 
-        {/* Right: Section Sidebar */}
+        {/* Right Section: Sidebar */}
         <div className="w-72 flex flex-col gap-5 tablet-lg:w-full">
           {/* Company Information Section */}
           <DetailCard className="p-5">

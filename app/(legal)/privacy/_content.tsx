@@ -550,14 +550,14 @@ const content = {
    Main component
 ───────────────────────────────────────────────────────────── */
 export function PrivacyContent() {
-  /* -------------------------------- All States -------------------------------- */
+  /* ----------------------------------- Utils --------------------------------- */
   const { language, setLanguage } = useLanguageStore();
   const c = content[language];
 
   /* -------------------------------- Render UI --------------------------------- */
   return (
     <div className="min-h-screen bg-background animate-page-in">
-      {/* ── Top nav ── */}
+      {/* Top Navigation Section */}
       <header className="sticky top-0 z-10 border-b border-border/60 bg-background/95 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto flex items-center gap-4 px-4 py-3 sm:px-6">
           <Link
@@ -570,7 +570,7 @@ export function PrivacyContent() {
           <span className="text-border">|</span>
           <span className="text-sm font-semibold truncate">{c.pageTitle}</span>
 
-          {/* Language toggle */}
+          {/* Language Toggle Section */}
           <div className="ml-auto flex items-center gap-1 rounded-lg border border-border bg-muted/40 p-0.5">
             <button
               onClick={() => setLanguage("en")}
@@ -597,7 +597,7 @@ export function PrivacyContent() {
       </header>
 
       <div className="max-w-5xl mx-auto px-4 py-10 sm:px-6 lg:flex lg:gap-12">
-        {/* ── Sticky TOC sidebar (desktop) ── */}
+        {/* Sticky TOC Sidebar Section (Desktop) */}
         <aside className="hidden lg:block w-56 shrink-0">
           <div className="sticky top-20 flex flex-col gap-1">
             <TypographySmall className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
@@ -615,9 +615,9 @@ export function PrivacyContent() {
           </div>
         </aside>
 
-        {/* ── Main content ── */}
+        {/* Main Content Section */}
         <main className="flex-1 flex flex-col gap-10 min-w-0">
-          {/* Hero header */}
+          {/* Hero Header Section */}
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <LucideCalendar className="size-3.5" />
@@ -644,7 +644,7 @@ export function PrivacyContent() {
             </TypographyP>
           </div>
 
-          {/* ─── 1. Information we collect ─── */}
+          {/* 1. Information We Collect Section */}
           <Section
             id="information-we-collect"
             icon={<LucideDatabase />}
@@ -693,7 +693,7 @@ export function PrivacyContent() {
             </div>
           </Section>
 
-          {/* ─── 2. How we use ─── */}
+          {/* 2. How We Use Section */}
           <Section
             id="how-we-use"
             icon={<LucideUserCheck />}
@@ -711,7 +711,7 @@ export function PrivacyContent() {
             </TypographyP>
           </Section>
 
-          {/* ─── 3. How we share ─── */}
+          {/* 3. How We Share Section */}
           <Section id="how-we-share" icon={<LucideShare2 />} title={c.s3.title}>
             <TypographyP>{c.s3.intro}</TypographyP>
             <ul className="flex flex-col gap-1.5 ml-1">
@@ -724,7 +724,7 @@ export function PrivacyContent() {
             </ul>
           </Section>
 
-          {/* ─── 4. Third-party services ─── */}
+          {/* 4. Third-Party Services Section */}
           <Section id="third-party" icon={<LucideServer />} title={c.s4.title}>
             <TypographyP>{c.s4.intro}</TypographyP>
             <ul className="flex flex-col gap-1.5 ml-1">
@@ -737,7 +737,7 @@ export function PrivacyContent() {
             </ul>
           </Section>
 
-          {/* ─── 5. Data retention ─── */}
+          {/* 5. Data Retention Section */}
           <Section
             id="data-retention"
             icon={<LucideDatabase />}
@@ -751,7 +751,7 @@ export function PrivacyContent() {
             </ul>
           </Section>
 
-          {/* ─── 6. Security ─── */}
+          {/* 6. Security Section */}
           <Section id="security" icon={<LucideLock />} title={c.s6.title}>
             <TypographyP>{c.s6.intro}</TypographyP>
             <ul className="flex flex-col gap-1.5 ml-1">
@@ -762,7 +762,7 @@ export function PrivacyContent() {
             <TypographyP>{c.s6.note}</TypographyP>
           </Section>
 
-          {/* ─── 7. Your rights ─── */}
+          {/* 7. Your Rights Section */}
           <Section
             id="your-rights"
             icon={<LucideShieldCheck />}
@@ -789,7 +789,7 @@ export function PrivacyContent() {
             </TypographyP>
           </Section>
 
-          {/* ─── 8. Cookies ─── */}
+          {/* 8. Cookies Section */}
           <Section id="cookies" icon={<LucideDatabase />} title={c.s8.title}>
             <TypographyP>{c.s8.intro}</TypographyP>
             <ul className="flex flex-col gap-1.5 ml-1">
@@ -800,12 +800,12 @@ export function PrivacyContent() {
             <TypographyP>{c.s8.note}</TypographyP>
           </Section>
 
-          {/* ─── 9. Children ─── */}
+          {/* 9. Children Section */}
           <Section id="children" icon={<LucideUser />} title={c.s9.title}>
             <TypographyP>{c.s9.text}</TypographyP>
           </Section>
 
-          {/* ─── 10. Changes ─── */}
+          {/* 10. Changes Section */}
           <Section id="changes" icon={<LucideRefreshCw />} title={c.s10.title}>
             <TypographyP>{c.s10.intro}</TypographyP>
             <ul className="flex flex-col gap-1.5 ml-1">
@@ -816,7 +816,7 @@ export function PrivacyContent() {
             <TypographyP>{c.s10.note}</TypographyP>
           </Section>
 
-          {/* ─── 11. Contact ─── */}
+          {/* 11. Contact Section */}
           <Section id="contact" icon={<LucideMail />} title={c.s11.title}>
             <TypographyP>{c.s11.intro}</TypographyP>
             <div className="rounded-xl border border-border bg-muted/30 p-4 flex flex-col gap-1.5">

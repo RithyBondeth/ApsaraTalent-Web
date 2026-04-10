@@ -66,8 +66,8 @@ export default function MainLayout({
     return "m-3 sm:m-4 lg:m-5";
   };
 
-  /* -------------------------------- Render UI -------------------------------- */
-  // ── Feed Detail Page — no sidebar ───────────────────────────────────
+  /* --------------------------------------------------------- Render UI --------------------------------------------------------- */
+  // ── Feed Detail Page: No Sidebar ─────────────────────────────────────────────────────────────────────
   if (pathname.startsWith("/feed/")) {
     return (
       <div className="relative">
@@ -79,7 +79,7 @@ export default function MainLayout({
     );
   }
 
-  // ── Single stable layout tree — SidebarProvider never remounts on navigation ─────────────────────────────────────────
+  // ── Single Stable Layout Tree: SidebarProvider never remounts on navigation ──────────────────────────
   return (
     <ThemeProviderClient defaultTheme={theme}>
       <ScrollProgressBar />

@@ -17,7 +17,6 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-
 import {
   emptySvgImage,
   favoriteSvgImage,

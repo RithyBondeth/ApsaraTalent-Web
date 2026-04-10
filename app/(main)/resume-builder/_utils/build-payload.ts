@@ -2,6 +2,7 @@ import { TResumeTemplate } from "@/utils/types/resume/resume.type";
 import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
 import { IUser } from "@/utils/interfaces/user/user.interface";
 
+/* ---------------------------------- Helper ---------------------------------- */
 /**
  * Formats a date string to "Month YYYY" (e.g. "January 2022").
  * Falls back to the original string if parsing fails.

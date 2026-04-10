@@ -391,7 +391,7 @@ export default function FeedPage() {
         <FeedBannerSkeleton />
       ) : isEmployee ? (
         <div className="w-full flex items-center justify-between gap-6 lg:gap-10 tablet-xl:flex-col tablet-xl:items-center">
-          {/* Employee Banner - Content Section */}
+          {/* Employee Banner Section: Content */}
           <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
             <TypographyH2 className="!leading-relaxed text-2xl sm:text-4xl tablet-xl:text-3xl tablet-xl:text-center">
               Connect with global professionals and grow your network
@@ -407,7 +407,7 @@ export default function FeedPage() {
             </TypographyMuted>
           </div>
 
-          {/* Employee Banner - Image Poster Section */}
+          {/* Employee Banner Section: Image Poster */}
           <Image
             src={feedCompanyImage}
             alt="feed"
@@ -419,7 +419,7 @@ export default function FeedPage() {
         </div>
       ) : (
         <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
-          {/* Company Banner - Content Section */}
+          {/* Company Banner Section: Content */}
           <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
             <TypographyH2 className="leading-relaxed tablet-xl:text-center">
               Find Top Talent from Anywhere
@@ -431,7 +431,7 @@ export default function FeedPage() {
               Post jobs, review profiles, and hire faster — all in one place
             </TypographyMuted>
           </div>
-          {/* Company Banner - Image Poster Section */}
+          {/* Company Banner Section: Image Poster */}
           {mounted ? (
             <Image
               src={feedImage}
