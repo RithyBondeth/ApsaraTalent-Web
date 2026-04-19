@@ -7,14 +7,13 @@ import { create } from "zustand";
 // ── Login OTP API Response ─────────────────────────────────
 type TLoginOTPResponse = {
   message: string | null;
-
-  isSuccess: boolean;
 };
 
 // ── Login OTP State ────────────────────────────────────────
 type TLoginOTPState = TLoginOTPResponse & {
   loading: boolean;
   error: string | null;
+  isSuccess: boolean;
   loginOtp: (phone: string) => Promise<void>;
 };
 
@@ -37,7 +36,7 @@ export const useLoginOTPStore = create<TLoginOTPState>((set) => ({
         loading: false,
         error: null,
         message: response.data.message,
-        isSuccess: response.data.isSuccess,
+        isSuccess: true,
       });
     } catch (error) {
       const errorMessage = extractApiErrorMessage(
