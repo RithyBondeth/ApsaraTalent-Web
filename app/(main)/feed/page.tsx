@@ -33,7 +33,7 @@ import { useGetEmployeeRecommendationsStore } from "@/stores/apis/recommendation
 import { useGetCompanyRecommendationsStore } from "@/stores/apis/recommendation/get-company-recommendations.store";
 import { ICompany } from "@/utils/interfaces/user/company.interface";
 import { IEmployee } from "@/utils/interfaces/user/employee.interface";
-import { Sparkles } from "lucide-react";
+import { Building2, Sparkles, Users } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -619,6 +619,23 @@ export default function FeedPage() {
           );
         })()}
 
+      {/* Divider Section: All Companies / All Talent */}
+      {!isLoading && (
+        <div className="w-full flex items-center gap-4">
+          <div className="flex items-center gap-2 shrink-0">
+            {isEmployee ? (
+              <Building2 className="h-5 w-5 text-primary" />
+            ) : (
+              <Users className="h-5 w-5 text-primary" />
+            )}
+            <TypographyH4>
+              {isEmployee ? "All Companies" : "All Talent"}
+            </TypographyH4>
+          </div>
+          <div className="flex-1 h-px bg-border" />
+        </div>
+      )}
+
       {/* Feed Card Section */}
       <div className="w-full grid grid-cols-3 gap-x-4 gap-y-4 laptop-sm:grid-cols-2 laptop-sm:gap-x-3 laptop-sm:gap-y-3 tablet-lg:grid-cols-1 tablet-lg:gap-x-0 tablet-lg:gap-y-3 stagger-list">
         {/* Loading Skeleton Section */}
@@ -630,35 +647,37 @@ export default function FeedPage() {
                 <EmployeeCardSkeleton key={`employee-skeleton-${index}`} />
               ),
             )
-          : allUsers.slice(0, visibleCount).map((user) =>
-              isEmployee ? (
-                <MemoCompanyFeedCard
-                  key={user.id}
-                  company={user as ICompany}
-                  employeeId={currentUser?.employee?.id ?? ""}
-                  isLiking={user.id === likingId && employeeLikeLoading}
-                  isFavorite={isEmpFavorite(user.id)}
-                  onView={handleEmployeeViewCompany}
-                  onLike={handleEmployeeLikeCompany}
-                  onSave={handleEmployeeFavoriteCompany}
-                  onProfileImageClick={handleClickProfilePopup}
-                  onSetProfileImage={setCurrentProfileImage}
-                />
-              ) : (
-                <MemoEmployeeFeedCard
-                  key={user.id}
-                  employee={user as IEmployee}
-                  companyId={currentUser?.company?.id ?? ""}
-                  isLiking={user.id === likingId && companyLikeLoading}
-                  isFavorite={isCmpFavorite(user.id)}
-                  onView={handleCompanyViewEmployee}
-                  onLike={handleCompanyLikeEmployee}
-                  onSave={handleCompanyFavoriteEmployee}
-                  onProfileImageClick={handleClickProfilePopup}
-                  onSetProfileImage={setCurrentProfileImage}
-                />
-              ),
-            )}
+          : allUsers
+              .slice(0, visibleCount)
+              .map((user) =>
+                isEmployee ? (
+                  <MemoCompanyFeedCard
+                    key={user.id}
+                    company={user as ICompany}
+                    employeeId={currentUser?.employee?.id ?? ""}
+                    isLiking={user.id === likingId && employeeLikeLoading}
+                    isFavorite={isEmpFavorite(user.id)}
+                    onView={handleEmployeeViewCompany}
+                    onLike={handleEmployeeLikeCompany}
+                    onSave={handleEmployeeFavoriteCompany}
+                    onProfileImageClick={handleClickProfilePopup}
+                    onSetProfileImage={setCurrentProfileImage}
+                  />
+                ) : (
+                  <MemoEmployeeFeedCard
+                    key={user.id}
+                    employee={user as IEmployee}
+                    companyId={currentUser?.company?.id ?? ""}
+                    isLiking={user.id === likingId && companyLikeLoading}
+                    isFavorite={isCmpFavorite(user.id)}
+                    onView={handleCompanyViewEmployee}
+                    onLike={handleCompanyLikeEmployee}
+                    onSave={handleCompanyFavoriteEmployee}
+                    onProfileImageClick={handleClickProfilePopup}
+                    onSetProfileImage={setCurrentProfileImage}
+                  />
+                ),
+              )}
       </div>
 
       {/* Empty List Section */}
@@ -679,7 +698,10 @@ export default function FeedPage() {
 
       {/* Infinite scroll sentinel — triggers loading the next page */}
       {!isLoading && visibleCount < allUsers.length && (
-        <div ref={sentinelRef} className="w-full grid grid-cols-3 gap-x-4 gap-y-4 laptop-sm:grid-cols-2 laptop-sm:gap-x-3 laptop-sm:gap-y-3 tablet-lg:grid-cols-1 tablet-lg:gap-x-0 tablet-lg:gap-y-3">
+        <div
+          ref={sentinelRef}
+          className="w-full grid grid-cols-3 gap-x-4 gap-y-4 laptop-sm:grid-cols-2 laptop-sm:gap-x-3 laptop-sm:gap-y-3 tablet-lg:grid-cols-1 tablet-lg:gap-x-0 tablet-lg:gap-y-3"
+        >
           {Array.from({ length: 3 }).map((_, i) =>
             isEmployee ? (
               <CompanyCardSkeleton key={`load-more-${i}`} />
