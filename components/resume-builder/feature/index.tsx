@@ -9,7 +9,7 @@ import {
 export default function ResumeBuilderFeature() {
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex flex-col items-center gap-10 p-5 rounded-md shadow-md">
+    <div className="w-full flex flex-col items-center gap-10 p-5 rounded-md shadow-md">
       {/* Title Section */}
       <TypographyH4>AI-Powered Features</TypographyH4>
       <div className="flex justify-between items-start gap-5 tablet-lg:flex-col">
