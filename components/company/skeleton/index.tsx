@@ -4,21 +4,24 @@ import { Skeleton } from "../../ui/skeleton";
 /* --------------------------- Company Card Skeleton ---------------------------- */
 export default function CompanyCardSkeleton() {
   return (
-    <div className="w-full flex flex-col rounded-xl border border-muted bg-card">
-      <div className="flex flex-col gap-3 px-4 pt-4 pb-3">
-        {/* Header Section */}
-        <div className="flex items-start gap-3">
-          <Skeleton className="size-12 rounded-md shrink-0" />
-          <div className="flex-1 flex flex-col gap-1.5">
-            <Skeleton className="h-4 w-28 rounded" />
-            <div className="flex items-center gap-3">
-              <Skeleton className="h-3 w-20 rounded" />
-              <Skeleton className="h-3 w-16 rounded" />
-            </div>
-          </div>
-          <div className="flex gap-1">
-            <Skeleton className="size-8 rounded-full" />
-            <Skeleton className="size-8 rounded-full" />
+    <div className="w-full flex flex-col rounded-xl border border-muted bg-card overflow-hidden">
+      {/* Cover Banner Section */}
+      <Skeleton className="h-24 w-full rounded-none" />
+
+      {/* Avatar and Eye Buttons Section */}
+      <div className="flex items-end justify-between px-4 -mt-5">
+        <Skeleton className="size-14 rounded-md ring-2 ring-card" />
+        <Skeleton className="size-8 rounded-full mb-1" />
+      </div>
+
+      <div className="flex flex-col gap-3 px-4 pt-2 pb-3">
+        {/* Name and Meta Section */}
+        <div className="flex flex-col gap-1.5">
+          <Skeleton className="h-4 w-32 rounded" />
+          <div className="flex flex-wrap gap-x-3 gap-y-1">
+            <Skeleton className="h-3 w-20 rounded" />
+            <Skeleton className="h-3 w-16 rounded" />
+            <Skeleton className="h-3 w-18 rounded" />
           </div>
         </div>
 
@@ -28,16 +31,25 @@ export default function CompanyCardSkeleton() {
           <Skeleton className="h-3 w-4/5 rounded" />
         </div>
 
-        {/* Tags Section */}
+        {/* Open Positions Section */}
+        <div className="space-y-1.5">
+          <Skeleton className="h-3 w-28 rounded" />
+          <div className="flex flex-wrap gap-1.5">
+            <Skeleton className="h-6 w-20 rounded-full" />
+            <Skeleton className="h-6 w-24 rounded-full" />
+            <Skeleton className="h-6 w-16 rounded-full" />
+          </div>
+        </div>
+
+        {/* Benefits Section */}
         <div className="flex flex-wrap gap-1.5">
-          <Skeleton className="h-6 w-20 rounded-full" />
-          <Skeleton className="h-6 w-24 rounded-full" />
-          <Skeleton className="h-6 w-16 rounded-full" />
+          <Skeleton className="h-6 w-18 rounded-full" />
+          <Skeleton className="h-6 w-22 rounded-full" />
         </div>
       </div>
 
       {/* Footer Section */}
-      <div className="flex justify-end gap-2 px-4 pb-3">
+      <div className="flex justify-end gap-2 px-4 pb-3 border-t border-muted/50 pt-2">
         <Skeleton className="h-7 w-16 rounded-full" />
         <Skeleton className="h-7 w-16 rounded-full" />
       </div>

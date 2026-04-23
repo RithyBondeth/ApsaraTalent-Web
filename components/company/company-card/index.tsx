@@ -3,6 +3,8 @@ import {
   LucideBookmark,
   LucideBriefcaseBusiness,
   LucideBuilding,
+  LucideBuilding2,
+  LucideCalendar,
   LucideCircleArrowRight,
   LucideClock,
   LucideEye,
@@ -10,17 +12,18 @@ import {
   LucideMapPin,
   LucideUsers,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "../../ui/button";
 import CachedAvatar from "../../ui/cached-avatar";
-import IconLabel from "@/components/utils/data-display/icon-label";
 import Tag from "@/components/utils/data-display/tag";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import CompanyDialog from "../company-dialog";
 import { ICompanyCardProps } from "./props";
+import IconLabel from "@/components/utils/data-display/icon-label";
 
 export default function CompanyCard(props: ICompanyCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
@@ -55,64 +58,81 @@ export default function CompanyCard(props: ICompanyCardProps) {
   if (isGrid) {
     return (
       <>
-        <div className="group relative w-full flex flex-col rounded-xl border border-muted bg-card cursor-pointer transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_8px_30px_hsl(var(--foreground)/0.08)] hover:border-primary/20">
-          {/* Main Content  Section*/}
-          <div className="flex flex-col gap-3 px-4 pt-4 pb-3">
-            {/* Header Section: Avatar + Info + Actions */}
-            <div className="flex items-start gap-3">
-              <CachedAvatar
-                src={props.avatar}
-                alt={props.name}
-                className="size-12 shrink-0 ring-2 ring-background shadow-sm"
-                rounded="md"
-                onClick={props.onProfileImageClick}
-                preload={true}
-                showLoadingState={true}
-              >
-                {props.name.slice(0, 2)}
-              </CachedAvatar>
+        <div className="group relative w-full flex flex-col rounded-xl border border-muted bg-card overflow-hidden cursor-pointer transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_8px_30px_hsl(var(--foreground)/0.10)] hover:border-primary/30">
+          {/* Cover Banner Section */}
+          <div className="relative h-24 w-full shrink-0 bg-gradient-to-br from-primary/15 via-primary/8 to-muted/30 overflow-hidden">
+            {props.cover && (
+              <Image
+                src={props.cover}
+                alt="cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 400px"
+              />
+            )}
+            {/* Like Button Section */}
+            <Button
+              size="icon"
+              variant="ghost"
+              className="absolute top-2 right-2 size-8 rounded-full bg-background/70 backdrop-blur-sm text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-all duration-200"
+              onClick={props.onLikeClick}
+              disabled={props.onLikeClickDisable}
+            >
+              <LucideHeartHandshake
+                className={`!size-4${props.onLikeClickDisable ? " animate-pop-shrink text-rose-500" : ""}`}
+              />
+            </Button>
+          </div>
 
-              <div className="flex-1 min-w-0">
-                <TypographyP className="!m-0 font-semibold text-sm truncate leading-tight">
-                  {props.name}
-                </TypographyP>
-                <div className="flex items-center gap-3 mt-0.5">
-                  <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
-                    <LucideUsers className="size-3 shrink-0" />
-                    <span>
-                      {props.companySize <= 1
-                        ? `${props.companySize} employee`
-                        : `${props.companySize} employees`}
-                    </span>
-                  </TypographySmall>
-                  <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
-                    <LucideMapPin className="size-3 shrink-0" />
-                    <span className="truncate">{props.location}</span>
-                  </TypographySmall>
-                </div>
-              </div>
+          {/* Avatar + Identity row */}
+          <div className="flex items-end justify-between gap-3 px-4 -mt-6 z-10">
+            <CachedAvatar
+              src={props.avatar}
+              alt={props.name}
+              className="size-14 shrink-0 ring-2 ring-card shadow-md"
+              rounded="md"
+              onClick={props.onProfileImageClick}
+              preload={true}
+              showLoadingState={true}
+            >
+              {props.name.slice(0, 2)}
+            </CachedAvatar>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="size-8 mb-1 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
+              onClick={handleClickDialog}
+            >
+              <LucideEye className="!size-4" />
+            </Button>
+          </div>
 
-              {/* Action Buttons Section */}
-              <div className="flex items-center gap-1 shrink-0">
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="size-8 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
-                  onClick={handleClickDialog}
-                >
-                  <LucideEye className="!size-4" />
-                </Button>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="size-8 rounded-full text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-all duration-200"
-                  onClick={props.onLikeClick}
-                  disabled={props.onLikeClickDisable}
-                >
-                  <LucideHeartHandshake
-                    className={`!size-4${props.onLikeClickDisable ? " animate-pop-shrink text-rose-500" : ""}`}
-                  />
-                </Button>
+          {/* Main Content Section */}
+          <div className="flex flex-col gap-3 px-4 pt-2 pb-3">
+            {/* Name and Meta Section */}
+            <div className="flex flex-col gap-1">
+              <TypographyP className="!m-0 font-semibold text-sm leading-tight">
+                {props.name}
+              </TypographyP>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
+                <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
+                  <LucideBuilding2 className="size-3 shrink-0" />
+                  <span className="truncate">{props.industry}</span>
+                </TypographySmall>
+                <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
+                  <LucideMapPin className="size-3 shrink-0" />
+                  <span className="truncate">{props.location}</span>
+                </TypographySmall>
+                <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
+                  <LucideUsers className="size-3 shrink-0" />
+                  <span>{props.companySize.toLocaleString()} people</span>
+                </TypographySmall>
+                {props.foundedYear && (
+                  <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
+                    <LucideCalendar className="size-3 shrink-0" />
+                    <span>Est. {props.foundedYear}</span>
+                  </TypographySmall>
+                )}
               </div>
             </div>
 
@@ -121,25 +141,47 @@ export default function CompanyCard(props: ICompanyCardProps) {
               {props.description}
             </TypographyMuted>
 
-            {/* Open Positions Tags Section */}
+            {/* Open Positions Section */}
             {props.openPositions.length > 0 && (
+              <div className="flex flex-col gap-1.5">
+                <TypographySmall className="text-[11px] font-semibold text-foreground/70 flex items-center gap-1">
+                  <LucideBriefcaseBusiness className="size-3" />
+                  {props.openPositions.length === 1
+                    ? "1 Open Position"
+                    : `${props.openPositions.length} Open Positions`}
+                </TypographySmall>
+                <div className="flex flex-wrap gap-1.5">
+                  {props.openPositions
+                    .slice(0, 3)
+                    .map((item: IJobPosition, index) => (
+                      <Tag key={index} label={item.title} />
+                    ))}
+                  {props.openPositions.length > 3 && (
+                    <span className="text-[11px] text-muted-foreground self-center font-medium">
+                      +{props.openPositions.length - 3} more
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Benefits Section */}
+            {props.benefits && props.benefits.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
-                {props.openPositions
-                  .slice(0, 3)
-                  .map((item: IJobPosition, index) => (
-                    <Tag key={index} label={item.title} />
-                  ))}
-                {props.openPositions.length > 3 && (
+                {props.benefits.slice(0, 3).map((b, i) => (
+                  <Tag key={i} label={b.label} />
+                ))}
+                {props.benefits.length > 3 && (
                   <span className="text-[11px] text-muted-foreground self-center font-medium">
-                    +{props.openPositions.length - 3}
+                    +{props.benefits.length - 3}
                   </span>
                 )}
               </div>
             )}
           </div>
 
-          {/* Footer Section: Save, View Buttons */}
-          <div className="flex items-center justify-end gap-2 px-4 pb-3 pt-0">
+          {/* Footer Section */}
+          <div className="flex items-center justify-end gap-2 px-4 pb-3 pt-0 border-t border-muted/50 mt-auto">
             <Button
               className={`text-xs h-7 px-3 rounded-full ${
                 props.hideSaveButton
@@ -177,7 +219,6 @@ export default function CompanyCard(props: ICompanyCardProps) {
           </div>
         </div>
 
-        {/* Company Dialog Section */}
         <CompanyDialog
           open={openCompanyDialog}
           setOpen={setOpenCompanyDialog}
@@ -187,7 +228,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
     );
   }
 
-  // ── Default variant: bordered card with shadow ──────────
+  // ── Default Variant Section ──────────────────────────────────────────────────────────
   return (
     <div className="h-fit w-full flex flex-col items-start gap-4 rounded-lg border border-muted p-3 shadow-sm cursor-pointer transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_8px_28px_hsl(var(--foreground)/0.1)] hover:border-primary/25">
       {/* Main Content Section */}
