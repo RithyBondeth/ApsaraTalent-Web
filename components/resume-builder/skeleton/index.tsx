@@ -3,16 +3,27 @@ import { Skeleton } from "@/components/ui/skeleton";
 /* -------------------------------- Resume Builder Loading Skeleton ------------------------------- */
 export default function ResumeBuilderLoadingSkeleton() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 p-5">
-      {Array.from({ length: 12 }, (_, index) => (
-        <TemplateCardSkeleton key={index} />
-      ))}
+    <div className="w-full flex flex-col items-start gap-5 px-2.5 sm:px-5 lg:px-8">
+      {/* Banner Skeleton */}
+      <Skeleton className="w-full h-28 rounded-xl" />
+
+      {/* Section Header Skeleton */}
+      <div className="w-full flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <Skeleton className="h-6 w-44" />
+      </div>
+
+      {/* Template Grid Skeleton — matches real grid: 1 → 2 → 3 cols */}
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+        {Array.from({ length: 6 }, (_, index) => (
+          <TemplateCardSkeleton key={index} />
+        ))}
+      </div>
     </div>
   );
 }
 
 /* ------------------------------------- Template Card Skeleton ------------------------------------ */
-function TemplateCardSkeleton() {
+export function TemplateCardSkeleton() {
   return (
     <div className="h-fit w-full flex flex-col rounded-lg shadow-sm border border-muted overflow-hidden">
       {/* Preview Area Section */}

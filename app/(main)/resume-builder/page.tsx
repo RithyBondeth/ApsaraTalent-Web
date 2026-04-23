@@ -13,7 +13,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { buildResumePayloadFromUser } from "./_utils/build-payload";
 import { TResumeTemplate } from "@/utils/types/resume/resume.type";
-import ResumeBuilderLoadingSkeleton from "@/components/resume-builder/skeleton";
+import { TemplateCardSkeleton } from "@/components/resume-builder/skeleton";
 
 // Module-level flag so templates are only fetched once per app session
 let hasFetchedTemplates = false;
@@ -109,26 +109,26 @@ export default function ResumeBuilder() {
           <TypographyH4>Choose your template</TypographyH4>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 my-3">
-          {templateData && templateData.length > 0 ? (
-            templateData.map((resume) => {
-              const mapped = templateMap[resume.title];
-              const isSelected = mapped && selectedTemplate === mapped;
-              return (
-                <TemplateCard
-                  key={resume.id}
-                  isPremium={resume.isPremium}
-                  price={resume.price!}
-                  image={resume.image}
-                  title={resume.title}
-                  description={resume.description}
-                  onUseTemplate={() => handleSelectTemplate(resume.title)}
-                  selected={!!isSelected}
-                />
-              );
-            })
-          ) : (
-            <ResumeBuilderLoadingSkeleton />
-          )}
+          {templateData && templateData.length > 0
+            ? templateData.map((resume) => {
+                const mapped = templateMap[resume.title];
+                const isSelected = mapped && selectedTemplate === mapped;
+                return (
+                  <TemplateCard
+                    key={resume.id}
+                    isPremium={resume.isPremium}
+                    price={resume.price!}
+                    image={resume.image}
+                    title={resume.title}
+                    description={resume.description}
+                    onUseTemplate={() => handleSelectTemplate(resume.title)}
+                    selected={!!isSelected}
+                  />
+                );
+              })
+            : Array.from({ length: 6 }, (_, i) => (
+                <TemplateCardSkeleton key={i} />
+              ))}
         </div>
       </div>
 
