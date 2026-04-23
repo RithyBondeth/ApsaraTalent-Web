@@ -29,8 +29,11 @@ import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { useGetEmployeeRecommendationsStore } from "@/stores/apis/recommendation/get-employee-recommendations.store";
+import { useGetCompanyRecommendationsStore } from "@/stores/apis/recommendation/get-company-recommendations.store";
 import { ICompany } from "@/utils/interfaces/user/company.interface";
 import { IEmployee } from "@/utils/interfaces/user/employee.interface";
+import { Sparkles } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -155,6 +158,26 @@ export default function FeedPage() {
   const { countCurrentEmpMatching } = useCountCurrentEmployeeMatchingStore();
   const { countCurrentCmpMatching } = useCountCurrentCompanyMatchingStore();
 
+  // Recommendations APIs
+  const employeeRecommendations = useGetEmployeeRecommendationsStore(
+    (s) => s.recommendations,
+  );
+  const employeeRecommendationsLoading = useGetEmployeeRecommendationsStore(
+    (s) => s.loading,
+  );
+  const queryEmployeeRecommendations = useGetEmployeeRecommendationsStore(
+    (s) => s.queryEmployeeRecommendations,
+  );
+  const companyRecommendations = useGetCompanyRecommendationsStore(
+    (s) => s.recommendations,
+  );
+  const companyRecommendationsLoading = useGetCompanyRecommendationsStore(
+    (s) => s.loading,
+  );
+  const queryCompanyRecommendations = useGetCompanyRecommendationsStore(
+    (s) => s.queryCompanyRecommendations,
+  );
+
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => setMounted(true), []);
 
@@ -163,6 +186,13 @@ export default function FeedPage() {
     cacheKey: "feed-page",
     onEmployeeFetch: queryCurrentEmployeeLiked,
     onCompanyFetch: queryCurrentCompanyLiked,
+  });
+
+  // Fetch Recommendations — separate cache key so it resets with the user
+  useFetchOnce({
+    cacheKey: "feed-recommendations",
+    onEmployeeFetch: queryEmployeeRecommendations,
+    onCompanyFetch: queryCompanyRecommendations,
   });
 
   // Stable refs for store methods — prevents useEffect from re-running when
@@ -227,6 +257,25 @@ export default function FeedPage() {
     currentCompanyLiked,
   ]);
 
+  // Filter recommendations against the liked list so cards vanish immediately after a like
+  const filteredEmployeeRecommendations = useMemo(() => {
+    if (!employeeRecommendations) return null;
+    if (!currentEmployeeLiked) return employeeRecommendations;
+    return employeeRecommendations.filter(
+      (company) =>
+        !currentEmployeeLiked.some((liked) => liked.id === company.id),
+    );
+  }, [employeeRecommendations, currentEmployeeLiked]);
+
+  const filteredCompanyRecommendations = useMemo(() => {
+    if (!companyRecommendations) return null;
+    if (!currentCompanyLiked) return companyRecommendations;
+    return companyRecommendations.filter(
+      (employee) =>
+        !currentCompanyLiked.some((liked) => liked.id === employee.id),
+    );
+  }, [companyRecommendations, currentCompanyLiked]);
+
   // Profile Pop up Effect
   useEffect(() => {
     if (openProfilePopup) {
@@ -243,7 +292,11 @@ export default function FeedPage() {
       setLikingId(companyID);
 
       // Optimistic update — remove card instantly before API responds
-      const company = companyData?.find((c) => c.id === companyID);
+      // Check both the main feed and the recommendations list so recommendation-only
+      // cards also vanish immediately without waiting for a server round-trip.
+      const company =
+        companyData?.find((c) => c.id === companyID) ??
+        employeeRecommendations?.find((c) => c.id === companyID);
       if (company) optimisticAddEmployeeLiked(company);
 
       // Backend auto-removes favorite on like — sync the local Set immediately
@@ -268,6 +321,7 @@ export default function FeedPage() {
       optimisticAddEmployeeLiked,
       optimisticRemoveEmpFav,
       companyData,
+      employeeRecommendations,
     ],
   );
 
@@ -278,7 +332,11 @@ export default function FeedPage() {
       setLikingId(employeeID);
 
       // Optimistic update — remove card instantly before API responds
-      const employee = employeesData?.find((e) => e.id === employeeID);
+      // Check both the main feed and the recommendations list so recommendation-only
+      // cards also vanish immediately without waiting for a server round-trip.
+      const employee =
+        employeesData?.find((e) => e.id === employeeID) ??
+        companyRecommendations?.find((e) => e.id === employeeID);
       if (employee) optimisticAddCompanyLiked(employee);
 
       // Backend auto-removes favorite on like — sync the local Set immediately
@@ -303,6 +361,7 @@ export default function FeedPage() {
       optimisticAddCompanyLiked,
       optimisticRemoveCmpFav,
       employeesData,
+      companyRecommendations,
     ],
   );
 
@@ -453,6 +512,101 @@ export default function FeedPage() {
           )}
         </div>
       )}
+
+      {/* Recommended for You Section */}
+      {!isLoading &&
+        (() => {
+          const recs = isEmployee
+            ? filteredEmployeeRecommendations
+            : filteredCompanyRecommendations;
+          const recsLoading = isEmployee
+            ? employeeRecommendationsLoading
+            : companyRecommendationsLoading;
+
+          if (recsLoading) {
+            return (
+              <div className="w-full flex flex-col gap-3">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  <TypographyH4>Recommended for You</TypographyH4>
+                </div>
+                <div className="w-full flex gap-4 overflow-x-auto pb-2">
+                  {Array.from({ length: 3 }).map((_, i) =>
+                    isEmployee ? (
+                      <div
+                        key={i}
+                        className="min-w-[290px] max-w-[290px] flex-shrink-0"
+                      >
+                        <CompanyCardSkeleton />
+                      </div>
+                    ) : (
+                      <div
+                        key={i}
+                        className="min-w-[290px] max-w-[290px] flex-shrink-0"
+                      >
+                        <EmployeeCardSkeleton />
+                      </div>
+                    ),
+                  )}
+                </div>
+              </div>
+            );
+          }
+
+          if (!recs || recs.length === 0) return null;
+
+          return (
+            <div className="w-full flex flex-col gap-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-primary" />
+                <TypographyH4>Recommended for You</TypographyH4>
+              </div>
+              <div className="w-full flex gap-4 overflow-x-auto pb-2">
+                {isEmployee
+                  ? (recs as ICompany[]).map((company) => (
+                      <div
+                        key={company.id}
+                        className="min-w-[290px] max-w-[290px] flex-shrink-0"
+                      >
+                        <MemoCompanyFeedCard
+                          company={company}
+                          employeeId={currentUser?.employee?.id ?? ""}
+                          isLiking={
+                            company.id === likingId && employeeLikeLoading
+                          }
+                          isFavorite={isEmpFavorite(company.id)}
+                          onView={handleEmployeeViewCompany}
+                          onLike={handleEmployeeLikeCompany}
+                          onSave={handleEmployeeFavoriteCompany}
+                          onProfileImageClick={handleClickProfilePopup}
+                          onSetProfileImage={setCurrentProfileImage}
+                        />
+                      </div>
+                    ))
+                  : (recs as IEmployee[]).map((employee) => (
+                      <div
+                        key={employee.id}
+                        className="min-w-[290px] max-w-[290px] flex-shrink-0"
+                      >
+                        <MemoEmployeeFeedCard
+                          employee={employee}
+                          companyId={currentUser?.company?.id ?? ""}
+                          isLiking={
+                            employee.id === likingId && companyLikeLoading
+                          }
+                          isFavorite={isCmpFavorite(employee.id)}
+                          onView={handleCompanyViewEmployee}
+                          onLike={handleCompanyLikeEmployee}
+                          onSave={handleCompanyFavoriteEmployee}
+                          onProfileImageClick={handleClickProfilePopup}
+                          onSetProfileImage={setCurrentProfileImage}
+                        />
+                      </div>
+                    ))}
+              </div>
+            </div>
+          );
+        })()}
 
       {/* Feed Card Section */}
       <div className="w-full grid grid-cols-3 gap-x-4 gap-y-4 laptop-sm:grid-cols-2 laptop-sm:gap-x-3 laptop-sm:gap-y-3 tablet-lg:grid-cols-1 tablet-lg:gap-x-0 tablet-lg:gap-y-3 stagger-list">
