@@ -63,6 +63,8 @@ const globalFetchCache = {
   employees: false,
 };
 
+const PAGE_SIZE = 9;
+
 export default function FeedPage() {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
@@ -71,6 +73,10 @@ export default function FeedPage() {
 
   /* -------------------------------- All States ------------------------------ */
   const [mounted, setMounted] = useState<boolean>(false);
+
+  // Infinite scroll
+  const [visibleCount, setVisibleCount] = useState<number>(PAGE_SIZE);
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   // Liked helper
   const [likingId, setLikingId] = useState<string | null>(null);
@@ -275,6 +281,29 @@ export default function FeedPage() {
         !currentCompanyLiked.some((liked) => liked.id === employee.id),
     );
   }, [companyRecommendations, currentCompanyLiked]);
+
+  // Reset visible count when the feed data source changes
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [isEmployee]);
+
+  // Infinite scroll — reveal more cards when sentinel enters the viewport
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisibleCount((prev) => prev + PAGE_SIZE);
+        }
+      },
+      { rootMargin: "200px" },
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, []);
 
   // Profile Pop up Effect
   useEffect(() => {
@@ -530,22 +559,12 @@ export default function FeedPage() {
                   <Sparkles className="h-5 w-5 text-primary" />
                   <TypographyH4>Recommended for You</TypographyH4>
                 </div>
-                <div className="w-full flex gap-4 overflow-x-auto pb-2">
+                <div className="w-full grid grid-cols-3 gap-x-4 gap-y-4 laptop-sm:grid-cols-2 laptop-sm:gap-x-3 laptop-sm:gap-y-3 tablet-lg:grid-cols-1 tablet-lg:gap-x-0 tablet-lg:gap-y-3">
                   {Array.from({ length: 3 }).map((_, i) =>
                     isEmployee ? (
-                      <div
-                        key={i}
-                        className="min-w-[290px] max-w-[290px] flex-shrink-0"
-                      >
-                        <CompanyCardSkeleton />
-                      </div>
+                      <CompanyCardSkeleton key={i} />
                     ) : (
-                      <div
-                        key={i}
-                        className="min-w-[290px] max-w-[290px] flex-shrink-0"
-                      >
-                        <EmployeeCardSkeleton />
-                      </div>
+                      <EmployeeCardSkeleton key={i} />
                     ),
                   )}
                 </div>
@@ -561,47 +580,39 @@ export default function FeedPage() {
                 <Sparkles className="h-5 w-5 text-primary" />
                 <TypographyH4>Recommended for You</TypographyH4>
               </div>
-              <div className="w-full flex gap-4 overflow-x-auto pb-2">
+              <div className="w-full grid grid-cols-3 gap-x-4 gap-y-4 laptop-sm:grid-cols-2 laptop-sm:gap-x-3 laptop-sm:gap-y-3 tablet-lg:grid-cols-1 tablet-lg:gap-x-0 tablet-lg:gap-y-3">
                 {isEmployee
                   ? (recs as ICompany[]).map((company) => (
-                      <div
+                      <MemoCompanyFeedCard
                         key={company.id}
-                        className="min-w-[290px] max-w-[290px] flex-shrink-0"
-                      >
-                        <MemoCompanyFeedCard
-                          company={company}
-                          employeeId={currentUser?.employee?.id ?? ""}
-                          isLiking={
-                            company.id === likingId && employeeLikeLoading
-                          }
-                          isFavorite={isEmpFavorite(company.id)}
-                          onView={handleEmployeeViewCompany}
-                          onLike={handleEmployeeLikeCompany}
-                          onSave={handleEmployeeFavoriteCompany}
-                          onProfileImageClick={handleClickProfilePopup}
-                          onSetProfileImage={setCurrentProfileImage}
-                        />
-                      </div>
+                        company={company}
+                        employeeId={currentUser?.employee?.id ?? ""}
+                        isLiking={
+                          company.id === likingId && employeeLikeLoading
+                        }
+                        isFavorite={isEmpFavorite(company.id)}
+                        onView={handleEmployeeViewCompany}
+                        onLike={handleEmployeeLikeCompany}
+                        onSave={handleEmployeeFavoriteCompany}
+                        onProfileImageClick={handleClickProfilePopup}
+                        onSetProfileImage={setCurrentProfileImage}
+                      />
                     ))
                   : (recs as IEmployee[]).map((employee) => (
-                      <div
+                      <MemoEmployeeFeedCard
                         key={employee.id}
-                        className="min-w-[290px] max-w-[290px] flex-shrink-0"
-                      >
-                        <MemoEmployeeFeedCard
-                          employee={employee}
-                          companyId={currentUser?.company?.id ?? ""}
-                          isLiking={
-                            employee.id === likingId && companyLikeLoading
-                          }
-                          isFavorite={isCmpFavorite(employee.id)}
-                          onView={handleCompanyViewEmployee}
-                          onLike={handleCompanyLikeEmployee}
-                          onSave={handleCompanyFavoriteEmployee}
-                          onProfileImageClick={handleClickProfilePopup}
-                          onSetProfileImage={setCurrentProfileImage}
-                        />
-                      </div>
+                        employee={employee}
+                        companyId={currentUser?.company?.id ?? ""}
+                        isLiking={
+                          employee.id === likingId && companyLikeLoading
+                        }
+                        isFavorite={isCmpFavorite(employee.id)}
+                        onView={handleCompanyViewEmployee}
+                        onLike={handleCompanyLikeEmployee}
+                        onSave={handleCompanyFavoriteEmployee}
+                        onProfileImageClick={handleClickProfilePopup}
+                        onSetProfileImage={setCurrentProfileImage}
+                      />
                     ))}
               </div>
             </div>
@@ -612,18 +623,15 @@ export default function FeedPage() {
       <div className="w-full grid grid-cols-3 gap-x-4 gap-y-4 laptop-sm:grid-cols-2 laptop-sm:gap-x-3 laptop-sm:gap-y-3 tablet-lg:grid-cols-1 tablet-lg:gap-x-0 tablet-lg:gap-y-3 stagger-list">
         {/* Loading Skeleton Section */}
         {isLoading
-          ? Array.from({ length: 9 }).map((_, index) =>
+          ? Array.from({ length: PAGE_SIZE }).map((_, index) =>
               isEmployee ? (
                 <CompanyCardSkeleton key={`company-skeleton-${index}`} />
               ) : (
                 <EmployeeCardSkeleton key={`employee-skeleton-${index}`} />
               ),
             )
-          : allUsers.length > 0 &&
-            // Card List Section
-            allUsers.map((user) =>
+          : allUsers.slice(0, visibleCount).map((user) =>
               isEmployee ? (
-                // Company Card Section
                 <MemoCompanyFeedCard
                   key={user.id}
                   company={user as ICompany}
@@ -637,7 +645,6 @@ export default function FeedPage() {
                   onSetProfileImage={setCurrentProfileImage}
                 />
               ) : (
-                // Employee Card Section
                 <MemoEmployeeFeedCard
                   key={user.id}
                   employee={user as IEmployee}
@@ -667,6 +674,19 @@ export default function FeedPage() {
           <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
             {isEmployee ? "Company List Empty" : "Employee List Empty"}
           </TypographyP>
+        </div>
+      )}
+
+      {/* Infinite scroll sentinel — triggers loading the next page */}
+      {!isLoading && visibleCount < allUsers.length && (
+        <div ref={sentinelRef} className="w-full grid grid-cols-3 gap-x-4 gap-y-4 laptop-sm:grid-cols-2 laptop-sm:gap-x-3 laptop-sm:gap-y-3 tablet-lg:grid-cols-1 tablet-lg:gap-x-0 tablet-lg:gap-y-3">
+          {Array.from({ length: 3 }).map((_, i) =>
+            isEmployee ? (
+              <CompanyCardSkeleton key={`load-more-${i}`} />
+            ) : (
+              <EmployeeCardSkeleton key={`load-more-${i}`} />
+            ),
+          )}
         </div>
       )}
 
