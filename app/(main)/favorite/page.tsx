@@ -68,8 +68,14 @@ export default function FavoritePage() {
       getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
         currentUser.employee.id,
       );
+      countCurrentEmpFavoritesStore.countCurrentEmpFavorites(
+        currentUser.employee.id,
+      );
     } else if (!isEmployee && currentUser.company?.id) {
       getAllCompanyFavoritesStore.queryAllCompanyFavorites(
+        currentUser.company.id,
+      );
+      countCurrentCmpFavoritesStore.countCurrentCmpFavorites(
         currentUser.company.id,
       );
     }

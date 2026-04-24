@@ -1,29 +1,39 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import CompanyCardSkeleton from "@/components/company/skeleton";
 
 /* ------------------------- Feed Page Loading Skeleton ------------------------- */
 export default function FeedPageLoadingSkeleton() {
   return (
-    <div className="mt-3 flex w-full flex-col px-2.5 sm:px-5">
+    <div className="w-full flex flex-col items-start gap-4 sm:gap-5">
       {/* Banner Section */}
       <FeedBannerSkeleton />
-      {/* Card List Section */}
-      <div className="flex flex-col items-start gap-3 p-2 sm:p-3 mt-3">
-        {[...Array(4)].map((_, i) => (
-          <div
-            key={i}
-            className="w-full flex items-start gap-5 p-5 shadow-md rounded-md"
-          >
-            <Skeleton className="size-16 rounded-md shrink-0" />
-            <div className="flex-1 flex flex-col gap-2">
-              <Skeleton className="h-5 w-48" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-3/4" />
-              <div className="flex gap-2 mt-1">
-                <Skeleton className="h-8 w-24 rounded-md" />
-                <Skeleton className="h-8 w-20 rounded-md" />
-              </div>
-            </div>
-          </div>
+
+      {/* Recommended for You Section */}
+      <div className="w-full flex flex-col gap-3">
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-5 w-5 rounded" />
+          <Skeleton className="h-5 w-44 rounded" />
+        </div>
+        <div className="w-full grid grid-cols-3 gap-x-4 gap-y-4 laptop-sm:grid-cols-2 laptop-sm:gap-x-3 laptop-sm:gap-y-3 tablet-lg:grid-cols-1 tablet-lg:gap-x-0 tablet-lg:gap-y-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <CompanyCardSkeleton key={i} />
+          ))}
+        </div>
+      </div>
+
+      {/* All Companies/Talent Divider Section */}
+      <div className="w-full flex items-center gap-4">
+        <div className="flex items-center gap-2 shrink-0">
+          <Skeleton className="h-5 w-5 rounded" />
+          <Skeleton className="h-5 w-32 rounded" />
+        </div>
+        <div className="flex-1 h-px bg-border" />
+      </div>
+
+      {/* Feed Card Grid Section */}
+      <div className="w-full grid grid-cols-3 gap-x-4 gap-y-4 laptop-sm:grid-cols-2 laptop-sm:gap-x-3 laptop-sm:gap-y-3 tablet-lg:grid-cols-1 tablet-lg:gap-x-0 tablet-lg:gap-y-3">
+        {Array.from({ length: 9 }).map((_, i) => (
+          <CompanyCardSkeleton key={i} />
         ))}
       </div>
     </div>

@@ -6,7 +6,7 @@ import { create } from "zustand";
 /* ---------------------------------- States --------------------------------- */
 // ── Count Current Company Favorites API Response ─────────────────────────
 type TCountCurrentCompanyFavoriteResponse = {
-  totalFavorites: number;
+  count: number;
 };
 
 // ── Count Current Company Favorites State ────────────────────────────────
@@ -32,7 +32,7 @@ export const useCountCurrentCompanyFavoritesStore =
         );
 
         set({
-          totalCmpFavorites: response.data.totalFavorites,
+          totalCmpFavorites: response.data.count,
           loading: false,
           error: null,
         });

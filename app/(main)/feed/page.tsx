@@ -51,7 +51,7 @@ import {
   feedWhiteSvg,
 } from "@/utils/constants/asset.constant";
 import CompanyCardSkeleton from "@/components/company/skeleton";
-import FeedBannerSkeleton from "@/components/feed/skeleton";
+import { FeedBannerSkeleton } from "@/components/feed/skeleton";
 import { MemoCompanyFeedCard } from "@/components/feed/memo-company-feed-card";
 import { MemoEmployeeFeedCard } from "@/components/feed/memo-employee-feed-card";
 import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";

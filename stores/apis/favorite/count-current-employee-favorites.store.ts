@@ -6,7 +6,7 @@ import { create } from "zustand";
 /* ---------------------------------- States --------------------------------- */
 // ── Count Current Employee Favorites API Response ─────────────────────────
 type TCountCurrentEmployeeFavoriteResponse = {
-  totalFavorites: number;
+  count: number;
 };
 
 // ── Count Current Employee Favorites State ────────────────────────────────
@@ -32,7 +32,7 @@ export const useCountCurrentEmployeeFavoritesStore =
         );
 
         set({
-          totalEmpFavorites: response.data.totalFavorites,
+          totalEmpFavorites: response.data.count,
           loading: false,
           error: null,
         });
