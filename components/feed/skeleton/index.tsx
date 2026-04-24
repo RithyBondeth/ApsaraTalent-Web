@@ -1,5 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import CompanyCardSkeleton from "@/components/company/skeleton";
+import EmployeeCardSkeleton from "@/components/employee/skeleton";
 
 /* ------------------------- Feed Page Loading Skeleton ------------------------- */
 export default function FeedPageLoadingSkeleton() {
@@ -9,31 +10,17 @@ export default function FeedPageLoadingSkeleton() {
       <FeedBannerSkeleton />
 
       {/* Recommended for You Section */}
-      <div className="w-full flex flex-col gap-3">
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-5 w-5 rounded" />
-          <Skeleton className="h-5 w-44 rounded" />
-        </div>
-        <div className="w-full grid grid-cols-3 gap-x-4 gap-y-4 laptop-sm:grid-cols-2 laptop-sm:gap-x-3 laptop-sm:gap-y-3 tablet-lg:grid-cols-1 tablet-lg:gap-x-0 tablet-lg:gap-y-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <CompanyCardSkeleton key={i} />
-          ))}
-        </div>
-      </div>
+      <FeedRecommendationsSkeleton />
 
       {/* All Companies/Talent Divider Section */}
-      <div className="w-full flex items-center gap-4">
-        <div className="flex items-center gap-2 shrink-0">
-          <Skeleton className="h-5 w-5 rounded" />
-          <Skeleton className="h-5 w-32 rounded" />
-        </div>
-        <div className="flex-1 h-px bg-border" />
-      </div>
+      <FeedDividerSkeleton />
 
       {/* Feed Card Grid Section */}
-      <div className="w-full grid grid-cols-3 gap-x-4 gap-y-4 laptop-sm:grid-cols-2 laptop-sm:gap-x-3 laptop-sm:gap-y-3 tablet-lg:grid-cols-1 tablet-lg:gap-x-0 tablet-lg:gap-y-3">
+      <div className="w-full columns-3 gap-x-4 laptop-sm:columns-2 tablet-lg:columns-1">
         {Array.from({ length: 9 }).map((_, i) => (
-          <CompanyCardSkeleton key={i} />
+          <div key={i} className="break-inside-avoid mb-4">
+            <CompanyCardSkeleton />
+          </div>
         ))}
       </div>
     </div>
@@ -68,6 +55,44 @@ export function FeedBannerSkeleton() {
 
       {/* Image Section */}
       <Skeleton className="h-[220px] w-[300px] sm:h-[250px] sm:w-[350px] tablet-xl:!w-full rounded-lg" />
+    </div>
+  );
+}
+
+/* ------------------- Feed Recommendations Loading Skeleton ------------------- */
+export function FeedRecommendationsSkeleton() {
+  return (
+    <div className="w-full flex flex-col gap-3">
+      {/* Title Section */}
+      <div className="flex items-center gap-2">
+        <Skeleton className="h-5 w-5 rounded" />
+        <Skeleton className="h-5 w-44 rounded" />
+      </div>
+
+      {/* Card Grid Section */}
+      <div className="w-full columns-3 gap-x-4 laptop-sm:columns-2 tablet-lg:columns-1">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="break-inside-avoid mb-4">
+            <EmployeeCardSkeleton />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* --------------------- Feed Divider Loading Skeleton ------------------------- */
+export function FeedDividerSkeleton() {
+  return (
+    <div className="w-full flex items-center gap-4">
+      {/* Icon and Label Section */}
+      <div className="flex items-center gap-2 shrink-0">
+        <Skeleton className="h-5 w-5 rounded" />
+        <Skeleton className="h-5 w-32 rounded" />
+      </div>
+
+      {/* Divider Line Section */}
+      <div className="flex-1 h-px bg-border" />
     </div>
   );
 }

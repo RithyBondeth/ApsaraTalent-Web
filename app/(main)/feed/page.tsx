@@ -51,7 +51,11 @@ import {
   feedWhiteSvg,
 } from "@/utils/constants/asset.constant";
 import CompanyCardSkeleton from "@/components/company/skeleton";
-import { FeedBannerSkeleton } from "@/components/feed/skeleton";
+import {
+  FeedBannerSkeleton,
+  FeedDividerSkeleton,
+  FeedRecommendationsSkeleton,
+} from "@/components/feed/skeleton";
 import { MemoCompanyFeedCard } from "@/components/feed/memo-company-feed-card";
 import { MemoEmployeeFeedCard } from "@/components/feed/memo-employee-feed-card";
 import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
@@ -543,8 +547,9 @@ export default function FeedPage() {
       )}
 
       {/* Recommended for You Section */}
-      {!isLoading &&
-        (() => {
+      {isLoading ? (
+        <FeedRecommendationsSkeleton />
+      ) : (() => {
           const recs = isEmployee
             ? filteredEmployeeRecommendations
             : filteredCompanyRecommendations;
@@ -624,7 +629,9 @@ export default function FeedPage() {
         })()}
 
       {/* Divider Section: All Companies / All Talent */}
-      {!isLoading && (
+      {isLoading ? (
+        <FeedDividerSkeleton />
+      ) : (
         <div className="w-full flex items-center gap-4">
           <div className="flex items-center gap-2 shrink-0">
             {isEmployee ? (
