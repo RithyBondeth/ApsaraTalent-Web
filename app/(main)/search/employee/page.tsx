@@ -40,6 +40,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Controller, useForm } from "react-hook-form";
 import { employeeSearchSchema, TEmployeeSearchSchema } from "./validation";
 import { EmployeeSearchSvg } from "@/utils/constants/asset.constant";
@@ -48,6 +49,7 @@ import { SearchEmployeeCardSkeleton } from "@/components/search/skeleton";
 
 export default function EmployeeSearchPage() {
   /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("searchEmployee");
   const isFirstWatchRenderRef = useRef<boolean>(true);
   const isInitialSearchDoneRef = useRef<boolean>(false);
 
@@ -197,16 +199,16 @@ export default function EmployeeSearchPage() {
       <div className="w-full flex items-center justify-between gap-6 lg:gap-10 laptop-sm:flex-col laptop-sm:items-center">
         <div className="w-full flex flex-col items-start gap-3 laptop-sm:py-5">
           <TypographyH2 className="leading-relaxed">
-            Find Opportunities, Anywhere.
+            {t("bannerTitle")}
           </TypographyH2>
           <TypographyH4 className="leading-relaxed">
-            Search top careers and connect instantly.
+            {t("bannerSubtitle1")}
           </TypographyH4>
           <TypographyH4 className="leading-relaxed">
-            Search careers, review company, and reach out directly — instantly.
+            {t("bannerSubtitle2")}
           </TypographyH4>
           <TypographyMuted className="leading-relaxed">
-            Your great opportunity is just a click away.
+            {t("bannerMuted")}
           </TypographyMuted>
 
           {/* Search Bar Section */}
@@ -660,8 +662,7 @@ export default function EmployeeSearchPage() {
               /* Empty List Section */
               <div className="w-full text-center py-10">
                 <TypographyP className="text-muted-foreground">
-                  No jobs match your search criteria. Try adjusting your
-                  filters.
+                  {t("emptyList")}
                 </TypographyP>
               </div>
             )}

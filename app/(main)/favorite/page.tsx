@@ -28,6 +28,7 @@ import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/co
 export default function FavoritePage() {
   /* --------------------------------- Utils ---------------------------------- */
   const t = useTranslations("toast");
+  const tFav = useTranslations("favorite");
 
   /* ----------------------------- API Integration ---------------------------- */
   // Current User
@@ -217,16 +218,16 @@ export default function FavoritePage() {
         {/* Content Section */}
         <div className="flex flex-col items-start gap-3 px-1 sm:px-5 tablet-xl:mt-2 tablet-xl:w-full tablet-xl:items-center">
           <TypographyH2 className="leading-relaxed tablet-xl:text-center">
-            Find your favorites at a Glance
+            {tFav("bannerTitle")}
           </TypographyH2>
           <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-            Quick access to the companies and talents you&apos;ve saved
+            {tFav("bannerSubtitle1")}
           </TypographyH4>
           <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-            Review, connect, and take the next step whenever you&apos;re ready
+            {tFav("bannerSubtitle2")}
           </TypographyH4>
           <TypographyMuted className="leading-relaxed tablet-xl:text-center">
-            Your personal shortlist — organized in one place.
+            {tFav("bannerMuted")}
           </TypographyMuted>
         </div>
 
@@ -313,7 +314,7 @@ export default function FavoritePage() {
               className="animate-float"
             />
             <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
-              Favorite List Empty
+              {tFav("emptyList")}
             </TypographyP>
           </div>
         )}

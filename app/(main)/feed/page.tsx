@@ -74,6 +74,7 @@ export default function FeedPage() {
   const router = useRouter();
   const { resolvedTheme } = useTheme();
   const t = useTranslations("toast");
+  const tFeed = useTranslations("feed");
 
   /* -------------------------------- All States ------------------------------ */
   const [mounted, setMounted] = useState<boolean>(false);
@@ -486,16 +487,16 @@ export default function FeedPage() {
           {/* Employee Banner Section: Content */}
           <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
             <TypographyH2 className="!leading-relaxed text-2xl sm:text-4xl tablet-xl:text-3xl tablet-xl:text-center">
-              Connect with global professionals and grow your network
+              {tFeed("employeeBannerTitle")}
             </TypographyH2>
             <TypographyH4 className="!leading-relaxed tablet-xl:text-center">
-              Start your journey toward a career you love.
+              {tFeed("employeeBannerSubtitle1")}
             </TypographyH4>
             <TypographyH4 className="!leading-relaxed tablet-xl:text-center">
-              Build meaningful connections that open doors to new opportunities.
+              {tFeed("employeeBannerSubtitle2")}
             </TypographyH4>
             <TypographyMuted className="!leading-relaxed tablet-xl:text-center">
-              Land your dream job with ease — no matter where you are.
+              {tFeed("employeeBannerMuted")}
             </TypographyMuted>
           </div>
 
@@ -514,13 +515,13 @@ export default function FeedPage() {
           {/* Company Banner Section: Content */}
           <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
             <TypographyH2 className="leading-relaxed tablet-xl:text-center">
-              Find Top Talent from Anywhere
+              {tFeed("companyBannerTitle")}
             </TypographyH2>
             <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-              Build your dream team effortlessly, no matter where you are.
+              {tFeed("companyBannerSubtitle1")}
             </TypographyH4>
             <TypographyMuted className="leading-relaxed tablet-xl:text-center">
-              Post jobs, review profiles, and hire faster — all in one place
+              {tFeed("companyBannerMuted")}
             </TypographyMuted>
           </div>
           {/* Company Banner Section: Image Poster */}
@@ -562,7 +563,7 @@ export default function FeedPage() {
               <div className="w-full flex flex-col gap-3">
                 <div className="flex items-center gap-2">
                   <Sparkles className="h-5 w-5 text-primary" />
-                  <TypographyH4>Recommended for You</TypographyH4>
+                  <TypographyH4>{tFeed("recommendedForYou")}</TypographyH4>
                 </div>
                 <div className="w-full columns-3 gap-x-4 laptop-sm:columns-2 tablet-lg:columns-1">
                   {Array.from({ length: 3 }).map((_, i) =>
@@ -587,7 +588,7 @@ export default function FeedPage() {
             <div className="w-full flex flex-col gap-3">
               <div className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-primary" />
-                <TypographyH4>Recommended for You</TypographyH4>
+                <TypographyH4>{tFeed("recommendedForYou")}</TypographyH4>
               </div>
               <div className="w-full columns-3 gap-x-4 laptop-sm:columns-2 tablet-lg:columns-1">
                 {isEmployee
@@ -640,7 +641,7 @@ export default function FeedPage() {
               <Users className="h-5 w-5 text-primary" />
             )}
             <TypographyH4>
-              {isEmployee ? "All Companies" : "All Talent"}
+              {isEmployee ? tFeed("allCompanies") : tFeed("allTalent")}
             </TypographyH4>
           </div>
           <div className="flex-1 h-px bg-border" />
@@ -712,7 +713,7 @@ export default function FeedPage() {
             className="animate-float"
           />
           <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
-            {isEmployee ? "Company List Empty" : "Employee List Empty"}
+            {isEmployee ? tFeed("companyListEmpty") : tFeed("employeeListEmpty")}
           </TypographyP>
         </div>
       )}
@@ -734,10 +735,10 @@ export default function FeedPage() {
         onOpenChange={setOpenLikeSuccessDialog}
       >
         <DialogContent>
-          <DialogTitle>You liked this successfully!</DialogTitle>
+          <DialogTitle>{tFeed("likedSuccessTitle")}</DialogTitle>
           <DialogFooter>
             <Button onClick={() => setOpenLikeSuccessDialog(false)}>
-              Close
+              {tFeed("close")}
             </Button>
           </DialogFooter>
         </DialogContent>

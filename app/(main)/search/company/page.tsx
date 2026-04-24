@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Controller, useForm } from "react-hook-form";
 import { companySearchSchema, TCompanySearchSchema } from "./validation";
 import { CompanySearchSvg } from "@/utils/constants/asset.constant";
@@ -44,6 +45,7 @@ import { SearchEmployeeCardSkeleton } from "@/components/search/skeleton";
 
 export default function CompanySearchPage() {
   /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("searchCompany");
   const didInitRef = useRef<boolean>(false);
   const skipFirstWatchRef = useRef<boolean>(true);
 
@@ -200,14 +202,10 @@ export default function CompanySearchPage() {
       {/* Banner Section */}
       <div className="w-full flex items-center justify-between gap-6 lg:gap-10 laptop-sm:flex-col laptop-sm:items-center">
         <div className="w-full flex flex-col items-start gap-3 laptop-sm:py-5">
-          <TypographyH2>Hire Smarter, Anywhere.</TypographyH2>
-          <TypographyH4>Search top talent and connect instantly.</TypographyH4>
-          <TypographyH4>
-            Search profiles, review resumes, and reach out directly — instantly.
-          </TypographyH4>
-          <TypographyMuted>
-            Your next great hire is just a click away.
-          </TypographyMuted>
+          <TypographyH2>{t("bannerTitle")}</TypographyH2>
+          <TypographyH4>{t("bannerSubtitle1")}</TypographyH4>
+          <TypographyH4>{t("bannerSubtitle2")}</TypographyH4>
+          <TypographyMuted>{t("bannerMuted")}</TypographyMuted>
 
           {/* Search Bar Section */}
           <SearchBar
@@ -488,8 +486,7 @@ export default function CompanySearchPage() {
               /* Empty List Section */
               <div className="w-full text-center py-10">
                 <TypographyP className="text-muted-foreground">
-                  No employees match your search criteria. Try adjusting your
-                  filters.
+                  {t("emptyList")}
                 </TypographyP>
               </div>
             )}

@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { initateChat } from "./_apis/initiate-chat.api";
 import { MatchingLoadingSkeleton } from "@/components/matching/skeleton";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   emptySvgImage,
   matchingSvgImage,
@@ -22,6 +23,7 @@ import {
 export default function MatchingPage() {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("matching");
 
   /* ----------------------------- API Integration ---------------------------- */
   const getCurrentEmpStore = useGetCurrentEmployeeMatchingStore();
@@ -93,16 +95,16 @@ export default function MatchingPage() {
         {/* Content Section */}
         <div className="flex flex-col items-start gap-3 px-1 sm:px-5 tablet-xl:mt-2 tablet-xl:w-full tablet-xl:items-center">
           <TypographyH2 className="leading-relaxed tablet-xl:text-center">
-            Ready to find your match? Let&apos;s make it happen.
+            {t("bannerTitle")}
           </TypographyH2>
           <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-            Find Your Perfect Match & Start a Conversation
+            {t("bannerSubtitle1")}
           </TypographyH4>
           <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-            Start chatting, connect instantly, and build your future together.
+            {t("bannerSubtitle2")}
           </TypographyH4>
           <TypographyMuted className="leading-relaxed tablet-xl:text-center">
-            When companies and talents like each other — it&apos;s a match.
+            {t("bannerMuted")}
           </TypographyMuted>
         </div>
 
@@ -169,7 +171,7 @@ export default function MatchingPage() {
               className="animate-float"
             />
             <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
-              Matching List Empty
+              {t("emptyList")}
             </TypographyP>
           </div>
         )}

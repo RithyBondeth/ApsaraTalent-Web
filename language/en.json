@@ -244,6 +244,68 @@
     "featureBilingual": "Bilingual Support",
     "featureBilingualDesc": "Full support for both English and Khmer languages to serve all Cambodian professionals."
   },
+  "searchEmployee": {
+    "bannerTitle": "Find Opportunities, Anywhere.",
+    "bannerSubtitle1": "Search top careers and connect instantly.",
+    "bannerSubtitle2": "Search careers, review company, and reach out directly — instantly.",
+    "bannerMuted": "Your great opportunity is just a click away.",
+    "emptyList": "No jobs match your search criteria. Try adjusting your filters."
+  },
+  "searchCompany": {
+    "bannerTitle": "Hire Smarter, Anywhere.",
+    "bannerSubtitle1": "Search top talent and connect instantly.",
+    "bannerSubtitle2": "Search profiles, review resumes, and reach out directly — instantly.",
+    "bannerMuted": "Your next great hire is just a click away.",
+    "emptyList": "No employees match your search criteria. Try adjusting your filters."
+  },
+  "favorite": {
+    "bannerTitle": "Find your favorites at a Glance",
+    "bannerSubtitle1": "Quick access to the companies and talents you've saved",
+    "bannerSubtitle2": "Review, connect, and take the next step whenever you're ready",
+    "bannerMuted": "Your personal shortlist — organized in one place.",
+    "emptyList": "Favorite List Empty"
+  },
+  "matching": {
+    "bannerTitle": "Ready to find your match? Let's make it happen.",
+    "bannerSubtitle1": "Find Your Perfect Match & Start a Conversation",
+    "bannerSubtitle2": "Start chatting, connect instantly, and build your future together.",
+    "bannerMuted": "When companies and talents like each other — it's a match.",
+    "emptyList": "Matching List Empty"
+  },
+  "feed": {
+    "employeeBannerTitle": "Connect with global professionals and grow your network",
+    "employeeBannerSubtitle1": "Start your journey toward a career you love.",
+    "employeeBannerSubtitle2": "Build meaningful connections that open doors to new opportunities.",
+    "employeeBannerMuted": "Land your dream job with ease — no matter where you are.",
+    "companyBannerTitle": "Find Top Talent from Anywhere",
+    "companyBannerSubtitle1": "Build your dream team effortlessly, no matter where you are.",
+    "companyBannerMuted": "Post jobs, review profiles, and hire faster — all in one place",
+    "recommendedForYou": "Recommended for You",
+    "allCompanies": "All Companies",
+    "allTalent": "All Talent",
+    "companyListEmpty": "Company List Empty",
+    "employeeListEmpty": "Employee List Empty",
+    "likedSuccessTitle": "You liked this successfully!",
+    "close": "Close"
+  },
+  "resumeBuilder": {
+    "bannerTitle": "AI-Powered Resume Builder",
+    "bannerSubtitle1": "Build your beautiful resume with a smartest AI.",
+    "bannerSubtitle2": "Join thousands of professionals who landed their dream jobs with our AI-powered resumes.",
+    "bannerMuted": "Create professional resumes in minutes with AI-powered technology. Choose from premium templates and let our AI optimize your content for maximum impact."
+  },
+  "profile": {
+    "completion": "Profile Completion",
+    "complete": "Profile Complete!",
+    "percentComplete": "{percentage}% Complete",
+    "missingInformation": "Missing information:"
+  },
+  "dialog": {
+    "areYouSure": "Are you sure?",
+    "deleteConfirm": "Are you sure you want to delete this {type}?",
+    "yes": "Yes",
+    "no": "No"
+  },
   "interview": {
     "title": "Interviews",
     "scheduleInterview": "Schedule Interview",

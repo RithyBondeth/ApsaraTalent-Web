@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -6,6 +8,7 @@ import {
   DialogFooter,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useTranslations } from "next-intl";
 
 /* ----------------------------------- Helper ---------------------------------- */
 interface IRemoveAlertDialog {
@@ -28,20 +31,23 @@ export default function RemoveAlertDialog(props: IRemoveAlertDialog) {
   /* ---------------------------------- Props ---------------------------------- */
   const { type, openDialog, setOpenDialog, onNoClick, onYesClick } = props;
 
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("dialog");
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={openDialog} onOpenChange={setOpenDialog}>
       <DialogContent>
-        <DialogTitle>Are you sure?</DialogTitle>
+        <DialogTitle>{t("areYouSure")}</DialogTitle>
         <DialogDescription>
-          Are you sure you want to delete this {type}?
+          {t("deleteConfirm", { type })}
         </DialogDescription>
         <DialogFooter>
           <Button variant={"outline"} type="button" onClick={onNoClick}>
-            No
+            {t("no")}
           </Button>
           <Button type="button" variant={"destructive"} onClick={onYesClick}>
-            Yes
+            {t("yes")}
           </Button>
         </DialogFooter>
       </DialogContent>
