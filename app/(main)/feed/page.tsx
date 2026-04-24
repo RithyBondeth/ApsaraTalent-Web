@@ -696,20 +696,9 @@ export default function FeedPage() {
         </div>
       )}
 
-      {/* Infinite scroll sentinel — triggers loading the next page */}
+      {/* Infinite scroll sentinel — triggers revealing the next batch of already-loaded cards */}
       {!isLoading && visibleCount < allUsers.length && (
-        <div
-          ref={sentinelRef}
-          className="w-full grid grid-cols-3 gap-x-4 gap-y-4 laptop-sm:grid-cols-2 laptop-sm:gap-x-3 laptop-sm:gap-y-3 tablet-lg:grid-cols-1 tablet-lg:gap-x-0 tablet-lg:gap-y-3"
-        >
-          {Array.from({ length: 3 }).map((_, i) =>
-            isEmployee ? (
-              <CompanyCardSkeleton key={`load-more-${i}`} />
-            ) : (
-              <EmployeeCardSkeleton key={`load-more-${i}`} />
-            ),
-          )}
-        </div>
+        <div ref={sentinelRef} className="w-full h-1" />
       )}
 
       {/* Image Popup Section */}
