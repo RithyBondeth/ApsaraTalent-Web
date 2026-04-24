@@ -6,7 +6,7 @@ import { create } from "zustand";
 /* ---------------------------------- States --------------------------------- */
 // ── Count Current Company Matching API Response ─────────────────
 type TCountCurrentCompanyMatchingResponse = {
-  totalMatching: number;
+  count: number;
 };
 
 // ── Count Current Company Matching State ────────────────────────
@@ -32,7 +32,7 @@ export const useCountCurrentCompanyMatchingStore =
         );
 
         set({
-          totalCmpMatching: response.data.totalMatching,
+          totalCmpMatching: response.data.count,
           loading: false,
           error: null,
         });

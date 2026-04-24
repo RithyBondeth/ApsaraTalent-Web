@@ -6,7 +6,7 @@ import { create } from "zustand";
 /* ---------------------------------- States --------------------------------- */
 // ── Count Current Employee Matching API Response ─────────────────
 type TCountCurrentEmployeeMatchingResponse = {
-  totalMatching: number;
+  count: number;
 };
 
 // ── Count Current Employee Matching State ────────────────────────
@@ -32,7 +32,7 @@ export const useCountCurrentEmployeeMatchingStore =
         );
 
         set({
-          totalEmpMatching: response.data.totalMatching,
+          totalEmpMatching: response.data.count,
           loading: false,
           error: null,
         });
