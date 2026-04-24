@@ -559,12 +559,16 @@ export default function FeedPage() {
                   <Sparkles className="h-5 w-5 text-primary" />
                   <TypographyH4>Recommended for You</TypographyH4>
                 </div>
-                <div className="w-full grid grid-cols-3 gap-x-4 gap-y-4 laptop-sm:grid-cols-2 laptop-sm:gap-x-3 laptop-sm:gap-y-3 tablet-lg:grid-cols-1 tablet-lg:gap-x-0 tablet-lg:gap-y-3">
+                <div className="w-full columns-3 gap-x-4 laptop-sm:columns-2 tablet-lg:columns-1">
                   {Array.from({ length: 3 }).map((_, i) =>
                     isEmployee ? (
-                      <CompanyCardSkeleton key={i} />
+                      <div key={i} className="break-inside-avoid mb-4">
+                        <CompanyCardSkeleton />
+                      </div>
                     ) : (
-                      <EmployeeCardSkeleton key={i} />
+                      <div key={i} className="break-inside-avoid mb-4">
+                        <EmployeeCardSkeleton />
+                      </div>
                     ),
                   )}
                 </div>
@@ -580,7 +584,7 @@ export default function FeedPage() {
                 <Sparkles className="h-5 w-5 text-primary" />
                 <TypographyH4>Recommended for You</TypographyH4>
               </div>
-              <div className="w-full grid grid-cols-3 gap-x-4 gap-y-4 laptop-sm:grid-cols-2 laptop-sm:gap-x-3 laptop-sm:gap-y-3 tablet-lg:grid-cols-1 tablet-lg:gap-x-0 tablet-lg:gap-y-3">
+              <div className="w-full columns-3 gap-x-4 laptop-sm:columns-2 tablet-lg:columns-1">
                 {isEmployee
                   ? (recs as ICompany[]).map((company) => (
                       <MemoCompanyFeedCard
@@ -637,14 +641,18 @@ export default function FeedPage() {
       )}
 
       {/* Feed Card Section */}
-      <div className="w-full grid grid-cols-3 gap-x-4 gap-y-4 laptop-sm:grid-cols-2 laptop-sm:gap-x-3 laptop-sm:gap-y-3 tablet-lg:grid-cols-1 tablet-lg:gap-x-0 tablet-lg:gap-y-3 stagger-list">
+      <div className="w-full columns-3 gap-x-4 laptop-sm:columns-2 tablet-lg:columns-1 stagger-list">
         {/* Loading Skeleton Section */}
         {isLoading
           ? Array.from({ length: PAGE_SIZE }).map((_, index) =>
               isEmployee ? (
-                <CompanyCardSkeleton key={`company-skeleton-${index}`} />
+                <div key={`company-skeleton-${index}`} className="break-inside-avoid mb-4">
+                  <CompanyCardSkeleton />
+                </div>
               ) : (
-                <EmployeeCardSkeleton key={`employee-skeleton-${index}`} />
+                <div key={`employee-skeleton-${index}`} className="break-inside-avoid mb-4">
+                  <EmployeeCardSkeleton />
+                </div>
               ),
             )
           : allUsers

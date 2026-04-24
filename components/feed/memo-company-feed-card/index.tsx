@@ -18,7 +18,7 @@ export const MemoCompanyFeedCard = React.memo(function CompanyFeedCard({
 }: IMemoCompanyFeedCardProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className={isLiking ? "animate-card-pop-shrink" : ""}>
+    <div className={`break-inside-avoid mb-4${isLiking ? " animate-card-pop-shrink" : ""}`}>
       <CompanyCard
         {...company}
         id={company.id}

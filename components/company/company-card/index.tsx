@@ -181,7 +181,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
           </div>
 
           {/* Footer Section */}
-          <div className="flex items-center justify-end gap-2 px-4 pb-3 pt-0 border-t border-muted/50 mt-auto">
+          <div className="flex items-center justify-end gap-2 px-4 pb-3 pt-2 border-t border-muted/50">
             <Button
               className={`text-xs h-7 px-3 rounded-full ${
                 props.hideSaveButton
