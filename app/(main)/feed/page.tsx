@@ -646,11 +646,17 @@ export default function FeedPage() {
         {isLoading
           ? Array.from({ length: PAGE_SIZE }).map((_, index) =>
               isEmployee ? (
-                <div key={`company-skeleton-${index}`} className="break-inside-avoid mb-4">
+                <div
+                  key={`company-skeleton-${index}`}
+                  className="break-inside-avoid mb-4"
+                >
                   <CompanyCardSkeleton />
                 </div>
               ) : (
-                <div key={`employee-skeleton-${index}`} className="break-inside-avoid mb-4">
+                <div
+                  key={`employee-skeleton-${index}`}
+                  className="break-inside-avoid mb-4"
+                >
                   <EmployeeCardSkeleton />
                 </div>
               ),
