@@ -19,6 +19,8 @@ import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { useGetEmployeeRecommendationsStore } from "@/stores/apis/recommendation/get-employee-recommendations.store";
+import { useGetCompanyRecommendationsStore } from "@/stores/apis/recommendation/get-company-recommendations.store";
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 import { toast } from "sonner";
 import Image from "next/image";
@@ -60,6 +62,12 @@ export default function PhoneOTPPage() {
   const queryAllEmployeeFavorites = useGetAllEmployeeFavoritesStore(
     (s) => s.queryAllEmployeeFavorites,
   );
+  const queryEmployeeRecommendations = useGetEmployeeRecommendationsStore(
+    (s) => s.queryEmployeeRecommendations,
+  );
+  const queryCompanyRecommendations = useGetCompanyRecommendationsStore(
+    (s) => s.queryCompanyRecommendations,
+  );
 
   // Verify OTP Authentication
   const verifyOtp = useVerifyOTPStore((s) => s.verifyOtp);
@@ -83,23 +91,17 @@ export default function PhoneOTPPage() {
 
           if (userData) {
             if (userData.role === "employee" && userData.employee?.id) {
-              // Preload employee-specific data
-              console.log(
-                "Querying all companies, employee liked, and employee favorite inside Login OTP Page!!",
-              );
               await Promise.all([
                 queryCurrentEmployeeLiked(userData.employee.id),
                 queryAllEmployeeFavorites(userData.employee.id),
+                queryEmployeeRecommendations(userData.employee.id),
                 queryCompany(),
               ]);
             } else if (userData.role === "company" && userData.company?.id) {
-              // Preload company-specific data
-              console.log(
-                "Querying all employees, companies liked, and company favorite inside Login OTP Page!!",
-              );
               await Promise.all([
                 queryCurrentCompanyLiked(userData.company.id),
                 queryAllCompanyFavorites(userData.company.id),
+                queryCompanyRecommendations(userData.company.id),
                 queryEmployee(),
               ]);
             }
@@ -117,6 +119,8 @@ export default function PhoneOTPPage() {
     queryAllEmployeeFavorites,
     queryCurrentCompanyLiked,
     queryCurrentEmployeeLiked,
+    queryCompanyRecommendations,
+    queryEmployeeRecommendations,
     queryCompany,
     queryEmployee,
   ]);
