@@ -1,22 +1,27 @@
+"use client";
+
 import CachedAvatar from "@/components/ui/cached-avatar";
 import { Handshake } from "lucide-react";
 import { IRecentMatchesListProps } from "./props";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { timeAgo } from "@/utils/functions/date";
+import { useTranslations } from "next-intl";
 
 export function RecentMatchesList({
   matches,
   isEmployee,
 }: IRecentMatchesListProps) {
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("dashboard");
+
   /* --------------------------- Empty List State --------------------------- */
   if (!matches || matches.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-8 text-center">
         <Handshake className="h-10 w-10 text-muted-foreground/30 mb-3" />
         <TypographyMuted className="text-sm text-muted-foreground">
-          No matches yet. Keep swiping to find your perfect{" "}
-          {isEmployee ? "company" : "candidate"}!
+          {t("noMatchesYet", { role: isEmployee ? t("company") : t("candidate") })}
         </TypographyMuted>
       </div>
     );

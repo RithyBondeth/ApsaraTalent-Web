@@ -30,6 +30,7 @@ import { getPaginationPages } from "@/utils/functions/ui";
 import { LucideArrowLeft, LucideSearch } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 
 export default function CompanyCareerScopeStepForm({
   register,
@@ -39,6 +40,7 @@ export default function CompanyCareerScopeStepForm({
 }: IStepFormProps<TCompanySignup>) {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("common");
   const itemsPerPage = 10;
   const totalPages = Math.ceil(careerScopesListConstant.length / itemsPerPage);
 
@@ -118,7 +120,7 @@ export default function CompanyCareerScopeStepForm({
         <DialogTitle className="sr-only">Search Careers</DialogTitle>
         <CommandInput placeholder="Search for a career..." />
         <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandEmpty>{t("noResultsFound")}</CommandEmpty>
           <CommandGroup heading="Suggestions">
             {careerScopesListConstant.slice(0, 5).map((item, index) => (
               <CommandItem key={index} className="flex items-center gap-2">

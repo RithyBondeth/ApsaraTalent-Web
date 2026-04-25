@@ -242,12 +242,12 @@ export default function EmployeeSearchPage() {
         >
           <div className="flex items-center gap-2">
             <LucideSlidersHorizontal className="h-4 w-4" />
-            <TypographySmall>Refine Results</TypographySmall>
+            <TypographySmall>{t("refineResults")}</TypographySmall>
           </div>
           {mobileFiltersOpen ? (
             <LucideX className="h-4 w-4" />
           ) : (
-            <TypographySmall>Open</TypographySmall>
+            <TypographySmall>{t("open")}</TypographySmall>
           )}
         </Button>
       </div>
@@ -260,7 +260,7 @@ export default function EmployeeSearchPage() {
           }`}
         >
           <div className="w-full flex items-center justify-between">
-            <TypographyH4 className="text-lg">Refine Result</TypographyH4>
+            <TypographyH4 className="text-lg">{t("refineResult")}</TypographyH4>
             <Button
               type="button"
               variant="outline"
@@ -277,7 +277,7 @@ export default function EmployeeSearchPage() {
               }}
               className="text-xs h-8 px-2"
             >
-              Clear Filters
+              {t("clearFilters")}
             </Button>
           </div>
 
@@ -285,7 +285,7 @@ export default function EmployeeSearchPage() {
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideCalendarDays strokeWidth={"1.5px"} />
-              Date Posted
+              {t("datePosted")}
             </TypographyP>
 
             <Controller
@@ -338,28 +338,28 @@ export default function EmployeeSearchPage() {
                       value="all"
                       htmlFor="date-all"
                     >
-                      All Dates Posted
+                      {t("allDatesPosted")}
                     </RadioGroupItemWithLabel>
                     <RadioGroupItemWithLabel
                       id="last-24"
                       value="last 24 hours"
                       htmlFor="last-24"
                     >
-                      Last 24 Hours
+                      {t("last24Hours")}
                     </RadioGroupItemWithLabel>
                     <RadioGroupItemWithLabel
                       id="last-3-days"
                       value="last 3 days"
                       htmlFor="last-3-days"
                     >
-                      Last 3 Days
+                      {t("last3Days")}
                     </RadioGroupItemWithLabel>
                     <RadioGroupItemWithLabel
                       id="last-week"
                       value="last week"
                       htmlFor="last-week"
                     >
-                      Last Week
+                      {t("lastWeek")}
                     </RadioGroupItemWithLabel>
                   </RadioGroup>
                 );
@@ -371,7 +371,7 @@ export default function EmployeeSearchPage() {
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideUsers strokeWidth={"1.5px"} />
-              Company Size
+              {t("companySize")}
             </TypographyP>
 
             <Controller
@@ -383,7 +383,7 @@ export default function EmployeeSearchPage() {
                   <div className="flex flex-wrap items-center gap-2">
                     <Input
                       type="number"
-                      placeholder="Min"
+                      placeholder={t("min")}
                       value={min ?? ""}
                       min={0}
                       onChange={(e) => {
@@ -399,7 +399,7 @@ export default function EmployeeSearchPage() {
                     <span className="text-muted-foreground">-</span>
                     <Input
                       type="number"
-                      placeholder="Max"
+                      placeholder={t("max")}
                       value={max ?? ""}
                       min={0}
                       onChange={(e) => {
@@ -413,7 +413,7 @@ export default function EmployeeSearchPage() {
                       className="h-9 w-[88px] shrink-0"
                     />
                     <span className="text-sm text-muted-foreground whitespace-nowrap">
-                      Employees
+                      {t("employees")}
                     </span>
                   </div>
                 );
@@ -425,7 +425,7 @@ export default function EmployeeSearchPage() {
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideCircleDollarSign strokeWidth={"1.5px"} />
-              Salary Range
+              {t("salaryRange")}
             </TypographyP>
 
             <Controller
@@ -437,7 +437,7 @@ export default function EmployeeSearchPage() {
                   <div className="flex flex-wrap items-center gap-2">
                     <Input
                       type="number"
-                      placeholder="Min"
+                      placeholder={t("min")}
                       value={min ?? ""}
                       min={0}
                       onChange={(e) => {
@@ -453,7 +453,7 @@ export default function EmployeeSearchPage() {
                     <span className="text-muted-foreground">-</span>
                     <Input
                       type="number"
-                      placeholder="Max"
+                      placeholder={t("max")}
                       value={max ?? ""}
                       min={0}
                       onChange={(e) => {
@@ -479,7 +479,7 @@ export default function EmployeeSearchPage() {
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideGraduationCap strokeWidth={"1.5px"} />
-              Education Level
+              {t("educationLevel")}
             </TypographyP>
 
             <Controller
@@ -487,35 +487,35 @@ export default function EmployeeSearchPage() {
               control={control}
               render={({ field }) => {
                 const educations = [
-                  "Under Graduate",
-                  "Bachelor",
-                  "Master",
-                  "PhD",
+                  { value: "Under Graduate", label: t("underGraduate") },
+                  { value: "Bachelor", label: t("bachelor") },
+                  { value: "Master", label: t("master") },
+                  { value: "PhD", label: t("phd") },
                 ];
                 const selectedEdu = field.value ?? [];
 
                 return (
                   <div className="ml-1.5 flex flex-col gap-3 sm:ml-3">
                     {educations.map((edu) => (
-                      <div key={edu} className="flex items-center space-x-2">
+                      <div key={edu.value} className="flex items-center space-x-2">
                         <Checkbox
-                          id={`edu-${edu}`}
-                          checked={selectedEdu.includes(edu)}
+                          id={`edu-${edu.value}`}
+                          checked={selectedEdu.includes(edu.value)}
                           onCheckedChange={(checked) => {
                             let updated = [...selectedEdu];
                             if (checked) {
-                              updated.push(edu);
+                              updated.push(edu.value);
                             } else {
-                              updated = updated.filter((item) => item !== edu);
+                              updated = updated.filter((item) => item !== edu.value);
                             }
                             handleRadioChange("educationLevel", updated);
                           }}
                         />
                         <label
-                          htmlFor={`edu-${edu}`}
+                          htmlFor={`edu-${edu.value}`}
                           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
-                          {edu}
+                          {edu.label}
                         </label>
                       </div>
                     ))}
@@ -529,32 +529,42 @@ export default function EmployeeSearchPage() {
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideBriefcaseBusiness strokeWidth={"1.5px"} />
-              Experience Level
+              {t("experienceLevel")}
             </TypographyP>
 
             <Controller
               name="experienceLevel"
               control={control}
-              render={({ field }) => (
-                <RadioGroup
-                  onValueChange={(value) =>
-                    handleRadioChange("experienceLevel", value)
-                  }
-                  value={field.value ?? ""}
-                  className="ml-1.5 flex flex-col gap-3 sm:ml-3"
-                >
-                  {yearOfExperienceConstant.map((option) => (
-                    <RadioGroupItemWithLabel
-                      key={option.id}
-                      value={option.value}
-                      id={`exp-${option.id}`}
-                      htmlFor={`exp-${option.id}`}
-                    >
-                      {option.label}
-                    </RadioGroupItemWithLabel>
-                  ))}
-                </RadioGroup>
-              )}
+              render={({ field }) => {
+                const expLabels: Record<string, string> = {
+                  "No Experience": t("expNoExperience"),
+                  "Less than 1 year": t("expLessThan1Year"),
+                  "1 - 2 years": t("exp1To2Years"),
+                  "3 - 5 years": t("exp3To5Years"),
+                  "6 - 10 years": t("exp6To10Years"),
+                  "10+ years": t("exp10PlusYears"),
+                };
+                return (
+                  <RadioGroup
+                    onValueChange={(value) =>
+                      handleRadioChange("experienceLevel", value)
+                    }
+                    value={field.value ?? ""}
+                    className="ml-1.5 flex flex-col gap-3 sm:ml-3"
+                  >
+                    {yearOfExperienceConstant.map((option) => (
+                      <RadioGroupItemWithLabel
+                        key={option.id}
+                        value={option.value}
+                        id={`exp-${option.id}`}
+                        htmlFor={`exp-${option.id}`}
+                      >
+                        {expLabels[option.value] ?? option.label}
+                      </RadioGroupItemWithLabel>
+                    ))}
+                  </RadioGroup>
+                );
+              }}
             />
           </div>
         </div>
@@ -568,12 +578,12 @@ export default function EmployeeSearchPage() {
                 <Skeleton className="h-6 w-40 bg-muted" />
               ) : error ? (
                 <TypographySmall className="text-destructive">
-                  0 Job is listing
+                  {t("zeroJobsListing")}
                 </TypographySmall>
               ) : filteredJobs && filteredJobs.length > 0 ? (
-                `${filteredJobs.length} Job${filteredJobs.length === 1 ? "" : "s"} listed`
+                t("jobsListed", { count: filteredJobs.length })
               ) : (
-                "No jobs found"
+                t("noJobsFound")
               )}
             </TypographyH4>
 
@@ -599,20 +609,20 @@ export default function EmployeeSearchPage() {
                         }}
                       >
                         <SelectTrigger className="w-full sm:w-[200px] h-9 text-sm">
-                          <SelectValue placeholder="Sort by" />
+                          <SelectValue placeholder={t("sortBy")} />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="createdAt-desc">
-                            Newest First
+                            {t("newestFirst")}
                           </SelectItem>
                           <SelectItem value="createdAt-asc">
-                            Oldest First
+                            {t("oldestFirst")}
                           </SelectItem>
                           <SelectItem value="companySize-desc">
-                            Company Size: High to Low
+                            {t("companySizeHighToLow")}
                           </SelectItem>
                           <SelectItem value="companySize-asc">
-                            Company Size: Low to High
+                            {t("companySizeLowToHigh")}
                           </SelectItem>
                         </SelectContent>
                       </Select>
@@ -638,7 +648,7 @@ export default function EmployeeSearchPage() {
               <div className="w-full mb-3">
                 <SearchErrorCard
                   title={error}
-                  description="Try adjusting your filters or search terms and try again."
+                  description={t("errorDescription")}
                 />
               </div>
             ) : filteredJobs && filteredJobs.length > 0 ? (

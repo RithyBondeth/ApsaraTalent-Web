@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Dialog,
   DialogContent,
@@ -5,6 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { useTranslations } from "next-intl";
 
 /* ----------------------------------- Helper ---------------------------------- */
 interface IReferencePreviewDialog {
@@ -16,6 +19,9 @@ interface IReferencePreviewDialog {
 }
 
 export default function ReferencePreviewDialog(props: IReferencePreviewDialog) {
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("dialog");
+
   /* --------------------------------- Methods --------------------------------- */
   // ── Get File Ext ─────────────────────────────────────────
   const getFileExt = (url: string) => {
@@ -58,7 +64,7 @@ export default function ReferencePreviewDialog(props: IReferencePreviewDialog) {
             if (!url) {
               return (
                 <div className="h-full flex items-center justify-center">
-                  <TypographyMuted>No document found.</TypographyMuted>
+                  <TypographyMuted>{t("noDocumentFound")}</TypographyMuted>
                 </div>
               );
             }

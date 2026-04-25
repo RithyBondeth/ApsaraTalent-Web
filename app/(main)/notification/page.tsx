@@ -16,6 +16,7 @@ import { TNotificationFilterType } from "@/utils/types/app/notification.type";
 import { LucideCheckCheck, LucideTrash2 } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { NotificationSvgImage } from "@/utils/constants/asset.constant";
 import { NotificationCardSkeleton } from "@/components/notification/skeleton";
@@ -44,6 +45,9 @@ function resolveNotificationUser(notification: INotification, role: string) {
 }
 
 export default function NotificationPage() {
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("notification");
+
   /* ----------------------------- API Integration ---------------------------- */
   // Current User
   const { user } = useGetCurrentUserStore();
@@ -214,7 +218,7 @@ export default function NotificationPage() {
               className="animate-float"
             />
             <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
-              No notifications yet
+              {t("emptyList")}
             </TypographyP>
           </div>
         )}

@@ -110,6 +110,7 @@ import ProfileCompletionCard from "@/components/profile/profile-completion-card"
 export default function ProfilePage() {
   /* ---------------------------------- Utils ----------------------------------- */
   const t = useTranslations("toast");
+  const tCommon = useTranslations("common");
 
   /* -------------------------------- All States -------------------------------- */
   const [isEdit, setIsEdit] = useState<boolean>(false);
@@ -1813,8 +1814,8 @@ export default function ProfilePage() {
                       <CommandList>
                         <CommandEmpty>
                           {getAllCareerScopeStore.loading
-                            ? "Loading Career..."
-                            : "No Career Found"}
+                            ? tCommon("loadingCareer")
+                            : tCommon("noCareerFound")}
                         </CommandEmpty>
                         <CommandGroup>
                           {getAllCareerScopeStore.careerScopes?.map(

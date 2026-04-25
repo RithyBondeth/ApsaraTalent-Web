@@ -118,6 +118,7 @@ import { EmployeeProfilePageLoadingSkeleton } from "@/components/profile/skeleto
 export default function EmployeeProfilePage() {
   /* ----------------------------------- Utils ---------------------------------- */
   const t = useTranslations("toast");
+  const tCommon = useTranslations("common");
 
   /* -------------------------------- All States -------------------------------- */
   // Util States
@@ -1865,8 +1866,8 @@ export default function EmployeeProfilePage() {
                       <CommandList>
                         <CommandEmpty>
                           {getAllCareerScopesStore.loading
-                            ? "Loading Career..."
-                            : "No Career Found"}
+                            ? tCommon("loadingCareer")
+                            : tCommon("noCareerFound")}
                         </CommandEmpty>
                         <CommandGroup>
                           {getAllCareerScopesStore.careerScopes?.map(

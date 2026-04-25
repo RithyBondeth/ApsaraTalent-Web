@@ -6,6 +6,7 @@ import { parseMessageDate } from "@/utils/functions/date";
 import { IMessage } from "@/utils/interfaces/chat/chat.interface";
 import { IChatMessagesProps } from "./props";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { useTranslations } from "next-intl";
 
 /* --------------------------------- Helper --------------------------------- */
 // Resolve last seen message index
@@ -18,6 +19,9 @@ function resolveLastSeenMessageIndex(messages: IMessage[]): number {
 }
 
 export const ChatMessages = (props: IChatMessagesProps) => {
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("message");
+
   /* --------------------------------- Props --------------------------------- */
   const { messages, activeChat, isTyping, onReply, onEdit } = props;
 
@@ -95,7 +99,7 @@ export const ChatMessages = (props: IChatMessagesProps) => {
             </svg>
           </div>
           <TypographyMuted className="text-sm text-muted-foreground">
-            No messages yet. Say hello! 👋
+            {t("noMessages")}
           </TypographyMuted>
         </div>
       ) : (
@@ -121,11 +125,11 @@ export const ChatMessages = (props: IChatMessagesProps) => {
             );
           })}
 
-          {/* Typing indicator — shown below messages when partner is typing */}
+          {/* Typing Indicator Section— shown below messages when partner is typing */}
           {isTyping && <ChatTypingIndicator activeChat={activeChat} />}
         </>
       )}
-      {/* Invisible sentinel element — scroll target for auto-scroll */}
+      {/* Invisible Sentinel Element Section — scroll target for auto-scroll */}
       <div ref={messagesEndRef} />
     </div>
   );

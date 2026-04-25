@@ -3,8 +3,12 @@ import { cn } from "@/lib/utils";
 import { Check, CheckCheck, Users } from "lucide-react";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { IChatListProps } from "../props";
+import { useTranslations } from "next-intl";
 
 export default function ExpandedChatList(props: IChatListProps) {
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("message");
+
   /* --------------------------------- Props --------------------------------- */
   const { chats, activeChat, currentUserId, onChatSelect } = props;
 
@@ -14,7 +18,7 @@ export default function ExpandedChatList(props: IChatListProps) {
       <div className="flex flex-col items-center justify-center gap-2 p-8 text-center h-40">
         <Users className="h-8 w-8 text-muted-foreground/40" />
         <TypographyMuted className="text-sm text-muted-foreground">
-          No conversations yet
+          {t("noConversations")}
         </TypographyMuted>
       </div>
     );
@@ -105,7 +109,7 @@ export default function ExpandedChatList(props: IChatListProps) {
                       : "text-muted-foreground",
                   )}
                 >
-                  {chat.preview || "No messages yet"}
+                  {chat.preview || t("noMessagesPreview")}
                 </TypographyMuted>
 
                 {/* Unread Count Badge Section */}

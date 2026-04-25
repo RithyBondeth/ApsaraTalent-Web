@@ -16,10 +16,12 @@ import { ISearchCompanyCardProps } from "./prop";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { memo } from "react";
+import { useTranslations } from "next-intl";
 
 const SearchCompanyCard = memo(function SearchCompanyCard(props: ISearchCompanyCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("searchEmployee");
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -54,7 +56,7 @@ const SearchCompanyCard = memo(function SearchCompanyCard(props: ISearchCompanyC
         <div className="flex flex-wrap gap-2">
           <MetaChip
             icon={<LucideUsers />}
-            text={`${props.company.companySize} employees`}
+            text={`${props.company.companySize} ${t("employees")}`}
           />
           <MetaChip icon={<LucideMapPin />} text={props.company.location} />
           <MetaChip icon={<LucideBriefcaseBusiness />} text={props.type} />
@@ -64,11 +66,11 @@ const SearchCompanyCard = memo(function SearchCompanyCard(props: ISearchCompanyC
         <div className="flex flex-wrap gap-2">
           <MetaChip
             icon={<LucideGraduationCap />}
-            text={`Education: ${props.education}`}
+            text={`${t("educationLabel")}: ${props.education}`}
           />
           <MetaChip
             icon={<LucideBriefcaseBusiness />}
-            text={`Experience: ${props.experience}`}
+            text={`${t("experienceLabel")}: ${props.experience}`}
           />
         </div>
 
@@ -101,7 +103,7 @@ const SearchCompanyCard = memo(function SearchCompanyCard(props: ISearchCompanyC
           onClick={() => router.replace(`/feed/company/${props.id}`)}
         >
           <LucideBuilding className="size-3.5" />
-          View Company
+          {t("viewCompany")}
         </Button>
       </div>
     </div>

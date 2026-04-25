@@ -13,10 +13,12 @@ import { ISearchEmployeeCardProps } from "./props";
 import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { useTranslations } from "next-intl";
 
 export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("searchCompany");
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -57,7 +59,7 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
         <div className="flex flex-wrap gap-2">
           <MetaChip
             icon={<LucideUser />}
-            text={`${props.yearOfExperience} yrs exp`}
+            text={`${props.yearOfExperience} ${t("yrsExp")}`}
           />
           <MetaChip icon={<LucideMapPin />} text={props.location} />
           <MetaChip icon={<LucideClock />} text={props.availability} />
@@ -89,7 +91,7 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
           onClick={() => router.replace(`/feed/employee/${props.id}`)}
         >
           <LucideUser className="size-3.5" />
-          View Profile
+          {t("viewProfile")}
         </Button>
       </div>
     </div>

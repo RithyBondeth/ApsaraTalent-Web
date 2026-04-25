@@ -237,13 +237,13 @@ export default function CompanySearchPage() {
         >
           <TypographySmall className="flex items-center gap-2 text-sm">
             <LucideSlidersHorizontal className="h-4 w-4" />
-            Refine Results
+            {t("refineResults")}
           </TypographySmall>
           {mobileFiltersOpen ? (
             <LucideX className="h-4 w-4" />
           ) : (
             <TypographySmall className="text-xs text-muted-foreground">
-              Open
+              {t("open")}
             </TypographySmall>
           )}
         </Button>
@@ -257,7 +257,7 @@ export default function CompanySearchPage() {
           }`}
         >
           <div className="w-full flex items-center justify-between">
-            <TypographyH4 className="text-lg">Refine Result</TypographyH4>
+            <TypographyH4 className="text-lg">{t("refineResult")}</TypographyH4>
             <Button
               type="button"
               variant="outline"
@@ -271,7 +271,7 @@ export default function CompanySearchPage() {
               }}
               className="text-xs h-8 px-2"
             >
-              Clear Filters
+              {t("clearFilters")}
             </Button>
           </div>
 
@@ -279,7 +279,7 @@ export default function CompanySearchPage() {
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideGraduationCap strokeWidth={"1.5px"} />
-              Education Level
+              {t("educationLevel")}
             </TypographyP>
 
             <Controller
@@ -290,12 +290,12 @@ export default function CompanySearchPage() {
                 const options = [
                   {
                     id: "edu-undergrad",
-                    label: "Under Graduate",
+                    label: t("underGraduate"),
                     value: "Under Graduate",
                   },
-                  { id: "edu-bachelor", label: "Bachelor", value: "Bachelor" },
-                  { id: "edu-master", label: "Master", value: "Master" },
-                  { id: "edu-phd", label: "PhD", value: "PHD" },
+                  { id: "edu-bachelor", label: t("bachelor"), value: "Bachelor" },
+                  { id: "edu-master", label: t("master"), value: "Master" },
+                  { id: "edu-phd", label: t("phd"), value: "PHD" },
                 ];
 
                 return (
@@ -342,32 +342,42 @@ export default function CompanySearchPage() {
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideBriefcaseBusiness strokeWidth={"1.5px"} />
-              Experience Level
+              {t("experienceLevel")}
             </TypographyP>
 
             <Controller
               name="experienceLevel"
               control={control}
-              render={({ field }) => (
-                <RadioGroup
-                  onValueChange={(value) =>
-                    handleRadioChange("experienceLevel", value)
-                  }
-                  value={field.value ?? ""}
-                  className="ml-1.5 flex flex-col gap-3 sm:ml-3"
-                >
-                  {yearOfExperienceConstant.map((option) => (
-                    <RadioGroupItemWithLabel
-                      key={option.id}
-                      value={option.value}
-                      id={`exp-${option.id}`}
-                      htmlFor={`exp-${option.id}`}
-                    >
-                      {option.label}
-                    </RadioGroupItemWithLabel>
-                  ))}
-                </RadioGroup>
-              )}
+              render={({ field }) => {
+                const expLabels: Record<string, string> = {
+                  "No Experience": t("expNoExperience"),
+                  "Less than 1 year": t("expLessThan1Year"),
+                  "1 - 2 years": t("exp1To2Years"),
+                  "3 - 5 years": t("exp3To5Years"),
+                  "6 - 10 years": t("exp6To10Years"),
+                  "10+ years": t("exp10PlusYears"),
+                };
+                return (
+                  <RadioGroup
+                    onValueChange={(value) =>
+                      handleRadioChange("experienceLevel", value)
+                    }
+                    value={field.value ?? ""}
+                    className="ml-1.5 flex flex-col gap-3 sm:ml-3"
+                  >
+                    {yearOfExperienceConstant.map((option) => (
+                      <RadioGroupItemWithLabel
+                        key={option.id}
+                        value={option.value}
+                        id={`exp-${option.id}`}
+                        htmlFor={`exp-${option.id}`}
+                      >
+                        {expLabels[option.value] ?? option.label}
+                      </RadioGroupItemWithLabel>
+                    ))}
+                  </RadioGroup>
+                );
+              }}
             />
           </div>
         </div>
@@ -381,12 +391,12 @@ export default function CompanySearchPage() {
                 <Skeleton className="h-6 w-40 bg-muted" />
               ) : error ? (
                 <TypographySmall className="text-destructive">
-                  0 Employee Found
+                  {t("zeroEmployeesFound")}
                 </TypographySmall>
               ) : filteredEmployees && filteredEmployees.length > 0 ? (
-                `${filteredEmployees.length} Employee${filteredEmployees.length > 1 ? "s" : ""} Found`
+                t("employeesFound", { count: filteredEmployees.length })
               ) : (
-                "No employees found"
+                t("noEmployeesFound")
               )}
             </TypographyH4>
 
@@ -412,20 +422,20 @@ export default function CompanySearchPage() {
                         }}
                       >
                         <SelectTrigger className="w-full sm:w-[200px] h-9 text-sm">
-                          <SelectValue placeholder="Sort by" />
+                          <SelectValue placeholder={t("sortBy")} />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="createdAt-desc">
-                            Newest First
+                            {t("newestFirst")}
                           </SelectItem>
                           <SelectItem value="createdAt-asc">
-                            Oldest First
+                            {t("oldestFirst")}
                           </SelectItem>
                           <SelectItem value="yearsOfExperience-desc">
-                            Experience: High to Low
+                            {t("experienceHighToLow")}
                           </SelectItem>
                           <SelectItem value="yearsOfExperience-asc">
-                            Experience: Low to High
+                            {t("experienceLowToHigh")}
                           </SelectItem>
                         </SelectContent>
                       </Select>
@@ -452,7 +462,7 @@ export default function CompanySearchPage() {
               <div className="w-full mb-3">
                 <SearchErrorCard
                   title={error}
-                  description="Try adjusting your filters or search terms and try again."
+                  description={t("errorDescription")}
                 />
               </div>
             ) : filteredEmployees && filteredEmployees.length > 0 ? (

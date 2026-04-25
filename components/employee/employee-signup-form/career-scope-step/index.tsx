@@ -33,6 +33,7 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { LucideArrowLeft, LucideSearch } from "lucide-react";
 import { careerScopesListConstant } from "@/utils/constants/ui.constant";
 import { getPaginationPages } from "@/utils/functions/ui";
+import { useTranslations } from "next-intl";
 
 export default function EmployeeCareerScopeStepForm({
   register,
@@ -42,6 +43,7 @@ export default function EmployeeCareerScopeStepForm({
 }: IStepFormProps<TEmployeeSignUp>) {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("common");
   const itemsPerPage = 10;
   const totalPages = Math.ceil(careerScopesListConstant.length / itemsPerPage);
 
@@ -117,7 +119,7 @@ export default function EmployeeCareerScopeStepForm({
         <DialogTitle className="sr-only">Search Careers</DialogTitle>
         <CommandInput placeholder="Search for a career..." />
         <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandEmpty>{t("noResultsFound")}</CommandEmpty>
           <CommandGroup heading="Suggestions">
             {careerScopesListConstant.slice(0, 5).map((item, index) => (
               <CommandItem key={index} className="flex items-center gap-2">
