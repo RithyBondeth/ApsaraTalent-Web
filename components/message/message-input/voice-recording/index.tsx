@@ -1,12 +1,14 @@
 import { formatDurationClock } from "@/utils/functions/date";
 import { Check, Loader2, X } from "lucide-react";
 import { IVoiceRecordingUIProps } from "./props";
+import { useTranslations } from "next-intl";
 
 export function VoiceRecordingUI(props: IVoiceRecordingUIProps) {
   /* --------------------------------- Props --------------------------------- */
   const { durationSeconds, isUploading, onCancel, onStop } = props;
 
   /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("message");
   const durationLabel = formatDurationClock(durationSeconds);
 
   /* --------------------------------- Methods -------------------------------- */
@@ -37,7 +39,7 @@ export function VoiceRecordingUI(props: IVoiceRecordingUIProps) {
         <span className="text-sm font-mono text-foreground tabular-nums">
           {durationLabel}
         </span>
-        <span className="text-xs text-muted-foreground">Recording…</span>
+        <span className="text-xs text-muted-foreground">{t("recording")}</span>
       </div>
 
       {/* Stop and Send Voice Message Button Section */}

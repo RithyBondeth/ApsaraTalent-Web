@@ -7,6 +7,7 @@ import { formatDurationClock } from "@/utils/functions/date";
 import { Mic, MicOff, PhoneOff } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ICallOverlayProps } from "./props";
+import { useTranslations } from "next-intl";
 
 export function CallOverlay(props: ICallOverlayProps) {
   /* --------------------------------- Props --------------------------------- */
@@ -49,6 +50,7 @@ export function CallOverlay(props: ICallOverlayProps) {
   }, [remoteStream]);
 
   /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("message");
   const partner = caller ?? callee;
   const partnerInitials = partner?.name
     .split(" ")
@@ -58,15 +60,15 @@ export function CallOverlay(props: ICallOverlayProps) {
     .toUpperCase();
   const statusLabel =
     status === "calling"
-      ? "Calling…"
+      ? t("calling")
       : status === "connecting"
-        ? "Connecting…"
+        ? t("connecting")
         : status === "connected"
           ? formatDurationClock(elapsed, { padMinutes: true })
           : status === "ended"
-            ? "Call ended"
+            ? t("callEnded")
             : "";
-  const muteLabel = isMuted ? "Unmute" : "Mute";
+  const muteLabel = isMuted ? t("unmute") : t("mute");
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Handle Call Actions ─────────────────────────────────────────
@@ -147,7 +149,7 @@ export function CallOverlay(props: ICallOverlayProps) {
             >
               <PhoneOff className="h-5 w-5 text-white" />
             </button>
-            <span className="text-[10px] text-muted-foreground">End</span>
+            <span className="text-[10px] text-muted-foreground">{t("endCall")}</span>
           </div>
         </div>
       </div>

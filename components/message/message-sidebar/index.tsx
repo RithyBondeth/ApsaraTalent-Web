@@ -8,6 +8,7 @@ import { useState } from "react";
 import { IChatSidebarProps } from "./props";
 import ExpandedChatList from "./expanded-chat-list";
 import CollapsedChatList from "./collapesed-chat-list";
+import { useTranslations } from "next-intl";
 
 export default function ChatSidebar(props: IChatSidebarProps) {
   /* --------------------------------- Props --------------------------------- */
@@ -22,6 +23,9 @@ export default function ChatSidebar(props: IChatSidebarProps) {
     onClose,
     onNewChat,
   } = props;
+
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("message");
 
   /* -------------------------------- All States ------------------------------ */
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -67,10 +71,10 @@ export default function ChatSidebar(props: IChatSidebarProps) {
       {isOpen ? (
         <div className="px-3 md:px-4 pt-4 md:pt-5 pb-2.5 md:pb-3 flex items-center justify-between shrink-0">
           <h1 className="text-xl md:text-2xl font-bold text-foreground tracking-tight">
-            Chats
+            {t("chats")}
           </h1>
           <div className="flex items-center gap-1">
-            {/* On New Chat Button */}
+            {/* On New Chat Button Section */}
             {onNewChat && (
               <button
                 onClick={onNewChat}
@@ -80,7 +84,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
                 <Plus className="h-4 w-4" />
               </button>
             )}
-            {/* On Close Button */}
+            {/* On Close Button Section */}
             {onClose && (
               <Button
                 variant="ghost"
@@ -115,7 +119,7 @@ export default function ChatSidebar(props: IChatSidebarProps) {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
             <Input
-              placeholder="Chats search..."
+              placeholder={t("chatsSearch")}
               className="pl-9 h-10 rounded-full bg-muted/40 border-muted focus-visible:ring-1"
               value={searchQuery}
               onChange={(e) => handleSearchChange(e.target.value)}

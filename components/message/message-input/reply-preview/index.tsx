@@ -3,15 +3,17 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { X } from "lucide-react";
 import { IMessageReplyPreviewProps } from "./props";
+import { useTranslations } from "next-intl";
 
 export function MessageReplyPreview(props: IMessageReplyPreviewProps) {
   /* --------------------------------- Props --------------------------------- */
   const { replyTarget, replyPreviewText, onCancelReply } = props;
 
   /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("message");
   const replySenderLabel = replyTarget.isMe
-    ? "You"
-    : replyTarget.senderName || "Unknown";
+    ? t("you")
+    : replyTarget.senderName || t("unknown");
   const truncatedPreviewText = `${replyPreviewText.slice(0, 100)}${
     replyPreviewText.length > 100 ? "…" : ""
   }`;
@@ -29,7 +31,7 @@ export function MessageReplyPreview(props: IMessageReplyPreviewProps) {
         {/* Reply Preview Text Section */}
         <TypographyMuted className="text-xs text-muted-foreground leading-snug truncate">
           {replyTarget.isDeleted
-            ? "🚫 This message was deleted"
+            ? t("deletedMessage")
             : truncatedPreviewText}
         </TypographyMuted>
       </div>

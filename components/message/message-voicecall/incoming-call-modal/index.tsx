@@ -4,12 +4,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { Phone, PhoneOff } from "lucide-react";
 import { IIncomingCallModalProps } from "./props";
+import { useTranslations } from "next-intl";
 
 export function IncomingCallModal(props: IIncomingCallModalProps) {
   /* --------------------------------- Props --------------------------------- */
   const { caller, onAccept, onDecline } = props;
 
   /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("message");
   const initials = caller.name
     .split(" ")
     .map((namePart: string) => namePart[0])
@@ -29,7 +31,7 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
         {/* Incoming Voice Call Label Section */}
         <div className="text-center space-y-1">
           <TypographyMuted className="text-xs text-muted-foreground uppercase tracking-widest font-medium">
-            Incoming Voice Call
+            {t("incomingVoiceCall")}
           </TypographyMuted>
         </div>
 
@@ -51,7 +53,7 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
             {caller.name}
           </h3>
           <TypographyMuted className="text-sm text-muted-foreground">
-            Calling…
+            {t("calling")}
           </TypographyMuted>
         </div>
 
@@ -67,7 +69,7 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
             >
               <PhoneOff className="h-6 w-6 text-white" />
             </button>
-            <span className="text-xs text-muted-foreground">Decline</span>
+            <span className="text-xs text-muted-foreground">{t("decline")}</span>
           </div>
 
           {/* Accept Call Button Section */}
@@ -80,7 +82,7 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
             >
               <Phone className="h-6 w-6 text-white" />
             </button>
-            <span className="text-xs text-muted-foreground">Accept</span>
+            <span className="text-xs text-muted-foreground">{t("accept")}</span>
           </div>
         </div>
       </div>

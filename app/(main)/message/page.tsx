@@ -26,10 +26,12 @@ import MessageLoadingSkeleton, {
 import { MessageSvgImage } from "@/utils/constants/asset.constant";
 import { CHAT_LOADING_TIMEOUT_MS } from "@/utils/constants/chat.constant";
 import { IMessage } from "@/utils/interfaces/chat/chat.interface";
+import { useTranslations } from "next-intl";
 
 export default function MessagePageContent() {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("message");
   const searchParams = useSearchParams();
   const chatId = searchParams.get("chatId");
 
@@ -106,7 +108,7 @@ export default function MessagePageContent() {
       } else if (isChatsLoaded && !alreadyOnChat) {
         setChat({
           id: chatId,
-          name: "Loading...",
+          name: t("loadingChat"),
           avatar: "",
           preview: "",
           time: "",
@@ -262,7 +264,7 @@ export default function MessagePageContent() {
           className="animate-float"
         />
         <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
-          Select a conversation from the sidebar to start chatting.
+          {t("selectConversation")}
         </TypographyP>
       </div>
     </div>

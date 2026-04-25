@@ -1,3 +1,5 @@
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
@@ -11,6 +13,7 @@ import {
   Video,
 } from "lucide-react";
 import { IChatHeaderProps } from "./props";
+import { useTranslations } from "next-intl";
 
 export default function ChatHeader(props: IChatHeaderProps) {
   /* --------------------------------- Props --------------------------------- */
@@ -25,11 +28,12 @@ export default function ChatHeader(props: IChatHeaderProps) {
   } = props;
 
   /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("message");
   const isOnline = Boolean(chat.isOnline);
-  const presenceLabel = isOnline ? "Online" : "Offline";
+  const presenceLabel = isOnline ? t("online") : t("offline");
   const sidebarToggleLabel = isSidebarOpen
-    ? "Collapse sidebar"
-    : "Expand sidebar";
+    ? t("collapseSidebar")
+    : t("expandSidebar");
   const avatarInitials = chat.name
     .split(" ")
     .map((namePart) => namePart[0])

@@ -26,6 +26,7 @@ import { MessageReplyPreview } from "./reply-preview";
 import { API_BASE_URL } from "@/utils/constants/apis/base.api.constant";
 import type { IPendingFile } from "@/utils/interfaces/chat/chat.interface";
 import { IMessage } from "@/utils/interfaces/chat/chat.interface";
+import { useTranslations } from "next-intl";
 
 /* ------------------------------------- Handle Lazy Load ------------------------------------- */
 // Lazy-load emoji-mart — ~90KB dataset + picker only needed when user opens the emoji popover
@@ -38,33 +39,6 @@ if (typeof window !== "undefined") {
   });
 }
 
-/* ------------------------------------------ Helpers ----------------------------------------- */
-function resolveReplyPreview(target: IMessage) {
-  if (target.isDeleted) return "This message was deleted";
-
-  const content = target.content?.trim();
-  if (content) return content;
-
-  const type = target.attachmentType;
-  if (type === "audio") return "Audio message";
-  if (type === "image") return "Photo";
-  if (type === "document") return "Attachment";
-  if (target.attachment) return "Attachment";
-
-  return "Message";
-}
-
-function buildReplyTo(target?: IMessage | null): IMessage["replyTo"] | null {
-  if (!target) return null;
-
-  return {
-    id: target.id,
-    content: resolveReplyPreview(target),
-    senderName: target.senderName || (target.isMe ? "You" : ""),
-    isDeleted: target.isDeleted,
-  };
-}
-
 export default function ChatInput(props: IChatInputProps) {
   /* ----------------------------------------- Props ----------------------------------------- */
   const {
@@ -74,6 +48,32 @@ export default function ChatInput(props: IChatInputProps) {
     replyTarget,
     onCancelReply,
   } = props;
+
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("message");
+
+  /* ------------------------------------------ Helpers ----------------------------------------- */
+  const resolveReplyPreview = (target: IMessage) => {
+    if (target.isDeleted) return t("thisMessageWasDeleted");
+    const content = target.content?.trim();
+    if (content) return content;
+    const type = target.attachmentType;
+    if (type === "audio") return t("audioMessage");
+    if (type === "image") return t("photo");
+    if (type === "document") return t("attachment");
+    if (target.attachment) return t("attachment");
+    return t("messageLabel");
+  };
+
+  const buildReplyTo = (target?: IMessage | null): IMessage["replyTo"] | null => {
+    if (!target) return null;
+    return {
+      id: target.id,
+      content: resolveReplyPreview(target),
+      senderName: target.senderName || (target.isMe ? t("you") : ""),
+      isDeleted: target.isDeleted,
+    };
+  };
 
   /* ------------------------------------- API Integration ------------------------------------ */
   const { theme, systemTheme } = useThemeStore();
@@ -257,7 +257,7 @@ export default function ChatInput(props: IChatInputProps) {
           const message =
             err instanceof Error
               ? err.message
-              : "Upload failed. Please try again.";
+              : t("uploadFailed");
           setPendingFiles((prev) =>
             prev.map((f) =>
               f.id === entry.id
@@ -414,7 +414,7 @@ export default function ChatInput(props: IChatInputProps) {
               {/* Textarea Section */}
               <textarea
                 ref={textareaRef}
-                placeholder={isDisabled ? "Loading..." : "Enter message..."}
+                placeholder={isDisabled ? t("loadingChat") : t("enterMessage")}
                 className="flex-1 resize-none bg-transparent text-sm leading-relaxed text-foreground placeholder:text-muted-foreground outline-none border-none min-h-[30px] sm:min-h-[32px] max-h-[96px] sm:max-h-[120px] overflow-y-auto py-1 disabled:opacity-50"
                 rows={1}
                 value={newMessage}
@@ -470,13 +470,13 @@ export default function ChatInput(props: IChatInputProps) {
                 className="shrink-0 h-8 w-8 flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors disabled:opacity-40 disabled:pointer-events-none"
                 aria-label={
                   atFileLimit
-                    ? `Maximum ${CHAT_MAX_FILES} files reached`
-                    : "Attach files"
+                    ? t("maxFilesReached", { max: CHAT_MAX_FILES })
+                    : t("attachFiles")
                 }
                 title={
                   atFileLimit
-                    ? `Maximum ${CHAT_MAX_FILES} files reached`
-                    : "Attach files"
+                    ? t("maxFilesReached", { max: CHAT_MAX_FILES })
+                    : t("attachFiles")
                 }
               >
                 <Paperclip className="h-4 w-4" />

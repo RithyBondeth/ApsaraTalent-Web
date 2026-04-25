@@ -1,6 +1,7 @@
 import { useChatStore } from "@/stores/features/chat/chat.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useMemo, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { IMessageBubbleProps } from "./props";
@@ -32,6 +33,9 @@ function DeliveryStatusIcon({
 export default function MessageBubble(props: IMessageBubbleProps) {
   /* --------------------------------- Props --------------------------------- */
   const { message, activeChat, isLastSeen, onReply, onEdit } = props;
+
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("message");
 
   /* ----------------------------- API Integration ---------------------------- */
   const { reactToMessage, deleteMessage } = useChatStore();
@@ -112,7 +116,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
   };
 
   const getUserName = (userId: string) => {
-    if (userId === currentUser?.id) return "You";
+    if (userId === currentUser?.id) return t("you");
     return activeChat.name;
   };
 
@@ -183,7 +187,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
                 </TypographyP>
                 <TypographyP className="[&:not(:first-child)]:mt-0 leading-snug line-clamp-2">
                   {message.replyTo.isDeleted
-                    ? "🚫 This message was deleted"
+                    ? t("deletedMessage")
                     : (message.replyTo.content ?? "").slice(0, 80) +
                       ((message.replyTo.content ?? "").length > 80 ? "…" : "")}
                 </TypographyP>
@@ -194,14 +198,14 @@ export default function MessageBubble(props: IMessageBubbleProps) {
             {message.isDeleted ? (
               /* Deleted Message Section */
               <span className="italic text-muted-foreground text-xs">
-                🚫 This message was deleted
+                {t("deletedMessage")}
               </span>
             ) : message.messageType === "call" ? (
               /* Call Section */
               <div className="flex flex-col gap-2 min-w-[150px] sm:min-w-[180px]">
                 <div className="flex items-center gap-2 text-sm font-medium">
                   <Phone className="h-4 w-4" />
-                  <span>{message.content || "Call"}</span>
+                  <span>{message.content || t("callLabel")}</span>
                 </div>
                 <Button
                   variant={message.isMe ? "secondary" : "default"}
@@ -212,7 +216,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
                     handleCallAgain();
                   }}
                 >
-                  Call again
+                  {t("callAgain")}
                 </Button>
               </div>
             ) : isEditing ? (
@@ -281,7 +285,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
                 {/* Edited Message Section */}
                 {message.isEdited && (
                   <span className="text-[10px] opacity-60 ml-1 italic">
-                    (edited)
+                    {t("edited")}
                   </span>
                 )}
               </>
@@ -344,7 +348,7 @@ export default function MessageBubble(props: IMessageBubbleProps) {
                 .join("")}
             </AvatarFallback>
           </Avatar>
-          <span className="text-[10px] text-muted-foreground">Seen</span>
+          <span className="text-[10px] text-muted-foreground">{t("seen")}</span>
         </div>
       )}
     </div>
