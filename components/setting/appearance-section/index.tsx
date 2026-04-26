@@ -1,3 +1,5 @@
+"use client";
+
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import React from "react";
 import {
@@ -9,17 +11,28 @@ import {
 import { ThemeCard } from "./theme-card";
 import { SettingWrapper } from "../setting-wrapper";
 import { IAppearanceSectionProps } from "./props";
+import { useTranslations } from "next-intl";
 
 export function AppearanceSection(props: IAppearanceSectionProps) {
   /* --------------------------------- Props --------------------------------- */
   const { theme, onThemeChange } = props;
 
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("setting");
+
+  /* ---------------------------------- Utils --------------------------------- */
+  const themeLabel: Record<string, string> = {
+    light: t("themeLight"),
+    dark: t("themeDark"),
+    system: t("themeSystem"),
+  };
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <SettingWrapper
       icon={<LucidePalette />}
-      title="Appearance"
-      description="Choose how Apsara Talent looks for you"
+      title={t("appearance")}
+      description={t("appearanceDescription")}
     >
       {/* Theme Section */}
       <div className="flex flex-col gap-4 p-4">
@@ -27,21 +40,21 @@ export function AppearanceSection(props: IAppearanceSectionProps) {
         <div className="grid grid-cols-3 gap-3">
           <ThemeCard
             value="light"
-            label="Light"
+            label={t("themeLight")}
             icon={<LucideSun />}
             active={theme === "light"}
             onClick={() => onThemeChange("light")}
           />
           <ThemeCard
             value="dark"
-            label="Dark"
+            label={t("themeDark")}
             icon={<LucideMoon />}
             active={theme === "dark"}
             onClick={() => onThemeChange("dark")}
           />
           <ThemeCard
             value="system"
-            label="System"
+            label={t("themeSystem")}
             icon={<LucideMonitor />}
             active={theme === "system"}
             onClick={() => onThemeChange("system")}
@@ -50,8 +63,8 @@ export function AppearanceSection(props: IAppearanceSectionProps) {
         {/* Theme Description Section */}
         <TypographyMuted className="text-xs text-center">
           {theme === "system"
-            ? "Follows your device's system preference"
-            : `Using ${theme} mode`}
+            ? t("followsSystem")
+            : t("usingMode", { theme: themeLabel[theme] ?? theme })}
         </TypographyMuted>
       </div>
     </SettingWrapper>

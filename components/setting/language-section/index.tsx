@@ -1,19 +1,25 @@
+"use client";
+
 import React from "react";
 import { cn } from "@/lib/utils";
 import { LucideCheck, LucideGlobe } from "lucide-react";
 import { SettingWrapper } from "../setting-wrapper";
 import { ILanguageCardProps, ILanguageSectionProps } from "./props";
+import { useTranslations } from "next-intl";
 
 export function LanguageSection(props: ILanguageSectionProps) {
   /* -------------------------------- Props -------------------------------- */
   const { language, onLanguageChange } = props;
 
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("setting");
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <SettingWrapper
       icon={<LucideGlobe />}
-      title="Language"
-      description="Select the language used throughout the app"
+      title={t("language")}
+      description={t("languageDescription")}
     >
       <div className="flex flex-col gap-3 p-4">
         {/* English Language Card Section */}

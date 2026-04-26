@@ -1,3 +1,5 @@
+"use client";
+
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import React from "react";
@@ -16,6 +18,7 @@ import {
 import { SettingWrapper } from "../setting-wrapper";
 import { SettingRow } from "../setting-row";
 import { IAccountSectionProps } from "./props";
+import { useTranslations } from "next-intl";
 
 export function AccountSection(props: IAccountSectionProps) {
   /* --------------------------------- Props --------------------------------- */
@@ -30,12 +33,15 @@ export function AccountSection(props: IAccountSectionProps) {
     onResetPassword,
   } = props;
 
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("setting");
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <SettingWrapper
       icon={<LucideUser />}
-      title="Account"
-      description="Your account details and security"
+      title={t("account")}
+      description={t("accountDescription")}
     >
       {/* Header Section: Avatar, DisplayName, Email, Role */}
       <div className="flex items-center gap-4 px-4 py-4 bg-muted/30">
@@ -63,35 +69,35 @@ export function AccountSection(props: IAccountSectionProps) {
       <Separator />
 
       {/* Email Section */}
-      <SettingRow icon={<LucideMail />} label="Email" value={email ?? "—"} />
+      <SettingRow icon={<LucideMail />} label={t("email")} value={email ?? "—"} />
 
       {/* Two-Factor Auth Section */}
       <SettingRow
         icon={<LucideShieldCheck />}
-        label="Two-Factor Auth"
+        label={t("twoFactorAuth")}
         value={
           isTwoFactorEnabled ? (
             <Badge className="text-[10px] bg-emerald-500/10 text-emerald-600 border border-emerald-300/40 hover:bg-emerald-500/10">
-              Enabled
+              {t("enabled")}
             </Badge>
           ) : (
             <Badge
               variant="outline"
               className="text-[10px] text-muted-foreground"
             >
-              Disabled
+              {t("disabled")}
             </Badge>
           )
         }
       />
 
       {/* Last Login Section */}
-      <SettingRow icon={<LucideLogIn />} label="Last Login" value={lastLogin} />
+      <SettingRow icon={<LucideLogIn />} label={t("lastLogin")} value={lastLogin} />
 
       {/* Member Since Section */}
       <SettingRow
         icon={<LucideInfo />}
-        label="Member Since"
+        label={t("memberSince")}
         value={memberSince}
       />
 
@@ -102,9 +108,9 @@ export function AccountSection(props: IAccountSectionProps) {
             <LucideKeyRound />
           </span>
           <div className="flex flex-col">
-            <span className="text-sm font-medium">Reset Password</span>
+            <span className="text-sm font-medium">{t("resetPassword")}</span>
             <span className="text-xs text-muted-foreground">
-              Send a reset link to your email
+              {t("sendResetLinkDesc")}
             </span>
           </div>
         </div>
@@ -114,7 +120,7 @@ export function AccountSection(props: IAccountSectionProps) {
           className="shrink-0 text-xs rounded-lg"
           onClick={onResetPassword}
         >
-          Reset
+          {t("reset")}
         </Button>
       </div>
     </SettingWrapper>

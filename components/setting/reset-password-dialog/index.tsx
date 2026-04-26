@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,10 +12,14 @@ import {
 } from "@/components/ui/dialog";
 import { LucideKeyRound } from "lucide-react";
 import { IResetPasswordDialogProps } from "./props";
+import { useTranslations } from "next-intl";
 
 export function ResetPasswordDialog(props: IResetPasswordDialogProps) {
   /* --------------------------------- Props --------------------------------- */
   const { open, onOpenChange, email, sending, onSendReset, sent } = props;
+
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("setting");
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -26,21 +32,14 @@ export function ResetPasswordDialog(props: IResetPasswordDialogProps) {
           </div>
 
           {/* Reset Password Title Section */}
-          <DialogTitle className="text-center">Reset your password</DialogTitle>
+          <DialogTitle className="text-center">{t("resetPasswordTitle")}</DialogTitle>
 
           {/* Reset Password Description Section */}
           <DialogDescription className="text-center text-sm leading-relaxed">
             {sent ? (
-              <>
-                We&apos;ve sent a reset link to{" "}
-                <span className="font-semibold text-foreground">{email}</span>.
-                Check your inbox and follow the instructions.
-              </>
+              t("resetSentDesc", { email: email ?? "" })
             ) : (
-              <>
-                We&apos;ll send a password reset link to{" "}
-                <span className="font-semibold text-foreground">{email}</span>.
-              </>
+              t("resetDesc", { email: email ?? "" })
             )}
           </DialogDescription>
         </DialogHeader>
@@ -52,7 +51,7 @@ export function ResetPasswordDialog(props: IResetPasswordDialogProps) {
               className="w-full rounded-xl"
               onClick={() => onOpenChange(false)}
             >
-              Done
+              {t("done")}
             </Button>
           ) : (
             <>
@@ -61,7 +60,7 @@ export function ResetPasswordDialog(props: IResetPasswordDialogProps) {
                 onClick={onSendReset}
                 disabled={sending}
               >
-                {sending ? "Sending…" : "Send Reset Link"}
+                {sending ? t("sending") : t("sendResetLink")}
               </Button>
               <Button
                 variant="outline"
@@ -69,7 +68,7 @@ export function ResetPasswordDialog(props: IResetPasswordDialogProps) {
                 onClick={() => onOpenChange(false)}
                 disabled={sending}
               >
-                Cancel
+                {t("cancel")}
               </Button>
             </>
           )}

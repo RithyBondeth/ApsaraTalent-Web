@@ -23,6 +23,7 @@ import SettingLoadingSkeleton from "@/components/setting/skeleton";
 export default function SettingPage() {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("toast");
+  const tS = useTranslations("setting");
 
   /* ----------------------------- API Integration ---------------------------- */
   // Get Current User and App Settings
@@ -113,9 +114,9 @@ export default function SettingPage() {
     <div className="w-full max-w-2xl mx-auto flex flex-col gap-8 px-3 py-6 sm:px-5 sm:py-8 animate-page-in">
       {/* Header Section */}
       <div className="flex flex-col gap-1">
-        <TypographyH2>Settings</TypographyH2>
+        <TypographyH2>{tS("title")}</TypographyH2>
         <TypographyP className="text-muted-foreground !m-0">
-          Manage your preferences and account details.
+          {tS("description")}
         </TypographyP>
       </div>
 
