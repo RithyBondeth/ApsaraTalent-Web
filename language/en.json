@@ -34,7 +34,9 @@
     "profilePage": "Profile Page",
     "settingPage": "Setting Page",
     "feedDescription": "Explore your connections",
-    "notificationDescription": "Stay updated with matches and messages"
+    "notificationDescription": "Stay updated with matches and messages",
+    "dashboardDescription": "View your analytics",
+    "interviewDescription": "Manage your interviews"
   },
   "auth": {
     "successLoggedIn": "Successfully Logged In",

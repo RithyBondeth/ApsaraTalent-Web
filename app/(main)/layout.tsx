@@ -48,9 +48,10 @@ export default function MainLayout({
     if (pathname.startsWith("/favorite")) return t("favorites");
     if (pathname.startsWith("/profile")) return t("profilePage");
     if (pathname.startsWith("/setting")) return t("settingPage");
-    if (pathname.startsWith("/notification"))
-      return t("notificationDescription");
-    return sidebarData[0]?.description ?? "";
+    if (pathname.startsWith("/notification")) return t("notificationDescription");
+    if (pathname.startsWith("/dashboard")) return t("dashboardDescription");
+    if (pathname.startsWith("/interview")) return t("interviewDescription");
+    return "";
   };
 
   // ── Determine content wrapper class ─────────────────────────────────
