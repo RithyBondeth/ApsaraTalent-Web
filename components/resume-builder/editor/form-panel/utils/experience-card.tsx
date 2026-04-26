@@ -14,6 +14,7 @@ import {
 import { PlusCircle, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { FieldLabel } from "./field-label";
+import { useTranslations } from "next-intl";
 
 /* -------------------------------- Component ------------------------------- */
 export function ExperienceCard({
@@ -37,6 +38,7 @@ export function ExperienceCard({
   });
 
   /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("resumeBuilder");
   // Achievements nested field array
   const achPath = `experience.${index}.achievements` as Path<IBuildResume>;
 
@@ -57,7 +59,7 @@ export function ExperienceCard({
       >
         {/* Card Header Title Section */}
         <span className="text-sm font-medium truncate">
-          {(position as string) || `Experience ${index + 1}`}
+          {(position as string) || `${t("experience")} ${index + 1}`}
         </span>
 
         {/* Card Header Actions Section */}
@@ -88,14 +90,14 @@ export function ExperienceCard({
           {/* Position and Company Section */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
-              <FieldLabel>Position / Role</FieldLabel>
+              <FieldLabel>{t("positionRole")}</FieldLabel>
               <Input
                 placeholder="Software Engineer"
                 {...register(`experience.${index}.position`)}
               />
             </div>
             <div>
-              <FieldLabel>Company</FieldLabel>
+              <FieldLabel>{t("company")}</FieldLabel>
               <Input
                 placeholder="Company Name"
                 {...register(`experience.${index}.company`)}
@@ -106,14 +108,14 @@ export function ExperienceCard({
           {/* Start and End Date Section */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
-              <FieldLabel>Start Date</FieldLabel>
+              <FieldLabel>{t("startDate")}</FieldLabel>
               <Input
                 placeholder="January 2022"
                 {...register(`experience.${index}.startDate`)}
               />
             </div>
             <div>
-              <FieldLabel>End Date</FieldLabel>
+              <FieldLabel>{t("endDate")}</FieldLabel>
               <Input
                 placeholder="Present"
                 {...register(`experience.${index}.endDate`)}
@@ -123,7 +125,7 @@ export function ExperienceCard({
 
           {/* Description Section */}
           <div>
-            <FieldLabel>Description</FieldLabel>
+            <FieldLabel>{t("description")}</FieldLabel>
             <Textarea
               autoResize
               placeholder="Brief description of your role..."
@@ -136,7 +138,7 @@ export function ExperienceCard({
           <div>
             {/* Achievements Header Section */}
             <div className="flex items-center justify-between mb-1.5">
-              <FieldLabel>Key Achievements</FieldLabel>
+              <FieldLabel>{t("keyAchievements")}</FieldLabel>
               <Button
                 type="button"
                 variant="ghost"
@@ -144,7 +146,7 @@ export function ExperienceCard({
                 className="h-6 px-2 text-xs"
                 onClick={() => achAppend("" as unknown as Experience)}
               >
-                <PlusCircle size={11} className="mr-1" /> Add
+                <PlusCircle size={11} className="mr-1" /> {t("add")}
               </Button>
             </div>
 
@@ -172,7 +174,7 @@ export function ExperienceCard({
               ))}
               {achFields.length === 0 && (
                 <TypographyMuted className="text-xs italic">
-                  No achievements added.
+                  {t("noAchievementsAdded")}
                 </TypographyMuted>
               )}
             </div>

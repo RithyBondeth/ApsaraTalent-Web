@@ -9,12 +9,14 @@ import { timeAgo } from "@/utils/functions/date";
 import { LucideMail, LucideX } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { INotificationMessageCardProps } from "./props";
+import { useTranslations } from "next-intl";
 
 export default function NotificationMessageCard(
   props: INotificationMessageCardProps,
 ) {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("notification");
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Handle Reply ─────────────────────────────────────────
@@ -45,7 +47,7 @@ export default function NotificationMessageCard(
       <div className="w-full flex flex-col items-start gap-2">
         <div className="w-full flex items-center justify-between phone-xl:flex-col phone-xl:items-start">
           <TypographyLead className="text-md font-semibold text-primary">
-            New Message!
+            {t("newMessage")}
           </TypographyLead>
           <div className="flex items-center gap-1">
             <TypographySmall className="text-muted-foreground phone-xl:text-xs">
@@ -79,7 +81,7 @@ export default function NotificationMessageCard(
 
             {/* Message Badge Section */}
             <div className="px-3 py-1 rounded-xl text-xs font-medium text-green-500 bg-green-100">
-              message
+              {t("messageBadge")}
             </div>
           </div>
 
@@ -88,7 +90,7 @@ export default function NotificationMessageCard(
             className="h-8 text-xs tablet-sm:h-9 tablet-sm:w-full tablet-sm:text-xs"
             onClick={handleReply}
           >
-            Reply
+            {t("reply")}
           </Button>
         </div>
       </div>

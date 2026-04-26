@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { buildResumePayloadFromUser } from "./_utils/build-payload";
 import { TResumeTemplate } from "@/utils/types/resume/resume.type";
 import { TemplateCardSkeleton } from "@/components/resume-builder/skeleton";
+import { useTranslations } from "next-intl";
 
 // Module-level flag so templates are only fetched once per app session
 let hasFetchedTemplates = false;
@@ -21,6 +22,7 @@ let hasFetchedTemplates = false;
 export default function ResumeBuilder() {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("resumeBuilder");
   const { setPayload } = useResumeEditStore();
   const { setSelectedTemplate, selectedTemplate } = useTemplateSelectionStore();
 
@@ -106,7 +108,7 @@ export default function ResumeBuilder() {
       {/* Template Grid Section */}
       <div className="w-full">
         <div className="w-full flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between">
-          <TypographyH4>Choose your template</TypographyH4>
+          <TypographyH4>{t("chooseTemplate")}</TypographyH4>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 my-3">
           {templateData && templateData.length > 0

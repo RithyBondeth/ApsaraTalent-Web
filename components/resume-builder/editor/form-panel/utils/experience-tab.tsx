@@ -4,12 +4,16 @@ import { useFieldArray } from "react-hook-form";
 import { PlusCircle } from "lucide-react";
 import { IFormPanelProps } from "../props";
 import { ExperienceCard } from "./experience-card";
+import { useTranslations } from "next-intl";
 
 /* -------------------------------- Component ------------------------------- */
 export function ExperienceTab({
   register,
   control,
 }: Pick<IFormPanelProps, "register" | "control">) {
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("resumeBuilder");
+
   /* --------------------------------- Form --------------------------------- */
   const { fields, append, remove } = useFieldArray({
     control,
@@ -53,7 +57,7 @@ export function ExperienceTab({
         onClick={addExperience}
       >
         <PlusCircle size={13} className="mr-1.5" />
-        Add Experience
+        {t("addExperience")}
       </Button>
     </div>
   );

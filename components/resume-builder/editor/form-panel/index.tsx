@@ -1,11 +1,17 @@
+"use client";
+
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { User, Briefcase, GraduationCap } from "lucide-react";
 import { IFormPanelProps } from "./props";
 import { PersonalInfoTab } from "./utils/personal-info-tab";
 import { ExperienceTab } from "./utils/experience-tab";
 import { SkillsEducationTab } from "./utils/skills-education-tab";
+import { useTranslations } from "next-intl";
 
 export default function ResumeEditorFormPanel(props: IFormPanelProps) {
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("resumeBuilder");
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Tabs defaultValue="personal" className="flex flex-col h-full">
@@ -16,7 +22,7 @@ export default function ResumeEditorFormPanel(props: IFormPanelProps) {
           value="personal"
           className="gap-1 text-[11px] sm:gap-1.5 sm:text-xs"
         >
-          <User size={12} /> Personal
+          <User size={12} /> {t("tabPersonal")}
         </TabsTrigger>
 
         {/* Experience Tab Trigger */}
@@ -24,7 +30,7 @@ export default function ResumeEditorFormPanel(props: IFormPanelProps) {
           value="experience"
           className="gap-1 text-[11px] sm:gap-1.5 sm:text-xs"
         >
-          <Briefcase size={12} /> Experience
+          <Briefcase size={12} /> {t("tabExperience")}
         </TabsTrigger>
 
         {/* Skills Tab Trigger */}
@@ -32,7 +38,7 @@ export default function ResumeEditorFormPanel(props: IFormPanelProps) {
           value="skills"
           className="gap-1 text-[11px] sm:gap-1.5 sm:text-xs"
         >
-          <GraduationCap size={12} /> Skills
+          <GraduationCap size={12} /> {t("tabSkills")}
         </TabsTrigger>
       </TabsList>
 

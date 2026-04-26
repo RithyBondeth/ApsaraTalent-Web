@@ -9,12 +9,14 @@ import { timeAgo } from "@/utils/functions/date";
 import { LucideHeartHandshake, LucideX } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { INotificationMatchCardProps } from "./props";
+import { useTranslations } from "next-intl";
 
 export default function NotificationMatchCard(
   props: INotificationMatchCardProps,
 ) {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("notification");
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Handle View Profile ─────────────────────────────────────────
@@ -45,7 +47,7 @@ export default function NotificationMatchCard(
       <div className="w-full flex flex-col items-start gap-2">
         <div className="w-full flex items-center justify-between phone-xl:flex-col phone-xl:items-start">
           <TypographyLead className="text-md font-semibold text-primary">
-            New Match Found!
+            {t("newMatch")}
           </TypographyLead>
           <div className="flex items-center gap-1">
             <TypographySmall className="text-muted-foreground phone-xl:text-xs">
@@ -57,10 +59,15 @@ export default function NotificationMatchCard(
 
         {/* Description Section */}
         <TypographyMuted>
-          You matched with {props.user.name}
           {props.role === "employee"
-            ? `, A ${props.user.position}.`
-            : `, ${props.user.industry} Company.`}
+            ? t("matchedWithEmployee", {
+                name: props.user.name,
+                position: props.user.position ?? "",
+              })
+            : t("matchedWithCompany", {
+                name: props.user.name,
+                industry: props.user.industry ?? "",
+              })}
         </TypographyMuted>
 
         {/* Action Section */}
@@ -78,7 +85,7 @@ export default function NotificationMatchCard(
 
             {/* Match Badge Section */}
             <div className="px-3 py-1 rounded-xl text-xs font-medium text-blue-500 bg-blue-100">
-              match
+              {t("matchBadge")}
             </div>
           </div>
 
@@ -87,7 +94,7 @@ export default function NotificationMatchCard(
             className="h-8 text-xs tablet-sm:h-9 tablet-sm:w-full tablet-sm:text-xs"
             onClick={handleViewProfile}
           >
-            View Profile
+            {t("viewProfile")}
           </Button>
         </div>
       </div>

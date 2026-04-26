@@ -1,3 +1,5 @@
+"use client";
+
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyLead } from "@/components/utils/typography/typography-lead";
 import {
@@ -5,13 +7,17 @@ import {
   LucidePencilRuler,
   LucideSearch,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function ResumeBuilderFeature() {
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("resumeBuilder");
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col items-center gap-10 p-5 rounded-md shadow-md">
       {/* Title Section */}
-      <TypographyH4>AI-Powered Features</TypographyH4>
+      <TypographyH4>{t("aiPoweredFeatures")}</TypographyH4>
       <div className="flex justify-between items-start gap-5 tablet-lg:flex-col">
         {/* Feature 1 Card Section */}
         <div className="flex flex-col items-center gap-2">
@@ -22,11 +28,10 @@ export default function ResumeBuilderFeature() {
             />
           </div>
           <TypographyLead className="text-md text-center text-primary font-medium">
-            Smart Content Optimization
+            {t("featureTitle")}
           </TypographyLead>
           <TypographyLead className="text-sm text-center">
-            AI analyzes your experience and optimizes descriptions for maximum
-            impact
+            {t("featureDesc")}
           </TypographyLead>
         </div>
 
@@ -39,11 +44,10 @@ export default function ResumeBuilderFeature() {
             />
           </div>
           <TypographyLead className="text-md text-center text-primary font-medium">
-            Smart Content Optimization
+            {t("featureTitle")}
           </TypographyLead>
           <TypographyLead className="text-sm text-center">
-            AI analyzes your experience and optimizes descriptions for maximum
-            impact
+            {t("featureDesc")}
           </TypographyLead>
         </div>
 
@@ -56,11 +60,10 @@ export default function ResumeBuilderFeature() {
             />
           </div>
           <TypographyLead className="text-md text-center text-primary font-medium">
-            Smart Content Optimization
+            {t("featureTitle")}
           </TypographyLead>
           <TypographyLead className="text-sm text-center">
-            AI analyzes your experience and optimizes descriptions for maximum
-            impact
+            {t("featureDesc")}
           </TypographyLead>
         </div>
       </div>

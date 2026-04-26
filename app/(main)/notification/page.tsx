@@ -118,31 +118,31 @@ export default function NotificationPage() {
             variant={notificationButtonVariant("all")}
             onClick={() => setNotificationFilter("all")}
           >
-            All
+            {t("filterAll")}
           </Button>
           <Button
             variant={notificationButtonVariant("match")}
             onClick={() => setNotificationFilter("match")}
           >
-            Matches
+            {t("filterMatches")}
           </Button>
           <Button
             variant={notificationButtonVariant("message")}
             onClick={() => setNotificationFilter("message")}
           >
-            Messages
+            {t("filterMessages")}
           </Button>
           <Button
             variant={notificationButtonVariant("like")}
             onClick={() => setNotificationFilter("like")}
           >
-            Likes
+            {t("filterLikes")}
           </Button>
           <Button
             variant={notificationButtonVariant("unread")}
             onClick={() => setNotificationFilter("unread")}
           >
-            Unread
+            {t("filterUnread")}
           </Button>
         </div>
 
@@ -150,26 +150,33 @@ export default function NotificationPage() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild className="hidden tablet-sm:flex">
             <Button className="h-9 w-full text-xs sm:w-auto">
-              Filter:{" "}
-              {notificationFilter.charAt(0).toUpperCase() +
-                notificationFilter.slice(1).toLowerCase()}
+              {t("filterLabel")}{" "}
+              {(
+                {
+                  all: t("filterAll"),
+                  match: t("filterMatches"),
+                  message: t("filterMessages"),
+                  like: t("filterLikes"),
+                  unread: t("filterUnread"),
+                } as Record<TNotificationFilterType, string>
+              )[notificationFilter]}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem onClick={() => setNotificationFilter("all")}>
-              All
+              {t("filterAll")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setNotificationFilter("match")}>
-              Matches
+              {t("filterMatches")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setNotificationFilter("message")}>
-              Messages
+              {t("filterMessages")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setNotificationFilter("like")}>
-              Likes
+              {t("filterLikes")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setNotificationFilter("unread")}>
-              Unread
+              {t("filterUnread")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -182,7 +189,7 @@ export default function NotificationPage() {
             onClick={handleMarkAllRead}
           >
             <LucideCheckCheck />
-            Mark All As Read
+            {t("markAllRead")}
           </Button>
           <Button
             className="h-9 w-full text-xs sm:w-auto"
@@ -191,7 +198,7 @@ export default function NotificationPage() {
             disabled={notifications.length === 0}
           >
             <LucideTrash2 />
-            Delete All
+            {t("deleteAll")}
           </Button>
         </div>
       </div>

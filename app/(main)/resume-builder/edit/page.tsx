@@ -20,10 +20,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
-import {
-  DOWNLOAD_RESUME_STEPS,
-  LIVE_RESUME_PREVIEW_DEBOUNCE_MS,
-} from "@/utils/constants/resume.constant";
+import { LIVE_RESUME_PREVIEW_DEBOUNCE_MS } from "@/utils/constants/resume.constant";
 import { TypographyLead } from "@/components/utils/typography/typography-lead";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { TypographyP } from "@/components/utils/typography/typography-p";
@@ -33,6 +30,7 @@ export default function ResumeEditorPage() {
   const router = useRouter();
   const isMobile = useIsMobile();
   const t = useTranslations("toast");
+  const tRb = useTranslations("resumeBuilder");
 
   /* ----------------------------- API Integration ---------------------------- */
   const { payload, clearPayload } = useResumeEditStore();
@@ -193,7 +191,7 @@ export default function ResumeEditorPage() {
             className="gap-1.5"
           >
             <ArrowLeft size={14} />
-            Back
+            {tRb("back")}
           </Button>
 
           {/* Toggle The Form Panel Section */}
@@ -202,7 +200,7 @@ export default function ResumeEditorPage() {
             size="sm"
             onClick={() => setFormPanelOpen((v) => !v)}
             className="gap-1.5"
-            title={formPanelOpen ? "Hide form panel" : "Show form panel"}
+            title={formPanelOpen ? tRb("hideFields") : tRb("showFields")}
           >
             {formPanelOpen ? (
               <PanelLeftClose size={14} />
@@ -210,10 +208,10 @@ export default function ResumeEditorPage() {
               <PanelLeftOpen size={14} />
             )}
             <span className="hidden sm:inline">
-              {formPanelOpen ? "Hide Fields" : "Show Fields"}
+              {formPanelOpen ? tRb("hideFields") : tRb("showFields")}
             </span>
             <span className="sm:hidden">
-              {formPanelOpen ? "Hide" : "Fields"}
+              {formPanelOpen ? tRb("hide") : tRb("fields")}
             </span>
           </Button>
 
@@ -222,10 +220,10 @@ export default function ResumeEditorPage() {
             <FileText size={16} className="text-primary shrink-0" />
             <div>
               <TypographyLead className="text-sm font-semibold leading-none">
-                Resume Editor
+                {tRb("resumeEditor")}
               </TypographyLead>
               <TypographySmall className="text-xs text-muted-foreground mt-0.5 capitalize">
-                Template:{" "}
+                {tRb("templateLabel")}{" "}
                 <span className="text-foreground font-medium">
                   {payload.template}
                 </span>
@@ -241,7 +239,7 @@ export default function ResumeEditorPage() {
           className="w-full shrink-0 justify-center gap-2 sm:w-auto"
         >
           <Download size={15} />
-          Download PDF
+          {tRb("downloadPdf")}
         </Button>
       </div>
 
@@ -252,8 +250,7 @@ export default function ResumeEditorPage() {
           <div className="w-full shrink-0 flex flex-col border-b bg-background overflow-hidden max-h-[56vh] lg:max-h-none lg:w-[420px] lg:border-b-0 lg:border-r">
             <div className="shrink-0 px-3 pt-3 pb-2 sm:px-4 sm:pt-4">
               <TypographyP className="text-xs text-muted-foreground">
-                Edit your resume details below. The canvas updates
-                automatically.
+                {tRb("editDetails")}
               </TypographyP>
             </div>
             <div className="flex-1 overflow-hidden px-3 pb-3 sm:px-4 sm:pb-4">
@@ -281,8 +278,15 @@ export default function ResumeEditorPage() {
       {/* Download Loading Dialog Section */}
       <LoadingDialog
         loading={downloading}
-        title="Generating your PDF..."
-        steps={DOWNLOAD_RESUME_STEPS}
+        title={tRb("generatingPdf")}
+        steps={[
+          { label: tRb("downloadStep1"), completeAt: 20 },
+          { label: tRb("downloadStep2"), completeAt: 40 },
+          { label: tRb("downloadStep3"), completeAt: 60 },
+          { label: tRb("downloadStep4"), completeAt: 78 },
+          { label: tRb("downloadStep5"), completeAt: 92 },
+          { label: tRb("downloadStep6"), completeAt: 99 },
+        ]}
         progress={dlProgress}
       />
     </div>

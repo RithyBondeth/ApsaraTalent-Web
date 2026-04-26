@@ -9,12 +9,14 @@ import { timeAgo } from "@/utils/functions/date";
 import { LucideHeart, LucideX } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { INotificationLikeCardProps } from "./props";
+import { useTranslations } from "next-intl";
 
 export default function NotificationLikeCard(
   props: INotificationLikeCardProps,
 ) {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("notification");
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Handle View Profile ─────────────────────────────────────────
@@ -45,7 +47,7 @@ export default function NotificationLikeCard(
       <div className="w-full flex flex-col items-start gap-2">
         <div className="w-full flex items-center justify-between phone-xl:flex-col phone-xl:items-start">
           <TypographyLead className="text-md font-semibold text-primary">
-            New Like!
+            {t("newLike")}
           </TypographyLead>
           <div className="flex items-center gap-1">
             <TypographySmall className="text-muted-foreground phone-xl:text-xs">
@@ -73,7 +75,7 @@ export default function NotificationLikeCard(
 
             {/* Like Badge Section */}
             <div className="px-3 py-1 rounded-xl text-xs font-medium text-pink-500 bg-pink-100">
-              like
+              {t("likeBadge")}
             </div>
           </div>
 
@@ -82,7 +84,7 @@ export default function NotificationLikeCard(
             className="h-8 text-xs tablet-sm:h-9 tablet-sm:w-full tablet-sm:text-xs"
             onClick={handleViewProfile}
           >
-            View Profile
+            {t("viewProfile")}
           </Button>
         </div>
       </div>

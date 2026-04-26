@@ -7,6 +7,7 @@ import { useWatch } from "react-hook-form";
 import { useState } from "react";
 import { IFormPanelProps } from "../props";
 import { FieldLabel } from "./field-label";
+import { useTranslations } from "next-intl";
 
 export function SkillsEducationTab({
   register,
@@ -19,6 +20,9 @@ export function SkillsEducationTab({
     []) as string[];
   const [newSkill, setNewSkill] = useState("");
   const [newScope, setNewScope] = useState("");
+
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("resumeBuilder");
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Add Skill ───────────────────────────────────────────
@@ -62,7 +66,7 @@ export function SkillsEducationTab({
     <div className="flex flex-col gap-5">
       {/* Skills Section */}
       <div>
-        <FieldLabel>Skills</FieldLabel>
+        <FieldLabel>{t("skills")}</FieldLabel>
         {/* Skills List Section */}
         <div className="flex flex-wrap gap-1.5 mb-2 min-h-[28px]">
           {skills.map((skill, i) => (
@@ -84,7 +88,7 @@ export function SkillsEducationTab({
         {/* Skills Input Section */}
         <div className="flex flex-col gap-2 sm:flex-row">
           <Input
-            placeholder="Add a skill..."
+            placeholder={t("addSkill")}
             value={newSkill}
             onChange={(e) => setNewSkill(e.target.value)}
             onKeyDown={(e) => {
@@ -101,7 +105,7 @@ export function SkillsEducationTab({
             onClick={addSkill}
             className="sm:min-w-20"
           >
-            Add
+            {t("add")}
           </Button>
         </div>
       </div>
@@ -110,7 +114,7 @@ export function SkillsEducationTab({
 
       {/* Education Section */}
       <div>
-        <FieldLabel>Education</FieldLabel>
+        <FieldLabel>{t("education")}</FieldLabel>
         <Textarea
           autoResize
           placeholder="e.g. Bachelor of Science, Computer Science, MIT, 2020"
@@ -118,7 +122,7 @@ export function SkillsEducationTab({
           {...register("education")}
         />
         <TypographyMuted className="text-xs mt-1">
-          Separate multiple degrees with{" "}
+          {t("separateDegrees")}{" "}
           <code className="text-xs bg-muted px-1 rounded">|</code>
         </TypographyMuted>
       </div>
@@ -127,7 +131,7 @@ export function SkillsEducationTab({
 
       {/* Career Scopes Section */}
       <div>
-        <FieldLabel>Career Interests</FieldLabel>
+        <FieldLabel>{t("careerInterests")}</FieldLabel>
         {/* Career Scopes List Section */}
         <div className="flex flex-wrap gap-1.5 mb-2 min-h-[28px]">
           {careerScopes.map((scope, i) => (
@@ -149,7 +153,7 @@ export function SkillsEducationTab({
         {/* Career Scopes Input Section */}
         <div className="flex flex-col gap-2 sm:flex-row">
           <Input
-            placeholder="Add a career interest..."
+            placeholder={t("addCareerInterest")}
             value={newScope}
             onChange={(e) => setNewScope(e.target.value)}
             onKeyDown={(e) => {
@@ -166,7 +170,7 @@ export function SkillsEducationTab({
             onClick={addScope}
             className="sm:min-w-20"
           >
-            Add
+            {t("add")}
           </Button>
         </div>
       </div>

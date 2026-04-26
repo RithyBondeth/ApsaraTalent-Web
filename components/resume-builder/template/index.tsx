@@ -8,6 +8,7 @@ import { Eye } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { ITemplateCardProps } from "./props";
+import { useTranslations } from "next-intl";
 
 /* ------------------------------- Helpers ------------------------------ */
 /** Maps template title keywords to a gradient for the preview placeholder */
@@ -74,6 +75,7 @@ export default function TemplateCard(props: ITemplateCardProps) {
   const [popupResume, setPopupResume] = useState<boolean>(false);
 
   /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("resumeBuilder");
   const gradient = getTemplateGradient(props.title);
   const styleBadge = getStyleBadge(props.title);
   const light = isLightTemplate(props.title);
@@ -156,7 +158,7 @@ export default function TemplateCard(props: ITemplateCardProps) {
               : "bg-green-500 text-white"
           }`}
         >
-          {props.isPremium ? `💎 $${props.price}` : "✓ Free"}
+          {props.isPremium ? `💎 $${props.price}` : `✓ ${t("free")}`}
         </div>
 
         {/* Style Keyword Badge Section */}
@@ -176,7 +178,7 @@ export default function TemplateCard(props: ITemplateCardProps) {
             }}
           >
             <Eye size={14} />
-            Preview
+            {t("preview")}
           </button>
         </div>
       </div>
@@ -201,7 +203,7 @@ export default function TemplateCard(props: ITemplateCardProps) {
             variant={props.selected ? "default" : "outline"}
             onClick={props.onUseTemplate}
           >
-            {props.selected ? "✓ Selected" : "Use Template"}
+            {props.selected ? `✓ ${t("selectedTemplate")}` : t("useTemplate")}
           </Button>
 
           {props.isPremium && (

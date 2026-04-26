@@ -6,6 +6,7 @@ import { useWatch, Path } from "react-hook-form";
 import { IFormPanelProps } from "../props";
 import { FieldLabel } from "./field-label";
 import { capitalizeWords } from "@/utils/functions/text";
+import { useTranslations } from "next-intl";
 
 export function PersonalInfoTab({
   register,
@@ -15,6 +16,7 @@ export function PersonalInfoTab({
   const socials = useWatch({ control, name: "personalInfo.socials" }) ?? {};
 
   /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("resumeBuilder");
   const socialKeys = Object.keys(socials);
 
   /* -------------------------------- Render UI -------------------------------- */
@@ -23,14 +25,14 @@ export function PersonalInfoTab({
       {/* Full Name and Job Title Section */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
-          <FieldLabel>Full Name</FieldLabel>
+          <FieldLabel>{t("fullName")}</FieldLabel>
           <Input
-            placeholder="Full Name"
+            placeholder={t("fullName")}
             {...register("personalInfo.fullName")}
           />
         </div>
         <div>
-          <FieldLabel>Job Title</FieldLabel>
+          <FieldLabel>{t("jobTitle")}</FieldLabel>
           <Input
             placeholder="e.g. Software Engineer"
             {...register("personalInfo.job")}
@@ -41,14 +43,14 @@ export function PersonalInfoTab({
       {/* Email and Phone Section */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
-          <FieldLabel>Email</FieldLabel>
+          <FieldLabel>{t("email")}</FieldLabel>
           <Input
             placeholder="email@example.com"
             {...register("personalInfo.email")}
           />
         </div>
         <div>
-          <FieldLabel>Phone</FieldLabel>
+          <FieldLabel>{t("phone")}</FieldLabel>
           <Input
             placeholder="+1 234 567 890"
             {...register("personalInfo.phone")}
@@ -59,17 +61,17 @@ export function PersonalInfoTab({
       {/* Location and Age Section */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
-          <FieldLabel>Location</FieldLabel>
+          <FieldLabel>{t("location")}</FieldLabel>
           <Input
             placeholder="City, Country"
             {...register("personalInfo.location")}
           />
         </div>
         <div>
-          <FieldLabel>Age</FieldLabel>
+          <FieldLabel>{t("age")}</FieldLabel>
           <Input
             type="number"
-            placeholder="Age"
+            placeholder={t("age")}
             {...register("personalInfo.age", { valueAsNumber: true })}
           />
         </div>
@@ -78,21 +80,21 @@ export function PersonalInfoTab({
       {/* Years of Experience and Availability Section */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
-          <FieldLabel>Years of Experience</FieldLabel>
+          <FieldLabel>{t("yearsOfExperience")}</FieldLabel>
           <Input
             placeholder="e.g. 5 years"
             {...register("yearsOfExperience")}
           />
         </div>
         <div>
-          <FieldLabel>Availability</FieldLabel>
+          <FieldLabel>{t("availability")}</FieldLabel>
           <Input placeholder="e.g. Immediately" {...register("availability")} />
         </div>
       </div>
 
       {/* Professional Summary Section */}
       <div>
-        <FieldLabel>Professional Summary</FieldLabel>
+        <FieldLabel>{t("professionalSummary")}</FieldLabel>
         <Textarea
           autoResize
           placeholder="A brief professional summary about yourself..."
@@ -105,7 +107,7 @@ export function PersonalInfoTab({
       {socialKeys.length > 0 && (
         <div>
           <Separator className="mb-3" />
-          <FieldLabel>Social Links</FieldLabel>
+          <FieldLabel>{t("socialLinks")}</FieldLabel>
           <div className="flex flex-col gap-2">
             {socialKeys.map((key) => {
               const path = `personalInfo.socials.${key}` as Path<IBuildResume>;
