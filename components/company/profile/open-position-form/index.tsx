@@ -25,6 +25,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
 
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("toast");
+  const tP = useTranslations("profile");
 
   /* -------------------------------- All States ------------------------------ */
   const initialSkill = getValues(`openPositions.${props.index}.skills`) || "";
@@ -86,7 +87,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
     <div className="w-full flex flex-col items-start gap-3">
       {/* Header With Remove Button Section */}
       <div className="w-full flex items-center justify-between">
-        <TypographyMuted>Position {Number(props.index) + 1}</TypographyMuted>
+        <TypographyMuted>{tP("positionIndex", { index: Number(props.index) + 1 })}</TypographyMuted>
         {props.isEdit && (
           <LucideTrash2
             onClick={props.onRemove}
@@ -100,10 +101,10 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
       <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
         {/* Title Section */}
         <LabelInput
-          label="Title"
+          label={tP("expTitle")}
           input={
             <Input
-              placeholder={props.isEdit ? "Title" : props.title}
+              placeholder={props.isEdit ? tP("expTitle") : props.title}
               id="title"
               {...register(`openPositions.${props.index}.title`)}
               disabled={!props.isEdit}
@@ -113,10 +114,10 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
 
         {/* Description Section */}
         <div className="w-full flex flex-col items-start gap-2">
-          <TypographyMuted className="text-xs">Description</TypographyMuted>
+          <TypographyMuted className="text-xs">{tP("expDescription")}</TypographyMuted>
           <Textarea
             autoResize
-            placeholder={props.isEdit ? "Description" : props.description}
+            placeholder={props.isEdit ? tP("expDescription") : props.description}
             id="description"
             {...register(`openPositions.${props.index}.description`)}
             className="placeholder:text-sm"
@@ -130,7 +131,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
 
         {/* Availability Section */}
         <div className="w-full flex flex-col items-start gap-2">
-          <TypographyMuted className="text-xs">Type</TypographyMuted>
+          <TypographyMuted className="text-xs">{tP("positionType")}</TypographyMuted>
           <Controller
             name={`openPositions.${props.index}.type`}
             control={control}
@@ -139,7 +140,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
                 options={availabilityConstant}
                 value={field.value || ""}
                 onChange={(value) => field.onChange(value)}
-                placeholder="Select Type"
+                placeholder={tP("selectType")}
               />
             )}
           />
@@ -147,11 +148,11 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
 
         {/* Experience Requirement Section */}
         <LabelInput
-          label="Experience Requirements"
+          label={tP("experienceRequirements")}
           input={
             <Input
               placeholder={
-                props.isEdit ? "Experience" : props.experienceReqirement
+                props.isEdit ? tP("experienceRequirements") : props.experienceReqirement
               }
               id="experience-requirement"
               {...register(
@@ -163,11 +164,11 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
         />
         {/* Education Requirement Section */}
         <LabelInput
-          label="Education Requirements"
+          label={tP("educationRequirements")}
           input={
             <Input
               placeholder={
-                props.isEdit ? "Education" : props.educationRequirement
+                props.isEdit ? tP("educationRequirements") : props.educationRequirement
               }
               id="education-requirement"
               {...register(`openPositions.${props.index}.educationRequirement`)}
@@ -179,7 +180,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
         {/* Skill Section */}
         <div className="w-full flex flex-col items-start gap-3">
           <TypographyMuted className="text-xs">
-            Skill Requirements
+            {tP("skillRequirements")}
           </TypographyMuted>
           {/* Skill List Section */}
           <div className="flex flex-wrap gap-2">
@@ -208,24 +209,25 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
           {props.isEdit && (
             <Popover open={openSkillPopOver} onOpenChange={setOpenSkillPopOver}>
               <PopoverTrigger asChild>
-                <Button className="w-full text-xs" variant="secondary">
-                  Add skill
+                <Button type="button" className="w-full text-xs" variant="secondary">
+                  {tP("addSkill")}
                   <LucidePlus />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
                 <Input
-                  placeholder="Enter your skill (e.g. Figma, Photo shop etc.)"
+                  placeholder={tP("enterSkillPlaceholder")}
                   onChange={(e) => setSkillInput(e.target.value)}
                 />
                 <div className="flex items-center gap-1 [&>button]:text-xs">
                   <Button
+                    type="button"
                     variant="outline"
                     onClick={() => setOpenSkillPopOver(false)}
                   >
-                    Cancel
+                    {tP("cancel")}
                   </Button>
-                  <Button onClick={addSkill}>Save</Button>
+                  <Button type="button" onClick={addSkill}>{tP("save")}</Button>
                 </div>
               </PopoverContent>
             </Popover>
@@ -234,10 +236,10 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
 
         {/* Salary Range Section */}
         <LabelInput
-          label="Salary Range"
+          label={tP("salaryRange")}
           input={
             <Input
-              placeholder={props.isEdit ? "Salary Range" : props.salary}
+              placeholder={props.isEdit ? tP("salaryRange") : props.salary}
               id="salary-range"
               {...register(`openPositions.${props.index}.salary`)}
               disabled={!props.isEdit}
@@ -261,7 +263,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
 
         {/* Deadline Date Section */}
         <div className="w-full flex flex-col items-start gap-1">
-          <TypographyMuted className="text-xs">Deadline Date</TypographyMuted>
+          <TypographyMuted className="text-xs">{tP("deadlineDate")}</TypographyMuted>
           <Controller
             control={control}
             name={`openPositions.${props.index}.deadlineDate`}

@@ -111,6 +111,7 @@ export default function ProfilePage() {
   /* ---------------------------------- Utils ----------------------------------- */
   const t = useTranslations("toast");
   const tCommon = useTranslations("common");
+  const tP = useTranslations("profile");
 
   /* -------------------------------- All States -------------------------------- */
   const [isEdit, setIsEdit] = useState<boolean>(false);
@@ -813,36 +814,34 @@ export default function ProfilePage() {
       }
 
       /* ------------------------ BENEFITS & VALUES ------------------------ */
-      if (
-        dirtyFields.benefitsAndValues?.benefits ||
-        deletedBenefitIds.length > 0
-      ) {
+      const benefitsChanged = benefits.some((b) => !b.id) || deletedBenefitIds.length > 0;
+      if (benefitsChanged) {
         updateBody.benefits = data.benefitsAndValues?.benefits || [];
-
         if (deletedBenefitIds.length > 0) {
           updateBody.benefitIdsToDelete = deletedBenefitIds;
         }
       }
 
-      if (dirtyFields.benefitsAndValues?.values || deletedValueIds.length > 0) {
+      const valuesChanged = values.some((v) => !v.id) || deletedValueIds.length > 0;
+      if (valuesChanged) {
         updateBody.values = data.benefitsAndValues?.values || [];
-
         if (deletedValueIds.length > 0) {
           updateBody.valueIdsToDelete = deletedValueIds;
         }
       }
 
       /* ------------------------ CAREER SCOPES ------------------------ */
-      if (dirtyFields.careerScopes || deleteCareerScopeIds.length > 0) {
+      const careerScopesChanged = careerScopes.some((cs) => !cs.id) || deleteCareerScopeIds.length > 0;
+      if (careerScopesChanged) {
         updateBody.careerScopes = data.careerScopes || [];
-
         if (deleteCareerScopeIds.length > 0) {
           updateBody.careerScopeIdsToDelete = deleteCareerScopeIds;
         }
       }
 
       /* ------------------------ SOCIALS ------------------------ */
-      if (dirtyFields.socials || deleteSocialIds.length > 0) {
+      const socialsChanged = socials.some((s) => !s.id) || deleteSocialIds.length > 0;
+      if (socialsChanged) {
         updateBody.socials =
           data.socials
             ?.filter((s): s is { id?: string; platform: string; url: string } =>
@@ -853,7 +852,6 @@ export default function ProfilePage() {
               platform: s.platform.trim(),
               url: s.url.trim(),
             })) || [];
-
         if (deleteSocialIds.length > 0) {
           updateBody.socialIdsToDelete = deleteSocialIds;
         }
@@ -900,7 +898,7 @@ export default function ProfilePage() {
         hasAvatarUpload || hasCoverUpload || hasImageUploads;
 
       if (!hasUpdateBodyChanges && !hasFileUploads) {
-        toast.info(t("noChangesDetected"));
+        await disableEditMode();
         return;
       }
 
@@ -925,10 +923,10 @@ export default function ProfilePage() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    form.setValue("benefitsAndValues.benefits", benefits);
-    form.setValue("benefitsAndValues.values", values);
-    form.setValue("careerScopes", careerScopes);
-    form.setValue("socials", socials);
+    form.setValue("benefitsAndValues.benefits", benefits, { shouldDirty: true });
+    form.setValue("benefitsAndValues.values", values, { shouldDirty: true });
+    form.setValue("careerScopes", careerScopes, { shouldDirty: true });
+    form.setValue("socials", socials, { shouldDirty: true });
 
     if (avatarFile)
       form.setValue("basicInfo.avatar", avatarFile, { shouldDirty: true });
@@ -954,21 +952,21 @@ export default function ProfilePage() {
 
   // Loading Message Based on Loading State
   const loadingMessage = removeCmpAvatarStore.loading
-    ? "Removing avatar..."
+    ? tP("removingAvatar")
     : removeCmpCoverStore.loading
-      ? "Removing cover..."
+      ? tP("removingCover")
       : removeOneCompImageStore.loading
-        ? "Removing image..."
+        ? tP("removingImage")
         : removeOneOpenPositionStore.loading
-          ? "Removing open position..."
+          ? tP("removingOpenPosition")
           : uploadAvatarCmpStore.loading
-            ? "Uploading avatar..."
+            ? tP("uploadingAvatar")
             : uploadCoverCmpStore.loading
-              ? "Uploading cover..."
+              ? tP("uploadingCover")
               : uploadCmpImagesStore.loading
-                ? "Uploading image..."
+                ? tP("uploadingImage")
                 : updateOneCmpStore.loading
-                  ? "Updating company profile..."
+                  ? tP("updatingCompany")
                   : "";
 
   if (loading) return <CompanyProfilePageLoadingSkeleton />;
@@ -984,6 +982,11 @@ export default function ProfilePage() {
     <form
       onSubmit={handleSubmit}
       className="flex flex-col gap-5 overflow-x-hidden animate-page-in"
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && (e.target as HTMLElement).tagName !== "TEXTAREA") {
+          e.preventDefault();
+        }
+      }}
     >
       {/* Profile Completion Section */}
       <ProfileCompletionCard
@@ -1011,7 +1014,7 @@ export default function ProfilePage() {
               >
                 <LucideCamera strokeWidth={"1.2px"} width={"18px"} />
                 <TypographySmall className="text-xs">
-                  Change Cover
+                  {tP("changeCover")}
                 </TypographySmall>
               </Button>
               {company.cover && (
@@ -1022,7 +1025,7 @@ export default function ProfilePage() {
                 >
                   <LucideXCircle strokeWidth={"1.2px"} width={"18px"} />
                   <TypographySmall className="text-xs">
-                    Remove Cover
+                    {tP("removeCover")}
                   </TypographySmall>
                 </Button>
               )}
@@ -1146,7 +1149,7 @@ export default function ProfilePage() {
                     type="submit"
                     disabled={updateProfileLoadingState}
                   >
-                    {updateProfileLoadingState ? "Updating..." : "Save"}
+                    {updateProfileLoadingState ? tP("updating") : tP("save")}
                     <LucideCircleCheck />
                   </Button>
                   <Button
@@ -1154,7 +1157,7 @@ export default function ProfilePage() {
                     type="button"
                     onClick={disableEditMode}
                   >
-                    Cancel
+                    {tP("cancel")}
                     <LucideXCircle />
                   </Button>
                 </>
@@ -1164,7 +1167,7 @@ export default function ProfilePage() {
                   type="button"
                   onClick={enableEditMode}
                 >
-                  Edit Profile
+                  {tP("editProfile")}
                   <LucideEdit />
                 </Button>
               )}
@@ -1181,16 +1184,16 @@ export default function ProfilePage() {
           <div className="w-full flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
             <SectionTitle
               icon={<LucideBuilding />}
-              title="Company Information"
+              title={tP("companyInformation")}
             />
 
             {/* Name and Description Section */}
             <div className="flex flex-col items-start gap-5">
               <LabelInput
-                label="Company Name"
+                label={tP("companyName")}
                 input={
                   <Input
-                    placeholder={isEdit ? "Company Name" : company.name}
+                    placeholder={isEdit ? tP("companyName") : company.name}
                     id="company-name"
                     {...form.register("basicInfo.name")}
                     disabled={!isEdit}
@@ -1199,12 +1202,12 @@ export default function ProfilePage() {
               />
               <div className="w-full flex flex-col items-start gap-2">
                 <TypographyMuted className="text-xs">
-                  Company Description
+                  {tP("companyDescription")}
                 </TypographyMuted>
                 <Textarea
                   autoResize
                   placeholder={
-                    isEdit ? "Company Description" : company.description
+                    isEdit ? tP("companyDescription") : company.description
                   }
                   id="company-description"
                   {...form.register("basicInfo.description")}
@@ -1215,10 +1218,10 @@ export default function ProfilePage() {
               {/* Industry and Location Section */}
               <div className="w-full flex items-center justify-between gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
                 <LabelInput
-                  label="Industry"
+                  label={tP("industry")}
                   input={
                     <Input
-                      placeholder={isEdit ? "Industry" : company.industry}
+                      placeholder={isEdit ? tP("industry") : company.industry}
                       id="industry"
                       {...form.register("basicInfo.industry")}
                       disabled={!isEdit}
@@ -1227,7 +1230,7 @@ export default function ProfilePage() {
                 />
                 <div className="flex flex-col items-start gap-2">
                   <TypographyMuted className="text-xs">
-                    Locations
+                    {tP("locations")}
                   </TypographyMuted>
                   <Controller
                     name="basicInfo.location"
@@ -1239,7 +1242,7 @@ export default function ProfilePage() {
                         disabled={!isEdit}
                       >
                         <SelectTrigger className="h-12 text-muted-foreground">
-                          <SelectValue placeholder="Location" />
+                          <SelectValue placeholder={tP("locations")} />
                         </SelectTrigger>
                         <SelectContent>
                           {locationConstant.map((location) => (
@@ -1258,12 +1261,12 @@ export default function ProfilePage() {
               <div className="w-full flex items-center justify-between gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
                 {company.companySize && (
                   <LabelInput
-                    label="Company Size"
+                    label={tP("companySize")}
                     input={
                       <Input
                         type="number"
                         placeholder={
-                          isEdit ? "Company Size" : `${company.companySize}`
+                          isEdit ? tP("companySize") : `${company.companySize}`
                         }
                         id="company-size"
                         {...form.register("basicInfo.companySize")}
@@ -1275,12 +1278,12 @@ export default function ProfilePage() {
                 )}
                 {company.foundedYear && (
                   <LabelInput
-                    label="Founded Year"
+                    label={tP("foundedYear")}
                     input={
                       <Input
                         type="number"
                         placeholder={
-                          isEdit ? "Founded Year" : `${company.foundedYear}`
+                          isEdit ? tP("foundedYear") : `${company.foundedYear}`
                         }
                         id="company-founded-year"
                         {...form.register("basicInfo.foundedYear")}
@@ -1293,10 +1296,10 @@ export default function ProfilePage() {
               </div>
               {user.email && (
                 <LabelInput
-                  label="Email"
+                  label={tP("email")}
                   input={
                     <Input
-                      placeholder={isEdit ? "Email" : user.email}
+                      placeholder={isEdit ? tP("email") : user.email}
                       id="email"
                       {...form.register("accountSetting.email")}
                       prefix={<LucideMail />}
@@ -1307,10 +1310,10 @@ export default function ProfilePage() {
               )}
               {company.phone && (
                 <LabelInput
-                  label="Phone Number"
+                  label={tP("phoneNumber")}
                   input={
                     <Input
-                      placeholder={isEdit ? "Phone number" : company.phone}
+                      placeholder={isEdit ? tP("phoneNumber") : company.phone}
                       id="phone"
                       {...form.register("accountSetting.phone")}
                       prefix={<LucidePhone />}
@@ -1333,13 +1336,13 @@ export default function ProfilePage() {
                     </span>
                   </div>
                   <h3 className="font-semibold text-base">
-                    Open Position Information
+                    {tP("openPositionInformation")}
                   </h3>
                 </div>
                 {isEdit && (
                   <div onClick={addNewOpenPosition}>
                     <IconLabel
-                      text="Add OpenPosition"
+                      text={tP("addOpenPosition")}
                       icon={<LucidePlus className="text-muted-foreground" />}
                       className="cursor-pointer"
                     />
@@ -1419,7 +1422,7 @@ export default function ProfilePage() {
                       className="size-44 animate-float"
                     />
                     <TypographyMuted className="text-sm">
-                      No Open Position Available.
+                      {tP("noOpenPositionAvailable")}
                     </TypographyMuted>
                   </div>
                 )}
@@ -1452,7 +1455,7 @@ export default function ProfilePage() {
           <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
             <SectionTitle
               icon={<LucideBuilding />}
-              title="Company Images Information"
+              title={tP("companyImagesInformation")}
             />
             <Carousel className="w-full">
               <CarouselContent className="w-full">
@@ -1539,7 +1542,7 @@ export default function ProfilePage() {
                       <div className="flex flex-col items-center gap-2">
                         <LucidePlus className="text-muted-foreground" />
                         <TypographyMuted className="text-xs">
-                          Add Company Image
+                          {tP("addCompanyImage")}
                         </TypographyMuted>
                       </div>
                     </label>
@@ -1557,7 +1560,7 @@ export default function ProfilePage() {
           {/* Benefits Section */}
           <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
             <div className="w-full">
-              <SectionTitle icon={<LucideCircleCheck />} title="Benefits" />
+              <SectionTitle icon={<LucideCircleCheck />} title={tP("benefits")} />
             </div>
 
             {/* Benefit List Section */}
@@ -1589,7 +1592,7 @@ export default function ProfilePage() {
                   <div className="w-full flex items-center justify-center">
                     {/* No Benefit Section */}
                     <TypographyMuted className="text-sm">
-                      No Benefit Avaliable
+                      {tP("noBenefitAvailable")}
                     </TypographyMuted>
                   </div>
                 )}
@@ -1605,13 +1608,13 @@ export default function ProfilePage() {
                       type="button"
                       variant="secondary"
                     >
-                      Add New Benefit
+                      {tP("addNewBenefit")}
                       <LucidePlus />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
                     <Input
-                      placeholder="Enter your benefit (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
+                      placeholder={tP("enterBenefitPlaceholder")}
                       onChange={(e) =>
                         setBenefitInput({ label: e.target.value })
                       }
@@ -1622,7 +1625,7 @@ export default function ProfilePage() {
                         type="button"
                         onClick={() => setOpenBenefitPopOver(false)}
                       >
-                        Cancel
+                        {tP("cancel")}
                       </Button>
                       <Button
                         onClick={() => {
@@ -1635,7 +1638,7 @@ export default function ProfilePage() {
                         }}
                         type="button"
                       >
-                        Save
+                        {tP("save")}
                       </Button>
                     </div>
                   </PopoverContent>
@@ -1647,7 +1650,7 @@ export default function ProfilePage() {
           {/* Values Section */}
           <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
             <div className="w-full">
-              <SectionTitle icon={<LucideZap />} title="Values" />
+              <SectionTitle icon={<LucideZap />} title={tP("values")} />
             </div>
 
             {/* Value List Section */}
@@ -1680,7 +1683,7 @@ export default function ProfilePage() {
                   <div className="w-full flex items-center justify-center">
                     {/* No Value Section */}
                     <TypographyMuted className="text-sm">
-                      No Value Avaliable
+                      {tP("noValueAvailable")}
                     </TypographyMuted>
                   </div>
                 )}
@@ -1696,13 +1699,13 @@ export default function ProfilePage() {
                       type="button"
                       variant="secondary"
                     >
-                      Add New Value
+                      {tP("addNewValue")}
                       <LucidePlus />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
                     <Input
-                      placeholder="Enter your value (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
+                      placeholder={tP("enterValuePlaceholder")}
                       onChange={(e) => setValueInput({ label: e.target.value })}
                     />
                     <div className="flex items-center gap-1 [&>button]:text-xs">
@@ -1711,7 +1714,7 @@ export default function ProfilePage() {
                         type="button"
                         onClick={() => setOpenValuePopOver(false)}
                       >
-                        Cancel
+                        {tP("cancel")}
                       </Button>
                       <Button
                         onClick={() => {
@@ -1724,7 +1727,7 @@ export default function ProfilePage() {
                         }}
                         type="button"
                       >
-                        Save
+                        {tP("save")}
                       </Button>
                     </div>
                   </PopoverContent>
@@ -1736,7 +1739,7 @@ export default function ProfilePage() {
           {/* Career Scopes Section */}
           <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
             <div className="w-full">
-              <SectionTitle icon={<LucideCompass />} title="Career Scopes" />
+              <SectionTitle icon={<LucideCompass />} title={tP("careerScopesSection")} />
             </div>
 
             {/* Career Scopes List Section */}
@@ -1774,7 +1777,7 @@ export default function ProfilePage() {
                 <div className="w-full flex items-center justify-center">
                   {/* No CareerScopes Section */}
                   <TypographyMuted className="text-sm">
-                    No CareerScope Avaliable
+                    {tP("noCareerScopeAvailable")}
                   </TypographyMuted>
                 </div>
               )}
@@ -1801,14 +1804,14 @@ export default function ProfilePage() {
                         ? getAllCareerScopeStore.careerScopes?.find(
                             (c) => c.name === careerScopeInput.name,
                           )?.name
-                        : "Select careers..."}
+                        : tP("selectCareers")}
                       <ChevronDown className="opacity-50" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="p-0">
                     <Command>
                       <CommandInput
-                        placeholder="Select careers..."
+                        placeholder={tP("selectCareers")}
                         className="h-9"
                       />
                       <CommandList>
@@ -1864,7 +1867,7 @@ export default function ProfilePage() {
                   }}
                 >
                   <LucidePlus />
-                  Add New CareerScope
+                  {tP("addNewCareerScope")}
                 </Button>
               </>
             )}
@@ -1872,7 +1875,7 @@ export default function ProfilePage() {
 
           {/* Social Section */}
           <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
-            <SectionTitle icon={<LucideGlobe />} title="Social Information" />
+            <SectionTitle icon={<LucideGlobe />} title={tP("socialInformation")} />
             {/* Social List Section */}
             {socials && socials.length > 0 ? (
               <div className="flex flex-wrap gap-2">
@@ -1904,7 +1907,7 @@ export default function ProfilePage() {
               <div className="w-full flex items-center justify-center pt-2">
                 {/* No Social Section */}
                 <TypographyMuted className="text-sm">
-                  No Social Avaliable
+                  {tP("noSocialAvailable")}
                 </TypographyMuted>
               </div>
             )}
@@ -1917,7 +1920,7 @@ export default function ProfilePage() {
                     <div className="w-full flex flex-col sm:flex-row gap-3 sm:gap-4">
                       <div className="w-full sm:w-[180px] flex-shrink-0 flex flex-col items-start gap-1">
                         <TypographyMuted className="text-xs">
-                          Platform
+                          {tP("platform")}
                         </TypographyMuted>
                         <Select
                           onValueChange={(value: string) =>
@@ -1932,7 +1935,7 @@ export default function ProfilePage() {
                             className="h-10 text-muted-foreground"
                             ref={socialSelectPlatformRef}
                           >
-                            <SelectValue placeholder="Platform" />
+                            <SelectValue placeholder={tP("platform")} />
                           </SelectTrigger>
                           <SelectContent>
                             {platformConstant.map((platform) => (
@@ -1949,7 +1952,7 @@ export default function ProfilePage() {
 
                       <div className="flex-1 min-w-0">
                         <LabelInput
-                          label="Link"
+                          label={tP("link")}
                           input={
                             <Input
                               className="w-full"
@@ -2014,7 +2017,7 @@ export default function ProfilePage() {
                   }}
                 >
                   <LucidePlus />
-                  Add New Social
+                  {tP("addNewSocial")}
                 </Button>
               </div>
             )}
@@ -2022,7 +2025,7 @@ export default function ProfilePage() {
 
           {/* Authentication Section */}
           <div className="flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
-            <SectionTitle icon={<LucideSettings />} title="Authentication" />
+            <SectionTitle icon={<LucideSettings />} title={tP("authentication")} />
 
             <div className="w-full flex flex-col items-start gap-3">
               {/* Google, Facebook, LinkedIn and Github Methods Section */}
@@ -2047,13 +2050,13 @@ export default function ProfilePage() {
                     item.label.toUpperCase() ? (
                     <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
                       <TypographySmall className="text-xs font-medium">
-                        Disconnect
+                        {tP("disconnect")}
                       </TypographySmall>
                     </div>
                   ) : (
                     <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
                       <TypographySmall className="text-xs font-medium">
-                        Connect
+                        {tP("connect")}
                       </TypographySmall>
                     </div>
                   )}
@@ -2064,18 +2067,18 @@ export default function ProfilePage() {
               <div className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer">
                 <div className="flex items-center gap-2">
                   <LucideMail className="mx-1" strokeWidth={1.5} />
-                  <TypographySmall>Email</TypographySmall>
+                  <TypographySmall>{tP("email")}</TypographySmall>
                 </div>
                 {user.email ? (
                   <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
                     <TypographySmall className="text-xs font-medium">
-                      Disconnect
+                      {tP("disconnect")}
                     </TypographySmall>
                   </div>
                 ) : (
                   <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
                     <TypographySmall className="text-xs font-medium">
-                      Connect
+                      {tP("connect")}
                     </TypographySmall>
                   </div>
                 )}
@@ -2085,18 +2088,18 @@ export default function ProfilePage() {
               <div className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer">
                 <div className="flex items-center gap-2">
                   <LucidePhone className="mx-1" strokeWidth={1.5} />
-                  <TypographySmall>Phone OTP</TypographySmall>
+                  <TypographySmall>{tP("phoneOtp")}</TypographySmall>
                 </div>
                 {user.phone ? (
                   <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
                     <TypographySmall className="text-xs font-medium">
-                      Disconnect
+                      {tP("disconnect")}
                     </TypographySmall>
                   </div>
                 ) : (
                   <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
                     <TypographySmall className="text-xs font-medium">
-                      Connect
+                      {tP("connect")}
                     </TypographySmall>
                   </div>
                 )}
@@ -2109,8 +2112,8 @@ export default function ProfilePage() {
       {/* Loading Dialog Section */}
       <LoadingDialog
         loading={updateProfileLoadingState}
-        title={loadingMessage || "Updating company profile..."}
-        subTitle="Please wait while we save your company details."
+        title={loadingMessage || tP("updatingCompany")}
+        subTitle={tP("pleaseWaitCompany")}
       />
 
       {/* Image Popup Section */}

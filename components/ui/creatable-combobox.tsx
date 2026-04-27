@@ -44,6 +44,7 @@ export function CreatableCombobox({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
+          type="button"
           variant="outline"
           role="combobox"
           aria-expanded={open}
@@ -69,6 +70,7 @@ export function CreatableCombobox({
                 </TypographyMuted>
                 {inputValue && (
                   <Button
+                    type="button"
                     variant="secondary"
                     size="sm"
                     className="w-full"

@@ -119,6 +119,7 @@ export default function EmployeeProfilePage() {
   /* ----------------------------------- Utils ---------------------------------- */
   const t = useTranslations("toast");
   const tCommon = useTranslations("common");
+  const tP = useTranslations("profile");
 
   /* -------------------------------- All States -------------------------------- */
   // Util States
@@ -825,7 +826,8 @@ export default function EmployeeProfilePage() {
       });
 
       /* ------------------------ SKILLS ------------------------ */
-      if (dirtyFields.skills || deleteSkillIds.length > 0) {
+      const skillsChanged = skills.some((s) => !s.id) || deleteSkillIds.length > 0;
+      if (skillsChanged) {
         updateBody.skills = (data.skills ?? [])
           .filter((s): s is ISkill => !!s && !!s.name?.trim())
           .map((s) => ({
@@ -833,14 +835,14 @@ export default function EmployeeProfilePage() {
             name: s.name.trim(),
             description: s.description ?? "",
           }));
-
         if (deleteSkillIds.length > 0) {
           updateBody.skillIdsToDelete = deleteSkillIds;
         }
       }
 
       /* ------------------------ CAREER SCOPES ------------------------ */
-      if (dirtyFields.careerScopes || deleteCareerScopeIds.length > 0) {
+      const careerScopesChanged = careerScopes.some((cs) => !cs.id) || deleteCareerScopeIds.length > 0;
+      if (careerScopesChanged) {
         updateBody.careerScopes = (data.careerScopes ?? [])
           .filter((cs): cs is ICareerScope => !!cs && !!cs.name?.trim())
           .map((cs) => ({
@@ -848,14 +850,14 @@ export default function EmployeeProfilePage() {
             name: cs.name.trim(),
             description: cs.description ?? "",
           }));
-
         if (deleteCareerScopeIds.length > 0) {
           updateBody.careerScopeIdsToDelete = deleteCareerScopeIds;
         }
       }
 
       /* ------------------------ SOCIALS ------------------------ */
-      if (dirtyFields.socials || deleteSocialIds.length > 0) {
+      const socialsChanged = socials.some((s) => !s.id) || deleteSocialIds.length > 0;
+      if (socialsChanged) {
         updateBody.socials = (data.socials ?? [])
           .filter(
             (s): s is ISocialLink =>
@@ -866,7 +868,6 @@ export default function EmployeeProfilePage() {
             platform: s.platform.trim(),
             url: s.url.trim(),
           }));
-
         if (deleteSocialIds.length > 0) {
           updateBody.socialIdsToDelete = deleteSocialIds;
         }
@@ -962,7 +963,7 @@ export default function EmployeeProfilePage() {
         hasAvatarUpload || hasResumeUpload || hasCoverLetterUpload;
 
       if (!hasUpdateBodyChanges && !hasFileUploads) {
-        toast.info(t("noChangesDetected"));
+        await disableEditMode();
         return;
       }
 
@@ -987,9 +988,9 @@ export default function EmployeeProfilePage() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    form.setValue("skills", skills);
-    form.setValue("careerScopes", careerScopes);
-    form.setValue("socials", socials);
+    form.setValue("skills", skills, { shouldDirty: true });
+    form.setValue("careerScopes", careerScopes, { shouldDirty: true });
+    form.setValue("socials", socials, { shouldDirty: true });
 
     if (avatarFile)
       form.setValue("basicInfo.avatar", avatarFile, { shouldDirty: true });
@@ -1022,23 +1023,23 @@ export default function EmployeeProfilePage() {
 
   // Loading Message Based on Loading State
   const loadingMessage = removeEmpAvatarStore.loading
-    ? "Removing avatar..."
+    ? tP("removingAvatar")
     : removeEmpResumeStore.loading
-      ? "Removing resume..."
+      ? tP("removingResume")
       : removeEmpCoverLetterStore.loading
-        ? "Removing cover letter..."
+        ? tP("removingCoverLetter")
         : removeEmpExperieceStore.loading
-          ? "Removing experience..."
+          ? tP("removingExperience")
           : removeEmpEducationStore.loading
-            ? "Removing education..."
+            ? tP("removingEducation")
             : uploadAvatarEmpStore.loading
-              ? "Uploading avatar..."
+              ? tP("uploadingAvatar")
               : uploadResumeEmpStore.loading
-                ? "Uploading resume..."
+                ? tP("uploadingResume")
                 : uploadCoverLetterEmpStore.loading
-                  ? "Uploading cover letter..."
+                  ? tP("uploadingCoverLetter")
                   : updateOneEmpStore.loading
-                    ? "Updating employee profile..."
+                    ? tP("updatingEmployee")
                     : "";
 
   if (loading) return <EmployeeProfilePageLoadingSkeleton />;
@@ -1054,6 +1055,11 @@ export default function EmployeeProfilePage() {
     <form
       className="!min-w-full flex flex-col gap-5 overflow-x-hidden animate-page-in"
       onSubmit={handleSubmit}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && (e.target as HTMLElement).tagName !== "TEXTAREA") {
+          e.preventDefault();
+        }
+      }}
     >
       {/* Profile Completion Section */}
       <ProfileCompletionCard
@@ -1074,7 +1080,7 @@ export default function EmployeeProfilePage() {
             {isEdit ? (
               <>
                 <Button type="submit" className="text-xs">
-                  {updateProfileLoadingState ? "Updating..." : "Save"}{" "}
+                  {updateProfileLoadingState ? tP("updating") : tP("save")}{" "}
                   <LucideCircleCheck />
                 </Button>
                 <Button
@@ -1082,7 +1088,7 @@ export default function EmployeeProfilePage() {
                   className="text-xs"
                   onClick={disableEditMode}
                 >
-                  Cancel
+                  {tP("cancel")}
                   <LucideXCircle />
                 </Button>
               </>
@@ -1092,7 +1098,7 @@ export default function EmployeeProfilePage() {
                 className="text-xs"
                 onClick={enableEditMode}
               >
-                Edit Profile
+                {tP("editProfile")}
                 <LucideEdit />
               </Button>
             )}
@@ -1142,7 +1148,7 @@ export default function EmployeeProfilePage() {
 
               {/* Avatar Crop Dialog Section */}
               <AvatarCropDialog
-                title={`Crop ${employee.username ?? ""} Avatar`}
+                title={tP("cropAvatar", { username: employee.username ?? "" })}
                 open={openCropDialog}
                 setOpen={setOpenCropDialog}
                 image={cropImageUrl}
@@ -1182,7 +1188,7 @@ export default function EmployeeProfilePage() {
               {isEdit ? (
                 <>
                   <Button type="submit" className="text-xs">
-                    {updateProfileLoadingState ? "Updating..." : "Save"}{" "}
+                    {updateProfileLoadingState ? tP("updating") : tP("save")}{" "}
                     <LucideCircleCheck />
                   </Button>
                   <Button
@@ -1190,7 +1196,7 @@ export default function EmployeeProfilePage() {
                     className="text-xs"
                     onClick={disableEditMode}
                   >
-                    Cancel
+                    {tP("cancel")}
                     <LucideXCircle />
                   </Button>
                 </>
@@ -1200,7 +1206,7 @@ export default function EmployeeProfilePage() {
                   className="text-xs"
                   onClick={enableEditMode}
                 >
-                  Edit Profile
+                  {tP("editProfile")}
                   <LucideEdit />
                 </Button>
               )}
@@ -1215,15 +1221,15 @@ export default function EmployeeProfilePage() {
         <div className="w-[60%] min-w-0 flex flex-col gap-5">
           {/* Personal Information Section: Firstname, Lastname, Username, DOB, Location, Gender, Email and Phone Number */}
           <div className="w-full flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
-            <SectionTitle icon={<LucideUser />} title="Personal Information" />
+            <SectionTitle icon={<LucideUser />} title={tP("personalInformation")} />
 
             <div className="flex flex-col items-start gap-5">
               <div className="w-full flex items-center justify-between gap-5 [&>div]:!w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
                 <LabelInput
-                  label="Firstname"
+                  label={tP("firstname")}
                   input={
                     <Input
-                      placeholder="Firstname"
+                      placeholder={tP("firstname")}
                       id="firstname"
                       {...form.register("basicInfo.firstname")}
                       disabled={!isEdit}
@@ -1231,10 +1237,10 @@ export default function EmployeeProfilePage() {
                   }
                 />
                 <LabelInput
-                  label="Lastname"
+                  label={tP("lastname")}
                   input={
                     <Input
-                      placeholder="Lastname"
+                      placeholder={tP("lastname")}
                       id="lastname"
                       {...form.register("basicInfo.lastname")}
                       disabled={!isEdit}
@@ -1244,7 +1250,7 @@ export default function EmployeeProfilePage() {
               </div>
 
               <LabelInput
-                label="Date of Birth"
+                label={tP("dateOfBirth")}
                 input={
                   <Controller
                     name="basicInfo.dob"
@@ -1253,7 +1259,7 @@ export default function EmployeeProfilePage() {
                       <Input
                         type="date"
                         id="dob"
-                        placeholder="Date of Birth"
+                        placeholder={tP("dateOfBirth")}
                         disabled={!isEdit}
                         value={
                           field.value instanceof Date
@@ -1272,10 +1278,10 @@ export default function EmployeeProfilePage() {
               />
 
               <LabelInput
-                label="Username"
+                label={tP("username")}
                 input={
                   <Input
-                    placeholder="Username"
+                    placeholder={tP("username")}
                     id="username"
                     {...form.register("basicInfo.username")}
                     disabled={!isEdit}
@@ -1283,10 +1289,10 @@ export default function EmployeeProfilePage() {
                 }
               />
 
-              <div className="w-full flex items-center justify-between gap-5 [&>div]:w-1/2">
+              <div className="w-full flex items-center justify-between gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
                 <div className="flex flex-col items-start gap-1">
                   <TypographyMuted className="text-xs">
-                    Locations
+                    {tP("locations")}
                   </TypographyMuted>
                   <Controller
                     name="basicInfo.location"
@@ -1298,7 +1304,7 @@ export default function EmployeeProfilePage() {
                         disabled={!isEdit}
                       >
                         <SelectTrigger className="h-12 text-muted-foreground">
-                          <SelectValue placeholder="Location" />
+                          <SelectValue placeholder={tP("locations")} />
                         </SelectTrigger>
                         <SelectContent>
                           {locationConstant.map((location) => (
@@ -1313,7 +1319,7 @@ export default function EmployeeProfilePage() {
                 </div>
 
                 <div className="flex flex-col items-start gap-1">
-                  <TypographyMuted className="text-xs">Gender</TypographyMuted>
+                  <TypographyMuted className="text-xs">{tP("gender")}</TypographyMuted>
                   <Controller
                     name="basicInfo.gender"
                     control={form.control}
@@ -1324,7 +1330,7 @@ export default function EmployeeProfilePage() {
                         disabled={!isEdit}
                       >
                         <SelectTrigger className="h-12 text-muted-foreground">
-                          <SelectValue placeholder="Gender" />
+                          <SelectValue placeholder={tP("gender")} />
                         </SelectTrigger>
                         <SelectContent>
                           {genderConstant.map((gender) => (
@@ -1340,10 +1346,10 @@ export default function EmployeeProfilePage() {
               </div>
 
               <LabelInput
-                label="Email"
+                label={tP("email")}
                 input={
                   <Input
-                    placeholder="Email"
+                    placeholder={tP("email")}
                     id="email"
                     {...form.register("accountSetting.email")}
                     prefix={<LucideMail strokeWidth={"1.3px"} />}
@@ -1352,10 +1358,10 @@ export default function EmployeeProfilePage() {
                 }
               />
               <LabelInput
-                label="Phone Number"
+                label={tP("phoneNumber")}
                 input={
                   <Input
-                    placeholder="Phone Number"
+                    placeholder={tP("phoneNumber")}
                     id="phone"
                     {...form.register("accountSetting.phone")}
                     prefix={<LucidePhone strokeWidth={"1.3px"} />}
@@ -1370,15 +1376,15 @@ export default function EmployeeProfilePage() {
           <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
             <SectionTitle
               icon={<LucideBriefcaseBusiness />}
-              title="Professional Information"
+              title={tP("professionalInformation")}
             />
 
             <div className="flex flex-col items-start gap-5">
               <LabelInput
-                label="Looking for position"
+                label={tP("lookingForPosition")}
                 input={
                   <Input
-                    placeholder="Looking for position"
+                    placeholder={tP("lookingForPosition")}
                     id="profession"
                     {...form.register("profession.job")}
                     prefix={<LucideUser strokeWidth={"1.3px"} />}
@@ -1389,10 +1395,10 @@ export default function EmployeeProfilePage() {
 
               <div className="w-full flex justify-between items-center gap-5 [&>div]:w-1/2 tablet-md:flex-col tablet-md:[&>div]:w-full">
                 <LabelInput
-                  label="Year of Experience"
+                  label={tP("yearOfExperience")}
                   input={
                     <Input
-                      placeholder="Year of Experience"
+                      placeholder={tP("yearOfExperience")}
                       id="yearOfExperience"
                       {...form.register("profession.yearOfExperience")}
                       prefix={<LucideBriefcaseBusiness strokeWidth={"1.3px"} />}
@@ -1401,10 +1407,10 @@ export default function EmployeeProfilePage() {
                   }
                 />
                 <LabelInput
-                  label="Availability"
+                  label={tP("availability")}
                   input={
                     <Input
-                      placeholder="Availability"
+                      placeholder={tP("availability")}
                       id="availability"
                       {...form.register("profession.availability")}
                       prefix={<LucideAlarmCheck strokeWidth={"1.3px"} />}
@@ -1416,11 +1422,11 @@ export default function EmployeeProfilePage() {
 
               <div className="w-full flex flex-col items-start gap-1">
                 <TypographyMuted className="text-xs">
-                  Description
+                  {tP("description")}
                 </TypographyMuted>
                 <Textarea
                   autoResize
-                  placeholder="Description"
+                  placeholder={tP("description")}
                   id="description"
                   {...form.register("profession.description")}
                   disabled={!isEdit}
@@ -1440,13 +1446,13 @@ export default function EmployeeProfilePage() {
                     </span>
                   </div>
                   <h3 className="font-semibold text-base">
-                    Experience Information
+                    {tP("experienceInformation")}
                   </h3>
                 </div>
                 {isEdit && (
                   <div onClick={addNewExperience}>
                     <IconLabel
-                      text="Add Experience"
+                      text={tP("addExperience")}
                       icon={<LucidePlus className="text-muted-foreground" />}
                       className="cursor-pointer"
                     />
@@ -1534,12 +1540,13 @@ export default function EmployeeProfilePage() {
                     <Button
                       className="text-xs"
                       variant={"secondary"}
+                      type="button"
                       onClick={() => {
                         setIsEdit(true);
                         addNewExperience();
                       }}
                     >
-                      Add Your Experience Background
+                      {tP("addExperienceBackground")}
                       <LucidePlus />
                     </Button>
                   </div>
@@ -1583,13 +1590,13 @@ export default function EmployeeProfilePage() {
                     </span>
                   </div>
                   <h3 className="font-semibold text-base">
-                    Education Information
+                    {tP("educationInformation")}
                   </h3>
                 </div>
                 {isEdit && (
                   <div onClick={addNewEducation}>
                     <IconLabel
-                      text="Add Education"
+                      text={tP("addEducation")}
                       icon={<LucidePlus className="text-muted-foreground" />}
                       className="cursor-pointer"
                     />
@@ -1657,12 +1664,13 @@ export default function EmployeeProfilePage() {
                     <Button
                       variant={"secondary"}
                       className="text-xs"
+                      type="button"
                       onClick={() => {
                         setIsEdit(true);
                         addNewEducation();
                       }}
                     >
-                      Add Your Education Background
+                      {tP("addEducationBackground")}
                       <LucidePlus />
                     </Button>
                   </div>
@@ -1698,7 +1706,7 @@ export default function EmployeeProfilePage() {
           {/* Skill Section*/}
           <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
             <div className="w-full">
-              <SectionTitle icon={<LucideZap />} title="Skills" />
+              <SectionTitle icon={<LucideZap />} title={tP("skillsSection")} />
             </div>
 
             {/* Skil List Section */}
@@ -1732,7 +1740,7 @@ export default function EmployeeProfilePage() {
               <div className="w-full flex items-center justify-center">
                 {/* No Skill Section */}
                 <TypographyMuted className="text-sm">
-                  No Skill Avaliable
+                  {tP("noSkillAvailable")}
                 </TypographyMuted>
               </div>
             )}
@@ -1749,13 +1757,13 @@ export default function EmployeeProfilePage() {
                     variant="secondary"
                     type="button"
                   >
-                    Add New Skill
+                    {tP("addNewSkill")}
                     <LucidePlus />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
                   <Input
-                    placeholder="Enter your skill"
+                    placeholder={tP("enterYourSkill")}
                     onChange={(e) => setSkillInput(e.target.value)}
                   />
                   <div className="flex items-center gap-1 [&>button]:text-xs">
@@ -1764,7 +1772,7 @@ export default function EmployeeProfilePage() {
                       type="button"
                       onClick={() => setOpenSkillPopOver(false)}
                     >
-                      Cancel
+                      {tP("cancel")}
                     </Button>
                     <Button
                       onClick={() => {
@@ -1777,7 +1785,7 @@ export default function EmployeeProfilePage() {
                       }}
                       type="button"
                     >
-                      Save
+                      {tP("save")}
                     </Button>
                   </div>
                 </PopoverContent>
@@ -1788,7 +1796,7 @@ export default function EmployeeProfilePage() {
           {/* Career Scopes Section */}
           <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
             <div className="w-full">
-              <SectionTitle icon={<LucideCompass />} title="Career Scopes" />
+              <SectionTitle icon={<LucideCompass />} title={tP("careerScopesSection")} />
             </div>
 
             {/* Career Scopes List Section */}
@@ -1826,7 +1834,7 @@ export default function EmployeeProfilePage() {
                 <div className="w-full flex items-center justify-center">
                   {/* No CareerScopes Section */}
                   <TypographyMuted className="text-sm">
-                    No CareerScope Avaliable
+                    {tP("noCareerScopeAvailable")}
                   </TypographyMuted>
                 </div>
               )}
@@ -1853,14 +1861,14 @@ export default function EmployeeProfilePage() {
                         ? getAllCareerScopesStore.careerScopes?.find(
                             (c) => c.name === careerScopeInput.name,
                           )?.name
-                        : "Select careers..."}
+                        : tP("selectCareers")}
                       <ChevronDown className="opacity-50" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="p-0">
                     <Command>
                       <CommandInput
-                        placeholder="Select careers..."
+                        placeholder={tP("selectCareers")}
                         className="h-9"
                       />
                       <CommandList>
@@ -1916,7 +1924,7 @@ export default function EmployeeProfilePage() {
                   }}
                 >
                   <LucidePlus />
-                  Add New CareerScope
+                  {tP("addNewCareerScope")}
                 </Button>
               </>
             )}
@@ -1926,7 +1934,7 @@ export default function EmployeeProfilePage() {
           <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
             <SectionTitle
               icon={<LucideFileText />}
-              title="References Information"
+              title={tP("referencesInformation")}
             />
             <div className="w-full flex flex-col items-start gap-5 [&>div]:w-full">
               {/* Resume Section */}
@@ -1938,7 +1946,7 @@ export default function EmployeeProfilePage() {
                       ? resumeFile.name
                       : employee.resume
                         ? extractCleanFilename(employee.resume)
-                        : "Add Your Resume"}
+                        : tP("addYourResume")}
                   </TypographyMuted>
                   <input
                     type="file"
@@ -2039,7 +2047,7 @@ export default function EmployeeProfilePage() {
                       ? coverLetterFile.name
                       : employee.coverLetter
                         ? extractCleanFilename(employee.coverLetter)
-                        : "Add Your CoverLetter"}
+                        : tP("addYourCoverLetter")}
                   </TypographyMuted>
                   <input
                     type="file"
@@ -2144,7 +2152,7 @@ export default function EmployeeProfilePage() {
 
           {/* Socials Section */}
           <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
-            <SectionTitle icon={<LucideGlobe />} title="Social Information" />
+            <SectionTitle icon={<LucideGlobe />} title={tP("socialInformation")} />
 
             {/* Social List Section */}
             {socials && socials.length > 0 ? (
@@ -2177,7 +2185,7 @@ export default function EmployeeProfilePage() {
               <div className="w-full flex items-center justify-center pt-2">
                 {/* No Social Section */}
                 <TypographyMuted className="text-sm">
-                  No Social Avaliable
+                  {tP("noSocialAvailable")}
                 </TypographyMuted>
               </div>
             )}
@@ -2190,7 +2198,7 @@ export default function EmployeeProfilePage() {
                     <div className="w-full flex flex-col sm:flex-row gap-3 sm:gap-4">
                       <div className="w-full sm:w-[180px] flex-shrink-0 flex flex-col items-start gap-1">
                         <TypographyMuted className="text-xs">
-                          Platform
+                          {tP("platform")}
                         </TypographyMuted>
                         <Select
                           onValueChange={(value: string) =>
@@ -2205,7 +2213,7 @@ export default function EmployeeProfilePage() {
                             className="h-10 text-muted-foreground"
                             ref={socialSelectPlatformRef}
                           >
-                            <SelectValue placeholder="Platform" />
+                            <SelectValue placeholder={tP("platform")} />
                           </SelectTrigger>
                           <SelectContent>
                             {platformConstant.map((platform) => (
@@ -2222,7 +2230,7 @@ export default function EmployeeProfilePage() {
 
                       <div className="flex-1 min-w-0">
                         <LabelInput
-                          label="Link"
+                          label={tP("link")}
                           input={
                             <Input
                               className="w-full"
@@ -2253,7 +2261,7 @@ export default function EmployeeProfilePage() {
                 <Button
                   type="button"
                   variant="secondary"
-                  className="text-xs w-full"
+                  className="text-xs w-full mt-3"
                   onClick={() => {
                     const openPlatformSelect = () => {
                       const el = socialSelectPlatformRef.current;
@@ -2287,7 +2295,7 @@ export default function EmployeeProfilePage() {
                   }}
                 >
                   <LucidePlus />
-                  Add New Social
+                  {tP("addNewSocial")}
                 </Button>
               </div>
             )}
@@ -2295,7 +2303,7 @@ export default function EmployeeProfilePage() {
 
           {/* Authentication Section */}
           <div className="flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
-            <SectionTitle icon={<LucideSettings />} title="Authentication" />
+            <SectionTitle icon={<LucideSettings />} title={tP("authentication")} />
 
             <div className="w-full flex flex-col items-start gap-3">
               {/* Google, Facebook, LinkedIn and Github Methods Section */}
@@ -2320,13 +2328,13 @@ export default function EmployeeProfilePage() {
                     item.label.toUpperCase() ? (
                     <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
                       <TypographySmall className="text-xs font-medium">
-                        Disconnect
+                        {tP("disconnect")}
                       </TypographySmall>
                     </div>
                   ) : (
                     <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
                       <TypographySmall className="text-xs font-medium">
-                        Connect
+                        {tP("connect")}
                       </TypographySmall>
                     </div>
                   )}
@@ -2337,18 +2345,18 @@ export default function EmployeeProfilePage() {
               <div className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer">
                 <div className="flex items-center gap-2">
                   <LucideMail className="mx-1" strokeWidth={1.5} />
-                  <TypographySmall>Email</TypographySmall>
+                  <TypographySmall>{tP("email")}</TypographySmall>
                 </div>
                 {user.email ? (
                   <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
                     <TypographySmall className="text-xs font-medium">
-                      Disconnect
+                      {tP("disconnect")}
                     </TypographySmall>
                   </div>
                 ) : (
                   <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
                     <TypographySmall className="text-xs font-medium">
-                      Connect
+                      {tP("connect")}
                     </TypographySmall>
                   </div>
                 )}
@@ -2358,18 +2366,18 @@ export default function EmployeeProfilePage() {
               <div className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer">
                 <div className="flex items-center gap-2">
                   <LucidePhone className="mx-1" strokeWidth={1.5} />
-                  <TypographySmall>Phone OTP</TypographySmall>
+                  <TypographySmall>{tP("phoneOtp")}</TypographySmall>
                 </div>
                 {user.phone ? (
                   <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
                     <TypographySmall className="text-xs font-medium">
-                      Disconnect
+                      {tP("disconnect")}
                     </TypographySmall>
                   </div>
                 ) : (
                   <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
                     <TypographySmall className="text-xs font-medium">
-                      Connect
+                      {tP("connect")}
                     </TypographySmall>
                   </div>
                 )}
@@ -2382,8 +2390,8 @@ export default function EmployeeProfilePage() {
       {/* Loading Dialog Section */}
       <LoadingDialog
         loading={updateProfileLoadingState}
-        title={loadingMessage || "Updating employee profile..."}
-        subTitle="Please wait while we save your profile changes."
+        title={loadingMessage || tP("updatingEmployee")}
+        subTitle={tP("pleaseWaitEmployee")}
       />
 
       {/* Profile Popup Dialog Section */}
