@@ -969,7 +969,7 @@ export default function ProfilePage() {
                   ? tP("updatingCompany")
                   : "";
 
-  if (loading) return <CompanyProfilePageLoadingSkeleton />;
+  if (loading && !user) return <CompanyProfilePageLoadingSkeleton />;
 
   /* -------------------------------- Empty State ------------------------------ */
   if (!user || !company) return null;

@@ -1042,7 +1042,7 @@ export default function EmployeeProfilePage() {
                     ? tP("updatingEmployee")
                     : "";
 
-  if (loading) return <EmployeeProfilePageLoadingSkeleton />;
+  if (loading && !user) return <EmployeeProfilePageLoadingSkeleton />;
 
   /* -------------------------------- Empty State ------------------------------ */
   if (!user || !employee) return null;
