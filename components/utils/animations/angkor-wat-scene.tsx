@@ -1,61 +1,10 @@
 "use client";
 
 import { useThemeStore } from "@/stores/themes/theme-store";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three-stdlib";
 import { MeshoptDecoder } from "meshoptimizer";
-
-function createFallbackMonument(isDark: boolean) {
-  const monument = new THREE.Group();
-
-  const baseMaterial = new THREE.MeshStandardMaterial({
-    color: isDark ? "#7c5a20" : "#d6b36a",
-    metalness: 0.12,
-    roughness: 0.78,
-  });
-  const bodyMaterial = new THREE.MeshStandardMaterial({
-    color: isDark ? "#d4a853" : "#b7791f",
-    metalness: 0.28,
-    roughness: 0.48,
-  });
-
-  const pedestal = new THREE.Mesh(
-    new THREE.CylinderGeometry(1.55, 1.85, 0.6, 6),
-    baseMaterial,
-  );
-  pedestal.position.y = -0.55;
-  monument.add(pedestal);
-
-  const core = new THREE.Mesh(
-    new THREE.BoxGeometry(1.8, 1.8, 1.8),
-    bodyMaterial,
-  );
-  core.position.y = 0.9;
-  monument.add(core);
-
-  const crown = new THREE.Mesh(
-    new THREE.ConeGeometry(0.8, 1.1, 4),
-    bodyMaterial.clone(),
-  );
-  crown.position.y = 2.15;
-  crown.rotation.y = Math.PI / 4;
-  monument.add(crown);
-
-  const ring = new THREE.Mesh(
-    new THREE.TorusGeometry(1.45, 0.08, 16, 48),
-    new THREE.MeshStandardMaterial({
-      color: isDark ? "#f7d774" : "#9a6a11",
-      metalness: 0.55,
-      roughness: 0.3,
-    }),
-  );
-  ring.rotation.x = Math.PI / 2;
-  ring.position.y = 0.4;
-  monument.add(ring);
-
-  return monument;
-}
 
 function fitObjectToCamera(
   object: THREE.Object3D,
@@ -65,7 +14,7 @@ function fitObjectToCamera(
   const size = box.getSize(new THREE.Vector3());
   const center = box.getCenter(new THREE.Vector3());
 
-  object.position.sub(center);
+  object.position.set(-center.x, -center.y + size.y * 0.06, -center.z);
 
   const maxDim = Math.max(size.x, size.y, size.z);
   const distance = maxDim / (2 * Math.tan((camera.fov * Math.PI) / 360));
@@ -73,12 +22,13 @@ function fitObjectToCamera(
   camera.near = Math.max(0.01, distance / 100);
   camera.far = Math.max(100, distance * 100);
   camera.updateProjectionMatrix();
-  camera.position.set(distance * 0.75, distance * 0.45, distance * 0.75);
-  camera.lookAt(0, 0, 0);
+  camera.position.set(distance * 0.82, distance * 0.52, distance * 0.82);
+  camera.lookAt(0, size.y * 0.04, 0);
 }
 
 export default function AngkorWatScene() {
   const mountRef = useRef<HTMLDivElement>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
   const { theme, systemTheme } = useThemeStore();
   const resolvedTheme = theme === "system" ? systemTheme : theme;
   const isDark = resolvedTheme === "dark";
@@ -137,15 +87,7 @@ export default function AngkorWatScene() {
     const root = new THREE.Group();
     scene.add(root);
 
-    let content: THREE.Object3D | null = createFallbackMonument(isDark);
     let disposed = false;
-    root.add(content);
-
-    const mountFallback = () => {
-      if (disposed || content) return;
-      content = createFallbackMonument(isDark);
-      root.add(content);
-    };
 
     const resize = () => {
       const { clientWidth, clientHeight } = mount;
@@ -185,17 +127,14 @@ export default function AngkorWatScene() {
           }
         });
 
-        if (content) {
-          root.remove(content);
-        }
-        content = model;
         root.add(model);
         fitObjectToCamera(model, camera);
+        setIsLoaded(true);
       },
       undefined,
       (error) => {
         console.error("Failed to load Angkor Wat GLB:", error);
-        mountFallback();
+        setIsLoaded(false);
       },
     );
 
@@ -205,7 +144,6 @@ export default function AngkorWatScene() {
     const animate = () => {
       const elapsed = clock.getElapsedTime();
       root.rotation.y = elapsed * 0.22;
-      root.position.y = Math.sin(elapsed * 0.8) * 0.08;
       renderer.render(scene, camera);
       frameId = window.requestAnimationFrame(animate);
     };
@@ -229,5 +167,15 @@ export default function AngkorWatScene() {
     };
   }, [isDark]);
 
-  return <div ref={mountRef} className="absolute inset-0 h-full w-full" />;
+  return (
+    <div ref={mountRef} className="absolute inset-0 h-full w-full">
+      {!isLoaded && (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div className="rounded-full border border-border/50 bg-background/70 px-4 py-2 text-sm text-muted-foreground backdrop-blur-sm">
+            Loading 3D preview...
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }

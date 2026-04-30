@@ -42,7 +42,7 @@ export default function LandingAngkorWat() {
       </div>
 
       {/* 3D Model Section */}
-      <div className="absolute inset-0 z-[1]">
+      <div className="absolute inset-x-0 top-20 bottom-20 z-[1] sm:top-24 sm:bottom-20 md:top-28 md:bottom-24">
         <AngkorWatWrapper />
       </div>
 
