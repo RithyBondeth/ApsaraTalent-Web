@@ -3,7 +3,8 @@
 import { useThemeStore } from "@/stores/themes/theme-store";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { GLTFLoader, MeshoptDecoder } from "three-stdlib";
+import { GLTFLoader } from "three-stdlib";
+import { MeshoptDecoder } from "meshoptimizer";
 
 function createFallbackMonument(isDark: boolean) {
   const monument = new THREE.Group();
