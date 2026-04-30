@@ -1,85 +1,38 @@
 "use client";
 
 import { useThemeStore } from "@/stores/themes/theme-store";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useGLTF } from "@react-three/drei";
-import { Suspense, useEffect, useMemo, useRef } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Suspense, useRef } from "react";
 import * as THREE from "three";
 
 /* ------------------------------------- Helpers ------------------------------------ */
-// ── AngkorWatModel — Loads and displays the .glb model ────────────────────────
-function AngkorWatModel({ isDark }: { isDark: boolean }) {
+function DiagnosticMonument({ isDark }: { isDark: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
-  const { scene } = useGLTF("/models/angkor_wat_optimized.glb", false, true);
-  const { camera } = useThree();
-
-  const clonedScene = useMemo(() => {
-    const clone = scene.clone(true);
-
-    clone.traverse((child) => {
-      if (child instanceof THREE.Mesh) {
-        child.castShadow = false;
-        child.receiveShadow = false;
-      }
-    });
-
-    // Normalize model scale
-    const initialBox = new THREE.Box3().setFromObject(clone);
-    const initialSize = initialBox.getSize(new THREE.Vector3());
-    const initialMaxDim = Math.max(initialSize.x, initialSize.y, initialSize.z);
-    const targetMaxDim = 6;
-
-    if (initialMaxDim > 0) {
-      const scaleFactor = targetMaxDim / initialMaxDim;
-      clone.scale.setScalar(scaleFactor);
-    }
-
-    return clone;
-  }, [scene]);
-
-  useEffect(() => {
-    clonedScene.traverse((child) => {
-      if (!(child instanceof THREE.Mesh) || !child.material) return;
-      const mat = child.material as THREE.MeshStandardMaterial;
-      if (!mat.isMeshStandardMaterial) return;
-      mat.metalness = isDark ? 0.4 : 0.2;
-      mat.roughness = isDark ? 0.6 : 0.7;
-      mat.envMapIntensity = isDark ? 1.5 : 1.0;
-      mat.needsUpdate = true;
-    });
-  }, [clonedScene, isDark]);
-
-  // Auto-fit the model to view
-  useEffect(() => {
-    const box = new THREE.Box3().setFromObject(clonedScene);
-    const boxSize = box.getSize(new THREE.Vector3());
-    const center = box.getCenter(new THREE.Vector3());
-
-    clonedScene.position.sub(center);
-
-    const maxDim = Math.max(boxSize.x, boxSize.y, boxSize.z);
-    const fov = camera instanceof THREE.PerspectiveCamera ? camera.fov : 45;
-    const distance = maxDim / (2 * Math.tan((fov * Math.PI) / 360));
-
-    if (camera instanceof THREE.PerspectiveCamera) {
-      camera.near = Math.max(0.01, distance / 100);
-      camera.far = Math.max(100, distance * 100);
-      camera.updateProjectionMatrix();
-    }
-
-    camera.position.set(distance * 0.75, distance * 0.45, distance * 0.75);
-    camera.lookAt(0, 0, 0);
-  }, [clonedScene, camera]);
-
   useFrame(({ clock }) => {
     if (groupRef.current) {
       groupRef.current.rotation.y = clock.getElapsedTime() * 0.08;
+      groupRef.current.position.y = Math.sin(clock.getElapsedTime() * 0.8) * 0.08;
     }
   });
 
   return (
-    <group ref={groupRef}>
-      <primitive object={clonedScene} />
+    <group ref={groupRef} position={[0, -0.25, 0]}>
+      <mesh castShadow={false} receiveShadow={false} position={[0, 0.9, 0]}>
+        <boxGeometry args={[1.8, 1.8, 1.8]} />
+        <meshStandardMaterial
+          color={isDark ? "#d4a853" : "#b7791f"}
+          metalness={0.35}
+          roughness={0.5}
+        />
+      </mesh>
+      <mesh castShadow={false} receiveShadow={false} position={[0, -0.55, 0]}>
+        <cylinderGeometry args={[1.5, 1.8, 0.55, 6]} />
+        <meshStandardMaterial
+          color={isDark ? "#7c5a20" : "#d6b36a"}
+          metalness={0.15}
+          roughness={0.75}
+        />
+      </mesh>
     </group>
   );
 }
@@ -117,7 +70,7 @@ export default function AngkorWatScene() {
   return (
     <div className="absolute inset-0 w-full h-full">
       <Canvas
-        camera={{ position: [5, 3, 5], fov: 45 }}
+        camera={{ position: [4.2, 2.6, 4.2], fov: 45 }}
         gl={{ antialias: true, powerPreference: "high-performance" }}
         dpr={[1, 1.5]}
       >
@@ -140,11 +93,9 @@ export default function AngkorWatScene() {
         />
 
         <Suspense fallback={<LoadingFallback isDark={isDark} />}>
-          <AngkorWatModel isDark={isDark} />
+          <DiagnosticMonument isDark={isDark} />
         </Suspense>
       </Canvas>
     </div>
   );
 }
-
-useGLTF.preload("/models/angkor_wat_optimized.glb", false, true);
