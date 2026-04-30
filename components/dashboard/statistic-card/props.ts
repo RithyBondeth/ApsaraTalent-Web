@@ -2,10 +2,10 @@ import {
   IRecentMatch,
   IWeeklyActivity,
 } from "@/utils/interfaces/analytics/analytics.interface";
-import { ElementType } from "react";
+import { LucideIcon } from "lucide-react";
 
 export interface IStatisticCardProps {
-  icon: ElementType;
+  icon: LucideIcon;
   value: number | IWeeklyActivity[] | IRecentMatch[];
   label: string;
   suffix?: string;

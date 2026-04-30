@@ -14,7 +14,6 @@ import { useChatConnection } from "@/hooks/chat/use-chat-connection";
 import { usePushNotifications } from "@/hooks/notification/use-push-notifications";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useThemeStore } from "@/stores/themes/theme-store";
-import { sidebarList } from "@/utils/constants/sidebar.constant";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 
@@ -25,7 +24,6 @@ export default function MainLayout({
 }) {
   /* ---------------------------------- Utils --------------------------------- */
   const pathname = usePathname();
-  const sidebarData = sidebarList.filter((item) => item.url === pathname);
   const t = useTranslations("header");
   const { theme } = useThemeStore();
 
@@ -48,7 +46,8 @@ export default function MainLayout({
     if (pathname.startsWith("/favorite")) return t("favorites");
     if (pathname.startsWith("/profile")) return t("profilePage");
     if (pathname.startsWith("/setting")) return t("settingPage");
-    if (pathname.startsWith("/notification")) return t("notificationDescription");
+    if (pathname.startsWith("/notification"))
+      return t("notificationDescription");
     if (pathname.startsWith("/dashboard")) return t("dashboardDescription");
     if (pathname.startsWith("/interview")) return t("interviewDescription");
     return "";
