@@ -136,11 +136,12 @@ export default function AngkorWatScene() {
     const root = new THREE.Group();
     scene.add(root);
 
-    let content: THREE.Object3D | null = null;
+    let content: THREE.Object3D | null = createFallbackMonument(isDark);
     let disposed = false;
+    root.add(content);
 
     const mountFallback = () => {
-      if (content || disposed) return;
+      if (disposed || content) return;
       content = createFallbackMonument(isDark);
       root.add(content);
     };
@@ -183,6 +184,9 @@ export default function AngkorWatScene() {
           }
         });
 
+        if (content) {
+          root.remove(content);
+        }
         content = model;
         root.add(model);
         fitObjectToCamera(model, camera);
