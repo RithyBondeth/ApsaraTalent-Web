@@ -58,6 +58,8 @@ export default function AngkorWatScene() {
     renderer.domElement.style.display = "block";
     renderer.domElement.style.cursor = "grab";
     renderer.domElement.style.touchAction = "none";
+    renderer.domElement.style.userSelect = "none";
+    renderer.domElement.style.webkitUserSelect = "none";
     mount.appendChild(renderer.domElement);
 
     const ambientLight = new THREE.AmbientLight(
@@ -101,6 +103,12 @@ export default function AngkorWatScene() {
     let lastPointerX = 0;
     let lastPointerY = 0;
 
+    const applyRotationDelta = (deltaX: number, deltaY: number) => {
+      rotationY += deltaX * 0.01;
+      rotationX = THREE.MathUtils.clamp(rotationX + deltaY * 0.0035, -0.35, 0.2);
+      root.rotation.set(rotationX, rotationY, 0);
+    };
+
     const resize = () => {
       const { clientWidth, clientHeight } = mount;
       if (!clientWidth || !clientHeight) return;
@@ -131,9 +139,7 @@ export default function AngkorWatScene() {
       lastPointerX = event.clientX;
       lastPointerY = event.clientY;
 
-      rotationY += deltaX * 0.01;
-      rotationX = THREE.MathUtils.clamp(rotationX + deltaY * 0.0035, -0.35, 0.2);
-      root.rotation.set(rotationX, rotationY, 0);
+      applyRotationDelta(deltaX, deltaY);
     };
 
     const endDrag = (event?: PointerEvent) => {
@@ -148,11 +154,48 @@ export default function AngkorWatScene() {
       renderer.domElement.style.cursor = "grab";
     };
 
+    const onTouchStart = (event: TouchEvent) => {
+      const touch = event.touches[0];
+      if (!touch) return;
+
+      isDragging = true;
+      lastPointerX = touch.clientX;
+      lastPointerY = touch.clientY;
+      event.preventDefault();
+    };
+
+    const onTouchMove = (event: TouchEvent) => {
+      if (!isDragging) return;
+
+      const touch = event.touches[0];
+      if (!touch) return;
+
+      const deltaX = touch.clientX - lastPointerX;
+      const deltaY = touch.clientY - lastPointerY;
+      lastPointerX = touch.clientX;
+      lastPointerY = touch.clientY;
+
+      applyRotationDelta(deltaX, deltaY);
+      event.preventDefault();
+    };
+
+    const onTouchEnd = () => {
+      isDragging = false;
+    };
+
     renderer.domElement.addEventListener("pointerdown", onPointerDown);
     renderer.domElement.addEventListener("pointermove", onPointerMove);
     renderer.domElement.addEventListener("pointerup", endDrag);
     renderer.domElement.addEventListener("pointerleave", endDrag);
     renderer.domElement.addEventListener("pointercancel", endDrag);
+    renderer.domElement.addEventListener("touchstart", onTouchStart, {
+      passive: false,
+    });
+    renderer.domElement.addEventListener("touchmove", onTouchMove, {
+      passive: false,
+    });
+    renderer.domElement.addEventListener("touchend", onTouchEnd);
+    renderer.domElement.addEventListener("touchcancel", onTouchEnd);
 
     const loader = new GLTFLoader();
     loader.setMeshoptDecoder(MeshoptDecoder);
@@ -207,6 +250,10 @@ export default function AngkorWatScene() {
       renderer.domElement.removeEventListener("pointerup", endDrag);
       renderer.domElement.removeEventListener("pointerleave", endDrag);
       renderer.domElement.removeEventListener("pointercancel", endDrag);
+      renderer.domElement.removeEventListener("touchstart", onTouchStart);
+      renderer.domElement.removeEventListener("touchmove", onTouchMove);
+      renderer.domElement.removeEventListener("touchend", onTouchEnd);
+      renderer.domElement.removeEventListener("touchcancel", onTouchEnd);
       renderer.dispose();
       scene.traverse((child) => {
         if (child instanceof THREE.Mesh) {
