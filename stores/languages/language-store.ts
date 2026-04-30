@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { STORE_PERSIST_KEYS } from "../shared/persist-keys";
 import { TLanguage } from "@/utils/types/app/language.type";
+import { safePersistStorage } from "../shared/persist-storage";
 
 /* ----------------------------- Store State ----------------------------- */
 // ── Language State ───────────────────────────────────────────
@@ -17,6 +18,9 @@ export const useLanguageStore = create<TLanguageState>()(
       language: "en",
       setLanguage: (language: TLanguage) => set({ language }),
     }),
-    { name: STORE_PERSIST_KEYS.language },
+    {
+      name: STORE_PERSIST_KEYS.language,
+      storage: safePersistStorage,
+    },
   ),
 );
