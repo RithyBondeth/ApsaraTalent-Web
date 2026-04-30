@@ -14,7 +14,7 @@ function fitObjectToCamera(
   const size = box.getSize(new THREE.Vector3());
   const center = box.getCenter(new THREE.Vector3());
 
-  object.position.set(-center.x, -center.y + size.y * 0.06, -center.z);
+  object.position.set(-center.x, -center.y, -center.z);
 
   const maxDim = Math.max(size.x, size.y, size.z);
   const distance = maxDim / (2 * Math.tan((camera.fov * Math.PI) / 360));
@@ -22,8 +22,8 @@ function fitObjectToCamera(
   camera.near = Math.max(0.01, distance / 100);
   camera.far = Math.max(100, distance * 100);
   camera.updateProjectionMatrix();
-  camera.position.set(distance * 0.82, distance * 0.52, distance * 0.82);
-  camera.lookAt(0, size.y * 0.04, 0);
+  camera.position.set(distance * 0.84, distance * 0.48, distance * 0.84);
+  camera.lookAt(0, 0, 0);
 }
 
 export default function AngkorWatScene() {
@@ -53,6 +53,11 @@ export default function AngkorWatScene() {
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = isDark ? 0.95 : 1.05;
+    renderer.domElement.style.width = "100%";
+    renderer.domElement.style.height = "100%";
+    renderer.domElement.style.display = "block";
+    renderer.domElement.style.cursor = "grab";
+    renderer.domElement.style.touchAction = "none";
     mount.appendChild(renderer.domElement);
 
     const ambientLight = new THREE.AmbientLight(
@@ -86,8 +91,15 @@ export default function AngkorWatScene() {
 
     const root = new THREE.Group();
     scene.add(root);
+    let rotationY = 0;
+    let rotationX = -0.08;
+    root.rotation.set(rotationX, rotationY, 0);
 
     let disposed = false;
+    let isDragging = false;
+    let pointerId: number | null = null;
+    let lastPointerX = 0;
+    let lastPointerY = 0;
 
     const resize = () => {
       const { clientWidth, clientHeight } = mount;
@@ -101,6 +113,46 @@ export default function AngkorWatScene() {
 
     const observer = new ResizeObserver(resize);
     observer.observe(mount);
+
+    const onPointerDown = (event: PointerEvent) => {
+      isDragging = true;
+      pointerId = event.pointerId;
+      lastPointerX = event.clientX;
+      lastPointerY = event.clientY;
+      renderer.domElement.style.cursor = "grabbing";
+      renderer.domElement.setPointerCapture(event.pointerId);
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      if (!isDragging || pointerId !== event.pointerId) return;
+
+      const deltaX = event.clientX - lastPointerX;
+      const deltaY = event.clientY - lastPointerY;
+      lastPointerX = event.clientX;
+      lastPointerY = event.clientY;
+
+      rotationY += deltaX * 0.01;
+      rotationX = THREE.MathUtils.clamp(rotationX + deltaY * 0.0035, -0.35, 0.2);
+      root.rotation.set(rotationX, rotationY, 0);
+    };
+
+    const endDrag = (event?: PointerEvent) => {
+      if (event && pointerId !== event.pointerId) return;
+
+      if (event && renderer.domElement.hasPointerCapture(event.pointerId)) {
+        renderer.domElement.releasePointerCapture(event.pointerId);
+      }
+
+      isDragging = false;
+      pointerId = null;
+      renderer.domElement.style.cursor = "grab";
+    };
+
+    renderer.domElement.addEventListener("pointerdown", onPointerDown);
+    renderer.domElement.addEventListener("pointermove", onPointerMove);
+    renderer.domElement.addEventListener("pointerup", endDrag);
+    renderer.domElement.addEventListener("pointerleave", endDrag);
+    renderer.domElement.addEventListener("pointercancel", endDrag);
 
     const loader = new GLTFLoader();
     loader.setMeshoptDecoder(MeshoptDecoder);
@@ -138,22 +190,23 @@ export default function AngkorWatScene() {
       },
     );
 
-    let frameId = 0;
-    const clock = new THREE.Clock();
-
     const animate = () => {
-      const elapsed = clock.getElapsedTime();
-      root.rotation.y = elapsed * 0.22;
       renderer.render(scene, camera);
       frameId = window.requestAnimationFrame(animate);
     };
 
+    let frameId = 0;
     animate();
 
     return () => {
       disposed = true;
       window.cancelAnimationFrame(frameId);
       observer.disconnect();
+      renderer.domElement.removeEventListener("pointerdown", onPointerDown);
+      renderer.domElement.removeEventListener("pointermove", onPointerMove);
+      renderer.domElement.removeEventListener("pointerup", endDrag);
+      renderer.domElement.removeEventListener("pointerleave", endDrag);
+      renderer.domElement.removeEventListener("pointercancel", endDrag);
       renderer.dispose();
       scene.traverse((child) => {
         if (child instanceof THREE.Mesh) {
