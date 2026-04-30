@@ -2,6 +2,10 @@
   "name": "apsaratalent-web",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.9.0",
+    "npm": ">=10"
+  },
   "scripts": {
     "clean:next": "node -e \"require('fs').rmSync('.next',{ recursive: true, force: true })\"",
     "predev": "npm run clean:next",
@@ -35,6 +39,7 @@
     "@radix-ui/react-tabs": "^1.1.3",
     "@radix-ui/react-toast": "^1.2.6",
     "@radix-ui/react-tooltip": "^1.1.8",
+    "@swc/helpers": "^0.5.21",
     "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.17.14",
     "@types/three": "^0.183.1",
