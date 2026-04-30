@@ -5,30 +5,49 @@ import { Button } from "@/components/ui/button";
 import { TypographyLead } from "@/components/utils/typography/typography-lead";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { timeAgo } from "@/utils/functions/timeago-formatter";
-import { LucideHeartHandshake } from "lucide-react";
+import { timeAgo } from "@/utils/functions/date";
+import { LucideHeartHandshake, LucideX } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { INotificationMatchCardProps } from "./props";
+import { useTranslations } from "next-intl";
 
 export default function NotificationMatchCard(
   props: INotificationMatchCardProps,
 ) {
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("notification");
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle View Profile ─────────────────────────────────────────
   const handleViewProfile = () => {
     if (props.onMarkRead && !props.seen) props.onMarkRead(props.id);
     router.push(`/feed/${props.role}/${props.user.id}`);
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-lg">
-      <div className="rounded-md p-3 text-blue-500 bg-blue-100">
-        <LucideHeartHandshake className="size-8" strokeWidth={1.5}/>
+    <div className="group/card relative w-full flex items-start gap-3 rounded-lg p-3 shadow-md sm:gap-5 sm:p-5">
+      {/* Delete Button Section */}
+      {props.onDelete && (
+        <button
+          onClick={() => props.onDelete!(props.id)}
+          className="absolute right-2 top-2 rounded-full p-1 text-muted-foreground opacity-0 transition-opacity hover:bg-destructive/10 hover:text-destructive group-hover/card:opacity-100"
+        >
+          <LucideX className="size-4" />
+        </button>
+      )}
+
+      {/* Matched Icon Section */}
+      <div className="rounded-md bg-blue-100 p-2.5 text-blue-500 sm:p-3">
+        <LucideHeartHandshake className="size-6 sm:size-8" strokeWidth={1.5} />
       </div>
+
+      {/* Content Section */}
       <div className="w-full flex flex-col items-start gap-2">
         <div className="w-full flex items-center justify-between phone-xl:flex-col phone-xl:items-start">
           <TypographyLead className="text-md font-semibold text-primary">
-            New Match Found!
+            {t("newMatch")}
           </TypographyLead>
           <div className="flex items-center gap-1">
             <TypographySmall className="text-muted-foreground phone-xl:text-xs">
@@ -37,13 +56,22 @@ export default function NotificationMatchCard(
             {!props.seen && <div className="size-2 rounded-full bg-blue-500" />}
           </div>
         </div>
+
+        {/* Description Section */}
         <TypographyMuted>
-          You matched with {props.user.name}
           {props.role === "employee"
-            ? `, A ${props.user.position}.`
-            : `, ${props.user.industry} Company.`}
+            ? t("matchedWithEmployee", {
+                name: props.user.name,
+                position: props.user.position ?? "",
+              })
+            : t("matchedWithCompany", {
+                name: props.user.name,
+                industry: props.user.industry ?? "",
+              })}
         </TypographyMuted>
-        <div className="w-full flex items-center justify-between tablet-sm:mt-1 tablet-sm:justify-end">
+
+        {/* Action Section */}
+        <div className="w-full flex items-center justify-between gap-2 tablet-sm:mt-1 tablet-sm:justify-end">
           <div className="flex items-center gap-3 tablet-sm:hidden">
             <div className="flex items-center gap-2">
               <Avatar rounded="md" className="bg-secondary size-8">
@@ -54,15 +82,19 @@ export default function NotificationMatchCard(
               </Avatar>
               <TypographySmall>{props.user.name}</TypographySmall>
             </div>
+
+            {/* Match Badge Section */}
             <div className="px-3 py-1 rounded-xl text-xs font-medium text-blue-500 bg-blue-100">
-              match
+              {t("matchBadge")}
             </div>
           </div>
+
+          {/* View Profile Button Section */}
           <Button
-            className="text-xs tablet-sm:text-[10px]"
+            className="h-8 text-xs tablet-sm:h-9 tablet-sm:w-full tablet-sm:text-xs"
             onClick={handleViewProfile}
           >
-            View Profile
+            {t("viewProfile")}
           </Button>
         </div>
       </div>

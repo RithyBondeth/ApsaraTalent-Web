@@ -1,6 +1,8 @@
 import {
+  BarChart3,
   BellRing,
   BookMarked,
+  CalendarCheck,
   Handshake,
   Home,
   MessageCircle,
@@ -38,6 +40,13 @@ export const sidebarList = [
     badge: 0,
   },
   {
+    title: "Interview",
+    description: "Manage your interviews",
+    url: "/interview",
+    icon: CalendarCheck,
+    badge: 0,
+  },
+  {
     title: "Message",
     description: "Chat and Message",
     url: "/message",
@@ -51,4 +60,11 @@ export const sidebarList = [
     icon: BellRing,
     badge: 0,
   },
-];
+  {
+    title: "Dashboard",
+    description: "View your analytics",
+    url: "/dashboard",
+    icon: BarChart3,
+    badge: 0,
+  },
+] as const;

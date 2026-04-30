@@ -1,14 +1,16 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import ImagePopup from "@/components/utils/image-popup";
+import ImagePopup from "@/components/utils/data-display/image-popup";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { Eye } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-import { TTemplateCardProps } from "./props";
+import { ITemplateCardProps } from "./props";
+import { useTranslations } from "next-intl";
 
+/* ------------------------------- Helpers ------------------------------ */
 /** Maps template title keywords to a gradient for the preview placeholder */
 function getTemplateGradient(title: string): string {
   const t = title.toLowerCase();
@@ -68,12 +70,17 @@ function getStyleBadge(title: string): { label: string; className: string } {
   return { label: "Modern", className: "bg-blue-700 text-white" };
 }
 
-export default function TemplateCard(props: TTemplateCardProps) {
+export default function TemplateCard(props: ITemplateCardProps) {
+  /* -------------------------------- All States ------------------------------ */
   const [popupResume, setPopupResume] = useState<boolean>(false);
+
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("resumeBuilder");
   const gradient = getTemplateGradient(props.title);
   const styleBadge = getStyleBadge(props.title);
   const light = isLightTemplate(props.title);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
       className={`h-fit w-full flex flex-col rounded-lg cursor-pointer transition-all duration-200 shadow-sm border overflow-hidden ${
@@ -82,7 +89,7 @@ export default function TemplateCard(props: TTemplateCardProps) {
           : "border-muted hover:border-primary/40 hover:shadow-md"
       }`}
     >
-      {/* Preview Area */}
+      {/* Preview Area Section */}
       <div className="w-full h-48 relative group overflow-hidden">
         {props.image ? (
           <Image
@@ -92,11 +99,10 @@ export default function TemplateCard(props: TTemplateCardProps) {
             className="object-cover object-top"
           />
         ) : (
-          /* Gradient placeholder when no image is seeded yet */
+          /* Gradient Placeholder Section: When no image is seeded yet */
           <div
             className={`w-full h-full bg-gradient-to-br ${gradient} flex flex-col items-center justify-center gap-3 select-none`}
           >
-            {/* Mini resume skeleton */}
             <div
               className={`w-28 h-36 backdrop-blur-sm rounded p-2 flex flex-col gap-1.5 ${
                 light
@@ -124,17 +130,27 @@ export default function TemplateCard(props: TTemplateCardProps) {
                   light ? "border-black/15" : "border-white/20"
                 }`}
               >
-                <div className={`h-1 w-full rounded ${light ? "bg-black/20" : "bg-white/30"}`} />
-                <div className={`h-1 w-4/5 rounded ${light ? "bg-black/15" : "bg-white/25"}`} />
-                <div className={`h-1 w-3/4 rounded ${light ? "bg-black/12" : "bg-white/20"}`} />
-                <div className={`h-1 w-full rounded mt-0.5 ${light ? "bg-black/20" : "bg-white/30"}`} />
-                <div className={`h-1 w-2/3 rounded ${light ? "bg-black/15" : "bg-white/25"}`} />
+                <div
+                  className={`h-1 w-full rounded ${light ? "bg-black/20" : "bg-white/30"}`}
+                />
+                <div
+                  className={`h-1 w-4/5 rounded ${light ? "bg-black/15" : "bg-white/25"}`}
+                />
+                <div
+                  className={`h-1 w-3/4 rounded ${light ? "bg-black/12" : "bg-white/20"}`}
+                />
+                <div
+                  className={`h-1 w-full rounded mt-0.5 ${light ? "bg-black/20" : "bg-white/30"}`}
+                />
+                <div
+                  className={`h-1 w-2/3 rounded ${light ? "bg-black/15" : "bg-white/25"}`}
+                />
               </div>
             </div>
           </div>
         )}
 
-        {/* Premium / Free badge */}
+        {/* Premium and Free Badge Section */}
         <div
           className={`absolute top-2 left-2 rounded-full px-2.5 py-0.5 text-xs font-semibold shadow ${
             props.isPremium
@@ -142,17 +158,17 @@ export default function TemplateCard(props: TTemplateCardProps) {
               : "bg-green-500 text-white"
           }`}
         >
-          {props.isPremium ? `💎 $${props.price}` : "✓ Free"}
+          {props.isPremium ? `💎 $${props.price}` : `✓ ${t("free")}`}
         </div>
 
-        {/* Style keyword badge */}
+        {/* Style Keyword Badge Section */}
         <div
           className={`absolute top-2 right-2 rounded-full px-2.5 py-0.5 text-xs font-semibold shadow ${styleBadge.className}`}
         >
           {styleBadge.label}
         </div>
 
-        {/* Hover overlay with preview button */}
+        {/* Hover Overlay with Preview Button Section */}
         <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100 group-hover:pointer-events-auto">
           <button
             className="flex items-center gap-2 bg-white text-gray-900 rounded-full px-4 py-2 text-xs font-semibold shadow-lg hover:bg-gray-100 transition"
@@ -162,13 +178,14 @@ export default function TemplateCard(props: TTemplateCardProps) {
             }}
           >
             <Eye size={14} />
-            Preview
+            {t("preview")}
           </button>
         </div>
       </div>
 
-      {/* Card Body */}
+      {/* Card Body Section */}
       <div className="w-full p-3 flex flex-col gap-2">
+        {/* Title and Description Section */}
         <div>
           <TypographyH4 className="text-sm font-semibold leading-tight">
             {props.title}
@@ -178,6 +195,7 @@ export default function TemplateCard(props: TTemplateCardProps) {
           </TypographyMuted>
         </div>
 
+        {/* Action Buttons Section */}
         <div className="flex items-center justify-between mt-1">
           <Button
             size="sm"
@@ -185,7 +203,7 @@ export default function TemplateCard(props: TTemplateCardProps) {
             variant={props.selected ? "default" : "outline"}
             onClick={props.onUseTemplate}
           >
-            {props.selected ? "✓ Selected" : "Use Template"}
+            {props.selected ? `✓ ${t("selectedTemplate")}` : t("useTemplate")}
           </Button>
 
           {props.isPremium && (
@@ -196,6 +214,7 @@ export default function TemplateCard(props: TTemplateCardProps) {
         </div>
       </div>
 
+      {/* Image Popup Section */}
       <ImagePopup
         image={props.image}
         open={popupResume}

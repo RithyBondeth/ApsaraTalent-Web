@@ -1,8 +1,11 @@
 import axios from "@/lib/axios";
-import { API_GET_ONE_CMP_URL } from "@/utils/constants/apis/company_url";
-import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
+import { API_GET_ONE_CMP_URL } from "@/utils/constants/apis/user-api/company.api.constant";
+import { ICompany } from "@/utils/interfaces/user/company.interface";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Get One Company State ───────────────────────────────────
 type TGetOneCompanyState = {
   companyData: ICompany | null;
   loading: boolean;
@@ -10,6 +13,7 @@ type TGetOneCompanyState = {
   queryOneCompany: (companyID: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useGetOneCompanyStore = create<TGetOneCompanyState>((set) => ({
   companyData: null,
   loading: false,
@@ -19,20 +23,17 @@ export const useGetOneCompanyStore = create<TGetOneCompanyState>((set) => ({
 
     try {
       const response = await axios.get<ICompany>(
-        API_GET_ONE_CMP_URL(companyID)
+        API_GET_ONE_CMP_URL(companyID),
       );
       set({ loading: false, error: null, companyData: response.data });
     } catch (error) {
-      if (axios.isAxiosError(error))
-        set({
-          loading: false,
-          error: error.response?.data?.message || error.message,
-        });
-      else
-        set({
-          loading: false,
-          error: "An error occurred while fetching one company",
-        });
+      set({
+        loading: false,
+        error: extractApiErrorMessage(
+          error,
+          "An error occurred while fetching one company",
+        ),
+      });
     }
   },
 }));

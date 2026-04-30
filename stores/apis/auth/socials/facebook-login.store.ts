@@ -1,12 +1,13 @@
 import { clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-manager";
-import { API_AUTH_SOCIAL_FACEBOOK_URL } from "@/utils/constants/apis/auth_url";
+import { API_AUTH_SOCIAL_FACEBOOK_URL } from "@/utils/constants/apis/auth.api.constant";
 import { EAuthLoginMethod } from "@/utils/constants/auth.constant";
-import { TUserRole } from "@/utils/types/role.type";
+import { TUserRole } from "@/utils/types/auth/role.type";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../../users/get-current-user.store";
 
-// Updated response type - NO TOKENS
-export type TFacebookLoginResponse = {
+/* ---------------------------------- States --------------------------------- */
+// ── Facebook Login Response ────────────────────────────────────
+type TFacebookLoginResponse = {
   type: "FACEBOOK_AUTH_SUCCESS" | "FACEBOOK_AUTH_ERROR";
   error?: string;
   newUser?: boolean;
@@ -25,7 +26,8 @@ export type TFacebookLoginResponse = {
   };
 };
 
-export type TFacebookLoginState = {
+// ── Facebook Login State ───────────────────────────────────────
+type TFacebookLoginState = {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
@@ -44,8 +46,12 @@ export type TFacebookLoginState = {
   clearToken: () => void;
 };
 
-// Backend origin (SAFE)
+/* ---------------------------------- Utils --------------------------------- */
+// Allowed origins: backend (where callback page lives) + frontend (where app runs)
 const BACKEND_ORIGIN = new URL(API_AUTH_SOCIAL_FACEBOOK_URL).origin;
+const FRONTEND_ORIGIN =
+  typeof window !== "undefined" ? window.location.origin : "";
+const ALLOWED_ORIGINS = new Set([BACKEND_ORIGIN, FRONTEND_ORIGIN]);
 
 // Shared Finish Logic
 const FINISH_LOGIN = (data: TFacebookLoginResponse) => {
@@ -82,6 +88,7 @@ const FINISH_LOGIN = (data: TFacebookLoginResponse) => {
   });
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useFacebookLoginStore = create<TFacebookLoginState>((set) => ({
   loading: false,
   error: null,
@@ -128,8 +135,8 @@ export const useFacebookLoginStore = create<TFacebookLoginState>((set) => ({
     let messageReceived = false;
 
     const handleMessage = (ev: MessageEvent<TFacebookLoginResponse>) => {
-      // Strict origin check
-      if (ev.origin !== BACKEND_ORIGIN) {
+      // Origin check: accept messages from backend or frontend
+      if (!ALLOWED_ORIGINS.has(ev.origin)) {
         console.warn("Ignored message from unexpected origin:", ev.origin);
         return;
       }

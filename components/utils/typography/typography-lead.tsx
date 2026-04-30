@@ -1,13 +1,19 @@
 import { cn } from "@/lib/utils";
-import { ITypographyProps } from "@/utils/interfaces/typography.interface";
+import { ComponentPropsWithoutRef, forwardRef } from "react";
 
-export function TypographyLead(props: ITypographyProps) {
+export const TypographyLead = forwardRef<
+  HTMLParagraphElement,
+  ComponentPropsWithoutRef<"p">
+>(({ className, children, ...props }, ref) => {
   return (
     <p
-      className={cn("text-xl text-muted-foreground", props.className)}
-      style={props.style}
+      ref={ref}
+      className={cn("text-xl text-muted-foreground", className)}
+      {...props}
     >
-      {props.children}
+      {children}
     </p>
   );
-}
+});
+
+TypographyLead.displayName = "TypographyLead";

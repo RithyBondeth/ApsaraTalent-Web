@@ -1,74 +1,67 @@
 "use client";
 
-import emptySvgImage from "@/assets/svg/empty.svg";
-import matchingSvgImage from "@/assets/svg/matching.svg";
 import MatchingCompanyCard from "@/components/matching/matching-company-card";
-import MatchingCompanyCardSkeleton from "@/components/matching/matching-company-card/skeleton";
 import MatchingEmployeeCard from "@/components/matching/matching-employee-card";
-import MatchingEmployeeCardSkeleton from "@/components/matching/matching-employee-card/skeleton";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { useFetchOnce } from "@/hooks/use-fetch-once";
-import axiosInstance from "@/lib/axios";
+import { useFetchOnce } from "@/hooks/utils/use-fetch-once";
 import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-current-company-matching.store";
 import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
-import MatchingBannerSkeleton from "./banner-skeleton";
+import { initateChat } from "./_apis/initiate-chat.api";
+import { MatchingLoadingSkeleton } from "@/components/matching/skeleton";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
+import {
+  emptySvgImage,
+  matchingSvgImage,
+} from "@/utils/constants/asset.constant";
 
 export default function MatchingPage() {
-  // Utils
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("matching");
 
-  // API Integration — use field selectors to avoid re-renders from unrelated store changes
-  const empMatching = useGetCurrentEmployeeMatchingStore((s) => s.currentEmployeeMatching);
-  const empLoading = useGetCurrentEmployeeMatchingStore((s) => s.loading);
-  const queryCurrentEmployeeMatching = useGetCurrentEmployeeMatchingStore((s) => s.queryCurrentEmployeeMatching);
+  /* ----------------------------- API Integration ---------------------------- */
+  const getCurrentEmpStore = useGetCurrentEmployeeMatchingStore();
+  const getCurrentCmpStore = useGetCurrentCompanyMatchingStore();
 
-  const cmpMatching = useGetCurrentCompanyMatchingStore((s) => s.currentCompanyMatching);
-  const cmpLoading = useGetCurrentCompanyMatchingStore((s) => s.loading);
-  const queryCurrentCompanyMatching = useGetCurrentCompanyMatchingStore((s) => s.queryCurrentCompanyMatching);
-
+  /* -------------------------------- All States ------------------------------ */
+  const [mounted, setMounted] = useState<boolean>(false);
   // Track which card is in a loading state to prevent double-clicks
   const [chatLoadingId, setChatLoadingId] = useState<string | null>(null);
 
-  // Use Custom Hook - Handles all ref logic and duplicate prevention
+  /* --------------------------------- Effects --------------------------------- */
+  useEffect(() => setMounted(true), []);
+
+  // Use Custom Hook - Handles all ref logic and duplicate prevention for fetching favorites
   const { isEmployee, currentUser } = useFetchOnce({
     cacheKey: "matching-page",
-    onEmployeeFetch: queryCurrentEmployeeMatching,
-    onCompanyFetch: queryCurrentCompanyMatching,
+    onEmployeeFetch: getCurrentEmpStore.queryCurrentEmployeeMatching,
+    onCompanyFetch: getCurrentCmpStore.queryCurrentCompanyMatching,
   });
 
-  // Compute All Loading States
-  const isLoadingForEmployee =
-    isEmployee && (empLoading || empMatching === null);
+  /* --------------------------------- Methods --------------------------------- */
+  // Stable senderId — avoids recomputing inside every card's inline callback
+  // ── Sender ID ────────────────────────────────────────────
+  const senderId = useMemo(
+    () => currentUser?.employee?.id ?? currentUser?.company?.id ?? "",
+    [currentUser],
+  );
 
-  const isLoadingForCompany =
-    !isEmployee && (cmpLoading || cmpMatching === null);
-
-  const isLoading = isLoadingForEmployee || isLoadingForCompany;
-
-  // Chat Handler — uses backend REST endpoint, not Firebase
+  // ── Chat Handler ─────────────────────────────────────────
   const handleChatNow = useCallback(
     async (senderId: string, receiverId: string) => {
       if (!currentUser || chatLoadingId) return;
+      if (senderId === receiverId) return;
 
       setChatLoadingId(receiverId);
       try {
-        const baseUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-        const res = await axiosInstance.post<{
-          chatId: string;
-          id: string;        // receiver's resolved User.id — used as chatId in the message page
-          name: string;
-          avatar: string;
-        }>(`${baseUrl}/chat/initiate`, { senderId, receiverId });
-        // The backend returns `id` = the receiver's User.id (resolved from employee/company ID).
-        // The message page uses chatId as userId2 for getChatHistory socket call.
-        router.push(`/message?chatId=${res.data.id}`);
+        const initateChatData = await initateChat(senderId, receiverId);
+        router.push(`/message?chatId=${initateChatData.id}`);
       } catch (err) {
         console.error("Failed to initiate chat:", err);
       } finally {
@@ -78,58 +71,62 @@ export default function MatchingPage() {
     [currentUser, chatLoadingId, router],
   );
 
-  if (isLoading) {
-    return (
-      <div className="w-full flex flex-col px-5 mt-3">
-        <MatchingBannerSkeleton />
-        <div className="flex flex-col items-start gap-3 p-3">
-          {[...Array(3)].map((_, index) =>
-            isEmployee ? (
-              <MatchingCompanyCardSkeleton key={index} />
-            ) : (
-              <MatchingEmployeeCardSkeleton key={index} />
-            ),
-          )}
-        </div>
-      </div>
-    );
-  }
+  /* ------------------------------- Loading State ----------------------------- */
+  const isLoadingForEmployee =
+    isEmployee &&
+    (getCurrentEmpStore.loading ||
+      getCurrentEmpStore.currentEmployeeMatching === null);
 
+  const isLoadingForCompany =
+    !isEmployee &&
+    (getCurrentCmpStore.loading ||
+      getCurrentCmpStore.currentCompanyMatching === null);
+
+  const isLoading =
+    !mounted || !currentUser || isLoadingForEmployee || isLoadingForCompany;
+
+  if (isLoading) return <MatchingLoadingSkeleton isEmployee={isEmployee} />;
+
+  /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col px-5">
+    <div className="w-full flex flex-col px-2.5 sm:px-5 animate-page-in">
       {/* Banner Section */}
-      <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
+      <div className="w-full flex items-center justify-between gap-4 sm:gap-5 tablet-xl:flex-col tablet-xl:items-center">
         {/* Content Section */}
-        <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center tablet-xl:mt-5 px-5">
+        <div className="flex flex-col items-start gap-3 px-1 sm:px-5 tablet-xl:mt-2 tablet-xl:w-full tablet-xl:items-center">
           <TypographyH2 className="leading-relaxed tablet-xl:text-center">
-            Ready to find your match? Let&apos;s make it happen.
+            {t("bannerTitle")}
           </TypographyH2>
           <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-            Find Your Perfect Match & Start a Conversation
+            {t("bannerSubtitle1")}
           </TypographyH4>
           <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-            Start chatting, connect instantly, and build your future together.
+            {t("bannerSubtitle2")}
           </TypographyH4>
           <TypographyMuted className="leading-relaxed tablet-xl:text-center">
-            When companies and talents like each other — it&apos;s a match.
+            {t("bannerMuted")}
           </TypographyMuted>
         </div>
 
         {/* Image Poster Section */}
-        <Image
-          src={matchingSvgImage}
-          alt="matching"
-          height={250}
-          width={350}
-          className="tablet-xl:!w-full"
-          priority
-        />
+        {mounted && (
+          <Image
+            src={matchingSvgImage}
+            alt="matching"
+            height={250}
+            width={350}
+            className="h-auto max-w-[320px] tablet-xl:!w-full"
+            priority
+          />
+        )}
       </div>
 
       {/* Matching Card List Section */}
-      <div className="flex flex-col items-start gap-3">
-        {empMatching && empMatching.length > 0 ? (
-          empMatching.map((cmp) => (
+      <div className="flex flex-col items-start gap-3 stagger-list">
+        {getCurrentEmpStore.currentEmployeeMatching &&
+        getCurrentEmpStore.currentEmployeeMatching.length > 0 ? (
+          getCurrentEmpStore.currentEmployeeMatching.map((cmp) => (
+            /* Matching Company Card */
             <MatchingCompanyCard
               key={cmp.id}
               name={cmp.name}
@@ -140,15 +137,14 @@ export default function MatchingPage() {
               foundedYear={cmp.foundedYear}
               openPosition={cmp.openPositions}
               location={cmp.location}
-              onChatNowClick={() => {
-                const senderId =
-                  currentUser?.employee?.id ?? currentUser?.company?.id ?? "";
-                handleChatNow(senderId, cmp.id);
-              }}
+              onChatNowClick={() => handleChatNow(senderId, cmp.id)}
+              onScheduleClick={() => router.push(`/interview?with=${cmp.id}`)}
             />
           ))
-        ) : cmpMatching && cmpMatching.length > 0 ? (
-          cmpMatching.map((emp) => (
+        ) : getCurrentCmpStore.currentCompanyMatching &&
+          getCurrentCmpStore.currentCompanyMatching.length > 0 ? (
+          getCurrentCmpStore.currentCompanyMatching.map((emp) => (
+            /* Matching Employee Card */
             <MatchingEmployeeCard
               key={emp.id}
               name={`${emp.firstname} ${emp.lastname}`}
@@ -160,17 +156,23 @@ export default function MatchingPage() {
               availability={emp.availability}
               location={emp.location ?? ""}
               skills={emp.skills.map((skill) => skill.name)}
-              onChatNowClick={() => {
-                const senderId =
-                  currentUser?.employee?.id ?? currentUser?.company?.id ?? "";
-                handleChatNow(senderId, emp.id);
-              }}
+              onChatNowClick={() => handleChatNow(senderId, emp.id)}
+              onScheduleClick={() => router.push(`/interview?with=${emp.id}`)}
             />
           ))
         ) : (
+          /* Empty Matching List Section */
           <div className="w-full flex flex-col items-center justify-center my-16">
-            <Image src={emptySvgImage} alt="empty" height={200} width={200} />
-            <TypographyP className="!m-0">No matched available</TypographyP>
+            <Image
+              src={emptySvgImage}
+              alt="empty"
+              height={200}
+              width={200}
+              className="animate-float"
+            />
+            <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
+              {t("emptyList")}
+            </TypographyP>
           </div>
         )}
       </div>

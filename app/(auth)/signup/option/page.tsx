@@ -2,44 +2,49 @@
 
 import { Button } from "@/components/ui/button";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
-import ErrorMessage from "@/components/utils/error-message";
+import ErrorMessage from "@/components/utils/feedback/error-message";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
 import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
 import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
-import { userRoleConstant } from "@/utils/constants/app.constant";
-import { TUserRole } from "@/utils/types/role.type";
+import { userRoleConstant } from "@/utils/constants/ui.constant";
+import { TUserRole } from "@/utils/types/auth/role.type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
+import { LucideArrowLeft, LucideArrowRight, LucideUsers } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { signupOptionSchema, TSignupOptionSchema } from "./validation";
 
 export default function SingUpOption() {
-  // Utils
+  /* ---------------------------------- Utils ---------------------------------- */
   const router = useRouter();
+  const t = useTranslations("auth");
 
+  /* -------------------------------- All States ------------------------------- */
   // Signup Option Helpers
   const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData, setBasicPhoneSignupData } =
     useBasicPhoneSignupDataStore();
 
-  // API Integration: Social Data
+  /* --------------------- API Integration: Social Data ------------------------ */
+  // Get user basic data from socials: Google, Github, LinkedIn, Facebook
   const googleUserData = useGoogleLoginStore();
   const githubUserData = useGithubLoginStore();
   const linkedInUserData = useLinkedInLoginStore();
   const facebookUserData = useFacebookLoginStore();
 
-  // React Hook Form: Signup Option Form
+  /* -------------------- React Hook Form: Signup Option Form ------------------- */
   const {
     handleSubmit,
     control,
@@ -51,6 +56,8 @@ export default function SingUpOption() {
     },
   });
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Signup Option Function ─────────────────────────────────────────
   // Set Role For Signup Option Function
   const onSubmit = (data: TSignupOptionSchema) => {
     console.log("Form Submitted With role:", data.selectedRole);
@@ -128,13 +135,22 @@ export default function SingUpOption() {
     router.push("/signup");
   };
 
+  /* ---------------------------------------- Render UI ---------------------------------------- */
   return (
-    <div className="h-[80%] w-[85%] flex flex-col items-center justify-start gap-3 tablet-lg:w-full tablet-lg:p-5">
-      <form
-        className="flex flex-col items-start gap-5"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <TypographyH2>Who do you wanna be in our platform?</TypographyH2>
+    <div className="w-full max-w-[500px] mx-auto flex flex-col items-start gap-6 py-8 tablet-lg:py-4">
+      {/* Icon Badge Section */}
+      <div className="size-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+        <LucideUsers className="size-6 text-primary" />
+      </div>
+
+      {/* Title Section */}
+      <TypographyH2>{t("signupOptionTitle")}</TypographyH2>
+
+      {/* Subtitle Section */}
+      <TypographyMuted>{t("signupOptionSubtitle")}</TypographyMuted>
+
+      <form className="w-full flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+        {/* Role Selection Section */}
         <div className="w-full flex flex-col items-start gap-2">
           <Controller
             name="selectedRole"
@@ -142,7 +158,7 @@ export default function SingUpOption() {
             render={({ field }) => (
               <Select onValueChange={field.onChange} value={field.value || ""}>
                 <SelectTrigger className="h-12 text-muted-foreground">
-                  <SelectValue placeholder="Who do you wanna be?" />
+                  <SelectValue placeholder={t("signupOptionPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
                   {userRoleConstant.map((role) => (
@@ -156,21 +172,31 @@ export default function SingUpOption() {
           />
           <ErrorMessage>{errors.selectedRole?.message}</ErrorMessage>
         </div>
-        <div className="w-full flex items-center gap-5">
+
+        {/* Navigate Back Button Section */}
+        <div className="w-full flex items-center gap-3">
           <Button
-            className="w-1/2"
+            className="flex-1"
+            variant="outline"
             type="button"
-            onClick={() => router.push("/login")}
+            onClick={() => router.back()}
           >
             <LucideArrowLeft />
-            Back
+            {t("back")}
           </Button>
-          <Button className="w-1/2" type="submit">
-            Next
+          <Button className="flex-1" type="submit">
+            {t("next")}
             <LucideArrowRight />
           </Button>
         </div>
       </form>
+
+      {/* Note Section */}
+      <div className="w-full flex items-center justify-center">
+        <TypographyMuted className="text-xs">
+          {t("signupOptionNote")}
+        </TypographyMuted>
+      </div>
     </div>
   );
 }

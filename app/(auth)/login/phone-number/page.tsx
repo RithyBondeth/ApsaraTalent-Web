@@ -1,36 +1,40 @@
 "use client";
 
-import phoneNumberWhiteSvg from "@/assets/svg/phone-number-white.svg";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import LogoComponent from "@/components/utils/logo";
+import LogoComponent from "@/components/utils/brand/logo";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-
 import { useLoginOTPStore } from "@/stores/apis/auth/login-otp.store";
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LucidePhone } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
+
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { phoneLoginSchema, TPhoneLoginForm } from "./validation";
+import { phoneNumberWhiteSvg } from "@/utils/constants/asset.constant";
+import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 export default function PhoneNumberPage() {
-  // Utils
+  /* ----------------------------------- Utils -------------------------------- */
   const router = useRouter();
+  const t = useTranslations("auth");
 
-  // Phone OTP Helpers
+  /* --------------------------------- All States ----------------------------- */
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const { setBasicPhoneSignupData } = useBasicPhoneSignupDataStore();
 
+  /* ----------------------------- API Integration ---------------------------- */
   // API Integration
   const { loading, error, message, isSuccess, loginOtp } = useLoginOTPStore();
 
-  // React Hook Form: Phone OTP Form
+  /* --------------------- React Hook Form: Phone OTP Form --------------------- */
   const {
     handleSubmit,
     register,
@@ -41,7 +45,8 @@ export default function PhoneNumberPage() {
     resolver: zodResolver(phoneLoginSchema),
   });
 
-  // Phone OTP Function
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Phone OTP Function ───────────────────────────────────────
   const onSubmit = async (data: TPhoneLoginForm) => {
     setIsSubmitted(true);
     setBasicPhoneSignupData({
@@ -52,38 +57,46 @@ export default function PhoneNumberPage() {
     await loginOtp(phone);
   };
 
-  // Phone OTP Effect
+  /* --------------------------------- Effects --------------------------------- */
+  // ── Phone OTP Effect ─────────────────────────────────────────
   useEffect(() => {
     if (!isSubmitted) return;
 
     if (isSuccess) {
       toast.dismiss();
-      toast.success(message ?? "OTP sent!", { duration: 1000 });
-      setTimeout(() => router.replace("/login/phone-number/phone-otp"), 1000);
+      toast.success(t("otpSent"), { duration: 1000 });
+      setTimeout(
+        () => router.replace("/login/phone-number/phone-otp"),
+        DEFAULT_REDIRECT_DELAY_MS,
+      );
     }
 
-    if (loading) toast.loading("Logging in...");
+    if (loading) toast.loading(t("loggingIn"));
 
     if (error) {
       toast.dismiss();
-      toast.error(message ?? "An error occurred", {
-        action: { label: "Retry", onClick: () => reset() },
+      toast.error(t("anErrorOccurred"), {
+        action: { label: t("retry"), onClick: () => reset() },
       });
     }
-  }, [error, loading, isSuccess, message, isSubmitted]);
+  }, [error, isSubmitted, isSuccess, loading, message, reset, router, t]);
 
   return (
-    <div className="h-screen w-screen flex justify-between items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
-      <div className="h-screen w-1/2 flex justify-center items-center">
-        <div className="h-fit w-[70%] flex flex-col items-stretch gap-3 tablet-lg:w-[85%] tablet-md:w-[95%] tablet-md:py-10">
+    /* -------------------------------- Render UI -------------------------------- */
+    <div className="min-h-screen w-full flex tablet-md:flex-col">
+      {/* Left Section */}
+      <div className="w-1/2 min-h-screen flex items-center justify-center bg-background p-6 sm:p-10 tablet-md:w-full tablet-md:min-h-0 tablet-md:py-12">
+        <div className="w-full max-w-[440px] flex flex-col gap-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
+          {/* Logo Section */}
+          <LogoComponent className="!h-24 w-auto self-start" withoutTitle />
+
           {/* Title Section */}
-          <div className="mb-5">
-            <LogoComponent className="!h-24 w-auto" withoutTitle />
+          <div className="flex flex-col items-start">
             <TypographyH2 className="phone-xl:text-xl">
-              Sign in with Your Phone Number
+              {t("phoneLoginTitle")}
             </TypographyH2>
             <TypographyMuted className="text-md phone-xl:text-sm">
-              Enter your phone number and password to access your account.
+              {t("phoneLoginSubtitle")}
             </TypographyMuted>
           </div>
 
@@ -96,7 +109,7 @@ export default function PhoneNumberPage() {
             <Input
               prefix={<LucidePhone />}
               type="number"
-              placeholder="Phone Number"
+              placeholder={t("phoneNumber")}
               {...register("phone")}
               validationMessage={errors.phone?.message}
             />
@@ -112,21 +125,33 @@ export default function PhoneNumberPage() {
                   />
                 )}
               />
-              <TypographyMuted className="text-xs">Remember me</TypographyMuted>
+              <TypographyMuted className="text-xs">
+                {t("rememberMeLabel")}
+              </TypographyMuted>
             </div>
-            <Button>Login</Button>
+            <Button>{t("loginButton")}</Button>
           </form>
+
+          {/* Navigate Back Button Section */}
+          <button
+            onClick={() => router.back()}
+            className="underline text-sm text-primary hover:text-primary/80 transition-colors text-center"
+          >
+            {t("backToEmailLogin")}
+          </button>
         </div>
       </div>
 
-      {/* Image Poster Section */}
-      <div className="w-1/2 flex justify-center items-center bg-primary tablet-sm:p-10">
+      {/* Right Section: Image Poster */}
+      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary relative overflow-hidden tablet-md:hidden">
         <Image
           src={phoneNumberWhiteSvg}
           alt="phone-number"
           height={undefined}
           width={600}
         />
+        <div className="absolute -top-20 -right-20 size-64 rounded-full bg-white/5" />
+        <div className="absolute -bottom-10 -left-10 size-48 rounded-full bg-white/5" />
       </div>
     </div>
   );

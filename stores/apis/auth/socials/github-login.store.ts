@@ -1,12 +1,13 @@
 import { clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-manager";
-import { API_AUTH_SOCIAL_GITHUB_URL } from "@/utils/constants/apis/auth_url";
+import { API_AUTH_SOCIAL_GITHUB_URL } from "@/utils/constants/apis/auth.api.constant";
 import { EAuthLoginMethod } from "@/utils/constants/auth.constant";
-import { TUserRole } from "@/utils/types/role.type";
+import { TUserRole } from "@/utils/types/auth/role.type";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../../users/get-current-user.store";
 
-// Updated response type - NO TOKENS
-export type TGithubLoginResponse = {
+/* ---------------------------------- States --------------------------------- */
+// ── Github Login Response ──────────────────────────────────────
+type TGithubLoginResponse = {
   type: "GITHUB_AUTH_SUCCESS" | "GITHUB_AUTH_ERROR";
   error?: string;
   newUser?: boolean;
@@ -24,7 +25,8 @@ export type TGithubLoginResponse = {
   };
 };
 
-export type TGithubLoginState = {
+// ── Github Login State ───────────────────────────────────────
+type TGithubLoginState = {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
@@ -42,8 +44,12 @@ export type TGithubLoginState = {
   clearToken: () => void;
 };
 
-// Backend origin (SAFE)
+/* ---------------------------------- Utils --------------------------------- */
+// Allowed origins: backend (where callback page lives) + frontend (where app runs)
 const BACKEND_ORIGIN = new URL(API_AUTH_SOCIAL_GITHUB_URL).origin;
+const FRONTEND_ORIGIN =
+  typeof window !== "undefined" ? window.location.origin : "";
+const ALLOWED_ORIGINS = new Set([BACKEND_ORIGIN, FRONTEND_ORIGIN]);
 
 // Shared Finish Logic
 const FINISH_LOGIN = (data: TGithubLoginResponse) => {
@@ -79,7 +85,7 @@ const FINISH_LOGIN = (data: TGithubLoginResponse) => {
   });
 };
 
-// Zustand Store
+/* ---------------------------------- Store --------------------------------- */
 export const useGithubLoginStore = create<TGithubLoginState>((set) => ({
   loading: false,
   error: null,
@@ -125,8 +131,8 @@ export const useGithubLoginStore = create<TGithubLoginState>((set) => ({
     let messageReceived = false;
 
     const handleMessage = (ev: MessageEvent<TGithubLoginResponse>) => {
-      // Strict origin check
-      if (ev.origin !== BACKEND_ORIGIN) {
+      // Origin check: accept messages from backend or frontend
+      if (!ALLOWED_ORIGINS.has(ev.origin)) {
         console.warn("Ignored message from unexpected origin:", ev.origin);
         return;
       }

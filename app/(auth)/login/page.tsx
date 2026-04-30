@@ -1,6 +1,5 @@
 "use client";
-import loginBlackSvg from "@/assets/svg/login-black.svg";
-import loginWhiteSvg from "@/assets/svg/login-white.svg";
+
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -14,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import SocialButton from "@/components/utils/buttons/social-button";
 import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
-import LogoComponent from "@/components/utils/logo";
+import LogoComponent from "@/components/utils/brand/logo";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
@@ -30,12 +29,14 @@ import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { getRememberPreference } from "@/utils/auth/get-access-token";
+import { useGetEmployeeRecommendationsStore } from "@/stores/apis/recommendation/get-employee-recommendations.store";
+import { useGetCompanyRecommendationsStore } from "@/stores/apis/recommendation/get-company-recommendations.store";
+import { getRememberPreference } from "@/utils/auth/cookie-manager";
 import {
-  facebookIcon,
-  githubIcon,
-  googleIcon,
-  linkedinIcon,
+  FacebookIcon as facebookIcon,
+  GithubIcon as githubIcon,
+  GoogleIcon as googleIcon,
+  LinkedInIcon as linkedinIcon,
 } from "@/utils/constants/asset.constant";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -46,18 +47,24 @@ import {
   LucidePhone,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { loginSchema, TLoginForm } from "./validation";
+import { loginBlackSvg, loginWhiteSvg } from "@/utils/constants/asset.constant";
+import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 function LoginPage() {
-  // Utils: Dialog, Theme
+  /* ------------------------------------ Utils -------------------------------- */
   const router = useRouter();
   const { resolvedTheme } = useTheme();
+  const t = useTranslations("auth");
+
+  /* -------------------------------- All States ------------------------------- */
   const [mounted, setMounted] = useState<boolean>(false);
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [openRmbDialog, setOpenRmbDialog] = useState<boolean>(false);
@@ -69,10 +76,47 @@ function LoginPage() {
   const [socialLoginInitiated, setSocialLoginInitiated] =
     useState<boolean>(false);
   const isProcessingSocialLogin = useRef<boolean>(false);
+  const isProcessingRegularLogin = useRef<boolean>(false);
   const [loginInitiated, setLoginInitiated] = useState<boolean>(false);
   const [isPreloadingData, setIsPreloadingData] = useState<boolean>(false);
 
-  // React Hook Form: Login Form
+  /* ----------------------------- API Integration ----------------------------- */
+  // Current User, Get All Employees and Companies
+  const { getCurrentUser } = useGetCurrentUserStore();
+  const { queryCompany } = useGetAllCompanyStore();
+  const { queryEmployee } = useGetAllEmployeeStore();
+  // User Liked Store
+  const queryCurrentEmployeeLiked = useGetCurrentEmployeeLikedStore(
+    (s) => s.queryCurrentEmployeeLiked,
+  ); // Companies liked by current employee
+  const queryCurrentCompanyLiked = useGetCurrentCompanyLikedStore(
+    (s) => s.queryCurrentCompanyLiked,
+  ); // Employees liked by current company
+  // User Favorited Store
+  const queryAllEmployeeFavorites = useGetAllEmployeeFavoritesStore(
+    (s) => s.queryAllEmployeeFavorites,
+  ); // Companies favorited by current employee
+  const queryAllCompanyFavorites = useGetAllCompanyFavoritesStore(
+    (s) => s.queryAllCompanyFavorites,
+  ); // Employees favorited by current company
+  // Recommendations Store
+  const queryEmployeeRecommendations = useGetEmployeeRecommendationsStore(
+    (s) => s.queryEmployeeRecommendations,
+  );
+  const queryCompanyRecommendations = useGetCompanyRecommendationsStore(
+    (s) => s.queryCompanyRecommendations,
+  );
+
+  // Regular Email-Password Authentication Store
+  const { isAuthenticated, login, error, loading } = useLoginStore();
+
+  // Social Authentication Stores
+  const googleLoginStore = useGoogleLoginStore();
+  const linkedInLoginStore = useLinkedInLoginStore();
+  const githubLoginStore = useGithubLoginStore();
+  const facebookLoginStore = useFacebookLoginStore();
+
+  /* ----------------------- React Hook Form: Login Form ----------------------- */
   const {
     handleSubmit,
     register,
@@ -87,54 +131,9 @@ function LoginPage() {
     },
   });
 
-  // Mark as mounted so the theme-dependent image is only resolved client-side,
-  // preventing the SSR/client hydration mismatch on the login image.
-  useEffect(() => setMounted(true), []);
-
-  // Load remember preference on mount
-  useEffect(() => {
-    try {
-      const savedRememberPreference = getRememberPreference();
-      setValue("rememberMe", savedRememberPreference);
-    } catch (error) {
-      console.error("Error loading remember preference:", error);
-    }
-  }, [setValue]);
-
-  // API Integration
-  // Current User, Get All Employees and Companies
-  const { getCurrentUser } = useGetCurrentUserStore();
-  const { queryCompany } = useGetAllCompanyStore();
-  const { queryEmployee } = useGetAllEmployeeStore();
-  // User Liked Store
-  const getCurrentEmployeeLikedStore = useGetCurrentEmployeeLikedStore(); // Companies liked by current employee
-  const getCurrentCompanyLikedStore = useGetCurrentCompanyLikedStore(); // Employees liked by current company
-  // User Favorited Store
-  const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore(); // Companies favorited by current employee
-  const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore(); // Employees favorited by current company
-
-  //Regular Email-Password Authentication Store
-  const { isAuthenticated, message, login, error, loading } = useLoginStore();
-
-  // Social Authentication Stores
-  const googleLoginStore = useGoogleLoginStore();
-  const linkedInLoginStore = useLinkedInLoginStore();
-  const githubLoginStore = useGithubLoginStore();
-  const facebookLoginStore = useFacebookLoginStore();
-  const isAnySocialLoading =
-    googleLoginStore.loading ||
-    linkedInLoginStore.loading ||
-    githubLoginStore.loading ||
-    facebookLoginStore.loading;
-  const isAuthLoading =
-    (loginInitiated && loading) ||
-    (socialLoginInitiated && isAnySocialLoading) ||
-    isPreloadingData;
-  const authLoadingTitle = isPreloadingData
-    ? "Preparing your workspace..."
-    : "Authenticating...";
-
-  const preloadUserData = async () => {
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Preload User Data ────────────────────────────────────────
+  const preloadUserData = useCallback(async () => {
     try {
       // First get current user data
       await getCurrentUser();
@@ -146,31 +145,17 @@ function LoginPage() {
 
           if (userData) {
             if (userData.role === "employee" && userData.employee?.id) {
-              // Preload employee-specific data
-              console.log(
-                "Querying all companies, employee liked, and employee favorite inside Login Page!!!",
-              );
               await Promise.all([
-                getCurrentEmployeeLikedStore.queryCurrentEmployeeLiked(
-                  userData.employee.id,
-                ),
-                getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
-                  userData.employee.id,
-                ),
+                queryCurrentEmployeeLiked(userData.employee.id),
+                queryAllEmployeeFavorites(userData.employee.id),
+                queryEmployeeRecommendations(userData.employee.id),
                 queryCompany(),
               ]);
             } else if (userData.role === "company" && userData.company?.id) {
-              // Preload company-specific data
-              console.log(
-                "Querying all employees, company liked, and company favorite inside Login Page!!!",
-              );
               await Promise.all([
-                getCurrentCompanyLikedStore.queryCurrentCompanyLiked(
-                  userData.company.id,
-                ),
-                getAllCompanyFavoritesStore.queryAllCompanyFavorites(
-                  userData.company.id,
-                ),
+                queryCurrentCompanyLiked(userData.company.id),
+                queryAllCompanyFavorites(userData.company.id),
+                queryCompanyRecommendations(userData.company.id),
                 queryEmployee(),
               ]);
             }
@@ -182,59 +167,131 @@ function LoginPage() {
       console.error("Error preloading user data:", error);
       throw error;
     }
-  };
+  }, [
+    getCurrentUser,
+    queryAllCompanyFavorites,
+    queryAllEmployeeFavorites,
+    queryCurrentCompanyLiked,
+    queryCurrentEmployeeLiked,
+    queryCompanyRecommendations,
+    queryEmployeeRecommendations,
+    queryCompany,
+    queryEmployee,
+  ]);
 
-  // Login Function
+  // ── Login Function ───────────────────────────────────────
   const onSubmit = async (data: TLoginForm) => {
+    isProcessingRegularLogin.current = false;
     setLoginInitiated(true);
     await login(data.email, data.password, data.rememberMe!);
   };
 
+  /* --------------------------------- Effects --------------------------------- */
+  /*
+    - Mark as mounted so the theme-dependent image is only resolved client-side,
+    - Preventing the SSR/client hydration mismatch on the login image.
+  */
+  useEffect(() => setMounted(true), []);
+
+  // ── Remember Preference Effect ──────────────────────────
+  useEffect(() => {
+    try {
+      const savedRememberPreference = getRememberPreference();
+      setValue("rememberMe", savedRememberPreference);
+    } catch (error) {
+      console.error("Error loading remember preference:", error);
+    }
+  }, [setValue]);
+
+  // ── Login Effect ─────────────────────────────────────────
   // Regular Email-Password Login Effect
   useEffect(() => {
     if (!loginInitiated) return;
+    if (loading) return;
 
-    if (isAuthenticated && loginInitiated) {
-      setIsPreloadingData(true);
-
-      // Preload all user data while showing loading message
-      preloadUserData()
-        .then(() => {
-          console.log("User data preloaded successfully in loin page");
-          toast.success(message ?? "Successfully Logged In", {
-            duration: 1000,
-          });
-        })
-        .catch((error) => {
-          console.error("Error preloading user data: ", error);
-          toast.error(String(error), { duration: 1000 });
-        })
-        .finally(() => {
-          setTimeout(() => {
-            toast.dismiss();
-            setIsPreloadingData(false);
-            setLoginInitiated(false);
-            router.push("/feed");
-          }, 1000);
-        });
-    }
-
-    if (error && loginInitiated) {
+    if (error) {
       toast.dismiss();
-      toast.error(message ?? "Login failed", {
+      toast.error(t("loginFailed"), {
         action: {
-          label: "Retry",
+          label: t("retry"),
           onClick: () => {
             reset();
             setLoginInitiated(false);
+            isProcessingRegularLogin.current = false;
           },
         },
       });
+      setLoginInitiated(false);
+      isProcessingRegularLogin.current = false;
+      return;
     }
-  }, [isAuthenticated, error, message, loading, loginInitiated]);
+
+    if (!isAuthenticated || isProcessingRegularLogin.current) return;
+
+    isProcessingRegularLogin.current = true;
+    setIsPreloadingData(true);
+
+    // Preload all user data while showing loading message
+    preloadUserData()
+      .then(() => {
+        console.log("User data preloaded successfully in login page");
+        toast.success(t("successLoggedIn"), {
+          duration: 1000,
+        });
+      })
+      .catch((error) => {
+        console.error("Error preloading user data: ", error);
+        toast.error(String(error), { duration: 1000 });
+      })
+      .finally(() => {
+        setTimeout(() => {
+          toast.dismiss();
+          setIsPreloadingData(false);
+          setLoginInitiated(false);
+          isProcessingRegularLogin.current = false;
+          router.replace("/feed");
+        }, DEFAULT_REDIRECT_DELAY_MS);
+      });
+  }, [
+    error,
+    isAuthenticated,
+    loading,
+    loginInitiated,
+    preloadUserData,
+    reset,
+    router,
+    t,
+  ]);
 
   // Social Login Function
   const handleSocialLogin = (rememberMe: "true" | "false") => {
+    // Reset all social store states to avoid stale errors triggering the effect
+    useGoogleLoginStore.setState({
+      error: null,
+      loading: false,
+      isAuthenticated: false,
+      newUser: null,
+    });
+    useLinkedInLoginStore.setState({
+      error: null,
+      loading: false,
+      isAuthenticated: false,
+      newUser: null,
+    });
+    useGithubLoginStore.setState({
+      error: null,
+      loading: false,
+      isAuthenticated: false,
+      newUser: null,
+    });
+    useFacebookLoginStore.setState({
+      error: null,
+      loading: false,
+      isAuthenticated: false,
+      newUser: null,
+    });
+
+    toast.dismiss();
     setSocialLoginInitiated(true);
     isProcessingSocialLogin.current = false; // Reset flag
     switch (socialTypeIdentifier) {
@@ -289,7 +346,7 @@ function LoginPage() {
       !socialLoadingState &&
       !isProcessingSocialLogin.current
     ) {
-      isProcessingSocialLogin.current = true; // Prevent duplicate execution
+      isProcessingSocialLogin.current = true;
       toast.dismiss();
 
       setIsPreloadingData(true);
@@ -298,7 +355,7 @@ function LoginPage() {
       preloadUserData()
         .then(() => {
           console.log("User data preloaded successfully");
-          toast.success("Successfully Logged In", { duration: 1000 });
+          toast.success(t("successLoggedIn"), { duration: 1000 });
         })
         .catch((error) => {
           console.error("Error preloading user data:", error);
@@ -310,8 +367,8 @@ function LoginPage() {
             setIsPreloadingData(false);
             setSocialLoginInitiated(false);
             isProcessingSocialLogin.current = false;
-            router.push("/feed");
-          }, 1000);
+            router.replace("/feed");
+          }, DEFAULT_REDIRECT_DELAY_MS);
         });
 
       return;
@@ -321,13 +378,13 @@ function LoginPage() {
     if (newUserStore && !socialLoadingState) {
       setIsPreloadingData(false);
       toast.dismiss();
-      toast.info("Please register first", { duration: 1500 });
+      setSocialLoginInitiated(false);
+      toast.info(t("pleaseRegisterFirst"), { duration: 1500 });
 
       setTimeout(() => {
         toast.dismiss();
-        setSocialLoginInitiated(false);
-        router.push("/signup/option");
-      }, 1500);
+        router.replace("/signup/option");
+      }, DEFAULT_REDIRECT_DELAY_MS);
 
       return;
     }
@@ -336,9 +393,11 @@ function LoginPage() {
     if (errorStore && !socialLoadingState) {
       setIsPreloadingData(false);
       toast.dismiss();
-      toast.error(errorStore.store.error || "Social login failed", {
+      setSocialLoginInitiated(false);
+      isProcessingSocialLogin.current = false;
+      toast.error(errorStore.store.error || t("socialLoginFailed"), {
         action: {
-          label: "Retry",
+          label: t("retry"),
           onClick: () => {
             setSocialLoginInitiated(false);
           },
@@ -362,45 +421,59 @@ function LoginPage() {
     facebookLoginStore.newUser,
     facebookLoginStore.loading,
     facebookLoginStore.error,
+    preloadUserData,
+    router,
     socialLoginInitiated,
-    isPreloadingData,
+    t,
   ]);
+
+  /* -------------------------------- Loading State -------------------------------- */
+  const isAnySocialLoading =
+    googleLoginStore.loading ||
+    linkedInLoginStore.loading ||
+    githubLoginStore.loading ||
+    facebookLoginStore.loading;
+
+  const isAuthLoading =
+    (loginInitiated && loading) ||
+    (socialLoginInitiated && isAnySocialLoading) ||
+    isPreloadingData;
+
+  const authLoadingTitle = isPreloadingData
+    ? t("preparingWorkspace")
+    : t("authenticating");
 
   // Get Current Image Based on Theme
   // Only resolve the theme after mounting — avoids SSR/client hydration mismatch
-  // because resolvedTheme is undefined on the server.
+  // Because resolvedTheme is undefined on the server.
   const loginImage =
     mounted && resolvedTheme === "dark" ? loginWhiteSvg : loginBlackSvg;
 
+  /* ----------------------------------- Render UI ----------------------------------- */
   return (
-    <div className="h-screen w-screen flex justify-between items-stretch tablet-lg:flex-col tablet-lg:[&>div]:w-full">
-      <LoadingDialog
-        loading={isAuthLoading}
-        title={authLoadingTitle}
-        subTitle="Please wait while we authenticate your account."
-      />
-
-      <div className="h-screen w-1/2 flex justify-center items-center bg-primary-foreground tablet-lg:h-fit">
-        <div className="size-[70%] flex flex-col items-start justify-center gap-3 tablet-md:w-[85%] tablet-md:py-10">
-          {/* Title Section */}
-          <div>
-            <LogoComponent className="!h-24 w-auto" withoutTitle />
+    <div className="h-screen w-full flex overflow-hidden tablet-lg:flex-col tablet-lg:h-auto tablet-lg:overflow-y-auto">
+      {/* Left Section */}
+      <div className="w-1/2 h-full flex items-center justify-center bg-background p-6 sm:p-10 tablet-lg:w-full tablet-lg:h-auto tablet-lg:py-12">
+        <div className="w-full max-w-[480px] flex flex-col gap-4 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
+          {/* Logo & Title Section */}
+          <div className="flex flex-col items-start gap-1">
+            <LogoComponent className="!h-16 w-auto self-start" withoutTitle />
             <TypographyH2 className="phone-xl:text-2xl">
-              Log in to your Account
+              {t("loginPageTitle")}
             </TypographyH2>
             <TypographyMuted className="text-md phone-xl:text-sm">
-              Welcome to Apsara Talent! Select method to log in
+              {t("loginSubtitle")}
             </TypographyMuted>
           </div>
 
           {/* Social Button Login Section */}
           <div className="w-full flex flex-col gap-3">
-            <div className="flex justify-between items-center gap-3">
+            <div className="grid grid-cols-2 gap-3">
               <SocialButton
                 image={googleIcon}
                 label="Google"
                 variant="outline"
-                className="w-1/2"
+                className="w-full transition-colors hover:bg-muted/50"
                 onClick={() => {
                   setOpenRmbDialog(true);
                   setSocialTypeIdentifier("google");
@@ -410,19 +483,17 @@ function LoginPage() {
                 image={facebookIcon}
                 label="Facebook"
                 variant="outline"
-                className="w-1/2"
+                className="w-full transition-colors hover:bg-muted/50"
                 onClick={() => {
                   setOpenRmbDialog(true);
                   setSocialTypeIdentifier("facebook");
                 }}
               />
-            </div>
-            <div className="flex justify-between items-center gap-3">
               <SocialButton
                 image={linkedinIcon}
                 label="LinkedIn"
                 variant="outline"
-                className="w-1/2"
+                className="w-full transition-colors hover:bg-muted/50"
                 onClick={() => {
                   setOpenRmbDialog(true);
                   setSocialTypeIdentifier("linkedIn");
@@ -432,7 +503,7 @@ function LoginPage() {
                 image={githubIcon}
                 label="Github"
                 variant="outline"
-                className="w-1/2"
+                className="w-full transition-colors hover:bg-muted/50"
                 onClick={() => {
                   setOpenRmbDialog(true);
                   setSocialTypeIdentifier("github");
@@ -441,31 +512,32 @@ function LoginPage() {
             </div>
             <Button
               variant="outline"
+              className="w-full transition-colors hover:bg-muted/50"
               onClick={() => router.push("login/phone-number")}
             >
               <LucidePhone />
-              Phone Number
+              {t("phoneNumber")}
             </Button>
           </div>
 
           {/* Divider Section */}
-          <div className="w-full flex justify-between items-center">
-            <Separator className="w-1/3" />
-            <TypographyMuted className="text-xs text-center">
-              or continue with email
+          <div className="w-full flex items-center gap-3">
+            <Separator className="flex-1" />
+            <TypographyMuted className="text-xs whitespace-nowrap">
+              {t("orContinueWithEmail")}
             </TypographyMuted>
-            <Separator className="w-1/3" />
+            <Separator className="flex-1" />
           </div>
 
           {/* Login Form Section */}
           <form
-            className="w-full flex flex-col items-stretch gap-5"
+            className="w-full flex flex-col items-stretch gap-3"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-3">
               <Input
                 prefix={<LucideMail strokeWidth={"1.3px"} />}
-                placeholder="Email"
+                placeholder={t("email")}
                 type="email"
                 {...register("email")}
                 validationMessage={errors.email?.message}
@@ -485,14 +557,14 @@ function LoginPage() {
                     />
                   )
                 }
-                placeholder="Password"
+                placeholder={t("password")}
                 type={passwordVisibility ? "text" : "password"}
                 {...register("password")}
                 validationMessage={errors.password?.message}
               />
             </div>
-            <div className="flex justify-between items-center mb-5">
-              <div className="flex items-center gap-1">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-1.5">
                 <Controller
                   name="rememberMe"
                   control={control}
@@ -505,21 +577,21 @@ function LoginPage() {
                   )}
                 />
                 <TypographyMuted className="text-xs">
-                  Remember me
+                  {t("rememberMeLabel")}
                 </TypographyMuted>
               </div>
-              <TypographySmall className="text-xs cursor-pointer hover:text-muted-foreground">
-                <Link href="/forgot-password">Forgot Password?</Link>
+              <TypographySmall className="text-xs cursor-pointer hover:text-muted-foreground transition-colors">
+                <Link href="/forgot-password">{t("forgotPasswordLink")}</Link>
               </TypographySmall>
             </div>
-            <Button type="submit" disabled={loading}>
-              Login
+            <Button type="submit" className="w-full" disabled={loading}>
+              {t("loginButton")}
             </Button>
-            <div className="flex items-center gap-2 mx-auto">
-              <TypographyMuted>Do not have account?</TypographyMuted>
+            <div className="flex items-center justify-center gap-2">
+              <TypographyMuted>{t("noAccount")}</TypographyMuted>
               <Link href="/signup/option">
-                <TypographySmall className="text-xs cursor-pointer hover:text-muted-foreground">
-                  Create account
+                <TypographySmall className="text-xs cursor-pointer hover:text-muted-foreground transition-colors">
+                  {t("createAccount")}
                 </TypographySmall>
               </Link>
             </div>
@@ -527,19 +599,27 @@ function LoginPage() {
         </div>
       </div>
 
-      {/* Image Poster Section */}
-      <div className="w-1/2 flex justify-center items-center bg-primary tablet-lg:p-10">
-        <Image src={loginImage} alt="login" height={undefined} width={600} />
+      {/* Right Section: Image Poster Section */}
+      <div className="w-1/2 h-full flex items-center justify-center bg-primary relative overflow-hidden tablet-lg:hidden">
+        {/* Decorative circles Section */}
+        <div className="absolute -top-20 -right-20 size-64 rounded-full bg-white/5" />
+        <div className="absolute -bottom-16 -left-16 size-48 rounded-full bg-white/5" />
+        <div className="absolute top-1/4 -left-10 size-32 rounded-full bg-white/[0.03]" />
+        <div className="absolute bottom-1/3 right-10 size-20 rounded-full bg-white/[0.07]" />
+        <Image
+          src={loginImage}
+          alt="login"
+          height={undefined}
+          width={450}
+          className="relative z-10"
+        />
       </div>
 
       {/* Remember Dialog Section */}
       <Dialog open={openRmbDialog} onOpenChange={setOpenRmbDialog}>
         <DialogContent>
-          <DialogTitle>Remember Me</DialogTitle>
-          <DialogDescription>
-            Do you want to remember this login? (30 days for &quot;Yes&quot;, 1
-            day for &quot;No&quot;)
-          </DialogDescription>
+          <DialogTitle>{t("rememberMe")}</DialogTitle>
+          <DialogDescription>{t("rememberMeDescription")}</DialogDescription>
           <DialogFooter>
             <Button
               variant={"outline"}
@@ -548,7 +628,7 @@ function LoginPage() {
                 setOpenRmbDialog(false);
               }}
             >
-              No
+              {t("no")}
             </Button>
             <Button
               onClick={() => {
@@ -556,11 +636,18 @@ function LoginPage() {
                 setOpenRmbDialog(false);
               }}
             >
-              Yes
+              {t("yes")}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Loading Dialog Section */}
+      <LoadingDialog
+        loading={isAuthLoading}
+        title={authLoadingTitle}
+        subTitle={t("pleaseWaitAuth")}
+      />
     </div>
   );
 }

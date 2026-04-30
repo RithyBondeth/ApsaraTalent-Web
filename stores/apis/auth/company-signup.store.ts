@@ -1,27 +1,33 @@
 import axios from "@/lib/axios";
-import { API_AUTH_SIGNUP_URL } from "@/utils/constants/apis/auth_url";
-import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
-import { IUser } from "@/utils/interfaces/user-interface/user.interface";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
+import { API_AUTH_SIGNUP_URL } from "@/utils/constants/apis/auth.api.constant";
+import { ICompany } from "@/utils/interfaces/user/company.interface";
+import { IUser } from "@/utils/interfaces/user/user.interface";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Company Signup API Response ─────────────────────────────────
 type TCompanySignupResponse = {
   accessToken: string | null;
   refreshToken: string | null;
   message: string | null;
 };
 
+// ── Company Signup API Request ─────────────────────────────────
 type TCompanySignupBody = Omit<ICompany, "id"> & {
   email: string | null;
   password: string | null;
   authEmail: boolean;
 };
 
+// ── Company Signup State ────────────────────────────────────────
 type TCompanySignupState = TCompanySignupResponse & {
   loading: boolean;
   error: string | null;
   signup: (body: TCompanySignupBody) => Promise<string | undefined>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useCompanySignupStore = create<TCompanySignupState>()((set) => ({
   accessToken: null,
   refreshToken: null,
@@ -81,20 +87,12 @@ export const useCompanySignupStore = create<TCompanySignupState>()((set) => ({
 
       return companyID;
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const errorMessage =
-          error.response?.data?.message instanceof Array
-            ? error.response.data.message.join(", ")
-            : error.response?.data?.message || error.message;
+      const errorMessage = extractApiErrorMessage(
+        error,
+        "An error occurred while signing up as company.",
+      );
 
-        set({ loading: false, error: errorMessage, message: errorMessage });
-      } else {
-        set({
-          loading: false,
-          error: "An error occurred while signing up as company.",
-          message: "An error occurred while signing up as company.",
-        });
-      }
+      set({ loading: false, error: errorMessage, message: errorMessage });
     }
   },
 }));

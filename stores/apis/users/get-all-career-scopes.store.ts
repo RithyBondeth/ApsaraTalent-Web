@@ -1,15 +1,22 @@
 import axios from "@/lib/axios";
-import { API_GET_ALL_CAREER_SCOPES_URL } from "@/utils/constants/apis/user_url";
-import { ICareerScopes } from "@/utils/interfaces/user-interface/company.interface";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
+import { API_GET_ALL_CAREER_SCOPES_URL } from "@/utils/constants/apis/user-api/user.api.constant";
+import { ICareerScope } from "@/utils/interfaces/user/career.interface";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Get All Career Scopes Response ─────────────────────────────
+type TGetAllCareerScopesResponse = ICareerScope[];
+
+// ── Get All Career Scopes State ────────────────────────────────
 type TGetAllCareerScopesStoreState = {
   error: string | null;
   loading: boolean;
-  careerScopes: ICareerScopes[] | null;
+  careerScopes: TGetAllCareerScopesResponse | null;
   getAllCareerScopes: () => Promise<void>;
 };
 
+/* ---------------------------------- Store ---------------------------------- */
 export const useGetAllCareerScopesStore = create<TGetAllCareerScopesStoreState>(
   (set) => ({
     error: null,
@@ -19,19 +26,18 @@ export const useGetAllCareerScopesStore = create<TGetAllCareerScopesStoreState>(
       set({ loading: true, error: null });
 
       try {
-        const response = await axios.get<[]>(API_GET_ALL_CAREER_SCOPES_URL);
+        const response = await axios.get<TGetAllCareerScopesResponse>(
+          API_GET_ALL_CAREER_SCOPES_URL,
+        );
         set({ careerScopes: response.data, loading: false, error: null });
       } catch (error) {
-        if (axios.isAxiosError(error))
-          set({
-            loading: false,
-            error: error.response?.data?.message || error.message,
-          });
-        else
-          set({
-            loading: false,
-            error: "An error occurred while fetching all career scopes",
-          });
+        set({
+          loading: false,
+          error: extractApiErrorMessage(
+            error,
+            "An error occurred while fetching all career scopes",
+          ),
+        });
       }
     },
   }),

@@ -1,27 +1,36 @@
+"use client";
+
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { YearPicker } from "@/components/ui/year-picker";
-import LabelInput from "@/components/utils/label-input";
+import LabelInput from "@/components/utils/forms/label-input";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { LucideGraduationCap, LucideSchool, LucideTrash2 } from "lucide-react";
 import { Controller, useWatch } from "react-hook-form";
 import { IEmployeeEducationFormProps } from "./props";
+import { useTranslations } from "next-intl";
 
 export default function EmployeeEducationForm(
   props: IEmployeeEducationFormProps,
 ) {
+  /* --------------------------------- Props --------------------------------- */
   const { register, control } = props.form;
 
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("profile");
+
+  /* ---------------------------------- Form --------------------------------- */
   const isStudying = useWatch({
     control,
     name: `educations.${props.index}.isStudying`,
   });
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col items-start gap-3">
       {/* Header Section */}
       <div className="w-full flex items-center justify-between">
-        <TypographyMuted>Education {props.index + 1}</TypographyMuted>
+        <TypographyMuted>{t("educationIndex", { index: props.index + 1 })}</TypographyMuted>
         {props.isEdit && (
           <LucideTrash2
             className="cursor-pointer text-red-500"
@@ -37,10 +46,10 @@ export default function EmployeeEducationForm(
         {/* School Section */}
         <div className="w-full flex flex-col items-start gap-2">
           <LabelInput
-            label="School"
+            label={t("school")}
             input={
               <Input
-                placeholder="School"
+                placeholder={t("school")}
                 id="school"
                 {...register(`educations.${props.index}.school`)}
                 prefix={<LucideSchool strokeWidth={"1.3px"} />}
@@ -48,7 +57,7 @@ export default function EmployeeEducationForm(
               />
             }
           />
-          {/* isStudying Checkbox */}
+          {/* isStudying Checkbox Section */}
           <div className="flex items-center space-x-2 mt-1">
             <Controller
               control={control}
@@ -66,17 +75,17 @@ export default function EmployeeEducationForm(
               htmlFor={`isStudying-profile-${props.index}`}
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground"
             >
-              I am currently studying here
+              {t("currentlyStudying")}
             </label>
           </div>
         </div>
         {/* Degree Section */}
         <LabelInput
-          label="Degree"
+          label={t("degree")}
           input={
             <Input
               placeholder={
-                isStudying ? "e.g. Pursuing Bachelor's, Undergrad" : "Degree"
+                isStudying ? t("pursuingDegree") : t("degree")
               }
               id="degree"
               {...register(`educations.${props.index}.degree`)}
@@ -87,7 +96,7 @@ export default function EmployeeEducationForm(
         />
         {/* Graduation Section */}
         <LabelInput
-          label={isStudying ? "Expected Graduation Year" : "Graduation Year"}
+          label={isStudying ? t("expectedGraduationYear") : t("graduationYear")}
           input={
             <Controller
               control={control}
@@ -95,7 +104,7 @@ export default function EmployeeEducationForm(
               render={({ field }) => (
                 <YearPicker
                   placeholder={
-                    isStudying ? "Expected Graduation Year" : "Graduation Year"
+                    isStudying ? t("expectedGraduationYear") : t("graduationYear")
                   }
                   year={field.value ? Number(field.value) : undefined}
                   onYearChange={(yr) => field.onChange(yr)}

@@ -1,19 +1,21 @@
-import { ICareerScopes } from "@/utils/interfaces/user-interface/employee.interface";
+import { ICareerScope } from "@/utils/interfaces/user/career.interface";
 import { useState } from "react";
 
-export function useCareerScopesState(
-  initialCareerScopes: ICareerScopes[] = [],
-) {
-  const [careerScopeInput, setCareerScopeInput] =
-    useState<ICareerScopes | null>(null);
+/* ----------------------------------- Hook ----------------------------------- */
+export function useCareerScopesState(initialCareerScopes: ICareerScope[] = []) {
+  /* -------------------------------- All States -------------------------------- */
+  const [careerScopeInput, setCareerScopeInput] = useState<ICareerScope | null>(
+    null,
+  );
   const [careerScopes, setCareerScopes] =
-    useState<ICareerScopes[]>(initialCareerScopes);
+    useState<ICareerScope[]>(initialCareerScopes);
   const [deleteCareerScopeIds, setDeleteCareerScopeIds] = useState<string[]>(
     [],
   );
   const [openCareerScopePopOver, setOpenCareerScopePopOver] =
     useState<boolean>(false);
 
+  /* --------------------------------- Methods ---------------------------------- */
   return {
     careerScopeInput,
     setCareerScopeInput,

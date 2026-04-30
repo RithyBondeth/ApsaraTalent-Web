@@ -1,17 +1,22 @@
 import axios from "@/lib/axios";
-import { API_REMOVE_ONE_CMP_IMAGE_URL } from "@/utils/constants/apis/company_url";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
+import { API_REMOVE_ONE_CMP_IMAGE_URL } from "@/utils/constants/apis/user-api/company.api.constant";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Remove One Cmp Image API Response ─────────────────────────────────
 type TRemoveOneCmpImageResponse = {
   message: string | null;
 };
 
+// ── Remove One Cmp Image State ────────────────────────────────────────
 type TRemoveOneCmpImageState = TRemoveOneCmpImageResponse & {
   loading: boolean;
   error: string | null;
   removeOneCmpImage: (companyID: string, imageID: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useRemoveOneCmpImageStore = create<TRemoveOneCmpImageState>(
   (set) => ({
     message: null,
@@ -27,20 +32,12 @@ export const useRemoveOneCmpImageStore = create<TRemoveOneCmpImageState>(
 
         set({ message: response.data.message, error: null, loading: false });
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const errorMessage =
-            error.response?.data?.message instanceof Array
-              ? error.response.data.message.join(", ")
-              : error.response?.data?.message || error.message;
+        const errorMessage = extractApiErrorMessage(
+          error,
+          "An error occurred while removing company's image",
+        );
 
-          set({ loading: false, error: errorMessage, message: errorMessage });
-        } else {
-          set({
-            loading: false,
-            error: "An error occurred while removing company's image",
-            message: "An error occurred while removing company's image",
-          });
-        }
+        set({ loading: false, error: errorMessage, message: errorMessage });
       }
     },
   }),

@@ -1,9 +1,13 @@
 import axios from "@/lib/axios";
-import { API_GET_CURRENT_USER_URL } from "@/utils/constants/apis/user_url";
-import { IUser } from "@/utils/interfaces/user-interface/user.interface";
+import { API_GET_CURRENT_USER_URL } from "@/utils/constants/apis/user-api/user.api.constant";
+import { IUser } from "@/utils/interfaces/user/user.interface";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { extractApiErrorMessage } from "../../shared/api-error-message";
+import { STORE_PERSIST_KEYS } from "../../shared/persist-keys";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Get Current User State ───────────────────────────────────
 type TGetCurrentUserState = {
   loading: boolean;
   error: string | null;
@@ -12,6 +16,7 @@ type TGetCurrentUserState = {
   clearUser: () => void;
 };
 
+/* ---------------------------------- Store ---------------------------------- */
 export const useGetCurrentUserStore = create<TGetCurrentUserState>()(
   persist(
     (set) => ({
@@ -33,7 +38,10 @@ export const useGetCurrentUserStore = create<TGetCurrentUserState>()(
           set({
             user: null,
             loading: false,
-            error: "Failed to fetch current user",
+            error: extractApiErrorMessage(
+              error,
+              "Failed to fetch current user",
+            ),
           });
         }
       },
@@ -45,11 +53,10 @@ export const useGetCurrentUserStore = create<TGetCurrentUserState>()(
           loading: false,
           error: null,
         });
-        localStorage.removeItem("current-user-store");
       },
     }),
     {
-      name: "current-user-store",
+      name: STORE_PERSIST_KEYS.currentUser,
       partialize: (state) => ({ user: state.user }),
     },
   ),

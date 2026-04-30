@@ -1,0 +1,128 @@
+"use client";
+
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import React from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import {
+  LucideInfo,
+  LucideKeyRound,
+  LucideLogIn,
+  LucideMail,
+  LucideShieldCheck,
+  LucideUser,
+} from "lucide-react";
+import { SettingWrapper } from "../setting-wrapper";
+import { SettingRow } from "../setting-row";
+import { IAccountSectionProps } from "./props";
+import { useTranslations } from "next-intl";
+
+export function AccountSection(props: IAccountSectionProps) {
+  /* --------------------------------- Props --------------------------------- */
+  const {
+    displayName,
+    avatarSrc,
+    email,
+    role,
+    isTwoFactorEnabled,
+    lastLogin,
+    memberSince,
+    onResetPassword,
+  } = props;
+
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("setting");
+
+  /* -------------------------------- Render UI -------------------------------- */
+  return (
+    <SettingWrapper
+      icon={<LucideUser />}
+      title={t("account")}
+      description={t("accountDescription")}
+    >
+      {/* Header Section: Avatar, DisplayName, Email, Role */}
+      <div className="flex items-center gap-4 px-4 py-4 bg-muted/30">
+        <Avatar className="size-14 rounded-xl shrink-0">
+          <AvatarImage src={avatarSrc} alt={displayName} />
+          <AvatarFallback className="rounded-xl text-base font-semibold">
+            {displayName.slice(0, 2).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex flex-col gap-1 min-w-0">
+          <TypographySmall className="font-semibold leading-none truncate block">
+            {displayName}
+          </TypographySmall>
+          <TypographyMuted className="text-xs truncate">
+            {email ?? "—"}
+          </TypographyMuted>
+          <Badge
+            variant="secondary"
+            className="w-fit mt-0.5 text-[10px] capitalize"
+          >
+            {role ?? "—"}
+          </Badge>
+        </div>
+      </div>
+      <Separator />
+
+      {/* Email Section */}
+      <SettingRow icon={<LucideMail />} label={t("email")} value={email ?? "—"} />
+
+      {/* Two-Factor Auth Section */}
+      <SettingRow
+        icon={<LucideShieldCheck />}
+        label={t("twoFactorAuth")}
+        value={
+          isTwoFactorEnabled ? (
+            <Badge className="text-[10px] bg-emerald-500/10 text-emerald-600 border border-emerald-300/40 hover:bg-emerald-500/10">
+              {t("enabled")}
+            </Badge>
+          ) : (
+            <Badge
+              variant="outline"
+              className="text-[10px] text-muted-foreground"
+            >
+              {t("disabled")}
+            </Badge>
+          )
+        }
+      />
+
+      {/* Last Login Section */}
+      <SettingRow icon={<LucideLogIn />} label={t("lastLogin")} value={lastLogin} />
+
+      {/* Member Since Section */}
+      <SettingRow
+        icon={<LucideInfo />}
+        label={t("memberSince")}
+        value={memberSince}
+      />
+
+      {/* Reset Password Section */}
+      <div className="flex items-center justify-between gap-4 px-4 py-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <span className="text-muted-foreground shrink-0 [&>svg]:size-4">
+            <LucideKeyRound />
+          </span>
+          <div className="flex flex-col">
+            <span className="text-sm font-medium">{t("resetPassword")}</span>
+            <span className="text-xs text-muted-foreground">
+              {t("sendResetLinkDesc")}
+            </span>
+          </div>
+        </div>
+        <Button
+          size="sm"
+          variant="outline"
+          className="shrink-0 text-xs rounded-lg"
+          onClick={onResetPassword}
+        >
+          {t("reset")}
+        </Button>
+      </div>
+    </SettingWrapper>
+  );
+}

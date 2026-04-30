@@ -1,7 +1,7 @@
-// My Signup Page
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -10,8 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import ErrorMessage from "@/components/utils/error-message";
-import LogoComponent from "@/components/utils/logo";
+import ErrorMessage from "@/components/utils/feedback/error-message";
+import LogoComponent from "@/components/utils/brand/logo";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
@@ -23,7 +23,7 @@ import { useThemeStore } from "@/stores/themes/theme-store";
 import {
   genderConstant,
   locationConstant,
-} from "@/utils/constants/app.constant";
+} from "@/utils/constants/ui.constant";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   LucideArrowLeft,
@@ -33,6 +33,7 @@ import {
   LucideLockKeyhole,
   LucideMail,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, FieldErrors, useForm } from "react-hook-form";
@@ -42,25 +43,32 @@ import {
   TBasicSignupCompanySchema,
   TBasicSignupEmployeeSchema,
 } from "./validation";
+import { formatDateForField } from "@/utils/functions/date";
 
 export default function SignupPage() {
-  // Utils
+  /* --------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("auth");
   const { theme } = useThemeStore();
 
-  // Signup Helpers
+  /* -------------------------------- All States ------------------------------ */
   const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [confirmPassVisibility, setConfirmPassVisibility] =
     useState<boolean>(false);
 
-  // API Integration
+  /* ----------------------------- API Integration ---------------------------- */
+  // Get user basic data from socials: Google, Github, LinkedIn, Facebook
   const googleUserData = useGoogleLoginStore();
   const githubUserData = useGithubLoginStore();
   const linkedInUserData = useLinkedInLoginStore();
   const facebookUserData = useFacebookLoginStore();
 
-  // Employee and Company Form
+  /* --------------------------- User Role Handling --------------------------- */
+  /*
+    Determine user role (Employee or Company) by checking local state first,
+    then falling back to any connected social login providers.
+  */
   const selectedRole = useMemo(
     () =>
       basicSignupData?.selectedRole ||
@@ -76,9 +84,9 @@ export default function SignupPage() {
       facebookUserData.role,
     ],
   );
-
   const isEmployeeForm = selectedRole === "employee";
 
+  /* ----------------------- React Hook Form: Emp and Cmp Signup Form ---------------------- */
   const cmpForm = useForm<TBasicSignupCompanySchema>({
     resolver: zodResolver(basicSignupCompanySchema),
     defaultValues: {
@@ -105,12 +113,14 @@ export default function SignupPage() {
     },
   });
 
-  // Employee and Company Error
+  // Employee and Company Error States
   const employeeErrors = empForm.formState
     .errors as FieldErrors<TBasicSignupEmployeeSchema>;
   const companyErrors = cmpForm.formState
     .errors as FieldErrors<TBasicSignupCompanySchema>;
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Signup Function ─────────────────────────────────────────
   // Set Basic Signup Data for Employee
   const onSubmitEmployee = (data: TBasicSignupEmployeeSchema) => {
     console.log("Basic Employee Data: ", data);
@@ -141,7 +151,8 @@ export default function SignupPage() {
     router.push("/signup/company");
   };
 
-  // Social Signup Effect
+  /* --------------------------------- Effects --------------------------------- */
+  // ── Social Signup Effect ─────────────────────────────────────────
   useEffect(() => {
     // Handle Google login data - Auto Fill Information in Form
     if (
@@ -221,58 +232,88 @@ export default function SignupPage() {
     empForm,
   ]);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="size-[70%] flex flex-col items-start justify-center gap-3 tablet-sm:w-[90%]">
+    <div className="w-full max-w-[620px] flex flex-col gap-5 tablet-sm:max-w-full">
+      {/* Logo Section */}
+      <LogoComponent
+        isBlackLogo={theme === "light" ? false : true}
+        className="!h-12 w-auto self-start"
+      />
+
       {/* Title Section */}
-      <div className="mb-5">
-        <LogoComponent
-          isBlackLogo={theme === "light" ? false : true}
-          className="!h-12 w-auto"
-        />
-        <TypographyH2>Welcome to Apsara Talent</TypographyH2>
+      <div className="flex flex-col items-start">
+        <TypographyH2>{t("signupPageTitle")}</TypographyH2>
         <TypographyMuted className="text-md">
-          Connect with professional community around the world.
+          {t("signupSubtitle")}
         </TypographyMuted>
       </div>
 
       {/* Form Section */}
       <form
-        className="w-full flex flex-col items-stretch gap-5"
+        className="w-full flex flex-col gap-4"
         onSubmit={
           isEmployeeForm
             ? empForm.handleSubmit(onSubmitEmployee)
             : cmpForm.handleSubmit(onSubmitCompany)
         }
       >
+        {/* Employee: Firstname & Lastname Section */}
         {isEmployeeForm && (
           <div className="flex items-center gap-3 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
             <Input
-              placeholder="Firstname"
+              placeholder={t("firstname")}
               type="text"
               {...empForm.register("firstName")}
               validationMessage={employeeErrors.firstName?.message}
             />
             <Input
-              placeholder="Lastname"
+              placeholder={t("lastname")}
               type="text"
               {...empForm.register("lastName")}
               validationMessage={employeeErrors.lastName?.message}
             />
           </div>
         )}
+
+        {/* Employee: DOB Section */}
         {isEmployeeForm && (
-          <Input
-            type="date"
-            placeholder="Date of Birth"
-            className="w-full"
-            {...empForm.register("dob")}
-          />
+          <div className="w-full flex flex-col items-start gap-1">
+            <Controller
+              name="dob"
+              control={empForm.control}
+              render={({ field }) => {
+                const selectedDate = field.value
+                  ? new Date(field.value)
+                  : undefined;
+                const safeDate =
+                  selectedDate instanceof Date &&
+                  !Number.isNaN(selectedDate.getTime())
+                    ? selectedDate
+                    : undefined;
+
+                return (
+                  <DatePicker
+                    placeholder={t("dateOfBirth")}
+                    date={safeDate}
+                    onDateChange={(date) =>
+                      field.onChange(date ? formatDateForField(date) : "")
+                    }
+                    dateFormat="dd MMM yyyy"
+                  />
+                );
+              }}
+            />
+            <ErrorMessage>{employeeErrors.dob?.message}</ErrorMessage>
+          </div>
         )}
+
+        {/* Employee: Username & Location Section */}
         <div className="w-full flex items-center gap-3 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
           {isEmployeeForm && (
             <Input
               type="text"
-              placeholder="Username"
+              placeholder={t("username")}
               className="w-full"
               {...empForm.register("username")}
               validationMessage={employeeErrors.username?.message}
@@ -289,7 +330,7 @@ export default function SignupPage() {
                     value={field.value || ""}
                   >
                     <SelectTrigger className="h-12 text-muted-foreground">
-                      <SelectValue placeholder="Location" />
+                      <SelectValue placeholder={t("location")} />
                     </SelectTrigger>
                     <SelectContent>
                       {locationConstant.map((location, index) => (
@@ -309,8 +350,10 @@ export default function SignupPage() {
             </div>
           )}
         </div>
-        <div className="flex flex-col items-stretch gap-5">
+
+        <div className="flex flex-col items-stretch gap-4">
           <div className="flex gap-3 [&>select]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
+            {/* Employee: Gender Section */}
             {isEmployeeForm && (
               <div className="w-full flex flex-col items-start gap-1">
                 <Controller
@@ -322,7 +365,7 @@ export default function SignupPage() {
                       value={field.value || ""}
                     >
                       <SelectTrigger className="h-12 text-muted-foreground">
-                        <SelectValue placeholder="Gender" />
+                        <SelectValue placeholder={t("gender")} />
                       </SelectTrigger>
                       <SelectContent>
                         {genderConstant.map((gender) => (
@@ -341,10 +384,11 @@ export default function SignupPage() {
                 </ErrorMessage>
               </div>
             )}
+            {/* Employee & Company: Phone Number Section */}
             {isEmployeeForm ? (
               <Input
                 type="number"
-                placeholder="Mobile"
+                placeholder={t("mobile")}
                 className="w-full"
                 {...empForm.register("phone")}
                 validationMessage={employeeErrors.phone?.message}
@@ -352,18 +396,20 @@ export default function SignupPage() {
             ) : (
               <Input
                 type="number"
-                placeholder="Mobile"
+                placeholder={t("mobile")}
                 className="w-full"
                 {...cmpForm.register("phone")}
                 validationMessage={companyErrors.phone?.message}
               />
             )}
           </div>
+
+          {/* Employee & Company: Email Section */}
           {isEmployeeForm ? (
             <Input
               prefix={<LucideMail strokeWidth={"1.3px"} />}
               type="email"
-              placeholder="Email"
+              placeholder={t("email")}
               {...empForm.register("email")}
               validationMessage={employeeErrors.email?.message}
             />
@@ -371,11 +417,13 @@ export default function SignupPage() {
             <Input
               prefix={<LucideMail strokeWidth={"1.3px"} />}
               type="email"
-              placeholder="Email"
+              placeholder={t("email")}
               {...cmpForm.register("email")}
               validationMessage={companyErrors.email?.message}
             />
           )}
+
+          {/* Employee & Company: Password Section */}
           {isEmployeeForm ? (
             <Input
               prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
@@ -393,7 +441,7 @@ export default function SignupPage() {
                 )
               }
               type={passwordVisibility ? "text" : "password"}
-              placeholder="Password"
+              placeholder={t("password")}
               {...empForm.register("password")}
               validationMessage={employeeErrors.password?.message}
             />
@@ -414,11 +462,13 @@ export default function SignupPage() {
                 )
               }
               type={passwordVisibility ? "text" : "password"}
-              placeholder="Password"
+              placeholder={t("password")}
               {...cmpForm.register("password")}
               validationMessage={companyErrors.password?.message}
             />
           )}
+
+          {/* Employee & Company: Confirm Password Section */}
           {isEmployeeForm ? (
             <Input
               prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
@@ -436,7 +486,7 @@ export default function SignupPage() {
                 )
               }
               type={confirmPassVisibility ? "text" : "password"}
-              placeholder="Confirm Password"
+              placeholder={t("confirmPassword")}
               {...empForm.register("confirmPassword")}
               validationMessage={employeeErrors.confirmPassword?.message}
             />
@@ -457,25 +507,27 @@ export default function SignupPage() {
                 )
               }
               type={confirmPassVisibility ? "text" : "password"}
-              placeholder="Confirm Password"
+              placeholder={t("confirmPassword")}
               {...cmpForm.register("confirmPassword")}
               validationMessage={companyErrors.confirmPassword?.message}
             />
           )}
         </div>
-        <div className="flex items-center gap-3">
+
+        {/* Employee & Company: Back & Next Buttons Section */}
+        <div className="flex items-center gap-3 tablet-sm:flex-col">
           <Button
             type="button"
-            className="flex-1"
+            className="flex-1 tablet-sm:w-full"
             variant="outline"
-            onClick={() => router.push("/login")}
+            onClick={() => router.back()}
           >
             <LucideArrowLeft />
-            Back
+            {t("back")}
           </Button>
-          <Button className="flex-1" type="submit">
+          <Button className="flex-1 tablet-sm:w-full" type="submit">
             <LucideArrowRight />
-            Next
+            {t("next")}
           </Button>
         </div>
       </form>

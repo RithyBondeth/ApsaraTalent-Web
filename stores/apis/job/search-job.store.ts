@@ -1,9 +1,12 @@
 import axios from "@/lib/axios";
-import { API_SEARCH_JOB_URL } from "@/utils/constants/apis/job_url";
-import { TLocations } from "@/utils/types/location.type";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
+import { API_SEARCH_JOB_URL } from "@/utils/constants/apis/job.api.constant";
+import { TLocations } from "@/utils/types/user/location.type";
 import { create } from "zustand";
 
-export type TSearchJobQuery = {
+/* ---------------------------------- States --------------------------------- */
+// ── Search Job Query Params ────────────────────────────────────────
+type TSearchJobQueryParams = {
   keyword?: string;
   location?: string;
   jobType?: string;
@@ -20,7 +23,8 @@ export type TSearchJobQuery = {
   sortOrder?: "ASC" | "DESC";
 };
 
-type TSearchJob = {
+// ── Search Job API Response ────────────────────────────────────────
+type TSearchJobResponse = {
   id?: string;
   title: string;
   description: string;
@@ -42,19 +46,21 @@ type TSearchJob = {
   };
 };
 
+// ── Search Job State ────────────────────────────────────────────────
 type TSearchJobState = {
-  jobs: TSearchJob[] | null;
+  jobs: TSearchJobResponse[] | null;
   error: string | null;
   loading: boolean;
-  querySearchJobs: (query: TSearchJobQuery) => Promise<void>;
+  querySearchJobs: (query: TSearchJobQueryParams) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useSearchJobStore = create<TSearchJobState>((set) => ({
   loading: false,
   error: null,
   message: null,
   jobs: null,
-  querySearchJobs: async (query: TSearchJobQuery) => {
+  querySearchJobs: async (query: TSearchJobQueryParams) => {
     set({ loading: true, error: null });
 
     try {
@@ -73,7 +79,7 @@ export const useSearchJobStore = create<TSearchJobState>((set) => ({
       const queryString = queryParams.toString();
       const url = `${API_SEARCH_JOB_URL}?${queryString}`;
 
-      const response = await axios.get(url);
+      const response = await axios.get<TSearchJobResponse[]>(url);
 
       set({
         jobs: response.data,
@@ -81,18 +87,11 @@ export const useSearchJobStore = create<TSearchJobState>((set) => ({
         error: null,
       });
     } catch (error) {
-      if (axios.isAxiosError(error))
-        set({
-          error: error.response?.data?.message,
-          loading: false,
-          jobs: null,
-        });
-      else
-        set({
-          error: "Failed to search jobs",
-          loading: false,
-          jobs: null,
-        });
+      set({
+        error: extractApiErrorMessage(error, "Failed to search jobs"),
+        loading: false,
+        jobs: null,
+      });
     }
   },
 }));

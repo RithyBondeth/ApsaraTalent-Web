@@ -1,12 +1,10 @@
-"use client";
-
 import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import ErrorMessage from "@/components/utils/error-message";
-import LabelInput from "@/components/utils/label-input";
+import ErrorMessage from "@/components/utils/feedback/error-message";
+import LabelInput from "@/components/utils/forms/label-input";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { LucidePlus, LucideTrash2 } from "lucide-react";
@@ -19,14 +17,16 @@ export default function ExperienceStepForm({
   control,
   errors,
 }: IStepFormProps<TEmployeeSignUp>) {
+  /* -------------------------------- Form Section ---------------------------- */
   const { fields, append, remove } = useFieldArray({
     control,
     name: "experience",
   });
 
-  // Ensure at least one empty row is shown when the step mounts.
-  // The ref guard prevents React StrictMode from appending twice.
-  const initializedRef = useRef(false);
+  /* -------------------------------- All States ------------------------------ */
+  const initializedRef = useRef<boolean>(false);
+
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     if (!initializedRef.current && fields.length === 0) {
       initializedRef.current = true;
@@ -37,9 +37,10 @@ export default function ExperienceStepForm({
         endDate: "" as unknown as Date,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [append, fields.length]);
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Add Experience ─────────────────────────────────────────
   const addExperience = () => {
     append({
       title: "",
@@ -49,16 +50,19 @@ export default function ExperienceStepForm({
     });
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col gap-5 w-full max-h-[500px] overflow-y-auto">
+      {/* Title Section */}
       <TypographyH4>Add your experiences information</TypographyH4>
 
+      {/* Experience Form Section */}
       {fields.map((field, index) => (
         <div
           key={field.id}
           className="relative flex flex-col items-start gap-3 w-full border border-muted-foreground/10 rounded-xl bg-muted p-5"
         >
-          {/* Header Without Remove Button */}
+          {/* Header Without Remove Button Section */}
           {fields.length === 1 && (
             <div className="w-full mb-3">
               <TypographyMuted className="text-md">
@@ -67,7 +71,7 @@ export default function ExperienceStepForm({
             </div>
           )}
 
-          {/* Header With Remove Button */}
+          {/* Header With Remove Button Section */}
           {fields.length > 1 && (
             <div className="w-full flex items-center justify-between mb-3">
               <TypographyMuted className="text-md">
@@ -84,7 +88,7 @@ export default function ExperienceStepForm({
             </div>
           )}
 
-          {/* Title */}
+          {/* Title Section */}
           <LabelInput
             label="Title"
             input={
@@ -96,7 +100,7 @@ export default function ExperienceStepForm({
             }
           />
 
-          {/* Description */}
+          {/* Description Section */}
           <div className="w-full flex flex-col gap-1">
             <TypographyMuted className="text-xs">Description</TypographyMuted>
             <Textarea
@@ -110,9 +114,9 @@ export default function ExperienceStepForm({
             />
           </div>
 
-          {/* Dates */}
+          {/* StartDate and EndDate Section */}
           <div className="w-full flex items-center gap-4">
-            {/* Start Date */}
+            {/* StartDate Section */}
             <div className="w-full flex flex-col gap-1">
               <TypographyMuted className="text-xs">Start Date</TypographyMuted>
               <Controller
@@ -133,7 +137,7 @@ export default function ExperienceStepForm({
               </ErrorMessage>
             </div>
 
-            {/* End Date */}
+            {/* EndDate Section */}
             <div className="w-full flex flex-col gap-1">
               <TypographyMuted className="text-xs">End Date</TypographyMuted>
               <Controller
@@ -157,7 +161,7 @@ export default function ExperienceStepForm({
         </div>
       ))}
 
-      {/* Add More Button */}
+      {/* Add More Button Section */}
       <div className="flex justify-end">
         <Button
           variant="secondary"

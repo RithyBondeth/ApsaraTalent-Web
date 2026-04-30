@@ -1,17 +1,20 @@
 import axios from "@/lib/axios";
-import { API_UPDATE_EMP_INFO_URL } from "@/utils/constants/apis/employee_url";
-import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
+import { API_UPDATE_EMP_INFO_URL } from "@/utils/constants/apis/user-api/employee.api.constant";
+import { IEmployee } from "@/utils/interfaces/user/employee.interface";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Update One Employee API Response ──────────────────────────────────
 type TUpdateOneEmployeeResponse = {
   message: string | null;
   employee: IEmployee | null;
 };
 
+// ── Update One Employee Body ──────────────────────────────────────────
 export type TEmployeeUpdateBody = Partial<Omit<IEmployee, "id">> & {
   email?: string;
-
-  // delete arrays (match backend DTO/service)
+  // Delete arrays (match backend DTO/service)
   skillIdsToDelete?: string[];
   careerScopeIdsToDelete?: string[];
   experienceIdsToDelete?: string[];
@@ -19,6 +22,7 @@ export type TEmployeeUpdateBody = Partial<Omit<IEmployee, "id">> & {
   socialIdsToDelete?: string[];
 };
 
+// ── Update One Employee State ────────────────────────────────────────
 type TUpdateOneEmployeeState = TUpdateOneEmployeeResponse & {
   loading: boolean;
   error: string | null;
@@ -28,6 +32,7 @@ type TUpdateOneEmployeeState = TUpdateOneEmployeeResponse & {
   ) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
   (set) => ({
     message: null,
@@ -40,13 +45,11 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
       body: TEmployeeUpdateBody,
     ) => {
       set({ loading: true, error: null });
-
       try {
+        // Build the request body
         const requestBody: any = {};
 
-        /* =========================
-         Basic scalar fields
-      ========================= */
+        // Basic fields
         if (body.email) requestBody.email = body.email;
         if (body.firstname) requestBody.firstname = body.firstname;
         if (body.lastname) requestBody.lastname = body.lastname;
@@ -69,10 +72,10 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
         if ((body as any).coverLetter)
           requestBody.coverLetter = (body as any).coverLetter;
 
-        /* =========================
+        /*
          Skills (M2M)
          backend expects: skills: [{ id?, name, description? }]
-      ========================= */
+        */
         if ((body as any).skills) {
           requestBody.skills = (body as any).skills.map((s: any) => ({
             ...(s.id && { id: s.id }),
@@ -85,10 +88,10 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
           requestBody.skillIdsToDelete = body.skillIdsToDelete;
         }
 
-        /* =========================
+        /*
          Career Scopes (M2M)
          backend expects: careerScopes: [{ id?, name, description? }]
-      ========================= */
+        */
         if ((body as any).careerScopes) {
           requestBody.careerScopes = (body as any).careerScopes.map(
             (cs: any) => ({
@@ -103,10 +106,10 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
           requestBody.careerScopeIdsToDelete = body.careerScopeIdsToDelete;
         }
 
-        /* =========================
+        /*
          Experiences (O2M upsert)
          backend expects: experiences: [{ id?, title, description, startDate, endDate? }]
-        ========================= */
+        */
         if ((body as any).experiences) {
           requestBody.experiences = (body as any).experiences.map(
             (exp: any) => ({
@@ -123,10 +126,10 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
           requestBody.experienceIdsToDelete = body.experienceIdsToDelete;
         }
 
-        /* =========================
+        /*
          Educations (O2M upsert)
          backend expects: educations: [{ id?, school, degree, year }]
-      ========================= */
+        */
         if ((body as any).educations) {
           requestBody.educations = (body as any).educations.map((edu: any) => ({
             ...(edu.id && { id: edu.id }),
@@ -140,10 +143,10 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
           requestBody.educationIdsToDelete = body.educationIdsToDelete;
         }
 
-        /* =========================
+        /*
          Socials (O2M upsert)
          backend expects: socials: [{ id?, platform, url }]
-      ========================= */
+        */
         if ((body as any).socials) {
           requestBody.socials = (body as any).socials.map((social: any) => ({
             ...(social.id && { id: social.id }),
@@ -170,20 +173,12 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
           error: null,
         });
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const errorMessage =
-            error.response?.data?.message instanceof Array
-              ? error.response.data.message.join(", ")
-              : error.response?.data?.message || error.message;
+        const errorMessage = extractApiErrorMessage(
+          error,
+          "An error occurred while updating employee's information",
+        );
 
-          set({ loading: false, error: errorMessage, message: errorMessage });
-        } else {
-          set({
-            loading: false,
-            error: "An error occurred while updating employee's information",
-            message: "An error occurred while updating employee's information",
-          });
-        }
+        set({ loading: false, error: errorMessage, message: errorMessage });
       }
     },
   }),

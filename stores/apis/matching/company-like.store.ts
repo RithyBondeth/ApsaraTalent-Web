@@ -1,9 +1,12 @@
 import axios from "@/lib/axios";
-import { API_MATCHING_CMP_LIKE_URL } from "@/utils/constants/apis/matching_url";
-import { ICompany } from "@/utils/interfaces/user-interface/company.interface";
-import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
+import { API_MATCHING_CMP_LIKE_URL } from "@/utils/constants/apis/matching.api.constant";
+import { ICompany } from "@/utils/interfaces/user/company.interface";
+import { IEmployee } from "@/utils/interfaces/user/employee.interface";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Company Like API Response ────────────────────────────
 type TCompanyLikeResponse = {
   employeeLiked: boolean;
   companyLiked: boolean;
@@ -12,6 +15,7 @@ type TCompanyLikeResponse = {
   company: ICompany;
 };
 
+// ── Company Like State ──────────────────────────────────
 type TCompanyLikeState = {
   loading: boolean;
   error: string | null;
@@ -19,6 +23,7 @@ type TCompanyLikeState = {
   companyLike: (companyID: string, employeeID: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useCompanyLikeStore = create<TCompanyLikeState>((set) => ({
   loading: false,
   error: null,
@@ -33,21 +38,15 @@ export const useCompanyLikeStore = create<TCompanyLikeState>((set) => ({
 
       set({ loading: false, error: null, data: response.data });
     } catch (error) {
-      const errorMessage = axios.isAxiosError(error)
-        ? error.response?.data?.message || error.message
-        : "Failed to like company";
-      if (axios.isAxiosError(error))
-        set({
-          error: errorMessage,
-          loading: false,
-          data: null,
-        });
-      else
-        set({
-          error: errorMessage,
-          loading: false,
-          data: null,
-        });
+      const errorMessage = extractApiErrorMessage(
+        error,
+        "Failed to like company",
+      );
+      set({
+        error: errorMessage,
+        loading: false,
+        data: null,
+      });
       throw new Error(errorMessage);
     }
   },

@@ -1,101 +1,114 @@
-import IconLabel from "@/components/utils/icon-label";
+import MetaChip from "@/components/utils/data-display/meta-chip";
 import {
-    LucideBriefcaseBusiness,
-    LucideBuilding,
-    LucideClock,
-    LucideMapPin,
-    LucideMessageCircle,
-    LucideUsers
+  LucideBriefcaseBusiness,
+  LucideBuilding,
+  LucideCalendarCheck,
+  LucideClock,
+  LucideMapPin,
+  LucideMessageCircle,
+  LucideUsers,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
-import Tag from "../../utils/tag";
-import { TypographyH4 } from "../../utils/typography/typography-h4";
-import { TypographyP } from "../../utils/typography/typography-p";
+import Tag from "@/components/utils/data-display/tag";
 import { IMatchingCompanyCardProps } from "./props";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { memo } from "react";
 
-export default function MatchingCompanyCard(props: IMatchingCompanyCardProps) {
+const MatchingCompanyCard = memo(function MatchingCompanyCard(props: IMatchingCompanyCardProps) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-md tablet-xl:flex-col">
-      <Avatar rounded="md" className="size-56 tablet-xl:size-36">
-        <AvatarFallback>{props.name.slice(0, 2).toUpperCase()}</AvatarFallback>
-        <AvatarImage src={props.avatar} />
-      </Avatar>
-      <div className="w-full flex flex-col items-start gap-3">
-        <div className="flex flex-col items-start gap-1">
-          <TypographyH4 className="text-lg">{props.name}</TypographyH4>
-          <div className="flex items-center gap-3 mt-1">
-            <IconLabel
-              className="[&>p]:text-primary"
-              icon={<LucideBuilding size={"15px"} />}
-              text={props.industry}
-            />
-            <IconLabel
-              className="[&>p]:text-primary"
-              icon={<LucideClock size={"15px"} />}
-              text={`Founded in ${props.foundedYear}`}
-            />
-          </div>
-        </div>
-        <TypographyP className="text-sm leading-relaxed !m-0">
-          {props.description}
-        </TypographyP>
-        <div className="flex flex-wrap items-center gap-2">
-          {props.openPosition.map((op) => (
-            <Tag label={op.title} key={op.id} />
-          ))}
-        </div>
-        <div className="w-full flex items-center justify-between mt-1 tablet-md:flex-col tablet-md:items-start tablet-md:gap-5">
-          <div className="flex items-center gap-5 tablet-md:flex-col">
-            <div className="flex items-center gap-2">
-              <div className="p-3 rounded-md bg-blue-100">
-                <LucideUsers size={"15px"} className="text-blue-500" />
-              </div>
-              <div className="flex flex-col items-start">
-                <TypographyP className="text-xs !m-0">Team member</TypographyP>
-                <TypographyP className="text-sm font-medium !m-0">
-                  {props.companySize <= 1
-                    ? `${props.companySize} member`
-                    : `${props.companySize} members`}
-                </TypographyP>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-md bg-red-100">
-                <LucideBriefcaseBusiness
-                  size={"15px"}
-                  className="text-red-500"
-                />
-              </div>
-              <div className="flex flex-col items-start">
-                <TypographyP className="text-xs !m-0">
-                  Open Position
-                </TypographyP>
-                <TypographyP className="text-sm font-medium !m-0">
-                  {props.openPosition.length <= 1
-                    ? `${props.openPosition.length} position`
-                    : `${props.openPosition.length} positions`}
-                </TypographyP>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="p-3 rounded-md bg-green-100">
-                <LucideMapPin size={"15px"} className="text-green-500" />
-              </div>
-              <div className="flex flex-col items-start">
-                <TypographyP className="text-xs !m-0">Location</TypographyP>
-                <TypographyP className="text-sm font-medium !m-0">
-                  {props.location}
-                </TypographyP>
-              </div>
+    <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
+      <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
+        {/* Avatar Section */}
+        <Avatar
+          rounded="md"
+          className="size-16 sm:size-20 flex-shrink-0 ring-[2px] ring-border/40"
+        >
+          <AvatarFallback className="text-sm font-semibold">
+            {props.name.slice(0, 2).toUpperCase()}
+          </AvatarFallback>
+          <AvatarImage src={props.avatar} />
+        </Avatar>
+
+        {/* Content Section */}
+        <div className="flex-1 min-w-0 flex flex-col gap-3">
+          {/* Header Section: Name, Industry and Founded Year */}
+          <div>
+            <h3 className="text-base font-bold leading-tight truncate">
+              {props.name}
+            </h3>
+            <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+              <span className="inline-flex items-center gap-1">
+                <LucideBuilding className="size-3.5" />
+                {props.industry}
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <LucideClock className="size-3.5" />
+                Founded {props.foundedYear}
+              </span>
             </div>
           </div>
-          <Button className="text-xs" onClick={props.onChatNowClick}>
-            Chat Now
-            <LucideMessageCircle />
+
+          {/* Description Section */}
+          {props.description && (
+            <TypographyMuted className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+              {props.description}
+            </TypographyMuted>
+          )}
+
+          {/* Open Positions Tags Section */}
+          {props.openPosition.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {props.openPosition.map((op) => (
+                <Tag label={op.title} key={op.id} />
+              ))}
+            </div>
+          )}
+
+          {/* Meta Chips Section */}
+          <div className="flex flex-wrap gap-2">
+            <MetaChip
+              icon={<LucideUsers />}
+              text={
+                props.companySize <= 1
+                  ? `${props.companySize} member`
+                  : `${props.companySize} members`
+              }
+            />
+            <MetaChip
+              icon={<LucideBriefcaseBusiness />}
+              text={
+                props.openPosition.length <= 1
+                  ? `${props.openPosition.length} position`
+                  : `${props.openPosition.length} positions`
+              }
+            />
+            <MetaChip icon={<LucideMapPin />} text={props.location} />
+          </div>
+        </div>
+      </div>
+
+      {/* Action Bar Section: Schedule and Chat Now Buttons */}
+      <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end gap-2">
+        {props.onScheduleClick && (
+          <Button
+            size="sm"
+            variant="outline"
+            className="text-xs"
+            onClick={props.onScheduleClick}
+          >
+            <LucideCalendarCheck className="size-3.5" />
+            Schedule
           </Button>
-        </div>
+        )}
+        <Button size="sm" className="text-xs" onClick={props.onChatNowClick}>
+          <LucideMessageCircle className="size-3.5" />
+          Chat Now
+        </Button>
       </div>
     </div>
   );
-}
+});
+
+export default MatchingCompanyCard;

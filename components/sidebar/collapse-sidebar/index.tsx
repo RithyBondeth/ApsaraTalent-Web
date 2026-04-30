@@ -1,147 +1,197 @@
 "use client";
-import { Badge } from "@/components/ui/badge";
+
 import { Separator } from "@/components/ui/separator";
-import { useFetchOnce } from "@/hooks/use-fetch-once";
-import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
-import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
+import { useFetchOnce } from "@/hooks/utils/use-fetch-once";
+import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
+import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
 import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
 import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useChatStore } from "@/stores/chat.store";
+import { useChatStore } from "@/stores/features/chat/chat.store";
 import { sidebarList } from "@/utils/constants/sidebar.constant";
-import { LucideFileUser } from "lucide-react";
+import { LucideFileUser, type LucideIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Collapsible, CollapsibleTrigger } from "../../ui/collapsible";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from "../../ui/sidebar";
-import LogoComponent from "../../utils/logo";
+import LogoComponent from "@/components/utils/brand/logo";
 import { SidebarDropdownFooter } from "./sidebar-dropdown-footer";
-import { SidebarDropdownFooterSkeleton } from "./sidebar-dropdown-footer/skeleton";
+import { SidebarDropdownFooterSkeleton } from "../skeleton";
+import FloatingBadge from "./badge/floating-badge";
+import CountBadge from "./badge/count-badge";
 
-// Badge Component
-const CountBadge = ({ count }: { count: number }) => {
-  if (count === 0) return null;
+/* ---------------------------------- Helper --------------------------------- */
+/* ─────────────────────────────────────────────────────────────────────────
+   Shared Button ClassName
+   Active: Gradient fill + inset left glow accent + outer drop shadow
+   Hover: 2 px slide-right micro-animation (cancelled on active items)
+   ───────────────────────────────────────────────────────────────────────── */
+const MENU_BTN_CLS = [
+  "group-data-[collapsible=icon]:justify-center",
+  "font-medium",
+  "px-2.5 py-2.5",
+  "text-[15px] md:text-sm",
+  "transition-all duration-300 ease-out",
+  /* Hover slide-right on non-active items */
+  "hover:translate-x-[2px]",
+  /* ── Active state ── */
+  "data-[active=true]:bg-gradient-to-r",
+  "data-[active=true]:from-primary",
+  "data-[active=true]:to-primary/80",
+  "data-[active=true]:text-primary-foreground",
+  "data-[active=true]:font-semibold",
+  /* Inset left accent bar + outer glow */
+  "data-[active=true]:shadow-[inset_3px_0_0_hsl(var(--primary-foreground)/0.3),_0_6px_20px_hsl(var(--primary)/0.4)]",
+  "data-[active=true]:animate-sidebar-active-in",
+  /* Cancel slide on active */
+  "data-[active=true]:translate-x-0",
+  "hover:data-[active=true]:translate-x-0",
+  /* Lock gradient on hover-over-active */
+  "hover:data-[active=true]:bg-gradient-to-r",
+  "hover:data-[active=true]:from-primary",
+  "hover:data-[active=true]:to-primary/80",
+  "hover:data-[active=true]:text-primary-foreground",
+].join(" ");
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Section Label with Coloured Dot Marker
+   ───────────────────────────────────────────────────────────────────────── */
+function NavGroupLabel({ children }: { children: React.ReactNode }) {
   return (
-    <Badge className="bg-red-500 dark:text-primary">{count}</Badge>
+    <SidebarGroupLabel className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
+      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary/50" />
+      {children}
+    </SidebarGroupLabel>
   );
-};
+}
 
 export default function CollapseSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  // Utils
+  /* ---------------------------------- Utils --------------------------------- */
   const pathname = usePathname();
-  const { open } = useSidebar();
+  const { open, isMobile, setOpenMobile } = useSidebar();
   const t = useTranslations("sidebar");
+  const isExpanded = isMobile ? true : open;
 
+  /* -------------------------------- All States ------------------------------ */
+  const [mounted, setMounted] = useState<boolean>(false);
+
+  /* ----------------------------- API Integration ---------------------------- */
+  // Current User
+  const { user, loading } = useGetCurrentUserStore();
+
+  // Count Current User Matching
+  const { countCurrentEmpMatching, totalEmpMatching } =
+    useCountCurrentEmployeeMatchingStore();
+  const { countCurrentCmpMatching, totalCmpMatching } =
+    useCountCurrentCompanyMatchingStore();
+
+  // Count Current User Favorites
+  const { countCurrentEmpFavorites, totalEmpFavorites } =
+    useCountCurrentEmployeeFavoritesStore();
+  const { countCurrentCmpFavorites, totalCmpFavorites } =
+    useCountCurrentCompanyFavoritesStore();
+
+  // Count Unread Notification
+  const { unreadCount: unreadNotifications, queryUnreadCount } =
+    useNotificationStore();
+
+  // Count Unread Message
+  const unreadMessages = useChatStore((s) => s.unreadCount);
+
+  /* --------------------------------- Effects --------------------------------- */
+  // Fetch Current User
+  const { isEmployee, isCompany } = useFetchOnce({
+    cacheKey: "sidebar-component",
+    onEmployeeFetch: (employeeId) => {
+      countCurrentEmpMatching(employeeId);
+      countCurrentEmpFavorites(employeeId);
+    },
+    onCompanyFetch: (companyId) => {
+      countCurrentCmpMatching(companyId);
+      countCurrentCmpFavorites(companyId);
+    },
+  });
+
+  useEffect(() => {
+    void queryUnreadCount();
+  }, [queryUnreadCount]);
+
+  useEffect(() => setMounted(true), []);
+
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Sidebar Title Map ──────────────────────────────────────────────────
   const sidebarTitleMap = useMemo<Record<string, string>>(
     () => ({
+      Dashboard: t("dashboard"),
       Feed: t("feed"),
       Search: t("search"),
       Favorite: t("favorite"),
       Matching: t("matching"),
+      Interview: t("interview"),
       Message: t("message"),
       Notification: t("notification"),
     }),
     [t],
   );
 
+  // ── Get Sidebar Title ──────────────────────────────────────────────────
   const getSidebarTitle = useCallback(
     (title: string): string => sidebarTitleMap[title] ?? title,
     [sidebarTitleMap],
   );
 
-  // API Calls
-  const { user, loading } = useGetCurrentUserStore();
-  const { countCurrentEmployeeMatching, totalEmpMatching } =
-    useCountCurrentEmployeeMatchingStore();
-  const { countCurrentCompanyMatching, totalCmpMatching } =
-    useCountCurrentCompanyMatchingStore();
-  const { totalAllEmployeeFavorites, countAllEmployeeFavorites } =
-    useCountAllEmployeeFavoritesStore();
-  const { totalAllCompanyFavorites, countAllCompanyFavorites } =
-    useCountAllCompanyFavoritesStore();
-
-  // Notification & message unread counts
-  const { unreadCount: unreadNotifications, fetchUnreadCount } =
-    useNotificationStore();
-  const unreadMessages = useChatStore((s) => s.unreadCount);
-
-  // Fetch unread notification count on mount (and keep it fresh)
-  useEffect(() => {
-    void fetchUnreadCount();
-  }, [fetchUnreadCount]);
-
-  // Handles all ref logic and duplicate prevention
-  const { isEmployee, isCompany } = useFetchOnce({
-    cacheKey: "sidebar-component",
-    onEmployeeFetch: (employeeId) => {
-      countCurrentEmployeeMatching(employeeId);
-      countAllEmployeeFavorites(employeeId);
-    },
-    onCompanyFetch: (companyId) => {
-      countCurrentCompanyMatching(companyId);
-      countAllCompanyFavorites(companyId);
-    },
-  });
-
-  // Memoized counts
+  // ── Matching Count ─────────────────────────────────────────────────────
   const matchingCount = useMemo(() => {
     if (isEmployee) return totalEmpMatching ?? 0;
     if (isCompany) return totalCmpMatching ?? 0;
     return 0;
   }, [isEmployee, isCompany, totalEmpMatching, totalCmpMatching]);
 
+  // ── Favorite Count ─────────────────────────────────────────────────────
   const favoriteCount = useMemo(() => {
-    if (isEmployee) return totalAllEmployeeFavorites ?? 0;
-    if (isCompany) return totalAllCompanyFavorites ?? 0;
+    if (isEmployee) return totalEmpFavorites ?? 0;
+    if (isCompany) return totalCmpFavorites ?? 0;
     return 0;
-  }, [
-    isEmployee,
-    isCompany,
-    totalAllEmployeeFavorites,
-    totalAllCompanyFavorites,
-  ]);
+  }, [isEmployee, isCompany, totalEmpFavorites, totalCmpFavorites]);
 
-  // Memoized user data
+  // ── User Data ──────────────────────────────────────────────────────────
   const userData = useMemo((): {
     name: string;
     email: string;
     avatar: string;
   } => {
-    if (isEmployee && user?.employee) {
+    if (isEmployee && user?.employee)
       return {
         name: user.employee.username ?? "",
         email: user.email ?? user.phone ?? "",
         avatar: user.employee.avatar ?? "",
       };
-    }
-
-    if (isCompany && user?.company) {
+    if (isCompany && user?.company)
       return {
         name: user.company.name ?? "",
         email: user.email ?? user.phone ?? "",
         avatar: user.company.avatar ?? "",
       };
-    }
-
     return { name: "", email: "", avatar: "" };
   }, [isEmployee, isCompany, user]);
 
-  // Badge count per URL
+  // ── Get Badge Count ───────────────────────────────────────────────
   const getBadgeCount = useCallback(
     (url: string): number => {
       if (url === "/matching") return matchingCount;
@@ -153,124 +203,138 @@ export default function CollapseSidebar({
     [matchingCount, favoriteCount, unreadMessages, unreadNotifications],
   );
 
-  // Check if a path is active
+  // ── Check Path Active ───────────────────────────────────────────────
   const isPathActive = useCallback(
     (url: string) => pathname === url || pathname.startsWith(`${url}/`),
     [pathname],
   );
 
-  // Resolve URL for search (needs role appended)
+  // ── Resolve URL ──────────────────────────────────────────────────────
   const resolveUrl = useCallback(
-    (url: string) => {
-      if (url === "/search") return `/search/${user?.role ?? ""}`;
-      return url;
-    },
+    (url: string) => (url === "/search" ? `/search/${user?.role ?? ""}` : url),
     [user?.role],
   );
 
+  // ── Handle Nav Click ─────────────────────────────────────────────────
+  const handleNavClick = useCallback(() => {
+    if (isMobile) setOpenMobile(false);
+  }, [isMobile, setOpenMobile]);
+
+  // ── Render Custom Navigation Item ─────────────────────────────────────
+  const renderNavItem = (
+    url: string,
+    title: string,
+    Icon: LucideIcon,
+    badgeCount?: number,
+  ) => {
+    const count = badgeCount ?? getBadgeCount(url);
+    const active = isPathActive(url);
+    return (
+      <Collapsible
+        key={url}
+        asChild
+        defaultOpen={true}
+        className="group/collapsible"
+      >
+        <SidebarMenuItem className="relative">
+          <CollapsibleTrigger asChild>
+            <SidebarMenuButton
+              isActive={active}
+              tooltip={title}
+              className={MENU_BTN_CLS}
+              asChild
+            >
+              <Link
+                href={resolveUrl(url)}
+                prefetch={true}
+                onClick={handleNavClick}
+              >
+                {/* Icon Section — Bolder stroke when active for extra punch */}
+                <Icon
+                  className="!size-5 shrink-0 transition-all duration-300"
+                  strokeWidth={active ? 2.2 : 1.5}
+                />
+                {/* Title Section */}
+                <span className="group-data-[collapsible=icon]:hidden">
+                  {title}
+                </span>
+                {/* Inline Badge Section (Expanded Only) */}
+                {isExpanded && count > 0 && (
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    <CountBadge count={count} />
+                  </span>
+                )}
+              </Link>
+            </SidebarMenuButton>
+          </CollapsibleTrigger>
+
+          {/* Floating Badge Section (Collapsed Only) */}
+          {!isExpanded && <FloatingBadge count={count} />}
+        </SidebarMenuItem>
+      </Collapsible>
+    );
+  };
+
+  /* --------------------------------------------- Render UI --------------------------------------------- */
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <Link href="/feed">
-          {open ? (
+      {/* Header Section: Logo */}
+      <SidebarHeader className="pt-1 pb-3">
+        {isExpanded ? (
+          <Link
+            href="/feed"
+            className="flex items-center rounded-xl px-2 py-1.5 transition-all duration-200 hover:bg-sidebar-accent"
+          >
             <LogoComponent priority={true} />
-          ) : (
-            <SidebarMenuButton tooltip="Apsara Talent" className="text-sm">
+          </Link>
+        ) : (
+          <SidebarMenuButton
+            tooltip="Apsara Talent"
+            className="justify-center text-sm"
+            asChild
+          >
+            <Link href="/feed">
               <LogoComponent withoutTitle />
-            </SidebarMenuButton>
-          )}
-        </Link>
+            </Link>
+          </SidebarMenuButton>
+        )}
       </SidebarHeader>
 
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarMenu className="space-y-5">
-            {sidebarList.map((item) => (
-              <Collapsible
-                key={item.title}
-                asChild
-                defaultOpen={true}
-                className="group/collapsible"
-              >
-                <SidebarMenuItem className="relative">
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton
-                      isActive={isPathActive(item.url)}
-                      tooltip={item.title}
-                      className="font-medium py-3 transition-all duration-300 ease-out data-[active=true]:bg-primary data-[active=true]:text-primary-foreground data-[active=true]:shadow-[0_8px_18px_hsl(var(--primary)/0.28)] data-[active=true]:animate-sidebar-active-in hover:data-[active=true]:bg-primary hover:data-[active=true]:text-primary-foreground"
-                      asChild
-                    >
-                      <Link href={resolveUrl(item.url)} prefetch={true}>
-                        {item.icon && (
-                          <item.icon
-                            className="!size-6 shrink-0"
-                            strokeWidth={1.5}
-                          />
-                        )}
-                        <span className="group-data-[collapsible=icon]:hidden">{getSidebarTitle(item.title)}</span>
-                        {item.url === "/matching" && (
-                          <span className="group-data-[collapsible=icon]:hidden ml-auto">
-                            <CountBadge count={matchingCount} />
-                          </span>
-                        )}
-                        {item.url === "/favorite" && (
-                          <span className="group-data-[collapsible=icon]:hidden ml-auto">
-                            <CountBadge count={favoriteCount} />
-                          </span>
-                        )}
-                        {item.url === "/message" && (
-                          <span className="group-data-[collapsible=icon]:hidden ml-auto">
-                            <CountBadge count={unreadMessages} />
-                          </span>
-                        )}
-                        {item.url === "/notification" && (
-                          <span className="group-data-[collapsible=icon]:hidden ml-auto">
-                            <CountBadge count={unreadNotifications} />
-                          </span>
-                        )}
-                      </Link>
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                  {!open && getBadgeCount(item.url) > 0 && (
-                    <span className="pointer-events-none absolute -top-1.5 right-1 z-50 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold leading-none">
-                      {getBadgeCount(item.url) > 99 ? "99+" : getBadgeCount(item.url)}
-                    </span>
-                  )}
-                </SidebarMenuItem>
-              </Collapsible>
-            ))}
+      {/* Separator Between Header and Navigation Section */}
+      <Separator className="mb-1" />
 
-            {/* AI Resume Builder - Only for employees */}
-            {!isCompany && (
-              <Collapsible
-                asChild
-                defaultOpen={true}
-                className="group/collapsible"
-              >
-                <SidebarMenuItem className="relative">
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton
-                      isActive={isPathActive("/resume-builder")}
-                      tooltip={t("aiResumeBuilder")}
-                      className="font-medium py-3 transition-all duration-300 ease-out data-[active=true]:bg-primary data-[active=true]:text-primary-foreground data-[active=true]:shadow-[0_8px_18px_hsl(var(--primary)/0.28)] data-[active=true]:animate-sidebar-active-in hover:data-[active=true]:bg-primary hover:data-[active=true]:text-primary-foreground"
-                      asChild
-                    >
-                      <Link href="/resume-builder" prefetch={true}>
-                        <LucideFileUser className="!size-6 shrink-0" strokeWidth={1.5} />
-                        <span className="group-data-[collapsible=icon]:hidden">{t("aiResumeBuilder")}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                </SidebarMenuItem>
-              </Collapsible>
+      {/* Navigation Group Section */}
+      <SidebarContent className="pb-1">
+        <SidebarGroup>
+          <NavGroupLabel>{t("navigationGroup")}</NavGroupLabel>
+          <SidebarMenu className="space-y-0.5">
+            {sidebarList.map((item) =>
+              renderNavItem(item.url, getSidebarTitle(item.title), item.icon),
             )}
           </SidebarMenu>
         </SidebarGroup>
+
+        {/* Tools Group Section: Employees Only (Deferred until after hydration) */}
+        {mounted && isEmployee && (
+          <SidebarGroup>
+            <NavGroupLabel>{t("toolsGroup")}</NavGroupLabel>
+            <SidebarMenu>
+              {renderNavItem(
+                "/resume-builder",
+                t("aiResumeBuilder"),
+                LucideFileUser,
+                0,
+              )}
+            </SidebarMenu>
+          </SidebarGroup>
+        )}
       </SidebarContent>
 
+      {/* Separator Between Tools / Navigation and Footer */}
       <Separator />
 
-      <SidebarFooter>
+      {/* Footer / User Menu Section */}
+      <SidebarFooter className="pb-[max(0.5rem,env(safe-area-inset-bottom))]">
         {loading || !user ? (
           <SidebarDropdownFooterSkeleton />
         ) : (

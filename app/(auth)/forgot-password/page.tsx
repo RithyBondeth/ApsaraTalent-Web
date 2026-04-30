@@ -1,34 +1,42 @@
 "use client";
 
-import forgotPasswordWhiteSvg from "@/assets/svg/forgot-password-white.svg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useForgotPasswordStore } from "@/stores/apis/auth/forgot-password.store";
-import { isEmailInput } from "@/utils/extensions/check-email-input";
-import { isNumberPhoneInput } from "@/utils/extensions/check-phone-input";
+import { isEmailInput } from "@/utils/functions/validation/check-email-input";
+import { isNumberPhoneInput } from "@/utils/functions/validation/check-phone-input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LucideArrowLeft, LucideMail, LucidePhone } from "lucide-react";
+import {
+  LucideArrowLeft,
+  LucideLock,
+  LucideMail,
+  LucidePhone,
+} from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { forgotPasswordSchema, TForgotPasswordForm } from "./validate";
+import { forgotPasswordWhiteSvg } from "@/utils/constants/asset.constant";
+import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 export default function ForgotPasswordPage() {
-  // Utils
+  /* ---------------------------------- Utils -------------------------------- */
   const router = useRouter();
+  const t = useTranslations("auth");
 
-  // Forgot Password Helpers
+  /* ------------------------------- All States ------------------------------ */
   const [inputValue, setInputValue] = useState<string>("");
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
-  // API Integration
+  /* ----------------------------- API Integration ---------------------------- */
   const { loading, error, message, forgotPassword } = useForgotPasswordStore();
 
-  // React Hook Form: Forgot Password Form
+  /* ------------------ React Hook Form: Forgot Password Form ----------------- */
   const {
     handleSubmit,
     register,
@@ -38,7 +46,8 @@ export default function ForgotPasswordPage() {
     resolver: zodResolver(forgotPasswordSchema),
   });
 
-  // Forgot Password Function
+  /* -------------------------------- Methods -------------------------------- */
+  // ── Forgot Password Function ───────────────────────────────────────
   const onSubmit = async (data: TForgotPasswordForm) => {
     setIsSubmitted(true);
     const idenifier = data.forgotPassword;
@@ -47,51 +56,60 @@ export default function ForgotPasswordPage() {
     else await forgotPassword(idenifier);
   };
 
-  // Forgot Password Effect
+  /* -------------------------------- Effects -------------------------------- */
+  // ── Forgot Password Effect ─────────────────────────────────────────
   useEffect(() => {
     if (!isSubmitted) return;
 
-    if (loading) {
-      toast.loading("Loading...");
-    }
+    if (loading) toast.loading(t("loading"));
 
     if (error) {
       toast.dismiss();
-      toast.error(message ?? "An error occurred", {
-        action: { label: "Retry", onClick: () => reset() },
+      toast.error(t("anErrorOccurred"), {
+        action: { label: t("retry"), onClick: () => reset() },
       });
     }
 
     if (!loading && !error && message) {
       toast.dismiss();
-      toast.success(message, { duration: 1000 });
-      setTimeout(() => router.push("/reset-password"), 1000);
+      toast.success(t("forgotPasswordEmailSent"), { duration: 1000 });
+      setTimeout(
+        () => router.push("/reset-password"),
+        DEFAULT_REDIRECT_DELAY_MS,
+      );
     }
-  }, [error, message, loading, isSubmitted]);
+  }, [error, isSubmitted, loading, message, reset, router, t]);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="h-screen w-screen flex items-stretch tablet-md:flex-col tablet-md:[&>div]:w-full">
-      <div className="w-1/2 flex justify-center items-center bg-primary-foreground tablet-md:h-[40%]">
-        <div className="size-[60%] flex flex-col items-stretch gap-3 tablet-md:justify-center tablet-md:size-full tablet-md:pb-10 tablet-md:p-5">
+    <div className="min-h-screen w-full flex tablet-md:flex-col">
+      {/* Left Section */}
+      <div className="w-1/2 min-h-screen flex items-center justify-center bg-background p-6 sm:p-10 tablet-md:w-full tablet-md:min-h-0 tablet-md:py-16">
+        <div className="w-full max-w-[440px] flex flex-col items-start gap-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
+          {/* Icon Badge Section */}
+          <div className="size-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+            <LucideLock className="size-7 text-primary" />
+          </div>
+
           {/* Title Section */}
-          <div className="mb-5">
+          <div className="flex flex-col items-start">
             <TypographyH2 className="tablet-sm:text-2xl">
-              Forgot your Password?
+              {t("forgotPageTitle")}
             </TypographyH2>
             <TypographyMuted className="text-md tablet-sm:text-sm">
-              Enter your Email or Mobile. We will help you reset your password.
+              {t("forgotSubtitle")}
             </TypographyMuted>
           </div>
 
           {/* Form Section */}
           <form
             action=""
-            className="flex flex-col gap-3"
+            className="w-full flex flex-col gap-3"
             onSubmit={handleSubmit(onSubmit)}
           >
             <Input
               type="text"
-              placeholder="Email or Mobile"
+              placeholder={t("emailOrMobile")}
               value={inputValue}
               prefix={
                 isEmailInput(inputValue) ? (
@@ -105,18 +123,22 @@ export default function ForgotPasswordPage() {
               validationMessage={errors.forgotPassword?.message}
             />
             <div className="flex items-center justify-stretch gap-3 [&>button]:w-1/2">
-              <Button type="button" onClick={() => router.push("/login")}>
+              <Button type="button" onClick={() => router.back()}>
                 <LucideArrowLeft />
-                Back
+                {t("back")}
               </Button>
-              <Button type="submit">Continue</Button>
+              <Button type="submit">{t("continue")}</Button>
             </div>
           </form>
         </div>
       </div>
 
-      {/* Image Poster Section */}
-      <div className="w-1/2 flex justify-center items-center bg-primary tablet-md:h-[60%]">
+      {/* Right Section: Image Poster Section */}
+      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary relative overflow-hidden tablet-md:hidden">
+        {/* Decorative Circles Section */}
+        <div className="absolute -top-20 -right-20 size-72 rounded-full bg-white/5" />
+        <div className="absolute -bottom-32 -left-32 size-96 rounded-full bg-white/5" />
+
         <Image
           src={forgotPasswordWhiteSvg}
           alt="forgot-password"

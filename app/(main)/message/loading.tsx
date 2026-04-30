@@ -1,5 +1,5 @@
-import MessagePageSkeleton from "@/components/message/message-page-skeleton";
+import MessageLoadingSkeleton from "@/components/message/skeleton/index";
 
 export default function MessageLoading() {
-  return <MessagePageSkeleton />;
+  return <MessageLoadingSkeleton />;
 }

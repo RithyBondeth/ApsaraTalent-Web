@@ -1,8 +1,6 @@
 "use client";
 
-import CompanySearchSvg from "@/assets/svg/company-search.svg";
 import SearchBar from "@/components/search/search-bar";
-import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
 import SearchEmployeeCard from "@/components/search/search-employee-card";
 import { SearchErrorCard } from "@/components/search/search-error-card";
 import { Button } from "@/components/ui/button";
@@ -22,34 +20,48 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useSearchEmployeeStore } from "@/stores/apis/employee/search-emp.store";
+import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import {
-  SEARCH_DEBOUNCE_MS,
-  yearOfExperienceConstant,
-} from "@/utils/constants/app.constant";
-import { TAvailability } from "@/utils/types/availability.type";
-import { TLocations } from "@/utils/types/location.type";
+import { SEARCH_DEBOUNCE_MS } from "@/utils/constants/search.constant";
+import { yearOfExperienceConstant } from "@/utils/constants/ui.constant";
+import { TAvailability } from "@/utils/types/user/availability.type";
+import { TLocations } from "@/utils/types/user/location.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import debounce from "lodash.debounce";
-import { LucideBriefcaseBusiness, LucideGraduationCap } from "lucide-react";
+import {
+  LucideBriefcaseBusiness,
+  LucideGraduationCap,
+  LucideSlidersHorizontal,
+  LucideX,
+} from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Controller, useForm } from "react-hook-form";
 import { companySearchSchema, TCompanySearchSchema } from "./validation";
+import { CompanySearchSvg } from "@/utils/constants/asset.constant";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { SearchEmployeeCardSkeleton } from "@/components/search/skeleton";
 
 export default function CompanySearchPage() {
-  // Utils
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("searchCompany");
   const didInitRef = useRef<boolean>(false);
   const skipFirstWatchRef = useRef<boolean>(true);
 
-  // API Integration
+  /* ----------------------------- API Integration ---------------------------- */
   const { error, loading, employees, querySearchEmployee } =
     useSearchEmployeeStore();
   const { user } = useGetCurrentUserStore();
+  const { currentCompanyLiked, queryCurrentCompanyLiked } =
+    useGetCurrentCompanyLikedStore();
 
+  /* -------------------------------- All States ------------------------------ */
   // Company Search For Employee Helper
   const [scopeNames, setScopeNames] = useState<string[]>([]);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
 
+  /* ------------------------------- Search Form ------------------------------ */
   // React Hook Form: Company Search Form
   const { register, setValue, control, handleSubmit, watch } =
     useForm<TCompanySearchSchema>({
@@ -69,7 +81,8 @@ export default function CompanySearchPage() {
   const location = watch("location");
   const jobType = watch("jobType");
 
-  // Real Searh Function
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Real Search Function ─────────────────────────────────────────
   const runSearch = useCallback(
     (data: TCompanySearchSchema) => {
       const normalizedJobType =
@@ -95,12 +108,13 @@ export default function CompanySearchPage() {
     [querySearchEmployee, scopeNames],
   );
 
-  // Stable Debounded Function
+  // ── Stable Debounced Function ───────────────────────────────────────
   const debouncedRunSearch = useMemo(
     () => debounce(runSearch, SEARCH_DEBOUNCE_MS),
     [runSearch],
   );
 
+  /* --------------------------------- Effects --------------------------------- */
   // Initial Search Effect (Once per mount / Per user ready)
   useEffect(() => {
     if (!user) return;
@@ -154,6 +168,24 @@ export default function CompanySearchPage() {
     return () => debouncedRunSearch.cancel();
   }, [debouncedRunSearch]);
 
+  // Fetch Liked Employees (So We Can Filter Them Out of Results)
+  useEffect(() => {
+    if (!user?.company?.id) return;
+    if (currentCompanyLiked !== null) return;
+    queryCurrentCompanyLiked(user.company.id);
+  }, [user?.company?.id, currentCompanyLiked, queryCurrentCompanyLiked]);
+
+  // Filter Out Employees The Company Has Already Liked
+  const filteredEmployees = useMemo(() => {
+    if (!employees) return null;
+    if (!currentCompanyLiked || currentCompanyLiked.length === 0)
+      return employees;
+    const likedEmployeeIds = new Set(currentCompanyLiked.map((e) => e.id));
+    return employees.filter((emp) => !likedEmployeeIds.has(emp.id));
+  }, [employees, currentCompanyLiked]);
+
+  /* ----------------------------- Event Handlers ---------------------------- */
+  // ── Handle Radio Change ─────────────────────────────────────────
   const handleRadioChange = (
     fieldName: keyof TCompanySearchSchema,
     value: TCompanySearchSchema[keyof TCompanySearchSchema],
@@ -161,22 +193,19 @@ export default function CompanySearchPage() {
     setValue(fieldName, value, { shouldDirty: true });
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <form
-      className="w-full flex flex-col items-start gap-5 px-10"
+      className="w-full flex flex-col items-start gap-5 px-2.5 sm:px-5 lg:px-8 animate-page-in"
       onSubmit={handleSubmit(runSearch)}
     >
       {/* Banner Section */}
-      <div className="w-full flex items-center justify-between gap-10 laptop-sm:flex-col laptop-sm:items-center">
+      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 laptop-sm:flex-col laptop-sm:items-center">
         <div className="w-full flex flex-col items-start gap-3 laptop-sm:py-5">
-          <TypographyH2>Hire Smarter, Anywhere.</TypographyH2>
-          <TypographyH4>Search top talent and connect instantly.</TypographyH4>
-          <TypographyH4>
-            Search profiles, review resumes, and reach out directly — instantly.
-          </TypographyH4>
-          <TypographyMuted>
-            Your next great hire is just a click away.
-          </TypographyMuted>
+          <TypographyH2>{t("bannerTitle")}</TypographyH2>
+          <TypographyH4>{t("bannerSubtitle1")}</TypographyH4>
+          <TypographyH4>{t("bannerSubtitle2")}</TypographyH4>
+          <TypographyMuted>{t("bannerMuted")}</TypographyMuted>
 
           {/* Search Bar Section */}
           <SearchBar
@@ -188,6 +217,7 @@ export default function CompanySearchPage() {
           />
         </div>
 
+        {/* Company Search Banner Section */}
         <Image
           src={CompanySearchSvg}
           alt="company-search"
@@ -197,12 +227,37 @@ export default function CompanySearchPage() {
         />
       </div>
 
-      {/* Left Side: Filter Section */}
+      {/* Mobile/Tablet Filter Toogle Section */}
+      <div className="hidden w-full tablet-xl:flex">
+        <Button
+          type="button"
+          variant="outline"
+          className="h-10 w-full justify-between"
+          onClick={() => setMobileFiltersOpen((v) => !v)}
+        >
+          <TypographySmall className="flex items-center gap-2 text-sm">
+            <LucideSlidersHorizontal className="h-4 w-4" />
+            {t("refineResults")}
+          </TypographySmall>
+          {mobileFiltersOpen ? (
+            <LucideX className="h-4 w-4" />
+          ) : (
+            <TypographySmall className="text-xs text-muted-foreground">
+              {t("open")}
+            </TypographySmall>
+          )}
+        </Button>
+      </div>
+
       <div className="w-full flex items-start gap-5 tablet-xl:!flex-col tablet-xl:[&>div]:w-full">
-        {/* Filters Section */}
-        <div className="w-1/4 flex flex-col items-start gap-8 p-5 shadow-md rounded-md">
+        {/* Left Side: Filters Section */}
+        <div
+          className={`w-1/4 flex flex-col items-start gap-6 p-4 sm:p-5 shadow-md rounded-md tablet-xl:w-full ${
+            mobileFiltersOpen ? "tablet-xl:flex" : "tablet-xl:hidden"
+          }`}
+        >
           <div className="w-full flex items-center justify-between">
-            <TypographyH4 className="text-lg">Refine Result</TypographyH4>
+            <TypographyH4 className="text-lg">{t("refineResult")}</TypographyH4>
             <Button
               type="button"
               variant="outline"
@@ -216,7 +271,7 @@ export default function CompanySearchPage() {
               }}
               className="text-xs h-8 px-2"
             >
-              Clear Filters
+              {t("clearFilters")}
             </Button>
           </div>
 
@@ -224,7 +279,7 @@ export default function CompanySearchPage() {
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideGraduationCap strokeWidth={"1.5px"} />
-              Education Level
+              {t("educationLevel")}
             </TypographyP>
 
             <Controller
@@ -235,16 +290,16 @@ export default function CompanySearchPage() {
                 const options = [
                   {
                     id: "edu-undergrad",
-                    label: "Under Graduate",
+                    label: t("underGraduate"),
                     value: "Under Graduate",
                   },
-                  { id: "edu-bachelor", label: "Bachelor", value: "Bachelor" },
-                  { id: "edu-master", label: "Master", value: "Master" },
-                  { id: "edu-phd", label: "PhD", value: "PHD" },
+                  { id: "edu-bachelor", label: t("bachelor"), value: "Bachelor" },
+                  { id: "edu-master", label: t("master"), value: "Master" },
+                  { id: "edu-phd", label: t("phd"), value: "PHD" },
                 ];
 
                 return (
-                  <div className="flex flex-col gap-3 ml-3">
+                  <div className="ml-1.5 flex flex-col gap-3 sm:ml-3">
                     {options.map((option) => (
                       <div
                         key={option.id}
@@ -287,48 +342,61 @@ export default function CompanySearchPage() {
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideBriefcaseBusiness strokeWidth={"1.5px"} />
-              Experience Level
+              {t("experienceLevel")}
             </TypographyP>
 
             <Controller
               name="experienceLevel"
               control={control}
-              render={({ field }) => (
-                <RadioGroup
-                  onValueChange={(value) =>
-                    handleRadioChange("experienceLevel", value)
-                  }
-                  value={field.value ?? ""}
-                  className="flex flex-col gap-3 ml-3"
-                >
-                  {yearOfExperienceConstant.map((option) => (
-                    <RadioGroupItemWithLabel
-                      key={option.id}
-                      value={option.value}
-                      id={`exp-${option.id}`}
-                      htmlFor={`exp-${option.id}`}
-                    >
-                      {option.label}
-                    </RadioGroupItemWithLabel>
-                  ))}
-                </RadioGroup>
-              )}
+              render={({ field }) => {
+                const expLabels: Record<string, string> = {
+                  "No Experience": t("expNoExperience"),
+                  "Less than 1 year": t("expLessThan1Year"),
+                  "1 - 2 years": t("exp1To2Years"),
+                  "3 - 5 years": t("exp3To5Years"),
+                  "6 - 10 years": t("exp6To10Years"),
+                  "10+ years": t("exp10PlusYears"),
+                };
+                return (
+                  <RadioGroup
+                    onValueChange={(value) =>
+                      handleRadioChange("experienceLevel", value)
+                    }
+                    value={field.value ?? ""}
+                    className="ml-1.5 flex flex-col gap-3 sm:ml-3"
+                  >
+                    {yearOfExperienceConstant.map((option) => (
+                      <RadioGroupItemWithLabel
+                        key={option.id}
+                        value={option.value}
+                        id={`exp-${option.id}`}
+                        htmlFor={`exp-${option.id}`}
+                      >
+                        {expLabels[option.value] ?? option.label}
+                      </RadioGroupItemWithLabel>
+                    ))}
+                  </RadioGroup>
+                );
+              }}
             />
           </div>
         </div>
 
-        {/* Results Section */}
-        <div className="w-3/4 flex flex-col items-start gap-3">
-          <div className="w-full flex justify-between items-center">
+        {/* Right Side: Results Section */}
+        <div className="w-3/4 flex flex-col items-start gap-3 tablet-xl:w-full">
+          {/* Results Header Section */}
+          <div className="w-full flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-3">
             <TypographyH4 className="text-lg">
               {loading ? (
                 <Skeleton className="h-6 w-40 bg-muted" />
               ) : error ? (
-                <span className="text-destructive">0 Employee Found</span>
-              ) : employees && employees.length > 0 ? (
-                `${employees.length} Employee${employees.length > 1 ? "s" : ""} Found`
+                <TypographySmall className="text-destructive">
+                  {t("zeroEmployeesFound")}
+                </TypographySmall>
+              ) : filteredEmployees && filteredEmployees.length > 0 ? (
+                t("employeesFound", { count: filteredEmployees.length })
               ) : (
-                "No employees found"
+                t("noEmployeesFound")
               )}
             </TypographyH4>
 
@@ -353,21 +421,21 @@ export default function CompanySearchPage() {
                           });
                         }}
                       >
-                        <SelectTrigger className="w-[200px] h-9 text-sm">
-                          <SelectValue placeholder="Sort by" />
+                        <SelectTrigger className="w-full sm:w-[200px] h-9 text-sm">
+                          <SelectValue placeholder={t("sortBy")} />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="createdAt-desc">
-                            Newest First
+                            {t("newestFirst")}
                           </SelectItem>
                           <SelectItem value="createdAt-asc">
-                            Oldest First
+                            {t("oldestFirst")}
                           </SelectItem>
                           <SelectItem value="yearsOfExperience-desc">
-                            Experience: High to Low
+                            {t("experienceHighToLow")}
                           </SelectItem>
                           <SelectItem value="yearsOfExperience-asc">
-                            Experience: Low to High
+                            {t("experienceLowToHigh")}
                           </SelectItem>
                         </SelectContent>
                       </Select>
@@ -378,8 +446,10 @@ export default function CompanySearchPage() {
             />
           </div>
 
+          {/* Results List Section */}
           <div className="w-full flex flex-col items-start gap-2">
             {loading ? (
+              /* Loading State Section */
               <div className="w-full mb-3">
                 {Array(3)
                   .fill(0)
@@ -388,14 +458,16 @@ export default function CompanySearchPage() {
                   ))}
               </div>
             ) : error ? (
+              /* Error State Section */
               <div className="w-full mb-3">
                 <SearchErrorCard
-                  error={error}
-                  errorDescription="Try adjusting your filters or search terms and try again."
+                  title={error}
+                  description={t("errorDescription")}
                 />
               </div>
-            ) : employees && employees.length > 0 ? (
-              employees.map((item) => (
+            ) : filteredEmployees && filteredEmployees.length > 0 ? (
+              /* Employee Search Card Section */
+              filteredEmployees.map((item) => (
                 <SearchEmployeeCard
                   key={item.id}
                   id={item.id}
@@ -421,10 +493,10 @@ export default function CompanySearchPage() {
                 />
               ))
             ) : (
+              /* Empty List Section */
               <div className="w-full text-center py-10">
                 <TypographyP className="text-muted-foreground">
-                  No employees match your search criteria. Try adjusting your
-                  filters.
+                  {t("emptyList")}
                 </TypographyP>
               </div>
             )}

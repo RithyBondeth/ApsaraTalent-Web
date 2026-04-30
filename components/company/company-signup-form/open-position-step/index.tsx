@@ -5,18 +5,19 @@ import { Card } from "@/components/ui/card";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
-import ErrorMessage from "@/components/utils/error-message";
-import LabelInput from "@/components/utils/label-input";
-import Tag from "@/components/utils/tag";
+import ErrorMessage from "@/components/utils/feedback/error-message";
+import LabelInput from "@/components/utils/forms/label-input";
+import Tag from "@/components/utils/data-display/tag";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { getRandomBadgeColor } from "@/utils/extensions/get-random-badge-color";
+import { getRandomBadgeColor } from "@/utils/functions/ui";
 import { LucidePlus, LucideTrash2, LucideXCircle } from "lucide-react";
 import { useState } from "react";
 import { Controller, useFieldArray } from "react-hook-form";
@@ -29,54 +30,52 @@ export default function OpenPositionStepForm({
   getValues,
   trigger,
 }: IStepFormProps<TCompanySignup>) {
-  // Utils
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("toast");
 
-  // Open Position Helpers
+  /* -------------------------------- All States ------------------------------ */
   const [skillInput, setSkillInput] = useState<string>("");
   const [openPopOvers, setOpenPopOvers] = useState<boolean[]>([]);
 
+  /* ---------------------------------- Form ---------------------------------- */
   const { fields, append, remove } = useFieldArray({
     control: control!,
     name: "openPositions",
   });
 
-  // Handle Add Skill
+  /* --------------------------------- Methods -------------------------------- */
+  // ── Add Skill ─────────────────────────────────────────
   const addSkill = async (index: number) => {
     const trimmed = skillInput.trim();
     if (!trimmed) return;
 
-    // Get the current skills for the specific open position at the given index
     const currentSkills = getValues?.(`openPositions.${index}.skills`) || [];
 
-    // Prevent duplicates (case-insensitive)
     const alreadyExists = currentSkills.some(
       (skill) => skill.toLowerCase() === trimmed.toLowerCase(),
     );
     if (alreadyExists) {
-      toast.error("Duplicated Skill", {
-        description: "Please input another skill.",
-        action: { label: "Try again", onClick: () => {} },
+      toast.error(t("duplicatedSkill"), {
+        description: t("pleaseInputAnotherSkill"),
+        action: { label: t("tryAgain"), onClick: () => {} },
       });
       return;
     }
 
-    // Add the new skill to the skills list
     const updatedSkills = [...currentSkills, trimmed];
     setValue?.(`openPositions.${index}.skills`, updatedSkills);
 
-    // Trigger validation after updating the skills
     await trigger?.(`openPositions.${index}.skills`);
 
-    // Reset the skill input field after adding the skill
     setSkillInput("");
     setOpenPopOvers((prevState) => {
       const updatedState = [...prevState];
-      updatedState[index] = false; // Close the popover after adding the skill
+      updatedState[index] = false;
       return updatedState;
     });
   };
 
-  // Handle Remove Skill
+  // ── Remove Skill ───────────────────────────────────────
   const removeSkill = async (skillToRemove: string, index: number) => {
     const currentSkills = getValues?.(`openPositions.${index}.skills`) || [];
     const updatedSkills = currentSkills.filter(
@@ -84,10 +83,10 @@ export default function OpenPositionStepForm({
     );
     setValue?.(`openPositions.${index}.skills`, updatedSkills);
 
-    // Trigger validation after removing the skill
     await trigger?.(`openPositions.${index}.skills`);
   };
 
+  // ── Add Open Position ───────────────────────────────────
   const addOpenPosition = () => {
     append({
       title: "",
@@ -100,14 +99,16 @@ export default function OpenPositionStepForm({
       deadlineDate: "" as unknown as Date,
     });
 
-    // Add a new popover state for the new form
     setOpenPopOvers((prevState) => [...prevState, false]);
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col gap-5 w-full max-h-[500px] overflow-y-auto">
+      {/* Title Section */}
       <TypographyH4>Add Open Position Information</TypographyH4>
 
+      {/* Open Position Form Section */}
       {fields.map((field, index) => (
         <Card
           key={field.id}
@@ -130,7 +131,7 @@ export default function OpenPositionStepForm({
             </div>
           )}
 
-          {/* Title, Experience, Education Section */}
+          {/* Title Section */}
           <LabelInput
             label="Title"
             input={
@@ -143,6 +144,8 @@ export default function OpenPositionStepForm({
               />
             }
           />
+
+          {/* Availability Section */}
           <LabelInput
             label="Type"
             input={
@@ -155,6 +158,8 @@ export default function OpenPositionStepForm({
               />
             }
           />
+
+          {/* Description Section */}
           <div className="w-full flex flex-col items-start gap-2">
             <TypographyMuted className="text-xs">Description</TypographyMuted>
             <Textarea
@@ -168,6 +173,7 @@ export default function OpenPositionStepForm({
             />
           </div>
 
+          {/* Experience and Education Section */}
           <div className="w-full flex gap-3 [&>div]:w-1/2 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
             <LabelInput
               label="Experience Required"
@@ -197,7 +203,7 @@ export default function OpenPositionStepForm({
             />
           </div>
 
-          {/* Description + Salary + Date Section */}
+          {/* Salary and Deadline Date Section */}
           <div className="w-full flex gap-3 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
             <LabelInput
               label="Salary"
@@ -234,7 +240,7 @@ export default function OpenPositionStepForm({
             </div>
           </div>
 
-          {/* Skill Tags + Add Skill Section */}
+          {/* Skill Tags and Add Skill Section */}
           <div className="w-full flex flex-col gap-2">
             <TypographyMuted className="text-xs">
               Skills Required
@@ -259,6 +265,8 @@ export default function OpenPositionStepForm({
                 },
               )}
             </div>
+
+            {/* Add New Skill PopOver Section */}
             <Popover
               open={openPopOvers[index]}
               onOpenChange={(state) => {

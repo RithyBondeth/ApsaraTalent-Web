@@ -1,9 +1,7 @@
 "use client";
 
-import EmployeeSearchSvg from "@/assets/svg/employee-search.svg";
 import SearchBar from "@/components/search/search-bar";
 import SearchCompanyCard from "@/components/search/search-company-card";
-import SearchEmployeeCardSkeleton from "@/components/search/search-company-card/skeleton";
 import { SearchErrorCard } from "@/components/search/search-error-card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -23,13 +21,12 @@ import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useSearchJobStore } from "@/stores/apis/job/search-job.store";
+import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import {
-  SEARCH_DEBOUNCE_MS,
-  yearOfExperienceConstant,
-} from "@/utils/constants/app.constant";
-import { TAvailability } from "@/utils/types/availability.type";
-import { TLocations } from "@/utils/types/location.type";
+import { SEARCH_DEBOUNCE_MS } from "@/utils/constants/search.constant";
+import { yearOfExperienceConstant } from "@/utils/constants/ui.constant";
+import { TAvailability } from "@/utils/types/user/availability.type";
+import { TLocations } from "@/utils/types/user/location.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import debounce from "lodash.debounce";
 import {
@@ -37,25 +34,37 @@ import {
   LucideCalendarDays,
   LucideCircleDollarSign,
   LucideGraduationCap,
+  LucideSlidersHorizontal,
   LucideUsers,
+  LucideX,
 } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Controller, useForm } from "react-hook-form";
 import { employeeSearchSchema, TEmployeeSearchSchema } from "./validation";
+import { EmployeeSearchSvg } from "@/utils/constants/asset.constant";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { SearchEmployeeCardSkeleton } from "@/components/search/skeleton";
 
 export default function EmployeeSearchPage() {
-  // Utils
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("searchEmployee");
   const isFirstWatchRenderRef = useRef<boolean>(true);
   const isInitialSearchDoneRef = useRef<boolean>(false);
 
-  // API Integration
+  /* ----------------------------- API Integration ---------------------------- */
   const { error, loading, jobs, querySearchJobs } = useSearchJobStore();
   const { user } = useGetCurrentUserStore();
+  const { currentEmployeeLiked, queryCurrentEmployeeLiked } =
+    useGetCurrentEmployeeLikedStore();
 
+  /* -------------------------------- All States ------------------------------ */
   // Employee Search for Company Helper
   const [scopeNames, setScopeNames] = useState<string[]>([]);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
 
+  /* ------------------------------- Search Form ------------------------------ */
   // React Hook Form: Employee Search Form
   const { register, control, setValue, handleSubmit, watch } =
     useForm<TEmployeeSearchSchema>({
@@ -78,7 +87,8 @@ export default function EmployeeSearchPage() {
   const location = watch("location");
   const jobType = watch("jobType");
 
-  // Real Search Function
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Real Search Function ────────────────────────────────────────
   const runSearch = useCallback(
     (data: TEmployeeSearchSchema) => {
       querySearchJobs({
@@ -104,12 +114,13 @@ export default function EmployeeSearchPage() {
     [querySearchJobs, scopeNames],
   );
 
-  // Stable Debounced Function
+  // ── Stable Debounced Function ─────────────────────────────────────
   const debouncedRunSearch = useMemo(
     () => debounce(runSearch, SEARCH_DEBOUNCE_MS),
     [runSearch],
   );
 
+  /* --------------------------------- Effects --------------------------------- */
   // Initial Search Effect (Once per mount / Per user ready)
   useEffect(() => {
     if (!user) return;
@@ -154,7 +165,23 @@ export default function EmployeeSearchPage() {
     return () => debouncedRunSearch.cancel();
   }, [debouncedRunSearch]);
 
-  // Handle Radio Change
+  // Fetch Liked Companies (So We Can Filter Them Out of Results)
+  useEffect(() => {
+    if (!user?.employee?.id) return;
+    if (currentEmployeeLiked !== null) return;
+    queryCurrentEmployeeLiked(user.employee.id);
+  }, [user?.employee?.id, currentEmployeeLiked, queryCurrentEmployeeLiked]);
+
+  // Filter Out Jobs From Companies The Employee Has Already Liked
+  const filteredJobs = useMemo(() => {
+    if (!jobs) return null;
+    if (!currentEmployeeLiked || currentEmployeeLiked.length === 0) return jobs;
+    const likedCompanyIds = new Set(currentEmployeeLiked.map((c) => c.id));
+    return jobs.filter((job) => !likedCompanyIds.has(job.company.id!));
+  }, [jobs, currentEmployeeLiked]);
+
+  /* ----------------------------- Event Handlers ---------------------------- */
+  // ── Handle Radio Change ─────────────────────────────────────────
   const handleRadioChange = (
     fieldName: keyof TEmployeeSearchSchema,
     value: TEmployeeSearchSchema[keyof TEmployeeSearchSchema],
@@ -162,25 +189,26 @@ export default function EmployeeSearchPage() {
     setValue(fieldName, value, { shouldDirty: true });
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <form
-      className="w-full flex flex-col items-start gap-5 px-10"
+      className="w-full flex flex-col items-start gap-5 px-2.5 sm:px-5 lg:px-8 animate-page-in"
       onSubmit={handleSubmit(runSearch)}
     >
       {/* Banner Section */}
-      <div className="w-full flex items-center justify-between gap-10 laptop-sm:flex-col laptop-sm:items-center">
+      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 laptop-sm:flex-col laptop-sm:items-center">
         <div className="w-full flex flex-col items-start gap-3 laptop-sm:py-5">
           <TypographyH2 className="leading-relaxed">
-            Find Opportunities, Anywhere.
+            {t("bannerTitle")}
           </TypographyH2>
           <TypographyH4 className="leading-relaxed">
-            Search top careers and connect instantly.
+            {t("bannerSubtitle1")}
           </TypographyH4>
           <TypographyH4 className="leading-relaxed">
-            Search careers, review company, and reach out directly — instantly.
+            {t("bannerSubtitle2")}
           </TypographyH4>
           <TypographyMuted className="leading-relaxed">
-            Your great opportunity is just a click away.
+            {t("bannerMuted")}
           </TypographyMuted>
 
           {/* Search Bar Section */}
@@ -193,20 +221,46 @@ export default function EmployeeSearchPage() {
           />
         </div>
 
+        {/* Employee Seach Banner Section */}
         <Image
           src={EmployeeSearchSvg}
           alt="employee-search"
           height={300}
           width={400}
           className="laptop-sm:hidden"
+          priority
         />
+      </div>
+
+      {/* Mobile/Tablet Filter Toggle Section */}
+      <div className="hidden w-full tablet-xl:flex">
+        <Button
+          type="button"
+          variant="outline"
+          className="h-10 w-full justify-between"
+          onClick={() => setMobileFiltersOpen((v) => !v)}
+        >
+          <div className="flex items-center gap-2">
+            <LucideSlidersHorizontal className="h-4 w-4" />
+            <TypographySmall>{t("refineResults")}</TypographySmall>
+          </div>
+          {mobileFiltersOpen ? (
+            <LucideX className="h-4 w-4" />
+          ) : (
+            <TypographySmall>{t("open")}</TypographySmall>
+          )}
+        </Button>
       </div>
 
       <div className="w-full flex items-start gap-5 tablet-xl:!flex-col tablet-xl:[&>div]:w-full">
         {/* Left Side: Filter Section */}
-        <div className="w-1/4 flex flex-col items-start gap-8 p-5 shadow-md rounded-md">
+        <div
+          className={`w-1/4 flex flex-col items-start gap-6 p-4 sm:p-5 shadow-md rounded-md tablet-xl:w-full ${
+            mobileFiltersOpen ? "tablet-xl:flex" : "tablet-xl:hidden"
+          }`}
+        >
           <div className="w-full flex items-center justify-between">
-            <TypographyH4 className="text-lg">Refine Result</TypographyH4>
+            <TypographyH4 className="text-lg">{t("refineResult")}</TypographyH4>
             <Button
               type="button"
               variant="outline"
@@ -223,7 +277,7 @@ export default function EmployeeSearchPage() {
               }}
               className="text-xs h-8 px-2"
             >
-              Clear Filters
+              {t("clearFilters")}
             </Button>
           </div>
 
@@ -231,7 +285,7 @@ export default function EmployeeSearchPage() {
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideCalendarDays strokeWidth={"1.5px"} />
-              Date Posted
+              {t("datePosted")}
             </TypographyP>
 
             <Controller
@@ -284,28 +338,28 @@ export default function EmployeeSearchPage() {
                       value="all"
                       htmlFor="date-all"
                     >
-                      All Dates Posted
+                      {t("allDatesPosted")}
                     </RadioGroupItemWithLabel>
                     <RadioGroupItemWithLabel
                       id="last-24"
                       value="last 24 hours"
                       htmlFor="last-24"
                     >
-                      Last 24 Hours
+                      {t("last24Hours")}
                     </RadioGroupItemWithLabel>
                     <RadioGroupItemWithLabel
                       id="last-3-days"
                       value="last 3 days"
                       htmlFor="last-3-days"
                     >
-                      Last 3 Days
+                      {t("last3Days")}
                     </RadioGroupItemWithLabel>
                     <RadioGroupItemWithLabel
                       id="last-week"
                       value="last week"
                       htmlFor="last-week"
                     >
-                      Last Week
+                      {t("lastWeek")}
                     </RadioGroupItemWithLabel>
                   </RadioGroup>
                 );
@@ -313,11 +367,11 @@ export default function EmployeeSearchPage() {
             />
           </div>
 
-          {/* Company Size */}
+          {/* Company Size Section */}
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideUsers strokeWidth={"1.5px"} />
-              Company Size
+              {t("companySize")}
             </TypographyP>
 
             <Controller
@@ -326,10 +380,10 @@ export default function EmployeeSearchPage() {
               render={({ field }) => {
                 const { min, max } = field.value ?? {};
                 return (
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <Input
                       type="number"
-                      placeholder="Min"
+                      placeholder={t("min")}
                       value={min ?? ""}
                       min={0}
                       onChange={(e) => {
@@ -340,12 +394,12 @@ export default function EmployeeSearchPage() {
                           max,
                         });
                       }}
-                      className="w-20 h-9 shrink-0"
+                      className="h-9 w-[88px] shrink-0"
                     />
                     <span className="text-muted-foreground">-</span>
                     <Input
                       type="number"
-                      placeholder="Max"
+                      placeholder={t("max")}
                       value={max ?? ""}
                       min={0}
                       onChange={(e) => {
@@ -356,10 +410,10 @@ export default function EmployeeSearchPage() {
                           max: numVal,
                         });
                       }}
-                      className="w-20 h-9 shrink-0"
+                      className="h-9 w-[88px] shrink-0"
                     />
                     <span className="text-sm text-muted-foreground whitespace-nowrap">
-                      Employees
+                      {t("employees")}
                     </span>
                   </div>
                 );
@@ -367,11 +421,11 @@ export default function EmployeeSearchPage() {
             />
           </div>
 
-          {/* Salary Range */}
+          {/* Salary Range Section */}
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideCircleDollarSign strokeWidth={"1.5px"} />
-              Salary Range
+              {t("salaryRange")}
             </TypographyP>
 
             <Controller
@@ -380,10 +434,10 @@ export default function EmployeeSearchPage() {
               render={({ field }) => {
                 const { min, max } = field.value ?? {};
                 return (
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <Input
                       type="number"
-                      placeholder="Min"
+                      placeholder={t("min")}
                       value={min ?? ""}
                       min={0}
                       onChange={(e) => {
@@ -394,12 +448,12 @@ export default function EmployeeSearchPage() {
                           max,
                         });
                       }}
-                      className="w-20 h-9 shrink-0"
+                      className="h-9 w-[88px] shrink-0"
                     />
                     <span className="text-muted-foreground">-</span>
                     <Input
                       type="number"
-                      placeholder="Max"
+                      placeholder={t("max")}
                       value={max ?? ""}
                       min={0}
                       onChange={(e) => {
@@ -410,7 +464,7 @@ export default function EmployeeSearchPage() {
                           max: numVal,
                         });
                       }}
-                      className="w-20 h-9 shrink-0"
+                      className="h-9 w-[88px] shrink-0"
                     />
                     <span className="text-sm text-muted-foreground whitespace-nowrap">
                       $
@@ -421,11 +475,11 @@ export default function EmployeeSearchPage() {
             />
           </div>
 
-          {/* Education Level */}
+          {/* Education Level Section */}
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideGraduationCap strokeWidth={"1.5px"} />
-              Education Level
+              {t("educationLevel")}
             </TypographyP>
 
             <Controller
@@ -433,35 +487,35 @@ export default function EmployeeSearchPage() {
               control={control}
               render={({ field }) => {
                 const educations = [
-                  "Under Graduate",
-                  "Bachelor",
-                  "Master",
-                  "PhD",
+                  { value: "Under Graduate", label: t("underGraduate") },
+                  { value: "Bachelor", label: t("bachelor") },
+                  { value: "Master", label: t("master") },
+                  { value: "PhD", label: t("phd") },
                 ];
                 const selectedEdu = field.value ?? [];
 
                 return (
-                  <div className="flex flex-col gap-3 ml-3">
+                  <div className="ml-1.5 flex flex-col gap-3 sm:ml-3">
                     {educations.map((edu) => (
-                      <div key={edu} className="flex items-center space-x-2">
+                      <div key={edu.value} className="flex items-center space-x-2">
                         <Checkbox
-                          id={`edu-${edu}`}
-                          checked={selectedEdu.includes(edu)}
+                          id={`edu-${edu.value}`}
+                          checked={selectedEdu.includes(edu.value)}
                           onCheckedChange={(checked) => {
                             let updated = [...selectedEdu];
                             if (checked) {
-                              updated.push(edu);
+                              updated.push(edu.value);
                             } else {
-                              updated = updated.filter((item) => item !== edu);
+                              updated = updated.filter((item) => item !== edu.value);
                             }
                             handleRadioChange("educationLevel", updated);
                           }}
                         />
                         <label
-                          htmlFor={`edu-${edu}`}
+                          htmlFor={`edu-${edu.value}`}
                           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
-                          {edu}
+                          {edu.label}
                         </label>
                       </div>
                     ))}
@@ -471,52 +525,65 @@ export default function EmployeeSearchPage() {
             />
           </div>
 
-          {/* Experience Level */}
+          {/* Experience Level Section */}
           <div className="flex flex-col items-start gap-3">
             <TypographyP className="text-sm font-medium flex items-center gap-1">
               <LucideBriefcaseBusiness strokeWidth={"1.5px"} />
-              Experience Level
+              {t("experienceLevel")}
             </TypographyP>
 
             <Controller
               name="experienceLevel"
               control={control}
-              render={({ field }) => (
-                <RadioGroup
-                  onValueChange={(value) =>
-                    handleRadioChange("experienceLevel", value)
-                  }
-                  value={field.value ?? ""}
-                  className="flex flex-col gap-3 ml-3"
-                >
-                  {yearOfExperienceConstant.map((option) => (
-                    <RadioGroupItemWithLabel
-                      key={option.id}
-                      value={option.value}
-                      id={`exp-${option.id}`}
-                      htmlFor={`exp-${option.id}`}
-                    >
-                      {option.label}
-                    </RadioGroupItemWithLabel>
-                  ))}
-                </RadioGroup>
-              )}
+              render={({ field }) => {
+                const expLabels: Record<string, string> = {
+                  "No Experience": t("expNoExperience"),
+                  "Less than 1 year": t("expLessThan1Year"),
+                  "1 - 2 years": t("exp1To2Years"),
+                  "3 - 5 years": t("exp3To5Years"),
+                  "6 - 10 years": t("exp6To10Years"),
+                  "10+ years": t("exp10PlusYears"),
+                };
+                return (
+                  <RadioGroup
+                    onValueChange={(value) =>
+                      handleRadioChange("experienceLevel", value)
+                    }
+                    value={field.value ?? ""}
+                    className="ml-1.5 flex flex-col gap-3 sm:ml-3"
+                  >
+                    {yearOfExperienceConstant.map((option) => (
+                      <RadioGroupItemWithLabel
+                        key={option.id}
+                        value={option.value}
+                        id={`exp-${option.id}`}
+                        htmlFor={`exp-${option.id}`}
+                      >
+                        {expLabels[option.value] ?? option.label}
+                      </RadioGroupItemWithLabel>
+                    ))}
+                  </RadioGroup>
+                );
+              }}
             />
           </div>
         </div>
 
-        {/* Right Side: Results */}
-        <div className="w-3/4 flex flex-col items-start gap-3">
-          <div className="w-full flex justify-between items-center">
+        {/* Right Side: Results Section */}
+        <div className="w-3/4 flex flex-col items-start gap-3 tablet-xl:w-full">
+          {/* Results Header Section */}
+          <div className="w-full flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-3">
             <TypographyH4 className="text-lg">
               {loading ? (
                 <Skeleton className="h-6 w-40 bg-muted" />
               ) : error ? (
-                <span className="text-destructive">0 Job is listing</span>
-              ) : jobs && jobs.length > 0 ? (
-                `${jobs.length} Job${jobs.length === 1 ? "" : "s"} listed`
+                <TypographySmall className="text-destructive">
+                  {t("zeroJobsListing")}
+                </TypographySmall>
+              ) : filteredJobs && filteredJobs.length > 0 ? (
+                t("jobsListed", { count: filteredJobs.length })
               ) : (
-                "No jobs found"
+                t("noJobsFound")
               )}
             </TypographyH4>
 
@@ -541,21 +608,21 @@ export default function EmployeeSearchPage() {
                           });
                         }}
                       >
-                        <SelectTrigger className="w-[200px] h-9 text-sm">
-                          <SelectValue placeholder="Sort by" />
+                        <SelectTrigger className="w-full sm:w-[200px] h-9 text-sm">
+                          <SelectValue placeholder={t("sortBy")} />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="createdAt-desc">
-                            Newest First
+                            {t("newestFirst")}
                           </SelectItem>
                           <SelectItem value="createdAt-asc">
-                            Oldest First
+                            {t("oldestFirst")}
                           </SelectItem>
                           <SelectItem value="companySize-desc">
-                            Company Size: High to Low
+                            {t("companySizeHighToLow")}
                           </SelectItem>
                           <SelectItem value="companySize-asc">
-                            Company Size: Low to High
+                            {t("companySizeLowToHigh")}
                           </SelectItem>
                         </SelectContent>
                       </Select>
@@ -566,8 +633,10 @@ export default function EmployeeSearchPage() {
             />
           </div>
 
+          {/* Results List Section */}
           <div className="w-full flex flex-col items-start gap-2">
             {loading ? (
+              /* Loading Skeleton Section */
               <div className="w-full mb-3">
                 {Array(3)
                   .fill(0)
@@ -578,12 +647,13 @@ export default function EmployeeSearchPage() {
             ) : error ? (
               <div className="w-full mb-3">
                 <SearchErrorCard
-                  error={error}
-                  errorDescription="Try adjusting your filters or search terms and try again."
+                  title={error}
+                  description={t("errorDescription")}
                 />
               </div>
-            ) : jobs && jobs.length > 0 ? (
-              jobs.map((item, index) => (
+            ) : filteredJobs && filteredJobs.length > 0 ? (
+              /* Search Company Card Section */
+              filteredJobs.map((item, index) => (
                 <SearchCompanyCard
                   key={item.id || index}
                   id={item.company.id}
@@ -595,21 +665,14 @@ export default function EmployeeSearchPage() {
                   education={item.education}
                   skills={item.skills}
                   postedDate={item.postedDate!}
-                  company={{
-                    id: item.company.id,
-                    name: item.company.name,
-                    avatar: item.company.avatar,
-                    companySize: item.company.companySize,
-                    industry: item.company.industry,
-                    location: item.company.location,
-                  }}
+                  company={item.company}
                 />
               ))
             ) : (
+              /* Empty List Section */
               <div className="w-full text-center py-10">
                 <TypographyP className="text-muted-foreground">
-                  No jobs match your search criteria. Try adjusting your
-                  filters.
+                  {t("emptyList")}
                 </TypographyP>
               </div>
             )}

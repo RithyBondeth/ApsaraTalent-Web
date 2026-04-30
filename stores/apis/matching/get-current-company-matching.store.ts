@@ -1,29 +1,35 @@
 import axios from "@/lib/axios";
-import { API_GET_CURRENT_COMPANY_MATCHING_URL } from "@/utils/constants/apis/matching_url";
-import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
+import { API_GET_CURRENT_COMPANY_MATCHING_URL } from "@/utils/constants/apis/matching.api.constant";
+import { IEmployee } from "@/utils/interfaces/user/employee.interface";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Get Current Company Matching API Response ────────────────────────
 type TGetCurrentCompanyMatchingResponse = IEmployee[];
+
+// ── Get Current Company Matching State ───────────────────────────────
 type TGetCurrentCompanyMatchingState = {
   currentCompanyMatching: TGetCurrentCompanyMatchingResponse | null;
   countCurrentCompanyMatching: number;
   loading: boolean;
   error: string | null;
-  queryCurrentCompanyMatching: (companyId: string) => Promise<void>;
+  queryCurrentCompanyMatching: (companyID: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useGetCurrentCompanyMatchingStore =
   create<TGetCurrentCompanyMatchingState>((set) => ({
     currentCompanyMatching: null,
     countCurrentCompanyMatching: 0,
     loading: false,
     error: null,
-    queryCurrentCompanyMatching: async (companyId: string) => {
+    queryCurrentCompanyMatching: async (companyID: string) => {
       set({ loading: true, error: null });
 
       try {
         const response = await axios.get<TGetCurrentCompanyMatchingResponse>(
-          API_GET_CURRENT_COMPANY_MATCHING_URL(companyId),
+          API_GET_CURRENT_COMPANY_MATCHING_URL(companyID),
         );
 
         set({
@@ -33,18 +39,14 @@ export const useGetCurrentCompanyMatchingStore =
           error: null,
         });
       } catch (error) {
-        if (axios.isAxiosError(error))
-          set({
-            error: error.response?.data?.message,
-            loading: false,
-            currentCompanyMatching: null,
-          });
-        else
-          set({
-            error: "Failed to get current company matching",
-            loading: false,
-            currentCompanyMatching: null,
-          });
+        set({
+          error: extractApiErrorMessage(
+            error,
+            "Failed to get current company matching",
+          ),
+          loading: false,
+          currentCompanyMatching: null,
+        });
       }
     },
   }));

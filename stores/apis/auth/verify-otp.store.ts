@@ -1,18 +1,22 @@
 import { clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-manager";
-import { API_AUTH_VERIFY_OTP_URL } from "@/utils/constants/apis/auth_url";
-import { TUserAuthResponse } from "@/utils/constants/auth.constant";
-import { IUser } from "@/utils/interfaces/user-interface/user.interface";
+import { API_AUTH_VERIFY_OTP_URL } from "@/utils/constants/apis/auth.api.constant";
+import { IUser } from "@/utils/interfaces/user/user.interface";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import axios from "axios";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../users/get-current-user.store";
+import { IUserAuthResponse } from "@/utils/interfaces/auth/auth.interface";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Verify OTP API Response ─────────────────────────────────
 type TVerifyOTPResponse = {
   message: string | null;
   accessToken: string | null;
   refreshToken: string | null;
-  user: TUserAuthResponse | null;
+  user: IUserAuthResponse | null;
 };
 
+// ── Verify OTP State ────────────────────────────────────────
 type TVerifyOTPStoreState = TVerifyOTPResponse & {
   loading: boolean;
   error: string | null;
@@ -27,6 +31,7 @@ type TVerifyOTPStoreState = TVerifyOTPResponse & {
   clearToken: () => void;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
   loading: false,
   error: null,
@@ -72,28 +77,20 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
         clearAuthCookies();
       }
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const errorMessage =
-          error.response?.data?.message instanceof Array
-            ? error.response.data.message.join(", ")
-            : error.response?.data?.message || error.message;
+      const errorMessage = extractApiErrorMessage(
+        error,
+        "An error occurred while verifying otp.",
+      );
 
-        set({
-          loading: false,
-          error: errorMessage,
-          message: errorMessage,
-          isAuthenticated: false,
-        });
-      } else {
-        set({
-          loading: false,
-          error: "An error occurred while verifying otp.",
-          message: "An error occurred while verifying otp.",
-          isAuthenticated: false,
-        });
-      }
+      set({
+        loading: false,
+        error: errorMessage,
+        message: errorMessage,
+        isAuthenticated: false,
+      });
     }
   },
+  // Clear Token
   clearToken: () => {
     try {
       // Use centralized cookie clearing

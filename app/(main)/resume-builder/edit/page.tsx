@@ -3,62 +3,80 @@
 import ResumeEditorFormPanel from "@/components/resume-builder/editor/form-panel";
 import ResumeEditorPreviewPanel from "@/components/resume-builder/editor/preview-panel";
 import { Button } from "@/components/ui/button";
-import LoadingDialog, {
-  LoadingStep,
-} from "@/components/utils/dialogs/loading-dialog";
+import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { generateResumeAPI, BuildResume } from "../_apis/generate-resume.api";
+import { generateResumeAPI } from "../_apis/generate-resume.api";
 import { useResumeEditStore } from "@/stores/apis/resume/resume-edit.store";
-import { ArrowLeft, Download, FileText, PanelLeftOpen, PanelLeftClose } from "lucide-react";
+import { useIsMobile } from "@/hooks/utils/use-mobile";
+import {
+  ArrowLeft,
+  Download,
+  FileText,
+  PanelLeftOpen,
+  PanelLeftClose,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
-
-/* ─── Download progress steps ────────────────────────────────── */
-const DOWNLOAD_STEPS: LoadingStep[] = [
-  { label: "Preparing your resume data", completeAt: 20 },
-  { label: "Sending to AI engine", completeAt: 40 },
-  { label: "Generating HTML layout", completeAt: 60 },
-  { label: "Applying template styling", completeAt: 78 },
-  { label: "Rendering PDF", completeAt: 92 },
-  { label: "Finalising & compressing", completeAt: 99 },
-];
+import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
+import { LIVE_RESUME_PREVIEW_DEBOUNCE_MS } from "@/utils/constants/resume.constant";
+import { TypographyLead } from "@/components/utils/typography/typography-lead";
+import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { TypographyP } from "@/components/utils/typography/typography-p";
 
 export default function ResumeEditorPage() {
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const isMobile = useIsMobile();
+  const t = useTranslations("toast");
+  const tRb = useTranslations("resumeBuilder");
+
+  /* ----------------------------- API Integration ---------------------------- */
   const { payload, clearPayload } = useResumeEditStore();
 
-  /* ── Redirect if no payload in store ────────────────────────── */
-  useEffect(() => {
-    if (!payload) {
-      router.replace("/resume-builder");
-    }
-  }, [payload, router]);
+  /* -------------------------------- All States ------------------------------ */
+  // Left panel (form) collapsed state
+  const [formPanelOpen, setFormPanelOpen] = useState<boolean>(false);
 
-  /* ── Form ────────────────────────────────────────────────────── */
+  // Live preview states
+  const [previewData, setPreviewData] = useState<IBuildResume>(
+    payload ?? ({} as IBuildResume),
+  );
+  // Only show "updating" badge after the user has made their first change
+  const [previewUpdating, setPreviewUpdating] = useState<boolean>(false);
+  const hasInteracted = useRef<boolean>(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Download progress states
+  const [downloading, setDownloading] = useState<boolean>(false);
+  const [dlProgress, setDlProgress] = useState<number>(0);
+  const progressTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  /* ------------------------------ React Hook Form --------------------------- */
   const { register, control, getValues, setValue, reset } =
-    useForm<BuildResume>({
+    useForm<IBuildResume>({
       defaultValues: payload ?? undefined,
     });
+  const watchedValues = useWatch({ control }) as IBuildResume;
+
+  /* --------------------------------- Effects --------------------------------- */
+  // Redirect if no payload in store
+  useEffect(() => {
+    if (!payload) router.replace("/resume-builder");
+  }, [payload, router]);
 
   // Sync form if the store payload changes after mount
   useEffect(() => {
     if (payload) reset(payload);
   }, [payload, reset]);
 
-  /* ── Left panel (form) collapsed state ───────────────────────── */
-  const [formPanelOpen, setFormPanelOpen] = useState(false);
+  // Update left panel (form) collapsed state based on mobile view
+  useEffect(() => {
+    setFormPanelOpen(!isMobile);
+  }, [isMobile]);
 
-  /* ── Live preview with 600 ms debounce ───────────────────────── */
-  const watchedValues = useWatch({ control }) as BuildResume;
-  const [previewData, setPreviewData] = useState<BuildResume>(
-    payload ?? ({} as BuildResume),
-  );
-  // Only show "updating" badge after the user has made their first change
-  const [previewUpdating, setPreviewUpdating] = useState(false);
-  const hasInteracted = useRef(false);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
+  // Live preview with 600 ms debounce
   useEffect(() => {
     // Skip the initial render — form values haven't changed yet
     if (!hasInteracted.current) {
@@ -66,21 +84,19 @@ export default function ResumeEditorPage() {
       return;
     }
     setPreviewUpdating(true);
+
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      setPreviewData({ ...watchedValues } as BuildResume);
+      setPreviewData({ ...watchedValues } as IBuildResume);
       setPreviewUpdating(false);
-    }, 600);
+    }, LIVE_RESUME_PREVIEW_DEBOUNCE_MS);
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
   }, [watchedValues]);
 
-  /* ── Download progress ───────────────────────────────────────── */
-  const [downloading, setDownloading] = useState(false);
-  const [dlProgress, setDlProgress] = useState(0);
-  const progressTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Download Progress ─────────────────────────────────────────
   const startProgress = (cap = 95) => {
     setDlProgress(0);
     let current = 0;
@@ -100,12 +116,12 @@ export default function ResumeEditorPage() {
     setDlProgress(finalValue);
   };
 
-  /* ── Handle Download ─────────────────────────────────────────── */
+  // ── Handle Download ─────────────────────────────────────────
   const handleDownload = async () => {
-    const raw = getValues() as BuildResume;
+    const raw = getValues() as IBuildResume;
 
     // Strip careerScopes — hidden section, not shown in resume.
-    const currentPayload: BuildResume = { ...raw, careerScopes: undefined };
+    const currentPayload: IBuildResume = { ...raw, careerScopes: undefined };
     setDownloading(true);
     startProgress(95);
     try {
@@ -130,8 +146,8 @@ export default function ResumeEditorPage() {
       link.click();
       window.URL.revokeObjectURL(objectUrl);
 
-      toast.success("Resume downloaded!", {
-        description: "Your resume has been saved to your downloads folder.",
+      toast.success(t("resumeDownloaded"), {
+        description: t("resumeSavedToDownloads"),
       });
 
       // Clear store and go back to template selection
@@ -143,8 +159,8 @@ export default function ResumeEditorPage() {
       const description =
         error instanceof Error && error.message
           ? error.message
-          : "Something went wrong. Please try again.";
-      toast.error("Download failed", {
+          : t("somethingWentWrong");
+      toast.error(t("downloadFailed"), {
         description,
       });
     } finally {
@@ -152,21 +168,22 @@ export default function ResumeEditorPage() {
     }
   };
 
-  /* ── Back button: clear store so stale data can't re-enter ──── */
+  // ── Handle Back ─────────────────────────────────────────
   const handleBack = () => {
     clearPayload();
     router.push("/resume-builder");
   };
 
-  /* ── Guard render ────────────────────────────────────────────── */
+  /* ------------------------------- Null State -------------------------------- */
   if (!payload) return null;
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] overflow-hidden">
-      {/* ── Top action bar ───────────────────────────────────────── */}
-      <div className="flex items-center justify-between px-5 py-3 border-b bg-background shrink-0 gap-4">
-        {/* Left: back + toggle form + title */}
-        <div className="flex items-center gap-3">
+    <div className="flex flex-col h-[calc(100dvh-4rem)] overflow-hidden animate-page-in">
+      {/* Top Action Bar Section */}
+      <div className="flex flex-col gap-2 border-b bg-background px-2.5 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5">
+        {/* Left Section: Back + Toggle Form + Title */}
+        <div className="flex w-full flex-wrap items-start gap-2 sm:w-auto sm:items-center sm:gap-3">
           <Button
             variant="outline"
             size="sm"
@@ -174,73 +191,80 @@ export default function ResumeEditorPage() {
             className="gap-1.5"
           >
             <ArrowLeft size={14} />
-            Back
+            {tRb("back")}
           </Button>
 
-          {/* Toggle the form panel */}
+          {/* Toggle The Form Panel Section */}
           <Button
             variant="outline"
             size="sm"
             onClick={() => setFormPanelOpen((v) => !v)}
             className="gap-1.5"
-            title={formPanelOpen ? "Hide form panel" : "Show form panel"}
+            title={formPanelOpen ? tRb("hideFields") : tRb("showFields")}
           >
             {formPanelOpen ? (
               <PanelLeftClose size={14} />
             ) : (
               <PanelLeftOpen size={14} />
             )}
-            {formPanelOpen ? "Hide Fields" : "Show Fields"}
+            <span className="hidden sm:inline">
+              {formPanelOpen ? tRb("hideFields") : tRb("showFields")}
+            </span>
+            <span className="sm:hidden">
+              {formPanelOpen ? tRb("hide") : tRb("fields")}
+            </span>
           </Button>
 
+          {/* Resume Title Section */}
           <div className="flex items-center gap-2">
             <FileText size={16} className="text-primary shrink-0" />
             <div>
-              <p className="text-sm font-semibold leading-none">
-                Resume Editor
-              </p>
-              <p className="text-xs text-muted-foreground mt-0.5 capitalize">
-                Template:{" "}
+              <TypographyLead className="text-sm font-semibold leading-none">
+                {tRb("resumeEditor")}
+              </TypographyLead>
+              <TypographySmall className="text-xs text-muted-foreground mt-0.5 capitalize">
+                {tRb("templateLabel")}{" "}
                 <span className="text-foreground font-medium">
                   {payload.template}
                 </span>
-              </p>
+              </TypographySmall>
             </div>
           </div>
         </div>
 
-        {/* Right: download */}
+        {/* Right Section: Download Button */}
         <Button
           onClick={handleDownload}
           disabled={downloading}
-          className="gap-2 shrink-0"
+          className="w-full shrink-0 justify-center gap-2 sm:w-auto"
         >
           <Download size={15} />
-          Download PDF
+          {tRb("downloadPdf")}
         </Button>
       </div>
 
-      {/* ── Split layout ─────────────────────────────────────────── */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Left — form panel (collapsible) */}
+      {/* Split Layout Section */}
+      <div className="flex flex-1 overflow-hidden flex-col lg:flex-row">
+        {/* Left Section: Form Panel (Collapsible) */}
         {formPanelOpen && (
-          <div className="w-[420px] shrink-0 flex flex-col border-r bg-background overflow-hidden">
-            <div className="px-4 pt-4 pb-2 shrink-0">
-              <p className="text-xs text-muted-foreground">
-                Edit your resume details below. The canvas updates automatically.
-              </p>
+          <div className="w-full shrink-0 flex flex-col border-b bg-background overflow-hidden max-h-[56vh] lg:max-h-none lg:w-[420px] lg:border-b-0 lg:border-r">
+            <div className="shrink-0 px-3 pt-3 pb-2 sm:px-4 sm:pt-4">
+              <TypographyP className="text-xs text-muted-foreground">
+                {tRb("editDetails")}
+              </TypographyP>
             </div>
-            <div className="flex-1 overflow-hidden px-4 pb-4">
+            <div className="flex-1 overflow-hidden px-3 pb-3 sm:px-4 sm:pb-4">
               <ResumeEditorFormPanel
                 register={register}
                 control={control}
                 setValue={setValue}
+                getValues={getValues}
               />
             </div>
           </div>
         )}
 
-        {/* Right — editable canvas (full width when form is hidden) */}
+        {/* Right Section: Editable Canvas (full width when form is hidden) */}
         <div className="flex-1 flex flex-col overflow-hidden">
           <ResumeEditorPreviewPanel
             data={previewData}
@@ -251,11 +275,18 @@ export default function ResumeEditorPage() {
         </div>
       </div>
 
-      {/* Download loading dialog */}
+      {/* Download Loading Dialog Section */}
       <LoadingDialog
         loading={downloading}
-        title="Generating your PDF..."
-        steps={DOWNLOAD_STEPS}
+        title={tRb("generatingPdf")}
+        steps={[
+          { label: tRb("downloadStep1"), completeAt: 20 },
+          { label: tRb("downloadStep2"), completeAt: 40 },
+          { label: tRb("downloadStep3"), completeAt: 60 },
+          { label: tRb("downloadStep4"), completeAt: 78 },
+          { label: tRb("downloadStep5"), completeAt: 92 },
+          { label: tRb("downloadStep6"), completeAt: 99 },
+        ]}
         progress={dlProgress}
       />
     </div>

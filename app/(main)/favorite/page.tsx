@@ -1,54 +1,107 @@
 "use client";
 
-import emptySvgImage from "@/assets/svg/empty.svg";
-import favoriteSvgImage from "@/assets/svg/favorite.svg";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
 import Image from "next/image";
-
 import FavoriteCompanyCard from "@/components/favorite/company-favorite-card";
-import FavoriteCompanyCardSkeleton from "@/components/favorite/company-favorite-card/skeleton";
 import FavoriteEmployeeCard from "@/components/favorite/employee-favorite-card";
-import FavoriteEmployeeCardSkeleton from "@/components/favorite/employee-favorite-card/skeleton";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { useFetchOnce } from "@/hooks/use-fetch-once";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
-import { useCountAllCompanyFavoritesStore } from "@/stores/apis/favorite/count-all-company-favorites.store";
-import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
 import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
+import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
+import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import FavoriteBannerSkeleton from "./banner-skeleton";
+import {
+  emptySvgImage,
+  favoriteSvgImage,
+} from "@/utils/constants/asset.constant";
+import { FavoriteLoadingSkeleton } from "@/components/favorite/skeleton";
+import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
+import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
 
 export default function FavoritePage() {
-  // API Integration
+  /* --------------------------------- Utils ---------------------------------- */
+  const t = useTranslations("toast");
+  const tFav = useTranslations("favorite");
+
+  /* ----------------------------- API Integration ---------------------------- */
+  // Current User
   const currentUser = useGetCurrentUserStore((state) => state.user);
+
+  // Get All Employee and Company Favorites
   const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
   const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
+
+  // Remove Employee and Company Favorites
   const employeeFavCompanyStore = useEmployeeFavCompanyStore();
   const companyFavEmployeeStore = useCompanyFavEmployeeStore();
-  const countAllCompanyFavoritesStore = useCountAllCompanyFavoritesStore();
-  const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
 
+  // Count All Employee and Company Favorites
+  const countCurrentCmpFavoritesStore = useCountCurrentCompanyFavoritesStore();
+  const countCurrentEmpFavoritesStore = useCountCurrentEmployeeFavoritesStore();
+
+  // Liked Users (To Filter Out From Favorites — Backend Auto-Removes But This Is A Safety Net)
+  const { currentEmployeeLiked } = useGetCurrentEmployeeLikedStore();
+  const { currentCompanyLiked } = useGetCurrentCompanyLikedStore();
+
+  /* -------------------------------- All States ------------------------------ */
+  const [mounted, setMounted] = useState(false);
   // Track IDs that are currently being removed (for animation)
   const [removingFavIds, setRemovingFavIds] = useState<Set<string>>(new Set());
 
-  // Use Custom Hook - Handles all ref logic and duplicate prevention
-  const { isEmployee } = useFetchOnce({
-    cacheKey: "favorite-page",
-    onEmployeeFetch: (employeeId) => {
-      getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(employeeId);
-    },
-    onCompanyFetch: (companyId) => {
-      getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyId);
-    },
-  });
+  /* --------------------------------- Effects --------------------------------- */
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  // Animate then remove helper
+  const isEmployee = currentUser?.role === "employee";
+
+  // Always fetch fresh data on every mount so liked items are never stale
+  useEffect(() => {
+    if (!currentUser) return;
+    if (isEmployee && currentUser.employee?.id) {
+      getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
+        currentUser.employee.id,
+      );
+      countCurrentEmpFavoritesStore.countCurrentEmpFavorites(
+        currentUser.employee.id,
+      );
+    } else if (!isEmployee && currentUser.company?.id) {
+      getAllCompanyFavoritesStore.queryAllCompanyFavorites(
+        currentUser.company.id,
+      );
+      countCurrentCmpFavoritesStore.countCurrentCmpFavorites(
+        currentUser.company.id,
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser?.employee?.id, currentUser?.company?.id]);
+
+  // Filter Out Liked Users From Favorites (Safety Net For Stale Data)
+  const filteredEmployeeFavorites = useMemo(() => {
+    const data = getAllEmployeeFavoritesStore.companyData;
+    if (!data) return null;
+    if (!currentEmployeeLiked || currentEmployeeLiked.length === 0) return data;
+    const likedIds = new Set(currentEmployeeLiked.map((c) => c.id));
+    return data.filter((fav) => !likedIds.has(fav.company.id));
+  }, [getAllEmployeeFavoritesStore.companyData, currentEmployeeLiked]);
+
+  const filteredCompanyFavorites = useMemo(() => {
+    const data = getAllCompanyFavoritesStore.employeeData;
+    if (!data) return null;
+    if (!currentCompanyLiked || currentCompanyLiked.length === 0) return data;
+    const likedIds = new Set(currentCompanyLiked.map((e) => e.id));
+    return data.filter((fav) => !likedIds.has(fav.employee.id));
+  }, [getAllCompanyFavoritesStore.employeeData, currentCompanyLiked]);
+
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Load Remove Animation Then Remove ─────────────────────────────────────────
   const animateThenRemove = useCallback(
     (favId: string, removeFn: () => Promise<void>) => {
       // Start card-pop-shrink animation
@@ -69,7 +122,7 @@ export default function FavoritePage() {
     [],
   );
 
-  // Handle Employee Remove Company From Favorite
+  // ── Handle Employee Remove Company From Favorite ─────────────────────────────────
   const handleEmployeeRemoveCompanyFromFavorite = useCallback(
     (
       employeeID: string,
@@ -85,15 +138,14 @@ export default function FavoritePage() {
             companyID,
             favoriteID,
           );
-          countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeID);
-          toast.success(`${companyName} removed from favorites.`);
+          countCurrentEmpFavoritesStore.countCurrentEmpFavorites(employeeID);
+          toast.success(t("removedFromFavorites", { name: companyName }));
           await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
             employeeID,
           );
         } catch {
           const err =
-            employeeFavCompanyStore.error ||
-            "Failed to remove company from favorites.";
+            employeeFavCompanyStore.empFavError || t("failedToRemoveFavorite");
           toast.error(err);
         }
       });
@@ -101,12 +153,13 @@ export default function FavoritePage() {
     [
       animateThenRemove,
       employeeFavCompanyStore,
-      countAllEmployeeFavoritesStore,
+      countCurrentEmpFavoritesStore,
       getAllEmployeeFavoritesStore,
+      t,
     ],
   );
 
-  // Handle Company Remove Employee From Favorite
+  // ── Handle Company Remove Employee From Favorite ───────────────────────────────────
   const handleCompanyRemoveEmployeeFromFavorite = useCallback(
     (
       companyID: string,
@@ -122,13 +175,12 @@ export default function FavoritePage() {
             employeeID,
             favoriteID,
           );
-          countAllCompanyFavoritesStore.countAllCompanyFavorites(companyID);
-          toast.success(`${employeeName} removed from favorites.`);
+          countCurrentCmpFavoritesStore.countCurrentCmpFavorites(companyID);
+          toast.success(t("removedFromFavorites", { name: employeeName }));
           await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyID);
         } catch {
           const err =
-            companyFavEmployeeStore.error ||
-            "Failed to remove employee from favorites.";
+            companyFavEmployeeStore.cmpFavError || t("failedToRemoveFavorite");
           toast.error(err);
         }
       });
@@ -136,12 +188,13 @@ export default function FavoritePage() {
     [
       animateThenRemove,
       companyFavEmployeeStore,
-      countAllCompanyFavoritesStore,
+      countCurrentCmpFavoritesStore,
       getAllCompanyFavoritesStore,
+      t,
     ],
   );
 
-  // Compute All Loading State
+  /* ------------------------------- Loading State ------------------------------ */
   const isLoadingForEmployee =
     isEmployee &&
     (getAllEmployeeFavoritesStore.loading ||
@@ -152,61 +205,50 @@ export default function FavoritePage() {
     (getAllCompanyFavoritesStore.loading ||
       getAllCompanyFavoritesStore.employeeData === null);
 
-  const isLoading = isLoadingForEmployee || isLoadingForCompany;
+  const isLoading =
+    !mounted || !currentUser || isLoadingForEmployee || isLoadingForCompany;
 
-  if (isLoading) {
-    return (
-      <div className="w-full flex flex-col px-5 mt-3">
-        <FavoriteBannerSkeleton />
-        <div className="flex flex-col items-start gap-3 p-3">
-          {[...Array(3)].map((_, index) =>
-            isEmployee ? (
-              <FavoriteCompanyCardSkeleton key={index} />
-            ) : (
-              <FavoriteEmployeeCardSkeleton key={index} />
-            ),
-          )}
-        </div>
-      </div>
-    );
-  }
+  if (isLoading) return <FavoriteLoadingSkeleton isEmployee={isEmployee} />;
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col px-5">
+    <div className="w-full flex flex-col px-2.5 sm:px-5 animate-page-in">
       {/* Banner Section */}
-      <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
+      <div className="w-full flex items-center justify-between gap-4 sm:gap-5 tablet-xl:flex-col tablet-xl:items-center">
         {/* Content Section */}
-        <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center tablet-xl:mt-5 px-5">
+        <div className="flex flex-col items-start gap-3 px-1 sm:px-5 tablet-xl:mt-2 tablet-xl:w-full tablet-xl:items-center">
           <TypographyH2 className="leading-relaxed tablet-xl:text-center">
-            Find your favorites at a Glance
+            {tFav("bannerTitle")}
           </TypographyH2>
           <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-            Quick access to the companies and talents you&apos;ve saved
+            {tFav("bannerSubtitle1")}
           </TypographyH4>
           <TypographyH4 className="leading-relaxed tablet-xl:text-center">
-            Review, connect, and take the next step whenever you&apos;re ready
+            {tFav("bannerSubtitle2")}
           </TypographyH4>
           <TypographyMuted className="leading-relaxed tablet-xl:text-center">
-            Your personal shortlist — organized in one place.
+            {tFav("bannerMuted")}
           </TypographyMuted>
         </div>
 
         {/* Image Poster Section */}
-        <Image
-          src={favoriteSvgImage}
-          alt="favorites"
-          height={250}
-          width={350}
-          className="tablet-xl:!w-full"
-        />
+        {mounted && (
+          <Image
+            src={favoriteSvgImage}
+            alt="favorites"
+            height={250}
+            width={350}
+            className="h-auto max-w-[320px] tablet-xl:!w-full"
+          />
+        )}
       </div>
 
       {/* Favorite Card List Section */}
-      <div className="flex flex-col items-start gap-3">
+      <div className="flex flex-col items-start gap-3 stagger-list">
         {isEmployee &&
-        getAllEmployeeFavoritesStore.companyData &&
-        getAllEmployeeFavoritesStore.companyData.length > 0 ? (
-          getAllEmployeeFavoritesStore.companyData.map((fav) => (
+        filteredEmployeeFavorites &&
+        filteredEmployeeFavorites.length > 0 ? (
+          filteredEmployeeFavorites.map((fav) => (
             <FavoriteCompanyCard
               key={fav.id}
               id={fav.company.id}
@@ -232,9 +274,9 @@ export default function FavoritePage() {
             />
           ))
         ) : !isEmployee &&
-          getAllCompanyFavoritesStore.employeeData &&
-          getAllCompanyFavoritesStore.employeeData.length > 0 ? (
-          getAllCompanyFavoritesStore.employeeData.map((fav) => (
+          filteredCompanyFavorites &&
+          filteredCompanyFavorites.length > 0 ? (
+          filteredCompanyFavorites.map((fav) => (
             <FavoriteEmployeeCard
               key={fav.id}
               id={fav.employee.id}
@@ -262,9 +304,18 @@ export default function FavoritePage() {
             />
           ))
         ) : (
+          /* Empty Favorite List */
           <div className="w-full flex flex-col items-center justify-center my-16">
-            <Image src={emptySvgImage} alt="empty" height={200} width={200} />
-            <TypographyP className="!m-0">No favorited available</TypographyP>
+            <Image
+              src={emptySvgImage}
+              alt="empty"
+              height={200}
+              width={200}
+              className="animate-float"
+            />
+            <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
+              {tFav("emptyList")}
+            </TypographyP>
           </div>
         )}
       </div>

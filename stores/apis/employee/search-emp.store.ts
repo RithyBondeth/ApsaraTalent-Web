@@ -1,11 +1,14 @@
 import axios from "@/lib/axios";
-import { API_SEARCH_EMP_URL } from "@/utils/constants/apis/employee_url";
-import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
-import { TAvailability } from "@/utils/types/availability.type";
-import { TLocations } from "@/utils/types/location.type";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
+import { API_SEARCH_EMP_URL } from "@/utils/constants/apis/user-api/employee.api.constant";
+import { IEmployee } from "@/utils/interfaces/user/employee.interface";
+import { TAvailability } from "@/utils/types/user/availability.type";
+import { TLocations } from "@/utils/types/user/location.type";
 import { create } from "zustand";
 
-export type TSearchEmpQuery = {
+/* ---------------------------------- States --------------------------------- */
+// ── Search Employee Query Params ──────────────────────────────────────
+type TSearchEmpQueryParams = {
   keyword?: string;
   location?: TLocations;
   careerScopes?: string[];
@@ -16,21 +19,23 @@ export type TSearchEmpQuery = {
   sortOrder?: "ASC" | "DESC";
 };
 
-type TSearchEmployee = IEmployee;
+// ── Search Employee API Response ──────────────────────────────────────
+type TSearchEmployeeResponse = IEmployee[];
 
+// ── Search Employee State ──────────────────────────────────────────────
 type TSearchEmployeeState = {
-  employees: TSearchEmployee[] | null;
+  employees: TSearchEmployeeResponse | null;
   error: string | null;
   loading: boolean;
-  querySearchEmployee: (query: TSearchEmpQuery) => Promise<void>;
+  querySearchEmployee: (query: TSearchEmpQueryParams) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useSearchEmployeeStore = create<TSearchEmployeeState>((set) => ({
   employees: null,
   loading: false,
-  message: null,
   error: null,
-  querySearchEmployee: async (query: TSearchEmpQuery) => {
+  querySearchEmployee: async (query: TSearchEmpQueryParams) => {
     set({ loading: true, error: null });
 
     try {
@@ -48,7 +53,7 @@ export const useSearchEmployeeStore = create<TSearchEmployeeState>((set) => ({
       const queryString = queryParams.toString();
       const url = `${API_SEARCH_EMP_URL}?${queryString}`;
 
-      const response = await axios.get(url);
+      const response = await axios.get<TSearchEmployeeResponse>(url);
 
       set({
         employees: response.data,
@@ -56,18 +61,11 @@ export const useSearchEmployeeStore = create<TSearchEmployeeState>((set) => ({
         error: null,
       });
     } catch (error) {
-      if (axios.isAxiosError(error))
-        set({
-          error: error.response?.data?.message,
-          loading: false,
-          employees: null,
-        });
-      else
-        set({
-          error: "Failed to search employee",
-          loading: false,
-          employees: null,
-        });
+      set({
+        error: extractApiErrorMessage(error, "Failed to search employee"),
+        loading: false,
+        employees: null,
+      });
     }
   },
 }));

@@ -1,17 +1,22 @@
-import { API_AUTH_FORGOT_PASSWORD_URL } from "@/utils/constants/apis/auth_url";
+import { API_AUTH_FORGOT_PASSWORD_URL } from "@/utils/constants/apis/auth.api.constant";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import axios from "axios";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Forgot Password API Response ─────────────────────────────────
 type TForgotPasswordResponse = {
   message: string | null;
 };
 
+// ── Forgot Password State ────────────────────────────────────────
 type TForgotPasswordState = TForgotPasswordResponse & {
   loading: boolean;
   error: string | null;
   forgotPassword: (identifier: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useForgotPasswordStore = create<TForgotPasswordState>()((set) => ({
   message: null,
   loading: false,
@@ -25,19 +30,15 @@ export const useForgotPasswordStore = create<TForgotPasswordState>()((set) => ({
       });
       set({ loading: false, message: response.data.message, error: null });
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        set({
-          loading: false,
-          error: error.response?.data?.message || error.message,
-          message: error.response?.data?.message || "Something went wrong",
-        });
-      } else {
-        set({
-          loading: false,
-          error: "An error occurred while forgetting password",
-          message: "An error occurred while forgetting password",
-        });
-      }
+      const errorMessage = extractApiErrorMessage(
+        error,
+        "An error occurred while forgetting password",
+      );
+      set({
+        loading: false,
+        error: errorMessage,
+        message: errorMessage,
+      });
     }
   },
 }));

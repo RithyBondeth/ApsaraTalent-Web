@@ -1,27 +1,33 @@
 import axios from "@/lib/axios";
-import { API_AUTH_SIGNUP_URL } from "@/utils/constants/apis/auth_url";
-import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
-import { IUser } from "@/utils/interfaces/user-interface/user.interface";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
+import { API_AUTH_SIGNUP_URL } from "@/utils/constants/apis/auth.api.constant";
+import { IEmployee } from "@/utils/interfaces/user/employee.interface";
+import { IUser } from "@/utils/interfaces/user/user.interface";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Employee Signup API Response ─────────────────────────────────
 type TEmployeeSignupResponse = {
   accessToken: string | null;
   refreshToken: string | null;
   message: string | null;
 };
 
+// ── Employee Signup API Request ─────────────────────────────────
 type TEmployeeSignupBody = Omit<IEmployee, "id"> & {
   email: string | null;
   password: string | null;
   authEmail: boolean;
 };
 
+// ── Employee Signup State ────────────────────────────────────────
 type TEmployeeSignupState = TEmployeeSignupResponse & {
   loading: boolean;
   error: string | null;
   signup: (body: TEmployeeSignupBody) => Promise<string | undefined>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useEmployeeSignupStore = create<TEmployeeSignupState>()((set) => ({
   accessToken: null,
   refreshToken: null,
@@ -87,20 +93,12 @@ export const useEmployeeSignupStore = create<TEmployeeSignupState>()((set) => ({
 
       return employeeID;
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const errorMessage =
-          error.response?.data?.message instanceof Array
-            ? error.response.data.message.join(", ")
-            : error.response?.data?.message || error.message;
+      const errorMessage = extractApiErrorMessage(
+        error,
+        "An error occurred while signing up as employee",
+      );
 
-        set({ loading: false, error: errorMessage, message: errorMessage });
-      } else {
-        set({
-          loading: false,
-          error: "An error occurred while signing up as employee",
-          message: "An error occurred while signing up as employee",
-        });
-      }
+      set({ loading: false, error: errorMessage, message: errorMessage });
     }
   },
 }));

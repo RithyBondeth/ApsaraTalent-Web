@@ -1,48 +1,50 @@
-import { API_COUNT_CURRENT_EMPLOYEE_MATCHING_URL } from "@/utils/constants/apis/matching_url";
+import { API_COUNT_CURRENT_EMPLOYEE_MATCHING_URL } from "@/utils/constants/apis/matching.api.constant";
 import axios from "@/lib/axios";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Count Current Employee Matching API Response ─────────────────
 type TCountCurrentEmployeeMatchingResponse = {
-  totalMatching: number;
+  count: number;
 };
+
+// ── Count Current Employee Matching State ────────────────────────
 type TCountCurrentEmployeeMatchingState = {
   totalEmpMatching: number | null;
   loading: boolean;
   error: string | null;
-  countCurrentEmployeeMatching: (employeeId: string) => Promise<void>;
+  countCurrentEmpMatching: (employeeID: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useCountCurrentEmployeeMatchingStore =
   create<TCountCurrentEmployeeMatchingState>((set) => ({
     totalEmpMatching: null,
     loading: false,
     error: null,
-    countCurrentEmployeeMatching: async (employeeId: string) => {
+    countCurrentEmpMatching: async (employeeID: string) => {
       set({ loading: true, error: null });
 
       try {
         const response = await axios.get<TCountCurrentEmployeeMatchingResponse>(
-          API_COUNT_CURRENT_EMPLOYEE_MATCHING_URL(employeeId),
+          API_COUNT_CURRENT_EMPLOYEE_MATCHING_URL(employeeID),
         );
 
         set({
-          totalEmpMatching: response.data.totalMatching,
+          totalEmpMatching: response.data.count,
           loading: false,
           error: null,
         });
       } catch (error) {
-        if (axios.isAxiosError(error))
-          set({
-            error: error.response?.data.message,
-            loading: false,
-            totalEmpMatching: null,
-          });
-        else
-          set({
-            error: "Failed to count current employee matching",
-            loading: false,
-            totalEmpMatching: null,
-          });
+        set({
+          error: extractApiErrorMessage(
+            error,
+            "Failed to count current employee matching",
+          ),
+          loading: false,
+          totalEmpMatching: null,
+        });
       }
     },
   }));

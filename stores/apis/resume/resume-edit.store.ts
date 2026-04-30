@@ -1,14 +1,17 @@
-import { BuildResume } from "@/app/(main)/resume-builder/_apis/generate-resume.api";
+import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
 import { create } from "zustand";
 
-interface ResumeEditState {
-  payload: BuildResume | null;
-  setPayload: (payload: BuildResume) => void;
+/* ---------------------------------- States --------------------------------- */
+// ── Resume Edit State ────────────────────────────────────────
+type TResumeEditState = {
+  payload: IBuildResume | null;
+  setPayload: (payload: IBuildResume) => void;
   clearPayload: () => void;
-}
+};
 
-export const useResumeEditStore = create<ResumeEditState>()((set) => ({
+/* ---------------------------------- Store --------------------------------- */
+export const useResumeEditStore = create<TResumeEditState>()((set) => ({
   payload: null,
-  setPayload: (payload) => set({ payload }),
+  setPayload: (payload: IBuildResume) => set({ payload }),
   clearPayload: () => set({ payload: null }),
 }));

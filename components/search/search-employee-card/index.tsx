@@ -1,88 +1,97 @@
+import MetaChip from "@/components/utils/data-display/meta-chip";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import IconLabel from "@/components/utils/icon-label";
-import Tag from "@/components/utils/tag";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { TypographyP } from "@/components/utils/typography/typography-p";
+import Tag from "@/components/utils/data-display/tag";
 import {
-    LucideClock,
-    LucideGraduationCap,
-    LucideMapPin,
-    LucideUser
+  LucideClock,
+  LucideGraduationCap,
+  LucideMapPin,
+  LucideUser,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { TSearchEmployeeCardProps } from "./props";
+import { ISearchEmployeeCardProps } from "./props";
+import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
+import { TypographyP } from "@/components/utils/typography/typography-p";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { useTranslations } from "next-intl";
 
-export default function SearchEmployeeCard(props: TSearchEmployeeCardProps) {
+export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("searchCompany");
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col items-start gap-4 px-4 py-3 shadow-md rounded-md">
-      <div className="w-full flex items-center gap-5 tablet-md:flex-col tablet-md:items-start">
-        <Avatar rounded="md" className="size-28 phone-md:!hidden">
-          <AvatarImage src={props.avatar} />
-          <AvatarFallback>{props.username?.slice(0, 2)}</AvatarFallback>
-        </Avatar>
-        <div className="flex flex-col items-start gap-3">
-          <div>
-            <TypographyH4 className="text-lg">
-              {props.firstname} {props.lastname}
-            </TypographyH4>
-            <TypographyMuted className="text-sm font-medium text-blue-500">
-              {props.job}
-            </TypographyMuted>
-          </div>
-          <div className="w-full flex items-center gap-3">
-            <IconLabel
-              icon={
-                <LucideUser
-                  className="text-muted-foreground"
-                  strokeWidth={"1.5px"}
-                />
-              }
-              text={props.yearOfExperience.toString()}
-            />
-            <IconLabel
-              icon={
-                <LucideMapPin
-                  className="text-muted-foreground"
-                  strokeWidth={"1.5px"}
-                />
-              }
-              text={props.location}
-            />
+    <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
+      <div className="p-4 sm:p-5 flex flex-col gap-3.5">
+        {/* Header Section: Avatar, Name, Job and Availability */}
+        <div className="flex gap-4">
+          <Avatar
+            rounded="md"
+            className="size-14 sm:size-16 flex-shrink-0 ring-[2px] ring-border/40"
+          >
+            <AvatarImage src={props.avatar} />
+            <AvatarFallback className="text-xs font-semibold">
+              {props.username?.slice(0, 2)?.toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0">
+                <h3 className="text-base font-bold leading-tight truncate">
+                  {props.firstname} {props.lastname}
+                </h3>
+                <TypographyP className="[&:not(:first-child)]:mt-0 text-sm text-primary font-medium mt-0.5">
+                  {props.job}
+                </TypographyP>
+              </div>
+              <span
+                className={`text-[11px] font-semibold px-2.5 py-1 rounded-full whitespace-nowrap flex-shrink-0 ${getAvailabilityStyleClass(props.availability)}`}
+              >
+                {props.availability}
+              </span>
+            </div>
           </div>
         </div>
+
+        {/* YearOfExperience, Location, Availability and Education Section */}
+        <div className="flex flex-wrap gap-2">
+          <MetaChip
+            icon={<LucideUser />}
+            text={`${props.yearOfExperience} ${t("yrsExp")}`}
+          />
+          <MetaChip icon={<LucideMapPin />} text={props.location} />
+          <MetaChip icon={<LucideClock />} text={props.availability} />
+          <MetaChip icon={<LucideGraduationCap />} text={props.education} />
+        </div>
+
+        {/* Description Section */}
+        {props.description && (
+          <TypographyMuted className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+            {props.description}
+          </TypographyMuted>
+        )}
+
+        {/* Skills Tags Section */}
+        {props.skills.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {props.skills.map((item, index) => (
+              <Tag label={item} key={index} />
+            ))}
+          </div>
+        )}
       </div>
-      <div className="w-full flex items-center gap-3 phone-340:flex-col phone-340:items-start">
-        <IconLabel
-          icon={<LucideClock />}
-          text={props.availability}
-          className="text-muted-foreground"
-        />
-        <IconLabel
-          icon={<LucideGraduationCap />}
-          text={props.education}
-          className="text-muted-foreground"
-        />
-      </div>
-      <TypographyP className="!m-0 text-sm leading-loose">
-        {props.description}
-      </TypographyP>
-      <div className="flex flex-wrap items-center gap-3">
-        {props.skills.map((item, index) => (
-          <Tag label={item} key={index} />
-        ))}
-      </div>
-      <div className="w-full flex justify-end items-center gap-2 [&>button]:text-xs">
+
+      {/* Action Bar Section */}
+      <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end">
         <Button
-          onClick={() => {
-            router.replace(`/feed/employee/${props.id}`);
-          }}
+          size="sm"
+          className="text-xs"
+          onClick={() => router.replace(`/feed/employee/${props.id}`)}
         >
-          <LucideUser />
-          View Employee Profile
+          <LucideUser className="size-3.5" />
+          {t("viewProfile")}
         </Button>
       </div>
     </div>

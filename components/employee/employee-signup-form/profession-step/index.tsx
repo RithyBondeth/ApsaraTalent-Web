@@ -1,16 +1,15 @@
-"use client";
 import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
 import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import ErrorMessage from "@/components/utils/error-message";
-import LabelInput from "@/components/utils/label-input";
+import ErrorMessage from "@/components/utils/feedback/error-message";
+import LabelInput from "@/components/utils/forms/label-input";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import {
-    availabilityConstant,
-    yearOfExperienceConstant
-} from "@/utils/constants/app.constant";
+  availabilityConstant,
+  yearOfExperienceConstant,
+} from "@/utils/constants/ui.constant";
 import { Controller } from "react-hook-form";
 import { IStepFormProps } from "../props";
 
@@ -19,9 +18,13 @@ export default function ProfessionStepForm({
   control,
   errors,
 }: IStepFormProps<TEmployeeSignUp>) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col items-start gap-5">
+      {/* Title Section */}
       <TypographyH4>Add profession information</TypographyH4>
+
+      {/* Looking for position Section */}
       <LabelInput
         label="Looking for position"
         input={
@@ -33,7 +36,10 @@ export default function ProfessionStepForm({
           />
         }
       />
+
+      {/* Year of Experience and Availability Section */}
       <div className="w-full flex justify-between items-start gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
+        {/* Year of Experience Section */}
         <div className="w-full flex flex-col items-start gap-2">
           <div className="w-full flex flex-col items-start gap-2">
             <TypographyMuted className="text-xs">
@@ -56,6 +62,8 @@ export default function ProfessionStepForm({
             {errors!.profession?.yearOfExperience?.message}
           </ErrorMessage>
         </div>
+
+        {/* Availability Section */}
         <div className="w-full flex flex-col items-start gap-2">
           <div className="w-full flex flex-col items-start gap-2">
             <TypographyMuted className="text-xs">Availability</TypographyMuted>
@@ -77,6 +85,8 @@ export default function ProfessionStepForm({
           </ErrorMessage>
         </div>
       </div>
+
+      {/* Description Section */}
       <div className="w-full flex flex-col items-start gap-1">
         <TypographyMuted className="text-xs">Description</TypographyMuted>
         <div className="w-full flex flex-col items-start gap-2">

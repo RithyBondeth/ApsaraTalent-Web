@@ -1,12 +1,15 @@
-import { ISocial } from "@/utils/interfaces/user-interface/employee.interface";
+import { ISocialLink } from "@/utils/interfaces/user/social.interface";
 import { useRef, useState } from "react";
 
-export function useCmpSocialsState(initialSocials: ISocial[] = []) {
-  const [socialInput, setSocialInput] = useState<ISocial | null>(null);
-  const [socials, setSocials] = useState<ISocial[]>(initialSocials);
+/* ----------------------------------- Hook ----------------------------------- */
+export function useCmpSocialsState(initialSocials: ISocialLink[] = []) {
+  /* -------------------------------- All States -------------------------------- */
+  const [socialInput, setSocialInput] = useState<ISocialLink | null>(null);
+  const [socials, setSocials] = useState<ISocialLink[]>(initialSocials);
   const [deleteSocialIds, setDeleteSocialIds] = useState<string[]>([]);
   const socialSelectPlatformRef = useRef<HTMLButtonElement>(null);
 
+  /* --------------------------------- Methods ---------------------------------- */
   return {
     socialInput,
     setSocialInput,

@@ -1,0 +1,1 @@
+export type TLoginMethod = "Google" | "Facebook" | "Github" | "LinkedIn";

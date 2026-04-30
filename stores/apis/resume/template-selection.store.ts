@@ -1,12 +1,15 @@
 import { create } from "zustand";
-import { ResumeTemplate } from "@/utils/interfaces/resume.interface";
+import { TResumeTemplate } from "@/utils/types/resume/resume.type";
 
-interface TemplateSelectionState {
-  selectedTemplate: ResumeTemplate | null;
-  setSelectedTemplate: (template: ResumeTemplate) => void;
-}
+/* ---------------------------------- States --------------------------------- */
+// ── Template Selection State ─────────────────────────────────
+type TTemplateSelectionState = {
+  selectedTemplate: TResumeTemplate | null;
+  setSelectedTemplate: (template: TResumeTemplate) => void;
+};
 
-export const useTemplateSelectionStore = create<TemplateSelectionState>()(
+/* ---------------------------------- Store ---------------------------------- */
+export const useTemplateSelectionStore = create<TTemplateSelectionState>()(
   (set) => ({
     selectedTemplate: null,
     setSelectedTemplate: (template) => set({ selectedTemplate: template }),

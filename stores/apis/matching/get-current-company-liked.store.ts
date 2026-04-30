@@ -1,18 +1,24 @@
 import axios from "@/lib/axios";
-import { API_GET_CURRENT_COMPANY_LIKED_URL } from "@/utils/constants/apis/matching_url";
-import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
+import { API_GET_CURRENT_COMPANY_LIKED_URL } from "@/utils/constants/apis/matching.api.constant";
+import { IEmployee } from "@/utils/interfaces/user/employee.interface";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Get Current Company Liked API Response ────────────────────────
 type TGetCurrentCompanyLikedResponse = IEmployee[];
+
+// ── Get Current Company Liked State ───────────────────────────────
 type TGetCurrentCompanyLikedState = {
   currentCompanyLiked: TGetCurrentCompanyLikedResponse | null;
   loading: boolean;
   error: string | null;
-  queryCurrentCompanyLiked: (companyId: string) => Promise<void>;
-  /** Optimistically add an employee to the liked list so the card disappears instantly */
+  queryCurrentCompanyLiked: (companyID: string) => Promise<void>;
+  /** Optimistically add an employee to the liked list so the card disappears instantly **/
   optimisticAddLiked: (employee: IEmployee) => void;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useGetCurrentCompanyLikedStore =
   create<TGetCurrentCompanyLikedState>((set, get) => ({
     currentCompanyLiked: null,
@@ -24,12 +30,13 @@ export const useGetCurrentCompanyLikedStore =
         set({ currentCompanyLiked: [...current, employee] });
       }
     },
-    queryCurrentCompanyLiked: async (companyId: string) => {
+
+    queryCurrentCompanyLiked: async (companyID: string) => {
       set({ loading: true, error: null });
 
       try {
         const response = await axios.get<TGetCurrentCompanyLikedResponse>(
-          API_GET_CURRENT_COMPANY_LIKED_URL(companyId),
+          API_GET_CURRENT_COMPANY_LIKED_URL(companyID),
         );
 
         set({
@@ -38,18 +45,14 @@ export const useGetCurrentCompanyLikedStore =
           error: null,
         });
       } catch (error) {
-        if (axios.isAxiosError(error))
-          set({
-            error: error.response?.data?.message,
-            loading: false,
-            currentCompanyLiked: null,
-          });
-        else
-          set({
-            error: "Failed to get current company liked",
-            loading: false,
-            currentCompanyLiked: null,
-          });
+        set({
+          error: extractApiErrorMessage(
+            error,
+            "Failed to get current company liked",
+          ),
+          loading: false,
+          currentCompanyLiked: null,
+        });
       }
     },
   }));

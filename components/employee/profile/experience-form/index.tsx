@@ -1,22 +1,31 @@
+"use client";
+
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import LabelInput from "@/components/utils/label-input";
+import LabelInput from "@/components/utils/forms/label-input";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { LucideBriefcaseBusiness, LucideTrash2 } from "lucide-react";
 import { Controller } from "react-hook-form";
 import { IEmployeeExperienceFormProps } from "./props";
+import { TypographyP } from "@/components/utils/typography/typography-p";
+import { useTranslations } from "next-intl";
 
 export default function EmployeeExperienceForm(
   props: IEmployeeExperienceFormProps,
 ) {
+  /* --------------------------------- Props --------------------------------- */
   const { register, control } = props.form;
 
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("profile");
+
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col items-start gap-3">
       {/* Header Section */}
       <div className="w-full flex items-center justify-between">
-        <TypographyMuted>Experience {props.index + 1}</TypographyMuted>
+        <TypographyMuted>{t("experienceIndex", { index: props.index + 1 })}</TypographyMuted>
         {props.isEdit && (
           <LucideTrash2
             className="cursor-pointer text-red-500"
@@ -31,10 +40,10 @@ export default function EmployeeExperienceForm(
       <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
         {/* Title Section */}
         <LabelInput
-          label="Title"
+          label={t("expTitle")}
           input={
             <Input
-              placeholder="Title"
+              placeholder={t("expTitle")}
               id="title"
               {...register(`experiences.${props.index}.title`)}
               className="placeholder:!text-red-500"
@@ -45,10 +54,10 @@ export default function EmployeeExperienceForm(
         />
         {/* Description Section */}
         <div className="w-full flex flex-col items-start gap-2">
-          <TypographyMuted className="text-xs">Description</TypographyMuted>
+          <TypographyMuted className="text-xs">{t("expDescription")}</TypographyMuted>
           <Textarea
             autoResize
-            placeholder="Description"
+            placeholder={t("expDescription")}
             id="description"
             {...register(`experiences.${props.index}.description`)}
             disabled={!props.isEdit}
@@ -60,36 +69,39 @@ export default function EmployeeExperienceForm(
         </div>
         {/* StartDate and EndDate Section */}
         <div className="w-full flex justify-between items-center gap-5 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
+          {/* StartDate Section */}
           <div className="w-1/2 flex flex-col items-start gap-1">
-            <TypographyMuted className="text-xs">Start Date</TypographyMuted>
+            <TypographyMuted className="text-xs">{t("expStartDate")}</TypographyMuted>
             <Controller
               control={control}
               name={`experiences.${props.index}.startDate`}
               render={({ field, fieldState }) => (
                 <>
                   <DatePicker
-                    placeholder="Start Date"
+                    placeholder={t("expStartDate")}
                     date={field.value}
                     onDateChange={field.onChange}
                     disabled={!props.isEdit}
                   />
                   {fieldState.error && (
-                    <p className="text-red-500 text-xs mt-1">
+                    <TypographyP className="[&:not(:first-child)]:mt-0 text-red-500 text-xs mt-1">
                       {fieldState.error.message}
-                    </p>
+                    </TypographyP>
                   )}
                 </>
               )}
             />
           </div>
+
+          {/* EndDate Section */}
           <div className="w-1/2 flex flex-col items-start gap-1">
-            <TypographyMuted className="text-xs">End Date</TypographyMuted>
+            <TypographyMuted className="text-xs">{t("expEndDate")}</TypographyMuted>
             <Controller
               control={control}
               name={`experiences.${props.index}.endDate`}
               render={({ field }) => (
                 <DatePicker
-                  placeholder="End Date"
+                  placeholder={t("expEndDate")}
                   date={field.value}
                   onDateChange={field.onChange}
                   disabled={!props.isEdit}

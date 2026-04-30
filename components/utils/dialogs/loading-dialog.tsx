@@ -7,29 +7,26 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { CheckCircle2, Loader2 } from "lucide-react";
-import ApsaraLoadingSpinner from "../apsara-loading-spinner";
-import { TypographyMuted } from "../typography/typography-muted";
+import ApsaraLoadingSpinner from "@/components/utils/feedback/apsara-loading-spinner";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { TLoadingStep } from "@/utils/interfaces/ui/loading.interface";
 
-export type LoadingStep = {
-  label: string;
-  /** 0–100 progress value at which this step becomes "done" */
-  completeAt: number;
-};
-
-type Props = {
+/* --------------------------------- Helper --------------------------------- */
+interface ILoadingDialogProps {
   loading: boolean;
   title: string;
   subTitle?: string;
-  /** When provided, renders the step-progress UI instead of the plain spinner */
-  steps?: LoadingStep[];
-  /** 0–100 */
+  steps?: TLoadingStep[];
   progress?: number;
-};
+}
 
-export default function LoadingDialog(props: Props) {
+export default function LoadingDialog(props: ILoadingDialogProps) {
+  /* --------------------------------- Props --------------------------------- */
   const { loading, title, subTitle, steps, progress = 0 } = props;
+  /* ---------------------------------- Utils -------------------------------- */
   const hasProgress = steps && steps.length > 0;
 
+  /* -------------------------------- Render UI ------------------------------ */
   return (
     <Dialog open={loading}>
       <DialogContent
@@ -37,21 +34,26 @@ export default function LoadingDialog(props: Props) {
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
+        {/* Background Orbs Section */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="loading-dialog-orb absolute -top-16 -right-10 h-32 w-32 rounded-full bg-primary/15 blur-2xl" />
           <div className="loading-dialog-orb absolute -bottom-16 -left-10 h-32 w-32 rounded-full bg-primary/15 blur-2xl" />
         </div>
 
+        {/* Main Content Section */}
         <div className="relative z-10 w-full flex flex-col items-center justify-center gap-4 py-2">
+          {/* Loading Spinner Section */}
           <div className="loading-dialog-spinner-wrap">
             <ApsaraLoadingSpinner size={64} loop />
           </div>
 
+          {/* Title Section */}
           <DialogTitle className="text-center text-base">{title}</DialogTitle>
 
+          {/* Progress Section */}
           {hasProgress ? (
             <div className="w-full flex flex-col gap-3">
-              {/* Progress bar */}
+              {/* Progress Bar Section */}
               <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
                 <div
                   className="h-full bg-primary rounded-full transition-all duration-700 ease-in-out"
@@ -59,12 +61,12 @@ export default function LoadingDialog(props: Props) {
                 />
               </div>
 
-              {/* Percentage label */}
-              <p className="text-xs text-muted-foreground text-center tabular-nums">
+              {/* Percentage Label Section */}
+              <TypographyMuted className="text-xs text-muted-foreground text-center tabular-nums">
                 {Math.round(progress)}%
-              </p>
+              </TypographyMuted>
 
-              {/* Step list */}
+              {/* Step List Section */}
               <ul className="w-full flex flex-col gap-2 mt-1">
                 {steps.map((step, i) => {
                   const done = progress >= step.completeAt;
@@ -105,6 +107,7 @@ export default function LoadingDialog(props: Props) {
               </ul>
             </div>
           ) : (
+            /* Subtitle Section */
             (subTitle || title) && (
               <DialogDescription asChild>
                 <TypographyMuted className="text-center text-xs">

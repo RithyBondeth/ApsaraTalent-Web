@@ -1,31 +1,39 @@
-"use client";
-
-import signupBlackSvg from "@/assets/svg/signup-black.svg";
-import signupWhiteSvg from "@/assets/svg/signup-white.svg";
-import { useTheme } from "next-themes";
 import Image from "next/image";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode } from "react";
+import {
+  signupBlackSvg,
+  signupWhiteSvg,
+} from "@/utils/constants/asset.constant";
 
 export default function SignupLayout({ children }: { children: ReactNode }) {
-  // Utils
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-
-  // Get Image Based On Theme
-  const currentTheme = mounted ? resolvedTheme : "light";
-  const signupImage = currentTheme === "dark" ? signupBlackSvg : signupWhiteSvg;
-
+  /* ------------------------------- Render UI ------------------------------- */
   return (
-    <div className="h-screen w-screen flex items-center tablet-xl:flex-col tablet-xl:[&>div]:w-full">
+    <div className="min-h-screen w-full flex items-stretch overflow-x-hidden">
       {/* Children Section */}
-      <div className="w-1/2 h-full flex justify-center items-center tablet-lg:h-fit tablet-xl:[&>div]:pb-20 phone-xl:!px-0 [&>div]:phone-xl:!px-5 [&>div]:phone-xl:!mt-8">
-        {children}
+      <div className="w-1/2 min-h-screen flex justify-center items-center px-6 sm:px-8 py-8 sm:py-10 tablet-xl:w-full tablet-xl:min-h-screen tablet-xl:items-start tablet-xl:px-4 tablet-xl:py-6">
+        <div className="w-full max-w-[680px] animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
+          {children}
+        </div>
       </div>
 
       {/* Image Poster Section */}
-      <div className="w-1/2 h-full flex justify-center items-center bg-primary tablet-xl:p-10">
-        <Image src={signupImage} alt="signup" height={undefined} width={600} />
+      <div className="w-1/2 min-h-screen flex justify-center items-center bg-primary px-8 py-10 relative overflow-hidden tablet-xl:hidden">
+        <div className="absolute -top-20 -right-20 size-64 rounded-full bg-white/5" />
+        <div className="absolute -bottom-10 -left-10 size-48 rounded-full bg-white/5" />
+        <div className="absolute top-1/3 left-10 size-32 rounded-full bg-white/[0.03]" />
+
+        <Image
+          src={signupWhiteSvg}
+          alt="signup"
+          className="h-auto w-full max-w-[620px] relative z-10 dark:hidden"
+          priority
+        />
+        <Image
+          src={signupBlackSvg}
+          alt="signup"
+          className="hidden h-auto w-full max-w-[620px] relative z-10 dark:block"
+          priority
+        />
       </div>
     </div>
   );

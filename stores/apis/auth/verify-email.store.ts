@@ -1,17 +1,22 @@
-import { API_AUTH_VERIFY_EMAIL_URL } from "@/utils/constants/apis/auth_url";
+import { API_AUTH_VERIFY_EMAIL_URL } from "@/utils/constants/apis/auth.api.constant";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import axios from "axios";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Verify Email API Response ─────────────────────────────────
 type TVerifyEmailResponse = {
   message: string | null;
 };
 
+// ── Verify Email State ────────────────────────────────────────
 type TVerifyEmailState = TVerifyEmailResponse & {
   loading: boolean;
   error: null | string;
   verifyEmail: (emailVerificationToken: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useVerifyEmailStore = create<TVerifyEmailState>((set) => ({
   message: null,
   loading: false,
@@ -25,19 +30,12 @@ export const useVerifyEmailStore = create<TVerifyEmailState>((set) => ({
       );
       set({ message: response.data.message, loading: false, error: null });
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const errorMessage =
-          error.response?.data?.message instanceof Array
-            ? error.response.data.message.join(", ")
-            : error.response?.data?.message || error.message;
+      const errorMessage = extractApiErrorMessage(
+        error,
+        "An error occurred while verifying email.",
+      );
 
-        set({ loading: false, error: errorMessage, message: errorMessage });
-      } else {
-        set({
-          loading: false,
-          error: "An error occurred while verifying email.",
-        });
-      }
+      set({ loading: false, error: errorMessage, message: errorMessage });
     }
   },
 }));

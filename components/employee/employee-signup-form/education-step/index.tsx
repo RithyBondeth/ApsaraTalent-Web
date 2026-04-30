@@ -3,17 +3,24 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { YearPicker } from "@/components/ui/year-picker";
-import ErrorMessage from "@/components/utils/error-message";
-import LabelInput from "@/components/utils/label-input";
+import ErrorMessage from "@/components/utils/feedback/error-message";
+import LabelInput from "@/components/utils/forms/label-input";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import {
-    LucideGraduationCap,
-    LucidePlus,
-    LucideSchool,
-    LucideTrash2
+  LucideGraduationCap,
+  LucidePlus,
+  LucideSchool,
+  LucideTrash2,
 } from "lucide-react";
-import { Controller, useFieldArray, useWatch } from "react-hook-form";
+import {
+  Controller,
+  useFieldArray,
+  useWatch,
+  Control,
+  FieldErrors,
+  UseFormRegister,
+} from "react-hook-form";
 import { IStepFormProps } from "../props";
 
 export default function EducationStepForm({
@@ -21,11 +28,14 @@ export default function EducationStepForm({
   errors,
   control,
 }: IStepFormProps<TEmployeeSignUp>) {
+  /* ---------------------------------- Form --------------------------------- */
   const { fields, append, remove } = useFieldArray({
     control,
     name: "educations",
   });
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Add Education ─────────────────────────────────────────
   const addEducation = () => {
     append({
       school: "",
@@ -34,15 +44,19 @@ export default function EducationStepForm({
     });
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col gap-5 w-full max-h-[500px] overflow-y-auto">
+      {/* Title Section */}
       <TypographyH4>Add your education information</TypographyH4>
+
+      {/* Education Form Section */}
       {fields.map((field, index) => (
         <div
           className="relative flex flex-col items-start gap-3 w-full border border-muted-foreground/10 rounded-xl bg-muted p-5"
           key={field.id}
         >
-          {/* Header Without Remove Button */}
+          {/* Header Without Remove Button Section */}
           {fields.length === 1 && (
             <div className="w-full mb-3">
               <TypographyMuted className="text-md">
@@ -51,7 +65,7 @@ export default function EducationStepForm({
             </div>
           )}
 
-          {/* Header With Remove Button */}
+          {/* Header With Remove Button Section */}
           {fields.length > 1 && (
             <div className="w-full flex items-center justify-between mb-3">
               <TypographyMuted className="text-md">
@@ -68,7 +82,7 @@ export default function EducationStepForm({
             </div>
           )}
 
-          {/* School */}
+          {/* School Section */}
           <div className="w-full flex flex-col items-start gap-2">
             <LabelInput
               label="School"
@@ -84,7 +98,8 @@ export default function EducationStepForm({
                 />
               }
             />
-            {/* isStudying Checkbox */}
+
+            {/* isStudying Checkbox Section */}
             <div className="flex items-center space-x-2 mt-1">
               <Controller
                 control={control}
@@ -106,7 +121,7 @@ export default function EducationStepForm({
             </div>
           </div>
 
-          {/* Dynamic Watcher for isStudying */}
+          {/* Dynamic Watcher for isStudying Section */}
           <IsStudyingWatcher
             index={index}
             control={control}
@@ -116,7 +131,7 @@ export default function EducationStepForm({
         </div>
       ))}
 
-      {/* Add More Button */}
+      {/* Add More Button Section */}
       <div className="w-full flex justify-end">
         <Button
           variant="secondary"
@@ -132,29 +147,27 @@ export default function EducationStepForm({
   );
 }
 
-import { Control, FieldErrors, UseFormRegister } from "react-hook-form";
-
-interface IsStudyingWatcherProps {
-  index: number;
-  control: Control<TEmployeeSignUp> | undefined;
-  register: UseFormRegister<TEmployeeSignUp>;
-  errors: FieldErrors<TEmployeeSignUp> | undefined;
-}
-
 function IsStudyingWatcher({
   index,
   control,
   register,
   errors,
-}: IsStudyingWatcherProps) {
+}: {
+  index: number;
+  control: Control<TEmployeeSignUp> | undefined;
+  register: UseFormRegister<TEmployeeSignUp>;
+  errors: FieldErrors<TEmployeeSignUp> | undefined;
+}) {
+  /* -------------------------------- All States ------------------------------ */
   const isStudying = useWatch({
     control,
     name: `educations.${index}.isStudying`,
   });
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col gap-3">
-      {/* Degree */}
+      {/* Degree Section */}
       <LabelInput
         label="Degree"
         input={
@@ -170,7 +183,7 @@ function IsStudyingWatcher({
         }
       />
 
-      {/* Graduation Year */}
+      {/* Graduation Year Section */}
       <div className="w-full flex flex-col items-start gap-2">
         <div className="w-full flex flex-col items-start gap-2">
           <TypographyMuted className="text-xs">

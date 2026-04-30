@@ -1,19 +1,24 @@
 import axios from "@/lib/axios";
-import { API_UPLOAD_EMP_RESUME_URL } from "@/utils/constants/apis/employee_url";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
+import { API_UPLOAD_EMP_RESUME_URL } from "@/utils/constants/apis/user-api/employee.api.constant";
 import { create } from "zustand";
 import { useEmployeeSignupStore } from "../auth/employee-signup.store";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Upload Employee Resume API Response ──────────────────────────────────
 type TUploadEmployeeResumeResponse = {
   message: string | null;
 };
 
-type TUploadEmployeeAvatarState = TUploadEmployeeResumeResponse & {
+// ── Upload Employee Resume State ────────────────────────────────────────
+type TUploadEmployeeResumeState = TUploadEmployeeResumeResponse & {
   loading: boolean;
   error: string | null;
   uploadResume: (employeeID: string, resume: File) => Promise<void>;
 };
 
-export const useUploadEmployeeResumeStore = create<TUploadEmployeeAvatarState>(
+/* ---------------------------------- Store --------------------------------- */
+export const useUploadEmployeeResumeStore = create<TUploadEmployeeResumeState>(
   (set) => ({
     message: null,
     loading: false,
@@ -38,20 +43,12 @@ export const useUploadEmployeeResumeStore = create<TUploadEmployeeAvatarState>(
         );
         set({ loading: false, error: null, message: response.data.message });
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const errorMessage =
-            error.response?.data?.message instanceof Array
-              ? error.response.data.message.join(", ")
-              : error.response?.data?.message || error.message;
+        const errorMessage = extractApiErrorMessage(
+          error,
+          "An error occurred while uploading employee's resume",
+        );
 
-          set({ loading: false, error: errorMessage, message: errorMessage });
-        } else {
-          set({
-            loading: false,
-            error: "An error occurred while uploading employee's resume",
-            message: "An error occurred while uploading employee's resume",
-          });
-        }
+        set({ loading: false, error: errorMessage, message: errorMessage });
       }
     },
   }),

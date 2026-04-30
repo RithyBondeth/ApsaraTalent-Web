@@ -1,18 +1,27 @@
 import axios from "@/lib/axios";
-import {
-    clearAuthCookies, setAuthCookies
-} from "@/utils/auth/cookie-manager";
-import { API_AUTH_LOGIN_URL } from "@/utils/constants/apis/auth_url";
-import { TUserAuthResponse } from "@/utils/constants/auth.constant";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
+import { clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-manager";
+import { API_AUTH_LOGIN_URL } from "@/utils/constants/apis/auth.api.constant";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../users/get-current-user.store";
+import { IUserAuthResponse } from "@/utils/interfaces/auth/auth.interface";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Login API Response ─────────────────────────────────
+type TLoginResponse = {
+  accessToken: string;
+  refreshToken: string;
+  message: string;
+  user: IUserAuthResponse;
+};
+
+// ── Login State ────────────────────────────────────────
 type TLoginState = {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
   message: string | null;
-  user: TUserAuthResponse | null;
+  user: IUserAuthResponse | null;
   login: (
     email: string,
     password: string,
@@ -21,6 +30,7 @@ type TLoginState = {
   clearToken: () => void;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useLoginStore = create<TLoginState>((set) => ({
   loading: false,
   error: null,
@@ -31,7 +41,7 @@ export const useLoginStore = create<TLoginState>((set) => ({
     set({ loading: true, error: null });
 
     try {
-      const response = await axios.post(API_AUTH_LOGIN_URL, {
+      const response = await axios.post<TLoginResponse>(API_AUTH_LOGIN_URL, {
         identifier: identifier,
         password: password,
       });
@@ -55,21 +65,16 @@ export const useLoginStore = create<TLoginState>((set) => ({
         user: response.data.user,
       });
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        set({
-          loading: false,
-          error: error.response?.data?.message || error.message,
-          message: error.response?.data?.message || "Something went wrong",
-          isAuthenticated: false,
-        });
-      } else {
-        set({
-          loading: false,
-          error: "An error occurred while login",
-          message: "An error occurred while login",
-          isAuthenticated: false,
-        });
-      }
+      const errorMessage = extractApiErrorMessage(
+        error,
+        "An error occurred while login",
+      );
+      set({
+        loading: false,
+        error: errorMessage,
+        message: errorMessage,
+        isAuthenticated: false,
+      });
     }
   },
   clearToken: () => {

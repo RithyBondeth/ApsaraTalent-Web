@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getCookie } from "cookies-next";
-import { normalizeMediaUrlsDeep } from "@/utils/functions/normalize-media-url";
+import { normalizeMediaUrlsDeep } from "@/utils/functions/media";
 
 // Configure axios to automatically send cookies with requests
 axios.defaults.withCredentials = true;

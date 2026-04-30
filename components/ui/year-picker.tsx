@@ -55,6 +55,7 @@ export function YearPicker({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
+          type="button"
           variant="outline"
           disabled={disabled}
           className={cn(
@@ -75,6 +76,7 @@ export function YearPicker({
         {/* Navigation */}
         <div className="flex items-center justify-between mb-2">
           <Button
+            type="button"
             variant="ghost"
             size="icon"
             className="h-7 w-7"
@@ -87,6 +89,7 @@ export function YearPicker({
             {pageStartYear} - {pageEndYear}
           </span>
           <Button
+            type="button"
             variant="ghost"
             size="icon"
             className="h-7 w-7"
@@ -102,6 +105,7 @@ export function YearPicker({
           {years.map((y) => (
             <Button
               key={y}
+              type="button"
               variant={y === year ? "default" : "ghost"}
               size="sm"
               className="h-9 w-full text-sm"

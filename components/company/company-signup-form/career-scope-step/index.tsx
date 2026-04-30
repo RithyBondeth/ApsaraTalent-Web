@@ -1,36 +1,36 @@
-"use client";
-
 import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
 import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-    CommandDialog,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
 } from "@/components/ui/command";
 import { DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
 } from "@/components/ui/pagination";
-import ErrorMessage from "@/components/utils/error-message";
+import ErrorMessage from "@/components/utils/feedback/error-message";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { careerScopesList } from "@/data/career-data";
+import { careerScopesListConstant } from "@/utils/constants/ui.constant";
+import { getPaginationPages } from "@/utils/functions/ui";
 import { LucideArrowLeft, LucideSearch } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 
 export default function CompanyCareerScopeStepForm({
   register,
@@ -38,18 +38,20 @@ export default function CompanyCareerScopeStepForm({
   setValue,
   errors,
 }: IStepFormProps<TCompanySignup>) {
-  // Utils
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
-  const hasMounted = useRef<boolean>(false);
-
-  // CareerScope Helpers
-  const [openSearchDialog, setOpenSearchDialog] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedCareers, setSelectedCareers] = useState<string[]>([]);
+  const t = useTranslations("common");
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(careerScopesList.length / itemsPerPage);
+  const totalPages = Math.ceil(careerScopesListConstant.length / itemsPerPage);
 
-  // Register field and sync initial value ONCE
+  /* -------------------------------- All States ------------------------------ */
+  const hasMounted = useRef<boolean>(false);
+  const [openSearchDialog, setOpenSearchDialog] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [selectedCareers, setSelectedCareers] = useState<string[]>([]);
+  const pageNumbers = getPaginationPages({ currentPage, totalPages });
+
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     if (hasMounted.current) return;
     hasMounted.current = true;
@@ -59,9 +61,10 @@ export default function CompanyCareerScopeStepForm({
     if (Array.isArray(initial)) {
       setSelectedCareers(initial);
     }
-  }, []);
+  }, [getValues, register]);
 
-  // Handle Toggle Career
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Toggle Career ───────────────────────────────────────
   const toggleCareer = (career: string) => {
     setSelectedCareers((prev) => {
       const updated = prev.includes(career)
@@ -72,33 +75,16 @@ export default function CompanyCareerScopeStepForm({
     });
   };
 
-  // Handle Pagination
-  const paginatedCareers = careerScopesList.slice(
+  // ── Go To Page ─────────────────────────────────────────
+  const goToPage = (page: number) => setCurrentPage(page);
+
+  // ── Paginated Careers ───────────────────────────────────
+  const paginatedCareers = careerScopesListConstant.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage,
   );
 
-  const goToPage = (page: number) => setCurrentPage(page);
-
-  const getPageNumbers = () => {
-    const pages: (number | "...")[] = [];
-    const maxVisiblePages = 1;
-    const startPage = Math.max(1, currentPage);
-
-    for (
-      let i = startPage;
-      i < startPage + maxVisiblePages && i <= totalPages;
-      i++
-    ) {
-      pages.push(i);
-    }
-
-    if (startPage + maxVisiblePages < totalPages) pages.push("...");
-    if (!pages.includes(totalPages)) pages.push(totalPages);
-
-    return pages;
-  };
-
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col items-stretch gap-8">
       {/* Back Button Section */}
@@ -111,7 +97,7 @@ export default function CompanyCareerScopeStepForm({
         Back
       </Button>
 
-      {/* Title Section */}
+      {/* Title and SubTitle Section */}
       <div className="phone-xl:mt-10">
         <TypographyH4>Choose Your Career Opportunity</TypographyH4>
         <TypographyMuted className="text-md">
@@ -134,9 +120,9 @@ export default function CompanyCareerScopeStepForm({
         <DialogTitle className="sr-only">Search Careers</DialogTitle>
         <CommandInput placeholder="Search for a career..." />
         <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandEmpty>{t("noResultsFound")}</CommandEmpty>
           <CommandGroup heading="Suggestions">
-            {careerScopesList.slice(0, 5).map((item, index) => (
+            {careerScopesListConstant.slice(0, 5).map((item, index) => (
               <CommandItem key={index} className="flex items-center gap-2">
                 <Checkbox
                   checked={selectedCareers.includes(item.value)}
@@ -189,7 +175,7 @@ export default function CompanyCareerScopeStepForm({
             />
           </PaginationItem>
 
-          {getPageNumbers().map((page, index) => (
+          {pageNumbers.map((page, index) => (
             <PaginationItem key={index}>
               {page === "..." ? (
                 <PaginationEllipsis />

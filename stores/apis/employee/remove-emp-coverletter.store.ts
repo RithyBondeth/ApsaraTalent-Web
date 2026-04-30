@@ -1,17 +1,22 @@
-import { API_REMOVE_EMP_COVER_LETTER_URL } from "@/utils/constants/apis/employee_url";
+import { API_REMOVE_EMP_COVER_LETTER_URL } from "@/utils/constants/apis/user-api/employee.api.constant";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import axios from "axios";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Remove Employee Cover Letter API Response ─────────────────────────────
 type TRemoveEmpCoverLetterResponse = {
   message: string | null;
 };
 
+// ── Remove Employee Cover Letter State ──────────────────────────────────────
 type TRemoveEmpCoverLetterStoreState = TRemoveEmpCoverLetterResponse & {
   loading: boolean;
   error: string | null;
   removeEmpCoverLetter: (employeeID: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useRemoveEmpCoverLetterStore =
   create<TRemoveEmpCoverLetterStoreState>((set) => ({
     message: null,
@@ -25,20 +30,12 @@ export const useRemoveEmpCoverLetterStore =
         );
         set({ loading: false, error: null, message: response.data.message });
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const errorMessage =
-            error.response?.data?.message instanceof Array
-              ? error.response.data.message.join(", ")
-              : error.response?.data?.message || error.message;
+        const errorMessage = extractApiErrorMessage(
+          error,
+          "An error occurred while removing employee's coverLetter.",
+        );
 
-          set({ loading: false, error: errorMessage, message: errorMessage });
-        } else {
-          set({
-            loading: false,
-            error: "An error occurred while removing employee's coverLetter.",
-            message: "An error occurred while removing employee's coverLetter.",
-          });
-        }
+        set({ loading: false, error: errorMessage, message: errorMessage });
       }
     },
   }));

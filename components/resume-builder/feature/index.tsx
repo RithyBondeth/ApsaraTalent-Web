@@ -1,16 +1,25 @@
+"use client";
+
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyLead } from "@/components/utils/typography/typography-lead";
 import {
-    LucideChartSpline,
-    LucidePencilRuler,
-    LucideSearch
+  LucideChartSpline,
+  LucidePencilRuler,
+  LucideSearch,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function ResumeBuilderFeature() {
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("resumeBuilder");
+
+  /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex flex-col items-center gap-10 p-5 rounded-md shadow-md">
-      <TypographyH4>AI-Powdered Features</TypographyH4>
+    <div className="w-full flex flex-col items-center gap-10 p-5 rounded-md shadow-md">
+      {/* Title Section */}
+      <TypographyH4>{t("aiPoweredFeatures")}</TypographyH4>
       <div className="flex justify-between items-start gap-5 tablet-lg:flex-col">
+        {/* Feature 1 Card Section */}
         <div className="flex flex-col items-center gap-2">
           <div className="p-5 rounded-full bg-blue-100">
             <LucidePencilRuler
@@ -19,13 +28,14 @@ export default function ResumeBuilderFeature() {
             />
           </div>
           <TypographyLead className="text-md text-center text-primary font-medium">
-            Smart Content Optimization
+            {t("featureTitle")}
           </TypographyLead>
           <TypographyLead className="text-sm text-center">
-            AI analyzes your experience and optimizes descriptions for maximum
-            impact
+            {t("featureDesc")}
           </TypographyLead>
         </div>
+
+        {/* Feature 2 Card Section */}
         <div className="flex flex-col items-center gap-2">
           <div className="p-5 rounded-full bg-green-100">
             <LucideSearch
@@ -34,13 +44,14 @@ export default function ResumeBuilderFeature() {
             />
           </div>
           <TypographyLead className="text-md text-center text-primary font-medium">
-            Smart Content Optimization
+            {t("featureTitle")}
           </TypographyLead>
           <TypographyLead className="text-sm text-center">
-            AI analyzes your experience and optimizes descriptions for maximum
-            impact
+            {t("featureDesc")}
           </TypographyLead>
         </div>
+
+        {/* Feature 3 Card Section */}
         <div className="flex flex-col items-center gap-2">
           <div className="p-5 rounded-full bg-purple-100">
             <LucideChartSpline
@@ -49,11 +60,10 @@ export default function ResumeBuilderFeature() {
             />
           </div>
           <TypographyLead className="text-md text-center text-primary font-medium">
-            Smart Content Optimization
+            {t("featureTitle")}
           </TypographyLead>
           <TypographyLead className="text-sm text-center">
-            AI analyzes your experience and optimizes descriptions for maximum
-            impact
+            {t("featureDesc")}
           </TypographyLead>
         </div>
       </div>

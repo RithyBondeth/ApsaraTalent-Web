@@ -1,3 +1,5 @@
+"use client";
+
 import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { Input } from "@/components/ui/input";
 import {
@@ -9,24 +11,29 @@ import {
 import {
   availabilityConstant,
   locationConstant,
-} from "@/utils/constants/app.constant";
-import { TLocations } from "@/utils/types/location.type";
+} from "@/utils/constants/ui.constant";
+import { TLocations } from "@/utils/types/user/location.type";
 import { SelectValue } from "@radix-ui/react-select";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { FieldValues, Path } from "react-hook-form";
 import { TSearchBarProps } from "./props";
 
 export default function SearchBar<T extends FieldValues>(
   props: TSearchBarProps<T>,
 ) {
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("searchBar");
+
+  /* -------------------------------- All States ------------------------------ */
   const [selectedLocation, setSelectionLocation] = useState<TLocations | "All">(
     props.initialLocation || "All",
   );
-
   const [selectedJobType, setSelectionJobType] = useState<string>(
     props.initialJobType || "all",
   );
 
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     if (props.initialLocation) {
       setSelectionLocation(props.initialLocation);
@@ -39,15 +46,20 @@ export default function SearchBar<T extends FieldValues>(
     }
   }, [props.initialJobType]);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col items-start gap-2 p-3 shadow-md rounded-md">
+    <div className="w-full flex flex-col items-start gap-2 p-2.5 sm:p-3 shadow-md rounded-md">
+      {/* SeachBar Input Section */}
       <Input
         placeholder={
-          props.isEmployee ? "Job title, keywords" : "Position title, keywords"
+          props.isEmployee ? t("jobTitleKeywords") : t("positionKeywords")
         }
+        className="h-10 sm:h-11"
         {...props.register("keyword" as Path<T>)}
       />
-      <div className="w-full flex items-center gap-3 [&>div]:w-1/2">
+      {/* Location and Job Type Section */}
+      <div className="w-full flex flex-col gap-2.5 sm:flex-row sm:items-center sm:gap-3 sm:[&>div]:w-1/2">
+        {/* Location Section */}
         <Select
           onValueChange={(value: TLocations) => {
             setSelectionLocation(value);
@@ -55,12 +67,12 @@ export default function SearchBar<T extends FieldValues>(
           }}
           value={selectedLocation === "All" ? "All" : selectedLocation}
         >
-          <SelectTrigger className="h-12 text-muted-foreground">
-            <SelectValue placeholder="Location" />
+          <SelectTrigger className="h-10 sm:h-12 text-muted-foreground">
+            <SelectValue placeholder={t("location")} />
           </SelectTrigger>
           <SelectContent>
             <SelectItem key="all-location" value="all">
-              All
+              {t("all")}
             </SelectItem>
             {locationConstant.map((location, index) => (
               <SelectItem key={index} value={location}>
@@ -69,6 +81,8 @@ export default function SearchBar<T extends FieldValues>(
             ))}
           </SelectContent>
         </Select>
+
+        {/* Job Type Section */}
         <CreatableCombobox
           value={selectedJobType}
           onChange={(value) => {
@@ -76,9 +90,23 @@ export default function SearchBar<T extends FieldValues>(
             setSelectionJobType(newValue);
             props.setValue("jobType" as Path<T>, newValue as T[keyof T]);
           }}
-          options={[{ label: "All", value: "all" }, ...availabilityConstant]}
-          placeholder="Job Type"
-          emptyText="Type job type..."
+          options={[
+            { label: t("all"), value: "all" },
+            ...availabilityConstant.map((a) => ({
+              ...a,
+              label:
+                ({
+                  full_time: t("fullTime"),
+                  part_time: t("partTime"),
+                  internship: t("internship"),
+                  contract: t("contract"),
+                  freelance: t("freelance"),
+                  remote: t("remote"),
+                } as Record<string, string>)[a.value] ?? a.label,
+            })),
+          ]}
+          placeholder={t("jobType")}
+          emptyText={t("typeJobType")}
         />
       </div>
     </div>

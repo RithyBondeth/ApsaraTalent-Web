@@ -1,7 +1,7 @@
 import {
-    passwordValidation,
-    textValidation
-} from "@/utils/functions/validations";
+  passwordValidation,
+  textValidation,
+} from "@/utils/functions/validation/form-schemas";
 import * as z from "zod";
 
 export const resetPasswordSchema = z
@@ -11,7 +11,6 @@ export const resetPasswordSchema = z
     confirmPassword: textValidation("Confirm password", 20),
   })
   .superRefine((data, ctx) => {
-    // Access password and confirmPassword from the object schema
     if (data.confirmPassword !== data.password) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,

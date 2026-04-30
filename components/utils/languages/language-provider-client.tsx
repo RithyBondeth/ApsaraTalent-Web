@@ -3,9 +3,10 @@
 import { useLanguageStore } from "@/stores/languages/language-store";
 import { NextIntlClientProvider } from "next-intl";
 import { useEffect, useState } from "react";
-import enMessages from "@/messages/en.json";
-import kmMessages from "@/messages/km.json";
+import enMessages from "@/language/en.json";
+import kmMessages from "@/language/km.json";
 
+/* ----------------------------------- Helper ---------------------------------- */
 const messages = {
   en: enMessages,
   km: kmMessages,
@@ -18,20 +19,26 @@ export function LanguageProviderClient({
   children: React.ReactNode;
   defaultLanguage: string;
 }) {
+  /* ----------------------------- API Integration ---------------------------- */
   const { language, setLanguage } = useLanguageStore();
-  const [mounted, setMounted] = useState(false);
+  /* -------------------------------- All States ------------------------------ */
+  const [mounted, setMounted] = useState<boolean>(false);
 
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
+    setLanguage(defaultLanguage as "en" | "km");
     setMounted(true);
-    if (language === "en" && defaultLanguage === "km") {
-      setLanguage("km");
-    }
-  }, [defaultLanguage, language, setLanguage]);
+  }, [defaultLanguage, setLanguage]);
 
+  /* ---------------------------------- Utils --------------------------------- */
   const activeLocale = mounted ? language : (defaultLanguage as "en" | "km");
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
-    <NextIntlClientProvider locale={activeLocale} messages={messages[activeLocale]}>
+    <NextIntlClientProvider
+      locale={activeLocale}
+      messages={messages[activeLocale]}
+    >
       {children}
     </NextIntlClientProvider>
   );

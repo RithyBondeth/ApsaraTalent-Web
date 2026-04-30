@@ -1,4 +1,4 @@
-import { IEmployee } from "@/utils/interfaces/user-interface/employee.interface";
+import { IEmployee } from "@/utils/interfaces/user/employee.interface";
 
 export interface IEmployeeCardProps extends IEmployee {
   onViewClick: () => void;
@@ -7,4 +7,8 @@ export interface IEmployeeCardProps extends IEmployee {
   onLikeClickDisable: boolean;
   onProfileImageClick: (e: React.MouseEvent) => void;
   hideSaveButton?: boolean;
+  /** "grid" removes outer border/rounded for seamless grid layout */
+  variant?: "default" | "grid";
+  /** If provided, the View button renders as a prefetching <Link> instead of a <button> */
+  viewHref?: string;
 }

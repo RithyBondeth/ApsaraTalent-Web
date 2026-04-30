@@ -1,16 +1,24 @@
 import axios from "@/lib/axios";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import {
-    API_EMPLOYEE_FAVORITE_COMPANY_URL,
-    API_EMPLOYEE_UNFAVORITE_COMPANY_URL
-} from "@/utils/constants/apis/favorite_url";
+  API_EMPLOYEE_FAVORITE_COMPANY_URL,
+  API_EMPLOYEE_UNFAVORITE_COMPANY_URL,
+} from "@/utils/constants/apis/favorite.api.constant";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { STORE_PERSIST_KEYS } from "../../shared/persist-keys";
 
-export type TEmployeeFavCompanyState = {
-  favoriteCompanyIds: Set<string>;
+/* ---------------------------------- States --------------------------------- */
+// ── Employee Fav Company API Response ──────────────────────────────────────
+type TEmployeeFavCompanyResponse = {
   message: string | null;
+};
+
+// ── Employee Fav Company State ──────────────────────────────────────────────
+type TEmployeeFavCompanyState = TEmployeeFavCompanyResponse & {
+  favoriteCompanyIds: Set<string>;
   loading: boolean;
-  error: string | null;
+  empFavError: string | null;
   isFavorite: (companyID: string) => boolean;
   addCompanyToFavorite: (
     employeeID: string,
@@ -21,16 +29,19 @@ export type TEmployeeFavCompanyState = {
     companyID: string,
     favoriteID: string,
   ) => Promise<void>;
+  /** Remove a company ID from the local Set without an API call (e.g. after a like auto-removes the favorite on the backend) */
+  optimisticRemove: (companyID: string) => void;
   clearFavorites: () => void;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>()(
   persist(
     (set, get) => ({
       favoriteCompanyIds: new Set(),
       message: null,
       loading: false,
-      error: null,
+      empFavError: null,
 
       isFavorite: (companyID: string) => {
         const isFavorite = get().favoriteCompanyIds.has(companyID);
@@ -38,15 +49,15 @@ export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>()(
       },
 
       addCompanyToFavorite: async (employeeID, companyID) => {
-        // Optimistic update — hide the save button immediately
+        // Optimistic Update: Hide the save button immediately
         set((state) => ({
           favoriteCompanyIds: new Set(state.favoriteCompanyIds).add(companyID),
           loading: true,
-          error: null,
+          empFavError: null,
         }));
 
         try {
-          const response = await axios.post<{ message: string }>(
+          const response = await axios.post<TEmployeeFavCompanyResponse>(
             API_EMPLOYEE_FAVORITE_COMPANY_URL(employeeID, companyID),
           );
           set({ loading: false, message: response.data.message });
@@ -56,52 +67,84 @@ export const useEmployeeFavCompanyStore = create<TEmployeeFavCompanyState>()(
           set((state) => {
             const rolled = new Set(state.favoriteCompanyIds);
             rolled.delete(companyID);
-            errorMessage = axios.isAxiosError(error)
-              ? error.response?.data?.message || error.message
-              : "Failed to add favorite";
-            return { favoriteCompanyIds: rolled, loading: false, error: errorMessage, message: errorMessage };
+            errorMessage = extractApiErrorMessage(
+              error,
+              "Failed to add favorite",
+            );
+            return {
+              favoriteCompanyIds: rolled,
+              loading: false,
+              empFavError: errorMessage,
+              message: errorMessage,
+            };
           });
           throw new Error(errorMessage);
         }
       },
 
       removeCompanyFromFavorite: async (employeeID, companyID, favoriteID) => {
-        // Optimistic update — remove immediately from Set
+        // Optimistic Update: Remove immediately from Set
         set((state) => {
           const updated = new Set(state.favoriteCompanyIds);
           updated.delete(companyID);
-          return { favoriteCompanyIds: updated, loading: true, error: null };
+          return {
+            favoriteCompanyIds: updated,
+            loading: true,
+            empFavError: null,
+          };
         });
 
         try {
-          const response = await axios.post<{ message: string }>(
-            API_EMPLOYEE_UNFAVORITE_COMPANY_URL(employeeID, companyID, favoriteID),
+          const response = await axios.post<TEmployeeFavCompanyResponse>(
+            API_EMPLOYEE_UNFAVORITE_COMPANY_URL(
+              employeeID,
+              companyID,
+              favoriteID,
+            ),
           );
-          set({ loading: false, message: response.data.message, error: null });
+          set({
+            loading: false,
+            message: response.data.message,
+            empFavError: null,
+          });
         } catch (error) {
-          // Roll back — add ID back to Set
+          // Roll back: add ID back to Set
           let errorMessage = "Failed to remove company from favorite";
           set((state) => {
             const rolledBack = new Set(state.favoriteCompanyIds).add(companyID);
-            errorMessage = axios.isAxiosError(error)
-              ? error.response?.data?.message || error.message
-              : "Failed to remove company from favorite";
-            return { favoriteCompanyIds: rolledBack, loading: false, error: errorMessage, message: errorMessage };
+            errorMessage = extractApiErrorMessage(
+              error,
+              "Failed to remove company from favorite",
+            );
+            return {
+              favoriteCompanyIds: rolledBack,
+              loading: false,
+              empFavError: errorMessage,
+              message: errorMessage,
+            };
           });
           throw new Error(errorMessage);
         }
+      },
+
+      optimisticRemove: (companyID: string) => {
+        set((state) => {
+          const updated = new Set(state.favoriteCompanyIds);
+          updated.delete(companyID);
+          return { favoriteCompanyIds: updated };
+        });
       },
 
       clearFavorites: () => {
         set({
           favoriteCompanyIds: new Set(),
           message: null,
-          error: null,
+          empFavError: null,
         });
       },
     }),
     {
-      name: "employee-favorite-company",
+      name: STORE_PERSIST_KEYS.employeeFavoriteCompany,
       partialize: (state) => ({
         favoriteCompanyIds: Array.from(state.favoriteCompanyIds),
       }),

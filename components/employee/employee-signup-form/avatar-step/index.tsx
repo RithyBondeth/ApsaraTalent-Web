@@ -1,8 +1,8 @@
 import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
 import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
-import { DragDropFile } from "@/components/utils/drag-drop-file.";
-import ErrorMessage from "@/components/utils/error-message";
+import { DragDropFile } from "@/components/utils/forms/drag-drop-file";
+import ErrorMessage from "@/components/utils/feedback/error-message";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { useEffect, useState } from "react";
 
@@ -11,11 +11,13 @@ export default function AvatarStepForm({
   getValues,
   errors,
 }: IStepFormProps<TEmployeeSignUp>) {
-  const [preview, setPreview] = useState<string | null>(null); // Preview state for image
-  const [selectedImage, setSelectedImage] = useState<string | null>(null); // Original image for cropping
-  const [cropDialogOpen, setCropDialogOpen] = useState(false); // Crop dialog open state
+  /* -------------------------------- All States ------------------------------ */
+  const [preview, setPreview] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [cropDialogOpen, setCropDialogOpen] = useState<boolean>(false);
 
-  // Handle file selection and open the crop dialog
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle Files Selected ─────────────────────────────────────────
   const handleFilesSelected = (files: File[]): void => {
     const file = files?.[0];
     if (file) {
@@ -25,34 +27,36 @@ export default function AvatarStepForm({
     }
   };
 
+  // ── Handle Crop Completed ─────────────────────────────────────────
   const handleCropComplete = (croppedFile: File) => {
-    // Set the cropped file to the form field
     setValue?.("avatar", croppedFile, { shouldValidate: true });
     const objectUrl = URL.createObjectURL(croppedFile);
-    setPreview(objectUrl); // Set preview for the cropped file
+    setPreview(objectUrl);
   };
 
-  // Use effect to get the avatar value from form and set the preview when coming back to this step
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     const avatar = getValues?.("avatar");
     if (avatar) {
       let objectUrl = "";
-      if (avatar instanceof File) {
-        objectUrl = URL.createObjectURL(avatar); // Create object URL for the file
-      } else if (typeof avatar === "string") {
-        objectUrl = avatar; // Use the avatar URL directly if it's a string
-      }
-      setPreview(objectUrl); // Set the preview
+      if (avatar instanceof File) objectUrl = URL.createObjectURL(avatar);
+      else if (typeof avatar === "string") objectUrl = avatar;
+
+      setPreview(objectUrl);
     }
   }, [getValues]);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col items-center gap-5">
+      {/* Title Section */}
       <TypographyH4>Add your profile picture (Optional)</TypographyH4>
+
+      {/* Drag Drop File Section */}
       <div className="w-full flex justify-center">
         {setValue && (
           <DragDropFile<TEmployeeSignUp>
-            preview={preview} // Directly pass the preview state
+            preview={preview}
             onFilesSelected={handleFilesSelected}
             acceptedFileTypes="image/*"
             maxFileSize={5242880}
@@ -64,8 +68,11 @@ export default function AvatarStepForm({
           />
         )}
       </div>
+
+      {/* Validation Message Section */}
       {errors?.avatar && <ErrorMessage>{errors.avatar.message}</ErrorMessage>}
 
+      {/* Avatar Crop Dialog Section */}
       {selectedImage && (
         <AvatarCropDialog
           title="Crop Profile Picture"

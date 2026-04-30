@@ -4,7 +4,6 @@ import ResumeBuilderBanner from "@/components/resume-builder/banner";
 import ResumeBuilderFeature from "@/components/resume-builder/feature";
 import ResumeBuilderGenerate from "@/components/resume-builder/generate";
 import TemplateCard from "@/components/resume-builder/template";
-import TemplateCardSkeleton from "@/components/resume-builder/template/skeleton";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { useGetAllTemplateStore } from "@/stores/apis/resume/get-all-template.store";
 import { useResumeEditStore } from "@/stores/apis/resume/resume-edit.store";
@@ -12,19 +11,29 @@ import { useTemplateSelectionStore } from "@/stores/apis/resume/template-selecti
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ResumeTemplate } from "./_apis/generate-resume.api";
 import { buildResumePayloadFromUser } from "./_utils/build-payload";
+import { TResumeTemplate } from "@/utils/types/resume/resume.type";
+import { TemplateCardSkeleton } from "@/components/resume-builder/skeleton";
+import { useTranslations } from "next-intl";
 
 // Module-level flag so templates are only fetched once per app session
 let hasFetchedTemplates = false;
 
 export default function ResumeBuilder() {
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("resumeBuilder");
   const { setPayload } = useResumeEditStore();
   const { setSelectedTemplate, selectedTemplate } = useTemplateSelectionStore();
 
+  /* ----------------------------- API Integration ---------------------------- */
+  // API state
+  const { templateData, queryAllTemplates } = useGetAllTemplateStore();
+  const currentUser = useGetCurrentUserStore((state) => state.user);
+
+  /* -------------------------------- All States ------------------------------ */
   // Maps DB template titles → ResumeTemplate enum values
-  const templateMap: Record<string, ResumeTemplate> = {
+  const templateMap: Record<string, TResumeTemplate> = {
     "Modern Professional": "modern",
     "Classic Professional": "classic",
     "Creative Design": "creative",
@@ -45,25 +54,35 @@ export default function ResumeBuilder() {
     Creative: "creative",
   };
 
-  const validKeys: ResumeTemplate[] = [
-    "modern", "classic", "creative", "minimalist", "timeline",
-    "bold", "compact", "elegant", "colorful", "professional", "corporate", "dark",
+  const validKeys: TResumeTemplate[] = [
+    "modern",
+    "classic",
+    "creative",
+    "minimalist",
+    "timeline",
+    "bold",
+    "compact",
+    "elegant",
+    "colorful",
+    "professional",
+    "corporate",
+    "dark",
   ];
 
-  // API state
-  const { templateData, queryAllTemplates } = useGetAllTemplateStore();
-  const currentUser = useGetCurrentUserStore((state) => state.user);
-
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     if (hasFetchedTemplates) return;
     hasFetchedTemplates = true;
     queryAllTemplates();
   }, [queryAllTemplates]);
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle Template Selection ─────────────────────────────────────────
   const handleSelectTemplate = (templateTitle: string) => {
     const mapped = templateMap[templateTitle];
-    const titleAsKey = templateTitle.toLowerCase() as ResumeTemplate;
-    const template = mapped ?? (validKeys.includes(titleAsKey) ? titleAsKey : null);
+    const titleAsKey = templateTitle.toLowerCase() as TResumeTemplate;
+    const template =
+      mapped ?? (validKeys.includes(titleAsKey) ? titleAsKey : null);
     if (template) {
       setSelectedTemplate(template);
     } else {
@@ -71,6 +90,7 @@ export default function ResumeBuilder() {
     }
   };
 
+  // ── Handle Generate Resume Payload ─────────────────────────────────────
   const handleGenerate = () => {
     if (!currentUser || !currentUser.employee) return;
     if (!selectedTemplate) return;
@@ -79,17 +99,18 @@ export default function ResumeBuilder() {
     router.push("/resume-builder/edit");
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col items-start gap-5 px-10">
-      {/* Banner */}
+    <div className="w-full flex flex-col items-start gap-5 px-2.5 sm:px-5 lg:px-8 animate-page-in">
+      {/* Banner Section */}
       <ResumeBuilderBanner />
 
-      {/* Template grid */}
+      {/* Template Grid Section */}
       <div className="w-full">
-        <div className="w-full flex justify-between items-center">
-          <TypographyH4>Choose your template</TypographyH4>
+        <div className="w-full flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between">
+          <TypographyH4>{t("chooseTemplate")}</TypographyH4>
         </div>
-        <div className="grid grid-cols-3 gap-3 my-3 tablet-lg:grid-cols-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 my-3">
           {templateData && templateData.length > 0
             ? templateData.map((resume) => {
                 const mapped = templateMap[resume.title];
@@ -107,16 +128,16 @@ export default function ResumeBuilder() {
                   />
                 );
               })
-            : Array.from({ length: 12 }, (_, i) => (
+            : Array.from({ length: 6 }, (_, i) => (
                 <TemplateCardSkeleton key={i} />
               ))}
         </div>
       </div>
 
-      {/* Features */}
+      {/* Features Section */}
       <ResumeBuilderFeature />
 
-      {/* Generate CTA */}
+      {/* Generate Section */}
       <ResumeBuilderGenerate
         disabled={!selectedTemplate}
         onGenerateClick={handleGenerate}

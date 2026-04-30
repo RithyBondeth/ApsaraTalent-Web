@@ -17,6 +17,7 @@ export interface IOpenPositionFormProps {
   index: number;
   onRemove: () => void;
 }
+
 interface IDatePickerItemProps {
   defaultValue: Date;
   data: Date;

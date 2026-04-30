@@ -1,15 +1,22 @@
 import axios from "@/lib/axios";
-import { API_GET_ALL_TEMPLATE_URL } from "@/utils/constants/apis/resume_url";
-import { IResumeTemplate } from "@/utils/interfaces/resume.interface";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
+import { API_GET_ALL_TEMPLATE_URL } from "@/utils/constants/apis/resume.api.constant";
+import { IResumeTemplate } from "@/utils/interfaces/resume/resume-template.interface";
 import { create } from "zustand";
 
+/* ---------------------------- States ----------------------------------- */
+// ── Get All Template Response ────────────────────────────────
+type TGetAllTemplateResponse = IResumeTemplate[];
+
+// ── Get All Template State ───────────────────────────────────
 type TGetAllTemplateState = {
-  templateData: IResumeTemplate[] | null;
+  templateData: TGetAllTemplateResponse | null;
   error: string | null;
   loading: boolean;
   queryAllTemplates: () => Promise<void>;
 };
 
+/* --------------------------------- Store ---------------------------------- */
 export const useGetAllTemplateStore = create<TGetAllTemplateState>((set) => ({
   templateData: null,
   loading: false,
@@ -18,21 +25,18 @@ export const useGetAllTemplateStore = create<TGetAllTemplateState>((set) => ({
     set({ loading: true, error: null });
 
     try {
-      const response = await axios.get<IResumeTemplate[]>(
+      const response = await axios.get<TGetAllTemplateResponse>(
         API_GET_ALL_TEMPLATE_URL,
       );
       set({ loading: false, error: null, templateData: response.data });
     } catch (error) {
-      if (axios.isAxiosError(error))
-        set({
-          loading: false,
-          error: error.response?.data?.message || error.message,
-        });
-      else
-        set({
-          loading: false,
-          error: "An error occurred while fetching all resume's templates",
-        });
+      set({
+        loading: false,
+        error: extractApiErrorMessage(
+          error,
+          "An error occurred while fetching all resume's templates",
+        ),
+      });
     }
   },
 }));

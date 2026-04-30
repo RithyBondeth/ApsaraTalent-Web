@@ -1,22 +1,23 @@
-import {
-    IBenefits,
-    IValues
-} from "@/utils/interfaces/user-interface/company.interface";
+import { IBenefits } from "@/utils/interfaces/user/company.interface";
+import { IValues } from "@/utils/interfaces/user/company.interface";
 import { useState } from "react";
 
+/* ----------------------------------- Hook ----------------------------------- */
 export default function useCmpBenefitValueState() {
-  // Benefit States
+  /* -------------------------------- All States -------------------------------- */
+  // ── Benefit States ─────────────────────────────────────────
   const [benefitInput, setBenefitInput] = useState<IBenefits | null>(null);
   const [benefits, setBenefits] = useState<IBenefits[]>([]);
   const [deletedBenefitIds, setDeletedBenefitIds] = useState<number[]>([]);
   const [openBenefitPopOver, setOpenBenefitPopOver] = useState<boolean>(false);
 
-  // Value States
+  // ── Value States ─────────────────────────────────────────
   const [valueInput, setValueInput] = useState<IValues | null>(null);
   const [values, setValues] = useState<IValues[]>([]);
   const [deletedValueIds, setDeletedValueIds] = useState<number[]>([]);
   const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
 
+  /* --------------------------------- Methods ---------------------------------- */
   return {
     benefitInput,
     setBenefitInput,

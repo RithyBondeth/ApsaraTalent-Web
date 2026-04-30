@@ -1,17 +1,22 @@
 import axios from "@/lib/axios";
-import { API_UPLOAD_CMP_IMAGES_URL } from "@/utils/constants/apis/company_url";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
+import { API_UPLOAD_CMP_IMAGES_URL } from "@/utils/constants/apis/user-api/company.api.constant";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Upload Company Images API Response ─────────────────────────────────
 type TUploadCompanyImagesResponse = {
   message: string | null;
 };
 
+// ── Upload Company Images State ────────────────────────────────────────
 type TUploadCompanyImagesState = TUploadCompanyImagesResponse & {
   loading: boolean;
   error: string | null;
   uploadImages: (companyID: string, images: File[]) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useUploadCompanyImagesStore = create<TUploadCompanyImagesState>(
   (set) => ({
     message: null,
@@ -37,20 +42,12 @@ export const useUploadCompanyImagesStore = create<TUploadCompanyImagesState>(
         );
         set({ loading: false, error: null, message: response.data.message });
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const errorMessage =
-            error.response?.data?.message instanceof Array
-              ? error.response.data.message.join(", ")
-              : error.response?.data?.message || error.message;
+        const errorMessage = extractApiErrorMessage(
+          error,
+          "An error occurred while uploading company's images",
+        );
 
-          set({ loading: false, error: errorMessage, message: errorMessage });
-        } else {
-          set({
-            loading: false,
-            error: "An error occurred while uploading company's images",
-            message: "An error occurred while uploading company's images"
-          });
-        }
+        set({ loading: false, error: errorMessage, message: errorMessage });
       }
     },
   }),

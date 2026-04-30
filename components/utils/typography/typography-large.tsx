@@ -1,13 +1,19 @@
 import { cn } from "@/lib/utils";
-import { ITypographyProps } from "@/utils/interfaces/typography.interface";
+import { ComponentPropsWithoutRef, forwardRef } from "react";
 
-export function TypographyLarge(props: ITypographyProps) {
+export const TypographyLarge = forwardRef<
+  HTMLDivElement,
+  ComponentPropsWithoutRef<"div">
+>(({ className, children, ...props }, ref) => {
   return (
     <div
-      className={cn("text-lg font-semibold", props.className)}
-      style={props.style}
+      ref={ref}
+      className={cn("text-lg font-semibold", className)}
+      {...props}
     >
-      {props.children}
+      {children}
     </div>
   );
-}
+});
+
+TypographyLarge.displayName = "TypographyLarge";

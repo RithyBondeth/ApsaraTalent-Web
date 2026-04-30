@@ -76,17 +76,19 @@
 
 @layer base {
   * {
-    @apply border-border; 
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
+    -webkit-overflow-scrolling: touch;
+  }
+  html {
+    scroll-behavior: smooth;
   }
   .input-otp-slot {
     @apply !size-14 !text-xl;
   }
 }
-
-
 
 @layer base {
   * {
@@ -95,6 +97,21 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@keyframes shimmer {
+  from { background-position: -200% center; }
+  to   { background-position:  200% center; }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(22px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px);   }
+  50%       { transform: translateY(-10px); }
 }
 
 @keyframes page-in {
@@ -151,5 +168,55 @@
 
   .loading-dialog-spinner-wrap {
     animation: loading-dialog-spinner-bob 1.4s ease-in-out infinite;
+  }
+
+  /* Shimmer for skeleton loaders */
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted)) 25%,
+      hsl(var(--muted-foreground) / 0.15) 50%,
+      hsl(var(--muted)) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
+  }
+
+  /* Float — for empty-state illustrations */
+  .animate-float {
+    animation: float 3.5s ease-in-out infinite;
+  }
+
+  /* Stagger fade-up — add to any list/grid container; children cascade in */
+  .stagger-list > * {
+    animation: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .stagger-list > *:nth-child(1)    { animation-delay:   0ms; }
+  .stagger-list > *:nth-child(2)    { animation-delay:  65ms; }
+  .stagger-list > *:nth-child(3)    { animation-delay: 130ms; }
+  .stagger-list > *:nth-child(4)    { animation-delay: 195ms; }
+  .stagger-list > *:nth-child(5)    { animation-delay: 260ms; }
+  .stagger-list > *:nth-child(6)    { animation-delay: 325ms; }
+  .stagger-list > *:nth-child(7)    { animation-delay: 390ms; }
+  .stagger-list > *:nth-child(8)    { animation-delay: 455ms; }
+  .stagger-list > *:nth-child(9)    { animation-delay: 520ms; }
+  .stagger-list > *:nth-child(10)   { animation-delay: 585ms; }
+  .stagger-list > *:nth-child(n+11) { animation-delay: 585ms; }
+
+  /* Legacy delay-only stagger (kept for backward compat) */
+  .stagger-children > *:nth-child(1) { animation-delay:   0ms; }
+  .stagger-children > *:nth-child(2) { animation-delay:  50ms; }
+  .stagger-children > *:nth-child(3) { animation-delay: 100ms; }
+  .stagger-children > *:nth-child(4) { animation-delay: 150ms; }
+  .stagger-children > *:nth-child(5) { animation-delay: 200ms; }
+  .stagger-children > *:nth-child(n+6) { animation-delay: 250ms; }
+}
+
+/* Respect user's reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

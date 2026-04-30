@@ -1,18 +1,23 @@
 import axios from "@/lib/axios";
-import { API_UPLOAD_CMP_COVER_URL } from "@/utils/constants/apis/company_url";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
+import { API_UPLOAD_CMP_COVER_URL } from "@/utils/constants/apis/user-api/company.api.constant";
 import { create } from "zustand";
 import { useCompanySignupStore } from "../auth/company-signup.store";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Upload Company Cover API Response ─────────────────────────────────
 type TUploadCompanyCoverResponse = {
   message: string | null;
 };
 
+// ── Upload Company Cover State ────────────────────────────────────────
 type TUploadCompanyCoverState = TUploadCompanyCoverResponse & {
   loading: boolean;
   error: string | null;
   uploadCover: (companyID: string, cover: File) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useUploadCompanyCoverStore = create<TUploadCompanyCoverState>(
   (set) => ({
     message: null,
@@ -38,20 +43,12 @@ export const useUploadCompanyCoverStore = create<TUploadCompanyCoverState>(
         );
         set({ loading: false, error: null, message: response.data.message });
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const errorMessage =
-            error.response?.data?.message instanceof Array
-              ? error.response.data.message.join(", ")
-              : error.response?.data?.message || error.message;
+        const errorMessage = extractApiErrorMessage(
+          error,
+          "An error occurred while uploading company's cover",
+        );
 
-          set({ loading: false, error: errorMessage, message: errorMessage });
-        } else {
-          set({
-            loading: false,
-            error: "An error occurred while uploading company's cover",
-            message: "An error occurred while uploading company's cover",
-          });
-        }
+        set({ loading: false, error: errorMessage, message: errorMessage });
       }
     },
   }),

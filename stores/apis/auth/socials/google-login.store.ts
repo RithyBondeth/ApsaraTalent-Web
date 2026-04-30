@@ -1,12 +1,13 @@
 import { clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-manager";
-import { API_AUTH_SOCIAL_GOOGLE_URL } from "@/utils/constants/apis/auth_url";
+import { API_AUTH_SOCIAL_GOOGLE_URL } from "@/utils/constants/apis/auth.api.constant";
 import { EAuthLoginMethod } from "@/utils/constants/auth.constant";
-import { TUserRole } from "@/utils/types/role.type";
+import { TUserRole } from "@/utils/types/auth/role.type";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../../users/get-current-user.store";
 
-// Updated response type - NO TOKENS
-export type TGoogleLoginResponse = {
+/* ---------------------------------- States --------------------------------- */
+// ── Google Login Response ──────────────────────────────────────
+type TGoogleLoginResponse = {
   type: "GOOGLE_AUTH_SUCCESS" | "GOOGLE_AUTH_ERROR";
   error?: string;
   newUser?: boolean;
@@ -25,7 +26,8 @@ export type TGoogleLoginResponse = {
   };
 };
 
-export type TGoogleLoginState = {
+// ── Google Login State ───────────────────────────────────────
+type TGoogleLoginState = {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
@@ -44,7 +46,12 @@ export type TGoogleLoginState = {
   clearToken: () => void;
 };
 
+/* ---------------------------------- Utils --------------------------------- */
+// Allowed origins: backend (where callback page lives) + frontend (where app runs)
 const BACKEND_ORIGIN = new URL(API_AUTH_SOCIAL_GOOGLE_URL).origin;
+const FRONTEND_ORIGIN =
+  typeof window !== "undefined" ? window.location.origin : "";
+const ALLOWED_ORIGINS = new Set([BACKEND_ORIGIN, FRONTEND_ORIGIN]);
 
 const FINISH_LOGIN = (data: TGoogleLoginResponse) => {
   if (!data || data.type !== "GOOGLE_AUTH_SUCCESS") {
@@ -80,6 +87,7 @@ const FINISH_LOGIN = (data: TGoogleLoginResponse) => {
   });
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
   loading: false,
   error: null,
@@ -126,8 +134,8 @@ export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
     let messageReceived = false;
 
     const handleMessage = (ev: MessageEvent<TGoogleLoginResponse>) => {
-      // Strict origin check
-      if (ev.origin !== BACKEND_ORIGIN) {
+      // Origin check: accept messages from backend or frontend
+      if (!ALLOWED_ORIGINS.has(ev.origin)) {
         console.warn("Ignored message from unexpected origin:", ev.origin);
         return;
       }
@@ -172,6 +180,7 @@ export const useGoogleLoginStore = create<TGoogleLoginState>((set) => ({
     }, 500);
   },
 
+  // Clear token
   clearToken: () => {
     // Use centralized cookie clearing
     clearAuthCookies();

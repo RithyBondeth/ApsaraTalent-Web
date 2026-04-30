@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
+/* ----------------------------------- Hook ----------------------------------- */
 export function useAvatarState() {
+  /* -------------------------------- All States -------------------------------- */
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [openAvatarPopup, setOpenAvatarPopup] = useState<boolean>(false);
   const [openRemoveAvatarDialog, setOpenRemoveAvatarDialog] =
@@ -10,12 +12,14 @@ export function useAvatarState() {
   const avatarInputRef = useRef<HTMLInputElement | null>(null);
   const ignoreNextClick = useRef<boolean>(false);
 
+  /* --------------------------------- Effects ---------------------------------- */
   useEffect(() => {
     return () => {
       if (cropImageUrl?.startsWith("blob:")) URL.revokeObjectURL(cropImageUrl);
     };
   }, [cropImageUrl]);
 
+  /* --------------------------------- Methods ---------------------------------- */
   return {
     avatarFile,
     setAvatarFile,

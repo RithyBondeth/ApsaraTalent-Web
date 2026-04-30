@@ -1,18 +1,23 @@
 import axios from "@/lib/axios";
-import { API_UPLOAD_CMP_AVATAR_URL } from "@/utils/constants/apis/company_url";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
+import { API_UPLOAD_CMP_AVATAR_URL } from "@/utils/constants/apis/user-api/company.api.constant";
 import { create } from "zustand";
 import { useCompanySignupStore } from "../auth/company-signup.store";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Upload Company Avatar API Response ─────────────────────────────────
 type TUploadCompanyAvatarResponse = {
   message: string | null;
 };
 
+// ── Upload Company Avatar State ────────────────────────────────────────
 type TUploadCompanyAvatarState = TUploadCompanyAvatarResponse & {
   loading: boolean;
   error: string | null;
   uploadAvatar: (companyID: string, avatar: File) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useUploadCompanyAvatarStore = create<TUploadCompanyAvatarState>(
   (set) => ({
     message: null,
@@ -38,20 +43,12 @@ export const useUploadCompanyAvatarStore = create<TUploadCompanyAvatarState>(
         );
         set({ loading: false, error: null, message: response.data.message });
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const errorMessage =
-            error.response?.data?.message instanceof Array
-              ? error.response.data.message.join(", ")
-              : error.response?.data?.message || error.message;
+        const errorMessage = extractApiErrorMessage(
+          error,
+          "An error occurred while uploading company's avatar",
+        );
 
-          set({ loading: false, error: errorMessage, message: errorMessage });
-        } else {
-          set({
-            loading: false,
-            error: "An error occurred while uploading company's avatar",
-            message: "An error occurred while uploading company's avatar",
-          });
-        }
+        set({ loading: false, error: errorMessage, message: errorMessage });
       }
     },
   }),

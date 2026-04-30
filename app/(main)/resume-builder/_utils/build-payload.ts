@@ -1,6 +1,8 @@
-import { IUser } from "@/utils/interfaces/user-interface/user.interface";
-import { BuildResume, ResumeTemplate } from "../_apis/generate-resume.api";
+import { TResumeTemplate } from "@/utils/types/resume/resume.type";
+import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
+import { IUser } from "@/utils/interfaces/user/user.interface";
 
+/* ---------------------------------- Helper ---------------------------------- */
 /**
  * Formats a date string to "Month YYYY" (e.g. "January 2022").
  * Falls back to the original string if parsing fails.
@@ -62,8 +64,8 @@ function formatEduYear(year?: string | null): string | undefined {
 
 export function buildResumePayloadFromUser(
   user: IUser,
-  template: ResumeTemplate,
-): BuildResume {
+  template: TResumeTemplate,
+): IBuildResume {
   if (!user.employee)
     throw new Error("Employee data is required to build a resume");
   const employee = user.employee;
@@ -155,7 +157,7 @@ export function buildResumePayloadFromUser(
     : undefined;
 
   // ─── Build Final Payload ──────────────────────────────────────────────────
-  const payload: BuildResume = {
+  const payload: IBuildResume = {
     personalInfo: {
       fullName,
       email: user.email || employee.email || "",

@@ -1,4 +1,4 @@
-import { phoneOrEmailValidation } from "@/utils/functions/validations";
+import { phoneOrEmailValidation } from "@/utils/functions/validation/form-schemas";
 import * as z from "zod";
 
 export const forgotPasswordSchema = z.object({

@@ -2,14 +2,14 @@ import {
   ACCEPTED_FILE_TYPES,
   DOCUMENT_SIZE,
   MAX_IMAGE_SIZE,
-} from "@/utils/constants/app.constant";
+} from "@/utils/constants/config.constant";
 import {
   dateValidation,
   emailValidation,
   khmerPhoneNumberValidation,
   selectedValidation,
   textValidation,
-} from "@/utils/functions/validations";
+} from "@/utils/functions/validation/form-schemas";
 import * as z from "zod";
 
 export const basicInfoSchema = z.object({

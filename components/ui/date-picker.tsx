@@ -34,6 +34,7 @@ export function DatePicker({
     <Popover>
       <PopoverTrigger asChild>
         <Button
+          type="button"
           variant="outline"
           className={cn(
             "w-full justify-between border rounded-md px-4 py-6 text-left text-muted-foreground bg-primary-foreground",

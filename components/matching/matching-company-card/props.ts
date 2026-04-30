@@ -1,4 +1,4 @@
-import { IJobPosition } from "@/utils/interfaces/user-interface/company.interface";
+import { IJobPosition } from "@/utils/interfaces/user/company.interface";
 
 export interface IMatchingCompanyCardProps {
   avatar: string;
@@ -10,4 +10,5 @@ export interface IMatchingCompanyCardProps {
   companySize: number;
   location: string;
   onChatNowClick: () => void;
+  onScheduleClick?: () => void;
 }

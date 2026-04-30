@@ -1,21 +1,20 @@
-"use client";
-
 import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
-import ErrorMessage from "@/components/utils/error-message";
-import LabelInput from "@/components/utils/label-input";
-import Tag from "@/components/utils/tag";
+import ErrorMessage from "@/components/utils/feedback/error-message";
+import LabelInput from "@/components/utils/forms/label-input";
+import Tag from "@/components/utils/data-display/tag";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { getErrorMessage } from "@/utils/extensions/get-error-message";
-import { getRandomBadgeColor } from "@/utils/extensions/get-random-badge-color";
+import { getErrorMessage } from "@/utils/functions/error/get-error-message";
+import { getRandomBadgeColor } from "@/utils/functions/ui";
 import { LucidePlus, LucideXCircle } from "lucide-react";
 import { useState } from "react";
 import { IStepFormProps } from "../props";
@@ -26,25 +25,28 @@ export default function SkillReferenceStepForm({
   getValues,
   trigger,
 }: IStepFormProps<TEmployeeSignUp>) {
-  // Skill Helpers
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("toast");
+  const initialSkills = getValues?.("skillAndReference.skills") || [];
+
+  /* -------------------------------- All States ------------------------------ */
   const [openPopOver, setOpenPopOver] = useState<boolean>(false);
   const [skillInput, setSkillInput] = useState<string>("");
-  const initialSkills = getValues?.("skillAndReference.skills") || [];
   const [skills, setSkills] = useState<string[]>(initialSkills);
 
-  // Handle Add New Skill
+  /* --------------------------------- Methods -------------------------------- */
+  // ── Add Skill ─────────────────────────────────────────
   const addSkill = async () => {
     const trimmed = skillInput.trim();
     if (!trimmed) return;
 
-    // Prevent duplicates (case-insensitive)
     const alreadyExists = skills.some(
       (skill) => skill.toLowerCase() === trimmed.toLowerCase(),
     );
     if (alreadyExists) {
-      toast.error("Duplicated Skill", {
-        description: "Please input another skill.",
-        action: { label: "Try again", onClick: () => {} },
+      toast.error(t("duplicatedSkill"), {
+        description: t("pleaseInputAnotherSkill"),
+        action: { label: t("tryAgain"), onClick: () => {} },
       });
       return;
     }
@@ -53,14 +55,13 @@ export default function SkillReferenceStepForm({
     setSkills(updated);
     setValue?.("skillAndReference.skills", updated);
 
-    // Trigger validation for the skills field
     await trigger?.("skillAndReference.skills");
 
     setSkillInput("");
     setOpenPopOver(false);
   };
 
-  // Handle Remove Skill
+  // ── Remove Skill ─────────────────────────────────────────
   const removeSkill = async (skillToRemove: string) => {
     const updated = skills.filter((skill) => skill !== skillToRemove);
     setSkills(updated);
@@ -68,8 +69,10 @@ export default function SkillReferenceStepForm({
     await trigger?.("skillAndReference.skills");
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col items-start gap-8">
+      {/* Skills Section */}
       <div className="w-full flex flex-col items-start gap-3">
         <TypographyH4>Add your skills</TypographyH4>
         <div className="flex flex-wrap gap-3">
@@ -90,6 +93,8 @@ export default function SkillReferenceStepForm({
             );
           })}
         </div>
+
+        {/* Add New Skill PopOver Section */}
         <Popover open={openPopOver} onOpenChange={setOpenPopOver}>
           <PopoverTrigger asChild>
             <Button className="w-full text-xs" variant="secondary">
@@ -117,9 +122,12 @@ export default function SkillReferenceStepForm({
           </ErrorMessage>
         )}
       </div>
+
+      {/* References Section */}
       <div className="w-full flex flex-col items-start gap-3">
         <TypographyH4>Add your references (Optional)</TypographyH4>
         <div className="w-full flex items-start gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
+          {/* Resume Section */}
           {getValues?.("skillAndReference.resume") ? (
             <div className="flex flex-col items-start gap-2">
               <TypographyMuted className="text-xs">Resume</TypographyMuted>
@@ -160,6 +168,8 @@ export default function SkillReferenceStepForm({
               }
             />
           )}
+
+          {/* CoverLetter Section */}
           {getValues?.("skillAndReference.coverLetter") ? (
             <div className="flex flex-col items-start gap-2">
               <TypographyMuted className="text-xs">

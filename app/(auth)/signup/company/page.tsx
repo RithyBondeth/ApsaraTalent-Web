@@ -11,10 +11,6 @@ import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useCompanySignupStore } from "@/stores/apis/auth/company-signup.store";
-import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
-import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
-import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
-import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
 import { useUploadCompanyAvatarStore } from "@/stores/apis/company/upload-cmp-avatar.store";
 import { useUploadCompanyCoverStore } from "@/stores/apis/company/upload-cmp-cover.store";
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
@@ -22,47 +18,36 @@ import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.sto
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { companySignupSchema, TCompanySignup } from "./validation";
+import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 export default function CompanySignup() {
-  // Utils
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
-
-  // Company Form Helpers
-  const [step, setStep] = useState<number>(1);
+  const t = useTranslations("auth");
   const totalSteps = 6;
 
-  // Company Data: Regular and Phone
+  /* ------------------------------ All States -------------------------------- */
+  const [step, setStep] = useState<number>(1);
+  const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
+
+  /* ----------------------------- API Integration ---------------------------- */
+  // Get user basic data from Basic, Phone
   const { basicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
 
-  // API Integration - Company Socials Data
-  const googleUserData = useGoogleLoginStore();
-  const githubUserData = useGithubLoginStore();
-  const linkedInUserData = useLinkedInLoginStore();
-  const facebookUserData = useFacebookLoginStore();
-
-  // API Integration - Company Signup
-  const cmpSignup = useCompanySignupStore();
-
-  // API Integration - Company Avatar, Cover
+  // Upload Avatar, Cover
   const uploadAvatar = useUploadCompanyAvatarStore();
   const uploadCover = useUploadCompanyCoverStore();
-  const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
-  const isSignupLoading =
-    cmpSignup.loading || uploadAvatar.loading || uploadCover.loading;
-  const signupLoadingMessage = cmpSignup.loading
-    ? "Creating your company account..."
-    : uploadAvatar.loading
-      ? "Uploading company avatar..."
-      : uploadCover.loading
-        ? "Uploading company cover..."
-        : "Processing your request...";
 
-  // React Hook Form: Company Signup Form
+  // Company Register
+  const cmpSignup = useCompanySignupStore();
+
+  /* ------------------- React Hook Form: Company Signup Form ------------------ */
   const methods = useForm<TCompanySignup>({
     mode: "onChange",
     resolver: zodResolver(companySignupSchema),
@@ -117,6 +102,11 @@ export default function CompanySignup() {
     6: ["careerScopes"],
   };
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Navigation Helpers ─────────────────────────────────────────
+  // Handle Previous Step
+  const prevStep = () => setStep((prev) => prev - 1);
+
   // Handle Next Step and Final Submit
   const nextStep = async () => {
     const fieldsToValidate = stepFieldMap[step];
@@ -125,7 +115,9 @@ export default function CompanySignup() {
 
     if (isValid) {
       if (step === totalSteps) {
+        // ── Final Submit: Company Registration ────────────────────
         handleSubmit(async (data) => {
+          // Register with regular email-password
           if (basicSignupData) {
             // Signup company first to get companyID
             const companyId = await cmpSignup.signup({
@@ -171,23 +163,20 @@ export default function CompanySignup() {
             // Upload files in parallel
             const uploadTasks = [];
 
-            if (data.avatar instanceof File) {
-              // If companyID exist then upload avatar
+            if (data.avatar instanceof File)
               uploadTasks.push(
                 uploadAvatar.uploadAvatar(companyId, data.avatar),
               );
-            }
 
-            if (data.cover instanceof File) {
-              // If companyID exist then upload cover
+            if (data.cover instanceof File)
               uploadTasks.push(uploadCover.uploadCover(companyId, data.cover));
-            }
 
             // Upload all avatar and cover together
             await Promise.all(uploadTasks);
             setUploadsComplete(true);
           }
 
+          // Register with phone-otp
           if (basicPhoneSignupData) {
             // Signup company first to get companyID
             const companyId = await cmpSignup.signup({
@@ -233,17 +222,13 @@ export default function CompanySignup() {
             // Upload files in parallel
             const uploadTasks: Promise<unknown>[] = [];
 
-            if (data.avatar instanceof File) {
-              // If companyID exist then upload avatar
+            if (data.avatar instanceof File)
               uploadTasks.push(
                 uploadAvatar.uploadAvatar(companyId, data.avatar),
               );
-            }
 
-            if (data.cover instanceof File) {
-              // If companyID exist then upload cover
+            if (data.cover instanceof File)
               uploadTasks.push(uploadCover.uploadCover(companyId, data.cover));
-            }
 
             // Upload all avatar and cover together
             await Promise.all(uploadTasks);
@@ -256,10 +241,8 @@ export default function CompanySignup() {
     }
   };
 
-  // Handle Previous Step
-  const prevStep = () => setStep((prev) => prev - 1);
-
-  // Company Signup Effect
+  /* --------------------------------- Effects --------------------------------- */
+  // ── Company Signup Effect ──────────────────────────────────
   useEffect(() => {
     if (
       cmpSignup.accessToken &&
@@ -270,8 +253,10 @@ export default function CompanySignup() {
       !uploadCover.loading
     ) {
       toast.dismiss();
-      toast.success(cmpSignup.message ?? "Signup successful!", { duration: 1000 });
-      setTimeout(() => router.replace("/login"), 1000);
+      toast.success(t("signupSuccessful"), {
+        duration: 1000,
+      });
+      setTimeout(() => router.replace("/login"), DEFAULT_REDIRECT_DELAY_MS);
     }
 
     const errorList = [
@@ -280,116 +265,87 @@ export default function CompanySignup() {
       { error: uploadCover.error, message: uploadCover.message },
     ];
 
-    errorList.forEach(({ error, message }) => {
+    errorList.forEach(({ error }) => {
       if (error) {
         toast.dismiss();
-        toast.error(message ?? "An error occurred", {
-          action: { label: "Retry", onClick: () => {} },
+        toast.error(t("anErrorOccurred"), {
+          action: { label: t("retry"), onClick: () => {} },
         });
       }
     });
   }, [
+    t,
     cmpSignup.loading,
     cmpSignup.error,
     cmpSignup.message,
     cmpSignup.refreshToken,
     cmpSignup.accessToken,
-    cmpSignup.signup,
     uploadAvatar.loading,
     uploadAvatar.error,
     uploadAvatar.message,
-    uploadAvatar.uploadAvatar,
     uploadCover.loading,
     uploadCover.error,
     uploadCover.message,
-    uploadCover.uploadCover,
     uploadsComplete,
+    router,
   ]);
 
-  // Log Basic Signup Data: Regular, Phone and Socials
-  useEffect(() => {
-    console.log("Basic Signup Data: ", basicSignupData);
-    console.log("Basic Phone Signup Data: ", basicPhoneSignupData);
-    console.log("Basic Google Signup Data: ", {
-      firstname: googleUserData.firstname,
-      lastname: googleUserData.lastname,
-      email: googleUserData.email,
-      picture: googleUserData.picture,
-      role: googleUserData.role,
-    });
-    console.log("Basic Github Signup Data: ", {
-      username: githubUserData.username,
-      email: githubUserData.email,
-      picture: githubUserData.picture,
-      role: githubUserData.role,
-    });
-    console.log("Basic LinkedIn Signup Data: ", {
-      firstname: linkedInUserData.firstname,
-      lastname: linkedInUserData.lastname,
-      email: linkedInUserData.email,
-      picture: linkedInUserData.picture,
-      role: linkedInUserData.role,
-    });
-    console.log("Basic Facebook Signup Data: ", {
-      firstname: facebookUserData.firstname,
-      lastname: facebookUserData.lastname,
-      email: facebookUserData.email,
-      picture: facebookUserData.picture,
-      role: facebookUserData.role,
-    });
-  }, [
-    basicSignupData,
-    basicPhoneSignupData,
-    googleUserData,
-    linkedInUserData,
-    githubUserData,
-    facebookUserData,
-  ]);
+  /* -------------------------------- Loading State -------------------------------- */
+  const isSignupLoading =
+    cmpSignup.loading || uploadAvatar.loading || uploadCover.loading;
 
+  // Signup loading title
+  const signupLoadingMessage = cmpSignup.loading
+    ? t("creatingCompanyAccount")
+    : uploadAvatar.loading
+      ? t("uploadingCompanyAvatar")
+      : uploadCover.loading
+        ? t("uploadingCompanyCover")
+        : t("processingRequest");
+
+  /* -------------------------------------------- Render UI -------------------------------------------- */
   return (
-    <div className="h-[80%] w-[85%] flex flex-col items-start gap-3 tablet-lg:w-full tablet-lg:p-5 tablet-xl:mb-5">
-      <LoadingDialog
-        loading={isSignupLoading}
-        title={signupLoadingMessage}
-        subTitle="Please wait while we complete your company signup."
-      />
-
+    <div className="w-full max-w-4xl mx-auto flex flex-col gap-5 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
       {/* Navigate Back Button Section */}
-      <Button
-        className="absolute top-5 left-5"
-        variant="outline"
+      <button
         type="button"
         onClick={() => router.push("/signup")}
+        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors w-fit"
       >
-        <LucideArrowLeft />
-      </Button>
+        <LucideArrowLeft className="size-4" />
+        Back to basic info
+      </button>
+
       {/* Title Section */}
-      <div className="mb-5">
+      <div>
         <TypographyH2>Sign up as company</TypographyH2>
         <TypographyMuted className="text-md">
           Find your potential candidate, Apsara Talent.
         </TypographyMuted>
       </div>
-      <div className="w-full">
-        {/* Step Progress Section */}
-        <div className="w-full flex items-center mb-5">
+
+      {/* Step Progress Indicator Section */}
+      <div className="w-full overflow-x-auto pb-2 mb-2">
+        <div className="w-full min-w-[360px] flex items-center gap-0">
           {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
             (st, index) => (
               <div key={st} className="w-full flex items-center">
                 {/* Step Circle */}
                 <div
-                  className={`size-8 flex items-center justify-center rounded-full text-muted font-bold transition-all ${
-                    step >= st ? "bg-primary" : "bg-muted text-muted-foreground"
+                  className={`size-8 text-xs sm:size-9 sm:text-sm flex items-center justify-center rounded-full font-bold transition-all ${
+                    step >= st
+                      ? "bg-primary text-primary-foreground shadow-md shadow-primary/30"
+                      : "bg-muted text-muted-foreground"
                   }`}
                 >
                   {st}
                 </div>
-                {/* Line Between Steps (Only Render Before Last Step) */}
+                {/* Line Between Steps Section (Only Render Before Last Step) */}
                 {index < totalSteps - 1 && (
-                  <div className="flex-1 h-1 bg-muted relative">
+                  <div className="flex-1 h-1 bg-muted rounded-full relative">
                     <div
-                      className={`absolute top-0 left-0 h-full transition-all duration-300 ${
-                        step > st ? "bg-primary w-full" : "bg-muted w-0"
+                      className={`absolute top-0 left-0 h-full rounded-full bg-primary transition-all duration-300 ${
+                        step > st ? "w-full" : "w-0"
                       }`}
                     />
                   </div>
@@ -398,84 +354,98 @@ export default function CompanySignup() {
             ),
           )}
         </div>
+      </div>
 
-        {/* Form Section */}
-        <FormProvider {...methods}>
-          <form className="w-full" onSubmit={(e) => e.preventDefault()}>
-            {step === 1 && (
-              <BasicInfoStepForm
-                register={register}
-                control={control}
-                errors={errors}
-              />
-            )}
-            {step === 2 && (
-              <OpenPositionStepForm
-                register={register}
-                getValues={getValues}
-                setValue={setValue}
-                trigger={trigger}
-                errors={errors}
-                control={control}
-              />
-            )}
-            {step === 3 && (
-              <BenefitValueStepForm
-                register={register}
-                getValues={getValues}
-                setValue={setValue}
-                trigger={trigger}
-                errors={errors}
-              />
-            )}
-            {step === 4 && (
-              <AvatarCompanyStepForm
-                register={register}
-                setValue={setValue}
-                getValues={getValues}
-              />
-            )}
-            {step === 5 && (
-              <CoverCompanyStepForm
-                register={register}
-                setValue={setValue}
-                getValues={getValues}
-              />
-            )}
-            {step === 6 && (
-              <CompanyCareerScopeStepForm
-                register={register}
-                getValues={getValues}
-                setValue={setValue}
-                errors={errors}
-              />
-            )}
+      {/* Form Section */}
+      <FormProvider {...methods}>
+        <form className="w-full" onSubmit={(e) => e.preventDefault()}>
+          {step === 1 && (
+            <BasicInfoStepForm
+              register={register}
+              control={control}
+              errors={errors}
+            />
+          )}
+          {step === 2 && (
+            <OpenPositionStepForm
+              register={register}
+              getValues={getValues}
+              setValue={setValue}
+              trigger={trigger}
+              errors={errors}
+              control={control}
+            />
+          )}
+          {step === 3 && (
+            <BenefitValueStepForm
+              register={register}
+              getValues={getValues}
+              setValue={setValue}
+              trigger={trigger}
+              errors={errors}
+            />
+          )}
+          {step === 4 && (
+            <AvatarCompanyStepForm
+              register={register}
+              setValue={setValue}
+              getValues={getValues}
+            />
+          )}
+          {step === 5 && (
+            <CoverCompanyStepForm
+              register={register}
+              setValue={setValue}
+              getValues={getValues}
+              errors={errors}
+            />
+          )}
+          {step === 6 && (
+            <CompanyCareerScopeStepForm
+              register={register}
+              getValues={getValues}
+              setValue={setValue}
+              errors={errors}
+            />
+          )}
 
-            {/* Next & Previous Step Section */}
-            {/* Navigation Buttons Section */}
-            <div className="flex justify-between my-8">
-              {step > 1 && (
-                <Button type="button" onClick={prevStep}>
-                  <LucideArrowLeft />
-                  Back
-                </Button>
-              )}
+          {/* Navigation Buttons Section */}
+          <div className="mt-6 mb-4 flex gap-3 sm:justify-between">
+            {step > 1 ? (
               <Button
                 type="button"
-                onClick={nextStep}
-                disabled={
-                  cmpSignup.loading ||
-                  uploadAvatar.loading ||
-                  uploadCover.loading
-                }
+                variant="outline"
+                onClick={prevStep}
+                className="flex-1 sm:flex-initial sm:min-w-[140px]"
               >
-                {step === totalSteps ? "Submit" : "Next"}
-                <LucideArrowRight />
+                <LucideArrowLeft />
+                Back
               </Button>
-            </div>
-          </form>
-        </FormProvider>
-      </div>
+            ) : (
+              <div className="hidden sm:block" />
+            )}
+
+            <Button
+              type="button"
+              className="flex-1 sm:flex-initial sm:min-w-[140px]"
+              onClick={nextStep}
+              disabled={
+                cmpSignup.loading || uploadAvatar.loading || uploadCover.loading
+              }
+            >
+              {step === totalSteps ? "Submit" : "Next"}
+              <LucideArrowRight />
+            </Button>
+          </div>
+        </form>
+      </FormProvider>
+
+      {/* Loading Dialog Section */}
+      <LoadingDialog
+        loading={isSignupLoading}
+        title={signupLoadingMessage}
+        subTitle={t("pleaseWaitCompanySignup")}
+      />
     </div>
   );
 }

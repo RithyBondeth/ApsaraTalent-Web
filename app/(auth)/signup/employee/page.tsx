@@ -1,4 +1,5 @@
 "use client";
+
 import AvatarStepForm from "@/components/employee/employee-signup-form/avatar-step";
 import EmployeeCareerScopeStepForm from "@/components/employee/employee-signup-form/career-scope-step";
 import EducationStepForm from "@/components/employee/employee-signup-form/education-step";
@@ -10,66 +11,46 @@ import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useEmployeeSignupStore } from "@/stores/apis/auth/employee-signup.store";
-import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
-import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
-import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
-import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
 import { useUploadEmployeeAvatarStore } from "@/stores/apis/employee/upload-emp-avatar.store";
 import { useUploadEmployeeCoverLetter } from "@/stores/apis/employee/upload-emp-coverletter.store";
 import { useUploadEmployeeResumeStore } from "@/stores/apis/employee/upload-emp-resume.store";
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
-import { TGender } from "@/utils/types/gender.type";
+import { TGender } from "@/utils/types/user/gender.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { employeeSignUpSchema, TEmployeeSignUp } from "./validation";
+import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 export default function EmployeeSignup() {
-  // Utils
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
-
-  // Employee Form Helpers
-  const [step, setStep] = useState<number>(1);
+  const t = useTranslations("auth");
   const totalSteps = 6;
 
-  // Employee Data: Regular and Phone
+  /* ------------------------------ All States -------------------------------- */
+  const [step, setStep] = useState<number>(1);
+  const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
+
+  /* ----------------------------- API Integration ---------------------------- */
+  // Get user basic data from Basic, Phone
   const { basicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
 
-  // API Integration - Employee Socials Data
-  const googleUserData = useGoogleLoginStore();
-  const githubUserData = useGithubLoginStore();
-  const linkedInUserData = useLinkedInLoginStore();
-  const facebookUserData = useFacebookLoginStore();
-
-  // API Integration - Employee Signup
-  const empSignup = useEmployeeSignupStore();
-
-  // API Integration - Employee Avatar, Resume and CoverLetter
+  // Upload Avatar, Resume, CoverLetter
   const uploadAvatar = useUploadEmployeeAvatarStore();
   const uploadResume = useUploadEmployeeResumeStore();
   const uploadCoverLetter = useUploadEmployeeCoverLetter();
-  const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
-  const isSignupLoading =
-    empSignup.loading ||
-    uploadAvatar.loading ||
-    uploadCoverLetter.loading ||
-    uploadResume.loading;
-  const signupLoadingMessage = empSignup.loading
-    ? "Creating your employee account..."
-    : uploadAvatar.loading
-      ? "Uploading profile avatar..."
-      : uploadResume.loading
-        ? "Uploading resume..."
-        : uploadCoverLetter.loading
-          ? "Uploading cover letter..."
-          : "Processing your request...";
 
-  // React Hook Form: Employee Signup Form
+  // Employee Register
+  const empSignup = useEmployeeSignupStore();
+
+  /* ------------------ React Hook Form: Employee Signup Form ----------------- */
   const methods = useForm<TEmployeeSignUp>({
     mode: "onChange",
     resolver: zodResolver(employeeSignUpSchema),
@@ -118,6 +99,8 @@ export default function EmployeeSignup() {
     6: ["careerScopes"],
   };
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Navigation Helpers ─────────────────────────────────────────
   // Check if user has no experience (to skip step 2)
   const hasNoExperience = () =>
     getValues("profession.yearOfExperience") === "No Experience";
@@ -131,6 +114,9 @@ export default function EmployeeSignup() {
     if (current === 3 && hasNoExperience()) return 1;
     return current - 1;
   };
+
+  // Handle Previous Step
+  const prevStep = () => setStep((prev) => resolvePrevStep(prev));
 
   // Handle Next Step and Final Submit
   const nextStep = async () => {
@@ -149,10 +135,12 @@ export default function EmployeeSignup() {
       return;
     }
 
+    // ── Final Submit: Employee Registration ────────────────────────────
     handleSubmit(async (data) => {
       try {
         setUploadsComplete(false);
 
+        // Register with regular email-password
         if (basicSignupData) {
           // Signup employee first to get employeeID
           const employeeId = await empSignup.signup({
@@ -197,38 +185,36 @@ export default function EmployeeSignup() {
             return;
           }
 
-          console.log("Employee ID: ", employeeId);
+          // Upload files in parallel for faster registration
+          const uploadTasks: Promise<unknown>[] = [];
 
-          // Upload files sequentially to avoid race conditions
-          if (data.avatar instanceof File) {
-            console.log(
-              "Attempting to upload avatar for employeeId:",
-              employeeId,
+          if (data.avatar instanceof File)
+            uploadTasks.push(
+              uploadAvatar.uploadAvatar(employeeId, data.avatar),
             );
-            console.log("Avatar: ", data.avatar);
-            await uploadAvatar.uploadAvatar(employeeId, data.avatar);
-          }
 
-          if (data.skillAndReference.resume instanceof File) {
-            console.log("Resume: ", data.skillAndReference.resume);
-            await uploadResume.uploadResume(
-              employeeId,
-              data.skillAndReference.resume,
+          if (data.skillAndReference.resume instanceof File)
+            uploadTasks.push(
+              uploadResume.uploadResume(
+                employeeId,
+                data.skillAndReference.resume,
+              ),
             );
-          }
 
-          if (data.skillAndReference.coverLetter instanceof File) {
-            console.log("CoverLetter: ", data.skillAndReference.coverLetter);
-            await uploadCoverLetter.uploadCoverLetter(
-              employeeId,
-              data.skillAndReference.coverLetter,
+          if (data.skillAndReference.coverLetter instanceof File)
+            uploadTasks.push(
+              uploadCoverLetter.uploadCoverLetter(
+                employeeId,
+                data.skillAndReference.coverLetter,
+              ),
             );
-          }
 
+          await Promise.all(uploadTasks);
           setUploadsComplete(true);
           return;
         }
 
+        // Register with phone-otp
         if (basicPhoneSignupData) {
           // Signup employee first to get employeeID
           const employeeId = await empSignup.signup({
@@ -273,39 +259,42 @@ export default function EmployeeSignup() {
             return;
           }
 
-          console.log("Employee ID from Phone Signup: ", employeeId);
+          // Upload files in parallel for faster registration
+          const uploadTasks: Promise<unknown>[] = [];
 
-          // Upload files sequentially to avoid race conditions
-          if (data.avatar instanceof File) {
-            await uploadAvatar.uploadAvatar(employeeId, data.avatar);
-          }
-
-          if (data.skillAndReference.resume instanceof File) {
-            await uploadResume.uploadResume(
-              employeeId,
-              data.skillAndReference.resume,
+          if (data.avatar instanceof File)
+            uploadTasks.push(
+              uploadAvatar.uploadAvatar(employeeId, data.avatar),
             );
-          }
 
-          if (data.skillAndReference.coverLetter instanceof File) {
-            await uploadCoverLetter.uploadCoverLetter(
-              employeeId,
-              data.skillAndReference.coverLetter,
+          if (data.skillAndReference.resume instanceof File)
+            uploadTasks.push(
+              uploadResume.uploadResume(
+                employeeId,
+                data.skillAndReference.resume,
+              ),
             );
-          }
 
+          if (data.skillAndReference.coverLetter instanceof File)
+            uploadTasks.push(
+              uploadCoverLetter.uploadCoverLetter(
+                employeeId,
+                data.skillAndReference.coverLetter,
+              ),
+            );
+
+          await Promise.all(uploadTasks);
           setUploadsComplete(true);
+          return;
         }
       } catch (error) {
-        console.error("Employee signup failed:", error);
+        console.error("Employee Registration Error:", error);
       }
     })();
   };
 
-  // Handle Previous Step
-  const prevStep = () => setStep((prev) => resolvePrevStep(prev));
-
-  // Employee Singup Effect
+  /* --------------------------------- Effects --------------------------------- */
+  // ── Employee Signup Effect ───────────────────────────────────────
   useEffect(() => {
     if (
       empSignup.accessToken &&
@@ -317,10 +306,10 @@ export default function EmployeeSignup() {
       !uploadResume.loading
     ) {
       toast.dismiss();
-      toast.success(empSignup.message ?? "Signup successful!", {
+      toast.success(t("signupSuccessful"), {
         duration: 1000,
       });
-      setTimeout(() => router.replace("/login"), 1000);
+      setTimeout(() => router.replace("/login"), DEFAULT_REDIRECT_DELAY_MS);
       return;
     }
 
@@ -331,15 +320,16 @@ export default function EmployeeSignup() {
       { error: uploadCoverLetter.error, message: uploadCoverLetter.message },
     ];
 
-    errorList.forEach(({ error, message }) => {
+    errorList.forEach(({ error }) => {
       if (error) {
         toast.dismiss();
-        toast.error(message ?? "An error occurred", {
-          action: { label: "Retry", onClick: () => {} },
+        toast.error(t("anErrorOccurred"), {
+          action: { label: t("retry"), onClick: () => {} },
         });
       }
     });
   }, [
+    t,
     empSignup.loading,
     uploadAvatar.loading,
     uploadCoverLetter.loading,
@@ -355,68 +345,42 @@ export default function EmployeeSignup() {
     empSignup.refreshToken,
     uploadsComplete,
     uploadAvatar.message,
+    router,
   ]);
 
-  // Log Basic Signup Data: Regular, Phone and Socials
-  useEffect(() => {
-    console.log("Basic Signup Data: ", basicSignupData);
-    console.log("Basic Phone Signup Data: ", basicPhoneSignupData);
-    console.log("Basic Google Signup Data: ", {
-      firstname: googleUserData.firstname,
-      lastname: googleUserData.lastname,
-      email: googleUserData.email,
-      picture: googleUserData.picture,
-      role: googleUserData.role,
-    });
-    console.log("Basic Github Signup Data: ", {
-      username: githubUserData.username,
-      email: githubUserData.email,
-      picture: githubUserData.picture,
-      role: githubUserData.role,
-    });
-    console.log("Basic LinkedIn Signup Data: ", {
-      firstname: linkedInUserData.firstname,
-      lastname: linkedInUserData.lastname,
-      email: linkedInUserData.email,
-      picture: linkedInUserData.picture,
-      role: linkedInUserData.role,
-    });
-    console.log("Basic Facebook Signup Data: ", {
-      firstname: facebookUserData.firstname,
-      lastname: facebookUserData.lastname,
-      email: facebookUserData.email,
-      picture: facebookUserData.picture,
-      role: facebookUserData.role,
-    });
-  }, [
-    basicSignupData,
-    basicPhoneSignupData,
-    googleUserData,
-    githubUserData,
-    linkedInUserData,
-    facebookUserData,
-  ]);
+  /* -------------------------------- Loading States -------------------------------- */
+  const isSignupLoading =
+    empSignup.loading ||
+    uploadAvatar.loading ||
+    uploadCoverLetter.loading ||
+    uploadResume.loading;
 
+  // Signup loading title
+  const signupLoadingMessage = empSignup.loading
+    ? t("creatingEmployeeAccount")
+    : uploadAvatar.loading
+      ? t("uploadingAvatar")
+      : uploadResume.loading
+        ? t("uploadingResume")
+        : uploadCoverLetter.loading
+          ? t("uploadingCoverLetter")
+          : t("processingRequest");
+
+  /* ----------------------------------- Render UI ----------------------------------- */
   return (
-    <div className="h-[80%] w-[85%] flex flex-col items-start gap-3 tablet-lg:w-full tablet-lg:p-5">
-      <LoadingDialog
-        loading={isSignupLoading}
-        title={signupLoadingMessage}
-        subTitle="Please wait while we complete your employee signup."
-      />
-
+    <div className="w-full max-w-4xl mx-auto flex flex-col gap-5 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
       {/* Navigate Back Button Section */}
-      <Button
+      <button
         type="button"
-        className="absolute top-5 left-5"
-        variant="outline"
         onClick={() => router.push("/signup")}
+        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors w-fit"
       >
-        <LucideArrowLeft />
-      </Button>
+        <LucideArrowLeft className="size-4" />
+        Back to basic info
+      </button>
 
       {/* Header Section */}
-      <div className="mb-5">
+      <div>
         <TypographyH2>Sign up as employee</TypographyH2>
         <TypographyMuted className="text-md">
           Explore your dream job with our platform, Apsara Talent.
@@ -424,41 +388,42 @@ export default function EmployeeSignup() {
       </div>
 
       {/* Step Progress Indicator Section */}
-      <div className="w-full flex items-center mb-5">
-        {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
-          (st, index) => {
-            const isSkipped =
-              st === 2 &&
-              methods.watch("profession.yearOfExperience") === "no_experience";
-            const isActive = step >= st && !isSkipped;
-            return (
-              <div key={st} className="w-full flex items-center">
-                <div
-                  className={`size-8 flex items-center justify-center rounded-full text-muted font-bold transition-all ${
-                    isSkipped
-                      ? "bg-muted text-muted-foreground opacity-40 line-through"
-                      : isActive
-                        ? "bg-primary"
-                        : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  {st}
-                </div>
-                {index < totalSteps - 1 && (
-                  <div className="flex-1 h-1 bg-muted relative">
-                    <div
-                      className={`absolute top-0 left-0 h-full transition-all duration-300 ${
-                        step > st && !isSkipped
-                          ? "bg-primary w-full"
-                          : "bg-muted w-0"
-                      }`}
-                    />
+      <div className="w-full overflow-x-auto pb-2 mb-2">
+        <div className="w-full min-w-[360px] flex items-center gap-0">
+          {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
+            (st, index) => {
+              const isSkipped =
+                st === 2 &&
+                methods.watch("profession.yearOfExperience") ===
+                  "no_experience";
+              const isActive = step >= st && !isSkipped;
+              return (
+                <div key={st} className="w-full flex items-center">
+                  <div
+                    className={`size-8 text-xs sm:size-9 sm:text-sm flex items-center justify-center rounded-full font-bold transition-all ${
+                      isSkipped
+                        ? "bg-muted text-muted-foreground opacity-40 line-through"
+                        : isActive
+                          ? "bg-primary text-primary-foreground shadow-md shadow-primary/30"
+                          : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {st}
                   </div>
-                )}
-              </div>
-            );
-          },
-        )}
+                  {index < totalSteps - 1 && (
+                    <div className="flex-1 h-1 bg-muted rounded-full relative">
+                      <div
+                        className={`absolute top-0 left-0 h-full rounded-full bg-primary transition-all duration-300 ${
+                          step > st && !isSkipped ? "w-full" : "w-0"
+                        }`}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            },
+          )}
+        </div>
       </div>
 
       {/* Form Section */}
@@ -511,20 +476,25 @@ export default function EmployeeSignup() {
             />
           )}
 
-          {/* Next & Previous Step Section */}
           {/* Navigation Buttons Section */}
-          <div className="flex justify-between my-8">
+          <div className="mt-6 mb-4 flex gap-3 sm:justify-between">
             {step > 1 ? (
-              <Button type="button" onClick={prevStep}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={prevStep}
+                className="flex-1 sm:flex-initial sm:min-w-[140px]"
+              >
                 <LucideArrowLeft />
                 Back
               </Button>
             ) : (
-              <div />
+              <div className="hidden sm:block" />
             )}
 
             <Button
               type="button"
+              className="flex-1 sm:flex-initial sm:min-w-[140px]"
               onClick={nextStep}
               disabled={
                 empSignup.loading ||
@@ -539,6 +509,13 @@ export default function EmployeeSignup() {
           </div>
         </form>
       </FormProvider>
+
+      {/* Loading Dialog Section */}
+      <LoadingDialog
+        loading={isSignupLoading}
+        title={signupLoadingMessage}
+        subTitle={t("pleaseWaitSignup")}
+      />
     </div>
   );
 }

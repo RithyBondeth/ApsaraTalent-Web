@@ -1,89 +1,108 @@
-import { availabilityWordsFormat } from "@/utils/functions/availability-word-format";
+import MetaChip from "@/components/utils/data-display/meta-chip";
+import { formatAvailabilityWords } from "@/utils/functions/text";
 import {
-    LucideBriefcaseBusiness,
-    LucideClock,
-    LucideMapPin,
-    LucideMessageCircle
+  LucideBriefcaseBusiness,
+  LucideCalendarCheck,
+  LucideClock,
+  LucideMapPin,
+  LucideMessageCircle,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
-import Tag from "../../utils/tag";
-import { TypographyH4 } from "../../utils/typography/typography-h4";
-import { TypographyP } from "../../utils/typography/typography-p";
+import Tag from "@/components/utils/data-display/tag";
 import { IMatchingEmployeeCardProps } from "./props";
+import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { memo } from "react";
 
-export default function MatchingEmployeeCard(
+const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
   props: IMatchingEmployeeCardProps,
 ) {
+  /* ---------------------------------- Utils --------------------------------- */
+  const availLabel = formatAvailabilityWords(props.availability);
+
+  /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex items-start gap-5 p-5 shadow-md rounded-md tablet-xl:flex-col">
-      <Avatar rounded="md" className="size-56 tablet-xl:size-36">
-        <AvatarFallback>{props.name.slice(0, 2).toUpperCase()}</AvatarFallback>
-        <AvatarImage src={props.avatar} />
-      </Avatar>
-      <div className="w-full flex flex-col items-start gap-3">
-        <div className="w-full flex items-start justify-between tablet-xl:justify-start tablet-xl:gap-3">
-          <div className="flex flex-col items-start gap-1">
-            <TypographyH4 className="text-lg">{props.name}</TypographyH4>
-            <TypographyP className="text-sm font-medium !m-0">
-              @{props.username}
-            </TypographyP>
+    <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
+      <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
+        {/* Avatar Section */}
+        <Avatar
+          rounded="md"
+          className="size-16 sm:size-20 flex-shrink-0 ring-[2px] ring-border/40"
+        >
+          <AvatarFallback className="text-sm font-semibold">
+            {props.name.slice(0, 2).toUpperCase()}
+          </AvatarFallback>
+          <AvatarImage src={props.avatar} />
+        </Avatar>
+
+        {/* Content Section */}
+        <div className="flex-1 min-w-0 flex flex-col gap-3">
+          {/* Header Section */}
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <h3 className="text-base font-bold leading-tight truncate">
+                {props.name}
+              </h3>
+              <TypographyMuted className="text-sm text-muted-foreground mt-0.5">
+                @{props.username}
+              </TypographyMuted>
+            </div>
+            <span
+              className={`text-[11px] font-semibold px-2.5 py-1 rounded-full whitespace-nowrap flex-shrink-0 ${getAvailabilityStyleClass(props.availability)}`}
+            >
+              {availLabel}
+            </span>
           </div>
-          <Tag label={availabilityWordsFormat(props.availability)} />
-        </div>
-        <TypographyP className="text-sm leading-relaxed !m-0">
-          {props.description}
-        </TypographyP>
-        <div className="flex flex-wrap items-center gap-2">
-          {props.skills.map((skill, index) => (
-            <Tag label={skill} key={index} />
-          ))}
-        </div>
-        <div className="w-full flex items-center justify-between mt-2 tablet-xl:flex-col tablet-xl:items-start tablet-xl:gap-5">
-          <div className="flex items-center gap-5 tablet-lg:flex-col tablet-lg:items-start">
-            <div className="flex items-center gap-2">
-              <div className="p-3 rounded-md bg-blue-100">
-                <LucideBriefcaseBusiness
-                  size={"15px"}
-                  className="text-blue-500"
-                />
-              </div>
-              <div className="flex flex-col items-start">
-                <TypographyP className="text-xs !m-0">Position</TypographyP>
-                <TypographyP className="text-sm font-medium !m-0">
-                  {props.position}
-                </TypographyP>
-              </div>
+
+          {/* Description Section */}
+          {props.description && (
+            <TypographyMuted className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+              {props.description}
+            </TypographyMuted>
+          )}
+
+          {/* Skills Tags Section */}
+          {props.skills.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {props.skills.map((skill, index) => (
+                <Tag label={skill} key={index} />
+              ))}
             </div>
-            <div className="flex items-center gap-2">
-              <div className="p-3 rounded-md bg-red-100">
-                <LucideClock size={"15px"} className="text-red-500" />
-              </div>
-              <div className="flex flex-col items-start">
-                <TypographyP className="text-xs !m-0">Experience</TypographyP>
-                <TypographyP className="text-sm font-medium !m-0">
-                  {props.experience}
-                </TypographyP>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="p-3 rounded-md bg-green-100">
-                <LucideMapPin size={"15px"} className="text-green-500" />
-              </div>
-              <div className="flex flex-col items-start">
-                <TypographyP className="text-xs !m-0">Location</TypographyP>
-                <TypographyP className="text-sm font-medium !m-0">
-                  {props.location}
-                </TypographyP>
-              </div>
-            </div>
+          )}
+
+          {/* Meta Chips Section: Position, Experience, Location */}
+          <div className="flex flex-wrap gap-2">
+            <MetaChip
+              icon={<LucideBriefcaseBusiness />}
+              text={props.position}
+            />
+            <MetaChip icon={<LucideClock />} text={props.experience} />
+            <MetaChip icon={<LucideMapPin />} text={props.location} />
           </div>
-          <Button className="text-xs" onClick={props.onChatNowClick}>
-            Chat now
-            <LucideMessageCircle />
+        </div>
+      </div>
+
+      {/* Action Bar Section: Schedule and Chat Now Buttons */}
+      <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end gap-2">
+        {props.onScheduleClick && (
+          <Button
+            size="sm"
+            variant="outline"
+            className="text-xs"
+            onClick={props.onScheduleClick}
+          >
+            <LucideCalendarCheck className="size-3.5" />
+            Schedule
           </Button>
-        </div>
+        )}
+        <Button size="sm" className="text-xs" onClick={props.onChatNowClick}>
+          <LucideMessageCircle className="size-3.5" />
+          Chat Now
+        </Button>
       </div>
     </div>
   );
-}
+});
+
+export default MatchingEmployeeCard;

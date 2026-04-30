@@ -1,18 +1,23 @@
 import axios from "@/lib/axios";
-import { API_UPLOAD_EMP_COVER_LETTER_URL } from "@/utils/constants/apis/employee_url";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
+import { API_UPLOAD_EMP_COVER_LETTER_URL } from "@/utils/constants/apis/user-api/employee.api.constant";
 import { create } from "zustand";
 import { useEmployeeSignupStore } from "../auth/employee-signup.store";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Upload Employee Cover Letter API Response ──────────────────────────────
 type TUploadEmployeeCoverLetterResponse = {
   message: string | null;
 };
 
+// ── Upload Employee Cover Letter State ──────────────────────────────────────
 type TUploadEmployeeCoverLetterState = TUploadEmployeeCoverLetterResponse & {
   loading: boolean;
   error: string | null;
   uploadCoverLetter: (employeeID: string, coverLetter: File) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useUploadEmployeeCoverLetter =
   create<TUploadEmployeeCoverLetterState>((set) => ({
     message: null,
@@ -38,20 +43,12 @@ export const useUploadEmployeeCoverLetter =
         );
         set({ loading: false, error: null, message: response.data.message });
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const errorMessage =
-            error.response?.data?.message instanceof Array
-              ? error.response.data.message.join(", ")
-              : error.response?.data?.message || error.message;
+        const errorMessage = extractApiErrorMessage(
+          error,
+          "An error occurred while uploading employee's cover letter",
+        );
 
-          set({ loading: false, error: errorMessage, message: errorMessage });
-        } else {
-          set({
-            loading: false,
-            error: "An error occurred while uploading employee's cover letter",
-            message: "An error occurred while uploading employee's cover letter"
-          });
-        }
+        set({ loading: false, error: errorMessage, message: errorMessage });
       }
     },
   }));

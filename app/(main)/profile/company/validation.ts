@@ -1,12 +1,12 @@
-import { MAX_IMAGE_SIZE } from "@/utils/constants/app.constant";
+import { MAX_IMAGE_SIZE } from "@/utils/constants/config.constant";
 import {
-    dateValidation,
-    emailValidation,
-    khmerPhoneNumberValidation,
-    positiveNumberValidation,
-    selectedValidation,
-    textValidation
-} from "@/utils/functions/validations";
+  dateValidation,
+  emailValidation,
+  khmerPhoneNumberValidation,
+  positiveNumberValidation,
+  selectedValidation,
+  textValidation,
+} from "@/utils/functions/validation/form-schemas";
 import * as z from "zod";
 
 export const basicInfoSchema = z.object({

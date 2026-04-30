@@ -14,35 +14,34 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import BlurBackGroundOverlay from "@/components/utils/bur-background-overlay";
-import Divider from "@/components/utils/divider";
-import IconLabel from "@/components/utils/icon-label";
-import ImagePopup from "@/components/utils/image-popup";
-import Tag from "@/components/utils/tag";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import ImagePopup from "@/components/utils/data-display/image-popup";
+import Tag from "@/components/utils/data-display/tag";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { getSocialPlatformTypeIcon } from "@/utils/extensions/get-social-type";
-import { dateFormatterv2 } from "@/utils/functions/dateformatter-v2";
-import {
-  IBenefits,
-  IImage,
-  ISocial,
-} from "@/utils/interfaces/user-interface/company.interface";
-import { TPlatform } from "@/utils/types/platform.type";
+import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type";
+import { formatDisplayDate } from "@/utils/functions/date";
+import { IBenefits } from "@/utils/interfaces/user/company.interface";
+import { IImage } from "@/utils/interfaces/user/company.interface";
+import { ISocialLink } from "@/utils/interfaces/user/social.interface";
+import { TPlatform } from "@/utils/types/user/platform.type";
 import {
   LucideAlarmClock,
+  LucideArrowLeft,
   LucideBookmark,
   LucideBriefcaseBusiness,
   LucideBuilding,
+  LucideBuilding2,
   LucideCalendarDays,
+  LucideCamera,
   LucideCircleCheck,
+  LucideCompass,
+  LucideGlobe,
   LucideHeartHandshake,
+  LucideInfo,
   LucideMail,
   LucideMapPinned,
   LucidePhone,
+  LucideStar,
   LucideUser,
   LucideUsers,
   User,
@@ -50,27 +49,33 @@ import {
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
-import { CompanyDetailPageSkeleton } from "./skeleton";
-
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useGetOneCompanyStore } from "@/stores/apis/company/get-one-cmp.store";
-import { useCountAllEmployeeFavoritesStore } from "@/stores/apis/favorite/count-all-employee-favorites.store";
+import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
 import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
 import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
 import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
 import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store";
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
+import MetaChip from "@/components/utils/data-display/meta-chip";
+import { DetailCard } from "@/components/utils/data-display/detail-card";
+import { SectionTitle } from "@/components/utils/layout/section-title";
+import { CompanyDetailPageLoadingSkeleton } from "@/components/company/skeleton";
 
 export default function CompanyDetailPage() {
-  // Utils
+  /* ---------------------------------- Utils ---------------------------------- */
   const router = useRouter();
   const param = useParams<{ companyId: string }>();
   const id = param.companyId;
-  const [isInitialized, setIsInitialized] = useState<boolean>(false);
-  const [fetchError, setFetchError] = useState<string | null>(null);
+  const t = useTranslations("toast");
 
-  // Popup States
+  /* -------------------------------- All States ------------------------------- */
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
+  const [accessGranted, setAccessGranted] = useState<boolean>(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
   const [currentCompanyImage, setCurrentCompanyImage] = useState<string | null>(
@@ -78,46 +83,67 @@ export default function CompanyDetailPage() {
   );
   const ignoreNextClick = useRef<boolean>(false);
 
-  // API Integration
-  const { loading, companyData, queryOneCompany } = useGetOneCompanyStore();
+  /* ------------------------------ API Integration ----------------------------- */
   const currentUser = useGetCurrentUserStore((state) => state.user);
-  // Liked Stores
+  const { loading, companyData, queryOneCompany } = useGetOneCompanyStore();
   const employeeLikeStore = useEmployeeLikeStore();
-  const queryCurrentEmployeeLiked =
-    useGetCurrentEmployeeLikedStore.getState().queryCurrentEmployeeLiked;
-  // Matching Store
-  const countCurrentEmployeeMatching =
-    useCountCurrentEmployeeMatchingStore.getState()
-      .countCurrentEmployeeMatching;
-  // Favorite Stores
+  const queryCurrentEmployeeLiked = useGetCurrentEmployeeLikedStore();
   const employeeFavCompanyStore = useEmployeeFavCompanyStore();
-  const countAllEmployeeFavoritesStore = useCountAllEmployeeFavoritesStore();
   const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
+  const countCurrentEmployeeMatching = useCountCurrentEmployeeMatchingStore();
+  const countAllEmployeeFavoritesStore =
+    useCountCurrentEmployeeFavoritesStore();
+  const currentEmployeeId = currentUser?.employee?.id;
 
-  // Initialize Component (Client-Side Only)
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     if (typeof window !== "undefined") setIsInitialized(true);
   }, []);
 
-  // Fetch One Company Effect
+  // Block access if this company was already liked by the current employee
   useEffect(() => {
-    const fetchOneCompany = async () => {
-      if (!isInitialized || !id) return;
+    if (!isInitialized) return;
+    if (!currentEmployeeId) {
+      setAccessGranted(true);
+      return;
+    }
+    (async () => {
+      await useGetCurrentEmployeeLikedStore
+        .getState()
+        .queryCurrentEmployeeLiked(currentEmployeeId);
+      const liked =
+        useGetCurrentEmployeeLikedStore.getState().currentEmployeeLiked;
+      if (liked?.some((c) => c.id === id)) {
+        router.replace("/feed");
+      } else {
+        setAccessGranted(true);
+      }
+    })();
+  }, [currentEmployeeId, id, isInitialized, router]);
 
+  useEffect(() => {
+    const fetch = async () => {
+      if (!isInitialized || !id) return;
       try {
         setFetchError(null);
         useGetOneCompanyStore.setState({ companyData: null, loading: true });
-        await queryOneCompany(id as string);
-      } catch (error) {
-        console.error("Failed to fetch company data:", error);
+        await queryOneCompany(id);
+      } catch {
         setFetchError("Failed to load company data. Please try again.");
       }
     };
-
-    fetchOneCompany();
+    fetch();
   }, [id, isInitialized, queryOneCompany]);
 
-  // Handle Profile Popup Clicks
+  useEffect(() => {
+    if (openProfilePopup) {
+      ignoreNextClick.current = true;
+      setTimeout(() => (ignoreNextClick.current = false), 200);
+    }
+  }, [openProfilePopup]);
+
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle Click Image Popup ─────────────────────────────────────────
   const handleClickImagePopup = () => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -126,32 +152,95 @@ export default function CompanyDetailPage() {
     setOpenImagePopup(true);
   };
 
+  // ── Handle Click Profile Popup ───────────────────────────────────────
   const handleClickProfilePopup = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
       return;
     }
-
     if ((e.target as HTMLElement).closest(".dialog-content")) return;
-
     setOpenProfilePopup(true);
   };
 
-  // Loading State
-  if (!isInitialized || loading) {
+  // ── Handle Employee Like Company ──────────────────────────────────────
+  const handleLike = async () => {
+    if (currentUser?.employee) {
+      const employeeId = currentUser.employee.id;
+      const companyId = companyData?.id;
+      if (!employeeId || !companyId) return;
+      try {
+        toast.dismiss();
+        await employeeLikeStore.employeeLike(employeeId, companyId);
+        const liked = useEmployeeLikeStore.getState().data;
+        if (liked) {
+          if (liked.isMatched) {
+            toast.success(t("itsAMatch"), {
+              description: t("youLikedEachOther", { name: liked.company.name }),
+            });
+            countCurrentEmployeeMatching.countCurrentEmpMatching(employeeId);
+            setTimeout(
+              () => router.push("/matching"),
+              DEFAULT_REDIRECT_DELAY_MS,
+            );
+          } else {
+            toast.success(t("youLiked", { name: liked.company.name }));
+            setTimeout(() => router.push("/feed"), DEFAULT_REDIRECT_DELAY_MS);
+          }
+        }
+      } catch {
+        toast.error(employeeLikeStore.error || t("failedToLikeCompany"));
+      } finally {
+        queryCurrentEmployeeLiked.queryCurrentEmployeeLiked(employeeId);
+        countAllEmployeeFavoritesStore.countCurrentEmpFavorites(employeeId);
+      }
+    }
+  };
+
+  // ── Handle Add Company To Favorite ──────────────────────────────────────
+  const handleAddToFavorite = async () => {
+    if (currentUser?.employee) {
+      const employeeId = currentUser.employee.id;
+      const companyId = companyData?.id;
+      if (!employeeId || !companyId) return;
+      try {
+        await employeeFavCompanyStore.addCompanyToFavorite(
+          employeeId,
+          companyId,
+        );
+        countAllEmployeeFavoritesStore.countCurrentEmpFavorites(employeeId);
+        toast.success(t("addedToFavorites", { name: companyData?.name }));
+        await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
+          employeeId,
+        );
+      } catch {
+        toast.error(
+          employeeFavCompanyStore.empFavError || t("failedToSaveFavorite"),
+        );
+      }
+    }
+  };
+
+  /* ------------------------------ Derived States ------------------------------ */
+  const isFav = employeeFavCompanyStore.isFavorite(id);
+  const likeDisabled = employeeLikeStore.loading || !currentUser?.employee?.id;
+  const favDisabled =
+    employeeFavCompanyStore.loading || !currentUser?.employee?.id;
+
+  /* ------------------------------- Loading State ------------------------------- */
+  const isLoading = !isInitialized || !accessGranted || loading;
+  if (isLoading)
     return (
       <div className="animate-page-in">
-        <CompanyDetailPageSkeleton />
+        <CompanyDetailPageLoadingSkeleton />
       </div>
     );
-  }
 
-  // Error State
-  if (fetchError) {
+  /* -------------------------------- Error State -------------------------------- */
+  if (fetchError)
     return (
-      <div className="h-screen w-screen flex justify-center items-center animate-page-in">
-        <div className="flex flex-col items-center gap-3">
-          <TypographyH4 className="text-red-500">{fetchError}</TypographyH4>
+      <div className="flex h-[60vh] items-center justify-center animate-page-in">
+        <div className="flex flex-col items-center gap-3 text-center">
+          <p className="text-red-500 font-medium">{fetchError}</p>
           <Button
             variant="destructive"
             onClick={() => window.location.reload()}
@@ -161,517 +250,443 @@ export default function CompanyDetailPage() {
         </div>
       </div>
     );
-  }
 
-  // No Data Available State
-  if (!companyData) {
+  /* ------------------------------ Not Found State ------------------------------ */
+  if (!companyData)
     return (
-      <div className="h-screen w-screen flex justify-center items-center animate-page-in">
+      <div className="flex h-[60vh] items-center justify-center animate-page-in">
         <div className="flex flex-col items-center gap-3">
-          <TypographyH4>Company not found</TypographyH4>
-          <Link href="/">
-            <Button variant="outline">Back to Home</Button>
+          <p className="font-medium">Company not found</p>
+          <Link href="/feed">
+            <Button variant="outline">Back to Feed</Button>
           </Link>
         </div>
       </div>
     );
-  }
 
-  // Handle Employee Like Company
-  const handleLike = async () => {
-    if (currentUser && currentUser.employee) {
-      const employeeId = currentUser.employee.id;
-      const companyId = companyData.id;
-
-      if (!employeeId || !companyId) return;
-
-      try {
-        toast.dismiss();
-        await employeeLikeStore.employeeLike(employeeId, companyId);
-        const employeeData = useEmployeeLikeStore.getState().data;
-        if (employeeData) {
-          const isMatching = employeeData.isMatched;
-          const companyName = employeeData.company.name;
-          if (isMatching) {
-            toast.success("It's a match!", {
-              description: `${companyName} and you like each other.`,
-            });
-            countCurrentEmployeeMatching(employeeId);
-            setTimeout(() => router.push("/matching"), 800);
-          } else {
-            console.log("Wait for this user to like you back....");
-            toast.success(`You liked ${companyName} company.`);
-            setTimeout(() => router.push("/feed"), 800);
-          }
-        }
-      } catch {
-        const err = employeeLikeStore.error || "Failed to like company";
-        toast.error(err);
-      } finally {
-        queryCurrentEmployeeLiked(employeeId);
-      }
-    }
-  };
-
-  // Handle Employee Add Company To Favorite
-  const handleAddToFavorite = async () => {
-    if (currentUser && currentUser.employee) {
-      const employeeId = currentUser.employee.id;
-      const companyId = companyData.id;
-      const companyName = companyData.name;
-
-      if (!employeeId || !companyId) return;
-
-      try {
-        await employeeFavCompanyStore.addCompanyToFavorite(
-          employeeId,
-          companyId,
-        );
-        countAllEmployeeFavoritesStore.countAllEmployeeFavorites(employeeId);
-        toast.success(`${companyName} added to favorites.`);
-        await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
-          employeeId,
-        );
-      } catch {
-        const err = employeeFavCompanyStore.error || "Failed to save company";
-        toast.error(err);
-      }
-    }
-  };
-
+  /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex flex-col gap-5 animate-page-in">
-      {/* Header Section */}
-      {companyData && (
+    <div className="flex flex-col gap-5 animate-page-in tablet-sm:pb-24">
+      {/* Back Navigation Header Section */}
+      <header className="sticky top-0 z-10 border-b border-border/60 bg-background/95 backdrop-blur-sm -mx-4 sm:-mx-6 px-4 sm:px-6">
+        <div className="flex items-center gap-4 py-3">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <LucideArrowLeft className="size-4" />
+            Back
+          </button>
+          <span className="text-border">|</span>
+          <span className="text-sm font-semibold truncate">
+            {companyData.name || "Company Detail"}
+          </span>
+        </div>
+      </header>
+
+      {/* Hero Card Section */}
+      <DetailCard>
+        {/* Cover Section */}
         <div
-          className="relative h-80 w-full flex items-end p-5 bg-center bg-cover bg-no-repeat tablet-sm:justify-center tablet-sm:items-start"
-          style={{ backgroundImage: `url(${companyData.cover})` }}
-        >
-          {/* Blur Background Overlay Section */}
-          <BlurBackGroundOverlay />
-          <div className="relative flex items-center gap-5 tablet-sm:flex-col">
+          className={`h-44 sm:h-56 rounded-t-2xl bg-cover bg-center bg-no-repeat ${
+            !companyData.cover
+              ? "bg-gradient-to-br from-primary/30 via-primary/10 to-muted"
+              : ""
+          }`}
+          style={
+            companyData.cover
+              ? { backgroundImage: `url(${companyData.cover})` }
+              : {}
+          }
+        />
+
+        {/* Identity Section */}
+        <div className="px-4 sm:px-6 pb-5">
+          <div className="flex items-start gap-4 tablet-md:flex-col tablet-md:items-center">
+            {/* Avatar Section */}
             <Avatar
-              className="size-32 tablet-sm:size-28"
+              className="size-20 sm:size-24 -mt-10 sm:-mt-12 ring-[3px] ring-card shadow-xl flex-shrink-0 cursor-pointer"
               rounded="md"
               onClick={(e) => {
-                if (companyData.avatar) {
-                  handleClickProfilePopup(e);
-                }
+                if (companyData.avatar) handleClickProfilePopup(e);
               }}
             >
               <AvatarImage src={companyData.avatar ?? ""} />
-              <AvatarFallback className="uppercase">
-                {companyData.name ? companyData.name.slice(0, 3) : <User />}
+              <AvatarFallback className="uppercase text-xl font-bold">
+                {companyData.name ? companyData.name.slice(0, 2) : <User />}
               </AvatarFallback>
             </Avatar>
-            <div className="flex flex-col items-start gap-2 text-white tablet-sm:items-center">
-              <TypographyH2 className="tablet-sm:text-center tablet-sm:text-xl">
+
+            {/* Information Section: Name, Industry, Location, Company Size, Founded Year */}
+            <div className="flex-1 min-w-0 pt-2 tablet-md:text-center tablet-md:pt-0 tablet-md:mt-1">
+              <h1 className="text-xl sm:text-2xl font-bold leading-tight">
                 {companyData.name}
-              </TypographyH2>
-              <TypographyP className="!m-0 tablet-sm:text-center tablet-sm:text-sm">
+              </h1>
+              <p className="text-muted-foreground text-sm mt-0.5">
                 {companyData.industry}
-              </TypographyP>
-              <div className="flex items-center gap-5">
-                <IconLabel
-                  icon={<LucideCalendarDays />}
-                  text={`Founded in ${companyData.foundedYear}`}
-                  className="[&>p]:text-white"
-                />
-                <IconLabel
-                  icon={<LucideUsers />}
-                  text={`${companyData.companySize}+ Employees`}
-                  className="[&>p]:text-white"
-                />
+              </p>
+              <div className="flex flex-wrap gap-2 mt-3 tablet-md:justify-center">
+                {companyData.location && (
+                  <MetaChip
+                    icon={<LucideMapPinned />}
+                    text={companyData.location}
+                  />
+                )}
+                {companyData.companySize && (
+                  <MetaChip
+                    icon={<LucideUsers />}
+                    text={`${companyData.companySize}+ Employees`}
+                  />
+                )}
+                {companyData.foundedYear && (
+                  <MetaChip
+                    icon={<LucideCalendarDays />}
+                    text={`Est. ${companyData.foundedYear}`}
+                  />
+                )}
               </div>
             </div>
-          </div>
-          <div className="z-10 absolute right-3 bottom-3 flex items-center gap-3">
-            {!employeeFavCompanyStore.isFavorite(id) && (
-              <Button
-                variant="outline"
-                onClick={handleAddToFavorite}
-                disabled={
-                  employeeFavCompanyStore.loading || !currentUser?.employee?.id
-                }
-              >
-                <LucideBookmark />
-                Save to Favorite
+
+            {/* Desktop Action Buttons Section */}
+            <div className="flex gap-2 flex-shrink-0 pt-2 tablet-md:hidden">
+              {!isFav && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAddToFavorite}
+                  disabled={favDisabled}
+                >
+                  <LucideBookmark className="size-4" /> Save
+                </Button>
+              )}
+              <Button size="sm" onClick={handleLike} disabled={likeDisabled}>
+                <LucideHeartHandshake className="size-4" /> Like
               </Button>
-            )}
-            <Button
-              onClick={handleLike}
-              disabled={employeeLikeStore.loading || !currentUser?.employee?.id}
-            >
-              <LucideHeartHandshake />
-              Like
-            </Button>
+            </div>
           </div>
         </div>
-      )}
-      <div className="w-full flex items-stretch gap-5 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
-        <div className="w-2/3 flex flex-col items-stretch gap-5">
-          {/* Description Section */}
-          {companyData && companyData.description && (
-            <div className="w-full flex flex-col items-start gap-3 border border-muted py-5 px-10">
-              <div className="w-full flex flex-col gap-2">
-                <TypographyH4>About {companyData.name}</TypographyH4>
-                <Divider />
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="h-full w-2 bg-primary" />
-                <TypographyMuted className="leading-loose">
-                  {companyData.description}
-                </TypographyMuted>
-              </div>
-            </div>
+      </DetailCard>
+
+      {/* Content Grid Section */}
+      <div className="flex items-start gap-5 tablet-lg:flex-col">
+        {/* Left Section */}
+        <div className="flex-1 min-w-0 flex flex-col gap-5">
+          {/* About Section */}
+          {companyData.description && (
+            <DetailCard className="p-5 sm:p-6">
+              <SectionTitle
+                icon={<LucideInfo />}
+                title={`About ${companyData.name}`}
+              />
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {companyData.description}
+              </p>
+            </DetailCard>
           )}
+
           {/* Open Positions Section */}
-          {companyData &&
-            companyData.openPositions &&
+          {companyData.openPositions &&
             companyData.openPositions.length > 0 && (
-              <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
-                <div className="w-full flex flex-col gap-2">
-                  <TypographyH4>Open Positions</TypographyH4>
-                  <Divider />
-                </div>
-                <div className="w-full flex flex-col gap-3">
-                  {companyData.openPositions?.map((item) => (
+              <DetailCard className="p-5 sm:p-6">
+                <SectionTitle
+                  icon={<LucideBriefcaseBusiness />}
+                  title="Open Positions"
+                />
+                <div className="flex flex-col gap-4">
+                  {companyData.openPositions.map((item) => (
                     <div
-                      className="border border-muted px-5 py-3 rounded-md"
                       key={item.id}
+                      className="rounded-xl border border-border/60 p-4 hover:border-primary/40 hover:shadow-sm transition-all duration-200"
                     >
-                      <div className="flex flex-col items-start gap-5">
-                        <div className="w-full flex items-center justify-between tablet-md:flex-col tablet-md:gap-5 tablet-md:[&>div]:w-full">
-                          <div className="flex flex-col items-start gap-2">
-                            <div className="flex items-center gap-2">
-                              <LucideBriefcaseBusiness strokeWidth={"1.5px"} />
-                              <TypographyP className="font-medium !m-0">
-                                {item.title}
-                              </TypographyP>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              {item.type && (
-                                <Tag
-                                  icon={
-                                    <LucideAlarmClock strokeWidth={"1.5px"} />
-                                  }
-                                  label={item.type}
-                                />
-                              )}
-                              {item.experience && (
-                                <Tag
-                                  icon={<LucideUser strokeWidth={"1.5px"} />}
-                                  label={item.experience}
-                                />
-                              )}
-                            </div>
-                          </div>
-                          <div className="flex flex-col items-start gap-2">
-                            <IconLabel
-                              icon={
-                                <LucideCalendarDays
-                                  className="text-muted-foreground"
-                                  strokeWidth={"1.5px"}
-                                />
-                              }
-                              text={`Post - ${dateFormatterv2(
-                                item.postedDate?.toString() ?? "",
-                              )}`}
-                            />
-                            <IconLabel
-                              icon={
-                                <LucideCalendarDays
-                                  className="text-muted-foreground"
-                                  strokeWidth={"1.5px"}
-                                />
-                              }
-                              text={`Deadline - ${dateFormatterv2(
-                                item.deadlineDate?.toString() ?? "",
-                              )}`}
-                            />
+                      {/* Position Header Section */}
+                      <div className="flex items-start justify-between gap-3 tablet-md:flex-col">
+                        <div className="space-y-2">
+                          <p className="font-semibold text-sm">{item.title}</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {item.type && (
+                              <Tag
+                                icon={<LucideAlarmClock />}
+                                label={item.type}
+                              />
+                            )}
+                            {item.experience && (
+                              <Tag
+                                icon={<LucideUser />}
+                                label={item.experience}
+                              />
+                            )}
                           </div>
                         </div>
-                        <Divider />
-                        <div className="flex flex-col items-start gap-5">
+                        <div className="flex flex-col gap-1 text-xs text-muted-foreground tablet-md:flex-row tablet-md:gap-3 flex-shrink-0">
+                          <span className="flex items-center gap-1">
+                            <LucideCalendarDays className="size-3" />
+                            Posted{" "}
+                            {formatDisplayDate(
+                              item.postedDate?.toString() ?? "",
+                            )}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <LucideCalendarDays className="size-3" />
+                            Deadline{" "}
+                            {formatDisplayDate(
+                              item.deadlineDate?.toString() ?? "",
+                            )}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Position Details Section */}
+                      {(item.description ||
+                        item.education ||
+                        item.skills ||
+                        item.salary) && (
+                        <div className="mt-4 pt-4 border-t border-border/60 space-y-3">
                           {item.description && (
-                            <div className="flex flex-col items-start gap-2">
-                              <TypographySmall className="font-medium">
+                            <div>
+                              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
                                 Description
-                              </TypographySmall>
-                              <TypographyMuted>
+                              </p>
+                              <TypographyMuted className="text-sm leading-relaxed">
                                 {item.description}
                               </TypographyMuted>
                             </div>
                           )}
                           {item.education && (
-                            <div className="flex flex-col items-start gap-2">
-                              <TypographySmall className="font-medium">
+                            <div>
+                              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
                                 Education
-                              </TypographySmall>
-                              <TypographyMuted>
+                              </p>
+                              <TypographyMuted className="text-sm">
                                 {item.education}
                               </TypographyMuted>
                             </div>
                           )}
                           {item.skills && (
-                            <div className="flex flex-col items-start gap-2">
-                              <TypographySmall className="font-medium">
+                            <div>
+                              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
                                 Skills
-                              </TypographySmall>
-                              <div className="flex flex-wrap gap-3">
-                                {item.skills.map((skill) => (
-                                  <Tag key={skill} label={skill} />
+                              </p>
+                              <div className="flex flex-wrap gap-1.5">
+                                {item.skills.map((s) => (
+                                  <Tag key={s} label={s} />
                                 ))}
                               </div>
                             </div>
                           )}
                           {item.salary && (
-                            <div className="flex flex-col items-start gap-2">
-                              <TypographySmall className="font-medium">
+                            <div>
+                              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
                                 Salary Range
-                              </TypographySmall>
-                              <TypographyMuted>{item.salary}</TypographyMuted>
+                              </p>
+                              <span className="text-sm font-semibold text-primary">
+                                {item.salary}
+                              </span>
                             </div>
                           )}
                         </div>
-                      </div>
+                      )}
                     </div>
                   ))}
                 </div>
-              </div>
+              </DetailCard>
             )}
 
-          {/* Careers Section */}
-          {companyData &&
-            companyData.careerScopes.length > 0 &&
-            companyData.careerScopes &&
-            companyData.careerScopes.length > 0 && (
-              <div className="border border-muted rounded-md p-5 flex flex-col items-start gap-5">
-                <div className="w-full flex flex-col gap-1">
-                  <TypographyH4>Company Careers</TypographyH4>
-                  <Divider />
-                </div>
-                <div className="w-full flex flex-col items-stretch gap-3">
-                  <div className="flex flex-wrap gap-3">
-                    {companyData.careerScopes.map((career, index) => (
-                      <div
-                        key={index}
-                        className="rounded-3xl border-[1px] border-muted duration-300 ease-linear hover:border-muted-foreground"
-                      >
-                        <HoverCard>
-                          <HoverCardTrigger>
-                            <Tag label={career.name} />
-                          </HoverCardTrigger>
-                          <HoverCardContent>
-                            <TypographySmall>
-                              {career.description
-                                ? career.description
-                                : career.name}
-                            </TypographySmall>
-                          </HoverCardContent>
-                        </HoverCard>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+          {/* Career Scope Section */}
+          {companyData.careerScopes && companyData.careerScopes.length > 0 && (
+            <DetailCard className="p-5 sm:p-6">
+              <SectionTitle icon={<LucideCompass />} title="Career Scope" />
+              <div className="flex flex-wrap gap-2">
+                {companyData.careerScopes.map((career, i) => (
+                  <HoverCard key={i}>
+                    <HoverCardTrigger>
+                      <Tag label={career.name} />
+                    </HoverCardTrigger>
+                    <HoverCardContent>
+                      <TypographySmall>
+                        {career.description ?? career.name}
+                      </TypographySmall>
+                    </HoverCardContent>
+                  </HoverCard>
+                ))}
               </div>
-            )}
+            </DetailCard>
+          )}
 
-          {/* Life at Company Section */}
+          {/* Company Images Section */}
           {companyData.images && companyData.images.length > 0 && (
-            <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
-              <div className="w-full flex flex-col gap-2">
-                <TypographyH4>Life at {companyData.name}</TypographyH4>
-                <Divider />
-              </div>
-              <div className="w-full">
-                <Carousel className="w-full">
-                  <CarouselContent className="w-full">
-                    {companyData.images.map((item: IImage) => (
-                      <CarouselItem key={item.id} className="max-w-[280px]">
-                        <div
-                          onClick={() => {
-                            handleClickImagePopup();
-                            setCurrentCompanyImage(item.image);
-                          }}
-                          className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center"
-                          style={{ backgroundImage: `url(${item.image})` }}
-                        />
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                  <CarouselPrevious className="ml-3" />
-                  <CarouselNext className="mr-3" />
-                </Carousel>
-              </div>
-            </div>
+            <DetailCard className="p-5 sm:p-6">
+              <SectionTitle
+                icon={<LucideCamera />}
+                title={`Life at ${companyData.name}`}
+              />
+              <Carousel className="w-full">
+                <CarouselContent>
+                  {companyData.images.map((item: IImage) => (
+                    <CarouselItem key={item.id} className="max-w-[260px]">
+                      <div
+                        onClick={() => {
+                          handleClickImagePopup();
+                          setCurrentCompanyImage(item.image);
+                        }}
+                        className="h-44 rounded-xl my-1 ml-1 bg-cover bg-center bg-muted cursor-pointer hover:opacity-90 hover:scale-[1.01] transition-all duration-200"
+                        style={{ backgroundImage: `url(${item.image})` }}
+                      />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="ml-3" />
+                <CarouselNext className="mr-3" />
+              </Carousel>
+            </DetailCard>
           )}
         </div>
-        <div className="w-1/3 flex flex-col items-stretch gap-5">
-          <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
-            <div className="w-full flex flex-col gap-2">
-              <TypographyH4>Company Information</TypographyH4>
-              <Divider />
-            </div>
-            <div className="flex flex-col gap-5 [&>div>p]:text-primary [&>div>p]:font-medium [&>div>p]:text-md">
-              <div className="flex flex-col items-start gap-2">
-                <TypographyMuted>Industry</TypographyMuted>
-                <IconLabel
-                  icon={
-                    <LucideBuilding
-                      className="text-muted-foreground"
-                      strokeWidth={"1.5px"}
-                    />
-                  }
-                  text={companyData.industry ?? ""}
-                />
-              </div>
-              <div className="flex flex-col items-start gap-2">
-                <TypographyMuted>Location</TypographyMuted>
-                <IconLabel
-                  icon={
-                    <LucideMapPinned
-                      className="text-muted-foreground"
-                      strokeWidth={"1.5px"}
-                    />
-                  }
-                  text={companyData.location ?? ""}
-                />
-              </div>
-              <div className="flex flex-col items-start gap-2">
-                <TypographyMuted>Founded</TypographyMuted>
-                <IconLabel
-                  icon={
-                    <LucideCalendarDays
-                      className="text-muted-foreground"
-                      strokeWidth={"1.5px"}
-                    />
-                  }
-                  text={`Founded in ${companyData.foundedYear}`}
-                />
-              </div>
-              <div className="flex flex-col items-start gap-2">
-                <TypographyMuted>Company Size</TypographyMuted>
-                <IconLabel
-                  icon={
-                    <LucideUsers
-                      className="text-muted-foreground"
-                      strokeWidth={"1.5px"}
-                    />
-                  }
-                  text={`${companyData.companySize}+ Employees`}
-                />
-              </div>
-              {companyData.phone && (
-                <div className="flex flex-col items-start gap-2">
-                  <TypographyMuted>Phone</TypographyMuted>
-                  <IconLabel
-                    icon={
-                      <LucidePhone
-                        className="text-muted-foreground"
-                        strokeWidth={"1.5px"}
-                      />
-                    }
-                    text={companyData.phone ?? ""}
-                  />
-                </div>
-              )}
-              <div className="flex flex-col items-start gap-2">
-                <TypographyMuted>Email</TypographyMuted>
-                <IconLabel
-                  icon={
-                    <LucideMail
-                      className="text-muted-foreground"
-                      strokeWidth={"1.5px"}
-                    />
-                  }
-                  text={companyData.email ?? ""}
-                />
-              </div>
-            </div>
-          </div>
 
-          {/* Culture and Benefit Section */}
+        {/* Right Section: Sidebar */}
+        <div className="w-72 flex flex-col gap-5 tablet-lg:w-full">
+          {/* Company Information Section */}
+          <DetailCard className="p-5">
+            <SectionTitle
+              icon={<LucideBuilding2 />}
+              title="Company Information"
+            />
+            <div className="space-y-3.5">
+              {[
+                {
+                  icon: <LucideBuilding />,
+                  label: "Industry",
+                  val: companyData.industry,
+                },
+                {
+                  icon: <LucideMapPinned />,
+                  label: "Location",
+                  val: companyData.location,
+                },
+                {
+                  icon: <LucideCalendarDays />,
+                  label: "Founded",
+                  val: companyData.foundedYear
+                    ? `${companyData.foundedYear}`
+                    : null,
+                },
+                {
+                  icon: <LucideUsers />,
+                  label: "Company Size",
+                  val: companyData.companySize
+                    ? `${companyData.companySize}+ Employees`
+                    : null,
+                },
+                {
+                  icon: <LucidePhone />,
+                  label: "Phone",
+                  val: companyData.phone,
+                },
+                {
+                  icon: <LucideMail />,
+                  label: "Email",
+                  val: companyData.email,
+                },
+              ]
+                .filter((r) => r.val)
+                .map((row) => (
+                  <div key={row.label} className="flex items-start gap-2.5">
+                    <span className="text-muted-foreground mt-0.5 flex-shrink-0 [&>svg]:size-4 [&>svg]:stroke-[1.5]">
+                      {row.icon}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
+                        {row.label}
+                      </p>
+                      <p className="text-sm mt-0.5 break-words">{row.val}</p>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </DetailCard>
+
+          {/* Values and Benefits Section */}
           {(companyData.values.length > 0 ||
             companyData.benefits.length > 0) && (
-            <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
-              <div className="w-full flex flex-col gap-2">
-                <TypographyH4>Company Culture</TypographyH4>
-                <Divider />
-              </div>
-              <div className="w-full flex flex-col items-stretch gap-3 [&>div]:w-full">
-                {companyData &&
-                  companyData.values &&
-                  companyData.values.length > 0 && (
-                    <div className="flex flex-col gap-3 border border-muted px-5 py-3 rounded-md">
-                      <TypographyP className="font-medium">Values</TypographyP>
-                      <div className="flex flex-col gap-2">
-                        {companyData.values.map((item) => (
-                          <IconLabel
-                            key={item.id}
-                            icon={
-                              <LucideCircleCheck
-                                stroke="white"
-                                fill="#69B41E"
-                              />
-                            }
-                            text={item.label}
-                          />
-                        ))}
-                      </div>
+            <DetailCard className="p-5">
+              <SectionTitle icon={<LucideStar />} title="Culture & Benefits" />
+              <div className="space-y-4">
+                {companyData.values.length > 0 && (
+                  <div>
+                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                      Values
+                    </p>
+                    <div className="flex flex-col gap-1.5">
+                      {companyData.values.map((v) => (
+                        <div
+                          key={v.id}
+                          className="flex items-center gap-2 text-sm text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-950/40 px-3 py-2 rounded-lg"
+                        >
+                          <LucideCircleCheck className="size-4 flex-shrink-0" />
+                          {v.label}
+                        </div>
+                      ))}
                     </div>
-                  )}
-                {companyData &&
-                  companyData.benefits &&
-                  companyData.benefits.length > 0 && (
-                    <div className="flex flex-col gap-3 border border-muted px-5 py-3 rounded-md">
-                      <TypographyP className="font-medium">
-                        Benefits
-                      </TypographyP>
-                      <div className="flex flex-col gap-2">
-                        {companyData.benefits.map((item: IBenefits) => (
-                          <IconLabel
-                            key={item.id}
-                            icon={
-                              <LucideCircleCheck
-                                stroke="white"
-                                fill="#0073E6"
-                              />
-                            }
-                            text={item.label}
-                          />
-                        ))}
-                      </div>
+                  </div>
+                )}
+                {companyData.benefits.length > 0 && (
+                  <div>
+                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                      Benefits
+                    </p>
+                    <div className="flex flex-col gap-1.5">
+                      {companyData.benefits.map((b: IBenefits) => (
+                        <div
+                          key={b.id}
+                          className="flex items-center gap-2 text-sm text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/40 px-3 py-2 rounded-lg"
+                        >
+                          <LucideCircleCheck className="size-4 flex-shrink-0" />
+                          {b.label}
+                        </div>
+                      ))}
                     </div>
-                  )}
+                  </div>
+                )}
               </div>
-            </div>
+            </DetailCard>
           )}
 
           {/* Social Section */}
           {companyData.socials && companyData.socials.length > 0 && (
-            <div className="flex flex-col items-start gap-3 border border-muted py-5 px-10">
-              <div className="w-full flex flex-col gap-2">
-                <TypographyH4>Company Socials</TypographyH4>
-                <Divider />
-              </div>
-              <div className="w-full flex flex-wrap gap-3">
-                {companyData.socials.map((item: ISocial) => (
+            <DetailCard className="p-5">
+              <SectionTitle icon={<LucideGlobe />} title="Social Links" />
+              <div className="flex flex-wrap gap-2">
+                {companyData.socials.map((s: ISocialLink) => (
                   <Link
-                    key={item.id}
-                    href={item.url}
+                    key={s.id}
+                    href={s.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-2xl hover:underline"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-muted hover:bg-muted/80 rounded-full text-xs font-medium transition-colors"
                   >
-                    {getSocialPlatformTypeIcon(item.platform as TPlatform)}
-                    <TypographySmall>{item.platform}</TypographySmall>
+                    {getSocialPlatformTypeIcon(s.platform as TPlatform)}
+                    {s.platform}
                   </Link>
                 ))}
               </div>
-            </div>
+            </DetailCard>
           )}
         </div>
+      </div>
+
+      {/* Mobile Sticky Action Bar Section */}
+      <div className="hidden tablet-md:flex fixed bottom-0 left-0 right-0 z-20 gap-3 px-4 py-3 bg-background/95 backdrop-blur-sm border-t border-border [&>button]:flex-1">
+        {!isFav && (
+          <Button
+            variant="outline"
+            onClick={handleAddToFavorite}
+            disabled={favDisabled}
+          >
+            <LucideBookmark /> Save
+          </Button>
+        )}
+        <Button onClick={handleLike} disabled={likeDisabled}>
+          <LucideHeartHandshake /> Like
+        </Button>
       </div>
 
       {/* Image Popup Section */}
@@ -680,6 +695,7 @@ export default function CompanyDetailPage() {
         setOpen={setOpenImagePopup}
         image={currentCompanyImage!}
       />
+
       {/* Profile Popup Section */}
       <ImagePopup
         open={openProfilePopup}

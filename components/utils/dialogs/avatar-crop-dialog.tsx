@@ -1,25 +1,30 @@
 "use client";
 
 import { useState } from "react";
-import Cropper from "react-easy-crop";
+import dynamic from "next/dynamic";
+
+const Cropper = dynamic(() => import("react-easy-crop"), { ssr: false });
 
 import {
-    Dialog,
-    DialogContent, DialogFooter, DialogHeader,
-    DialogTitle
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 
-type CropArea = {
+/* ------------------------------- Helpers ------------------------------ */
+type TCropArea = {
   x: number;
   y: number;
   width: number;
   height: number;
 };
 
-interface AvatarCropDialogProps {
+interface IAvatarCropDialogProps {
   title: string;
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -30,29 +35,36 @@ interface AvatarCropDialogProps {
   fileName?: string;
 }
 
-export default function AvatarCropDialog({
-  title,
-  open,
-  setOpen,
-  image,
-  onCropComplete,
-  aspect = 1,
-  cropShape = "round",
-  fileName = "avatar.jpg",
-}: AvatarCropDialogProps) {
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<CropArea | null>(
+export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
+  /* -------------------------------- Props -------------------------------- */
+  const {
+    title,
+    open,
+    setOpen,
+    image,
+    onCropComplete,
+    aspect = 1,
+    cropShape = "round",
+    fileName = "avatar.jpg",
+  } = props;
+
+  /* -------------------------------- All States ------------------------------ */
+  const [crop, setCrop] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState<number>(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<TCropArea | null>(
     null,
   );
 
-  const handleCropComplete = (_: unknown, croppedPixels: CropArea) => {
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle Crop Complete ─────────────────────────────────────────
+  const handleCropComplete = (_: unknown, croppedPixels: TCropArea): void => {
     setCroppedAreaPixels(croppedPixels);
   };
 
+  // ── Get Cropped Image ─────────────────────────────────────────────
   async function getCroppedImage(
     imageSrc: string,
-    crop: CropArea,
+    crop: TCropArea,
   ): Promise<Blob> {
     const image = new Image();
     image.src = imageSrc;
@@ -81,6 +93,8 @@ export default function AvatarCropDialog({
       canvas.toBlob((blob) => resolve(blob as Blob), "image/png");
     });
   }
+
+  // ── Confirm Crop ─────────────────────────────────────────────────────
   const confirmCrop = async () => {
     if (!croppedAreaPixels) return;
 
@@ -94,13 +108,16 @@ export default function AvatarCropDialog({
     setOpen(false);
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-w-lg">
+        {/* Dialog Header Section: Title */}
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
 
+        {/* Image Section */}
         <div className="relative w-full h-[320px] rounded-md overflow-hidden bg-muted">
           {image && (
             <Cropper
@@ -113,10 +130,21 @@ export default function AvatarCropDialog({
               onCropChange={setCrop}
               onZoomChange={setZoom}
               onCropComplete={handleCropComplete}
+              rotation={0}
+              minZoom={1}
+              maxZoom={3}
+              zoomSpeed={1}
+              restrictPosition={true}
+              keyboardStep={10}
+              style={{}}
+              classes={{}}
+              mediaProps={{}}
+              cropperProps={{}}
             />
           )}
         </div>
 
+        {/* Crop Section */}
         <div className="flex flex-col gap-2 mt-4">
           <span className="text-sm text-muted-foreground">Zoom</span>
 
@@ -129,6 +157,7 @@ export default function AvatarCropDialog({
           />
         </div>
 
+        {/* Dialog Footer Section: Cancel and CropImage Buttons */}
         <DialogFooter className="mt-4">
           <Button
             type="button"

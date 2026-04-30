@@ -5,19 +5,20 @@ import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
 } from "@/components/ui/command";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 interface CreatableComboboxProps {
   options: { label: string; value: string }[];
@@ -43,6 +44,7 @@ export function CreatableCombobox({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
+          type="button"
           variant="outline"
           role="combobox"
           aria-expanded={open}
@@ -63,9 +65,12 @@ export function CreatableCombobox({
           <CommandList>
             <CommandEmpty>
               <div className="flex flex-col items-center gap-2 px-2 py-4">
-                <p className="text-sm text-muted-foreground">{emptyText}</p>
+                <TypographyMuted className="text-sm text-muted-foreground">
+                  {emptyText}
+                </TypographyMuted>
                 {inputValue && (
                   <Button
+                    type="button"
                     variant="secondary"
                     size="sm"
                     className="w-full"

@@ -1,4 +1,4 @@
-import { TUserRole } from "@/utils/types/role.type";
+import { TUserRole } from "@/utils/types/auth/role.type";
 
 export interface INotificationMatchCardProps {
   id: string;
@@ -13,4 +13,5 @@ export interface INotificationMatchCardProps {
     avatar: string;
   };
   onMarkRead?: (id: string) => void;
+  onDelete?: (id: string) => void;
 }

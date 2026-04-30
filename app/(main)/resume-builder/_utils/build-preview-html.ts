@@ -1,11 +1,11 @@
-import { BuildResume } from "../_apis/generate-resume.api";
+import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
 
 /**
  * Generates a clean, professional HTML string from a BuildResume payload.
  * Used for the live client-side preview inside the editor (sandboxed iframe).
  * This is NOT the final PDF — it is a visual approximation for editing convenience.
  */
-export function buildPreviewHTML(data: BuildResume): string {
+export function buildPreviewHTML(data: IBuildResume): string {
   const {
     personalInfo,
     summary,

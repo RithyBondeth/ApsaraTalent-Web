@@ -1,10 +1,19 @@
 import { cn } from "@/lib/utils";
-import { ITypographyProps } from "@/utils/interfaces/typography.interface";
+import { ComponentPropsWithoutRef, forwardRef } from "react";
 
-export function TypographySmall(props: ITypographyProps) {
+export const TypographySmall = forwardRef<
+  HTMLElement,
+  ComponentPropsWithoutRef<"small">
+>(({ className, children, ...props }, ref) => {
   return (
-    <small className={cn("text-sm", props.className)} style={props.style}>
-      {props.children}
+    <small
+      ref={ref}
+      className={cn("text-sm transition-all", className)}
+      {...props}
+    >
+      {children}
     </small>
   );
-}
+});
+
+TypographySmall.displayName = "TypographySmall";

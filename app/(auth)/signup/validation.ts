@@ -4,9 +4,10 @@ import {
   passwordValidation,
   selectedValidation,
   textValidation,
-} from "@/utils/functions/validations";
+} from "@/utils/functions/validation/form-schemas";
 import * as z from "zod";
 
+// Sign up as Employee Schema
 export const basicSignupEmployeeSchema = z
   .object({
     firstName: textValidation("First name", 50),
@@ -21,7 +22,6 @@ export const basicSignupEmployeeSchema = z
     confirmPassword: z.string().min(1, "Confirm password is required"),
   })
   .superRefine((data, ctx) => {
-    // Access password and confirmPassword from the object schema
     if (data.confirmPassword !== data.password) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -31,6 +31,7 @@ export const basicSignupEmployeeSchema = z
     }
   });
 
+// Sign up as Company Schema
 export const basicSignupCompanySchema = z
   .object({
     phone: khmerPhoneNumberValidation(),
@@ -39,7 +40,6 @@ export const basicSignupCompanySchema = z
     confirmPassword: z.string().min(1, "Confirm password is required"),
   })
   .superRefine((data, ctx) => {
-    // Access password and confirmPassword from the object schema
     if (data.confirmPassword !== data.password) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -49,9 +49,12 @@ export const basicSignupCompanySchema = z
     }
   });
 
-export type TBasicSignupCompanySchema = z.infer<
-  typeof basicSignupCompanySchema
->;
+// Type for basic signup as Employee
 export type TBasicSignupEmployeeSchema = z.infer<
   typeof basicSignupEmployeeSchema
+>;
+
+// Type for basic signup as Company
+export type TBasicSignupCompanySchema = z.infer<
+  typeof basicSignupCompanySchema
 >;

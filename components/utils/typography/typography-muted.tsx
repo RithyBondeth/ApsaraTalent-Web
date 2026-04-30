@@ -1,13 +1,19 @@
 import { cn } from "@/lib/utils";
-import { ITypographyProps } from "@/utils/interfaces/typography.interface";
+import { ComponentPropsWithoutRef, forwardRef } from "react";
 
-export function TypographyMuted(props: ITypographyProps) {
+export const TypographyMuted = forwardRef<
+  HTMLParagraphElement,
+  ComponentPropsWithoutRef<"p">
+>(({ className, children, ...props }, ref) => {
   return (
     <p
-      className={cn("text-sm text-muted-foreground", props.className)}
-      style={props.style}
+      ref={ref}
+      className={cn("text-sm text-muted-foreground", className)}
+      {...props}
     >
-      {props.children}
+      {children}
     </p>
   );
-}
+});
+
+TypographyMuted.displayName = "TypographyMuted";

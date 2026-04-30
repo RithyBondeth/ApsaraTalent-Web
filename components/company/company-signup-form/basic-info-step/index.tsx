@@ -1,21 +1,19 @@
-"use client";
-
 import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
 import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import ErrorMessage from "@/components/utils/error-message";
-import LabelInput from "@/components/utils/label-input";
+import ErrorMessage from "@/components/utils/feedback/error-message";
+import LabelInput from "@/components/utils/forms/label-input";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { locationConstant } from "@/utils/constants/app.constant";
+import { locationConstant } from "@/utils/constants/ui.constant";
 import { Controller } from "react-hook-form";
 
 export default function BasicInfoStepForm({
@@ -23,9 +21,12 @@ export default function BasicInfoStepForm({
   control,
   errors,
 }: IStepFormProps<TCompanySignup>) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col items-start gap-5">
+      {/* Title Section */}
       <TypographyH4>Add Basic information</TypographyH4>
+      {/* Form Section */}
       <LabelInput
         label="Company Name"
         input={

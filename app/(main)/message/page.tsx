@@ -3,50 +3,49 @@
 import { ChatMessages } from "@/components/message";
 import ChatHeader from "@/components/message/message-header";
 import ChatInput from "@/components/message/message-input";
-import MessagePageSkeleton, {
-  MessagePaneSkeleton,
-  MessageThreadSkeleton,
-} from "@/components/message/message-page-skeleton";
 import ChatSidebar from "@/components/message/message-sidebar";
-import { CallOrchestrator } from "@/components/call";
-import { ErrorBoundary } from "@/components/utils/error-boundary";
+import { CallOrchestrator } from "@/components/message/message-voicecall/call-orchestrator";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useChatStore } from "@/stores/chat.store";
-import { useCallStore } from "@/stores/call.store";
+import { useChatStore } from "@/stores/features/chat/chat.store";
+import { useCallStore } from "@/stores/features/call/call.store";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { IMessage } from "@/components/message/props";
 import type { ImperativePanelHandle } from "react-resizable-panels";
+import { TypographyP } from "@/components/utils/typography/typography-p";
+import Image from "next/image";
+import MessageLoadingSkeleton, {
+  MessagePaneSkeleton,
+  MessageThreadSkeleton,
+} from "@/components/message/skeleton/index";
+import { MessageSvgImage } from "@/utils/constants/asset.constant";
+import { CHAT_LOADING_TIMEOUT_MS } from "@/utils/constants/chat.constant";
+import { IMessage } from "@/utils/interfaces/chat/chat.interface";
+import { useTranslations } from "next-intl";
 
-/**
- * Message page — orchestrates the full chat experience.
- *
- * ── Layout Strategy ───────────────────────────────────────────────────────────
- *   Mobile  (< 768px):  Single-column, full-screen.
- *     • No chatId in URL → show full-height sidebar list.
- *     • chatId in URL    → show chat view; back arrow goes back to list.
- *     • Hamburger in header opens sidebar as an overlay sheet.
- *   Desktop (≥ 768px):  Classic side-by-side split.
- *     • Sidebar (w-80) is collapsible via toggle chevron in header.
- *
- * ── Key State ─────────────────────────────────────────────────────────────────
- *   replyTarget — the IMessage the user wants to reply to.
- *     Set by: MessageBubble → ChatMessages.onReply → here.
- *     Consumed by: ChatInput (shows quote bar; attaches replyTo to send).
- *     Cleared by: ChatInput after send, or when user presses ✕.
- */
-const MessagePageContent = () => {
+export default function MessagePageContent() {
+  /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("message");
   const searchParams = useSearchParams();
   const chatId = searchParams.get("chatId");
+
+  /* -------------------------------- All States ------------------------------ */
+  const [isSidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const sidebarPanelRef = useRef<ImperativePanelHandle>(null);
+  const [replyTarget, setReplyTarget] = useState<IMessage | null>(null);
+  const [loadingTimedOut, setLoadingTimedOut] = useState<boolean>(false);
+
+  /* ----------------------------- API Integration ---------------------------- */
+  // Current User
   const currentUser = useGetCurrentUserStore((state) => state.user);
 
+  // Chat APIs
   const {
     activeChat,
     activeChats,
@@ -57,39 +56,13 @@ const MessagePageContent = () => {
     isHistoryLoading,
     setTyping,
   } = useChatStore();
-
-  // Stable action refs — read directly from the store singleton so they never
-  // appear in useEffect dependency arrays (which would re-fire effects and
-  // call disconnect() on every store update, wiping currentMessages).
   const sendMessage = useChatStore((s) => s.sendMessage);
   const editMessageAction = useChatStore((s) => s.editMessage);
 
-  // ── Voice call initiation ─────────────────────────────────────────────────
+  // Voice Call Initiation
   const initiateCall = useCallStore((s) => s.initiateCall);
-  const handleStartVoiceCall = () => {
-    if (!activeChat) return;
-    initiateCall({
-      userId: activeChat.id,
-      name: activeChat.name,
-      avatar: activeChat.avatar,
-    });
-  };
 
-  // Desktop: sidebar open by default. Mobile: always false (overlay takes over).
-  const [isSidebarOpen, setSidebarOpen] = useState(true);
-  const sidebarPanelRef = useRef<ImperativePanelHandle>(null);
-  // Mobile overlay open state
-  const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-
-  /**
-   * Reply target — when set, the input bar shows a quote preview.
-   * Flow: bubble.onReply(msg) → setReplyTarget(msg) → ChatInput shows preview
-   *       → user sends → handleSendMessage passes replyTo → store attaches it.
-   */
-  const [replyTarget, setReplyTarget] = useState<IMessage | null>(null);
-
-  const toggleSidebar = () => setSidebarOpen((prev) => !prev);
-
+  /* --------------------------------- Effects --------------------------------- */
   // Keep resizable panel state in sync with the sidebar toggle (avoid calling
   // panel methods inside setState which triggers render-phase updates).
   useEffect(() => {
@@ -98,14 +71,10 @@ const MessagePageContent = () => {
     if (isSidebarOpen) panel.expand();
     else panel.collapse();
   }, [isSidebarOpen]);
-  const openMobileSidebar = () => setMobileSidebarOpen(true);
-  const closeMobileSidebar = () => setMobileSidebarOpen(false);
 
-  // ── 1. Core socket connection ────────────────────────────────────────────
+  // 1. Core Socket Connection
   // IMPORTANT: connect/disconnect are read via getState() (not reactive hooks)
   // so this effect only runs when currentUser actually changes (login/logout).
-  // Using them as reactive dependencies would re-fire the effect on every store
-  // update, calling disconnect() and wiping currentMessages mid-session.
   useEffect(() => {
     const { connect, disconnect } = useChatStore.getState();
     if (currentUser) {
@@ -114,10 +83,7 @@ const MessagePageContent = () => {
     return () => disconnect();
   }, [currentUser]);
 
-  // ── 2. URL → Store sync ──────────────────────────────────────────────────
-  // Runs only when chatId or the chats list changes.
-  // activeChat is read via getState() (not the reactive value) so the guard
-  // always reflects the current store value without needing it in deps.
+  // 2. URL → Store sync
   useEffect(() => {
     if (!currentUser || !isConnected) return;
 
@@ -131,10 +97,6 @@ const MessagePageContent = () => {
         currentActiveChat?.id.toLowerCase() === chatId.toLowerCase();
       const hasMessages = msgs.length > 0;
 
-      // Skip entirely if:
-      //  (a) already on this chat AND messages are loaded (normal guard), OR
-      //  (b) already on this chat AND history is currently loading (getChatHistory
-      //      was already started — don't kick off a second concurrent request)
       if (alreadyOnChat && (hasMessages || isHistoryLoading)) return;
 
       const chatFromSidebar = activeChats.find(
@@ -142,27 +104,22 @@ const MessagePageContent = () => {
       );
 
       if (chatFromSidebar) {
-        // Found in sidebar — setActiveChat will atomically set loading state + fetch
         setChat(chatFromSidebar);
       } else if (isChatsLoaded && !alreadyOnChat) {
-        // Not in sidebar yet (e.g. brand-new chat navigated to directly).
-        // Set a skeleton placeholder so the header renders; getChatHistory will
-        // resolve the name + avatar from partnerProfile when it returns.
         setChat({
           id: chatId,
-          name: "Loading...",
+          name: t("loadingChat"),
           avatar: "",
           preview: "",
           time: "",
         });
       }
-      // If !isChatsLoaded, wait — the effect will re-run when isChatsLoaded becomes true
     } else if (currentActiveChat) {
       setChat(null);
     }
   }, [chatId, activeChats, isChatsLoaded, isConnected, currentUser]);
 
-  // ── 3. Mark unread messages as read when opening a chat ─────────────────
+  // 3. Mark unread messages as read when opening a chat
   useEffect(() => {
     if (!activeChat || !currentMessages.length) return;
     const lastUnread = [...currentMessages]
@@ -172,28 +129,34 @@ const MessagePageContent = () => {
       useChatStore.getState().markAsRead(lastUnread.id, lastUnread.senderId);
   }, [currentMessages, activeChat]);
 
-  // ── Handlers ─────────────────────────────────────────────────────────────
+  // 4. Show full-page spinner only during initial load
+  useEffect(() => {
+    if (isConnected && isChatsLoaded) {
+      setLoadingTimedOut(false);
+      return;
+    }
+    const t = setTimeout(
+      () => setLoadingTimedOut(true),
+      CHAT_LOADING_TIMEOUT_MS,
+    );
+    return () => clearTimeout(t);
+  }, [isConnected, isChatsLoaded]);
 
-  /**
-   * Send a message (with optional reply-to context and/or file attachments).
-   *
-   * Multi-file strategy: each file becomes its own chat message so every
-   * attachment renders as a separate bubble (consistent with how most chat
-   * apps handle multi-file sends).  The text (if any) travels with the
-   * FIRST file so it reads naturally as a caption.  Extra files after the
-   * first are sent as attachment-only messages immediately after.
-   *
-   * Examples:
-   *   text="check this" + [img1, img2]
-   *     → msg1: content="check this", attachment=img1
-   *     → msg2: content="",            attachment=img2
-   *
-   *   text="hello" + no attachments
-   *     → msg1: content="hello"
-   *
-   *   text="" + [doc1]
-   *     → msg1: content="", attachment=doc1
-   */
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Toggle Sidebar ────────────────────────────────────────
+  const toggleSidebar = () => setSidebarOpen((prev) => !prev);
+
+  // ── Handle Start Voice Call ───────────────────────────────
+  const handleStartVoiceCall = () => {
+    if (!activeChat) return;
+    initiateCall({
+      userId: activeChat.id,
+      name: activeChat.name,
+      avatar: activeChat.avatar,
+    });
+  };
+
+  // ── Send Message ─────────────────────────────────────────
   const handleSendMessage = (
     text: string,
     replyTo?: IMessage["replyTo"] | null,
@@ -226,62 +189,47 @@ const MessagePageContent = () => {
     return true;
   };
 
-  /**
-   * Edit an existing message's text content.
-   * Called by MessageBubble when the user confirms an inline edit.
-   */
+  // ── Edit Message ─────────────────────────────────────────
   const handleEditMessage = (messageId: string, newContent: string) => {
     if (chatId) editMessageAction(messageId, chatId, newContent);
   };
 
+  // ── Handle Typing ─────────────────────────────────────────
   const handleTyping = (typing: boolean) => {
     if (chatId) setTyping(chatId, typing);
   };
 
+  // ── Handle Chat Select ─────────────────────────────────────
   const handleChatSelect = (chat: { id: string }) => {
-    closeMobileSidebar();
-    // Clear reply state when switching chats
     setReplyTarget(null);
     router.push(`/message?chatId=${chat.id}`);
   };
 
+  // ── Handle Back ────────────────────────────────────────────
   const handleBack = () => {
     setReplyTarget(null);
     router.push("/message");
   };
 
-  // Show full-page spinner only during initial load (connection + first chat list fetch).
-  // Use a 5-second timeout so a connection error doesn't leave the page stuck forever.
-  const [loadingTimedOut, setLoadingTimedOut] = useState(false);
-  useEffect(() => {
-    // Reset timeout flag whenever we successfully connect so a future disconnect
-    // → reconnect cycle can show the spinner briefly again if needed.
-    if (isConnected && isChatsLoaded) {
-      setLoadingTimedOut(false);
-      return;
-    }
-    const t = setTimeout(() => setLoadingTimedOut(true), 5000);
-    return () => clearTimeout(t);
-  }, [isConnected, isChatsLoaded]);
-
+  /* ------------------------------- Loading State ----------------------------- */
   const isLoading = (!isConnected || !isChatsLoaded) && !loadingTimedOut;
 
-  if (isLoading) {
-    return <MessagePageSkeleton />;
-  }
+  if (isLoading) return <MessageLoadingSkeleton />;
 
+  /* -------------------------------- Render UI -------------------------------- */
+  // Chat View Section
   const chatView = activeChat ? (
-    <div className="flex flex-col h-full min-w-0">
+    <div className="flex flex-col h-full min-h-0 min-w-0">
+      {/* Chat Header Section */}
       <ChatHeader
         chat={activeChat}
         isSidebarOpen={isSidebarOpen}
         onToggleSidebar={toggleSidebar}
         onBack={handleBack}
-        onOpenMobileSidebar={openMobileSidebar}
         onStartVoiceCall={handleStartVoiceCall}
       />
 
-      {/* Message area — spinner while history is loading */}
+      {/* Message Area Section — Spinner while history is loading */}
       {isHistoryLoading ? (
         <MessageThreadSkeleton />
       ) : (
@@ -289,12 +237,12 @@ const MessagePageContent = () => {
           messages={currentMessages}
           activeChat={activeChat}
           isTyping={isTyping[activeChat.id] || false}
-          onReply={(msg) => setReplyTarget(msg)} // ← reply handler
-          onEdit={handleEditMessage} // ← edit handler
+          onReply={(msg) => setReplyTarget(msg)}
+          onEdit={handleEditMessage}
         />
       )}
 
-      {/* Input bar — shows quote preview when replyTarget is set */}
+      {/* Input Bar Section — Shows quote preview when replyTarget is set */}
       <ChatInput
         onSendMessage={handleSendMessage}
         onTyping={handleTyping}
@@ -304,117 +252,73 @@ const MessagePageContent = () => {
     </div>
   ) : null;
 
-  const desktopEmptyState = (
+  // Desktop Empty State View Section
+  const desktopEmptyStateView = (
     <div className="flex flex-1 flex-col items-center justify-center p-8 text-center bg-muted/5">
-      <div className="max-w-md space-y-3">
-        <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-          <svg
-            className="w-8 h-8 text-primary"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-            />
-          </svg>
-        </div>
-        <h2 className="text-2xl font-semibold">Your Messages</h2>
-        <p className="text-muted-foreground">
-          Select a conversation from the sidebar to start chatting.
-        </p>
+      <div className="w-full flex flex-col items-center justify-center my-16">
+        <Image
+          src={MessageSvgImage}
+          alt="Message"
+          height={300}
+          width={300}
+          className="animate-float"
+        />
+        <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
+          {t("selectConversation")}
+        </TypographyP>
       </div>
     </div>
   );
 
   return (
-    <div className="w-full h-full flex bg-background overflow-hidden relative">
-      {/* Call overlay + incoming modal — persists across chat switches */}
+    <div className="w-full h-[calc(100dvh-4rem)] md:h-full min-h-0 flex bg-background overflow-hidden relative animate-page-in">
+      {/* Call Overlay + Incoming Modal Section */}
       <CallOrchestrator />
-      {/*
-       * MOBILE / TABLET  (<= 768px):  Full-screen sidebar overlays chat.
-       *   - No chatId → show sidebar list (full height)
-       *   - chatId    → show chat view; back arrow returns to list
-       *   - Hamburger in header opens sidebar sheet over chat view
-       *
-       * DESKTOP  (> 768px):  Classic side-by-side split view.
-       *   - Sidebar is collapsible (w-80 ↔ w-16) via toggle in header
-       */}
 
-      {/* ── DESKTOP RESIZABLE LAYOUT ─────────────────────────────────────── */}
-      <ResizablePanelGroup
-        direction="horizontal"
-        className="hidden md:flex w-full h-full"
-      >
-        <ResizablePanel
-          ref={sidebarPanelRef}
-          defaultSize={26}
-          minSize={18}
-          maxSize={40}
-          collapsible
-          collapsedSize={6}
-          onCollapse={() => setSidebarOpen(false)}
-          onExpand={() => setSidebarOpen(true)}
+      {/* Desktop Resizable Layout Section */}
+      <div className="hidden lg:flex w-full h-full min-h-0">
+        <ResizablePanelGroup
+          direction="horizontal"
+          className="w-full h-full min-h-0"
         >
-          <ChatSidebar
-            chats={activeChats}
-            activeChat={activeChat}
-            isOpen={isSidebarOpen}
-            isResizable
-            className="h-full"
-            currentUserId={currentUser?.id}
-            onChatSelect={(chat) => router.push(`/message?chatId=${chat.id}`)}
-            onNewChat={() => {
-              // TODO: open contact picker modal
-              // For now we just navigate to /message to show the empty state
-              router.push("/message");
-            }}
-          />
-        </ResizablePanel>
-        <ResizableHandle withHandle />
-        <ResizablePanel minSize={60} className="flex flex-col min-w-0">
-          {chatView ?? desktopEmptyState}
-        </ResizablePanel>
-      </ResizablePanelGroup>
-
-      {/* ── MOBILE SIDEBAR OVERLAY ───────────────────────────────────────── */}
-      {isMobileSidebarOpen && (
-        <div className="md:hidden fixed inset-0 z-50 flex">
-          {/* Backdrop — clicking dismisses the overlay */}
-          <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-            onClick={closeMobileSidebar}
-          />
-          {/* Sidebar panel slides in from the left */}
-          <div className="relative w-[85vw] max-w-sm h-full bg-background shadow-xl z-10 animate-in slide-in-from-left duration-300">
+          <ResizablePanel
+            ref={sidebarPanelRef}
+            defaultSize={26}
+            minSize={18}
+            maxSize={40}
+            collapsible
+            collapsedSize={6}
+            onCollapse={() => setSidebarOpen(false)}
+            onExpand={() => setSidebarOpen(true)}
+          >
             <ChatSidebar
               chats={activeChats}
               activeChat={activeChat}
-              isOpen={true}
+              isOpen={isSidebarOpen}
+              isResizable
+              className="h-full"
               currentUserId={currentUser?.id}
-              onChatSelect={handleChatSelect}
-              onClose={closeMobileSidebar}
-              onNewChat={() => {
-                closeMobileSidebar();
-                router.push("/message");
-              }}
+              onChatSelect={(chat) => router.push(`/message?chatId=${chat.id}`)}
+              onNewChat={() => router.push("/message")}
             />
-          </div>
-        </div>
-      )}
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel minSize={60} className="flex flex-col min-w-0">
+            {chatView ?? desktopEmptyStateView}
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
 
-      {/* ── MOBILE CONTENT AREA ──────────────────────────────────────────── */}
-      <div className="md:hidden flex-1 flex flex-col min-w-0 h-full">
-        {/* Mobile: show full-height sidebar list when no chat is selected */}
+      {/* Mobile Content Area Section */}
+      <div className="lg:hidden flex-1 flex flex-col min-w-0 h-full min-h-0">
+        {/* Mobile Section: show full-height sidebar list when no chat is selected */}
         {!chatId && (
-          <div className="md:hidden h-full flex flex-col">
+          <div className="h-full min-h-0 flex flex-col">
             <ChatSidebar
               chats={activeChats}
               activeChat={activeChat}
               isOpen={true}
+              className="h-full w-full"
               currentUserId={currentUser?.id}
               onChatSelect={handleChatSelect}
               onNewChat={() => router.push("/message")}
@@ -422,24 +326,14 @@ const MessagePageContent = () => {
           </div>
         )}
 
-        {/* Chat view — shown when a chatId is in the URL */}
+        {/* Chat View Section: shown when a chatId is in the URL */}
         {chatId && chatView}
         {chatId && !chatView && (
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 min-h-0">
             <MessagePaneSkeleton />
           </div>
         )}
       </div>
     </div>
-  );
-};
-
-export default function MessagePage() {
-  return (
-    <ErrorBoundary>
-      <Suspense fallback={<MessagePageSkeleton />}>
-        <MessagePageContent />
-      </Suspense>
-    </ErrorBoundary>
   );
 }

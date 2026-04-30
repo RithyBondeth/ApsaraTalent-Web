@@ -1,13 +1,17 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogTitle
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
 } from "@/components/ui/dialog";
+import { useTranslations } from "next-intl";
 
-export default function RemoveAlertDialog(props: {
+/* ----------------------------------- Helper ---------------------------------- */
+interface IRemoveAlertDialog {
   type:
     | "experience"
     | "education"
@@ -21,24 +25,29 @@ export default function RemoveAlertDialog(props: {
   setOpenDialog: (onRemoveOpDialog: boolean) => void;
   onNoClick: () => void;
   onYesClick: () => void;
-}) {
+}
+
+export default function RemoveAlertDialog(props: IRemoveAlertDialog) {
+  /* ---------------------------------- Props ---------------------------------- */
+  const { type, openDialog, setOpenDialog, onNoClick, onYesClick } = props;
+
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("dialog");
+
+  /* -------------------------------- Render UI -------------------------------- */
   return (
-    <Dialog open={props.openDialog} onOpenChange={props.setOpenDialog}>
+    <Dialog open={openDialog} onOpenChange={setOpenDialog}>
       <DialogContent>
-        <DialogTitle>Are you sure?</DialogTitle>
+        <DialogTitle>{t("areYouSure")}</DialogTitle>
         <DialogDescription>
-          Are you sure you want to delete this {props.type}?
+          {t("deleteConfirm", { type })}
         </DialogDescription>
         <DialogFooter>
-          <Button variant={"outline"} type="button" onClick={props.onNoClick}>
-            No
+          <Button variant={"outline"} type="button" onClick={onNoClick}>
+            {t("no")}
           </Button>
-          <Button
-            type="button"
-            variant={"destructive"}
-            onClick={props.onYesClick}
-          >
-            Yes
+          <Button type="button" variant={"destructive"} onClick={onYesClick}>
+            {t("yes")}
           </Button>
         </DialogFooter>
       </DialogContent>

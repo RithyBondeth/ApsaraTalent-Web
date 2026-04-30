@@ -1,17 +1,22 @@
-import { API_REMOVE_EMP_EXPERIENCE_URL } from "@/utils/constants/apis/employee_url";
+import { API_REMOVE_EMP_EXPERIENCE_URL } from "@/utils/constants/apis/user-api/employee.api.constant";
+import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import axios from "axios";
 import { create } from "zustand";
 
+/* ---------------------------------- States --------------------------------- */
+// ── Remove Employee Experience API Response ─────────────────────────────
 type TRemoveEmpExperienceResponse = {
   message: string | null;
 };
 
+// ── Remove Employee Experience State ──────────────────────────────────────
 type TRemoveEmpExperienceStoreState = TRemoveEmpExperienceResponse & {
   loading: boolean;
   error: string | null;
   removeExperience: (employeeID: string, experienceID: string) => Promise<void>;
 };
 
+/* ---------------------------------- Store --------------------------------- */
 export const useRemoveEmpExperienceStore =
   create<TRemoveEmpExperienceStoreState>((set) => ({
     message: null,
@@ -25,20 +30,12 @@ export const useRemoveEmpExperienceStore =
         );
         set({ loading: false, error: null, message: response.data.message });
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const errorMessage =
-            error.response?.data?.message instanceof Array
-              ? error.response.data.message.join(", ")
-              : error.response?.data?.message || error.message;
+        const errorMessage = extractApiErrorMessage(
+          error,
+          "An error occurred while removing employee's experience.",
+        );
 
-          set({ loading: false, error: errorMessage, message: errorMessage });
-        } else {
-          set({
-            loading: false,
-            error: "An error occurred while removing employee's experience.",
-            message: "An error occurred while removing employee's experience.",
-          });
-        }
+        set({ loading: false, error: errorMessage, message: errorMessage });
       }
     },
   }));
