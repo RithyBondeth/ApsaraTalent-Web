@@ -99,7 +99,7 @@ import {
   LucideXCircle,
   LucideZap,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
@@ -124,6 +124,7 @@ export default function EmployeeProfilePage() {
   /* -------------------------------- All States -------------------------------- */
   // Util States
   const [isEdit, setIsEdit] = useState<boolean>(false);
+  const editModeEnteredAtRef = useRef<number | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | undefined>(
     undefined,
   );
@@ -392,7 +393,7 @@ export default function EmployeeProfilePage() {
 
   // ── Enable Edit Mode ───────────────────────────────────
   const enableEditMode = () => {
-    getAllCareerScopesStore.getAllCareerScopes();
+    editModeEnteredAtRef.current = Date.now();
     setIsEdit(true);
   };
 
@@ -403,6 +404,9 @@ export default function EmployeeProfilePage() {
     setResumeFile(null);
     setCoverLetterFile(null);
     closeAllDialogs();
+    setDeleteSkillIds([]);
+    setDeleteSocialIds([]);
+    setDeleteCareerScopeIds([]);
     setIsEdit(false);
   };
 
@@ -826,7 +830,8 @@ export default function EmployeeProfilePage() {
       });
 
       /* ------------------------ SKILLS ------------------------ */
-      const skillsChanged = skills.some((s) => !s.id) || deleteSkillIds.length > 0;
+      const skillsChanged =
+        skills.some((s) => !s.id) || deleteSkillIds.length > 0;
       if (skillsChanged) {
         updateBody.skills = (data.skills ?? [])
           .filter((s): s is ISkill => !!s && !!s.name?.trim())
@@ -841,7 +846,8 @@ export default function EmployeeProfilePage() {
       }
 
       /* ------------------------ CAREER SCOPES ------------------------ */
-      const careerScopesChanged = careerScopes.some((cs) => !cs.id) || deleteCareerScopeIds.length > 0;
+      const careerScopesChanged =
+        careerScopes.some((cs) => !cs.id) || deleteCareerScopeIds.length > 0;
       if (careerScopesChanged) {
         updateBody.careerScopes = (data.careerScopes ?? [])
           .filter((cs): cs is ICareerScope => !!cs && !!cs.name?.trim())
@@ -856,7 +862,8 @@ export default function EmployeeProfilePage() {
       }
 
       /* ------------------------ SOCIALS ------------------------ */
-      const socialsChanged = socials.some((s) => !s.id) || deleteSocialIds.length > 0;
+      const socialsChanged =
+        socials.some((s) => !s.id) || deleteSocialIds.length > 0;
       if (socialsChanged) {
         updateBody.socials = (data.socials ?? [])
           .filter(
@@ -963,7 +970,14 @@ export default function EmployeeProfilePage() {
         hasAvatarUpload || hasResumeUpload || hasCoverLetterUpload;
 
       if (!hasUpdateBodyChanges && !hasFileUploads) {
-        await disableEditMode();
+        setAvatarFile(null);
+        setResumeFile(null);
+        setCoverLetterFile(null);
+        closeAllDialogs();
+        setDeleteSkillIds([]);
+        setDeleteSocialIds([]);
+        setDeleteCareerScopeIds([]);
+        setIsEdit(false);
         return;
       }
 
@@ -974,8 +988,7 @@ export default function EmployeeProfilePage() {
         await updateOneEmpStore.updateOneEmployee(employee.id, updateBody);
       }
 
-      await getCurrentUser();
-      setIsEdit(false);
+      await disableEditMode();
     } catch (err) {
       console.error(err);
       toast.error(t("error"), {
@@ -987,6 +1000,15 @@ export default function EmployeeProfilePage() {
   // ── handleSubmit: Submit Employee Profile Form ─────────────────────────────────────────
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Guard: ignore submissions that arrive within 400ms of entering edit mode
+    // (prevents double-click on Edit Profile from immediately hitting Save)
+    if (
+      editModeEnteredAtRef.current !== null &&
+      Date.now() - editModeEnteredAtRef.current < 400
+    ) {
+      return;
+    }
 
     form.setValue("skills", skills, { shouldDirty: true });
     form.setValue("careerScopes", careerScopes, { shouldDirty: true });
@@ -1056,7 +1078,10 @@ export default function EmployeeProfilePage() {
       className="!min-w-full flex flex-col gap-5 overflow-x-hidden animate-page-in"
       onSubmit={handleSubmit}
       onKeyDown={(e) => {
-        if (e.key === "Enter" && (e.target as HTMLElement).tagName !== "TEXTAREA") {
+        if (
+          e.key === "Enter" &&
+          (e.target as HTMLElement).tagName !== "TEXTAREA"
+        ) {
           e.preventDefault();
         }
       }}
@@ -1079,7 +1104,7 @@ export default function EmployeeProfilePage() {
           <div className="absolute top-4 right-4 hidden sm:flex items-center gap-3">
             {isEdit ? (
               <>
-                <Button type="submit" className="text-xs">
+                <Button type="submit" className="text-xs" disabled={updateProfileLoadingState}>
                   {updateProfileLoadingState ? tP("updating") : tP("save")}{" "}
                   <LucideCircleCheck />
                 </Button>
@@ -1187,7 +1212,7 @@ export default function EmployeeProfilePage() {
             <div className="flex sm:hidden items-center gap-3 tablet-md:w-full tablet-md:justify-center">
               {isEdit ? (
                 <>
-                  <Button type="submit" className="text-xs">
+                  <Button type="submit" className="text-xs" disabled={updateProfileLoadingState}>
                     {updateProfileLoadingState ? tP("updating") : tP("save")}{" "}
                     <LucideCircleCheck />
                   </Button>
@@ -1221,7 +1246,10 @@ export default function EmployeeProfilePage() {
         <div className="w-[60%] min-w-0 flex flex-col gap-5">
           {/* Personal Information Section: Firstname, Lastname, Username, DOB, Location, Gender, Email and Phone Number */}
           <div className="w-full flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
-            <SectionTitle icon={<LucideUser />} title={tP("personalInformation")} />
+            <SectionTitle
+              icon={<LucideUser />}
+              title={tP("personalInformation")}
+            />
 
             <div className="flex flex-col items-start gap-5">
               <div className="w-full flex items-center justify-between gap-5 [&>div]:!w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:!w-full">
@@ -1319,7 +1347,9 @@ export default function EmployeeProfilePage() {
                 </div>
 
                 <div className="flex flex-col items-start gap-1">
-                  <TypographyMuted className="text-xs">{tP("gender")}</TypographyMuted>
+                  <TypographyMuted className="text-xs">
+                    {tP("gender")}
+                  </TypographyMuted>
                   <Controller
                     name="basicInfo.gender"
                     control={form.control}
@@ -1796,7 +1826,10 @@ export default function EmployeeProfilePage() {
           {/* Career Scopes Section */}
           <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
             <div className="w-full">
-              <SectionTitle icon={<LucideCompass />} title={tP("careerScopesSection")} />
+              <SectionTitle
+                icon={<LucideCompass />}
+                title={tP("careerScopesSection")}
+              />
             </div>
 
             {/* Career Scopes List Section */}
@@ -2152,7 +2185,10 @@ export default function EmployeeProfilePage() {
 
           {/* Socials Section */}
           <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
-            <SectionTitle icon={<LucideGlobe />} title={tP("socialInformation")} />
+            <SectionTitle
+              icon={<LucideGlobe />}
+              title={tP("socialInformation")}
+            />
 
             {/* Social List Section */}
             {socials && socials.length > 0 ? (
@@ -2303,7 +2339,10 @@ export default function EmployeeProfilePage() {
 
           {/* Authentication Section */}
           <div className="flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
-            <SectionTitle icon={<LucideSettings />} title={tP("authentication")} />
+            <SectionTitle
+              icon={<LucideSettings />}
+              title={tP("authentication")}
+            />
 
             <div className="w-full flex flex-col items-start gap-3">
               {/* Google, Facebook, LinkedIn and Github Methods Section */}

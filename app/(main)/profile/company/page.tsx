@@ -98,7 +98,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { companyFormSchema, TCompanyProfileForm } from "./validation";
 import { emptySvgImage } from "@/utils/constants/asset.constant";
@@ -115,6 +115,7 @@ export default function ProfilePage() {
 
   /* -------------------------------- All States -------------------------------- */
   const [isEdit, setIsEdit] = useState<boolean>(false);
+  const editModeEnteredAtRef = useRef<number | null>(null);
 
   // Image States
   const {
@@ -382,7 +383,7 @@ export default function ProfilePage() {
 
   // ── Enable Edit Mode ─────────────────────────────────────────
   const enableEditMode = () => {
-    getAllCareerScopeStore.getAllCareerScopes();
+    editModeEnteredAtRef.current = Date.now();
     setIsEdit(true);
   };
 
@@ -392,6 +393,10 @@ export default function ProfilePage() {
     setAvatarFile(null);
     setCoverFile(null);
     closeAllDialogs();
+    setDeletedBenefitIds([]);
+    setDeletedValueIds([]);
+    setDeleteCareerScopeIds([]);
+    setDeleteSocialIds([]);
     setIsEdit(false);
   };
 
@@ -814,7 +819,8 @@ export default function ProfilePage() {
       }
 
       /* ------------------------ BENEFITS & VALUES ------------------------ */
-      const benefitsChanged = benefits.some((b) => !b.id) || deletedBenefitIds.length > 0;
+      const benefitsChanged =
+        benefits.some((b) => !b.id) || deletedBenefitIds.length > 0;
       if (benefitsChanged) {
         updateBody.benefits = data.benefitsAndValues?.benefits || [];
         if (deletedBenefitIds.length > 0) {
@@ -822,7 +828,8 @@ export default function ProfilePage() {
         }
       }
 
-      const valuesChanged = values.some((v) => !v.id) || deletedValueIds.length > 0;
+      const valuesChanged =
+        values.some((v) => !v.id) || deletedValueIds.length > 0;
       if (valuesChanged) {
         updateBody.values = data.benefitsAndValues?.values || [];
         if (deletedValueIds.length > 0) {
@@ -831,7 +838,8 @@ export default function ProfilePage() {
       }
 
       /* ------------------------ CAREER SCOPES ------------------------ */
-      const careerScopesChanged = careerScopes.some((cs) => !cs.id) || deleteCareerScopeIds.length > 0;
+      const careerScopesChanged =
+        careerScopes.some((cs) => !cs.id) || deleteCareerScopeIds.length > 0;
       if (careerScopesChanged) {
         updateBody.careerScopes = data.careerScopes || [];
         if (deleteCareerScopeIds.length > 0) {
@@ -840,7 +848,8 @@ export default function ProfilePage() {
       }
 
       /* ------------------------ SOCIALS ------------------------ */
-      const socialsChanged = socials.some((s) => !s.id) || deleteSocialIds.length > 0;
+      const socialsChanged =
+        socials.some((s) => !s.id) || deleteSocialIds.length > 0;
       if (socialsChanged) {
         updateBody.socials =
           data.socials
@@ -898,7 +907,14 @@ export default function ProfilePage() {
         hasAvatarUpload || hasCoverUpload || hasImageUploads;
 
       if (!hasUpdateBodyChanges && !hasFileUploads) {
-        await disableEditMode();
+        setAvatarFile(null);
+        setCoverFile(null);
+        closeAllDialogs();
+        setDeletedBenefitIds([]);
+        setDeletedValueIds([]);
+        setDeleteCareerScopeIds([]);
+        setDeleteSocialIds([]);
+        setIsEdit(false);
         return;
       }
 
@@ -909,8 +925,7 @@ export default function ProfilePage() {
         await updateOneCmpStore.updateOneCompany(company.id, updateBody);
       }
 
-      await getCurrentUser();
-      setIsEdit(false);
+      await disableEditMode();
     } catch (error) {
       console.error(error);
       toast.error(t("error"), {
@@ -923,7 +938,18 @@ export default function ProfilePage() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    form.setValue("benefitsAndValues.benefits", benefits, { shouldDirty: true });
+    // Guard: ignore submissions that arrive within 400ms of entering edit mode
+    // (prevents double-click on Edit Profile from immediately hitting Save)
+    if (
+      editModeEnteredAtRef.current !== null &&
+      Date.now() - editModeEnteredAtRef.current < 400
+    ) {
+      return;
+    }
+
+    form.setValue("benefitsAndValues.benefits", benefits, {
+      shouldDirty: true,
+    });
     form.setValue("benefitsAndValues.values", values, { shouldDirty: true });
     form.setValue("careerScopes", careerScopes, { shouldDirty: true });
     form.setValue("socials", socials, { shouldDirty: true });
@@ -983,7 +1009,10 @@ export default function ProfilePage() {
       onSubmit={handleSubmit}
       className="flex flex-col gap-5 overflow-x-hidden animate-page-in"
       onKeyDown={(e) => {
-        if (e.key === "Enter" && (e.target as HTMLElement).tagName !== "TEXTAREA") {
+        if (
+          e.key === "Enter" &&
+          (e.target as HTMLElement).tagName !== "TEXTAREA"
+        ) {
           e.preventDefault();
         }
       }}
@@ -1560,7 +1589,10 @@ export default function ProfilePage() {
           {/* Benefits Section */}
           <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
             <div className="w-full">
-              <SectionTitle icon={<LucideCircleCheck />} title={tP("benefits")} />
+              <SectionTitle
+                icon={<LucideCircleCheck />}
+                title={tP("benefits")}
+              />
             </div>
 
             {/* Benefit List Section */}
@@ -1739,7 +1771,10 @@ export default function ProfilePage() {
           {/* Career Scopes Section */}
           <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
             <div className="w-full">
-              <SectionTitle icon={<LucideCompass />} title={tP("careerScopesSection")} />
+              <SectionTitle
+                icon={<LucideCompass />}
+                title={tP("careerScopesSection")}
+              />
             </div>
 
             {/* Career Scopes List Section */}
@@ -1875,7 +1910,10 @@ export default function ProfilePage() {
 
           {/* Social Section */}
           <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
-            <SectionTitle icon={<LucideGlobe />} title={tP("socialInformation")} />
+            <SectionTitle
+              icon={<LucideGlobe />}
+              title={tP("socialInformation")}
+            />
             {/* Social List Section */}
             {socials && socials.length > 0 ? (
               <div className="flex flex-wrap gap-2">
@@ -2025,7 +2063,10 @@ export default function ProfilePage() {
 
           {/* Authentication Section */}
           <div className="flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
-            <SectionTitle icon={<LucideSettings />} title={tP("authentication")} />
+            <SectionTitle
+              icon={<LucideSettings />}
+              title={tP("authentication")}
+            />
 
             <div className="w-full flex flex-col items-start gap-3">
               {/* Google, Facebook, LinkedIn and Github Methods Section */}
