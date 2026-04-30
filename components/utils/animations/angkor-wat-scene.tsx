@@ -2,7 +2,7 @@
 
 import { useThemeStore } from "@/stores/themes/theme-store";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Float, OrbitControls, useGLTF } from "@react-three/drei";
+import { useGLTF } from "@react-three/drei";
 import { Suspense, useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 
@@ -84,22 +84,6 @@ function AngkorWatModel({ isDark }: { isDark: boolean }) {
   );
 }
 
-// ── SceneControls — Orbit controls for the 3D scene ────────────────────────
-function SceneControls() {
-  return (
-    <OrbitControls
-      enableZoom={false}
-      enablePan={false}
-      enableDamping
-      dampingFactor={0.08}
-      rotateSpeed={0.6}
-      minPolarAngle={Math.PI / 3.2}
-      maxPolarAngle={Math.PI / 1.9}
-      target={[0, 0, 0]}
-    />
-  );
-}
-
 // ── LoadingFallback — Spinner while model loads ────────────────────────
 function LoadingFallback({ isDark }: { isDark: boolean }) {
   const meshRef = useRef<THREE.Mesh>(null);
@@ -156,12 +140,8 @@ export default function AngkorWatScene() {
         />
 
         <Suspense fallback={<LoadingFallback isDark={isDark} />}>
-          <Float speed={1.2} rotationIntensity={0.05} floatIntensity={0.2}>
-            <AngkorWatModel isDark={isDark} />
-          </Float>
+          <AngkorWatModel isDark={isDark} />
         </Suspense>
-
-        <SceneControls />
       </Canvas>
     </div>
   );
