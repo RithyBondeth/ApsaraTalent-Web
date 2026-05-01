@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { LucideTriangleAlert } from "lucide-react";
 import { Component, type ReactNode, useEffect, useRef, useState } from "react";
 
+/* ----------------------------------- Helper ---------------------------------- */
 const AngkorWatScene = dynamic(
   () => import("@/components/utils/animations/angkor-wat-scene"),
   {
@@ -11,19 +12,19 @@ const AngkorWatScene = dynamic(
   },
 );
 
-type AngkorWatErrorBoundaryState = {
+type TAngkorWatErrorBoundaryState = {
   hasError: boolean;
 };
 
 class AngkorWatErrorBoundary extends Component<
   { children: ReactNode },
-  AngkorWatErrorBoundaryState
+  TAngkorWatErrorBoundaryState
 > {
-  state: AngkorWatErrorBoundaryState = {
+  state: TAngkorWatErrorBoundaryState = {
     hasError: false,
   };
 
-  static getDerivedStateFromError(): AngkorWatErrorBoundaryState {
+  static getDerivedStateFromError(): TAngkorWatErrorBoundaryState {
     return { hasError: true };
   }
 
@@ -56,9 +57,11 @@ class AngkorWatErrorBoundary extends Component<
 }
 
 export function AngkorWatWrapper() {
+  /* -------------------------------- All States ------------------------------ */
   const hostRef = useRef<HTMLDivElement>(null);
   const [shouldRender, setShouldRender] = useState(false);
 
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     const element = hostRef.current;
     if (!element) return;
@@ -78,6 +81,7 @@ export function AngkorWatWrapper() {
     return () => observer.disconnect();
   }, [hostRef]);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div ref={hostRef} className="absolute inset-0">
       <AngkorWatErrorBoundary>
