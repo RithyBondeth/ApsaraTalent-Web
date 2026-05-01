@@ -62,10 +62,7 @@ export default function AngkorWatScene() {
     renderer.domElement.style.webkitUserSelect = "none";
     mount.appendChild(renderer.domElement);
 
-    const ambientLight = new THREE.AmbientLight(
-      0xffffff,
-      isDark ? 0.55 : 0.8,
-    );
+    const ambientLight = new THREE.AmbientLight(0xffffff, isDark ? 0.55 : 0.8);
     scene.add(ambientLight);
 
     const keyLight = new THREE.DirectionalLight(
@@ -105,7 +102,11 @@ export default function AngkorWatScene() {
 
     const applyRotationDelta = (deltaX: number, deltaY: number) => {
       rotationY += deltaX * 0.01;
-      rotationX = THREE.MathUtils.clamp(rotationX + deltaY * 0.0035, -0.35, 0.2);
+      rotationX = THREE.MathUtils.clamp(
+        rotationX + deltaY * 0.0035,
+        -0.35,
+        0.2,
+      );
       root.rotation.set(rotationX, rotationY, 0);
     };
 
