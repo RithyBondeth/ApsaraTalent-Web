@@ -6,6 +6,7 @@ import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/cou
 import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
 import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
 import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
+import { useInterviewStore } from "@/stores/apis/matching/interview.store";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useChatStore } from "@/stores/features/chat/chat.store";
@@ -114,6 +115,9 @@ export default function CollapseSidebar({
   // Count Unread Message
   const unreadMessages = useChatStore((s) => s.unreadCount);
 
+  // Pending Interview Count
+  const { interviews, queryInterviews } = useInterviewStore();
+
   /* --------------------------------- Effects --------------------------------- */
   // Fetch Current User
   const { isEmployee, isCompany } = useFetchOnce({
@@ -121,10 +125,12 @@ export default function CollapseSidebar({
     onEmployeeFetch: (employeeId) => {
       countCurrentEmpMatching(employeeId);
       countCurrentEmpFavorites(employeeId);
+      queryInterviews(employeeId, "employee");
     },
     onCompanyFetch: (companyId) => {
       countCurrentCmpMatching(companyId);
       countCurrentCmpFavorites(companyId);
+      queryInterviews(companyId, "company");
     },
   });
 
@@ -163,6 +169,12 @@ export default function CollapseSidebar({
     return 0;
   }, [isEmployee, isCompany, totalEmpMatching, totalCmpMatching]);
 
+  // ── Pending Interview Count ────────────────────────────────────────────
+  const pendingInterviewCount = useMemo(
+    () => interviews.filter((i) => i.status === "pending").length,
+    [interviews],
+  );
+
   // ── Favorite Count ─────────────────────────────────────────────────────
   const favoriteCount = useMemo(() => {
     if (isEmployee) return totalEmpFavorites ?? 0;
@@ -198,9 +210,16 @@ export default function CollapseSidebar({
       if (url === "/favorite") return favoriteCount;
       if (url === "/message") return unreadMessages;
       if (url === "/notification") return unreadNotifications;
+      if (url === "/interview") return pendingInterviewCount;
       return 0;
     },
-    [matchingCount, favoriteCount, unreadMessages, unreadNotifications],
+    [
+      matchingCount,
+      favoriteCount,
+      unreadMessages,
+      unreadNotifications,
+      pendingInterviewCount,
+    ],
   );
 
   // ── Check Path Active ───────────────────────────────────────────────
@@ -300,7 +319,7 @@ export default function CollapseSidebar({
         )}
       </SidebarHeader>
 
-      {/* Separator Between Header and Navigation Section */}
+      {/* Separator Section: Between Header and Navigation Section */}
       <Separator className="mb-1" />
 
       {/* Navigation Group Section */}
@@ -330,7 +349,7 @@ export default function CollapseSidebar({
         )}
       </SidebarContent>
 
-      {/* Separator Between Tools / Navigation and Footer */}
+      {/* Separator Section: Between Tools / Navigation and Footer */}
       <Separator />
 
       {/* Footer / User Menu Section */}
