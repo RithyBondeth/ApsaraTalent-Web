@@ -44,6 +44,13 @@ export default function MatchingPage() {
     (s) => s.markAsSeen,
   );
 
+  // Use Custom Hook - Handles all ref logic and duplicate prevention for fetching favorites
+  const { isEmployee, currentUser } = useFetchOnce({
+    cacheKey: "matching-page",
+    onEmployeeFetch: getCurrentEmpStore.queryCurrentEmployeeMatching,
+    onCompanyFetch: getCurrentCmpStore.queryCurrentCompanyMatching,
+  });
+
   /* --------------------------------- Effects ---------------------------------*/
   useEffect(() => setMounted(true), []);
 
@@ -53,13 +60,6 @@ export default function MatchingPage() {
     if (isEmployee) markEmpMatchingAsSeen(id);
     else markCmpMatchingAsSeen(id);
   }, [currentUser, isEmployee, markEmpMatchingAsSeen, markCmpMatchingAsSeen]);
-
-  // Use Custom Hook - Handles all ref logic and duplicate prevention for fetching favorites
-  const { isEmployee, currentUser } = useFetchOnce({
-    cacheKey: "matching-page",
-    onEmployeeFetch: getCurrentEmpStore.queryCurrentEmployeeMatching,
-    onCompanyFetch: getCurrentCmpStore.queryCurrentCompanyMatching,
-  });
 
   /* --------------------------------- Methods --------------------------------- */
   // Stable senderId — avoids recomputing inside every card's inline callback
