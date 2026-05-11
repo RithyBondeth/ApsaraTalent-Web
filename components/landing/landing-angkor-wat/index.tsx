@@ -15,7 +15,7 @@ export default function LandingAngkorWat() {
   return (
     <section
       ref={sectionRef}
-      className="relative h-[50dvh] sm:h-[70dvh] md:h-[80dvh] lg:h-[85dvh] overflow-hidden"
+      className="relative h-[50dvh] sm:h-[70dvh] md:h-[80dvh] lg:h-[100dvh] overflow-hidden"
     >
       {/* Dotted Background Section */}
       <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.07] dark:opacity-[0.12] [background-image:radial-gradient(circle,hsl(var(--foreground))_1px,transparent_1px)] [background-size:24px_24px]" />
@@ -42,7 +42,7 @@ export default function LandingAngkorWat() {
       </div>
 
       {/* 3D Model Section */}
-      <div className="absolute inset-x-0 top-20 bottom-20 z-[1] sm:top-24 sm:bottom-20 md:top-28 md:bottom-24">
+      <div className="absolute inset-x-0 top-20 bottom-20 z-[1] sm:top-24 sm:bottom-20 md:top-28 md:bottom-24 lg:top-16 lg:bottom-16">
         <AngkorWatWrapper />
       </div>
 
