@@ -22,7 +22,7 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
-      className={`bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20${props.isRemoving ? " animate-card-pop-shrink" : ""}`}
+      className={`w-full bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20${props.isRemoving ? " animate-card-pop-shrink" : ""}`}
     >
       <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
         {/* Avatar Section: Company Avatar */}
