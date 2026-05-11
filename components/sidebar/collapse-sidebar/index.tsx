@@ -2,9 +2,9 @@
 
 import { Separator } from "@/components/ui/separator";
 import { useFetchOnce } from "@/hooks/utils/use-fetch-once";
+import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
 import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
 import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
-import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
 import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
 import { useInterviewStore } from "@/stores/apis/matching/interview.store";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
@@ -169,18 +169,18 @@ export default function CollapseSidebar({
     return 0;
   }, [isEmployee, isCompany, totalEmpMatching, totalCmpMatching]);
 
-  // ── Pending Interview Count ────────────────────────────────────────────
-  const pendingInterviewCount = useMemo(
-    () => interviews.filter((i) => i.status === "pending").length,
-    [interviews],
-  );
-
   // ── Favorite Count ─────────────────────────────────────────────────────
   const favoriteCount = useMemo(() => {
     if (isEmployee) return totalEmpFavorites ?? 0;
     if (isCompany) return totalCmpFavorites ?? 0;
     return 0;
   }, [isEmployee, isCompany, totalEmpFavorites, totalCmpFavorites]);
+
+  // ── Pending Interview Count ────────────────────────────────────────────
+  const pendingInterviewCount = useMemo(
+    () => interviews.filter((i) => i.status === "pending").length,
+    [interviews],
+  );
 
   // ── User Data ──────────────────────────────────────────────────────────
   const userData = useMemo((): {
@@ -213,13 +213,7 @@ export default function CollapseSidebar({
       if (url === "/interview") return pendingInterviewCount;
       return 0;
     },
-    [
-      matchingCount,
-      favoriteCount,
-      unreadMessages,
-      unreadNotifications,
-      pendingInterviewCount,
-    ],
+    [matchingCount, favoriteCount, unreadMessages, unreadNotifications, pendingInterviewCount],
   );
 
   // ── Check Path Active ───────────────────────────────────────────────

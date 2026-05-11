@@ -9,6 +9,8 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useFetchOnce } from "@/hooks/utils/use-fetch-once";
 import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-current-company-matching.store";
 import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
+import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
+import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { initateChat } from "./_apis/initiate-chat.api";
@@ -34,8 +36,17 @@ export default function MatchingPage() {
   // Track which card is in a loading state to prevent double-clicks
   const [chatLoadingId, setChatLoadingId] = useState<string | null>(null);
 
+  /* ----------------------------- Badge Clearing ----------------------------- */
+  const clearEmpMatchingCount = useCountCurrentEmployeeMatchingStore((s) => s.clearCount);
+  const clearCmpMatchingCount = useCountCurrentCompanyMatchingStore((s) => s.clearCount);
+
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    clearEmpMatchingCount();
+    clearCmpMatchingCount();
+  }, [clearEmpMatchingCount, clearCmpMatchingCount]);
 
   // Use Custom Hook - Handles all ref logic and duplicate prevention for fetching favorites
   const { isEmployee, currentUser } = useFetchOnce({

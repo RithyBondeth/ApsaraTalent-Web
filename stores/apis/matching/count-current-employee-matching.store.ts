@@ -15,6 +15,7 @@ type TCountCurrentEmployeeMatchingState = {
   loading: boolean;
   error: string | null;
   countCurrentEmpMatching: (employeeID: string) => Promise<void>;
+  clearCount: () => void;
 };
 
 /* ---------------------------------- Store --------------------------------- */
@@ -23,6 +24,8 @@ export const useCountCurrentEmployeeMatchingStore =
     totalEmpMatching: null,
     loading: false,
     error: null,
+    clearCount: () => set({ totalEmpMatching: 0 }),
+
     countCurrentEmpMatching: async (employeeID: string) => {
       set({ loading: true, error: null });
 
