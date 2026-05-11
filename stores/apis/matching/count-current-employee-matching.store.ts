@@ -3,6 +3,13 @@ import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { create } from "zustand";
 
+const STORAGE_KEY = (id: string) => `matching-seen:emp:${id}`;
+
+const readSeen = (employeeId: string): number => {
+  if (typeof window === "undefined") return 0;
+  return parseInt(localStorage.getItem(STORAGE_KEY(employeeId)) ?? "0", 10);
+};
+
 /* ---------------------------------- States --------------------------------- */
 // ── Count Current Employee Matching API Response ─────────────────
 type TCountCurrentEmployeeMatchingResponse = {
@@ -12,22 +19,32 @@ type TCountCurrentEmployeeMatchingResponse = {
 // ── Count Current Employee Matching State ────────────────────────
 type TCountCurrentEmployeeMatchingState = {
   totalEmpMatching: number | null;
+  seenEmpMatching: number;
   loading: boolean;
   error: string | null;
   countCurrentEmpMatching: (employeeID: string) => Promise<void>;
-  clearCount: () => void;
+  markAsSeen: (employeeId: string) => void;
 };
 
 /* ---------------------------------- Store --------------------------------- */
 export const useCountCurrentEmployeeMatchingStore =
-  create<TCountCurrentEmployeeMatchingState>((set) => ({
+  create<TCountCurrentEmployeeMatchingState>((set, get) => ({
     totalEmpMatching: null,
+    seenEmpMatching: 0,
     loading: false,
     error: null,
-    clearCount: () => set({ totalEmpMatching: 0 }),
+
+    markAsSeen: (employeeId: string) => {
+      const count = get().totalEmpMatching ?? 0;
+      if (typeof window !== "undefined") {
+        localStorage.setItem(STORAGE_KEY(employeeId), String(count));
+      }
+      set({ seenEmpMatching: count });
+    },
 
     countCurrentEmpMatching: async (employeeID: string) => {
-      set({ loading: true, error: null });
+      const seen = readSeen(employeeID);
+      set({ seenEmpMatching: seen, loading: true, error: null });
 
       try {
         const response = await axios.get<TCountCurrentEmployeeMatchingResponse>(

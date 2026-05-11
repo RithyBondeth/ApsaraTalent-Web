@@ -97,9 +97,9 @@ export default function CollapseSidebar({
   const { user, loading } = useGetCurrentUserStore();
 
   // Count Current User Matching
-  const { countCurrentEmpMatching, totalEmpMatching } =
+  const { countCurrentEmpMatching, totalEmpMatching, seenEmpMatching } =
     useCountCurrentEmployeeMatchingStore();
-  const { countCurrentCmpMatching, totalCmpMatching } =
+  const { countCurrentCmpMatching, totalCmpMatching, seenCmpMatching } =
     useCountCurrentCompanyMatchingStore();
 
   // Count Current User Favorites
@@ -164,10 +164,19 @@ export default function CollapseSidebar({
 
   // ── Matching Count ─────────────────────────────────────────────────────
   const matchingCount = useMemo(() => {
-    if (isEmployee) return totalEmpMatching ?? 0;
-    if (isCompany) return totalCmpMatching ?? 0;
+    if (isEmployee)
+      return Math.max(0, (totalEmpMatching ?? 0) - seenEmpMatching);
+    if (isCompany)
+      return Math.max(0, (totalCmpMatching ?? 0) - seenCmpMatching);
     return 0;
-  }, [isEmployee, isCompany, totalEmpMatching, totalCmpMatching]);
+  }, [
+    isEmployee,
+    isCompany,
+    totalEmpMatching,
+    seenEmpMatching,
+    totalCmpMatching,
+    seenCmpMatching,
+  ]);
 
   // ── Favorite Count ─────────────────────────────────────────────────────
   const favoriteCount = useMemo(() => {
@@ -213,7 +222,13 @@ export default function CollapseSidebar({
       if (url === "/interview") return pendingInterviewCount;
       return 0;
     },
-    [matchingCount, favoriteCount, unreadMessages, unreadNotifications, pendingInterviewCount],
+    [
+      matchingCount,
+      favoriteCount,
+      unreadMessages,
+      unreadNotifications,
+      pendingInterviewCount,
+    ],
   );
 
   // ── Check Path Active ───────────────────────────────────────────────

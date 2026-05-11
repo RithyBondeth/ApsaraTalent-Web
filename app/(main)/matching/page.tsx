@@ -37,16 +37,22 @@ export default function MatchingPage() {
   const [chatLoadingId, setChatLoadingId] = useState<string | null>(null);
 
   /* ----------------------------- Badge Clearing ----------------------------- */
-  const clearEmpMatchingCount = useCountCurrentEmployeeMatchingStore((s) => s.clearCount);
-  const clearCmpMatchingCount = useCountCurrentCompanyMatchingStore((s) => s.clearCount);
+  const markEmpMatchingAsSeen = useCountCurrentEmployeeMatchingStore(
+    (s) => s.markAsSeen,
+  );
+  const markCmpMatchingAsSeen = useCountCurrentCompanyMatchingStore(
+    (s) => s.markAsSeen,
+  );
 
-  /* --------------------------------- Effects --------------------------------- */
+  /* --------------------------------- Effects ---------------------------------*/
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
-    clearEmpMatchingCount();
-    clearCmpMatchingCount();
-  }, [clearEmpMatchingCount, clearCmpMatchingCount]);
+    const id = currentUser?.employee?.id ?? currentUser?.company?.id;
+    if (!id) return;
+    if (isEmployee) markEmpMatchingAsSeen(id);
+    else markCmpMatchingAsSeen(id);
+  }, [currentUser, isEmployee, markEmpMatchingAsSeen, markCmpMatchingAsSeen]);
 
   // Use Custom Hook - Handles all ref logic and duplicate prevention for fetching favorites
   const { isEmployee, currentUser } = useFetchOnce({
