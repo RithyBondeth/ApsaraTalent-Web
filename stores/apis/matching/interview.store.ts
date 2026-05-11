@@ -84,7 +84,7 @@ export const useInterviewStore = create<InterviewStoreState>((set) => ({
     try {
       const response = await axios.patch<IInterview>(
         API_UPDATE_INTERVIEW_STATUS_URL,
-        { interviewID, status },
+        { interviewId: interviewID, status },
       );
 
       set((state) => ({

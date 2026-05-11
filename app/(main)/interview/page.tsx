@@ -18,7 +18,7 @@ export default function InterviewPage() {
   const t = useTranslations("interview");
 
   /* ----------------------------- API Integration ---------------------------- */
-  const { interviews, queryInterviews, updateStatus } = useInterviewStore();
+  const { interviews, queryInterviews, updateStatus, error } = useInterviewStore();
   const { currentCompanyMatching, queryCurrentCompanyMatching } =
     useGetCurrentCompanyMatchingStore();
 
@@ -67,6 +67,13 @@ export default function InterviewPage() {
           />
         )}
       </div>
+
+      {/* Error Banner */}
+      {error && (
+        <div className="text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg px-4 py-3">
+          {error}
+        </div>
+      )}
 
       {/* Interview List Section */}
       {interviews.length > 0 ? (
