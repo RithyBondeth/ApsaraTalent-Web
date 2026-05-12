@@ -14,6 +14,16 @@ export default function NotificationInterviewCard(
 ) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("notification");
+  const tc = useTranslations("common");
+
+  const titleKeyMap: Record<string, string> = {
+    "Interview Scheduled": "interviewScheduled",
+    "Interview Accepted": "interviewAccepted",
+    "Interview Declined": "interviewDeclined",
+    "Interview Cancelled": "interviewCancelled",
+    "Interview Completed": "interviewCompleted",
+  };
+  const titleKey = titleKeyMap[props.title] ?? "newInterview";
 
   return (
     /* ------------------------------ Render UI -------------------------------- */
@@ -37,11 +47,11 @@ export default function NotificationInterviewCard(
       <div className="w-full flex flex-col items-start gap-2">
         <div className="w-full flex items-center justify-between phone-xl:flex-col phone-xl:items-start">
           <TypographyLead className="text-md font-semibold text-primary">
-            {props.title}
+            {t(titleKey as Parameters<typeof t>[0])}
           </TypographyLead>
           <div className="flex items-center gap-1">
             <TypographySmall className="text-muted-foreground phone-xl:text-xs">
-              {timeAgo(props.timestamp)}
+              {timeAgo(props.timestamp, tc)}
             </TypographySmall>
             {!props.seen && <div className="size-2 rounded-full bg-teal-500" />}
           </div>

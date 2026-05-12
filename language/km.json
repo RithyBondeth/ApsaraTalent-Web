@@ -623,7 +623,12 @@
     "viewProfile": "មើលប្រវត្តិរូប",
     "reply": "ឆ្លើយ",
     "matchedWithEmployee": "អ្នកបានផ្គូផ្គងជាមួយ {name} ជា {position}។",
-    "matchedWithCompany": "អ្នកបានផ្គូផ្គងជាមួយ {name} ក្រុមហ៊ុន {industry}។"
+    "matchedWithCompany": "អ្នកបានផ្គូផ្គងជាមួយ {name} ក្រុមហ៊ុន {industry}។",
+    "interviewScheduled": "ការសម្ភាសន៍ត្រូវបានគ្រោង",
+    "interviewAccepted": "ការសម្ភាសន៍ត្រូវបានទទួលស្គាល់",
+    "interviewDeclined": "ការសម្ភាសន៍ត្រូវបានបដិសេធ",
+    "interviewCancelled": "ការសម្ភាសន៍ត្រូវបានបោះបង់",
+    "interviewCompleted": "ការសម្ភាសន៍ត្រូវបានបញ្ចប់"
   },
   "message": {
     "noMessages": "មិនទាន់មានសារនៅឡើយទេ។ ស្វាគមន៍! 👋",
@@ -667,7 +672,14 @@
   "common": {
     "noResultsFound": "រករលទ្ធផលមិនឃើញ។",
     "loadingCareer": "កំពុងផ្ទុកអាជីព...",
-    "noCareerFound": "រករអាជីពមិនឃើញ"
+    "noCareerFound": "រករអាជីពមិនឃើញ",
+    "timeAgoJustNow": "ទើបតែ",
+    "timeAgoMinutes": "{count, plural, one {# នាទីមុន} other {# នាទីមុន}}",
+    "timeAgoHours": "{count, plural, one {# ម៉ោងមុន} other {# ម៉ោងមុន}}",
+    "timeAgoDays": "{count, plural, one {# ថ្ងៃមុន} other {# ថ្ងៃមុន}}",
+    "timeAgoWeeks": "{count, plural, one {# សប្ដាហ៍មុន} other {# សប្ដាហ៍មុន}}",
+    "timeAgoMonths": "{count, plural, one {# ខែមុន} other {# ខែមុន}}",
+    "timeAgoYears": "{count, plural, one {# ឆ្នាំមុន} other {# ឆ្នាំមុន}}"
   },
   "interview": {
     "title": "សម្ភាសន៍",

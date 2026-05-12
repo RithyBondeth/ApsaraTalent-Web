@@ -14,6 +14,7 @@ export function RecentMatchesList({
 }: IRecentMatchesListProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("dashboard");
+  const tc = useTranslations("common");
 
   /* --------------------------- Empty List State --------------------------- */
   if (!matches || matches.length === 0) {
@@ -50,7 +51,7 @@ export function RecentMatchesList({
               {match.name}
             </TypographyP>
             <TypographyMuted className="text-[11px] text-muted-foreground">
-              {timeAgo(match.matchDate)}
+              {timeAgo(match.matchDate, tc)}
             </TypographyMuted>
           </div>
         </div>

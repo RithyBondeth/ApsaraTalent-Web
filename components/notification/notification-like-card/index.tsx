@@ -14,6 +14,7 @@ export default function NotificationLikeCard(
 ) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("notification");
+  const tc = useTranslations("common");
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -41,7 +42,7 @@ export default function NotificationLikeCard(
           </TypographyLead>
           <div className="flex items-center gap-1">
             <TypographySmall className="text-muted-foreground phone-xl:text-xs">
-              {timeAgo(props.timestamp)}
+              {timeAgo(props.timestamp, tc)}
             </TypographySmall>
             {!props.seen && <div className="size-2 rounded-full bg-pink-500" />}
           </div>

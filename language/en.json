@@ -616,6 +616,11 @@
     "newMatch": "New Match Found!",
     "newMessage": "New Message!",
     "newInterview": "Interview Update",
+    "interviewScheduled": "Interview Scheduled",
+    "interviewAccepted": "Interview Accepted",
+    "interviewDeclined": "Interview Declined",
+    "interviewCancelled": "Interview Cancelled",
+    "interviewCompleted": "Interview Completed",
     "likeBadge": "like",
     "matchBadge": "match",
     "messageBadge": "message",
@@ -667,7 +672,14 @@
   "common": {
     "noResultsFound": "No results found.",
     "loadingCareer": "Loading Career...",
-    "noCareerFound": "No Career Found"
+    "noCareerFound": "No Career Found",
+    "timeAgoJustNow": "just now",
+    "timeAgoMinutes": "{count, plural, one {# minute ago} other {# minutes ago}}",
+    "timeAgoHours": "{count, plural, one {# hour ago} other {# hours ago}}",
+    "timeAgoDays": "{count, plural, one {# day ago} other {# days ago}}",
+    "timeAgoWeeks": "{count, plural, one {# week ago} other {# weeks ago}}",
+    "timeAgoMonths": "{count, plural, one {# month ago} other {# months ago}}",
+    "timeAgoYears": "{count, plural, one {# year ago} other {# years ago}}"
   },
   "interview": {
     "title": "Interviews",

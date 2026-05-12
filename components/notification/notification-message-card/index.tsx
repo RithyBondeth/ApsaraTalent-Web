@@ -17,6 +17,7 @@ export default function NotificationMessageCard(
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const t = useTranslations("notification");
+  const tc = useTranslations("common");
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Handle Reply ─────────────────────────────────────────
@@ -51,7 +52,7 @@ export default function NotificationMessageCard(
           </TypographyLead>
           <div className="flex items-center gap-1">
             <TypographySmall className="text-muted-foreground phone-xl:text-xs">
-              {timeAgo(props.timestamp)}
+              {timeAgo(props.timestamp, tc)}
             </TypographySmall>
             {!props.seen && (
               <div className="size-2 rounded-full bg-green-500" />
