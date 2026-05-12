@@ -14,12 +14,14 @@ import Tag from "@/components/utils/data-display/tag";
 import { IFavoriteEmployeeCardProps } from "./props";
 import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { useTranslations } from "next-intl";
 
 export default function FavoriteEmployeeCard(
   props: IFavoriteEmployeeCardProps,
 ) {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("favorite");
   const availLabel = formatAvailabilityWords(props.availability);
 
   /* -------------------------------- Render UI -------------------------------- */
@@ -82,7 +84,7 @@ export default function FavoriteEmployeeCard(
             />
             <MetaChip
               icon={<LucideClock />}
-              text={`${props.experience} yrs exp`}
+              text={t("yrsExp", { years: props.experience })}
             />
             <MetaChip icon={<LucideMapPin />} text={props.location} />
           </div>
@@ -98,14 +100,14 @@ export default function FavoriteEmployeeCard(
           onClick={props.onRemoveFromFavorite}
         >
           <LucideBookmarkX className="size-3.5" />
-          Remove
+          {t("remove")}
         </Button>
         <Button
           size="sm"
           className="text-xs"
           onClick={() => router.replace(`/feed/employee/${props.id}`)}
         >
-          View Detail
+          {t("viewDetail")}
           <LucideArrowRight className="size-3.5" />
         </Button>
       </div>

@@ -14,10 +14,12 @@ import { Button } from "../../ui/button";
 import Tag from "@/components/utils/data-display/tag";
 import { IFavoriteCompanyCardProps } from "./props";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { useTranslations } from "next-intl";
 
 export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("favorite");
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -50,7 +52,7 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
               </span>
               <span className="inline-flex items-center gap-1">
                 <LucideClock className="size-3.5" />
-                Founded {props.foundedYear}
+                {t("founded", { year: props.foundedYear })}
               </span>
             </div>
           </div>
@@ -75,19 +77,11 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
           <div className="flex flex-wrap gap-2">
             <MetaChip
               icon={<LucideUsers />}
-              text={
-                props.companySize <= 1
-                  ? `${props.companySize} member`
-                  : `${props.companySize} members`
-              }
+              text={t("memberCount", { count: props.companySize })}
             />
             <MetaChip
               icon={<LucideBriefcaseBusiness />}
-              text={
-                props.openPosition.length <= 1
-                  ? `${props.openPosition.length} position`
-                  : `${props.openPosition.length} positions`
-              }
+              text={t("positionCount", { count: props.openPosition.length })}
             />
             <MetaChip icon={<LucideMapPin />} text={props.location} />
           </div>
@@ -103,14 +97,14 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
           onClick={props.onRemoveFromFavorite}
         >
           <LucideBookmarkX className="size-3.5" />
-          Remove
+          {t("remove")}
         </Button>
         <Button
           size="sm"
           className="text-xs"
           onClick={() => router.replace(`/feed/company/${props.id}`)}
         >
-          View Detail
+          {t("viewDetail")}
           <LucideArrowRight className="size-3.5" />
         </Button>
       </div>

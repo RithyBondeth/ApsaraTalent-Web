@@ -384,14 +384,25 @@
     "bannerSubtitle1": "Quick access to the companies and talents you've saved",
     "bannerSubtitle2": "Review, connect, and take the next step whenever you're ready",
     "bannerMuted": "Your personal shortlist — organized in one place.",
-    "emptyList": "Favorite List Empty"
+    "emptyList": "Favorite List Empty",
+    "remove": "Remove",
+    "viewDetail": "View Detail",
+    "founded": "Founded {year}",
+    "memberCount": "{count, plural, one {# member} other {# members}}",
+    "positionCount": "{count, plural, one {# position} other {# positions}}",
+    "yrsExp": "{years} yrs exp"
   },
   "matching": {
     "bannerTitle": "Ready to find your match? Let's make it happen.",
     "bannerSubtitle1": "Find Your Perfect Match & Start a Conversation",
     "bannerSubtitle2": "Start chatting, connect instantly, and build your future together.",
     "bannerMuted": "When companies and talents like each other — it's a match.",
-    "emptyList": "Matching List Empty"
+    "emptyList": "Matching List Empty",
+    "schedule": "Schedule",
+    "chatNow": "Chat Now",
+    "founded": "Founded {year}",
+    "memberCount": "{count, plural, one {# member} other {# members}}",
+    "positionCount": "{count, plural, one {# position} other {# positions}}"
   },
   "feed": {
     "employeeBannerTitle": "Connect with global professionals and grow your network",

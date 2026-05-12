@@ -14,11 +14,13 @@ import { IMatchingEmployeeCardProps } from "./props";
 import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { memo } from "react";
+import { useTranslations } from "next-intl";
 
 const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
   props: IMatchingEmployeeCardProps,
 ) {
   /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("matching");
   const availLabel = formatAvailabilityWords(props.availability);
 
   /* -------------------------------- Render UI -------------------------------- */
@@ -93,12 +95,12 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
             onClick={props.onScheduleClick}
           >
             <LucideCalendarCheck className="size-3.5" />
-            Schedule
+            {t("schedule")}
           </Button>
         )}
         <Button size="sm" className="text-xs" onClick={props.onChatNowClick}>
           <LucideMessageCircle className="size-3.5" />
-          Chat Now
+          {t("chatNow")}
         </Button>
       </div>
     </div>

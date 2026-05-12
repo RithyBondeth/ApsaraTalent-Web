@@ -14,10 +14,14 @@ import Tag from "@/components/utils/data-display/tag";
 import { IMatchingCompanyCardProps } from "./props";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { memo } from "react";
+import { useTranslations } from "next-intl";
 
 const MatchingCompanyCard = memo(function MatchingCompanyCard(
   props: IMatchingCompanyCardProps,
 ) {
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("matching");
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
@@ -47,7 +51,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
               </span>
               <span className="inline-flex items-center gap-1">
                 <LucideClock className="size-3.5" />
-                Founded {props.foundedYear}
+                {t("founded", { year: props.foundedYear })}
               </span>
             </div>
           </div>
@@ -72,19 +76,11 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
           <div className="flex flex-wrap gap-2">
             <MetaChip
               icon={<LucideUsers />}
-              text={
-                props.companySize <= 1
-                  ? `${props.companySize} member`
-                  : `${props.companySize} members`
-              }
+              text={t("memberCount", { count: props.companySize })}
             />
             <MetaChip
               icon={<LucideBriefcaseBusiness />}
-              text={
-                props.openPosition.length <= 1
-                  ? `${props.openPosition.length} position`
-                  : `${props.openPosition.length} positions`
-              }
+              text={t("positionCount", { count: props.openPosition.length })}
             />
             <MetaChip icon={<LucideMapPin />} text={props.location} />
           </div>
@@ -101,12 +97,12 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
             onClick={props.onScheduleClick}
           >
             <LucideCalendarCheck className="size-3.5" />
-            Schedule
+            {t("schedule")}
           </Button>
         )}
         <Button size="sm" className="text-xs" onClick={props.onChatNowClick}>
           <LucideMessageCircle className="size-3.5" />
-          Chat Now
+          {t("chatNow")}
         </Button>
       </div>
     </div>

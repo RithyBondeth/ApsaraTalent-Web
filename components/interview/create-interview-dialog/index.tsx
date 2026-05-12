@@ -132,14 +132,20 @@ function InterviewFormBody({
         {/* ── Employee ── */}
         <Field label={t("selectEmployee")} required icon={<LucideUser />}>
           {currentCompanyMatching && currentCompanyMatching.length > 0 ? (
-            <Select value={selectedEmployeeId} onValueChange={setSelectedEmployeeId}>
+            <Select
+              value={selectedEmployeeId}
+              onValueChange={setSelectedEmployeeId}
+            >
               <SelectTrigger className="w-full h-10">
                 <SelectValue placeholder={t("chooseMatchedEmployee")} />
               </SelectTrigger>
               <SelectContent>
                 {currentCompanyMatching.map((emp: any) => {
                   const name =
-                    [emp.firstname, emp.lastname].filter(Boolean).join(" ").trim() ||
+                    [emp.firstname, emp.lastname]
+                      .filter(Boolean)
+                      .join(" ")
+                      .trim() ||
                     emp.username ||
                     "Unknown";
                   return (
@@ -171,7 +177,11 @@ function InterviewFormBody({
         </Field>
 
         {/* ── Title ── */}
-        <Field label={t("interviewTitle")} required icon={<LucideCalendarCheck />}>
+        <Field
+          label={t("interviewTitle")}
+          required
+          icon={<LucideCalendarCheck />}
+        >
           <Input
             placeholder={t("interviewTitlePlaceholder")}
             value={title}
@@ -383,8 +393,17 @@ export function CreateInterviewDialog({
     setOpen(false);
     resetForm();
   }, [
-    canSubmit, currentId, selectedEmployeeId, title, description,
-    scheduledAt, durationMinutes, location, meetingLink, createInterview, resetForm,
+    canSubmit,
+    currentId,
+    selectedEmployeeId,
+    title,
+    description,
+    scheduledAt,
+    durationMinutes,
+    location,
+    meetingLink,
+    createInterview,
+    resetForm,
   ]);
 
   const today = useMemo(() => {
@@ -394,16 +413,29 @@ export function CreateInterviewDialog({
   }, []);
 
   const formProps = {
-    t, currentCompanyMatching,
-    selectedEmployeeId, setSelectedEmployeeId,
-    title, setTitle,
-    description, setDescription,
-    selectedDate, setSelectedDate,
-    selectedTime, setSelectedTime,
-    durationMinutes, setDurationMinutes,
-    location, setLocation,
-    meetingLink, setMeetingLink,
-    scheduledAt, today, error, creating, canSubmit,
+    t,
+    currentCompanyMatching,
+    selectedEmployeeId,
+    setSelectedEmployeeId,
+    title,
+    setTitle,
+    description,
+    setDescription,
+    selectedDate,
+    setSelectedDate,
+    selectedTime,
+    setSelectedTime,
+    durationMinutes,
+    setDurationMinutes,
+    location,
+    setLocation,
+    meetingLink,
+    setMeetingLink,
+    scheduledAt,
+    today,
+    error,
+    creating,
+    canSubmit,
     onClose: handleClose,
     onSubmit: handleCreate,
   };
@@ -430,7 +462,13 @@ export function CreateInterviewDialog({
 
   if (isDesktop) {
     return (
-      <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
+      <Dialog
+        open={open}
+        onOpenChange={(v) => {
+          setOpen(v);
+          if (!v) resetForm();
+        }}
+      >
         <DialogTrigger asChild>{trigger}</DialogTrigger>
         <DialogContent className="sm:max-w-[520px] max-h-[90vh] overflow-hidden flex flex-col p-0 gap-0">
           <DialogHeader className="px-6 pt-6 pb-4 shrink-0">
@@ -449,9 +487,18 @@ export function CreateInterviewDialog({
   }
 
   return (
-    <Sheet open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
+    <Sheet
+      open={open}
+      onOpenChange={(v) => {
+        setOpen(v);
+        if (!v) resetForm();
+      }}
+    >
       <SheetTrigger asChild>{trigger}</SheetTrigger>
-      <SheetContent side="bottom" className="h-[90vh] flex flex-col p-0 rounded-t-2xl">
+      <SheetContent
+        side="bottom"
+        className="h-[90vh] flex flex-col p-0 rounded-t-2xl"
+      >
         <SheetHeader className="px-6 pt-6 pb-4 shrink-0">
           <SheetTitle className="text-lg font-semibold">
             {t("scheduleInterview")}
