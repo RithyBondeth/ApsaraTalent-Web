@@ -159,6 +159,8 @@ export const usePushNotifications = () => {
         // ── Real-time badge update (foreground) ──────────────────────────────
         // Only bump the badge if this push was addressed to the current user.
         // Skipping the check when targetUserId is absent keeps backward compat.
+        // Interview badge + page updates are handled by the interviewUpdate
+        // socket event, not here.
         const targetUserId = payload.data?.targetUserId;
         if (!targetUserId || targetUserId === userId) {
           useNotificationStore.getState().incrementUnreadCount();

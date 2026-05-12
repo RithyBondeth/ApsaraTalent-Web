@@ -3,7 +3,18 @@ import { IMessage } from "@/utils/interfaces/chat/chat.interface";
 import { resolveMessageSnippet } from "./utils";
 import { formatSidebarTime, parseMessageDate } from "@/utils/functions/date";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
+import { useInterviewStore } from "@/stores/apis/matching/interview.store";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { normalizeMediaUrl } from "@/utils/functions/media";
+
+function refetchInterviews() {
+  const user = useGetCurrentUserStore.getState().user;
+  const role = user?.role;
+  const id = role === "employee" ? user?.employee?.id : user?.company?.id;
+  if (role && id) {
+    void useInterviewStore.getState().queryInterviews(id, role);
+  }
+}
 
 export const registerSocketListeners = (
   socket: SocketInstance,
@@ -281,6 +292,13 @@ export const registerSocketListeners = (
   // needs immediate update (full notification data is fetched lazily on open).
   socket.on("badgeIncrement", () => {
     useNotificationStore.getState().incrementUnreadCount();
+  });
+
+  // ── Interview Update ──────────────────────────────────────────────────────
+  // Fired when the other party creates or changes the status of an interview.
+  // Re-fetches the interview store so the badge and interview page update live.
+  socket.on("interviewUpdate", () => {
+    refetchInterviews();
   });
 
   socket.on("error", (error: any) => {
