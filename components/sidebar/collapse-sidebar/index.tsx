@@ -6,6 +6,7 @@ import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/coun
 import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
 import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
 import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
+import { usePendingInterviewCount } from "@/hooks/utils/use-pending-interview-count";
 import { useInterviewStore } from "@/stores/apis/matching/interview.store";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
@@ -115,8 +116,9 @@ export default function CollapseSidebar({
   // Count Unread Message
   const unreadMessages = useChatStore((s) => s.unreadCount);
 
-  // Pending Interview Count
-  const { interviews, queryInterviews } = useInterviewStore();
+  // Pending Interview Count (derived from shared store, updated by useFetchOnce below)
+  const pendingInterviewCount = usePendingInterviewCount();
+  const queryInterviews = useInterviewStore((s) => s.queryInterviews);
 
   /* --------------------------------- Effects --------------------------------- */
   // Fetch Current User
@@ -184,12 +186,6 @@ export default function CollapseSidebar({
     if (isCompany) return totalCmpFavorites ?? 0;
     return 0;
   }, [isEmployee, isCompany, totalEmpFavorites, totalCmpFavorites]);
-
-  // ── Pending Interview Count ────────────────────────────────────────────
-  const pendingInterviewCount = useMemo(
-    () => interviews.filter((i) => i.status === "pending").length,
-    [interviews],
-  );
 
   // ── User Data ──────────────────────────────────────────────────────────
   const userData = useMemo((): {

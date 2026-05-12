@@ -13,6 +13,5 @@ export interface INotificationLikeCardProps {
     avatar: string;
   };
   message: string;
-  onMarkRead?: (id: string) => void;
   onDelete?: (id: string) => void;
 }

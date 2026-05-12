@@ -178,10 +178,7 @@ export default function CompanyDetailPage() {
               description: t("youLikedEachOther", { name: liked.company.name }),
             });
             countCurrentEmployeeMatching.countCurrentEmpMatching(employeeId);
-            setTimeout(
-              () => router.push("/matching"),
-              DEFAULT_REDIRECT_DELAY_MS,
-            );
+            setTimeout(() => router.push("/feed"), DEFAULT_REDIRECT_DELAY_MS);
           } else {
             toast.success(t("youLiked", { name: liked.company.name }));
             setTimeout(() => router.push("/feed"), DEFAULT_REDIRECT_DELAY_MS);

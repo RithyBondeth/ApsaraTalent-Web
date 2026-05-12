@@ -1,5 +1,6 @@
 "use client";
 
+import NotificationInterviewCard from "@/components/notification/notification-interview-card";
 import NotificationLikeCard from "@/components/notification/notification-like-card";
 import NotificationMatchCard from "@/components/notification/notification-match-card";
 import NotificationMessageCard from "@/components/notification/notification-message-card";
@@ -10,10 +11,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import axios from "@/lib/axios";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { API_MARK_ALL_NOTIFICATIONS_READ_URL } from "@/utils/constants/apis/notification.api.constant";
 import { TNotificationFilterType } from "@/utils/types/app/notification.type";
-import { LucideCheckCheck, LucideTrash2 } from "lucide-react";
+import { LucideTrash2 } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -25,9 +28,6 @@ import { INotification } from "@/utils/interfaces/notification/notification.inte
 /* ---------------------------------- Helper --------------------------------- */
 /** Derive a display-friendly user object from a notification's title + data fields. */
 function resolveNotificationUser(notification: INotification, role: string) {
-  // For "like" notifications the relevant ID is the OTHER party:
-  // if the current user is an employee → the liker is the company (companyId)
-  // if the current user is a company → the liker is the employee (employeeId)
   const id =
     (notification.data?.senderId as string) ??
     (role === "employee"
@@ -49,18 +49,15 @@ export default function NotificationPage() {
   const t = useTranslations("notification");
 
   /* ----------------------------- API Integration ---------------------------- */
-  // Current User
   const { user } = useGetCurrentUserStore();
   const role = user?.role ?? "employee";
 
-  // Notification APIs
   const {
     notifications,
     loading,
     queryNotifications,
-    queryUnreadCount,
     markRead,
-    markAllRead,
+    resetUnreadCount,
     deleteNotification,
     deleteAllNotifications,
   } = useNotificationStore();
@@ -70,23 +67,26 @@ export default function NotificationPage() {
     useState<TNotificationFilterType>("all");
 
   /* --------------------------------- Effects --------------------------------- */
-  // Fetch on mount
+  // On mount: zero badge locally and sync read state to server
   useEffect(() => {
-    void queryNotifications({ page: 1, limit: 50 });
-    void queryUnreadCount();
-  }, [queryNotifications, queryUnreadCount]);
+    resetUnreadCount();
+    void axios
+      .patch(API_MARK_ALL_NOTIFICATIONS_READ_URL)
+      .catch((err) =>
+        console.error("Failed to mark all notifications as read:", err),
+      );
+  }, [resetUnreadCount]);
 
-  // Re-fetch when switching to "unread" filter
+  // Fetch notifications on mount and whenever filter changes
   useEffect(() => {
-    if (notificationFilter === "unread") {
-      void queryNotifications({ page: 1, limit: 50, unreadOnly: true });
-    } else {
-      void queryNotifications({ page: 1, limit: 50, unreadOnly: false });
-    }
+    void queryNotifications({
+      page: 1,
+      limit: 50,
+      ...(notificationFilter === "unread" && { unreadOnly: true }),
+    });
   }, [notificationFilter, queryNotifications]);
 
   /* --------------------------------- Methods --------------------------------- */
-  // ── Filter notifications based on the current filter ──────────────
   const filteredNotifications = useMemo(() => {
     return notifications.filter((n) => {
       if (notificationFilter === "all") return true;
@@ -94,19 +94,13 @@ export default function NotificationPage() {
       if (notificationFilter === "match") return n.type === "match";
       if (notificationFilter === "message") return n.type === "chat";
       if (notificationFilter === "like") return n.type === "like";
+      if (notificationFilter === "interview") return n.type === "interview";
       return true;
     });
   }, [notifications, notificationFilter]);
 
-  // ── Get notification button variant ──────────────────────────────
   const notificationButtonVariant = (currentFilter: TNotificationFilterType) =>
     notificationFilter === currentFilter ? "default" : "secondary";
-
-  // ── Handle mark all read ─────────────────────────────────────────
-  const handleMarkAllRead = async () => {
-    await markAllRead();
-    void queryUnreadCount();
-  };
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -139,6 +133,12 @@ export default function NotificationPage() {
             {t("filterLikes")}
           </Button>
           <Button
+            variant={notificationButtonVariant("interview")}
+            onClick={() => setNotificationFilter("interview")}
+          >
+            {t("filterInterviews")}
+          </Button>
+          <Button
             variant={notificationButtonVariant("unread")}
             onClick={() => setNotificationFilter("unread")}
           >
@@ -151,15 +151,18 @@ export default function NotificationPage() {
           <DropdownMenuTrigger asChild className="hidden tablet-sm:flex">
             <Button className="h-9 w-full text-xs sm:w-auto">
               {t("filterLabel")}{" "}
-              {(
-                {
-                  all: t("filterAll"),
-                  match: t("filterMatches"),
-                  message: t("filterMessages"),
-                  like: t("filterLikes"),
-                  unread: t("filterUnread"),
-                } as Record<TNotificationFilterType, string>
-              )[notificationFilter]}
+              {
+                (
+                  {
+                    all: t("filterAll"),
+                    match: t("filterMatches"),
+                    message: t("filterMessages"),
+                    like: t("filterLikes"),
+                    interview: t("filterInterviews"),
+                    unread: t("filterUnread"),
+                  } as Record<TNotificationFilterType, string>
+                )[notificationFilter]
+              }
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
@@ -175,37 +178,31 @@ export default function NotificationPage() {
             <DropdownMenuItem onClick={() => setNotificationFilter("like")}>
               {t("filterLikes")}
             </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setNotificationFilter("interview")}
+            >
+              {t("filterInterviews")}
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setNotificationFilter("unread")}>
               {t("filterUnread")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Action Buttons Section */}
-        <div className="flex items-center gap-2 tablet-sm:flex-col tablet-sm:w-full">
-          <Button
-            className="h-9 w-full text-xs sm:w-auto"
-            variant="outline"
-            onClick={handleMarkAllRead}
-          >
-            <LucideCheckCheck />
-            {t("markAllRead")}
-          </Button>
-          <Button
-            className="h-9 w-full text-xs sm:w-auto"
-            variant="outline"
-            onClick={deleteAllNotifications}
-            disabled={notifications.length === 0}
-          >
-            <LucideTrash2 />
-            {t("deleteAll")}
-          </Button>
-        </div>
+        {/* Delete All Button Section */}
+        <Button
+          className="h-9 w-full text-xs sm:w-auto"
+          variant="outline"
+          onClick={deleteAllNotifications}
+          disabled={notifications.length === 0}
+        >
+          <LucideTrash2 />
+          {t("deleteAll")}
+        </Button>
       </div>
 
       {/* Notification List Section */}
       <div className="flex flex-col gap-5">
-        {/* Loading Skeleton Section */}
         {loading && (
           <>
             <NotificationCardSkeleton />
@@ -213,7 +210,6 @@ export default function NotificationPage() {
             <NotificationCardSkeleton />
           </>
         )}
-
         {/* Empty State Section */}
         {!loading && filteredNotifications.length === 0 && (
           <div className="w-full flex flex-col items-center justify-center my-16">
@@ -260,7 +256,6 @@ export default function NotificationPage() {
                   timestamp={notification.createdAt}
                   role={role}
                   user={notifUser}
-                  onMarkRead={markRead}
                   onDelete={deleteNotification}
                 />
               );
@@ -276,13 +271,27 @@ export default function NotificationPage() {
                   role={role}
                   user={notifUser}
                   message={notification.message}
-                  onMarkRead={markRead}
                   onDelete={deleteNotification}
                 />
               );
             }
 
-            // Fallback: unknown type — render as a generic like card
+            if (notification.type === "interview") {
+              return (
+                <NotificationInterviewCard
+                  key={notification.id}
+                  id={notification.id}
+                  seen={notification.isRead}
+                  timestamp={notification.createdAt}
+                  role={role}
+                  title={notification.title}
+                  message={notification.message}
+                  user={notifUser}
+                  onDelete={deleteNotification}
+                />
+              );
+            }
+
             return (
               <NotificationLikeCard
                 key={notification.id}
@@ -292,7 +301,6 @@ export default function NotificationPage() {
                 role={role}
                 user={notifUser}
                 message={notification.message}
-                onMarkRead={markRead}
                 onDelete={deleteNotification}
               />
             );

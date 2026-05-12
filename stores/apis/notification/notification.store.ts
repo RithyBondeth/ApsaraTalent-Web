@@ -5,7 +5,6 @@ import {
   API_DELETE_NOTIFICATION_URL,
   API_GET_NOTIFICATIONS_URL,
   API_GET_UNREAD_NOTIFICATION_COUNT_URL,
-  API_MARK_ALL_NOTIFICATIONS_READ_URL,
   API_MARK_NOTIFICATION_READ_URL,
 } from "@/utils/constants/apis/notification.api.constant";
 import { INotification } from "@/utils/interfaces/notification/notification.interface";
@@ -42,10 +41,11 @@ type TNotificationState = {
   queryUnreadCount: () => Promise<void>;
   /** Instantly bump unreadCount by 1 (used when a foreground push arrives) */
   incrementUnreadCount: () => void;
+  /** Zero the badge when the user opens the notification page */
+  resetUnreadCount: () => void;
   /** Prepend a confirmed notification from the socket event to the list and bump the badge */
   addNotification: (notification: INotification) => void;
   markRead: (notificationId: string) => Promise<void>;
-  markAllRead: () => Promise<void>;
   /** Optimistically mark a notification as read by its chat messageId (from data.messageId) */
   markReadByChatMessageId: (messageId: string) => void;
   deleteNotification: (notificationId: string) => Promise<void>;
@@ -68,7 +68,7 @@ export const useNotificationStore = create<TNotificationState>((set, get) => ({
       const { page = 1, limit = 20, unreadOnly = false } = params;
       const response = await axios.get<TNotificationListResponse>(
         API_GET_NOTIFICATIONS_URL,
-        { params: { page, limit, unreadOnly } },
+        { params: { page, limit, ...(unreadOnly && { unreadOnly }) } },
       );
       set({
         notifications: response.data.items,
@@ -92,12 +92,16 @@ export const useNotificationStore = create<TNotificationState>((set, get) => ({
         API_GET_UNREAD_NOTIFICATION_COUNT_URL,
       );
       set({ unreadCount: response.data.unreadCount });
-    } catch {}
+    } catch (error) {
+      console.error("Failed to fetch unread notification count:", error);
+    }
   },
 
   incrementUnreadCount: () => {
     set((state) => ({ unreadCount: state.unreadCount + 1 }));
   },
+
+  resetUnreadCount: () => set({ unreadCount: 0 }),
 
   addNotification: (notification: INotification) => {
     set((state) => ({
@@ -127,25 +131,6 @@ export const useNotificationStore = create<TNotificationState>((set, get) => ({
         ),
         unreadCount: state.unreadCount + 1,
       }));
-    }
-  },
-
-  markAllRead: async () => {
-    const prevNotifications = get().notifications;
-    const prevUnreadCount = get().unreadCount;
-    // Optimistic update
-    set((state) => ({
-      notifications: state.notifications.map((n) => ({ ...n, isRead: true })),
-      unreadCount: 0,
-    }));
-    try {
-      await axios.patch(API_MARK_ALL_NOTIFICATIONS_READ_URL);
-    } catch {
-      // Revert on failure
-      set({
-        notifications: prevNotifications,
-        unreadCount: prevUnreadCount,
-      });
     }
   },
 

@@ -276,6 +276,13 @@ export const registerSocketListeners = (
     }
   });
 
+  // ── Badge Increment ───────────────────────────────────────────────────────
+  // Fired for match/like/interview notifications where only the badge count
+  // needs immediate update (full notification data is fetched lazily on open).
+  socket.on("badgeIncrement", () => {
+    useNotificationStore.getState().incrementUnreadCount();
+  });
+
   socket.on("error", (error: any) => {
     console.error("Socket error:", error?.message || error || "Unknown");
   });

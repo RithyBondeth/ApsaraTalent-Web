@@ -5,7 +5,7 @@ import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { useFetchOnce } from "@/hooks/utils/use-fetch-once";
 import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-current-company-matching.store";
 import { useInterviewStore } from "@/stores/apis/matching/interview.store";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import InterviewLoadingSkeleton from "./loading";
 import { InterviewCard } from "@/components/interview/interview-card";
 import { CreateInterviewDialog } from "@/components/interview/create-interview-dialog";
@@ -17,12 +17,21 @@ export default function InterviewPage() {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("interview");
 
-  /* ----------------------------- API Integration ---------------------------- */
-  const { interviews, queryInterviews, updateStatus, error } = useInterviewStore();
-  const { currentCompanyMatching, queryCurrentCompanyMatching } =
-    useGetCurrentCompanyMatchingStore();
+  /* -------------------------------- All States ------------------------------ */
+  const [mounted, setMounted] = useState<boolean>(false);
 
   /* --------------------------------- Effects --------------------------------- */
+  useEffect(() => setMounted(true), []);
+
+  /* ----------------------------- API Integration ---------------------------- */
+  const { loading, interviews, queryInterviews, updateStatus, error } =
+    useInterviewStore();
+  const {
+    currentCompanyMatching,
+    queryCurrentCompanyMatching,
+    loading: companyMatchingLoading,
+  } = useGetCurrentCompanyMatchingStore();
+
   const { isEmployee, isCompany, currentUser } = useFetchOnce({
     cacheKey: "interview-page",
     onEmployeeFetch: (employeeId) => queryInterviews(employeeId, "employee"),
@@ -50,7 +59,12 @@ export default function InterviewPage() {
   );
 
   /* ------------------------------ Loading State ----------------------------- */
-  if (interviews === null) return <InterviewLoadingSkeleton />;
+  const isLoadingForCompany =
+    isCompany && (companyMatchingLoading || currentCompanyMatching === null);
+
+  const isLoading = !mounted || !currentUser || loading || isLoadingForCompany;
+
+  if (isLoading) return <InterviewLoadingSkeleton />;
 
   /* -------------------------------- Render UI -------------------------------- */
   return (

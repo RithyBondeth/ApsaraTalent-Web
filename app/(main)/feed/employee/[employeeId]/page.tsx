@@ -153,10 +153,7 @@ export default function EmployeeDetailPage() {
               description: t("yourCompanyLikedEachOther", { name }),
             });
             countCurrentCompanyMatching.countCurrentCmpMatching(companyId);
-            setTimeout(
-              () => router.push("/matching"),
-              DEFAULT_REDIRECT_DELAY_MS,
-            );
+            setTimeout(() => router.push("/feed"), DEFAULT_REDIRECT_DELAY_MS);
           } else {
             toast.success(t("youLiked", { name }));
             setTimeout(() => router.push("/feed"), DEFAULT_REDIRECT_DELAY_MS);

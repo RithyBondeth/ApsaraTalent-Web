@@ -157,9 +157,12 @@ export const usePushNotifications = () => {
         });
 
         // ── Real-time badge update (foreground) ──────────────────────────────
-        // A push arrived while the tab is focused — bump the bell badge immediately
-        // without waiting for a re-fetch, so the sidebar counter updates instantly.
-        useNotificationStore.getState().incrementUnreadCount();
+        // Only bump the badge if this push was addressed to the current user.
+        // Skipping the check when targetUserId is absent keeps backward compat.
+        const targetUserId = payload.data?.targetUserId;
+        if (!targetUserId || targetUserId === userId) {
+          useNotificationStore.getState().incrementUnreadCount();
+        }
       });
 
       document.addEventListener("visibilitychange", handleVisibilityChange);

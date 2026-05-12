@@ -1,13 +1,11 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { TypographyLead } from "@/components/utils/typography/typography-lead";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { timeAgo } from "@/utils/functions/date";
 import { LucideHeart, LucideX } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { INotificationLikeCardProps } from "./props";
 import { useTranslations } from "next-intl";
 
@@ -15,15 +13,7 @@ export default function NotificationLikeCard(
   props: INotificationLikeCardProps,
 ) {
   /* ---------------------------------- Utils --------------------------------- */
-  const router = useRouter();
   const t = useTranslations("notification");
-
-  /* --------------------------------- Methods --------------------------------- */
-  // ── Handle View Profile ─────────────────────────────────────────
-  const handleViewProfile = () => {
-    if (props.onMarkRead && !props.seen) props.onMarkRead(props.id);
-    router.push(`/feed/${props.role}/${props.user.id}`);
-  };
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -78,14 +68,6 @@ export default function NotificationLikeCard(
               {t("likeBadge")}
             </div>
           </div>
-
-          {/* View Profile Button Section */}
-          <Button
-            className="h-8 text-xs tablet-sm:h-9 tablet-sm:w-full tablet-sm:text-xs"
-            onClick={handleViewProfile}
-          >
-            {t("viewProfile")}
-          </Button>
         </div>
       </div>
     </div>
