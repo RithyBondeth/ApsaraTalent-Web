@@ -19,6 +19,7 @@ import Tag from "@/components/utils/data-display/tag";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type";
+import { translateLocation } from "@/utils/functions/text";
 import { formatDisplayDate } from "@/utils/functions/date";
 import { IBenefits } from "@/utils/interfaces/user/company.interface";
 import { IImage } from "@/utils/interfaces/user/company.interface";
@@ -71,6 +72,8 @@ export default function CompanyDetailPage() {
   const param = useParams<{ companyId: string }>();
   const id = param.companyId;
   const t = useTranslations("toast");
+  const tf = useTranslations("feed");
+  const tl = useTranslations("locations");
 
   /* -------------------------------- All States ------------------------------- */
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
@@ -242,7 +245,7 @@ export default function CompanyDetailPage() {
             variant="destructive"
             onClick={() => window.location.reload()}
           >
-            Retry
+            {tf("retry")}
           </Button>
         </div>
       </div>
@@ -253,9 +256,9 @@ export default function CompanyDetailPage() {
     return (
       <div className="flex h-[60vh] items-center justify-center animate-page-in">
         <div className="flex flex-col items-center gap-3">
-          <p className="font-medium">Company not found</p>
+          <p className="font-medium">{tf("companyNotFound")}</p>
           <Link href="/feed">
-            <Button variant="outline">Back to Feed</Button>
+            <Button variant="outline">{tf("backToFeed")}</Button>
           </Link>
         </div>
       </div>
@@ -273,11 +276,11 @@ export default function CompanyDetailPage() {
             className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <LucideArrowLeft className="size-4" />
-            Back
+            {tf("back")}
           </button>
           <span className="text-border">|</span>
           <span className="text-sm font-semibold truncate">
-            {companyData.name || "Company Detail"}
+            {companyData.name || tf("companyDetail")}
           </span>
         </div>
       </header>
@@ -327,19 +330,19 @@ export default function CompanyDetailPage() {
                 {companyData.location && (
                   <MetaChip
                     icon={<LucideMapPinned />}
-                    text={companyData.location}
+                    text={translateLocation(companyData.location, tl)}
                   />
                 )}
                 {companyData.companySize && (
                   <MetaChip
                     icon={<LucideUsers />}
-                    text={`${companyData.companySize}+ Employees`}
+                    text={tf("dialogEmployeesCount", { count: companyData.companySize })}
                   />
                 )}
                 {companyData.foundedYear && (
                   <MetaChip
                     icon={<LucideCalendarDays />}
-                    text={`Est. ${companyData.foundedYear}`}
+                    text={tf("established", { year: companyData.foundedYear })}
                   />
                 )}
               </div>
@@ -354,11 +357,11 @@ export default function CompanyDetailPage() {
                   onClick={handleAddToFavorite}
                   disabled={favDisabled}
                 >
-                  <LucideBookmark className="size-4" /> Save
+                  <LucideBookmark className="size-4" /> {tf("save")}
                 </Button>
               )}
               <Button size="sm" onClick={handleLike} disabled={likeDisabled}>
-                <LucideHeartHandshake className="size-4" /> Like
+                <LucideHeartHandshake className="size-4" /> {tf("like")}
               </Button>
             </div>
           </div>
@@ -374,7 +377,7 @@ export default function CompanyDetailPage() {
             <DetailCard className="p-5 sm:p-6">
               <SectionTitle
                 icon={<LucideInfo />}
-                title={`About ${companyData.name}`}
+                title={tf("dialogAboutCompany", { name: companyData.name })}
               />
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {companyData.description}
@@ -388,7 +391,7 @@ export default function CompanyDetailPage() {
               <DetailCard className="p-5 sm:p-6">
                 <SectionTitle
                   icon={<LucideBriefcaseBusiness />}
-                  title="Open Positions"
+                  title={tf("openPositions")}
                 />
                 <div className="flex flex-col gap-4">
                   {companyData.openPositions.map((item) => (
@@ -418,14 +421,14 @@ export default function CompanyDetailPage() {
                         <div className="flex flex-col gap-1 text-xs text-muted-foreground tablet-md:flex-row tablet-md:gap-3 flex-shrink-0">
                           <span className="flex items-center gap-1">
                             <LucideCalendarDays className="size-3" />
-                            Posted{" "}
+                            {tf("posted")}{" "}
                             {formatDisplayDate(
                               item.postedDate?.toString() ?? "",
                             )}
                           </span>
                           <span className="flex items-center gap-1">
                             <LucideCalendarDays className="size-3" />
-                            Deadline{" "}
+                            {tf("deadline")}{" "}
                             {formatDisplayDate(
                               item.deadlineDate?.toString() ?? "",
                             )}
@@ -442,7 +445,7 @@ export default function CompanyDetailPage() {
                           {item.description && (
                             <div>
                               <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-                                Description
+                                {tf("description")}
                               </p>
                               <TypographyMuted className="text-sm leading-relaxed">
                                 {item.description}
@@ -452,7 +455,7 @@ export default function CompanyDetailPage() {
                           {item.education && (
                             <div>
                               <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-                                Education
+                                {tf("dialogEducation")}
                               </p>
                               <TypographyMuted className="text-sm">
                                 {item.education}
@@ -462,7 +465,7 @@ export default function CompanyDetailPage() {
                           {item.skills && (
                             <div>
                               <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-                                Skills
+                                {tf("dialogSkills")}
                               </p>
                               <div className="flex flex-wrap gap-1.5">
                                 {item.skills.map((s) => (
@@ -474,7 +477,7 @@ export default function CompanyDetailPage() {
                           {item.salary && (
                             <div>
                               <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-                                Salary Range
+                                {tf("salaryRange")}
                               </p>
                               <span className="text-sm font-semibold text-primary">
                                 {item.salary}
@@ -492,7 +495,7 @@ export default function CompanyDetailPage() {
           {/* Career Scope Section */}
           {companyData.careerScopes && companyData.careerScopes.length > 0 && (
             <DetailCard className="p-5 sm:p-6">
-              <SectionTitle icon={<LucideCompass />} title="Career Scope" />
+              <SectionTitle icon={<LucideCompass />} title={tf("careerScope")} />
               <div className="flex flex-wrap gap-2">
                 {companyData.careerScopes.map((career, i) => (
                   <HoverCard key={i}>
@@ -515,7 +518,7 @@ export default function CompanyDetailPage() {
             <DetailCard className="p-5 sm:p-6">
               <SectionTitle
                 icon={<LucideCamera />}
-                title={`Life at ${companyData.name}`}
+                title={tf("lifeAt", { name: companyData.name })}
               />
               <Carousel className="w-full">
                 <CarouselContent>
@@ -545,42 +548,42 @@ export default function CompanyDetailPage() {
           <DetailCard className="p-5">
             <SectionTitle
               icon={<LucideBuilding2 />}
-              title="Company Information"
+              title={tf("companyInformation")}
             />
             <div className="space-y-3.5">
               {[
                 {
                   icon: <LucideBuilding />,
-                  label: "Industry",
+                  label: tf("industryLabel"),
                   val: companyData.industry,
                 },
                 {
                   icon: <LucideMapPinned />,
-                  label: "Location",
-                  val: companyData.location,
+                  label: tf("location"),
+                  val: translateLocation(companyData.location, tl),
                 },
                 {
                   icon: <LucideCalendarDays />,
-                  label: "Founded",
+                  label: tf("foundedLabel"),
                   val: companyData.foundedYear
                     ? `${companyData.foundedYear}`
                     : null,
                 },
                 {
                   icon: <LucideUsers />,
-                  label: "Company Size",
+                  label: tf("companySizeLabel"),
                   val: companyData.companySize
-                    ? `${companyData.companySize}+ Employees`
+                    ? tf("dialogEmployeesCount", { count: companyData.companySize })
                     : null,
                 },
                 {
                   icon: <LucidePhone />,
-                  label: "Phone",
+                  label: tf("phone"),
                   val: companyData.phone,
                 },
                 {
                   icon: <LucideMail />,
-                  label: "Email",
+                  label: tf("email"),
                   val: companyData.email,
                 },
               ]
@@ -605,12 +608,12 @@ export default function CompanyDetailPage() {
           {(companyData.values.length > 0 ||
             companyData.benefits.length > 0) && (
             <DetailCard className="p-5">
-              <SectionTitle icon={<LucideStar />} title="Culture & Benefits" />
+              <SectionTitle icon={<LucideStar />} title={tf("cultureAndBenefits")} />
               <div className="space-y-4">
                 {companyData.values.length > 0 && (
                   <div>
                     <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-                      Values
+                      {tf("dialogValues")}
                     </p>
                     <div className="flex flex-col gap-1.5">
                       {companyData.values.map((v) => (
@@ -628,7 +631,7 @@ export default function CompanyDetailPage() {
                 {companyData.benefits.length > 0 && (
                   <div>
                     <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-                      Benefits
+                      {tf("dialogBenefits")}
                     </p>
                     <div className="flex flex-col gap-1.5">
                       {companyData.benefits.map((b: IBenefits) => (
@@ -650,7 +653,7 @@ export default function CompanyDetailPage() {
           {/* Social Section */}
           {companyData.socials && companyData.socials.length > 0 && (
             <DetailCard className="p-5">
-              <SectionTitle icon={<LucideGlobe />} title="Social Links" />
+              <SectionTitle icon={<LucideGlobe />} title={tf("socialLinks")} />
               <div className="flex flex-wrap gap-2">
                 {companyData.socials.map((s: ISocialLink) => (
                   <Link
@@ -678,11 +681,11 @@ export default function CompanyDetailPage() {
             onClick={handleAddToFavorite}
             disabled={favDisabled}
           >
-            <LucideBookmark /> Save
+            <LucideBookmark /> {tf("save")}
           </Button>
         )}
         <Button onClick={handleLike} disabled={likeDisabled}>
-          <LucideHeartHandshake /> Like
+          <LucideHeartHandshake /> {tf("like")}
         </Button>
       </div>
 

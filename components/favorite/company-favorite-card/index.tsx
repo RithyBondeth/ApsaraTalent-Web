@@ -15,11 +15,13 @@ import Tag from "@/components/utils/data-display/tag";
 import { IFavoriteCompanyCardProps } from "./props";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useTranslations } from "next-intl";
+import { translateLocation } from "@/utils/functions/text";
 
 export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const t = useTranslations("favorite");
+  const tl = useTranslations("locations");
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -83,7 +85,7 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
               icon={<LucideBriefcaseBusiness />}
               text={t("positionCount", { count: props.openPosition.length })}
             />
-            <MetaChip icon={<LucideMapPin />} text={props.location} />
+            <MetaChip icon={<LucideMapPin />} text={translateLocation(props.location, tl)} />
           </div>
         </div>
       </div>

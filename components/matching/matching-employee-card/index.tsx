@@ -15,12 +15,14 @@ import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { memo } from "react";
 import { useTranslations } from "next-intl";
+import { translateLocation } from "@/utils/functions/text";
 
 const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
   props: IMatchingEmployeeCardProps,
 ) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("matching");
+  const tl = useTranslations("locations");
   const availLabel = formatAvailabilityWords(props.availability);
 
   /* -------------------------------- Render UI -------------------------------- */
@@ -80,7 +82,7 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
               text={props.position}
             />
             <MetaChip icon={<LucideClock />} text={props.experience} />
-            <MetaChip icon={<LucideMapPin />} text={props.location} />
+            <MetaChip icon={<LucideMapPin />} text={translateLocation(props.location, tl)} />
           </div>
         </div>
       </div>

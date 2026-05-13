@@ -15,12 +15,14 @@ import { IMatchingCompanyCardProps } from "./props";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { memo } from "react";
 import { useTranslations } from "next-intl";
+import { translateLocation } from "@/utils/functions/text";
 
 const MatchingCompanyCard = memo(function MatchingCompanyCard(
   props: IMatchingCompanyCardProps,
 ) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("matching");
+  const tl = useTranslations("locations");
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -82,7 +84,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
               icon={<LucideBriefcaseBusiness />}
               text={t("positionCount", { count: props.openPosition.length })}
             />
-            <MetaChip icon={<LucideMapPin />} text={props.location} />
+            <MetaChip icon={<LucideMapPin />} text={translateLocation(props.location, tl)} />
           </div>
         </div>
       </div>

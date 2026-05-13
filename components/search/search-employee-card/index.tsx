@@ -14,11 +14,13 @@ import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useTranslations } from "next-intl";
+import { translateLocation } from "@/utils/functions/text";
 
 export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const t = useTranslations("searchCompany");
+  const tl = useTranslations("locations");
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -61,7 +63,7 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
             icon={<LucideUser />}
             text={`${props.yearOfExperience} ${t("yrsExp")}`}
           />
-          <MetaChip icon={<LucideMapPin />} text={props.location} />
+          <MetaChip icon={<LucideMapPin />} text={translateLocation(props.location, tl)} />
           <MetaChip icon={<LucideClock />} text={props.availability} />
           <MetaChip icon={<LucideGraduationCap />} text={props.education} />
         </div>

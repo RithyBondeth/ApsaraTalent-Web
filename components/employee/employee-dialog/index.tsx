@@ -24,10 +24,12 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { AvailabilityBadge } from "@/components/utils/data-display/availability-badge";
 import { useTranslations } from "next-intl";
+import { translateLocation } from "@/utils/functions/text";
 
 export default function EmployeeDialog(props: IEmployeeDialogProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("feed");
+  const tl = useTranslations("locations");
 
   const fullName =
     [props.firstname, props.lastname].filter(Boolean).join(" ") ||
@@ -78,7 +80,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
             {props.location && (
               <span className="inline-flex items-center gap-1 text-xs bg-muted px-2.5 py-1 rounded-full text-muted-foreground">
                 <LucideMapPin className="h-3 w-3 shrink-0" />
-                {props.location}
+                {translateLocation(props.location, tl)}
               </span>
             )}
             {props.yearsOfExperience && (

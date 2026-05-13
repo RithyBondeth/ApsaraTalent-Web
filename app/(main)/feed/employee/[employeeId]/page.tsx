@@ -22,6 +22,7 @@ import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/coun
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type";
+import { translateLocation } from "@/utils/functions/text";
 import { formatShortDate } from "@/utils/functions/date";
 import { extractCleanFilename } from "@/utils/functions/file";
 import {
@@ -67,6 +68,8 @@ export default function EmployeeDetailPage() {
   const params = useParams<{ employeeId: string }>();
   const id = params.employeeId;
   const t = useTranslations("toast");
+  const tf = useTranslations("feed");
+  const tl = useTranslations("locations");
 
   /* -------------------------------- All States ------------------------------- */
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
@@ -233,7 +236,7 @@ export default function EmployeeDetailPage() {
             variant="destructive"
             onClick={() => window.location.reload()}
           >
-            Retry
+            {tf("retry")}
           </Button>
         </div>
       </div>
@@ -244,9 +247,9 @@ export default function EmployeeDetailPage() {
     return (
       <div className="flex h-[60vh] items-center justify-center animate-page-in">
         <div className="flex flex-col items-center gap-3">
-          <p className="font-medium">Employee not found</p>
+          <p className="font-medium">{tf("employeeNotFound")}</p>
           <Link href="/feed">
-            <Button variant="outline">Back to Feed</Button>
+            <Button variant="outline">{tf("backToFeed")}</Button>
           </Link>
         </div>
       </div>
@@ -273,11 +276,11 @@ export default function EmployeeDetailPage() {
             className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <LucideArrowLeft className="size-4" />
-            Back
+            {tf("back")}
           </button>
           <span className="text-border">|</span>
           <span className="text-sm font-semibold truncate">
-            {fullName || "Employee Detail"}
+            {fullName || tf("employeeDetail")}
           </span>
         </div>
       </header>
@@ -333,7 +336,13 @@ export default function EmployeeDetailPage() {
                 {employeeData.gender && (
                   <MetaChip
                     icon={<LucideTransgender />}
-                    text={employeeData.gender}
+                    text={
+                      employeeData.gender.toLowerCase() === "male"
+                        ? tf("genderMale")
+                        : employeeData.gender.toLowerCase() === "female"
+                          ? tf("genderFemale")
+                          : tf("genderOther")
+                    }
                   />
                 )}
                 {employeeData.yearsOfExperience && (
@@ -345,7 +354,7 @@ export default function EmployeeDetailPage() {
                 {employeeData.location && (
                   <MetaChip
                     icon={<LucideMapPinned />}
-                    text={employeeData.location}
+                    text={translateLocation(employeeData.location, tl)}
                   />
                 )}
                 {employeeData.username && (
@@ -366,11 +375,11 @@ export default function EmployeeDetailPage() {
                   onClick={handleAddToFavorite}
                   disabled={favDisabled}
                 >
-                  <LucideBookmark className="size-4" /> Save
+                  <LucideBookmark className="size-4" /> {tf("save")}
                 </Button>
               )}
               <Button size="sm" onClick={handleLike} disabled={likeDisabled}>
-                <LucideHeartHandshake className="size-4" /> Like
+                <LucideHeartHandshake className="size-4" /> {tf("like")}
               </Button>
             </div>
           </div>
@@ -384,7 +393,7 @@ export default function EmployeeDetailPage() {
           {/* About Section */}
           {employeeData.description && (
             <DetailCard className="p-5 sm:p-6">
-              <SectionTitle icon={<LucideUser />} title="About" />
+              <SectionTitle icon={<LucideUser />} title={tf("dialogAbout")} />
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {employeeData.description}
               </p>
@@ -394,7 +403,7 @@ export default function EmployeeDetailPage() {
           {/* Skills Section */}
           {employeeData.skills && employeeData.skills.length > 0 && (
             <DetailCard className="p-5 sm:p-6">
-              <SectionTitle icon={<LucideZap />} title="Skills" />
+              <SectionTitle icon={<LucideZap />} title={tf("dialogSkills")} />
               <div className="flex flex-wrap gap-2">
                 {employeeData.skills.map((item: ISkill) => (
                   <HoverCard key={item.id}>
@@ -420,7 +429,7 @@ export default function EmployeeDetailPage() {
             <DetailCard className="p-5 sm:p-6">
               <SectionTitle
                 icon={<LucideBriefcaseBusiness />}
-                title="Experience"
+                title={tf("experience")}
               />
               <div className="flex flex-col gap-3">
                 {employeeData.experiences.map(
@@ -460,7 +469,7 @@ export default function EmployeeDetailPage() {
           {/* Education Section */}
           {employeeData.educations && employeeData.educations.length > 0 && (
             <DetailCard className="p-5 sm:p-6">
-              <SectionTitle icon={<LucideGraduationCap />} title="Education" />
+              <SectionTitle icon={<LucideGraduationCap />} title={tf("dialogEducation")} />
               <div className="flex flex-col gap-3">
                 {employeeData.educations.map((item: IEducation) => (
                   <div
@@ -497,7 +506,7 @@ export default function EmployeeDetailPage() {
           {/* Documents Section */}
           {(employeeData.resume || employeeData.coverLetter) && (
             <DetailCard className="p-5">
-              <SectionTitle icon={<LucideFileText />} title="Documents" />
+              <SectionTitle icon={<LucideFileText />} title={tf("documents")} />
               <div className="flex flex-col gap-2.5">
                 {[
                   { file: employeeData.resume, suffix: "resume" },
@@ -550,23 +559,23 @@ export default function EmployeeDetailPage() {
 
           {/* Contact Section */}
           <DetailCard className="p-5">
-            <SectionTitle icon={<LucidePhone />} title="Contact" />
+            <SectionTitle icon={<LucidePhone />} title={tf("contact")} />
             <div className="space-y-3.5">
               {[
                 {
                   icon: <LucidePhone />,
-                  label: "Phone",
+                  label: tf("phone"),
                   val: employeeData.phone,
                 },
                 {
                   icon: <LucideMail />,
-                  label: "Email",
+                  label: tf("email"),
                   val: employeeData.email,
                 },
                 {
                   icon: <LucideMapPinned />,
-                  label: "Address",
-                  val: employeeData.location,
+                  label: tf("address"),
+                  val: translateLocation(employeeData.location, tl),
                 },
               ]
                 .filter((r) => r.val)
@@ -589,7 +598,7 @@ export default function EmployeeDetailPage() {
           {/* Socials Section */}
           {employeeData.socials && employeeData.socials.length > 0 && (
             <DetailCard className="p-5">
-              <SectionTitle icon={<LucideGlobe />} title="Social Links" />
+              <SectionTitle icon={<LucideGlobe />} title={tf("socialLinks")} />
               <div className="flex flex-wrap gap-2">
                 {employeeData.socials.map((item: ISocialLink) => (
                   <Link
@@ -617,11 +626,11 @@ export default function EmployeeDetailPage() {
             onClick={handleAddToFavorite}
             disabled={favDisabled}
           >
-            <LucideBookmark /> Save
+            <LucideBookmark /> {tf("save")}
           </Button>
         )}
         <Button onClick={handleLike} disabled={likeDisabled}>
-          <LucideHeartHandshake /> Like
+          <LucideHeartHandshake /> {tf("like")}
         </Button>
       </div>
 

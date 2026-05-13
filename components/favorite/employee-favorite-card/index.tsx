@@ -15,6 +15,7 @@ import { IFavoriteEmployeeCardProps } from "./props";
 import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useTranslations } from "next-intl";
+import { translateLocation } from "@/utils/functions/text";
 
 export default function FavoriteEmployeeCard(
   props: IFavoriteEmployeeCardProps,
@@ -22,6 +23,7 @@ export default function FavoriteEmployeeCard(
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const t = useTranslations("favorite");
+  const tl = useTranslations("locations");
   const availLabel = formatAvailabilityWords(props.availability);
 
   /* -------------------------------- Render UI -------------------------------- */
@@ -86,7 +88,7 @@ export default function FavoriteEmployeeCard(
               icon={<LucideClock />}
               text={t("yrsExp", { years: props.experience })}
             />
-            <MetaChip icon={<LucideMapPin />} text={props.location} />
+            <MetaChip icon={<LucideMapPin />} text={translateLocation(props.location, tl)} />
           </div>
         </div>
       </div>

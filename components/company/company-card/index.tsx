@@ -27,10 +27,12 @@ import CompanyDialog from "../company-dialog";
 import { ICompanyCardProps } from "./props";
 import IconLabel from "@/components/utils/data-display/icon-label";
 import { useTranslations } from "next-intl";
+import { translateLocation } from "@/utils/functions/text";
 
 export default function CompanyCard(props: ICompanyCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("feed");
+  const tl = useTranslations("locations");
   const isGrid = props.variant === "grid";
 
   /* -------------------------------- All States ------------------------------ */
@@ -125,7 +127,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
                 </TypographySmall>
                 <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
                   <LucideMapPin className="size-3 shrink-0" />
-                  <span className="truncate">{props.location}</span>
+                  <span className="truncate">{translateLocation(props.location, tl)}</span>
                 </TypographySmall>
                 <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
                   <LucideUsers className="size-3 shrink-0" />
@@ -258,7 +260,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
             </TypographySmall>
             <TypographySmall className="text-xs flex items-center gap-1 text-muted-foreground">
               <LucideMapPin className="size-3 " />
-              <span>{props.location}</span>
+              <span>{translateLocation(props.location, tl)}</span>
             </TypographySmall>
           </div>
         </div>

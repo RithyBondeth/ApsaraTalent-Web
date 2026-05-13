@@ -19,10 +19,12 @@ import { TypographySmall } from "@/components/utils/typography/typography-small"
 import EmployeeDialog from "../employee-dialog";
 import { IEmployeeCardProps } from "./props";
 import { useTranslations } from "next-intl";
+import { translateLocation } from "@/utils/functions/text";
 
 export default function EmployeeCard(props: IEmployeeCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("feed");
+  const tl = useTranslations("locations");
   const isGrid = props.variant === "grid";
 
   /* -------------------------------- All States ------------------------------ */
@@ -86,7 +88,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
                 {props.location && (
                   <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
                     <LucideMapPin className="size-3 shrink-0" />
-                    <span className="truncate">{props.location}</span>
+                    <span className="truncate">{translateLocation(props.location, tl)}</span>
                   </TypographySmall>
                 )}
                 <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
@@ -231,7 +233,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
             <TypographyMuted>{props.job}</TypographyMuted>
             <TypographySmall className="text-xs flex items-center gap-1 text-muted-foreground">
               <LucideMapPin className="size-3 " />
-              <span>{props.location}</span>
+              <span>{translateLocation(props.location, tl)}</span>
             </TypographySmall>
           </div>
         </div>

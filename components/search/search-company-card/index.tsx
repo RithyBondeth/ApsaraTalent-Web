@@ -17,11 +17,13 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { memo } from "react";
 import { useTranslations } from "next-intl";
+import { translateLocation } from "@/utils/functions/text";
 
 const SearchCompanyCard = memo(function SearchCompanyCard(props: ISearchCompanyCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const t = useTranslations("searchEmployee");
+  const tl = useTranslations("locations");
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -58,7 +60,7 @@ const SearchCompanyCard = memo(function SearchCompanyCard(props: ISearchCompanyC
             icon={<LucideUsers />}
             text={`${props.company.companySize} ${t("employees")}`}
           />
-          <MetaChip icon={<LucideMapPin />} text={props.company.location} />
+          <MetaChip icon={<LucideMapPin />} text={translateLocation(props.company.location, tl)} />
           <MetaChip icon={<LucideBriefcaseBusiness />} text={props.type} />
         </div>
 
