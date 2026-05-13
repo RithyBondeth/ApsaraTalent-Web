@@ -1,3 +1,5 @@
+"use client";
+
 import {
   LucideBriefcase,
   LucideExternalLink,
@@ -21,9 +23,12 @@ import { IEmployeeDialogProps } from "./props";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { AvailabilityBadge } from "@/components/utils/data-display/availability-badge";
+import { useTranslations } from "next-intl";
 
 export default function EmployeeDialog(props: IEmployeeDialogProps) {
   /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("feed");
+
   const fullName =
     [props.firstname, props.lastname].filter(Boolean).join(" ") ||
     props.username ||
@@ -99,7 +104,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
           {props.description && (
             <section>
               <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-semibold mb-1.5">
-                About
+                {t("dialogAbout")}
               </TypographyP>
               <TypographyMuted className="text-sm text-muted-foreground leading-relaxed">
                 {props.description}
@@ -111,7 +116,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
           {props.skills && props.skills.length > 0 && (
             <section>
               <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-semibold mb-2">
-                Skills
+                {t("dialogSkills")}
               </TypographyP>
               <div className="flex flex-wrap gap-1.5">
                 {props.skills.map((skill) => (
@@ -130,7 +135,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
           {props.educations && props.educations.length > 0 && (
             <section>
               <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-semibold mb-2">
-                Education
+                {t("dialogEducation")}
               </TypographyP>
               <div className="space-y-2.5">
                 {props.educations.map((edu, index) => (
@@ -168,7 +173,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
           <Link href={`/feed/employee/${props.id}`} className="w-full">
             <Button className="w-full gap-2">
               <LucideUser className="h-4 w-4" />
-              View Profile
+              {t("dialogViewProfile")}
               <LucideExternalLink className="h-3.5 w-3.5 ml-auto opacity-70" />
             </Button>
           </Link>

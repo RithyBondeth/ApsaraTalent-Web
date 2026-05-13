@@ -1,3 +1,5 @@
+"use client";
+
 import { IJobPosition } from "@/utils/interfaces/user/company.interface";
 import {
   LucideBookmark,
@@ -24,9 +26,11 @@ import { TypographySmall } from "@/components/utils/typography/typography-small"
 import CompanyDialog from "../company-dialog";
 import { ICompanyCardProps } from "./props";
 import IconLabel from "@/components/utils/data-display/icon-label";
+import { useTranslations } from "next-intl";
 
 export default function CompanyCard(props: ICompanyCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("feed");
   const isGrid = props.variant === "grid";
 
   /* -------------------------------- All States ------------------------------ */
@@ -125,12 +129,12 @@ export default function CompanyCard(props: ICompanyCardProps) {
                 </TypographySmall>
                 <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
                   <LucideUsers className="size-3 shrink-0" />
-                  <span>{props.companySize.toLocaleString()} people</span>
+                  <span>{t("companyPeopleCount", { count: props.companySize })}</span>
                 </TypographySmall>
                 {props.foundedYear && (
                   <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
                     <LucideCalendar className="size-3 shrink-0" />
-                    <span>Est. {props.foundedYear}</span>
+                    <span>{t("established", { year: props.foundedYear })}</span>
                   </TypographySmall>
                 )}
               </div>
@@ -146,9 +150,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
               <div className="flex flex-col gap-1.5">
                 <TypographySmall className="text-[11px] font-semibold text-foreground/70 flex items-center gap-1">
                   <LucideBriefcaseBusiness className="size-3" />
-                  {props.openPositions.length === 1
-                    ? "1 Open Position"
-                    : `${props.openPositions.length} Open Positions`}
+                  {t("openPositionCount", { count: props.openPositions.length })}
                 </TypographySmall>
                 <div className="flex flex-wrap gap-1.5">
                   {props.openPositions
@@ -158,7 +160,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
                     ))}
                   {props.openPositions.length > 3 && (
                     <span className="text-[11px] text-muted-foreground self-center font-medium">
-                      +{props.openPositions.length - 3} more
+                      {t("moreItems", { count: props.openPositions.length - 3 })}
                     </span>
                   )}
                 </div>
@@ -193,7 +195,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
               onClick={props.onSaveClick}
             >
               <LucideBookmark className="!size-3" />
-              Save
+              {t("save")}
             </Button>
             {props.viewHref ? (
               <Button
@@ -202,7 +204,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
                 asChild
               >
                 <Link href={props.viewHref} prefetch={true}>
-                  View
+                  {t("view")}
                   <LucideCircleArrowRight className="!size-3" />
                 </Link>
               </Button>
@@ -212,7 +214,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
                 size="sm"
                 onClick={props.onViewClick}
               >
-                View
+                {t("view")}
                 <LucideCircleArrowRight className="!size-3" />
               </Button>
             )}
@@ -252,11 +254,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
             </TypographyP>
             <TypographySmall className="text-xs flex items-center gap-1 text-muted-foreground">
               <LucideUsers className="size-3 " />
-              <span>
-                {props.companySize <= 1
-                  ? `${props.companySize} employee`
-                  : `${props.companySize} employees`}
-              </span>
+              <span>{t("employeeCount", { count: props.companySize })}</span>
             </TypographySmall>
             <TypographySmall className="text-xs flex items-center gap-1 text-muted-foreground">
               <LucideMapPin className="size-3 " />
@@ -288,7 +286,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
       {/* Industry and Description Section */}
       <div className="w-full flex flex-col gap-3">
         <IconLabel
-          text="Industry"
+          text={t("industryLabel")}
           icon={<LucideBuilding strokeWidth={"1.5px"} />}
           className="[&>p]:text-primary [&>p]:font-medium"
         />
@@ -301,11 +299,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-3">
           <IconLabel
-            text={`${
-              props.openPositions.length <= 1
-                ? `${props.openPositions.length} Open Position`
-                : `${props.openPositions.length} Open Positions`
-            }`}
+            text={t("openPositionCount", { count: props.openPositions.length })}
             icon={<LucideBriefcaseBusiness strokeWidth={"1.5px"} />}
             className="[&>p]:text-primary [&>p]:font-medium"
           />
@@ -318,11 +312,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
         {props.availableTimes && props.availableTimes.length > 0 && (
           <div className="flex flex-col gap-3">
             <IconLabel
-              text={
-                props.availableTimes.length > 1
-                  ? "Available times"
-                  : "Available time"
-              }
+              text={t("availableTime", { count: props.availableTimes.length })}
               icon={<LucideClock strokeWidth={"1.5px"} />}
               className="[&>p]:text-primary [&>p]:font-medium"
             />
@@ -346,11 +336,11 @@ export default function CompanyCard(props: ICompanyCardProps) {
           variant="outline"
           onClick={props.onSaveClick}
         >
-          Save
+          {t("save")}
           <LucideBookmark />
         </Button>
         <Button className="text-xs" onClick={props.onViewClick}>
-          View
+          {t("view")}
           <LucideCircleArrowRight />
         </Button>
       </div>

@@ -1,3 +1,5 @@
+"use client";
+
 import {
   LucideBuilding,
   LucideBuilding2,
@@ -22,9 +24,11 @@ import { getCompanyProfileCompletion } from "@/utils/functions/profile";
 import { ICompanyDialogProps } from "./props";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { useTranslations } from "next-intl";
 
 export default function CompanyDialog(props: ICompanyDialogProps) {
   /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("feed");
   const completion = useMemo(() => getCompanyProfileCompletion(props), [props]);
 
   /* -------------------------------- Render UI -------------------------------- */
@@ -64,7 +68,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
           </div>
         </div>
 
-        {/* Name, Industry, Location, CompanySize, FoundedYear, Progess Section  */}
+        {/* Name, Industry, Location, CompanySize, FoundedYear, Progress Section */}
         <div className="pt-12 px-4 shrink-0">
           <DialogTitle className="text-base font-bold leading-tight">
             {props.name}
@@ -83,13 +87,13 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
             {props.companySize && (
               <span className="inline-flex items-center gap-1 text-xs bg-muted px-2.5 py-1 rounded-full text-muted-foreground">
                 <LucideUsers className="h-3 w-3 shrink-0" />
-                {props.companySize}+ Employees
+                {t("dialogEmployeesCount", { count: props.companySize })}
               </span>
             )}
             {props.foundedYear && (
               <span className="inline-flex items-center gap-1 text-xs bg-muted px-2.5 py-1 rounded-full text-muted-foreground">
                 <LucideBuilding className="h-3 w-3 shrink-0" />
-                Est. {props.foundedYear}
+                {t("established", { year: props.foundedYear })}
               </span>
             )}
           </div>
@@ -102,11 +106,11 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
 
         {/* Scrollable Body Section */}
         <div className="flex-1 overflow-y-auto min-h-0 px-4 py-4 space-y-5">
-          {/* About Section: Name and Description */}
+          {/* About Section */}
           {props.description && (
             <section>
               <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-semibold mb-1.5">
-                About {props.name}
+                {t("dialogAboutCompany", { name: props.name })}
               </TypographyP>
               <TypographyMuted className="text-sm text-muted-foreground leading-relaxed">
                 {props.description}
@@ -118,7 +122,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
           {props.benefits && props.benefits.length > 0 && (
             <section>
               <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-semibold mb-2">
-                Benefits
+                {t("dialogBenefits")}
               </TypographyP>
               <div className="flex flex-wrap gap-2">
                 {props.benefits.map((benefit, index) => (
@@ -138,7 +142,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
           {props.values && props.values.length > 0 && (
             <section>
               <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-semibold mb-2">
-                Values
+                {t("dialogValues")}
               </TypographyP>
               <div className="flex flex-wrap gap-2">
                 {props.values.map((value, index) => (
@@ -160,7 +164,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
           <Link href={`/feed/company/${props.id}`} className="w-full">
             <Button className="w-full gap-2">
               <LucideBuilding2 className="h-4 w-4" />
-              View Company
+              {t("dialogViewCompany")}
               <LucideExternalLink className="h-3.5 w-3.5 ml-auto opacity-70" />
             </Button>
           </Link>

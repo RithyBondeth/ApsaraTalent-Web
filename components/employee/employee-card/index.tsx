@@ -18,9 +18,11 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import EmployeeDialog from "../employee-dialog";
 import { IEmployeeCardProps } from "./props";
+import { useTranslations } from "next-intl";
 
 export default function EmployeeCard(props: IEmployeeCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("feed");
   const isGrid = props.variant === "grid";
 
   /* -------------------------------- All States ------------------------------ */
@@ -181,14 +183,14 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
                 onClick={props.onSaveClick}
               >
                 <LucideBookmark className="!size-3" />
-                Save
+                {t("save")}
               </Button>
               <Button
                 className="text-[11px] h-7 px-3 rounded-full gap-1"
                 size="sm"
                 onClick={props.onViewClick}
               >
-                View
+                {t("view")}
                 <LucideCircleArrowRight className="!size-3" />
               </Button>
             </div>
@@ -282,11 +284,11 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
           variant="outline"
           onClick={props.onSaveClick}
         >
-          Save
+          {t("save")}
           <LucideBookmark />
         </Button>
         <Button className="text-sm" onClick={props.onViewClick}>
-          View
+          {t("view")}
           <LucideCircleArrowRight />
         </Button>
       </div>
