@@ -6,10 +6,12 @@ type TimeAgoTranslator = (
 
 /* --------------------------------- Methods ---------------------------------- */
 export function timeAgo(
-  timestamp: string | Date,
+  timestamp: string | Date | null | undefined,
   t?: TimeAgoTranslator,
 ): string {
+  if (!timestamp) return "";
   const date = typeof timestamp === "string" ? new Date(timestamp) : timestamp;
+  if (isNaN(date.getTime())) return "";
   const now = new Date();
   const secondsAgo = Math.floor((now.getTime() - date.getTime()) / 1000);
 
