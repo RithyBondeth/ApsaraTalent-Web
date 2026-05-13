@@ -26,7 +26,26 @@ import { NotificationCardSkeleton } from "@/components/notification/skeleton";
 import { INotification } from "@/utils/interfaces/notification/notification.interface";
 
 /* ---------------------------------- Helper --------------------------------- */
-/** Derive a display-friendly user object from a notification's title + data fields. */
+/** Fallback name parser for old notifications that pre-date the senderName data field. */
+function parseSenderNameFromMessage(type: string | null, message: string): string {
+  if (type === "like") {
+    const m = message.match(/^(.+?) liked your/);
+    if (m) return m[1];
+  }
+  if (type === "match") {
+    const m1 = message.match(/^(.+?) and (?:you|your company) liked/);
+    if (m1) return m1[1];
+    const m2 = message.match(/^You and (.+?) liked/);
+    if (m2) return m2[1];
+  }
+  if (type === "interview") {
+    const m = message.match(/^(.+?) wants to schedule/);
+    if (m) return m[1];
+  }
+  return "";
+}
+
+/** Derive a display-friendly user object from a notification's data fields. */
 function resolveNotificationUser(notification: INotification, role: string) {
   const id =
     (notification.data?.senderId as string) ??
@@ -35,12 +54,19 @@ function resolveNotificationUser(notification: INotification, role: string) {
       : (notification.data?.employeeId as string)) ??
     "";
 
+  const name =
+    (notification.data?.senderName as string) ||
+    parseSenderNameFromMessage(notification.type, notification.message ?? "");
+
   return {
     id,
-    name: notification.title,
+    name,
     position: (notification.data?.position as string | null) ?? null,
     industry: (notification.data?.industry as string | null) ?? null,
-    avatar: (notification.data?.avatar as string) ?? "/avatars/default.png",
+    avatar:
+      (notification.data?.senderAvatar as string) ??
+      (notification.data?.avatar as string) ??
+      "/avatars/default.png",
   };
 }
 
@@ -270,13 +296,25 @@ export default function NotificationPage() {
                   timestamp={notification.createdAt}
                   role={role}
                   user={notifUser}
-                  message={notification.message}
                   onDelete={deleteNotification}
                 />
               );
             }
 
             if (notification.type === "interview") {
+              const rawMsg = notification.message ?? "";
+              const dataInterviewTitle = (notification.data?.interviewTitle as string) || "";
+              const dataSenderName = (notification.data?.senderName as string) || "";
+
+              // Backwards-compat: extract parts from old English message format
+              const scheduledSep = " wants to schedule an interview: ";
+              const sepIdx = rawMsg.indexOf(scheduledSep);
+              const parsedSenderName = sepIdx !== -1 ? rawMsg.slice(0, sepIdx) : "";
+              const parsedInterviewTitle = sepIdx !== -1 ? rawMsg.slice(sepIdx + scheduledSep.length) : "";
+
+              const resolvedSenderName = dataSenderName || parsedSenderName;
+              const resolvedInterviewTitle = dataInterviewTitle || parsedInterviewTitle;
+
               return (
                 <NotificationInterviewCard
                   key={notification.id}
@@ -284,8 +322,11 @@ export default function NotificationPage() {
                   seen={notification.isRead}
                   timestamp={notification.createdAt}
                   role={role}
-                  title={notification.title}
-                  message={notification.message}
+                  eventType={(notification.data?.eventType as string) ?? "interview_scheduled"}
+                  senderName={resolvedSenderName}
+                  interviewTitle={resolvedInterviewTitle}
+                  status={notification.data?.status as string | undefined}
+                  rawMessage={!resolvedInterviewTitle ? rawMsg || undefined : undefined}
                   user={notifUser}
                   onDelete={deleteNotification}
                 />
@@ -300,7 +341,6 @@ export default function NotificationPage() {
                 timestamp={notification.createdAt}
                 role={role}
                 user={notifUser}
-                message={notification.message}
                 onDelete={deleteNotification}
               />
             );

@@ -16,14 +16,26 @@ export default function NotificationInterviewCard(
   const t = useTranslations("notification");
   const tc = useTranslations("common");
 
-  const titleKeyMap: Record<string, string> = {
-    "Interview Scheduled": "interviewScheduled",
-    "Interview Accepted": "interviewAccepted",
-    "Interview Declined": "interviewDeclined",
-    "Interview Cancelled": "interviewCancelled",
-    "Interview Completed": "interviewCompleted",
+  const eventTypeKeyMap: Record<string, string> = {
+    interview_scheduled: "interviewScheduled",
+    interview_accepted: "interviewAccepted",
+    interview_declined: "interviewDeclined",
+    interview_cancelled: "interviewCancelled",
+    interview_completed: "interviewCompleted",
   };
-  const titleKey = titleKeyMap[props.title] ?? "newInterview";
+  const titleKey = eventTypeKeyMap[props.eventType] ?? "newInterview";
+
+  const description = props.rawMessage
+    ? props.rawMessage
+    : props.status
+      ? t("interviewMessageStatus", {
+          title: props.interviewTitle,
+          status: props.status,
+        })
+      : t("interviewMessageScheduled", {
+          name: props.senderName,
+          title: props.interviewTitle,
+        });
 
   return (
     /* ------------------------------ Render UI -------------------------------- */
@@ -58,7 +70,7 @@ export default function NotificationInterviewCard(
         </div>
 
         {/* Description Section */}
-        <TypographyMuted>{props.message}</TypographyMuted>
+        <TypographyMuted>{description}</TypographyMuted>
 
         {/* Action Section */}
         <div className="w-full flex items-center justify-between gap-2 tablet-sm:mt-1 tablet-sm:justify-end">

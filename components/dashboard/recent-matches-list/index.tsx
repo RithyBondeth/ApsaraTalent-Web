@@ -22,7 +22,9 @@ export function RecentMatchesList({
       <div className="flex flex-col items-center justify-center py-8 text-center">
         <Handshake className="h-10 w-10 text-muted-foreground/30 mb-3" />
         <TypographyMuted className="text-sm text-muted-foreground">
-          {t("noMatchesYet", { role: isEmployee ? t("company") : t("candidate") })}
+          {t("noMatchesYet", {
+            role: isEmployee ? t("company") : t("candidate"),
+          })}
         </TypographyMuted>
       </div>
     );

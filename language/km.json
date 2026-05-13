@@ -622,13 +622,17 @@
     "interviewBadge": "សម្ភាសន៍",
     "viewProfile": "មើលប្រវត្តិរូប",
     "reply": "ឆ្លើយ",
-    "matchedWithEmployee": "អ្នកបានផ្គូផ្គងជាមួយ {name} ជា {position}។",
-    "matchedWithCompany": "អ្នកបានផ្គូផ្គងជាមួយ {name} ក្រុមហ៊ុន {industry}។",
+    "matchedWithEmployee": "អ្នកបានផ្គូផ្គងជាមួយ {name}។",
+    "matchedWithCompany": "អ្នកបានផ្គូផ្គងជាមួយ {name}។",
     "interviewScheduled": "ការសម្ភាសន៍ត្រូវបានគ្រោង",
     "interviewAccepted": "ការសម្ភាសន៍ត្រូវបានទទួលស្គាល់",
     "interviewDeclined": "ការសម្ភាសន៍ត្រូវបានបដិសេធ",
     "interviewCancelled": "ការសម្ភាសន៍ត្រូវបានបោះបង់",
-    "interviewCompleted": "ការសម្ភាសន៍ត្រូវបានបញ្ចប់"
+    "interviewCompleted": "ការសម្ភាសន៍ត្រូវបានបញ្ចប់",
+    "interviewMessageScheduled": "{name} ចង់គ្រោងការសម្ភាសន៍: {title}",
+    "interviewMessageStatus": "ការសម្ភាសន៍ \"{title}\" ត្រូវបាន{status}។",
+    "likedYourProfile": "{name} បានចូលចិត្តប្រវត្តិរូបរបស់អ្នក។",
+    "likedYourCompany": "{name} បានចូលចិត្តក្រុមហ៊ុនរបស់អ្នក។"
   },
   "message": {
     "noMessages": "មិនទាន់មានសារនៅឡើយទេ។ ស្វាគមន៍! 👋",

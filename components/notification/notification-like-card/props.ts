@@ -12,6 +12,5 @@ export interface INotificationLikeCardProps {
     industry: string | null;
     avatar: string;
   };
-  message: string;
   onDelete?: (id: string) => void;
 }

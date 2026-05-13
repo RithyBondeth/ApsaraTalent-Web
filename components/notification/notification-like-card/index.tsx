@@ -49,7 +49,11 @@ export default function NotificationLikeCard(
         </div>
 
         {/* Description Section */}
-        <TypographyMuted>{props.message}</TypographyMuted>
+        <TypographyMuted>
+          {props.role === "employee"
+            ? t("likedYourProfile", { name: props.user.name })
+            : t("likedYourCompany", { name: props.user.name })}
+        </TypographyMuted>
 
         {/* Action Section */}
         <div className="w-full flex items-center justify-between gap-2 tablet-sm:mt-1 tablet-sm:justify-end">

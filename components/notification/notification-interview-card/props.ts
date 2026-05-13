@@ -5,8 +5,11 @@ export interface INotificationInterviewCardProps {
   seen: boolean;
   timestamp: string;
   role: TUserRole;
-  title: string;
-  message: string;
+  eventType: string;
+  senderName: string;
+  interviewTitle: string;
+  status?: string;
+  rawMessage?: string;
   user: {
     id: string;
     name: string;
