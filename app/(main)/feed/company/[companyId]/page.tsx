@@ -269,17 +269,17 @@ export default function CompanyDetailPage() {
     <div className="flex flex-col gap-5 animate-page-in tablet-sm:pb-24">
       {/* Back Navigation Header Section */}
       <header className="sticky top-0 z-10 border-b border-border/60 bg-background/95 backdrop-blur-sm -mx-4 sm:-mx-6 px-4 sm:px-6">
-        <div className="flex items-center gap-4 py-3">
+        <div className="flex items-center gap-4 py-3 min-w-0">
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors shrink-0"
           >
             <LucideArrowLeft className="size-4" />
             {tf("back")}
           </button>
-          <span className="text-border">|</span>
-          <span className="text-sm font-semibold truncate">
+          <span className="text-border shrink-0">|</span>
+          <span className="text-sm font-semibold truncate flex-1 min-w-0">
             {companyData.name || tf("companyDetail")}
           </span>
         </div>

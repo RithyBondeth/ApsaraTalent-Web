@@ -30,7 +30,9 @@ export default function EmployeeEducationForm(
     <div className="w-full flex flex-col items-start gap-3">
       {/* Header Section */}
       <div className="w-full flex items-center justify-between">
-        <TypographyMuted>{t("educationIndex", { index: props.index + 1 })}</TypographyMuted>
+        <TypographyMuted>
+          {t("educationIndex", { index: props.index + 1 })}
+        </TypographyMuted>
         {props.isEdit && (
           <LucideTrash2
             className="cursor-pointer text-red-500"
@@ -84,9 +86,7 @@ export default function EmployeeEducationForm(
           label={t("degree")}
           input={
             <Input
-              placeholder={
-                isStudying ? t("pursuingDegree") : t("degree")
-              }
+              placeholder={isStudying ? t("pursuingDegree") : t("degree")}
               id="degree"
               {...register(`educations.${props.index}.degree`)}
               prefix={<LucideGraduationCap strokeWidth={"1.3px"} />}
@@ -104,7 +104,9 @@ export default function EmployeeEducationForm(
               render={({ field }) => (
                 <YearPicker
                   placeholder={
-                    isStudying ? t("expectedGraduationYear") : t("graduationYear")
+                    isStudying
+                      ? t("expectedGraduationYear")
+                      : t("graduationYear")
                   }
                   year={field.value ? Number(field.value) : undefined}
                   onYearChange={(yr) => field.onChange(yr)}

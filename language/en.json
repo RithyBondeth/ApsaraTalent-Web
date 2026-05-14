@@ -466,7 +466,8 @@
     "cultureAndBenefits": "Culture & Benefits",
     "genderMale": "Male",
     "genderFemale": "Female",
-    "genderOther": "Other"
+    "genderOther": "Other",
+    "dialogEmptyProfile": "No details have been added to this profile yet."
   },
   "locations": {
     "phnomPenh": "Phnom Penh",

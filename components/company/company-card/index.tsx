@@ -80,6 +80,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
             <Button
               size="icon"
               variant="ghost"
+              aria-label="Like"
               className="absolute top-2 right-2 size-8 rounded-full bg-background/70 backdrop-blur-sm text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-all duration-200"
               onClick={props.onLikeClick}
               disabled={props.onLikeClickDisable}
@@ -106,6 +107,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
             <Button
               size="icon"
               variant="ghost"
+              aria-label="Quick view"
               className="size-8 mb-1 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
               onClick={handleClickDialog}
             >
@@ -177,7 +179,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
                 ))}
                 {props.benefits.length > 3 && (
                   <span className="text-[11px] text-muted-foreground self-center font-medium">
-                    +{props.benefits.length - 3}
+                    {t("moreItems", { count: props.benefits.length - 3 })}
                   </span>
                 )}
               </div>
@@ -186,19 +188,17 @@ export default function CompanyCard(props: ICompanyCardProps) {
 
           {/* Footer Section */}
           <div className="flex items-center justify-end gap-2 px-4 pb-3 pt-2 border-t border-muted/50">
-            <Button
-              className={`text-xs h-7 px-3 rounded-full ${
-                props.hideSaveButton
-                  ? "animate-pop-shrink pointer-events-none"
-                  : "opacity-100 scale-100"
-              }`}
-              variant="outline"
-              size="sm"
-              onClick={props.onSaveClick}
-            >
-              <LucideBookmark className="!size-3" />
-              {t("save")}
-            </Button>
+            {!props.hideSaveButton && (
+              <Button
+                className="text-xs h-7 px-3 rounded-full"
+                variant="outline"
+                size="sm"
+                onClick={props.onSaveClick}
+              >
+                <LucideBookmark className="!size-3" />
+                {t("save")}
+              </Button>
+            )}
             {props.viewHref ? (
               <Button
                 className="text-xs h-7 px-3 rounded-full"
@@ -268,12 +268,14 @@ export default function CompanyCard(props: ICompanyCardProps) {
         {/* Action Buttons Section */}
         <div className="flex items-center gap-1 shrink-0">
           <Button
+            aria-label="Quick view"
             className="size-10 sm:size-12 rounded-xl transition-all duration-300 ease-out hover:scale-110 active:scale-95"
             onClick={handleClickDialog}
           >
             <LucideEye className="!size-5 sm:!size-6 transition-all duration-300 ease-in-out" />
           </Button>
           <Button
+            aria-label="Like"
             className="size-10 sm:size-12 rounded-xl transition-all duration-300 ease-out hover:scale-110 active:scale-95"
             onClick={props.onLikeClick}
             disabled={props.onLikeClickDisable}
@@ -329,18 +331,16 @@ export default function CompanyCard(props: ICompanyCardProps) {
 
       {/* Footer Section: Save, View Buttons */}
       <div className="w-full flex items-center justify-end gap-2 sm:gap-3 tablet-lg:justify-stretch tablet-lg:[&>button]:flex-1 phone-xl:justify-stretch phone-xl:[&>button]:flex-1">
-        <Button
-          className={`text-xs ${
-            props.hideSaveButton
-              ? "animate-pop-shrink pointer-events-none"
-              : "opacity-100 scale-100"
-          }`}
-          variant="outline"
-          onClick={props.onSaveClick}
-        >
-          {t("save")}
-          <LucideBookmark />
-        </Button>
+        {!props.hideSaveButton && (
+          <Button
+            className="text-xs"
+            variant="outline"
+            onClick={props.onSaveClick}
+          >
+            {t("save")}
+            <LucideBookmark />
+          </Button>
+        )}
         <Button className="text-xs" onClick={props.onViewClick}>
           {t("view")}
           <LucideCircleArrowRight />

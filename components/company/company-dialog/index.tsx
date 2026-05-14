@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useMemo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import {
@@ -19,8 +18,6 @@ import {
   DialogDescription,
   DialogTitle,
 } from "../../ui/dialog";
-import { ProfileProgressBar } from "../../profile/profile-progress-bar/";
-import { getCompanyProfileCompletion } from "@/utils/functions/profile";
 import { ICompanyDialogProps } from "./props";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
@@ -31,7 +28,11 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("feed");
   const tl = useTranslations("locations");
-  const completion = useMemo(() => getCompanyProfileCompletion(props), [props]);
+
+  const isEmpty =
+    !props.description &&
+    (!props.benefits || props.benefits.length === 0) &&
+    (!props.values || props.values.length === 0);
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -99,15 +100,17 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
               </span>
             )}
           </div>
-
-          {/* Profile Progress Section */}
-          <div className="mt-3">
-            <ProfileProgressBar percentage={completion.percentage} />
-          </div>
         </div>
 
         {/* Scrollable Body Section */}
         <div className="flex-1 overflow-y-auto min-h-0 px-4 py-4 space-y-5">
+          {/* Empty State Section */}
+          {isEmpty && (
+            <TypographyMuted className="text-sm text-center py-6">
+              {t("dialogEmptyProfile")}
+            </TypographyMuted>
+          )}
+
           {/* About Section */}
           {props.description && (
             <section>

@@ -19,7 +19,10 @@ import { TypographySmall } from "@/components/utils/typography/typography-small"
 import EmployeeDialog from "../employee-dialog";
 import { IEmployeeCardProps } from "./props";
 import { useTranslations } from "next-intl";
-import { translateLocation } from "@/utils/functions/text";
+import {
+  translateLocation,
+  formatAvailabilityWords,
+} from "@/utils/functions/text";
 
 export default function EmployeeCard(props: IEmployeeCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
@@ -63,7 +66,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
           {/* Top Accent Bar On Hover Section */}
           <div className="absolute inset-x-0 top-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left z-10" />
 
-          {/* Header Section: Avatar, Identity and Like */}
+          {/* Header Section: Avatar, Identity, Quick View and Like */}
           <div className="flex items-start gap-3 p-4 pb-3">
             <CachedAvatar
               src={props.avatar}
@@ -88,7 +91,9 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
                 {props.location && (
                   <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
                     <LucideMapPin className="size-3 shrink-0" />
-                    <span className="truncate">{translateLocation(props.location, tl)}</span>
+                    <span className="truncate">
+                      {translateLocation(props.location, tl)}
+                    </span>
                   </TypographySmall>
                 )}
                 <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
@@ -98,30 +103,34 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
               </div>
             </div>
 
-            <Button
-              size="icon"
-              variant="ghost"
-              className="size-8 rounded-full text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-all duration-200 shrink-0"
-              onClick={props.onLikeClick}
-              disabled={props.onLikeClickDisable}
-            >
-              <LucideHeartHandshake
-                className={`!size-4${props.onLikeClickDisable ? " animate-pop-shrink text-rose-500" : ""}`}
-              />
-            </Button>
+            <div className="flex flex-col items-center gap-1 shrink-0">
+              <Button
+                size="icon"
+                variant="ghost"
+                aria-label="Like"
+                className="size-8 rounded-full text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-all duration-200"
+                onClick={props.onLikeClick}
+                disabled={props.onLikeClickDisable}
+              >
+                <LucideHeartHandshake
+                  className={`!size-4${props.onLikeClickDisable ? " animate-pop-shrink text-rose-500" : ""}`}
+                />
+              </Button>
+              <Button
+                size="icon"
+                variant="ghost"
+                aria-label="Quick view"
+                className="size-8 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
+                onClick={handleClickDialog}
+              >
+                <LucideEye className="!size-4" />
+              </Button>
+            </div>
           </div>
 
           {/* Status Badges Section */}
           <div className="flex flex-wrap items-center gap-1.5 px-4 pb-3">
-            <Tag label={props.availability} />
-            {props.careerScopes?.slice(0, 2).map((cs) => (
-              <Tag key={cs.id} label={cs.name} />
-            ))}
-            {(props.careerScopes?.length ?? 0) > 2 && (
-              <span className="text-[11px] text-muted-foreground font-medium">
-                +{props.careerScopes.length - 2}
-              </span>
-            )}
+            <Tag label={formatAvailabilityWords(props.availability)} />
           </div>
 
           {/* Skills Section */}
@@ -164,22 +173,10 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
           </div>
 
           {/* Footer Section */}
-          <div className="flex items-center justify-between px-4 pb-3 pt-2 border-t border-muted/50">
-            <Button
-              size="icon"
-              variant="ghost"
-              className="size-8 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
-              onClick={handleClickDialog}
-            >
-              <LucideEye className="!size-4" />
-            </Button>
-            <div className="flex items-center gap-1.5">
+          <div className="flex items-center justify-end gap-2 px-4 pb-3 pt-2 border-t border-muted/50">
+            {!props.hideSaveButton && (
               <Button
-                className={`text-[11px] h-7 px-2.5 rounded-full gap-1 ${
-                  props.hideSaveButton
-                    ? "animate-pop-shrink pointer-events-none"
-                    : "opacity-100 scale-100"
-                }`}
+                className="text-[11px] h-7 px-2.5 rounded-full gap-1"
                 variant="outline"
                 size="sm"
                 onClick={props.onSaveClick}
@@ -187,15 +184,15 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
                 <LucideBookmark className="!size-3" />
                 {t("save")}
               </Button>
-              <Button
-                className="text-[11px] h-7 px-3 rounded-full gap-1"
-                size="sm"
-                onClick={props.onViewClick}
-              >
-                {t("view")}
-                <LucideCircleArrowRight className="!size-3" />
-              </Button>
-            </div>
+            )}
+            <Button
+              className="text-[11px] h-7 px-3 rounded-full gap-1"
+              size="sm"
+              onClick={props.onViewClick}
+            >
+              {t("view")}
+              <LucideCircleArrowRight className="!size-3" />
+            </Button>
           </div>
         </div>
 
@@ -240,12 +237,14 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
         {/* Action Buttons Section: View and Like Button */}
         <div className="flex items-center gap-1 shrink-0">
           <Button
+            aria-label="Quick view"
             className="size-10 sm:size-12 rounded-xl transition-all duration-300 ease-out hover:scale-110 active:scale-95"
             onClick={handleClickDialog}
           >
             <LucideEye className="!size-5 sm:!size-6 transition-all duration-300 ease-in-out" />
           </Button>
           <Button
+            aria-label="Like"
             className="size-10 sm:size-12 rounded-xl transition-all duration-300 ease-out hover:scale-110 active:scale-95"
             onClick={props.onLikeClick}
             disabled={props.onLikeClickDisable}
@@ -257,13 +256,20 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
         </div>
       </div>
       {/* Skills Tags Section */}
-      <div className="w-full flex flex-wrap gap-2">
-        {props.skills.map((skill) => (
-          <Tag key={skill.id} label={skill.name} />
-        ))}
-      </div>
+      {props.skills.length > 0 && (
+        <div className="w-full flex flex-wrap gap-2">
+          {props.skills.slice(0, 5).map((skill) => (
+            <Tag key={skill.id} label={skill.name} />
+          ))}
+          {props.skills.length > 5 && (
+            <span className="text-[11px] text-muted-foreground self-center font-medium">
+              {t("moreItems", { count: props.skills.length - 5 })}
+            </span>
+          )}
+        </div>
+      )}
       {/* Description Section */}
-      <TypographyP className="!m-0 text-sm leading-relaxed">
+      <TypographyP className="!m-0 text-sm leading-relaxed line-clamp-3">
         {props.description}
       </TypographyP>
       {/* Experience & Availability Section */}
@@ -273,22 +279,20 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
             <Tag key={index} label={edu.degree} />
           ))}
         <Tag label={props.yearsOfExperience} />
-        <Tag label={props.availability} />
+        <Tag label={formatAvailabilityWords(props.availability)} />
       </div>
       {/* Action Buttons Section: View and Save Buttons */}
       <div className="w-full flex items-center justify-end gap-2 sm:gap-3 tablet-lg:justify-stretch tablet-lg:[&>button]:flex-1 phone-xl:justify-stretch phone-xl:[&>button]:flex-1">
-        <Button
-          className={`text-sm ${
-            props.hideSaveButton
-              ? "animate-pop-shrink pointer-events-none"
-              : "opacity-100 scale-100"
-          }`}
-          variant="outline"
-          onClick={props.onSaveClick}
-        >
-          {t("save")}
-          <LucideBookmark />
-        </Button>
+        {!props.hideSaveButton && (
+          <Button
+            className="text-sm"
+            variant="outline"
+            onClick={props.onSaveClick}
+          >
+            {t("save")}
+            <LucideBookmark />
+          </Button>
+        )}
         <Button className="text-sm" onClick={props.onViewClick}>
           {t("view")}
           <LucideCircleArrowRight />

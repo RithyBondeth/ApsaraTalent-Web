@@ -466,7 +466,8 @@
     "cultureAndBenefits": "វប្បធម៌ & អត្ថប្រយោជន៍",
     "genderMale": "បុរស",
     "genderFemale": "ស្រី",
-    "genderOther": "ផ្សេងៗ"
+    "genderOther": "ផ្សេងៗ",
+    "dialogEmptyProfile": "មិនទាន់មានព័ត៌មានលម្អិតបន្ថែមក្នុងប្រវត្តិរូបនេះនៅឡើយទេ"
   },
   "locations": {
     "phnomPenh": "ភ្នំពេញ",

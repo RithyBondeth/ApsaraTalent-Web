@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function EmployeeCardSkeleton() {
   return (
     <div className="w-full flex flex-col rounded-xl border border-muted bg-card overflow-hidden">
-      {/* Header Section  */}
+      {/* Header Section */}
       <div className="flex items-start gap-3 p-4 pb-3">
         <Skeleton className="size-14 rounded-md shrink-0" />
         <div className="flex-1 flex flex-col gap-1.5">
@@ -16,13 +16,16 @@ export default function EmployeeCardSkeleton() {
             <Skeleton className="h-3 w-14 rounded" />
           </div>
         </div>
-        <Skeleton className="size-8 rounded-full shrink-0" />
+        {/* Like + Quick View Buttons Section (stacked) */}
+        <div className="flex flex-col items-center gap-1 shrink-0">
+          <Skeleton className="size-8 rounded-full" />
+          <Skeleton className="size-8 rounded-full" />
+        </div>
       </div>
 
       {/* Status Badges Section */}
       <div className="flex gap-1.5 px-4 pb-3">
         <Skeleton className="h-6 w-20 rounded-full" />
-        <Skeleton className="h-6 w-24 rounded-full" />
       </div>
 
       {/* Skills Section */}
@@ -46,12 +49,9 @@ export default function EmployeeCardSkeleton() {
       </div>
 
       {/* Footer Section */}
-      <div className="flex items-center justify-between px-4 pb-3 pt-2 border-t border-muted/50">
-        <Skeleton className="size-8 rounded-full" />
-        <div className="flex gap-1.5">
-          <Skeleton className="h-7 w-16 rounded-full" />
-          <Skeleton className="h-7 w-16 rounded-full" />
-        </div>
+      <div className="flex items-center justify-end gap-2 px-4 pb-3 pt-2 border-t border-muted/50">
+        <Skeleton className="h-7 w-16 rounded-full" />
+        <Skeleton className="h-7 w-16 rounded-full" />
       </div>
     </div>
   );
