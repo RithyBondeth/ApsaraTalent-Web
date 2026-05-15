@@ -104,14 +104,14 @@ export default function DashboardPage() {
         {/* Weekly Activity Bar Chart Section */}
         <div className="lg:col-span-2 bg-card rounded-2xl border border-border/60 p-5 sm:p-6">
           {/* Weekly Activity Header Section */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-start justify-between gap-3 mb-4 flex-wrap">
             <div className="flex flex-col items-start gap-2">
               <TypographyH4>{t("weeklyActivity")}</TypographyH4>
               <TypographyP className="!m-0 text-xs text-muted-foreground">
                 {t("weeklyActivityDescription")}
               </TypographyP>
             </div>
-            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <div className="flex items-center flex-wrap gap-x-3 gap-y-1.5 text-xs text-muted-foreground">
               <span className="flex items-center gap-1.5">
                 <span className="size-2.5 rounded-full bg-primary" />
                 {t("likes")}

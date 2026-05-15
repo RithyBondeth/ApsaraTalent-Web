@@ -58,37 +58,37 @@ export default function CompanySignup() {
         deadlineRequired: tv("deadlineRequired"),
         fieldRequired: (field) => {
           const labels: Record<string, string> = {
-            "Name": tv("fieldLabelName"),
-            "Description": tv("fieldLabelDescription"),
-            "Industry": tv("fieldLabelIndustry"),
+            Name: tv("fieldLabelName"),
+            Description: tv("fieldLabelDescription"),
+            Industry: tv("fieldLabelIndustry"),
             "Company size": tv("fieldLabelCompanySize"),
             "Founded Year": tv("fieldLabelFoundedYear"),
-            "Title": tv("fieldLabelTitle"),
+            Title: tv("fieldLabelTitle"),
             "Experience requirement": tv("fieldLabelExperienceReq"),
             "Education requirement": tv("fieldLabelEducationReq"),
-            "Salary": tv("fieldLabelSalary"),
-            "Type": tv("fieldLabelType"),
+            Salary: tv("fieldLabelSalary"),
+            Type: tv("fieldLabelType"),
           };
           return tv("fieldRequired", { field: labels[field] ?? field });
         },
         fieldTooLong: (field, max) => {
           const labels: Record<string, string> = {
-            "Name": tv("fieldLabelName"),
-            "Description": tv("fieldLabelDescription"),
-            "Industry": tv("fieldLabelIndustry"),
+            Name: tv("fieldLabelName"),
+            Description: tv("fieldLabelDescription"),
+            Industry: tv("fieldLabelIndustry"),
             "Company size": tv("fieldLabelCompanySize"),
             "Founded Year": tv("fieldLabelFoundedYear"),
-            "Title": tv("fieldLabelTitle"),
+            Title: tv("fieldLabelTitle"),
             "Experience requirement": tv("fieldLabelExperienceReq"),
             "Education requirement": tv("fieldLabelEducationReq"),
-            "Salary": tv("fieldLabelSalary"),
-            "Type": tv("fieldLabelType"),
+            Salary: tv("fieldLabelSalary"),
+            Type: tv("fieldLabelType"),
           };
           return tv("fieldTooLong", { field: labels[field] ?? field, max });
         },
         selectRequired: (field) => {
           const labels: Record<string, string> = {
-            "location": tv("fieldLabelLocation"),
+            location: tv("fieldLabelLocation"),
           };
           return tv("selectRequired", { field: labels[field] ?? field });
         },
@@ -374,7 +374,7 @@ export default function CompanySignup() {
 
       {/* Step Progress Indicator Section */}
       <div className="w-full overflow-x-auto pb-2 mb-2">
-        <div className="w-full min-w-[360px] flex items-center gap-0">
+        <div className="w-full min-w-[280px] flex items-center gap-0">
           {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
             (st, index) => (
               <div key={st} className="w-full flex items-center">

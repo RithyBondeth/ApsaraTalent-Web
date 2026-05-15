@@ -1243,7 +1243,7 @@ export default function EmployeeProfilePage() {
       {/* Content Section */}
       <div className="flex items-start gap-5 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
         {/* LEFT Side Section */}
-        <div className="w-[60%] min-w-0 flex flex-col gap-5">
+        <div className="w-[60%] tablet-lg:w-full min-w-0 flex flex-col gap-5">
           {/* Personal Information Section: Firstname, Lastname, Username, DOB, Location, Gender, Email and Phone Number */}
           <div className="w-full flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
             <SectionTitle
@@ -1732,7 +1732,7 @@ export default function EmployeeProfilePage() {
         </div>
 
         {/* RIGHT Side Section*/}
-        <div className="w-[40%] min-w-0 flex flex-col gap-5">
+        <div className="w-[40%] tablet-lg:w-full min-w-0 flex flex-col gap-5">
           {/* Skill Section*/}
           <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
             <div className="w-full">

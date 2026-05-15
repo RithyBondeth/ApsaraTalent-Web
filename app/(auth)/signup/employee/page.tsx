@@ -425,7 +425,7 @@ export default function EmployeeSignup() {
 
       {/* Step Progress Indicator Section */}
       <div className="w-full overflow-x-auto pb-2 mb-2">
-        <div className="w-full min-w-[360px] flex items-center gap-0">
+        <div className="w-full min-w-[280px] flex items-center gap-0">
           {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
             (st, index) => {
               const isSkipped =

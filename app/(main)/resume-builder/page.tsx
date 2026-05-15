@@ -114,7 +114,7 @@ export default function ResumeBuilder() {
           </div>
           <div className="flex-1 h-px bg-border/60" />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {templateData && templateData.length > 0
             ? templateData.map((resume) => {
                 const mapped = templateMap[resume.title];

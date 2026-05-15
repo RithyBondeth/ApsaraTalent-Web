@@ -174,7 +174,7 @@ export default function NotificationPage() {
         {/* Responsive Dropdown Section */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild className="hidden tablet-sm:flex">
-            <Button className="h-9 w-full text-xs sm:w-auto">
+            <Button className="h-9 w-full text-xs tablet-sm:w-auto">
               {t("filterLabel")}{" "}
               {
                 (

@@ -49,7 +49,7 @@ export default function MainLayout({
           isMessage
             ? /* Fill the viewport height below the navbar (64px) and above
                the mobile bottom bar (also 64px on small screens). */
-              "h-[calc(100dvh-4rem)] md:h-[calc(100dvh-4rem)] flex flex-col"
+              "h-[calc(100dvh-8rem)] md:h-[calc(100dvh-4rem)] flex flex-col"
             : /* Regular pages: container with padding + bottom-bar clearance on mobile */
               "container mx-auto px-3 sm:px-4 lg:px-6 py-5 pb-24 lg:pb-8 animate-page-in"
         }
