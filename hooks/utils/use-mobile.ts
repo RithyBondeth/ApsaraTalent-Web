@@ -1,7 +1,7 @@
 import * as React from "react";
 import { MOBILE_BREAKPOINT } from "@/utils/constants/ui.constant";
 
-/* ----------------------------------- Hook ----------------------------------- */
+/* ------------------------------------ Hook ------------------------------------ */
 export function useIsMobile() {
   /* -------------------------------- All States -------------------------------- */
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(
@@ -18,7 +18,5 @@ export function useIsMobile() {
     setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
     return () => mql.removeEventListener("change", onChange);
   }, []);
-
-  /* --------------------------------- Methods ---------------------------------- */
   return !!isMobile;
 }

@@ -65,7 +65,5 @@ export function useTextSelection(): TextSelectionState {
     return () =>
       document.removeEventListener("selectionchange", handleSelectionChange);
   }, []);
-
-  /* --------------------------------- Methods ---------------------------------- */
   return state;
 }

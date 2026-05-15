@@ -1,7 +1,7 @@
 import { ICareerScope } from "@/utils/interfaces/user/career.interface";
 import { useState } from "react";
 
-/* ----------------------------------- Hook ----------------------------------- */
+/* ----------------------------------- Hook ------------------------------------- */
 export function useCareerScopesState(initialCareerScopes: ICareerScope[] = []) {
   /* -------------------------------- All States -------------------------------- */
   const [careerScopeInput, setCareerScopeInput] = useState<ICareerScope | null>(

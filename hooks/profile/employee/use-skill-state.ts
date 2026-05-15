@@ -1,7 +1,7 @@
 import { ISkill } from "@/utils/interfaces/user/employee.interface";
 import { useState } from "react";
 
-/* ----------------------------------- Hook ----------------------------------- */
+/* ------------------------------------ Hook ------------------------------------ */
 export function useSkillsState(initialSkills: ISkill[] = []) {
   /* -------------------------------- All States -------------------------------- */
   const [skillInput, setSkillInput] = useState<string | null>(null);

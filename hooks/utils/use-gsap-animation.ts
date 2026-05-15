@@ -43,7 +43,7 @@ function splitTextIntoWords(el: HTMLElement) {
  *
  * Variants: fade-up, fade-down, fade-left, fade-right, scale-up, stagger-children, split-words
  */
-/* ----------------------------------- Hook ----------------------------------- */
+/* ------------------------------------ Hook ------------------------------------ */
 export function useGsapScrollAnimation<T extends HTMLElement>() {
   /* -------------------------------- All States -------------------------------- */
   const containerRef = useRef<T>(null);
@@ -214,8 +214,6 @@ export function useGsapScrollAnimation<T extends HTMLElement>() {
 
     return () => ctx.revert();
   }, []);
-
-  /* --------------------------------- Methods ---------------------------------- */
   return containerRef;
 }
 
@@ -223,7 +221,7 @@ export function useGsapScrollAnimation<T extends HTMLElement>() {
  * Hero-specific entrance animation with word-by-word heading reveal.
  * Plays on every mount (including language-switch remounts via key={language}).
  */
-/* ----------------------------------- Hook ----------------------------------- */
+/* ------------------------------------ Hook ------------------------------------ */
 export function useGsapHeroAnimation<T extends HTMLElement>() {
   /* -------------------------------- All States -------------------------------- */
   const containerRef = useRef<T>(null);
@@ -302,7 +300,5 @@ export function useGsapHeroAnimation<T extends HTMLElement>() {
 
     return () => ctx.revert();
   }, []);
-
-  /* --------------------------------- Methods ---------------------------------- */
   return containerRef;
 }

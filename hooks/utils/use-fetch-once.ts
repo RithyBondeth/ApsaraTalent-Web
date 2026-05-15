@@ -115,7 +115,5 @@ export function useFetchOnce(
     userData.employeeId,
     userData.companyId,
   ]);
-
-  /* --------------------------------- Methods ---------------------------------- */
   return userData;
 }

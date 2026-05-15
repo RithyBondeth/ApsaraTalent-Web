@@ -2,9 +2,12 @@
 
 import { useEffect, useState } from "react";
 
+/* ------------------------------------ Hook ------------------------------------ */
 export function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(false);
+  /* -------------------------------- All States -------------------------------- */
+  const [matches, setMatches] = useState<boolean>(false);
 
+  /* ---------------------------------- Effects --------------------------------- */
   useEffect(() => {
     const media = window.matchMedia(query);
     setMatches(media.matches);

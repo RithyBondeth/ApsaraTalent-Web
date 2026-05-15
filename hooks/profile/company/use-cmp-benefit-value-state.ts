@@ -2,7 +2,7 @@ import { IBenefits } from "@/utils/interfaces/user/company.interface";
 import { IValues } from "@/utils/interfaces/user/company.interface";
 import { useState } from "react";
 
-/* ----------------------------------- Hook ----------------------------------- */
+/* ----------------------------------- Hook ------------------------------------- */
 export default function useCmpBenefitValueState() {
   /* -------------------------------- All States -------------------------------- */
   // ── Benefit States ─────────────────────────────────────────

@@ -1,7 +1,7 @@
 import { ISocialLink } from "@/utils/interfaces/user/social.interface";
 import { useRef, useState } from "react";
 
-/* ----------------------------------- Hook ----------------------------------- */
+/* ----------------------------------- Hook ------------------------------------- */
 export function useCmpSocialsState(initialSocials: ISocialLink[] = []) {
   /* -------------------------------- All States -------------------------------- */
   const [socialInput, setSocialInput] = useState<ISocialLink | null>(null);

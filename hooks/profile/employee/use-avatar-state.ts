@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-/* ----------------------------------- Hook ----------------------------------- */
+/* ------------------------------------ Hook ------------------------------------ */
 export function useAvatarState() {
   /* -------------------------------- All States -------------------------------- */
   const [avatarFile, setAvatarFile] = useState<File | null>(null);

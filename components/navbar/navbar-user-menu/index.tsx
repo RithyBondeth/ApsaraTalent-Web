@@ -28,7 +28,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Skeleton } from "@/components/ui/skeleton";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useLoginStore } from "@/stores/apis/auth/login.store";
 import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
@@ -51,49 +50,39 @@ import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import MenuIcon from "./menu-icon";
+import { INavbarUserMenuProps } from "./props";
 
-interface INavbarUserMenuProps {
-  user: { name: string; email: string; avatar: string };
-}
+export function NavbarUserMenu(props: INavbarUserMenuProps) {
+  /* --------------------------------- Props --------------------------------- */
+  const { user } = props;
 
-/* ─── Shared icon container ──────────────────────────────────────────── */
-function MenuIcon({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className: string;
-}) {
-  return (
-    <span
-      className={`flex size-7 shrink-0 items-center justify-center rounded-lg ${className}`}
-    >
-      {children}
-    </span>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════════════════
-   NavbarUserMenu
-   ═══════════════════════════════════════════════════════════════════════ */
-export function NavbarUserMenu({ user }: INavbarUserMenuProps) {
+  /* ---------------------------------- Utils -------------------------------- */
   const { resolvedTheme, setTheme } = useTheme();
+  const { theme, toggleTheme } = useThemeStore();
+  const { language, setLanguage } = useLanguageStore();
   const router = useRouter();
   const t = useTranslations("sidebarFooter");
 
-  const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
+  /* -------------------------------- All States ----------------------------- */
+  const [openLogoutDialog, setOpenLogoutDialog] = useState<boolean>(false);
 
+  /* ----------------------------- API Integration --------------------------- */
+  // Current User
   const currentUser = useGetCurrentUserStore((state) => state.user);
-  const { theme, toggleTheme } = useThemeStore();
-  const { language, setLanguage } = useLanguageStore();
 
+  // Logout
   const normalLogout = useLoginStore((state) => state.clearToken);
   const otpLogout = useVerifyOTPStore((state) => state.clearToken);
   const googleLogout = useGoogleLoginStore((state) => state.clearToken);
   const githubLogout = useGithubLoginStore((state) => state.clearToken);
   const linkedInLogout = useLinkedInLoginStore((state) => state.clearToken);
   const facebookLogout = useFacebookLoginStore((state) => state.clearToken);
+
+  // Clear Current User Token
   const clearCurrentUser = useGetCurrentUserStore((state) => state.clearUser);
+
+  // Clear Favorites ID
   const clearEmployeeFavorites = useEmployeeFavCompanyStore(
     (state) => state.clearFavorites,
   );
@@ -101,29 +90,44 @@ export function NavbarUserMenu({ user }: INavbarUserMenuProps) {
     (state) => state.clearFavorite,
   );
 
+  /* --------------------------------- Effects --------------------------------- */
+  // Theme Effect
   useEffect(() => {
     setTheme(theme);
     setCookie("theme", theme);
   }, [theme, setTheme]);
 
+  // Language Effect
   useEffect(() => {
     setCookie("language", language);
   }, [language]);
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Handle Logout ─────────────────────────────────────────
   const handleLogout = async () => {
     setOpenLogoutDialog(false);
+
+    // Clear all potential authentication tokens from stores
     normalLogout();
     otpLogout();
     googleLogout();
     githubLogout();
     linkedInLogout();
     facebookLogout();
+
+    // Clear favorite stores and their persisted cache
     clearEmployeeFavorites();
     clearCompanyFavorites();
     useEmployeeFavCompanyStore.persist.clearStorage();
     useCompanyFavEmployeeStore.persist.clearStorage();
+
+    // Clear current user persist
     clearCurrentUser();
+
+    // Try server-side cookie clearing first (for httpOnly cookies)
     await clearAuthCookiesServerSide();
+
+    // Also try client-side clearing as backup
     clearAuthCookies();
     router.push("/");
     window.location.reload();
@@ -131,35 +135,39 @@ export function NavbarUserMenu({ user }: INavbarUserMenuProps) {
 
   const isEmployee = currentUser?.role === "employee";
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <>
       <DropdownMenu>
-        {/* ── Trigger ─────────────────────────────────────────────── */}
+        {/* User Menu Trigger Section */}
         <DropdownMenuTrigger asChild>
           <button className="group flex items-center gap-1.5 rounded-xl px-1.5 py-1 transition-all duration-200 hover:bg-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            {/* Avatar Section */}
             <Avatar className="h-8 w-8 ring-2 ring-border/60 transition-all duration-200 group-hover:ring-primary/40">
               <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+              <AvatarFallback className="bg-primary/10 text-xs font-bold text-primary">
                 {user.name.slice(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
+
+            {/* Chevron Icon Section */}
             <ChevronDown className="size-3.5 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
           </button>
         </DropdownMenuTrigger>
 
-        {/* ── Dropdown panel ──────────────────────────────────────── */}
+        {/* Dropdown Content Section */}
         <DropdownMenuContent
           className="w-64 overflow-hidden rounded-2xl border border-border/70 p-0 shadow-[0_8px_32px_hsl(var(--foreground)/0.12)]"
           side="bottom"
           align="end"
           sideOffset={8}
         >
-          {/* Header — gradient identity card */}
+          {/* Dropdown Header Section: Avatar, Name and Email */}
           <div className="bg-gradient-to-br from-primary/[0.08] via-transparent to-muted/40 px-4 py-4">
             <div className="flex items-center gap-3">
               <Avatar className="h-11 w-11 ring-2 ring-background shadow-sm">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                <AvatarFallback className="bg-primary/10 font-bold text-primary">
                   {user.name.slice(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
@@ -167,7 +175,7 @@ export function NavbarUserMenu({ user }: INavbarUserMenuProps) {
                 <p className="truncate text-sm font-semibold leading-tight">
                   {user.name}
                 </p>
-                <p className="truncate text-xs text-muted-foreground mt-0.5">
+                <p className="mt-0.5 truncate text-xs text-muted-foreground">
                   {user.email}
                 </p>
                 <span className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary capitalize">
@@ -182,10 +190,11 @@ export function NavbarUserMenu({ user }: INavbarUserMenuProps) {
             </div>
           </div>
 
-          {/* Menu items */}
+          {/* Dropdown Menu Content Section */}
           <div className="p-1.5">
-            {/* Profile */}
+            {/* Dropdown Menu Group Section */}
             <DropdownMenuGroup>
+              {/* My Profile Section */}
               <DropdownMenuItem asChild>
                 <Link
                   href={`/profile/${currentUser?.role ?? "employee"}`}
@@ -206,8 +215,9 @@ export function NavbarUserMenu({ user }: INavbarUserMenuProps) {
 
             <DropdownMenuSeparator className="my-1.5 bg-border/60" />
 
-            {/* Utilities */}
+            {/* Dropdown Menu Group Section */}
             <DropdownMenuGroup>
+              {/* Settings Section */}
               <DropdownMenuItem asChild>
                 <Link
                   href="/setting"
@@ -221,6 +231,7 @@ export function NavbarUserMenu({ user }: INavbarUserMenuProps) {
                 </Link>
               </DropdownMenuItem>
 
+              {/* Appearance Section */}
               <DropdownMenuItem
                 onClick={toggleTheme}
                 className="flex items-center gap-2.5"
@@ -241,6 +252,7 @@ export function NavbarUserMenu({ user }: INavbarUserMenuProps) {
                 {t("appearance")}
               </DropdownMenuItem>
 
+              {/* Language Section */}
               <DropdownMenuItem
                 onClick={() => setLanguage(language === "en" ? "km" : "en")}
                 className="flex items-center gap-2.5"
@@ -256,6 +268,7 @@ export function NavbarUserMenu({ user }: INavbarUserMenuProps) {
                 </span>
               </DropdownMenuItem>
 
+              {/* Favorite Section */}
               <DropdownMenuItem asChild>
                 <Link
                   href="/favorite"
@@ -269,6 +282,7 @@ export function NavbarUserMenu({ user }: INavbarUserMenuProps) {
                 </Link>
               </DropdownMenuItem>
 
+              {/* Report Problem Section */}
               <DropdownMenuItem className="flex items-center gap-2.5">
                 <MenuIcon className="bg-orange-500/10">
                   <LucideInfo className="size-3.5 text-orange-500" />
@@ -279,7 +293,7 @@ export function NavbarUserMenu({ user }: INavbarUserMenuProps) {
 
             <DropdownMenuSeparator className="my-1.5 bg-border/60" />
 
-            {/* Logout */}
+            {/* Logout Section */}
             <DropdownMenuItem
               onClick={() => setOpenLogoutDialog(true)}
               className="flex items-center gap-2.5 text-destructive focus:bg-destructive/10 focus:text-destructive"
@@ -293,7 +307,7 @@ export function NavbarUserMenu({ user }: INavbarUserMenuProps) {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Logout confirmation dialog */}
+      {/* Logout Dialog Section */}
       <Dialog open={openLogoutDialog} onOpenChange={setOpenLogoutDialog}>
         <DialogContent className="max-w-sm rounded-2xl">
           <DialogTitle>{t("confirmLogout")}</DialogTitle>
@@ -314,15 +328,5 @@ export function NavbarUserMenu({ user }: INavbarUserMenuProps) {
         </DialogContent>
       </Dialog>
     </>
-  );
-}
-
-/* ─── Skeleton ──────────────────────────────────────────────────────── */
-export function NavbarUserMenuSkeleton() {
-  return (
-    <div className="flex items-center gap-1.5 rounded-xl px-1.5 py-1">
-      <Skeleton className="h-8 w-8 rounded-full" />
-      <Skeleton className="h-3 w-3 rounded" />
-    </div>
   );
 }

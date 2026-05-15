@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-/* ----------------------------------- Hook ----------------------------------- */
+/* ------------------------------------ Hook ------------------------------------ */
 export default function useCmpImageState() {
   /* -------------------------------- All States -------------------------------- */
   const [openImagePopup, setOpenImagePopup] = useState<boolean>(false);
