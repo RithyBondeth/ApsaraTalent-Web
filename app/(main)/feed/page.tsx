@@ -46,8 +46,8 @@ import React, {
 } from "react";
 import {
   emptySvg,
-  feedSvg,
-  feedCompanySvg,
+  feedCompanyBannerSvg,
+  feedEmployeeBannerSvg,
 } from "@/utils/constants/asset.constant";
 import CompanyCardSkeleton from "@/components/company/skeleton";
 import {
@@ -495,7 +495,7 @@ export default function FeedPage() {
 
           {/* Employee Banner Section: Image Poster */}
           <Image
-            src={feedCompanySvg}
+            src={feedEmployeeBannerSvg}
             alt="feed"
             height={300}
             width={400}
@@ -519,7 +519,7 @@ export default function FeedPage() {
           </div>
           {/* Company Banner Section: Image Poster */}
           <Image
-            src={feedSvg}
+            src={feedCompanyBannerSvg}
             alt="feed"
             height={250}
             width={350}
