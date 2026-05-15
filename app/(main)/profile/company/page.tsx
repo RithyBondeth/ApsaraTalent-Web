@@ -101,7 +101,7 @@ import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { companyFormSchema, TCompanyProfileForm } from "./validation";
-import { emptySvgImage } from "@/utils/constants/asset.constant";
+import { emptySvg } from "@/utils/constants/asset.constant";
 import { getCompanyProfileCompletion } from "@/utils/functions/profile";
 import { CompanyProfilePageLoadingSkeleton } from "@/components/profile/skeleton";
 import { SectionTitle } from "@/components/utils/layout/section-title";
@@ -1447,7 +1447,7 @@ export default function ProfilePage() {
                     {/* Add New OpenPosition Section */}
                     <Image
                       alt="empty"
-                      src={emptySvgImage}
+                      src={emptySvg}
                       className="size-44 animate-float"
                     />
                     <TypographyMuted className="text-sm">

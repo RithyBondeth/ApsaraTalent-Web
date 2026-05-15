@@ -12,8 +12,8 @@ import InterviewLoadingSkeleton from "./loading";
 import { InterviewCard } from "@/components/interview/interview-card";
 import { CreateInterviewDialog } from "@/components/interview/create-interview-dialog";
 import {
-  emptySvgImage,
-  interviewImageSvg,
+  emptySvg,
+  interviewBannerSvg,
 } from "@/utils/constants/asset.constant";
 import Image from "next/image";
 import { TypographyP } from "@/components/utils/typography/typography-p";
@@ -96,7 +96,7 @@ export default function InterviewPage() {
         </div>
         {mounted && (
           <Image
-            src={interviewImageSvg}
+            src={interviewBannerSvg}
             alt="interview"
             height={250}
             width={350}
@@ -140,7 +140,7 @@ export default function InterviewPage() {
         /* Interview Empty State Section */
         <div className="w-full flex flex-col items-center justify-center my-16">
           <Image
-            src={emptySvgImage}
+            src={emptySvg}
             alt="empty"
             height={200}
             width={200}

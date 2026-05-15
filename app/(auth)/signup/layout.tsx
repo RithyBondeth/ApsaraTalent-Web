@@ -1,9 +1,6 @@
 import Image from "next/image";
 import { ReactNode } from "react";
-import {
-  signupBlackSvg,
-  signupWhiteSvg,
-} from "@/utils/constants/asset.constant";
+import { signupSvg } from "@/utils/constants/asset.constant";
 
 export default function SignupLayout({ children }: { children: ReactNode }) {
   /* ------------------------------- Render UI ------------------------------- */
@@ -23,15 +20,9 @@ export default function SignupLayout({ children }: { children: ReactNode }) {
         <div className="absolute top-1/3 left-10 size-32 rounded-full bg-white/[0.03]" />
 
         <Image
-          src={signupWhiteSvg}
+          src={signupSvg}
           alt="signup"
-          className="h-auto w-full max-w-[620px] relative z-10 dark:hidden"
-          priority
-        />
-        <Image
-          src={signupBlackSvg}
-          alt="signup"
-          className="hidden h-auto w-full max-w-[620px] relative z-10 dark:block"
+          className="h-auto w-full max-w-[620px] relative z-10 brightness-0 invert dark:brightness-100 dark:invert-0"
           priority
         />
       </div>

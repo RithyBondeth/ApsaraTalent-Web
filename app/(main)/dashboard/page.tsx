@@ -15,7 +15,7 @@ import StatisticCard from "@/components/dashboard/statistic-card";
 import { DashboardLoadingSkeleton } from "@/components/dashboard/skeleton";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { matchingSvgImage } from "@/utils/constants/asset.constant";
+import { matchingBannerSvg } from "@/utils/constants/asset.constant";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 
 const WeeklyActivityChart = dynamic(
@@ -104,7 +104,7 @@ export default function DashboardPage() {
         </div>
         {mounted && (
           <Image
-            src={matchingSvgImage}
+            src={matchingBannerSvg}
             alt="dashboard"
             height={250}
             width={350}

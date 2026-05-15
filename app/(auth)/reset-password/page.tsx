@@ -19,7 +19,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { makeResetPasswordSchema, TResetPasswordForm } from "./validate";
-import { resetPasswordWhiteSvg } from "@/utils/constants/asset.constant";
+import { resetPasswordSvg } from "@/utils/constants/asset.constant";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 export default function ResetPasswordPage() {
@@ -192,7 +192,8 @@ export default function ResetPasswordPage() {
         <div className="absolute -bottom-32 -left-32 size-96 rounded-full bg-white/5" />
 
         <Image
-          src={resetPasswordWhiteSvg}
+          src={resetPasswordSvg}
+          className="brightness-0 invert"
           alt="reset-password"
           height={undefined}
           width={600}

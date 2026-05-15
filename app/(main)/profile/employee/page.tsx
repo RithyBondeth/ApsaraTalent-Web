@@ -108,8 +108,8 @@ import Link from "next/link";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { employeeFormSchema, TEmployeeProfileForm } from "./validation";
 import {
-  addNewEducationSvgImage,
-  addNewExperienceSvgImage,
+  addNewEducationSvg,
+  addNewExperienceSvg,
 } from "@/utils/constants/asset.constant";
 import { getEmployeeProfileCompletion } from "@/utils/functions/profile";
 import { SectionTitle } from "@/components/utils/layout/section-title";
@@ -1581,7 +1581,7 @@ export default function EmployeeProfilePage() {
                     {/* Add New Experience Section */}
                     <Image
                       alt="empty"
-                      src={addNewExperienceSvgImage}
+                      src={addNewExperienceSvg}
                       className="size-60 animate-float"
                     />
                     <Button
@@ -1705,7 +1705,7 @@ export default function EmployeeProfilePage() {
                     {/* Add New Education Section */}
                     <Image
                       alt="empty"
-                      src={addNewEducationSvgImage}
+                      src={addNewEducationSvg}
                       className="size-60 animate-float"
                     />
                     <Button

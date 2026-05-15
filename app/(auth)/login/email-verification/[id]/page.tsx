@@ -7,19 +7,14 @@ import { useVerifyEmailStore } from "@/stores/apis/auth/verify-email.store";
 import { LucideMail } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-  emailVerificationWhiteSvg,
-  emailVerificationBlackSvg,
-} from "@/utils/constants/asset.constant";
+import { emailVerificationSvg } from "@/utils/constants/asset.constant";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 export default function EmailVerificationPage() {
   /* ---------------------------------- Utils -------------------------------- */
-  const { resolvedTheme } = useTheme();
   const params = useParams();
   const token = params?.id;
   const router = useRouter();
@@ -56,13 +51,6 @@ export default function EmailVerificationPage() {
       setTimeout(() => router.replace("/login"), DEFAULT_REDIRECT_DELAY_MS);
     }
   }, [error, isSubmitted, loading, message, router, t]);
-
-  // ── Get Current Image Based on Theme ─────────────────────────────
-  const currentTheme = resolvedTheme || "light";
-  const emailVerificationImage =
-    currentTheme === "dark"
-      ? emailVerificationWhiteSvg
-      : emailVerificationBlackSvg;
 
   /* ------------------------------ Render UI ------------------------------ */
   return (
@@ -109,10 +97,11 @@ export default function EmailVerificationPage() {
         <div className="absolute -bottom-32 -left-32 size-96 rounded-full bg-white/5" />
 
         <Image
-          src={emailVerificationImage}
-          alt="login"
+          src={emailVerificationSvg}
+          alt="email-verification"
           height={undefined}
           width={600}
+          className="brightness-0 invert dark:brightness-100 dark:invert-0"
         />
       </div>
     </div>

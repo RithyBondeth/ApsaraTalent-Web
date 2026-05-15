@@ -35,7 +35,6 @@ import { useGetCompanyRecommendationsStore } from "@/stores/apis/recommendation/
 import { ICompany } from "@/utils/interfaces/user/company.interface";
 import { IEmployee } from "@/utils/interfaces/user/employee.interface";
 import { Building2, Sparkles, Users } from "lucide-react";
-import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, {
@@ -46,10 +45,9 @@ import React, {
   useState,
 } from "react";
 import {
-  emptySvgImage,
-  feedBlackSvg,
+  emptySvg,
+  feedSvg,
   feedCompanySvg,
-  feedWhiteSvg,
 } from "@/utils/constants/asset.constant";
 import CompanyCardSkeleton from "@/components/company/skeleton";
 import {
@@ -73,7 +71,6 @@ const PAGE_SIZE = 9;
 export default function FeedPage() {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
-  const { resolvedTheme } = useTheme();
   const t = useTranslations("toast");
   const tFeed = useTranslations("feed");
 
@@ -472,11 +469,6 @@ export default function FeedPage() {
     (isEmployee && (companyLoading || currentEmployeeLikedLoading)) ||
     (!isEmployee && (employeeLoading || currentCompanyLikedLoading));
 
-  // Get Current Image Based on Theme
-  // Only resolve the theme after mounting — avoids SSR/client hydration mismatch
-  const feedImage =
-    mounted && resolvedTheme === "dark" ? feedBlackSvg : feedWhiteSvg;
-  const feedCompanyImage = feedCompanySvg;
 
   return (
     <div className="w-full flex flex-col items-start gap-4 sm:gap-5 animate-page-in">
@@ -503,7 +495,7 @@ export default function FeedPage() {
 
           {/* Employee Banner Section: Image Poster */}
           <Image
-            src={feedCompanyImage}
+            src={feedCompanySvg}
             alt="feed"
             height={300}
             width={400}
@@ -526,25 +518,14 @@ export default function FeedPage() {
             </TypographyMuted>
           </div>
           {/* Company Banner Section: Image Poster */}
-          {mounted ? (
-            <Image
-              src={feedImage}
-              alt="feed"
-              height={250}
-              width={350}
-              className="h-auto max-w-[340px] tablet-xl:!w-full"
-              priority
-            />
-          ) : (
-            <Image
-              src={feedWhiteSvg}
-              alt="feed"
-              height={250}
-              width={350}
-              className="h-auto max-w-[340px] tablet-xl:!w-full"
-              priority
-            />
-          )}
+          <Image
+            src={feedSvg}
+            alt="feed"
+            height={250}
+            width={350}
+            className="h-auto max-w-[340px] tablet-xl:!w-full brightness-0 invert dark:brightness-100 dark:invert-0"
+            priority
+          />
         </div>
       )}
 
@@ -709,7 +690,7 @@ export default function FeedPage() {
       {!isLoading && allUsers.length === 0 && (
         <div className="w-full flex flex-col items-center justify-center my-16">
           <Image
-            src={emptySvgImage}
+            src={emptySvg}
             alt="empty"
             height={200}
             width={200}

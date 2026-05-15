@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
-import { emptySvgImage } from "@/utils/constants/asset.constant";
+import { emptySvg } from "@/utils/constants/asset.constant";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
@@ -40,7 +40,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Controller, useForm } from "react-hook-form";
 import { companySearchSchema, TCompanySearchSchema } from "./validation";
-import { CompanySearchSvg } from "@/utils/constants/asset.constant";
+import { companySearchBannerSvg } from "@/utils/constants/asset.constant";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { SearchEmployeeCardSkeleton } from "@/components/search/skeleton";
 
@@ -228,7 +228,7 @@ export default function CompanySearchPage() {
 
         {/* Company Search Banner Section */}
         <Image
-          src={CompanySearchSvg}
+          src={companySearchBannerSvg}
           alt="company-search"
           height={300}
           width={400}
@@ -525,7 +525,7 @@ export default function CompanySearchPage() {
               /* Empty List Section */
               <div className="w-full flex flex-col items-center justify-center py-10 gap-2">
                 <Image
-                  src={emptySvgImage}
+                  src={emptySvg}
                   alt="empty"
                   height={160}
                   width={160}

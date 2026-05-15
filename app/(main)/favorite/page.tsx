@@ -18,8 +18,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
-  emptySvgImage,
-  favoriteSvgImage,
+  emptySvg,
+  favoriteBannerSvg,
 } from "@/utils/constants/asset.constant";
 import { FavoriteLoadingSkeleton } from "@/components/favorite/skeleton";
 import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
@@ -250,7 +250,7 @@ export default function FavoritePage() {
         {/* Image Banner Section */}
         {mounted && (
           <Image
-            src={favoriteSvgImage}
+            src={favoriteBannerSvg}
             alt="favorites"
             height={250}
             width={350}
@@ -323,7 +323,7 @@ export default function FavoritePage() {
           /* Empty Favorite List */
           <div className="w-full flex flex-col items-center justify-center my-16">
             <Image
-              src={emptySvgImage}
+              src={emptySvg}
               alt="empty"
               height={200}
               width={200}

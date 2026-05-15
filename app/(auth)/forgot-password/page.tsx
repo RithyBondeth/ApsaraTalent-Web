@@ -21,7 +21,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { makeForgotPasswordSchema, TForgotPasswordForm } from "./validate";
-import { forgotPasswordWhiteSvg } from "@/utils/constants/asset.constant";
+import { forgotPasswordSvg } from "@/utils/constants/asset.constant";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 export default function ForgotPasswordPage() {
@@ -150,7 +150,8 @@ export default function ForgotPasswordPage() {
         <div className="absolute -bottom-32 -left-32 size-96 rounded-full bg-white/5" />
 
         <Image
-          src={forgotPasswordWhiteSvg}
+          src={forgotPasswordSvg}
+          className="brightness-0 invert"
           alt="forgot-password"
           height={undefined}
           width={600}

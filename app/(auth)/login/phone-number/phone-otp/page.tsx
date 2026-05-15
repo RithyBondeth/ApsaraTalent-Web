@@ -28,7 +28,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { phoneOTPWhiteSvg } from "@/utils/constants/asset.constant";
+import { phoneOTPSvg } from "@/utils/constants/asset.constant";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 export default function PhoneOTPPage() {
@@ -333,7 +333,8 @@ export default function PhoneOTPPage() {
       {/* Right Section: Image Poster */}
       <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-md:hidden">
         <Image
-          src={phoneOTPWhiteSvg}
+          src={phoneOTPSvg}
+          className="brightness-0 invert"
           alt="phone-otp"
           height={undefined}
           width={600}

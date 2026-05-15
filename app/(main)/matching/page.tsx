@@ -18,8 +18,8 @@ import { MatchingLoadingSkeleton } from "@/components/matching/skeleton";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
-  emptySvgImage,
-  matchingSvgImage,
+  emptySvg,
+  matchingBannerSvg,
 } from "@/utils/constants/asset.constant";
 
 export default function MatchingPage() {
@@ -128,7 +128,7 @@ export default function MatchingPage() {
         {/* Image Poster Section */}
         {mounted && (
           <Image
-            src={matchingSvgImage}
+            src={matchingBannerSvg}
             alt="matching"
             height={250}
             width={350}
@@ -183,7 +183,7 @@ export default function MatchingPage() {
           /* Empty Matching List Section */
           <div className="w-full flex flex-col items-center justify-center my-16">
             <Image
-              src={emptySvgImage}
+              src={emptySvg}
               alt="empty"
               height={200}
               width={200}

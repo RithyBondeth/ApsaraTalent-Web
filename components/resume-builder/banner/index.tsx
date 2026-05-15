@@ -2,7 +2,7 @@ import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import Image from "next/image";
-import { resumeBuilderImageSvg } from "@/utils/constants/asset.constant";
+import { resumeBuilderBannerSvg } from "@/utils/constants/asset.constant";
 import { useTranslations } from "next-intl";
 
 export default function ResumeBuilderBanner() {
@@ -32,7 +32,7 @@ export default function ResumeBuilderBanner() {
       </div>
       {/* Image Section */}
       <Image
-        src={resumeBuilderImageSvg}
+        src={resumeBuilderBannerSvg}
         alt="resume builder"
         height={300}
         width={400}

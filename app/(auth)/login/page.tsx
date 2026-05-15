@@ -33,10 +33,10 @@ import { useGetEmployeeRecommendationsStore } from "@/stores/apis/recommendation
 import { useGetCompanyRecommendationsStore } from "@/stores/apis/recommendation/get-company-recommendations.store";
 import { getRememberPreference } from "@/utils/auth/cookie-manager";
 import {
-  FacebookIcon as facebookIcon,
-  GithubIcon as githubIcon,
-  GoogleIcon as googleIcon,
-  LinkedInIcon as linkedinIcon,
+  facebookIcon,
+  githubIcon,
+  googleIcon,
+  linkedInIcon as linkedinIcon,
 } from "@/utils/constants/asset.constant";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -55,7 +55,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { makeLoginSchema, TLoginForm } from "./validation";
-import { loginBlackSvg, loginWhiteSvg } from "@/utils/constants/asset.constant";
+import { loginSvg } from "@/utils/constants/asset.constant";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 function LoginPage() {
@@ -474,11 +474,6 @@ function LoginPage() {
     ? t("preparingWorkspace")
     : t("authenticating");
 
-  // Get Current Image Based on Theme
-  // Only resolve the theme after mounting — avoids SSR/client hydration mismatch
-  // Because resolvedTheme is undefined on the server.
-  const loginImage =
-    mounted && resolvedTheme === "dark" ? loginWhiteSvg : loginBlackSvg;
 
   /* ----------------------------------- Render UI ----------------------------------- */
   return (
@@ -638,11 +633,11 @@ function LoginPage() {
         <div className="absolute top-1/4 -left-10 size-32 rounded-full bg-white/[0.03]" />
         <div className="absolute bottom-1/3 right-10 size-20 rounded-full bg-white/[0.07]" />
         <Image
-          src={loginImage}
+          src={loginSvg}
           alt="login"
           height={undefined}
           width={450}
-          className="relative z-10"
+          className="relative z-10 dark:brightness-0 dark:invert"
         />
       </div>
 

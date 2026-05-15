@@ -2,11 +2,9 @@
 
 import { cn } from "@/lib/utils";
 import {
-  BlackLogo,
-  BlackLogoV2,
-  LogoWithoutTitle,
-  WhiteLogo,
-  WhiteLogoV2,
+  logo,
+  logoV2,
+  logoWithoutTitle,
 } from "@/utils/constants/asset.constant";
 import { useTheme } from "next-themes";
 import Image from "next/image";
@@ -39,16 +37,8 @@ export default function LogoComponent({
 
   /* ---------------------------------- Utils ---------------------------------- */
   const isDark = mounted ? resolvedTheme === "dark" : false;
-  const src = withoutTitle
-    ? LogoWithoutTitle
-    : variant === "v2"
-      ? isDark
-        ? WhiteLogoV2
-        : BlackLogoV2
-      : isDark
-        ? WhiteLogo
-        : BlackLogo;
-  const filterClass = withoutTitle && isDark ? "brightness-0 invert" : "";
+  const src = withoutTitle ? logoWithoutTitle : variant === "v2" ? logoV2 : logo;
+  const filterClass = isDark ? "brightness-0 invert" : "";
 
   return (
     <Image
