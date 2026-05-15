@@ -7,6 +7,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { useResumeCanvasEditorStore } from "@/stores/apis/resume/resume-canvas-editor.store";
 import { Button } from "@/components/ui/button";
 import { IPreviewPanelProps } from "./props";
+import { useTranslations } from "next-intl";
 
 /* ---------------------------------- Helper --------------------------------- */
 // A4 width in pixels at 96 dpi
@@ -23,6 +24,9 @@ export default function ResumeEditorPreviewPanel({
   getValues,
   updating,
 }: IPreviewPanelProps) {
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("resumeBuilder");
+
   /* -------------------------------- All States ------------------------------ */
   const scrollWrapperRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -99,7 +103,7 @@ export default function ResumeEditorPreviewPanel({
         {/* Left Section: Title */}
         <div className="flex items-center gap-1.5 text-xs font-medium text-foreground sm:text-sm shrink-0">
           <Eye size={15} className="text-muted-foreground" />
-          Resume Canvas
+          {t("resumeCanvas")}
         </div>
 
         {/* Centre Section: Hint or Updating Badge */}
@@ -107,11 +111,11 @@ export default function ResumeEditorPreviewPanel({
           {updating ? (
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground animate-pulse">
               <RefreshCw size={11} className="animate-spin" />
-              Updating…
+              {t("updatingCanvas")}
             </div>
           ) : (
             <span className="hidden text-xs text-muted-foreground md:block">
-              Click text to edit · Hover to add/delete · Drag to reorder
+              {t("canvasHint")}
             </span>
           )}
         </div>

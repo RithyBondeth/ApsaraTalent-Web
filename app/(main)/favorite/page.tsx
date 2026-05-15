@@ -210,6 +210,22 @@ export default function FavoritePage() {
 
   if (isLoading) return <FavoriteLoadingSkeleton isEmployee={isEmployee} />;
 
+  /* ------------------------------- Error State -------------------------------- */
+  const apiError = isEmployee
+    ? getAllEmployeeFavoritesStore.error
+    : getAllCompanyFavoritesStore.error;
+
+  if (apiError)
+    return (
+      <div className="w-full px-2.5 sm:px-5 py-10 flex flex-col items-center justify-center gap-3">
+        <div className="rounded-2xl border border-destructive/30 bg-destructive/5 px-6 py-8 text-center max-w-md w-full">
+          <TypographyP className="text-sm font-medium text-destructive">
+            {apiError}
+          </TypographyP>
+        </div>
+      </div>
+    );
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col px-2.5 sm:px-5 animate-page-in">
@@ -231,7 +247,7 @@ export default function FavoritePage() {
           </TypographyMuted>
         </div>
 
-        {/* Image Poster Section */}
+        {/* Image Banner Section */}
         {mounted && (
           <Image
             src={favoriteSvgImage}

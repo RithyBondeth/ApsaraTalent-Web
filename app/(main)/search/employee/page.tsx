@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
+import { emptySvgImage } from "@/utils/constants/asset.constant";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
@@ -281,297 +282,313 @@ export default function EmployeeSearchPage() {
             </Button>
           </div>
 
-          {/* Date Posted Section */}
-          <div className="flex flex-col items-start gap-3">
-            <TypographyP className="text-sm font-medium flex items-center gap-1">
-              <LucideCalendarDays strokeWidth={"1.5px"} />
-              {t("datePosted")}
-            </TypographyP>
+          {/* Filter Panel Skeleton Section */}
+          {loading && jobs && jobs.length === 0 ? (
+            <div className="w-full flex flex-col gap-6">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex flex-col gap-3">
+                  <Skeleton className="h-4 w-32 rounded" />
+                  <Skeleton className="h-3 w-24 rounded ml-3" />
+                  <Skeleton className="h-3 w-28 rounded ml-3" />
+                  <Skeleton className="h-3 w-20 rounded ml-3" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <>
+              {/* Date Posted Section */}
+              <div className="flex flex-col items-start gap-3">
+                <TypographyP className="text-sm font-medium flex items-center gap-1">
+                  <LucideCalendarDays strokeWidth={"1.5px"} />
+                  {t("datePosted")}
+                </TypographyP>
 
-            <Controller
-              name="date"
-              control={control}
-              render={({ field }) => {
-                const from = field.value?.from;
-                const to = field.value?.to;
+                <Controller
+                  name="date"
+                  control={control}
+                  render={({ field }) => {
+                    const from = field.value?.from;
+                    const to = field.value?.to;
 
-                let selectedValue: string = "all";
-                if (!from && !to) selectedValue = "all";
-                else if (from && to) {
-                  const diffHours = (to.getTime() - from.getTime()) / 36e5;
-                  // NOTE: your original code used 2 hours for "last 24 hours"
-                  if (diffHours <= 24) selectedValue = "last 24 hours";
-                  else if (diffHours <= 72) selectedValue = "last 3 days";
-                  else if (diffHours <= 168) selectedValue = "last week";
-                }
-
-                return (
-                  <RadioGroup
-                    value={selectedValue}
-                    onValueChange={(val) => {
-                      let updated: { from?: Date; to?: Date } = {};
-                      if (val !== "all") {
-                        const now = new Date();
-                        const fromDate = new Date(now);
-
-                        switch (val) {
-                          case "last 24 hours":
-                            fromDate.setHours(now.getHours() - 24);
-                            break;
-                          case "last 3 days":
-                            fromDate.setDate(now.getDate() - 3);
-                            break;
-                          case "last week":
-                            fromDate.setDate(now.getDate() - 7);
-                            break;
-                        }
-
-                        updated = { from: fromDate, to: new Date() };
-                      }
-
-                      handleRadioChange("date", updated);
-                    }}
-                    className="ml-3"
-                  >
-                    <RadioGroupItemWithLabel
-                      id="date-all"
-                      value="all"
-                      htmlFor="date-all"
-                    >
-                      {t("allDatesPosted")}
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="last-24"
-                      value="last 24 hours"
-                      htmlFor="last-24"
-                    >
-                      {t("last24Hours")}
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="last-3-days"
-                      value="last 3 days"
-                      htmlFor="last-3-days"
-                    >
-                      {t("last3Days")}
-                    </RadioGroupItemWithLabel>
-                    <RadioGroupItemWithLabel
-                      id="last-week"
-                      value="last week"
-                      htmlFor="last-week"
-                    >
-                      {t("lastWeek")}
-                    </RadioGroupItemWithLabel>
-                  </RadioGroup>
-                );
-              }}
-            />
-          </div>
-
-          {/* Company Size Section */}
-          <div className="flex flex-col items-start gap-3">
-            <TypographyP className="text-sm font-medium flex items-center gap-1">
-              <LucideUsers strokeWidth={"1.5px"} />
-              {t("companySize")}
-            </TypographyP>
-
-            <Controller
-              name="companySize"
-              control={control}
-              render={({ field }) => {
-                const { min, max } = field.value ?? {};
-                return (
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Input
-                      type="number"
-                      placeholder={t("min")}
-                      value={min ?? ""}
-                      min={0}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        const numVal = val ? parseInt(val) : undefined;
-                        handleRadioChange("companySize", {
-                          min: numVal,
-                          max,
-                        });
-                      }}
-                      className="h-9 w-[88px] shrink-0"
-                    />
-                    <span className="text-muted-foreground">-</span>
-                    <Input
-                      type="number"
-                      placeholder={t("max")}
-                      value={max ?? ""}
-                      min={0}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        const numVal = val ? parseInt(val) : undefined;
-                        handleRadioChange("companySize", {
-                          min,
-                          max: numVal,
-                        });
-                      }}
-                      className="h-9 w-[88px] shrink-0"
-                    />
-                    <span className="text-sm text-muted-foreground whitespace-nowrap">
-                      {t("employees")}
-                    </span>
-                  </div>
-                );
-              }}
-            />
-          </div>
-
-          {/* Salary Range Section */}
-          <div className="flex flex-col items-start gap-3">
-            <TypographyP className="text-sm font-medium flex items-center gap-1">
-              <LucideCircleDollarSign strokeWidth={"1.5px"} />
-              {t("salaryRange")}
-            </TypographyP>
-
-            <Controller
-              name="salaryRange"
-              control={control}
-              render={({ field }) => {
-                const { min, max } = field.value ?? {};
-                return (
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Input
-                      type="number"
-                      placeholder={t("min")}
-                      value={min ?? ""}
-                      min={0}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        const numVal = val ? parseInt(val) : undefined;
-                        handleRadioChange("salaryRange", {
-                          min: numVal,
-                          max,
-                        });
-                      }}
-                      className="h-9 w-[88px] shrink-0"
-                    />
-                    <span className="text-muted-foreground">-</span>
-                    <Input
-                      type="number"
-                      placeholder={t("max")}
-                      value={max ?? ""}
-                      min={0}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        const numVal = val ? parseInt(val) : undefined;
-                        handleRadioChange("salaryRange", {
-                          min,
-                          max: numVal,
-                        });
-                      }}
-                      className="h-9 w-[88px] shrink-0"
-                    />
-                    <span className="text-sm text-muted-foreground whitespace-nowrap">
-                      $
-                    </span>
-                  </div>
-                );
-              }}
-            />
-          </div>
-
-          {/* Education Level Section */}
-          <div className="flex flex-col items-start gap-3">
-            <TypographyP className="text-sm font-medium flex items-center gap-1">
-              <LucideGraduationCap strokeWidth={"1.5px"} />
-              {t("educationLevel")}
-            </TypographyP>
-
-            <Controller
-              name="educationLevel"
-              control={control}
-              render={({ field }) => {
-                const educations = [
-                  { value: "Under Graduate", label: t("underGraduate") },
-                  { value: "Bachelor", label: t("bachelor") },
-                  { value: "Master", label: t("master") },
-                  { value: "PhD", label: t("phd") },
-                ];
-                const selectedEdu = field.value ?? [];
-
-                return (
-                  <div className="ml-1.5 flex flex-col gap-3 sm:ml-3">
-                    {educations.map((edu) => (
-                      <div
-                        key={edu.value}
-                        className="flex items-center space-x-2"
-                      >
-                        <Checkbox
-                          id={`edu-${edu.value}`}
-                          checked={selectedEdu.includes(edu.value)}
-                          onCheckedChange={(checked) => {
-                            let updated = [...selectedEdu];
-                            if (checked) {
-                              updated.push(edu.value);
-                            } else {
-                              updated = updated.filter(
-                                (item) => item !== edu.value,
-                              );
-                            }
-                            handleRadioChange("educationLevel", updated);
-                          }}
-                        />
-                        <label
-                          htmlFor={`edu-${edu.value}`}
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          {edu.label}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                );
-              }}
-            />
-          </div>
-
-          {/* Experience Level Section */}
-          <div className="flex flex-col items-start gap-3">
-            <TypographyP className="text-sm font-medium flex items-center gap-1">
-              <LucideBriefcaseBusiness strokeWidth={"1.5px"} />
-              {t("experienceLevel")}
-            </TypographyP>
-
-            <Controller
-              name="experienceLevel"
-              control={control}
-              render={({ field }) => {
-                const expLabels: Record<string, string> = {
-                  "No Experience": t("expNoExperience"),
-                  "Less than 1 year": t("expLessThan1Year"),
-                  "1 - 2 years": t("exp1To2Years"),
-                  "3 - 5 years": t("exp3To5Years"),
-                  "6 - 10 years": t("exp6To10Years"),
-                  "10+ years": t("exp10PlusYears"),
-                };
-                return (
-                  <RadioGroup
-                    onValueChange={(value) =>
-                      handleRadioChange("experienceLevel", value)
+                    let selectedValue: string = "all";
+                    if (!from && !to) selectedValue = "all";
+                    else if (from && to) {
+                      const diffHours = (to.getTime() - from.getTime()) / 36e5;
+                      // NOTE: your original code used 2 hours for "last 24 hours"
+                      if (diffHours <= 24) selectedValue = "last 24 hours";
+                      else if (diffHours <= 72) selectedValue = "last 3 days";
+                      else if (diffHours <= 168) selectedValue = "last week";
                     }
-                    value={field.value ?? ""}
-                    className="ml-1.5 flex flex-col gap-3 sm:ml-3"
-                  >
-                    {yearOfExperienceConstant.map((option) => (
-                      <RadioGroupItemWithLabel
-                        key={option.id}
-                        value={option.value}
-                        id={`exp-${option.id}`}
-                        htmlFor={`exp-${option.id}`}
+
+                    return (
+                      <RadioGroup
+                        value={selectedValue}
+                        onValueChange={(val) => {
+                          let updated: { from?: Date; to?: Date } = {};
+                          if (val !== "all") {
+                            const now = new Date();
+                            const fromDate = new Date(now);
+
+                            switch (val) {
+                              case "last 24 hours":
+                                fromDate.setHours(now.getHours() - 24);
+                                break;
+                              case "last 3 days":
+                                fromDate.setDate(now.getDate() - 3);
+                                break;
+                              case "last week":
+                                fromDate.setDate(now.getDate() - 7);
+                                break;
+                            }
+
+                            updated = { from: fromDate, to: new Date() };
+                          }
+
+                          handleRadioChange("date", updated);
+                        }}
+                        className="ml-3"
                       >
-                        {expLabels[option.value] ?? option.label}
-                      </RadioGroupItemWithLabel>
-                    ))}
-                  </RadioGroup>
-                );
-              }}
-            />
-          </div>
+                        <RadioGroupItemWithLabel
+                          id="date-all"
+                          value="all"
+                          htmlFor="date-all"
+                        >
+                          {t("allDatesPosted")}
+                        </RadioGroupItemWithLabel>
+                        <RadioGroupItemWithLabel
+                          id="last-24"
+                          value="last 24 hours"
+                          htmlFor="last-24"
+                        >
+                          {t("last24Hours")}
+                        </RadioGroupItemWithLabel>
+                        <RadioGroupItemWithLabel
+                          id="last-3-days"
+                          value="last 3 days"
+                          htmlFor="last-3-days"
+                        >
+                          {t("last3Days")}
+                        </RadioGroupItemWithLabel>
+                        <RadioGroupItemWithLabel
+                          id="last-week"
+                          value="last week"
+                          htmlFor="last-week"
+                        >
+                          {t("lastWeek")}
+                        </RadioGroupItemWithLabel>
+                      </RadioGroup>
+                    );
+                  }}
+                />
+              </div>
+
+              {/* Company Size Section */}
+              <div className="flex flex-col items-start gap-3">
+                <TypographyP className="text-sm font-medium flex items-center gap-1">
+                  <LucideUsers strokeWidth={"1.5px"} />
+                  {t("companySize")}
+                </TypographyP>
+
+                <Controller
+                  name="companySize"
+                  control={control}
+                  render={({ field }) => {
+                    const { min, max } = field.value ?? {};
+                    return (
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Input
+                          type="number"
+                          placeholder={t("min")}
+                          value={min ?? ""}
+                          min={0}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            const numVal = val ? parseInt(val) : undefined;
+                            handleRadioChange("companySize", {
+                              min: numVal,
+                              max,
+                            });
+                          }}
+                          className="h-9 w-[88px] shrink-0"
+                        />
+                        <span className="text-muted-foreground">-</span>
+                        <Input
+                          type="number"
+                          placeholder={t("max")}
+                          value={max ?? ""}
+                          min={0}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            const numVal = val ? parseInt(val) : undefined;
+                            handleRadioChange("companySize", {
+                              min,
+                              max: numVal,
+                            });
+                          }}
+                          className="h-9 w-[88px] shrink-0"
+                        />
+                        <span className="text-sm text-muted-foreground whitespace-nowrap">
+                          {t("employees")}
+                        </span>
+                      </div>
+                    );
+                  }}
+                />
+              </div>
+
+              {/* Salary Range Section */}
+              <div className="flex flex-col items-start gap-3">
+                <TypographyP className="text-sm font-medium flex items-center gap-1">
+                  <LucideCircleDollarSign strokeWidth={"1.5px"} />
+                  {t("salaryRange")}
+                </TypographyP>
+
+                <Controller
+                  name="salaryRange"
+                  control={control}
+                  render={({ field }) => {
+                    const { min, max } = field.value ?? {};
+                    return (
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Input
+                          type="number"
+                          placeholder={t("min")}
+                          value={min ?? ""}
+                          min={0}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            const numVal = val ? parseInt(val) : undefined;
+                            handleRadioChange("salaryRange", {
+                              min: numVal,
+                              max,
+                            });
+                          }}
+                          className="h-9 w-[88px] shrink-0"
+                        />
+                        <span className="text-muted-foreground">-</span>
+                        <Input
+                          type="number"
+                          placeholder={t("max")}
+                          value={max ?? ""}
+                          min={0}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            const numVal = val ? parseInt(val) : undefined;
+                            handleRadioChange("salaryRange", {
+                              min,
+                              max: numVal,
+                            });
+                          }}
+                          className="h-9 w-[88px] shrink-0"
+                        />
+                        <span className="text-sm text-muted-foreground whitespace-nowrap">
+                          $
+                        </span>
+                      </div>
+                    );
+                  }}
+                />
+              </div>
+
+              {/* Education Level Section */}
+              <div className="flex flex-col items-start gap-3">
+                <TypographyP className="text-sm font-medium flex items-center gap-1">
+                  <LucideGraduationCap strokeWidth={"1.5px"} />
+                  {t("educationLevel")}
+                </TypographyP>
+
+                <Controller
+                  name="educationLevel"
+                  control={control}
+                  render={({ field }) => {
+                    const educations = [
+                      { value: "Under Graduate", label: t("underGraduate") },
+                      { value: "Bachelor", label: t("bachelor") },
+                      { value: "Master", label: t("master") },
+                      { value: "PhD", label: t("phd") },
+                    ];
+                    const selectedEdu = field.value ?? [];
+
+                    return (
+                      <div className="ml-1.5 flex flex-col gap-3 sm:ml-3">
+                        {educations.map((edu) => (
+                          <div
+                            key={edu.value}
+                            className="flex items-center space-x-2"
+                          >
+                            <Checkbox
+                              id={`edu-${edu.value}`}
+                              checked={selectedEdu.includes(edu.value)}
+                              onCheckedChange={(checked) => {
+                                let updated = [...selectedEdu];
+                                if (checked) {
+                                  updated.push(edu.value);
+                                } else {
+                                  updated = updated.filter(
+                                    (item) => item !== edu.value,
+                                  );
+                                }
+                                handleRadioChange("educationLevel", updated);
+                              }}
+                            />
+                            <label
+                              htmlFor={`edu-${edu.value}`}
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              {edu.label}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  }}
+                />
+              </div>
+
+              {/* Experience Level Section */}
+              <div className="flex flex-col items-start gap-3">
+                <TypographyP className="text-sm font-medium flex items-center gap-1">
+                  <LucideBriefcaseBusiness strokeWidth={"1.5px"} />
+                  {t("experienceLevel")}
+                </TypographyP>
+
+                <Controller
+                  name="experienceLevel"
+                  control={control}
+                  render={({ field }) => {
+                    const expLabels: Record<string, string> = {
+                      "No Experience": t("expNoExperience"),
+                      "Less than 1 year": t("expLessThan1Year"),
+                      "1 - 2 years": t("exp1To2Years"),
+                      "3 - 5 years": t("exp3To5Years"),
+                      "6 - 10 years": t("exp6To10Years"),
+                      "10+ years": t("exp10PlusYears"),
+                    };
+                    return (
+                      <RadioGroup
+                        onValueChange={(value) =>
+                          handleRadioChange("experienceLevel", value)
+                        }
+                        value={field.value ?? ""}
+                        className="ml-1.5 flex flex-col gap-3 sm:ml-3"
+                      >
+                        {yearOfExperienceConstant.map((option) => (
+                          <RadioGroupItemWithLabel
+                            key={option.id}
+                            value={option.value}
+                            id={`exp-${option.id}`}
+                            htmlFor={`exp-${option.id}`}
+                          >
+                            {expLabels[option.value] ?? option.label}
+                          </RadioGroupItemWithLabel>
+                        ))}
+                      </RadioGroup>
+                    );
+                  }}
+                />
+              </div>
+            </>
+          )}
         </div>
 
         {/* Right Side: Results Section */}
@@ -675,7 +692,14 @@ export default function EmployeeSearchPage() {
               ))
             ) : (
               /* Empty List Section */
-              <div className="w-full text-center py-10">
+              <div className="w-full flex flex-col items-center justify-center py-10 gap-2">
+                <Image
+                  src={emptySvgImage}
+                  alt="empty"
+                  height={160}
+                  width={160}
+                  className="animate-float"
+                />
                 <TypographyP className="text-muted-foreground">
                   {t("emptyList")}
                 </TypographyP>

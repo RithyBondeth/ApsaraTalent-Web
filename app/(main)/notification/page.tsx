@@ -24,7 +24,10 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { NotificationSvgImage } from "@/utils/constants/asset.constant";
+import {
+  NotificationEmptySvgImage,
+  NotificationSvgImage,
+} from "@/utils/constants/asset.constant";
 import NotificationLoadingSkeleton, {
   NotificationCardSkeleton,
 } from "@/components/notification/skeleton";
@@ -279,7 +282,7 @@ export default function NotificationPage() {
         {!loading && filteredNotifications.length === 0 && (
           <div className="w-full flex flex-col items-center justify-center my-16">
             <Image
-              src={NotificationSvgImage}
+              src={NotificationEmptySvgImage}
               alt="Notification"
               height={200}
               width={200}

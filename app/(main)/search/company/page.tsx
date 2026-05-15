@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
+import { emptySvgImage } from "@/utils/constants/asset.constant";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
@@ -283,115 +284,131 @@ export default function CompanySearchPage() {
             </Button>
           </div>
 
-          {/* Education Section */}
-          <div className="flex flex-col items-start gap-3">
-            <TypographyP className="text-sm font-medium flex items-center gap-1">
-              <LucideGraduationCap strokeWidth={"1.5px"} />
-              {t("educationLevel")}
-            </TypographyP>
+          {/* Filter Panel Skeleton Section */}
+          {loading && !employees ? (
+            <div className="w-full flex flex-col gap-6">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex flex-col gap-3">
+                  <Skeleton className="h-4 w-32 rounded" />
+                  <Skeleton className="h-3 w-24 rounded ml-3" />
+                  <Skeleton className="h-3 w-28 rounded ml-3" />
+                  <Skeleton className="h-3 w-20 rounded ml-3" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <>
+              {/* Education Section */}
+              <div className="flex flex-col items-start gap-3">
+                <TypographyP className="text-sm font-medium flex items-center gap-1">
+                  <LucideGraduationCap strokeWidth={"1.5px"} />
+                  {t("educationLevel")}
+                </TypographyP>
 
-            <Controller
-              name="educationLevel"
-              control={control}
-              render={({ field }) => {
-                const selected = field.value || [];
-                const options = [
-                  {
-                    id: "edu-undergrad",
-                    label: t("underGraduate"),
-                    value: "Under Graduate",
-                  },
-                  {
-                    id: "edu-bachelor",
-                    label: t("bachelor"),
-                    value: "Bachelor",
-                  },
-                  { id: "edu-master", label: t("master"), value: "Master" },
-                  { id: "edu-phd", label: t("phd"), value: "PHD" },
-                ];
+                <Controller
+                  name="educationLevel"
+                  control={control}
+                  render={({ field }) => {
+                    const selected = field.value || [];
+                    const options = [
+                      {
+                        id: "edu-undergrad",
+                        label: t("underGraduate"),
+                        value: "Under Graduate",
+                      },
+                      {
+                        id: "edu-bachelor",
+                        label: t("bachelor"),
+                        value: "Bachelor",
+                      },
+                      { id: "edu-master", label: t("master"), value: "Master" },
+                      { id: "edu-phd", label: t("phd"), value: "PHD" },
+                    ];
 
-                return (
-                  <div className="ml-1.5 flex flex-col gap-3 sm:ml-3">
-                    {options.map((option) => (
-                      <div
-                        key={option.id}
-                        className="flex items-center space-x-2"
-                      >
-                        <Checkbox
-                          id={option.id}
-                          checked={selected.includes(option.value)}
-                          onCheckedChange={(checked) => {
-                            if (checked) {
-                              handleRadioChange("educationLevel", [
-                                ...selected,
-                                option.value,
-                              ]);
-                            } else {
-                              handleRadioChange(
-                                "educationLevel",
-                                selected.filter(
-                                  (v: string) => v !== option.value,
-                                ),
-                              );
-                            }
-                          }}
-                        />
-                        <label
-                          htmlFor={option.id}
-                          className="text-sm font-medium leading-none cursor-pointer"
-                        >
-                          {option.label}
-                        </label>
+                    return (
+                      <div className="ml-1.5 flex flex-col gap-3 sm:ml-3">
+                        {options.map((option) => (
+                          <div
+                            key={option.id}
+                            className="flex items-center space-x-2"
+                          >
+                            <Checkbox
+                              id={option.id}
+                              checked={selected.includes(option.value)}
+                              onCheckedChange={(checked) => {
+                                if (checked) {
+                                  handleRadioChange("educationLevel", [
+                                    ...selected,
+                                    option.value,
+                                  ]);
+                                } else {
+                                  handleRadioChange(
+                                    "educationLevel",
+                                    selected.filter(
+                                      (v: string) => v !== option.value,
+                                    ),
+                                  );
+                                }
+                              }}
+                            />
+                            <label
+                              htmlFor={option.id}
+                              className="text-sm font-medium leading-none cursor-pointer"
+                            >
+                              {option.label}
+                            </label>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                );
-              }}
-            />
-          </div>
+                    );
+                  }}
+                />
+              </div>
 
-          {/* Experience Section */}
-          <div className="flex flex-col items-start gap-3">
-            <TypographyP className="text-sm font-medium flex items-center gap-1">
-              <LucideBriefcaseBusiness strokeWidth={"1.5px"} />
-              {t("experienceLevel")}
-            </TypographyP>
+              {/* Experience Section */}
+              <div className="flex flex-col items-start gap-3">
+                <TypographyP className="text-sm font-medium flex items-center gap-1">
+                  <LucideBriefcaseBusiness strokeWidth={"1.5px"} />
+                  {t("experienceLevel")}
+                </TypographyP>
 
-            <Controller
-              name="experienceLevel"
-              control={control}
-              render={({ field }) => {
-                const expLabels: Record<string, string> = {
-                  "No Experience": t("expNoExperience"),
-                  "Less than 1 year": t("expLessThan1Year"),
-                  "1 - 2 years": t("exp1To2Years"),
-                  "3 - 5 years": t("exp3To5Years"),
-                  "6 - 10 years": t("exp6To10Years"),
-                  "10+ years": t("exp10PlusYears"),
-                };
-                return (
-                  <RadioGroup
-                    onValueChange={(value) =>
-                      handleRadioChange("experienceLevel", value)
-                    }
-                    value={field.value ?? ""}
-                    className="ml-1.5 flex flex-col gap-3 sm:ml-3"
-                  >
-                    {yearOfExperienceConstant.map((option) => (
-                      <RadioGroupItemWithLabel
-                        key={option.id}
-                        value={option.value}
-                        id={`exp-${option.id}`}
-                        htmlFor={`exp-${option.id}`}
+                <Controller
+                  name="experienceLevel"
+                  control={control}
+                  render={({ field }) => {
+                    const expLabels: Record<string, string> = {
+                      "No Experience": t("expNoExperience"),
+                      "Less than 1 year": t("expLessThan1Year"),
+                      "1 - 2 years": t("exp1To2Years"),
+                      "3 - 5 years": t("exp3To5Years"),
+                      "6 - 10 years": t("exp6To10Years"),
+                      "10+ years": t("exp10PlusYears"),
+                    };
+                    return (
+                      <RadioGroup
+                        onValueChange={(value) =>
+                          handleRadioChange("experienceLevel", value)
+                        }
+                        value={field.value ?? ""}
+                        className="ml-1.5 flex flex-col gap-3 sm:ml-3"
                       >
-                        {expLabels[option.value] ?? option.label}
-                      </RadioGroupItemWithLabel>
-                    ))}
-                  </RadioGroup>
-                );
-              }}
-            />
-          </div>
+                        {yearOfExperienceConstant.map((option) => (
+                          <RadioGroupItemWithLabel
+                            key={option.id}
+                            value={option.value}
+                            id={`exp-${option.id}`}
+                            htmlFor={`exp-${option.id}`}
+                          >
+                            {expLabels[option.value] ?? option.label}
+                          </RadioGroupItemWithLabel>
+                        ))}
+                      </RadioGroup>
+                    );
+                  }}
+                />
+              </div>
+            </>
+          )}
         </div>
 
         {/* Right Side: Results Section */}
@@ -506,7 +523,14 @@ export default function CompanySearchPage() {
               ))
             ) : (
               /* Empty List Section */
-              <div className="w-full text-center py-10">
+              <div className="w-full flex flex-col items-center justify-center py-10 gap-2">
+                <Image
+                  src={emptySvgImage}
+                  alt="empty"
+                  height={160}
+                  width={160}
+                  className="animate-float"
+                />
                 <TypographyP className="text-muted-foreground">
                   {t("emptyList")}
                 </TypographyP>

@@ -4,6 +4,7 @@ import {
   LucideBuilding,
   LucideCalendarCheck,
   LucideClock,
+  LucideLoader2,
   LucideMapPin,
   LucideMessageCircle,
   LucideUsers,
@@ -84,7 +85,10 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
               icon={<LucideBriefcaseBusiness />}
               text={t("positionCount", { count: props.openPosition.length })}
             />
-            <MetaChip icon={<LucideMapPin />} text={translateLocation(props.location, tl)} />
+            <MetaChip
+              icon={<LucideMapPin />}
+              text={translateLocation(props.location, tl)}
+            />
           </div>
         </div>
       </div>
@@ -102,8 +106,17 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
             {t("schedule")}
           </Button>
         )}
-        <Button size="sm" className="text-xs" onClick={props.onChatNowClick}>
-          <LucideMessageCircle className="size-3.5" />
+        <Button
+          size="sm"
+          className="text-xs"
+          onClick={props.onChatNowClick}
+          disabled={props.isChatLoading}
+        >
+          {props.isChatLoading ? (
+            <LucideLoader2 className="size-3.5 animate-spin" />
+          ) : (
+            <LucideMessageCircle className="size-3.5" />
+          )}
           {t("chatNow")}
         </Button>
       </div>

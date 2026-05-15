@@ -552,6 +552,7 @@
     "companyListEmpty": "Company List Empty",
     "employeeListEmpty": "Employee List Empty",
     "likedSuccessTitle": "You liked this successfully!",
+    "likedSuccessDescription": "If they like you back, it's a match! Check your Matching page to see who you've connected with.",
     "close": "Close",
     "save": "Save",
     "view": "View",
@@ -691,7 +692,11 @@
     "downloadStep3": "Generating HTML layout",
     "downloadStep4": "Applying template styling",
     "downloadStep5": "Rendering PDF",
-    "downloadStep6": "Finalising & compressing"
+    "downloadStep6": "Finalising & compressing",
+    "resumeCanvas": "Resume Canvas",
+    "updatingCanvas": "Updating…",
+    "canvasHint": "Click text to edit · Hover to add/delete · Drag to reorder",
+    "noTemplatesAvailable": "No templates available at the moment. Please try again later."
   },
   "profile": {
     "completion": "Profile Completion",

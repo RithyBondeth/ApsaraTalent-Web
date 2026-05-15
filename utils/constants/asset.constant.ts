@@ -6,6 +6,7 @@ import landingSvg from "@/assets/svg/landing.svg";
 import emptySvgImage from "@/assets/svg/empty.svg";
 import matchingSvgImage from "@/assets/svg/matching.svg";
 import NotificationSvgImage from "@/assets/svg/notification.svg";
+import NotificationEmptySvgImage from "@/assets/svg/notification-empty.svg";
 import MessageSvgImage from "@/assets/svg/message.svg";
 import favoriteSvgImage from "@/assets/svg/favorite.svg";
 import EmployeeSearchSvg from "@/assets/svg/employee-search.svg";
@@ -42,6 +43,7 @@ export {
   emptySvgImage,
   matchingSvgImage,
   NotificationSvgImage,
+  NotificationEmptySvgImage,
   MessageSvgImage,
   favoriteSvgImage,
   EmployeeSearchSvg,

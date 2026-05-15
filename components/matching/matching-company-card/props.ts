@@ -11,4 +11,5 @@ export interface IMatchingCompanyCardProps {
   location: string;
   onChatNowClick: () => void;
   onScheduleClick?: () => void;
+  isChatLoading?: boolean;
 }

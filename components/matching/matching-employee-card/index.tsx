@@ -4,6 +4,7 @@ import {
   LucideBriefcaseBusiness,
   LucideCalendarCheck,
   LucideClock,
+  LucideLoader2,
   LucideMapPin,
   LucideMessageCircle,
 } from "lucide-react";
@@ -82,7 +83,10 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
               text={props.position}
             />
             <MetaChip icon={<LucideClock />} text={props.experience} />
-            <MetaChip icon={<LucideMapPin />} text={translateLocation(props.location, tl)} />
+            <MetaChip
+              icon={<LucideMapPin />}
+              text={translateLocation(props.location, tl)}
+            />
           </div>
         </div>
       </div>
@@ -100,8 +104,17 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
             {t("schedule")}
           </Button>
         )}
-        <Button size="sm" className="text-xs" onClick={props.onChatNowClick}>
-          <LucideMessageCircle className="size-3.5" />
+        <Button
+          size="sm"
+          className="text-xs"
+          onClick={props.onChatNowClick}
+          disabled={props.isChatLoading}
+        >
+          {props.isChatLoading ? (
+            <LucideLoader2 className="size-3.5 animate-spin" />
+          ) : (
+            <LucideMessageCircle className="size-3.5" />
+          )}
           {t("chatNow")}
         </Button>
       </div>

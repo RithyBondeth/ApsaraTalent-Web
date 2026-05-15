@@ -83,6 +83,7 @@ import {
   LucideCamera,
   LucideCircleCheck,
   LucideCompass,
+  LucideLoader2,
   LucideDownload,
   LucideEdit,
   LucideEye,
@@ -1104,9 +1105,17 @@ export default function EmployeeProfilePage() {
           <div className="absolute top-4 right-4 hidden sm:flex items-center gap-3">
             {isEdit ? (
               <>
-                <Button type="submit" className="text-xs" disabled={updateProfileLoadingState}>
-                  {updateProfileLoadingState ? tP("updating") : tP("save")}{" "}
-                  <LucideCircleCheck />
+                <Button
+                  type="submit"
+                  className="text-xs min-w-[72px]"
+                  disabled={updateProfileLoadingState}
+                >
+                  {updateProfileLoadingState ? (
+                    <LucideLoader2 className="size-3.5 animate-spin" />
+                  ) : (
+                    <LucideCircleCheck />
+                  )}
+                  {updateProfileLoadingState ? tP("updating") : tP("save")}
                 </Button>
                 <Button
                   type="button"
@@ -1212,9 +1221,17 @@ export default function EmployeeProfilePage() {
             <div className="flex sm:hidden items-center gap-3 tablet-md:w-full tablet-md:justify-center">
               {isEdit ? (
                 <>
-                  <Button type="submit" className="text-xs" disabled={updateProfileLoadingState}>
-                    {updateProfileLoadingState ? tP("updating") : tP("save")}{" "}
-                    <LucideCircleCheck />
+                  <Button
+                    type="submit"
+                    className="text-xs min-w-[72px]"
+                    disabled={updateProfileLoadingState}
+                  >
+                    {updateProfileLoadingState ? (
+                      <LucideLoader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <LucideCircleCheck />
+                    )}
+                    {updateProfileLoadingState ? tP("updating") : tP("save")}
                   </Button>
                   <Button
                     type="button"

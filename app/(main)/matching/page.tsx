@@ -156,6 +156,7 @@ export default function MatchingPage() {
               location={cmp.location}
               onChatNowClick={() => handleChatNow(senderId, cmp.id)}
               onScheduleClick={() => router.push(`/interview?with=${cmp.id}`)}
+              isChatLoading={chatLoadingId === cmp.id}
             />
           ))
         ) : getCurrentCmpStore.currentCompanyMatching &&
@@ -175,6 +176,7 @@ export default function MatchingPage() {
               skills={emp.skills.map((skill) => skill.name)}
               onChatNowClick={() => handleChatNow(senderId, emp.id)}
               onScheduleClick={() => router.push(`/interview?with=${emp.id}`)}
+              isChatLoading={chatLoadingId === emp.id}
             />
           ))
         ) : (

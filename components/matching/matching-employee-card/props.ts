@@ -10,4 +10,5 @@ export interface IMatchingEmployeeCardProps {
   skills: string[];
   onChatNowClick: () => void;
   onScheduleClick?: () => void;
+  isChatLoading?: boolean;
 }

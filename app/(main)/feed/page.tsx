@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -550,7 +551,8 @@ export default function FeedPage() {
       {/* Recommended for You Section */}
       {isLoading ? (
         <FeedRecommendationsSkeleton />
-      ) : (() => {
+      ) : (
+        (() => {
           const recs = isEmployee
             ? filteredEmployeeRecommendations
             : filteredCompanyRecommendations;
@@ -627,7 +629,8 @@ export default function FeedPage() {
               </div>
             </div>
           );
-        })()}
+        })()
+      )}
 
       {/* Divider Section: All Companies / All Talent */}
       {isLoading ? (
@@ -713,7 +716,9 @@ export default function FeedPage() {
             className="animate-float"
           />
           <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
-            {isEmployee ? tFeed("companyListEmpty") : tFeed("employeeListEmpty")}
+            {isEmployee
+              ? tFeed("companyListEmpty")
+              : tFeed("employeeListEmpty")}
           </TypographyP>
         </div>
       )}
@@ -736,6 +741,9 @@ export default function FeedPage() {
       >
         <DialogContent>
           <DialogTitle>{tFeed("likedSuccessTitle")}</DialogTitle>
+          <DialogDescription>
+            {tFeed("likedSuccessDescription")}
+          </DialogDescription>
           <DialogFooter>
             <Button onClick={() => setOpenLikeSuccessDialog(false)}>
               {tFeed("close")}
