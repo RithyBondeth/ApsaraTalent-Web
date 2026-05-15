@@ -1,17 +1,12 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import {
-  logo,
-  logoV2,
-  logoWithoutTitle,
-} from "@/utils/constants/asset.constant";
+import { logo, logoWithoutTitle } from "@/utils/constants/asset.constant";
 import Image from "next/image";
 
 /* ----------------------------------- Helper ---------------------------------- */
 interface ILogoProps {
   withoutTitle?: boolean;
-  variant?: "default" | "v2";
   width?: number;
   height?: number;
   className?: string;
@@ -20,18 +15,13 @@ interface ILogoProps {
 
 export default function LogoComponent({
   withoutTitle = false,
-  variant = "default",
   height = 100,
   width = 200,
   className,
   priority = false,
 }: ILogoProps) {
   /* ---------------------------------- Utils ---------------------------------- */
-  const src = withoutTitle
-    ? logoWithoutTitle
-    : variant === "v2"
-      ? logoV2
-      : logo;
+  const src = withoutTitle ? logoWithoutTitle : logo;
 
   return (
     <Image

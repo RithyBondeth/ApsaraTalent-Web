@@ -284,7 +284,7 @@ export default function SignupPage() {
   return (
     <div className="w-full max-w-[620px] flex flex-col gap-5 tablet-sm:max-w-full">
       {/* Logo Section */}
-      <LogoComponent variant="v2" className="!h-12 w-auto self-start" />
+      <LogoComponent className="!h-12 w-auto self-start" />
 
       {/* Title Section */}
       <div className="flex flex-col items-start">

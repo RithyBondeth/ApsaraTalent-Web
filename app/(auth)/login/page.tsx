@@ -483,7 +483,7 @@ function LoginPage() {
         <div className="w-full max-w-[480px] flex flex-col gap-4 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
           {/* Logo & Title Section */}
           <div className="flex flex-col items-start gap-1">
-            <LogoComponent variant="v2" className="!h-12 w-auto self-start" />
+            <LogoComponent className="!h-12 w-auto self-start" />
             <TypographyH2 className="phone-xl:text-2xl">
               {t("loginPageTitle")}
             </TypographyH2>

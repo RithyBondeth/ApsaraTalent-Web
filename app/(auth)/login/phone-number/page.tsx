@@ -117,7 +117,7 @@ export default function PhoneNumberPage() {
       <div className="w-1/2 min-h-screen flex items-center justify-center bg-background p-6 sm:p-10 tablet-md:w-full tablet-md:min-h-0 tablet-md:py-12">
         <div className="w-full max-w-[440px] flex flex-col gap-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
           {/* Logo Section */}
-          <LogoComponent variant="v2" className="!h-12 w-auto self-start" />
+          <LogoComponent className="!h-12 w-auto self-start" />
 
           {/* Title Section */}
           <div className="flex flex-col items-start">

@@ -18,7 +18,7 @@ export default function LandingFooter() {
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-10">
           {/* Brand Section */}
           <div className="flex flex-col gap-3 max-w-xs">
-            <LogoComponent variant="v2" className="!h-14 w-auto self-start" />
+            <LogoComponent className="!h-14 w-auto self-start" />
             <TypographyMuted className="!text-xs !leading-relaxed">
               {t("angkorWatDescription")}
             </TypographyMuted>

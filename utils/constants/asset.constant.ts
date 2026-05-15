@@ -47,7 +47,6 @@ import resumeBuilderBannerSvg from "@/assets/resume-builder/banner.svg";
 // ─── Utils (shared across pages) ──────────────────────────────────────────────
 import emptySvg from "@/assets/utils/empty.svg";
 import logo from "@/assets/utils/logo.svg";
-import logoV2 from "@/assets/utils/logo.svg";
 import logoWithoutTitle from "@/assets/utils/logo-icon.svg";
 
 export {
@@ -89,6 +88,5 @@ export {
   // Utils
   emptySvg,
   logo,
-  logoV2,
   logoWithoutTitle,
 };
