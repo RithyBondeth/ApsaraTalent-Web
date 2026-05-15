@@ -5,7 +5,6 @@ import googleIcon from "@/assets/socials/google.png";
 import linkedInIcon from "@/assets/socials/linkedin.png";
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
-import landingSvg from "@/assets/auth/landing.svg";
 import signupSvg from "@/assets/auth/signup.svg";
 import loginSvg from "@/assets/auth/login.svg";
 import forgotPasswordSvg from "@/assets/auth/forgot-password.svg";
@@ -58,7 +57,6 @@ export {
   googleIcon,
   linkedInIcon,
   // Auth
-  landingSvg,
   signupSvg,
   loginSvg,
   forgotPasswordSvg,

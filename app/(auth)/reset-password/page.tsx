@@ -193,7 +193,6 @@ export default function ResetPasswordPage() {
 
         <Image
           src={resetPasswordSvg}
-          className="brightness-0 invert"
           alt="reset-password"
           height={undefined}
           width={600}

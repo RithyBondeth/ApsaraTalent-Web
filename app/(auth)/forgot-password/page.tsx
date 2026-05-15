@@ -151,7 +151,6 @@ export default function ForgotPasswordPage() {
 
         <Image
           src={forgotPasswordSvg}
-          className="brightness-0 invert"
           alt="forgot-password"
           height={undefined}
           width={600}

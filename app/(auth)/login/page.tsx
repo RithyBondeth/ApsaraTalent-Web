@@ -637,7 +637,7 @@ function LoginPage() {
           alt="login"
           height={undefined}
           width={450}
-          className="relative z-10 dark:brightness-0 dark:invert"
+          className="relative z-10"
         />
       </div>
 

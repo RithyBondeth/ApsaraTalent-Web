@@ -523,7 +523,7 @@ export default function FeedPage() {
             alt="feed"
             height={250}
             width={350}
-            className="h-auto max-w-[340px] tablet-xl:!w-full brightness-0 invert dark:brightness-100 dark:invert-0"
+            className="h-auto max-w-[340px] tablet-xl:!w-full"
             priority
           />
         </div>

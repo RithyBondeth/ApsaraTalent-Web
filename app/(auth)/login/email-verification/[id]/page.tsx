@@ -101,7 +101,6 @@ export default function EmailVerificationPage() {
           alt="email-verification"
           height={undefined}
           width={600}
-          className="brightness-0 invert dark:brightness-100 dark:invert-0"
         />
       </div>
     </div>

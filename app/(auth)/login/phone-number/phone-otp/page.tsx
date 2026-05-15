@@ -334,7 +334,6 @@ export default function PhoneOTPPage() {
       <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-md:hidden">
         <Image
           src={phoneOTPSvg}
-          className="brightness-0 invert"
           alt="phone-otp"
           height={undefined}
           width={600}

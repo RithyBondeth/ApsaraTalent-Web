@@ -6,9 +6,7 @@ import {
   logoV2,
   logoWithoutTitle,
 } from "@/utils/constants/asset.constant";
-import { useTheme } from "next-themes";
 import Image from "next/image";
-import { useEffect, useState } from "react";
 
 /* ----------------------------------- Helper ---------------------------------- */
 interface ILogoProps {
@@ -28,17 +26,12 @@ export default function LogoComponent({
   className,
   priority = false,
 }: ILogoProps) {
-  /* -------------------------------- All States ------------------------------ */
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  /* --------------------------------- Effects --------------------------------- */
-  useEffect(() => setMounted(true), []);
-
   /* ---------------------------------- Utils ---------------------------------- */
-  const isDark = mounted ? resolvedTheme === "dark" : false;
-  const src = withoutTitle ? logoWithoutTitle : variant === "v2" ? logoV2 : logo;
-  const filterClass = isDark ? "brightness-0 invert" : "";
+  const src = withoutTitle
+    ? logoWithoutTitle
+    : variant === "v2"
+      ? logoV2
+      : logo;
 
   return (
     <Image
@@ -46,7 +39,7 @@ export default function LogoComponent({
       alt="Apsara Talent logo"
       height={height}
       width={width}
-      className={cn("h-auto w-auto", filterClass, className)}
+      className={cn("h-auto w-auto", className)}
       priority={priority}
     />
   );

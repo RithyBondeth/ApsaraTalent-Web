@@ -22,7 +22,7 @@ export default function SignupLayout({ children }: { children: ReactNode }) {
         <Image
           src={signupSvg}
           alt="signup"
-          className="h-auto w-full max-w-[620px] relative z-10 brightness-0 invert dark:brightness-100 dark:invert-0"
+          className="h-auto w-full max-w-[620px] relative z-10"
           priority
         />
       </div>
