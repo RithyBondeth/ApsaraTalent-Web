@@ -51,7 +51,7 @@ import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { makeLoginSchema, TLoginForm } from "./validation";
@@ -61,9 +61,19 @@ import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 function LoginPage() {
   /* ------------------------------------ Utils -------------------------------- */
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { resolvedTheme } = useTheme();
   const t = useTranslations("auth");
   const tv = useTranslations("validation");
+
+  /* ----------------------------------- Memo ---------------------------------- */
+  const callbackUrl = useMemo(() => {
+    const value = searchParams.get("callbackUrl");
+    if (!value || !value.startsWith("/") || value.startsWith("//")) {
+      return "/feed";
+    }
+    return value;
+  }, [searchParams]);
 
   /* -------------------------------- All States ------------------------------- */
   const [mounted, setMounted] = useState<boolean>(false);
@@ -263,7 +273,7 @@ function LoginPage() {
           setIsPreloadingData(false);
           setLoginInitiated(false);
           isProcessingRegularLogin.current = false;
-          router.replace("/feed");
+          router.replace(callbackUrl);
         }, DEFAULT_REDIRECT_DELAY_MS);
       });
   }, [
@@ -274,6 +284,7 @@ function LoginPage() {
     preloadUserData,
     reset,
     router,
+    callbackUrl,
     t,
   ]);
 
@@ -381,7 +392,7 @@ function LoginPage() {
             setIsPreloadingData(false);
             setSocialLoginInitiated(false);
             isProcessingSocialLogin.current = false;
-            router.replace("/feed");
+            router.replace(callbackUrl);
           }, DEFAULT_REDIRECT_DELAY_MS);
         });
 
@@ -435,6 +446,7 @@ function LoginPage() {
     facebookLoginStore.newUser,
     facebookLoginStore.loading,
     facebookLoginStore.error,
+    callbackUrl,
     preloadUserData,
     router,
     socialLoginInitiated,
