@@ -53,7 +53,7 @@ export default function EmailVerificationPage() {
     if (!loading && !error && message) {
       toast.dismiss();
       toast.success(t("emailVerifiedSuccess"), { duration: 1500 });
-      setTimeout(() => router.push("/login"), DEFAULT_REDIRECT_DELAY_MS);
+      setTimeout(() => router.replace("/login"), DEFAULT_REDIRECT_DELAY_MS);
     }
   }, [error, isSubmitted, loading, message, router, t]);
 
@@ -95,7 +95,7 @@ export default function EmailVerificationPage() {
           <Button
             variant="link"
             className="w-fit mx-auto"
-            onClick={() => router.back()}
+            onClick={() => router.replace("/login")}
           >
             {t("backToLogin")}
           </Button>

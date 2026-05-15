@@ -408,7 +408,7 @@ export default function EmployeeSignup() {
       {/* Navigate Back Button Section */}
       <button
         type="button"
-        onClick={() => router.push("/signup")}
+        onClick={() => router.replace("/signup")}
         className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors w-fit"
       >
         <LucideArrowLeft className="size-4" />

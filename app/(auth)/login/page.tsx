@@ -75,6 +75,11 @@ function LoginPage() {
     return value;
   }, [searchParams]);
 
+  const phoneLoginHref = useMemo(() => {
+    if (callbackUrl === "/feed") return "/login/phone-number";
+    return `/login/phone-number?callbackUrl=${encodeURIComponent(callbackUrl)}`;
+  }, [callbackUrl]);
+
   /* -------------------------------- All States ------------------------------- */
   const [mounted, setMounted] = useState<boolean>(false);
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
@@ -539,7 +544,7 @@ function LoginPage() {
             <Button
               variant="outline"
               className="w-full transition-colors hover:bg-muted/50"
-              onClick={() => router.push("login/phone-number")}
+              onClick={() => router.push(phoneLoginHref)}
             >
               <LucidePhone />
               {t("phoneNumber")}

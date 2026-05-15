@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LucidePhone } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -23,8 +23,25 @@ import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 export default function PhoneNumberPage() {
   /* ----------------------------------- Utils -------------------------------- */
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations("auth");
   const tv = useTranslations("validation");
+
+  /* ----------------------------------- Memo ---------------------------------- */
+  const callbackUrl = useMemo(() => {
+    const value = searchParams.get("callbackUrl");
+    if (!value || !value.startsWith("/") || value.startsWith("//")) {
+      return "/feed";
+    }
+    return value;
+  }, [searchParams]);
+
+  const phoneOtpHref = useMemo(() => {
+    if (callbackUrl === "/feed") return "/login/phone-number/phone-otp";
+    return `/login/phone-number/phone-otp?callbackUrl=${encodeURIComponent(
+      callbackUrl,
+    )}`;
+  }, [callbackUrl]);
 
   /* --------------------------------- All States ----------------------------- */
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
@@ -70,10 +87,7 @@ export default function PhoneNumberPage() {
     if (isSuccess) {
       toast.dismiss();
       toast.success(t("otpSent"), { duration: 1000 });
-      setTimeout(
-        () => router.replace("/login/phone-number/phone-otp"),
-        DEFAULT_REDIRECT_DELAY_MS,
-      );
+      setTimeout(() => router.replace(phoneOtpHref), DEFAULT_REDIRECT_DELAY_MS);
     }
 
     if (loading) toast.loading(t("loggingIn"));
@@ -84,7 +98,17 @@ export default function PhoneNumberPage() {
         action: { label: t("retry"), onClick: () => reset() },
       });
     }
-  }, [error, isSubmitted, isSuccess, loading, message, reset, router, t]);
+  }, [
+    error,
+    isSubmitted,
+    isSuccess,
+    loading,
+    message,
+    phoneOtpHref,
+    reset,
+    router,
+    t,
+  ]);
 
   return (
     /* -------------------------------- Render UI -------------------------------- */
@@ -139,7 +163,7 @@ export default function PhoneNumberPage() {
 
           {/* Navigate Back Button Section */}
           <button
-            onClick={() => router.back()}
+            onClick={() => router.replace("/login")}
             className="underline text-sm text-primary hover:text-primary/80 transition-colors text-center"
           >
             {t("backToEmailLogin")}

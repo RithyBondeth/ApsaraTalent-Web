@@ -19,7 +19,6 @@ import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.sto
 import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
 import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
 import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
-import { useThemeStore } from "@/stores/themes/theme-store";
 import {
   genderConstant,
   locationConstant,
@@ -79,8 +78,6 @@ export default function SignupPage() {
     Takeo: tLoc("takeo"),
     "Tbong Khmum": tLoc("tbongKhmum"),
   };
-  const { theme } = useThemeStore();
-
   /* -------------------------------- All States ------------------------------ */
   const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
@@ -576,7 +573,7 @@ export default function SignupPage() {
             type="button"
             className="flex-1 tablet-sm:w-full"
             variant="outline"
-            onClick={() => router.back()}
+            onClick={() => router.replace("/signup/option")}
           >
             <LucideArrowLeft />
             {t("back")}

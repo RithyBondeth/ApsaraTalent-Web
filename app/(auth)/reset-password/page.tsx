@@ -93,7 +93,7 @@ export default function ResetPasswordPage() {
     if (!loading && !error && message) {
       toast.dismiss();
       toast.success(t("resetPasswordSuccess"), { duration: 1500 });
-      setTimeout(() => router.push("/login"), DEFAULT_REDIRECT_DELAY_MS);
+      setTimeout(() => router.replace("/login"), DEFAULT_REDIRECT_DELAY_MS);
     }
   }, [error, isSubmitted, loading, message, reset, router, t]);
 
@@ -176,7 +176,7 @@ export default function ResetPasswordPage() {
           {/* Navigate Back Button Section */}
           <div className="w-full flex justify-center">
             <button
-              onClick={() => router.back()}
+              onClick={() => router.replace("/login")}
               className="underline text-sm text-primary hover:text-primary/80 transition-colors text-center"
             >
               {`\u2190 ${t("backToLogin")}`}

@@ -24,9 +24,9 @@ import { useGetCompanyRecommendationsStore } from "@/stores/apis/recommendation/
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 import { toast } from "sonner";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { phoneOTPWhiteSvg } from "@/utils/constants/asset.constant";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
@@ -34,10 +34,19 @@ import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 export default function PhoneOTPPage() {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations("auth");
 
-  /* -------------------------------- All States ------------------------------ */
+  /* ----------------------------------- Memo ---------------------------------- */
+  const callbackUrl = useMemo(() => {
+    const value = searchParams.get("callbackUrl");
+    if (!value || !value.startsWith("/") || value.startsWith("//")) {
+      return "/feed";
+    }
+    return value;
+  }, [searchParams]);
 
+  /* -------------------------------- All States ------------------------------ */
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
   const [loginInitiated, setLoginInitiated] = useState<boolean>(false);
   const isProcessingOtpLogin = useRef<boolean>(false);
@@ -211,7 +220,7 @@ export default function PhoneOTPPage() {
             toast.dismiss();
             setLoginInitiated(false);
             isProcessingOtpLogin.current = false;
-            router.replace("/feed");
+            router.replace(callbackUrl);
           }, DEFAULT_REDIRECT_DELAY_MS);
         });
     }
@@ -225,6 +234,7 @@ export default function PhoneOTPPage() {
     preloadUserData,
     reset,
     router,
+    callbackUrl,
     t,
   ]);
 

@@ -84,7 +84,7 @@ export default function ForgotPasswordPage() {
       toast.dismiss();
       toast.success(t("forgotPasswordEmailSent"), { duration: 1000 });
       setTimeout(
-        () => router.push("/reset-password"),
+        () => router.replace("/reset-password"),
         DEFAULT_REDIRECT_DELAY_MS,
       );
     }
@@ -133,7 +133,7 @@ export default function ForgotPasswordPage() {
               validationMessage={errors.forgotPassword?.message}
             />
             <div className="flex items-center justify-stretch gap-3 [&>button]:w-1/2">
-              <Button type="button" onClick={() => router.back()}>
+              <Button type="button" onClick={() => router.replace("/login")}>
                 <LucideArrowLeft />
                 {t("back")}
               </Button>
