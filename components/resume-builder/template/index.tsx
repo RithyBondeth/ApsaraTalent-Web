@@ -83,14 +83,14 @@ export default function TemplateCard(props: ITemplateCardProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
-      className={`h-fit w-full flex flex-col rounded-lg cursor-pointer transition-all duration-200 shadow-sm border overflow-hidden ${
+      className={`h-fit w-full flex flex-col rounded-2xl cursor-pointer transition-all duration-300 ease-out border overflow-hidden ${
         props.selected
-          ? "border-primary ring-2 ring-primary/30 shadow-md"
-          : "border-muted hover:border-primary/40 hover:shadow-md"
+          ? "border-primary ring-2 ring-primary/25 shadow-[0_8px_32px_hsl(var(--foreground)/0.14)] -translate-y-1"
+          : "border-border/70 shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_8px_24px_hsl(var(--foreground)/0.12)]"
       }`}
     >
       {/* Preview Area Section */}
-      <div className="w-full h-48 relative group overflow-hidden">
+      <div className="w-full h-52 relative group overflow-hidden">
         {props.image ? (
           <Image
             src={props.image}
@@ -184,22 +184,22 @@ export default function TemplateCard(props: ITemplateCardProps) {
       </div>
 
       {/* Card Body Section */}
-      <div className="w-full p-3 flex flex-col gap-2">
+      <div className="w-full p-4 flex flex-col gap-3 bg-card">
         {/* Title and Description Section */}
-        <div>
-          <TypographyH4 className="text-sm font-semibold leading-tight">
+        <div className="flex flex-col gap-1">
+          <TypographyH4 className="!m-0 text-sm font-semibold leading-tight">
             {props.title}
           </TypographyH4>
-          <TypographyMuted className="text-xs leading-relaxed mt-1 line-clamp-2">
+          <TypographyMuted className="text-xs leading-relaxed line-clamp-2">
             {props.description}
           </TypographyMuted>
         </div>
 
         {/* Action Buttons Section */}
-        <div className="flex items-center justify-between mt-1">
+        <div className="flex items-center justify-between">
           <Button
             size="sm"
-            className="text-xs h-8"
+            className="text-xs h-8 rounded-full px-4"
             variant={props.selected ? "default" : "outline"}
             onClick={props.onUseTemplate}
           >

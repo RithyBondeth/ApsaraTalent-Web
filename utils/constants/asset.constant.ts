@@ -25,10 +25,13 @@ import emailVerificationWhiteSvg from "@/assets/svg/email-verification-black.svg
 import emailVerificationBlackSvg from "@/assets/svg/email-verification-white.svg";
 import phoneNumberWhiteSvg from "@/assets/svg/phone-number-white.svg";
 import phoneOTPWhiteSvg from "@/assets/svg/phone-otp-white.svg";
-import BlackLogo from "@/assets/svg/logo-version2-black.svg";
-import WhiteLogo from "@/assets/svg/logo-version2-white.svg";
+import BlackLogo from "@/assets/svg/logo-black.svg";
+import WhiteLogo from "@/assets/svg/logo-white.svg";
 import LogoWithoutTitle from "@/assets/svg/logo-without-title.svg";
+import BlackLogoV2 from "@/assets/svg/logo-version2-black.svg";
+import WhiteLogoV2 from "@/assets/svg/logo-version2-white.svg";
 import resumeBuilderImageSvg from "@/assets/svg/resume-builder-banner.svg";
+import interviewImageSvg from "@/assets/svg/interview.svg";
 
 export {
   FacebookIcon,
@@ -61,5 +64,8 @@ export {
   BlackLogo,
   WhiteLogo,
   LogoWithoutTitle,
+  BlackLogoV2,
+  WhiteLogoV2,
   resumeBuilderImageSvg,
+  interviewImageSvg,
 };

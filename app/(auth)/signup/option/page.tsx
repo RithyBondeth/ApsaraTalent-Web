@@ -151,7 +151,7 @@ export default function SingUpOption() {
 
       <form className="w-full flex flex-col" onSubmit={handleSubmit(onSubmit)}>
         {/* Role Selection Section */}
-        <div className="w-full flex flex-col items-start gap-2">
+        <div className="w-full flex flex-col items-start">
           <Controller
             name="selectedRole"
             control={control}
@@ -163,14 +163,18 @@ export default function SingUpOption() {
                 <SelectContent>
                   {userRoleConstant.map((role) => (
                     <SelectItem key={role.id} value={role.value}>
-                      {role.label}
+                      {role.value === "employee"
+                        ? t("signupOptionRoleEmployee")
+                        : t("signupOptionRoleCompany")}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             )}
           />
-          <ErrorMessage>{errors.selectedRole?.message}</ErrorMessage>
+          <ErrorMessage className="mb-3 mt-1">
+            {errors.selectedRole ? t("signupOptionRoleRequired") : null}
+          </ErrorMessage>
         </div>
 
         {/* Navigate Back Button Section */}

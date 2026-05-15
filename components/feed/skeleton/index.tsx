@@ -30,31 +30,31 @@ export default function FeedPageLoadingSkeleton() {
 /* ------------------------ Feed Banner Loading Skeleton ------------------------ */
 export function FeedBannerSkeleton() {
   return (
-    <div className="w-full flex items-center justify-between gap-4 sm:gap-5 tablet-xl:flex-col tablet-xl:items-center">
+    <div className="w-full flex items-center justify-between gap-6 lg:gap-10 tablet-xl:flex-col tablet-xl:items-center rounded-2xl border border-border/50 px-6 py-8 sm:px-8 animate-shimmer">
       <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
         {/* Main Heading Section */}
-        <div className="tablet-xl:text-center w-full tablet-xl:flex tablet-xl:justify-center">
-          <Skeleton className="h-8 w-96 tablet-xl:w-80" />
+        <div className="tablet-xl:flex tablet-xl:justify-center w-full">
+          <Skeleton className="h-9 w-96 tablet-xl:w-80" />
         </div>
 
         {/* First Subheading Section */}
-        <div className="tablet-xl:text-center w-full tablet-xl:flex tablet-xl:justify-center">
-          <Skeleton className="h-8 w-72 tablet-xl:w-64" />
+        <div className="tablet-xl:flex tablet-xl:justify-center w-full">
+          <Skeleton className="h-6 w-72 tablet-xl:w-64" />
         </div>
 
         {/* Second Subheading Section */}
-        <div className="tablet-xl:text-center w-full tablet-xl:flex tablet-xl:justify-center">
+        <div className="tablet-xl:flex tablet-xl:justify-center w-full">
           <Skeleton className="h-6 w-80 tablet-xl:w-72" />
         </div>
 
         {/* Muted Text Section */}
-        <div className="tablet-xl:text-center w-full tablet-xl:flex tablet-xl:justify-center">
+        <div className="tablet-xl:flex tablet-xl:justify-center w-full">
           <Skeleton className="h-4 w-64 tablet-xl:w-56" />
         </div>
       </div>
 
       {/* Image Section */}
-      <Skeleton className="h-[220px] w-[300px] sm:h-[250px] sm:w-[350px] tablet-xl:!w-full rounded-lg" />
+      <Skeleton className="h-[220px] w-[300px] sm:h-[250px] sm:w-[340px] rounded-xl tablet-xl:!w-full" />
     </div>
   );
 }
@@ -85,14 +85,14 @@ export function FeedRecommendationsSkeleton() {
 export function FeedDividerSkeleton() {
   return (
     <div className="w-full flex items-center gap-4">
-      {/* Icon and Label Section */}
-      <div className="flex items-center gap-2 shrink-0">
-        <Skeleton className="h-5 w-5 rounded" />
-        <Skeleton className="h-5 w-32 rounded" />
+      {/* Pill Badge Section */}
+      <div className="flex items-center gap-2 shrink-0 bg-card border border-border/70 rounded-full px-3 py-1.5 shadow-[0_1px_4px_hsl(var(--foreground)/0.06)]">
+        <Skeleton className="h-4 w-4 rounded" />
+        <Skeleton className="h-4 w-24 rounded" />
       </div>
 
       {/* Divider Line Section */}
-      <div className="flex-1 h-px bg-border" />
+      <div className="flex-1 h-px bg-border/60" />
     </div>
   );
 }

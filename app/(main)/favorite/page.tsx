@@ -214,9 +214,9 @@ export default function FavoritePage() {
   return (
     <div className="w-full flex flex-col px-2.5 sm:px-5 animate-page-in">
       {/* Banner Section */}
-      <div className="w-full flex items-center justify-between gap-4 sm:gap-5 tablet-xl:flex-col tablet-xl:items-center">
+      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 tablet-xl:flex-col tablet-xl:items-center rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8">
         {/* Content Section */}
-        <div className="flex flex-col items-start gap-3 px-1 sm:px-5 tablet-xl:mt-2 tablet-xl:w-full tablet-xl:items-center">
+        <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
           <TypographyH2 className="leading-relaxed tablet-xl:text-center">
             {tFav("bannerTitle")}
           </TypographyH2>
@@ -238,13 +238,13 @@ export default function FavoritePage() {
             alt="favorites"
             height={250}
             width={350}
-            className="h-auto max-w-[320px] tablet-xl:!w-full"
+            className="h-auto max-w-[340px] tablet-xl:!w-full"
           />
         )}
       </div>
 
       {/* Favorite Card List Section */}
-      <div className="flex flex-col items-start gap-3 stagger-list">
+      <div className="mt-5 flex flex-col items-start gap-3 stagger-list">
         {isEmployee &&
         filteredEmployeeFavorites &&
         filteredEmployeeFavorites.length > 0 ? (

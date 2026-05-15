@@ -16,9 +16,9 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { resetPasswordSchema, TResetPasswordForm } from "./validate";
+import { makeResetPasswordSchema, TResetPasswordForm } from "./validate";
 import { resetPasswordWhiteSvg } from "@/utils/constants/asset.constant";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
@@ -27,6 +27,7 @@ export default function ResetPasswordPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations("auth");
+  const tv = useTranslations("validation");
 
   /* ── Auto-read token from URL: /reset-password?token=xxx ── */
   const tokenFromUrl = searchParams.get("token") ?? "";
@@ -41,6 +42,19 @@ export default function ResetPasswordPage() {
   const { loading, error, message, resetPassword } = useResetPasswordStore();
 
   /* ------------------- React Hook Form: Reset Password Form ------------------- */
+  const resetPasswordSchema = useMemo(
+    () =>
+      makeResetPasswordSchema({
+        passwordRequired: tv("passwordRequired"),
+        passwordMinLength: tv("passwordMinLength"),
+        passwordNeedsNumber: tv("passwordNeedsNumber"),
+        passwordNeedsSpecial: tv("passwordNeedsSpecial"),
+        confirmPasswordRequired: tv("confirmPasswordRequired"),
+        passwordsMismatch: tv("passwordsMismatch"),
+      }),
+    [tv],
+  );
+
   const {
     handleSubmit,
     register,
@@ -55,7 +69,7 @@ export default function ResetPasswordPage() {
   /* --------------------------------- Methods ---------------------------------- */
   const onSubmit = async (data: TResetPasswordForm) => {
     setIsSubmitted(true);
-    await resetPassword(data.token, data.password, data.confirmPassword);
+    await resetPassword(data.token ?? "", data.password, data.confirmPassword);
   };
 
   /* --------------------------------- Effects ---------------------------------- */
@@ -172,7 +186,7 @@ export default function ResetPasswordPage() {
       </div>
 
       {/* Right Section: Image Poster */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary relative overflow-hidden tablet-md:hidden">
+      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-md:hidden">
         {/* Decorative Circles Section */}
         <div className="absolute -top-20 -right-20 size-72 rounded-full bg-white/5" />
         <div className="absolute -bottom-32 -left-32 size-96 rounded-full bg-white/5" />

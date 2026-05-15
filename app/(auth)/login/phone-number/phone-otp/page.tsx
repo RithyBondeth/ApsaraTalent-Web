@@ -321,7 +321,7 @@ export default function PhoneOTPPage() {
       </div>
 
       {/* Right Section: Image Poster */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary relative overflow-hidden tablet-md:hidden">
+      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-md:hidden">
         <Image
           src={phoneOTPWhiteSvg}
           alt="phone-otp"

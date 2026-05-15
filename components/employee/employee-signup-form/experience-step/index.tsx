@@ -8,6 +8,7 @@ import LabelInput from "@/components/utils/forms/label-input";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { LucidePlus, LucideTrash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 import { Controller, useFieldArray } from "react-hook-form";
 import { IStepFormProps } from "../props";
@@ -17,6 +18,9 @@ export default function ExperienceStepForm({
   control,
   errors,
 }: IStepFormProps<TEmployeeSignUp>) {
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("auth");
+
   /* -------------------------------- Form Section ---------------------------- */
   const { fields, append, remove } = useFieldArray({
     control,
@@ -54,7 +58,7 @@ export default function ExperienceStepForm({
   return (
     <div className="flex flex-col gap-5 w-full max-h-[500px] overflow-y-auto">
       {/* Title Section */}
-      <TypographyH4>Add your experiences information</TypographyH4>
+      <TypographyH4>{t("empExperienceTitle")}</TypographyH4>
 
       {/* Experience Form Section */}
       {fields.map((field, index) => (
@@ -66,7 +70,7 @@ export default function ExperienceStepForm({
           {fields.length === 1 && (
             <div className="w-full mb-3">
               <TypographyMuted className="text-md">
-                Experience {index + 1}
+                {t("empExperienceLabel")} {index + 1}
               </TypographyMuted>
             </div>
           )}
@@ -75,7 +79,7 @@ export default function ExperienceStepForm({
           {fields.length > 1 && (
             <div className="w-full flex items-center justify-between mb-3">
               <TypographyMuted className="text-md">
-                Experience {index + 1}
+                {t("empExperienceLabel")} {index + 1}
               </TypographyMuted>
               <Button
                 variant="ghost"
@@ -90,10 +94,10 @@ export default function ExperienceStepForm({
 
           {/* Title Section */}
           <LabelInput
-            label="Title"
+            label={t("empExperienceFieldTitle")}
             input={
               <Input
-                placeholder="Title"
+                placeholder={t("empExperienceTitlePlaceholder")}
                 {...register(`experience.${index}.title`)}
                 validationMessage={errors?.experience?.[index]?.title?.message}
               />
@@ -102,10 +106,12 @@ export default function ExperienceStepForm({
 
           {/* Description Section */}
           <div className="w-full flex flex-col gap-1">
-            <TypographyMuted className="text-xs">Description</TypographyMuted>
+            <TypographyMuted className="text-xs">
+              {t("empExperienceDescription")}
+            </TypographyMuted>
             <Textarea
               autoResize
-              placeholder="Description"
+              placeholder={t("empExperienceDescriptionPlaceholder")}
               className="placeholder:text-sm"
               {...register(`experience.${index}.description`)}
               validationMessage={
@@ -118,13 +124,15 @@ export default function ExperienceStepForm({
           <div className="w-full flex items-center gap-4">
             {/* StartDate Section */}
             <div className="w-full flex flex-col gap-1">
-              <TypographyMuted className="text-xs">Start Date</TypographyMuted>
+              <TypographyMuted className="text-xs">
+                {t("empExperienceStartDate")}
+              </TypographyMuted>
               <Controller
                 control={control}
                 name={`experience.${index}.startDate`}
                 render={({ field }) => (
                   <DatePicker
-                    placeholder="Start Date"
+                    placeholder={t("empExperienceStartDatePlaceholder")}
                     date={field.value ? new Date(field.value) : undefined}
                     onDateChange={(date) =>
                       field.onChange(date ? new Date(date) : "")
@@ -139,13 +147,15 @@ export default function ExperienceStepForm({
 
             {/* EndDate Section */}
             <div className="w-full flex flex-col gap-1">
-              <TypographyMuted className="text-xs">End Date</TypographyMuted>
+              <TypographyMuted className="text-xs">
+                {t("empExperienceEndDate")}
+              </TypographyMuted>
               <Controller
                 control={control}
                 name={`experience.${index}.endDate`}
                 render={({ field }) => (
                   <DatePicker
-                    placeholder="End Date"
+                    placeholder={t("empExperienceEndDatePlaceholder")}
                     date={field.value ? new Date(field.value) : undefined}
                     onDateChange={(date) =>
                       field.onChange(date ? new Date(date) : "")
@@ -169,7 +179,7 @@ export default function ExperienceStepForm({
           type="button"
           onClick={addExperience}
         >
-          Add More
+          {t("addMore")}
           <LucidePlus className="ml-1" size={16} />
         </Button>
       </div>

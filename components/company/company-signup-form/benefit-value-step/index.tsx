@@ -11,8 +11,14 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import ErrorMessage from "@/components/utils/feedback/error-message";
 import IconLabel from "@/components/utils/data-display/icon-label";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { LucideCircleCheck, LucidePlus, LucideXCircle } from "lucide-react";
+import { SectionTitle } from "@/components/utils/layout/section-title";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import {
+  LucideCircleCheck,
+  LucidePlus,
+  LucideXCircle,
+  LucideZap,
+} from "lucide-react";
 import { useState } from "react";
 
 export default function BenefitValueStepForm({
@@ -22,7 +28,8 @@ export default function BenefitValueStepForm({
   errors,
 }: IStepFormProps<TCompanySignup>) {
   /* ---------------------------------- Utils --------------------------------- */
-  const t = useTranslations("toast");
+  const t = useTranslations("auth");
+  const tToast = useTranslations("toast");
 
   /* -------------------------------- All States ------------------------------ */
   // Benefits
@@ -48,9 +55,9 @@ export default function BenefitValueStepForm({
     );
 
     if (alreadyExists) {
-      toast.error(t("duplicatedBenefit"), {
-        description: t("pleaseInputAnotherBenefit"),
-        action: { label: t("tryAgain"), onClick: () => {} },
+      toast.error(tToast("duplicatedBenefit"), {
+        description: tToast("pleaseInputAnotherBenefit"),
+        action: { label: tToast("tryAgain"), onClick: () => {} },
       });
       return;
     }
@@ -75,9 +82,9 @@ export default function BenefitValueStepForm({
     );
 
     if (alreadyExists) {
-      toast.error(t("duplicatedValue"), {
-        description: t("pleaseInputAnotherValue"),
-        action: { label: t("tryAgain"), onClick: () => {} },
+      toast.error(tToast("duplicatedValue"), {
+        description: tToast("pleaseInputAnotherValue"),
+        action: { label: tToast("tryAgain"), onClick: () => {} },
       });
       return;
     }
@@ -112,120 +119,153 @@ export default function BenefitValueStepForm({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col items-start gap-8">
+    <div className="w-full flex flex-col items-start gap-5">
       {/* Benefit Section */}
-      <div className="w-full flex flex-col items-start gap-3">
-        {/* Benefit Title Section */}
-        <TypographyH4>Add company benefit information (Optional)</TypographyH4>
-        {/* Benefit List Section */}
-        <div className="flex flex-wrap gap-2">
-          {benefits.map((benefit) => (
-            <div
-              className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted"
-              key={benefit}
-            >
-              <IconLabel
-                icon={<LucideCircleCheck stroke="white" fill="#0073E6" />}
-                text={benefit}
-              />
-              <LucideXCircle
-                className="text-muted-foreground cursor-pointer"
-                width={"18px"}
-                onClick={() => removeBenefit(benefit)}
-              />
-            </div>
-          ))}
+      <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5">
+        <div className="w-full">
+          <SectionTitle
+            icon={<LucideCircleCheck />}
+            title={t("cmpBenefitTitle")}
+          />
         </div>
-        {/* Add Benefit Dialog Section */}
-        <Popover open={openBenefitPopOver} onOpenChange={setOpenBenefitPopOver}>
-          <PopoverTrigger asChild>
-            <Button
-              className="w-full text-xs"
-              type="button"
-              variant="secondary"
-            >
-              Add benefit
-              <LucidePlus />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
-            <Input
-              placeholder="Enter your benefit (e.g. Unlimited PTO, Yearly Tech Stipend etc.)"
-              value={benefitInput}
-              onChange={(e) => setBenefitInput(e.target.value)}
-            />
-            <div className="flex items-center gap-1 [&>button]:text-xs">
+        {/* Benefit List Section */}
+        <div className="w-full flex flex-col items-stretch gap-3">
+          <div className="w-full flex flex-wrap gap-3">
+            {benefits.length > 0 ? (
+              benefits.map((benefit) => (
+                <div
+                  className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs"
+                  key={benefit}
+                >
+                  <IconLabel
+                    icon={<LucideCircleCheck stroke="white" fill="#0073E6" />}
+                    className="[&>p]:text-[#0073E6] font-medium"
+                    text={benefit}
+                  />
+                  <LucideXCircle
+                    className="text-red-500 cursor-pointer"
+                    width={"18px"}
+                    onClick={() => removeBenefit(benefit)}
+                  />
+                </div>
+              ))
+            ) : (
+              <div className="w-full flex items-center justify-center py-2">
+                <TypographyMuted className="text-sm">
+                  {t("cmpBenefitEmpty")}
+                </TypographyMuted>
+              </div>
+            )}
+          </div>
+
+          {/* Add Benefit Dialog Section */}
+          <Popover
+            open={openBenefitPopOver}
+            onOpenChange={setOpenBenefitPopOver}
+          >
+            <PopoverTrigger asChild>
               <Button
-                variant="outline"
+                className="w-full text-xs"
                 type="button"
-                onClick={() => setOpenBenefitPopOver(false)}
+                variant="secondary"
               >
-                Cancel
+                {t("cmpBenefitAddBtn")}
+                <LucidePlus />
               </Button>
-              <Button type="button" onClick={addBenefits}>
-                Save
-              </Button>
-            </div>
-          </PopoverContent>
-        </Popover>
-        <ErrorMessage>
-          {errors?.benefitsAndValues?.benefits?.message}
-        </ErrorMessage>
+            </PopoverTrigger>
+            <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
+              <Input
+                placeholder={t("cmpBenefitPlaceholder")}
+                value={benefitInput}
+                onChange={(e) => setBenefitInput(e.target.value)}
+              />
+              <div className="flex items-center gap-1 [&>button]:text-xs">
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => setOpenBenefitPopOver(false)}
+                >
+                  {t("cancel")}
+                </Button>
+                <Button type="button" onClick={addBenefits}>
+                  {t("save")}
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+          <ErrorMessage>
+            {errors?.benefitsAndValues?.benefits?.message}
+          </ErrorMessage>
+        </div>
       </div>
 
       {/* Value Section */}
-      <div className="w-full flex flex-col items-start gap-3">
-        {/* Value Title Section */}
-        <TypographyH4>Add company value information (Optional)</TypographyH4>
-        {/* Value List Section */}
-        <div className="flex flex-wrap gap-2">
-          {values.map((value) => (
-            <div
-              className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted"
-              key={value}
-            >
-              <IconLabel
-                icon={<LucideCircleCheck stroke="white" fill="#69B41E" />}
-                text={value}
-              />
-              <LucideXCircle
-                className="text-muted-foreground cursor-pointer"
-                width={"18px"}
-                onClick={() => removeValue(value)}
-              />
-            </div>
-          ))}
+      <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5">
+        <div className="w-full">
+          <SectionTitle icon={<LucideZap />} title={t("cmpValueTitle")} />
         </div>
-        {/* Add Value Section */}
-        <Popover open={openValuePopOver} onOpenChange={setOpenValuePopOver}>
-          <PopoverTrigger asChild>
-            <Button
-              className="w-full text-xs"
-              type="button"
-              variant="secondary"
-            >
-              Add value
-              <LucidePlus />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
-            <Input
-              placeholder="Enter your value (e.g. Insurance, Employee Well-being etc.)"
-              value={valueInput}
-              onChange={(e) => setValueInput(e.target.value)}
-            />
-            <div className="flex items-center gap-1 [&>button]:text-xs">
+        {/* Value List Section */}
+        <div className="w-full flex flex-col items-stretch gap-3">
+          <div className="w-full flex flex-wrap gap-3">
+            {values.length > 0 ? (
+              values.map((value) => (
+                <div
+                  className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs"
+                  key={value}
+                >
+                  <IconLabel
+                    icon={<LucideCircleCheck stroke="white" fill="#69B41E" />}
+                    className="[&>p]:text-[#69B41E] font-medium"
+                    text={value}
+                  />
+                  <LucideXCircle
+                    className="text-red-500 cursor-pointer"
+                    width={"18px"}
+                    onClick={() => removeValue(value)}
+                  />
+                </div>
+              ))
+            ) : (
+              <div className="w-full flex items-center justify-center py-2">
+                <TypographyMuted className="text-sm">
+                  {t("cmpValueEmpty")}
+                </TypographyMuted>
+              </div>
+            )}
+          </div>
+          {/* Add Value Section */}
+          <Popover open={openValuePopOver} onOpenChange={setOpenValuePopOver}>
+            <PopoverTrigger asChild>
               <Button
+                className="w-full text-xs"
                 type="button"
-                variant="outline"
-                onClick={() => setOpenValuePopOver(false)}
+                variant="secondary"
               >
-                Cancel
+                {t("cmpValueAddBtn")}
+                <LucidePlus />
               </Button>
-              <Button onClick={addValues}>Save</Button>
-            </div>
-          </PopoverContent>
-        </Popover>
+            </PopoverTrigger>
+            <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
+              <Input
+                placeholder={t("cmpValuePlaceholder")}
+                value={valueInput}
+                onChange={(e) => setValueInput(e.target.value)}
+              />
+              <div className="flex items-center gap-1 [&>button]:text-xs">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setOpenValuePopOver(false)}
+                >
+                  {t("cancel")}
+                </Button>
+                <Button type="button" onClick={addValues}>
+                  {t("save")}
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
       </div>
     </div>
   );

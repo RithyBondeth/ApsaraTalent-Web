@@ -12,12 +12,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LucidePhone } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
-
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { phoneLoginSchema, TPhoneLoginForm } from "./validation";
+import { makePhoneLoginSchema, TPhoneLoginForm } from "./validation";
 import { phoneNumberWhiteSvg } from "@/utils/constants/asset.constant";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
@@ -25,6 +24,7 @@ export default function PhoneNumberPage() {
   /* ----------------------------------- Utils -------------------------------- */
   const router = useRouter();
   const t = useTranslations("auth");
+  const tv = useTranslations("validation");
 
   /* --------------------------------- All States ----------------------------- */
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
@@ -35,6 +35,11 @@ export default function PhoneNumberPage() {
   const { loading, error, message, isSuccess, loginOtp } = useLoginOTPStore();
 
   /* --------------------- React Hook Form: Phone OTP Form --------------------- */
+  const phoneLoginSchema = useMemo(
+    () => makePhoneLoginSchema({ phoneInvalid: tv("phoneInvalid") }),
+    [tv],
+  );
+
   const {
     handleSubmit,
     register,
@@ -88,7 +93,7 @@ export default function PhoneNumberPage() {
       <div className="w-1/2 min-h-screen flex items-center justify-center bg-background p-6 sm:p-10 tablet-md:w-full tablet-md:min-h-0 tablet-md:py-12">
         <div className="w-full max-w-[440px] flex flex-col gap-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
           {/* Logo Section */}
-          <LogoComponent className="!h-24 w-auto self-start" withoutTitle />
+          <LogoComponent variant="v2" className="!h-12 w-auto self-start" />
 
           {/* Title Section */}
           <div className="flex flex-col items-start">
@@ -143,7 +148,7 @@ export default function PhoneNumberPage() {
       </div>
 
       {/* Right Section: Image Poster */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary relative overflow-hidden tablet-md:hidden">
+      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-md:hidden">
         <Image
           src={phoneNumberWhiteSvg}
           alt="phone-number"

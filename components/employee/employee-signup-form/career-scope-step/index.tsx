@@ -1,10 +1,8 @@
 "use client";
 
 import { TEmployeeSignUp } from "@/app/(auth)/signup/employee/validation";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { IStepFormProps } from "../props";
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -24,13 +22,11 @@ import {
   PaginationEllipsis,
   PaginationItem,
   PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
 } from "@/components/ui/pagination";
 import ErrorMessage from "@/components/utils/feedback/error-message";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { LucideArrowLeft, LucideSearch } from "lucide-react";
+import { ChevronLeft, ChevronRight, LucideSearch } from "lucide-react";
 import { careerScopesListConstant } from "@/utils/constants/ui.constant";
 import { getPaginationPages } from "@/utils/functions/ui";
 import { useTranslations } from "next-intl";
@@ -42,8 +38,8 @@ export default function EmployeeCareerScopeStepForm({
   errors,
 }: IStepFormProps<TEmployeeSignUp>) {
   /* ---------------------------------- Utils --------------------------------- */
-  const router = useRouter();
-  const t = useTranslations("common");
+  const t = useTranslations("auth");
+  const tCommon = useTranslations("common");
   const itemsPerPage = 10;
   const totalPages = Math.ceil(careerScopesListConstant.length / itemsPerPage);
 
@@ -90,37 +86,29 @@ export default function EmployeeCareerScopeStepForm({
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col items-stretch gap-8">
-      {/* Back Button Section */}
-      <Button
-        className="absolute top-5 left-5"
-        type="button"
-        onClick={() => router.push("/signup")}
-      >
-        <LucideArrowLeft />
-        Back
-      </Button>
-
       {/* Title and SubTite Section */}
       <div className="phone-xl:mt-10">
-        <TypographyH4>Choose Your Career Opportunity</TypographyH4>
+        <TypographyH4>{t("careerScopeTitle")}</TypographyH4>
         <TypographyMuted className="text-md">
-          Connect with top professionals and explore new opportunities.
+          {t("careerScopeSubtitle")}
         </TypographyMuted>
       </div>
 
       {/* Search Section */}
       <Button variant="outline" onClick={() => setOpenSearchDialog(true)}>
         <LucideSearch />
-        Search your career
+        {t("careerScopeSearchBtn")}
       </Button>
 
       {/* Search Dialog Section */}
       <CommandDialog open={openSearchDialog} onOpenChange={setOpenSearchDialog}>
-        <DialogTitle className="sr-only">Search Careers</DialogTitle>
-        <CommandInput placeholder="Search for a career..." />
+        <DialogTitle className="sr-only">
+          {t("careerScopeSearchDialogTitle")}
+        </DialogTitle>
+        <CommandInput placeholder={t("careerScopeSearchPlaceholder")} />
         <CommandList>
-          <CommandEmpty>{t("noResultsFound")}</CommandEmpty>
-          <CommandGroup heading="Suggestions">
+          <CommandEmpty>{tCommon("noResultsFound")}</CommandEmpty>
+          <CommandGroup heading={t("careerScopeSuggestions")}>
             {careerScopesListConstant.slice(0, 5).map((item, index) => (
               <CommandItem key={index} className="flex items-center gap-2">
                 <Checkbox
@@ -166,12 +154,13 @@ export default function EmployeeCareerScopeStepForm({
       <Pagination className="mt-5">
         <PaginationContent>
           <PaginationItem>
-            <PaginationPrevious
+            <PaginationLink
               onClick={() => goToPage(Math.max(currentPage - 1, 1))}
-              className={
-                currentPage === 1 ? "pointer-events-none opacity-50" : ""
-              }
-            />
+              className={`gap-1 pl-2.5 ${currentPage === 1 ? "pointer-events-none opacity-50" : ""}`}
+            >
+              <ChevronLeft className="h-4 w-4" />
+              <span>{tCommon("previous")}</span>
+            </PaginationLink>
           </PaginationItem>
 
           {pageNumbers.map((page, index) => (
@@ -190,14 +179,13 @@ export default function EmployeeCareerScopeStepForm({
           ))}
 
           <PaginationItem>
-            <PaginationNext
+            <PaginationLink
               onClick={() => goToPage(Math.min(currentPage + 1, totalPages))}
-              className={
-                currentPage === totalPages
-                  ? "pointer-events-none opacity-50"
-                  : ""
-              }
-            />
+              className={`gap-1 pr-2.5 ${currentPage === totalPages ? "pointer-events-none opacity-50" : ""}`}
+            >
+              <span>{tCommon("next")}</span>
+              <ChevronRight className="h-4 w-4" />
+            </PaginationLink>
           </PaginationItem>
         </PaginationContent>
       </Pagination>

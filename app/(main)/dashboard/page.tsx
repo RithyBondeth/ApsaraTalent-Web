@@ -77,8 +77,8 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6 animate-page-in">
       {/* Header Section */}
-      <div className="flex flex-col items-start gap-1">
-        <TypographyH3>{t("title")}</TypographyH3>
+      <div className="flex flex-col items-start gap-1.5 pb-2 border-b border-border/50">
+        <TypographyH3 className="!m-0">{t("title")}</TypographyH3>
         <TypographyP className="!m-0 text-sm text-muted-foreground">
           {t("description")}
         </TypographyP>

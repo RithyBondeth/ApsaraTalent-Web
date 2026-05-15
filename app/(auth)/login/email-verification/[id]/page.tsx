@@ -103,7 +103,7 @@ export default function EmailVerificationPage() {
       </div>
 
       {/* Right Section: Image Poster Section */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary relative overflow-hidden tablet-md:hidden">
+      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-md:hidden">
         {/* Decorative Circles Section */}
         <div className="absolute -top-20 -right-20 size-72 rounded-full bg-white/5" />
         <div className="absolute -bottom-32 -left-32 size-96 rounded-full bg-white/5" />

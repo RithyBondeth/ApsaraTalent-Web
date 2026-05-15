@@ -26,7 +26,8 @@ export default function SkillReferenceStepForm({
   trigger,
 }: IStepFormProps<TEmployeeSignUp>) {
   /* ---------------------------------- Utils --------------------------------- */
-  const t = useTranslations("toast");
+  const t = useTranslations("auth");
+  const tToast = useTranslations("toast");
   const initialSkills = getValues?.("skillAndReference.skills") || [];
 
   /* -------------------------------- All States ------------------------------ */
@@ -44,9 +45,9 @@ export default function SkillReferenceStepForm({
       (skill) => skill.toLowerCase() === trimmed.toLowerCase(),
     );
     if (alreadyExists) {
-      toast.error(t("duplicatedSkill"), {
-        description: t("pleaseInputAnotherSkill"),
-        action: { label: t("tryAgain"), onClick: () => {} },
+      toast.error(tToast("duplicatedSkill"), {
+        description: tToast("pleaseInputAnotherSkill"),
+        action: { label: tToast("tryAgain"), onClick: () => {} },
       });
       return;
     }
@@ -74,7 +75,7 @@ export default function SkillReferenceStepForm({
     <div className="w-full flex flex-col items-start gap-8">
       {/* Skills Section */}
       <div className="w-full flex flex-col items-start gap-3">
-        <TypographyH4>Add your skills</TypographyH4>
+        <TypographyH4>{t("empSkillTitle")}</TypographyH4>
         <div className="flex flex-wrap gap-3">
           {skills.map((skill, index) => {
             const { bg } = getRandomBadgeColor(skill);
@@ -98,21 +99,21 @@ export default function SkillReferenceStepForm({
         <Popover open={openPopOver} onOpenChange={setOpenPopOver}>
           <PopoverTrigger asChild>
             <Button className="w-full text-xs" variant="secondary">
-              Add Skill
+              {t("empSkillAddBtn")}
               <LucidePlus />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
             <Input
-              placeholder="Enter your skill (e.g. PhotoShop, Figma)"
+              placeholder={t("empSkillPlaceholder")}
               value={skillInput}
               onChange={(e) => setSkillInput(e.target.value)}
             />
             <div className="flex items-center gap-1 [&>button]:text-xs">
               <Button variant="outline" onClick={() => setOpenPopOver(false)}>
-                Cancel
+                {t("cancel")}
               </Button>
-              <Button onClick={addSkill}>Save</Button>
+              <Button onClick={addSkill}>{t("save")}</Button>
             </div>
           </PopoverContent>
         </Popover>
@@ -125,12 +126,14 @@ export default function SkillReferenceStepForm({
 
       {/* References Section */}
       <div className="w-full flex flex-col items-start gap-3">
-        <TypographyH4>Add your references (Optional)</TypographyH4>
+        <TypographyH4>{t("empReferenceTitle")}</TypographyH4>
         <div className="w-full flex items-start gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
           {/* Resume Section */}
           {getValues?.("skillAndReference.resume") ? (
             <div className="flex flex-col items-start gap-2">
-              <TypographyMuted className="text-xs">Resume</TypographyMuted>
+              <TypographyMuted className="text-xs">
+                {t("empReferenceResume")}
+              </TypographyMuted>
               <div className="w-full flex justify-between items-center p-3 rounded-md bg-muted">
                 <TypographyMuted>
                   {getValues("skillAndReference.resume").name.trim()}
@@ -148,7 +151,7 @@ export default function SkillReferenceStepForm({
             </div>
           ) : (
             <LabelInput
-              label="Upload Resume"
+              label={t("empReferenceUploadResume")}
               input={
                 <Input
                   type="file"
@@ -173,7 +176,7 @@ export default function SkillReferenceStepForm({
           {getValues?.("skillAndReference.coverLetter") ? (
             <div className="flex flex-col items-start gap-2">
               <TypographyMuted className="text-xs">
-                Cover Letter
+                {t("empReferenceCoverLetter")}
               </TypographyMuted>
               <div className="w-full flex justify-between items-center p-3 rounded-md bg-muted">
                 <TypographyMuted>
@@ -192,7 +195,7 @@ export default function SkillReferenceStepForm({
             </div>
           ) : (
             <LabelInput
-              label="Upload Cover Letter"
+              label={t("empReferenceUploadCoverLetter")}
               input={
                 <Input
                   type="file"

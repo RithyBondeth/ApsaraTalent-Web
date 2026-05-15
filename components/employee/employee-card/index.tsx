@@ -62,7 +62,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
 
     return (
       <>
-        <div className="group relative w-full flex flex-col bg-card border border-muted rounded-xl overflow-hidden cursor-pointer transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_8px_30px_hsl(var(--foreground)/0.10)] hover:border-primary/30">
+        <div className="group relative w-full flex flex-col bg-card border border-border/70 rounded-2xl overflow-hidden cursor-pointer shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_16px_48px_hsl(var(--foreground)/0.13)] hover:border-primary/25">
           {/* Top Accent Bar On Hover Section */}
           <div className="absolute inset-x-0 top-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left z-10" />
 
@@ -173,7 +173,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
           </div>
 
           {/* Footer Section */}
-          <div className="flex items-center justify-end gap-2 px-4 pb-3 pt-2 border-t border-muted/50">
+          <div className="flex items-center justify-end gap-2 px-4 pb-3 pt-2 border-t border-border/50">
             {!props.hideSaveButton && (
               <Button
                 className="text-[11px] h-7 px-2.5 rounded-full gap-1"
@@ -207,7 +207,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
 
   // ─── Default Variant Section ─────────────────────────────────────────────────────────
   return (
-    <div className="h-fit w-full flex flex-col items-start gap-4 rounded-lg border border-muted p-3 shadow-sm cursor-pointer transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_8px_28px_hsl(var(--foreground)/0.1)] hover:border-primary/25">
+    <div className="h-fit w-full flex flex-col items-start gap-4 rounded-2xl border border-border/70 bg-card p-4 shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] cursor-pointer transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_12px_36px_hsl(var(--foreground)/0.11)] hover:border-primary/25">
       {/* Profile Section */}
       <div className="w-full flex flex-wrap items-start justify-between gap-3">
         {/* Avatar, Username, JobTitle and Location Section */}

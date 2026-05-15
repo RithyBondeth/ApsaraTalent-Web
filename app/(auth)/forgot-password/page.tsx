@@ -18,9 +18,9 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { forgotPasswordSchema, TForgotPasswordForm } from "./validate";
+import { makeForgotPasswordSchema, TForgotPasswordForm } from "./validate";
 import { forgotPasswordWhiteSvg } from "@/utils/constants/asset.constant";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
@@ -28,6 +28,7 @@ export default function ForgotPasswordPage() {
   /* ---------------------------------- Utils -------------------------------- */
   const router = useRouter();
   const t = useTranslations("auth");
+  const tv = useTranslations("validation");
 
   /* ------------------------------- All States ------------------------------ */
   const [inputValue, setInputValue] = useState<string>("");
@@ -37,6 +38,15 @@ export default function ForgotPasswordPage() {
   const { loading, error, message, forgotPassword } = useForgotPasswordStore();
 
   /* ------------------ React Hook Form: Forgot Password Form ----------------- */
+  const forgotPasswordSchema = useMemo(
+    () =>
+      makeForgotPasswordSchema({
+        phoneOrEmailRequired: tv("phoneOrEmailRequired"),
+        phoneOrEmailInvalid: tv("phoneOrEmailInvalid"),
+      }),
+    [tv],
+  );
+
   const {
     handleSubmit,
     register,
@@ -134,7 +144,7 @@ export default function ForgotPasswordPage() {
       </div>
 
       {/* Right Section: Image Poster Section */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary relative overflow-hidden tablet-md:hidden">
+      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-md:hidden">
         {/* Decorative Circles Section */}
         <div className="absolute -top-20 -right-20 size-72 rounded-full bg-white/5" />
         <div className="absolute -bottom-32 -left-32 size-96 rounded-full bg-white/5" />

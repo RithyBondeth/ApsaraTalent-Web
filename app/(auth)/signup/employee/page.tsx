@@ -22,15 +22,16 @@ import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { employeeSignUpSchema, TEmployeeSignUp } from "./validation";
+import { makeEmployeeSignUpSchema, TEmployeeSignUp } from "./validation";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 export default function EmployeeSignup() {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const t = useTranslations("auth");
+  const tv = useTranslations("validation");
   const totalSteps = 6;
 
   /* ------------------------------ All States -------------------------------- */
@@ -51,6 +52,41 @@ export default function EmployeeSignup() {
   const empSignup = useEmployeeSignupStore();
 
   /* ------------------ React Hook Form: Employee Signup Form ----------------- */
+  const employeeSignUpSchema = useMemo(
+    () =>
+      makeEmployeeSignUpSchema({
+        yearsOfExperienceRequired: tv("yearsOfExperienceRequired"),
+        availabilityRequired: tv("availabilityRequired"),
+        endDateAfterStart: tv("endDateAfterStart"),
+        startDateRequired: tv("startDateRequired"),
+        endDateRequired: tv("endDateRequired"),
+        graduationYearRequired: tv("graduationYearRequired"),
+        atLeastOneSkill: tv("atLeastOneSkill"),
+        atLeastOneCareer: tv("atLeastOneCareer"),
+        fieldRequired: (field) => {
+          const labels: Record<string, string> = {
+            Profession: tv("fieldLabelProfession"),
+            Description: tv("fieldLabelDescription"),
+            Title: tv("fieldLabelTitle"),
+            School: tv("fieldLabelSchool"),
+            Degree: tv("fieldLabelDegree"),
+          };
+          return tv("fieldRequired", { field: labels[field] ?? field });
+        },
+        fieldTooLong: (field, max) => {
+          const labels: Record<string, string> = {
+            Profession: tv("fieldLabelProfession"),
+            Description: tv("fieldLabelDescription"),
+            Title: tv("fieldLabelTitle"),
+            School: tv("fieldLabelSchool"),
+            Degree: tv("fieldLabelDegree"),
+          };
+          return tv("fieldTooLong", { field: labels[field] ?? field, max });
+        },
+      }),
+    [tv],
+  );
+
   const methods = useForm<TEmployeeSignUp>({
     mode: "onChange",
     resolver: zodResolver(employeeSignUpSchema),
@@ -376,14 +412,14 @@ export default function EmployeeSignup() {
         className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors w-fit"
       >
         <LucideArrowLeft className="size-4" />
-        Back to basic info
+        {t("backToBasicInfo")}
       </button>
 
       {/* Header Section */}
       <div>
-        <TypographyH2>Sign up as employee</TypographyH2>
+        <TypographyH2>{t("signupAsEmployee")}</TypographyH2>
         <TypographyMuted className="text-md">
-          Explore your dream job with our platform, Apsara Talent.
+          {t("employeeSignupSubtitle")}
         </TypographyMuted>
       </div>
 
@@ -486,7 +522,7 @@ export default function EmployeeSignup() {
                 className="flex-1 sm:flex-initial sm:min-w-[140px]"
               >
                 <LucideArrowLeft />
-                Back
+                {t("back")}
               </Button>
             ) : (
               <div className="hidden sm:block" />
@@ -503,7 +539,7 @@ export default function EmployeeSignup() {
                 uploadCoverLetter.loading
               }
             >
-              {step === totalSteps ? "Submit" : "Next"}
+              {step === totalSteps ? t("submit") : t("next")}
               <LucideArrowRight />
             </Button>
           </div>

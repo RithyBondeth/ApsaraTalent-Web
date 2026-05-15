@@ -38,8 +38,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, FieldErrors, useForm } from "react-hook-form";
 import {
-  basicSignupCompanySchema,
-  basicSignupEmployeeSchema,
+  makeBasicSignupCompanySchema,
+  makeBasicSignupEmployeeSchema,
   TBasicSignupCompanySchema,
   TBasicSignupEmployeeSchema,
 } from "./validation";
@@ -49,6 +49,36 @@ export default function SignupPage() {
   /* --------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const t = useTranslations("auth");
+  const tv = useTranslations("validation");
+  const tLoc = useTranslations("locations");
+
+  const locationLabels: Record<string, string> = {
+    "Phnom Penh": tLoc("phnomPenh"),
+    "Banteay Meanchey": tLoc("banteayMeanchey"),
+    Battambang: tLoc("battambang"),
+    "Kampong Cham": tLoc("kampongCham"),
+    "Kampong Chhnang": tLoc("kampongChhnang"),
+    "Kampong Speu": tLoc("kampongSpeu"),
+    "Kampong Thom": tLoc("kampongThom"),
+    Kampot: tLoc("kampot"),
+    Kandal: tLoc("kandal"),
+    Kep: tLoc("kep"),
+    "Koh Kong": tLoc("kohKong"),
+    Kratie: tLoc("kratie"),
+    Mondulkiri: tLoc("mondulkiri"),
+    "Oddar Meanchey": tLoc("oddarMeanchey"),
+    Pailin: tLoc("pailin"),
+    "Preah Sihanouk": tLoc("preahSihanouk"),
+    "Preah Vihear": tLoc("preahVihear"),
+    "Prey Veng": tLoc("preyVeng"),
+    Pursat: tLoc("pursat"),
+    Ratanakiri: tLoc("ratanakiri"),
+    "Siem Reap": tLoc("siemReap"),
+    "Stung Treng": tLoc("stungTreng"),
+    "Svay Rieng": tLoc("svayRieng"),
+    Takeo: tLoc("takeo"),
+    "Tbong Khmum": tLoc("tbongKhmum"),
+  };
   const { theme } = useThemeStore();
 
   /* -------------------------------- All States ------------------------------ */
@@ -87,8 +117,29 @@ export default function SignupPage() {
   const isEmployeeForm = selectedRole === "employee";
 
   /* ----------------------- React Hook Form: Emp and Cmp Signup Form ---------------------- */
+  const signupMessages = useMemo(
+    () => ({
+      phoneInvalid: tv("phoneInvalid"),
+      emailRequired: tv("emailRequired"),
+      emailInvalid: tv("emailInvalid"),
+      passwordRequired: tv("passwordRequired"),
+      passwordMinLength: tv("passwordMinLength"),
+      passwordNeedsNumber: tv("passwordNeedsNumber"),
+      passwordNeedsSpecial: tv("passwordNeedsSpecial"),
+      confirmPasswordRequired: tv("confirmPasswordRequired"),
+      passwordsMismatch: tv("passwordsMismatch"),
+      firstNameRequired: tv("firstNameRequired"),
+      lastNameRequired: tv("lastNameRequired"),
+      dobRequired: tv("dobRequired"),
+      usernameRequired: tv("usernameRequired"),
+      locationRequired: tv("locationRequired"),
+      genderRequired: tv("genderRequired"),
+    }),
+    [tv],
+  );
+
   const cmpForm = useForm<TBasicSignupCompanySchema>({
-    resolver: zodResolver(basicSignupCompanySchema),
+    resolver: zodResolver(makeBasicSignupCompanySchema(signupMessages)),
     defaultValues: {
       email: "",
       phone: "",
@@ -98,7 +149,7 @@ export default function SignupPage() {
   });
 
   const empForm = useForm<TBasicSignupEmployeeSchema>({
-    resolver: zodResolver(basicSignupEmployeeSchema),
+    resolver: zodResolver(makeBasicSignupEmployeeSchema(signupMessages)),
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -236,10 +287,7 @@ export default function SignupPage() {
   return (
     <div className="w-full max-w-[620px] flex flex-col gap-5 tablet-sm:max-w-full">
       {/* Logo Section */}
-      <LogoComponent
-        isBlackLogo={theme === "light" ? false : true}
-        className="!h-12 w-auto self-start"
-      />
+      <LogoComponent variant="v2" className="!h-12 w-auto self-start" />
 
       {/* Title Section */}
       <div className="flex flex-col items-start">
@@ -251,110 +299,109 @@ export default function SignupPage() {
 
       {/* Form Section */}
       <form
-        className="w-full flex flex-col gap-4"
+        className="w-full flex flex-col gap-6"
         onSubmit={
           isEmployeeForm
             ? empForm.handleSubmit(onSubmitEmployee)
             : cmpForm.handleSubmit(onSubmitCompany)
         }
       >
-        {/* Employee: Firstname & Lastname Section */}
+        {/* Employee Information Section */}
         {isEmployeeForm && (
-          <div className="flex items-center gap-3 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
-            <Input
-              placeholder={t("firstname")}
-              type="text"
-              {...empForm.register("firstName")}
-              validationMessage={employeeErrors.firstName?.message}
-            />
-            <Input
-              placeholder={t("lastname")}
-              type="text"
-              {...empForm.register("lastName")}
-              validationMessage={employeeErrors.lastName?.message}
-            />
-          </div>
-        )}
+          <div className="flex flex-col gap-4">
+            {/* Divider Section */}
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest whitespace-nowrap">
+                {t("signupSectionPersonal")}
+              </span>
+              <div className="flex-1 h-px bg-border" />
+            </div>
 
-        {/* Employee: DOB Section */}
-        {isEmployeeForm && (
-          <div className="w-full flex flex-col items-start gap-1">
-            <Controller
-              name="dob"
-              control={empForm.control}
-              render={({ field }) => {
-                const selectedDate = field.value
-                  ? new Date(field.value)
-                  : undefined;
-                const safeDate =
-                  selectedDate instanceof Date &&
-                  !Number.isNaN(selectedDate.getTime())
-                    ? selectedDate
-                    : undefined;
+            {/* Employee: Firstname & Lastname Section */}
+            <div className="flex items-start gap-3 tablet-sm:flex-col">
+              <Input
+                placeholder={t("firstname")}
+                type="text"
+                {...empForm.register("firstName")}
+                validationMessage={employeeErrors.firstName?.message}
+              />
+              <Input
+                placeholder={t("lastname")}
+                type="text"
+                {...empForm.register("lastName")}
+                validationMessage={employeeErrors.lastName?.message}
+              />
+            </div>
 
-                return (
-                  <DatePicker
-                    placeholder={t("dateOfBirth")}
-                    date={safeDate}
-                    onDateChange={(date) =>
-                      field.onChange(date ? formatDateForField(date) : "")
-                    }
-                    dateFormat="dd MMM yyyy"
-                  />
-                );
-              }}
-            />
-            <ErrorMessage>{employeeErrors.dob?.message}</ErrorMessage>
-          </div>
-        )}
-
-        {/* Employee: Username & Location Section */}
-        <div className="w-full flex items-center gap-3 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
-          {isEmployeeForm && (
-            <Input
-              type="text"
-              placeholder={t("username")}
-              className="w-full"
-              {...empForm.register("username")}
-              validationMessage={employeeErrors.username?.message}
-            />
-          )}
-          {isEmployeeForm && (
+            {/* Employee: DOB Section */}
             <div className="w-full flex flex-col items-start gap-1">
               <Controller
-                name="selectedLocation"
+                name="dob"
                 control={empForm.control}
-                render={({ field }) => (
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value || ""}
-                  >
-                    <SelectTrigger className="h-12 text-muted-foreground">
-                      <SelectValue placeholder={t("location")} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {locationConstant.map((location, index) => (
-                        <SelectItem key={index} value={location}>
-                          {location}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                render={({ field }) => {
+                  const selectedDate = field.value
+                    ? new Date(field.value)
+                    : undefined;
+                  const safeDate =
+                    selectedDate instanceof Date &&
+                    !Number.isNaN(selectedDate.getTime())
+                      ? selectedDate
+                      : undefined;
+                  return (
+                    <DatePicker
+                      placeholder={t("dateOfBirth")}
+                      date={safeDate}
+                      onDateChange={(date) =>
+                        field.onChange(date ? formatDateForField(date) : "")
+                      }
+                      dateFormat="dd MMM yyyy"
+                    />
+                  );
+                }}
               />
-              <ErrorMessage>
-                {typeof employeeErrors.selectedLocation?.message === "string"
-                  ? employeeErrors.selectedLocation?.message
-                  : null}
-              </ErrorMessage>
+              <ErrorMessage>{employeeErrors.dob?.message}</ErrorMessage>
             </div>
-          )}
-        </div>
 
-        <div className="flex flex-col items-stretch gap-4">
-          <div className="flex gap-3 [&>select]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
-            {/* Employee: Gender Section */}
-            {isEmployeeForm && (
+            {/* Employee: Username & Location Section */}
+            <div className="flex items-start gap-3 tablet-sm:flex-col">
+              <Input
+                type="text"
+                placeholder={t("username")}
+                {...empForm.register("username")}
+                validationMessage={employeeErrors.username?.message}
+              />
+              <div className="w-full flex flex-col items-start gap-1">
+                <Controller
+                  name="selectedLocation"
+                  control={empForm.control}
+                  render={({ field }) => (
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value || ""}
+                    >
+                      <SelectTrigger className="h-12 text-muted-foreground">
+                        <SelectValue placeholder={t("location")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {locationConstant.map((location, index) => (
+                          <SelectItem key={index} value={location}>
+                            {locationLabels[location] ?? location}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                <ErrorMessage>
+                  {typeof employeeErrors.selectedLocation?.message === "string"
+                    ? employeeErrors.selectedLocation?.message
+                    : null}
+                </ErrorMessage>
+              </div>
+            </div>
+
+            {/* Employee: Gender & Phone Section */}
+            <div className="flex items-start gap-3 tablet-sm:flex-col">
               <div className="w-full flex flex-col items-start gap-1">
                 <Controller
                   name="gender"
@@ -370,7 +417,7 @@ export default function SignupPage() {
                       <SelectContent>
                         {genderConstant.map((gender) => (
                           <SelectItem key={gender.id} value={gender.value}>
-                            {gender.label}
+                            {t(`gender${gender.label as "Male" | "Female"}`)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -383,28 +430,37 @@ export default function SignupPage() {
                     : null}
                 </ErrorMessage>
               </div>
-            )}
-            {/* Employee & Company: Phone Number Section */}
-            {isEmployeeForm ? (
               <Input
                 type="number"
                 placeholder={t("mobile")}
-                className="w-full"
                 {...empForm.register("phone")}
                 validationMessage={employeeErrors.phone?.message}
               />
-            ) : (
-              <Input
-                type="number"
-                placeholder={t("mobile")}
-                className="w-full"
-                {...cmpForm.register("phone")}
-                validationMessage={companyErrors.phone?.message}
-              />
-            )}
+            </div>
+          </div>
+        )}
+
+        {/* Employee: Account Security Section */}
+        <div className="flex flex-col gap-4">
+          {/* Divider Section */}
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest whitespace-nowrap">
+              {t("signupSectionAccount")}
+            </span>
+            <div className="flex-1 h-px bg-border" />
           </div>
 
-          {/* Employee & Company: Email Section */}
+          {/* Company: Phone Section */}
+          {!isEmployeeForm && (
+            <Input
+              type="number"
+              placeholder={t("mobile")}
+              {...cmpForm.register("phone")}
+              validationMessage={companyErrors.phone?.message}
+            />
+          )}
+
+          {/* Employee and Company: Email Section */}
           {isEmployeeForm ? (
             <Input
               prefix={<LucideMail strokeWidth={"1.3px"} />}
@@ -423,7 +479,7 @@ export default function SignupPage() {
             />
           )}
 
-          {/* Employee & Company: Password Section */}
+          {/* Employee and Company: Password Section */}
           {isEmployeeForm ? (
             <Input
               prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
@@ -468,7 +524,7 @@ export default function SignupPage() {
             />
           )}
 
-          {/* Employee & Company: Confirm Password Section */}
+          {/* Employee and Company: Confirm Password Section */}
           {isEmployeeForm ? (
             <Input
               prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
@@ -514,7 +570,7 @@ export default function SignupPage() {
           )}
         </div>
 
-        {/* Employee & Company: Back & Next Buttons Section */}
+        {/* Back & Next Buttons Section */}
         <div className="flex items-center gap-3 tablet-sm:flex-col">
           <Button
             type="button"
@@ -526,8 +582,8 @@ export default function SignupPage() {
             {t("back")}
           </Button>
           <Button className="flex-1 tablet-sm:w-full" type="submit">
-            <LucideArrowRight />
             {t("next")}
+            <LucideArrowRight />
           </Button>
         </div>
       </form>

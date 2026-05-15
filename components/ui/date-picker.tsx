@@ -1,13 +1,17 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { enUS, km } from "date-fns/locale";
 import { format, isValid } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import { useLocale } from "next-intl";
 
 interface DatePickerProps {
   date: Date | undefined;
@@ -28,6 +32,7 @@ export function DatePicker({
   popoverSide = "bottom",
   dateFormat = "PPP",
 }: DatePickerProps) {
+  const locale = useLocale() === "km" ? km : enUS;
   const isValidDate = date instanceof Date && isValid(date);
 
   return (
@@ -44,7 +49,11 @@ export function DatePicker({
           )}
           disabled={disabled}
         >
-          {isValidDate ? format(date, dateFormat) : <span>{placeholder}</span>}
+          {isValidDate ? (
+            format(date, dateFormat, { locale })
+          ) : (
+            <span>{placeholder}</span>
+          )}
           <CalendarIcon className="ml-auto h-5 w-5 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -58,6 +67,7 @@ export function DatePicker({
           fromYear={1900}
           toYear={new Date().getFullYear() + 10}
           captionLayout="dropdown-buttons"
+          locale={locale}
         />
       </PopoverContent>
     </Popover>

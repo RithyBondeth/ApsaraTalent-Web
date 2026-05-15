@@ -9,12 +9,20 @@ export default {
     "./utils/**/*.{js,ts,jsx,tsx}",
   ],
   safelist: [
-	{
-	  pattern: /bg-(blue|green|purple|yellow|pink|indigo|red|teal|orange|emerald|cyan|rose)-100/,
-	},
-	{
-	  pattern: /text-(blue|green|purple|yellow|pink|indigo|red|teal|orange|emerald|cyan|rose)-800/,
-	},
+    {
+      pattern: /bg-(blue|green|purple|yellow|pink|indigo|red|teal|orange|emerald|cyan|rose)-100/,
+    },
+    {
+      pattern: /text-(blue|green|purple|yellow|pink|indigo|red|teal|orange|emerald|cyan|rose)-800/,
+    },
+    {
+      pattern: /bg-(blue|green|purple|yellow|pink|indigo|red|teal|orange|emerald|cyan|rose)-500\/15/,
+      variants: ["dark"],
+    },
+    {
+      pattern: /text-(blue|green|purple|yellow|pink|indigo|red|teal|orange|emerald|cyan|rose)-300/,
+      variants: ["dark"],
+    },
   ],
   theme: {
   	extend: {

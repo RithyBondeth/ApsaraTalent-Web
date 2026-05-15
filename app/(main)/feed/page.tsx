@@ -483,7 +483,7 @@ export default function FeedPage() {
       {isLoading ? (
         <FeedBannerSkeleton />
       ) : isEmployee ? (
-        <div className="w-full flex items-center justify-between gap-6 lg:gap-10 tablet-xl:flex-col tablet-xl:items-center">
+        <div className="w-full flex items-center justify-between gap-6 lg:gap-10 tablet-xl:flex-col tablet-xl:items-center rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8">
           {/* Employee Banner Section: Content */}
           <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
             <TypographyH2 className="!leading-relaxed text-2xl sm:text-4xl tablet-xl:text-3xl tablet-xl:text-center">
@@ -511,7 +511,7 @@ export default function FeedPage() {
           />
         </div>
       ) : (
-        <div className="w-full flex items-center justify-between gap-5 tablet-xl:flex-col tablet-xl:items-center">
+        <div className="w-full flex items-center justify-between gap-6 lg:gap-10 tablet-xl:flex-col tablet-xl:items-center rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8">
           {/* Company Banner Section: Content */}
           <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
             <TypographyH2 className="leading-relaxed tablet-xl:text-center">
@@ -634,17 +634,17 @@ export default function FeedPage() {
         <FeedDividerSkeleton />
       ) : (
         <div className="w-full flex items-center gap-4">
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-2 shrink-0 bg-card border border-border/70 rounded-full px-3 py-1.5 shadow-[0_1px_4px_hsl(var(--foreground)/0.06)]">
             {isEmployee ? (
-              <Building2 className="h-5 w-5 text-primary" />
+              <Building2 className="h-4 w-4 text-primary" />
             ) : (
-              <Users className="h-5 w-5 text-primary" />
+              <Users className="h-4 w-4 text-primary" />
             )}
-            <TypographyH4>
+            <span className="text-sm font-semibold text-foreground/80">
               {isEmployee ? tFeed("allCompanies") : tFeed("allTalent")}
-            </TypographyH4>
+            </span>
           </div>
-          <div className="flex-1 h-px bg-border" />
+          <div className="flex-1 h-px bg-border/60" />
         </div>
       )}
 

@@ -52,9 +52,9 @@ import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { loginSchema, TLoginForm } from "./validation";
+import { makeLoginSchema, TLoginForm } from "./validation";
 import { loginBlackSvg, loginWhiteSvg } from "@/utils/constants/asset.constant";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
@@ -63,6 +63,7 @@ function LoginPage() {
   const router = useRouter();
   const { resolvedTheme } = useTheme();
   const t = useTranslations("auth");
+  const tv = useTranslations("validation");
 
   /* -------------------------------- All States ------------------------------- */
   const [mounted, setMounted] = useState<boolean>(false);
@@ -117,6 +118,19 @@ function LoginPage() {
   const facebookLoginStore = useFacebookLoginStore();
 
   /* ----------------------- React Hook Form: Login Form ----------------------- */
+  const loginSchema = useMemo(
+    () =>
+      makeLoginSchema({
+        emailRequired: tv("emailRequired"),
+        emailInvalid: tv("emailInvalid"),
+        passwordRequired: tv("passwordRequired"),
+        passwordMinLength: tv("passwordMinLength"),
+        passwordNeedsNumber: tv("passwordNeedsNumber"),
+        passwordNeedsSpecial: tv("passwordNeedsSpecial"),
+      }),
+    [tv],
+  );
+
   const {
     handleSubmit,
     register,
@@ -457,7 +471,7 @@ function LoginPage() {
         <div className="w-full max-w-[480px] flex flex-col gap-4 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
           {/* Logo & Title Section */}
           <div className="flex flex-col items-start gap-1">
-            <LogoComponent className="!h-16 w-auto self-start" withoutTitle />
+            <LogoComponent variant="v2" className="!h-12 w-auto self-start" />
             <TypographyH2 className="phone-xl:text-2xl">
               {t("loginPageTitle")}
             </TypographyH2>
@@ -600,7 +614,7 @@ function LoginPage() {
       </div>
 
       {/* Right Section: Image Poster Section */}
-      <div className="w-1/2 h-full flex items-center justify-center bg-primary relative overflow-hidden tablet-lg:hidden">
+      <div className="w-1/2 h-full flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-lg:hidden">
         {/* Decorative circles Section */}
         <div className="absolute -top-20 -right-20 size-64 rounded-full bg-white/5" />
         <div className="absolute -bottom-16 -left-16 size-48 rounded-full bg-white/5" />

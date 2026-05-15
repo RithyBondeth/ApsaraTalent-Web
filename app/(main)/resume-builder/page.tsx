@@ -4,7 +4,6 @@ import ResumeBuilderBanner from "@/components/resume-builder/banner";
 import ResumeBuilderFeature from "@/components/resume-builder/feature";
 import ResumeBuilderGenerate from "@/components/resume-builder/generate";
 import TemplateCard from "@/components/resume-builder/template";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { useGetAllTemplateStore } from "@/stores/apis/resume/get-all-template.store";
 import { useResumeEditStore } from "@/stores/apis/resume/resume-edit.store";
 import { useTemplateSelectionStore } from "@/stores/apis/resume/template-selection.store";
@@ -106,11 +105,16 @@ export default function ResumeBuilder() {
       <ResumeBuilderBanner />
 
       {/* Template Grid Section */}
-      <div className="w-full">
-        <div className="w-full flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between">
-          <TypographyH4>{t("chooseTemplate")}</TypographyH4>
+      <div className="w-full flex flex-col gap-3">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 shrink-0 bg-card border border-border/70 rounded-full px-3 py-1.5 shadow-[0_1px_4px_hsl(var(--foreground)/0.06)]">
+            <span className="text-sm font-semibold text-foreground/80">
+              {t("chooseTemplate")}
+            </span>
+          </div>
+          <div className="flex-1 h-px bg-border/60" />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 my-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {templateData && templateData.length > 0
             ? templateData.map((resume) => {
                 const mapped = templateMap[resume.title];

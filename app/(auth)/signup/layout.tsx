@@ -17,7 +17,7 @@ export default function SignupLayout({ children }: { children: ReactNode }) {
       </div>
 
       {/* Image Poster Section */}
-      <div className="w-1/2 min-h-screen flex justify-center items-center bg-primary px-8 py-10 relative overflow-hidden tablet-xl:hidden">
+      <div className="w-1/2 min-h-screen flex justify-center items-center bg-primary dark:bg-secondary px-8 py-10 relative overflow-hidden tablet-xl:hidden">
         <div className="absolute -top-20 -right-20 size-64 rounded-full bg-white/5" />
         <div className="absolute -bottom-10 -left-10 size-48 rounded-full bg-white/5" />
         <div className="absolute top-1/3 left-10 size-32 rounded-full bg-white/[0.03]" />

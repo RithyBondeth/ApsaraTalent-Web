@@ -13,6 +13,7 @@ import {
   LucideSchool,
   LucideTrash2,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import {
   Controller,
   useFieldArray,
@@ -28,6 +29,9 @@ export default function EducationStepForm({
   errors,
   control,
 }: IStepFormProps<TEmployeeSignUp>) {
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("auth");
+
   /* ---------------------------------- Form --------------------------------- */
   const { fields, append, remove } = useFieldArray({
     control,
@@ -48,7 +52,7 @@ export default function EducationStepForm({
   return (
     <div className="flex flex-col gap-5 w-full max-h-[500px] overflow-y-auto">
       {/* Title Section */}
-      <TypographyH4>Add your education information</TypographyH4>
+      <TypographyH4>{t("empEducationTitle")}</TypographyH4>
 
       {/* Education Form Section */}
       {fields.map((field, index) => (
@@ -60,7 +64,7 @@ export default function EducationStepForm({
           {fields.length === 1 && (
             <div className="w-full mb-3">
               <TypographyMuted className="text-md">
-                Education {index + 1}
+                {t("empEducationLabel")} {index + 1}
               </TypographyMuted>
             </div>
           )}
@@ -69,7 +73,7 @@ export default function EducationStepForm({
           {fields.length > 1 && (
             <div className="w-full flex items-center justify-between mb-3">
               <TypographyMuted className="text-md">
-                Education {index + 1}
+                {t("empEducationLabel")} {index + 1}
               </TypographyMuted>
               <Button
                 variant="ghost"
@@ -85,10 +89,10 @@ export default function EducationStepForm({
           {/* School Section */}
           <div className="w-full flex flex-col items-start gap-2">
             <LabelInput
-              label="School"
+              label={t("empEducationSchool")}
               input={
                 <Input
-                  placeholder="School"
+                  placeholder={t("empEducationSchoolPlaceholder")}
                   id={`school-${index}`}
                   {...register(`educations.${index}.school`)}
                   prefix={<LucideSchool />}
@@ -116,7 +120,7 @@ export default function EducationStepForm({
                 htmlFor={`isStudying-${index}`}
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground"
               >
-                I am currently studying here
+                {t("empEducationCurrentlyStudying")}
               </label>
             </div>
           </div>
@@ -139,7 +143,7 @@ export default function EducationStepForm({
           className="text-xs"
           onClick={addEducation}
         >
-          Add More
+          {t("addMore")}
           <LucidePlus />
         </Button>
       </div>
@@ -158,6 +162,9 @@ function IsStudyingWatcher({
   register: UseFormRegister<TEmployeeSignUp>;
   errors: FieldErrors<TEmployeeSignUp> | undefined;
 }) {
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("auth");
+
   /* -------------------------------- All States ------------------------------ */
   const isStudying = useWatch({
     control,
@@ -169,11 +176,13 @@ function IsStudyingWatcher({
     <div className="w-full flex flex-col gap-3">
       {/* Degree Section */}
       <LabelInput
-        label="Degree"
+        label={t("empEducationDegree")}
         input={
           <Input
             placeholder={
-              isStudying ? "e.g. Pursuing Bachelor's, Undergrad" : "Degree"
+              isStudying
+                ? t("empEducationDegreePursuingPlaceholder")
+                : t("empEducationDegreePlaceholder")
             }
             id={`degree-${index}`}
             {...register(`educations.${index}.degree`)}
@@ -187,7 +196,9 @@ function IsStudyingWatcher({
       <div className="w-full flex flex-col items-start gap-2">
         <div className="w-full flex flex-col items-start gap-2">
           <TypographyMuted className="text-xs">
-            {isStudying ? "Expected Graduation Year" : "Graduation Year"}
+            {isStudying
+              ? t("empEducationExpectedGraduationYear")
+              : t("empEducationGraduationYear")}
           </TypographyMuted>
           <Controller
             name={`educations.${index}.year`}
@@ -195,7 +206,9 @@ function IsStudyingWatcher({
             render={({ field }) => (
               <YearPicker
                 placeholder={
-                  isStudying ? "Expected Graduation Year" : "Graduation Year"
+                  isStudying
+                    ? t("empEducationExpectedGraduationYearPlaceholder")
+                    : t("empEducationGraduationYearPlaceholder")
                 }
                 year={field.value ? Number(field.value) : undefined}
                 onYearChange={(yr) => field.onChange(yr)}

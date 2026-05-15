@@ -27,7 +27,10 @@ import { INotification } from "@/utils/interfaces/notification/notification.inte
 
 /* ---------------------------------- Helper --------------------------------- */
 /** Fallback name parser for old notifications that pre-date the senderName data field. */
-function parseSenderNameFromMessage(type: string | null, message: string): string {
+function parseSenderNameFromMessage(
+  type: string | null,
+  message: string,
+): string {
   if (type === "like") {
     const m = message.match(/^(.+?) liked your/);
     if (m) return m[1];
@@ -125,51 +128,47 @@ export default function NotificationPage() {
     });
   }, [notifications, notificationFilter]);
 
-  const notificationButtonVariant = (currentFilter: TNotificationFilterType) =>
-    notificationFilter === currentFilter ? "default" : "secondary";
-
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col gap-4 sm:gap-5 px-2.5 sm:px-5 animate-page-in">
       {/* Header Section */}
-      <div className="w-full flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap items-center gap-2 [&>button]:text-xs tablet-sm:hidden">
-          <Button
-            variant={notificationButtonVariant("all")}
-            onClick={() => setNotificationFilter("all")}
-          >
-            {t("filterAll")}
-          </Button>
-          <Button
-            variant={notificationButtonVariant("match")}
-            onClick={() => setNotificationFilter("match")}
-          >
-            {t("filterMatches")}
-          </Button>
-          <Button
-            variant={notificationButtonVariant("message")}
-            onClick={() => setNotificationFilter("message")}
-          >
-            {t("filterMessages")}
-          </Button>
-          <Button
-            variant={notificationButtonVariant("like")}
-            onClick={() => setNotificationFilter("like")}
-          >
-            {t("filterLikes")}
-          </Button>
-          <Button
-            variant={notificationButtonVariant("interview")}
-            onClick={() => setNotificationFilter("interview")}
-          >
-            {t("filterInterviews")}
-          </Button>
-          <Button
-            variant={notificationButtonVariant("unread")}
-            onClick={() => setNotificationFilter("unread")}
-          >
-            {t("filterUnread")}
-          </Button>
+      <div className="w-full flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        {/* Pill Tabs Filter Section */}
+        <div className="flex items-center gap-1 bg-muted/60 rounded-full p-1 overflow-x-auto scrollbar-none tablet-sm:hidden">
+          {(
+            [
+              "all",
+              "match",
+              "message",
+              "like",
+              "interview",
+              "unread",
+            ] as TNotificationFilterType[]
+          ).map((f) => {
+            const labels: Record<TNotificationFilterType, string> = {
+              all: t("filterAll"),
+              match: t("filterMatches"),
+              message: t("filterMessages"),
+              like: t("filterLikes"),
+              interview: t("filterInterviews"),
+              unread: t("filterUnread"),
+            };
+            const active = notificationFilter === f;
+            return (
+              <button
+                key={f}
+                type="button"
+                onClick={() => setNotificationFilter(f)}
+                className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
+                  active
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {labels[f]}
+              </button>
+            );
+          })}
         </div>
 
         {/* Responsive Dropdown Section */}
@@ -303,17 +302,22 @@ export default function NotificationPage() {
 
             if (notification.type === "interview") {
               const rawMsg = notification.message ?? "";
-              const dataInterviewTitle = (notification.data?.interviewTitle as string) || "";
-              const dataSenderName = (notification.data?.senderName as string) || "";
+              const dataInterviewTitle =
+                (notification.data?.interviewTitle as string) || "";
+              const dataSenderName =
+                (notification.data?.senderName as string) || "";
 
               // Backwards-compat: extract parts from old English message format
               const scheduledSep = " wants to schedule an interview: ";
               const sepIdx = rawMsg.indexOf(scheduledSep);
-              const parsedSenderName = sepIdx !== -1 ? rawMsg.slice(0, sepIdx) : "";
-              const parsedInterviewTitle = sepIdx !== -1 ? rawMsg.slice(sepIdx + scheduledSep.length) : "";
+              const parsedSenderName =
+                sepIdx !== -1 ? rawMsg.slice(0, sepIdx) : "";
+              const parsedInterviewTitle =
+                sepIdx !== -1 ? rawMsg.slice(sepIdx + scheduledSep.length) : "";
 
               const resolvedSenderName = dataSenderName || parsedSenderName;
-              const resolvedInterviewTitle = dataInterviewTitle || parsedInterviewTitle;
+              const resolvedInterviewTitle =
+                dataInterviewTitle || parsedInterviewTitle;
 
               return (
                 <NotificationInterviewCard
@@ -322,11 +326,16 @@ export default function NotificationPage() {
                   seen={notification.isRead}
                   timestamp={notification.createdAt}
                   role={role}
-                  eventType={(notification.data?.eventType as string) ?? "interview_scheduled"}
+                  eventType={
+                    (notification.data?.eventType as string) ??
+                    "interview_scheduled"
+                  }
                   senderName={resolvedSenderName}
                   interviewTitle={resolvedInterviewTitle}
                   status={notification.data?.status as string | undefined}
-                  rawMessage={!resolvedInterviewTitle ? rawMsg || undefined : undefined}
+                  rawMessage={
+                    !resolvedInterviewTitle ? rawMsg || undefined : undefined
+                  }
                   user={notifUser}
                   onDelete={deleteNotification}
                 />

@@ -31,7 +31,8 @@ export default function OpenPositionStepForm({
   trigger,
 }: IStepFormProps<TCompanySignup>) {
   /* ---------------------------------- Utils --------------------------------- */
-  const t = useTranslations("toast");
+  const t = useTranslations("auth");
+  const tToast = useTranslations("toast");
 
   /* -------------------------------- All States ------------------------------ */
   const [skillInput, setSkillInput] = useState<string>("");
@@ -55,9 +56,9 @@ export default function OpenPositionStepForm({
       (skill) => skill.toLowerCase() === trimmed.toLowerCase(),
     );
     if (alreadyExists) {
-      toast.error(t("duplicatedSkill"), {
-        description: t("pleaseInputAnotherSkill"),
-        action: { label: t("tryAgain"), onClick: () => {} },
+      toast.error(tToast("duplicatedSkill"), {
+        description: tToast("pleaseInputAnotherSkill"),
+        action: { label: tToast("tryAgain"), onClick: () => {} },
       });
       return;
     }
@@ -106,7 +107,7 @@ export default function OpenPositionStepForm({
   return (
     <div className="flex flex-col gap-5 w-full max-h-[500px] overflow-y-auto">
       {/* Title Section */}
-      <TypographyH4>Add Open Position Information</TypographyH4>
+      <TypographyH4>{t("cmpOpenPositionTitle")}</TypographyH4>
 
       {/* Open Position Form Section */}
       {fields.map((field, index) => (
@@ -118,7 +119,7 @@ export default function OpenPositionStepForm({
           {fields.length > 1 && (
             <div className="w-full flex items-center justify-between mb-3">
               <TypographyMuted className="text-md">
-                Open Position {index + 1}
+                {t("cmpOpenPositionLabel")} {index + 1}
               </TypographyMuted>
               <Button
                 variant="ghost"
@@ -133,10 +134,10 @@ export default function OpenPositionStepForm({
 
           {/* Title Section */}
           <LabelInput
-            label="Title"
+            label={t("cmpOpenPositionFieldTitle")}
             input={
               <Input
-                placeholder="Title"
+                placeholder={t("cmpOpenPositionTitlePlaceholder")}
                 {...register(`openPositions.${index}.title`)}
                 validationMessage={
                   errors?.openPositions?.[index]?.title?.message
@@ -147,10 +148,10 @@ export default function OpenPositionStepForm({
 
           {/* Availability Section */}
           <LabelInput
-            label="Type"
+            label={t("cmpOpenPositionType")}
             input={
               <Input
-                placeholder="Type"
+                placeholder={t("cmpOpenPositionTypePlaceholder")}
                 {...register(`openPositions.${index}.types`)}
                 validationMessage={errors?.openPositions?.[
                   index
@@ -161,10 +162,12 @@ export default function OpenPositionStepForm({
 
           {/* Description Section */}
           <div className="w-full flex flex-col items-start gap-2">
-            <TypographyMuted className="text-xs">Description</TypographyMuted>
+            <TypographyMuted className="text-xs">
+              {t("cmpOpenPositionDescription")}
+            </TypographyMuted>
             <Textarea
               autoResize
-              placeholder="Description"
+              placeholder={t("cmpOpenPositionDescriptionPlaceholder")}
               className="placeholder:text-sm"
               {...register(`openPositions.${index}.description`)}
               validationMessage={
@@ -176,10 +179,10 @@ export default function OpenPositionStepForm({
           {/* Experience and Education Section */}
           <div className="w-full flex gap-3 [&>div]:w-1/2 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
             <LabelInput
-              label="Experience Required"
+              label={t("cmpOpenPositionExpRequired")}
               input={
                 <Input
-                  placeholder="Experience"
+                  placeholder={t("cmpOpenPositionExpPlaceholder")}
                   {...register(`openPositions.${index}.experienceRequirement`)}
                   validationMessage={
                     errors?.openPositions?.[index]?.experienceRequirement
@@ -189,10 +192,10 @@ export default function OpenPositionStepForm({
               }
             />
             <LabelInput
-              label="Education Required"
+              label={t("cmpOpenPositionEduRequired")}
               input={
                 <Input
-                  placeholder="Education"
+                  placeholder={t("cmpOpenPositionEduPlaceholder")}
                   {...register(`openPositions.${index}.educationRequirement`)}
                   validationMessage={
                     errors?.openPositions?.[index]?.educationRequirement
@@ -206,10 +209,10 @@ export default function OpenPositionStepForm({
           {/* Salary and Deadline Date Section */}
           <div className="w-full flex gap-3 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
             <LabelInput
-              label="Salary"
+              label={t("cmpOpenPositionSalary")}
               input={
                 <Input
-                  placeholder="Salary"
+                  placeholder={t("cmpOpenPositionSalaryPlaceholder")}
                   {...register(`openPositions.${index}.salary`)}
                   validationMessage={
                     errors?.openPositions?.[index]?.salary?.message
@@ -219,14 +222,14 @@ export default function OpenPositionStepForm({
             />
             <div className="flex flex-col gap-2">
               <TypographyMuted className="text-xs">
-                Deadline Date
+                {t("cmpOpenPositionDeadlineDate")}
               </TypographyMuted>
               <Controller
                 control={control!}
                 name={`openPositions.${index}.deadlineDate`}
                 render={({ field }) => (
                   <DatePicker
-                    placeholder="Deadline"
+                    placeholder={t("cmpOpenPositionDeadlinePlaceholder")}
                     date={field.value ? new Date(field.value) : undefined}
                     onDateChange={(date) =>
                       field.onChange(date ? new Date(date) : "")
@@ -243,7 +246,7 @@ export default function OpenPositionStepForm({
           {/* Skill Tags and Add Skill Section */}
           <div className="w-full flex flex-col gap-2">
             <TypographyMuted className="text-xs">
-              Skills Required
+              {t("cmpOpenPositionSkillsRequired")}
             </TypographyMuted>
             <div className="flex flex-wrap gap-3">
               {(getValues?.(`openPositions.${index}.skills`) || []).map(
@@ -282,13 +285,13 @@ export default function OpenPositionStepForm({
                   size="sm"
                   className="text-xs w-full"
                 >
-                  Add skill
+                  {t("cmpOpenPositionAddSkillBtn")}
                   <LucidePlus size={14} />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="p-5 flex flex-col gap-3 w-[var(--radix-popper-anchor-width)]">
                 <Input
-                  placeholder="e.g. React, Tailwind"
+                  placeholder={t("cmpOpenPositionSkillPlaceholder")}
                   value={skillInput}
                   onChange={(e) => setSkillInput(e.target.value)}
                 />
@@ -305,14 +308,14 @@ export default function OpenPositionStepForm({
                       })
                     }
                   >
-                    Cancel
+                    {t("cancel")}
                   </Button>
                   <Button
                     size="sm"
                     type="button"
                     onClick={() => addSkill(index)}
                   >
-                    Save
+                    {t("save")}
                   </Button>
                 </div>
               </PopoverContent>
@@ -332,7 +335,7 @@ export default function OpenPositionStepForm({
           onClick={addOpenPosition}
           type="button"
         >
-          Add More
+          {t("addMore")}
           <LucidePlus size={14} />
         </Button>
       </div>

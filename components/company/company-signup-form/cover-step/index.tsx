@@ -5,6 +5,7 @@ import { DragDropFile } from "@/components/utils/forms/drag-drop-file";
 import ErrorMessage from "@/components/utils/feedback/error-message";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { LucideBuilding } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 export default function CoverCompanyStepForm({
@@ -12,6 +13,9 @@ export default function CoverCompanyStepForm({
   getValues,
   errors,
 }: IStepFormProps<TCompanySignup>) {
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("auth");
+
   /* -------------------------------- All States ------------------------------ */
   const [preview, setPreview] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -51,7 +55,7 @@ export default function CoverCompanyStepForm({
   return (
     <div className="w-full flex flex-col items-center gap-5">
       {/* Title Section */}
-      <TypographyH4>Add your company cover picture (Optional)</TypographyH4>
+      <TypographyH4>{t("cmpCoverTitle")}</TypographyH4>
       {/* Form Section */}
       <div className="w-full flex justify-center">
         {setValue && (
@@ -60,8 +64,8 @@ export default function CoverCompanyStepForm({
             acceptedFileTypes="image/*"
             maxFileSize={5242880}
             multiple={false}
-            boxText="Drop your company cover picture here"
-            boxSubText="JPG, PNG or WEBP files up to 5MB"
+            boxText={t("cmpCoverBoxText")}
+            boxSubText={t("cmpCoverBoxSubText")}
             className="max-w-md"
             preview={preview}
             icon={LucideBuilding}
@@ -80,7 +84,7 @@ export default function CoverCompanyStepForm({
       {/* Crop Avatar Dialog Section */}
       {selectedImage && (
         <AvatarCropDialog
-          title="Crop Company Cover Picture"
+          title={t("cmpCoverCropDialogTitle")}
           open={cropDialogOpen}
           setOpen={setCropDialogOpen}
           image={selectedImage}

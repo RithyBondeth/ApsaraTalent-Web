@@ -20,15 +20,16 @@ import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { companySignupSchema, TCompanySignup } from "./validation";
+import { makeCompanySignupSchema, TCompanySignup } from "./validation";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
 
 export default function CompanySignup() {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const t = useTranslations("auth");
+  const tv = useTranslations("validation");
   const totalSteps = 6;
 
   /* ------------------------------ All States -------------------------------- */
@@ -48,6 +49,53 @@ export default function CompanySignup() {
   const cmpSignup = useCompanySignupStore();
 
   /* ------------------- React Hook Form: Company Signup Form ------------------ */
+  const companySignupSchema = useMemo(
+    () =>
+      makeCompanySignupSchema({
+        atLeastOneSkill: tv("atLeastOneSkill"),
+        atLeastOnePosition: tv("atLeastOnePosition"),
+        atLeastOneCareer: tv("atLeastOneCareer"),
+        deadlineRequired: tv("deadlineRequired"),
+        fieldRequired: (field) => {
+          const labels: Record<string, string> = {
+            "Name": tv("fieldLabelName"),
+            "Description": tv("fieldLabelDescription"),
+            "Industry": tv("fieldLabelIndustry"),
+            "Company size": tv("fieldLabelCompanySize"),
+            "Founded Year": tv("fieldLabelFoundedYear"),
+            "Title": tv("fieldLabelTitle"),
+            "Experience requirement": tv("fieldLabelExperienceReq"),
+            "Education requirement": tv("fieldLabelEducationReq"),
+            "Salary": tv("fieldLabelSalary"),
+            "Type": tv("fieldLabelType"),
+          };
+          return tv("fieldRequired", { field: labels[field] ?? field });
+        },
+        fieldTooLong: (field, max) => {
+          const labels: Record<string, string> = {
+            "Name": tv("fieldLabelName"),
+            "Description": tv("fieldLabelDescription"),
+            "Industry": tv("fieldLabelIndustry"),
+            "Company size": tv("fieldLabelCompanySize"),
+            "Founded Year": tv("fieldLabelFoundedYear"),
+            "Title": tv("fieldLabelTitle"),
+            "Experience requirement": tv("fieldLabelExperienceReq"),
+            "Education requirement": tv("fieldLabelEducationReq"),
+            "Salary": tv("fieldLabelSalary"),
+            "Type": tv("fieldLabelType"),
+          };
+          return tv("fieldTooLong", { field: labels[field] ?? field, max });
+        },
+        selectRequired: (field) => {
+          const labels: Record<string, string> = {
+            "location": tv("fieldLabelLocation"),
+          };
+          return tv("selectRequired", { field: labels[field] ?? field });
+        },
+      }),
+    [tv],
+  );
+
   const methods = useForm<TCompanySignup>({
     mode: "onChange",
     resolver: zodResolver(companySignupSchema),
@@ -313,14 +361,14 @@ export default function CompanySignup() {
         className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors w-fit"
       >
         <LucideArrowLeft className="size-4" />
-        Back to basic info
+        {t("backToBasicInfo")}
       </button>
 
       {/* Title Section */}
       <div>
-        <TypographyH2>Sign up as company</TypographyH2>
+        <TypographyH2>{t("signupAsCompany")}</TypographyH2>
         <TypographyMuted className="text-md">
-          Find your potential candidate, Apsara Talent.
+          {t("companySignupSubtitle")}
         </TypographyMuted>
       </div>
 
@@ -419,7 +467,7 @@ export default function CompanySignup() {
                 className="flex-1 sm:flex-initial sm:min-w-[140px]"
               >
                 <LucideArrowLeft />
-                Back
+                {t("back")}
               </Button>
             ) : (
               <div className="hidden sm:block" />
@@ -433,7 +481,7 @@ export default function CompanySignup() {
                 cmpSignup.loading || uploadAvatar.loading || uploadCover.loading
               }
             >
-              {step === totalSteps ? "Submit" : "Next"}
+              {step === totalSteps ? t("submit") : t("next")}
               <LucideArrowRight />
             </Button>
           </div>

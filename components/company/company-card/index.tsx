@@ -64,9 +64,9 @@ export default function CompanyCard(props: ICompanyCardProps) {
   if (isGrid) {
     return (
       <>
-        <div className="group relative w-full flex flex-col rounded-xl border border-muted bg-card overflow-hidden cursor-pointer transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_8px_30px_hsl(var(--foreground)/0.10)] hover:border-primary/30">
+        <div className="group relative w-full flex flex-col rounded-2xl border border-border/70 bg-card overflow-hidden cursor-pointer shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_16px_48px_hsl(var(--foreground)/0.13)] hover:border-primary/25">
           {/* Cover Banner Section */}
-          <div className="relative h-24 w-full shrink-0 bg-gradient-to-br from-primary/15 via-primary/8 to-muted/30 overflow-hidden">
+          <div className="relative h-28 w-full shrink-0 bg-gradient-to-br from-primary/20 via-primary/10 to-muted/40 overflow-hidden">
             {props.cover && (
               <Image
                 src={props.cover}
@@ -129,11 +129,15 @@ export default function CompanyCard(props: ICompanyCardProps) {
                 </TypographySmall>
                 <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
                   <LucideMapPin className="size-3 shrink-0" />
-                  <span className="truncate">{translateLocation(props.location, tl)}</span>
+                  <span className="truncate">
+                    {translateLocation(props.location, tl)}
+                  </span>
                 </TypographySmall>
                 <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
                   <LucideUsers className="size-3 shrink-0" />
-                  <span>{t("companyPeopleCount", { count: props.companySize })}</span>
+                  <span>
+                    {t("companyPeopleCount", { count: props.companySize })}
+                  </span>
                 </TypographySmall>
                 {props.foundedYear && (
                   <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
@@ -154,7 +158,9 @@ export default function CompanyCard(props: ICompanyCardProps) {
               <div className="flex flex-col gap-1.5">
                 <TypographySmall className="text-[11px] font-semibold text-foreground/70 flex items-center gap-1">
                   <LucideBriefcaseBusiness className="size-3" />
-                  {t("openPositionCount", { count: props.openPositions.length })}
+                  {t("openPositionCount", {
+                    count: props.openPositions.length,
+                  })}
                 </TypographySmall>
                 <div className="flex flex-wrap gap-1.5">
                   {props.openPositions
@@ -164,7 +170,9 @@ export default function CompanyCard(props: ICompanyCardProps) {
                     ))}
                   {props.openPositions.length > 3 && (
                     <span className="text-[11px] text-muted-foreground self-center font-medium">
-                      {t("moreItems", { count: props.openPositions.length - 3 })}
+                      {t("moreItems", {
+                        count: props.openPositions.length - 3,
+                      })}
                     </span>
                   )}
                 </div>
@@ -187,7 +195,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
           </div>
 
           {/* Footer Section */}
-          <div className="flex items-center justify-end gap-2 px-4 pb-3 pt-2 border-t border-muted/50">
+          <div className="flex items-center justify-end gap-2 px-4 pb-3 pt-2 border-t border-border/50">
             {!props.hideSaveButton && (
               <Button
                 className="text-xs h-7 px-3 rounded-full"
@@ -234,7 +242,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
 
   // ── Default Variant Section ──────────────────────────────────────────────────────────
   return (
-    <div className="h-fit w-full flex flex-col items-start gap-4 rounded-lg border border-muted p-3 shadow-sm cursor-pointer transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_8px_28px_hsl(var(--foreground)/0.1)] hover:border-primary/25">
+    <div className="h-fit w-full flex flex-col items-start gap-4 rounded-2xl border border-border/70 bg-card p-4 shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] cursor-pointer transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_12px_36px_hsl(var(--foreground)/0.11)] hover:border-primary/25">
       {/* Main Content Section */}
       <div className="w-full flex flex-wrap items-start justify-between gap-3">
         {/* Header Section: Avatar + Info + Actions */}

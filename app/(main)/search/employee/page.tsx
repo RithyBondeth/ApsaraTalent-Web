@@ -196,18 +196,18 @@ export default function EmployeeSearchPage() {
       onSubmit={handleSubmit(runSearch)}
     >
       {/* Banner Section */}
-      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 laptop-sm:flex-col laptop-sm:items-center">
-        <div className="w-full flex flex-col items-start gap-3 laptop-sm:py-5">
-          <TypographyH2 className="leading-relaxed">
+      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 tablet-xl:flex-col tablet-xl:items-center rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8">
+        <div className="w-full flex flex-col items-start gap-3 tablet-xl:items-center">
+          <TypographyH2 className="leading-relaxed tablet-xl:text-center">
             {t("bannerTitle")}
           </TypographyH2>
-          <TypographyH4 className="leading-relaxed">
+          <TypographyH4 className="leading-relaxed tablet-xl:text-center">
             {t("bannerSubtitle1")}
           </TypographyH4>
-          <TypographyH4 className="leading-relaxed">
+          <TypographyH4 className="leading-relaxed tablet-xl:text-center">
             {t("bannerSubtitle2")}
           </TypographyH4>
-          <TypographyMuted className="leading-relaxed">
+          <TypographyMuted className="leading-relaxed tablet-xl:text-center">
             {t("bannerMuted")}
           </TypographyMuted>
 
@@ -221,13 +221,13 @@ export default function EmployeeSearchPage() {
           />
         </div>
 
-        {/* Employee Seach Banner Section */}
+        {/* Employee Search Banner Section */}
         <Image
           src={EmployeeSearchSvg}
           alt="employee-search"
           height={300}
           width={400}
-          className="laptop-sm:hidden"
+          className="h-auto max-w-[340px] tablet-xl:hidden"
           priority
         />
       </div>
@@ -255,7 +255,7 @@ export default function EmployeeSearchPage() {
       <div className="w-full flex items-start gap-5 tablet-xl:!flex-col tablet-xl:[&>div]:w-full">
         {/* Left Side: Filter Section */}
         <div
-          className={`w-1/4 flex flex-col items-start gap-6 p-4 sm:p-5 shadow-md rounded-md tablet-xl:w-full ${
+          className={`w-1/4 flex flex-col items-start gap-6 p-4 sm:p-5 bg-card rounded-2xl border border-border/70 shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] tablet-xl:w-full ${
             mobileFiltersOpen ? "tablet-xl:flex" : "tablet-xl:hidden"
           }`}
         >
@@ -497,7 +497,10 @@ export default function EmployeeSearchPage() {
                 return (
                   <div className="ml-1.5 flex flex-col gap-3 sm:ml-3">
                     {educations.map((edu) => (
-                      <div key={edu.value} className="flex items-center space-x-2">
+                      <div
+                        key={edu.value}
+                        className="flex items-center space-x-2"
+                      >
                         <Checkbox
                           id={`edu-${edu.value}`}
                           checked={selectedEdu.includes(edu.value)}
@@ -506,7 +509,9 @@ export default function EmployeeSearchPage() {
                             if (checked) {
                               updated.push(edu.value);
                             } else {
-                              updated = updated.filter((item) => item !== edu.value);
+                              updated = updated.filter(
+                                (item) => item !== edu.value,
+                              );
                             }
                             handleRadioChange("educationLevel", updated);
                           }}
