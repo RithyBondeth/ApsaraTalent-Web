@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { FeedBannerSkeleton } from "@/components/feed/skeleton";
 
 export function DashboardChartSkeleton() {
   return <Skeleton className="h-full w-full min-h-[180px] rounded-xl" />;
@@ -7,11 +8,8 @@ export function DashboardChartSkeleton() {
 export function DashboardLoadingSkeleton() {
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6">
-      {/* Header Section */}
-      <div className="flex flex-col items-start gap-2">
-        <Skeleton className="h-8 w-48 rounded" />
-        <Skeleton className="h-6 w-64 rounded" />
-      </div>
+      {/* Banner Section */}
+      <FeedBannerSkeleton />
 
       {/* Statistic Card Section */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">

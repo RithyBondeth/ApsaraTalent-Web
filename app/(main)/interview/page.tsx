@@ -74,17 +74,6 @@ export default function InterviewPage() {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col gap-4 px-2.5 sm:px-5 animate-page-in">
-      {/* Header Section */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        {/* Create Interview Dialog Section */}
-        {isCompany && currentId && (
-          <CreateInterviewDialog
-            currentId={currentId}
-            currentCompanyMatching={currentCompanyMatching}
-          />
-        )}
-      </div>
-
       {/* Banner Section */}
       <div className="w-full flex items-center justify-between gap-6 lg:gap-10 tablet-xl:flex-col tablet-xl:items-center rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8">
         <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
@@ -117,10 +106,20 @@ export default function InterviewPage() {
         )}
       </div>
 
-      {/* Error Banner */}
+      {/* Error Banner Section */}
       {error && (
         <div className="text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg px-4 py-3">
           {error}
+        </div>
+      )}
+
+      {/* Create Interview Action Section (Company Only) */}
+      {isCompany && currentId && (
+        <div className="flex items-center justify-end">
+          <CreateInterviewDialog
+            currentId={currentId}
+            currentCompanyMatching={currentCompanyMatching}
+          />
         </div>
       )}
 

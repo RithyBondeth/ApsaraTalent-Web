@@ -3,17 +3,20 @@
 import { useAnalyticsStore } from "@/stores/apis/matching/analytics.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { LucideUsers } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { statisticCardConstants } from "@/utils/constants/dashboard.constant";
 import dynamic from "next/dynamic";
 import { DashboardChartSkeleton } from "@/components/dashboard/skeleton";
 import { RecentMatchesList } from "@/components/dashboard/recent-matches-list";
-import { TypographyH3 } from "@/components/utils/typography/typography-h3";
-import { TypographyP } from "@/components/utils/typography/typography-p";
-import StatisticCard from "@/components/dashboard/statistic-card";
+import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import StatisticCard from "@/components/dashboard/statistic-card";
 import { DashboardLoadingSkeleton } from "@/components/dashboard/skeleton";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
+import { matchingSvgImage } from "@/utils/constants/asset.constant";
+import { TypographyP } from "@/components/utils/typography/typography-p";
 
 const WeeklyActivityChart = dynamic(
   () =>
@@ -41,8 +44,11 @@ export default function DashboardPage() {
 
   /* -------------------------------- All States ------------------------------ */
   const hasFetched = useRef<boolean>(false);
+  const [mounted, setMounted] = useState<boolean>(false);
 
   /* --------------------------------- Effects --------------------------------- */
+  useEffect(() => setMounted(true), []);
+
   useEffect(() => {
     if (!user || hasFetched.current) return;
 
@@ -76,12 +82,36 @@ export default function DashboardPage() {
   /* ------------------------------- Render UI ------------------------------- */
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6 animate-page-in">
-      {/* Header Section */}
-      <div className="flex flex-col items-start gap-1.5 pb-2 border-b border-border/50">
-        <TypographyH3 className="!m-0">{t("title")}</TypographyH3>
-        <TypographyP className="!m-0 text-sm text-muted-foreground">
-          {t("description")}
-        </TypographyP>
+      {/* Banner Section */}
+      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 tablet-xl:flex-col tablet-xl:items-center rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8">
+        <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
+          <TypographyH2 className="leading-relaxed tablet-xl:text-center">
+            {isEmployee ? t("bannerTitleEmployee") : t("bannerTitleCompany")}
+          </TypographyH2>
+          <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+            {isEmployee
+              ? t("bannerSubtitle1Employee")
+              : t("bannerSubtitle1Company")}
+          </TypographyH4>
+          <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+            {isEmployee
+              ? t("bannerSubtitle2Employee")
+              : t("bannerSubtitle2Company")}
+          </TypographyH4>
+          <TypographyMuted className="leading-relaxed tablet-xl:text-center">
+            {isEmployee ? t("bannerMutedEmployee") : t("bannerMutedCompany")}
+          </TypographyMuted>
+        </div>
+        {mounted && (
+          <Image
+            src={matchingSvgImage}
+            alt="dashboard"
+            height={250}
+            width={350}
+            className="h-auto max-w-[340px] tablet-xl:!w-full"
+            priority
+          />
+        )}
       </div>
 
       {/* Stat Cards Row Section */}

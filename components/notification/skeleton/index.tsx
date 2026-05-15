@@ -1,10 +1,22 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { FeedBannerSkeleton } from "@/components/feed/skeleton";
 
 /* ---------------------------- Notification Page Loading Skeleton ---------------------------- */
 export default function NotificationLoadingSkeleton() {
   return (
-    <div className="w-full flex flex-col gap-3 p-5">
-      {[...Array(5)].map((_, i) => (
+    <div className="w-full flex flex-col gap-4 sm:gap-5 px-2.5 sm:px-5">
+      {/* Banner Section */}
+      <FeedBannerSkeleton />
+
+      {/* Filter Row Section */}
+      <div className="flex items-center gap-2">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Skeleton key={i} className="h-8 w-20 rounded-full shrink-0" />
+        ))}
+      </div>
+
+      {/* Cards Section */}
+      {[...Array(4)].map((_, i) => (
         <NotificationCardSkeleton key={i} />
       ))}
     </div>

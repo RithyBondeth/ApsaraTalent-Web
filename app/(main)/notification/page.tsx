@@ -21,8 +21,13 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { TypographyP } from "@/components/utils/typography/typography-p";
+import { TypographyH2 } from "@/components/utils/typography/typography-h2";
+import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { NotificationSvgImage } from "@/utils/constants/asset.constant";
-import { NotificationCardSkeleton } from "@/components/notification/skeleton";
+import NotificationLoadingSkeleton, {
+  NotificationCardSkeleton,
+} from "@/components/notification/skeleton";
 import { INotification } from "@/utils/interfaces/notification/notification.interface";
 
 /* ---------------------------------- Helper --------------------------------- */
@@ -92,10 +97,13 @@ export default function NotificationPage() {
   } = useNotificationStore();
 
   /* -------------------------------- All States ------------------------------ */
+  const [mounted, setMounted] = useState<boolean>(false);
   const [notificationFilter, setNotificationFilter] =
     useState<TNotificationFilterType>("all");
 
   /* --------------------------------- Effects --------------------------------- */
+  useEffect(() => setMounted(true), []);
+
   // On mount: zero badge locally and sync read state to server
   useEffect(() => {
     resetUnreadCount();
@@ -128,9 +136,41 @@ export default function NotificationPage() {
     });
   }, [notifications, notificationFilter]);
 
+  /* ----------------------------- Loading State ------------------------------ */
+  if (loading && notifications.length === 0)
+    return <NotificationLoadingSkeleton />;
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full flex flex-col gap-4 sm:gap-5 px-2.5 sm:px-5 animate-page-in">
+      {/* Banner Section */}
+      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 tablet-xl:flex-col tablet-xl:items-center rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8">
+        <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
+          <TypographyH2 className="leading-relaxed tablet-xl:text-center">
+            {t("bannerTitle")}
+          </TypographyH2>
+          <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+            {t("bannerSubtitle1")}
+          </TypographyH4>
+          <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+            {t("bannerSubtitle2")}
+          </TypographyH4>
+          <TypographyMuted className="leading-relaxed tablet-xl:text-center">
+            {t("bannerMuted")}
+          </TypographyMuted>
+        </div>
+        {mounted && (
+          <Image
+            src={NotificationSvgImage}
+            alt="notifications"
+            height={250}
+            width={350}
+            className="h-auto max-w-[340px] tablet-xl:!w-full"
+            priority
+          />
+        )}
+      </div>
+
       {/* Header Section */}
       <div className="w-full flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         {/* Pill Tabs Filter Section */}

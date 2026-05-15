@@ -349,7 +349,15 @@
     "matches": "Matches",
     "noMatchesYet": "No matches yet. Keep swiping to find your perfect {role}!",
     "company": "company",
-    "candidate": "candidate"
+    "candidate": "candidate",
+    "bannerTitleEmployee": "Welcome Back to Your Dashboard",
+    "bannerSubtitle1Employee": "Track your likes, matches, and weekly activity at a glance.",
+    "bannerSubtitle2Employee": "Stay on top of every opportunity and see how far you've come.",
+    "bannerMutedEmployee": "Your next match could be just one swipe away.",
+    "bannerTitleCompany": "Your Hiring Dashboard",
+    "bannerSubtitle1Company": "Track your outreach, matches, and pipeline activity.",
+    "bannerSubtitle2Company": "Monitor candidate engagement and keep your hiring process moving.",
+    "bannerMutedCompany": "Great hires start with great insight."
   },
   "landing": {
     "badge": "Cambodia's Premier Talent Platform",
@@ -834,7 +842,11 @@
     "viewProfile": "View Profile",
     "reply": "Reply",
     "matchedWithEmployee": "You matched with {name}, A {position}.",
-    "matchedWithCompany": "You matched with {name}, {industry} Company."
+    "matchedWithCompany": "You matched with {name}, {industry} Company.",
+    "bannerTitle": "Your Notifications",
+    "bannerSubtitle1": "Stay updated with your latest matches, likes, and messages.",
+    "bannerSubtitle2": "Never miss an important update — all your alerts, all in one place.",
+    "bannerMuted": "Real-time updates, delivered directly to you."
   },
   "message": {
     "noMessages": "No messages yet. Say hello! 👋",
