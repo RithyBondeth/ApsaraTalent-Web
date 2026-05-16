@@ -65,8 +65,9 @@ export function MatchingEmployeeCardSkeleton() {
       </div>
 
       {/* Action Bar Section */}
-      <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end">
-        <Skeleton className="h-8 w-24 rounded-md" />
+      <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end gap-2">
+        <Skeleton className="h-9 w-24 rounded-md" />
+        <Skeleton className="h-9 w-24 rounded-md" />
       </div>
     </div>
   );
@@ -111,8 +112,9 @@ export function MatchingCompanyCardSkeleton() {
       </div>
 
       {/* Action Bar Section */}
-      <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end">
-        <Skeleton className="h-8 w-24 rounded-md" />
+      <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end gap-2">
+        <Skeleton className="h-9 w-24 rounded-md" />
+        <Skeleton className="h-9 w-24 rounded-md" />
       </div>
     </div>
   );

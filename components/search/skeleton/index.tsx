@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 /* --------------------------------------- Search Banner Skeleton ----------------------------------------- */
 function SearchBannerSkeleton() {
   return (
-    <div className="w-full flex items-center justify-between gap-6 lg:gap-10 tablet-xl:flex-col tablet-xl:items-center rounded-2xl border border-border/50 px-6 py-8 sm:px-8 animate-shimmer">
+    <div className="w-full flex items-center justify-between gap-6 lg:gap-10 tablet-xl:flex-col tablet-xl:items-center rounded-2xl border border-border/50 px-6 py-8 sm:px-8">
       <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
         {/* Title Section */}
         <Skeleton className="h-9 w-96 tablet-xl:w-80" />
@@ -80,7 +80,7 @@ export function SearchEmployeeLoadingSkeleton() {
           <SearchResultsHeaderSkeleton />
           <div className="w-full flex flex-col gap-2">
             {Array.from({ length: 3 }).map((_, i) => (
-              <SearchCompanyPageCardSkeleton key={i} />
+              <SearchCompanyCardSkeleton key={i} />
             ))}
           </div>
         </div>
@@ -119,7 +119,7 @@ export function SearchCompanyLoadingSkeleton() {
 }
 
 /* -------------------------------- Search Company Card Skeleton (job listing — used in employee search page) -------------------------------- */
-function SearchCompanyPageCardSkeleton() {
+export function SearchCompanyCardSkeleton() {
   return (
     <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
       <div className="p-4 sm:p-5 flex flex-col gap-3.5">

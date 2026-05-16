@@ -16,7 +16,7 @@ export function DashboardLoadingSkeleton() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="bg-card rounded-2xl border border-border/60 p-4 sm:p-5 animate-pulse"
+            className="bg-card rounded-2xl border border-border/60 p-4 sm:p-5"
           >
             <div className="flex items-center justify-between mb-3">
               <Skeleton className="h-9 w-9 rounded-lg" />
@@ -31,7 +31,7 @@ export function DashboardLoadingSkeleton() {
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Bar Chart Section */}
-        <div className="lg:col-span-2 bg-card rounded-2xl border border-border/60 p-5 sm:p-6 animate-pulse">
+        <div className="lg:col-span-2 bg-card rounded-2xl border border-border/60 p-5 sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
               <Skeleton className="h-5 w-32 rounded mb-1.5" />
@@ -47,7 +47,7 @@ export function DashboardLoadingSkeleton() {
         </div>
 
         {/* Radial Chart Section */}
-        <div className="bg-card rounded-2xl border border-border/60 p-5 sm:p-6 animate-pulse flex flex-col">
+        <div className="bg-card rounded-2xl border border-border/60 p-5 sm:p-6 flex flex-col">
           <Skeleton className="h-5 w-24 rounded mb-1.5" />
           <Skeleton className="h-3 w-44 rounded" />
           <div className="flex-1 flex items-center justify-center min-h-[200px]">
@@ -57,7 +57,7 @@ export function DashboardLoadingSkeleton() {
       </div>
 
       {/* Recent Matches Section */}
-      <div className="bg-card rounded-2xl border border-border/60 p-5 sm:p-6 animate-pulse">
+      <div className="bg-card rounded-2xl border border-border/60 p-5 sm:p-6">
         <div className="flex items-center gap-2 mb-4">
           <Skeleton className="h-4.5 w-4.5 rounded" />
           <Skeleton className="h-5 w-32 rounded" />

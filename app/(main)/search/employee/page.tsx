@@ -47,7 +47,7 @@ import { Controller, useForm } from "react-hook-form";
 import { employeeSearchSchema, TEmployeeSearchSchema } from "./validation";
 import { employeeSearchBannerSvg } from "@/utils/constants/asset.constant";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { SearchEmployeeCardSkeleton } from "@/components/search/skeleton";
+import { SearchCompanyCardSkeleton } from "@/components/search/skeleton";
 
 export default function EmployeeSearchPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -714,7 +714,7 @@ export default function EmployeeSearchPage() {
                 {Array(3)
                   .fill(0)
                   .map((_, index) => (
-                    <SearchEmployeeCardSkeleton key={index} />
+                    <SearchCompanyCardSkeleton key={index} />
                   ))}
               </div>
             ) : filteredJobs.length > 0 ? (

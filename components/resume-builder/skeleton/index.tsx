@@ -5,7 +5,7 @@ export default function ResumeBuilderLoadingSkeleton() {
   return (
     <div className="w-full flex flex-col items-start gap-5 px-2.5 sm:px-5 lg:px-8">
       {/* Banner Section */}
-      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 tablet-xl:flex-col tablet-xl:items-center rounded-2xl border border-border/50 px-6 py-8 sm:px-8 animate-shimmer">
+      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 tablet-xl:flex-col tablet-xl:items-center rounded-2xl border border-border/50 px-6 py-8 sm:px-8">
         <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
           <Skeleton className="h-9 w-96 tablet-xl:w-80" />
           <Skeleton className="h-6 w-72 tablet-xl:w-64" />
