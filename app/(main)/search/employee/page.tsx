@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { emptySvg } from "@/utils/constants/asset.constant";
@@ -51,18 +52,25 @@ import { SearchEmployeeCardSkeleton } from "@/components/search/skeleton";
 export default function EmployeeSearchPage() {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("searchEmployee");
-  const isFirstWatchRenderRef = useRef<boolean>(true);
   const isInitialSearchDoneRef = useRef<boolean>(false);
 
   /* ----------------------------- API Integration ---------------------------- */
-  const { error, loading, jobs, querySearchJobs } = useSearchJobStore();
+  const {
+    error,
+    loading,
+    jobs,
+    querySearchJobs,
+    resetSearch,
+    isUsingFallback,
+  } = useSearchJobStore();
   const { user } = useGetCurrentUserStore();
   const { currentEmployeeLiked, queryCurrentEmployeeLiked } =
     useGetCurrentEmployeeLikedStore();
 
   /* -------------------------------- All States ------------------------------ */
-  // Employee Search for Company Helper
-  const [scopeNames, setScopeNames] = useState<string[]>([]);
+  // Holds the user's career scope names, written synchronously in the init
+  // effect so runSearch always reads the latest value.
+  const scopeNamesRef = useRef<string[]>([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
 
   /* ------------------------------- Search Form ------------------------------ */
@@ -92,30 +100,38 @@ export default function EmployeeSearchPage() {
   // ── Real Search Function ────────────────────────────────────────
   const runSearch = useCallback(
     (data: TEmployeeSearchSchema) => {
-      querySearchJobs({
-        careerScopes: scopeNames,
-        keyword: data.keyword || undefined,
-        location: data.location === "all" ? undefined : data.location,
-        jobType: data.jobType === "all" ? undefined : data.jobType,
-        companySizeMin: data.companySize?.min,
-        companySizeMax: data.companySize?.max,
-        postedDateFrom: data.date?.from?.toISOString(),
-        postedDateTo: data.date?.to?.toISOString(),
-        salaryMin: data.salaryRange?.min,
-        salaryMax: data.salaryRange?.max,
-        educationRequired:
-          data.educationLevel === undefined || data.educationLevel.length === 0
-            ? undefined
-            : data.educationLevel,
-        experienceLevel: data.experienceLevel,
-        sortBy: data.sortBy,
-        sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
-      });
+      querySearchJobs(
+        {
+          careerScopes:
+            scopeNamesRef.current.length > 0
+              ? scopeNamesRef.current
+              : undefined,
+          keyword: data.keyword || undefined,
+          location: data.location === "all" ? undefined : data.location,
+          jobType: data.jobType === "all" ? undefined : data.jobType,
+          companySizeMin: data.companySize?.min,
+          companySizeMax: data.companySize?.max,
+          postedDateFrom: data.date?.from?.toISOString(),
+          postedDateTo: data.date?.to?.toISOString(),
+          salaryMin: data.salaryRange?.min,
+          salaryMax: data.salaryRange?.max,
+          educationRequired:
+            data.educationLevel === undefined ||
+            data.educationLevel.length === 0
+              ? undefined
+              : data.educationLevel,
+          experienceLevel: data.experienceLevel,
+          sortBy: data.sortBy,
+          sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
+        },
+        { scopeFallback: true },
+      );
     },
-    [querySearchJobs, scopeNames],
+    [querySearchJobs],
   );
 
   // ── Stable Debounced Function ─────────────────────────────────────
+  // runSearch is stable so debouncedRunSearch is also created exactly once per mount.
   const debouncedRunSearch = useMemo(
     () => debounce(runSearch, SEARCH_DEBOUNCE_MS),
     [runSearch],
@@ -127,33 +143,36 @@ export default function EmployeeSearchPage() {
     if (!user) return;
     if (isInitialSearchDoneRef.current) return;
 
+    // Clear any stale results left from a previous visit before firing a
+    // fresh search — prevents old data flashing on re-navigation.
+    resetSearch();
+
     const scopes =
       user.role === "company"
         ? user.company?.careerScopes
         : user.employee?.careerScopes;
 
-    const names = scopes?.map((cs) => cs.name) ?? [];
-    setScopeNames(names);
+    scopeNamesRef.current = scopes?.map((cs) => cs.name) ?? [];
 
-    querySearchJobs({
-      careerScopes: names,
-      sortBy: "title",
-      sortOrder: "DESC",
-    });
+    querySearchJobs(
+      {
+        careerScopes:
+          scopeNamesRef.current.length > 0 ? scopeNamesRef.current : undefined,
+        sortBy: "createdAt",
+        sortOrder: "DESC",
+      },
+      { scopeFallback: true },
+    );
 
     isInitialSearchDoneRef.current = true;
-  }, [user, querySearchJobs]);
+  }, [user, querySearchJobs, resetSearch]);
 
-  // Auto Search As User Types / Changes filters Effect
+  // Auto Search As User Types / Changes Filters Effect
+  // watch dep is stable; debouncedRunSearch is now stable too — this effect
+  // runs exactly once and never re-subscribes, eliminating the spurious
+  // immediate-fire that caused a second concurrent request.
   useEffect(() => {
-    // Skip first render so it doesn’t duplicate initial search
-    if (isFirstWatchRenderRef.current) {
-      isFirstWatchRenderRef.current = false;
-      return;
-    }
-
     const subscription = watch((value) => {
-      // Only run after scopes are ready (prevents empty search when page first loads)
       if (!isInitialSearchDoneRef.current) return;
       debouncedRunSearch(value as TEmployeeSearchSchema);
     });
@@ -253,15 +272,18 @@ export default function EmployeeSearchPage() {
         </Button>
       </div>
 
-      <div className="w-full flex items-start gap-5 tablet-xl:!flex-col tablet-xl:[&>div]:w-full">
+      <div className="w-full flex items-start gap-6 tablet-xl:flex-col">
         {/* Left Side: Filter Section */}
         <div
-          className={`w-1/4 flex flex-col items-start gap-6 p-4 sm:p-5 bg-card rounded-2xl border border-border/70 shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] tablet-xl:w-full ${
+          className={`w-72 xl:w-80 shrink-0 sticky top-5 self-start flex flex-col bg-card rounded-2xl border border-border/70 shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] tablet-xl:w-full tablet-xl:static ${
             mobileFiltersOpen ? "tablet-xl:flex" : "tablet-xl:hidden"
           }`}
         >
-          <div className="w-full flex items-center justify-between">
-            <TypographyH4 className="text-lg">{t("refineResult")}</TypographyH4>
+          {/* Header Section: Always visible, never scrolls */}
+          <div className="flex items-center justify-between px-5 py-4 border-b border-border/40 shrink-0">
+            <TypographyH4 className="font-semibold">
+              {t("refineResult")}
+            </TypographyH4>
             <Button
               type="button"
               variant="outline"
@@ -282,332 +304,354 @@ export default function EmployeeSearchPage() {
             </Button>
           </div>
 
-          {/* Filter Panel Skeleton Section */}
-          {loading && jobs && jobs.length === 0 ? (
-            <div className="w-full flex flex-col gap-6">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="flex flex-col gap-3">
-                  <Skeleton className="h-4 w-32 rounded" />
-                  <Skeleton className="h-3 w-24 rounded ml-3" />
-                  <Skeleton className="h-3 w-28 rounded ml-3" />
-                  <Skeleton className="h-3 w-20 rounded ml-3" />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <>
-              {/* Date Posted Section */}
-              <div className="flex flex-col items-start gap-3">
-                <TypographyP className="text-sm font-medium flex items-center gap-1">
-                  <LucideCalendarDays strokeWidth={"1.5px"} />
-                  {t("datePosted")}
-                </TypographyP>
+          {/* Scrollable Filter Body Section */}
+          <div className="flex flex-col gap-5 p-5">
+            {/* Filter Panel Skeleton Section */}
+            {jobs === null ? (
+              <div className="w-full flex flex-col gap-6">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="flex flex-col gap-3">
+                    <Skeleton className="h-4 w-32 rounded" />
+                    <Skeleton className="h-3 w-24 rounded ml-3" />
+                    <Skeleton className="h-3 w-28 rounded ml-3" />
+                    <Skeleton className="h-3 w-20 rounded ml-3" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <>
+                {/* Date Posted Section */}
+                <div className="flex flex-col items-start gap-3">
+                  <TypographyP className="text-sm font-medium flex items-center gap-1">
+                    <LucideCalendarDays strokeWidth={"1.5px"} />
+                    {t("datePosted")}
+                  </TypographyP>
 
-                <Controller
-                  name="date"
-                  control={control}
-                  render={({ field }) => {
-                    const from = field.value?.from;
-                    const to = field.value?.to;
+                  <Controller
+                    name="date"
+                    control={control}
+                    render={({ field }) => {
+                      const from = field.value?.from;
+                      const to = field.value?.to;
 
-                    let selectedValue: string = "all";
-                    if (!from && !to) selectedValue = "all";
-                    else if (from && to) {
-                      const diffHours = (to.getTime() - from.getTime()) / 36e5;
-                      // NOTE: your original code used 2 hours for "last 24 hours"
-                      if (diffHours <= 24) selectedValue = "last 24 hours";
-                      else if (diffHours <= 72) selectedValue = "last 3 days";
-                      else if (diffHours <= 168) selectedValue = "last week";
-                    }
+                      let selectedValue: string = "all";
+                      if (!from && !to) selectedValue = "all";
+                      else if (from && to) {
+                        const diffHours =
+                          (to.getTime() - from.getTime()) / 36e5;
+                        // NOTE: your original code used 2 hours for "last 24 hours"
+                        if (diffHours <= 24) selectedValue = "last 24 hours";
+                        else if (diffHours <= 72) selectedValue = "last 3 days";
+                        else if (diffHours <= 168) selectedValue = "last week";
+                      }
 
-                    return (
-                      <RadioGroup
-                        value={selectedValue}
-                        onValueChange={(val) => {
-                          let updated: { from?: Date; to?: Date } = {};
-                          if (val !== "all") {
-                            const now = new Date();
-                            const fromDate = new Date(now);
+                      return (
+                        <RadioGroup
+                          value={selectedValue}
+                          onValueChange={(val) => {
+                            let updated: { from?: Date; to?: Date } = {};
+                            if (val !== "all") {
+                              const now = new Date();
+                              const fromDate = new Date(now);
 
-                            switch (val) {
-                              case "last 24 hours":
-                                fromDate.setHours(now.getHours() - 24);
-                                break;
-                              case "last 3 days":
-                                fromDate.setDate(now.getDate() - 3);
-                                break;
-                              case "last week":
-                                fromDate.setDate(now.getDate() - 7);
-                                break;
+                              switch (val) {
+                                case "last 24 hours":
+                                  fromDate.setHours(now.getHours() - 24);
+                                  break;
+                                case "last 3 days":
+                                  fromDate.setDate(now.getDate() - 3);
+                                  break;
+                                case "last week":
+                                  fromDate.setDate(now.getDate() - 7);
+                                  break;
+                              }
+
+                              updated = { from: fromDate, to: new Date() };
                             }
 
-                            updated = { from: fromDate, to: new Date() };
-                          }
-
-                          handleRadioChange("date", updated);
-                        }}
-                        className="ml-3"
-                      >
-                        <RadioGroupItemWithLabel
-                          id="date-all"
-                          value="all"
-                          htmlFor="date-all"
-                        >
-                          {t("allDatesPosted")}
-                        </RadioGroupItemWithLabel>
-                        <RadioGroupItemWithLabel
-                          id="last-24"
-                          value="last 24 hours"
-                          htmlFor="last-24"
-                        >
-                          {t("last24Hours")}
-                        </RadioGroupItemWithLabel>
-                        <RadioGroupItemWithLabel
-                          id="last-3-days"
-                          value="last 3 days"
-                          htmlFor="last-3-days"
-                        >
-                          {t("last3Days")}
-                        </RadioGroupItemWithLabel>
-                        <RadioGroupItemWithLabel
-                          id="last-week"
-                          value="last week"
-                          htmlFor="last-week"
-                        >
-                          {t("lastWeek")}
-                        </RadioGroupItemWithLabel>
-                      </RadioGroup>
-                    );
-                  }}
-                />
-              </div>
-
-              {/* Company Size Section */}
-              <div className="flex flex-col items-start gap-3">
-                <TypographyP className="text-sm font-medium flex items-center gap-1">
-                  <LucideUsers strokeWidth={"1.5px"} />
-                  {t("companySize")}
-                </TypographyP>
-
-                <Controller
-                  name="companySize"
-                  control={control}
-                  render={({ field }) => {
-                    const { min, max } = field.value ?? {};
-                    return (
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Input
-                          type="number"
-                          placeholder={t("min")}
-                          value={min ?? ""}
-                          min={0}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            const numVal = val ? parseInt(val) : undefined;
-                            handleRadioChange("companySize", {
-                              min: numVal,
-                              max,
-                            });
+                            handleRadioChange("date", updated);
                           }}
-                          className="h-9 w-[88px] shrink-0"
-                        />
-                        <span className="text-muted-foreground">-</span>
-                        <Input
-                          type="number"
-                          placeholder={t("max")}
-                          value={max ?? ""}
-                          min={0}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            const numVal = val ? parseInt(val) : undefined;
-                            handleRadioChange("companySize", {
-                              min,
-                              max: numVal,
-                            });
-                          }}
-                          className="h-9 w-[88px] shrink-0"
-                        />
-                        <span className="text-sm text-muted-foreground whitespace-nowrap">
-                          {t("employees")}
-                        </span>
-                      </div>
-                    );
-                  }}
-                />
-              </div>
-
-              {/* Salary Range Section */}
-              <div className="flex flex-col items-start gap-3">
-                <TypographyP className="text-sm font-medium flex items-center gap-1">
-                  <LucideCircleDollarSign strokeWidth={"1.5px"} />
-                  {t("salaryRange")}
-                </TypographyP>
-
-                <Controller
-                  name="salaryRange"
-                  control={control}
-                  render={({ field }) => {
-                    const { min, max } = field.value ?? {};
-                    return (
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Input
-                          type="number"
-                          placeholder={t("min")}
-                          value={min ?? ""}
-                          min={0}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            const numVal = val ? parseInt(val) : undefined;
-                            handleRadioChange("salaryRange", {
-                              min: numVal,
-                              max,
-                            });
-                          }}
-                          className="h-9 w-[88px] shrink-0"
-                        />
-                        <span className="text-muted-foreground">-</span>
-                        <Input
-                          type="number"
-                          placeholder={t("max")}
-                          value={max ?? ""}
-                          min={0}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            const numVal = val ? parseInt(val) : undefined;
-                            handleRadioChange("salaryRange", {
-                              min,
-                              max: numVal,
-                            });
-                          }}
-                          className="h-9 w-[88px] shrink-0"
-                        />
-                        <span className="text-sm text-muted-foreground whitespace-nowrap">
-                          $
-                        </span>
-                      </div>
-                    );
-                  }}
-                />
-              </div>
-
-              {/* Education Level Section */}
-              <div className="flex flex-col items-start gap-3">
-                <TypographyP className="text-sm font-medium flex items-center gap-1">
-                  <LucideGraduationCap strokeWidth={"1.5px"} />
-                  {t("educationLevel")}
-                </TypographyP>
-
-                <Controller
-                  name="educationLevel"
-                  control={control}
-                  render={({ field }) => {
-                    const educations = [
-                      { value: "Under Graduate", label: t("underGraduate") },
-                      { value: "Bachelor", label: t("bachelor") },
-                      { value: "Master", label: t("master") },
-                      { value: "PhD", label: t("phd") },
-                    ];
-                    const selectedEdu = field.value ?? [];
-
-                    return (
-                      <div className="ml-1.5 flex flex-col gap-3 sm:ml-3">
-                        {educations.map((edu) => (
-                          <div
-                            key={edu.value}
-                            className="flex items-center space-x-2"
-                          >
-                            <Checkbox
-                              id={`edu-${edu.value}`}
-                              checked={selectedEdu.includes(edu.value)}
-                              onCheckedChange={(checked) => {
-                                let updated = [...selectedEdu];
-                                if (checked) {
-                                  updated.push(edu.value);
-                                } else {
-                                  updated = updated.filter(
-                                    (item) => item !== edu.value,
-                                  );
-                                }
-                                handleRadioChange("educationLevel", updated);
-                              }}
-                            />
-                            <label
-                              htmlFor={`edu-${edu.value}`}
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                              {edu.label}
-                            </label>
-                          </div>
-                        ))}
-                      </div>
-                    );
-                  }}
-                />
-              </div>
-
-              {/* Experience Level Section */}
-              <div className="flex flex-col items-start gap-3">
-                <TypographyP className="text-sm font-medium flex items-center gap-1">
-                  <LucideBriefcaseBusiness strokeWidth={"1.5px"} />
-                  {t("experienceLevel")}
-                </TypographyP>
-
-                <Controller
-                  name="experienceLevel"
-                  control={control}
-                  render={({ field }) => {
-                    const expLabels: Record<string, string> = {
-                      "No Experience": t("expNoExperience"),
-                      "Less than 1 year": t("expLessThan1Year"),
-                      "1 - 2 years": t("exp1To2Years"),
-                      "3 - 5 years": t("exp3To5Years"),
-                      "6 - 10 years": t("exp6To10Years"),
-                      "10+ years": t("exp10PlusYears"),
-                    };
-                    return (
-                      <RadioGroup
-                        onValueChange={(value) =>
-                          handleRadioChange("experienceLevel", value)
-                        }
-                        value={field.value ?? ""}
-                        className="ml-1.5 flex flex-col gap-3 sm:ml-3"
-                      >
-                        {yearOfExperienceConstant.map((option) => (
+                          className="ml-3"
+                        >
                           <RadioGroupItemWithLabel
-                            key={option.id}
-                            value={option.value}
-                            id={`exp-${option.id}`}
-                            htmlFor={`exp-${option.id}`}
+                            id="date-all"
+                            value="all"
+                            htmlFor="date-all"
                           >
-                            {expLabels[option.value] ?? option.label}
+                            {t("allDatesPosted")}
                           </RadioGroupItemWithLabel>
-                        ))}
-                      </RadioGroup>
-                    );
-                  }}
-                />
-              </div>
-            </>
-          )}
+                          <RadioGroupItemWithLabel
+                            id="last-24"
+                            value="last 24 hours"
+                            htmlFor="last-24"
+                          >
+                            {t("last24Hours")}
+                          </RadioGroupItemWithLabel>
+                          <RadioGroupItemWithLabel
+                            id="last-3-days"
+                            value="last 3 days"
+                            htmlFor="last-3-days"
+                          >
+                            {t("last3Days")}
+                          </RadioGroupItemWithLabel>
+                          <RadioGroupItemWithLabel
+                            id="last-week"
+                            value="last week"
+                            htmlFor="last-week"
+                          >
+                            {t("lastWeek")}
+                          </RadioGroupItemWithLabel>
+                        </RadioGroup>
+                      );
+                    }}
+                  />
+                </div>
+
+                <Separator />
+
+                {/* Company Size Section */}
+                <div className="flex flex-col items-start gap-3">
+                  <TypographyP className="text-sm font-medium flex items-center gap-1">
+                    <LucideUsers strokeWidth={"1.5px"} />
+                    {t("companySize")}
+                  </TypographyP>
+
+                  <Controller
+                    name="companySize"
+                    control={control}
+                    render={({ field }) => {
+                      const { min, max } = field.value ?? {};
+                      return (
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Input
+                            type="number"
+                            placeholder={t("min")}
+                            value={min ?? ""}
+                            min={0}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              const numVal = val ? parseInt(val) : undefined;
+                              handleRadioChange("companySize", {
+                                min: numVal,
+                                max,
+                              });
+                            }}
+                            className="h-9 w-[88px] shrink-0"
+                          />
+                          <span className="text-muted-foreground">-</span>
+                          <Input
+                            type="number"
+                            placeholder={t("max")}
+                            value={max ?? ""}
+                            min={0}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              const numVal = val ? parseInt(val) : undefined;
+                              handleRadioChange("companySize", {
+                                min,
+                                max: numVal,
+                              });
+                            }}
+                            className="h-9 w-[88px] shrink-0"
+                          />
+                          <span className="text-sm text-muted-foreground whitespace-nowrap">
+                            {t("employees")}
+                          </span>
+                        </div>
+                      );
+                    }}
+                  />
+                </div>
+
+                <Separator />
+
+                {/* Salary Range Section */}
+                <div className="flex flex-col items-start gap-3">
+                  <TypographyP className="text-sm font-medium flex items-center gap-1">
+                    <LucideCircleDollarSign strokeWidth={"1.5px"} />
+                    {t("salaryRange")}
+                  </TypographyP>
+
+                  <Controller
+                    name="salaryRange"
+                    control={control}
+                    render={({ field }) => {
+                      const { min, max } = field.value ?? {};
+                      return (
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Input
+                            type="number"
+                            placeholder={t("min")}
+                            value={min ?? ""}
+                            min={0}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              const numVal = val ? parseInt(val) : undefined;
+                              handleRadioChange("salaryRange", {
+                                min: numVal,
+                                max,
+                              });
+                            }}
+                            className="h-9 w-[88px] shrink-0"
+                          />
+                          <span className="text-muted-foreground">-</span>
+                          <Input
+                            type="number"
+                            placeholder={t("max")}
+                            value={max ?? ""}
+                            min={0}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              const numVal = val ? parseInt(val) : undefined;
+                              handleRadioChange("salaryRange", {
+                                min,
+                                max: numVal,
+                              });
+                            }}
+                            className="h-9 w-[88px] shrink-0"
+                          />
+                          <span className="text-sm text-muted-foreground whitespace-nowrap">
+                            $
+                          </span>
+                        </div>
+                      );
+                    }}
+                  />
+                </div>
+
+                <Separator />
+
+                {/* Education Level Section */}
+                <div className="flex flex-col items-start gap-3">
+                  <TypographyP className="text-sm font-medium flex items-center gap-1">
+                    <LucideGraduationCap strokeWidth={"1.5px"} />
+                    {t("educationLevel")}
+                  </TypographyP>
+
+                  <Controller
+                    name="educationLevel"
+                    control={control}
+                    render={({ field }) => {
+                      const educations = [
+                        { value: "Under Graduate", label: t("underGraduate") },
+                        { value: "Bachelor", label: t("bachelor") },
+                        { value: "Master", label: t("master") },
+                        { value: "PhD", label: t("phd") },
+                      ];
+                      const selectedEdu = field.value ?? [];
+
+                      return (
+                        <div className="ml-1.5 flex flex-col gap-3 sm:ml-3">
+                          {educations.map((edu) => (
+                            <div
+                              key={edu.value}
+                              className="flex items-center space-x-2"
+                            >
+                              <Checkbox
+                                id={`edu-${edu.value}`}
+                                checked={selectedEdu.includes(edu.value)}
+                                onCheckedChange={(checked) => {
+                                  let updated = [...selectedEdu];
+                                  if (checked) {
+                                    updated.push(edu.value);
+                                  } else {
+                                    updated = updated.filter(
+                                      (item) => item !== edu.value,
+                                    );
+                                  }
+                                  handleRadioChange("educationLevel", updated);
+                                }}
+                              />
+                              <label
+                                htmlFor={`edu-${edu.value}`}
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                              >
+                                {edu.label}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    }}
+                  />
+                </div>
+
+                <Separator />
+
+                {/* Experience Level Section */}
+                <div className="flex flex-col items-start gap-3">
+                  <TypographyP className="text-sm font-medium flex items-center gap-1">
+                    <LucideBriefcaseBusiness strokeWidth={"1.5px"} />
+                    {t("experienceLevel")}
+                  </TypographyP>
+
+                  <Controller
+                    name="experienceLevel"
+                    control={control}
+                    render={({ field }) => {
+                      const expLabels: Record<string, string> = {
+                        "No Experience": t("expNoExperience"),
+                        "Less than 1 year": t("expLessThan1Year"),
+                        "1 - 2 years": t("exp1To2Years"),
+                        "3 - 5 years": t("exp3To5Years"),
+                        "6 - 10 years": t("exp6To10Years"),
+                        "10+ years": t("exp10PlusYears"),
+                      };
+                      return (
+                        <RadioGroup
+                          onValueChange={(value) =>
+                            handleRadioChange("experienceLevel", value)
+                          }
+                          value={field.value ?? ""}
+                          className="ml-1.5 flex flex-col gap-3 sm:ml-3"
+                        >
+                          {yearOfExperienceConstant.map((option) => (
+                            <RadioGroupItemWithLabel
+                              key={option.id}
+                              value={option.value}
+                              id={`exp-${option.id}`}
+                              htmlFor={`exp-${option.id}`}
+                            >
+                              {expLabels[option.value] ?? option.label}
+                            </RadioGroupItemWithLabel>
+                          ))}
+                        </RadioGroup>
+                      );
+                    }}
+                  />
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Right Side: Results Section */}
-        <div className="w-3/4 flex flex-col items-start gap-3 tablet-xl:w-full">
+        <div className="flex-1 min-w-0 flex flex-col items-start gap-3">
           {/* Results Header Section */}
           <div className="w-full flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-3">
-            <TypographyH4 className="text-lg">
-              {loading ? (
-                <Skeleton className="h-6 w-40 bg-muted" />
-              ) : error ? (
-                <TypographySmall className="text-destructive">
-                  {t("zeroJobsListing")}
-                </TypographySmall>
-              ) : filteredJobs && filteredJobs.length > 0 ? (
-                t("jobsListed", { count: filteredJobs.length })
-              ) : (
-                t("noJobsFound")
-              )}
-            </TypographyH4>
+            <div className="flex flex-col gap-1">
+              <TypographyH4 className="text-lg">
+                {loading || filteredJobs === null ? (
+                  <Skeleton className="h-6 w-40 bg-muted" />
+                ) : error ? (
+                  <TypographySmall className="text-destructive">
+                    {t("zeroJobsListing")}
+                  </TypographySmall>
+                ) : filteredJobs.length > 0 ? (
+                  t("jobsListed", { count: filteredJobs.length })
+                ) : (
+                  t("noJobsFound")
+                )}
+              </TypographyH4>
+              {!loading &&
+                isUsingFallback &&
+                filteredJobs &&
+                filteredJobs.length > 0 && (
+                  <TypographyMuted className="text-xs">
+                    {t("fallbackResults")}
+                  </TypographyMuted>
+                )}
+            </div>
 
             <Controller
               name="sortBy"
@@ -657,7 +701,14 @@ export default function EmployeeSearchPage() {
 
           {/* Results List Section */}
           <div className="w-full flex flex-col items-start gap-2">
-            {loading ? (
+            {error && !loading ? (
+              <div className="w-full mb-3">
+                <SearchErrorCard
+                  title={error}
+                  description={t("errorDescription")}
+                />
+              </div>
+            ) : loading || filteredJobs === null ? (
               /* Loading Skeleton Section */
               <div className="w-full mb-3">
                 {Array(3)
@@ -666,14 +717,7 @@ export default function EmployeeSearchPage() {
                     <SearchEmployeeCardSkeleton key={index} />
                   ))}
               </div>
-            ) : error ? (
-              <div className="w-full mb-3">
-                <SearchErrorCard
-                  title={error}
-                  description={t("errorDescription")}
-                />
-              </div>
-            ) : filteredJobs && filteredJobs.length > 0 ? (
+            ) : filteredJobs.length > 0 ? (
               /* Search Company Card Section */
               filteredJobs.map((item, index) => (
                 <SearchCompanyCard

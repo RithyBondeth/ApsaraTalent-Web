@@ -44,6 +44,10 @@ import interviewBannerSvg from "@/assets/interview/banner.svg";
 // ─── Resume Builder ───────────────────────────────────────────────────────────
 import resumeBuilderBannerSvg from "@/assets/resume-builder/banner.svg";
 
+// ─── Legal ────────────────────────────────────────────────────────────────────
+import termsBannerSvg from "@/assets/legal/terms-banner.svg";
+import privacyBannerSvg from "@/assets/legal/privacy-banner.svg";
+
 // ─── Utils (shared across pages) ──────────────────────────────────────────────
 import emptySvg from "@/assets/utils/empty.svg";
 import logo from "@/assets/utils/logo.svg";
@@ -85,6 +89,9 @@ export {
   interviewBannerSvg,
   // Resume Builder
   resumeBuilderBannerSvg,
+  // Legal
+  termsBannerSvg,
+  privacyBannerSvg,
   // Utils
   emptySvg,
   logo,

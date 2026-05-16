@@ -1,6 +1,7 @@
 import { RESUME_GENERATION_TIMEOUT_MS } from "@/utils/constants/config.constant";
 import { API_RESUME_BUILDER_URL } from "@/utils/constants/apis/resume.api.constant";
 import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
+import { isAxiosError } from "axios";
 import axios from "@/lib/axios";
 
 export async function generateResumeAPI(payload: IBuildResume) {
@@ -15,7 +16,7 @@ export async function generateResumeAPI(payload: IBuildResume) {
 
     return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
+    if (isAxiosError(error)) {
       const apiMessage =
         (error.response?.data as { message?: string } | undefined)?.message ||
         error.message ||

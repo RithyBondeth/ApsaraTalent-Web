@@ -60,8 +60,12 @@ import { MemoEmployeeFeedCard } from "@/components/feed/memo-employee-feed-card"
 import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
 import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
 
-// Module-level Cache For Global Data (survives Strict Mode)
-const globalFetchCache = {
+// Tracks whether we've ever successfully started a fetch for each dataset
+// within this JS module lifetime (survives Strict Mode double-invocation).
+// Only the INITIATED flag is tracked here; actual data lives in the Zustand
+// stores. If a fetch fails, `companyData` stays null — the effect detects
+// that and fires again on the next render cycle.
+const fetchInitiated = {
   companies: false,
   employees: false,
 };
@@ -76,6 +80,11 @@ export default function FeedPage() {
 
   /* -------------------------------- All States ------------------------------ */
   const [mounted, setMounted] = useState<boolean>(false);
+
+  // True only after this component instance's first recommendation fetch completes.
+  // Guards against showing a stale error from a previous session's failed fetch
+  // that still lives in the Zustand store on re-mount.
+  const [recsHasFetched, setRecsHasFetched] = useState(false);
 
   // Infinite scroll
   const [visibleCount, setVisibleCount] = useState<number>(PAGE_SIZE);
@@ -174,6 +183,9 @@ export default function FeedPage() {
   const employeeRecommendationsLoading = useGetEmployeeRecommendationsStore(
     (s) => s.loading,
   );
+  const employeeRecommendationsError = useGetEmployeeRecommendationsStore(
+    (s) => s.error,
+  );
   const queryEmployeeRecommendations = useGetEmployeeRecommendationsStore(
     (s) => s.queryEmployeeRecommendations,
   );
@@ -182,6 +194,9 @@ export default function FeedPage() {
   );
   const companyRecommendationsLoading = useGetCompanyRecommendationsStore(
     (s) => s.loading,
+  );
+  const companyRecommendationsError = useGetCompanyRecommendationsStore(
+    (s) => s.error,
   );
   const queryCompanyRecommendations = useGetCompanyRecommendationsStore(
     (s) => s.queryCompanyRecommendations,
@@ -197,12 +212,33 @@ export default function FeedPage() {
     onCompanyFetch: queryCurrentCompanyLiked,
   });
 
-  // Fetch Recommendations — separate cache key so it resets with the user
-  useFetchOnce({
-    cacheKey: "feed-recommendations",
-    onEmployeeFetch: queryEmployeeRecommendations,
-    onCompanyFetch: queryCompanyRecommendations,
-  });
+  // Fetch Recommendations — use a component-level ref instead of the module-level
+  // useFetchOnce cache so that navigating away and back (unmount → remount) always
+  // retries. The module-level cache never resets within a JS session, so a failed
+  // first fetch would permanently suppress recommendations until a full page refresh.
+  const recsFetchedForRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const id = isEmployee
+      ? currentUser.employee?.id
+      : currentUser.company?.id;
+    if (!id) return;
+
+    // Already fetched for this user ID in this component instance — skip
+    if (recsFetchedForRef.current === id) return;
+    recsFetchedForRef.current = id;
+
+    // Mark as not-yet-fetched so stale store error doesn't show the retry button
+    setRecsHasFetched(false);
+
+    const fetchPromise = isEmployee
+      ? queryEmployeeRecommendations(id)
+      : queryCompanyRecommendations(id);
+
+    // Only reveal error/retry UI after this instance's fetch has actually settled
+    fetchPromise.finally(() => setRecsHasFetched(true));
+  }, [currentUser, isEmployee, queryEmployeeRecommendations, queryCompanyRecommendations]);
 
   // Stable refs for store methods — prevents useEffect from re-running when
   // Zustand creates new function references on each render
@@ -213,22 +249,27 @@ export default function FeedPage() {
     queryEmployeeRef.current = queryEmployee;
   });
 
-  // Fetch All Companies or Employees - Global Data (Only Once, Never Resets)
+  // Fetch All Companies or Employees - Global Data
+  // Guards against two failure modes:
+  //   1. Strict Mode double-invocation (fetchInitiated flag prevents duplicate requests)
+  //   2. Failed first fetch (companyData/employeesData stays null → re-fetches on
+  //      next render until data arrives, instead of being stuck empty forever)
   useEffect(() => {
     if (!currentUser) return;
 
     if (isEmployee) {
-      if (!globalFetchCache.companies) {
+      // Re-fetch if: never started, OR previously started but data never arrived
+      if (!fetchInitiated.companies || !companyData) {
+        fetchInitiated.companies = true;
         queryCompanyRef.current();
-        globalFetchCache.companies = true;
       }
     } else {
-      if (!globalFetchCache.employees) {
+      if (!fetchInitiated.employees || !employeesData) {
+        fetchInitiated.employees = true;
         queryEmployeeRef.current();
-        globalFetchCache.employees = true;
       }
     }
-  }, [isEmployee, currentUser]);
+  }, [isEmployee, currentUser, companyData, employeesData]);
 
   // Filter Users Based on Role
   // If User is Employee filter -> Companies (Filter Out Current Employee Liked)
@@ -507,13 +548,16 @@ export default function FeedPage() {
         <div className="w-full flex items-center justify-between gap-6 lg:gap-10 tablet-xl:flex-col tablet-xl:items-center rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8">
           {/* Company Banner Section: Content */}
           <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
-            <TypographyH2 className="leading-relaxed tablet-xl:text-center">
+            <TypographyH2 className="!leading-relaxed text-2xl sm:text-4xl tablet-xl:text-3xl tablet-xl:text-center">
               {tFeed("companyBannerTitle")}
             </TypographyH2>
-            <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+            <TypographyH4 className="!leading-relaxed tablet-xl:text-center">
               {tFeed("companyBannerSubtitle1")}
             </TypographyH4>
-            <TypographyMuted className="leading-relaxed tablet-xl:text-center">
+            <TypographyH4 className="!leading-relaxed tablet-xl:text-center">
+              {tFeed("companyBannerSubtitle2")}
+            </TypographyH4>
+            <TypographyMuted className="!leading-relaxed tablet-xl:text-center">
               {tFeed("companyBannerMuted")}
             </TypographyMuted>
           </div>
@@ -540,6 +584,9 @@ export default function FeedPage() {
           const recsLoading = isEmployee
             ? employeeRecommendationsLoading
             : companyRecommendationsLoading;
+          const recsError = isEmployee
+            ? employeeRecommendationsError
+            : companyRecommendationsError;
 
           if (recsLoading) {
             return (
@@ -561,6 +608,37 @@ export default function FeedPage() {
                     ),
                   )}
                 </div>
+              </div>
+            );
+          }
+
+          // Only show the retry button after this instance's own fetch has settled.
+          // Guarding with recsHasFetched prevents flashing stale error state that
+          // may still be in the store from a previous session's failed fetch.
+          if (recsHasFetched && recsError && (!recs || recs.length === 0)) {
+            const retryId = isEmployee
+              ? currentUser?.employee?.id
+              : currentUser?.company?.id;
+            const retryFn = isEmployee
+              ? queryEmployeeRecommendations
+              : queryCompanyRecommendations;
+
+            return (
+              <div className="w-full flex items-center gap-3">
+                <Sparkles className="h-5 w-5 text-muted-foreground" />
+                <TypographyMuted>{tFeed("recommendedForYou")}</TypographyMuted>
+                {retryId && (
+                  <button
+                    onClick={() => {
+                      recsFetchedForRef.current = null;
+                      setRecsHasFetched(false);
+                      retryFn(retryId).finally(() => setRecsHasFetched(true));
+                    }}
+                    className="text-xs text-primary underline underline-offset-2 hover:opacity-70 transition-opacity"
+                  >
+                    {tFeed("retry")}
+                  </button>
+                )}
               </div>
             );
           }

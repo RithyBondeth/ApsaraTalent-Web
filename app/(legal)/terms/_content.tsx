@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import {
   LucideAlertTriangle,
@@ -20,6 +21,7 @@ import { TypographyH1 } from "@/components/utils/typography/typography-h1";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { termsBannerSvg } from "@/utils/constants/asset.constant";
 import { useLanguageStore } from "@/stores/languages/language-store";
 
 /* ─────────────────────────────────────────────────────────────
@@ -550,18 +552,33 @@ export function TermsContent() {
 
         {/* Main Content Section */}
         <main className="flex-1 flex flex-col gap-10 min-w-0">
-          {/* Hero Header Section */}
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <LucideCalendar className="size-3.5" />
-              <span>{c.lastUpdated}</span>
+          {/* Banner Section */}
+          <div className="flex flex-col gap-4">
+            <div className="w-full flex items-center justify-between gap-6 lg:gap-10 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8">
+              {/* Content Section */}
+              <div className="flex flex-col items-start gap-3">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <LucideCalendar className="size-3.5" />
+                  <span>{c.lastUpdated}</span>
+                </div>
+                <TypographyH1 className="text-3xl font-bold tracking-tight">
+                  {c.pageTitle}
+                </TypographyH1>
+                <TypographyP className="text-muted-foreground text-sm leading-relaxed max-w-2xl">
+                  {c.intro}
+                </TypographyP>
+              </div>
+
+              {/* Banner Image Section */}
+              <Image
+                src={termsBannerSvg}
+                alt="terms"
+                height={250}
+                width={350}
+                className="h-auto max-w-[340px] tablet-xl:!w-full hidden sm:block"
+                priority
+              />
             </div>
-            <TypographyH1 className="text-3xl font-bold tracking-tight">
-              {c.pageTitle}
-            </TypographyH1>
-            <TypographyP className="text-muted-foreground text-sm leading-relaxed max-w-2xl">
-              {c.intro}
-            </TypographyP>
 
             {/* Callout Section */}
             <div className="rounded-xl border border-amber-200/70 bg-amber-50/60 dark:border-amber-800/40 dark:bg-amber-950/30 px-4 py-3 flex items-start gap-3">

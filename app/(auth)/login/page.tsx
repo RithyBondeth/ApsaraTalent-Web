@@ -474,7 +474,6 @@ function LoginPage() {
     ? t("preparingWorkspace")
     : t("authenticating");
 
-
   /* ----------------------------------- Render UI ----------------------------------- */
   return (
     <div className="h-screen w-full flex overflow-hidden tablet-lg:flex-col tablet-lg:h-auto tablet-lg:overflow-y-auto">

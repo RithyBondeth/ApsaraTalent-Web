@@ -30,15 +30,21 @@ export default function StaticContentLoadingSkeleton() {
 
         {/* Loading Skeleton for Main Content */}
         <main className="flex-1 flex flex-col gap-10 min-w-0">
-          {/* Loading Skeleton for Hero Header */}
+          {/* Loading Skeleton for Banner */}
           <div className="flex flex-col gap-4">
-            <Skeleton className="h-4 w-40" />
-            <Skeleton className="h-10 w-3/4" />
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-5/6" />
+            <div className="w-full flex items-center justify-between gap-6 rounded-2xl border border-border/50 bg-muted/20 px-6 py-8 sm:px-8">
+              <div className="flex flex-col gap-3 flex-1">
+                <Skeleton className="h-3 w-40" />
+                <Skeleton className="h-9 w-3/4" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-5/6" />
+                  <Skeleton className="h-4 w-4/6" />
+                </div>
+              </div>
+              <Skeleton className="hidden sm:block h-[180px] w-[260px] rounded-2xl shrink-0" />
             </div>
-            <Skeleton className="h-16 w-full rounded-xl" />
+            <Skeleton className="h-14 w-full rounded-xl" />
           </div>
 
           {/* Loading Skeleton for List Content Sections */}

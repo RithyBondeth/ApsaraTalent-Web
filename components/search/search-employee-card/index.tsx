@@ -24,7 +24,7 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
+    <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
       <div className="p-4 sm:p-5 flex flex-col gap-3.5">
         {/* Header Section: Avatar, Name, Job and Availability */}
         <div className="flex gap-4">
@@ -42,10 +42,10 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
                 <h3 className="text-base font-bold leading-tight truncate">
-                  {props.firstname} {props.lastname}
+                  {props.job}
                 </h3>
                 <TypographyP className="[&:not(:first-child)]:mt-0 text-sm text-primary font-medium mt-0.5">
-                  {props.job}
+                  {props.firstname} {props.lastname}
                 </TypographyP>
               </div>
               <span
@@ -63,7 +63,10 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
             icon={<LucideUser />}
             text={`${props.yearOfExperience} ${t("yrsExp")}`}
           />
-          <MetaChip icon={<LucideMapPin />} text={translateLocation(props.location, tl)} />
+          <MetaChip
+            icon={<LucideMapPin />}
+            text={translateLocation(props.location, tl)}
+          />
           <MetaChip icon={<LucideClock />} text={props.availability} />
           <MetaChip icon={<LucideGraduationCap />} text={props.education} />
         </div>

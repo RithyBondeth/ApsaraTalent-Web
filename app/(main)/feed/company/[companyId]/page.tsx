@@ -327,6 +327,12 @@ export default function CompanyDetailPage() {
                 {companyData.industry}
               </p>
               <div className="flex flex-wrap gap-2 mt-3 tablet-md:justify-center">
+                {companyData.industry && (
+                  <MetaChip
+                    icon={<LucideBuilding />}
+                    text={companyData.industry}
+                  />
+                )}
                 {companyData.location && (
                   <MetaChip
                     icon={<LucideMapPinned />}

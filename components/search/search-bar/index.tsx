@@ -26,8 +26,8 @@ export default function SearchBar<T extends FieldValues>(
   const t = useTranslations("searchBar");
 
   /* -------------------------------- All States ------------------------------ */
-  const [selectedLocation, setSelectionLocation] = useState<TLocations | "All">(
-    props.initialLocation || "All",
+  const [selectedLocation, setSelectionLocation] = useState<TLocations | "all">(
+    props.initialLocation || "all",
   );
   const [selectedJobType, setSelectionJobType] = useState<string>(
     props.initialJobType || "all",
@@ -65,7 +65,7 @@ export default function SearchBar<T extends FieldValues>(
             setSelectionLocation(value);
             props.setValue("location" as Path<T>, value as T[keyof T]);
           }}
-          value={selectedLocation === "All" ? "All" : selectedLocation}
+          value={selectedLocation}
         >
           <SelectTrigger className="h-10 sm:h-12 text-muted-foreground">
             <SelectValue placeholder={t("location")} />
@@ -95,14 +95,16 @@ export default function SearchBar<T extends FieldValues>(
             ...availabilityConstant.map((a) => ({
               ...a,
               label:
-                ({
-                  full_time: t("fullTime"),
-                  part_time: t("partTime"),
-                  internship: t("internship"),
-                  contract: t("contract"),
-                  freelance: t("freelance"),
-                  remote: t("remote"),
-                } as Record<string, string>)[a.value] ?? a.label,
+                (
+                  {
+                    full_time: t("fullTime"),
+                    part_time: t("partTime"),
+                    internship: t("internship"),
+                    contract: t("contract"),
+                    freelance: t("freelance"),
+                    remote: t("remote"),
+                  } as Record<string, string>
+                )[a.value] ?? a.label,
             })),
           ]}
           placeholder={t("jobType")}
