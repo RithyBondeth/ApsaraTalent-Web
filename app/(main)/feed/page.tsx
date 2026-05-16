@@ -1,14 +1,6 @@
 "use client";
 
 import EmployeeCardSkeleton from "@/components/employee/skeleton";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import ImagePopup from "@/components/utils/data-display/image-popup";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
@@ -99,8 +91,6 @@ export default function FeedPage() {
   const [currentProfileImage, setCurrentProfileImage] = useState<string | null>(
     null,
   );
-  const [openLikeSuccessDialog, setOpenLikeSuccessDialog] =
-    useState<boolean>(false);
 
   /* ----------------------------- API Integration ---------------------------- */
   // Current User
@@ -220,9 +210,7 @@ export default function FeedPage() {
   useEffect(() => {
     if (!currentUser) return;
 
-    const id = isEmployee
-      ? currentUser.employee?.id
-      : currentUser.company?.id;
+    const id = isEmployee ? currentUser.employee?.id : currentUser.company?.id;
     if (!id) return;
 
     // Already fetched for this user ID in this component instance — skip
@@ -238,7 +226,12 @@ export default function FeedPage() {
 
     // Only reveal error/retry UI after this instance's fetch has actually settled
     fetchPromise.finally(() => setRecsHasFetched(true));
-  }, [currentUser, isEmployee, queryEmployeeRecommendations, queryCompanyRecommendations]);
+  }, [
+    currentUser,
+    isEmployee,
+    queryEmployeeRecommendations,
+    queryCompanyRecommendations,
+  ]);
 
   // Stable refs for store methods — prevents useEffect from re-running when
   // Zustand creates new function references on each render
@@ -379,7 +372,9 @@ export default function FeedPage() {
         await employeeLike(employeeID, companyID);
         countCurrentEmpMatching(employeeID);
         countCurrentEmpFavorites(employeeID);
-        setOpenLikeSuccessDialog(true);
+        toast.success(t("youLiked", { name: company?.name ?? "" }), {
+          description: tFeed("likedSuccessDescription"),
+        });
         // Sync with server to confirm (replaces optimistic state)
         await queryCurrentEmployeeLiked(employeeID);
       } finally {
@@ -419,7 +414,9 @@ export default function FeedPage() {
         await companyLike(companyID, employeeID);
         countCurrentCmpMatching(companyID);
         countCurrentCmpFavorites(companyID);
-        setOpenLikeSuccessDialog(true);
+        toast.success(t("youLiked", { name: employee?.username ?? "" }), {
+          description: tFeed("likedSuccessDescription"),
+        });
         // Sync with server to confirm (replaces optimistic state)
         await queryCurrentCompanyLiked(companyID);
       } finally {
@@ -445,7 +442,9 @@ export default function FeedPage() {
       try {
         await addCompanyToFavorite(employeeID, companyID);
         countCurrentEmpFavorites(employeeID);
-        toast.success(t("addedToFavorites", { name: companyName }));
+        toast.success(t("addedToFavorites", { name: companyName }), {
+          description: t("addedToFavoritesDescription"),
+        });
         await queryAllEmployeeFavorites(employeeID);
       } catch {
         toast.error(empFavError || t("failedToSaveFavorite"));
@@ -467,7 +466,9 @@ export default function FeedPage() {
       try {
         await addEmployeeToFavorite(companyID, employeeID);
         countCurrentCmpFavorites(companyID);
-        toast.success(t("addedToFavorites", { name: employeeName }));
+        toast.success(t("addedToFavorites", { name: employeeName }), {
+          description: t("addedToFavoritesDescription"),
+        });
         await queryAllCompanyFavorites(companyID);
       } catch {
         toast.error(cmpFavError || t("failedToSaveFavorite"));
@@ -510,7 +511,6 @@ export default function FeedPage() {
     !recsHasFetched ||
     (isEmployee && (companyLoading || currentEmployeeLikedLoading)) ||
     (!isEmployee && (employeeLoading || currentCompanyLikedLoading));
-
 
   return (
     <div className="w-full flex flex-col items-start gap-4 sm:gap-5 animate-page-in">
@@ -663,6 +663,7 @@ export default function FeedPage() {
                           company.id === likingId && employeeLikeLoading
                         }
                         isFavorite={isEmpFavorite(company.id)}
+                        isRecommended
                         onView={handleEmployeeViewCompany}
                         onLike={handleEmployeeLikeCompany}
                         onSave={handleEmployeeFavoriteCompany}
@@ -679,6 +680,7 @@ export default function FeedPage() {
                           employee.id === likingId && companyLikeLoading
                         }
                         isFavorite={isCmpFavorite(employee.id)}
+                        isRecommended
                         onView={handleCompanyViewEmployee}
                         onLike={handleCompanyLikeEmployee}
                         onSave={handleCompanyFavoriteEmployee}
@@ -783,7 +785,7 @@ export default function FeedPage() {
         </div>
       )}
 
-      {/* Infinite scroll sentinel — triggers revealing the next batch of already-loaded cards */}
+      {/* Infinite Scroll Sentinel Section: Triggers revealing the next batch of already-loaded cards */}
       {!isLoading && visibleCount < allUsers.length && (
         <div ref={sentinelRef} className="w-full h-1" />
       )}
@@ -794,23 +796,6 @@ export default function FeedPage() {
         setOpen={setOpenProfilePopup}
         image={currentProfileImage!}
       />
-      {/* Like Success Dialog Section */}
-      <Dialog
-        open={openLikeSuccessDialog}
-        onOpenChange={setOpenLikeSuccessDialog}
-      >
-        <DialogContent>
-          <DialogTitle>{tFeed("likedSuccessTitle")}</DialogTitle>
-          <DialogDescription>
-            {tFeed("likedSuccessDescription")}
-          </DialogDescription>
-          <DialogFooter>
-            <Button onClick={() => setOpenLikeSuccessDialog(false)}>
-              {tFeed("close")}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

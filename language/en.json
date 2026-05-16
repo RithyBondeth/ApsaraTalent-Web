@@ -317,6 +317,7 @@
     "duplicatedValue": "Duplicated value",
     "pleaseInputAnotherValue": "Please input another value.",
     "addedToFavorites": "{name} added to favorites.",
+    "addedToFavoritesDescription": "You can view it anytime in your Favorites page.",
     "removedFromFavorites": "{name} removed from favorites.",
     "failedToSaveFavorite": "Failed to save to favorites.",
     "failedToRemoveFavorite": "Failed to remove from favorites.",

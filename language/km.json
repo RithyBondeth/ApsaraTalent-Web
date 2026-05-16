@@ -317,6 +317,7 @@
     "duplicatedValue": "តម្លៃស្ទួន",
     "pleaseInputAnotherValue": "សូមបញ្ចូលតម្លៃផ្សេងទៀត។",
     "addedToFavorites": "{name} បានបន្ថែមទៅរក្សាទុក។",
+    "addedToFavoritesDescription": "អ្នកអាចមើលវាបានគ្រប់ពេលនៅក្នុងទំព័រចំណូលចិត្តរបស់អ្នក។",
     "removedFromFavorites": "{name} បានលុបចេញពីររក្សាទុក។",
     "failedToSaveFavorite": "មិនអាចរក្សាទុកទៅរក្សាទុកបានទេ។",
     "failedToRemoveFavorite": "មិនអាចលុបចេញពីររក្សាទុកបានទេ។",

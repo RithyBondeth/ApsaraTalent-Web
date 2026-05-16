@@ -1,4 +1,5 @@
 import EmployeeCard from "@/components/employee/employee-card";
+import { Sparkles } from "lucide-react";
 import React from "react";
 import { IMemoEmployeeFeedCardProps } from "./props";
 
@@ -10,6 +11,7 @@ export const MemoEmployeeFeedCard = React.memo(function EmployeeFeedCard({
   companyId,
   isLiking,
   isFavorite,
+  isRecommended,
   onView,
   onLike,
   onSave,
@@ -18,7 +20,20 @@ export const MemoEmployeeFeedCard = React.memo(function EmployeeFeedCard({
 }: IMemoEmployeeFeedCardProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className={`break-inside-avoid mb-4${isLiking ? " animate-card-pop-shrink" : ""}`}>
+    <div
+      className={`break-inside-avoid mb-4${isLiking ? " animate-card-pop-shrink" : ""}`}
+    >
+      {/* Recommended Badge Section */}
+      {isRecommended && (
+        <div className="flex items-center gap-1 mb-1.5 px-1">
+          <Sparkles className="size-3 text-primary" />
+          <span className="text-[10px] font-semibold text-primary">
+            Recommended
+          </span>
+        </div>
+      )}
+
+      {/* Employee Card Section */}
       <EmployeeCard
         {...employee}
         id={employee.id}
