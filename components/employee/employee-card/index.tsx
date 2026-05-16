@@ -63,9 +63,6 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
     return (
       <>
         <div className="group relative w-full flex flex-col bg-card border border-border/70 rounded-2xl overflow-hidden cursor-pointer shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_16px_48px_hsl(var(--foreground)/0.13)] hover:border-primary/25">
-          {/* Top Accent Bar On Hover Section */}
-          <div className="absolute inset-x-0 top-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left z-10" />
-
           {/* Header Section: Avatar, Identity, Quick View and Like */}
           <div className="flex items-start gap-3 p-4 pb-3">
             <CachedAvatar

@@ -507,6 +507,7 @@ export default function FeedPage() {
   const isLoading =
     !mounted ||
     !currentUser ||
+    !recsHasFetched ||
     (isEmployee && (companyLoading || currentEmployeeLikedLoading)) ||
     (!isEmployee && (employeeLoading || currentCompanyLikedLoading));
 
@@ -595,7 +596,7 @@ export default function FeedPage() {
                   <Sparkles className="h-5 w-5 text-primary" />
                   <TypographyH4>{tFeed("recommendedForYou")}</TypographyH4>
                 </div>
-                <div className="w-full columns-3 gap-x-4 laptop-sm:columns-2 tablet-lg:columns-1">
+                <div className="w-full columns-3 gap-x-4 laptop-sm:columns-2 tablet-lg:columns-1 stagger-list">
                   {Array.from({ length: 3 }).map((_, i) =>
                     isEmployee ? (
                       <div key={i} className="break-inside-avoid mb-4">
@@ -651,7 +652,7 @@ export default function FeedPage() {
                 <Sparkles className="h-5 w-5 text-primary" />
                 <TypographyH4>{tFeed("recommendedForYou")}</TypographyH4>
               </div>
-              <div className="w-full columns-3 gap-x-4 laptop-sm:columns-2 tablet-lg:columns-1">
+              <div className="w-full columns-3 gap-x-4 laptop-sm:columns-2 tablet-lg:columns-1 stagger-list">
                 {isEmployee
                   ? (recs as ICompany[]).map((company) => (
                       <MemoCompanyFeedCard
