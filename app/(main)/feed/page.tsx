@@ -596,14 +596,14 @@ export default function FeedPage() {
                   <Sparkles className="h-5 w-5 text-primary" />
                   <TypographyH4>{tFeed("recommendedForYou")}</TypographyH4>
                 </div>
-                <div className="w-full columns-3 gap-x-4 laptop-sm:columns-2 tablet-lg:columns-1 stagger-list">
+                <div className="w-full pt-2 grid grid-cols-3 gap-4 items-start laptop-sm:grid-cols-2 tablet-lg:grid-cols-1 stagger-list">
                   {Array.from({ length: 3 }).map((_, i) =>
                     isEmployee ? (
-                      <div key={i} className="break-inside-avoid mb-4">
+                      <div key={i}>
                         <CompanyCardSkeleton />
                       </div>
                     ) : (
-                      <div key={i} className="break-inside-avoid mb-4">
+                      <div key={i}>
                         <EmployeeCardSkeleton />
                       </div>
                     ),
@@ -652,7 +652,7 @@ export default function FeedPage() {
                 <Sparkles className="h-5 w-5 text-primary" />
                 <TypographyH4>{tFeed("recommendedForYou")}</TypographyH4>
               </div>
-              <div className="w-full columns-3 gap-x-4 laptop-sm:columns-2 tablet-lg:columns-1 stagger-list">
+              <div className="w-full pt-2 grid grid-cols-3 gap-4 items-start laptop-sm:grid-cols-2 tablet-lg:grid-cols-1 stagger-list">
                 {isEmployee
                   ? (recs as ICompany[]).map((company) => (
                       <MemoCompanyFeedCard
@@ -714,22 +714,16 @@ export default function FeedPage() {
       )}
 
       {/* Feed Card Section */}
-      <div className="w-full columns-3 gap-x-4 laptop-sm:columns-2 tablet-lg:columns-1 stagger-list">
+      <div className="w-full pt-2 grid grid-cols-3 gap-4 items-start laptop-sm:grid-cols-2 tablet-lg:grid-cols-1 stagger-list">
         {/* Loading Skeleton Section */}
         {isLoading
           ? Array.from({ length: PAGE_SIZE }).map((_, index) =>
               isEmployee ? (
-                <div
-                  key={`company-skeleton-${index}`}
-                  className="break-inside-avoid mb-4"
-                >
+                <div key={`company-skeleton-${index}`}>
                   <CompanyCardSkeleton />
                 </div>
               ) : (
-                <div
-                  key={`employee-skeleton-${index}`}
-                  className="break-inside-avoid mb-4"
-                >
+                <div key={`employee-skeleton-${index}`}>
                   <EmployeeCardSkeleton />
                 </div>
               ),

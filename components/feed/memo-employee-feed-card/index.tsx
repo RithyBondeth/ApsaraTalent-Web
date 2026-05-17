@@ -21,7 +21,7 @@ export const MemoEmployeeFeedCard = React.memo(function EmployeeFeedCard({
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
-      className={`break-inside-avoid mb-4${isLiking ? " animate-card-pop-shrink" : ""}`}
+      className={isLiking ? "animate-card-pop-shrink" : undefined}
     >
       {/* Recommended Badge Section */}
       {isRecommended && (

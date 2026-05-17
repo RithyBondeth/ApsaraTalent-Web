@@ -64,7 +64,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
   if (isGrid) {
     return (
       <>
-        <div className="group relative w-full flex flex-col rounded-2xl border border-border/70 bg-card overflow-hidden cursor-pointer shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_16px_48px_hsl(var(--foreground)/0.13)] hover:border-primary/25">
+        <div className="group relative w-full flex flex-col rounded-2xl border border-border/70 bg-card overflow-hidden cursor-pointer shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] transition-all duration-300 ease-out hover:z-10 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_hsl(var(--foreground)/0.13)] hover:border-primary/25">
           {/* Cover Banner Section */}
           <div className="relative h-28 w-full shrink-0 bg-gradient-to-br from-primary/20 via-primary/10 to-muted/40 overflow-hidden">
             {props.cover && (
