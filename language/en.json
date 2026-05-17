@@ -606,7 +606,8 @@
     "genderMale": "Male",
     "genderFemale": "Female",
     "genderOther": "Other",
-    "dialogEmptyProfile": "No details have been added to this profile yet."
+    "dialogEmptyProfile": "No details have been added to this profile yet.",
+    "recommended": "Recommended"
   },
   "locations": {
     "phnomPenh": "Phnom Penh",

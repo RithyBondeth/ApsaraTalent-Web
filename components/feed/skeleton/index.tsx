@@ -1,15 +1,20 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import CompanyCardSkeleton from "@/components/company/skeleton";
+import EmployeeCardSkeleton from "@/components/employee/skeleton";
 
 /* ------------------------- Feed Page Loading Skeleton ------------------------- */
-export default function FeedPageLoadingSkeleton() {
+export default function FeedPageLoadingSkeleton({
+  isCompany,
+}: {
+  isCompany: boolean;
+}) {
   return (
     <div className="w-full flex flex-col items-start gap-4 sm:gap-5">
       {/* Banner Section */}
       <FeedBannerSkeleton />
 
       {/* Recommended for You Section */}
-      <FeedRecommendationsSkeleton />
+      <FeedRecommendationsSkeleton isCompany={isCompany} />
 
       {/* All Companies/Talent Divider Section */}
       <FeedDividerSkeleton />
@@ -60,7 +65,11 @@ export function FeedBannerSkeleton() {
 }
 
 /* ------------------- Feed Recommendations Loading Skeleton ------------------- */
-export function FeedRecommendationsSkeleton() {
+export function FeedRecommendationsSkeleton({
+  isCompany,
+}: {
+  isCompany: boolean;
+}) {
   return (
     <div className="w-full flex flex-col gap-3">
       {/* Title Section */}
@@ -73,7 +82,7 @@ export function FeedRecommendationsSkeleton() {
       <div className="w-full columns-3 gap-x-4 laptop-sm:columns-2 tablet-lg:columns-1">
         {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className="break-inside-avoid mb-4">
-            <CompanyCardSkeleton />
+            {isCompany ? <CompanyCardSkeleton /> : <EmployeeCardSkeleton />}
           </div>
         ))}
       </div>

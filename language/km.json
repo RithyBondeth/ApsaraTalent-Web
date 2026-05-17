@@ -606,7 +606,8 @@
     "genderMale": "បុរស",
     "genderFemale": "ស្រី",
     "genderOther": "ផ្សេងៗ",
-    "dialogEmptyProfile": "មិនទាន់មានព័ត៌មានលម្អិតបន្ថែមក្នុងប្រវត្តិរូបនេះនៅឡើយទេ"
+    "dialogEmptyProfile": "មិនទាន់មានព័ត៌មានលម្អិតបន្ថែមក្នុងប្រវត្តិរូបនេះនៅឡើយទេ",
+    "recommended": "ណែនាំ"
   },
   "locations": {
     "phnomPenh": "ភ្នំពេញ",

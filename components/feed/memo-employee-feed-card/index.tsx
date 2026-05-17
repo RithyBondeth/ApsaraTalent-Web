@@ -1,5 +1,6 @@
 import EmployeeCard from "@/components/employee/employee-card";
 import { Sparkles } from "lucide-react";
+import { useTranslations } from "next-intl";
 import React from "react";
 import { IMemoEmployeeFeedCardProps } from "./props";
 
@@ -18,17 +19,17 @@ export const MemoEmployeeFeedCard = React.memo(function EmployeeFeedCard({
   onProfileImageClick,
   onSetProfileImage,
 }: IMemoEmployeeFeedCardProps) {
-  /* -------------------------------- Render UI -------------------------------- */
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("feed");
+  /* -------------------------------- Render UI ------------------------------- */
   return (
-    <div
-      className={isLiking ? "animate-card-pop-shrink" : undefined}
-    >
+    <div className={isLiking ? "animate-card-pop-shrink" : undefined}>
       {/* Recommended Badge Section */}
       {isRecommended && (
         <div className="flex items-center gap-1 mb-1.5 px-1">
           <Sparkles className="size-3 text-primary" />
           <span className="text-[10px] font-semibold text-primary">
-            Recommended
+            {t("recommended")}
           </span>
         </div>
       )}

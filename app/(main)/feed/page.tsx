@@ -576,7 +576,7 @@ export default function FeedPage() {
 
       {/* Recommended for You Section */}
       {isLoading ? (
-        <FeedRecommendationsSkeleton />
+        <FeedRecommendationsSkeleton isCompany={isEmployee} />
       ) : (
         (() => {
           const recs = isEmployee
