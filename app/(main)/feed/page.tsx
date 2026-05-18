@@ -32,6 +32,7 @@ import { useRouter } from "next/navigation";
 import React, {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -46,11 +47,17 @@ import {
   FeedBannerSkeleton,
   FeedDividerSkeleton,
   FeedRecommendationsSkeleton,
+  NeutralCardSkeleton,
 } from "@/components/feed/skeleton";
 import { MemoCompanyFeedCard } from "@/components/feed/memo-company-feed-card";
 import { MemoEmployeeFeedCard } from "@/components/feed/memo-employee-feed-card";
 import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
 import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
+
+// useLayoutEffect on client (fires before paint), useEffect on server (no-op safe)
+// Used to read localStorage synchronously before the first visible frame.
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 // Tracks whether we've ever successfully started a fetch for each dataset
 // within this JS module lifetime (survives Strict Mode double-invocation).
@@ -72,6 +79,13 @@ export default function FeedPage() {
 
   /* -------------------------------- All States ------------------------------ */
   const [mounted, setMounted] = useState<boolean>(false);
+
+  // Tracks the user's role before Zustand rehydration completes, derived directly
+  // from localStorage so the correct skeleton type is known before the first paint.
+  // null = unknown (no stored session), true = employee, false = company
+  const [skeletonIsEmployee, setSkeletonIsEmployee] = useState<boolean | null>(
+    null,
+  );
 
   // True only after this component instance's first recommendation fetch completes.
   // Guards against showing a stale error from a previous session's failed fetch
@@ -194,6 +208,23 @@ export default function FeedPage() {
 
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => setMounted(true), []);
+
+  // Read user role directly from localStorage before first paint so the correct
+  // Skeleton type is shown immediately — no neutral-then-correct flash.
+  useIsomorphicLayoutEffect(() => {
+    try {
+      const raw = localStorage.getItem("current-user-store");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        const role = parsed.state?.user?.role;
+        setSkeletonIsEmployee(
+          role === "employee" ? true : role === "company" ? false : null,
+        );
+      }
+    } catch {
+      // ignore parse/access errors — neutral skeleton is the safe fallback
+    }
+  }, []);
 
   // Fetch All Current Employee or Company Liked - User Specific Data (Reset When User Change)
   const { isEmployee } = useFetchOnce({
@@ -505,6 +536,12 @@ export default function FeedPage() {
   );
 
   /* -------------------------------- Render UI -------------------------------- */
+  // SkeletonIsEmployee is pre-seeded from localStorage before first paint.
+  // Once Zustand rehydrates, sync it with the authoritative store value.
+  // null = unknown (no stored session — show neutral skeleton)
+  // true = employee (browsing companies)
+  // false = company  (browsing employees)
+
   const isLoading =
     !mounted ||
     !currentUser ||
@@ -576,7 +613,9 @@ export default function FeedPage() {
 
       {/* Recommended for You Section */}
       {isLoading ? (
-        <FeedRecommendationsSkeleton isCompany={isEmployee} />
+        <FeedRecommendationsSkeleton
+          isEmployee={skeletonIsEmployee ?? undefined}
+        />
       ) : (
         (() => {
           const recs = isEmployee
@@ -718,7 +757,11 @@ export default function FeedPage() {
         {/* Loading Skeleton Section */}
         {isLoading
           ? Array.from({ length: PAGE_SIZE }).map((_, index) =>
-              isEmployee ? (
+              skeletonIsEmployee === null ? (
+                <div key={`neutral-skeleton-${index}`}>
+                  <NeutralCardSkeleton />
+                </div>
+              ) : skeletonIsEmployee ? (
                 <div key={`company-skeleton-${index}`}>
                   <CompanyCardSkeleton />
                 </div>

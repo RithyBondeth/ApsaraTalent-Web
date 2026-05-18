@@ -213,6 +213,12 @@ export default function ProfilePage() {
     cover: undefined,
   });
 
+  const [avatarLoadError, setAvatarLoadError] = useState<boolean>(false);
+  const [coverLoadError, setCoverLoadError] = useState<boolean>(false);
+
+  const lastUploadedAvatarRef = useRef<string | null>(null);
+  const lastUploadedCoverRef = useRef<string | null>(null);
+
   /* ----------------------------- API Integration ---------------------------- */
   // Current User Infomation and Current User CareerScopes
   const { user, loading, getCurrentUser } = useGetCurrentUserStore();
@@ -271,16 +277,27 @@ export default function ProfilePage() {
   }, [getCurrentUser]);
 
   useEffect(() => {
+    // Reset error states whenever the image sources change
+    setAvatarLoadError(false);
+    setCoverLoadError(false);
+
     let avatarUrl: string | undefined;
     let coverUrl: string | undefined;
 
     if (avatarFile) avatarUrl = URL.createObjectURL(avatarFile);
-
     if (coverFile) coverUrl = URL.createObjectURL(coverFile);
 
     setAvatarOrCoverPreview({
-      avatar: avatarUrl ?? company?.avatar,
-      cover: coverUrl ?? company?.cover,
+      // Priority: local file blob (editing) → retained upload blob → server URL
+      // Retained blob takes priority over server URL so a broken/slow server URL
+      // never causes blank avatar/cover after a successful upload.
+      avatar:
+        avatarUrl ??
+        lastUploadedAvatarRef.current ??
+        company?.avatar ??
+        undefined,
+      cover:
+        coverUrl ?? lastUploadedCoverRef.current ?? company?.cover ?? undefined,
     });
 
     return () => {
@@ -288,6 +305,26 @@ export default function ProfilePage() {
       if (coverUrl) URL.revokeObjectURL(coverUrl);
     };
   }, [avatarFile, coverFile, company?.avatar, company?.cover]);
+
+  // Revoke retained blobs on unmount
+  useEffect(() => {
+    return () => {
+      if (lastUploadedAvatarRef.current)
+        URL.revokeObjectURL(lastUploadedAvatarRef.current);
+      if (lastUploadedCoverRef.current)
+        URL.revokeObjectURL(lastUploadedCoverRef.current);
+    };
+  }, []);
+
+  // Warn the user before leaving the page with unsaved changes
+  useEffect(() => {
+    if (!isEdit || !form.formState.isDirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [isEdit, form.formState.isDirty]);
 
   // FieldArray for OpenPositions
   const openPositionFA = useFieldArray({
@@ -403,6 +440,10 @@ export default function ProfilePage() {
   // ── Avatar, Cover and Image Methods ──────────────────────────────────────
   // ── API: Remove Avatar ─────────────────────────────────────────
   const removeAvatar = async () => {
+    if (lastUploadedAvatarRef.current) {
+      URL.revokeObjectURL(lastUploadedAvatarRef.current);
+      lastUploadedAvatarRef.current = null;
+    }
     if (company) await removeCmpAvatarStore.removeCmpAvatar(company.id);
 
     await disableEditMode();
@@ -412,6 +453,10 @@ export default function ProfilePage() {
 
   // ── API: Remove Cover ─────────────────────────────────────────
   const removeCover = async () => {
+    if (lastUploadedCoverRef.current) {
+      URL.revokeObjectURL(lastUploadedCoverRef.current);
+      lastUploadedCoverRef.current = null;
+    }
     if (company) await removeCmpCoverStore.removeCmpCover(company.id);
 
     await disableEditMode();
@@ -429,7 +474,7 @@ export default function ProfilePage() {
 
     await disableEditMode();
 
-    toast.success(t("removeCoverSuccess"));
+    toast.success(t("removeImageSuccess"));
   };
 
   // ── Handle Click Image Popup ────────────────────────────────────
@@ -920,11 +965,25 @@ export default function ProfilePage() {
 
       await Promise.all(uploadTasks);
 
+      if (hasAvatarUpload && avatarFileToUpload instanceof File) {
+        if (lastUploadedAvatarRef.current)
+          URL.revokeObjectURL(lastUploadedAvatarRef.current);
+        lastUploadedAvatarRef.current = URL.createObjectURL(avatarFileToUpload);
+      }
+      if (hasCoverUpload && coverFileToUpload instanceof File) {
+        if (lastUploadedCoverRef.current)
+          URL.revokeObjectURL(lastUploadedCoverRef.current);
+        lastUploadedCoverRef.current = URL.createObjectURL(coverFileToUpload);
+      }
+
       /* ------------------------ API UPDATE ------------------------ */
       if (hasUpdateBodyChanges) {
         await updateOneCmpStore.updateOneCompany(company.id, updateBody);
       }
 
+      toast.success(t("profileUpdatedSuccess"), {
+        description: t("profileUpdatedSuccessDescription"),
+      });
       await disableEditMode();
     } catch (error) {
       console.error(error);
@@ -959,9 +1018,7 @@ export default function ProfilePage() {
     if (coverFile)
       form.setValue("basicInfo.cover", coverFile, { shouldDirty: true });
 
-    form.handleSubmit(onSubmit, (errors) => console.log("RHF errors:", errors))(
-      e,
-    );
+    form.handleSubmit(onSubmit, () => toast.error(t("validationError")))(e);
   };
 
   /* -------------------------------- Loading States ------------------------------- */
@@ -1001,7 +1058,11 @@ export default function ProfilePage() {
   if (!user || !company) return null;
 
   /* -------------------------------- Profile Completion ----------------------- */
-  const profileCompletion = getCompanyProfileCompletion(company);
+  const profileCompletion = getCompanyProfileCompletion({
+    ...company,
+    avatar: avatarLoadError ? undefined : company.avatar,
+    cover: coverLoadError ? undefined : company.cover,
+  });
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -1074,7 +1135,10 @@ export default function ProfilePage() {
                   if (!isEdit && company.avatar) handleClickAvatarPopup(e);
                 }}
               >
-                <AvatarImage src={avatarOrCoverPreview.avatar} />
+                <AvatarImage
+                  src={avatarOrCoverPreview.avatar}
+                  onError={() => setAvatarLoadError(true)}
+                />
                 <AvatarFallback className="uppercase text-lg font-medium">
                   {company.name.slice(0, 3)}
                 </AvatarFallback>
@@ -1089,10 +1153,17 @@ export default function ProfilePage() {
                   >
                     <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
                   </Button>
-                  {company.avatar && (
+                  {avatarFile && (
                     <Button
                       className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-red-500 text-red-100"
-                      onClick={() => setOpenRemoveAvatarDialog(true)}
+                      onClick={() => {
+                        setAvatarFile(null);
+                        form.setValue(
+                          "basicInfo.avatar",
+                          company.avatar ?? null,
+                          { shouldDirty: false },
+                        );
+                      }}
                       type="button"
                     >
                       <LucideXCircle width={"18px"} strokeWidth={"1.2px"} />
@@ -1119,6 +1190,17 @@ export default function ProfilePage() {
               accept="image/*"
               onChange={(e) => handleFileChange(e, "cover")}
             />
+
+            {/* Hidden Image Section: Purely for detecting broken cover URLs */}
+            {company.cover && !coverFile && (
+              <img
+                src={company.cover}
+                alt=""
+                className="hidden"
+                aria-hidden="true"
+                onError={() => setCoverLoadError(true)}
+              />
+            )}
 
             {/* Avatar Crop Dialog Section */}
             <AvatarCropDialog
@@ -1832,7 +1914,8 @@ export default function ProfilePage() {
                       className="w-full justify-between"
                       type="button"
                       onClick={() => {
-                        getAllCareerScopeStore.getAllCareerScopes();
+                        if (!getAllCareerScopeStore.careerScopes?.length)
+                          getAllCareerScopeStore.getAllCareerScopes();
                       }}
                     >
                       {careerScopeInput

@@ -10,6 +10,7 @@ export default function ProfileCompletionCard({
 }: IProfileCompletionCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("profile");
+  const tFields = useTranslations("profile.completionFields");
   const isComplete = percentage >= 100;
 
   /* -------------------------------- Render UI -------------------------------- */
@@ -51,7 +52,7 @@ export default function ProfileCompletionCard({
                 key={field}
                 className="text-sm text-muted-foreground list-disc"
               >
-                {field}
+                {tFields(field as Parameters<typeof tFields>[0])}
               </li>
             ))}
           </ul>

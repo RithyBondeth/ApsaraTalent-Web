@@ -2,7 +2,6 @@ import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_UPLOAD_CMP_AVATAR_URL } from "@/utils/constants/apis/user-api/company.api.constant";
 import { create } from "zustand";
-import { useCompanySignupStore } from "../auth/company-signup.store";
 
 /* ---------------------------------- States --------------------------------- */
 // ── Upload Company Avatar API Response ─────────────────────────────────
@@ -30,16 +29,9 @@ export const useUploadCompanyAvatarStore = create<TUploadCompanyAvatarState>(
         const formData = new FormData();
         formData.append("avatar", _avatar);
 
-        const accessToken = useCompanySignupStore.getState().accessToken;
-
         const response = await axios.post<TUploadCompanyAvatarResponse>(
           API_UPLOAD_CMP_AVATAR_URL(_companyID),
           formData,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          },
         );
         set({ loading: false, error: null, message: response.data.message });
       } catch (error) {
@@ -49,6 +41,7 @@ export const useUploadCompanyAvatarStore = create<TUploadCompanyAvatarState>(
         );
 
         set({ loading: false, error: errorMessage, message: errorMessage });
+        throw new Error(errorMessage);
       }
     },
   }),

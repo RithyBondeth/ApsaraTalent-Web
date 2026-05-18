@@ -90,7 +90,7 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
     );
 
     return new Promise((resolve) => {
-      canvas.toBlob((blob) => resolve(blob as Blob), "image/png");
+      canvas.toBlob((blob) => resolve(blob as Blob), "image/jpeg", 0.9);
     });
   }
 

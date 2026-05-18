@@ -159,8 +159,6 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
           requestBody.socialIdsToDelete = body.socialIdsToDelete;
         }
 
-        console.log("Request Body to Backend (Employee):", requestBody);
-
         const response = await axios.patch<TUpdateOneEmployeeResponse>(
           API_UPDATE_EMP_INFO_URL(employeeID),
           requestBody,
@@ -179,6 +177,7 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
         );
 
         set({ loading: false, error: errorMessage, message: errorMessage });
+        throw new Error(errorMessage);
       }
     },
   }),

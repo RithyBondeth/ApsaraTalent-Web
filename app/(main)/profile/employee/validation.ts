@@ -177,7 +177,11 @@ export const socialSchema = z.object({
         .object({
           id: z.string().optional(),
           platform: z.string().optional(),
-          url: z.string().optional(),
+          url: z
+            .string()
+            .url({ message: "Please enter a valid URL (e.g. https://...)" })
+            .optional()
+            .or(z.literal("")),
         })
         .optional(),
     )

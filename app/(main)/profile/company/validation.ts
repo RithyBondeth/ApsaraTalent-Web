@@ -45,7 +45,7 @@ export const basicInfoSchema = z.object({
               );
             },
             {
-              message: `Invalid file: avatar must be an image (jpeg, png, webp) and < 5MB`,
+              message: `Invalid file: cover must be an image (jpeg, png, webp) and < 5MB`,
             },
           ),
           z.string(),

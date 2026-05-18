@@ -130,6 +130,9 @@ export default function EmployeeProfilePage() {
     undefined,
   );
 
+  const [avatarLoadError, setAvatarLoadError] = useState<boolean>(false);
+  const lastUploadedAvatarRef = useRef<string | null>(null);
+
   // Avatar State
   const {
     avatarFile,
@@ -274,14 +277,37 @@ export default function EmployeeProfilePage() {
 
   // Avatar Preview Effect
   useEffect(() => {
+    setAvatarLoadError(false);
+
     if (!avatarFile) {
-      setAvatarPreview(employee?.avatar);
+      setAvatarPreview(
+        lastUploadedAvatarRef.current ?? employee?.avatar ?? undefined,
+      );
       return;
     }
     const url = URL.createObjectURL(avatarFile);
     setAvatarPreview(url);
     return () => URL.revokeObjectURL(url);
   }, [avatarFile, employee?.avatar]);
+
+  // Revoke retained avatar blob URL on unmount
+  useEffect(() => {
+    return () => {
+      if (lastUploadedAvatarRef.current) {
+        URL.revokeObjectURL(lastUploadedAvatarRef.current);
+      }
+    };
+  }, []);
+
+  // Warn the user before leaving the page with unsaved changes
+  useEffect(() => {
+    if (!isEdit || !form.formState.isDirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [isEdit, form.formState.isDirty]);
 
   // FieldArray for Experiences
   const experienceFA = useFieldArray({
@@ -454,6 +480,10 @@ export default function EmployeeProfilePage() {
 
   // ── API: Remove Avatar ─────────────────────────────────────────
   const removeAvatar = async () => {
+    if (lastUploadedAvatarRef.current) {
+      URL.revokeObjectURL(lastUploadedAvatarRef.current);
+      lastUploadedAvatarRef.current = null;
+    }
     if (employee) await removeEmpAvatarStore.removeEmpAvatar(employee.id);
 
     await disableEditMode();
@@ -984,11 +1014,20 @@ export default function EmployeeProfilePage() {
 
       await Promise.all(uploadTasks);
 
+      if (hasAvatarUpload && avatarFileToUpload instanceof File) {
+        if (lastUploadedAvatarRef.current)
+          URL.revokeObjectURL(lastUploadedAvatarRef.current);
+        lastUploadedAvatarRef.current = URL.createObjectURL(avatarFileToUpload);
+      }
+
       /* ------------------------ API UPDATE ------------------------ */
       if (hasUpdateBodyChanges) {
         await updateOneEmpStore.updateOneEmployee(employee.id, updateBody);
       }
 
+      toast.success(t("profileUpdatedSuccess"), {
+        description: t("profileUpdatedSuccessDescription"),
+      });
       await disableEditMode();
     } catch (err) {
       console.error(err);
@@ -1024,9 +1063,7 @@ export default function EmployeeProfilePage() {
         shouldDirty: true,
       });
 
-    form.handleSubmit(onSubmit, (errors) => console.log("RHF errors:", errors))(
-      e,
-    );
+    form.handleSubmit(onSubmit, () => toast.error(t("validationError")))(e);
   };
 
   /* ------------------------------- Loading State ------------------------------- */
@@ -1071,7 +1108,10 @@ export default function EmployeeProfilePage() {
   if (!user || !employee) return null;
 
   /* -------------------------------- Profile Completion ---------------------- */
-  const profileCompletion = getEmployeeProfileCompletion(employee);
+  const profileCompletion = getEmployeeProfileCompletion({
+    ...employee,
+    avatar: avatarLoadError ? undefined : employee.avatar,
+  });
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -1153,7 +1193,10 @@ export default function EmployeeProfilePage() {
                 className="size-20 sm:size-24 ring-[3px] ring-card shadow-xl"
                 rounded="md"
               >
-                <AvatarImage src={avatarPreview} />
+                <AvatarImage
+                  src={avatarPreview}
+                  onError={() => setAvatarLoadError(true)}
+                />
                 <AvatarFallback className="uppercase">
                   {employee.username?.slice(0, 3)}
                 </AvatarFallback>
@@ -1168,11 +1211,18 @@ export default function EmployeeProfilePage() {
                   >
                     <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
                   </Button>
-                  {employee.avatar && (
+                  {avatarFile && (
                     <Button
                       className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-red-500 text-primary-foreground"
                       type="button"
-                      onClick={() => setOpenRemoveAvatarDialog(true)}
+                      onClick={() => {
+                        setAvatarFile(null);
+                        form.setValue(
+                          "basicInfo.avatar",
+                          employee.avatar ?? null,
+                          { shouldDirty: false },
+                        );
+                      }}
                     >
                       <LucideXCircle width={"18px"} strokeWidth={"1.2px"} />
                     </Button>
@@ -1904,7 +1954,8 @@ export default function EmployeeProfilePage() {
                       className="w-full justify-between"
                       type="button"
                       onClick={() => {
-                        getAllCareerScopesStore.getAllCareerScopes();
+                        if (!getAllCareerScopesStore.careerScopes?.length)
+                          getAllCareerScopesStore.getAllCareerScopes();
                       }}
                     >
                       {careerScopeInput

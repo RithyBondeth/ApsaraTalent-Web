@@ -148,8 +148,6 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
           requestBody.socialIdsToDelete = body.socialIdsToDelete;
         }
 
-        console.log("Request Body to Backend (Company):", requestBody);
-
         const response = await axios.patch<TUpdateOneCompanyResponse>(
           API_UPDATE_CMP_INFO_URL(companyID),
           requestBody,
@@ -167,6 +165,7 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
           "An error occurred while updating company's information",
         );
         set({ loading: false, error: errorMessage, message: errorMessage });
+        throw new Error(errorMessage);
       }
     },
   }),

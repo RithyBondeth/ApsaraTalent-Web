@@ -2,7 +2,6 @@ import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_UPLOAD_EMP_AVATAR_URL } from "@/utils/constants/apis/user-api/employee.api.constant";
 import { create } from "zustand";
-import { useEmployeeSignupStore } from "../auth/employee-signup.store";
 
 /* ---------------------------------- States --------------------------------- */
 // ── Upload Employee Avatar API Response ──────────────────────────────────
@@ -30,16 +29,9 @@ export const useUploadEmployeeAvatarStore = create<TUploadEmployeeAvatarState>(
         const formData = new FormData();
         formData.append("avatar", _avatar);
 
-        const accessToken = useEmployeeSignupStore.getState().accessToken;
-
         const response = await axios.post<TUploadEmployeeAvatarResponse>(
           API_UPLOAD_EMP_AVATAR_URL(_employeeID),
           formData,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          },
         );
         set({ loading: false, error: null, message: response.data.message });
       } catch (error) {
@@ -49,6 +41,7 @@ export const useUploadEmployeeAvatarStore = create<TUploadEmployeeAvatarState>(
         );
 
         set({ loading: false, error: errorMessage, message: errorMessage });
+        throw new Error(errorMessage);
       }
     },
   }),
