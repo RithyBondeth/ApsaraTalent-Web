@@ -143,16 +143,15 @@ export default function ResumeEditorPage() {
       const objectUrl = window.URL.createObjectURL(blob);
       link.href = objectUrl;
       link.download = result.filename || "resume.pdf";
+      link.style.display = "none";
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
       window.URL.revokeObjectURL(objectUrl);
 
       toast.success(t("resumeDownloaded"), {
         description: t("resumeSavedToDownloads"),
       });
-
-      // Clear store and go back to template selection
-      clearPayload();
-      router.push("/resume-builder");
     } catch (error) {
       console.error("Failed to generate resume:", error);
       stopProgress(0);

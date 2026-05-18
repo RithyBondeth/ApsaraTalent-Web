@@ -9,10 +9,12 @@ import { IUserAuthResponse } from "@/utils/interfaces/auth/auth.interface";
 /* ---------------------------------- States --------------------------------- */
 // ── Login API Response ─────────────────────────────────
 type TLoginResponse = {
-  accessToken: string;
-  refreshToken: string;
+  accessToken?: string;
+  refreshToken?: string;
   message: string;
-  user: IUserAuthResponse;
+  user?: IUserAuthResponse;
+  requiresTwoFactor?: boolean;
+  userId?: string;
 };
 
 // ── Login State ────────────────────────────────────────
@@ -22,12 +24,16 @@ type TLoginState = {
   isAuthenticated: boolean;
   message: string | null;
   user: IUserAuthResponse | null;
+  requiresTwoFactor: boolean;
+  pendingUserId: string | null;
+  pendingRememberMe: boolean;
   login: (
     email: string,
     password: string,
     rememberMe: boolean,
   ) => Promise<void>;
   clearToken: () => void;
+  clearTwoFactorPending: () => void;
 };
 
 /* ---------------------------------- Store --------------------------------- */
@@ -37,15 +43,37 @@ export const useLoginStore = create<TLoginState>((set) => ({
   isAuthenticated: false,
   message: null,
   user: null,
+  requiresTwoFactor: false,
+  pendingUserId: null,
+  pendingRememberMe: false,
   login: async (identifier: string, password: string, rememberMe: boolean) => {
-    set({ loading: true, error: null });
+    set({
+      loading: true,
+      error: null,
+      requiresTwoFactor: false,
+      pendingUserId: null,
+    });
 
     try {
       const response = await axios.post<TLoginResponse>(API_AUTH_LOGIN_URL, {
         identifier: identifier,
         password: password,
       });
-      const { accessToken, refreshToken, message } = response.data;
+      const { accessToken, refreshToken, message, requiresTwoFactor, userId } =
+        response.data;
+
+      if (requiresTwoFactor && userId) {
+        set({
+          loading: false,
+          error: null,
+          isAuthenticated: false,
+          requiresTwoFactor: true,
+          pendingUserId: userId,
+          pendingRememberMe: rememberMe,
+          message: null,
+        });
+        return;
+      }
 
       // Set cookies for secure token storage
       console.log("Setting auth cookies...", {
@@ -55,14 +83,14 @@ export const useLoginStore = create<TLoginState>((set) => ({
       });
 
       // Use centralized cookie management
-      setAuthCookies(accessToken, refreshToken, rememberMe);
+      setAuthCookies(accessToken!, refreshToken!, rememberMe);
 
       set({
         loading: false,
         error: null,
         isAuthenticated: true,
         message,
-        user: response.data.user,
+        user: response.data.user ?? null,
       });
     } catch (error) {
       const errorMessage = extractApiErrorMessage(
@@ -76,6 +104,13 @@ export const useLoginStore = create<TLoginState>((set) => ({
         isAuthenticated: false,
       });
     }
+  },
+  clearTwoFactorPending: () => {
+    set({
+      requiresTwoFactor: false,
+      pendingUserId: null,
+      pendingRememberMe: false,
+    });
   },
   clearToken: () => {
     try {
@@ -94,7 +129,6 @@ export const useLoginStore = create<TLoginState>((set) => ({
       });
     } catch (error) {
       console.error("Error clearing tokens:", error);
-      // Still update state even if clearing failed
       set({
         isAuthenticated: false,
         message: null,

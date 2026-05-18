@@ -61,7 +61,11 @@
     "done": "រួចរាល់",
     "sending": "កំពុងផ្ញើ…",
     "sendResetLink": "ផ្ញើតំណកំណត់ឡើងវិញ",
-    "cancel": "បោះបង់"
+    "cancel": "បោះបង់",
+    "twoFactorEnabledDesc": "គណនីរបស់អ្នកត្រូវបានការពារដោយកម្មវិធីផ្ទៀងផ្ទាត់",
+    "twoFactorDisabledDesc": "បន្ថែមស្រទាប់សុវត្ថិភាពបន្ថែមមួយទៀតទៅគណនីរបស់អ្នក",
+    "enable": "បើក",
+    "disable": "បិទ"
   },
   "header": {
     "chat": "ការជជែក",
@@ -286,7 +290,9 @@
     "cmpCoverTitle": "បន្ថែមរូបភាពគម្របក្រុមហ៊ុន (ស្រេចចិត្ត)",
     "cmpCoverBoxText": "ទម្លាក់រូបភាពគម្របក្រុមហ៊ុននៅទីនេះ",
     "cmpCoverBoxSubText": "ឯកសារ JPG, PNG ឬ WEBP រហូតដល់ 5MB",
-    "cmpCoverCropDialogTitle": "កាត់រូបភាពគម្របក្រុមហ៊ុន"
+    "cmpCoverCropDialogTitle": "កាត់រូបភាពគម្របក្រុមហ៊ុន",
+    "twoFactorTitle": "ការផ្ទៀងផ្ទាត់ពីរជំហាន",
+    "twoFactorDesc": "បញ្ចូលលេខ 6 ខ្ទង់ពីកម្មវិធីផ្ទៀងផ្ទាត់របស់អ្នកដើម្បីបន្ត។"
   },
   "toast": {
     "removeResumeSuccess": "លុប Resume បានជោគជ័យ!",
@@ -337,7 +343,9 @@
     "resetLinkSent": "បានផ្ញើតំណកំណត់ឡើងវិញ! សូមពិនិត្យប្រអប់សំបុត្ររបស់អ្នក។",
     "resumeDownloaded": "បានទាញយក Resume!",
     "resumeSavedToDownloads": "Resume របស់អ្នកត្រូវបានរក្សាទុកក្នុងថតទាញយក។",
-    "somethingWentWrong": "មានបញ្ហាកើតឡើង។ សូមព្យាយាមម្តងទៀតល"
+    "somethingWentWrong": "មានបញ្ហាកើតឡើង។ សូមព្យាយាមម្តងទៀតល",
+    "twoFactorEnabled": "ការផ្ទៀងផ្ទាត់ពីរជំហានបានបើក។",
+    "twoFactorDisabled": "ការផ្ទៀងផ្ទាត់ពីរជំហានបានបិទ។"
   },
   "dashboard": {
     "title": "ផ្ទាំងគ្រប់គ្រង",
@@ -1038,5 +1046,18 @@
       "cancelled": "បានបោះបង់",
       "completed": "បានបញ្ចប់"
     }
+  },
+  "twoFactor": {
+    "enableTitle": "បើកការផ្ទៀងផ្ទាត់ពីរជំហាន",
+    "disableTitle": "បិទការផ្ទៀងផ្ទាត់ពីរជំហាន",
+    "enableStep1Desc": "ស្កែន QR Code ខាងក្រោមជាមួយកម្មវិធីផ្ទៀងផ្ទាត់របស់អ្នក (ឧ. Google Authenticator, Authy)។",
+    "enableStep2Desc": "បញ្ចូលលេខ 6 ខ្ទង់ពីកម្មវិធីផ្ទៀងផ្ទាត់របស់អ្នកដើម្បីបញ្ជាក់។",
+    "disableDesc": "បញ្ចូលលេខ 6 ខ្ទង់ពីកម្មវិធីផ្ទៀងផ្ទាត់របស់អ្នកដើម្បីបិទ 2FA។",
+    "manualEntry": "ឬបញ្ចូលសោនេះដោយដៃ:",
+    "otpHint": "បើកកម្មវិធីផ្ទៀងផ្ទាត់របស់អ្នក ហើយបញ្ចូលលេខ 6 ខ្ទង់។",
+    "next": "បន្ទាប់",
+    "cancel": "បោះបង់",
+    "enableConfirm": "បើក",
+    "disableConfirm": "បិទ"
   }
 }

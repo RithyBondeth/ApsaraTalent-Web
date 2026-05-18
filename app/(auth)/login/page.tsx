@@ -18,6 +18,7 @@ import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useLoginStore } from "@/stores/apis/auth/login.store";
+import { useTwoFactorStore } from "@/stores/apis/auth/two-factor.store";
 import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
 import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
@@ -40,11 +41,13 @@ import {
 } from "@/utils/constants/asset.constant";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  LucideAlertCircle,
   LucideEye,
   LucideEyeClosed,
   LucideLockKeyhole,
   LucideMail,
   LucidePhone,
+  LucideShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
@@ -57,6 +60,11 @@ import { Controller, useForm } from "react-hook-form";
 import { makeLoginSchema, TLoginForm } from "./validation";
 import { loginSvg } from "@/utils/constants/asset.constant";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 
 function LoginPage() {
   /* ------------------------------------ Utils -------------------------------- */
@@ -95,6 +103,8 @@ function LoginPage() {
   const isProcessingRegularLogin = useRef<boolean>(false);
   const [loginInitiated, setLoginInitiated] = useState<boolean>(false);
   const [isPreloadingData, setIsPreloadingData] = useState<boolean>(false);
+  const [twoFactorOtp, setTwoFactorOtp] = useState<string>("");
+  const [twoFactorInitiated, setTwoFactorInitiated] = useState<boolean>(false);
 
   /* ----------------------------- API Integration ----------------------------- */
   // Current User, Get All Employees and Companies
@@ -124,7 +134,19 @@ function LoginPage() {
   );
 
   // Regular Email-Password Authentication Store
-  const { isAuthenticated, login, error, loading } = useLoginStore();
+  const {
+    isAuthenticated,
+    login,
+    error,
+    loading,
+    requiresTwoFactor,
+    pendingUserId,
+    pendingRememberMe,
+    clearTwoFactorPending,
+  } = useLoginStore();
+
+  // Two-Factor Authentication Store
+  const twoFactorStore = useTwoFactorStore();
 
   // Social Authentication Stores
   const googleLoginStore = useGoogleLoginStore();
@@ -213,6 +235,40 @@ function LoginPage() {
     isProcessingRegularLogin.current = false;
     setLoginInitiated(true);
     await login(data.email, data.password, data.rememberMe!);
+  };
+
+  // ── 2FA Verify ───────────────────────────────────────────
+  const handleTwoFactorVerify = async () => {
+    if (!pendingUserId || twoFactorOtp.length < 6) return;
+    setTwoFactorInitiated(true);
+    const success = await twoFactorStore.verifyLogin(
+      pendingUserId,
+      twoFactorOtp,
+      pendingRememberMe,
+    );
+    if (!success) {
+      setTwoFactorInitiated(false);
+      return;
+    }
+    // Verified — now preload user data and redirect
+    setIsPreloadingData(true);
+    clearTwoFactorPending();
+    preloadUserData()
+      .then(() => {
+        toast.success(t("successLoggedIn"), { duration: 1000 });
+      })
+      .catch(() => {
+        toast.error(t("loginFailed"), { duration: 1000 });
+      })
+      .finally(() => {
+        setTimeout(() => {
+          toast.dismiss();
+          setIsPreloadingData(false);
+          setTwoFactorInitiated(false);
+          setTwoFactorOtp("");
+          router.replace(callbackUrl);
+        }, DEFAULT_REDIRECT_DELAY_MS);
+      });
   };
 
   /* --------------------------------- Effects --------------------------------- */
@@ -639,6 +695,63 @@ function LoginPage() {
           className="relative z-10"
         />
       </div>
+
+      {/* Two-Factor Auth Verification Dialog Section */}
+      <Dialog
+        open={requiresTwoFactor}
+        onOpenChange={(open) => {
+          if (!open) {
+            clearTwoFactorPending();
+            setTwoFactorOtp("");
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogTitle className="flex items-center gap-2">
+            <LucideShieldCheck className="size-5 text-primary" />
+            {t("twoFactorTitle")}
+          </DialogTitle>
+          <DialogDescription>{t("twoFactorDesc")}</DialogDescription>
+          <div className="flex flex-col items-center gap-3 py-2">
+            <InputOTP
+              maxLength={6}
+              value={twoFactorOtp}
+              onChange={setTwoFactorOtp}
+              disabled={twoFactorInitiated}
+            >
+              <InputOTPGroup>
+                {Array.from({ length: 6 }, (_, i) => (
+                  <InputOTPSlot key={i} index={i} />
+                ))}
+              </InputOTPGroup>
+            </InputOTP>
+            {twoFactorStore.error && (
+              <div className="flex items-center gap-1.5 text-destructive text-xs">
+                <LucideAlertCircle className="size-3.5 shrink-0" />
+                {twoFactorStore.error}
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                clearTwoFactorPending();
+                setTwoFactorOtp("");
+              }}
+              disabled={twoFactorInitiated}
+            >
+              {t("cancel")}
+            </Button>
+            <Button
+              onClick={handleTwoFactorVerify}
+              disabled={twoFactorInitiated || twoFactorOtp.length < 6}
+            >
+              {t("verify")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Remember Dialog Section */}
       <Dialog open={openRmbDialog} onOpenChange={setOpenRmbDialog}>

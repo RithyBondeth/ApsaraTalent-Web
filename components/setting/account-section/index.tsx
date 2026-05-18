@@ -31,6 +31,7 @@ export function AccountSection(props: IAccountSectionProps) {
     lastLogin,
     memberSince,
     onResetPassword,
+    onToggleTwoFactor,
   } = props;
 
   /* ---------------------------------- Utils --------------------------------- */
@@ -69,14 +70,29 @@ export function AccountSection(props: IAccountSectionProps) {
       <Separator />
 
       {/* Email Section */}
-      <SettingRow icon={<LucideMail />} label={t("email")} value={email ?? "—"} />
+      <SettingRow
+        icon={<LucideMail />}
+        label={t("email")}
+        value={email ?? "—"}
+      />
 
       {/* Two-Factor Auth Section */}
-      <SettingRow
-        icon={<LucideShieldCheck />}
-        label={t("twoFactorAuth")}
-        value={
-          isTwoFactorEnabled ? (
+      <div className="flex items-center justify-between gap-4 px-4 py-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <span className="text-muted-foreground shrink-0 [&>svg]:size-4">
+            <LucideShieldCheck />
+          </span>
+          <div className="flex flex-col">
+            <span className="text-sm font-medium">{t("twoFactorAuth")}</span>
+            <span className="text-xs text-muted-foreground">
+              {isTwoFactorEnabled
+                ? t("twoFactorEnabledDesc")
+                : t("twoFactorDisabledDesc")}
+            </span>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          {isTwoFactorEnabled ? (
             <Badge className="text-[10px] bg-emerald-500/10 text-emerald-600 border border-emerald-300/40 hover:bg-emerald-500/10">
               {t("enabled")}
             </Badge>
@@ -87,12 +103,24 @@ export function AccountSection(props: IAccountSectionProps) {
             >
               {t("disabled")}
             </Badge>
-          )
-        }
-      />
+          )}
+          <Button
+            size="sm"
+            variant={isTwoFactorEnabled ? "outline" : "default"}
+            className="shrink-0 text-xs rounded-lg"
+            onClick={onToggleTwoFactor}
+          >
+            {isTwoFactorEnabled ? t("disable") : t("enable")}
+          </Button>
+        </div>
+      </div>
 
       {/* Last Login Section */}
-      <SettingRow icon={<LucideLogIn />} label={t("lastLogin")} value={lastLogin} />
+      <SettingRow
+        icon={<LucideLogIn />}
+        label={t("lastLogin")}
+        value={lastLogin}
+      />
 
       {/* Member Since Section */}
       <SettingRow

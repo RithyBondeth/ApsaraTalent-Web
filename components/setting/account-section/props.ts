@@ -7,4 +7,5 @@ export interface IAccountSectionProps {
   lastLogin: string;
   memberSince: string;
   onResetPassword: () => void;
+  onToggleTwoFactor: () => void;
 }

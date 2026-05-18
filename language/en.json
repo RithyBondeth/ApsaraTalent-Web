@@ -61,7 +61,11 @@
     "done": "Done",
     "sending": "Sending…",
     "sendResetLink": "Send Reset Link",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "twoFactorEnabledDesc": "Your account is protected with an authenticator app",
+    "twoFactorDisabledDesc": "Add an extra layer of security to your account",
+    "enable": "Enable",
+    "disable": "Disable"
   },
   "header": {
     "chat": "Chat",
@@ -286,7 +290,9 @@
     "cmpCoverTitle": "Add your company cover picture (Optional)",
     "cmpCoverBoxText": "Drop your company cover picture here",
     "cmpCoverBoxSubText": "JPG, PNG or WEBP files up to 5MB",
-    "cmpCoverCropDialogTitle": "Crop Company Cover Picture"
+    "cmpCoverCropDialogTitle": "Crop Company Cover Picture",
+    "twoFactorTitle": "Two-Factor Authentication",
+    "twoFactorDesc": "Enter the 6-digit code from your authenticator app to continue."
   },
   "toast": {
     "removeResumeSuccess": "Remove Resume Successfully!",
@@ -337,7 +343,9 @@
     "resetLinkSent": "Reset link sent! Check your inbox.",
     "resumeDownloaded": "Resume downloaded!",
     "resumeSavedToDownloads": "Your resume has been saved to your downloads folder.",
-    "somethingWentWrong": "Something went wrong. Please try again."
+    "somethingWentWrong": "Something went wrong. Please try again.",
+    "twoFactorEnabled": "Two-factor authentication enabled.",
+    "twoFactorDisabled": "Two-factor authentication disabled."
   },
   "dashboard": {
     "title": "Dashboard",
@@ -1038,5 +1046,18 @@
       "cancelled": "Cancelled",
       "completed": "Completed"
     }
+  },
+  "twoFactor": {
+    "enableTitle": "Enable Two-Factor Authentication",
+    "disableTitle": "Disable Two-Factor Authentication",
+    "enableStep1Desc": "Scan the QR code below with your authenticator app (e.g. Google Authenticator, Authy).",
+    "enableStep2Desc": "Enter the 6-digit code from your authenticator app to confirm.",
+    "disableDesc": "Enter the 6-digit code from your authenticator app to disable 2FA.",
+    "manualEntry": "Or enter this key manually:",
+    "otpHint": "Open your authenticator app and enter the 6-digit code.",
+    "next": "Next",
+    "cancel": "Cancel",
+    "enableConfirm": "Enable",
+    "disableConfirm": "Disable"
   }
 }

@@ -16,6 +16,8 @@ import { LanguageSection } from "@/components/setting/language-section";
 import { AccountSection } from "@/components/setting/account-section";
 import { AboutSection } from "@/components/setting/about-section";
 import { ResetPasswordDialog } from "@/components/setting/reset-password-dialog";
+import { TwoFactorDialog } from "@/components/setting/two-factor-dialog";
+import { T2FADialogMode } from "@/components/setting/two-factor-dialog/props";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import SettingLoadingSkeleton from "@/components/setting/skeleton";
@@ -34,12 +36,16 @@ export default function SettingPage() {
 
   // Security Integration
   const { forgotPassword } = useForgotPasswordStore();
+  const { getCurrentUser } = useGetCurrentUserStore();
 
   /* -------------------------------- All States ------------------------------ */
   // Dialog and Process States
   const [resetDialogOpen, setResetDialogOpen] = useState<boolean>(false);
   const [sending, setSending] = useState<boolean>(false);
   const [sent, setSent] = useState<boolean>(false);
+  const [twoFactorDialogOpen, setTwoFactorDialogOpen] =
+    useState<boolean>(false);
+  const [twoFactorMode, setTwoFactorMode] = useState<T2FADialogMode>("enable");
 
   // Account helpers
   const displayName =
@@ -85,6 +91,21 @@ export default function SettingPage() {
   };
 
   // ── Security and Account Methods ──────────────────────────────────────────
+  // ── Handle Toggle 2FA ──────────────────────────────────
+  const handleToggleTwoFactor = () => {
+    setTwoFactorMode(currentUser?.isTwoFactorEnabled ? "disable" : "enable");
+    setTwoFactorDialogOpen(true);
+  };
+
+  const handleTwoFactorSuccess = async () => {
+    await getCurrentUser();
+    toast.success(
+      twoFactorMode === "enable"
+        ? t("twoFactorEnabled")
+        : t("twoFactorDisabled"),
+    );
+  };
+
   // ── API: Send Password Reset Link ───────────────────────
   const handleSendReset = async () => {
     if (!currentUser?.email || sending) return;
@@ -142,10 +163,19 @@ export default function SettingPage() {
           setSent(false);
           setResetDialogOpen(true);
         }}
+        onToggleTwoFactor={handleToggleTwoFactor}
       />
 
       {/* About Section */}
       <AboutSection />
+
+      {/* Two-Factor Auth Dialog Section */}
+      <TwoFactorDialog
+        open={twoFactorDialogOpen}
+        mode={twoFactorMode}
+        onOpenChange={setTwoFactorDialogOpen}
+        onSuccess={handleTwoFactorSuccess}
+      />
 
       {/* Reset Password Dialog Section */}
       <ResetPasswordDialog
