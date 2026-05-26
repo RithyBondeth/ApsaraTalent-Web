@@ -33,6 +33,8 @@ export interface IValues {
   label: string;
 }
 
+export type TJobWorkMode = "remote" | "on_site" | "hybrid" | "flexible";
+
 export interface IJobPosition {
   id?: string;
   title: string;
