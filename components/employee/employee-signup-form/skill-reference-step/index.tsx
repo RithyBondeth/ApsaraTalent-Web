@@ -15,11 +15,14 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/utils/functions/error/get-error-message";
 import { getRandomBadgeColor } from "@/utils/functions/ui";
-import { LucidePlus, LucideXCircle } from "lucide-react";
+import { LucidePlus, LucideXCircle, Sparkles, Loader2 } from "lucide-react";
 import { useState } from "react";
+import { useWatch } from "react-hook-form";
 import { IStepFormProps } from "../props";
+import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 
 export default function SkillReferenceStepForm({
+  control,
   errors,
   setValue,
   getValues,
@@ -28,14 +31,41 @@ export default function SkillReferenceStepForm({
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("auth");
   const tToast = useTranslations("toast");
+
+  /* ----------------------------- React Hook Form ----------------------------- */
   const initialSkills = getValues?.("skillAndReference.skills") || [];
+  const jobTitle = getValues?.("profession.job") || "";
+
+  const resumeFile = useWatch({ control, name: "skillAndReference.resume" });
+  const coverLetterFile = useWatch({
+    control,
+    name: "skillAndReference.coverLetter",
+  });
 
   /* -------------------------------- All States ------------------------------ */
   const [openPopOver, setOpenPopOver] = useState<boolean>(false);
   const [skillInput, setSkillInput] = useState<string>("");
   const [skills, setSkills] = useState<string[]>(initialSkills);
 
+  /* ------------------------------ API Integration --------------------------- */
+  const { isRefining, refineContent } = useAIRefine();
+
   /* --------------------------------- Methods -------------------------------- */
+  // ── Suggest Skills ──────────────────────────────────────
+  const handleSuggest = async () => {
+    const results = await refineContent(jobTitle, "skills", { jobTitle });
+    if (results && typeof results === "string") {
+      const suggested = results
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      const nextSkills = [...new Set([...skills, ...suggested])];
+      setSkills(nextSkills);
+      setValue?.("skillAndReference.skills", nextSkills);
+      toast.success("Skills suggested based on your job title!");
+    }
+  };
+
   // ── Add Skill ─────────────────────────────────────────
   const addSkill = async () => {
     const trimmed = skillInput.trim();
@@ -75,7 +105,26 @@ export default function SkillReferenceStepForm({
     <div className="w-full flex flex-col items-start gap-8">
       {/* Skills Section */}
       <div className="w-full flex flex-col items-start gap-3">
-        <TypographyH4>{t("empSkillTitle")}</TypographyH4>
+        <div className="w-full flex items-center justify-between">
+          <TypographyH4>{t("empSkillTitle")}</TypographyH4>
+          {jobTitle && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={handleSuggest}
+              disabled={isRefining}
+              className="h-7 px-2 text-[10px] gap-1 text-primary hover:text-primary hover:bg-primary/5 border border-primary/20"
+            >
+              {isRefining ? (
+                <Loader2 size={12} className="animate-spin" />
+              ) : (
+                <Sparkles size={12} />
+              )}
+              Suggest
+            </Button>
+          )}
+        </div>
         <div className="flex flex-wrap gap-3">
           {skills.map((skill, index) => {
             const { bg } = getRandomBadgeColor(skill);
@@ -129,20 +178,20 @@ export default function SkillReferenceStepForm({
         <TypographyH4>{t("empReferenceTitle")}</TypographyH4>
         <div className="w-full flex items-start gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
           {/* Resume Section */}
-          {getValues?.("skillAndReference.resume") ? (
+          {resumeFile ? (
             <div className="flex flex-col items-start gap-2">
               <TypographyMuted className="text-xs">
                 {t("empReferenceResume")}
               </TypographyMuted>
               <div className="w-full flex justify-between items-center p-3 rounded-md bg-muted">
-                <TypographyMuted>
-                  {getValues("skillAndReference.resume").name.trim()}
+                <TypographyMuted className="truncate pr-2">
+                  {resumeFile.name.trim()}
                 </TypographyMuted>
                 <LucideXCircle
                   strokeWidth="1.3px"
-                  className="text-muted-foreground cursor-pointer"
+                  className="text-muted-foreground cursor-pointer shrink-0"
                   onClick={() =>
-                    setValue?.("skillAndReference.coverLetter", undefined, {
+                    setValue?.("skillAndReference.resume", undefined, {
                       shouldValidate: true,
                     })
                   }
@@ -173,18 +222,18 @@ export default function SkillReferenceStepForm({
           )}
 
           {/* CoverLetter Section */}
-          {getValues?.("skillAndReference.coverLetter") ? (
+          {coverLetterFile ? (
             <div className="flex flex-col items-start gap-2">
               <TypographyMuted className="text-xs">
                 {t("empReferenceCoverLetter")}
               </TypographyMuted>
               <div className="w-full flex justify-between items-center p-3 rounded-md bg-muted">
-                <TypographyMuted>
-                  {getValues("skillAndReference.coverLetter").name.trim()}
+                <TypographyMuted className="truncate pr-2">
+                  {coverLetterFile.name.trim()}
                 </TypographyMuted>
                 <LucideXCircle
                   strokeWidth="1.3px"
-                  className="text-muted-foreground cursor-pointer"
+                  className="text-muted-foreground cursor-pointer shrink-0"
                   onClick={() =>
                     setValue?.("skillAndReference.coverLetter", undefined, {
                       shouldValidate: true,

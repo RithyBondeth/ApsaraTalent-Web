@@ -26,6 +26,7 @@ import matchingBannerSvg from "@/assets/matching/banner.svg";
 
 // ─── Message ──────────────────────────────────────────────────────────────────
 import messageEmptySvg from "@/assets/message/empty.svg";
+import messageSvg from "@/assets/message/message.svg";
 
 // ─── Favorite ─────────────────────────────────────────────────────────────────
 import favoriteBannerSvg from "@/assets/favorite/banner.svg";
@@ -77,6 +78,7 @@ export {
   matchingBannerSvg,
   // Message
   messageEmptySvg,
+  messageSvg,
   // Favorite
   favoriteBannerSvg,
   // Search

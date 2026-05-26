@@ -23,8 +23,6 @@ export default function ResumeBuilder() {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const t = useTranslations("resumeBuilder");
-  const { setPayload } = useResumeEditStore();
-  const { setSelectedTemplate, selectedTemplate } = useTemplateSelectionStore();
 
   /* ----------------------------- API Integration ---------------------------- */
   // API state
@@ -73,6 +71,9 @@ export default function ResumeBuilder() {
     "dark",
   ];
 
+  const { setPayload } = useResumeEditStore();
+  const { setSelectedTemplate, selectedTemplate } = useTemplateSelectionStore();
+
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     if (hasFetchedTemplates) return;
@@ -120,11 +121,11 @@ export default function ResumeBuilder() {
           <div className="flex-1 h-px bg-border/60" />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {templatesLoading ? (
+          {templatesLoading || templateData === null ? (
             Array.from({ length: 6 }, (_, i) => (
               <TemplateCardSkeleton key={i} />
             ))
-          ) : templateData && templateData.length > 0 ? (
+          ) : templateData.length > 0 ? (
             templateData.map((resume) => {
               const mapped = templateMap[resume.title];
               const isSelected = mapped && selectedTemplate === mapped;

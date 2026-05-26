@@ -19,6 +19,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { emptySvg } from "@/utils/constants/asset.constant";
+import { TypographyH3 } from "@/components/utils/typography/typography-h3";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
@@ -52,7 +53,6 @@ import { SearchCompanyCardSkeleton } from "@/components/search/skeleton";
 export default function EmployeeSearchPage() {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("searchEmployee");
-  const isInitialSearchDoneRef = useRef<boolean>(false);
 
   /* ----------------------------- API Integration ---------------------------- */
   const {
@@ -68,6 +68,8 @@ export default function EmployeeSearchPage() {
     useGetCurrentEmployeeLikedStore();
 
   /* -------------------------------- All States ------------------------------ */
+  const isInitialSearchDoneRef = useRef<boolean>(false);
+
   // Holds the user's career scope names, written synchronously in the init
   // effect so runSearch always reads the latest value.
   const scopeNamesRef = useRef<string[]>([]);
@@ -95,6 +97,30 @@ export default function EmployeeSearchPage() {
   // Watch Only What SearchBar Needs (prevents full page rerender on every key)
   const location = watch("location");
   const jobType = watch("jobType");
+
+  // Active filter count for the mobile filter badge
+  const allValues = watch();
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (allValues.keyword) count++;
+    if (allValues.location && allValues.location !== "all") count++;
+    if (allValues.jobType && allValues.jobType !== "all") count++;
+    if (
+      allValues.companySize?.min !== undefined ||
+      allValues.companySize?.max !== undefined
+    )
+      count++;
+    if (allValues.date?.from || allValues.date?.to) count++;
+    if (
+      allValues.salaryRange?.min !== undefined ||
+      allValues.salaryRange?.max !== undefined
+    )
+      count++;
+    if (allValues.educationLevel && allValues.educationLevel.length > 0)
+      count++;
+    if (allValues.experienceLevel !== undefined) count++;
+    return count;
+  }, [allValues]);
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Real Search Function ────────────────────────────────────────
@@ -216,22 +242,21 @@ export default function EmployeeSearchPage() {
       onSubmit={handleSubmit(runSearch)}
     >
       {/* Banner Section */}
-      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 tablet-xl:flex-col tablet-xl:items-center rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8">
-        <div className="w-full flex flex-col items-start gap-3 tablet-xl:items-center">
-          <TypographyH2 className="leading-relaxed tablet-xl:text-center">
+      {/* Desktop Banner Section 1050px */}
+      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8 tablet-xl:hidden">
+        <div className="w-full flex flex-col items-start gap-3">
+          <TypographyH2 className="leading-relaxed">
             {t("bannerTitle")}
           </TypographyH2>
-          <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+          <TypographyH4 className="leading-relaxed">
             {t("bannerSubtitle1")}
           </TypographyH4>
-          <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+          <TypographyH4 className="leading-relaxed">
             {t("bannerSubtitle2")}
           </TypographyH4>
-          <TypographyMuted className="leading-relaxed tablet-xl:text-center">
+          <TypographyMuted className="leading-relaxed">
             {t("bannerMuted")}
           </TypographyMuted>
-
-          {/* Search Bar Section */}
           <SearchBar
             isEmployee={true}
             register={register}
@@ -240,15 +265,46 @@ export default function EmployeeSearchPage() {
             initialJobType={jobType as TAvailability}
           />
         </div>
-
-        {/* Employee Search Banner Section */}
         <Image
           src={employeeSearchBannerSvg}
           alt="employee-search"
           height={300}
           width={400}
-          className="h-auto max-w-[340px] tablet-xl:hidden"
+          className="h-auto max-w-[340px] shrink-0"
           priority
+        />
+      </div>
+
+      {/* Tablet Banner Section 651px–1050px */}
+      <div className="hidden tablet-xl:flex tablet-md:!hidden w-full flex-col gap-4 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-5 py-5">
+        <div className="flex flex-col gap-2">
+          <TypographyH3 className="!leading-snug">
+            {t("bannerTitle")}
+          </TypographyH3>
+          <TypographyMuted className="!leading-snug">
+            {t("bannerSubtitle1")}
+          </TypographyMuted>
+        </div>
+        <SearchBar
+          isEmployee={true}
+          register={register}
+          setValue={setValue}
+          initialLocation={location as TLocations}
+          initialJobType={jobType as TAvailability}
+        />
+      </div>
+
+      {/* Mobile Banner Section ≤650px */}
+      <div className="hidden tablet-md:flex w-full flex-col gap-3 rounded-2xl bg-gradient-to-br from-primary/[0.08] via-primary/[0.03] to-muted/40 border border-border/50 px-4 py-4">
+        <p className="font-bold text-sm leading-snug text-foreground">
+          {t("bannerTitle")}
+        </p>
+        <SearchBar
+          isEmployee={true}
+          register={register}
+          setValue={setValue}
+          initialLocation={location as TLocations}
+          initialJobType={jobType as TAvailability}
         />
       </div>
 
@@ -261,7 +317,14 @@ export default function EmployeeSearchPage() {
           onClick={() => setMobileFiltersOpen((v) => !v)}
         >
           <div className="flex items-center gap-2">
-            <LucideSlidersHorizontal className="h-4 w-4" />
+            <div className="relative">
+              <LucideSlidersHorizontal className="h-4 w-4" />
+              {activeFilterCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 flex size-3.5 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground leading-none">
+                  {activeFilterCount > 9 ? "9+" : activeFilterCount}
+                </span>
+              )}
+            </div>
             <TypographySmall>{t("refineResults")}</TypographySmall>
           </div>
           {mobileFiltersOpen ? (
@@ -626,7 +689,7 @@ export default function EmployeeSearchPage() {
         </div>
 
         {/* Right Side: Results Section */}
-        <div className="flex-1 min-w-0 flex flex-col items-start gap-3">
+        <div className="flex-1 min-w-0 tablet-xl:w-full flex flex-col items-start gap-3">
           {/* Results Header Section */}
           <div className="w-full flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-3">
             <div className="flex flex-col gap-1">
@@ -736,7 +799,7 @@ export default function EmployeeSearchPage() {
               ))
             ) : (
               /* Empty List Section */
-              <div className="w-full flex flex-col items-center justify-center py-10 gap-2">
+              <div className="w-full flex flex-col items-center justify-center py-10 gap-3">
                 <Image
                   src={emptySvg}
                   alt="empty"
@@ -747,6 +810,30 @@ export default function EmployeeSearchPage() {
                 <TypographyP className="text-muted-foreground">
                   {t("emptyList")}
                 </TypographyP>
+                {activeFilterCount > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setValue("keyword", "");
+                      setValue("location", "all");
+                      setValue("jobType", "all");
+                      setValue("date", {});
+                      setValue("companySize", {
+                        min: undefined,
+                        max: undefined,
+                      });
+                      setValue("salaryRange", {
+                        min: undefined,
+                        max: undefined,
+                      });
+                      setValue("educationLevel", []);
+                      setValue("experienceLevel", undefined);
+                    }}
+                    className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2 text-xs font-semibold text-foreground shadow-sm transition-all hover:bg-muted active:scale-95"
+                  >
+                    {t("clearFilters")}
+                  </button>
+                )}
               </div>
             )}
           </div>

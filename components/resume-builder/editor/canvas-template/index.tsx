@@ -28,17 +28,17 @@ import { SkillChips } from "./utils/skill-chip";
 import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
 import { Path, PathValue } from "react-hook-form";
 
+/* ---------------------------------- Helper --------------------------------- */
+/**
+ * Education is stored as a "|"-separated string in the DB.
+ * Parse it into an array of strings for the editable canvas UI.
+ */
+const parseEducationLines = (raw?: string): string[] =>
+  raw ? raw.split("|").map((l) => l.trim()) : [];
+
 export default function CanvasTemplate(props: ICanvasTemplateProps) {
   /* ----------------------------------- Props -------------------------------- */
   const { data, setValue, getValues } = props;
-
-  /* ----------------------------- API Integration ---------------------------- */
-  const { sectionOrder } = useResumeCanvasEditorStore();
-
-  /* -------------------------------- All States ------------------------------ */
-  const [educationLines, setEducationLinesState] = useState<string[]>(() =>
-    parseEducationLines(education),
-  );
 
   /* ---------------------------------- Utils --------------------------------- */
   const {
@@ -51,23 +51,21 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
     availability,
   } = data;
 
+  /* -------------------------------- All States ------------------------------ */
+  const [educationLines, setEducationLinesState] = useState<string[]>(() =>
+    parseEducationLines(education),
+  );
+
+  /* ----------------------------- API Integration ---------------------------- */
+  const { sectionOrder } = useResumeCanvasEditorStore();
+
   /* PointerSensor with distance constraint so a click doesn't start a drag */
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   );
 
-  /* ── Stable sortable ID
-   * Use stable IDs based on position + a short hash so React
-   * can reconcile correctly even after reorders.  */
   const expIds = (experience || []).map((_, i) => `exp-${i}`);
   const skillIds = (skills || []).map((_, i) => `skill-${i}`);
-
-  /* ── Parse Education Lines
-   * Education stored as "|"-separated lines.
-   * Use local state so add/delete/edit re-render immediately without waiting
-   * for the 600 ms debounce on the parent's previewData. */
-  const parseEducationLines = (raw?: string): string[] =>
-    raw ? raw.split("|").map((l) => l.trim()) : [];
 
   /* --------------------------------- Effects --------------------------------- */
   // Sync from parent when the debounced data prop changes (e.g. form-panel edits)
@@ -77,7 +75,6 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Commit Education Line ──────────────────────────────────────────
-  /** Commit an edited education line and write back to the "|"-separated string */
   function commitEducationLine(idx: number, value: string) {
     const next = [...educationLines];
     next[idx] = value;
@@ -87,7 +84,6 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
   }
 
   // ── Set Education Lines ────────────────────────────────────────────
-  /** Persist the full lines array as the education string */
   function setEducationLines(lines: string[]) {
     setEducationLinesState(lines);
     const nonEmpty = lines.filter(Boolean);

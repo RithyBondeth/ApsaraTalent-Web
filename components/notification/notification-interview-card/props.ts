@@ -13,7 +13,10 @@ export interface INotificationInterviewCardProps {
   user: {
     id: string;
     name: string;
+    position: string | null;
+    industry: string | null;
     avatar: string;
   };
   onDelete?: (id: string) => void;
+  onMarkRead?: (id: string) => void;
 }

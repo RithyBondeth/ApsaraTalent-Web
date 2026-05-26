@@ -4,6 +4,7 @@ import React from "react";
 export interface ICompanyCardProps extends ICompany {
   onViewClick: () => void;
   onSaveClick: () => void;
+  onSaveClickDisable?: boolean;
   onLikeClick: () => void | Promise<void>;
   onLikeClickDisable: boolean;
   onProfileImageClick: (e: React.MouseEvent) => void;

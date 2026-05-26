@@ -5,6 +5,7 @@ import {
   API_DELETE_NOTIFICATION_URL,
   API_GET_NOTIFICATIONS_URL,
   API_GET_UNREAD_NOTIFICATION_COUNT_URL,
+  API_MARK_ALL_NOTIFICATIONS_READ_URL,
   API_MARK_NOTIFICATION_READ_URL,
 } from "@/utils/constants/apis/notification.api.constant";
 import { INotification } from "@/utils/interfaces/notification/notification.interface";
@@ -46,6 +47,8 @@ type TNotificationState = {
   /** Prepend a confirmed notification from the socket event to the list and bump the badge */
   addNotification: (notification: INotification) => void;
   markRead: (notificationId: string) => Promise<void>;
+  /** Mark all notifications as read — optimistic update + server sync */
+  markAllRead: () => Promise<void>;
   /** Optimistically mark a notification as read by its chat messageId (from data.messageId) */
   markReadByChatMessageId: (messageId: string) => void;
   deleteNotification: (notificationId: string) => Promise<void>;
@@ -131,6 +134,22 @@ export const useNotificationStore = create<TNotificationState>((set, get) => ({
         ),
         unreadCount: state.unreadCount + 1,
       }));
+    }
+  },
+
+  markAllRead: async () => {
+    const prev = get().notifications;
+    const prevCount = get().unreadCount;
+    // Optimistic update
+    set({
+      notifications: prev.map((n) => ({ ...n, isRead: true })),
+      unreadCount: 0,
+    });
+    try {
+      await axios.patch(API_MARK_ALL_NOTIFICATIONS_READ_URL);
+    } catch {
+      // Revert on failure
+      set({ notifications: prev, unreadCount: prevCount });
     }
   },
 

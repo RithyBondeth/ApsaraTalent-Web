@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { formatSidebarTime, parseMessageDate } from "@/utils/functions/date";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
-import axios from "@/lib/axios";
-import { getApiOrigin, normalizeMediaUrl } from "@/utils/functions/media";
+import { useGetRecentChatsStore } from "@/stores/apis/chat/get-recent-chats.store";
+import { normalizeMediaUrl } from "@/utils/functions/media";
 import { IChatPreview } from "@/utils/interfaces/chat/chat.interface";
 import { IMessage } from "@/utils/interfaces/chat/chat.interface";
 import { resolveProfile, resolveMessageSnippet, resolvePreview } from "./utils";
@@ -131,9 +131,11 @@ export const useChatStore = create<TChatState>((set, get) => ({
 
     const fallbackFetchRecentChats = async () => {
       try {
-        const response = await axios.get(`${getApiOrigin()}/chat/recent`);
-        if (Array.isArray(response.data)) {
-          applyRecentChats(response.data);
+        const chats = await useGetRecentChatsStore
+          .getState()
+          .fetchRecentChats();
+        if (Array.isArray(chats) && chats.length > 0) {
+          applyRecentChats(chats);
           return;
         }
       } catch (error) {

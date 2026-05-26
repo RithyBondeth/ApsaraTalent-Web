@@ -18,6 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { emptySvg } from "@/utils/constants/asset.constant";
+import { TypographyH3 } from "@/components/utils/typography/typography-h3";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
@@ -48,7 +49,6 @@ import { SearchEmployeeCardSkeleton } from "@/components/search/skeleton";
 export default function CompanySearchPage() {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("searchCompany");
-  const didInitRef = useRef<boolean>(false);
 
   /* ----------------------------- API Integration ---------------------------- */
   const {
@@ -64,12 +64,12 @@ export default function CompanySearchPage() {
     useGetCurrentCompanyLikedStore();
 
   /* -------------------------------- All States ------------------------------ */
+  const didInitRef = useRef<boolean>(false);
   // Holds the user's career scope names, written synchronously in the init effect.
   const scopeNamesRef = useRef<string[]>([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
 
-  /* ------------------------------- Search Form ------------------------------ */
-  // React Hook Form: Company Search Form
+  /* ----------------------- React Hook Form: Search Form ---------------------- */
   const { register, setValue, control, handleSubmit, watch } =
     useForm<TCompanySearchSchema>({
       resolver: zodResolver(companySearchSchema),
@@ -87,6 +87,19 @@ export default function CompanySearchPage() {
   // Watch Only What SearchBar Needs  (Prevent full page rerender on every key)
   const location = watch("location");
   const jobType = watch("jobType");
+
+  // Active filter count for the mobile filter badge
+  const allValues = watch();
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (allValues.keyword) count++;
+    if (allValues.location && allValues.location !== "all") count++;
+    if (allValues.jobType && allValues.jobType !== "all") count++;
+    if (allValues.educationLevel && allValues.educationLevel.length > 0)
+      count++;
+    if (allValues.experienceLevel !== undefined) count++;
+    return count;
+  }, [allValues]);
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Real Search Function ─────────────────────────────────────────
@@ -221,22 +234,21 @@ export default function CompanySearchPage() {
       onSubmit={handleSubmit(runSearch)}
     >
       {/* Banner Section */}
-      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 tablet-xl:flex-col tablet-xl:items-center rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8">
-        <div className="w-full flex flex-col items-start gap-3 tablet-xl:items-center">
-          <TypographyH2 className="leading-relaxed tablet-xl:text-center">
+      {/* Desktop Banner Section 1050px */}
+      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8 tablet-xl:hidden">
+        <div className="w-full flex flex-col items-start gap-3">
+          <TypographyH2 className="leading-relaxed">
             {t("bannerTitle")}
           </TypographyH2>
-          <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+          <TypographyH4 className="leading-relaxed">
             {t("bannerSubtitle1")}
           </TypographyH4>
-          <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+          <TypographyH4 className="leading-relaxed">
             {t("bannerSubtitle2")}
           </TypographyH4>
-          <TypographyMuted className="leading-relaxed tablet-xl:text-center">
+          <TypographyMuted className="leading-relaxed">
             {t("bannerMuted")}
           </TypographyMuted>
-
-          {/* Search Bar Section */}
           <SearchBar
             isEmployee={false}
             register={register}
@@ -245,18 +257,50 @@ export default function CompanySearchPage() {
             initialJobType={jobType as TAvailability}
           />
         </div>
-
-        {/* Company Search Banner Section */}
         <Image
           src={companySearchBannerSvg}
           alt="company-search"
           height={300}
           width={400}
-          className="h-auto max-w-[340px] tablet-xl:hidden"
+          className="h-auto max-w-[340px] shrink-0"
+          priority
         />
       </div>
 
-      {/* Mobile/Tablet Filter Toogle Section */}
+      {/* Tablet Banner Section 651px–1050px */}
+      <div className="hidden tablet-xl:flex tablet-md:!hidden w-full flex-col gap-4 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-5 py-5">
+        <div className="flex flex-col gap-2">
+          <TypographyH3 className="!leading-snug">
+            {t("bannerTitle")}
+          </TypographyH3>
+          <TypographyMuted className="!leading-snug">
+            {t("bannerSubtitle1")}
+          </TypographyMuted>
+        </div>
+        <SearchBar
+          isEmployee={false}
+          register={register}
+          setValue={setValue}
+          initialLocation={location as TLocations}
+          initialJobType={jobType as TAvailability}
+        />
+      </div>
+
+      {/* Mobile Banner Section ≤650px */}
+      <div className="hidden tablet-md:flex w-full flex-col gap-3 rounded-2xl bg-gradient-to-br from-primary/[0.08] via-primary/[0.03] to-muted/40 border border-border/50 px-4 py-4">
+        <p className="font-bold text-sm leading-snug text-foreground">
+          {t("bannerTitle")}
+        </p>
+        <SearchBar
+          isEmployee={false}
+          register={register}
+          setValue={setValue}
+          initialLocation={location as TLocations}
+          initialJobType={jobType as TAvailability}
+        />
+      </div>
+
+      {/* Mobile/Tablet Filter Toggle Section */}
       <div className="hidden w-full tablet-xl:flex">
         <Button
           type="button"
@@ -264,10 +308,17 @@ export default function CompanySearchPage() {
           className="h-10 w-full justify-between"
           onClick={() => setMobileFiltersOpen((v) => !v)}
         >
-          <TypographySmall className="flex items-center gap-2 text-sm">
-            <LucideSlidersHorizontal className="h-4 w-4" />
-            {t("refineResults")}
-          </TypographySmall>
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <LucideSlidersHorizontal className="h-4 w-4" />
+              {activeFilterCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 flex size-3.5 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground leading-none">
+                  {activeFilterCount > 9 ? "9+" : activeFilterCount}
+                </span>
+              )}
+            </div>
+            <TypographySmall>{t("refineResults")}</TypographySmall>
+          </div>
           {mobileFiltersOpen ? (
             <LucideX className="h-4 w-4" />
           ) : (
@@ -444,7 +495,7 @@ export default function CompanySearchPage() {
         </div>
 
         {/* Right Side: Results Section */}
-        <div className="flex-1 min-w-0 flex flex-col items-start gap-3">
+        <div className="flex-1 min-w-0 tablet-xl:w-full flex flex-col items-start gap-3">
           {/* Results Header Section */}
           <div className="w-full flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-3">
             <div className="flex flex-col gap-1">
@@ -520,7 +571,7 @@ export default function CompanySearchPage() {
           {/* Results List Section */}
           <div className="w-full flex flex-col items-start gap-2">
             {error && !loading ? (
-              <div className="w-full mb-3">
+              <div className="w-full">
                 <SearchErrorCard
                   title={error}
                   description={t("errorDescription")}
@@ -528,7 +579,7 @@ export default function CompanySearchPage() {
               </div>
             ) : loading || filteredEmployees === null ? (
               /* Loading State Section */
-              <div className="w-full mb-3">
+              <div className="w-full flex flex-col gap-2">
                 {Array(3)
                   .fill(0)
                   .map((_, i) => (
@@ -564,7 +615,7 @@ export default function CompanySearchPage() {
               ))
             ) : (
               /* Empty List Section */
-              <div className="w-full flex flex-col items-center justify-center py-10 gap-2">
+              <div className="w-full flex flex-col items-center justify-center py-10 gap-3">
                 <Image
                   src={emptySvg}
                   alt="empty"
@@ -575,6 +626,21 @@ export default function CompanySearchPage() {
                 <TypographyP className="text-muted-foreground">
                   {t("emptyList")}
                 </TypographyP>
+                {activeFilterCount > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setValue("keyword", "");
+                      setValue("location", "all");
+                      setValue("jobType", "all");
+                      setValue("educationLevel", []);
+                      setValue("experienceLevel", undefined);
+                    }}
+                    className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2 text-xs font-semibold text-foreground shadow-sm transition-all hover:bg-muted active:scale-95"
+                  >
+                    {t("clearFilters")}
+                  </button>
+                )}
               </div>
             )}
           </div>

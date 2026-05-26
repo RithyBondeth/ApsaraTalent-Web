@@ -1,6 +1,13 @@
 import { ICareerScope } from "./career.interface";
 import { ISocialLink } from "./social.interface";
 
+export type TCompanyType =
+  | "startup"
+  | "sme"
+  | "enterprise"
+  | "ngo"
+  | "government";
+
 export interface ICompany {
   id: string;
   name: string;
@@ -13,6 +20,8 @@ export interface ICompany {
   foundedYear: number;
   location: string;
   phone: string;
+  websiteUrl?: string | null;
+  companyType?: TCompanyType | null;
   images?: IImage[];
   openPositions: IJobPosition[];
   availableTimes?: string[];
@@ -21,6 +30,7 @@ export interface ICompany {
   careerScopes: ICareerScope[];
   socials: ISocialLink[];
   createdAt?: string;
+  skillScore?: number | null;
 }
 
 export interface IBenefits {
@@ -39,7 +49,13 @@ export interface IJobPosition {
   id?: string;
   title: string;
   description: string;
-  salary: string;
+  salary?: string;
+  salaryMin?: number | null;
+  salaryMax?: number | null;
+  salaryCurrency?: string | null;
+  workMode?: TJobWorkMode | null;
+  location?: string | null;
+  openingsCount?: number | null;
   type: string;
   experience: string;
   education: string;

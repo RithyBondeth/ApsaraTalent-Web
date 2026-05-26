@@ -16,6 +16,8 @@ export const API_AUTH_VERIFY_EMAIL_URL = (emailVerificationToken: string) =>
 export const API_AUTH_VERIFY_OTP_URL = API_AUTH_URL + "/verify-otp";
 export const API_AUTH_LOGIN_OTP_URL = API_AUTH_URL + "/login-otp";
 
+export const API_AUTH_PARSE_RESUME_URL = API_AUTH_URL + "/parse-resume";
+
 export const API_AUTH_SOCIAL_GOOGLE_URL = API_BASE_URL + "/social/google/login";
 export const API_AUTH_SOCIAL_LINKEDIN_URL =
   API_BASE_URL + "/social/linkedin/login";

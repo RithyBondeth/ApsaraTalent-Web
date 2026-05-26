@@ -203,7 +203,7 @@ export default function TopNavbar() {
     <>
       {/* Sticky Top Navbar Section */}
       <nav className="sticky top-0 z-50 w-full">
-        <div className="border-b border-border/60 bg-background/95 backdrop-blur-md">
+        <div className="border-b border-border/40 bg-background/85 backdrop-blur-xl shadow-[0_1px_0_hsl(var(--border)/0.3),0_4px_24px_hsl(var(--foreground)/0.05)]">
           <div
             className="mx-auto flex h-14 max-w-screen-2xl items-center justify-between gap-2 px-3 sm:gap-4 sm:px-4 lg:px-6"
             style={{ paddingTop: "env(safe-area-inset-top)" }}
@@ -246,8 +246,8 @@ export default function TopNavbar() {
               )}
             </div>
 
-            {/* User Menu Section */}
-            <div className="flex shrink-0 items-center">
+            {/* Right Section: User Menu */}
+            <div className="flex shrink-0 items-center gap-1">
               {loading || !user ? (
                 <NavbarUserMenuSkeleton />
               ) : (
@@ -260,7 +260,7 @@ export default function TopNavbar() {
 
       {/* Mobile Bottom Tab Bar Section */}
       <div
-        className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/60 bg-background/95 backdrop-blur-lg lg:hidden"
+        className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/40 bg-background/85 backdrop-blur-xl shadow-[0_-1px_0_hsl(var(--border)/0.3),0_-4px_24px_hsl(var(--foreground)/0.05)] lg:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <div className="flex h-16 items-stretch justify-around">
@@ -278,13 +278,17 @@ export default function TopNavbar() {
           {/* More Sheet Section */}
           <Sheet open={moreOpen} onOpenChange={setMoreOpen}>
             <SheetTrigger asChild>
-              <button className="relative flex flex-1 flex-col items-center justify-center gap-1 py-2">
-                <MoreHorizontal
-                  className="size-5 text-muted-foreground"
-                  strokeWidth={1.7}
-                />
-                <span className="text-[10px] font-medium leading-none text-muted-foreground">
-                  {t("more")}
+              <button className="relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2">
+                <span className="flex flex-col items-center gap-0.5">
+                  <span className="flex h-7 w-7 items-center justify-center">
+                    <MoreHorizontal
+                      className="size-5 text-muted-foreground"
+                      strokeWidth={1.7}
+                    />
+                  </span>
+                  <span className="text-[10px] font-medium leading-none text-muted-foreground">
+                    {t("more")}
+                  </span>
                 </span>
               </button>
             </SheetTrigger>

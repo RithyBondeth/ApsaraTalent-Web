@@ -47,6 +47,14 @@ export const makeBasicInfoStepSchema = (m: {
       location: z
         .string({ required_error: m.selectRequired("location") })
         .min(1, { message: m.selectRequired("location") }),
+      websiteUrl: z
+        .string()
+        .url({ message: "Please enter a valid URL (e.g. https://...)" })
+        .optional()
+        .or(z.literal("")),
+      companyType: z
+        .enum(["startup", "sme", "enterprise", "ngo", "government"])
+        .optional(),
     }),
   });
 
@@ -79,10 +87,14 @@ export const makeOpenPositionStepSchema = (m: {
             .min(1, m.fieldRequired("Education requirement"))
             .max(100, m.fieldTooLong("Education requirement", 100)),
           skills: z.array(z.string()).min(1, { message: m.atLeastOneSkill }),
-          salary: z
-            .string()
-            .min(1, m.fieldRequired("Salary"))
-            .max(100, m.fieldTooLong("Salary", 100)),
+          salaryMin: z.number().positive().optional(),
+          salaryMax: z.number().positive().optional(),
+          salaryCurrency: z.string().optional().default("USD"),
+          workMode: z
+            .enum(["remote", "on_site", "hybrid", "flexible"])
+            .optional(),
+          location: z.string().optional().or(z.literal("")),
+          openingsCount: z.number().int().positive().optional(),
           types: z
             .string()
             .min(1, m.fieldRequired("Type"))

@@ -27,6 +27,19 @@ export const API_COUNT_CURRENT_COMPANY_MATCHING_URL = (cmpID: string) =>
 export const API_GET_ANALYTICS_URL = (id: string, role: string) =>
   `${API_MATCHING_BASE_URL}/analytics/${id}?role=${role}`;
 
+export const API_AI_MATCH_EXPLANATION_URL = (eid: string, cid: string) =>
+  `${API_MATCHING_BASE_URL}/ai-explanation/${eid}/${cid}`;
+export const API_AI_MATCH_EXPLANATION_STREAM_URL = (eid: string, cid: string) =>
+  `${API_MATCHING_BASE_URL}/ai-explanation/${eid}/${cid}/stream`;
+
+export const API_AI_INTERVIEW_PREP_URL = (eid: string, cid: string) =>
+  `${API_MATCHING_BASE_URL}/ai-interview-prep/${eid}/${cid}`;
+export const API_AI_INTERVIEW_PREP_STREAM_URL = (eid: string, cid: string) =>
+  `${API_MATCHING_BASE_URL}/ai-interview-prep/${eid}/${cid}/stream`;
+
+export const API_AI_SKILL_GAP_STREAM_URL = (eid: string, cid: string) =>
+  `${API_MATCHING_BASE_URL}/ai-skill-gap/${eid}/${cid}/stream`;
+
 // Interview URLs
 export const API_CREATE_INTERVIEW_URL = `${API_MATCHING_BASE_URL}/interview`;
 export const API_GET_INTERVIEWS_BY_EMPLOYEE_URL = (empID: string) =>

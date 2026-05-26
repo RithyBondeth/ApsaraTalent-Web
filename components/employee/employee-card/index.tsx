@@ -6,6 +6,7 @@ import {
   LucideEye,
   LucideGraduationCap,
   LucideHeartHandshake,
+  LucideLoader2,
   LucideMapPin,
   LucideTimer,
 } from "lucide-react";
@@ -35,6 +36,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
   const ignoreNextClick = useRef<boolean>(false);
 
   /* --------------------------------- Methods --------------------------------- */
+  // ─── Handle Click Dialog ─────────────────────────────────
   const handleClickDialog = (e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
       ignoreNextClick.current = false;
@@ -55,16 +57,16 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
   }, [openProfileDialog]);
 
   /* -------------------------------- Render UI -------------------------------- */
-  // ─── Grid Variant Section ──────────────────────────────────────────────────
+  // ─── Grid Variant Section ─────────────────────────────────────
   if (isGrid) {
     const latestExp = props.experiences?.[0] ?? null;
     const latestEdu = props.educations?.[0] ?? null;
 
     return (
       <>
-        <div className="relative w-full flex flex-col bg-card border border-border/70 rounded-2xl overflow-hidden cursor-pointer shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] transition-all duration-300 ease-out hover:z-10 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_hsl(var(--foreground)/0.13)] hover:border-primary/25">
+        <div className="relative h-full w-full flex flex-col bg-card border border-border/70 rounded-2xl overflow-hidden cursor-pointer shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] transition-all duration-300 ease-out hover:z-10 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_hsl(var(--foreground)/0.13)] hover:border-primary/25 active:scale-[0.98] active:shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] active:translate-y-0">
           {/* Header Section: Avatar, Identity, Quick View and Like */}
-          <div className="flex items-start gap-3 p-4 pb-3">
+          <div className="flex items-start gap-3 p-4 pb-3 tablet-md:p-3 tablet-md:pb-2">
             <CachedAvatar
               src={props.avatar}
               alt={props.username ?? "Profile"}
@@ -100,7 +102,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
               </div>
             </div>
 
-            <div className="flex flex-col items-center gap-1 shrink-0">
+            <div className="flex justify-end items-center gap-1 shrink-0">
               <Button
                 size="icon"
                 variant="ghost"
@@ -109,9 +111,11 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
                 onClick={props.onLikeClick}
                 disabled={props.onLikeClickDisable}
               >
-                <LucideHeartHandshake
-                  className={`!size-4${props.onLikeClickDisable ? " animate-pop-shrink text-rose-500" : ""}`}
-                />
+                {props.onLikeClickDisable ? (
+                  <LucideLoader2 className="!size-4 animate-spin text-rose-500" />
+                ) : (
+                  <LucideHeartHandshake className="!size-4" />
+                )}
               </Button>
               <Button
                 size="icon"
@@ -164,7 +168,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
 
           {/* Description Section */}
           <div className="px-4 pb-3 flex-1">
-            <TypographyMuted className="text-xs leading-relaxed line-clamp-2">
+            <TypographyMuted className="text-xs leading-relaxed line-clamp-2 tablet-md:line-clamp-1">
               {props.description}
             </TypographyMuted>
           </div>
@@ -177,8 +181,13 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
                 variant="outline"
                 size="sm"
                 onClick={props.onSaveClick}
+                disabled={props.onSaveClickDisable}
               >
-                <LucideBookmark className="!size-3" />
+                {props.onSaveClickDisable ? (
+                  <LucideLoader2 className="!size-3 animate-spin" />
+                ) : (
+                  <LucideBookmark className="!size-3" />
+                )}
                 {t("save")}
               </Button>
             )}

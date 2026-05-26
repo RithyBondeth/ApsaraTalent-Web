@@ -70,6 +70,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
   /* ----------------------------- API Integration --------------------------- */
   // Current User
   const currentUser = useGetCurrentUserStore((state) => state.user);
+  const isEmployee = currentUser?.role === "employee";
 
   // Logout
   const normalLogout = useLoginStore((state) => state.clearToken);
@@ -133,7 +134,10 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
     window.location.reload();
   };
 
-  const isEmployee = currentUser?.role === "employee";
+  // ── Handle Theme Toggle ─────────────────────────────────────────
+  const handleThemeToggle = () => {
+    toggleTheme();
+  };
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -141,17 +145,27 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
       <DropdownMenu>
         {/* User Menu Trigger Section */}
         <DropdownMenuTrigger asChild>
-          <button className="group flex items-center gap-1.5 rounded-xl px-1.5 py-1 transition-all duration-200 hover:bg-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          <button className="group flex items-center gap-2 rounded-xl border border-border/50 bg-gradient-to-br from-card via-card to-muted/40 px-2 py-1.5 shadow-sm transition-all duration-200 hover:border-border/80 hover:shadow-md hover:from-accent hover:to-accent/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
             {/* Avatar Section */}
-            <Avatar className="h-8 w-8 ring-2 ring-border/60 transition-all duration-200 group-hover:ring-primary/40">
+            <Avatar className="h-7 w-7 shrink-0 ring-2 ring-border/60 transition-all duration-200 group-hover:ring-primary/40">
               <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback className="bg-primary/10 text-xs font-bold text-primary">
+              <AvatarFallback className="bg-primary/10 text-[10px] font-bold text-primary">
                 {user.name.slice(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
 
+            {/* Name and Role Section */}
+            <div className="flex min-w-0 flex-col gap-0.5">
+              <span className="max-w-[90px] truncate text-xs font-semibold leading-none sm:max-w-[140px]">
+                {user.name}
+              </span>
+              <span className="text-[10px] leading-none text-muted-foreground capitalize">
+                {currentUser?.role ?? ""}
+              </span>
+            </div>
+
             {/* Chevron Icon Section */}
-            <ChevronDown className="size-3.5 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
+            <ChevronDown className="size-3.5 shrink-0 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
           </button>
         </DropdownMenuTrigger>
 
@@ -233,7 +247,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
 
               {/* Appearance Section */}
               <DropdownMenuItem
-                onClick={toggleTheme}
+                onClick={handleThemeToggle}
                 className="flex items-center gap-2.5"
               >
                 <MenuIcon

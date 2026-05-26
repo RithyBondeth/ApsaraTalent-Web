@@ -66,6 +66,20 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
         if (body.location) requestBody.location = body.location;
         if (body.phone) requestBody.phone = body.phone;
 
+        if (body.workMode !== undefined) requestBody.workMode = body.workMode;
+        if (body.noticePeriod !== undefined)
+          requestBody.noticePeriod = body.noticePeriod;
+        if (body.portfolioUrl !== undefined)
+          requestBody.portfolioUrl = body.portfolioUrl;
+        if (body.linkedinUrl !== undefined)
+          requestBody.linkedinUrl = body.linkedinUrl;
+        if (body.languages !== undefined)
+          requestBody.languages = body.languages;
+        if (body.expectedSalaryMin !== undefined)
+          requestBody.expectedSalaryMin = body.expectedSalaryMin;
+        if (body.expectedSalaryMax !== undefined)
+          requestBody.expectedSalaryMax = body.expectedSalaryMax;
+
         // If you store these in IEmployee
         if ((body as any).avatar) requestBody.avatar = (body as any).avatar;
         if ((body as any).resume) requestBody.resume = (body as any).resume;

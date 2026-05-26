@@ -2,6 +2,9 @@ import { ICareerScope } from "./career.interface";
 import { ISocialLink } from "./social.interface";
 import { TGender } from "@/utils/types/user/gender.type";
 
+export type TWorkMode = "remote" | "on_site" | "hybrid" | "flexible";
+export type TNoticePeriod = "immediate" | "2_weeks" | "1_month";
+
 export interface IEmployee {
   id: string;
   firstname?: string | null;
@@ -19,12 +22,20 @@ export interface IEmployee {
   location?: string | null;
   resume?: string;
   coverLetter?: string;
+  workMode?: TWorkMode | null;
+  noticePeriod?: TNoticePeriod | null;
+  portfolioUrl?: string | null;
+  linkedinUrl?: string | null;
+  languages?: string[] | null;
+  expectedSalaryMin?: number | null;
+  expectedSalaryMax?: number | null;
   skills: ISkill[];
   experiences: IExperience[];
   educations: IEducation[];
   socials: ISocialLink[];
   careerScopes: ICareerScope[];
   createdAt?: string;
+  skillScore?: number | null;
 }
 
 export interface ISkill {

@@ -20,7 +20,7 @@ export default function ResumeBuilderFeature() {
       <TypographyH4 className="!m-0 font-semibold">
         {t("aiPoweredFeatures")}
       </TypographyH4>
-      <div className="w-full flex justify-between items-start gap-6 tablet-lg:flex-col">
+      <div className="w-full flex justify-between items-center gap-6 tablet-lg:flex-col">
         {/* Feature 1 Card Section */}
         <div className="flex flex-col items-center gap-3 flex-1">
           <div className="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20">

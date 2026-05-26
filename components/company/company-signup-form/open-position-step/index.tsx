@@ -9,18 +9,36 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import ErrorMessage from "@/components/utils/feedback/error-message";
 import LabelInput from "@/components/utils/forms/label-input";
 import Tag from "@/components/utils/data-display/tag";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import {
+  salaryCurrencyConstant,
+  workModeConstant,
+} from "@/utils/constants/ui.constant";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getRandomBadgeColor } from "@/utils/functions/ui";
-import { LucidePlus, LucideTrash2, LucideXCircle } from "lucide-react";
+import {
+  LucidePlus,
+  LucideTrash2,
+  LucideXCircle,
+  Sparkles,
+  Loader2,
+} from "lucide-react";
 import { useState } from "react";
-import { Controller, useFieldArray } from "react-hook-form";
+import { Controller, useFieldArray, useWatch } from "react-hook-form";
+import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 
 export default function OpenPositionStepForm({
   register,
@@ -32,17 +50,23 @@ export default function OpenPositionStepForm({
 }: IStepFormProps<TCompanySignup>) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("auth");
+  const tr = useTranslations("resumeBuilder");
   const tToast = useTranslations("toast");
+
+  /* ----------------------------- API Integration ---------------------------- */
+  const { isRefining, refineContent } = useAIRefine();
 
   /* -------------------------------- All States ------------------------------ */
   const [skillInput, setSkillInput] = useState<string>("");
   const [openPopOvers, setOpenPopOvers] = useState<boolean[]>([]);
 
-  /* ---------------------------------- Form ---------------------------------- */
+  /* ----------------------------- React Hook Form ----------------------------- */
   const { fields, append, remove } = useFieldArray({
     control: control!,
     name: "openPositions",
   });
+
+  const openPositionsValues = useWatch({ control, name: "openPositions" });
 
   /* --------------------------------- Methods -------------------------------- */
   // ── Add Skill ─────────────────────────────────────────
@@ -96,16 +120,33 @@ export default function OpenPositionStepForm({
       educationRequirement: "",
       skills: [],
       types: "",
-      salary: "",
+      salaryMin: undefined,
+      salaryMax: undefined,
+      salaryCurrency: "USD",
+      workMode: undefined,
+      location: "",
+      openingsCount: undefined,
       deadlineDate: "" as unknown as Date,
     });
 
     setOpenPopOvers((prevState) => [...prevState, false]);
   };
 
+  // ── Refine Description ───────────────────────────────────
+  const handleRefine = async (index: number) => {
+    const desc = openPositionsValues?.[index]?.description ?? "";
+    const result = await refineContent(desc, "experience");
+    if (result && typeof result === "string" && setValue) {
+      setValue(`openPositions.${index}.description`, result, {
+        shouldDirty: true,
+      });
+      toast.success(tr("refinedSuccess"));
+    }
+  };
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex flex-col gap-5 w-full max-h-[500px] overflow-y-auto">
+    <div className="flex flex-col gap-5 w-full max-h-[500px] overflow-y-auto pr-1">
       {/* Title Section */}
       <TypographyH4>{t("cmpOpenPositionTitle")}</TypographyH4>
 
@@ -118,7 +159,7 @@ export default function OpenPositionStepForm({
           {/* Header With Remove Button Section */}
           {fields.length > 1 && (
             <div className="w-full flex items-center justify-between mb-3">
-              <TypographyMuted className="text-md">
+              <TypographyMuted className="text-md font-bold text-foreground">
                 {t("cmpOpenPositionLabel")} {index + 1}
               </TypographyMuted>
               <Button
@@ -126,6 +167,7 @@ export default function OpenPositionStepForm({
                 size="icon"
                 type="button"
                 onClick={() => remove(index)}
+                className="hover:bg-destructive/10 hover:text-destructive"
               >
                 <LucideTrash2 size={16} />
               </Button>
@@ -161,10 +203,29 @@ export default function OpenPositionStepForm({
           />
 
           {/* Description Section */}
-          <div className="w-full flex flex-col items-start gap-2">
-            <TypographyMuted className="text-xs">
-              {t("cmpOpenPositionDescription")}
-            </TypographyMuted>
+          <div className="w-full flex flex-col items-start gap-1">
+            <div className="w-full flex items-center justify-between">
+              <TypographyMuted className="text-xs">
+                {t("cmpOpenPositionDescription")}
+              </TypographyMuted>
+              {openPositionsValues?.[index]?.description && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleRefine(index)}
+                  disabled={isRefining}
+                  className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                >
+                  {isRefining ? (
+                    <Loader2 size={10} className="animate-spin" />
+                  ) : (
+                    <Sparkles size={10} />
+                  )}
+                  {tr("aiRefine")}
+                </Button>
+              )}
+            </div>
             <Textarea
               autoResize
               placeholder={t("cmpOpenPositionDescriptionPlaceholder")}
@@ -206,41 +267,170 @@ export default function OpenPositionStepForm({
             />
           </div>
 
-          {/* Salary and Deadline Date Section */}
-          <div className="w-full flex gap-3 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
-            <LabelInput
-              label={t("cmpOpenPositionSalary")}
-              input={
-                <Input
-                  placeholder={t("cmpOpenPositionSalaryPlaceholder")}
-                  {...register(`openPositions.${index}.salary`)}
-                  validationMessage={
-                    errors?.openPositions?.[index]?.salary?.message
-                  }
-                />
-              }
+          {/* Structured Salary Section (Min / Max / Currency) */}
+          <div className="w-full flex flex-col gap-2">
+            <TypographyMuted className="text-xs">
+              {t("cmpOpenPositionSalaryMin")} / {t("cmpOpenPositionSalaryMax")}
+            </TypographyMuted>
+            {/* Currency Section */}
+            <Controller
+              control={control!}
+              name={`openPositions.${index}.salaryCurrency`}
+              render={({ field }) => (
+                <Select
+                  value={field.value ?? "USD"}
+                  onValueChange={field.onChange}
+                >
+                  <SelectTrigger className="h-12 w-36">
+                    <SelectValue placeholder="USD" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {salaryCurrencyConstant.map((c) => (
+                      <SelectItem key={c.value} value={c.value}>
+                        {c.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
             />
-            <div className="flex flex-col gap-2">
+            {/* Min — Max Section */}
+            <div className="w-full flex items-center gap-2">
+              <div className="flex-1 min-w-0">
+                <Controller
+                  control={control!}
+                  name={`openPositions.${index}.salaryMin`}
+                  render={({ field }) => (
+                    <Input
+                      type="number"
+                      placeholder={t("cmpOpenPositionSalaryMinPlaceholder")}
+                      {...field}
+                      value={field.value ?? ""}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value === ""
+                            ? null
+                            : parseFloat(e.target.value),
+                        )
+                      }
+                    />
+                  )}
+                />
+              </div>
+              <span className="text-muted-foreground text-sm shrink-0">—</span>
+              <div className="flex-1 min-w-0">
+                <Controller
+                  control={control!}
+                  name={`openPositions.${index}.salaryMax`}
+                  render={({ field }) => (
+                    <Input
+                      type="number"
+                      placeholder={t("cmpOpenPositionSalaryMaxPlaceholder")}
+                      {...field}
+                      value={field.value ?? ""}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value === ""
+                            ? null
+                            : parseFloat(e.target.value),
+                        )
+                      }
+                    />
+                  )}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Work Mode, Location, Openings Count Section */}
+          <div className="w-full flex gap-3 [&>div]:flex-1 tablet-md:flex-col">
+            {/* Work Mode Section */}
+            <div className="flex flex-col gap-1">
               <TypographyMuted className="text-xs">
-                {t("cmpOpenPositionDeadlineDate")}
+                {t("cmpOpenPositionWorkMode")}
               </TypographyMuted>
               <Controller
                 control={control!}
-                name={`openPositions.${index}.deadlineDate`}
+                name={`openPositions.${index}.workMode`}
                 render={({ field }) => (
-                  <DatePicker
-                    placeholder={t("cmpOpenPositionDeadlinePlaceholder")}
-                    date={field.value ? new Date(field.value) : undefined}
-                    onDateChange={(date) =>
-                      field.onChange(date ? new Date(date) : "")
-                    }
-                  />
+                  <Select
+                    value={field.value ?? ""}
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger className="h-12 text-muted-foreground">
+                      <SelectValue
+                        placeholder={t("cmpOpenPositionWorkModePlaceholder")}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {workModeConstant.map((item) => (
+                        <SelectItem key={item.value} value={item.value}>
+                          {item.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 )}
               />
-              <ErrorMessage>
-                {errors?.openPositions?.[index]?.deadlineDate?.message}
-              </ErrorMessage>
             </div>
+            {/* Location Section */}
+            <LabelInput
+              label={t("cmpOpenPositionLocation")}
+              input={
+                <Input
+                  placeholder={t("cmpOpenPositionLocationPlaceholder")}
+                  {...register(`openPositions.${index}.location`)}
+                />
+              }
+            />
+            {/* Openings Count Section */}
+            <LabelInput
+              label={t("cmpOpenPositionOpeningsCount")}
+              input={
+                <Controller
+                  control={control!}
+                  name={`openPositions.${index}.openingsCount`}
+                  render={({ field }) => (
+                    <Input
+                      type="number"
+                      placeholder={t("cmpOpenPositionOpeningsCountPlaceholder")}
+                      {...field}
+                      value={field.value ?? ""}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value === ""
+                            ? null
+                            : parseInt(e.target.value, 10),
+                        )
+                      }
+                    />
+                  )}
+                />
+              }
+            />
+          </div>
+
+          {/* Deadline Date Section */}
+          <div className="w-full flex flex-col gap-2">
+            <TypographyMuted className="text-xs">
+              {t("cmpOpenPositionDeadlineDate")}
+            </TypographyMuted>
+            <Controller
+              control={control!}
+              name={`openPositions.${index}.deadlineDate`}
+              render={({ field }) => (
+                <DatePicker
+                  placeholder={t("cmpOpenPositionDeadlinePlaceholder")}
+                  date={field.value ? new Date(field.value) : undefined}
+                  onDateChange={(date) =>
+                    field.onChange(date ? new Date(date) : "")
+                  }
+                />
+              )}
+            />
+            <ErrorMessage>
+              {errors?.openPositions?.[index]?.deadlineDate?.message}
+            </ErrorMessage>
           </div>
 
           {/* Skill Tags and Add Skill Section */}

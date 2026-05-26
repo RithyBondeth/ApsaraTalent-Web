@@ -65,10 +65,21 @@ export function CompanyProfilePageLoadingSkeleton() {
                 <Skeleton className="h-3 w-20" />
                 <Skeleton className="h-24 w-full rounded-md" />
               </div>
-              {/* Industry and Size Section */}
+              {/* Industry and Location Section */}
               <div className="flex gap-5 tablet-sm:flex-col">
                 <div className="flex-1 space-y-1.5">
                   <Skeleton className="h-3 w-16" />
+                  <Skeleton className="h-10 w-full rounded-md" />
+                </div>
+                <div className="flex-1 space-y-1.5">
+                  <Skeleton className="h-3 w-20" />
+                  <Skeleton className="h-10 w-full rounded-md" />
+                </div>
+              </div>
+              {/* Company Size and Founded Year Section */}
+              <div className="flex gap-5 tablet-sm:flex-col">
+                <div className="flex-1 space-y-1.5">
+                  <Skeleton className="h-3 w-24" />
                   <Skeleton className="h-10 w-full rounded-md" />
                 </div>
                 <div className="flex-1 space-y-1.5">
@@ -76,19 +87,25 @@ export function CompanyProfilePageLoadingSkeleton() {
                   <Skeleton className="h-10 w-full rounded-md" />
                 </div>
               </div>
-              {/* Website Section */}
+              {/* Website URL and Company Type Section */}
+              <div className="flex gap-5 tablet-sm:flex-col">
+                <div className="flex-1 space-y-1.5">
+                  <Skeleton className="h-3 w-24" />
+                  <Skeleton className="h-10 w-full rounded-md" />
+                </div>
+                <div className="flex-1 space-y-1.5">
+                  <Skeleton className="h-3 w-28" />
+                  <Skeleton className="h-10 w-full rounded-md" />
+                </div>
+              </div>
+              {/* Email Section */}
               <div className="space-y-1.5">
-                <Skeleton className="h-3 w-16" />
+                <Skeleton className="h-3 w-12" />
                 <Skeleton className="h-10 w-full rounded-md" />
               </div>
               {/* Phone Section */}
               <div className="space-y-1.5">
                 <Skeleton className="h-3 w-24" />
-                <Skeleton className="h-10 w-full rounded-md" />
-              </div>
-              {/* Location Section */}
-              <div className="space-y-1.5">
-                <Skeleton className="h-3 w-16" />
                 <Skeleton className="h-10 w-full rounded-md" />
               </div>
             </div>
@@ -103,12 +120,72 @@ export function CompanyProfilePageLoadingSkeleton() {
                   key={i}
                   className="rounded-xl border border-border/60 p-4 space-y-3"
                 >
-                  {[...Array(4)].map((_, j) => (
-                    <div key={j} className="space-y-1.5">
+                  {/* Title Section */}
+                  <div className="space-y-1.5">
+                    <Skeleton className="h-3 w-20" />
+                    <Skeleton className="h-10 w-full rounded-md" />
+                  </div>
+                  {/* Description Section */}
+                  <div className="space-y-1.5">
+                    <Skeleton className="h-3 w-24" />
+                    <Skeleton className="h-20 w-full rounded-md" />
+                  </div>
+                  {/* Position Type | Work Mode Section */}
+                  <div className="flex gap-3">
+                    <div className="flex-1 space-y-1.5">
                       <Skeleton className="h-3 w-20" />
                       <Skeleton className="h-10 w-full rounded-md" />
                     </div>
-                  ))}
+                    <div className="flex-1 space-y-1.5">
+                      <Skeleton className="h-3 w-20" />
+                      <Skeleton className="h-10 w-full rounded-md" />
+                    </div>
+                  </div>
+                  {/* Experience | Education Section */}
+                  <div className="flex gap-3">
+                    <div className="flex-1 space-y-1.5">
+                      <Skeleton className="h-3 w-28" />
+                      <Skeleton className="h-10 w-full rounded-md" />
+                    </div>
+                    <div className="flex-1 space-y-1.5">
+                      <Skeleton className="h-3 w-28" />
+                      <Skeleton className="h-10 w-full rounded-md" />
+                    </div>
+                  </div>
+                  {/* Skills Section */}
+                  <div className="space-y-1.5">
+                    <Skeleton className="h-3 w-24" />
+                    <div className="flex flex-wrap gap-2">
+                      {[...Array(4)].map((_, k) => (
+                        <Skeleton key={k} className="h-7 w-16 rounded-full" />
+                      ))}
+                    </div>
+                  </div>
+                  {/* Salary Range Section */}
+                  <div className="space-y-1.5">
+                    <Skeleton className="h-3 w-20" />
+                    <Skeleton className="h-10 w-36 rounded-md" />
+                    <div className="flex gap-2">
+                      <Skeleton className="h-10 flex-1 rounded-md" />
+                      <Skeleton className="h-10 flex-1 rounded-md" />
+                    </div>
+                  </div>
+                  {/* Job Location | Number of Openings Section */}
+                  <div className="flex gap-3">
+                    <div className="flex-1 space-y-1.5">
+                      <Skeleton className="h-3 w-24" />
+                      <Skeleton className="h-10 w-full rounded-md" />
+                    </div>
+                    <div className="flex-1 space-y-1.5">
+                      <Skeleton className="h-3 w-28" />
+                      <Skeleton className="h-10 w-full rounded-md" />
+                    </div>
+                  </div>
+                  {/* Deadline Date Section */}
+                  <div className="space-y-1.5">
+                    <Skeleton className="h-3 w-24" />
+                    <Skeleton className="h-10 w-full rounded-md" />
+                  </div>
                 </div>
               ))}
             </div>
@@ -311,6 +388,47 @@ export function EmployeeProfilePageLoadingSkeleton() {
               <div className="space-y-1.5">
                 <Skeleton className="h-3 w-20" />
                 <Skeleton className="h-24 w-full rounded-md" />
+              </div>
+              {/* Work Mode and Notice Period Section */}
+              <div className="flex gap-5 tablet-sm:flex-col">
+                <div className="flex-1 space-y-1.5">
+                  <Skeleton className="h-3 w-20" />
+                  <Skeleton className="h-10 w-full rounded-md" />
+                </div>
+                <div className="flex-1 space-y-1.5">
+                  <Skeleton className="h-3 w-24" />
+                  <Skeleton className="h-10 w-full rounded-md" />
+                </div>
+              </div>
+              {/* Portfolio URL and LinkedIn URL Section */}
+              <div className="flex gap-5 tablet-sm:flex-col">
+                <div className="flex-1 space-y-1.5">
+                  <Skeleton className="h-3 w-24" />
+                  <Skeleton className="h-10 w-full rounded-md" />
+                </div>
+                <div className="flex-1 space-y-1.5">
+                  <Skeleton className="h-3 w-28" />
+                  <Skeleton className="h-10 w-full rounded-md" />
+                </div>
+              </div>
+              {/* Languages Section */}
+              <div className="space-y-1.5">
+                <Skeleton className="h-3 w-24" />
+                <div className="flex flex-wrap gap-2">
+                  {[...Array(3)].map((_, i) => (
+                    <Skeleton key={i} className="h-7 w-20 rounded-full" />
+                  ))}
+                </div>
+                <Skeleton className="h-10 w-full rounded-md" />
+              </div>
+              {/* Expected Salary Section */}
+              <div className="space-y-1.5">
+                <Skeleton className="h-3 w-32" />
+                <div className="flex gap-2">
+                  <Skeleton className="h-10 w-28 rounded-md shrink-0" />
+                  <Skeleton className="h-10 flex-1 rounded-md" />
+                  <Skeleton className="h-10 flex-1 rounded-md" />
+                </div>
               </div>
             </div>
           </SkeletonCard>

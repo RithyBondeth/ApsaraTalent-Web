@@ -61,6 +61,7 @@ import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
+import { useFeedActionEffect } from "@/components/utils/effects/feed-action-effect";
 import MetaChip from "@/components/utils/data-display/meta-chip";
 import { DetailCard } from "@/components/utils/data-display/detail-card";
 import { SectionTitle } from "@/components/utils/layout/section-title";
@@ -85,6 +86,7 @@ export default function CompanyDetailPage() {
     null,
   );
   const ignoreNextClick = useRef<boolean>(false);
+  const { trigger: triggerEffect, effectPortal } = useFeedActionEffect();
 
   /* ------------------------------ API Integration ----------------------------- */
   const currentUser = useGetCurrentUserStore((state) => state.user);
@@ -166,12 +168,13 @@ export default function CompanyDetailPage() {
   };
 
   // ── Handle Employee Like Company ──────────────────────────────────────
-  const handleLike = async () => {
+  const handleLike = async (e: React.MouseEvent) => {
     if (currentUser?.employee) {
       const employeeId = currentUser.employee.id;
       const companyId = companyData?.id;
       if (!employeeId || !companyId) return;
       try {
+        triggerEffect("like", e);
         toast.dismiss();
         await employeeLikeStore.employeeLike(employeeId, companyId);
         const liked = useEmployeeLikeStore.getState().data;
@@ -197,12 +200,13 @@ export default function CompanyDetailPage() {
   };
 
   // ── Handle Add Company To Favorite ──────────────────────────────────────
-  const handleAddToFavorite = async () => {
+  const handleAddToFavorite = async (e: React.MouseEvent) => {
     if (currentUser?.employee) {
       const employeeId = currentUser.employee.id;
       const companyId = companyData?.id;
       if (!employeeId || !companyId) return;
       try {
+        triggerEffect("save", e);
         await employeeFavCompanyStore.addCompanyToFavorite(
           employeeId,
           companyId,
@@ -267,6 +271,7 @@ export default function CompanyDetailPage() {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col gap-5 animate-page-in tablet-sm:pb-24">
+      {effectPortal}
       {/* Back Navigation Header Section */}
       <header className="sticky top-0 z-10 border-b border-border/60 bg-background/95 backdrop-blur-sm -mx-4 sm:-mx-6 px-4 sm:px-6">
         <div className="flex items-center gap-4 py-3 min-w-0">
@@ -342,7 +347,9 @@ export default function CompanyDetailPage() {
                 {companyData.companySize && (
                   <MetaChip
                     icon={<LucideUsers />}
-                    text={tf("dialogEmployeesCount", { count: companyData.companySize })}
+                    text={tf("dialogEmployeesCount", {
+                      count: companyData.companySize,
+                    })}
                   />
                 )}
                 {companyData.foundedYear && (
@@ -501,7 +508,10 @@ export default function CompanyDetailPage() {
           {/* Career Scope Section */}
           {companyData.careerScopes && companyData.careerScopes.length > 0 && (
             <DetailCard className="p-5 sm:p-6">
-              <SectionTitle icon={<LucideCompass />} title={tf("careerScope")} />
+              <SectionTitle
+                icon={<LucideCompass />}
+                title={tf("careerScope")}
+              />
               <div className="flex flex-wrap gap-2">
                 {companyData.careerScopes.map((career, i) => (
                   <HoverCard key={i}>
@@ -579,7 +589,9 @@ export default function CompanyDetailPage() {
                   icon: <LucideUsers />,
                   label: tf("companySizeLabel"),
                   val: companyData.companySize
-                    ? tf("dialogEmployeesCount", { count: companyData.companySize })
+                    ? tf("dialogEmployeesCount", {
+                        count: companyData.companySize,
+                      })
                     : null,
                 },
                 {
@@ -614,7 +626,10 @@ export default function CompanyDetailPage() {
           {(companyData.values.length > 0 ||
             companyData.benefits.length > 0) && (
             <DetailCard className="p-5">
-              <SectionTitle icon={<LucideStar />} title={tf("cultureAndBenefits")} />
+              <SectionTitle
+                icon={<LucideStar />}
+                title={tf("cultureAndBenefits")}
+              />
               <div className="space-y-4">
                 {companyData.values.length > 0 && (
                   <div>

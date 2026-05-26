@@ -7,8 +7,7 @@ import {
   isSupported,
   onMessage,
 } from "firebase/messaging";
-import axios from "@/lib/axios";
-import { API_UPDATE_PUSH_TOKEN_URL } from "@/utils/constants/apis/user-api/user.api.constant";
+import { useUpdatePushTokenStore } from "@/stores/apis/notification/update-push-token.store";
 import { getFirebaseApp } from "@/lib/firebase";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
@@ -102,7 +101,7 @@ export const usePushNotifications = () => {
         const cached = localStorage.getItem(PUSH_TOKEN_STORAGE_KEY);
         if (cached !== token) {
           try {
-            await axios.post(API_UPDATE_PUSH_TOKEN_URL, { token });
+            await useUpdatePushTokenStore.getState().updatePushToken(token);
             localStorage.setItem(PUSH_TOKEN_STORAGE_KEY, token);
             console.log("[Push] Token saved.");
           } catch (error) {

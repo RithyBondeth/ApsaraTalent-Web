@@ -57,6 +57,7 @@ import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { EmployeeDetailPageLoadingSkeleton } from "@/components/employee/skeleton";
 import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
+import { useFeedActionEffect } from "@/components/utils/effects/feed-action-effect";
 import MetaChip from "@/components/utils/data-display/meta-chip";
 import { DetailCard } from "@/components/utils/data-display/detail-card";
 import { SectionTitle } from "@/components/utils/layout/section-title";
@@ -77,6 +78,7 @@ export default function EmployeeDetailPage() {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
   const ignoreNextClick = useRef<boolean>(false);
+  const { trigger: triggerEffect, effectPortal } = useFeedActionEffect();
 
   /* ------------------------------ API Integration ---------------------------- */
   const currentUser = useGetCurrentUserStore((state) => state.user);
@@ -138,12 +140,13 @@ export default function EmployeeDetailPage() {
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Handle Company Like Employee ─────────────────────────────────────────
-  const handleLike = async () => {
+  const handleLike = async (e: React.MouseEvent) => {
     if (currentUser?.company) {
       const companyId = currentUser.company.id;
       const employeeId = employeeData?.id;
       if (!companyId || !employeeId) return;
       try {
+        triggerEffect("like", e);
         toast.dismiss();
         await companyLikeStore.companyLike(companyId, employeeId);
         const data = useCompanyLikeStore.getState().data;
@@ -172,7 +175,7 @@ export default function EmployeeDetailPage() {
   };
 
   // ── Handle Add Employee To Favorite ─────────────────────────────────────
-  const handleAddToFavorite = async () => {
+  const handleAddToFavorite = async (e: React.MouseEvent) => {
     if (currentUser?.company) {
       const companyId = currentUser.company.id;
       const employeeId = employeeData?.id;
@@ -181,6 +184,7 @@ export default function EmployeeDetailPage() {
         `${employeeData?.firstname} ${employeeData?.lastname}`;
       if (!companyId || !employeeId) return;
       try {
+        triggerEffect("save", e);
         await companyFavEmployeeStore.addEmployeeToFavorite(
           companyId,
           employeeId,
@@ -267,6 +271,9 @@ export default function EmployeeDetailPage() {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col gap-5 animate-page-in tablet-sm:pb-24">
+      {/* Feed Action Effect Portal Section */}
+      {effectPortal}
+
       {/* Back Navigation Header Section */}
       <header className="sticky top-0 z-10 border-b border-border/60 bg-background/95 backdrop-blur-sm -mx-4 sm:-mx-6 px-4 sm:px-6">
         <div className="flex items-center gap-4 py-3 min-w-0">
@@ -469,7 +476,10 @@ export default function EmployeeDetailPage() {
           {/* Education Section */}
           {employeeData.educations && employeeData.educations.length > 0 && (
             <DetailCard className="p-5 sm:p-6">
-              <SectionTitle icon={<LucideGraduationCap />} title={tf("dialogEducation")} />
+              <SectionTitle
+                icon={<LucideGraduationCap />}
+                title={tf("dialogEducation")}
+              />
               <div className="flex flex-col gap-3">
                 {employeeData.educations.map((item: IEducation) => (
                   <div

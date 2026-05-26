@@ -5,7 +5,7 @@ import {
 } from "@/utils/functions/validation/form-schemas";
 import * as z from "zod";
 
-// Define schema for step 1: Professtion
+// Define schema for step 1: Profession
 export const makeProfessionStepSchema = (m: {
   yearsOfExperienceRequired: string;
   availabilityRequired: string;
@@ -28,6 +28,22 @@ export const makeProfessionStepSchema = (m: {
         .string()
         .min(1, m.fieldRequired("Description"))
         .max(1000, m.fieldTooLong("Description", 1000)),
+      workMode: z.enum(["remote", "on_site", "hybrid", "flexible"]).optional(),
+      noticePeriod: z.enum(["immediate", "2_weeks", "1_month"]).optional(),
+      portfolioUrl: z
+        .string()
+        .url({ message: "Please enter a valid URL (e.g. https://...)" })
+        .optional()
+        .or(z.literal("")),
+      linkedinUrl: z
+        .string()
+        .url({ message: "Please enter a valid URL (e.g. https://...)" })
+        .optional()
+        .or(z.literal("")),
+      languages: z.array(z.string()).optional().default([]),
+      expectedSalaryCurrency: z.string().optional().default("USD"),
+      expectedSalaryMin: z.number().positive().optional(),
+      expectedSalaryMax: z.number().positive().optional(),
     }),
   });
 
@@ -140,6 +156,7 @@ export const makeEmployeeSignUpSchema = (m: {
   atLeastOneCareer: string;
   fieldRequired: (field: string) => string;
   fieldTooLong: (field: string, max: number) => string;
+  [key: string]: unknown;
 }) =>
   z.object({
     ...makeProfessionStepSchema(m).shape,

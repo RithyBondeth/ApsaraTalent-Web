@@ -11,6 +11,7 @@ import {
   LucideClock,
   LucideEye,
   LucideHeartHandshake,
+  LucideLoader2,
   LucideMapPin,
   LucideUsers,
 } from "lucide-react";
@@ -64,9 +65,9 @@ export default function CompanyCard(props: ICompanyCardProps) {
   if (isGrid) {
     return (
       <>
-        <div className="group relative w-full flex flex-col rounded-2xl border border-border/70 bg-card overflow-hidden cursor-pointer shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] transition-all duration-300 ease-out hover:z-10 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_hsl(var(--foreground)/0.13)] hover:border-primary/25">
+        <div className="group relative h-full w-full flex flex-col rounded-2xl border border-border/70 bg-card overflow-hidden cursor-pointer shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] transition-all duration-300 ease-out hover:z-10 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_hsl(var(--foreground)/0.13)] hover:border-primary/25 active:scale-[0.98] active:shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] active:translate-y-0">
           {/* Cover Banner Section */}
-          <div className="relative h-28 w-full shrink-0 bg-gradient-to-br from-primary/20 via-primary/10 to-muted/40 overflow-hidden">
+          <div className="relative h-28 tablet-md:h-12 w-full shrink-0 bg-gradient-to-br from-primary/20 via-primary/10 to-muted/40 overflow-hidden">
             {props.cover && (
               <Image
                 src={props.cover}
@@ -76,27 +77,40 @@ export default function CompanyCard(props: ICompanyCardProps) {
                 sizes="(max-width: 768px) 100vw, 400px"
               />
             )}
-            {/* Like Button Section */}
-            <Button
-              size="icon"
-              variant="ghost"
-              aria-label="Like"
-              className="absolute top-2 right-2 size-8 rounded-full bg-background/70 backdrop-blur-sm text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-all duration-200"
-              onClick={props.onLikeClick}
-              disabled={props.onLikeClickDisable}
-            >
-              <LucideHeartHandshake
-                className={`!size-4${props.onLikeClickDisable ? " animate-pop-shrink text-rose-500" : ""}`}
-              />
-            </Button>
+            {/* Like Button and Dialog Button Section */}
+            <div className="absolute top-2 right-2 flex justify-center items-center gap-1">
+              <Button
+                size="icon"
+                variant="ghost"
+                aria-label="Like"
+                className="size-8 rounded-full bg-background/70 backdrop-blur-sm text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-all duration-200"
+                onClick={props.onLikeClick}
+                disabled={props.onLikeClickDisable}
+              >
+                {props.onLikeClickDisable ? (
+                  <LucideLoader2 className="!size-4 animate-spin text-rose-500" />
+                ) : (
+                  <LucideHeartHandshake className="!size-4" />
+                )}
+              </Button>
+              <Button
+                size="icon"
+                variant="ghost"
+                aria-label="Quick view"
+                className="size-8 rounded-full bg-background/70 backdrop-blur-sm text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
+                onClick={handleClickDialog}
+              >
+                <LucideEye className="!size-4" />
+              </Button>
+            </div>
           </div>
 
-          {/* Avatar + Identity row */}
-          <div className="flex items-end justify-between gap-3 px-4 -mt-6 z-10">
+          {/* Avatar and Identity Section */}
+          <div className="flex items-end justify-between gap-3 px-4 -mt-6 tablet-md:-mt-4 z-10">
             <CachedAvatar
               src={props.avatar}
               alt={props.name}
-              className="size-14 shrink-0 ring-2 ring-card shadow-md"
+              className="size-14 tablet-md:size-10 shrink-0 ring-2 ring-card shadow-md"
               rounded="md"
               onClick={props.onProfileImageClick}
               preload={true}
@@ -104,19 +118,10 @@ export default function CompanyCard(props: ICompanyCardProps) {
             >
               {props.name.slice(0, 2)}
             </CachedAvatar>
-            <Button
-              size="icon"
-              variant="ghost"
-              aria-label="Quick view"
-              className="size-8 mb-1 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
-              onClick={handleClickDialog}
-            >
-              <LucideEye className="!size-4" />
-            </Button>
           </div>
 
           {/* Main Content Section */}
-          <div className="flex flex-col gap-3 px-4 pt-2 pb-3">
+          <div className="flex flex-1 flex-col gap-2 tablet-md:gap-1.5 px-4 pt-2 pb-3">
             {/* Name and Meta Section */}
             <div className="flex flex-col gap-1">
               <TypographyP className="!m-0 font-semibold text-sm leading-tight">
@@ -149,7 +154,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
             </div>
 
             {/* Description Section */}
-            <TypographyMuted className="text-xs leading-relaxed line-clamp-2">
+            <TypographyMuted className="text-xs leading-relaxed line-clamp-2 tablet-md:line-clamp-1">
               {props.description}
             </TypographyMuted>
 
@@ -195,15 +200,20 @@ export default function CompanyCard(props: ICompanyCardProps) {
           </div>
 
           {/* Footer Section */}
-          <div className="flex items-center justify-end gap-2 px-4 pb-3 pt-2 border-t border-border/50">
+          <div className=" flex items-center justify-end gap-2 px-4 pb-3 pt-3 border-t border-border/50">
             {!props.hideSaveButton && (
               <Button
                 className="text-xs h-7 px-3 rounded-full"
                 variant="outline"
                 size="sm"
                 onClick={props.onSaveClick}
+                disabled={props.onSaveClickDisable}
               >
-                <LucideBookmark className="!size-3" />
+                {props.onSaveClickDisable ? (
+                  <LucideLoader2 className="!size-3 animate-spin" />
+                ) : (
+                  <LucideBookmark className="!size-3" />
+                )}
                 {t("save")}
               </Button>
             )}

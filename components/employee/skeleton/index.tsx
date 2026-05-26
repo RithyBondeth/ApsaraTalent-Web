@@ -4,9 +4,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 /* ------------------------- Employee Card Skeleton ------------------------- */
 export default function EmployeeCardSkeleton() {
   return (
-    <div className="w-full flex flex-col rounded-2xl border border-border/70 bg-card overflow-hidden shadow-[0_2px_8px_hsl(var(--foreground)/0.05)]">
+    <div className="h-full w-full flex flex-col rounded-2xl border border-border/70 bg-card overflow-hidden shadow-[0_2px_8px_hsl(var(--foreground)/0.05)]">
       {/* Header Section */}
-      <div className="flex items-start gap-3 p-4 pb-3">
+      <div className="flex items-start gap-3 p-4 pb-3 tablet-md:p-3 tablet-md:pb-2">
         <Skeleton className="size-14 rounded-md shrink-0 ring-2 ring-border" />
         <div className="flex-1 flex flex-col gap-1.5">
           <Skeleton className="h-4 w-28 rounded" />
@@ -16,8 +16,8 @@ export default function EmployeeCardSkeleton() {
             <Skeleton className="h-3 w-14 rounded" />
           </div>
         </div>
-        {/* Like + Quick View Buttons Section (stacked) */}
-        <div className="flex flex-col items-center gap-1 shrink-0">
+        {/* Like and Quick View Buttons Section (Stacked) */}
+        <div className="flex justify-end items-center gap-1 shrink-0">
           <Skeleton className="size-8 rounded-full" />
           <Skeleton className="size-8 rounded-full" />
         </div>
@@ -33,7 +33,7 @@ export default function EmployeeCardSkeleton() {
         <Skeleton className="h-6 w-16 rounded-full" />
         <Skeleton className="h-6 w-20 rounded-full" />
         <Skeleton className="h-6 w-14 rounded-full" />
-        <Skeleton className="h-6 w-18 rounded-full" />
+        <Skeleton className="h-6 w-[4.5rem] rounded-full" />
       </div>
 
       {/* Experience and Education Section */}

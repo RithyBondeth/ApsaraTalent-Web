@@ -26,6 +26,7 @@ interface CreatableComboboxProps {
   onChange: (value: string) => void;
   placeholder?: string;
   emptyText?: string;
+  disabled?: boolean;
 }
 
 export function CreatableCombobox({
@@ -34,6 +35,7 @@ export function CreatableCombobox({
   onChange,
   placeholder = "Select or type...",
   emptyText = "Type to create...",
+  disabled = false,
 }: CreatableComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
@@ -41,13 +43,17 @@ export function CreatableCombobox({
   const selectedOption = options.find((option) => option.value === value);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover
+      open={disabled ? false : open}
+      onOpenChange={disabled ? undefined : setOpen}
+    >
       <PopoverTrigger asChild>
         <Button
           type="button"
           variant="outline"
           role="combobox"
           aria-expanded={open}
+          disabled={disabled}
           className="w-full justify-between h-12 text-muted-foreground font-normal overflow-hidden"
         >
           <span className="truncate">

@@ -20,7 +20,7 @@ import { useInterviewStore } from "@/stores/apis/matching/interview.store";
 import { useMediaQuery } from "@/hooks/utils/use-media-query";
 import { LucideCalendarCheck, LucidePlus } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { InterviewFormBody } from "./interview-form-body";
 import { ICreateInterviewDialogProps } from "./props";
 import { IInterviewFormBodyProps } from "./interview-form-body/props";
@@ -28,10 +28,10 @@ import { IInterviewFormBodyProps } from "./interview-form-body/props";
 export function CreateInterviewDialog({
   currentId,
   currentCompanyMatching,
+  initialEmployeeId,
 }: ICreateInterviewDialogProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("interview");
-  const { creating, error, createInterview } = useInterviewStore();
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
   /* -------------------------------- All States ------------------------------ */
@@ -44,6 +44,18 @@ export function CreateInterviewDialog({
   const [durationMinutes, setDurationMinutes] = useState<number>(30);
   const [location, setLocation] = useState<string>("");
   const [meetingLink, setMeetingLink] = useState<string>("");
+
+  /* ----------------------------- API Integration ---------------------------- */
+  const { creating, error, createInterview } = useInterviewStore();
+
+  /* --------------------------------- Effects -------------------------------- */
+  // Auto-open and pre-select when navigating from matching page with ?with= param
+  useEffect(() => {
+    if (initialEmployeeId) {
+      setSelectedEmployeeId(initialEmployeeId);
+      setOpen(true);
+    }
+  }, [initialEmployeeId]);
 
   /* --------------------------------- Methods -------------------------------- */
   // ── Scheduled At ─────────────────────────────────────────────────────

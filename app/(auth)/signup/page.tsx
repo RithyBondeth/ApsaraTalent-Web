@@ -18,6 +18,7 @@ import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login
 import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
 import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
 import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
+import { useParseResumeStore } from "@/stores/apis/auth/parse-resume.store";
 import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
 import {
   genderConstant,
@@ -91,6 +92,9 @@ export default function SignupPage() {
   const linkedInUserData = useLinkedInLoginStore();
   const facebookUserData = useFacebookLoginStore();
 
+  // Prased Smart Resume Data
+  const { data: parsedData } = useParseResumeStore();
+
   /* --------------------------- User Role Handling --------------------------- */
   /*
     Determine user role (Employee or Company) by checking local state first,
@@ -135,6 +139,42 @@ export default function SignupPage() {
     [tv],
   );
 
+  // ── Pre-fill Employee Form from Resume Parsed ──────────────────────
+  const defaultEmpValues = useMemo(() => {
+    const stripped = parsedData?.phone?.replace(/[\s\-().]/g, "") ?? "";
+    const normalizedPhone =
+      stripped.startsWith("855") && !stripped.startsWith("+855")
+        ? `+${stripped}`
+        : stripped;
+    const validPhone = /^(\+855|0)[0-9]{8,9}$/.test(normalizedPhone)
+      ? normalizedPhone
+      : "";
+
+    const matchedLocation = parsedData?.location
+      ? locationConstant.find(
+          (loc) =>
+            loc.toLowerCase() === parsedData.location!.trim().toLowerCase(),
+        )
+      : undefined;
+
+    return {
+      firstName: parsedData?.firstName ?? "",
+      lastName: parsedData?.lastName ?? "",
+      dob: "",
+      username:
+        parsedData?.firstName && parsedData?.lastName
+          ? `${parsedData.firstName} ${parsedData.lastName}`
+          : "",
+      selectedLocation: matchedLocation,
+      gender: undefined,
+      phone: validPhone,
+      email: parsedData?.email ?? "",
+      password: "",
+      confirmPassword: "",
+    };
+  }, []);
+
+  // ── Cmp and Emp Form ─────────────────────────────────────────
   const cmpForm = useForm<TBasicSignupCompanySchema>({
     resolver: zodResolver(makeBasicSignupCompanySchema(signupMessages)),
     defaultValues: {
@@ -147,21 +187,10 @@ export default function SignupPage() {
 
   const empForm = useForm<TBasicSignupEmployeeSchema>({
     resolver: zodResolver(makeBasicSignupEmployeeSchema(signupMessages)),
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      dob: "",
-      username: "",
-      selectedLocation: undefined,
-      gender: undefined,
-      phone: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
+    defaultValues: defaultEmpValues,
   });
 
-  // Employee and Company Error States
+  // ── Cmp and Emp Form Error States ───────────────────────────
   const employeeErrors = empForm.formState
     .errors as FieldErrors<TBasicSignupEmployeeSchema>;
   const companyErrors = cmpForm.formState
@@ -316,17 +345,29 @@ export default function SignupPage() {
 
             {/* Employee: Firstname & Lastname Section */}
             <div className="flex items-start gap-3 tablet-sm:flex-col">
-              <Input
-                placeholder={t("firstname")}
-                type="text"
-                {...empForm.register("firstName")}
-                validationMessage={employeeErrors.firstName?.message}
+              <Controller
+                name="firstName"
+                control={empForm.control}
+                render={({ field }) => (
+                  <Input
+                    placeholder={t("firstname")}
+                    type="text"
+                    {...field}
+                    validationMessage={employeeErrors.firstName?.message}
+                  />
+                )}
               />
-              <Input
-                placeholder={t("lastname")}
-                type="text"
-                {...empForm.register("lastName")}
-                validationMessage={employeeErrors.lastName?.message}
+              <Controller
+                name="lastName"
+                control={empForm.control}
+                render={({ field }) => (
+                  <Input
+                    placeholder={t("lastname")}
+                    type="text"
+                    {...field}
+                    validationMessage={employeeErrors.lastName?.message}
+                  />
+                )}
               />
             </div>
 
@@ -361,11 +402,17 @@ export default function SignupPage() {
 
             {/* Employee: Username & Location Section */}
             <div className="flex items-start gap-3 tablet-sm:flex-col">
-              <Input
-                type="text"
-                placeholder={t("username")}
-                {...empForm.register("username")}
-                validationMessage={employeeErrors.username?.message}
+              <Controller
+                name="username"
+                control={empForm.control}
+                render={({ field }) => (
+                  <Input
+                    type="text"
+                    placeholder={t("username")}
+                    {...field}
+                    validationMessage={employeeErrors.username?.message}
+                  />
+                )}
               />
               <div className="w-full flex flex-col items-start gap-1">
                 <Controller
@@ -427,11 +474,17 @@ export default function SignupPage() {
                     : null}
                 </ErrorMessage>
               </div>
-              <Input
-                type="number"
-                placeholder={t("mobile")}
-                {...empForm.register("phone")}
-                validationMessage={employeeErrors.phone?.message}
+              <Controller
+                name="phone"
+                control={empForm.control}
+                render={({ field }) => (
+                  <Input
+                    type="text"
+                    placeholder={t("mobile")}
+                    {...field}
+                    validationMessage={employeeErrors.phone?.message}
+                  />
+                )}
               />
             </div>
           </div>
@@ -459,12 +512,18 @@ export default function SignupPage() {
 
           {/* Employee and Company: Email Section */}
           {isEmployeeForm ? (
-            <Input
-              prefix={<LucideMail strokeWidth={"1.3px"} />}
-              type="email"
-              placeholder={t("email")}
-              {...empForm.register("email")}
-              validationMessage={employeeErrors.email?.message}
+            <Controller
+              name="email"
+              control={empForm.control}
+              render={({ field }) => (
+                <Input
+                  prefix={<LucideMail strokeWidth={"1.3px"} />}
+                  type="email"
+                  placeholder={t("email")}
+                  {...field}
+                  validationMessage={employeeErrors.email?.message}
+                />
+              )}
             />
           ) : (
             <Input

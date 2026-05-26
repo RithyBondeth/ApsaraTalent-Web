@@ -1,6 +1,14 @@
 "use client";
 
+import SmartResumeUpload from "@/components/employee/employee-signup-form/smart-resume-upload";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -23,6 +31,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LucideArrowLeft, LucideArrowRight, LucideUsers } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { signupOptionSchema, TSignupOptionSchema } from "./validation";
 
@@ -32,13 +41,16 @@ export default function SingUpOption() {
   const t = useTranslations("auth");
 
   /* -------------------------------- All States ------------------------------- */
+  const [showResumeDialog, setShowResumeDialog] = useState<boolean>(false);
+  // Guards against double navigation (e.g. upload success + dialog close firing together)
+  const navigatingRef = useRef<boolean>(false);
+
   // Signup Option Helpers
   const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData, setBasicPhoneSignupData } =
     useBasicPhoneSignupDataStore();
 
   /* --------------------- API Integration: Social Data ------------------------ */
-  // Get user basic data from socials: Google, Github, LinkedIn, Facebook
   const googleUserData = useGoogleLoginStore();
   const githubUserData = useGithubLoginStore();
   const linkedInUserData = useLinkedInLoginStore();
@@ -57,82 +69,43 @@ export default function SingUpOption() {
   });
 
   /* --------------------------------- Methods --------------------------------- */
-  // ── Signup Option Function ─────────────────────────────────────────
-  // Set Role For Signup Option Function
-  const onSubmit = (data: TSignupOptionSchema) => {
-    console.log("Form Submitted With role:", data.selectedRole);
-    console.log("Store States:", {
-      basicPhoneSignupData: !!basicPhoneSignupData,
-      basicSignupData: !!basicSignupData,
-      googleNewUser: googleUserData.newUser && !googleUserData.isAuthenticated,
-      linkedInNewUser:
-        linkedInUserData.newUser && !linkedInUserData.isAuthenticated,
-      githubNewUser: githubUserData.newUser && !githubUserData.isAuthenticated,
-      facebookNewUser:
-        facebookUserData.newUser && !facebookUserData.isAuthenticated,
-    });
 
-    // Check different signup flows and navigate accordingly
-    if (basicPhoneSignupData) {
-      setBasicPhoneSignupData({
-        ...basicPhoneSignupData,
-        role: data.selectedRole,
-      });
-
-      setBasicSignupData({
-        ...basicSignupData,
-        selectedRole: data.selectedRole,
-      });
-
-      router.push("/signup");
-      return;
-    }
-
-    if (googleUserData.newUser && !googleUserData.isAuthenticated) {
-      googleUserData.setRole(data.selectedRole as TUserRole);
-      setBasicSignupData({
-        ...basicSignupData,
-        selectedRole: data.selectedRole,
-      });
-      router.push("/signup");
-      return;
-    }
-
-    if (linkedInUserData.newUser && !linkedInUserData.isAuthenticated) {
-      linkedInUserData.setRole(data.selectedRole as TUserRole);
-      setBasicSignupData({
-        ...basicSignupData,
-        selectedRole: data.selectedRole,
-      });
-      router.push("/signup");
-      return;
-    }
-
-    if (githubUserData.newUser && !githubUserData.isAuthenticated) {
-      githubUserData.setRole(data.selectedRole as TUserRole);
-      setBasicSignupData({
-        ...basicSignupData,
-        selectedRole: data.selectedRole,
-      });
-      router.push("/signup");
-      return;
-    }
-
-    if (facebookUserData.newUser && !facebookUserData.isAuthenticated) {
-      facebookUserData.setRole(data.selectedRole as TUserRole);
-      setBasicSignupData({
-        ...basicSignupData,
-        selectedRole: data.selectedRole,
-      });
-      router.push("/signup");
-      return;
-    }
-
-    setBasicSignupData({
-      ...basicSignupData,
-      selectedRole: data.selectedRole,
-    });
+  // ── Navigate to /signup (called after upload or skip) ────────
+  const goToSignup = () => {
+    if (navigatingRef.current) return;
+    navigatingRef.current = true;
+    setShowResumeDialog(false);
     router.push("/signup");
+  };
+
+  // ── Commit role to stores (shared across all signup flows) ────
+  const commitRole = (role: string) => {
+    if (basicPhoneSignupData) {
+      setBasicPhoneSignupData({ ...basicPhoneSignupData, role });
+    }
+
+    if (googleUserData.newUser && !googleUserData.isAuthenticated)
+      googleUserData.setRole(role as TUserRole);
+    if (linkedInUserData.newUser && !linkedInUserData.isAuthenticated)
+      linkedInUserData.setRole(role as TUserRole);
+    if (githubUserData.newUser && !githubUserData.isAuthenticated)
+      githubUserData.setRole(role as TUserRole);
+    if (facebookUserData.newUser && !facebookUserData.isAuthenticated)
+      facebookUserData.setRole(role as TUserRole);
+
+    setBasicSignupData({ ...basicSignupData, selectedRole: role });
+  };
+
+  // ── Form submit ───────────────────────────────────────────────
+  const onSubmit = (data: TSignupOptionSchema) => {
+    commitRole(data.selectedRole);
+
+    if (data.selectedRole === "employee") {
+      // Show the smart resume dialog — navigation happens inside it
+      setShowResumeDialog(true);
+    } else {
+      router.push("/signup");
+    }
   };
 
   /* ---------------------------------------- Render UI ---------------------------------------- */
@@ -201,6 +174,41 @@ export default function SingUpOption() {
           {t("signupOptionNote")}
         </TypographyMuted>
       </div>
+
+      {/* Smart Resume Upload Dialog Section (Employee Only) */}
+      <Dialog
+        open={showResumeDialog}
+        onOpenChange={(open) => {
+          if (!open) goToSignup();
+        }}
+      >
+        <DialogContent className="max-w-lg">
+          <div className="px-6 pt-6 pb-5 flex flex-col gap-5">
+            {/* Header Section */}
+            <DialogHeader>
+              <DialogTitle className="text-xl">
+                {t("smartUploadDialogTitle")}
+              </DialogTitle>
+              <DialogDescription className="text-sm mt-1">
+                {t("smartUploadDialogSubtitle")}
+              </DialogDescription>
+            </DialogHeader>
+
+            {/* Upload Section */}
+            <SmartResumeUpload onParsed={goToSignup} />
+
+            {/* Skip Button Section */}
+            <Button
+              type="button"
+              variant="ghost"
+              className="w-full text-muted-foreground hover:text-foreground text-sm"
+              onClick={goToSignup}
+            >
+              {t("smartUploadDialogSkip")}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -7,28 +7,37 @@ import ErrorMessage from "@/components/utils/feedback/error-message";
 import LabelInput from "@/components/utils/forms/label-input";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { LucidePlus, LucideTrash2 } from "lucide-react";
+import { LucidePlus, LucideTrash2, Sparkles, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
-import { Controller, useFieldArray } from "react-hook-form";
+import { Controller, useFieldArray, useWatch } from "react-hook-form";
 import { IStepFormProps } from "../props";
+import { useAIRefine } from "@/hooks/utils/use-ai-refine";
+import { toast } from "sonner";
 
 export default function ExperienceStepForm({
   register,
   control,
   errors,
+  setValue,
 }: IStepFormProps<TEmployeeSignUp>) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("auth");
+  const tr = useTranslations("resumeBuilder");
 
-  /* -------------------------------- Form Section ---------------------------- */
+  /* -------------------------------- All States ------------------------------ */
+  const initializedRef = useRef<boolean>(false);
+
+  /* ------------------------------ AI Integration ---------------------------- */
+  const { isRefining, refineContent } = useAIRefine();
+
+  /* ------------------------------ React Hook Form --------------------------- */
   const { fields, append, remove } = useFieldArray({
     control,
     name: "experience",
   });
 
-  /* -------------------------------- All States ------------------------------ */
-  const initializedRef = useRef<boolean>(false);
+  const experienceValues = useWatch({ control, name: "experience" });
 
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
@@ -54,9 +63,21 @@ export default function ExperienceStepForm({
     });
   };
 
+  // ── Refine Experience ─────────────────────────────────────────
+  const handleRefine = async (index: number) => {
+    const desc = experienceValues[index]?.description;
+    const result = await refineContent(desc, "experience");
+    if (result && typeof result === "string" && setValue) {
+      setValue(`experience.${index}.description`, result, {
+        shouldDirty: true,
+      });
+      toast.success(tr("refinedSuccess"));
+    }
+  };
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex flex-col gap-5 w-full max-h-[500px] overflow-y-auto">
+    <div className="flex flex-col gap-5 w-full max-h-[500px] overflow-y-auto pr-1">
       {/* Title Section */}
       <TypographyH4>{t("empExperienceTitle")}</TypographyH4>
 
@@ -69,7 +90,7 @@ export default function ExperienceStepForm({
           {/* Header Without Remove Button Section */}
           {fields.length === 1 && (
             <div className="w-full mb-3">
-              <TypographyMuted className="text-md">
+              <TypographyMuted className="text-md font-bold text-foreground">
                 {t("empExperienceLabel")} {index + 1}
               </TypographyMuted>
             </div>
@@ -78,7 +99,7 @@ export default function ExperienceStepForm({
           {/* Header With Remove Button Section */}
           {fields.length > 1 && (
             <div className="w-full flex items-center justify-between mb-3">
-              <TypographyMuted className="text-md">
+              <TypographyMuted className="text-md font-bold text-foreground">
                 {t("empExperienceLabel")} {index + 1}
               </TypographyMuted>
               <Button
@@ -86,6 +107,7 @@ export default function ExperienceStepForm({
                 size="icon"
                 type="button"
                 onClick={() => remove(index)}
+                className="hover:bg-destructive/10 hover:text-destructive"
               >
                 <LucideTrash2 size={16} />
               </Button>
@@ -106,9 +128,28 @@ export default function ExperienceStepForm({
 
           {/* Description Section */}
           <div className="w-full flex flex-col gap-1">
-            <TypographyMuted className="text-xs">
-              {t("empExperienceDescription")}
-            </TypographyMuted>
+            <div className="flex items-center justify-between">
+              <TypographyMuted className="text-xs">
+                {t("empExperienceDescription")}
+              </TypographyMuted>
+              {experienceValues?.[index]?.description && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleRefine(index)}
+                  disabled={isRefining}
+                  className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                >
+                  {isRefining ? (
+                    <Loader2 size={10} className="animate-spin" />
+                  ) : (
+                    <Sparkles size={10} />
+                  )}
+                  {tr("aiRefine")}
+                </Button>
+              )}
+            </div>
             <Textarea
               autoResize
               placeholder={t("empExperienceDescriptionPlaceholder")}

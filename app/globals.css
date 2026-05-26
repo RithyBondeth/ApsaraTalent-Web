@@ -108,7 +108,7 @@
 }
 
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(22px) scale(0.98); }
+  from { opacity: 0; transform: translateY(10px) scale(0.99); }
   to   { opacity: 1; transform: translateY(0)    scale(1);    }
 }
 
@@ -118,8 +118,8 @@
 }
 
 @keyframes page-in {
-  from { opacity: 0; transform: translateY(12px) scale(0.99); }
-  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+  from { opacity: 0; transform: translateY(6px) scale(0.995); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);     }
 }
 
 @keyframes pop-shrink {
@@ -163,6 +163,7 @@
   100% { transform: scale(1)    translateY(0);   }
 }
 
+
 @keyframes loading-dialog-orb {
   0%, 100% { transform: translateY(0) scale(1); opacity: 0.55; }
   50%      { transform: translateY(-10px) scale(1.08); opacity: 0.85; }
@@ -175,7 +176,7 @@
 
 @layer utilities {
   .animate-page-in {
-    animation: page-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: page-in 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
   .animate-pop-shrink {
     animation: pop-shrink 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
@@ -222,28 +223,39 @@
     animation: shimmer 1.6s ease-in-out infinite;
   }
 
-  /* Float — for empty-state illustrations */
   .animate-float {
     animation: float 3.5s ease-in-out infinite;
+  }
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .scrollbar-none::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .scrollbar-none {
+    -ms-overflow-style: none !important;  /* IE and Edge */
+    scrollbar-width: none !important;  /* Firefox */
+    -webkit-overflow-scrolling: touch;
   }
 
   /* Stagger fade-up — add to any list/grid container; children cascade in */
   /* fill-mode: backwards — keeps initial opacity:0 during delay, then releases  */
   /* back to normal CSS on completion so hover transforms are never overridden.   */
   .stagger-list > * {
-    animation: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation: fade-up 0.25s cubic-bezier(0.22, 1, 0.36, 1) backwards;
   }
   .stagger-list > *:nth-child(1)    { animation-delay:   0ms; }
-  .stagger-list > *:nth-child(2)    { animation-delay:  65ms; }
-  .stagger-list > *:nth-child(3)    { animation-delay: 130ms; }
-  .stagger-list > *:nth-child(4)    { animation-delay: 195ms; }
-  .stagger-list > *:nth-child(5)    { animation-delay: 260ms; }
-  .stagger-list > *:nth-child(6)    { animation-delay: 325ms; }
-  .stagger-list > *:nth-child(7)    { animation-delay: 390ms; }
-  .stagger-list > *:nth-child(8)    { animation-delay: 455ms; }
-  .stagger-list > *:nth-child(9)    { animation-delay: 520ms; }
-  .stagger-list > *:nth-child(10)   { animation-delay: 585ms; }
-  .stagger-list > *:nth-child(n+11) { animation-delay: 585ms; }
+  .stagger-list > *:nth-child(2)    { animation-delay:  35ms; }
+  .stagger-list > *:nth-child(3)    { animation-delay:  70ms; }
+  .stagger-list > *:nth-child(4)    { animation-delay: 105ms; }
+  .stagger-list > *:nth-child(5)    { animation-delay: 140ms; }
+  .stagger-list > *:nth-child(6)    { animation-delay: 175ms; }
+  .stagger-list > *:nth-child(7)    { animation-delay: 210ms; }
+  .stagger-list > *:nth-child(8)    { animation-delay: 245ms; }
+  .stagger-list > *:nth-child(9)    { animation-delay: 280ms; }
+  .stagger-list > *:nth-child(10)   { animation-delay: 315ms; }
+  .stagger-list > *:nth-child(n+11) { animation-delay: 315ms; }
 
   /* Legacy delay-only stagger (kept for backward compat) */
   .stagger-children > *:nth-child(1) { animation-delay:   0ms; }
@@ -254,6 +266,16 @@
   .stagger-children > *:nth-child(n+6) { animation-delay: 250ms; }
 }
 
+/* Hide number input spinners globally */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
 /* Respect user's reduced-motion preference */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -262,3 +284,4 @@
     transition-duration: 0.01ms !important;
   }
 }
+

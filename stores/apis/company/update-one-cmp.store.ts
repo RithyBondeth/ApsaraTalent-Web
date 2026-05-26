@@ -54,6 +54,10 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
         if (body.location) requestBody.location = body.location;
         if (body.companySize) requestBody.companySize = body.companySize;
         if (body.foundedYear) requestBody.foundedYear = body.foundedYear;
+        if (body.websiteUrl !== undefined)
+          requestBody.websiteUrl = body.websiteUrl;
+        if (body.companyType !== undefined)
+          requestBody.companyType = body.companyType;
 
         // If you store these in ICompany
         if ((body as any).avatar) requestBody.avatar = (body as any).avatar;
@@ -62,7 +66,7 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
 
         /*
          Jobs (O2M upsert)
-         backend expects: jobs: [{ id?, title, description, type, experienceRequired, educationRequired, salary, expireDate, skillsRequired }]
+         backend expects: jobs: [{ id?, title, description, type, experienceRequired, educationRequired, expireDate, skillsRequired, salaryMin, salaryMax, salaryCurrency, workMode, location, openingsCount }]
         */
         if ((body as any).openPositions) {
           requestBody.jobs = (body as any).openPositions.map((job: any) => ({
@@ -72,7 +76,12 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
             type: job.type,
             experienceRequired: job.experience,
             educationRequired: job.education,
-            salary: job.salary,
+            salaryMin: job.salaryMin ?? null,
+            salaryMax: job.salaryMax ?? null,
+            salaryCurrency: job.salaryCurrency ?? "USD",
+            workMode: job.workMode ?? null,
+            location: job.location ?? null,
+            openingsCount: job.openingsCount ?? null,
             expireDate: job.deadlineDate,
             skillsRequired: Array.isArray(job.skills)
               ? job.skills.join(", ")

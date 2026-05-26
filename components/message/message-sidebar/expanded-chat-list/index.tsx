@@ -4,9 +4,11 @@ import { Check, CheckCheck, Users } from "lucide-react";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { IChatListProps } from "../props";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
+import { messageSvg } from "@/utils/constants/asset.constant";
 
 export default function ExpandedChatList(props: IChatListProps) {
-  /* ---------------------------------- Utils --------------------------------- */
+  /* ---------------------------------- Utils -------------------------------- */
   const t = useTranslations("message");
 
   /* --------------------------------- Props --------------------------------- */
@@ -15,8 +17,14 @@ export default function ExpandedChatList(props: IChatListProps) {
   /* ------------------------------ Empty State ------------------------------ */
   if (!chats || chats.length === 0)
     return (
-      <div className="flex flex-col items-center justify-center gap-2 p-8 text-center h-40">
-        <Users className="h-8 w-8 text-muted-foreground/40" />
+      <div className="flex flex-col items-center justify-center gap-2 p-8 text-center">
+        <Image
+          src={messageSvg}
+          alt="No conversations"
+          height={300}
+          width={300}
+          className="animate-float"
+        />
         <TypographyMuted className="text-sm text-muted-foreground">
           {t("noConversations")}
         </TypographyMuted>

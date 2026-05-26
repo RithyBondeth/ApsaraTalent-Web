@@ -8,6 +8,7 @@ import {
   LucideMapPin,
   LucideMessageCircle,
 } from "lucide-react";
+import { AiMatchExplanationModal } from "@/components/matching/ai-match-explanation-modal";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import Tag from "@/components/utils/data-display/tag";
@@ -28,7 +29,7 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
+    <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
       <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
         {/* Avatar Section */}
         <Avatar
@@ -91,32 +92,44 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
         </div>
       </div>
 
-      {/* Action Bar Section: Schedule and Chat Now Buttons */}
-      <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end gap-2">
-        {props.onScheduleClick && (
+      {/* Action Bar Section */}
+      <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-between gap-2">
+        {/* AI Actions Section*/}
+        <div className="flex items-center gap-1.5">
+          <AiMatchExplanationModal
+            eid={props.id}
+            cid={props.companyId}
+            companyName={props.name}
+          />
+        </div>
+
+        {/* Primary Actions Section */}
+        <div className="flex items-center gap-2">
+          {props.onScheduleClick && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-8 text-xs px-3"
+              onClick={props.onScheduleClick}
+            >
+              <LucideCalendarCheck className="size-3.5" />
+              {t("schedule")}
+            </Button>
+          )}
           <Button
             size="sm"
-            variant="outline"
-            className="text-xs"
-            onClick={props.onScheduleClick}
+            className="h-8 text-xs px-3"
+            onClick={props.onChatNowClick}
+            disabled={props.isChatLoading}
           >
-            <LucideCalendarCheck className="size-3.5" />
-            {t("schedule")}
+            {props.isChatLoading ? (
+              <LucideLoader2 className="size-3.5 animate-spin" />
+            ) : (
+              <LucideMessageCircle className="size-3.5" />
+            )}
+            {t("chatNow")}
           </Button>
-        )}
-        <Button
-          size="sm"
-          className="text-xs"
-          onClick={props.onChatNowClick}
-          disabled={props.isChatLoading}
-        >
-          {props.isChatLoading ? (
-            <LucideLoader2 className="size-3.5 animate-spin" />
-          ) : (
-            <LucideMessageCircle className="size-3.5" />
-          )}
-          {t("chatNow")}
-        </Button>
+        </div>
       </div>
     </div>
   );

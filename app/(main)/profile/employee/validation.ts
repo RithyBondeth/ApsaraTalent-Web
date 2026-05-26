@@ -59,6 +59,30 @@ export const professionInfoSchema = z.object({
       yearOfExperience: textValidation().optional(),
       availability: textValidation().optional(),
       description: textValidation().optional(),
+      workMode: z
+        .enum(["remote", "on_site", "hybrid", "flexible"])
+        .optional()
+        .nullable(),
+      noticePeriod: z
+        .enum(["immediate", "2_weeks", "1_month"])
+        .optional()
+        .nullable(),
+      portfolioUrl: z
+        .string()
+        .url({ message: "Please enter a valid URL (e.g. https://...)" })
+        .optional()
+        .nullable()
+        .or(z.literal("")),
+      linkedinUrl: z
+        .string()
+        .url({ message: "Please enter a valid URL (e.g. https://...)" })
+        .optional()
+        .nullable()
+        .or(z.literal("")),
+      languages: z.array(z.string()).optional().nullable(),
+      expectedSalaryMin: z.number().positive().optional().nullable(),
+      expectedSalaryMax: z.number().positive().optional().nullable(),
+      salaryCurrency: z.string().optional().default("USD"),
     })
     .optional(),
 });

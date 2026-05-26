@@ -11,6 +11,7 @@ export const MemoEmployeeFeedCard = React.memo(function EmployeeFeedCard({
   employee,
   companyId,
   isLiking,
+  isSaving,
   isFavorite,
   isRecommended,
   onView,
@@ -23,7 +24,9 @@ export const MemoEmployeeFeedCard = React.memo(function EmployeeFeedCard({
   const t = useTranslations("feed");
   /* -------------------------------- Render UI ------------------------------- */
   return (
-    <div className={isLiking ? "animate-card-pop-shrink" : undefined}>
+    <div
+      className={`flex h-full min-w-0 flex-col ${isLiking ? "animate-card-pop-shrink" : ""}`}
+    >
       {/* Recommended Badge Section */}
       {isRecommended && (
         <div className="flex items-center gap-1 mb-1.5 px-1">
@@ -47,6 +50,7 @@ export const MemoEmployeeFeedCard = React.memo(function EmployeeFeedCard({
         hideSaveButton={isFavorite}
         onLikeClick={() => onLike(companyId, employee.id)}
         onLikeClickDisable={isLiking}
+        onSaveClickDisable={isSaving}
         onProfileImageClick={(e: React.MouseEvent) => {
           if (employee.avatar) {
             onProfileImageClick(e);

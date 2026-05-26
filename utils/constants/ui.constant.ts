@@ -58,7 +58,6 @@ export const availabilityConstant: {
   { id: 3, label: "Internship", value: "internship" },
   { id: 4, label: "Contract", value: "contract" },
   { id: 5, label: "Freelance", value: "freelance" },
-  { id: 6, label: "Remote", value: "remote" },
 ] as const;
 
 export const yearOfExperienceConstant: {
@@ -100,6 +99,59 @@ export const locationConstant: string[] = [
   "Svay Rieng",
   "Takeo",
   "Tbong Khmum",
+] as const;
+
+export const workModeConstant: {
+  id: number;
+  label: string;
+  value: string;
+}[] = [
+  { id: 1, label: "Remote", value: "remote" },
+  { id: 2, label: "On-site", value: "on_site" },
+  { id: 3, label: "Hybrid", value: "hybrid" },
+  { id: 4, label: "Flexible", value: "flexible" },
+] as const;
+
+export const noticePeriodConstant: {
+  id: number;
+  label: string;
+  value: string;
+}[] = [
+  { id: 1, label: "Immediate", value: "immediate" },
+  { id: 2, label: "2 Weeks", value: "2_weeks" },
+  { id: 3, label: "1 Month", value: "1_month" },
+] as const;
+
+export const companyTypeConstant: {
+  id: number;
+  label: string;
+  value: string;
+}[] = [
+  { id: 1, label: "Startup", value: "startup" },
+  { id: 2, label: "SME", value: "sme" },
+  { id: 3, label: "Enterprise", value: "enterprise" },
+  { id: 4, label: "NGO", value: "ngo" },
+  { id: 5, label: "Government", value: "government" },
+] as const;
+
+export const languageConstant: string[] = [
+  "Khmer",
+  "English",
+  "Chinese",
+  "French",
+  "Japanese",
+  "Korean",
+  "Thai",
+  "Vietnamese",
+] as const;
+
+export const salaryCurrencyConstant: {
+  id: number;
+  label: string;
+  value: string;
+}[] = [
+  { id: 1, label: "USD ($)", value: "USD" },
+  { id: 2, label: "KHR (៛)", value: "KHR" },
 ] as const;
 
 export const badgeRandomColorsClass: { bg: string; text: string }[] = [

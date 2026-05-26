@@ -2,11 +2,12 @@
 
 import ResumeEditorFormPanel from "@/components/resume-builder/editor/form-panel";
 import ResumeEditorPreviewPanel from "@/components/resume-builder/editor/preview-panel";
+import TemplateSelector from "@/components/resume-builder/editor/template-selector";
 import { Button } from "@/components/ui/button";
 import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { generateResumeAPI } from "../_apis/generate-resume.api";
+import { useGenerateResumeStore } from "@/stores/apis/resume/generate-resume.store";
 import { useResumeEditStore } from "@/stores/apis/resume/resume-edit.store";
 import { useIsMobile } from "@/hooks/utils/use-mobile";
 import {
@@ -15,15 +16,20 @@ import {
   FileText,
   PanelLeftOpen,
   PanelLeftClose,
+  RotateCcw,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
 import { LIVE_RESUME_PREVIEW_DEBOUNCE_MS } from "@/utils/constants/resume.constant";
 import { TypographyLead } from "@/components/utils/typography/typography-lead";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { TypographyP } from "@/components/utils/typography/typography-p";
+import { TResumeTemplate } from "@/utils/types/resume/resume.type";
+import { AiResumeOptimizerDrawer } from "@/components/resume-builder/ai-optimizer-drawer";
+
+const RESUME_LOCAL_STORAGE_KEY = "apsara-talent-resume-draft";
 
 export default function ResumeEditorPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -33,9 +39,11 @@ export default function ResumeEditorPage() {
   const tRb = useTranslations("resumeBuilder");
 
   /* ----------------------------- API Integration ---------------------------- */
-  const { payload, clearPayload } = useResumeEditStore();
+  const { generateResume } = useGenerateResumeStore();
 
   /* -------------------------------- All States ------------------------------ */
+  const { payload, clearPayload, setPayload } = useResumeEditStore();
+
   // Left panel (form) collapsed state
   const [formPanelOpen, setFormPanelOpen] = useState<boolean>(false);
 
@@ -61,10 +69,24 @@ export default function ResumeEditorPage() {
   const watchedValues = useWatch({ control }) as IBuildResume;
 
   /* --------------------------------- Effects --------------------------------- */
-  // Redirect if no payload in store
+  // Recover from localStorage on mount if store is empty
   useEffect(() => {
-    if (!payload) router.replace("/resume-builder");
-  }, [payload, router]);
+    if (!payload) {
+      const saved = localStorage.getItem(RESUME_LOCAL_STORAGE_KEY);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved) as IBuildResume;
+          setPayload(parsed);
+          reset(parsed);
+          setPreviewData(parsed);
+        } catch (e) {
+          console.error("Failed to parse saved resume draft", e);
+        }
+      } else {
+        router.replace("/resume-builder");
+      }
+    }
+  }, [payload, router, setPayload, reset]);
 
   // Sync form if the store payload changes after mount
   useEffect(() => {
@@ -76,7 +98,7 @@ export default function ResumeEditorPage() {
     setFormPanelOpen(!isMobile);
   }, [isMobile]);
 
-  // Live preview with 600 ms debounce
+  // Live preview with 600 ms debounce + local storage persistence
   useEffect(() => {
     // Skip the initial render — form values haven't changed yet
     if (!hasInteracted.current) {
@@ -89,6 +111,11 @@ export default function ResumeEditorPage() {
     debounceRef.current = setTimeout(() => {
       setPreviewData({ ...watchedValues } as IBuildResume);
       setPreviewUpdating(false);
+      // Persist to local storage
+      localStorage.setItem(
+        RESUME_LOCAL_STORAGE_KEY,
+        JSON.stringify(watchedValues),
+      );
     }, LIVE_RESUME_PREVIEW_DEBOUNCE_MS);
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -125,7 +152,7 @@ export default function ResumeEditorPage() {
     setDownloading(true);
     startProgress(95);
     try {
-      const result = await generateResumeAPI(currentPayload);
+      const result = await generateResume(currentPayload);
       if (!result?.data || typeof result.data !== "string") {
         throw new Error("Resume service returned invalid data");
       }
@@ -170,15 +197,64 @@ export default function ResumeEditorPage() {
   // ── Handle Back ─────────────────────────────────────────
   const handleBack = () => {
     clearPayload();
+    localStorage.removeItem(RESUME_LOCAL_STORAGE_KEY);
     router.push("/resume-builder");
   };
 
+  // ── Handle Reset ────────────────────────────────────────
+  const handleReset = () => {
+    if (confirm(tRb("resetConfirm"))) {
+      reset(payload ?? undefined);
+      localStorage.removeItem(RESUME_LOCAL_STORAGE_KEY);
+      toast.success(tRb("resetSuccess"));
+    }
+  };
+
+  // ── AI Optimizer Callbacks ───────────────────────────────
+  const handleApplySummary = useCallback(
+    (summary: string) => {
+      setValue("summary", summary, { shouldDirty: true });
+      toast.success("Summary updated");
+    },
+    [setValue],
+  );
+
+  const handleApplySkills = useCallback(
+    (newSkills: string[]) => {
+      const current = getValues("skills") ?? [];
+      const merged = Array.from(new Set([...current, ...newSkills]));
+      setValue("skills", merged, { shouldDirty: true });
+      toast.success(`Added ${newSkills.length} suggested skills`);
+    },
+    [setValue, getValues],
+  );
+
+  const handleApplyExperience = useCallback(
+    (index: number, description: string, achievements: string[]) => {
+      setValue(`experience.${index}.description`, description, {
+        shouldDirty: true,
+      });
+      setValue(`experience.${index}.achievements`, achievements, {
+        shouldDirty: true,
+      });
+      toast.success(`Experience #${index + 1} updated`);
+    },
+    [setValue],
+  );
+
   /* ------------------------------- Null State -------------------------------- */
-  if (!payload) return null;
+  // During SSR or if no data is available yet, return null.
+  // Redirection and recovery are handled in useEffect.
+  if (
+    typeof window === "undefined" ||
+    (!payload && !localStorage.getItem(RESUME_LOCAL_STORAGE_KEY))
+  ) {
+    return null;
+  }
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex flex-col h-[calc(100dvh-4rem)] overflow-hidden animate-page-in">
+    <div className="flex flex-col h-[calc(100dvh-4rem)] overflow-hidden animate-page-in text-foreground">
       {/* Top Action Bar Section */}
       <div className="flex flex-col gap-2 border-b bg-background px-2.5 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5">
         {/* Left Section: Back + Toggle Form + Title */}
@@ -187,7 +263,7 @@ export default function ResumeEditorPage() {
             variant="outline"
             size="sm"
             onClick={handleBack}
-            className="gap-1.5"
+            className="gap-1.5 h-8 text-xs"
           >
             <ArrowLeft size={14} />
             {tRb("back")}
@@ -198,7 +274,7 @@ export default function ResumeEditorPage() {
             variant="outline"
             size="sm"
             onClick={() => setFormPanelOpen((v) => !v)}
-            className="gap-1.5"
+            className="gap-1.5 h-8 text-xs"
             title={formPanelOpen ? tRb("hideFields") : tRb("showFields")}
           >
             {formPanelOpen ? (
@@ -214,41 +290,68 @@ export default function ResumeEditorPage() {
             </span>
           </Button>
 
+          {/* Vertical Separator Section */}
+          <div className="hidden h-6 w-px bg-border sm:block" />
+
           {/* Resume Title Section */}
           <div className="flex items-center gap-2">
             <FileText size={16} className="text-primary shrink-0" />
-            <div>
-              <TypographyLead className="text-sm font-semibold leading-none">
+            <div className="flex flex-col">
+              <TypographyLead className="text-[13px] font-bold leading-none">
                 {tRb("resumeEditor")}
               </TypographyLead>
-              <TypographySmall className="text-xs text-muted-foreground mt-0.5 capitalize">
-                {tRb("templateLabel")}{" "}
-                <span className="text-foreground font-medium">
-                  {payload.template}
-                </span>
+              <TypographySmall className="text-[10px] text-muted-foreground mt-0.5 uppercase tracking-tight font-medium">
+                {tRb("templateLabel")}
               </TypographySmall>
             </div>
           </div>
+
+          {/* Template Selector Section */}
+          <TemplateSelector
+            value={watchedValues.template}
+            onChange={(next) =>
+              setValue("template", next, { shouldDirty: true })
+            }
+          />
         </div>
 
-        {/* Right Section: Download Button */}
-        <Button
-          onClick={handleDownload}
-          disabled={downloading}
-          className="w-full shrink-0 justify-center gap-2 sm:w-auto"
-        >
-          <Download size={15} />
-          {tRb("downloadPdf")}
-        </Button>
+        {/* Right Section: Actions */}
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <AiResumeOptimizerDrawer
+            getCurrentValues={() => getValues() as IBuildResume}
+            onApplySummary={handleApplySummary}
+            onApplySkills={handleApplySkills}
+            onApplyExperience={handleApplyExperience}
+          />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleReset}
+            className="h-8 text-xs gap-1.5 text-muted-foreground hover:text-foreground"
+            title={tRb("reset")}
+          >
+            <RotateCcw size={14} />
+            <span className="hidden lg:inline">{tRb("reset")}</span>
+          </Button>
+          <Button
+            onClick={handleDownload}
+            disabled={downloading}
+            size="sm"
+            className="h-8 text-xs flex-1 shrink-0 justify-center gap-2 sm:w-auto sm:flex-none px-4"
+          >
+            <Download size={15} />
+            {tRb("downloadPdf")}
+          </Button>
+        </div>
       </div>
 
       {/* Split Layout Section */}
-      <div className="flex flex-1 overflow-hidden flex-col lg:flex-row">
+      <div className="flex flex-1 overflow-hidden flex-col lg:flex-row bg-muted/20">
         {/* Left Section: Form Panel (Collapsible) */}
         {formPanelOpen && (
-          <div className="w-full shrink-0 flex flex-col border-b bg-background overflow-hidden max-h-[56vh] lg:max-h-none lg:w-[420px] lg:border-b-0 lg:border-r">
-            <div className="shrink-0 px-3 pt-3 pb-2 sm:px-4 sm:pt-4">
-              <TypographyP className="text-xs text-muted-foreground">
+          <div className="w-full shrink-0 flex flex-col border-b bg-background overflow-hidden max-h-[60vh] lg:max-h-none lg:w-[420px] lg:border-b-0 lg:border-r border-border/60 shadow-sm">
+            <div className="shrink-0 px-3 pt-3 pb-1 sm:px-4 sm:pt-4">
+              <TypographyP className="text-[10px] sm:text-xs text-muted-foreground uppercase font-bold tracking-wider">
                 {tRb("editDetails")}
               </TypographyP>
             </div>

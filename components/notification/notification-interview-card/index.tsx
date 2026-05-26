@@ -1,20 +1,20 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { TypographyLead } from "@/components/utils/typography/typography-lead";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { Button } from "@/components/ui/button";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { timeAgo } from "@/utils/functions/date";
-import { LucideCalendarCheck, LucideX } from "lucide-react";
+import { LucideCalendarCheck } from "lucide-react";
 import { INotificationInterviewCardProps } from "./props";
 import { useTranslations } from "next-intl";
+import NotificationBaseCard from "../notification-base-card";
+import { useRouter } from "next/navigation";
 
 export default function NotificationInterviewCard(
   props: INotificationInterviewCardProps,
 ) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("notification");
-  const tc = useTranslations("common");
+  const router = useRouter();
 
   const eventTypeKeyMap: Record<string, string> = {
     interview_scheduled: "interviewScheduled",
@@ -37,60 +37,69 @@ export default function NotificationInterviewCard(
           title: props.interviewTitle,
         });
 
+  /* --------------------------------- Methods --------------------------------- */
+  // ─── Handle Navigate ─────────────────────────────────
+  const handleNavigate = () => {
+    if (props.onMarkRead && !props.seen) props.onMarkRead(props.id);
+    router.push("/interview");
+  };
+
   return (
-    /* ------------------------------ Render UI -------------------------------- */
-    <div className="group/card relative w-full flex items-start gap-3 rounded-lg p-3 shadow-md sm:gap-5 sm:p-5">
-      {/* Delete Button Section */}
-      {props.onDelete && (
-        <button
-          onClick={() => props.onDelete!(props.id)}
-          className="absolute right-2 top-2 rounded-full p-1 text-muted-foreground opacity-0 transition-opacity hover:bg-destructive/10 hover:text-destructive group-hover/card:opacity-100"
+    <NotificationBaseCard
+      id={props.id}
+      seen={props.seen}
+      timestamp={props.timestamp}
+      title={t(titleKey as Parameters<typeof t>[0])}
+      description={description}
+      icon={<LucideCalendarCheck strokeWidth={1.5} className="size-full" />}
+      iconBgColor="bg-teal-100 dark:bg-teal-900/30"
+      iconColor="text-teal-600"
+      unreadColor="bg-teal-500"
+      onDelete={props.onDelete}
+      onClick={handleNavigate}
+    >
+      <div className="w-full flex items-center justify-between gap-2 tablet-sm:flex-col tablet-sm:items-start tablet-sm:gap-3">
+        {/* User Info Section */}
+        <div className="flex items-center gap-3 min-w-0">
+          {/* Avatar and Name Section */}
+          <div className="flex items-center gap-2 min-w-0">
+            <Avatar rounded="md" className="bg-secondary size-8 shrink-0">
+              <AvatarFallback className="text-sm">
+                {props.user.name.slice(0, 2).toUpperCase()}
+              </AvatarFallback>
+              <AvatarImage src={props.user.avatar} />
+            </Avatar>
+            <div className="flex flex-col min-w-0">
+              <TypographySmall className="font-bold text-foreground line-clamp-1">
+                {props.user.name}
+              </TypographySmall>
+              {(props.user.position || props.user.industry) && (
+                <TypographySmall className="text-[10px] text-muted-foreground line-clamp-1">
+                  {props.role === "employee"
+                    ? props.user.industry
+                    : props.user.position}
+                </TypographySmall>
+              )}
+            </div>
+          </div>
+
+          {/* Interview Badge Section */}
+          <div className="shrink-0 px-3 py-1 rounded-xl text-[10px] font-bold uppercase tracking-wider text-teal-600 bg-teal-100 dark:bg-teal-900/30">
+            {t("interviewBadge")}
+          </div>
+        </div>
+
+        {/* Button Section */}
+        <Button
+          className="h-8 text-xs tablet-sm:h-9 tablet-sm:w-full tablet-sm:text-xs"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleNavigate();
+          }}
         >
-          <LucideX className="size-4" />
-        </button>
-      )}
-
-      {/* Interview Icon Section */}
-      <div className="rounded-md bg-teal-100 p-2.5 text-teal-600 sm:p-3">
-        <LucideCalendarCheck className="size-6 sm:size-8" strokeWidth={1.5} />
+          {t("viewInterview")}
+        </Button>
       </div>
-
-      {/* Content Section */}
-      <div className="w-full flex flex-col items-start gap-2">
-        <div className="w-full flex items-center justify-between phone-xl:flex-col phone-xl:items-start">
-          <TypographyLead className="text-md font-semibold text-primary">
-            {t(titleKey as Parameters<typeof t>[0])}
-          </TypographyLead>
-          <div className="flex items-center gap-1">
-            <TypographySmall className="text-muted-foreground phone-xl:text-xs">
-              {timeAgo(props.timestamp, tc)}
-            </TypographySmall>
-            {!props.seen && <div className="size-2 rounded-full bg-teal-500" />}
-          </div>
-        </div>
-
-        {/* Description Section */}
-        <TypographyMuted>{description}</TypographyMuted>
-
-        {/* Action Section */}
-        <div className="w-full flex items-center justify-between gap-2 tablet-sm:mt-1 tablet-sm:justify-end">
-          <div className="flex items-center gap-3 tablet-sm:hidden">
-            <div className="flex items-center gap-2">
-              <Avatar rounded="md" className="bg-secondary size-8">
-                <AvatarFallback className="text-sm">
-                  {props.user.name.slice(0, 2).toUpperCase()}
-                </AvatarFallback>
-                <AvatarImage src={props.user.avatar} />
-              </Avatar>
-              <TypographySmall>{props.user.name}</TypographySmall>
-            </div>
-
-            <div className="px-3 py-1 rounded-xl text-xs font-medium text-teal-600 bg-teal-100">
-              {t("interviewBadge")}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </NotificationBaseCard>
   );
 }

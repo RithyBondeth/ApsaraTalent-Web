@@ -11,17 +11,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import axios from "@/lib/axios";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { API_MARK_ALL_NOTIFICATIONS_READ_URL } from "@/utils/constants/apis/notification.api.constant";
 import { TNotificationFilterType } from "@/utils/types/app/notification.type";
-import { LucideTrash2 } from "lucide-react";
+import { LucideCheckCheck, LucideTrash2 } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
+import { TypographyH3 } from "@/components/utils/typography/typography-h3";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import {
@@ -87,14 +86,14 @@ export default function NotificationPage() {
 
   /* ----------------------------- API Integration ---------------------------- */
   const { user } = useGetCurrentUserStore();
-  const role = user?.role ?? "employee";
 
   const {
     notifications,
     loading,
+    unreadCount,
     queryNotifications,
     markRead,
-    resetUnreadCount,
+    markAllRead,
     deleteNotification,
     deleteAllNotifications,
   } = useNotificationStore();
@@ -104,18 +103,15 @@ export default function NotificationPage() {
   const [notificationFilter, setNotificationFilter] =
     useState<TNotificationFilterType>("all");
 
+  const role = user?.role ?? "employee";
+
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => setMounted(true), []);
 
-  // On mount: zero badge locally and sync read state to server
+  // On mount: mark all as read (optimistic badge clear + server sync)
   useEffect(() => {
-    resetUnreadCount();
-    void axios
-      .patch(API_MARK_ALL_NOTIFICATIONS_READ_URL)
-      .catch((err) =>
-        console.error("Failed to mark all notifications as read:", err),
-      );
-  }, [resetUnreadCount]);
+    void markAllRead();
+  }, [markAllRead]);
 
   // Fetch notifications on mount and whenever filter changes
   useEffect(() => {
@@ -127,6 +123,7 @@ export default function NotificationPage() {
   }, [notificationFilter, queryNotifications]);
 
   /* --------------------------------- Methods --------------------------------- */
+  // ── Filtered Notifications ─────────────────────────────────────────
   const filteredNotifications = useMemo(() => {
     return notifications.filter((n) => {
       if (notificationFilter === "all") return true;
@@ -147,18 +144,19 @@ export default function NotificationPage() {
   return (
     <div className="w-full flex flex-col gap-4 sm:gap-5 px-2.5 sm:px-5 animate-page-in">
       {/* Banner Section */}
-      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 tablet-xl:flex-col tablet-xl:items-center rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8">
-        <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
-          <TypographyH2 className="leading-relaxed tablet-xl:text-center">
+      {/* Desktop Banner Section 1050px */}
+      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8 tablet-xl:hidden">
+        <div className="flex flex-col items-start gap-3">
+          <TypographyH2 className="leading-relaxed">
             {t("bannerTitle")}
           </TypographyH2>
-          <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+          <TypographyH4 className="leading-relaxed">
             {t("bannerSubtitle1")}
           </TypographyH4>
-          <TypographyH4 className="leading-relaxed tablet-xl:text-center">
+          <TypographyH4 className="leading-relaxed">
             {t("bannerSubtitle2")}
           </TypographyH4>
-          <TypographyMuted className="leading-relaxed tablet-xl:text-center">
+          <TypographyMuted className="leading-relaxed">
             {t("bannerMuted")}
           </TypographyMuted>
         </div>
@@ -168,7 +166,54 @@ export default function NotificationPage() {
             alt="notifications"
             height={250}
             width={350}
-            className="h-auto max-w-[340px] tablet-xl:!w-full"
+            className="h-auto max-w-[340px] shrink-0"
+            priority
+          />
+        )}
+      </div>
+
+      {/* Tablet Banner Section 651px–1050px */}
+      <div className="hidden tablet-xl:flex tablet-md:!hidden w-full items-center justify-between gap-4 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-5 py-5 overflow-hidden">
+        <div className="flex-1 min-w-0 flex flex-col gap-2">
+          <TypographyH3 className="!leading-snug">
+            {t("bannerTitle")}
+          </TypographyH3>
+          <TypographyMuted className="!leading-snug">
+            {t("bannerSubtitle1")}
+          </TypographyMuted>
+          <TypographyMuted className="!leading-snug">
+            {t("bannerSubtitle2")}
+          </TypographyMuted>
+        </div>
+        {mounted && (
+          <Image
+            src={notificationBannerSvg}
+            alt="notifications"
+            width={160}
+            height={160}
+            className="shrink-0 h-auto object-contain"
+            priority
+          />
+        )}
+      </div>
+
+      {/* Mobile Banner Section ≤650px */}
+      <div className="hidden tablet-md:flex w-full items-center gap-3 rounded-2xl bg-gradient-to-br from-primary/[0.08] via-primary/[0.03] to-muted/40 border border-border/50 px-4 py-3 overflow-hidden">
+        <div className="flex-1 min-w-0 flex flex-col gap-1">
+          <h2 className="font-bold text-sm leading-snug text-foreground">
+            {t("bannerTitle")}
+          </h2>
+          <p className="text-xs text-muted-foreground leading-snug line-clamp-2">
+            {t("bannerSubtitle1")}
+          </p>
+        </div>
+        {mounted && (
+          <Image
+            src={notificationBannerSvg}
+            alt="notifications"
+            width={88}
+            height={88}
+            className="flex-shrink-0 object-contain"
             priority
           />
         )}
@@ -257,16 +302,27 @@ export default function NotificationPage() {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Delete All Button Section */}
-        <Button
-          className="h-9 w-full text-xs sm:w-auto"
-          variant="outline"
-          onClick={deleteAllNotifications}
-          disabled={notifications.length === 0}
-        >
-          <LucideTrash2 />
-          {t("deleteAll")}
-        </Button>
+        {/* Action Buttons Section */}
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <Button
+            className="h-9 flex-1 sm:flex-none text-xs"
+            variant="outline"
+            onClick={() => void markAllRead()}
+            disabled={unreadCount === 0 || notifications.length === 0}
+          >
+            <LucideCheckCheck />
+            {t("markAllRead")}
+          </Button>
+          <Button
+            className="h-9 flex-1 sm:flex-none text-xs"
+            variant="outline"
+            onClick={deleteAllNotifications}
+            disabled={notifications.length === 0}
+          >
+            <LucideTrash2 />
+            {t("deleteAll")}
+          </Button>
+        </div>
       </div>
 
       {/* Notification List Section */}
@@ -324,6 +380,7 @@ export default function NotificationPage() {
                   timestamp={notification.createdAt}
                   role={role}
                   user={notifUser}
+                  onMarkRead={markRead}
                   onDelete={deleteNotification}
                 />
               );
@@ -338,6 +395,7 @@ export default function NotificationPage() {
                   timestamp={notification.createdAt}
                   role={role}
                   user={notifUser}
+                  onMarkRead={markRead}
                   onDelete={deleteNotification}
                 />
               );
@@ -380,6 +438,7 @@ export default function NotificationPage() {
                     !resolvedInterviewTitle ? rawMsg || undefined : undefined
                   }
                   user={notifUser}
+                  onMarkRead={markRead}
                   onDelete={deleteNotification}
                 />
               );
@@ -393,6 +452,7 @@ export default function NotificationPage() {
                 timestamp={notification.createdAt}
                 role={role}
                 user={notifUser}
+                onMarkRead={markRead}
                 onDelete={deleteNotification}
               />
             );

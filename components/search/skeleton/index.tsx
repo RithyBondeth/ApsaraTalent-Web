@@ -1,51 +1,78 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-/* --------------------------------------- Search Banner Skeleton ----------------------------------------- */
-function SearchBannerSkeleton() {
+/* ----------------------------------------- Search Bar Skeleton ----------------------------------------- */
+function SearchBarSkeleton() {
   return (
-    <div className="w-full flex items-center justify-between gap-6 lg:gap-10 tablet-xl:flex-col tablet-xl:items-center rounded-2xl border border-border/50 px-6 py-8 sm:px-8">
-      <div className="flex flex-col items-start gap-3 tablet-xl:w-full tablet-xl:items-center">
-        {/* Title Section */}
-        <Skeleton className="h-9 w-96 tablet-xl:w-80" />
-        {/* Subtitle Section */}
-        <Skeleton className="h-6 w-72 tablet-xl:w-64" />
-        {/* Description Section */}
-        <Skeleton className="h-6 w-80 tablet-xl:w-72" />
-        {/* Description Section */}
-        <Skeleton className="h-4 w-64 tablet-xl:w-56" />
-        {/* Search Bar Row Section */}
-        <div className="flex items-center gap-2 mt-1 w-full max-w-xl">
-          <Skeleton className="h-10 flex-1 rounded-lg" />
-          <Skeleton className="h-10 w-32 rounded-lg" />
-          <Skeleton className="h-10 w-32 rounded-lg" />
-        </div>
+    <div className="w-full flex flex-col gap-2 p-2.5 sm:p-3 shadow-md rounded-md">
+      {/* Keyword Input Section */}
+      <Skeleton className="h-10 sm:h-11 w-full rounded-md" />
+      {/* Location + JobType Section */}
+      <div className="w-full flex flex-col gap-2.5 sm:flex-row sm:gap-3">
+        <Skeleton className="h-10 sm:h-12 w-full rounded-md" />
+        <Skeleton className="h-10 sm:h-12 w-full rounded-md" />
       </div>
-      {/* Image Section */}
-      <Skeleton className="h-[220px] w-[300px] sm:h-[250px] sm:w-[340px] rounded-xl tablet-xl:hidden" />
     </div>
   );
 }
 
-/* ----------------------------------- Search Filter Sidebar Skeleton ------------------------------------ */
-function SearchFilterSidebarSkeleton() {
+/* --------------------------------------- Search Banner Skeleton ----------------------------------------- */
+function SearchBannerSkeleton() {
   return (
-    <div className="w-1/4 flex flex-col gap-6 p-4 sm:p-5 bg-card rounded-2xl border border-border/70 shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] tablet-xl:hidden">
-      {/* Header Section */}
-      <div className="flex items-center justify-between">
+    <>
+      {/* Desktop Banner Section */}
+      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 rounded-2xl border border-border/50 px-6 py-8 sm:px-8 tablet-xl:hidden">
+        <div className="w-full flex flex-col items-start gap-3">
+          <Skeleton className="h-9 w-96" />
+          <Skeleton className="h-6 w-72" />
+          <Skeleton className="h-6 w-80" />
+          <Skeleton className="h-4 w-64" />
+          <div className="w-full mt-1">
+            <SearchBarSkeleton />
+          </div>
+        </div>
+        <Skeleton className="h-[250px] w-[340px] rounded-xl shrink-0" />
+      </div>
+
+      {/* Tablet Banner Section */}
+      <div className="hidden tablet-xl:flex tablet-md:!hidden w-full flex-col gap-4 rounded-2xl border border-border/50 px-5 py-5">
+        <div className="flex flex-col gap-2">
+          <Skeleton className="h-7 w-72" />
+          <Skeleton className="h-5 w-56" />
+        </div>
+        <SearchBarSkeleton />
+      </div>
+
+      {/* Mobile Banner Section */}
+      <div className="hidden tablet-md:flex w-full flex-col gap-3 rounded-2xl border border-border/50 px-4 py-4">
+        <Skeleton className="h-5 w-52" />
+        <SearchBarSkeleton />
+      </div>
+    </>
+  );
+}
+
+/* ----------------------------------- Search Filter Sidebar Skeleton ------------------------------------ */
+function SearchFilterSidebarSkeleton({ filterCount }: { filterCount: number }) {
+  return (
+    <div className="w-72 xl:w-80 shrink-0 flex flex-col bg-card rounded-2xl border border-border/70 shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] tablet-xl:hidden">
+      {/* Sidebar Header Section */}
+      <div className="flex items-center justify-between px-5 py-4 border-b border-border/40 shrink-0">
         <Skeleton className="h-5 w-28" />
         <Skeleton className="h-8 w-20 rounded-lg" />
       </div>
-      {/* Filter Section */}
-      {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="flex flex-col gap-3">
-          <Skeleton className="h-4 w-24" />
-          <div className="ml-3 flex flex-col gap-2.5">
-            {Array.from({ length: 3 }).map((_, j) => (
-              <Skeleton key={j} className="h-4 w-32 rounded" />
-            ))}
+      {/* Sidebar Filter Body Section */}
+      <div className="flex flex-col gap-6 p-5">
+        {Array.from({ length: filterCount }).map((_, i) => (
+          <div key={i} className="flex flex-col gap-3">
+            <Skeleton className="h-4 w-32 rounded" />
+            <div className="ml-3 flex flex-col gap-2.5">
+              <Skeleton className="h-3 w-24 rounded" />
+              <Skeleton className="h-3 w-28 rounded" />
+              <Skeleton className="h-3 w-20 rounded" />
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
@@ -54,7 +81,9 @@ function SearchFilterSidebarSkeleton() {
 function SearchResultsHeaderSkeleton() {
   return (
     <div className="w-full flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-3">
-      <Skeleton className="h-6 w-40" />
+      <div className="flex flex-col gap-1">
+        <Skeleton className="h-6 w-40" />
+      </div>
       <Skeleton className="h-9 w-full sm:w-[200px] rounded-lg" />
     </div>
   );
@@ -71,14 +100,14 @@ export function SearchEmployeeLoadingSkeleton() {
       <Skeleton className="hidden tablet-xl:flex h-10 w-full rounded-lg" />
 
       {/* Two-Column Layout Section */}
-      <div className="w-full flex items-start gap-5">
+      <div className="w-full flex items-start gap-6 tablet-xl:flex-col">
         {/* Filter Sidebar Section */}
-        <SearchFilterSidebarSkeleton />
+        <SearchFilterSidebarSkeleton filterCount={5} />
 
         {/* Results Section */}
-        <div className="w-3/4 flex flex-col items-start gap-3 tablet-xl:w-full">
+        <div className="flex-1 min-w-0 tablet-xl:w-full flex flex-col items-start gap-3">
           <SearchResultsHeaderSkeleton />
-          <div className="w-full flex flex-col gap-2">
+          <div className="w-full flex flex-col items-start gap-2">
             {Array.from({ length: 3 }).map((_, i) => (
               <SearchCompanyCardSkeleton key={i} />
             ))}
@@ -100,14 +129,14 @@ export function SearchCompanyLoadingSkeleton() {
       <Skeleton className="hidden tablet-xl:flex h-10 w-full rounded-lg" />
 
       {/* Two-Column Layout Section */}
-      <div className="w-full flex items-start gap-5">
+      <div className="w-full flex items-start gap-6 tablet-xl:flex-col">
         {/* Filter Sidebar Section */}
-        <SearchFilterSidebarSkeleton />
+        <SearchFilterSidebarSkeleton filterCount={2} />
 
         {/* Results Section */}
-        <div className="w-3/4 flex flex-col items-start gap-3 tablet-xl:w-full">
+        <div className="flex-1 min-w-0 tablet-xl:w-full flex flex-col items-start gap-3">
           <SearchResultsHeaderSkeleton />
-          <div className="w-full flex flex-col gap-2">
+          <div className="w-full flex flex-col items-start gap-2">
             {Array.from({ length: 3 }).map((_, i) => (
               <SearchEmployeePageCardSkeleton key={i} />
             ))}
@@ -132,13 +161,13 @@ export function SearchCompanyCardSkeleton() {
             <Skeleton className="h-3 w-20 mt-1" />
           </div>
         </div>
-        {/* Meta Chips Row 1 Section*/}
+        {/* Meta Chips Row 1 Section — Company size, Location, Job type */}
         <div className="flex flex-wrap gap-2">
           {Array.from({ length: 3 }).map((_, j) => (
             <Skeleton key={j} className="h-7 w-28 rounded-full" />
           ))}
         </div>
-        {/* Meta Chips Row 2 Section (education + experience) */}
+        {/* Meta Chips Row 2 Section — Education + Experience Requirements */}
         <div className="flex flex-wrap gap-2">
           <Skeleton className="h-7 w-32 rounded-full" />
           <Skeleton className="h-7 w-36 rounded-full" />
@@ -146,6 +175,7 @@ export function SearchCompanyCardSkeleton() {
         {/* Description Section */}
         <Skeleton className="h-4 w-full" />
         <Skeleton className="h-4 w-4/5" />
+        <Skeleton className="h-4 w-3/5" />
         {/* Tags Section */}
         <div className="flex flex-wrap gap-1.5">
           {Array.from({ length: 4 }).map((_, j) => (
@@ -153,7 +183,7 @@ export function SearchCompanyCardSkeleton() {
           ))}
         </div>
       </div>
-      {/* Action Bar Section */}
+      {/* Action Bar Section — salary, posted date + view button */}
       <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
           <Skeleton className="h-7 w-20 rounded-full" />
@@ -165,7 +195,7 @@ export function SearchCompanyCardSkeleton() {
   );
 }
 
-/* -------------------------------- Search Employee Card Skeleton (Employee Profile — Used in Company Search Page) -------------------------------- */
+/* -------------------------------- Search Employee Card Skeleton (Profile — Used in Company search page) -------------------------------- */
 function SearchEmployeePageCardSkeleton() {
   return (
     <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
@@ -183,7 +213,7 @@ function SearchEmployeePageCardSkeleton() {
             </div>
           </div>
         </div>
-        {/* Meta Chips Section (4 chips: exp, location, availability, education) */}
+        {/* Meta Chips Section — Experience, Location, Availability, Education */}
         <div className="flex flex-wrap gap-2">
           {Array.from({ length: 4 }).map((_, j) => (
             <Skeleton key={j} className="h-7 w-24 rounded-full" />
@@ -192,6 +222,7 @@ function SearchEmployeePageCardSkeleton() {
         {/* Description Section */}
         <Skeleton className="h-4 w-full" />
         <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-4 w-1/2" />
         {/* Tags Section */}
         <div className="flex flex-wrap gap-1.5">
           {Array.from({ length: 4 }).map((_, j) => (

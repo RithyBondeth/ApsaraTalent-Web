@@ -5,20 +5,38 @@ import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
 import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import LabelInput from "@/components/utils/forms/label-input";
 import Tag from "@/components/utils/data-display/tag";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { availabilityConstant } from "@/utils/constants/ui.constant";
+import {
+  availabilityConstant,
+  salaryCurrencyConstant,
+  workModeConstant,
+} from "@/utils/constants/ui.constant";
 import { getRandomBadgeColor } from "@/utils/functions/ui";
 import { Popover } from "@radix-ui/react-popover";
-import { LucidePlus, LucideTrash2, LucideXCircle } from "lucide-react";
+import {
+  LucidePlus,
+  LucideTrash2,
+  LucideXCircle,
+  Sparkles,
+  Loader2,
+} from "lucide-react";
 import { useState } from "react";
-import { Controller } from "react-hook-form";
+import { Controller, useWatch } from "react-hook-form";
 import { IOpenPositionFormProps } from "./props";
 import { TypographyP } from "@/components/utils/typography/typography-p";
+import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 
 export default function OpenPositionForm(props: IOpenPositionFormProps) {
   const { register, control, getValues, setValue } = props.form;
@@ -26,6 +44,10 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("toast");
   const tP = useTranslations("profile");
+  const tr = useTranslations("resumeBuilder");
+
+  /* ----------------------------- API Integration ---------------------------- */
+  const { isRefining, refineContent } = useAIRefine();
 
   /* -------------------------------- All States ------------------------------ */
   const initialSkill = getValues(`openPositions.${props.index}.skills`) || "";
@@ -33,7 +55,24 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
   const [skillInput, setSkillInput] = useState<string | null>(null);
   const [openSkillPopOver, setOpenSkillPopOver] = useState<boolean>(false);
 
+  /* ----------------------------- React Hook Form ---------------------------- */
+  const descValue = useWatch({
+    control,
+    name: `openPositions.${props.index}.description`,
+  });
+
   /* --------------------------------- Methods --------------------------------- */
+  // ── AI Refine ─────────────────────────────────────────
+  const handleRefine = async () => {
+    const result = await refineContent(descValue ?? "", "experience");
+    if (result && typeof result === "string") {
+      setValue(`openPositions.${props.index}.description`, result, {
+        shouldDirty: true,
+      });
+      toast.success(tr("refinedSuccess"));
+    }
+  };
+
   // ── Add Skill ─────────────────────────────────────────
   const addSkill = () => {
     const trimmed = skillInput?.trim();
@@ -87,18 +126,20 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
     <div className="w-full flex flex-col items-start gap-3">
       {/* Header With Remove Button Section */}
       <div className="w-full flex items-center justify-between">
-        <TypographyMuted>{tP("positionIndex", { index: Number(props.index) + 1 })}</TypographyMuted>
+        <TypographyMuted className="font-bold text-foreground">
+          {tP("positionIndex", { index: Number(props.index) + 1 })}
+        </TypographyMuted>
         {props.isEdit && (
           <LucideTrash2
             onClick={props.onRemove}
-            className="cursor-pointer text-red-500"
+            className="cursor-pointer text-red-500 hover:text-red-600"
             width={"18px"}
           />
         )}
       </div>
 
       {/* Content Section */}
-      <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
+      <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md bg-card">
         {/* Title Section */}
         <LabelInput
           label={tP("expTitle")}
@@ -113,11 +154,34 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
         />
 
         {/* Description Section */}
-        <div className="w-full flex flex-col items-start gap-2">
-          <TypographyMuted className="text-xs">{tP("expDescription")}</TypographyMuted>
+        <div className="w-full flex flex-col items-start gap-1">
+          <div className="w-full flex items-center justify-between">
+            <TypographyMuted className="text-xs font-bold text-foreground">
+              {tP("expDescription")}
+            </TypographyMuted>
+            {props.isEdit && descValue && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={handleRefine}
+                disabled={isRefining}
+                className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+              >
+                {isRefining ? (
+                  <Loader2 size={10} className="animate-spin" />
+                ) : (
+                  <Sparkles size={10} />
+                )}
+                {tr("aiRefine")}
+              </Button>
+            )}
+          </div>
           <Textarea
             autoResize
-            placeholder={props.isEdit ? tP("expDescription") : props.description}
+            placeholder={
+              props.isEdit ? tP("expDescription") : props.description
+            }
             id="description"
             {...register(`openPositions.${props.index}.description`)}
             className="placeholder:text-sm"
@@ -129,53 +193,98 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
           />
         </div>
 
-        {/* Availability Section */}
-        <div className="w-full flex flex-col items-start gap-2">
-          <TypographyMuted className="text-xs">{tP("positionType")}</TypographyMuted>
-          <Controller
-            name={`openPositions.${props.index}.type`}
-            control={control}
-            render={({ field }) => (
-              <CreatableCombobox
-                options={availabilityConstant}
-                value={field.value || ""}
-                onChange={(value) => field.onChange(value)}
-                placeholder={tP("selectType")}
-              />
-            )}
-          />
+        {/* Position Type and Work Mode Section */}
+        <div className="w-full flex gap-3 tablet-md:flex-col">
+          {/* Position Type Section */}
+          <div className="flex-1 flex flex-col items-start gap-2">
+            <TypographyMuted className="text-xs">
+              {tP("positionType")}
+            </TypographyMuted>
+            <Controller
+              name={`openPositions.${props.index}.type`}
+              control={control}
+              render={({ field }) => (
+                <CreatableCombobox
+                  options={availabilityConstant}
+                  value={field.value || ""}
+                  onChange={(value) => field.onChange(value)}
+                  placeholder={tP("selectType")}
+                  disabled={!props.isEdit}
+                />
+              )}
+            />
+          </div>
+          {/* Work Mode Section */}
+          <div className="flex-1 flex flex-col gap-1">
+            <TypographyMuted className="text-xs">
+              {tP("workMode")}
+            </TypographyMuted>
+            <Controller
+              control={control}
+              name={`openPositions.${props.index}.workMode`}
+              render={({ field }) => (
+                <Select
+                  value={field.value ?? ""}
+                  onValueChange={field.onChange}
+                  disabled={!props.isEdit}
+                >
+                  <SelectTrigger className="h-12 text-muted-foreground">
+                    <SelectValue placeholder={tP("workModePlaceholder")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {workModeConstant.map((item) => (
+                      <SelectItem key={item.value} value={item.value}>
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </div>
         </div>
 
-        {/* Experience Requirement Section */}
-        <LabelInput
-          label={tP("experienceRequirements")}
-          input={
-            <Input
-              placeholder={
-                props.isEdit ? tP("experienceRequirements") : props.experienceReqirement
-              }
-              id="experience-requirement"
-              {...register(
-                `openPositions.${props.index}.experienceRequirement`,
-              )}
-              disabled={!props.isEdit}
-            />
-          }
-        />
-        {/* Education Requirement Section */}
-        <LabelInput
-          label={tP("educationRequirements")}
-          input={
-            <Input
-              placeholder={
-                props.isEdit ? tP("educationRequirements") : props.educationRequirement
-              }
-              id="education-requirement"
-              {...register(`openPositions.${props.index}.educationRequirement`)}
-              disabled={!props.isEdit}
-            />
-          }
-        />
+        {/* Experience and Education Requirements Section */}
+        <div className="w-full flex gap-3 tablet-md:flex-col">
+          {/* Experience Requirements Section */}
+          <LabelInput
+            className="flex-1"
+            label={tP("experienceRequirements")}
+            input={
+              <Input
+                placeholder={
+                  props.isEdit
+                    ? tP("experienceRequirements")
+                    : props.experienceReqirement
+                }
+                id="experience-requirement"
+                {...register(
+                  `openPositions.${props.index}.experienceRequirement`,
+                )}
+                disabled={!props.isEdit}
+              />
+            }
+          />
+          {/* Education Requirements Section */}
+          <LabelInput
+            className="flex-1"
+            label={tP("educationRequirements")}
+            input={
+              <Input
+                placeholder={
+                  props.isEdit
+                    ? tP("educationRequirements")
+                    : props.educationRequirement
+                }
+                id="education-requirement"
+                {...register(
+                  `openPositions.${props.index}.educationRequirement`,
+                )}
+                disabled={!props.isEdit}
+              />
+            }
+          />
+        </div>
 
         {/* Skill Section */}
         <div className="w-full flex flex-col items-start gap-3">
@@ -205,11 +314,16 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
                 );
               })}
           </div>
+
           {/* Skill Poppver Section */}
           {props.isEdit && (
             <Popover open={openSkillPopOver} onOpenChange={setOpenSkillPopOver}>
               <PopoverTrigger asChild>
-                <Button type="button" className="w-full text-xs" variant="secondary">
+                <Button
+                  type="button"
+                  className="w-full text-xs"
+                  variant="secondary"
+                >
                   {tP("addSkill")}
                   <LucidePlus />
                 </Button>
@@ -227,25 +341,135 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
                   >
                     {tP("cancel")}
                   </Button>
-                  <Button type="button" onClick={addSkill}>{tP("save")}</Button>
+                  <Button type="button" onClick={addSkill}>
+                    {tP("save")}
+                  </Button>
                 </div>
               </PopoverContent>
             </Popover>
           )}
         </div>
 
-        {/* Salary Range Section */}
-        <LabelInput
-          label={tP("salaryRange")}
-          input={
-            <Input
-              placeholder={props.isEdit ? tP("salaryRange") : props.salary}
-              id="salary-range"
-              {...register(`openPositions.${props.index}.salary`)}
-              disabled={!props.isEdit}
-            />
-          }
-        />
+        {/* Structured Salary Section (Min / Max / Currency) */}
+        <div className="w-full flex flex-col gap-2">
+          <TypographyMuted className="text-xs">
+            {tP("salaryRange")}
+          </TypographyMuted>
+          {/* Currency Section */}
+          <Controller
+            control={control}
+            name={`openPositions.${props.index}.salaryCurrency`}
+            render={({ field }) => (
+              <Select
+                value={field.value ?? "USD"}
+                onValueChange={field.onChange}
+                disabled={!props.isEdit}
+              >
+                <SelectTrigger className="h-12 w-36">
+                  <SelectValue placeholder="USD" />
+                </SelectTrigger>
+                <SelectContent>
+                  {salaryCurrencyConstant.map((c) => (
+                    <SelectItem key={c.value} value={c.value}>
+                      {c.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+          {/* Min and Max Section */}
+          <div className="w-full flex items-center gap-2">
+            <div className="flex-1 min-w-0">
+              <Controller
+                control={control}
+                name={`openPositions.${props.index}.salaryMin`}
+                render={({ field }) => (
+                  <Input
+                    type="number"
+                    placeholder={tP("salaryMin") ?? "Min"}
+                    {...field}
+                    value={field.value ?? ""}
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value === ""
+                          ? null
+                          : parseFloat(e.target.value),
+                      )
+                    }
+                    disabled={!props.isEdit}
+                  />
+                )}
+              />
+            </div>
+            <span className="text-muted-foreground text-sm shrink-0">—</span>
+            <div className="flex-1 min-w-0">
+              <Controller
+                control={control}
+                name={`openPositions.${props.index}.salaryMax`}
+                render={({ field }) => (
+                  <Input
+                    type="number"
+                    placeholder={tP("salaryMax") ?? "Max"}
+                    {...field}
+                    value={field.value ?? ""}
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value === ""
+                          ? null
+                          : parseFloat(e.target.value),
+                      )
+                    }
+                    disabled={!props.isEdit}
+                  />
+                )}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Job Location and Number of Openings Section */}
+        <div className="w-full flex gap-3 tablet-md:flex-col">
+          {/* Job Location Section */}
+          <LabelInput
+            className="flex-1"
+            label={tP("jobLocation")}
+            input={
+              <Input
+                placeholder={tP("jobLocationPlaceholder")}
+                {...register(`openPositions.${props.index}.location`)}
+                disabled={!props.isEdit}
+              />
+            }
+          />
+          {/* Number of Openings Section */}
+          <LabelInput
+            className="flex-1"
+            label={tP("openingsCount")}
+            input={
+              <Controller
+                control={control}
+                name={`openPositions.${props.index}.openingsCount`}
+                render={({ field }) => (
+                  <Input
+                    type="number"
+                    placeholder={tP("openingsCountPlaceholder")}
+                    {...field}
+                    value={field.value ?? ""}
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value === ""
+                          ? null
+                          : parseInt(e.target.value, 10),
+                      )
+                    }
+                    disabled={!props.isEdit}
+                  />
+                )}
+              />
+            }
+          />
+        </div>
 
         {/* Open Position ID Section: Hidden */}
         <LabelInput
@@ -263,7 +487,9 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
 
         {/* Deadline Date Section */}
         <div className="w-full flex flex-col items-start gap-1">
-          <TypographyMuted className="text-xs">{tP("deadlineDate")}</TypographyMuted>
+          <TypographyMuted className="text-xs">
+            {tP("deadlineDate")}
+          </TypographyMuted>
           <Controller
             control={control}
             name={`openPositions.${props.index}.deadlineDate`}

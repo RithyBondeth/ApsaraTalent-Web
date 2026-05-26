@@ -66,7 +66,6 @@ export default function CompanySignup() {
             Title: tv("fieldLabelTitle"),
             "Experience requirement": tv("fieldLabelExperienceReq"),
             "Education requirement": tv("fieldLabelEducationReq"),
-            Salary: tv("fieldLabelSalary"),
             Type: tv("fieldLabelType"),
           };
           return tv("fieldRequired", { field: labels[field] ?? field });
@@ -81,7 +80,6 @@ export default function CompanySignup() {
             Title: tv("fieldLabelTitle"),
             "Experience requirement": tv("fieldLabelExperienceReq"),
             "Education requirement": tv("fieldLabelEducationReq"),
-            Salary: tv("fieldLabelSalary"),
             Type: tv("fieldLabelType"),
           };
           return tv("fieldTooLong", { field: labels[field] ?? field, max });
@@ -115,8 +113,13 @@ export default function CompanySignup() {
           experienceRequirement: "",
           educationRequirement: "",
           skills: [],
-          salary: "",
           types: "",
+          salaryMin: undefined,
+          salaryMax: undefined,
+          salaryCurrency: "USD",
+          workMode: undefined,
+          location: "",
+          openingsCount: undefined,
           deadlineDate: "" as unknown as Date,
         },
       ],
@@ -186,7 +189,6 @@ export default function CompanySignup() {
                 experience: job.experienceRequirement,
                 education: job.educationRequirement,
                 skills: job.skills,
-                salary: job.salary,
                 deadlineDate: job.deadlineDate.toISOString(),
               })),
               benefits:
@@ -245,7 +247,6 @@ export default function CompanySignup() {
                 experience: job.experienceRequirement,
                 education: job.educationRequirement,
                 skills: job.skills,
-                salary: job.salary,
                 deadlineDate: job.deadlineDate.toISOString(),
               })),
               benefits:
@@ -412,6 +413,8 @@ export default function CompanySignup() {
               register={register}
               control={control}
               errors={errors}
+              setValue={setValue}
+              getValues={getValues}
             />
           )}
           {step === 2 && (

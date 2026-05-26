@@ -66,8 +66,10 @@ function FavoriteCompanyCardSkeleton() {
 
       {/* Action Bar Section */}
       <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end gap-2">
-        <Skeleton className="h-9 w-20 rounded-lg" />
-        <Skeleton className="h-9 w-24 rounded-lg" />
+        <Skeleton className="h-9 w-20 rounded-md" />
+        {/* Remove Section */}
+        <Skeleton className="h-9 w-24 rounded-md" />
+        {/* View Detail Section */}
       </div>
     </div>
   );
@@ -113,8 +115,10 @@ function FavoriteEmployeeCardSkeleton() {
 
       {/* Action Bar Section */}
       <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end gap-2">
-        <Skeleton className="h-9 w-20 rounded-lg" />
-        <Skeleton className="h-9 w-24 rounded-lg" />
+        <Skeleton className="h-9 w-20 rounded-md" />
+        {/* Remove Section */}
+        <Skeleton className="h-9 w-24 rounded-md" />
+        {/* View Detail Section */}
       </div>
     </div>
   );

@@ -5,11 +5,38 @@ export function DashboardChartSkeleton() {
   return <Skeleton className="h-full w-full min-h-[180px] rounded-xl" />;
 }
 
+export function ProfileCompletenessCardSkeleton() {
+  return (
+    <div className="w-full flex items-center gap-4 sm:gap-6 bg-card rounded-2xl border border-border/60 px-5 py-4 sm:px-6">
+      {/* Icon Section: Hidden on mobile */}
+      <Skeleton className="hidden sm:block h-10 w-10 rounded-xl shrink-0" />
+
+      {/* Content Section */}
+      <div className="flex-1 min-w-0 flex flex-col gap-2">
+        <div className="flex items-center justify-between gap-2">
+          <Skeleton className="h-4 w-36 rounded" />
+          <Skeleton className="h-4 w-10 rounded" />
+        </div>
+        {/* Progress Bar */}
+        <Skeleton className="w-full h-1.5 rounded-full" />
+        {/* Status Text */}
+        <Skeleton className="h-3 w-52 rounded" />
+      </div>
+
+      {/* CTA Button Section: Hidden on mobile */}
+      <Skeleton className="hidden xs:block h-8 w-28 rounded-xl shrink-0" />
+    </div>
+  );
+}
+
 export function DashboardLoadingSkeleton() {
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6">
       {/* Banner Section */}
       <FeedBannerSkeleton />
+
+      {/* Profile Completeness Card Section */}
+      <ProfileCompletenessCardSkeleton />
 
       {/* Statistic Card Section */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -29,10 +56,10 @@ export function DashboardLoadingSkeleton() {
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Bar Chart Section */}
-        <div className="lg:col-span-2 bg-card rounded-2xl border border-border/60 p-5 sm:p-6">
-          <div className="flex items-center justify-between mb-4">
+        <div className="sm:col-span-2 lg:col-span-2 bg-card rounded-2xl border border-border/60 p-5 sm:p-6">
+          <div className="flex items-start flex-wrap justify-between gap-3 mb-4">
             <div>
               <Skeleton className="h-5 w-32 rounded mb-1.5" />
               <Skeleton className="h-3 w-48 rounded" />

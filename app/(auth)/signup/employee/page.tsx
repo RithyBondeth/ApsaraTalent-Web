@@ -11,6 +11,7 @@ import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useEmployeeSignupStore } from "@/stores/apis/auth/employee-signup.store";
+import { useParseResumeStore } from "@/stores/apis/auth/parse-resume.store";
 import { useUploadEmployeeAvatarStore } from "@/stores/apis/employee/upload-emp-avatar.store";
 import { useUploadEmployeeCoverLetter } from "@/stores/apis/employee/upload-emp-coverletter.store";
 import { useUploadEmployeeResumeStore } from "@/stores/apis/employee/upload-emp-resume.store";
@@ -18,7 +19,11 @@ import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-sign
 import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
 import { TGender } from "@/utils/types/user/gender.type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
+import {
+  LucideArrowLeft,
+  LucideArrowRight,
+  LucideCheckCircle2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -47,6 +52,9 @@ export default function EmployeeSignup() {
   const uploadAvatar = useUploadEmployeeAvatarStore();
   const uploadResume = useUploadEmployeeResumeStore();
   const uploadCoverLetter = useUploadEmployeeCoverLetter();
+
+  // SmartResumeUpload
+  const { data: parsedData, file: parsedFile } = useParseResumeStore();
 
   // Employee Register
   const empSignup = useEmployeeSignupStore();
@@ -87,32 +95,58 @@ export default function EmployeeSignup() {
     [tv],
   );
 
-  const methods = useForm<TEmployeeSignUp>({
-    mode: "onChange",
-    resolver: zodResolver(employeeSignUpSchema),
-    defaultValues: {
+  // ── Pre-fill Employee Form from Resume Parsed ──────────────────────
+  const defaultFormValues = useMemo(
+    (): TEmployeeSignUp => ({
       profession: {
-        job: "",
-        yearOfExperience: "",
-        availability: "",
-        description: "",
+        job: parsedData?.jobTitle ?? "",
+        yearOfExperience: parsedData?.yearsOfExperience ?? "",
+        availability: parsedData?.availability ?? "",
+        description: parsedData?.description ?? "",
+        workMode: undefined,
+        noticePeriod: undefined,
+        portfolioUrl: "",
+        linkedinUrl: "",
+        languages: [],
+        expectedSalaryCurrency: "USD",
+        expectedSalaryMin: undefined,
+        expectedSalaryMax: undefined,
       },
-      experience: [],
-      educations: [
-        {
-          school: "",
-          degree: "",
-          year: undefined as unknown as number,
-        },
-      ],
+      experience: parsedData?.experiences?.length
+        ? parsedData.experiences.map((exp) => ({
+            title: exp.title,
+            description: exp.description,
+            startDate: exp.startDate
+              ? new Date(exp.startDate)
+              : ("" as unknown as Date),
+            endDate: exp.endDate
+              ? new Date(exp.endDate)
+              : ("" as unknown as Date),
+          }))
+        : [],
+      educations: parsedData?.educations?.length
+        ? parsedData.educations.map((edu) => ({
+            school: edu.school,
+            degree: edu.degree,
+            year: edu.year,
+          }))
+        : [{ school: "", degree: "", year: undefined as unknown as number }],
       skillAndReference: {
-        skills: [],
-        resume: undefined,
+        skills: parsedData?.skills ?? [],
+        resume: parsedFile ?? undefined,
         coverLetter: undefined,
       },
       avatar: null,
-      careerScopes: [],
-    },
+      careerScopes: parsedData?.careerScopes ?? [],
+    }),
+    [],
+  );
+
+  // ── React Hook Form Methods ─────────────────────────────────────────
+  const methods = useForm<TEmployeeSignUp>({
+    mode: "onChange",
+    resolver: zodResolver(employeeSignUpSchema),
+    defaultValues: defaultFormValues,
   });
 
   const {
@@ -125,7 +159,7 @@ export default function EmployeeSignup() {
     formState: { errors },
   } = methods;
 
-  // Field groups per step for selective validation
+  // ── Field groups per step for selective validation ──────────────────────
   const stepFieldMap: Record<number, (keyof TEmployeeSignUp)[]> = {
     1: ["profession"],
     2: ["experience"],
@@ -423,6 +457,14 @@ export default function EmployeeSignup() {
         </TypographyMuted>
       </div>
 
+      {/* SmartResumeUpload Chip Title Section */}
+      {!!parsedData && (
+        <div className="flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/50 dark:border-emerald-800/50 px-3 py-1.5 rounded-full w-fit">
+          <LucideCheckCircle2 size={13} className="shrink-0" />
+          {t("smartUploadDataApplied")}
+        </div>
+      )}
+
       {/* Step Progress Indicator Section */}
       <div className="w-full overflow-x-auto pb-2 mb-2">
         <div className="w-full min-w-[280px] flex items-center gap-0">
@@ -470,6 +512,8 @@ export default function EmployeeSignup() {
               register={register}
               control={control}
               errors={errors}
+              setValue={setValue}
+              getValues={getValues}
             />
           )}
           {step === 2 && (
@@ -477,6 +521,8 @@ export default function EmployeeSignup() {
               register={register}
               errors={errors}
               control={control}
+              setValue={setValue}
+              getValues={getValues}
             />
           )}
           {step === 3 && (
@@ -484,11 +530,14 @@ export default function EmployeeSignup() {
               register={register}
               errors={errors}
               control={control}
+              setValue={setValue}
+              getValues={getValues}
             />
           )}
           {step === 4 && (
             <SkillReferenceStepForm
               register={register}
+              control={control}
               errors={errors}
               getValues={getValues}
               setValue={setValue}

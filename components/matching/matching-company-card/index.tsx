@@ -17,6 +17,9 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { memo } from "react";
 import { useTranslations } from "next-intl";
 import { translateLocation } from "@/utils/functions/text";
+import { AiMatchExplanationModal } from "@/components/matching/ai-match-explanation-modal";
+import { AiCoverLetterModal } from "@/components/matching/ai-cover-letter-modal";
+import { AiSkillGapModal } from "@/components/matching/ai-skill-gap-modal";
 
 const MatchingCompanyCard = memo(function MatchingCompanyCard(
   props: IMatchingCompanyCardProps,
@@ -27,7 +30,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
+    <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
       <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
         {/* Avatar Section */}
         <Avatar
@@ -42,7 +45,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
 
         {/* Content Section */}
         <div className="flex-1 min-w-0 flex flex-col gap-3">
-          {/* Header Section: Name, Industry and Founded Year */}
+          {/* Header Section: Name, Industry, Founded Year and Score Badge */}
           <div>
             <h3 className="text-base font-bold leading-tight truncate">
               {props.name}
@@ -93,32 +96,71 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
         </div>
       </div>
 
-      {/* Action Bar Section: Schedule and Chat Now Buttons */}
-      <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end gap-2">
-        {props.onScheduleClick && (
+      {/* Action Bar Section */}
+      <div className="px-4 sm:px-5 py-2.5 border-t border-border/60 bg-muted/30 flex items-center justify-between gap-2">
+        {/* AI Actions Section: Icon-only on mobile (< sm), full label on sm+ */}
+        <div className="flex items-center gap-1">
+          {/* AI Match Explanation Modal Section */}
+          <AiMatchExplanationModal
+            eid={props.employeeId}
+            cid={props.id}
+            companyName={props.name}
+            compact
+          />
+
+          {/* AI Cover Letter Modal Section */}
+          <AiCoverLetterModal
+            employeeName={props.employeeName}
+            employeeJob={props.employeeJob}
+            employeeSkills={props.employeeSkills}
+            employeeExperience={props.employeeExperience}
+            employeeDescription={props.employeeDescription}
+            companyName={props.name}
+            companyIndustry={props.industry}
+            companyDescription={props.description}
+            openPositions={props.openPosition.map((p) => p.title)}
+            compact
+          />
+
+          {/* AI Skill Gap Modal Section */}
+          <AiSkillGapModal
+            eid={props.employeeId}
+            cid={props.id}
+            companyName={props.name}
+            compact
+          />
+        </div>
+
+        {/* Primary Actions Section: Icon-only on mobile, labelled on sm+ */}
+        <div className="flex items-center gap-1.5">
+          {/* Schedule Button Section */}
+          {props.onScheduleClick && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-8 text-xs px-2.5 sm:px-3"
+              onClick={props.onScheduleClick}
+            >
+              <LucideCalendarCheck className="size-3.5 shrink-0" />
+              <span className="hidden sm:inline">{t("schedule")}</span>
+            </Button>
+          )}
+
+          {/* Chat Now Button Section */}
           <Button
             size="sm"
-            variant="outline"
-            className="text-xs"
-            onClick={props.onScheduleClick}
+            className="h-8 text-xs px-2.5 sm:px-3"
+            onClick={props.onChatNowClick}
+            disabled={props.isChatLoading}
           >
-            <LucideCalendarCheck className="size-3.5" />
-            {t("schedule")}
+            {props.isChatLoading ? (
+              <LucideLoader2 className="size-3.5 animate-spin shrink-0" />
+            ) : (
+              <LucideMessageCircle className="size-3.5 shrink-0" />
+            )}
+            <span className="hidden sm:inline">{t("chatNow")}</span>
           </Button>
-        )}
-        <Button
-          size="sm"
-          className="text-xs"
-          onClick={props.onChatNowClick}
-          disabled={props.isChatLoading}
-        >
-          {props.isChatLoading ? (
-            <LucideLoader2 className="size-3.5 animate-spin" />
-          ) : (
-            <LucideMessageCircle className="size-3.5" />
-          )}
-          {t("chatNow")}
-        </Button>
+        </div>
       </div>
     </div>
   );

@@ -8,12 +8,12 @@ export function MatchingLoadingSkeleton({
   isEmployee: boolean;
 }) {
   return (
-    <div className="w-full flex flex-col px-2.5 sm:px-5">
+    <div className="w-full flex flex-col gap-5 px-2.5 sm:px-5">
       {/* Banner Section */}
       <FeedBannerSkeleton />
 
       {/* Card List Section */}
-      <div className="flex flex-col gap-3 mt-4">
+      <div className="w-full flex flex-col items-start gap-3">
         {[...Array(3)].map((_, index) =>
           isEmployee ? (
             <MatchingCompanyCardSkeleton key={index} />
@@ -29,7 +29,7 @@ export function MatchingLoadingSkeleton({
 /* -------------------------------- Matching Employee Card Skeleton -------------------------------- */
 export function MatchingEmployeeCardSkeleton() {
   return (
-    <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
+    <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
       <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
         {/* Avatar Section */}
         <Skeleton className="size-16 sm:size-20 rounded-xl flex-shrink-0" />
@@ -64,10 +64,16 @@ export function MatchingEmployeeCardSkeleton() {
         </div>
       </div>
 
-      {/* Action Bar Section */}
-      <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end gap-2">
-        <Skeleton className="h-9 w-24 rounded-md" />
-        <Skeleton className="h-9 w-24 rounded-md" />
+      {/* Action Bar Section: AI Score left, Schedule+Chat right (single row on all sizes) */}
+      <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-between gap-2">
+        <Skeleton className="h-8 w-[90px] rounded-md" />
+        {/* AI Score Section */}
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-8 w-[90px] rounded-md" />
+          {/* Schedule Section */}
+          <Skeleton className="h-8 w-[90px] rounded-md" />
+          {/* Chat Now Section */}
+        </div>
       </div>
     </div>
   );
@@ -76,7 +82,7 @@ export function MatchingEmployeeCardSkeleton() {
 /* -------------------------------- Matching Company Card Skeleton -------------------------------- */
 export function MatchingCompanyCardSkeleton() {
   return (
-    <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
+    <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
       <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
         {/* Avatar Section */}
         <Skeleton className="size-16 sm:size-20 rounded-xl flex-shrink-0" />
@@ -111,10 +117,22 @@ export function MatchingCompanyCardSkeleton() {
         </div>
       </div>
 
-      {/* Action Bar Section */}
-      <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end gap-2">
-        <Skeleton className="h-9 w-24 rounded-md" />
-        <Skeleton className="h-9 w-24 rounded-md" />
+      {/* Action Bar Section: All icon-only on mobile, labelled on sm+ */}
+      <div className="px-4 sm:px-5 py-2.5 border-t border-border/60 bg-muted/30 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1">
+          <Skeleton className="h-8 w-8 sm:w-[90px] rounded-md" />
+          {/* AI Score Section */}
+          <Skeleton className="h-8 w-8 sm:w-[110px] rounded-md" />
+          {/* Cover Letter Section */}
+          <Skeleton className="h-8 w-8 sm:w-[95px] rounded-md" />
+          {/* Skill Gap Section */}
+        </div>
+        <div className="flex items-center gap-1.5">
+          <Skeleton className="h-8 w-8 sm:w-[90px] rounded-md" />
+          {/* Schedule Section */}
+          <Skeleton className="h-8 w-8 sm:w-[90px] rounded-md" />
+          {/* Chat Now Section */}
+        </div>
       </div>
     </div>
   );

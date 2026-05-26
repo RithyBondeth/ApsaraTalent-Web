@@ -1,6 +1,7 @@
 import { TCompanySignup } from "@/app/(auth)/signup/company/validation";
 import { IStepFormProps } from "@/components/employee/employee-signup-form/props";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -13,19 +14,26 @@ import ErrorMessage from "@/components/utils/feedback/error-message";
 import LabelInput from "@/components/utils/forms/label-input";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { locationConstant } from "@/utils/constants/ui.constant";
+import {
+  companyTypeConstant,
+  locationConstant,
+} from "@/utils/constants/ui.constant";
 import { useTranslations } from "next-intl";
-import { Controller } from "react-hook-form";
+import { Controller, useWatch } from "react-hook-form";
+import { useAIRefine } from "@/hooks/utils/use-ai-refine";
+import { Sparkles, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function BasicInfoStepForm({
   register,
   control,
   errors,
+  setValue,
 }: IStepFormProps<TCompanySignup>) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("auth");
+  const tr = useTranslations("resumeBuilder");
   const tLoc = useTranslations("locations");
-
   const locationLabels: Record<string, string> = {
     "Phnom Penh": tLoc("phnomPenh"),
     "Banteay Meanchey": tLoc("banteayMeanchey"),
@@ -54,6 +62,22 @@ export default function BasicInfoStepForm({
     "Tbong Khmum": tLoc("tbongKhmum"),
   };
 
+  /* ----------------------------- API Integration ---------------------------- */
+  const { isRefining, refineContent } = useAIRefine();
+
+  /* ----------------------------- React Hook Form ----------------------------- */
+  const descValue = useWatch({ control, name: "basicInfo.description" });
+
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Refine Description ────────────────────────────────────────────
+  const handleRefine = async () => {
+    const result = await refineContent(descValue, "summary");
+    if (result && typeof result === "string" && setValue) {
+      setValue("basicInfo.description", result, { shouldDirty: true });
+      toast.success(tr("refinedSuccess"));
+    }
+  };
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col items-start gap-5">
@@ -73,9 +97,28 @@ export default function BasicInfoStepForm({
       />
       <div className="w-full flex flex-col items-start gap-2">
         <div className="w-full flex flex-col items-start gap-2">
-          <TypographyMuted className="text-xs">
-            {t("cmpBasicInfoDescription")}
-          </TypographyMuted>
+          <div className="w-full flex items-center justify-between">
+            <TypographyMuted className="text-xs">
+              {t("cmpBasicInfoDescription")}
+            </TypographyMuted>
+            {descValue && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={handleRefine}
+                disabled={isRefining}
+                className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+              >
+                {isRefining ? (
+                  <Loader2 size={10} className="animate-spin" />
+                ) : (
+                  <Sparkles size={10} />
+                )}
+                {tr("aiRefine")}
+              </Button>
+            )}
+          </div>
           <Textarea
             autoResize
             placeholder={t("cmpBasicInfoDescriptionPlaceholder")}
@@ -153,6 +196,50 @@ export default function BasicInfoStepForm({
             />
           </div>
           <ErrorMessage>{errors!.basicInfo?.location?.message}</ErrorMessage>
+        </div>
+      </div>
+
+      {/* Website URL and Company Type Section */}
+      <div className="w-full flex justify-between items-center gap-3 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
+        {/* Website URL Section */}
+        <LabelInput
+          label={t("cmpBasicInfoWebsiteUrl")}
+          input={
+            <Input
+              placeholder={t("cmpBasicInfoWebsiteUrlPlaceholder")}
+              id="website-url"
+              {...register("basicInfo.websiteUrl")}
+              validationMessage={errors!.basicInfo?.websiteUrl?.message}
+            />
+          }
+        />
+
+        {/* Company Type Section */}
+        <div className="w-full flex flex-col items-start gap-2">
+          <TypographyMuted className="text-xs">
+            {t("cmpBasicInfoCompanyType")}
+          </TypographyMuted>
+          <Controller
+            name="basicInfo.companyType"
+            control={control!}
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} value={field.value ?? ""}>
+                <SelectTrigger className="h-12 text-muted-foreground">
+                  <SelectValue
+                    placeholder={t("cmpBasicInfoCompanyTypePlaceholder")}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {companyTypeConstant.map((item) => (
+                    <SelectItem key={item.value} value={item.value}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+          <ErrorMessage>{errors!.basicInfo?.companyType?.message}</ErrorMessage>
         </div>
       </div>
     </div>

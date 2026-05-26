@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 
 const Cropper = dynamic(() => import("react-easy-crop"), { ssr: false });
 
@@ -47,6 +48,9 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
     cropShape = "round",
     fileName = "avatar.jpg",
   } = props;
+
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("common");
 
   /* -------------------------------- All States ------------------------------ */
   const [crop, setCrop] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -146,7 +150,7 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
 
         {/* Crop Section */}
         <div className="flex flex-col gap-2 mt-4">
-          <span className="text-sm text-muted-foreground">Zoom</span>
+          <span className="text-sm text-muted-foreground">{t("zoom")}</span>
 
           <Slider
             value={[zoom]}
@@ -164,11 +168,11 @@ export default function AvatarCropDialog(props: IAvatarCropDialogProps) {
             variant="outline"
             onClick={() => setOpen(false)}
           >
-            Cancel
+            {t("cancel")}
           </Button>
 
           <Button type="button" onClick={confirmCrop}>
-            Crop Image
+            {t("cropImage")}
           </Button>
         </DialogFooter>
       </DialogContent>
