@@ -3,7 +3,7 @@ import { IQuestionCardProps } from "./props";
 import {
   INTERVIEW_PREP_CHIP,
   INTERVIEW_PREP_CHIP_FALLBACK,
-} from "@/utils/constants/matching.comstant";
+} from "@/utils/constants/matching.constant";
 
 export function QuestionCard(props: IQuestionCardProps) {
   /* ---------------------------- Props --------------------------- */

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRoleFromJwt } from "./utils/functions/auth/get-role-from-jwt";
+import { COOKIE_CONFIG } from "@/utils/constants/cookie.constant";
 
 /* ---------------------------------- Helper --------------------------------- */
 const PROTECTED_ROUTES = [
@@ -42,7 +43,7 @@ function buildCallbackUrl(request: NextRequest) {
 export function middleware(request: NextRequest) {
   try {
     const { pathname } = request.nextUrl;
-    const token = request.cookies.get("auth-token")?.value ?? "";
+    const token = request.cookies.get(COOKIE_CONFIG.AUTH_TOKEN)?.value ?? "";
     const isAuthenticated = token.length > 0;
 
     const isAuthRoute = isRouteMatch(pathname, AUTH_ROUTES);

@@ -1,8 +1,10 @@
 import { TLoadingStep } from "@/utils/interfaces/ui/loading.interface";
 import { TResumeSectionID } from "../types/resume/resume-section-id.type";
 
+/* --------------------------------- Config --------------------------------- */
 export const LIVE_RESUME_PREVIEW_DEBOUNCE_MS = 600;
 
+/* --------------------------------- Loading -------------------------------- */
 export const DOWNLOAD_RESUME_STEPS: TLoadingStep[] = [
   { label: "Preparing your resume data", completeAt: 20 },
   { label: "Sending to AI engine", completeAt: 40 },

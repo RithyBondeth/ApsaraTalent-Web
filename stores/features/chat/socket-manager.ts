@@ -2,6 +2,7 @@ import io from "socket.io-client";
 import { SocketInstance } from "./types";
 import { getApiOrigin } from "@/utils/functions/media";
 import { getCookie } from "cookies-next";
+import { COOKIE_CONFIG } from "@/utils/constants/cookie.constant";
 
 // ── Module-level Socket Singleton ────────────────────────
 let _socket: SocketInstance | null = null;
@@ -35,7 +36,7 @@ export const scheduleDisconnect = (callback: () => void) => {
 // ── Create Socket ───────────────────────────────────────────
 export const createSocket = () => {
   const socketUrl = getApiOrigin();
-  const socketToken = getCookie("auth-token");
+  const socketToken = getCookie(COOKIE_CONFIG.AUTH_TOKEN);
 
   const socket: SocketInstance = io(`${socketUrl}/chat`, {
     withCredentials: true,

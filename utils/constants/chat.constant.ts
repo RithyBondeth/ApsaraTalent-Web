@@ -1,7 +1,9 @@
+/* --------------------------------- Message -------------------------------- */
 export const CHAT_TYPING_DEBOUNCE_MS = 1500;
 export const CHAT_LOADING_TIMEOUT_MS = 5000;
 export const CHAT_REACTION_EMOJIS = ["👍", "❤️", "😂", "😮", "😢", "😡"];
 
+/* -------------------------------- Styling --------------------------------- */
 export const CHAT_TYPING_INDICATOR_STYLES = `
   @keyframes typing-bounce {
     0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
@@ -13,11 +15,22 @@ export const CHAT_TYPING_INDICATOR_STYLES = `
   .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 `;
 
+/* --------------------------------- Audio ---------------------------------- */
 export const CHAT_DEFAULT_AMPLITUDE_AUDIO = Array.from(
   { length: 30 },
   (_, index) => 0.2 + 0.4 * Math.sin((index / 30) * Math.PI),
 );
 
+/** Maximum recording duration in milliseconds (5 minutes). */
+export const VOICE_RECORDING_MAX_DURATION_MS = 5 * 60 * 1000;
+
+/** How often (ms) we sample amplitude data during recording. */
+export const AMPLITUDE_SAMPLE_INTERVAL_MS = 100;
+
+/** Target number of amplitude bars in the waveform visualization. */
+export const WAVEFORM_POINTS = 30;
+
+/* --------------------------------- Files ---------------------------------- */
 export const CHAT_MAX_FILE_SIZE_MB = 10;
 export const CHAT_MAX_FILE_SIZE_BYTES = CHAT_MAX_FILE_SIZE_MB * 1024 * 1024;
 export const CHAT_MAX_FILES = 10;
@@ -33,13 +46,5 @@ export const CHAT_ACCEPTED_MIME_TYPES = [
   "text/plain",
 ].join(",");
 
+/* -------------------------------- Regex ----------------------------------- */
 export const WEB_URL_REGEX = /(?:https?:\/\/|www\.)[^\s/$.?#].[^\s]*/gi;
-
-/** Maximum recording duration in milliseconds (5 minutes). */
-export const VOICE_RECORDING_MAX_DURATION_MS = 5 * 60 * 1000;
-
-/** How often (ms) we sample amplitude data during recording. */
-export const AMPLITUDE_SAMPLE_INTERVAL_MS = 100;
-
-/** Target number of amplitude bars in the waveform visualization. */
-export const WAVEFORM_POINTS = 30;

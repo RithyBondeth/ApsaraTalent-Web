@@ -30,7 +30,7 @@ import { IAiCoverLetterModalProps } from "./props";
 import {
   COVER_LETTER_STYLES,
   TCoverLetterStyle,
-} from "@/utils/constants/matching.comstant";
+} from "@/utils/constants/matching.constant";
 
 export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
   /* -------------------------- Utils -------------------------- */

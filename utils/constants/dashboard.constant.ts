@@ -7,6 +7,7 @@ import {
   LucideIcon,
 } from "lucide-react";
 
+/* ---------------------------------- Types --------------------------------- */
 type TStatisticCardConfig = {
   key: Extract<
     keyof TAnalyticsResponse,
@@ -19,6 +20,7 @@ type TStatisticCardConfig = {
   suffix?: string;
 };
 
+/* -------------------------------- Constants ------------------------------- */
 export const statisticCardConstants: TStatisticCardConfig[] = [
   {
     key: "totalLikesGiven",

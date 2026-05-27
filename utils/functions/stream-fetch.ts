@@ -1,4 +1,5 @@
 import { getCookie } from "cookies-next";
+import { COOKIE_CONFIG } from "@/utils/constants/cookie.constant";
 
 /** SSE event shape emitted by the API gateway streaming endpoints. */
 export type StreamEvent =
@@ -19,7 +20,7 @@ export async function streamFetch(
   },
   onEvent: (event: StreamEvent) => void,
 ): Promise<void> {
-  const token = getCookie("auth-token");
+  const token = getCookie(COOKIE_CONFIG.AUTH_TOKEN);
 
   const res = await fetch(url, {
     method: options.method ?? "GET",

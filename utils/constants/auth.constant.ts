@@ -1,3 +1,4 @@
+/* -------------------------------- Constants ------------------------------- */
 export const AUTH_LOGIN_METHODS = {
   EMAIL_PASSWORD: "email_password",
   PHONE_OTP: "phone_otp",
@@ -7,5 +8,6 @@ export const AUTH_LOGIN_METHODS = {
   GITHUB: "github",
 } as const;
 
+/* ---------------------------------- Types --------------------------------- */
 export type TAuthLoginMethod =
   (typeof AUTH_LOGIN_METHODS)[keyof typeof AUTH_LOGIN_METHODS];

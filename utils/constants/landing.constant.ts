@@ -8,6 +8,7 @@ import {
   LucideSearch,
 } from "lucide-react";
 
+/* --------------------------------- Features ------------------------------- */
 export const landingFeatureKeys: {
   icon: LucideIcon;
   titleKey: string;
@@ -45,6 +46,7 @@ export const landingFeatureKeys: {
   },
 ] as const;
 
+/* ---------------------------------- Steps --------------------------------- */
 export const landingStepKeys: {
   number: string;
   titleKey: string;

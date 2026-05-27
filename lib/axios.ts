@@ -1,6 +1,7 @@
 import axios from "axios";
 import { getCookie } from "cookies-next";
 import { normalizeMediaUrlsDeep } from "@/utils/functions/media";
+import { COOKIE_CONFIG } from "@/utils/constants/cookie.constant";
 
 // Use a private instance so interceptors are never duplicated on HMR re-evaluations
 const instance = axios.create({
@@ -9,7 +10,7 @@ const instance = axios.create({
 
 // Automatically attach auth token as Authorization header on every request
 instance.interceptors.request.use((config) => {
-  const token = getCookie("auth-token");
+  const token = getCookie(COOKIE_CONFIG.AUTH_TOKEN);
   if (token) {
     config.headers["Authorization"] = `Bearer ${token}`;
   }

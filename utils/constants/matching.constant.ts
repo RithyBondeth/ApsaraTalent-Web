@@ -8,7 +8,7 @@ export const COVER_LETTER_STYLES: { id: string; label: string }[] = [
 
 export type TCoverLetterStyle = (typeof COVER_LETTER_STYLES)[number]["id"];
 
-/* ------------------------------ Interview Prep ------------------------------ */
+/* ----------------------------- Interview Prep ----------------------------- */
 export const INTERVIEW_PREP_CHIP: Record<string, string> = {
   Technical: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
   Behavioral:

@@ -9,6 +9,7 @@ import {
   SearchCheck,
 } from "lucide-react";
 
+/* --------------------------------- Sidebar -------------------------------- */
 export const sidebarList = [
   {
     title: "Feed",
