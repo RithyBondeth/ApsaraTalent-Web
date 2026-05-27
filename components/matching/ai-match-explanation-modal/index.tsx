@@ -180,7 +180,7 @@ export function AiMatchExplanationModal({
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           {/* Header */}
-          <DialogHeader className="px-4 sm:px-5 pt-5 pb-3 shrink-0 flex-shrink-0 border-b border-border/60">
+          <DialogHeader className="px-4 sm:px-5 pt-5 pb-3 shrink-0 border-b border-border/60">
             <DialogTitle className="flex items-center gap-2 text-base text-left sm:text-left pr-8">
               <LucideSparkles className="size-4 text-primary shrink-0" />
               <span className="truncate">{t("aiMatchAnalysis")}</span>

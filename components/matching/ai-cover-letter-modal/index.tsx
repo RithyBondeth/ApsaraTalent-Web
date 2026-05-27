@@ -251,7 +251,7 @@ export function AiCoverLetterModal(props: Props) {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="h-[78dvh]">
           {/* Header */}
-          <DialogHeader className="px-5 pt-5 pb-3 shrink-0 flex-shrink-0 border-b border-border/60">
+          <DialogHeader className="px-5 pt-5 pb-3 shrink-0 border-b border-border/60">
             <DialogTitle className="flex items-center gap-2 text-base text-left pr-8">
               <LucideFileText className="size-4 text-primary shrink-0" />
               <span className="truncate">
