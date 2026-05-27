@@ -45,9 +45,10 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
 
   const { isEmployee, isCompany, currentUser } = useFetchOnce({
     cacheKey: "interview-page",
-    onEmployeeFetch: (employeeId) => queryInterviews(employeeId, "employee"),
+    onEmployeeFetch: (employeeId) =>
+      queryInterviews(employeeId, USER_ROLE.EMPLOYEE),
     onCompanyFetch: (companyId) => {
-      queryInterviews(companyId, "company");
+      queryInterviews(companyId, USER_ROLE.COMPANY);
       queryCurrentCompanyMatching(companyId);
     },
   });

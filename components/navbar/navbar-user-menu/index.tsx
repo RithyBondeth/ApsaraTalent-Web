@@ -200,7 +200,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
                   ) : (
                     <LucideBuilding className="size-2.5" />
                   )}
-                  {currentUser?.role ?? "employee"}
+                  {currentUser?.role ?? USER_ROLE.EMPLOYEE}
                 </span>
               </div>
             </div>
@@ -213,7 +213,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
               {/* My Profile Section */}
               <DropdownMenuItem asChild>
                 <Link
-                  href={`/profile/${currentUser?.role ?? "employee"}`}
+                  href={`/profile/${currentUser?.role ?? USER_ROLE.EMPLOYEE}`}
                   prefetch={true}
                   className="flex items-center gap-2.5"
                 >

@@ -9,6 +9,7 @@ import { useTranslations } from "next-intl";
 import NotificationBaseCard from "../notification-base-card";
 import { useRouter } from "next/navigation";
 import { getNameInitials } from "@/utils/functions/text";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 export default function NotificationLikeCard(
   props: INotificationLikeCardProps,
@@ -22,7 +23,7 @@ export default function NotificationLikeCard(
   const handleNavigate = () => {
     if (props.onMarkRead && !props.seen) props.onMarkRead(props.id);
     // Navigate to profile or matching depending on role
-    if (props.role === "employee") {
+    if (props.role === USER_ROLE.EMPLOYEE) {
       router.push(`/profile/company/${props.user.id}`);
     } else {
       router.push(`/profile/employee/${props.user.id}`);
@@ -37,7 +38,7 @@ export default function NotificationLikeCard(
       timestamp={props.timestamp}
       title={t("newLike")}
       description={
-        props.role === "employee"
+        props.role === USER_ROLE.EMPLOYEE
           ? t("likedYourProfile", { name: props.user.name })
           : t("likedYourCompany", { name: props.user.name })
       }
@@ -65,7 +66,7 @@ export default function NotificationLikeCard(
               </TypographySmall>
               {(props.user.position || props.user.industry) && (
                 <TypographySmall className="text-[10px] text-muted-foreground line-clamp-1">
-                  {props.role === "employee"
+                  {props.role === USER_ROLE.EMPLOYEE
                     ? props.user.industry
                     : props.user.position}
                 </TypographySmall>

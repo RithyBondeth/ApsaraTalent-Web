@@ -59,6 +59,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ISidebarDropdownFooterProps } from "./props";
 import { getNameInitials } from "@/utils/functions/text";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
   /* ---------------------------------- Utils --------------------------------- */
@@ -195,10 +196,10 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
               {/* My Profile Section */}
               <DropdownMenuItem asChild>
                 <Link
-                  href={`/profile/${currentUser?.role ?? "employee"}`}
+                  href={`/profile/${currentUser?.role ?? USER_ROLE.EMPLOYEE}`}
                   prefetch={true}
                 >
-                  {currentUser?.role === "employee" ? (
+                  {currentUser?.role === USER_ROLE.EMPLOYEE ? (
                     <LucideUser className="text-violet-500" />
                   ) : (
                     <LucideBuilding className="text-violet-500" />

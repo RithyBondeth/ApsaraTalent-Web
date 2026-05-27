@@ -9,6 +9,7 @@ import { useTranslations } from "next-intl";
 import NotificationBaseCard from "../notification-base-card";
 import { useRouter } from "next/navigation";
 import { getNameInitials } from "@/utils/functions/text";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 export default function NotificationMatchCard(
   props: INotificationMatchCardProps,
@@ -32,7 +33,7 @@ export default function NotificationMatchCard(
       timestamp={props.timestamp}
       title={t("newMatch")}
       description={
-        props.role === "employee"
+        props.role === USER_ROLE.EMPLOYEE
           ? t("matchedWithEmployee", {
               name: props.user.name,
               position: props.user.position ?? "",
@@ -67,7 +68,7 @@ export default function NotificationMatchCard(
               </TypographySmall>
               {(props.user.position || props.user.industry) && (
                 <TypographySmall className="text-[10px] text-muted-foreground line-clamp-1">
-                  {props.role === "employee"
+                  {props.role === USER_ROLE.EMPLOYEE
                     ? props.user.industry
                     : props.user.position}
                 </TypographySmall>

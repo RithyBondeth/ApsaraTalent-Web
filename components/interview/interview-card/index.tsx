@@ -16,6 +16,7 @@ import { useTranslations } from "next-intl";
 import { IInterviewCardProps } from "./props";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { AiInterviewPrepModal } from "@/components/matching/ai-interview-prep-modal";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 export function InterviewCard({
   interview,
@@ -26,7 +27,8 @@ export function InterviewCard({
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("interview");
   const isCreator =
-    interview.createdBy === (isEmployee ? "employee" : "company");
+    interview.createdBy ===
+    (isEmployee ? USER_ROLE.EMPLOYEE : USER_ROLE.COMPANY);
   const showActions = interview.status === "pending" && !isCreator;
   const otherPartyName = isEmployee
     ? (interview.company?.name ?? "Company")

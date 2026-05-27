@@ -6,11 +6,13 @@ import { useNotificationStore } from "@/stores/apis/notification/notification.st
 import { useInterviewStore } from "@/stores/apis/matching/interview.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { normalizeMediaUrl } from "@/utils/functions/media";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 function refetchInterviews() {
   const user = useGetCurrentUserStore.getState().user;
   const role = user?.role;
-  const id = role === "employee" ? user?.employee?.id : user?.company?.id;
+  const id =
+    role === USER_ROLE.EMPLOYEE ? user?.employee?.id : user?.company?.id;
   if (role && id) {
     void useInterviewStore.getState().queryInterviews(id, role);
   }

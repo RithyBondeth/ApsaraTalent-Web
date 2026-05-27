@@ -1,4 +1,5 @@
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 import { IUser } from "@/utils/interfaces/user/user.interface";
 import { useEffect, useMemo, useRef } from "react";
 
@@ -42,9 +43,9 @@ export function useFetchOnce(
 
   const userData = useMemo(() => {
     const employee =
-      currentUser?.role === "employee" ? currentUser.employee : null;
+      currentUser?.role === USER_ROLE.EMPLOYEE ? currentUser.employee : null;
     const company =
-      currentUser?.role === "company" ? currentUser.company : null;
+      currentUser?.role === USER_ROLE.COMPANY ? currentUser.company : null;
 
     const currentUserId = employee?.id ?? company?.id;
 

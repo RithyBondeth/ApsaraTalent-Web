@@ -22,6 +22,7 @@ import { emptySvg, favoriteBannerSvg } from "@/utils/constants/asset.constant";
 import { FavoriteLoadingSkeleton } from "@/components/favorite/skeleton";
 import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
 import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 interface Props {
   initialIsEmployee: boolean;
@@ -58,7 +59,7 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
   const [removingFavIds, setRemovingFavIds] = useState<Set<string>>(new Set());
 
   // User Role
-  const isEmployee = currentUser?.role === "employee";
+  const isEmployee = currentUser?.role === USER_ROLE.EMPLOYEE;
   const skeletonIsEmployee = initialIsEmployee;
 
   /* --------------------------------- Effects --------------------------------- */

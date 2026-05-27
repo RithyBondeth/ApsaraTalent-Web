@@ -31,6 +31,7 @@ import LogoComponent from "@/components/utils/brand/logo";
 import DesktopNavItem from "./desktop-nav-item";
 import MobileTabItem from "./mobile-tab-item";
 import MoreSheetItem from "./more-sheet-item";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 export default function TopNavbar() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -75,12 +76,12 @@ export default function TopNavbar() {
     onEmployeeFetch: (id) => {
       countCurrentEmpMatching(id);
       countCurrentEmpFavorites(id);
-      queryInterviews(id, "employee");
+      queryInterviews(id, USER_ROLE.EMPLOYEE);
     },
     onCompanyFetch: (id) => {
       countCurrentCmpMatching(id);
       countCurrentCmpFavorites(id);
-      queryInterviews(id, "company");
+      queryInterviews(id, USER_ROLE.COMPANY);
     },
   });
   // Fetch Unread Notification

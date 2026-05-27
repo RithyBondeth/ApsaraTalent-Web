@@ -1,12 +1,13 @@
 import { FeedBannerSkeleton } from "@/components/feed/skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 export default function InterviewLoadingSkeleton({
   role,
 }: {
   role?: "employee" | "company";
 }) {
-  const isCompany = role === "company";
+  const isCompany = role === USER_ROLE.COMPANY;
 
   return (
     <div className="w-full flex flex-col gap-4 px-2.5 sm:px-5">

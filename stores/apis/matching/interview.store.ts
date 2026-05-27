@@ -6,6 +6,7 @@ import {
   API_GET_INTERVIEWS_BY_EMPLOYEE_URL,
   API_UPDATE_INTERVIEW_STATUS_URL,
 } from "@/utils/constants/apis/matching.api.constant";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 import {
   ICreateInterviewPayload,
   IInterview,
@@ -36,7 +37,7 @@ export const useInterviewStore = create<InterviewStoreState>((set) => ({
 
     try {
       const url =
-        role === "employee"
+        role === USER_ROLE.EMPLOYEE
           ? API_GET_INTERVIEWS_BY_EMPLOYEE_URL(id)
           : API_GET_INTERVIEWS_BY_COMPANY_URL(id);
 

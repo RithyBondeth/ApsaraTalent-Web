@@ -35,6 +35,7 @@ import { SidebarDropdownFooter } from "./sidebar-dropdown-footer";
 import { SidebarDropdownFooterSkeleton } from "../skeleton";
 import FloatingBadge from "./badge/floating-badge";
 import CountBadge from "./badge/count-badge";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 /* ---------------------------------- Helper --------------------------------- */
 /* ─────────────────────────────────────────────────────────────────────────
@@ -127,12 +128,12 @@ export default function CollapseSidebar({
     onEmployeeFetch: (employeeId) => {
       countCurrentEmpMatching(employeeId);
       countCurrentEmpFavorites(employeeId);
-      queryInterviews(employeeId, "employee");
+      queryInterviews(employeeId, USER_ROLE.EMPLOYEE);
     },
     onCompanyFetch: (companyId) => {
       countCurrentCmpMatching(companyId);
       countCurrentCmpFavorites(companyId);
-      queryInterviews(companyId, "company");
+      queryInterviews(companyId, USER_ROLE.COMPANY);
     },
   });
 
