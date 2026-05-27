@@ -56,7 +56,10 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { EmployeeDetailPageLoadingSkeleton } from "@/components/employee/skeleton";
-import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
+import {
+  DEFAULT_REDIRECT_DELAY_MS,
+  LIKE_DEBOUNCE_MS,
+} from "@/utils/constants/config.constant";
 import { useFeedActionEffect } from "@/components/utils/effects/feed-action-effect";
 import MetaChip from "@/components/utils/data-display/meta-chip";
 import { DetailCard } from "@/components/utils/data-display/detail-card";
@@ -134,7 +137,7 @@ export default function EmployeeDetailPage() {
   useEffect(() => {
     if (openProfilePopup) {
       ignoreNextClick.current = true;
-      setTimeout(() => (ignoreNextClick.current = false), 200);
+      setTimeout(() => (ignoreNextClick.current = false), LIKE_DEBOUNCE_MS);
     }
   }, [openProfilePopup]);
 

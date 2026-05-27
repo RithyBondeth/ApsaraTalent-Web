@@ -1,7 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { flushSync } from "react-dom";
+import { useDownloadProgress } from "@/hooks/utils/use-download-progress";
+import { downloadBase64File } from "@/utils/functions/file";
 import { useInterviewPrepPdfStore } from "@/stores/apis/resume/interview-prep-pdf.store";
 import { Button } from "@/components/ui/button";
 import {
@@ -42,8 +44,11 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
   const [error, setError] = useState<string | null>(null);
 
   const [downloading, setDownloading] = useState<boolean>(false);
-  const [dlProgress, setDlProgress] = useState<number>(0);
-  const progressTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const {
+    progress: dlProgress,
+    start: startProgress,
+    stop: stopProgress,
+  } = useDownloadProgress();
 
   /* ----------------------- API Integration ----------------------- */
   const { generateInterviewPrepPdf } = useInterviewPrepPdfStore();
@@ -123,27 +128,6 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
     streamPrep();
   };
 
-  // ── Handle Start Progress ────────────────────────
-  const startProgress = (cap = 92) => {
-    setDlProgress(0);
-    let current = 0;
-    progressTimerRef.current = setInterval(() => {
-      const inc = Math.max(0.5, (cap - current) * 0.04);
-      current = Math.min(cap, current + inc);
-      setDlProgress(current);
-      if (current >= cap) clearInterval(progressTimerRef.current!);
-    }, 300);
-  };
-
-  // ── Handle Stop Progress ──────────────────────────
-  const stopProgress = (v = 100) => {
-    if (progressTimerRef.current) {
-      clearInterval(progressTimerRef.current);
-      progressTimerRef.current = null;
-    }
-    setDlProgress(v);
-  };
-
   // ── Handle Download PDF ───────────────────────────
   const handleDownloadPdf = async () => {
     if (!questions.length) return;
@@ -158,19 +142,7 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
       stopProgress(100);
       await new Promise((r) => setTimeout(r, 400));
       const { data: b64, mimeType, filename } = res;
-      const bytes = new Uint8Array(
-        Array.from(atob(b64), (c) => c.charCodeAt(0)),
-      );
-      const blob = new Blob([bytes], { type: mimeType });
-      const a = document.createElement("a");
-      const url = window.URL.createObjectURL(blob);
-      a.href = url;
-      a.download = filename || "interview-prep.pdf";
-      a.style.display = "none";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
+      downloadBase64File(b64, mimeType, filename || "interview-prep.pdf");
     } catch {
       stopProgress(0);
     } finally {

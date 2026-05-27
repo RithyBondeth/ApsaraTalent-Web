@@ -812,6 +812,7 @@ export const careerScopesListConstant: {
 ] as const;
 
 export const MOBILE_BREAKPOINT = 768;
+export const AVATAR_INITIALS_LENGTH = 2;
 
 export const HOOK_TEXT_SELECTION_HIDDEN_STATE = {
   isVisible: false,

@@ -60,7 +60,10 @@ import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/cou
 import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store";
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
+import {
+  DEFAULT_REDIRECT_DELAY_MS,
+  LIKE_DEBOUNCE_MS,
+} from "@/utils/constants/config.constant";
 import { useFeedActionEffect } from "@/components/utils/effects/feed-action-effect";
 import MetaChip from "@/components/utils/data-display/meta-chip";
 import { DetailCard } from "@/components/utils/data-display/detail-card";
@@ -143,7 +146,7 @@ export default function CompanyDetailPage() {
   useEffect(() => {
     if (openProfilePopup) {
       ignoreNextClick.current = true;
-      setTimeout(() => (ignoreNextClick.current = false), 200);
+      setTimeout(() => (ignoreNextClick.current = false), LIKE_DEBOUNCE_MS);
     }
   }, [openProfilePopup]);
 

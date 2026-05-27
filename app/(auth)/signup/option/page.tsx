@@ -26,6 +26,7 @@ import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
 import { userRoleConstant } from "@/utils/constants/ui.constant";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 import { TUserRole } from "@/utils/types/auth/role.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LucideArrowLeft, LucideArrowRight, LucideUsers } from "lucide-react";
@@ -100,7 +101,7 @@ export default function SingUpOption() {
   const onSubmit = (data: TSignupOptionSchema) => {
     commitRole(data.selectedRole);
 
-    if (data.selectedRole === "employee") {
+    if (data.selectedRole === USER_ROLE.EMPLOYEE) {
       // Show the smart resume dialog — navigation happens inside it
       setShowResumeDialog(true);
     } else {
@@ -136,7 +137,7 @@ export default function SingUpOption() {
                 <SelectContent>
                   {userRoleConstant.map((role) => (
                     <SelectItem key={role.id} value={role.value}>
-                      {role.value === "employee"
+                      {role.value === USER_ROLE.EMPLOYEE
                         ? t("signupOptionRoleEmployee")
                         : t("signupOptionRoleCompany")}
                     </SelectItem>

@@ -15,6 +15,7 @@ import {
 } from "./socket-manager";
 import { registerSocketListeners } from "./socket-listeners";
 import { TChatState } from "./types";
+import { CHAT_MESSAGE_FETCH_LIMIT } from "@/utils/constants/chat.constant";
 
 /* ---------------------------------- Store ────────────────────────────────-- */
 export const useChatStore = create<TChatState>((set, get) => ({
@@ -176,7 +177,7 @@ export const useChatStore = create<TChatState>((set, get) => ({
 
     socket.emit(
       "getChatHistory",
-      { userId2, limit: 50 },
+      { userId2, limit: CHAT_MESSAGE_FETCH_LIMIT },
       (
         res:
           | { messages: any[]; partnerId: string; partnerProfile: any }

@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { IChatHeaderProps } from "./props";
 import { useTranslations } from "next-intl";
+import { getNameInitials } from "@/utils/functions/text";
 
 export default function ChatHeader(props: IChatHeaderProps) {
   /* --------------------------------- Props --------------------------------- */
@@ -34,12 +35,7 @@ export default function ChatHeader(props: IChatHeaderProps) {
   const sidebarToggleLabel = isSidebarOpen
     ? t("collapseSidebar")
     : t("expandSidebar");
-  const avatarInitials = chat.name
-    .split(" ")
-    .map((namePart) => namePart[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+  const avatarInitials = getNameInitials(chat.name);
 
   /* -------------------------------- Render UI -------------------------------- */
   return (

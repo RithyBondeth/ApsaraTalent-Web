@@ -18,6 +18,7 @@ import { DashboardLoadingSkeleton } from "@/components/dashboard/skeleton";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { matchingBannerSvg } from "@/utils/constants/asset.constant";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import {
   getEmployeeProfileCompletion,
@@ -60,9 +61,9 @@ export default function DashboardPage() {
 
     const role = user.role;
     const id =
-      role === "employee"
+      role === USER_ROLE.EMPLOYEE
         ? user.employee?.id
-        : role === "company"
+        : role === USER_ROLE.COMPANY
           ? user.company?.id
           : null;
 
@@ -72,18 +73,18 @@ export default function DashboardPage() {
     }
   }, [user, queryAnalytics]);
 
-  const isEmployee = user?.role === "employee";
+  const isEmployee = user?.role === USER_ROLE.EMPLOYEE;
 
   const profileCompletion = useMemo(() => {
     if (!user) return null;
-    if (user.role === "employee" && user.employee)
+    if (user.role === USER_ROLE.EMPLOYEE && user.employee)
       return getEmployeeProfileCompletion(user.employee);
-    if (user.role === "company" && user.company)
+    if (user.role === USER_ROLE.COMPANY && user.company)
       return getCompanyProfileCompletion(user.company);
     return null;
   }, [user]);
 
-  const profileUrl = `/profile/${user?.role ?? "employee"}`;
+  const profileUrl = `/profile/${user?.role ?? USER_ROLE.EMPLOYEE}`;
 
   /* ---------------------------- Loading State ------------------------------ */
   if (loading || !data) return <DashboardLoadingSkeleton />;

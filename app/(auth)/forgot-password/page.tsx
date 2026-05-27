@@ -22,7 +22,10 @@ import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { makeForgotPasswordSchema, TForgotPasswordForm } from "./validate";
 import { forgotPasswordSvg } from "@/utils/constants/asset.constant";
-import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
+import {
+  DEFAULT_REDIRECT_DELAY_MS,
+  TOAST_DURATION_MS,
+} from "@/utils/constants/config.constant";
 
 export default function ForgotPasswordPage() {
   /* ---------------------------------- Utils -------------------------------- */
@@ -82,7 +85,9 @@ export default function ForgotPasswordPage() {
 
     if (!loading && !error && message) {
       toast.dismiss();
-      toast.success(t("forgotPasswordEmailSent"), { duration: 1000 });
+      toast.success(t("forgotPasswordEmailSent"), {
+        duration: TOAST_DURATION_MS.SHORT,
+      });
       setTimeout(
         () => router.replace("/reset-password"),
         DEFAULT_REDIRECT_DELAY_MS,

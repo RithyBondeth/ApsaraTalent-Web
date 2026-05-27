@@ -11,3 +11,14 @@ export const ACCEPTED_FILE_TYPES: string[] = [
 /* -------------------------------- Timeouts -------------------------------- */
 export const RESUME_GENERATION_TIMEOUT_MS = 180000;
 export const DEFAULT_REDIRECT_DELAY_MS = 1000;
+export const LIKE_DEBOUNCE_MS = 200;
+
+/* --------------------------------- Toasts --------------------------------- */
+export const TOAST_DURATION_MS = {
+  SHORT: 1000,
+  MEDIUM: 1500,
+} as const;
+
+/* ------------------------------- Pagination ------------------------------- */
+export const FEED_PAGE_SIZE = 9;
+export const NOTIFICATION_PAGE_SIZE = 20;

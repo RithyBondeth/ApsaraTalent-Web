@@ -18,7 +18,10 @@ import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { makePhoneLoginSchema, TPhoneLoginForm } from "./validation";
 import { phoneNumberSvg } from "@/utils/constants/asset.constant";
-import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
+import {
+  DEFAULT_REDIRECT_DELAY_MS,
+  TOAST_DURATION_MS,
+} from "@/utils/constants/config.constant";
 
 export default function PhoneNumberPage() {
   /* ----------------------------------- Utils -------------------------------- */
@@ -86,7 +89,7 @@ export default function PhoneNumberPage() {
 
     if (isSuccess) {
       toast.dismiss();
-      toast.success(t("otpSent"), { duration: 1000 });
+      toast.success(t("otpSent"), { duration: TOAST_DURATION_MS.SHORT });
       setTimeout(() => router.replace(phoneOtpHref), DEFAULT_REDIRECT_DELAY_MS);
     }
 

@@ -27,6 +27,7 @@ import {
   notificationEmptySvg,
   notificationBannerSvg,
 } from "@/utils/constants/asset.constant";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 import NotificationLoadingSkeleton, {
   NotificationCardSkeleton,
 } from "@/components/notification/skeleton";
@@ -59,7 +60,7 @@ function parseSenderNameFromMessage(
 function resolveNotificationUser(notification: INotification, role: string) {
   const id =
     (notification.data?.senderId as string) ??
-    (role === "employee"
+    (role === USER_ROLE.EMPLOYEE
       ? (notification.data?.companyId as string)
       : (notification.data?.employeeId as string)) ??
     "";
@@ -103,7 +104,7 @@ export default function NotificationPage() {
   const [notificationFilter, setNotificationFilter] =
     useState<TNotificationFilterType>("all");
 
-  const role = user?.role ?? "employee";
+  const role = user?.role ?? USER_ROLE.EMPLOYEE;
 
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => setMounted(true), []);

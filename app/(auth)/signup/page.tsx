@@ -44,6 +44,7 @@ import {
   TBasicSignupEmployeeSchema,
 } from "./validation";
 import { formatDateForField } from "@/utils/functions/date";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 export default function SignupPage() {
   /* --------------------------------- Utils --------------------------------- */
@@ -115,7 +116,7 @@ export default function SignupPage() {
       facebookUserData.role,
     ],
   );
-  const isEmployeeForm = selectedRole === "employee";
+  const isEmployeeForm = selectedRole === USER_ROLE.EMPLOYEE;
 
   /* ----------------------- React Hook Form: Emp and Cmp Signup Form ---------------------- */
   const signupMessages = useMemo(
@@ -205,7 +206,7 @@ export default function SignupPage() {
     const payload = {
       ...basicSignupData,
       ...data,
-      selectedRole: "employee" as const,
+      selectedRole: USER_ROLE.EMPLOYEE,
       phone: data.phone ?? undefined,
     };
 
@@ -220,7 +221,7 @@ export default function SignupPage() {
     const payload = {
       ...basicSignupData,
       ...data,
-      selectedRole: "company" as const,
+      selectedRole: USER_ROLE.COMPANY,
       phone: data.phone ?? undefined,
     };
 

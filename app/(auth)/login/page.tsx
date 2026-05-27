@@ -59,7 +59,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { makeLoginSchema, TLoginForm } from "./validation";
 import { loginSvg } from "@/utils/constants/asset.constant";
-import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
+import {
+  DEFAULT_REDIRECT_DELAY_MS,
+  TOAST_DURATION_MS,
+} from "@/utils/constants/config.constant";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 import {
   InputOTP,
   InputOTPGroup,
@@ -195,14 +199,17 @@ function LoginPage() {
           const userData = useGetCurrentUserStore.getState().user;
 
           if (userData) {
-            if (userData.role === "employee" && userData.employee?.id) {
+            if (userData.role === USER_ROLE.EMPLOYEE && userData.employee?.id) {
               await Promise.all([
                 queryCurrentEmployeeLiked(userData.employee.id),
                 queryAllEmployeeFavorites(userData.employee.id),
                 queryEmployeeRecommendations(userData.employee.id),
                 queryCompany(),
               ]);
-            } else if (userData.role === "company" && userData.company?.id) {
+            } else if (
+              userData.role === USER_ROLE.COMPANY &&
+              userData.company?.id
+            ) {
               await Promise.all([
                 queryCurrentCompanyLiked(userData.company.id),
                 queryAllCompanyFavorites(userData.company.id),
@@ -255,10 +262,12 @@ function LoginPage() {
     clearTwoFactorPending();
     preloadUserData()
       .then(() => {
-        toast.success(t("successLoggedIn"), { duration: 1000 });
+        toast.success(t("successLoggedIn"), {
+          duration: TOAST_DURATION_MS.SHORT,
+        });
       })
       .catch(() => {
-        toast.error(t("loginFailed"), { duration: 1000 });
+        toast.error(t("loginFailed"), { duration: TOAST_DURATION_MS.SHORT });
       })
       .finally(() => {
         setTimeout(() => {
@@ -326,7 +335,7 @@ function LoginPage() {
       })
       .catch((error) => {
         console.error("Error preloading user data: ", error);
-        toast.error(String(error), { duration: 1000 });
+        toast.error(String(error), { duration: TOAST_DURATION_MS.SHORT });
       })
       .finally(() => {
         setTimeout(() => {
@@ -441,11 +450,13 @@ function LoginPage() {
       preloadUserData()
         .then(() => {
           console.log("User data preloaded successfully");
-          toast.success(t("successLoggedIn"), { duration: 1000 });
+          toast.success(t("successLoggedIn"), {
+            duration: TOAST_DURATION_MS.SHORT,
+          });
         })
         .catch((error) => {
           console.error("Error preloading user data:", error);
-          toast.error(String(error), { duration: 1000 });
+          toast.error(String(error), { duration: TOAST_DURATION_MS.SHORT });
         })
         .finally(() => {
           setTimeout(() => {
@@ -465,7 +476,9 @@ function LoginPage() {
       setIsPreloadingData(false);
       toast.dismiss();
       setSocialLoginInitiated(false);
-      toast.info(t("pleaseRegisterFirst"), { duration: 1500 });
+      toast.info(t("pleaseRegisterFirst"), {
+        duration: TOAST_DURATION_MS.MEDIUM,
+      });
 
       setTimeout(() => {
         toast.dismiss();

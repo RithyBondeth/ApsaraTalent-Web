@@ -8,6 +8,7 @@ import {
   API_MARK_ALL_NOTIFICATIONS_READ_URL,
   API_MARK_NOTIFICATION_READ_URL,
 } from "@/utils/constants/apis/notification.api.constant";
+import { NOTIFICATION_PAGE_SIZE } from "@/utils/constants/config.constant";
 import { INotification } from "@/utils/interfaces/notification/notification.interface";
 import { create } from "zustand";
 
@@ -62,7 +63,7 @@ export const useNotificationStore = create<TNotificationState>((set, get) => ({
   notifications: [],
   total: 0,
   page: 1,
-  limit: 20,
+  limit: NOTIFICATION_PAGE_SIZE,
   unreadCount: 0,
 
   queryNotifications: async (params = {}) => {

@@ -14,6 +14,7 @@ import InterviewLoadingSkeleton from "@/components/interview/skeleton";
 import { InterviewCard } from "@/components/interview/interview-card";
 import { CreateInterviewDialog } from "@/components/interview/create-interview-dialog";
 import { emptySvg, interviewBannerSvg } from "@/utils/constants/asset.constant";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 import Image from "next/image";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 
@@ -77,7 +78,7 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
   if (isLoading)
     return (
       <InterviewLoadingSkeleton
-        role={initialIsEmployee ? "employee" : "company"}
+        role={initialIsEmployee ? USER_ROLE.EMPLOYEE : USER_ROLE.COMPANY}
       />
     );
 

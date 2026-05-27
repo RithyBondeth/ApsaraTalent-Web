@@ -29,7 +29,11 @@ import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { phoneOTPSvg } from "@/utils/constants/asset.constant";
-import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
+import {
+  DEFAULT_REDIRECT_DELAY_MS,
+  TOAST_DURATION_MS,
+} from "@/utils/constants/config.constant";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 export default function PhoneOTPPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -99,14 +103,17 @@ export default function PhoneOTPPage() {
           const userData = useGetCurrentUserStore.getState().user;
 
           if (userData) {
-            if (userData.role === "employee" && userData.employee?.id) {
+            if (userData.role === USER_ROLE.EMPLOYEE && userData.employee?.id) {
               await Promise.all([
                 queryCurrentEmployeeLiked(userData.employee.id),
                 queryAllEmployeeFavorites(userData.employee.id),
                 queryEmployeeRecommendations(userData.employee.id),
                 queryCompany(),
               ]);
-            } else if (userData.role === "company" && userData.company?.id) {
+            } else if (
+              userData.role === USER_ROLE.COMPANY &&
+              userData.company?.id
+            ) {
               await Promise.all([
                 queryCurrentCompanyLiked(userData.company.id),
                 queryAllCompanyFavorites(userData.company.id),
@@ -204,14 +211,14 @@ export default function PhoneOTPPage() {
           console.log("User data preload successfully in otp page");
           toast.dismiss(loadingId);
           toast.success(t("successLoggedIn"), {
-            duration: 1000,
+            duration: TOAST_DURATION_MS.SHORT,
           });
         })
         .catch((error) => {
           console.error("Error preloading user data: ", error);
           toast.dismiss(loadingId);
           toast.error(otpMessage ?? String(error), {
-            duration: 1000,
+            duration: TOAST_DURATION_MS.SHORT,
           });
         })
         .finally(() => {

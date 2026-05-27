@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useDownloadProgress } from "@/hooks/utils/use-download-progress";
+import { downloadBase64File } from "@/utils/functions/file";
 import { useForm, useWatch } from "react-hook-form";
 import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
 import { LIVE_RESUME_PREVIEW_DEBOUNCE_MS } from "@/utils/constants/resume.constant";
@@ -58,8 +60,11 @@ export default function ResumeEditorPage() {
 
   // Download progress states
   const [downloading, setDownloading] = useState<boolean>(false);
-  const [dlProgress, setDlProgress] = useState<number>(0);
-  const progressTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const {
+    progress: dlProgress,
+    start: startProgress,
+    stop: stopProgress,
+  } = useDownloadProgress();
 
   /* ------------------------------ React Hook Form --------------------------- */
   const { register, control, getValues, setValue, reset } =
@@ -123,26 +128,6 @@ export default function ResumeEditorPage() {
   }, [watchedValues]);
 
   /* --------------------------------- Methods --------------------------------- */
-  // ── Download Progress ─────────────────────────────────────────
-  const startProgress = (cap = 95) => {
-    setDlProgress(0);
-    let current = 0;
-    progressTimerRef.current = setInterval(() => {
-      const increment = Math.max(0.4, (cap - current) * 0.035);
-      current = Math.min(cap, current + increment);
-      setDlProgress(current);
-      if (current >= cap) clearInterval(progressTimerRef.current!);
-    }, 300);
-  };
-
-  const stopProgress = (finalValue = 100) => {
-    if (progressTimerRef.current) {
-      clearInterval(progressTimerRef.current);
-      progressTimerRef.current = null;
-    }
-    setDlProgress(finalValue);
-  };
-
   // ── Handle Download ─────────────────────────────────────────
   const handleDownload = async () => {
     const raw = getValues() as IBuildResume;
@@ -159,22 +144,11 @@ export default function ResumeEditorPage() {
       stopProgress(100);
       await new Promise((r) => setTimeout(r, 500));
 
-      const byteCharacters = atob(result.data);
-      const byteNumbers = Array.from(
-        { length: byteCharacters.length },
-        (_, i) => byteCharacters.charCodeAt(i),
+      downloadBase64File(
+        result.data,
+        result.mimeType,
+        result.filename || "resume.pdf",
       );
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: result.mimeType });
-      const link = document.createElement("a");
-      const objectUrl = window.URL.createObjectURL(blob);
-      link.href = objectUrl;
-      link.download = result.filename || "resume.pdf";
-      link.style.display = "none";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(objectUrl);
 
       toast.success(t("resumeDownloaded"), {
         description: t("resumeSavedToDownloads"),

@@ -23,7 +23,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { makeCompanySignupSchema, TCompanySignup } from "./validation";
-import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
+import {
+  DEFAULT_REDIRECT_DELAY_MS,
+  TOAST_DURATION_MS,
+} from "@/utils/constants/config.constant";
 
 export default function CompanySignup() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -303,7 +306,7 @@ export default function CompanySignup() {
     ) {
       toast.dismiss();
       toast.success(t("signupSuccessful"), {
-        duration: 1000,
+        duration: TOAST_DURATION_MS.SHORT,
       });
       setTimeout(() => router.replace("/login"), DEFAULT_REDIRECT_DELAY_MS);
     }

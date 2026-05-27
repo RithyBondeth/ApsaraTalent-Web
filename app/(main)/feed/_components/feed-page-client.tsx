@@ -42,6 +42,10 @@ import {
   feedCompanyBannerSvg,
   feedEmployeeBannerSvg,
 } from "@/utils/constants/asset.constant";
+import {
+  FEED_PAGE_SIZE,
+  LIKE_DEBOUNCE_MS,
+} from "@/utils/constants/config.constant";
 import CompanyCardSkeleton from "@/components/company/skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -67,7 +71,6 @@ const fetchInitiated = {
   employees: false,
 };
 
-const PAGE_SIZE = 9;
 const FEED_CARD_GRID_CLASS =
   "w-full pt-2 grid grid-cols-3 gap-4 items-stretch laptop-sm:grid-cols-2 tablet-lg:!grid-cols-1 stagger-list [&>*]:min-w-0 [&>*]:h-full";
 
@@ -87,7 +90,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
   const [recsHasFetched, setRecsHasFetched] = useState<boolean>(false);
 
   // Infinite scroll
-  const [visibleCount, setVisibleCount] = useState<number>(PAGE_SIZE);
+  const [visibleCount, setVisibleCount] = useState<number>(FEED_PAGE_SIZE);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   // Liked helper
@@ -317,7 +320,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
 
   // Reset visible count when the feed data source changes
   useEffect(() => {
-    setVisibleCount(PAGE_SIZE);
+    setVisibleCount(FEED_PAGE_SIZE);
   }, [isEmployee]);
 
   // Infinite scroll — reveal more cards when sentinel enters the viewport
@@ -328,7 +331,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
-          setVisibleCount((prev) => prev + PAGE_SIZE);
+          setVisibleCount((prev) => prev + FEED_PAGE_SIZE);
         }
       },
       { rootMargin: "200px" },
@@ -342,7 +345,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
   useEffect(() => {
     if (openProfilePopup) {
       ignoreNextClick.current = true;
-      setTimeout(() => (ignoreNextClick.current = false), 200);
+      setTimeout(() => (ignoreNextClick.current = false), LIKE_DEBOUNCE_MS);
     }
   }, [openProfilePopup]);
 
@@ -831,7 +834,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
       >
         {/* Loading Skeleton Section */}
         {isLoading
-          ? Array.from({ length: PAGE_SIZE }).map((_, index) =>
+          ? Array.from({ length: FEED_PAGE_SIZE }).map((_, index) =>
               skeletonIsEmployee ? (
                 <div
                   key={`company-skeleton-${index}`}

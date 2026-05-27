@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import InterviewLoadingSkeleton from "@/components/interview/skeleton";
 import { getRoleFromJwt } from "@/utils/functions/auth/get-role-from-jwt";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 export default async function InterviewLoading() {
   // Get cookie store
@@ -11,7 +12,11 @@ export default async function InterviewLoading() {
   const role = getRoleFromJwt(token);
   return (
     <InterviewLoadingSkeleton
-      role={role === "employee" || role === "company" ? role : undefined}
+      role={
+        role === USER_ROLE.EMPLOYEE || role === USER_ROLE.COMPANY
+          ? role
+          : undefined
+      }
     />
   );
 }

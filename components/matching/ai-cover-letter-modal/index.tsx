@@ -1,7 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useCoverLetterPdfStore } from "@/stores/apis/resume/cover-letter-pdf.store";
+import { useDownloadProgress } from "@/hooks/utils/use-download-progress";
+import { downloadBase64File } from "@/utils/functions/file";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -61,34 +63,16 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
 
   // Download
   const [downloading, setDownloading] = useState<boolean>(false);
-  const [dlProgress, setDlProgress] = useState<number>(0);
-  const progressTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const {
+    progress: dlProgress,
+    start: startProgress,
+    stop: stopProgress,
+  } = useDownloadProgress();
 
   /* ---------------------- Computed State --------------------- */
   const isBusy = generating || polishing || downloading;
 
   /* ------------------------- Methods ------------------------- */
-  // ── Handle Start Progress ───────────────────
-  const startProgress = (cap = 92) => {
-    setDlProgress(0);
-    let current = 0;
-    progressTimerRef.current = setInterval(() => {
-      const increment = Math.max(0.5, (cap - current) * 0.04);
-      current = Math.min(cap, current + increment);
-      setDlProgress(current);
-      if (current >= cap) clearInterval(progressTimerRef.current!);
-    }, 300);
-  };
-
-  // ── Handle Stop Progress ─────────────────────
-  const stopProgress = (finalValue = 100) => {
-    if (progressTimerRef.current) {
-      clearInterval(progressTimerRef.current);
-      progressTimerRef.current = null;
-    }
-    setDlProgress(finalValue);
-  };
-
   // ── Handle Generate ───────────────────────────
   const generate = async () => {
     setOpen(true);
@@ -185,19 +169,7 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
       await new Promise((r) => setTimeout(r, 400));
 
       const { data, mimeType, filename } = res;
-      const bytes = new Uint8Array(
-        Array.from(atob(data), (c) => c.charCodeAt(0)),
-      );
-      const blob = new Blob([bytes], { type: mimeType });
-      const a = document.createElement("a");
-      const objectUrl = window.URL.createObjectURL(blob);
-      a.href = objectUrl;
-      a.download = filename || "cover-letter.pdf";
-      a.style.display = "none";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(objectUrl);
+      downloadBase64File(data, mimeType, filename || "cover-letter.pdf");
     } catch {
       stopProgress(0);
     } finally {
