@@ -20,7 +20,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { emptySvg, matchingBannerSvg } from "@/utils/constants/asset.constant";
-import { CountUp } from "@/components/utils/animation/count-up";
+import { CountUp } from "@/components/utils/animations/count-up";
 
 interface Props {
   initialIsEmployee: boolean;

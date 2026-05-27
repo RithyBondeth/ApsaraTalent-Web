@@ -2,24 +2,23 @@
 
 import { useEffect, useRef, useState } from "react";
 
-interface CountUpProps {
+export function CountUp({
+  to,
+  duration = 900,
+  className,
+}: {
   to: number;
   duration?: number;
   className?: string;
-}
-
-/**
- * Animates a number from 0 → `to` using a cubic ease-out curve.
- * Re-triggers automatically when `to` changes.
- */
-export function CountUp({ to, duration = 900, className }: CountUpProps) {
-  const [value, setValue] = useState(0);
+}) {
+  /* ------------------------------- All State -------------------------------- */
+  const [value, setValue] = useState<number>(0);
   const rafRef = useRef<number | null>(null);
   const startRef = useRef<number | null>(null);
-  const fromRef = useRef(0);
+  const fromRef = useRef<number>(0);
 
+  /* --------------------------------- Effects -------------------------------- */
   useEffect(() => {
-    // Cancel any in-progress animation
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     startRef.current = null;
     const from = fromRef.current;
@@ -48,5 +47,6 @@ export function CountUp({ to, duration = 900, className }: CountUpProps) {
     };
   }, [to, duration]);
 
+  /* -------------------------------- Render UI ------------------------------- */
   return <span className={className}>{value}</span>;
 }

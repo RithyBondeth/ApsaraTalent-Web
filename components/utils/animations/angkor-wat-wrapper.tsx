@@ -20,18 +20,23 @@ class AngkorWatErrorBoundary extends Component<
   { children: ReactNode },
   TAngkorWatErrorBoundaryState
 > {
+  /* ------------------------------- All State -------------------------------- */
   state: TAngkorWatErrorBoundaryState = {
     hasError: false,
   };
 
+  /* --------------------------------- Methods -------------------------------- */
+  // ── Error Boundary ────────────────────────────────────────
   static getDerivedStateFromError(): TAngkorWatErrorBoundaryState {
     return { hasError: true };
   }
 
+  // ── Error Logging ─────────────────────────────────────────
   componentDidCatch(error: Error) {
     console.error("Angkor Wat scene failed to render:", error);
   }
 
+  /* -------------------------------- Render UI ------------------------------- */
   render() {
     if (this.state.hasError) {
       return (
@@ -59,9 +64,9 @@ class AngkorWatErrorBoundary extends Component<
 export function AngkorWatWrapper() {
   /* -------------------------------- All States ------------------------------ */
   const hostRef = useRef<HTMLDivElement>(null);
-  const [shouldRender, setShouldRender] = useState(false);
+  const [shouldRender, setShouldRender] = useState<boolean>(false);
 
-  /* --------------------------------- Effects --------------------------------- */
+  /* --------------------------------- Effects -------------------------------- */
   useEffect(() => {
     const element = hostRef.current;
     if (!element) return;

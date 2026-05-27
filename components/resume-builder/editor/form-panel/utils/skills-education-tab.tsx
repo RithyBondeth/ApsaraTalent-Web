@@ -36,7 +36,7 @@ export function SkillsEducationTab({
     useAIRefine();
   const { isRefining: eduLoading, refineContent: refineEdu } = useAIRefine();
 
-  /* --------------------------------- Methods --------------------------------- */
+  /* --------------------------------- Methods ------------------------------- */
   // ── Add Skill ───────────────────────────────────────────
   const addSkill = (val?: string) => {
     const trimmed = (val ?? newSkill).trim();
