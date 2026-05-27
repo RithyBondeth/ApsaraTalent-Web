@@ -15,7 +15,6 @@ import {
   LucideMessageCircleQuestion,
   LucideRotateCcw,
   LucideAlertCircle,
-  LucideLightbulb,
   LucideDownload,
   LucideLoader2,
 } from "lucide-react";
@@ -24,120 +23,33 @@ import { IAiInterviewPrepQuestion } from "@/utils/interfaces/resume";
 import { streamFetch } from "@/utils/functions/stream-fetch";
 import { useTranslations } from "next-intl";
 import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
+import { QuestionCard } from "./question-card";
+import { IAiInterviewPrepModalProps } from "./props";
 
-/* ------------------------------------------------------------------ */
-/*  Category chip colours                                                */
-/* ------------------------------------------------------------------ */
-const CHIP: Record<string, string> = {
-  Technical: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
-  Behavioral:
-    "bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300",
-  Situational:
-    "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
-  "Culture Fit":
-    "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300",
-};
-const CHIP_FALLBACK = "bg-muted text-muted-foreground";
+export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
+  /* ---------------------------- Props --------------------------- */
+  const { eid, cid, companyName, interviewTitle } = props;
 
-/* ------------------------------------------------------------------ */
-/*  Single question card                                                  */
-/* ------------------------------------------------------------------ */
-function QuestionCard({
-  item,
-  index,
-  tipLabel,
-}: {
-  item: IAiInterviewPrepQuestion;
-  index: number;
-  tipLabel: string;
-}) {
-  const chip = CHIP[item.category] ?? CHIP_FALLBACK;
-
-  return (
-    <div className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden px-4 py-4 flex flex-col gap-3 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
-      {/* Question */}
-      <div className="flex gap-3">
-        <span className="shrink-0 text-xs font-semibold text-muted-foreground/50 w-5 text-right leading-5 mt-0.5">
-          {index + 1}
-        </span>
-        <div className="flex-1">
-          <span
-            className={`inline-flex text-[11px] font-semibold px-2.5 py-0.5 rounded-full mb-2 ${chip}`}
-          >
-            {item.category}
-          </span>
-          <p className="text-sm font-medium text-foreground leading-relaxed">
-            {item.question}
-          </p>
-          {item.questionKm && (
-            <p className="text-xs text-muted-foreground leading-relaxed mt-1">
-              {item.questionKm}
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* Tip */}
-      <div className="ml-8 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800/30 px-4 py-3">
-        <div className="flex gap-2.5">
-          <LucideLightbulb className="size-4 text-amber-500 shrink-0 mt-0.5" />
-          <div>
-            <p className="text-[11px] font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider mb-1.5">
-              {tipLabel}
-            </p>
-            <p className="text-sm text-foreground/80 leading-relaxed">
-              {item.tip}
-            </p>
-            {item.tipKm && (
-              <p className="text-xs text-muted-foreground leading-relaxed mt-2 pt-2 border-t border-amber-100 dark:border-amber-800/30">
-                {item.tipKm}
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  Props                                                                */
-/* ------------------------------------------------------------------ */
-interface Props {
-  eid: string;
-  cid: string;
-  companyName: string;
-  interviewTitle?: string;
-}
-
-/* ------------------------------------------------------------------ */
-/*  Modal                                                                */
-/* ------------------------------------------------------------------ */
-export function AiInterviewPrepModal({
-  eid,
-  cid,
-  companyName,
-  interviewTitle,
-}: Props) {
+  /* ---------------------------- Utils --------------------------- */
   const t = useTranslations("matching");
 
-  /* ------------------------------------------------------------------ */
-  /*  API                                                                  */
-  /* ------------------------------------------------------------------ */
-  const { generateInterviewPrepPdf } = useInterviewPrepPdfStore();
-
-  const [open, setOpen] = useState(false);
+  /* -------------------------- All States ------------------------ */
+  const [open, setOpen] = useState<boolean>(false);
   /** Questions streamed in so far */
   const [questions, setQuestions] = useState<IAiInterviewPrepQuestion[]>([]);
   /** True while the SSE stream is active */
-  const [generating, setGenerating] = useState(false);
+  const [generating, setGenerating] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [downloading, setDownloading] = useState(false);
-  const [dlProgress, setDlProgress] = useState(0);
+  const [downloading, setDownloading] = useState<boolean>(false);
+  const [dlProgress, setDlProgress] = useState<number>(0);
   const progressTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  /* stream ----------------------------------------------------------- */
+  /* ----------------------- API Integration ----------------------- */
+  const { generateInterviewPrepPdf } = useInterviewPrepPdfStore();
+
+  /* --------------------------- Methods --------------------------- */
+  // ── Handle Stream Questions ──────────────────────
   const streamPrep = async () => {
     setOpen(true);
     setGenerating(true);
@@ -171,9 +83,7 @@ export function AiInterviewPrepModal({
           // bypassing React 18's automatic batching.
           flushSync(() => setQuestions([...received]));
         }
-      } catch {
-        // Incomplete JSON fragment — wait for more chunks
-      }
+      } catch {}
     };
 
     try {
@@ -198,6 +108,7 @@ export function AiInterviewPrepModal({
     setGenerating(false);
   };
 
+  // ── Handle Open Modal ───────────────────────────
   const handleOpen = () => {
     if (questions.length > 0 && !generating) {
       setOpen(true);
@@ -206,12 +117,13 @@ export function AiInterviewPrepModal({
     streamPrep();
   };
 
+  // ── Handle Regenerate ───────────────────────────
   const handleRegenerate = () => {
     setQuestions([]);
     streamPrep();
   };
 
-  /* pdf -------------------------------------------------------------- */
+  // ── Handle Start Progress ────────────────────────
   const startProgress = (cap = 92) => {
     setDlProgress(0);
     let current = 0;
@@ -223,6 +135,7 @@ export function AiInterviewPrepModal({
     }, 300);
   };
 
+  // ── Handle Stop Progress ──────────────────────────
   const stopProgress = (v = 100) => {
     if (progressTimerRef.current) {
       clearInterval(progressTimerRef.current);
@@ -231,6 +144,7 @@ export function AiInterviewPrepModal({
     setDlProgress(v);
   };
 
+  // ── Handle Download PDF ───────────────────────────
   const handleDownloadPdf = async () => {
     if (!questions.length) return;
     setDownloading(true);
@@ -264,12 +178,14 @@ export function AiInterviewPrepModal({
     }
   };
 
+  /* ------------------------------ Computed States ------------------------------ */
   const isBusy = generating || downloading;
   const hasQuestions = questions.length > 0;
 
-  /* render ----------------------------------------------------------- */
+  /* --------------------------------- Render UI --------------------------------- */
   return (
     <>
+      {/* Button To Open Modal Section */}
       <Button
         size="sm"
         variant="outline"
@@ -280,9 +196,10 @@ export function AiInterviewPrepModal({
         {t("interviewPrep")}
       </Button>
 
+      {/* Modal Section */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-2xl flex flex-col p-0 gap-0">
-          {/* ── Header ─────────────────────────────────────────────── */}
+          {/* Header Section */}
           <DialogHeader className="shrink-0 px-5 pt-5 pb-4 border-b border-border/60">
             <div className="flex items-center gap-3 pr-8">
               <div className="size-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
@@ -309,9 +226,9 @@ export function AiInterviewPrepModal({
             </div>
           </DialogHeader>
 
-          {/* ── Scrollable body ─────────────────────────────────────── */}
+          {/* Scrollable Body Section */}
           <div className="overflow-y-auto overscroll-contain max-h-[58vh] px-5 py-4 space-y-3">
-            {/* Full skeleton — while streaming AND no questions yet */}
+            {/* Full Skeleton Section: While Streaming AND No Questions Yet */}
             {generating &&
               !hasQuestions &&
               [...Array(5)].map((_, i) => (
@@ -331,7 +248,7 @@ export function AiInterviewPrepModal({
                 </div>
               ))}
 
-            {/* Error (only shown if no questions at all) */}
+            {/* Error Section (Only Shown if No Questions At All) */}
             {error && !generating && !hasQuestions && (
               <div className="flex flex-col items-center gap-4 py-16 text-center">
                 <div className="size-14 rounded-2xl bg-destructive/10 flex items-center justify-center">
@@ -357,7 +274,7 @@ export function AiInterviewPrepModal({
               </div>
             )}
 
-            {/* Questions (progressively revealed as the stream arrives) */}
+            {/* Questions Section (Progressively Revealed As The Stream Arrives) */}
             {hasQuestions &&
               questions.map((q, i) => (
                 <QuestionCard
@@ -368,7 +285,7 @@ export function AiInterviewPrepModal({
                 />
               ))}
 
-            {/* Subtle "generating more..." indicator when streaming with questions */}
+            {/* Subtle Section: "Generating More..." Indicator When Streaming With Questions */}
             {generating && hasQuestions && (
               <div className="flex items-center gap-2 py-2 px-4 text-xs text-primary">
                 <LucideLoader2 className="size-3.5 animate-spin shrink-0" />
@@ -377,7 +294,7 @@ export function AiInterviewPrepModal({
             )}
           </div>
 
-          {/* ── Footer ─────────────────────────────────────────────── */}
+          {/* Footer Section */}
           {!error && (
             <div className="shrink-0 px-5 py-4 border-t border-border/60 bg-muted/20 flex items-center justify-between gap-3">
               {generating && !hasQuestions ? (
@@ -419,6 +336,7 @@ export function AiInterviewPrepModal({
         </DialogContent>
       </Dialog>
 
+      {/* Loading Dialog Section */}
       <LoadingDialog
         loading={downloading}
         title={t("interviewPrepPdfGenerating")}

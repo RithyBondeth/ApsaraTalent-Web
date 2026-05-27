@@ -26,69 +26,49 @@ import {
 } from "@/utils/constants/apis/resume.api.constant";
 import { streamFetch } from "@/utils/functions/stream-fetch";
 import { useTranslations } from "next-intl";
+import { IAiCoverLetterModalProps } from "./props";
+import {
+  COVER_LETTER_STYLES,
+  TCoverLetterStyle,
+} from "@/utils/constants/matching.comstant";
 
-/* ------------------------------------------------------------------ */
-/*  Types                                                                */
-/* ------------------------------------------------------------------ */
-type TCoverLetterStyle = "classic" | "modern" | "minimal" | "bold";
-
-const STYLES: { id: TCoverLetterStyle; label: string }[] = [
-  { id: "classic", label: "Classic" },
-  { id: "modern", label: "Modern" },
-  { id: "minimal", label: "Minimal" },
-  { id: "bold", label: "Bold" },
-];
-
-/* ------------------------------------------------------------------ */
-/*  Props                                                                */
-/* ------------------------------------------------------------------ */
-interface Props {
-  employeeName: string;
-  employeeJob?: string;
-  employeeSkills: string[];
-  employeeExperience?: string;
-  employeeDescription?: string;
-  companyName: string;
-  companyIndustry?: string;
-  companyDescription?: string;
-  openPositions: string[];
-  /** When true the trigger shows icon-only on mobile (< sm) and full label on sm+. */
-  compact?: boolean;
-}
-
-export function AiCoverLetterModal(props: Props) {
+export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
+  /* -------------------------- Utils -------------------------- */
   const t = useTranslations("matching");
 
-  /* ------------------------------------------------------------------ */
-  /*  API                                                                  */
-  /* ------------------------------------------------------------------ */
+  /* --------------------- API Integration --------------------- */
   const { generateCoverLetterPdf } = useCoverLetterPdfStore();
 
-  /* ------------------------------------------------------------------ */
-  /*  State                                                                */
-  /* ------------------------------------------------------------------ */
-  const [open, setOpen] = useState(false);
+  /* ------------------------ All States ----------------------- */
+  // Modal
+  const [open, setOpen] = useState<boolean>(false);
 
-  const [generating, setGenerating] = useState(false);
+  // Generate
+  const [generating, setGenerating] = useState<boolean>(false);
   const [coverLetter, setCoverLetter] = useState<string | null>(null);
   const [genError, setGenError] = useState<string | null>(null);
 
-  const [polishing, setPolishing] = useState(false);
+  // Polish
+  const [polishing, setPolishing] = useState<boolean>(false);
   const [polishError, setPolishError] = useState<string | null>(null);
 
+  // Style
   const [selectedStyle, setSelectedStyle] =
     useState<TCoverLetterStyle>("classic");
-  const [copied, setCopied] = useState(false);
 
-  const [downloading, setDownloading] = useState(false);
-  const [dlProgress, setDlProgress] = useState(0);
+  // Copy
+  const [copied, setCopied] = useState<boolean>(false);
+
+  // Download
+  const [downloading, setDownloading] = useState<boolean>(false);
+  const [dlProgress, setDlProgress] = useState<number>(0);
   const progressTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  /* ---------------------- Computed State --------------------- */
   const isBusy = generating || polishing || downloading;
 
-  /* ------------------------------------------------------------------ */
-  /*  Progress helpers                                                     */
-  /* ------------------------------------------------------------------ */
+  /* ------------------------- Methods ------------------------- */
+  // ── Handle Start Progress ───────────────────
   const startProgress = (cap = 92) => {
     setDlProgress(0);
     let current = 0;
@@ -100,6 +80,7 @@ export function AiCoverLetterModal(props: Props) {
     }, 300);
   };
 
+  // ── Handle Stop Progress ─────────────────────
   const stopProgress = (finalValue = 100) => {
     if (progressTimerRef.current) {
       clearInterval(progressTimerRef.current);
@@ -108,16 +89,14 @@ export function AiCoverLetterModal(props: Props) {
     setDlProgress(finalValue);
   };
 
-  /* ------------------------------------------------------------------ */
-  /*  Generate (streaming)                                                 */
-  /* ------------------------------------------------------------------ */
+  // ── Handle Generate ───────────────────────────
   const generate = async () => {
     setOpen(true);
     if (coverLetter) return;
     setGenerating(true);
     setGenError(null);
     setPolishError(null);
-    setCoverLetter(""); // show textarea immediately so text streams into it
+    setCoverLetter("");
 
     await streamFetch(
       API_RESUME_COVER_LETTER_STREAM_URL,
@@ -148,21 +127,20 @@ export function AiCoverLetterModal(props: Props) {
     setGenerating(false);
   };
 
+  // ── Handle Regenerate ───────────────────────────
   const handleRegenerate = () => {
     setCoverLetter(null);
     setPolishError(null);
     generate();
   };
 
-  /* ------------------------------------------------------------------ */
-  /*  Polish (streaming)                                                   */
-  /* ------------------------------------------------------------------ */
+  // ── Handle Polish ────────────────────────────────
   const handlePolish = async () => {
     if (!coverLetter) return;
     setPolishing(true);
     setPolishError(null);
     const originalText = coverLetter;
-    setCoverLetter(""); // clear and stream polished version in
+    setCoverLetter("");
 
     await streamFetch(
       API_RESUME_POLISH_COVER_LETTER_STREAM_URL,
@@ -172,7 +150,7 @@ export function AiCoverLetterModal(props: Props) {
           setCoverLetter((prev) => (prev ?? "") + event.v);
         } else if (event.t === "error") {
           setPolishError(t("polishFailed"));
-          setCoverLetter(originalText); // restore on error
+          setCoverLetter(originalText);
         }
       },
     );
@@ -180,9 +158,7 @@ export function AiCoverLetterModal(props: Props) {
     setPolishing(false);
   };
 
-  /* ------------------------------------------------------------------ */
-  /*  Copy                                                                 */
-  /* ------------------------------------------------------------------ */
+  // ── Handle Copy ─────────────────────────────────────
   const handleCopy = async () => {
     if (!coverLetter) return;
     await navigator.clipboard.writeText(coverLetter);
@@ -190,9 +166,7 @@ export function AiCoverLetterModal(props: Props) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  /* ------------------------------------------------------------------ */
-  /*  Download PDF                                                         */
-  /* ------------------------------------------------------------------ */
+  // ── Handle Download PDF ──────────────────────────────
   const handleDownloadPdf = async () => {
     if (!coverLetter) return;
     setDownloading(true);
@@ -231,11 +205,10 @@ export function AiCoverLetterModal(props: Props) {
     }
   };
 
-  /* ------------------------------------------------------------------ */
-  /*  Render                                                               */
-  /* ------------------------------------------------------------------ */
+  /* --------------------------------- Render UI --------------------------------- */
   return (
     <>
+      {/* Button To Open The Modal Section */}
       <Button
         size="sm"
         variant="outline"
@@ -248,9 +221,10 @@ export function AiCoverLetterModal(props: Props) {
         </span>
       </Button>
 
+      {/* Modal Section */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="h-[78dvh]">
-          {/* Header */}
+          {/* Header Section */}
           <DialogHeader className="px-5 pt-5 pb-3 shrink-0 border-b border-border/60">
             <DialogTitle className="flex items-center gap-2 text-base text-left pr-8">
               <LucideFileText className="size-4 text-primary shrink-0" />
@@ -260,12 +234,12 @@ export function AiCoverLetterModal(props: Props) {
             </DialogTitle>
           </DialogHeader>
 
-          {/* Style selector */}
+          {/* Style Selector Section */}
           <div className="shrink-0 px-5 pt-3 pb-2.5 border-b border-border/50 flex items-center gap-2.5 overflow-x-auto scrollbar-none bg-background">
             <span className="text-xs text-muted-foreground font-medium shrink-0">
               {t("styleLabel")}
             </span>
-            {STYLES.map((s) => (
+            {COVER_LETTER_STYLES.map((s) => (
               <button
                 key={s.id}
                 onClick={() => setSelectedStyle(s.id)}
@@ -281,14 +255,14 @@ export function AiCoverLetterModal(props: Props) {
             ))}
           </div>
 
-          {/* Content */}
+          {/* Content Section */}
           <div className="flex-1 min-h-0 overflow-hidden flex flex-col px-5 py-4 gap-2 overscroll-contain">
-            {/* Error */}
+            {/* Error Section */}
             {genError && !generating && (
               <p className="text-sm text-destructive shrink-0">{genError}</p>
             )}
 
-            {/* Textarea — visible as soon as coverLetter is non-null (even empty string during stream) */}
+            {/* Textarea Section */}
             {coverLetter !== null && (
               <>
                 <textarea
@@ -303,7 +277,7 @@ export function AiCoverLetterModal(props: Props) {
                   className="flex-1 min-h-0 w-full resize-none bg-transparent text-sm text-foreground leading-relaxed outline-none border-0 focus:ring-0 p-0 overflow-y-auto scrollbar-none disabled:opacity-60 disabled:cursor-not-allowed"
                 />
 
-                {/* Streaming cursor */}
+                {/* Streaming Cursor Section */}
                 {(generating || polishing) && (
                   <div className="flex items-center gap-2 text-xs text-primary shrink-0">
                     <LucideLoader2 className="size-3.5 animate-spin shrink-0" />
@@ -315,6 +289,7 @@ export function AiCoverLetterModal(props: Props) {
                   </div>
                 )}
 
+                {/* Polish Error Section */}
                 {polishError && !polishing && (
                   <p className="text-xs text-destructive shrink-0">
                     {polishError}
@@ -324,10 +299,11 @@ export function AiCoverLetterModal(props: Props) {
             )}
           </div>
 
-          {/* Footer */}
+          {/* Footer Section */}
           <div className="shrink-0 px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-between gap-2">
             {generating && !coverLetter ? (
               <>
+                {/* Skeleton Loader Section */}
                 <Skeleton className="h-7 w-24 rounded-md" />
                 <div className="flex items-center gap-2">
                   <Skeleton className="h-7 w-16 rounded-md" />
@@ -337,6 +313,7 @@ export function AiCoverLetterModal(props: Props) {
               </>
             ) : (
               <>
+                {/* Regenerate Button Section */}
                 <Button
                   size="sm"
                   variant="outline"
@@ -350,6 +327,7 @@ export function AiCoverLetterModal(props: Props) {
                 </Button>
 
                 <div className="flex items-center gap-2">
+                  {/* Polish Button Section */}
                   <Button
                     size="sm"
                     variant="outline"
@@ -370,6 +348,7 @@ export function AiCoverLetterModal(props: Props) {
                     </span>
                   </Button>
 
+                  {/* Copy Button Section */}
                   <Button
                     size="sm"
                     variant="ghost"
@@ -385,6 +364,7 @@ export function AiCoverLetterModal(props: Props) {
                     )}
                   </Button>
 
+                  {/* Download Button Section */}
                   <Button
                     size="sm"
                     className="h-8 text-xs gap-1.5 shrink-0"
@@ -410,6 +390,7 @@ export function AiCoverLetterModal(props: Props) {
         </DialogContent>
       </Dialog>
 
+      {/* Loading Dialog Section */}
       <LoadingDialog
         loading={downloading}
         title={t("coverLetterPdfGenerating")}

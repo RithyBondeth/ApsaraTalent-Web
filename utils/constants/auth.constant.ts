@@ -1,4 +1,4 @@
-export const EAuthLoginMethod = {
+export const AUTH_LOGIN_METHODS = {
   EMAIL_PASSWORD: "email_password",
   PHONE_OTP: "phone_otp",
   GOOGLE: "google",
@@ -7,5 +7,5 @@ export const EAuthLoginMethod = {
   GITHUB: "github",
 } as const;
 
-export type EAuthLoginMethod =
-  (typeof EAuthLoginMethod)[keyof typeof EAuthLoginMethod];
+export type TAuthLoginMethod =
+  (typeof AUTH_LOGIN_METHODS)[keyof typeof AUTH_LOGIN_METHODS];

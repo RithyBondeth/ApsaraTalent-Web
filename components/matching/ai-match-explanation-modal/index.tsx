@@ -18,100 +18,27 @@ import {
 } from "lucide-react";
 import { IAiMatchExplanationResponse } from "@/utils/interfaces/resume";
 import { useTranslations } from "next-intl";
+import { IAiMatchExplanationModalProps } from "./props";
+import ScoreRing from "./score-ring";
 
-interface Props {
-  eid: string;
-  cid: string;
-  companyName: string;
-  /** When true the trigger shows icon-only on mobile (< sm) and full label on sm+. */
-  compact?: boolean;
-}
+export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
+  /* --------------------------------- Props -------------------------------- */
+  const { eid, cid, companyName, compact } = props;
 
-/* ------------------------------------------------------------------ */
-/*  Score ring                                                           */
-/* ------------------------------------------------------------------ */
-function ScoreRing({ score }: { score: number }) {
-  const radius = 34;
-  const circumference = 2 * Math.PI * radius;
-  const filled = (score / 100) * circumference;
-
-  const color = score >= 75 ? "#22c55e" : score >= 50 ? "#f59e0b" : "#ef4444";
-
-  return (
-    <div className="relative flex items-center justify-center size-[72px] sm:size-[88px] shrink-0">
-      {/*
-        Explicit width/height attrs are required for Safari — SVG without them
-        defaults to 300×150 and ignores CSS size-[] utilities.
-        stroke="currentColor" + className="text-muted" is the cross-browser way
-        to colour SVG strokes; CSS `stroke-muted` is unreliable in Safari.
-      */}
-      <svg
-        width="72"
-        height="72"
-        viewBox="0 0 84 84"
-        aria-hidden="true"
-        className="-rotate-90 sm:w-[88px] sm:h-[88px]"
-      >
-        {/* Track */}
-        <circle
-          cx="42"
-          cy="42"
-          r={radius}
-          strokeWidth="7"
-          fill="none"
-          stroke="currentColor"
-          className="text-muted"
-        />
-        {/* Progress arc */}
-        <circle
-          cx="42"
-          cy="42"
-          r={radius}
-          strokeWidth="7"
-          fill="none"
-          stroke={color}
-          strokeDasharray={`${filled} ${circumference}`}
-          strokeLinecap="round"
-          style={{ transition: "stroke-dasharray 0.6s ease" }}
-        />
-      </svg>
-      {/* Score label — absolute overlay, centred in the ring */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span
-          className="text-[18px] sm:text-[22px] font-bold tabular-nums leading-none"
-          style={{ color }}
-        >
-          {score}
-        </span>
-        <span className="text-[9px] sm:text-[10px] text-muted-foreground font-medium mt-0.5">
-          / 100
-        </span>
-      </div>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  Modal                                                                */
-/* ------------------------------------------------------------------ */
-export function AiMatchExplanationModal({
-  eid,
-  cid,
-  companyName,
-  compact,
-}: Props) {
+  /* --------------------------------- Utils -------------------------------- */
   const t = useTranslations("matching");
 
-  /* ------------------------------------------------------------------ */
-  /*  API                                                                  */
-  /* ------------------------------------------------------------------ */
-  const { fetchMatchExplanation } = useAiMatchExplanationStore();
-
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  /* ------------------------------- All States ----------------------------- */
+  const [open, setOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<IAiMatchExplanationResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  /* ---------------------------- API Integration --------------------------- */
+  const { fetchMatchExplanation } = useAiMatchExplanationStore();
+
+  /* -------------------------------- Methods ------------------------------- */
+  // ── Handle Fetch Explanation ──────────────────────
   const fetchExplanation = async () => {
     setOpen(true);
     setLoading(true);
@@ -126,6 +53,7 @@ export function AiMatchExplanationModal({
     }
   };
 
+  // ── Handle Open ──────────────────────────────────
   const handleOpen = () => {
     if (data) {
       setOpen(true);
@@ -134,12 +62,13 @@ export function AiMatchExplanationModal({
     fetchExplanation();
   };
 
+  // ── Handle Reanalyze ─────────────────────────────
   const handleReanalyze = () => {
     setData(null);
     fetchExplanation();
   };
 
-  /* Verdict pill colours */
+  // ── Verdict Color ────────────────────────────────
   const verdictColor = (verdict: string) => {
     const v = verdict.toLowerCase();
     if (v.includes("strong"))
@@ -151,7 +80,7 @@ export function AiMatchExplanationModal({
     return "text-red-700 bg-red-100 dark:text-red-400 dark:bg-red-900/30";
   };
 
-  /* Hero background tint based on score */
+  // ── Hero Background ───────────────────────────────
   const heroBg = (score: number) =>
     score >= 75
       ? "bg-green-50/70 dark:bg-green-900/15"
@@ -159,12 +88,10 @@ export function AiMatchExplanationModal({
         ? "bg-amber-50/70 dark:bg-amber-900/15"
         : "bg-red-50/70 dark:bg-red-900/15";
 
-  /* ------------------------------------------------------------------ */
-  /*  Render                                                               */
-  /* ------------------------------------------------------------------ */
+  /* ---------------------------------- Render UI ---------------------------------- */
   return (
     <>
-      {/* Trigger */}
+      {/* Trigger Button Section */}
       <Button
         size="sm"
         variant="outline"
@@ -177,9 +104,10 @@ export function AiMatchExplanationModal({
         </span>
       </Button>
 
+      {/* Dialog Section */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
-          {/* Header */}
+          {/* Header Section */}
           <DialogHeader className="px-4 sm:px-5 pt-5 pb-3 shrink-0 border-b border-border/60">
             <DialogTitle className="flex items-center gap-2 text-base text-left sm:text-left pr-8">
               <LucideSparkles className="size-4 text-primary shrink-0" />
@@ -187,12 +115,12 @@ export function AiMatchExplanationModal({
             </DialogTitle>
           </DialogHeader>
 
-          {/* ── Scrollable content ────────────────────────────────── */}
+          {/* Scrollable Content Section */}
           <div className="overflow-y-auto scrollbar-none overscroll-contain min-h-[120px] max-h-[66dvh] sm:max-h-[72dvh] relative z-10">
-            {/* ── Loading skeleton — mirrors exact content structure ── */}
+            {/* Loading Skeleton Section */}
             {loading && (
               <>
-                {/* Hero skeleton — same layout as real hero, no border (real has none) */}
+                {/* Hero Skeleton Section */}
                 <div className="px-4 sm:px-5 py-5 flex items-center gap-3 sm:gap-4 bg-muted/30">
                   <div className="relative flex items-center justify-center size-[72px] sm:size-[88px] shrink-0">
                     <div className="absolute inset-0 rounded-full border-[7px] border-muted animate-pulse" />
@@ -201,23 +129,23 @@ export function AiMatchExplanationModal({
                       <Skeleton className="h-2 w-6 sm:w-7 rounded" />
                     </div>
                   </div>
-                  {/* Company name line + verdict pill — mirrors real hero text */}
+                  {/* Company Name Line and Verdict Pill Section */}
                   <div className="flex flex-col gap-2 min-w-0 flex-1">
                     <Skeleton className="h-3 w-24 rounded" />
                     <Skeleton className="h-6 w-20 rounded-full" />
                   </div>
                 </div>
 
-                {/* Body skeleton */}
+                {/* Body Skeleton Section */}
                 <div className="px-4 sm:px-5 py-4 flex flex-col gap-5">
-                  {/* Explanation paragraph */}
+                  {/* Explanation Paragraph Section */}
                   <div className="flex flex-col gap-2">
                     <Skeleton className="h-4 w-full rounded" />
                     <Skeleton className="h-4 w-full rounded" />
                     <Skeleton className="h-4 w-5/6 rounded" />
                   </div>
 
-                  {/* Strengths section — green tint + icon mirrors real items */}
+                  {/* Strengths Section */}
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-1.5">
                       <span className="size-2 rounded-full bg-green-400/80 shrink-0" />
@@ -241,7 +169,7 @@ export function AiMatchExplanationModal({
                     </div>
                   </div>
 
-                  {/* Gaps section — amber tint + icon mirrors real items */}
+                  {/* Gaps Section */}
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-1.5">
                       <span className="size-2 rounded-full bg-amber-400/80 shrink-0" />
@@ -268,7 +196,7 @@ export function AiMatchExplanationModal({
               </>
             )}
 
-            {/* Error state */}
+            {/* Error State Section */}
             {error && !loading && (
               <div className="px-4 sm:px-5 py-10 flex flex-col items-center gap-3 text-center">
                 <div className="size-12 rounded-full bg-destructive/10 flex items-center justify-center">
@@ -289,10 +217,10 @@ export function AiMatchExplanationModal({
               </div>
             )}
 
-            {/* Data */}
+            {/* Data Section */}
             {data && !loading && (
               <>
-                {/* ── Score hero ── */}
+                {/* Score Hero Section */}
                 <div
                   className={`px-4 sm:px-5 py-5 flex items-center gap-3 sm:gap-4 ${heroBg(data.score)}`}
                 >
@@ -309,14 +237,14 @@ export function AiMatchExplanationModal({
                   </div>
                 </div>
 
-                {/* ── Body ── */}
+                {/* Body Section */}
                 <div className="px-4 sm:px-5 py-4 flex flex-col gap-5">
-                  {/* Explanation */}
+                  {/* Explanation Section */}
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     {data.explanation}
                   </p>
 
-                  {/* Strengths */}
+                  {/* Strengths Section */}
                   {data.strengths.length > 0 && (
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-1.5">
@@ -341,7 +269,7 @@ export function AiMatchExplanationModal({
                     </div>
                   )}
 
-                  {/* Gaps */}
+                  {/* Gaps Section */}
                   {data.gaps.length > 0 && (
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-1.5">
@@ -370,7 +298,7 @@ export function AiMatchExplanationModal({
             )}
           </div>
 
-          {/* ── Footer — always in DOM (prevents layout shift) ───────── */}
+          {/* Footer Section */}
           {!error && (
             <div className="shrink-0 px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end">
               {loading ? (
