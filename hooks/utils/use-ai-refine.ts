@@ -2,6 +2,7 @@ import { useState } from "react";
 import { streamFetch } from "@/utils/functions/stream-fetch";
 import { API_RESUME_REFINE_BIO_STREAM_URL } from "@/utils/constants/apis/resume.api.constant";
 
+/* ---------------------------------- Types --------------------------------- */
 /** Context that enriches the AI prompt for better output quality. */
 export interface IRefineContext {
   // Employee bio / job title context
@@ -18,6 +19,7 @@ export interface IRefineContext {
   values?: string[];
 }
 
+/* ---------------------------------- Hook ---------------------------------- */
 /**
  * Real streaming AI bio / field refinement hook.
  *
@@ -32,8 +34,11 @@ export interface IRefineContext {
  *   if (result) toast.success("Refined!");
  */
 export function useAIRefine() {
-  const [isRefining, setIsRefining] = useState(false);
+  /* ------------------------------- All States ------------------------------- */
+  const [isRefining, setIsRefining] = useState<boolean>(false);
 
+  /* --------------------------------- Methods -------------------------------- */
+  // ── Handle Refine Content ───────────────────────
   const refineContent = async (
     content: string,
     type:
@@ -97,5 +102,6 @@ export function useAIRefine() {
     }
   };
 
+  /* -------------------------------- Render UI ------------------------------- */
   return { isRefining, refineContent };
 }
