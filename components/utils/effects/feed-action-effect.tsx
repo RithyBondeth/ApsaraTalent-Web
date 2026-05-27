@@ -9,14 +9,14 @@ import {
   LucideSparkles,
 } from "lucide-react";
 
-/* -------------------------------- Types --------------------------------- */
-export type FeedEffectType = "like" | "save";
+/* ---------------------------------- Types --------------------------------- */
+export type TFeedEffectType = "like" | "save";
 
-type ParticleKind = "heart" | "bookmark" | "star" | "sparkle";
+type TParticleKind = "heart" | "bookmark" | "star" | "sparkle";
 
-interface Particle {
+interface IParticle {
   id: number;
-  kind: ParticleKind;
+  kind: TParticleKind;
   x: number;
   y: number;
   size: number;
@@ -27,21 +27,22 @@ interface Particle {
   driftX: number;
 }
 
-interface Ripple {
+interface IRipple {
   id: number;
   x: number;
   y: number;
-  color: string; // ring color
+  color: string;
   duration: number;
 }
 
+/* --------------------------------- Helpers -------------------------------- */
 let uid = 0;
 const rand = (lo: number, hi: number) => lo + Math.random() * (hi - lo);
-const pick = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
-/* =============================== SOUNDS ================================== */
+/* --------------------------------- Sounds --------------------------------- */
 let audioCtx: AudioContext | null = null;
 
+// ── Get Audio Context ─────────────────
 function getCtx(): AudioContext | null {
   if (typeof window === "undefined") return null;
   if (!audioCtx)
@@ -54,7 +55,7 @@ function getCtx(): AudioContext | null {
   return audioCtx;
 }
 
-/** Synthetic reverb via a convolver with a short noise impulse */
+// ── Make Reverb ───────────────────────
 function makeReverb(ctx: AudioContext, secs: number): ConvolverNode {
   const conv = ctx.createConvolver();
   const len = Math.floor(ctx.sampleRate * secs);
@@ -68,12 +69,13 @@ function makeReverb(ctx: AudioContext, secs: number): ConvolverNode {
   return conv;
 }
 
+// ── Add Oscillator ────────────────────
 function addOsc(
   ctx: AudioContext,
   dest: AudioNode,
   type: OscillatorType,
-  freqs: [number, number][], // [time, freq]
-  amps: [number, number, number][], // [time, gain, endTime]
+  freqs: [number, number][],
+  amps: [number, number, number][],
   stopAt: number,
 ) {
   const osc = ctx.createOscillator();
@@ -82,7 +84,6 @@ function addOsc(
   g.connect(dest);
   osc.type = type;
   freqs.forEach(([t, f]) => osc.frequency.setValueAtTime(f, t));
-  // exponential ramp from first amp to near-zero
   g.gain.setValueAtTime(0, amps[0][0]);
   g.gain.linearRampToValueAtTime(amps[0][1], amps[0][0] + 0.018);
   g.gain.exponentialRampToValueAtTime(0.0001, amps[0][2]);
@@ -90,6 +91,7 @@ function addOsc(
   osc.stop(stopAt);
 }
 
+// ── Play Like Sound ───────────────────
 function playLikeSound() {
   const ctx = getCtx();
   if (!ctx) return;
@@ -106,7 +108,6 @@ function playLikeSound() {
   rev.connect(revGain);
   revGain.connect(ctx.destination);
 
-  // Layer 1 — main upward pop (A4 → A5 → Ab5)
   addOsc(
     ctx,
     master,
@@ -120,7 +121,6 @@ function playLikeSound() {
     now + 0.4,
   );
 
-  // Layer 2 — sparkle harmonic (E6)
   addOsc(
     ctx,
     master,
@@ -130,7 +130,6 @@ function playLikeSound() {
     now + 0.22,
   );
 
-  // Layer 3 — low body thump (A2 → low)
   addOsc(
     ctx,
     master,
@@ -143,7 +142,6 @@ function playLikeSound() {
     now + 0.16,
   );
 
-  // Layer 4 — shimmer (C#7 flash)
   addOsc(
     ctx,
     master,
@@ -154,6 +152,7 @@ function playLikeSound() {
   );
 }
 
+// ── Play Save Sound ───────────────────
 function playSaveSound() {
   const ctx = getCtx();
   if (!ctx) return;
@@ -170,7 +169,6 @@ function playSaveSound() {
   rev.connect(revGain);
   revGain.connect(ctx.destination);
 
-  // C-major arpeggio  C5 → E5 → G5 → C6  (bell triangle wave)
   const arpNotes = [
     { freq: 523.25, t: 0 },
     { freq: 659.25, t: 0.09 },
@@ -189,7 +187,6 @@ function playSaveSound() {
     );
   });
 
-  // Soft sub-harmonic shimmer on C3
   addOsc(
     ctx,
     master,
@@ -200,12 +197,14 @@ function playSaveSound() {
   );
 }
 
-/* ========================= VISUAL COMPONENTS ============================= */
+function AnimatedRipple(props: { ripple: IRipple }) {
+  /* ---------------------------------- Props --------------------------------- */
+  const { ripple } = props;
 
-/** Expanding ripple ring that bursts from the tap origin */
-function AnimatedRipple({ ripple }: { ripple: Ripple }) {
+  /* -------------------------------- All States -------------------------------- */
   const ref = useRef<HTMLSpanElement>(null);
 
+  /* --------------------------------- Effects -------------------------------- */
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -220,6 +219,7 @@ function AnimatedRipple({ ripple }: { ripple: Ripple }) {
     return () => anim.cancel();
   }, [ripple]);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <span
       ref={ref}
@@ -240,10 +240,14 @@ function AnimatedRipple({ ripple }: { ripple: Ripple }) {
   );
 }
 
-/** A single floating particle (heart / bookmark / star / sparkle) */
-function AnimatedParticle({ p }: { p: Particle }) {
+function AnimatedParticle(props: { p: IParticle }) {
+  /* ---------------------------------- Props --------------------------------- */
+  const { p } = props;
+
+  /* -------------------------------- All States -------------------------------- */
   const ref = useRef<HTMLSpanElement>(null);
 
+  /* --------------------------------- Effects -------------------------------- */
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -298,6 +302,7 @@ function AnimatedParticle({ p }: { p: Particle }) {
       ? "drop-shadow(0 0 8px rgba(250,204,21,0.95)) drop-shadow(0 0 18px rgba(234,179,8,0.55))"
       : "drop-shadow(0 0 10px rgba(234,179,8,0.95)) drop-shadow(0 0 22px rgba(234,179,8,0.55))";
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <span
       ref={ref}
@@ -314,24 +319,31 @@ function AnimatedParticle({ p }: { p: Particle }) {
         zIndex: 9999,
       }}
     >
+      {/* Heart Icon Section */}
       {isLike && (
         <LucideHeart
           style={{ width: "100%", height: "100%" }}
           className="fill-rose-500 text-rose-300"
         />
       )}
+
+      {/* Bookmark Icon Section */}
       {p.kind === "bookmark" && (
         <LucideBookmark
           style={{ width: "100%", height: "100%" }}
           className="fill-yellow-400 text-yellow-200"
         />
       )}
+
+      {/* Star Icon Section */}
       {isStar && (
         <LucideStar
           style={{ width: "100%", height: "100%" }}
           className="fill-yellow-300 text-yellow-200"
         />
       )}
+
+      {/* Sparkle Icon Section */}
       {isSparkle && (
         <LucideSparkles
           style={{ width: "100%", height: "100%" }}
@@ -342,14 +354,16 @@ function AnimatedParticle({ p }: { p: Particle }) {
   );
 }
 
-/* ================================ HOOK =================================== */
+/* --------------------------------- Hook ----------------------------------- */
 export function useFeedActionEffect() {
-  const [particles, setParticles] = useState<Particle[]>([]);
-  const [ripples, setRipples] = useState<Ripple[]>([]);
+  /* -------------------------------- All States -------------------------------- */
+  const [particles, setParticles] = useState<IParticle[]>([]);
+  const [ripples, setRipples] = useState<IRipple[]>([]);
 
+  /* ---------------------------------- Methods --------------------------------- */
+  // ── Handle Trigger Effect ─────────────────
   const trigger = useCallback(
-    (type: FeedEffectType, e?: React.MouseEvent | React.TouchEvent) => {
-      /* Origin */
+    (type: TFeedEffectType, e?: React.MouseEvent | React.TouchEvent) => {
       let ox: number, oy: number;
       if (e) {
         const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
@@ -360,11 +374,9 @@ export function useFeedActionEffect() {
         oy = typeof window !== "undefined" ? window.innerHeight * 0.62 : 420;
       }
 
-      /* Sound */
       if (type === "like") playLikeSound();
       else playSaveSound();
 
-      /* Ripple ring */
       const rippleId = ++uid;
       const rippleDuration = 700;
       setRipples((prev) => [
@@ -383,21 +395,19 @@ export function useFeedActionEffect() {
         rippleDuration + 100,
       );
 
-      /* Particles */
       const isLike = type === "like";
 
-      // hearts or bookmarks + accent particles
-      const mainKinds: ParticleKind[] = isLike
+      const mainKinds: TParticleKind[] = isLike
         ? ["heart", "heart", "heart", "heart", "heart", "heart", "heart"]
         : ["bookmark", "bookmark", "bookmark", "bookmark", "bookmark"];
 
-      const accentKinds: ParticleKind[] = isLike
-        ? ["star", "star", "sparkle"] // small stars around hearts
-        : ["star", "star", "sparkle", "sparkle"]; // gold stars around bookmarks
+      const accentKinds: TParticleKind[] = isLike
+        ? ["star", "star", "sparkle"]
+        : ["star", "star", "sparkle", "sparkle"];
 
       const allKinds = [...mainKinds, ...accentKinds];
 
-      const newParticles: Particle[] = allKinds.map((kind, i) => {
+      const newParticles: IParticle[] = allKinds.map((kind, i) => {
         const isAccent = i >= mainKinds.length;
         return {
           id: ++uid,
@@ -425,14 +435,18 @@ export function useFeedActionEffect() {
     [],
   );
 
+  /* -------------------------------- Render UI -------------------------------- */
   const effectPortal =
     typeof document !== "undefined" &&
     (particles.length > 0 || ripples.length > 0)
       ? createPortal(
           <>
+            {/* Ripples Section */}
             {ripples.map((r) => (
               <AnimatedRipple key={r.id} ripple={r} />
             ))}
+
+            {/* Particles Section */}
             {particles.map((p) => (
               <AnimatedParticle key={p.id} p={p} />
             ))}
