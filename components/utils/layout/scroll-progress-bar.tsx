@@ -4,18 +4,20 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 
 export function ScrollProgressBar() {
-  /* ---------------------------------- Utils --------------------------------- */
+  /* --------------------------------- Utils ---------------------------------- */
   const pathname = usePathname();
 
   /* -------------------------------- All States ------------------------------ */
   const [progress, setProgress] = useState<number>(0);
   const rafRef = useRef<number | null>(null);
 
-  /* --------------------------------- Effects --------------------------------- */
+  /* --------------------------------- Effects -------------------------------- */
+  // Reset Progress When Pathname Changes Effect
   useEffect(() => {
     setProgress(0);
   }, [pathname]);
 
+  // Handle Scroll Effect
   useEffect(() => {
     const onScroll = () => {
       if (rafRef.current !== null) return;

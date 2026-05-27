@@ -5,16 +5,21 @@ import { LucideArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function ScrollToTop() {
-  const [visible, setVisible] = useState(false);
+  /* ------------------------------- All States ------------------------------- */
+  const [visible, setVisible] = useState<boolean>(false);
 
+  /* --------------------------------- Effects -------------------------------- */
   useEffect(() => {
     const onScroll = () => setVisible(window.scrollY > 320);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  /* --------------------------------- Methods -------------------------------- */
+  // ── Handle Click ─────────────────────────
   const handleClick = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <button
       onClick={handleClick}
@@ -30,6 +35,7 @@ export function ScrollToTop() {
           : "pointer-events-none translate-y-4 opacity-0",
       )}
     >
+      {/* Icon Section */}
       <LucideArrowUp className="size-4 shrink-0" strokeWidth={2.2} />
     </button>
   );
