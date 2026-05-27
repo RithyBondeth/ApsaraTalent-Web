@@ -7,6 +7,7 @@ export function FieldLabel({
   children: React.ReactNode;
   className?: string;
 }) {
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <TypographyMuted className={`text-xs font-medium mb-1 ${className ?? ""}`}>
       {children}

@@ -20,7 +20,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-/* ---------------------------------- Helper --------------------------------- */
+/* ---------------------------------- Helpers --------------------------------- */
 function SectionItem({
   id,
   label,
@@ -32,15 +32,18 @@ function SectionItem({
   isVisible: boolean;
   onToggle: (id: TResumeSectionID) => void;
 }) {
-  const t = useTranslations("resumeBuilder");
+  /* -------------------------------- All State ------------------------------- */
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("resumeBuilder");
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
       ref={setNodeRef}
@@ -49,7 +52,9 @@ function SectionItem({
         !isVisible ? "opacity-60 bg-muted/30" : "shadow-sm"
       }`}
     >
+      {/* Information Section */}
       <div className="flex items-center gap-3">
+        {/* Drag Handle Section */}
         <div
           {...attributes}
           {...listeners}
@@ -57,6 +62,8 @@ function SectionItem({
         >
           <GripVertical size={16} />
         </div>
+
+        {/* Section Name and Status Section */}
         <div className="flex flex-col">
           <span className="text-sm font-medium">{label}</span>
           <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
@@ -65,6 +72,7 @@ function SectionItem({
         </div>
       </div>
 
+      {/* Visibility Toggle Section */}
       <div className="flex items-center gap-2">
         {isVisible ? (
           <Eye size={14} className="text-primary" />
@@ -82,9 +90,8 @@ function SectionItem({
 }
 
 export function LayoutTab() {
+  /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("resumeBuilder");
-  const { sectionOrder, reorderSections } = useResumeCanvasEditorStore();
-
   const allSections: { id: TResumeSectionID; label: string }[] = [
     { id: "summary", label: t("professionalSummary") },
     { id: "experience", label: t("tabExperience") },
@@ -92,6 +99,11 @@ export function LayoutTab() {
     { id: "education", label: t("education") },
   ];
 
+  /* ------------------------------- All State -------------------------------- */
+  const { sectionOrder, reorderSections } = useResumeCanvasEditorStore();
+
+  /* --------------------------------- Methods -------------------------------- */
+  // ── Toggle Section Visibility ────────────────────────────────
   const handleToggle = (id: TResumeSectionID) => {
     const isVisible = sectionOrder.includes(id);
     if (isVisible) {
@@ -105,6 +117,7 @@ export function LayoutTab() {
     }
   };
 
+  // ── Reorder Sections ─────────────────────────────────────────
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
@@ -114,10 +127,13 @@ export function LayoutTab() {
     }
   };
 
+  // ── Dnd Context ──────────────────────────────────────────────
   const sensors = useSensors(useSensor(PointerSensor));
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col gap-6">
+      {/* Header Section */}
       <div className="space-y-1">
         <h4 className="text-sm font-semibold">{t("sectionManagement")}</h4>
         <p className="text-xs text-muted-foreground">
@@ -125,11 +141,13 @@ export function LayoutTab() {
         </p>
       </div>
 
+      {/* Dnd Context Section */}
       <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
         <SortableContext
           items={sectionOrder}
           strategy={verticalListSortingStrategy}
         >
+          {/* Sortable Items Section */}
           <div className="flex flex-col gap-3">
             {/* Visible Sections */}
             {sectionOrder.map((id) => {
@@ -162,6 +180,7 @@ export function LayoutTab() {
         </SortableContext>
       </DndContext>
 
+      {/* Pro Tip Section */}
       <div className="rounded-xl bg-primary/5 border border-primary/10 p-4">
         <h5 className="text-xs font-bold text-primary uppercase tracking-widest mb-2">
           {t("proTip")}

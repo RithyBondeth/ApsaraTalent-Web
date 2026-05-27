@@ -6,7 +6,6 @@ import { IFormPanelProps } from "../props";
 import { ExperienceCard } from "./experience-card";
 import { useTranslations } from "next-intl";
 
-/* -------------------------------- Component ------------------------------- */
 export function ExperienceTab({
   register,
   control,

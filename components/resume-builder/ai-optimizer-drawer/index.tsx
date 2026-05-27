@@ -21,52 +21,33 @@ import {
   IOptimizeResumeResponse,
   IExperienceSuggestion,
 } from "@/utils/interfaces/resume";
-import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
 import { streamFetch } from "@/utils/functions/stream-fetch";
 import { Badge } from "@/components/ui/badge";
+import { IAiOptimizerDrawerProps } from "./props";
 
-/* ------------------------------------------------------------------ */
-/*  Props                                                                */
-/* ------------------------------------------------------------------ */
-interface Props {
-  getCurrentValues: () => IBuildResume;
-  onApplySummary: (summary: string) => void;
-  onApplySkills: (skills: string[]) => void;
-  onApplyExperience: (
-    index: number,
-    description: string,
-    achievements: string[],
-  ) => void;
-}
+export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
+  /* ---------------------------------- Props ---------------------------------- */
+  const { getCurrentValues, onApplySummary, onApplySkills, onApplyExperience } =
+    props;
 
-/* ------------------------------------------------------------------ */
-/*  Component                                                            */
-/* ------------------------------------------------------------------ */
-export function AiResumeOptimizerDrawer({
-  getCurrentValues,
-  onApplySummary,
-  onApplySkills,
-  onApplyExperience,
-}: Props) {
-  const [open, setOpen] = useState(false);
-
+  /* -------------------------------- All States -------------------------------- */
+  const [open, setOpen] = useState<boolean>(false);
   /** True while the SSE stream is active */
-  const [generating, setGenerating] = useState(false);
+  const [generating, setGenerating] = useState<boolean>(false);
   /** Progressively built result */
   const [data, setData] = useState<IOptimizeResumeResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  const [appliedSummary, setAppliedSummary] = useState(false);
-  const [appliedSkills, setAppliedSkills] = useState(false);
+  const [appliedSummary, setAppliedSummary] = useState<boolean>(false);
+  const [appliedSkills, setAppliedSkills] = useState<boolean>(false);
   const [appliedExp, setAppliedExp] = useState<Set<number>>(new Set());
 
-  /* analyze ---------------------------------------------------------- */
+  /* ---------------------------------- Methods --------------------------------- */
+  // ── Handle Analyze Resume ─────────────────
   const analyze = async () => {
     setOpen(true);
-    if (data && !generating) return; // already have data
+    if (data && !generating) return;
     setGenerating(true);
     setError(null);
-    // Reset partial state
     setData({
       overallFeedback: "",
       suggestedSummary: "",
@@ -160,6 +141,7 @@ export function AiResumeOptimizerDrawer({
     setGenerating(false);
   };
 
+  // ── Handle Reanalyze Resume ───────────────
   const handleReanalyze = () => {
     setData(null);
     setAppliedSummary(false);
@@ -168,19 +150,21 @@ export function AiResumeOptimizerDrawer({
     analyze();
   };
 
-  /* apply actions ---------------------------------------------------- */
+  // ── Handle Apply Summary ──────────────────
   const handleApplySummary = () => {
     if (!data) return;
     onApplySummary(data.suggestedSummary);
     setAppliedSummary(true);
   };
 
+  // ── Handle Apply Skills ───────────────────
   const handleApplySkills = () => {
     if (!data) return;
     onApplySkills(data.suggestedSkills);
     setAppliedSkills(true);
   };
 
+  // ── Handle Apply Experience ───────────────
   const handleApplyExperience = (index: number) => {
     if (!data) return;
     const s = data.experienceSuggestions.find((e) => e.index === index);
@@ -189,11 +173,10 @@ export function AiResumeOptimizerDrawer({
     setAppliedExp((prev) => new Set(prev).add(index));
   };
 
-  /* ------------------------------------------------------------------ */
-  /*  Render                                                               */
-  /* ------------------------------------------------------------------ */
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <>
+      {/* Button To Open Drawer Section */}
       <Button
         variant="outline"
         size="sm"
@@ -206,11 +189,13 @@ export function AiResumeOptimizerDrawer({
         <span className="lg:hidden">Optimize</span>
       </Button>
 
+      {/* Drawer Section */}
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent
           side="right"
           className="w-full sm:max-w-md flex flex-col gap-0 p-0"
         >
+          {/* Header Section */}
           <SheetHeader className="px-5 py-4 border-b">
             <SheetTitle className="flex items-center gap-2">
               <LucideSparkles className="size-4 text-primary" />
@@ -221,8 +206,9 @@ export function AiResumeOptimizerDrawer({
             </SheetTitle>
           </SheetHeader>
 
+          {/* Content Section */}
           <div className="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-6">
-            {/* Full skeleton — generating with no data yet */}
+            {/* Full Skeleton Section (Generating With No Data Yet) */}
             {generating && !data?.overallFeedback && (
               <div className="flex flex-col gap-3 pt-2">
                 <Skeleton className="h-4 w-full" />
@@ -236,15 +222,15 @@ export function AiResumeOptimizerDrawer({
               </div>
             )}
 
-            {/* Error */}
+            {/* Error Section */}
             {error && !generating && (
               <p className="text-sm text-destructive">{error}</p>
             )}
 
-            {/* Progressively revealed results */}
+            {/* Progressively Revealed Results Section */}
             {data && (
               <>
-                {/* Overall Feedback */}
+                {/* Overall Feedback Section */}
                 {data.overallFeedback && (
                   <div className="rounded-xl bg-muted/50 border border-border/60 p-4 animate-in fade-in-0 slide-in-from-bottom-1 duration-200">
                     <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
@@ -256,7 +242,7 @@ export function AiResumeOptimizerDrawer({
                   </div>
                 )}
 
-                {/* Summary suggestion */}
+                {/* Summary Suggestion Section */}
                 {data.suggestedSummary && (
                   <div className="flex flex-col gap-2 animate-in fade-in-0 slide-in-from-bottom-1 duration-200">
                     <div className="flex items-center justify-between">
@@ -285,7 +271,7 @@ export function AiResumeOptimizerDrawer({
                   </div>
                 )}
 
-                {/* Skills suggestions */}
+                {/* Skills Suggestions Section */}
                 {data.suggestedSkills.length > 0 && (
                   <div className="flex flex-col gap-2 animate-in fade-in-0 slide-in-from-bottom-1 duration-200">
                     <div className="flex items-center justify-between">
@@ -319,7 +305,7 @@ export function AiResumeOptimizerDrawer({
                           {skill}
                         </Badge>
                       ))}
-                      {/* Pulsing placeholder while generating skills */}
+                      {/* Pulsing Placeholder While Generating Skills Section */}
                       {generating && data.suggestedSkills.length < 6 && (
                         <Skeleton className="h-5 w-20 rounded-full" />
                       )}
@@ -327,7 +313,7 @@ export function AiResumeOptimizerDrawer({
                   </div>
                 )}
 
-                {/* Experience suggestions */}
+                {/* Experience Suggestions Section */}
                 {data.experienceSuggestions.length > 0 && (
                   <div className="flex flex-col gap-3">
                     <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -377,7 +363,7 @@ export function AiResumeOptimizerDrawer({
                       </div>
                     ))}
 
-                    {/* Skeleton for next EXP block while still streaming */}
+                    {/* Skeleton For Next EXP Block While Still Streaming Section */}
                     {generating && (
                       <div className="flex flex-col gap-2 rounded-xl border border-border/60 p-3 bg-muted/20">
                         <Skeleton className="h-3 w-24" />
@@ -391,6 +377,7 @@ export function AiResumeOptimizerDrawer({
             )}
           </div>
 
+          {/* Re-analyze Button Section */}
           {data && !generating && (
             <div className="px-5 py-3 border-t bg-background">
               <Button
