@@ -11,6 +11,7 @@ import {
 import { useRouter } from "next/navigation";
 import { ISearchEmployeeCardProps } from "./props";
 import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
+import { AVATAR_INITIALS_LENGTH } from "@/utils/constants/ui.constant";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useTranslations } from "next-intl";
@@ -34,7 +35,7 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
           >
             <AvatarImage src={props.avatar} />
             <AvatarFallback className="text-xs font-semibold">
-              {props.username?.slice(0, 2)?.toUpperCase()}
+              {props.username?.slice(0, AVATAR_INITIALS_LENGTH)?.toUpperCase()}
             </AvatarFallback>
           </Avatar>
 

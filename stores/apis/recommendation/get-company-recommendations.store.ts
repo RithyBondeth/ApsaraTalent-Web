@@ -3,9 +3,13 @@ import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_GET_COMPANY_RECOMMENDATIONS_URL } from "@/utils/constants/apis/user-api/user.api.constant";
 import { IEmployee } from "@/utils/interfaces/user/employee.interface";
 import { create } from "zustand";
+import {
+  RECOMMENDATION_MAX_RETRIES,
+  RECOMMENDATION_RETRY_DELAY_MS,
+} from "@/utils/constants/config.constant";
 
-const MAX_RETRIES = 2;
-const RETRY_DELAY_MS = 1500;
+const MAX_RETRIES = RECOMMENDATION_MAX_RETRIES;
+const RETRY_DELAY_MS = RECOMMENDATION_RETRY_DELAY_MS;
 
 /* ---------------------------------- States --------------------------------- */
 type TGetCompanyRecommendationsState = {
@@ -44,8 +48,8 @@ export const useGetCompanyRecommendationsStore =
           set({ recommendations: response.data, loading: false, error: null });
           return;
         } catch (error) {
-          const status = (error as { response?: { status?: number } })
-            ?.response?.status;
+          const status = (error as { response?: { status?: number } })?.response
+            ?.status;
 
           // 404 = no recommendations found — treat as empty, not an error.
           // Never retry on 404 — no point, the result won't change.

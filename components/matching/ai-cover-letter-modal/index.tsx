@@ -4,6 +4,10 @@ import { useState } from "react";
 import { useCoverLetterPdfStore } from "@/stores/apis/resume/cover-letter-pdf.store";
 import { useDownloadProgress } from "@/hooks/utils/use-download-progress";
 import { downloadBase64File } from "@/utils/functions/file";
+import {
+  COPY_FEEDBACK_TIMEOUT_MS,
+  MODAL_ANIMATION_DELAY_MS,
+} from "@/utils/constants/config.constant";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -147,7 +151,7 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
     if (!coverLetter) return;
     await navigator.clipboard.writeText(coverLetter);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => setCopied(false), COPY_FEEDBACK_TIMEOUT_MS);
   };
 
   // ── Handle Download PDF ──────────────────────────────
@@ -166,7 +170,7 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
       });
 
       stopProgress(100);
-      await new Promise((r) => setTimeout(r, 400));
+      await new Promise((r) => setTimeout(r, MODAL_ANIMATION_DELAY_MS));
 
       const { data, mimeType, filename } = res;
       downloadBase64File(data, mimeType, filename || "cover-letter.pdf");

@@ -18,3 +18,6 @@ export const USER_ROLE = {
 /* ---------------------------------- Types --------------------------------- */
 export type TAuthLoginMethod =
   (typeof AUTH_LOGIN_METHODS)[keyof typeof AUTH_LOGIN_METHODS];
+
+/* ---------------------------------- OTP ----------------------------------- */
+export const OTP_LENGTH = 6;

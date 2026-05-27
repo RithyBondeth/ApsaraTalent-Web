@@ -28,7 +28,7 @@ import CompanyDialog from "../company-dialog";
 import { ICompanyCardProps } from "./props";
 import IconLabel from "@/components/utils/data-display/icon-label";
 import { useTranslations } from "next-intl";
-import { translateLocation } from "@/utils/functions/text";
+import { translateLocation, getNameInitials } from "@/utils/functions/text";
 
 export default function CompanyCard(props: ICompanyCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
@@ -116,7 +116,7 @@ export default function CompanyCard(props: ICompanyCardProps) {
               preload={true}
               showLoadingState={true}
             >
-              {props.name.slice(0, 2)}
+              {getNameInitials(props.name)}
             </CachedAvatar>
           </div>
 

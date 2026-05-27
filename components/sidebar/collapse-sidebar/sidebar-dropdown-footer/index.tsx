@@ -58,6 +58,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ISidebarDropdownFooterProps } from "./props";
+import { getNameInitials } from "@/utils/functions/text";
 
 export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
   /* ---------------------------------- Utils --------------------------------- */
@@ -150,7 +151,7 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
               <Avatar className="h-8 w-8 rounded-lg shrink-0">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="rounded-lg">
-                  {user.name.slice(0, 2).toUpperCase()}
+                  {getNameInitials(user.name)}
                 </AvatarFallback>
               </Avatar>
 
@@ -178,7 +179,7 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback className="rounded-lg">
-                    {user.name.slice(0, 2).toUpperCase()}
+                    {getNameInitials(user.name)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">

@@ -19,6 +19,7 @@ import { SettingWrapper } from "../setting-wrapper";
 import { SettingRow } from "../setting-row";
 import { IAccountSectionProps } from "./props";
 import { useTranslations } from "next-intl";
+import { getNameInitials } from "@/utils/functions/text";
 
 export function AccountSection(props: IAccountSectionProps) {
   /* --------------------------------- Props --------------------------------- */
@@ -49,7 +50,7 @@ export function AccountSection(props: IAccountSectionProps) {
         <Avatar className="size-14 rounded-xl shrink-0">
           <AvatarImage src={avatarSrc} alt={displayName} />
           <AvatarFallback className="rounded-xl text-base font-semibold">
-            {displayName.slice(0, 2).toUpperCase()}
+            {getNameInitials(displayName)}
           </AvatarFallback>
         </Avatar>
         <div className="flex flex-col gap-1 min-w-0">

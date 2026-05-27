@@ -74,6 +74,7 @@ import {
 } from "@/utils/constants/ui.constant";
 import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type";
 import { capitalizeWords } from "@/utils/functions/text";
+import { AVATAR_INITIALS_LENGTH } from "@/utils/constants/ui.constant";
 import { isUuid } from "@/utils/functions/validation/check-uuid";
 import { extractCleanFilename } from "@/utils/functions/file";
 import { parseMaybeDate } from "@/utils/functions/date";
@@ -1258,7 +1259,7 @@ export default function EmployeeProfilePage() {
                   onError={() => setAvatarLoadError(true)}
                 />
                 <AvatarFallback className="uppercase text-lg font-semibold">
-                  {employee.username?.slice(0, 2)}
+                  {employee.username?.slice(0, AVATAR_INITIALS_LENGTH)}
                 </AvatarFallback>
               </Avatar>
 

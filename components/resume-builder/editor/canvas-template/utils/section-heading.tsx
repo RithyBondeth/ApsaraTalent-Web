@@ -1,3 +1,5 @@
+import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
+
 export function SectionHeading(props: { children: React.ReactNode }) {
   /* ----------------------------------- Props --------------------------------- */
   const { children } = props;
@@ -10,8 +12,8 @@ export function SectionHeading(props: { children: React.ReactNode }) {
         fontWeight: 700,
         textTransform: "uppercase",
         letterSpacing: "0.1em",
-        color: "#4f46e5",
-        borderBottom: "1.5px solid #ede9fe",
+        color: RESUME_COLOR.ACCENT,
+        borderBottom: `1.5px solid ${RESUME_COLOR.ACCENT_LIGHT}`,
         paddingBottom: 3,
         marginTop: 18,
         marginBottom: 8,

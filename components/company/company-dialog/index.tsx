@@ -22,7 +22,7 @@ import { ICompanyDialogProps } from "./props";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useTranslations } from "next-intl";
-import { translateLocation } from "@/utils/functions/text";
+import { translateLocation, getNameInitials } from "@/utils/functions/text";
 
 export default function CompanyDialog(props: ICompanyDialogProps) {
   /* ---------------------------------- Utils --------------------------------- */
@@ -65,7 +65,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
             >
               <AvatarImage src={props.avatar!} />
               <AvatarFallback className="uppercase text-lg font-semibold">
-                {props.name.slice(0, 2)}
+                {getNameInitials(props.name)}
               </AvatarFallback>
             </Avatar>
           </div>

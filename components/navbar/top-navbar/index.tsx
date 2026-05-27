@@ -10,7 +10,10 @@ import { useInterviewStore } from "@/stores/apis/matching/interview.store";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useChatStore } from "@/stores/features/chat/chat.store";
-import { sidebarList } from "@/utils/constants/sidebar.constant";
+import {
+  sidebarList,
+  MOBILE_PRIMARY_URLS,
+} from "@/utils/constants/sidebar.constant";
 import { LucideFileUser, MoreHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
@@ -28,15 +31,6 @@ import LogoComponent from "@/components/utils/brand/logo";
 import DesktopNavItem from "./desktop-nav-item";
 import MobileTabItem from "./mobile-tab-item";
 import MoreSheetItem from "./more-sheet-item";
-
-/* ---------------------------------- Helpers --------------------------------- */
-const MOBILE_PRIMARY_URLS = [
-  "/feed",
-  "/matching",
-  "/message",
-  "/notification",
-  "/dashboard",
-];
 
 export default function TopNavbar() {
   /* ---------------------------------- Utils --------------------------------- */

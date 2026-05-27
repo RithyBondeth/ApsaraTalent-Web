@@ -23,6 +23,7 @@ import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-curre
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type";
 import { translateLocation } from "@/utils/functions/text";
+import { AVATAR_INITIALS_LENGTH } from "@/utils/constants/ui.constant";
 import { formatShortDate } from "@/utils/functions/date";
 import { extractCleanFilename } from "@/utils/functions/file";
 import {
@@ -318,7 +319,7 @@ export default function EmployeeDetailPage() {
               <AvatarImage src={employeeData.avatar ?? ""} />
               <AvatarFallback className="uppercase font-bold text-xl">
                 {employeeData.username ? (
-                  employeeData.username.slice(0, 2)
+                  employeeData.username.slice(0, AVATAR_INITIALS_LENGTH)
                 ) : (
                   <User />
                 )}

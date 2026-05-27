@@ -8,15 +8,12 @@ import { useResumeCanvasEditorStore } from "@/stores/apis/resume/resume-canvas-e
 import { Button } from "@/components/ui/button";
 import { IPreviewPanelProps } from "./props";
 import { useTranslations } from "next-intl";
-
-/* ---------------------------------- Helper --------------------------------- */
-// A4 width in pixels at 96 dpi
-export const RESUME_EDITOR_A4_WIDTH = 794;
-// Zoom step per click (10%)
-export const RESUME_EDITOR_ZOOM_STEP = 0.1;
-// Min / max manual zoom multipliers relative to the auto-fit scale
-export const RESUME_EDITOR_ZOOM_MIN = 0.5;
-export const RESUME_EDITOR_ZOOM_MAX = 2.0;
+import {
+  RESUME_EDITOR_A4_WIDTH,
+  RESUME_EDITOR_ZOOM_STEP,
+  RESUME_EDITOR_ZOOM_MIN,
+  RESUME_EDITOR_ZOOM_MAX,
+} from "@/utils/constants/resume.constant";
 
 export default function ResumeEditorPreviewPanel({
   data,

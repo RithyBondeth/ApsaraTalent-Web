@@ -16,7 +16,7 @@ import { IMatchingCompanyCardProps } from "./props";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { memo } from "react";
 import { useTranslations } from "next-intl";
-import { translateLocation } from "@/utils/functions/text";
+import { translateLocation, getNameInitials } from "@/utils/functions/text";
 import { AiMatchExplanationModal } from "@/components/matching/ai-match-explanation-modal";
 import { AiCoverLetterModal } from "@/components/matching/ai-cover-letter-modal";
 import { AiSkillGapModal } from "@/components/matching/ai-skill-gap-modal";
@@ -38,7 +38,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
           className="size-16 sm:size-20 flex-shrink-0 ring-[2px] ring-border/40"
         >
           <AvatarFallback className="text-sm font-semibold">
-            {props.name.slice(0, 2).toUpperCase()}
+            {getNameInitials(props.name)}
           </AvatarFallback>
           <AvatarImage src={props.avatar} />
         </Avatar>

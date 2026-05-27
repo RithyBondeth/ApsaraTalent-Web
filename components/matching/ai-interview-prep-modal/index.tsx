@@ -4,6 +4,7 @@ import { useState } from "react";
 import { flushSync } from "react-dom";
 import { useDownloadProgress } from "@/hooks/utils/use-download-progress";
 import { downloadBase64File } from "@/utils/functions/file";
+import { MODAL_ANIMATION_DELAY_MS } from "@/utils/constants/config.constant";
 import { useInterviewPrepPdfStore } from "@/stores/apis/resume/interview-prep-pdf.store";
 import { Button } from "@/components/ui/button";
 import {
@@ -140,7 +141,7 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
         questions,
       });
       stopProgress(100);
-      await new Promise((r) => setTimeout(r, 400));
+      await new Promise((r) => setTimeout(r, MODAL_ANIMATION_DELAY_MS));
       const { data: b64, mimeType, filename } = res;
       downloadBase64File(b64, mimeType, filename || "interview-prep.pdf");
     } catch {

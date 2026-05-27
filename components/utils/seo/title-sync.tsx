@@ -3,10 +3,11 @@
 import { useLanguageStore } from "@/stores/languages/language-store";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
+import { BRAND_NAME } from "@/utils/constants/config.constant";
 
 /* --------------------------------- Helpers -------------------------------- */
 // ── Brand Suffix ──────────────────────────────────────────
-const BRAND = "Apsara Talent";
+const BRAND = BRAND_NAME;
 
 // ── Static Route → Bilingual Title Map ───────────────────
 const TITLES: Record<string, { en: string; km: string }> = {

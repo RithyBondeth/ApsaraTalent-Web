@@ -12,10 +12,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+  ONBOARDING_STORAGE_KEY,
+  ONBOARDING_SHOW_DELAY_MS,
+} from "@/utils/constants/config.constant";
 
 /* --------------------------------- Helpers -------------------------------- */
-const STORAGE_KEY = "onboarding-complete-v1";
-
 const STEPS: {
   icon: React.ReactNode;
   titleKey: string;
@@ -61,8 +63,14 @@ export function OnboardingFlow() {
   /* --------------------------------- Effects -------------------------------- */
   useEffect(() => {
     try {
-      if (typeof window !== "undefined" && !localStorage.getItem(STORAGE_KEY)) {
-        const timer = setTimeout(() => setVisible(true), 1200);
+      if (
+        typeof window !== "undefined" &&
+        !localStorage.getItem(ONBOARDING_STORAGE_KEY)
+      ) {
+        const timer = setTimeout(
+          () => setVisible(true),
+          ONBOARDING_SHOW_DELAY_MS,
+        );
         return () => clearTimeout(timer);
       }
     } catch {}
@@ -75,10 +83,8 @@ export function OnboardingFlow() {
     setTimeout(() => {
       setVisible(false);
       try {
-        localStorage.setItem(STORAGE_KEY, "1");
-      } catch {
-        /* ignore */
-      }
+        localStorage.setItem(ONBOARDING_STORAGE_KEY, "1");
+      } catch {}
     }, 250);
   };
 

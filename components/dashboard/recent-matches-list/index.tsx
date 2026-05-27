@@ -6,6 +6,7 @@ import { IRecentMatchesListProps } from "./props";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { timeAgo } from "@/utils/functions/date";
+import { getNameInitials } from "@/utils/functions/text";
 import { useTranslations } from "next-intl";
 
 export function RecentMatchesList({
@@ -38,6 +39,7 @@ export function RecentMatchesList({
           key={match.id}
           className="flex items-center gap-3 rounded-xl border border-border/50 bg-accent/30 p-3 transition-colors hover:bg-accent/60"
         >
+          {/* Avatar Section */}
           <CachedAvatar
             src={match.avatar}
             alt={match.name}
@@ -46,8 +48,10 @@ export function RecentMatchesList({
             preload={true}
             showLoadingState={true}
           >
-            {match.name.slice(0, 2)}
+            {getNameInitials(match.name)}
           </CachedAvatar>
+
+          {/* Info Section */}
           <div className="flex-1 min-w-0">
             <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-medium truncate">
               {match.name}

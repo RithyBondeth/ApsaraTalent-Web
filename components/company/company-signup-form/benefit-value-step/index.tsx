@@ -20,6 +20,7 @@ import {
   LucideZap,
 } from "lucide-react";
 import { useState } from "react";
+import { COMPANY_ICON_COLOR } from "@/utils/constants/ui.constant";
 
 export default function BenefitValueStepForm({
   getValues,
@@ -138,7 +139,12 @@ export default function BenefitValueStepForm({
                   key={benefit}
                 >
                   <IconLabel
-                    icon={<LucideCircleCheck stroke="white" fill="#0073E6" />}
+                    icon={
+                      <LucideCircleCheck
+                        stroke="white"
+                        fill={COMPANY_ICON_COLOR.BENEFIT}
+                      />
+                    }
                     className="[&>p]:text-[#0073E6] font-medium"
                     text={benefit}
                   />
@@ -214,7 +220,12 @@ export default function BenefitValueStepForm({
                   key={value}
                 >
                   <IconLabel
-                    icon={<LucideCircleCheck stroke="white" fill="#69B41E" />}
+                    icon={
+                      <LucideCircleCheck
+                        stroke="white"
+                        fill={COMPANY_ICON_COLOR.VALUE}
+                      />
+                    }
                     className="[&>p]:text-[#69B41E] font-medium"
                     text={value}
                   />

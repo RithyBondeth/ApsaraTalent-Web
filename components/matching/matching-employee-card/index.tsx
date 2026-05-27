@@ -1,5 +1,8 @@
 import MetaChip from "@/components/utils/data-display/meta-chip";
-import { formatAvailabilityWords } from "@/utils/functions/text";
+import {
+  formatAvailabilityWords,
+  getNameInitials,
+} from "@/utils/functions/text";
 import {
   LucideBriefcaseBusiness,
   LucideCalendarCheck,
@@ -37,7 +40,7 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
           className="size-16 sm:size-20 flex-shrink-0 ring-[2px] ring-border/40"
         >
           <AvatarFallback className="text-sm font-semibold">
-            {props.name.slice(0, 2).toUpperCase()}
+            {getNameInitials(props.name)}
           </AvatarFallback>
           <AvatarImage src={props.avatar} />
         </Avatar>

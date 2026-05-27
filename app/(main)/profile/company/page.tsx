@@ -68,14 +68,13 @@ import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-s
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import {
   companyTypeConstant,
+  COMPANY_ICON_COLOR,
   locationConstant,
   loginMethodConstant,
   platformConstant,
-  salaryCurrencyConstant,
-  workModeConstant,
 } from "@/utils/constants/ui.constant";
 import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type";
-import { capitalizeWords } from "@/utils/functions/text";
+import { capitalizeWords, getNameInitials } from "@/utils/functions/text";
 import { isUuid } from "@/utils/functions/validation/check-uuid";
 import { parseMaybeDate } from "@/utils/functions/date";
 import { IBenefits } from "@/utils/interfaces/user/company.interface";
@@ -1225,7 +1224,7 @@ export default function ProfilePage() {
                   onError={() => setAvatarLoadError(true)}
                 />
                 <AvatarFallback className="uppercase text-lg font-semibold">
-                  {company.name.slice(0, 2)}
+                  {getNameInitials(company.name)}
                 </AvatarFallback>
               </Avatar>
 
@@ -1824,7 +1823,10 @@ export default function ProfilePage() {
                     >
                       <IconLabel
                         icon={
-                          <LucideCircleCheck stroke="white" fill="#0073E6" />
+                          <LucideCircleCheck
+                            stroke="white"
+                            fill={COMPANY_ICON_COLOR.BENEFIT}
+                          />
                         }
                         className="[&>p]:text-[#0073E6] font-medium"
                         text={benefit.label}
@@ -1914,7 +1916,10 @@ export default function ProfilePage() {
                     >
                       <IconLabel
                         icon={
-                          <LucideCircleCheck stroke="white" fill="#69B41E" />
+                          <LucideCircleCheck
+                            stroke="white"
+                            fill={COMPANY_ICON_COLOR.VALUE}
+                          />
                         }
                         className="[&>p]:text-[#69B41E] font-medium"
                         text={value.label}

@@ -24,14 +24,16 @@ import { useDownloadProgress } from "@/hooks/utils/use-download-progress";
 import { downloadBase64File } from "@/utils/functions/file";
 import { useForm, useWatch } from "react-hook-form";
 import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
-import { LIVE_RESUME_PREVIEW_DEBOUNCE_MS } from "@/utils/constants/resume.constant";
+import {
+  LIVE_RESUME_PREVIEW_DEBOUNCE_MS,
+  RESUME_LOCAL_STORAGE_KEY,
+} from "@/utils/constants/resume.constant";
+import { RESUME_DOWNLOAD_SETTLE_MS } from "@/utils/constants/config.constant";
 import { TypographyLead } from "@/components/utils/typography/typography-lead";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TResumeTemplate } from "@/utils/types/resume/resume.type";
 import { AiResumeOptimizerDrawer } from "@/components/resume-builder/ai-optimizer-drawer";
-
-const RESUME_LOCAL_STORAGE_KEY = "apsara-talent-resume-draft";
 
 export default function ResumeEditorPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -142,7 +144,7 @@ export default function ResumeEditorPage() {
         throw new Error("Resume service returned invalid data");
       }
       stopProgress(100);
-      await new Promise((r) => setTimeout(r, 500));
+      await new Promise((r) => setTimeout(r, RESUME_DOWNLOAD_SETTLE_MS));
 
       downloadBase64File(
         result.data,

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { SCROLL_PROGRESS_GRADIENT } from "@/utils/constants/ui.constant";
 
 export function ScrollProgressBar() {
   /* --------------------------------- Utils ---------------------------------- */
@@ -47,8 +48,7 @@ export function ScrollProgressBar() {
       <div
         className="h-full origin-left will-change-transform"
         style={{
-          background:
-            "linear-gradient(90deg, hsl(var(--primary)) 0%, #7c3aed 55%, #ec4899 100%)",
+          background: SCROLL_PROGRESS_GRADIENT,
           transform: `scaleX(${progress / 100})`,
           transition: progress === 0 ? "none" : "transform 80ms linear",
         }}

@@ -1,3 +1,5 @@
+import { SCORE_COLOR } from "@/utils/constants/ui.constant";
+
 export default function ScoreRing(props: { score: number }) {
   /* ---------------------------- Props --------------------------- */
   const { score } = props;
@@ -7,7 +9,12 @@ export default function ScoreRing(props: { score: number }) {
   const circumference = 2 * Math.PI * radius;
   const filled = (score / 100) * circumference;
 
-  const color = score >= 75 ? "#22c55e" : score >= 50 ? "#f59e0b" : "#ef4444";
+  const color =
+    score >= 75
+      ? SCORE_COLOR.HIGH
+      : score >= 50
+        ? SCORE_COLOR.MEDIUM
+        : SCORE_COLOR.LOW;
 
   /* -------------------------- Render UI ------------------------- */
   return (

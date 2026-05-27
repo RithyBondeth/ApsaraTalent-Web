@@ -8,6 +8,7 @@ import { INotificationMatchCardProps } from "./props";
 import { useTranslations } from "next-intl";
 import NotificationBaseCard from "../notification-base-card";
 import { useRouter } from "next/navigation";
+import { getNameInitials } from "@/utils/functions/text";
 
 export default function NotificationMatchCard(
   props: INotificationMatchCardProps,
@@ -56,7 +57,7 @@ export default function NotificationMatchCard(
           <div className="flex items-center gap-2 min-w-0">
             <Avatar rounded="md" className="bg-secondary size-8 shrink-0">
               <AvatarFallback className="text-sm">
-                {props.user.name.slice(0, 2).toUpperCase()}
+                {getNameInitials(props.user.name)}
               </AvatarFallback>
               <AvatarImage src={props.user.avatar} />
             </Avatar>

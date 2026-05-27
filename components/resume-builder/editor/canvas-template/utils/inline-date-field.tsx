@@ -8,6 +8,7 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarDays } from "lucide-react";
 import { Editable } from "./editable";
+import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
 
 export function InlineDateField(props: {
   value: string;
@@ -49,7 +50,7 @@ export function InlineDateField(props: {
             onMouseDown={(e) => e.stopPropagation()}
             title="Pick a date"
             className="opacity-0 group-hover/date:opacity-50 hover:!opacity-100 transition-opacity ml-0.5"
-            style={{ color: "#9ca3af", lineHeight: 1 }}
+            style={{ color: RESUME_COLOR.TEXT_SUBTLE, lineHeight: 1 }}
           >
             <CalendarDays size={10} />
           </button>

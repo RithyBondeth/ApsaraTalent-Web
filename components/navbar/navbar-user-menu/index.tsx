@@ -52,6 +52,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import MenuIcon from "./menu-icon";
 import { INavbarUserMenuProps } from "./props";
+import { getNameInitials } from "@/utils/functions/text";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 export function NavbarUserMenu(props: INavbarUserMenuProps) {
   /* --------------------------------- Props --------------------------------- */
@@ -70,7 +72,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
   /* ----------------------------- API Integration --------------------------- */
   // Current User
   const currentUser = useGetCurrentUserStore((state) => state.user);
-  const isEmployee = currentUser?.role === "employee";
+  const isEmployee = currentUser?.role === USER_ROLE.EMPLOYEE;
 
   // Logout
   const normalLogout = useLoginStore((state) => state.clearToken);
@@ -150,7 +152,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
             <Avatar className="h-7 w-7 shrink-0 ring-2 ring-border/60 transition-all duration-200 group-hover:ring-primary/40">
               <AvatarImage src={user.avatar} alt={user.name} />
               <AvatarFallback className="bg-primary/10 text-[10px] font-bold text-primary">
-                {user.name.slice(0, 2).toUpperCase()}
+                {getNameInitials(user.name)}
               </AvatarFallback>
             </Avatar>
 
@@ -182,7 +184,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
               <Avatar className="h-11 w-11 ring-2 ring-background shadow-sm">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="bg-primary/10 font-bold text-primary">
-                  {user.name.slice(0, 2).toUpperCase()}
+                  {getNameInitials(user.name)}
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0 flex-1">

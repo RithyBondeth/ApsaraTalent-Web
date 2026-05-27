@@ -6,6 +6,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, X, Plus } from "lucide-react";
 import { Editable } from "./editable";
 import { InlineDateField } from "./inline-date-field";
+import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
 
 export function ExperienceEntry(props: {
   exp: Experience;
@@ -15,7 +16,7 @@ export function ExperienceEntry(props: {
   getValues: UseFormGetValues<IBuildResume>;
   onDelete: () => void;
 }) {
-  /* ----------------------------------- Props --------------------------------- */
+  /* ----------------------------------- Props -------------------------------- */
   const { exp, sortableId, index, setValue, getValues, onDelete } = props;
 
   /* -------------------------------- All States ------------------------------ */
@@ -48,7 +49,7 @@ export function ExperienceEntry(props: {
         title="Drag to reorder"
         className="absolute -left-5 top-2 cursor-grab active:cursor-grabbing opacity-0 group-hover/entry:opacity-50 transition-opacity"
       >
-        <GripVertical size={12} style={{ color: "#9ca3af" }} />
+        <GripVertical size={12} style={{ color: RESUME_COLOR.TEXT_SUBTLE }} />
       </div>
 
       {/* Delete Button Section */}
@@ -59,7 +60,7 @@ export function ExperienceEntry(props: {
         }}
         title="Remove experience"
         className="absolute -right-5 top-0 opacity-0 group-hover/entry:opacity-60 hover:!opacity-100 transition-opacity"
-        style={{ color: "#ef4444" }}
+        style={{ color: RESUME_COLOR.DANGER }}
       >
         <X size={13} />
       </button>
@@ -74,7 +75,13 @@ export function ExperienceEntry(props: {
       >
         {/* Position and Company Section */}
         <div>
-          <div style={{ fontWeight: 600, fontSize: 13, color: "#111827" }}>
+          <div
+            style={{
+              fontWeight: 600,
+              fontSize: 13,
+              color: RESUME_COLOR.TEXT_PRIMARY,
+            }}
+          >
             <Editable
               value={exp.position || ""}
               placeholder="Position"
@@ -85,7 +92,13 @@ export function ExperienceEntry(props: {
               }
             />
           </div>
-          <div style={{ fontSize: 12, color: "#6b7280", marginTop: 1 }}>
+          <div
+            style={{
+              fontSize: 12,
+              color: RESUME_COLOR.TEXT_MUTED,
+              marginTop: 1,
+            }}
+          >
             <Editable
               value={exp.company || ""}
               placeholder="Company"
@@ -102,7 +115,7 @@ export function ExperienceEntry(props: {
         <div
           style={{
             fontSize: 11,
-            color: "#9ca3af",
+            color: RESUME_COLOR.TEXT_SUBTLE,
             whiteSpace: "nowrap",
             marginLeft: 8,
             flexShrink: 0,
@@ -133,7 +146,7 @@ export function ExperienceEntry(props: {
         style={{
           marginTop: 4,
           fontSize: 12,
-          color: "#374151",
+          color: RESUME_COLOR.TEXT_SECONDARY,
           lineHeight: 1.55,
         }}
       >
@@ -156,7 +169,11 @@ export function ExperienceEntry(props: {
           {exp.achievements.map((ach, ai) => (
             <li
               key={ai}
-              style={{ fontSize: 12, color: "#374151", marginBottom: 2 }}
+              style={{
+                fontSize: 12,
+                color: RESUME_COLOR.TEXT_SECONDARY,
+                marginBottom: 2,
+              }}
               className="group/ach relative"
             >
               <Editable
@@ -184,7 +201,7 @@ export function ExperienceEntry(props: {
                   );
                 }}
                 className="absolute -right-4 top-0 opacity-0 group-hover/ach:opacity-60 hover:!opacity-100 transition-opacity"
-                style={{ color: "#ef4444" }}
+                style={{ color: RESUME_COLOR.DANGER }}
                 title="Remove achievement"
               >
                 <X size={10} />
@@ -205,7 +222,7 @@ export function ExperienceEntry(props: {
           });
         }}
         className="opacity-0 group-hover/entry:opacity-60 hover:!opacity-100 transition-opacity flex items-center gap-0.5 mt-1"
-        style={{ fontSize: 10, color: "#4f46e5" }}
+        style={{ fontSize: 10, color: RESUME_COLOR.ACCENT }}
         title="Add achievement"
       >
         <Plus size={9} />

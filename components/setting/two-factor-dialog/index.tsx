@@ -27,8 +27,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
 import { ITwoFactorDialogProps } from "./props";
-
-const OTP_LENGTH = 6;
+import { OTP_LENGTH } from "@/utils/constants/auth.constant";
 
 export function TwoFactorDialog({
   open,

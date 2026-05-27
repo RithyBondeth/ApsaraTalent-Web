@@ -814,6 +814,33 @@ export const careerScopesListConstant: {
 export const MOBILE_BREAKPOINT = 768;
 export const AVATAR_INITIALS_LENGTH = 2;
 
+/* --------------------------------- Colors --------------------------------- */
+export const SCORE_COLOR = {
+  HIGH: "#22c55e", // score >= 75 — green-500
+  MEDIUM: "#f59e0b", // score >= 50 — amber-400
+  LOW: "#ef4444", // score  < 50 — red-500
+} as const;
+
+export const RATE_COLOR = {
+  HIGH: "#10b981", // rate >= 70 — emerald-500
+  MEDIUM: "#f59e0b", // rate >= 20 — amber-400
+  LOW: "#ef4444", // rate  < 20 — red-500
+} as const;
+
+export const CHART_COLOR = {
+  PINK: "#ec4899", // pink-500  — likes received bar
+  GREEN: "#10b981", // emerald-500 — matches bar
+} as const;
+
+export const COMPANY_ICON_COLOR = {
+  BENEFIT: "#0073E6", // blue   — benefit check icon
+  VALUE: "#69B41E", // green  — value check icon
+} as const;
+
+/* Scroll progress bar decorative gradient (fixed top of page) */
+export const SCROLL_PROGRESS_GRADIENT =
+  "linear-gradient(90deg, hsl(var(--primary)) 0%, #7c3aed 55%, #ec4899 100%)";
+
 export const HOOK_TEXT_SELECTION_HIDDEN_STATE = {
   isVisible: false,
   top: 0,

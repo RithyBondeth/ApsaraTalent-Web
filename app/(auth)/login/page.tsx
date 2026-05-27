@@ -51,7 +51,6 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -63,7 +62,7 @@ import {
   DEFAULT_REDIRECT_DELAY_MS,
   TOAST_DURATION_MS,
 } from "@/utils/constants/config.constant";
-import { USER_ROLE } from "@/utils/constants/auth.constant";
+import { USER_ROLE, OTP_LENGTH } from "@/utils/constants/auth.constant";
 import {
   InputOTP,
   InputOTPGroup,
@@ -74,7 +73,6 @@ function LoginPage() {
   /* ------------------------------------ Utils -------------------------------- */
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { resolvedTheme } = useTheme();
   const t = useTranslations("auth");
   const tv = useTranslations("validation");
 
@@ -330,7 +328,7 @@ function LoginPage() {
       .then(() => {
         console.log("User data preloaded successfully in login page");
         toast.success(t("successLoggedIn"), {
-          duration: 1000,
+          duration: TOAST_DURATION_MS.SHORT,
         });
       })
       .catch((error) => {
@@ -727,13 +725,13 @@ function LoginPage() {
           <DialogDescription>{t("twoFactorDesc")}</DialogDescription>
           <div className="flex flex-col items-center gap-3 py-2">
             <InputOTP
-              maxLength={6}
+              maxLength={OTP_LENGTH}
               value={twoFactorOtp}
               onChange={setTwoFactorOtp}
               disabled={twoFactorInitiated}
             >
               <InputOTPGroup>
-                {Array.from({ length: 6 }, (_, i) => (
+                {Array.from({ length: OTP_LENGTH }, (_, i) => (
                   <InputOTPSlot key={i} index={i} />
                 ))}
               </InputOTPGroup>

@@ -19,7 +19,7 @@ import Tag from "@/components/utils/data-display/tag";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type";
-import { translateLocation } from "@/utils/functions/text";
+import { translateLocation, getNameInitials } from "@/utils/functions/text";
 import { formatDisplayDate } from "@/utils/functions/date";
 import { IBenefits } from "@/utils/interfaces/user/company.interface";
 import { IImage } from "@/utils/interfaces/user/company.interface";
@@ -322,7 +322,11 @@ export default function CompanyDetailPage() {
             >
               <AvatarImage src={companyData.avatar ?? ""} />
               <AvatarFallback className="uppercase text-xl font-bold">
-                {companyData.name ? companyData.name.slice(0, 2) : <User />}
+                {companyData.name ? (
+                  getNameInitials(companyData.name)
+                ) : (
+                  <User />
+                )}
               </AvatarFallback>
             </Avatar>
 

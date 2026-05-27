@@ -15,7 +15,7 @@ import Tag from "@/components/utils/data-display/tag";
 import { IFavoriteCompanyCardProps } from "./props";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useTranslations } from "next-intl";
-import { translateLocation } from "@/utils/functions/text";
+import { translateLocation, getNameInitials } from "@/utils/functions/text";
 
 export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
@@ -35,7 +35,7 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
           className="size-16 sm:size-20 flex-shrink-0 ring-[2px] ring-border/40"
         >
           <AvatarFallback className="text-sm font-semibold">
-            {props.name.slice(0, 2).toUpperCase()}
+            {getNameInitials(props.name)}
           </AvatarFallback>
           <AvatarImage src={props.avatar} />
         </Avatar>
@@ -85,7 +85,10 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
               icon={<LucideBriefcaseBusiness />}
               text={t("positionCount", { count: props.openPosition.length })}
             />
-            <MetaChip icon={<LucideMapPin />} text={translateLocation(props.location, tl)} />
+            <MetaChip
+              icon={<LucideMapPin />}
+              text={translateLocation(props.location, tl)}
+            />
           </div>
         </div>
       </div>

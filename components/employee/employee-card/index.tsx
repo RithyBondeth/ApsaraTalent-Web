@@ -24,6 +24,7 @@ import {
   translateLocation,
   formatAvailabilityWords,
 } from "@/utils/functions/text";
+import { AVATAR_INITIALS_LENGTH } from "@/utils/constants/ui.constant";
 
 export default function EmployeeCard(props: IEmployeeCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
@@ -76,7 +77,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
               preload={true}
               showLoadingState={true}
             >
-              {props.username?.slice(0, 2)}
+              {props.username?.slice(0, AVATAR_INITIALS_LENGTH)}
             </CachedAvatar>
 
             <div className="flex-1 min-w-0">

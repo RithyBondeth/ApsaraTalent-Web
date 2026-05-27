@@ -21,7 +21,7 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { AvailabilityBadge } from "@/components/utils/data-display/availability-badge";
 import { useTranslations } from "next-intl";
-import { translateLocation } from "@/utils/functions/text";
+import { translateLocation, getNameInitials } from "@/utils/functions/text";
 
 export default function EmployeeDialog(props: IEmployeeDialogProps) {
   /* ---------------------------------- Utils --------------------------------- */
@@ -58,7 +58,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
             >
               <AvatarImage src={props.avatar!} />
               <AvatarFallback className="uppercase text-lg font-semibold">
-                {fullName.slice(0, 2)}
+                {getNameInitials(fullName)}
               </AvatarFallback>
             </Avatar>
           </div>
