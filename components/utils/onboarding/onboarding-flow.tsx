@@ -13,16 +13,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+/* --------------------------------- Helpers -------------------------------- */
 const STORAGE_KEY = "onboarding-complete-v1";
 
-interface Step {
+const STEPS: {
   icon: React.ReactNode;
   titleKey: string;
   descKey: string;
   accent: string;
-}
-
-const STEPS: Step[] = [
+}[] = [
   {
     icon: <LucideSparkles className="size-7" />,
     titleKey: "step1Title",
@@ -47,26 +46,30 @@ const STEPS: Step[] = [
     descKey: "step4Desc",
     accent: "from-emerald-500/20 to-emerald-400/5",
   },
-];
+] as const;
 
 export function OnboardingFlow() {
+  /* --------------------------------- Utils ---------------------------------- */
   const t = useTranslations("onboarding");
-  const [step, setStep] = useState(0);
-  const [visible, setVisible] = useState(false);
-  const [closing, setClosing] = useState(false);
 
+  /* ------------------------------- All States ------------------------------- */
+  const [step, setStep] = useState<number>(0);
+  const [visible, setVisible] = useState<boolean>(false);
+  const [closing, setClosing] = useState<boolean>(false);
+  const currentStep = STEPS[step];
+
+  /* --------------------------------- Effects -------------------------------- */
   useEffect(() => {
     try {
       if (typeof window !== "undefined" && !localStorage.getItem(STORAGE_KEY)) {
-        // Short delay so the page renders first
         const timer = setTimeout(() => setVisible(true), 1200);
         return () => clearTimeout(timer);
       }
-    } catch {
-      // localStorage blocked — skip onboarding
-    }
+    } catch {}
   }, []);
 
+  /* --------------------------------- Methods -------------------------------- */
+  // ── Handle Dismiss ───────────────────────
   const dismiss = () => {
     setClosing(true);
     setTimeout(() => {
@@ -79,6 +82,7 @@ export function OnboardingFlow() {
     }, 250);
   };
 
+  // ── Handle Next ────────────────────────
   const next = () => {
     if (step < STEPS.length - 1) {
       setStep((s) => s + 1);
@@ -87,13 +91,13 @@ export function OnboardingFlow() {
     }
   };
 
+  /* -------------------------------- Null State -------------------------------- */
   if (!visible) return null;
 
-  const current = STEPS[step];
-
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <>
-      {/* Backdrop */}
+      {/* Backdrop Section */}
       <div
         className={cn(
           "fixed inset-0 z-50 bg-foreground/30 backdrop-blur-[2px] transition-opacity duration-300",
@@ -102,7 +106,7 @@ export function OnboardingFlow() {
         onClick={dismiss}
       />
 
-      {/* Coach card */}
+      {/* Coach Card Section */}
       <div
         className={cn(
           "fixed bottom-24 left-1/2 z-50 w-[calc(100vw-2rem)] max-w-sm -translate-x-1/2 transition-all duration-300 lg:bottom-10",
@@ -110,8 +114,9 @@ export function OnboardingFlow() {
         )}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Card Container Section */}
         <div className="relative flex flex-col gap-4 rounded-2xl border border-border/60 bg-card p-5 shadow-[0_20px_60px_hsl(var(--foreground)/0.18)]">
-          {/* Close */}
+          {/* Close Button Section */}
           <button
             onClick={dismiss}
             className="absolute right-3 top-3 flex size-6 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
@@ -119,29 +124,29 @@ export function OnboardingFlow() {
             <LucideX className="size-3.5" />
           </button>
 
-          {/* Icon + text */}
+          {/* Icon Text Profile Section */}
           <div className={cn("flex items-start gap-4")}>
             <div
               className={cn(
                 "flex size-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-foreground",
-                current.accent,
+                currentStep.accent,
               )}
             >
-              {current.icon}
+              {currentStep.icon}
             </div>
             <div className="flex flex-col gap-1 pr-4">
               <p className="font-semibold text-sm leading-snug">
-                {t(current.titleKey)}
+                {t(currentStep.titleKey)}
               </p>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                {t(current.descKey)}
+                {t(currentStep.descKey)}
               </p>
             </div>
           </div>
 
-          {/* Footer: dots + button */}
+          {/* Footer Controller Section */}
           <div className="flex items-center justify-between">
-            {/* Progress dots */}
+            {/* Progress Dots Section */}
             <div className="flex items-center gap-1.5">
               {STEPS.map((_, i) => (
                 <button
@@ -157,6 +162,7 @@ export function OnboardingFlow() {
               ))}
             </div>
 
+            {/* Next Action Button Section */}
             <Button
               size="sm"
               onClick={next}
