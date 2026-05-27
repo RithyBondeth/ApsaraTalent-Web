@@ -29,12 +29,12 @@ export const platformConstant: {
   label: string;
   value: string;
 }[] = [
-  { id: 1, label: "Facebook", value: "facebook" },
+  { id: 1, label: "Facebook", value: "Facebook" },
   { id: 2, label: "Instagram", value: "Instagram" },
-  { id: 3, label: "Telegram", value: "telegram" },
-  { id: 4, label: "LinkedIn", value: "linkedin" },
-  { id: 5, label: "Github", value: "github" },
-  { id: 6, label: "Website", value: "website" },
+  { id: 3, label: "Telegram", value: "Telegram" },
+  { id: 4, label: "LinkedIn", value: "Linkedin" },
+  { id: 5, label: "Github", value: "Github" },
+  { id: 6, label: "Website", value: "Website" },
 ] as const;
 
 export const loginMethodConstant: {
