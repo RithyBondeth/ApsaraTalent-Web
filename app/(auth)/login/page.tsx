@@ -76,26 +76,9 @@ function LoginPage() {
   const t = useTranslations("auth");
   const tv = useTranslations("validation");
 
-  /* ----------------------------------- Memo ---------------------------------- */
-  const callbackUrl = useMemo(() => {
-    const value = searchParams.get("callbackUrl");
-    if (!value || !value.startsWith("/") || value.startsWith("//")) {
-      return "/feed";
-    }
-    return value;
-  }, [searchParams]);
-
-  const phoneLoginHref = useMemo(() => {
-    if (callbackUrl === "/feed") return "/login/phone-number";
-    return `/login/phone-number?callbackUrl=${encodeURIComponent(callbackUrl)}`;
-  }, [callbackUrl]);
-
   /* -------------------------------- All States ------------------------------- */
-  const [mounted, setMounted] = useState<boolean>(false);
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [openRmbDialog, setOpenRmbDialog] = useState<boolean>(false);
-
-  // Login Helpers
   const [socialTypeIdentifier, setSocialTypeIdentifier] = useState<
     string | null
   >(null);
@@ -113,21 +96,24 @@ function LoginPage() {
   const { getCurrentUser } = useGetCurrentUserStore();
   const { queryCompany } = useGetAllCompanyStore();
   const { queryEmployee } = useGetAllEmployeeStore();
-  // User Liked Store
+
+  // User Liked
   const queryCurrentEmployeeLiked = useGetCurrentEmployeeLikedStore(
     (s) => s.queryCurrentEmployeeLiked,
   ); // Companies liked by current employee
   const queryCurrentCompanyLiked = useGetCurrentCompanyLikedStore(
     (s) => s.queryCurrentCompanyLiked,
   ); // Employees liked by current company
-  // User Favorited Store
+
+  // User Favorited
   const queryAllEmployeeFavorites = useGetAllEmployeeFavoritesStore(
     (s) => s.queryAllEmployeeFavorites,
   ); // Companies favorited by current employee
   const queryAllCompanyFavorites = useGetAllCompanyFavoritesStore(
     (s) => s.queryAllCompanyFavorites,
   ); // Employees favorited by current company
-  // Recommendations Store
+
+  // Recommendations
   const queryEmployeeRecommendations = useGetEmployeeRecommendationsStore(
     (s) => s.queryEmployeeRecommendations,
   );
@@ -135,7 +121,7 @@ function LoginPage() {
     (s) => s.queryCompanyRecommendations,
   );
 
-  // Regular Email-Password Authentication Store
+  // Regular Email-Password Authentication
   const {
     isAuthenticated,
     login,
@@ -147,16 +133,17 @@ function LoginPage() {
     clearTwoFactorPending,
   } = useLoginStore();
 
-  // Two-Factor Authentication Store
+  // Two-Factor Authentication
   const twoFactorStore = useTwoFactorStore();
 
-  // Social Authentication Stores
+  // Social Authentication
   const googleLoginStore = useGoogleLoginStore();
   const linkedInLoginStore = useLinkedInLoginStore();
   const githubLoginStore = useGithubLoginStore();
   const facebookLoginStore = useFacebookLoginStore();
 
   /* ----------------------- React Hook Form: Login Form ----------------------- */
+  // ── Define Schema For Login Form ──────────────────────────
   const loginSchema = useMemo(
     () =>
       makeLoginSchema({
@@ -185,7 +172,22 @@ function LoginPage() {
   });
 
   /* --------------------------------- Methods --------------------------------- */
-  // ── Preload User Data ────────────────────────────────────────
+  // ── Callback URL Function ────────────────────────────────────
+  const callbackUrl = useMemo(() => {
+    const value = searchParams.get("callbackUrl");
+    if (!value || !value.startsWith("/") || value.startsWith("//")) {
+      return "/feed";
+    }
+    return value;
+  }, [searchParams]);
+
+  // ── Phone Login Href Function ────────────────────────────────
+  const phoneLoginHref = useMemo(() => {
+    if (callbackUrl === "/feed") return "/login/phone-number";
+    return `/login/phone-number?callbackUrl=${encodeURIComponent(callbackUrl)}`;
+  }, [callbackUrl]);
+
+  // ── Preload User Data Function ────────────────────────────────
   const preloadUserData = useCallback(async () => {
     try {
       // First get current user data
@@ -235,14 +237,61 @@ function LoginPage() {
     queryEmployee,
   ]);
 
-  // ── Login Function ───────────────────────────────────────
+  // ── Email Password Login Function ────────────────────────────
   const onSubmit = async (data: TLoginForm) => {
     isProcessingRegularLogin.current = false;
     setLoginInitiated(true);
     await login(data.email, data.password, data.rememberMe!);
   };
 
-  // ── 2FA Verify ───────────────────────────────────────────
+  // ── Social Login Function ────────────────────────────────────
+  const handleSocialLogin = (rememberMe: "true" | "false") => {
+    // Reset all social store states to avoid stale errors triggering the effect
+    useGoogleLoginStore.setState({
+      error: null,
+      loading: false,
+      isAuthenticated: false,
+      newUser: null,
+    });
+    useLinkedInLoginStore.setState({
+      error: null,
+      loading: false,
+      isAuthenticated: false,
+      newUser: null,
+    });
+    useGithubLoginStore.setState({
+      error: null,
+      loading: false,
+      isAuthenticated: false,
+      newUser: null,
+    });
+    useFacebookLoginStore.setState({
+      error: null,
+      loading: false,
+      isAuthenticated: false,
+      newUser: null,
+    });
+
+    toast.dismiss();
+    setSocialLoginInitiated(true);
+    isProcessingSocialLogin.current = false; // Reset flag
+    switch (socialTypeIdentifier) {
+      case "facebook":
+        facebookLoginStore.facebookLogin(rememberMe);
+        break;
+      case "google":
+        googleLoginStore.googleLogin(rememberMe);
+        break;
+      case "github":
+        githubLoginStore.githubLogin(rememberMe);
+        break;
+      case "linkedIn":
+        linkedInLoginStore.linkedinLogin(rememberMe);
+        break;
+    }
+  };
+
+  // ── 2FA Verify Function ──────────────────────────────────────
   const handleTwoFactorVerify = async () => {
     if (!pendingUserId || twoFactorOtp.length < 6) return;
     setTwoFactorInitiated(true);
@@ -279,13 +328,7 @@ function LoginPage() {
   };
 
   /* --------------------------------- Effects --------------------------------- */
-  /*
-    - Mark as mounted so the theme-dependent image is only resolved client-side,
-    - Preventing the SSR/client hydration mismatch on the login image.
-  */
-  useEffect(() => setMounted(true), []);
-
-  // ── Remember Preference Effect ──────────────────────────
+  // ── Remember Preference Effect ───────────────────────────────
   useEffect(() => {
     try {
       const savedRememberPreference = getRememberPreference();
@@ -295,7 +338,7 @@ function LoginPage() {
     }
   }, [setValue]);
 
-  // ── Login Effect ─────────────────────────────────────────
+  // ── Login Effect ─────────────────────────────────────────────
   // Regular Email-Password Login Effect
   useEffect(() => {
     if (!loginInitiated) return;
@@ -355,53 +398,6 @@ function LoginPage() {
     callbackUrl,
     t,
   ]);
-
-  // Social Login Function
-  const handleSocialLogin = (rememberMe: "true" | "false") => {
-    // Reset all social store states to avoid stale errors triggering the effect
-    useGoogleLoginStore.setState({
-      error: null,
-      loading: false,
-      isAuthenticated: false,
-      newUser: null,
-    });
-    useLinkedInLoginStore.setState({
-      error: null,
-      loading: false,
-      isAuthenticated: false,
-      newUser: null,
-    });
-    useGithubLoginStore.setState({
-      error: null,
-      loading: false,
-      isAuthenticated: false,
-      newUser: null,
-    });
-    useFacebookLoginStore.setState({
-      error: null,
-      loading: false,
-      isAuthenticated: false,
-      newUser: null,
-    });
-
-    toast.dismiss();
-    setSocialLoginInitiated(true);
-    isProcessingSocialLogin.current = false; // Reset flag
-    switch (socialTypeIdentifier) {
-      case "facebook":
-        facebookLoginStore.facebookLogin(rememberMe);
-        break;
-      case "google":
-        googleLoginStore.googleLogin(rememberMe);
-        break;
-      case "github":
-        githubLoginStore.githubLogin(rememberMe);
-        break;
-      case "linkedIn":
-        linkedInLoginStore.linkedinLogin(rememberMe);
-        break;
-    }
-  };
 
   // Social Login Effect
   useEffect(() => {
@@ -525,7 +521,7 @@ function LoginPage() {
     t,
   ]);
 
-  /* -------------------------------- Loading State -------------------------------- */
+  /* --------------------------------- Loading State --------------------------------- */
   const isAnySocialLoading =
     googleLoginStore.loading ||
     linkedInLoginStore.loading ||
@@ -561,6 +557,7 @@ function LoginPage() {
           {/* Social Button Login Section */}
           <div className="w-full flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-3">
+              {/* Google Login Button */}
               <SocialButton
                 image={googleIcon}
                 label="Google"
@@ -571,6 +568,7 @@ function LoginPage() {
                   setSocialTypeIdentifier("google");
                 }}
               />
+              {/* Facebook Login Button */}
               <SocialButton
                 image={facebookIcon}
                 label="Facebook"
@@ -581,6 +579,7 @@ function LoginPage() {
                   setSocialTypeIdentifier("facebook");
                 }}
               />
+              {/* LinkedIn Login Button */}
               <SocialButton
                 image={linkedinIcon}
                 label="LinkedIn"
@@ -591,6 +590,7 @@ function LoginPage() {
                   setSocialTypeIdentifier("linkedIn");
                 }}
               />
+              {/* Github Login Button */}
               <SocialButton
                 image={githubIcon}
                 label="Github"

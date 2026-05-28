@@ -16,7 +16,7 @@ const makeDateRequired = (requiredError: string) =>
     }),
   );
 
-// Define Schema for step 1: Basic Information
+// ─── Define Schema for step 1: Basic Information ──────────────────
 export const makeBasicInfoStepSchema = (m: {
   fieldRequired: (field: string) => string;
   fieldTooLong: (field: string, max: number) => string;
@@ -58,7 +58,7 @@ export const makeBasicInfoStepSchema = (m: {
     }),
   });
 
-// Define schema for step 2: OpenPosition
+// ─── Define schema for step 2: OpenPosition ──────────────────────
 export const makeOpenPositionStepSchema = (m: {
   atLeastOneSkill: string;
   atLeastOnePosition: string;
@@ -105,7 +105,7 @@ export const makeOpenPositionStepSchema = (m: {
       .min(1, { message: m.atLeastOnePosition }),
   });
 
-// Define schema for step 3: Benefit and Value
+// ─── Define schema for step 3: Benefit and Value ──────────────────
 export const benefitAndValueStepSchema = z.object({
   benefitsAndValues: z.object({
     benefits: z.array(z.string()).optional(),
@@ -113,23 +113,23 @@ export const benefitAndValueStepSchema = z.object({
   }),
 });
 
-// Define schema for step 4: Company Avatar
+// ─── Define schema for step 4: Company Avatar ─────────────────────
 export const companyAvatarStepSchema = z.object({
   avatar: optionalImageValidation("Avatar"),
 });
 
-// Define schema for step 5: Company Cover
+// ─── Define schema for step 5: Company Cover ──────────────────────
 export const companyCoverStepSchema = z.object({
   cover: optionalImageValidation("Cover"),
 });
 
-// Define schema for step 6: Career Scopes
+// ─── Define schema for step 6: Career Scopes ──────────────────────
 export const makeCareerScopesStepSchema = (m: { atLeastOneCareer: string }) =>
   z.object({
     careerScopes: z.array(z.string()).min(1, { message: m.atLeastOneCareer }),
   });
 
-// Define schema for step 7: Company Signup
+// ─── Define schema for step 7: Company Signup ──────────────────────
 export const makeCompanySignupSchema = (m: {
   atLeastOneSkill: string;
   atLeastOnePosition: string;

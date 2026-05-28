@@ -47,7 +47,7 @@ import { formatDateForField } from "@/utils/functions/date";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 export default function SignupPage() {
-  /* --------------------------------- Utils --------------------------------- */
+  /* --------------------------------------- Utils --------------------------------------- */
   const router = useRouter();
   const t = useTranslations("auth");
   const tv = useTranslations("validation");
@@ -80,13 +80,16 @@ export default function SignupPage() {
     Takeo: tLoc("takeo"),
     "Tbong Khmum": tLoc("tbongKhmum"),
   };
-  /* -------------------------------- All States ------------------------------ */
-  const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
+
+  /* -------------------------------------- All States ------------------------------------ */
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [confirmPassVisibility, setConfirmPassVisibility] =
     useState<boolean>(false);
 
-  /* ----------------------------- API Integration ---------------------------- */
+  // Basic Signup Data
+  const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
+
+  /* ----------------------------------- API Integration ---------------------------------- */
   // Get user basic data from socials: Google, Github, LinkedIn, Facebook
   const googleUserData = useGoogleLoginStore();
   const githubUserData = useGithubLoginStore();
@@ -96,7 +99,7 @@ export default function SignupPage() {
   // Prased Smart Resume Data
   const { data: parsedData } = useParseResumeStore();
 
-  /* --------------------------- User Role Handling --------------------------- */
+  /* --------------------------------- User Role Handling --------------------------------- */
   /*
     Determine user role (Employee or Company) by checking local state first,
     then falling back to any connected social login providers.
@@ -119,6 +122,7 @@ export default function SignupPage() {
   const isEmployeeForm = selectedRole === USER_ROLE.EMPLOYEE;
 
   /* ----------------------- React Hook Form: Emp and Cmp Signup Form ---------------------- */
+  // ── Validation Messages For Signup Forms ───────────────────────────────
   const signupMessages = useMemo(
     () => ({
       phoneInvalid: tv("phoneInvalid"),
@@ -140,7 +144,7 @@ export default function SignupPage() {
     [tv],
   );
 
-  // ── Pre-fill Employee Form from Resume Parsed ──────────────────────
+  // ── Pre-fill Employee Form from Resume Parsed ──────────────────────────
   const defaultEmpValues = useMemo(() => {
     const stripped = parsedData?.phone?.replace(/[\s\-().]/g, "") ?? "";
     const normalizedPhone =
@@ -175,7 +179,7 @@ export default function SignupPage() {
     };
   }, []);
 
-  // ── Cmp and Emp Form ─────────────────────────────────────────
+  // ── Initialize Cmp Form with Default Values ────────────────────────────
   const cmpForm = useForm<TBasicSignupCompanySchema>({
     resolver: zodResolver(makeBasicSignupCompanySchema(signupMessages)),
     defaultValues: {
@@ -186,19 +190,20 @@ export default function SignupPage() {
     },
   });
 
+  // ── Initialize Emp Form with Default Values ────────────────────────────
   const empForm = useForm<TBasicSignupEmployeeSchema>({
     resolver: zodResolver(makeBasicSignupEmployeeSchema(signupMessages)),
     defaultValues: defaultEmpValues,
   });
 
-  // ── Cmp and Emp Form Error States ───────────────────────────
+  // ── Cmp and Emp form error states ──────────────────────────────────────
   const employeeErrors = empForm.formState
     .errors as FieldErrors<TBasicSignupEmployeeSchema>;
   const companyErrors = cmpForm.formState
     .errors as FieldErrors<TBasicSignupCompanySchema>;
 
-  /* --------------------------------- Methods --------------------------------- */
-  // ── Signup Function ─────────────────────────────────────────
+  /* ----------------------------------- Methods ------------------------------------------- */
+  // ── Signup Function ────────────────────────────────────────────────────
   // Set Basic Signup Data for Employee
   const onSubmitEmployee = (data: TBasicSignupEmployeeSchema) => {
     console.log("Basic Employee Data: ", data);
@@ -229,8 +234,8 @@ export default function SignupPage() {
     router.push("/signup/company");
   };
 
-  /* --------------------------------- Effects --------------------------------- */
-  // ── Social Signup Effect ─────────────────────────────────────────
+  /* --------------------------------------- Effects --------------------------------------- */
+  // ── Social Signup Effect ────────────────────────────────────────────────
   useEffect(() => {
     // Handle Google login data - Auto Fill Information in Form
     if (
@@ -310,7 +315,7 @@ export default function SignupPage() {
     empForm,
   ]);
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* -------------------------------------- Render UI -------------------------------------- */
   return (
     <div className="w-full max-w-[620px] flex flex-col gap-5 tablet-sm:max-w-full">
       {/* Logo Section */}

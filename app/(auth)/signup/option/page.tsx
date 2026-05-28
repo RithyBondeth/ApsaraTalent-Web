@@ -37,27 +37,26 @@ import { Controller, useForm } from "react-hook-form";
 import { signupOptionSchema, TSignupOptionSchema } from "./validation";
 
 export default function SingUpOption() {
-  /* ---------------------------------- Utils ---------------------------------- */
+  /* -------------------------------------- Utils -------------------------------------- */
   const router = useRouter();
   const t = useTranslations("auth");
 
-  /* -------------------------------- All States ------------------------------- */
+  /* ------------------------------------ All States ----------------------------------- */
   const [showResumeDialog, setShowResumeDialog] = useState<boolean>(false);
-  // Guards against double navigation (e.g. upload success + dialog close firing together)
   const navigatingRef = useRef<boolean>(false);
 
-  // Signup Option Helpers
+  // Basic Signup Data
   const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData, setBasicPhoneSignupData } =
     useBasicPhoneSignupDataStore();
 
-  /* --------------------- API Integration: Social Data ------------------------ */
+  /* -------------------------------- API Integrations --------------------------------- */
   const googleUserData = useGoogleLoginStore();
   const githubUserData = useGithubLoginStore();
   const linkedInUserData = useLinkedInLoginStore();
   const facebookUserData = useFacebookLoginStore();
 
-  /* -------------------- React Hook Form: Signup Option Form ------------------- */
+  /* ------------------------ React Hook Form: Signup Option Form ---------------------- */
   const {
     handleSubmit,
     control,
@@ -69,9 +68,8 @@ export default function SingUpOption() {
     },
   });
 
-  /* --------------------------------- Methods --------------------------------- */
-
-  // ── Navigate to /signup (called after upload or skip) ────────
+  /* -------------------------------------- Methods -------------------------------------- */
+  // ── Navigate To Signup Function (called after upload or skip) ────────────────
   const goToSignup = () => {
     if (navigatingRef.current) return;
     navigatingRef.current = true;
@@ -79,12 +77,13 @@ export default function SingUpOption() {
     router.push("/signup");
   };
 
-  // ── Commit role to stores (shared across all signup flows) ────
+  // ── Commit Role To Stores Function ───────────────────────────────────────────
   const commitRole = (role: string) => {
-    if (basicPhoneSignupData) {
+    // Basic Phone Signup Data
+    if (basicPhoneSignupData)
       setBasicPhoneSignupData({ ...basicPhoneSignupData, role });
-    }
 
+    // Social Signup Data
     if (googleUserData.newUser && !googleUserData.isAuthenticated)
       googleUserData.setRole(role as TUserRole);
     if (linkedInUserData.newUser && !linkedInUserData.isAuthenticated)
@@ -97,7 +96,7 @@ export default function SingUpOption() {
     setBasicSignupData({ ...basicSignupData, selectedRole: role });
   };
 
-  // ── Form submit ───────────────────────────────────────────────
+  // ── Commit Signup Option Function ────────────────────────────────────────────
   const onSubmit = (data: TSignupOptionSchema) => {
     commitRole(data.selectedRole);
 

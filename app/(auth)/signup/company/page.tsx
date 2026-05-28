@@ -39,11 +39,11 @@ export default function CompanySignup() {
   const [step, setStep] = useState<number>(1);
   const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
 
-  /* ----------------------------- API Integration ---------------------------- */
   // Get user basic data from Basic, Phone
   const { basicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
 
+  /* ----------------------------- API Integration ---------------------------- */
   // Upload Avatar, Cover
   const uploadAvatar = useUploadCompanyAvatarStore();
   const uploadCover = useUploadCompanyCoverStore();
@@ -52,6 +52,7 @@ export default function CompanySignup() {
   const cmpSignup = useCompanySignupStore();
 
   /* ------------------- React Hook Form: Company Signup Form ------------------ */
+  // ── Define Schema For Company Signup Form ───────────────────────────
   const companySignupSchema = useMemo(
     () =>
       makeCompanySignupSchema({
@@ -97,7 +98,8 @@ export default function CompanySignup() {
     [tv],
   );
 
-  const methods = useForm<TCompanySignup>({
+  // ── Initialize Company Form with Default Values ─────────────────────
+  const cmpForm = useForm<TCompanySignup>({
     mode: "onChange",
     resolver: zodResolver(companySignupSchema),
     defaultValues: {
@@ -144,9 +146,9 @@ export default function CompanySignup() {
     getValues,
     setValue,
     formState: { errors },
-  } = methods;
+  } = cmpForm;
 
-  // Field groups per step for selective validation
+  // ── Field Groups Per Step For Selective Validation ──────────────────
   const stepFieldMap: Record<number, (keyof TCompanySignup)[]> = {
     1: ["basicInfo"],
     2: ["openPositions"],
@@ -157,7 +159,7 @@ export default function CompanySignup() {
   };
 
   /* --------------------------------- Methods --------------------------------- */
-  // ── Navigation Helpers ─────────────────────────────────────────
+  // ── Navigation Helpers Function ────────────────────────────────
   // Handle Previous Step
   const prevStep = () => setStep((prev) => prev - 1);
 
@@ -169,7 +171,7 @@ export default function CompanySignup() {
 
     if (isValid) {
       if (step === totalSteps) {
-        // ── Final Submit: Company Registration ────────────────────
+        // Final Submit: Company Registration
         handleSubmit(async (data) => {
           // Register with regular email-password
           if (basicSignupData) {
@@ -294,7 +296,7 @@ export default function CompanySignup() {
   };
 
   /* --------------------------------- Effects --------------------------------- */
-  // ── Company Signup Effect ──────────────────────────────────
+  // ── Company Signup Effect ──────────────────────────────────────
   useEffect(() => {
     if (
       cmpSignup.accessToken &&
@@ -342,7 +344,7 @@ export default function CompanySignup() {
     router,
   ]);
 
-  /* -------------------------------- Loading State -------------------------------- */
+  /* ------------------------------ Loading State ------------------------------ */
   const isSignupLoading =
     cmpSignup.loading || uploadAvatar.loading || uploadCover.loading;
 
@@ -355,7 +357,7 @@ export default function CompanySignup() {
         ? t("uploadingCompanyCover")
         : t("processingRequest");
 
-  /* -------------------------------------------- Render UI -------------------------------------------- */
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col gap-5 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
       {/* Navigate Back Button Section */}
@@ -382,7 +384,7 @@ export default function CompanySignup() {
           {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
             (st, index) => (
               <div key={st} className="w-full flex items-center">
-                {/* Step Circle */}
+                {/* Step Circle Section */}
                 <div
                   className={`size-8 text-xs sm:size-9 sm:text-sm flex items-center justify-center rounded-full font-bold transition-all ${
                     step >= st
@@ -409,7 +411,7 @@ export default function CompanySignup() {
       </div>
 
       {/* Form Section */}
-      <FormProvider {...methods}>
+      <FormProvider {...cmpForm}>
         <form className="w-full" onSubmit={(e) => e.preventDefault()}>
           {step === 1 && (
             <BasicInfoStepForm

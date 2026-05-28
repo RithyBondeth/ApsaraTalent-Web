@@ -5,7 +5,22 @@ import {
 } from "@/utils/functions/validation/form-schemas";
 import * as z from "zod";
 
-// Define schema for step 1: Profession
+const makeDateRequired = (requiredError: string) =>
+  z.preprocess(
+    (arg) => {
+      if (typeof arg === "string" && arg.trim() === "") return undefined;
+      if (arg instanceof Date) return arg;
+      if (typeof arg === "string" || typeof arg === "number")
+        return new Date(arg);
+      return arg;
+    },
+    z.date({
+      required_error: requiredError,
+      invalid_type_error: requiredError,
+    }),
+  );
+
+// ─── Define schema for step 1: Profession ───────────────────────
 export const makeProfessionStepSchema = (m: {
   yearsOfExperienceRequired: string;
   availabilityRequired: string;
@@ -47,22 +62,7 @@ export const makeProfessionStepSchema = (m: {
     }),
   });
 
-const makeDateRequired = (requiredError: string) =>
-  z.preprocess(
-    (arg) => {
-      if (typeof arg === "string" && arg.trim() === "") return undefined;
-      if (arg instanceof Date) return arg;
-      if (typeof arg === "string" || typeof arg === "number")
-        return new Date(arg);
-      return arg;
-    },
-    z.date({
-      required_error: requiredError,
-      invalid_type_error: requiredError,
-    }),
-  );
-
-// Define schema for step 2: Experience
+// ─── Define schema for step 2: Experience ───────────────────────
 export const makeExperienceStepSchema = (m: {
   endDateAfterStart: string;
   startDateRequired: string;
@@ -93,7 +93,7 @@ export const makeExperienceStepSchema = (m: {
       .default([]),
   });
 
-// Define schema for step 3: Education
+// ─── Define schema for step 3: Education ───────────────────────
 export const makeEducationStepSchema = (m: {
   graduationYearRequired: string;
   fieldRequired: (field: string) => string;
@@ -123,7 +123,7 @@ export const makeEducationStepSchema = (m: {
       .array(),
   });
 
-// Define schema for step 4: Skill and Reference
+// ─── Define schema for step 4: Skill and Reference ─────────────
 export const makeSkillReferenceStepSchema = (m: { atLeastOneSkill: string }) =>
   z.object({
     skillAndReference: z.object({
@@ -133,18 +133,18 @@ export const makeSkillReferenceStepSchema = (m: { atLeastOneSkill: string }) =>
     }),
   });
 
-// Define schema for step 5: Avatar
+// ─── Define schema for step 5: Avatar ───────────────────────────
 export const avatarStepSchema = z.object({
   avatar: optionalImageValidation("Avatar"),
 });
 
-// Define schema for step 6: Career Scopes
+// ─── Define schema for step 6: Career Scopes ─────────────────────
 export const makeCareerScopesStepSchema = (m: { atLeastOneCareer: string }) =>
   z.object({
     careerScopes: z.array(z.string()).min(1, { message: m.atLeastOneCareer }),
   });
 
-// Define schema for step 7: Employee Sign Up
+// ─── Define schema for step 7: Employee Sign Up ──────────────────
 export const makeEmployeeSignUpSchema = (m: {
   yearsOfExperienceRequired: string;
   availabilityRequired: string;

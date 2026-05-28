@@ -30,31 +30,17 @@ export default function PhoneNumberPage() {
   const t = useTranslations("auth");
   const tv = useTranslations("validation");
 
-  /* ----------------------------------- Memo ---------------------------------- */
-  const callbackUrl = useMemo(() => {
-    const value = searchParams.get("callbackUrl");
-    if (!value || !value.startsWith("/") || value.startsWith("//")) {
-      return "/feed";
-    }
-    return value;
-  }, [searchParams]);
-
-  const phoneOtpHref = useMemo(() => {
-    if (callbackUrl === "/feed") return "/login/phone-number/phone-otp";
-    return `/login/phone-number/phone-otp?callbackUrl=${encodeURIComponent(
-      callbackUrl,
-    )}`;
-  }, [callbackUrl]);
-
   /* --------------------------------- All States ----------------------------- */
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+
+  // Basic Phone Signup Data
   const { setBasicPhoneSignupData } = useBasicPhoneSignupDataStore();
 
   /* ----------------------------- API Integration ---------------------------- */
-  // API Integration
   const { loading, error, message, isSuccess, loginOtp } = useLoginOTPStore();
 
-  /* --------------------- React Hook Form: Phone OTP Form --------------------- */
+  /* --------------------- React Hook Form: Phone OTP Form -------------------- */
+  // ── Define Schema For Phone OTP Form ────────────────────────
   const phoneLoginSchema = useMemo(
     () => makePhoneLoginSchema({ phoneInvalid: tv("phoneInvalid") }),
     [tv],
@@ -71,7 +57,24 @@ export default function PhoneNumberPage() {
   });
 
   /* --------------------------------- Methods --------------------------------- */
-  // ── Phone OTP Function ───────────────────────────────────────
+  // ── Callback URL Function ────────────────────────────────────
+  const callbackUrl = useMemo(() => {
+    const value = searchParams.get("callbackUrl");
+    if (!value || !value.startsWith("/") || value.startsWith("//")) {
+      return "/feed";
+    }
+    return value;
+  }, [searchParams]);
+
+  // ── Phone OTP Href Function ──────────────────────────────────
+  const phoneOtpHref = useMemo(() => {
+    if (callbackUrl === "/feed") return "/login/phone-number/phone-otp";
+    return `/login/phone-number/phone-otp?callbackUrl=${encodeURIComponent(
+      callbackUrl,
+    )}`;
+  }, [callbackUrl]);
+
+  // ── Phone Send OTP Function ──────────────────────────────────
   const onSubmit = async (data: TPhoneLoginForm) => {
     setIsSubmitted(true);
     setBasicPhoneSignupData({
@@ -83,7 +86,7 @@ export default function PhoneNumberPage() {
   };
 
   /* --------------------------------- Effects --------------------------------- */
-  // ── Phone OTP Effect ─────────────────────────────────────────
+  // ── Phone Send OTP Effect ────────────────────────────────────
   useEffect(() => {
     if (!isSubmitted) return;
 

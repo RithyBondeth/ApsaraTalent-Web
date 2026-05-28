@@ -1,5 +1,6 @@
 import * as z from "zod";
 
+// ── Basic Signup Employee Schema ─────────────────────────────────────────────
 export const makeBasicSignupEmployeeSchema = (m: {
   firstNameRequired: string;
   lastNameRequired: string;
@@ -60,6 +61,7 @@ export const makeBasicSignupEmployeeSchema = (m: {
       }
     });
 
+// ── Basic Signup Company Schema ──────────────────────────────────────────────
 export const makeBasicSignupCompanySchema = (m: {
   phoneInvalid: string;
   emailRequired: string;

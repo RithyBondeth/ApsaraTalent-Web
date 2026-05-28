@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 import { signupSvg } from "@/utils/constants/asset.constant";
 
 export default function SignupLayout({ children }: { children: ReactNode }) {
-  /* ------------------------------- Render UI ------------------------------- */
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="min-h-screen w-full flex items-stretch overflow-x-hidden">
       {/* Children Section */}

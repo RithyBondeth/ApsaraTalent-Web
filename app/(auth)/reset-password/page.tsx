@@ -26,12 +26,11 @@ import {
 } from "@/utils/constants/config.constant";
 
 export default function ResetPasswordPage() {
-  /* ---------------------------------- Utils --------------------------------- */
+  /* ---------------------------------- Utils -------------------------------- */
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations("auth");
   const tv = useTranslations("validation");
-
   /* ── Auto-read token from URL: /reset-password?token=xxx ── */
   const tokenFromUrl = searchParams.get("token") ?? "";
 
@@ -44,7 +43,8 @@ export default function ResetPasswordPage() {
   /* ----------------------------- API Integration ----------------------------- */
   const { loading, error, message, resetPassword } = useResetPasswordStore();
 
-  /* ------------------- React Hook Form: Reset Password Form ------------------- */
+  /* ------------------- React Hook Form: Reset Password Form ------------------ */
+  // ── Initialize Reset Password Form with Default Values ──────────────────
   const resetPasswordSchema = useMemo(
     () =>
       makeResetPasswordSchema({
@@ -70,17 +70,19 @@ export default function ResetPasswordPage() {
   });
 
   /* --------------------------------- Methods ---------------------------------- */
+  // ── Reset Password Function ──────────────────────────────────────────────
   const onSubmit = async (data: TResetPasswordForm) => {
     setIsSubmitted(true);
     await resetPassword(data.token ?? "", data.password, data.confirmPassword);
   };
 
   /* --------------------------------- Effects ---------------------------------- */
-  /* ── Pre-fill token whenever URL param is available ── */
+  // ── Pre-fill Token Whenever URL Param is Available Effect ────────────────
   useEffect(() => {
     if (tokenFromUrl) setValue("token", tokenFromUrl);
   }, [tokenFromUrl, setValue]);
 
+  // ── Reset Password Effect ────────────────────────────────────────────────
   useEffect(() => {
     if (!isSubmitted) return;
 
@@ -102,7 +104,7 @@ export default function ResetPasswordPage() {
     }
   }, [error, isSubmitted, loading, message, reset, router, t]);
 
-  /* --------------------------------------------- Render UI ------------------------------------------- */
+  /* -------------------------------- Render UI --------------------------------- */
   return (
     <div className="min-h-screen w-full flex tablet-md:flex-col">
       {/* Left Section */}

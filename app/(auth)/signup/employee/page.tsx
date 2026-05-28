@@ -46,11 +46,11 @@ export default function EmployeeSignup() {
   const [step, setStep] = useState<number>(1);
   const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
 
-  /* ----------------------------- API Integration ---------------------------- */
   // Get user basic data from Basic, Phone
   const { basicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
 
+  /* ----------------------------- API Integration ---------------------------- */
   // Upload Avatar, Resume, CoverLetter
   const uploadAvatar = useUploadEmployeeAvatarStore();
   const uploadResume = useUploadEmployeeResumeStore();
@@ -63,6 +63,7 @@ export default function EmployeeSignup() {
   const empSignup = useEmployeeSignupStore();
 
   /* ------------------ React Hook Form: Employee Signup Form ----------------- */
+  // ── Define Schema For Employee Signup Form ─────────────────────────
   const employeeSignUpSchema = useMemo(
     () =>
       makeEmployeeSignUpSchema({
@@ -145,8 +146,8 @@ export default function EmployeeSignup() {
     [],
   );
 
-  // ── React Hook Form Methods ─────────────────────────────────────────
-  const methods = useForm<TEmployeeSignUp>({
+  // ── Initialize Employee Form with Default Values ───────────────────
+  const empForm = useForm<TEmployeeSignUp>({
     mode: "onChange",
     resolver: zodResolver(employeeSignUpSchema),
     defaultValues: defaultFormValues,
@@ -160,9 +161,9 @@ export default function EmployeeSignup() {
     getValues,
     setValue,
     formState: { errors },
-  } = methods;
+  } = empForm;
 
-  // ── Field groups per step for selective validation ──────────────────────
+  // ── Field Groups Per Step For Selective Validation ─────────────────
   const stepFieldMap: Record<number, (keyof TEmployeeSignUp)[]> = {
     1: ["profession"],
     2: ["experience"],
@@ -173,7 +174,7 @@ export default function EmployeeSignup() {
   };
 
   /* --------------------------------- Methods --------------------------------- */
-  // ── Navigation Helpers ─────────────────────────────────────────
+  // ── Navigation Helpers Function ────────────────────────────────────
   // Check if user has no experience (to skip step 2)
   const hasNoExperience = () =>
     getValues("profession.yearOfExperience") === "No Experience";
@@ -366,8 +367,8 @@ export default function EmployeeSignup() {
     })();
   };
 
-  /* --------------------------------- Effects --------------------------------- */
-  // ── Employee Signup Effect ───────────────────────────────────────
+  /* ----------------------------------- Effects ----------------------------------- */
+  // ── Employee Signup Effect ─────────────────────────────────────────
   useEffect(() => {
     if (
       empSignup.accessToken &&
@@ -439,7 +440,7 @@ export default function EmployeeSignup() {
           ? t("uploadingCoverLetter")
           : t("processingRequest");
 
-  /* ----------------------------------- Render UI ----------------------------------- */
+  /* ----------------------------------- Render UI ---------------------------------- */
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col gap-5 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
       {/* Navigate Back Button Section */}
@@ -475,7 +476,7 @@ export default function EmployeeSignup() {
             (st, index) => {
               const isSkipped =
                 st === 2 &&
-                methods.watch("profession.yearOfExperience") ===
+                empForm.watch("profession.yearOfExperience") ===
                   "no_experience";
               const isActive = step >= st && !isSkipped;
               return (
@@ -508,7 +509,7 @@ export default function EmployeeSignup() {
       </div>
 
       {/* Form Section */}
-      <FormProvider {...methods}>
+      <FormProvider {...empForm}>
         <form onSubmit={(e) => e.preventDefault()} className="w-full">
           {step === 1 && (
             <ProfessionStepForm

@@ -37,10 +37,11 @@ export default function ForgotPasswordPage() {
   const [inputValue, setInputValue] = useState<string>("");
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
-  /* ----------------------------- API Integration ---------------------------- */
+  /* ----------------------------- API Integration --------------------------- */
   const { loading, error, message, forgotPassword } = useForgotPasswordStore();
 
-  /* ------------------ React Hook Form: Forgot Password Form ----------------- */
+  /* ------------------ React Hook Form: Forgot Password Form ---------------- */
+  // ── Define Schema For Forgot Password Form ────────────────────────
   const forgotPasswordSchema = useMemo(
     () =>
       makeForgotPasswordSchema({
@@ -95,7 +96,7 @@ export default function ForgotPasswordPage() {
     }
   }, [error, isSubmitted, loading, message, reset, router, t]);
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* -------------------------------- Render UI ------------------------------- */
   return (
     <div className="min-h-screen w-full flex tablet-md:flex-col">
       {/* Left Section */}

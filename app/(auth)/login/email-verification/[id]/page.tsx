@@ -37,7 +37,7 @@ export default function EmailVerificationPage() {
   };
 
   /* -------------------------------- Effects -------------------------------- */
-  // ── Verify Email Effect ─────────────────────────────────────────
+  // ── Verify Email Effect ────────────────────────────────────────
   useEffect(() => {
     if (!isSubmitted) return;
 
