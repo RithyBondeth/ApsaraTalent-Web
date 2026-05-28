@@ -1,11 +1,12 @@
 import { FeedBannerSkeleton } from "@/components/feed/skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
+import { TUserRole } from "@/utils/types/auth";
 
 export default function InterviewLoadingSkeleton({
   role,
 }: {
-  role?: "employee" | "company";
+  role?: TUserRole;
 }) {
   const isCompany = role === USER_ROLE.COMPANY;
 

@@ -45,6 +45,7 @@ import { companySearchSchema, TCompanySearchSchema } from "./validation";
 import { companySearchBannerSvg } from "@/utils/constants/asset.constant";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { SearchEmployeeCardSkeleton } from "@/components/search/skeleton";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 export default function CompanySearchPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -152,14 +153,14 @@ export default function CompanySearchPage() {
     resetSearch();
 
     const scopes =
-      user.role === "company"
+      user.role === USER_ROLE.COMPANY
         ? user.company?.careerScopes
         : user.employee?.careerScopes;
 
     scopeNamesRef.current = scopes?.map((cs) => cs.name) ?? [];
 
     const userLocation =
-      user.role === "company"
+      user.role === USER_ROLE.COMPANY
         ? user.company?.location
         : user.employee?.location;
 

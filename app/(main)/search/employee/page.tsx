@@ -49,6 +49,7 @@ import { employeeSearchSchema, TEmployeeSearchSchema } from "./validation";
 import { employeeSearchBannerSvg } from "@/utils/constants/asset.constant";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { SearchCompanyCardSkeleton } from "@/components/search/skeleton";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 export default function EmployeeSearchPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -174,7 +175,7 @@ export default function EmployeeSearchPage() {
     resetSearch();
 
     const scopes =
-      user.role === "company"
+      user.role === USER_ROLE.COMPANY
         ? user.company?.careerScopes
         : user.employee?.careerScopes;
 

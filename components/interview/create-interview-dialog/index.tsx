@@ -24,6 +24,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { InterviewFormBody } from "./interview-form-body";
 import { ICreateInterviewDialogProps } from "./props";
 import { IInterviewFormBodyProps } from "./interview-form-body/props";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 export function CreateInterviewDialog({
   currentId,
@@ -100,7 +101,7 @@ export function CreateInterviewDialog({
       durationMinutes,
       location: location.trim() || undefined,
       meetingLink: meetingLink.trim() || undefined,
-      createdBy: "company",
+      createdBy: USER_ROLE.COMPANY,
     });
     setOpen(false);
     resetForm();
