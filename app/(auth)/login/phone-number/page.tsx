@@ -33,7 +33,7 @@ export default function PhoneNumberPage() {
   /* --------------------------------- All States ----------------------------- */
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
-  // Basic Phone Signup Data
+  // Get User Basic Data From Phone Signup
   const { setBasicPhoneSignupData } = useBasicPhoneSignupDataStore();
 
   /* ----------------------------- API Integration ---------------------------- */

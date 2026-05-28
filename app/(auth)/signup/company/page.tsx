@@ -39,7 +39,7 @@ export default function CompanySignup() {
   const [step, setStep] = useState<number>(1);
   const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
 
-  // Get user basic data from Basic, Phone
+  // Get User Basic Data
   const { basicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
 

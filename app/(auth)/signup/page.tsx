@@ -90,7 +90,7 @@ export default function SignupPage() {
   const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
 
   /* ----------------------------------- API Integration ---------------------------------- */
-  // Get user basic data from socials: Google, Github, LinkedIn, Facebook
+  // Get User Basic Data From Socials: Google, Github, LinkedIn, Facebook
   const googleUserData = useGoogleLoginStore();
   const githubUserData = useGithubLoginStore();
   const linkedInUserData = useLinkedInLoginStore();
