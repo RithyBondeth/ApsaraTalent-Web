@@ -24,6 +24,10 @@ type TCountCurrentCompanyMatchingState = {
   error: string | null;
   countCurrentCmpMatching: (companyID: string) => Promise<void>;
   markAsSeen: (companyId: string) => void;
+  /** Bump total by 1 when a new match arrives via socket. */
+  incrementCount: () => void;
+  /** Reduce total by 1 when an unmatch is confirmed. */
+  decrementCount: () => void;
 };
 
 /* ---------------------------------- Store --------------------------------- */
@@ -33,6 +37,17 @@ export const useCountCurrentCompanyMatchingStore =
     seenCmpMatching: 0,
     loading: false,
     error: null,
+
+    incrementCount: () => {
+      set((s) => ({ totalCmpMatching: (s.totalCmpMatching ?? 0) + 1 }));
+    },
+
+    decrementCount: () => {
+      set((s) => ({
+        totalCmpMatching: Math.max(0, (s.totalCmpMatching ?? 0) - 1),
+        seenCmpMatching: Math.max(0, s.seenCmpMatching - 1),
+      }));
+    },
 
     markAsSeen: (companyId: string) => {
       const count = get().totalCmpMatching ?? 0;

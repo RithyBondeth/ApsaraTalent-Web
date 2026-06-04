@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -30,12 +31,11 @@ import {
   LucideUser,
 } from "lucide-react";
 import { IInterviewFormBodyProps } from "./props";
-import {
-  DURATION_OPTIONS,
-  TIME_SLOTS,
-} from "@/utils/constants/interview.constant";
+import { useLanguageStore } from "@/stores/languages/language-store";
+import { km, enUS } from "date-fns/locale";
 
 /* --------------------------------- Helpers --------------------------------- */
+
 function Field({
   label,
   required,
@@ -92,6 +92,15 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
     onClose,
     onSubmit,
   } = props;
+
+  /* ---------------------------------- Utils --------------------------------- */
+  const { language } = useLanguageStore();
+  const dateLocale = language === "km" ? km : enUS;
+  const displayLocale = language === "km" ? "km" : undefined;
+  const minLabel = t("durationMin");
+
+  /* -------------------------------- All States ------------------------------ */
+  const [calendarOpen, setCalendarOpen] = useState<boolean>(false);
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -179,7 +188,7 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
             </Label>
           </div>
 
-          <Popover modal={false}>
+          <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
@@ -190,7 +199,7 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
               >
                 <LucideCalendarCheck className="mr-2 size-4" />
                 {selectedDate
-                  ? selectedDate.toLocaleDateString(undefined, {
+                  ? selectedDate.toLocaleDateString(displayLocale, {
                       weekday: "short",
                       year: "numeric",
                       month: "short",
@@ -199,12 +208,20 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
                   : t("pickDate")}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent
+              className="w-auto p-0"
+              align="start"
+              onInteractOutside={(e) => e.preventDefault()}
+            >
               <Calendar
                 mode="single"
                 selected={selectedDate}
-                onSelect={setSelectedDate}
+                onSelect={(date) => {
+                  setSelectedDate(date);
+                  setCalendarOpen(false);
+                }}
                 disabled={{ before: today }}
+                locale={dateLocale}
                 initialFocus
               />
             </PopoverContent>
@@ -212,36 +229,35 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
 
           <div className="mt-1 grid grid-cols-2 gap-3">
             <Field label={t("time")} icon={<LucideClock />}>
-              <Select value={selectedTime} onValueChange={setSelectedTime}>
-                <SelectTrigger className="h-10">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="max-h-52">
-                  {TIME_SLOTS.map(({ value, label }) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Input
+                type="time"
+                value={selectedTime}
+                onChange={(e) => setSelectedTime(e.target.value)}
+                className="h-10"
+              />
             </Field>
 
             <Field label={t("duration")} icon={<LucideTimer />}>
-              <Select
-                value={String(durationMinutes)}
-                onValueChange={(v) => setDurationMinutes(Number(v))}
-              >
-                <SelectTrigger className="h-10">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {DURATION_OPTIONS.map(({ value, label }) => (
-                    <SelectItem key={value} value={String(value)}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex items-center h-10 rounded-md border border-input bg-background px-3 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-background">
+                <input
+                  type="number"
+                  min={5}
+                  max={480}
+                  step={5}
+                  value={durationMinutes}
+                  onChange={(e) => {
+                    const v = Math.max(
+                      5,
+                      Math.min(480, Number(e.target.value) || 5),
+                    );
+                    setDurationMinutes(v);
+                  }}
+                  className="w-full bg-transparent text-sm outline-none tabular-nums [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                />
+                <span className="ml-1.5 shrink-0 text-sm text-muted-foreground">
+                  {minLabel}
+                </span>
+              </div>
             </Field>
           </div>
         </div>
@@ -283,10 +299,13 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
       <div className="flex items-center justify-between gap-3 px-6 py-4">
         <div className="text-xs text-muted-foreground">
           {selectedDate && scheduledAt
-            ? `${selectedDate.toLocaleDateString(undefined, {
-                month: "short",
-                day: "numeric",
-              })} at ${TIME_SLOTS.find((s) => s.value === selectedTime)?.label}`
+            ? t("scheduledAtSummary", {
+                date: selectedDate.toLocaleDateString(displayLocale, {
+                  month: "short",
+                  day: "numeric",
+                }),
+                time: selectedTime,
+              })
             : t("noDateSelected")}
         </div>
         <div className="flex gap-2">

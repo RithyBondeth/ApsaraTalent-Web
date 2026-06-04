@@ -10,16 +10,21 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useFetchOnce } from "@/hooks/utils/use-fetch-once";
 import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-current-company-matching.store";
 import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
+import { useUnmatchStore } from "@/stores/apis/matching/unmatch.store";
+import { useInterviewStore } from "@/stores/apis/matching/interview.store";
 import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
 import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useInitiateChatStore } from "@/stores/apis/chat/initiate-chat.store";
+import { useChatStore } from "@/stores/features/chat/chat.store";
 import { MatchingLoadingSkeleton } from "@/components/matching/skeleton";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import Link from "next/link";
 import { emptySvg, matchingBannerSvg } from "@/utils/constants/asset.constant";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 import { CountUp } from "@/components/utils/animations/count-up";
 
 interface Props {
@@ -35,11 +40,25 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
   const [mounted, setMounted] = useState<boolean>(false);
   // Track which card is in a loading state to prevent double-clicks
   const [chatLoadingId, setChatLoadingId] = useState<string | null>(null);
+  const [unmatchingId, setUnmatchingId] = useState<string | null>(null);
 
   /* ----------------------------- API Integration ---------------------------- */
   const getCurrentEmpStore = useGetCurrentEmployeeMatchingStore();
   const getCurrentCmpStore = useGetCurrentCompanyMatchingStore();
   const { initiateChat } = useInitiateChatStore();
+  const { unmatchLoading, unmatchError, unmatch } = useUnmatchStore();
+  const removeChatByPartnerId = useChatStore((s) => s.removeChatByPartnerId);
+  const getRecentChats = useChatStore((s) => s.getRecentChats);
+  const removeInterviewsByPartnerId = useInterviewStore(
+    (s) => s.removeInterviewsByPartnerId,
+  );
+  const silentRefetchInterviews = useInterviewStore((s) => s.silentRefetch);
+  const decrementEmpMatchingCount = useCountCurrentEmployeeMatchingStore(
+    (s) => s.decrementCount,
+  );
+  const decrementCmpMatchingCount = useCountCurrentCompanyMatchingStore(
+    (s) => s.decrementCount,
+  );
   const markEmpMatchingAsSeen = useCountCurrentEmployeeMatchingStore(
     (s) => s.markAsSeen,
   );
@@ -87,6 +106,74 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
       }
     },
     [currentUser, chatLoadingId, router],
+  );
+
+  // ── Unmatch Handler ──────────────────────────────────────────
+  const handleUnmatch = useCallback(
+    async (otherId: string) => {
+      if (unmatchingId) return;
+      const employeeId = isEmployee
+        ? (currentUser?.employee?.id ?? "")
+        : otherId;
+      const companyId = isEmployee ? otherId : (currentUser?.company?.id ?? "");
+
+      setUnmatchingId(otherId);
+
+      // Optimistic removal — match card + chat sidebar + interviews
+      if (isEmployee) getCurrentEmpStore.removeMatch(otherId);
+      else getCurrentCmpStore.removeMatch(otherId);
+
+      removeChatByPartnerId(otherId);
+      removeInterviewsByPartnerId(otherId);
+
+      await unmatch(employeeId, companyId, isEmployee);
+      setUnmatchingId(null);
+
+      if (unmatchLoading && !unmatchError) {
+        // Matching badge decrements immediately on success
+        if (isEmployee) decrementEmpMatchingCount();
+        else decrementCmpMatchingCount();
+      }
+
+      if (!unmatchLoading && unmatchError) {
+        // Restore all three optimistically-removed pieces
+        const currentId = isEmployee
+          ? currentUser?.employee?.id
+          : currentUser?.company?.id;
+        const role = isEmployee ? USER_ROLE.EMPLOYEE : USER_ROLE.COMPANY;
+
+        if (currentId) {
+          // 1. Restore match list
+          if (isEmployee)
+            getCurrentEmpStore.queryCurrentEmployeeMatching(currentId);
+          else getCurrentCmpStore.queryCurrentCompanyMatching(currentId);
+
+          // 2. Restore chat sidebar
+          getRecentChats();
+          // 3. Restore interviews
+          void silentRefetchInterviews(currentId, role);
+        }
+
+        toast.error(t("unmatchError"));
+      } else {
+        toast.success(t("unmatchSuccess"));
+      }
+    },
+    [
+      unmatchingId,
+      isEmployee,
+      currentUser,
+      unmatch,
+      getCurrentEmpStore,
+      getCurrentCmpStore,
+      removeChatByPartnerId,
+      removeInterviewsByPartnerId,
+      getRecentChats,
+      silentRefetchInterviews,
+      decrementEmpMatchingCount,
+      decrementCmpMatchingCount,
+      t,
+    ],
   );
 
   /* ------------------------------- Loading State ----------------------------- */
@@ -222,7 +309,9 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
               location={cmp.location}
               onChatNowClick={() => handleChatNow(senderId, cmp.id)}
               onScheduleClick={() => router.push(`/interview?with=${cmp.id}`)}
+              onUnmatch={() => handleUnmatch(cmp.id)}
               isChatLoading={chatLoadingId === cmp.id}
+              isUnmatching={unmatchingId === cmp.id}
               employeeId={currentUser?.employee?.id ?? ""}
               employeeName={
                 [
@@ -261,7 +350,9 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
               skills={emp.skills.map((skill) => skill.name)}
               onChatNowClick={() => handleChatNow(senderId, emp.id)}
               onScheduleClick={() => router.push(`/interview?with=${emp.id}`)}
+              onUnmatch={() => handleUnmatch(emp.id)}
               isChatLoading={chatLoadingId === emp.id}
+              isUnmatching={unmatchingId === emp.id}
               companyId={currentUser?.company?.id ?? ""}
               skillScore={emp.skillScore}
             />

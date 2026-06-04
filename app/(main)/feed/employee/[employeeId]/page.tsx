@@ -165,7 +165,9 @@ export default function EmployeeDetailPage() {
             countCurrentCompanyMatching.countCurrentCmpMatching(companyId);
             setTimeout(() => router.push("/feed"), DEFAULT_REDIRECT_DELAY_MS);
           } else {
-            toast.success(t("youLiked", { name }));
+            toast.success(t("youLiked", { name }), {
+              description: tf("likedSuccessDescription"),
+            });
             setTimeout(() => router.push("/feed"), DEFAULT_REDIRECT_DELAY_MS);
           }
         }

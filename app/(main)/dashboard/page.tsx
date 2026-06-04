@@ -45,17 +45,19 @@ export default function DashboardPage() {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("dashboard");
 
-  /* ----------------------------- API Integration ---------------------------- */
-  const { user } = useGetCurrentUserStore();
-  const { data, loading, error, queryAnalytics } = useAnalyticsStore();
-
   /* -------------------------------- All States ------------------------------ */
   const hasFetched = useRef<boolean>(false);
   const [mounted, setMounted] = useState<boolean>(false);
 
-  /* --------------------------------- Effects --------------------------------- */
+  /* ----------------------------- API Integration ---------------------------- */
+  const { user } = useGetCurrentUserStore();
+  const { data, loading, error, queryAnalytics } = useAnalyticsStore();
+
+  /* --------------------------------- Effects -------------------------------- */
+  // ── Mounted Effect ─────────────────────────────
   useEffect(() => setMounted(true), []);
 
+  // ── Query Analytics Effect ─────────────────────
   useEffect(() => {
     if (!user || hasFetched.current) return;
 
@@ -73,8 +75,12 @@ export default function DashboardPage() {
     }
   }, [user, queryAnalytics]);
 
+  /* --------------------------- User Role Handling --------------------------- */
   const isEmployee = user?.role === USER_ROLE.EMPLOYEE;
+  const profileUrl = `/profile/${user?.role ?? USER_ROLE.EMPLOYEE}`;
 
+  /* -------------------------------- Methods --------------------------------- */
+  // ── Profile Completion Function ────────────────
   const profileCompletion = useMemo(() => {
     if (!user) return null;
     if (user.role === USER_ROLE.EMPLOYEE && user.employee)
@@ -83,8 +89,6 @@ export default function DashboardPage() {
       return getCompanyProfileCompletion(user.company);
     return null;
   }, [user]);
-
-  const profileUrl = `/profile/${user?.role ?? USER_ROLE.EMPLOYEE}`;
 
   /* ---------------------------- Loading State ------------------------------ */
   if (loading || !data) return <DashboardLoadingSkeleton />;

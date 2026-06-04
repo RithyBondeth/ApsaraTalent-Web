@@ -7,14 +7,23 @@ import {
   LucideLoader2,
   LucideMapPin,
   LucideMessageCircle,
+  LucideUserX,
   LucideUsers,
 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import Tag from "@/components/utils/data-display/tag";
 import { IMatchingCompanyCardProps } from "./props";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { memo } from "react";
+import { memo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { translateLocation, getNameInitials } from "@/utils/functions/text";
 import { AiMatchExplanationModal } from "@/components/matching/ai-match-explanation-modal";
@@ -24,9 +33,15 @@ import { AiSkillGapModal } from "@/components/matching/ai-skill-gap-modal";
 const MatchingCompanyCard = memo(function MatchingCompanyCard(
   props: IMatchingCompanyCardProps,
 ) {
+  /* ---------------------------------- Props --------------------------------- */
+  const { onUnmatch, isUnmatching } = props;
+
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("matching");
   const tl = useTranslations("locations");
+
+  /* -------------------------------- All States ------------------------------ */
+  const [unmatchDialogOpen, setUnmatchDialogOpen] = useState<boolean>(false);
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -98,7 +113,7 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
 
       {/* Action Bar Section */}
       <div className="px-4 sm:px-5 py-2.5 border-t border-border/60 bg-muted/30 flex items-center justify-between gap-2">
-        {/* AI Actions Section: Icon-only on mobile (< sm), full label on sm+ */}
+        {/* Left Section: AI Actions and Unmatch */}
         <div className="flex items-center gap-1">
           {/* AI Match Explanation Modal Section */}
           <AiMatchExplanationModal
@@ -129,9 +144,53 @@ const MatchingCompanyCard = memo(function MatchingCompanyCard(
             companyName={props.name}
             compact
           />
+
+          {/* Unmatch Button Section */}
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-8 px-2 text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+            disabled={isUnmatching}
+            onClick={() => setUnmatchDialogOpen(true)}
+          >
+            {isUnmatching ? (
+              <LucideLoader2 className="size-3.5 animate-spin shrink-0" />
+            ) : (
+              <LucideUserX className="size-3.5 shrink-0" />
+            )}
+            <span className="hidden sm:inline">{t("unmatch")}</span>
+          </Button>
+
+          <Dialog open={unmatchDialogOpen} onOpenChange={setUnmatchDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>
+                  {t("unmatchConfirmTitle", { name: props.name })}
+                </DialogTitle>
+                <DialogDescription>{t("unmatchConfirmDesc")}</DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => setUnmatchDialogOpen(false)}
+                >
+                  {t("cancel")}
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => {
+                    setUnmatchDialogOpen(false);
+                    onUnmatch();
+                  }}
+                >
+                  {t("unmatchConfirm")}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
 
-        {/* Primary Actions Section: Icon-only on mobile, labelled on sm+ */}
+        {/* Right Section: Schedule and Chat Now Buttons */}
         <div className="flex items-center gap-1.5">
           {/* Schedule Button Section */}
           {props.onScheduleClick && (

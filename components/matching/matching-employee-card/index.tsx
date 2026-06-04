@@ -10,7 +10,16 @@ import {
   LucideLoader2,
   LucideMapPin,
   LucideMessageCircle,
+  LucideUserX,
 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { AiMatchExplanationModal } from "@/components/matching/ai-match-explanation-modal";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
@@ -18,19 +27,25 @@ import Tag from "@/components/utils/data-display/tag";
 import { IMatchingEmployeeCardProps } from "./props";
 import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { memo } from "react";
+import { memo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { translateLocation } from "@/utils/functions/text";
 
 const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
   props: IMatchingEmployeeCardProps,
 ) {
+  /* ---------------------------------- Props --------------------------------- */
+  const { onUnmatch, isUnmatching } = props;
+
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("matching");
   const tl = useTranslations("locations");
-  const availLabel = formatAvailabilityWords(props.availability);
+  const availabilityLabel = formatAvailabilityWords(props.availability);
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* -------------------------------- All States ------------------------------ */
+  const [unmatchDialogOpen, setUnmatchDialogOpen] = useState<boolean>(false);
+
+  /* -------------------------------- Render UI ------------------------------- */
   return (
     <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
       <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
@@ -60,7 +75,7 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
             <span
               className={`text-[11px] font-semibold px-2.5 py-1 rounded-full whitespace-nowrap flex-shrink-0 ${getAvailabilityStyleClass(props.availability)}`}
             >
-              {availLabel}
+              {availabilityLabel}
             </span>
           </div>
 
@@ -97,17 +112,61 @@ const MatchingEmployeeCard = memo(function MatchingEmployeeCard(
 
       {/* Action Bar Section */}
       <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-between gap-2">
-        {/* AI Actions Section*/}
+        {/* Left Section: AI Actions and Unmatch */}
         <div className="flex items-center gap-1.5">
           <AiMatchExplanationModal
             eid={props.id}
             cid={props.companyId}
             companyName={props.name}
           />
+
+          {/* Unmatch Button Section */}
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-8 px-2 text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+            disabled={isUnmatching}
+            onClick={() => setUnmatchDialogOpen(true)}
+          >
+            {isUnmatching ? (
+              <LucideLoader2 className="size-3.5 animate-spin" />
+            ) : (
+              <LucideUserX className="size-3.5" />
+            )}
+            <span className="hidden sm:inline">{t("unmatch")}</span>
+          </Button>
+
+          <Dialog open={unmatchDialogOpen} onOpenChange={setUnmatchDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>
+                  {t("unmatchConfirmTitle", { name: props.name })}
+                </DialogTitle>
+                <DialogDescription>{t("unmatchConfirmDesc")}</DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => setUnmatchDialogOpen(false)}
+                >
+                  {t("cancel")}
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => {
+                    setUnmatchDialogOpen(false);
+                    onUnmatch();
+                  }}
+                >
+                  {t("unmatchConfirm")}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
 
-        {/* Primary Actions Section */}
-        <div className="flex items-center gap-2">
+        {/* Right Section: Schedule and Chat Now Buttons */}
+        <div className="flex items-center gap-1.5">
           {props.onScheduleClick && (
             <Button
               size="sm"

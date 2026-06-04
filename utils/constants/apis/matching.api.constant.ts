@@ -40,6 +40,9 @@ export const API_AI_INTERVIEW_PREP_STREAM_URL = (eid: string, cid: string) =>
 export const API_AI_SKILL_GAP_STREAM_URL = (eid: string, cid: string) =>
   `${API_MATCHING_BASE_URL}/ai-skill-gap/${eid}/${cid}/stream`;
 
+export const API_UNMATCH_URL = (empID: string, cmpID: string) =>
+  `${API_MATCHING_BASE_URL}/unmatch/${empID}/${cmpID}`;
+
 // Interview URLs
 export const API_CREATE_INTERVIEW_URL = `${API_MATCHING_BASE_URL}/interview`;
 export const API_GET_INTERVIEWS_BY_EMPLOYEE_URL = (empID: string) =>

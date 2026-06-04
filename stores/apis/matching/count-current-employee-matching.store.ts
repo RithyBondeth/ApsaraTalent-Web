@@ -24,6 +24,10 @@ type TCountCurrentEmployeeMatchingState = {
   error: string | null;
   countCurrentEmpMatching: (employeeID: string) => Promise<void>;
   markAsSeen: (employeeId: string) => void;
+  /** Bump total by 1 when a new match arrives via socket. */
+  incrementCount: () => void;
+  /** Reduce total by 1 when an unmatch is confirmed. */
+  decrementCount: () => void;
 };
 
 /* ---------------------------------- Store --------------------------------- */
@@ -33,6 +37,17 @@ export const useCountCurrentEmployeeMatchingStore =
     seenEmpMatching: 0,
     loading: false,
     error: null,
+
+    incrementCount: () => {
+      set((s) => ({ totalEmpMatching: (s.totalEmpMatching ?? 0) + 1 }));
+    },
+
+    decrementCount: () => {
+      set((s) => ({
+        totalEmpMatching: Math.max(0, (s.totalEmpMatching ?? 0) - 1),
+        seenEmpMatching: Math.max(0, s.seenEmpMatching - 1),
+      }));
+    },
 
     markAsSeen: (employeeId: string) => {
       const count = get().totalEmpMatching ?? 0;

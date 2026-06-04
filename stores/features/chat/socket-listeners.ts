@@ -5,19 +5,61 @@ import { formatSidebarTime, parseMessageDate } from "@/utils/functions/date";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import { useInterviewStore } from "@/stores/apis/matching/interview.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
+import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-current-company-matching.store";
+import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
+import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
 import { normalizeMediaUrl } from "@/utils/functions/media";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 
-function refetchInterviews() {
+/* ------------------------------------- Helper Functions ---------------------------------- */
+// ── Silent Refetch Interviews ────────────────────────────────────────────
+function silentRefetchInterviews() {
   const user = useGetCurrentUserStore.getState().user;
   const role = user?.role;
   const id =
     role === USER_ROLE.EMPLOYEE ? user?.employee?.id : user?.company?.id;
   if (role && id) {
-    void useInterviewStore.getState().queryInterviews(id, role);
+    void useInterviewStore.getState().silentRefetch(id, role);
   }
 }
 
+// ── Silent Refetch Matching List ─────────────────────────────────────────
+function silentRefetchMatchingList() {
+  const user = useGetCurrentUserStore.getState().user;
+  const role = user?.role;
+  const id =
+    role === USER_ROLE.EMPLOYEE ? user?.employee?.id : user?.company?.id;
+  if (!role || !id) return;
+  if (role === USER_ROLE.EMPLOYEE) {
+    void useGetCurrentEmployeeMatchingStore.getState().silentRefetch(id);
+  } else {
+    void useGetCurrentCompanyMatchingStore.getState().silentRefetch(id);
+  }
+}
+
+// ── Increment Matching Count ─────────────────────────────────────────────
+function incrementMatchingCount() {
+  const user = useGetCurrentUserStore.getState().user;
+  if (user?.role === USER_ROLE.EMPLOYEE) {
+    useCountCurrentEmployeeMatchingStore.getState().incrementCount();
+  } else if (user?.role === USER_ROLE.COMPANY) {
+    useCountCurrentCompanyMatchingStore.getState().incrementCount();
+  }
+}
+
+// ── Decrement Matching Count ─────────────────────────────────────────────
+function decrementMatchingCount() {
+  const user = useGetCurrentUserStore.getState().user;
+  if (user?.role === USER_ROLE.EMPLOYEE) {
+    useCountCurrentEmployeeMatchingStore.getState().decrementCount();
+  } else if (user?.role === USER_ROLE.COMPANY) {
+    useCountCurrentCompanyMatchingStore.getState().decrementCount();
+  }
+}
+
+/* ------------------------------------ Socket Listeners ------------------------------------ */
+// ── Register Socket Listeners ─────────────────────────────────────────────
 export const registerSocketListeners = (
   socket: SocketInstance,
   set: (partial: any) => void,
@@ -287,6 +329,15 @@ export const registerSocketListeners = (
     if (notification?.id) {
       useNotificationStore.getState().addNotification(notification);
     }
+    // New mutual match → bump the matching badge + refresh the matching list
+    if (notification?.type === "match") {
+      incrementMatchingCount();
+      silentRefetchMatchingList();
+    }
+    // New interview → refresh the interview list + badge
+    if (notification?.type === "interview") {
+      silentRefetchInterviews();
+    }
   });
 
   // ── Badge Increment ───────────────────────────────────────────────────────
@@ -298,9 +349,19 @@ export const registerSocketListeners = (
 
   // ── Interview Update ──────────────────────────────────────────────────────
   // Fired when the other party creates or changes the status of an interview.
-  // Re-fetches the interview store so the badge and interview page update live.
+  // Silently re-fetches so the interview page updates without a skeleton flash.
   socket.on("interviewUpdate", () => {
-    refetchInterviews();
+    silentRefetchInterviews();
+  });
+
+  // ── Unmatch Update ────────────────────────────────────────────────────────
+  // Fired to BOTH parties when a match is deleted. The initiating party
+  // already removed things optimistically; this event updates the OTHER party
+  // so their matching list, interview list, and badge all update live.
+  socket.on("unmatchUpdate", () => {
+    silentRefetchMatchingList();
+    silentRefetchInterviews();
+    decrementMatchingCount();
   });
 
   socket.on("error", (error: any) => {

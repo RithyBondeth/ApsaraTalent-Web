@@ -12,7 +12,9 @@ export interface IMatchingCompanyCardProps {
   location: string;
   onChatNowClick: () => void;
   onScheduleClick?: () => void;
+  onUnmatch: () => void;
   isChatLoading?: boolean;
+  isUnmatching?: boolean;
   /** Current employee's ID — used for AI Score */
   employeeId: string;
   /** Current employee's profile fields — used for Cover Letter */

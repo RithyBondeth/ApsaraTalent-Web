@@ -15,6 +15,10 @@ type TGetCurrentCompanyMatchingState = {
   loading: boolean;
   error: string | null;
   queryCurrentCompanyMatching: (companyID: string) => Promise<void>;
+  /** Fetch in the background without showing the loading skeleton. */
+  silentRefetch: (companyID: string) => Promise<void>;
+  /** Optimistically remove an employee from the match list by their ID. */
+  removeMatch: (employeeId: string) => void;
 };
 
 /* ---------------------------------- Store --------------------------------- */
@@ -48,5 +52,29 @@ export const useGetCurrentCompanyMatchingStore =
           currentCompanyMatching: null,
         });
       }
+    },
+
+    silentRefetch: async (companyID: string) => {
+      try {
+        const response = await axios.get<TGetCurrentCompanyMatchingResponse>(
+          API_GET_CURRENT_COMPANY_MATCHING_URL(companyID),
+        );
+        set({
+          currentCompanyMatching: response.data,
+          countCurrentCompanyMatching: response.data.length,
+        });
+      } catch {}
+    },
+
+    removeMatch: (employeeId: string) => {
+      set((state) => {
+        const updated = (state.currentCompanyMatching ?? []).filter(
+          (e) => e.id !== employeeId,
+        );
+        return {
+          currentCompanyMatching: updated,
+          countCurrentCompanyMatching: updated.length,
+        };
+      });
     },
   }));

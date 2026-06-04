@@ -1,5 +1,7 @@
+import { TInterviewStatus } from "@/utils/types/interview";
+
 /* --------------------------------- Methods ---------------------------------- */
-export function getStatusBadgeStyleClass(status: string) {
+export function getStatusBadgeStyleClass(status: TInterviewStatus) {
   switch (status) {
     case "accepted":
       return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800";

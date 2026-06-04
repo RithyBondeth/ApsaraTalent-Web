@@ -9,9 +9,11 @@ import {
   LucideCheck,
   LucideClock,
   LucideLink,
+  LucideLoader2,
   LucideMapPin,
   LucideX,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { IInterviewCardProps } from "./props";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
@@ -21,6 +23,7 @@ import { USER_ROLE } from "@/utils/constants/auth.constant";
 export function InterviewCard({
   interview,
   isEmployee,
+  isUpdating,
   onAccept,
   onDecline,
 }: IInterviewCardProps) {
@@ -35,6 +38,17 @@ export function InterviewCard({
     : `${interview.employee?.firstname ?? ""} ${interview.employee?.lastname ?? ""}`.trim() ||
       interview.employee?.username ||
       "Employee";
+
+  /* -------------------------------- All States ------------------------------ */
+  const [pendingAction, setPendingAction] = useState<
+    "accept" | "decline" | null
+  >(null);
+
+  /* --------------------------------- Effects -------------------------------- */
+  // Clear the pending action once the API call finishes
+  useEffect(() => {
+    if (!isUpdating) setPendingAction(null);
+  }, [isUpdating]);
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -98,7 +112,7 @@ export function InterviewCard({
       {/* Action Bar Section: Practice Questions (employee only) + Accept/Decline (pending only) */}
       {(isEmployee || showActions) && (
         <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-between gap-2">
-          {/* AI Practice Questions — employees only */}
+          {/* AI Practice Questions Section (employees only) */}
           {isEmployee && (
             <AiInterviewPrepModal
               eid={interview.employee.id}
@@ -108,7 +122,7 @@ export function InterviewCard({
             />
           )}
 
-          {/* Accept and Decline Section — Pending only, for the non-creator */}
+          {/* Accept and Decline Section (pending only, for the non-creator) */}
           {showActions && (
             <div
               className={`flex items-center gap-2 ${!isEmployee ? "ml-auto" : ""}`}
@@ -117,17 +131,33 @@ export function InterviewCard({
                 size="sm"
                 variant="outline"
                 className="text-xs text-destructive hover:bg-destructive/10"
-                onClick={() => onDecline(interview.id)}
+                disabled={isUpdating}
+                onClick={() => {
+                  setPendingAction("decline");
+                  onDecline(interview.id);
+                }}
               >
-                <LucideX className="size-3.5" />
+                {pendingAction === "decline" ? (
+                  <LucideLoader2 className="size-3.5 animate-spin" />
+                ) : (
+                  <LucideX className="size-3.5" />
+                )}
                 {t("decline")}
               </Button>
               <Button
                 size="sm"
                 className="text-xs"
-                onClick={() => onAccept(interview.id)}
+                disabled={isUpdating}
+                onClick={() => {
+                  setPendingAction("accept");
+                  onAccept(interview.id);
+                }}
               >
-                <LucideCheck className="size-3.5" />
+                {pendingAction === "accept" ? (
+                  <LucideLoader2 className="size-3.5 animate-spin" />
+                ) : (
+                  <LucideCheck className="size-3.5" />
+                )}
                 {t("accept")}
               </Button>
             </div>

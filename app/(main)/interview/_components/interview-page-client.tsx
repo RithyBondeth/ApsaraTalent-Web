@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH3 } from "@/components/utils/typography/typography-h3";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
@@ -32,8 +33,14 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
   const initialEmployeeId = searchParams.get("with") ?? undefined;
 
   /* ----------------------------- API Integration ---------------------------- */
-  const { loading, interviews, queryInterviews, updateStatus, error } =
-    useInterviewStore();
+  const {
+    loading,
+    interviews,
+    queryInterviews,
+    updateStatus,
+    updatingId,
+    error,
+  } = useInterviewStore();
   const {
     currentCompanyMatching,
     queryCurrentCompanyMatching,
@@ -60,14 +67,22 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
   /* --------------------------------- Methods --------------------------------- */
   // ── Handle Accept Interview ─────────────────────────────────────────
   const handleAccept = useCallback(
-    (interviewId: string) => updateStatus(interviewId, "accepted"),
-    [updateStatus],
+    async (interviewId: string) => {
+      const ok = await updateStatus(interviewId, "accepted");
+      if (ok) toast.success(t("acceptSuccess"));
+      else toast.error(t("updateError"));
+    },
+    [updateStatus, t],
   );
 
   // ── Handle Decline Interview ─────────────────────────────────────────
   const handleDecline = useCallback(
-    (interviewId: string) => updateStatus(interviewId, "declined"),
-    [updateStatus],
+    async (interviewId: string) => {
+      const ok = await updateStatus(interviewId, "declined");
+      if (ok) toast.success(t("declineSuccess"));
+      else toast.error(t("updateError"));
+    },
+    [updateStatus, t],
   );
 
   /* ------------------------------ Loading State ----------------------------- */
@@ -198,6 +213,7 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
               key={interview.id}
               interview={interview}
               isEmployee={isEmployee}
+              isUpdating={updatingId === interview.id}
               onAccept={handleAccept}
               onDecline={handleDecline}
             />

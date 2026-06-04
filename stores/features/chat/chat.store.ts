@@ -17,13 +17,13 @@ import { registerSocketListeners } from "./socket-listeners";
 import { TChatState } from "./types";
 import { CHAT_MESSAGE_FETCH_LIMIT } from "@/utils/constants/chat.constant";
 
-/* ---------------------------------- Store ────────────────────────────────-- */
+/* ------------------------------------------- Store ------------------------------------------- */
 export const useChatStore = create<TChatState>((set, get) => ({
-  // ── Socket ───────────────────────────────
+  // ── Socket ─────────────────────────────────────────────────────────────────────────
   socket: null,
   isConnected: false,
 
-  // ── Chats ────────────────────────────────
+  // ── Chats ──────────────────────────────────────────────────────────────────────────
   isChatsLoaded: false,
   isHistoryLoading: false,
   me: null,
@@ -32,12 +32,12 @@ export const useChatStore = create<TChatState>((set, get) => ({
   currentMessages: [],
   unreadCount: 0,
 
-  // ── UI ───────────────────────────────────
+  // ── UI ─────────────────────────────────────────────────────────────────────────────
   isTyping: {},
   onlineUsers: {},
 
-  // ── API Integration ──────────────────────
-  // ── Get Recent Chats ────
+  // ── API Integration ────────────────────────────────────────────────────────────────
+  // ── Get Recent Chats ────────────────────────────────────────────────
   getRecentChats: () => {
     const { socket, me } = get();
     if (!socket?.connected || !me) {
@@ -166,7 +166,7 @@ export const useChatStore = create<TChatState>((set, get) => ({
       });
   },
 
-  // ── Get Chat History ────
+  // ── Get Chat History ──────────────────────────────────────────────────
   getChatHistory: (userId2: string) => {
     const { socket, me } = get();
     if (!socket?.connected || !me) return;
@@ -276,7 +276,7 @@ export const useChatStore = create<TChatState>((set, get) => ({
     );
   },
 
-  // ── Get Unread Count ────
+  // ── Get Unread Count ──────────────────────────────────────────────────
   getUnreadCount: () => {
     const { socket } = get();
     if (socket?.connected) {
@@ -288,7 +288,7 @@ export const useChatStore = create<TChatState>((set, get) => ({
     }
   },
 
-  // ── Connect ────
+  // ── Connect ──────────────────────────────────────────────────────────
   connect: (user?: any) => {
     if (user) set({ me: user });
 
@@ -344,7 +344,7 @@ export const useChatStore = create<TChatState>((set, get) => ({
     set({ socket });
   },
 
-  // ── Disconnect ────
+  // ── Disconnect ──────────────────────────────────────────────────────────
   disconnect: () => {
     scheduleDisconnect(() => {
       const socketToClose = getSocket();
@@ -362,10 +362,10 @@ export const useChatStore = create<TChatState>((set, get) => ({
     });
   },
 
-  // ── Set Me ────
+  // ── Set Me ──────────────────────────────────────────────────────────────
   setMe: (user: any) => set({ me: user }),
 
-  // ── Send Message ────
+  // ── Send Message ────────────────────────────────────────────────────────
   sendMessage: (receiverId, content, type = "text", replyTo, attachment) => {
     const { socket, currentMessages, me } = get();
     if (!socket?.connected) return false;
@@ -432,7 +432,7 @@ export const useChatStore = create<TChatState>((set, get) => ({
     return true;
   },
 
-  // ── Set Active Chat ────
+  // ── Set Active Chat ──────────────────────────────────────────────────────
   setActiveChat: (chat) => {
     const prevChat = get().activeChat;
     const isSameChat =
@@ -476,7 +476,7 @@ export const useChatStore = create<TChatState>((set, get) => ({
     }
   },
 
-  // ── Mark As Read ────
+  // ── Mark As Read ────────────────────────────────────────────────────────
   markAsRead: (messageId, senderId) => {
     const { socket, activeChat, me } = get();
     if (socket?.connected) {
@@ -501,20 +501,20 @@ export const useChatStore = create<TChatState>((set, get) => ({
     }
   },
 
-  // ── React To Message ────
+  // ── React To Message ────────────────────────────────────────────────────
   reactToMessage: (messageId, receiverId, emoji) => {
     const { socket } = get();
     if (socket?.connected)
       socket.emit("react", { messageId, receiverId, emoji });
   },
 
-  // ── Set Typing ────
+  // ── Set Typing ──────────────────────────────────────────────────────────
   setTyping: (receiverId, isTyping) => {
     const { socket } = get();
     if (socket?.connected) socket.emit("typing", { receiverId, isTyping });
   },
 
-  // ── Delete Message ────
+  // ── Delete Message ───────────────────────────────────────────────────────
   deleteMessage: (messageId, receiverId) => {
     const { socket, currentMessages } = get();
     if (!socket?.connected) return;
@@ -526,7 +526,7 @@ export const useChatStore = create<TChatState>((set, get) => ({
     socket.emit("deleteMessage", { messageId, receiverId });
   },
 
-  // ── Edit Message ────
+  // ── Edit Message ─────────────────────────────────────────────────────────
   editMessage: (messageId, receiverId, newContent) => {
     const { socket, currentMessages } = get();
     if (!socket?.connected) return;
@@ -536,5 +536,27 @@ export const useChatStore = create<TChatState>((set, get) => ({
       ),
     });
     socket.emit("editMessage", { messageId, receiverId, newContent });
+  },
+
+  // ── Remove Chat By Partner ID ────────────────────────────────────────────
+  removeChatByPartnerId: (partnerId: string) => {
+    const { activeChat, activeChats } = get();
+
+    const filtered = activeChats.filter(
+      (c) => c.id.toLowerCase() !== partnerId.toLowerCase(),
+    );
+
+    // If the currently open chat is with this partner, close it too
+    const isActiveChatAffected =
+      activeChat?.id.toLowerCase() === partnerId.toLowerCase();
+
+    set({
+      activeChats: filtered,
+      ...(isActiveChatAffected && {
+        activeChat: null,
+        currentMessages: [],
+        isHistoryLoading: false,
+      }),
+    });
   },
 }));

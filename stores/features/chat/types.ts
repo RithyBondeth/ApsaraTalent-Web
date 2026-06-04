@@ -4,7 +4,7 @@ import io from "socket.io-client";
 
 export type SocketInstance = ReturnType<typeof io>;
 
-/* ---------------------------------- States ────────────────────────────────- */
+/* ---------------------------------- States --------------------------------- */
 // ── Chat State ────────────────────────────────────────────────────────
 export type TChatState = {
   // ── Socket ────
@@ -58,4 +58,6 @@ export type TChatState = {
     receiverId: string,
     newContent: string,
   ) => void;
+  /** Remove a chat from the sidebar and clear it if currently open. Called after unmatch. */
+  removeChatByPartnerId: (partnerId: string) => void;
 };
