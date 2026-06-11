@@ -24,6 +24,7 @@ export async function streamFetch(
 
   const res = await fetch(url, {
     method: options.method ?? "GET",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),

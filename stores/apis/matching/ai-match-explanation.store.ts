@@ -12,6 +12,7 @@ type TAiMatchExplanationState = {
   fetchMatchExplanation: (
     eid: string,
     cid: string,
+    lang?: string,
   ) => Promise<IAiMatchExplanationResponse>;
 };
 
@@ -21,11 +22,11 @@ export const useAiMatchExplanationStore = create<TAiMatchExplanationState>(
     loading: false,
     error: null,
     data: null,
-    fetchMatchExplanation: async (eid, cid) => {
+    fetchMatchExplanation: async (eid, cid, lang) => {
       set({ loading: true, error: null });
       try {
         const response = await axios.get<IAiMatchExplanationResponse>(
-          API_AI_MATCH_EXPLANATION_URL(eid, cid),
+          API_AI_MATCH_EXPLANATION_URL(eid, cid, lang),
         );
         set({ data: response.data, loading: false, error: null });
         return response.data;

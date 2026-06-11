@@ -20,7 +20,7 @@ import {
 import { API_AI_SKILL_GAP_STREAM_URL } from "@/utils/constants/apis/matching.api.constant";
 import { ISkillGapMissing, ISkillGapSummary } from "@/utils/interfaces/resume";
 import { streamFetch } from "@/utils/functions/stream-fetch";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import MissingCard from "./missing-card";
 import { IAiSkillGapModalProps } from "./props";
 
@@ -41,6 +41,7 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
 
   /* ---------------------------------- Utils ---------------------------------- */
   const t = useTranslations("matching");
+  const locale = useLocale();
 
   /* -------------------------------- All States ------------------------------- */
   const [open, setOpen] = useState<boolean>(false);
@@ -87,7 +88,7 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
 
     try {
       await streamFetch(
-        API_AI_SKILL_GAP_STREAM_URL(eid, cid),
+        API_AI_SKILL_GAP_STREAM_URL(eid, cid, locale),
         { method: "GET" },
         (event) => {
           if (event.t === "chunk") {

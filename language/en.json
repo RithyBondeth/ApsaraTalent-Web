@@ -648,6 +648,7 @@
     "coverLetterPdfFailed": "Failed to generate PDF. Please try again.",
     "downloadPdf": "Download PDF",
     "downloadingPdf": "Generating…",
+    "generating": "Generating…",
     "styleLabel": "Style",
     "polish": "Polish",
     "polishing": "Polishing…",

@@ -17,7 +17,7 @@ import {
   LucideRotateCcw,
 } from "lucide-react";
 import { IAiMatchExplanationResponse } from "@/utils/interfaces/resume";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { IAiMatchExplanationModalProps } from "./props";
 import ScoreRing from "./score-ring";
 
@@ -27,6 +27,7 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
 
   /* --------------------------------- Utils -------------------------------- */
   const t = useTranslations("matching");
+  const locale = useLocale();
 
   /* ------------------------------- All States ----------------------------- */
   const [open, setOpen] = useState<boolean>(false);
@@ -44,7 +45,7 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetchMatchExplanation(eid, cid);
+      const res = await fetchMatchExplanation(eid, cid, locale);
       setData(res);
     } catch {
       setError(t("analysisFailed"));
