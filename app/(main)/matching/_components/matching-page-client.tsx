@@ -18,6 +18,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useInitiateChatStore } from "@/stores/apis/chat/initiate-chat.store";
 import { useChatStore } from "@/stores/features/chat/chat.store";
+import { markUnmatchInitiated } from "@/stores/features/chat/socket-listeners";
 import { MatchingLoadingSkeleton } from "@/components/matching/skeleton";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -46,24 +47,30 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
   const getCurrentEmpStore = useGetCurrentEmployeeMatchingStore();
   const getCurrentCmpStore = useGetCurrentCompanyMatchingStore();
   const { initiateChat } = useInitiateChatStore();
-  const { unmatchLoading, unmatchError, unmatch } = useUnmatchStore();
+  const { unmatch } = useUnmatchStore();
   const removeChatByPartnerId = useChatStore((s) => s.removeChatByPartnerId);
   const getRecentChats = useChatStore((s) => s.getRecentChats);
   const removeInterviewsByPartnerId = useInterviewStore(
     (s) => s.removeInterviewsByPartnerId,
   );
   const silentRefetchInterviews = useInterviewStore((s) => s.silentRefetch);
-  const decrementEmpMatchingCount = useCountCurrentEmployeeMatchingStore(
-    (s) => s.decrementCount,
-  );
-  const decrementCmpMatchingCount = useCountCurrentCompanyMatchingStore(
-    (s) => s.decrementCount,
-  );
   const markEmpMatchingAsSeen = useCountCurrentEmployeeMatchingStore(
     (s) => s.markAsSeen,
   );
   const markCmpMatchingAsSeen = useCountCurrentCompanyMatchingStore(
     (s) => s.markAsSeen,
+  );
+  /* 
+    Subscribe to the totals so we can guard markAsSeen until they're loaded.
+    Without this guard, markAsSeen(id) runs when currentUser resolves but
+    before the count API returns — totalMatching is still null, so it writes
+    seen=0 to localStorage and the badge inflates to the full total on next load.
+  */
+  const totalEmpMatching = useCountCurrentEmployeeMatchingStore(
+    (s) => s.totalEmpMatching,
+  );
+  const totalCmpMatching = useCountCurrentCompanyMatchingStore(
+    (s) => s.totalCmpMatching,
   );
 
   /* --------------------------------- Effects ---------------------------------*/
@@ -78,9 +85,23 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
   useEffect(() => {
     const id = currentUser?.employee?.id ?? currentUser?.company?.id;
     if (!id) return;
-    if (isEmployee) markEmpMatchingAsSeen(id);
-    else markCmpMatchingAsSeen(id);
-  }, [currentUser, isEmployee, markEmpMatchingAsSeen, markCmpMatchingAsSeen]);
+    // Only mark as seen once the server count has been fetched.
+    // totalMatching starts as null and becomes a number after the API returns.
+    if (isEmployee) {
+      if (totalEmpMatching === null) return;
+      markEmpMatchingAsSeen(id);
+    } else {
+      if (totalCmpMatching === null) return;
+      markCmpMatchingAsSeen(id);
+    }
+  }, [
+    currentUser,
+    isEmployee,
+    totalEmpMatching,
+    totalCmpMatching,
+    markEmpMatchingAsSeen,
+    markCmpMatchingAsSeen,
+  ]);
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Sender ID ────────────────────────────────────────────
@@ -119,6 +140,16 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
 
       setUnmatchingId(otherId);
 
+      /* 
+        Flag suppresses the "You have been unmatched" toast in the socket
+        listener — must be set BEFORE the API call so it's active when the
+        server emits unmatchUpdate back to us.
+      */
+      markUnmatchInitiated();
+
+      // Show loading feedback
+      const loadingToast = toast.loading(t("unmatchLoading"));
+
       // Optimistic removal — match card + chat sidebar + interviews
       if (isEmployee) getCurrentEmpStore.removeMatch(otherId);
       else getCurrentCmpStore.removeMatch(otherId);
@@ -129,13 +160,16 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
       await unmatch(employeeId, companyId, isEmployee);
       setUnmatchingId(null);
 
-      if (unmatchLoading && !unmatchError) {
-        // Matching badge decrements immediately on success
-        if (isEmployee) decrementEmpMatchingCount();
-        else decrementCmpMatchingCount();
-      }
+      // Read fresh state directly from the store after await (avoids stale closure)
+      const { unmatchError: postError } = useUnmatchStore.getState();
 
-      if (!unmatchLoading && unmatchError) {
+      toast.dismiss(loadingToast);
+
+      if (!postError) {
+        // Badge decrement is handled by the socket unmatchUpdate event (fires for
+        // both parties) — no local decrement needed here to avoid double-counting.
+        toast.success(t("unmatchSuccess"));
+      } else {
         // Restore all three optimistically-removed pieces
         const currentId = isEmployee
           ? currentUser?.employee?.id
@@ -155,8 +189,6 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
         }
 
         toast.error(t("unmatchError"));
-      } else {
-        toast.success(t("unmatchSuccess"));
       }
     },
     [
@@ -170,8 +202,6 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
       removeInterviewsByPartnerId,
       getRecentChats,
       silentRefetchInterviews,
-      decrementEmpMatchingCount,
-      decrementCmpMatchingCount,
       t,
     ],
   );

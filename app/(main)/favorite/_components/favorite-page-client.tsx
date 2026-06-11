@@ -46,8 +46,12 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
   const companyFavEmployeeStore = useCompanyFavEmployeeStore();
 
   // Count All Employee and Company Favorites
-  const countCurrentCmpFavoritesStore = useCountCurrentCompanyFavoritesStore();
-  const countCurrentEmpFavoritesStore = useCountCurrentEmployeeFavoritesStore();
+  const decrementEmpFavCount = useCountCurrentEmployeeFavoritesStore(
+    (s) => s.decrementCount,
+  );
+  const decrementCmpFavCount = useCountCurrentCompanyFavoritesStore(
+    (s) => s.decrementCount,
+  );
 
   // Liked Users (To Filter Out From Favorites)
   const { currentEmployeeLiked } = useGetCurrentEmployeeLikedStore();
@@ -67,21 +71,20 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
     setMounted(true);
   }, []);
 
-  // Always Fetch Fresh Data On Every Mount So Liked Items Are Never Stale
+  /* Always fetch the favorites list fresh on every mount so liked items are
+    never stale (e.g. a card was liked in another tab / session).
+    The badge count is maintained optimistically by the count stores and does
+    NOT need a separate API re-fetch here — the navbar already fetches it on
+    app load and increment/decrementCount keep it in sync for all user actions.
+  */
   useEffect(() => {
     if (!currentUser) return;
     if (isEmployee && currentUser.employee?.id) {
       getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
         currentUser.employee.id,
       );
-      countCurrentEmpFavoritesStore.countCurrentEmpFavorites(
-        currentUser.employee.id,
-      );
     } else if (!isEmployee && currentUser.company?.id) {
       getAllCompanyFavoritesStore.queryAllCompanyFavorites(
-        currentUser.company.id,
-      );
-      countCurrentCmpFavoritesStore.countCurrentCmpFavorites(
         currentUser.company.id,
       );
     }
@@ -142,7 +145,7 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
             companyID,
             favoriteID,
           );
-          countCurrentEmpFavoritesStore.countCurrentEmpFavorites(employeeID);
+          decrementEmpFavCount();
           toast.success(t("removedFromFavorites", { name: companyName }));
           await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
             employeeID,
@@ -157,7 +160,7 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
     [
       animateThenRemove,
       employeeFavCompanyStore,
-      countCurrentEmpFavoritesStore,
+      decrementEmpFavCount,
       getAllEmployeeFavoritesStore,
       t,
     ],
@@ -179,7 +182,7 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
             employeeID,
             favoriteID,
           );
-          countCurrentCmpFavoritesStore.countCurrentCmpFavorites(companyID);
+          decrementCmpFavCount();
           toast.success(t("removedFromFavorites", { name: employeeName }));
           await getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyID);
         } catch {
@@ -192,7 +195,7 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
     [
       animateThenRemove,
       companyFavEmployeeStore,
-      countCurrentCmpFavoritesStore,
+      decrementCmpFavCount,
       getAllCompanyFavoritesStore,
       t,
     ],

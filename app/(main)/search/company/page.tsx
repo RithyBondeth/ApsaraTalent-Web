@@ -38,6 +38,7 @@ import {
   LucideX,
 } from "lucide-react";
 import Image from "next/image";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Controller, useForm } from "react-hook-form";
@@ -50,13 +51,28 @@ import { USER_ROLE } from "@/utils/constants/auth.constant";
 export default function CompanySearchPage() {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("searchCompany");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // Capture whether the URL already had params on the FIRST render (before any
+  // router.replace calls update searchParams and re-render this component).
+  const hasUrlFiltersRef = useRef(searchParams.toString() !== "");
+
+  // Parse URL params for form initialisation (evaluated once at first render)
+  const urlSortRaw = searchParams.get("sort") ?? "createdAt-desc";
+  const [urlSortBy, urlOrderBy] = urlSortRaw.split("-");
+  const urlEdu = searchParams.get("edu");
 
   /* ----------------------------- API Integration ---------------------------- */
   const {
     error,
     loading,
+    loadingMore,
     employees,
+    total,
     querySearchEmployee,
+    loadMoreEmployees,
     resetSearch,
     isUsingFallback,
   } = useSearchEmployeeStore();
@@ -71,17 +87,19 @@ export default function CompanySearchPage() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
 
   /* ----------------------- React Hook Form: Search Form ---------------------- */
-  const { register, setValue, control, handleSubmit, watch } =
+  // defaultValues are seeded from the URL so a page refresh / shared link
+  // restores the exact filter state that was active when the URL was captured.
+  const { register, setValue, getValues, control, handleSubmit, watch } =
     useForm<TCompanySearchSchema>({
       resolver: zodResolver(companySearchSchema),
       defaultValues: {
-        keyword: "",
-        location: "all",
-        jobType: "all",
-        experienceLevel: undefined,
-        educationLevel: [],
-        sortBy: "createdAt",
-        orderBy: "desc",
+        keyword: searchParams.get("q") ?? "",
+        location: searchParams.get("loc") ?? "all",
+        jobType: searchParams.get("type") ?? "all",
+        educationLevel: urlEdu ? urlEdu.split(",") : [],
+        experienceLevel: searchParams.get("exp") ?? undefined,
+        sortBy: urlSortBy ?? "createdAt",
+        orderBy: urlOrderBy ?? "desc",
       },
     });
 
@@ -103,6 +121,28 @@ export default function CompanySearchPage() {
   }, [allValues]);
 
   /* --------------------------------- Methods --------------------------------- */
+  // ── Sync Filter State to URL (immediate, no debounce) ─────────────────────
+  // Uses router.replace so each keystroke does NOT push a new history entry —
+  // the user's back button still exits the search page cleanly.
+  const syncToUrl = useCallback(
+    (values: TCompanySearchSchema) => {
+      const params = new URLSearchParams();
+      if (values.keyword) params.set("q", values.keyword);
+      if (values.location && values.location !== "all")
+        params.set("loc", values.location);
+      if (values.jobType && values.jobType !== "all")
+        params.set("type", values.jobType);
+      const sortStr = `${values.sortBy ?? "createdAt"}-${values.orderBy ?? "desc"}`;
+      if (sortStr !== "createdAt-desc") params.set("sort", sortStr);
+      if (values.educationLevel && values.educationLevel.length > 0)
+        params.set("edu", values.educationLevel.join(","));
+      if (values.experienceLevel) params.set("exp", values.experienceLevel);
+      const qs = params.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    },
+    [router, pathname],
+  );
+
   // ── Real Search Function ─────────────────────────────────────────
   const runSearch = useCallback(
     (data: TCompanySearchSchema) => {
@@ -115,22 +155,17 @@ export default function CompanySearchPage() {
           ? undefined
           : data.educationLevel;
 
-      querySearchEmployee(
-        {
-          careerScopes:
-            scopeNamesRef.current.length > 0
-              ? scopeNamesRef.current
-              : undefined,
-          keyword: data.keyword || undefined,
-          location: normalizedLocation as TLocations | undefined,
-          jobType: normalizedJobType as TAvailability | undefined,
-          experienceLevel: data.experienceLevel,
-          education: normalizedEducation,
-          sortBy: data.sortBy,
-          sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
-        },
-        { scopeFallback: true },
-      );
+      querySearchEmployee({
+        careerScopes:
+          scopeNamesRef.current.length > 0 ? scopeNamesRef.current : undefined,
+        keyword: data.keyword || undefined,
+        location: normalizedLocation as TLocations | undefined,
+        jobType: normalizedJobType as TAvailability | undefined,
+        experienceLevel: data.experienceLevel,
+        education: normalizedEducation,
+        sortBy: data.sortBy,
+        sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
+      });
     },
     [querySearchEmployee],
   );
@@ -141,6 +176,15 @@ export default function CompanySearchPage() {
     () => debounce(runSearch, SEARCH_DEBOUNCE_MS),
     [runSearch],
   );
+
+  // ── Clear All Filters ─────────────────────────────────────────────────────
+  const clearAllFilters = useCallback(() => {
+    setValue("keyword", "");
+    setValue("location", "all");
+    setValue("jobType", "all");
+    setValue("educationLevel", []);
+    setValue("experienceLevel", undefined);
+  }, [setValue]);
 
   /* --------------------------------- Effects --------------------------------- */
   // Initial Search Effect (Once per mount / Per user ready)
@@ -159,17 +203,25 @@ export default function CompanySearchPage() {
 
     scopeNamesRef.current = scopes?.map((cs) => cs.name) ?? [];
 
-    const userLocation =
-      user.role === USER_ROLE.COMPANY
-        ? user.company?.location
-        : user.employee?.location;
+    if (hasUrlFiltersRef.current) {
+      // URL already has filter params (page refresh / shared link) — run the
+      // search immediately using the values already seeded into the form.
+      runSearch(getValues());
+    } else {
+      // No URL params — seed location from the user's profile so the initial
+      // results are relevant to where the user is based.
+      const userLocation =
+        user.role === USER_ROLE.COMPANY
+          ? user.company?.location
+          : user.employee?.location;
 
-    if (userLocation && userLocation !== "all") {
-      setValue("location", userLocation);
-    }
+      if (userLocation && userLocation !== "all") {
+        // Set the form value BEFORE didInitRef = true so the watch subscription
+        // ignores this programmatic change and doesn't fire a second search.
+        setValue("location", userLocation);
+      }
 
-    querySearchEmployee(
-      {
+      querySearchEmployee({
         careerScopes:
           scopeNamesRef.current.length > 0 ? scopeNamesRef.current : undefined,
         location:
@@ -178,32 +230,35 @@ export default function CompanySearchPage() {
             : undefined,
         sortBy: "createdAt",
         sortOrder: "DESC",
-      },
-      { scopeFallback: true },
-    );
+      });
+    }
 
     didInitRef.current = true;
-  }, [user, querySearchEmployee, resetSearch, setValue]);
+  }, [user, querySearchEmployee, resetSearch, setValue, runSearch, getValues]);
 
-  // Auto-Search on any form change (Debounced)
-  // watch dep is stable; debouncedRunSearch is now stable too — this effect
-  // runs exactly once and never re-subscribes, eliminating the spurious
-  // immediate-fire that caused a second concurrent request.
+  /* 
+    Auto-Search on any form change (Debounced)
+    watch dep is stable; debouncedRunSearch is now stable too — this effect
+    runs exactly once and never re-subscribes, eliminating the spurious
+    immediate-fire that caused a second concurrent request.
+  */
   useEffect(() => {
     const subscription = watch((value) => {
       if (!didInitRef.current) return;
       debouncedRunSearch(value as TCompanySearchSchema);
+      // Sync immediately so URL reflects the filter before the debounce fires
+      syncToUrl(value as TCompanySearchSchema);
     });
 
     return () => subscription.unsubscribe();
-  }, [watch, debouncedRunSearch]);
+  }, [watch, debouncedRunSearch, syncToUrl]);
 
   // Cleanup Debounce Timer Effect
   useEffect(() => {
     return () => debouncedRunSearch.cancel();
   }, [debouncedRunSearch]);
 
-  // Fetch Liked Employees (So We Can Filter Them Out of Results)
+  // Fetch Liked Employees (So We Can Filter Them Out From Results)
   useEffect(() => {
     if (!user?.company?.id) return;
     if (currentCompanyLiked !== null) return;
@@ -346,13 +401,7 @@ export default function CompanySearchPage() {
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => {
-                setValue("keyword", "");
-                setValue("location", "all");
-                setValue("jobType", "all");
-                setValue("educationLevel", []);
-                setValue("experienceLevel", undefined);
-              }}
+              onClick={clearAllFilters}
               className="text-xs h-8 px-2"
             >
               {t("clearFilters")}
@@ -508,7 +557,7 @@ export default function CompanySearchPage() {
                     {t("zeroEmployeesFound")}
                   </TypographySmall>
                 ) : filteredEmployees.length > 0 ? (
-                  t("employeesFound", { count: filteredEmployees.length })
+                  t("employeesFound", { count: total })
                 ) : (
                   t("noEmployeesFound")
                 )}
@@ -589,31 +638,70 @@ export default function CompanySearchPage() {
               </div>
             ) : filteredEmployees.length > 0 ? (
               /* Employee Search Card Section */
-              filteredEmployees.map((item) => (
-                <SearchEmployeeCard
-                  key={item.id}
-                  id={item.id}
-                  firstname={item.firstname ?? ""}
-                  lastname={item.lastname ?? ""}
-                  username={item.username ?? ""}
-                  avatar={item.avatar ?? ""}
-                  job={item.job}
-                  yearOfExperience={item.yearsOfExperience}
-                  availability={item.availability as TAvailability}
-                  description={item.description}
-                  location={item.location as TLocations}
-                  skills={
-                    Array.isArray(item.skills)
-                      ? item.skills.map((s) => s.name)
-                      : []
-                  }
-                  education={
-                    Array.isArray(item.educations)
-                      ? item.educations.map((edu) => edu.degree).join(", ")
-                      : ""
-                  }
-                />
-              ))
+              <>
+                {filteredEmployees.map((item) => (
+                  <SearchEmployeeCard
+                    key={item.id}
+                    id={item.id}
+                    firstname={item.firstname ?? ""}
+                    lastname={item.lastname ?? ""}
+                    username={item.username ?? ""}
+                    avatar={item.avatar ?? ""}
+                    job={item.job}
+                    yearOfExperience={item.yearsOfExperience}
+                    availability={item.availability as TAvailability}
+                    description={item.description}
+                    location={item.location as TLocations}
+                    skills={
+                      Array.isArray(item.skills)
+                        ? item.skills.map((s) => s.name)
+                        : []
+                    }
+                    education={
+                      Array.isArray(item.educations)
+                        ? item.educations.map((edu) => edu.degree).join(", ")
+                        : ""
+                    }
+                  />
+                ))}
+                {employees && employees.length < total && (
+                  <div className="w-full flex justify-center pt-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={loadingMore}
+                      onClick={() =>
+                        loadMoreEmployees({
+                          careerScopes:
+                            scopeNamesRef.current.length > 0
+                              ? scopeNamesRef.current
+                              : undefined,
+                          keyword: getValues("keyword") || undefined,
+                          location:
+                            getValues("location") === "all"
+                              ? undefined
+                              : (getValues("location") as TLocations),
+                          jobType:
+                            getValues("jobType") === "all"
+                              ? undefined
+                              : (getValues("jobType") as TAvailability),
+                          experienceLevel: getValues("experienceLevel"),
+                          education: getValues("educationLevel")?.length
+                            ? getValues("educationLevel")
+                            : undefined,
+                          sortBy: getValues("sortBy"),
+                          sortOrder: getValues("orderBy")?.toUpperCase() as
+                            | "ASC"
+                            | "DESC",
+                        })
+                      }
+                      className="h-9 px-6 text-sm"
+                    >
+                      {loadingMore ? t("loading") : t("loadMore")}
+                    </Button>
+                  </div>
+                )}
+              </>
             ) : (
               /* Empty List Section */
               <div className="w-full flex flex-col items-center justify-center py-10 gap-3">
@@ -630,13 +718,7 @@ export default function CompanySearchPage() {
                 {activeFilterCount > 0 && (
                   <button
                     type="button"
-                    onClick={() => {
-                      setValue("keyword", "");
-                      setValue("location", "all");
-                      setValue("jobType", "all");
-                      setValue("educationLevel", []);
-                      setValue("experienceLevel", undefined);
-                    }}
+                    onClick={clearAllFilters}
                     className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2 text-xs font-semibold text-foreground shadow-sm transition-all hover:bg-muted active:scale-95"
                   >
                     {t("clearFilters")}

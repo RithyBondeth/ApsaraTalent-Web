@@ -56,7 +56,16 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
       queryInterviews(employeeId, USER_ROLE.EMPLOYEE),
     onCompanyFetch: (companyId) => {
       queryInterviews(companyId, USER_ROLE.COMPANY);
-      queryCurrentCompanyMatching(companyId);
+      /* 
+        CreateInterviewDialog needs the matching list to show candidate options.
+        Skip the fetch if the list is already loaded (e.g. user previously visited
+        /matching), so we don't duplicate the request on every interview page visit.
+      */
+      if (
+        !useGetCurrentCompanyMatchingStore.getState().currentCompanyMatching
+      ) {
+        queryCurrentCompanyMatching(companyId);
+      }
     },
   });
 

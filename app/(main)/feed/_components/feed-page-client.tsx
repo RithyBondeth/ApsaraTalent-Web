@@ -17,8 +17,6 @@ import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-
 import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
 import { useCompanyLikeStore } from "@/stores/apis/matching/company-like.store";
-import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
-import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
 import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store";
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
@@ -43,6 +41,7 @@ import {
   feedEmployeeBannerSvg,
 } from "@/utils/constants/asset.constant";
 import {
+  DEFAULT_REDIRECT_DELAY_MS,
   FEED_PAGE_SIZE,
   LIKE_DEBOUNCE_MS,
 } from "@/utils/constants/config.constant";
@@ -173,12 +172,22 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
   const { queryAllCompanyFavorites } = useGetAllCompanyFavoritesStore();
 
   // Count All Current Employee/Company Favorite APIs
-  const { countCurrentEmpFavorites } = useCountCurrentEmployeeFavoritesStore();
-  const { countCurrentCmpFavorites } = useCountCurrentCompanyFavoritesStore();
+  const incrementEmpFavCount = useCountCurrentEmployeeFavoritesStore(
+    (s) => s.incrementCount,
+  );
+  const decrementEmpFavCount = useCountCurrentEmployeeFavoritesStore(
+    (s) => s.decrementCount,
+  );
+  const incrementCmpFavCount = useCountCurrentCompanyFavoritesStore(
+    (s) => s.incrementCount,
+  );
+  const decrementCmpFavCount = useCountCurrentCompanyFavoritesStore(
+    (s) => s.decrementCount,
+  );
 
-  // Count Current Employee/Company Matching APIs
-  const { countCurrentEmpMatching } = useCountCurrentEmployeeMatchingStore();
-  const { countCurrentCmpMatching } = useCountCurrentCompanyMatchingStore();
+  // Note: matching count updates are handled exclusively via the socket
+  // "newNotification" type=match event (incrementCount) so no direct API
+  // re-fetch is needed here — doing both would double-increment the badge.
 
   // Recommendations APIs
   const employeeRecommendations = useGetEmployeeRecommendationsStore(
@@ -356,38 +365,64 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
       if (!employeeID || !companyID) return;
       setLikingId(companyID);
 
-      // Optimistic update — remove card instantly before API responds
-      // Check both the main feed and the recommendations list so recommendation-only
-      // cards also vanish immediately without waiting for a server round-trip.
+      /* 
+        Optimistic update — remove card instantly before API responds
+        Check both the main feed and the recommendations list so recommendation-only
+        cards also vanish immediately without waiting for a server round-trip.
+      */
       triggerEffect("like");
       const company =
         companyData?.find((c) => c.id === companyID) ??
         employeeRecommendations?.find((c) => c.id === companyID);
       if (company) optimisticAddEmployeeLiked(company);
 
-      // Backend auto-removes favorite on like — sync the local Set immediately
+      /* 
+        Backend auto-removes favorite on like — snapshot BEFORE removing from Set,
+        then decrement the badge count immediately (avoids a re-fetch race condition
+        where a stale in-flight count request resolves after and overwrites with the
+        old value).
+      */
+      const wasFavorited = isEmpFavorite(companyID);
       optimisticRemoveEmpFav(companyID);
+      if (wasFavorited) decrementEmpFavCount();
 
       try {
         await employeeLike(employeeID, companyID);
-        countCurrentEmpMatching(employeeID);
-        countCurrentEmpFavorites(employeeID);
-        toast.success(t("youLiked", { name: company?.name ?? "" }), {
-          description: tFeed("likedSuccessDescription"),
-        });
+        const liked = useEmployeeLikeStore.getState().data;
+        if (liked) {
+          if (liked.isMatched) {
+            toast.success(t("itsAMatch"), {
+              description: t("youLikedEachOther", {
+                name: company?.name ?? "",
+              }),
+            });
+            // Badge increment handled by socket "newNotification" type=match
+            // for both parties — no local countCurrentEmpMatching call needed.
+            setTimeout(() => router.push("/feed"), DEFAULT_REDIRECT_DELAY_MS);
+          } else {
+            toast.success(t("youLiked", { name: company?.name ?? "" }), {
+              description: tFeed("likedSuccessDescription"),
+            });
+            setTimeout(() => router.push("/feed"), DEFAULT_REDIRECT_DELAY_MS);
+          }
+        }
         // Sync with server to confirm (replaces optimistic state)
         await queryCurrentEmployeeLiked(employeeID);
+      } catch (error) {
+        toast.error(
+          useEmployeeLikeStore.getState().error || t("failedToLikeCompany"),
+        );
       } finally {
         setLikingId(null);
       }
     },
     [
       employeeLike,
-      countCurrentEmpMatching,
-      countCurrentEmpFavorites,
+      decrementEmpFavCount,
       queryCurrentEmployeeLiked,
       optimisticAddEmployeeLiked,
       optimisticRemoveEmpFav,
+      isEmpFavorite,
       companyData,
       employeeRecommendations,
     ],
@@ -399,38 +434,62 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
       if (!companyID || !employeeID) return;
       setLikingId(employeeID);
 
-      // Optimistic update — remove card instantly before API responds
-      // Check both the main feed and the recommendations list so recommendation-only
-      // cards also vanish immediately without waiting for a server round-trip.
+      /* 
+        Optimistic update — remove card instantly before API responds
+        Check both the main feed and the recommendations list so recommendation-only
+        cards also vanish immediately without waiting for a server round-trip.
+      */
       triggerEffect("like");
       const employee =
         employeesData?.find((e) => e.id === employeeID) ??
         companyRecommendations?.find((e) => e.id === employeeID);
       if (employee) optimisticAddCompanyLiked(employee);
 
-      // Backend auto-removes favorite on like — sync the local Set immediately
+      // Backend auto-removes favorite on like — snapshot BEFORE removing from Set,
+      // then decrement the badge count immediately (avoids a re-fetch race condition).
+      const wasFavorited = isCmpFavorite(employeeID);
       optimisticRemoveCmpFav(employeeID);
+      if (wasFavorited) decrementCmpFavCount();
 
       try {
         await companyLike(companyID, employeeID);
-        countCurrentCmpMatching(companyID);
-        countCurrentCmpFavorites(companyID);
-        toast.success(t("youLiked", { name: employee?.username ?? "" }), {
-          description: tFeed("likedSuccessDescription"),
-        });
-        // Sync with server to confirm (replaces optimistic state)
-        await queryCurrentCompanyLiked(companyID);
+        const liked = useCompanyLikeStore.getState().data;
+        if (liked) {
+          if (liked.isMatched) {
+            toast.success(t("itsAMatch"), {
+              description: t("youLikedEachOther", {
+                name: employee?.username ?? "",
+              }),
+            });
+            // Badge increment handled by socket "newNotification" type=match
+            // for both parties — no local countCurrentCmpMatching call needed.
+            setTimeout(() => router.push("/feed"), DEFAULT_REDIRECT_DELAY_MS);
+          } else {
+            toast.success(t("youLiked", { name: employee?.username ?? "" }), {
+              description: tFeed("likedSuccessDescription", {
+                name: employee?.username ?? "",
+              }),
+            });
+            setTimeout(() => router.push("/feed"), DEFAULT_REDIRECT_DELAY_MS);
+          }
+          // Sync with server to confirm (replaces optimistic state)
+          await queryCurrentCompanyLiked(companyID);
+        }
+      } catch (error) {
+        toast.error(
+          useCompanyLikeStore.getState().error || t("failedToLikeCompany"),
+        );
       } finally {
         setLikingId(null);
       }
     },
     [
       companyLike,
-      countCurrentCmpMatching,
-      countCurrentCmpFavorites,
+      decrementCmpFavCount,
       queryCurrentCompanyLiked,
       optimisticAddCompanyLiked,
       optimisticRemoveCmpFav,
+      isCmpFavorite,
       employeesData,
       companyRecommendations,
     ],
@@ -444,7 +503,9 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
       triggerEffect("save");
       try {
         await addCompanyToFavorite(employeeID, companyID);
-        countCurrentEmpFavorites(employeeID);
+        // Increment badge immediately — avoids a re-fetch race where a stale
+        // in-flight count request resolves after a subsequent like and overwrites.
+        incrementEmpFavCount();
         toast.success(t("addedToFavorites", { name: companyName }), {
           description: t("addedToFavoritesDescription"),
         });
@@ -457,7 +518,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
     },
     [
       addCompanyToFavorite,
-      countCurrentEmpFavorites,
+      incrementEmpFavCount,
       queryAllEmployeeFavorites,
       empFavError,
       t,
@@ -472,7 +533,8 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
       triggerEffect("save");
       try {
         await addEmployeeToFavorite(companyID, employeeID);
-        countCurrentCmpFavorites(companyID);
+        // Increment badge immediately — same reason as employee side.
+        incrementCmpFavCount();
         toast.success(t("addedToFavorites", { name: employeeName }), {
           description: t("addedToFavoritesDescription"),
         });
@@ -485,7 +547,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
     },
     [
       addEmployeeToFavorite,
-      countCurrentCmpFavorites,
+      incrementCmpFavCount,
       queryAllCompanyFavorites,
       cmpFavError,
       t,

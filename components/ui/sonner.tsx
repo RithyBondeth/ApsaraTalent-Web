@@ -1,19 +1,14 @@
-"use client"
+"use client";
 
-import {
-    CircleCheck,
-    Info,
-    OctagonX,
-    TriangleAlert
-} from "lucide-react"
-import { useTheme } from "next-themes"
-import { Toaster as Sonner } from "sonner"
-import ApsaraLoadingSpinner from "@/components/utils/feedback/apsara-loading-spinner"
+import { CircleCheck, Info, OctagonX, TriangleAlert } from "lucide-react";
+import { useTheme } from "next-themes";
+import { Toaster as Sonner } from "sonner";
+import ApsaraLoadingSpinner from "@/components/utils/feedback/apsara-loading-spinner";
 
-type ToasterProps = React.ComponentProps<typeof Sonner>
+type ToasterProps = React.ComponentProps<typeof Sonner>;
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "system" } = useTheme()
+  const { theme = "system" } = useTheme();
 
   return (
     <Sonner
@@ -26,7 +21,10 @@ const Toaster = ({ ...props }: ToasterProps) => {
         error: <OctagonX className="h-4 w-4 text-destructive" />,
         loading: <ApsaraLoadingSpinner size={32} loop />,
       }}
-      style={{ fontFamily: "var(--font-ubuntu), var(--font-khmer), sans-serif" }}
+      style={{
+        fontFamily:
+          "var(--font-roboto-slab), var(--font-koh-santepheap), sans-serif",
+      }}
       toastOptions={{
         classNames: {
           toast:
@@ -40,7 +38,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }}
       {...props}
     />
-  )
-}
+  );
+};
 
-export { Toaster }
+export { Toaster };

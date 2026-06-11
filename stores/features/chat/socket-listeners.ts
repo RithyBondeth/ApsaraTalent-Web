@@ -11,6 +11,21 @@ import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/cou
 import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
 import { normalizeMediaUrl } from "@/utils/functions/media";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
+import { toast } from "sonner";
+
+/* ------------------------------------- Unmatch Suppression -------------------------------- */
+/* 
+  Module-level flag: set by the initiating party right before calling the unmatch API,
+  cleared when the resulting socket event is processed.  This reliably prevents the
+  initiator from seeing the "You have been unmatched" toast that is meant for the
+  OTHER party — timing-safe because it is set BEFORE the API call, not after.
+*/
+let _suppressUnmatchToast = false;
+
+// ── Mark Unmatch Initiated ─────────────────────────────────────────────
+export function markUnmatchInitiated() {
+  _suppressUnmatchToast = true;
+}
 
 /* ------------------------------------- Helper Functions ---------------------------------- */
 // ── Silent Refetch Interviews ────────────────────────────────────────────
@@ -129,14 +144,13 @@ export const registerSocketListeners = (
     });
 
     // ── Update Unread Count ────
-    // Note: notification badge is updated via the 'newNotification' socket event
-    // (emitted after the DB record is confirmed) — NOT here. Doing it here caused
-    // a race condition where the badge incremented before the notification existed in DB.
-    if (!isFromMe && isForMe && !isActiveChatOpen) {
-      // No-op: badge will increment when 'newNotification' arrives
-    } else {
-      void useNotificationStore.getState().queryUnreadCount();
-    }
+    /* 
+      The notification badge is updated exclusively via the 'newNotification'
+      socket event (emitted after the DB record is confirmed).  Calling
+      queryUnreadCount() here would fire on EVERY message — including every
+      message the user sends — causing one unnecessary network round-trip per
+      message.  The 'newNotification' event is the single source of truth.
+    */
 
     // ── Update Current Messages ────
     const isForActiveChat =
@@ -362,6 +376,21 @@ export const registerSocketListeners = (
     silentRefetchMatchingList();
     silentRefetchInterviews();
     decrementMatchingCount();
+
+    /* 
+      Only notify the OTHER party — not the one who initiated the unmatch.
+      _suppressUnmatchToast is set synchronously before the API call, so it
+      is still true when this socket event arrives even though the API has
+      already finished.
+    */
+    if (_suppressUnmatchToast) {
+      _suppressUnmatchToast = false; // consume the flag
+    } else {
+      toast.info("You have been unmatched", {
+        description: "Someone removed the match with you.",
+        duration: 5000,
+      });
+    }
   });
 
   socket.on("error", (error: any) => {

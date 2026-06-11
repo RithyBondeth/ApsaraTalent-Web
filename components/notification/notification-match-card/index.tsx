@@ -19,10 +19,21 @@ export default function NotificationMatchCard(
   const router = useRouter();
 
   /* --------------------------------- Methods --------------------------------- */
-  // ─── Handle Navigate ─────────────────────────────────
+  // ─── Handle Navigate to Matching ─────────────────────────────────
   const handleNavigate = () => {
     if (props.onMarkRead && !props.seen) props.onMarkRead(props.id);
     router.push("/matching");
+  };
+
+  // ─── Handle View Profile ─────────────────────────────────────────
+  const handleViewProfile = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (props.onMarkRead && !props.seen) props.onMarkRead(props.id);
+    if (props.role === USER_ROLE.EMPLOYEE) {
+      router.push(`/feed/company/${props.user.id}`);
+    } else {
+      router.push(`/feed/employee/${props.user.id}`);
+    }
   };
 
   /* -------------------------------- Render UI -------------------------------- */
@@ -83,15 +94,24 @@ export default function NotificationMatchCard(
         </div>
 
         {/* Button Section */}
-        <Button
-          className="h-8 text-xs tablet-sm:h-9 tablet-sm:w-full tablet-sm:text-xs"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleNavigate();
-          }}
-        >
-          {t("viewMatching")}
-        </Button>
+        <div className="flex items-center gap-2 tablet-sm:w-full">
+          <Button
+            variant="outline"
+            className="h-8 text-xs tablet-sm:h-9 tablet-sm:flex-1 tablet-sm:text-xs"
+            onClick={handleViewProfile}
+          >
+            {t("viewProfile")}
+          </Button>
+          <Button
+            className="h-8 text-xs tablet-sm:h-9 tablet-sm:flex-1 tablet-sm:text-xs"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleNavigate();
+            }}
+          >
+            {t("viewMatching")}
+          </Button>
+        </div>
       </div>
     </NotificationBaseCard>
   );

@@ -22,11 +22,11 @@ export default function NotificationLikeCard(
   // ─── Handle Navigate ─────────────────────────────────
   const handleNavigate = () => {
     if (props.onMarkRead && !props.seen) props.onMarkRead(props.id);
-    // Navigate to profile or matching depending on role
+    // Navigate to the sender's public feed profile
     if (props.role === USER_ROLE.EMPLOYEE) {
-      router.push(`/profile/company/${props.user.id}`);
+      router.push(`/feed/company/${props.user.id}`);
     } else {
-      router.push(`/profile/employee/${props.user.id}`);
+      router.push(`/feed/employee/${props.user.id}`);
     }
   };
 

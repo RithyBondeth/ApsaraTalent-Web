@@ -16,9 +16,7 @@ import { useTranslations } from "next-intl";
 import { useGetOneEmployeeStore } from "@/stores/apis/employee/get-one-emp.store";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
 import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
-import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 import { useCompanyLikeStore } from "@/stores/apis/matching/company-like.store";
-import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type";
@@ -88,10 +86,7 @@ export default function EmployeeDetailPage() {
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const { loading, employeeData, queryOneEmployee } = useGetOneEmployeeStore();
   const companyLikeStore = useCompanyLikeStore();
-  const queryCurrentCompanyLiked = useGetCurrentCompanyLikedStore();
   const companyFavEmployeeStore = useCompanyFavEmployeeStore();
-  const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
-  const countCurrentCompanyMatching = useCountCurrentCompanyMatchingStore();
   const countAllCompanyFavoritesStore = useCountCurrentCompanyFavoritesStore();
   const currentCompanyId = currentUser?.company?.id;
 
@@ -149,6 +144,8 @@ export default function EmployeeDetailPage() {
       const companyId = currentUser.company.id;
       const employeeId = employeeData?.id;
       if (!companyId || !employeeId) return;
+      // Snapshot before the API call — backend auto-removes from favorites on like
+      const wasFavorited = companyFavEmployeeStore.isFavorite(employeeId);
       try {
         triggerEffect("like", e);
         toast.dismiss();
@@ -162,7 +159,7 @@ export default function EmployeeDetailPage() {
             toast.success(t("itsAMatch"), {
               description: t("yourCompanyLikedEachOther", { name }),
             });
-            countCurrentCompanyMatching.countCurrentCmpMatching(companyId);
+            // Matching badge increment handled by socket "newNotification" type=match
             setTimeout(() => router.push("/feed"), DEFAULT_REDIRECT_DELAY_MS);
           } else {
             toast.success(t("youLiked", { name }), {
@@ -174,8 +171,14 @@ export default function EmployeeDetailPage() {
       } catch {
         toast.error(companyLikeStore.error || t("failedToLikeEmployee"));
       } finally {
-        queryCurrentCompanyLiked.queryCurrentCompanyLiked(companyId);
-        countAllCompanyFavoritesStore.countCurrentCmpFavorites(companyId);
+        // Optimistically add to liked list (avoids a full re-fetch)
+        if (employeeData) {
+          useGetCurrentCompanyLikedStore
+            .getState()
+            .optimisticAddLiked(employeeData);
+        }
+        // Sync favorite badge locally — no network call needed
+        if (wasFavorited) countAllCompanyFavoritesStore.decrementCount();
       }
     }
   };
@@ -195,9 +198,12 @@ export default function EmployeeDetailPage() {
           companyId,
           employeeId,
         );
-        countAllCompanyFavoritesStore.countCurrentCmpFavorites(companyId);
+        // Increment badge locally — avoids a count re-fetch and the race
+        // condition where a stale in-flight response overwrites the new value
+        countAllCompanyFavoritesStore.incrementCount();
         toast.success(t("addedToFavorites", { name }));
-        getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyId);
+        // No need to refetch the full favorites list from the detail page;
+        // the favorite page fetches fresh data on its own mount.
       } catch {
         toast.error(
           companyFavEmployeeStore.cmpFavError || t("failedToSaveFavorite"),

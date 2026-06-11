@@ -42,6 +42,7 @@ import {
   LucideX,
 } from "lucide-react";
 import Image from "next/image";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Controller, useForm } from "react-hook-form";
@@ -54,13 +55,34 @@ import { USER_ROLE } from "@/utils/constants/auth.constant";
 export default function EmployeeSearchPage() {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("searchEmployee");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // Capture whether the URL already had params on the FIRST render (before any
+  // router.replace calls update searchParams and re-render this component).
+  const hasUrlFiltersRef = useRef(searchParams.toString() !== "");
+
+  // Parse URL params for form initialisation (evaluated once at first render)
+  const urlSortRaw = searchParams.get("sort") ?? "createdAt-desc";
+  const [urlSortBy, urlOrderBy] = urlSortRaw.split("-");
+  const urlEdu = searchParams.get("edu");
+  const urlCmin = searchParams.get("cmin");
+  const urlCmax = searchParams.get("cmax");
+  const urlSmin = searchParams.get("smin");
+  const urlSmax = searchParams.get("smax");
+  const urlDfrom = searchParams.get("dfrom");
+  const urlDto = searchParams.get("dto");
 
   /* ----------------------------- API Integration ---------------------------- */
   const {
     error,
     loading,
+    loadingMore,
     jobs,
+    total,
     querySearchJobs,
+    loadMoreJobs,
     resetSearch,
     isUsingFallback,
   } = useSearchJobStore();
@@ -77,21 +99,34 @@ export default function EmployeeSearchPage() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
 
   /* ------------------------------- Search Form ------------------------------ */
-  // React Hook Form: Employee Search Form
-  const { register, control, setValue, handleSubmit, watch } =
+  /* 
+    React Hook Form: Employee Search Form
+    defaultValues are seeded from the URL so a page refresh / shared link
+    restores the exact filter state that was active when the URL was captured.
+  */
+  const { register, control, setValue, getValues, handleSubmit, watch } =
     useForm<TEmployeeSearchSchema>({
       resolver: zodResolver(employeeSearchSchema),
       defaultValues: {
-        keyword: "",
-        location: "all",
-        jobType: "all",
-        companySize: {},
-        date: {},
-        salaryRange: {},
-        educationLevel: [],
-        experienceLevel: undefined,
-        sortBy: "createdAt",
-        orderBy: "desc",
+        keyword: searchParams.get("q") ?? "",
+        location: searchParams.get("loc") ?? "all",
+        jobType: searchParams.get("type") ?? "all",
+        companySize: {
+          min: urlCmin ? parseInt(urlCmin) : undefined,
+          max: urlCmax ? parseInt(urlCmax) : undefined,
+        },
+        date: {
+          from: urlDfrom ? new Date(urlDfrom) : undefined,
+          to: urlDto ? new Date(urlDto) : undefined,
+        },
+        salaryRange: {
+          min: urlSmin ? parseInt(urlSmin) : undefined,
+          max: urlSmax ? parseInt(urlSmax) : undefined,
+        },
+        educationLevel: urlEdu ? urlEdu.split(",") : [],
+        experienceLevel: searchParams.get("exp") ?? undefined,
+        sortBy: urlSortBy ?? "createdAt",
+        orderBy: urlOrderBy ?? "desc",
       },
     });
 
@@ -124,35 +159,62 @@ export default function EmployeeSearchPage() {
   }, [allValues]);
 
   /* --------------------------------- Methods --------------------------------- */
+  // ── Sync Filter State to URL (immediate, no debounce) ─────────────────────
+  // Uses router.replace so each keystroke does NOT push a new history entry —
+  // the user's back button still exits the search page cleanly.
+  const syncToUrl = useCallback(
+    (values: TEmployeeSearchSchema) => {
+      const params = new URLSearchParams();
+      if (values.keyword) params.set("q", values.keyword);
+      if (values.location && values.location !== "all")
+        params.set("loc", values.location);
+      if (values.jobType && values.jobType !== "all")
+        params.set("type", values.jobType);
+      const sortStr = `${values.sortBy ?? "createdAt"}-${values.orderBy ?? "desc"}`;
+      if (sortStr !== "createdAt-desc") params.set("sort", sortStr);
+      if (values.educationLevel && values.educationLevel.length > 0)
+        params.set("edu", values.educationLevel.join(","));
+      if (values.experienceLevel) params.set("exp", values.experienceLevel);
+      if (values.companySize?.min !== undefined)
+        params.set("cmin", String(values.companySize.min));
+      if (values.companySize?.max !== undefined)
+        params.set("cmax", String(values.companySize.max));
+      if (values.salaryRange?.min !== undefined)
+        params.set("smin", String(values.salaryRange.min));
+      if (values.salaryRange?.max !== undefined)
+        params.set("smax", String(values.salaryRange.max));
+      if (values.date?.from)
+        params.set("dfrom", values.date.from.toISOString());
+      if (values.date?.to) params.set("dto", values.date.to.toISOString());
+      const qs = params.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    },
+    [router, pathname],
+  );
+
   // ── Real Search Function ────────────────────────────────────────
   const runSearch = useCallback(
     (data: TEmployeeSearchSchema) => {
-      querySearchJobs(
-        {
-          careerScopes:
-            scopeNamesRef.current.length > 0
-              ? scopeNamesRef.current
-              : undefined,
-          keyword: data.keyword || undefined,
-          location: data.location === "all" ? undefined : data.location,
-          jobType: data.jobType === "all" ? undefined : data.jobType,
-          companySizeMin: data.companySize?.min,
-          companySizeMax: data.companySize?.max,
-          postedDateFrom: data.date?.from?.toISOString(),
-          postedDateTo: data.date?.to?.toISOString(),
-          salaryMin: data.salaryRange?.min,
-          salaryMax: data.salaryRange?.max,
-          educationRequired:
-            data.educationLevel === undefined ||
-            data.educationLevel.length === 0
-              ? undefined
-              : data.educationLevel,
-          experienceLevel: data.experienceLevel,
-          sortBy: data.sortBy,
-          sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
-        },
-        { scopeFallback: true },
-      );
+      querySearchJobs({
+        careerScopes:
+          scopeNamesRef.current.length > 0 ? scopeNamesRef.current : undefined,
+        keyword: data.keyword || undefined,
+        location: data.location === "all" ? undefined : data.location,
+        jobType: data.jobType === "all" ? undefined : data.jobType,
+        companySizeMin: data.companySize?.min,
+        companySizeMax: data.companySize?.max,
+        postedDateFrom: data.date?.from?.toISOString(),
+        postedDateTo: data.date?.to?.toISOString(),
+        salaryMin: data.salaryRange?.min,
+        salaryMax: data.salaryRange?.max,
+        educationRequired:
+          data.educationLevel === undefined || data.educationLevel.length === 0
+            ? undefined
+            : data.educationLevel,
+        experienceLevel: data.experienceLevel,
+        sortBy: data.sortBy,
+        sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
+      });
     },
     [querySearchJobs],
   );
@@ -163,6 +225,18 @@ export default function EmployeeSearchPage() {
     () => debounce(runSearch, SEARCH_DEBOUNCE_MS),
     [runSearch],
   );
+
+  // ── Clear All Filters ─────────────────────────────────────────────────────
+  const clearAllFilters = useCallback(() => {
+    setValue("keyword", "");
+    setValue("location", "all");
+    setValue("jobType", "all");
+    setValue("date", {});
+    setValue("companySize", { min: undefined, max: undefined });
+    setValue("salaryRange", { min: undefined, max: undefined });
+    setValue("educationLevel", []);
+    setValue("experienceLevel", undefined);
+  }, [setValue]);
 
   /* --------------------------------- Effects --------------------------------- */
   // Initial Search Effect (Once per mount / Per user ready)
@@ -181,31 +255,58 @@ export default function EmployeeSearchPage() {
 
     scopeNamesRef.current = scopes?.map((cs) => cs.name) ?? [];
 
-    querySearchJobs(
-      {
+    if (hasUrlFiltersRef.current) {
+      // URL already has filter params (page refresh / shared link) — run the
+      // search immediately using the values already seeded into the form.
+      runSearch(getValues());
+    } else {
+      // No URL params — seed location from the user's profile so the initial
+      // results are relevant to where the user is based.
+      const userLocation =
+        user.role === USER_ROLE.EMPLOYEE
+          ? user.employee?.location
+          : user.company?.location;
+
+      if (userLocation && userLocation !== "all") {
+        /* 
+          Set the form value BEFORE isInitialSearchDoneRef = true so the watch
+          subscription ignores this programmatic change and doesn't fire a
+          second concurrent search.
+        */
+        setValue("location", userLocation as string);
+      }
+
+      querySearchJobs({
         careerScopes:
           scopeNamesRef.current.length > 0 ? scopeNamesRef.current : undefined,
+        location:
+          userLocation && userLocation !== "all"
+            ? (userLocation as TLocations)
+            : undefined,
         sortBy: "createdAt",
         sortOrder: "DESC",
-      },
-      { scopeFallback: true },
-    );
+      });
+    }
 
     isInitialSearchDoneRef.current = true;
-  }, [user, querySearchJobs, resetSearch]);
+  }, [user, querySearchJobs, resetSearch, setValue, runSearch, getValues]);
 
-  // Auto Search As User Types / Changes Filters Effect
-  // watch dep is stable; debouncedRunSearch is now stable too — this effect
-  // runs exactly once and never re-subscribes, eliminating the spurious
-  // immediate-fire that caused a second concurrent request.
+  /* 
+    Auto Search As User Types / Changes Filters Effect
+    watch dep is stable; debouncedRunSearch is now stable too — this effect
+    runs exactly once and never re-subscribes, eliminating the spurious
+    immediate-fire that caused a second concurrent request.
+  */
   useEffect(() => {
     const subscription = watch((value) => {
       if (!isInitialSearchDoneRef.current) return;
       debouncedRunSearch(value as TEmployeeSearchSchema);
+      // Sync immediately so URL reflects the filter before the debounce fires
+      syncToUrl(value as TEmployeeSearchSchema);
     });
 
     return () => subscription.unsubscribe();
-  }, [watch, debouncedRunSearch]);
+  }, [watch, debouncedRunSearch, syncToUrl]);
 
   // Cleanup Debounce Timer Effect
   useEffect(() => {
@@ -352,16 +453,7 @@ export default function EmployeeSearchPage() {
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => {
-                setValue("keyword", "");
-                setValue("location", "all");
-                setValue("jobType", "all");
-                setValue("date", {});
-                setValue("companySize", { min: undefined, max: undefined });
-                setValue("salaryRange", { min: undefined, max: undefined });
-                setValue("educationLevel", []);
-                setValue("experienceLevel", undefined);
-              }}
+              onClick={clearAllFilters}
               className="text-xs h-8 px-2"
             >
               {t("clearFilters")}
@@ -702,7 +794,7 @@ export default function EmployeeSearchPage() {
                     {t("zeroJobsListing")}
                   </TypographySmall>
                 ) : filteredJobs.length > 0 ? (
-                  t("jobsListed", { count: filteredJobs.length })
+                  t("jobsListed", { count: total })
                 ) : (
                   t("noJobsFound")
                 )}
@@ -783,21 +875,67 @@ export default function EmployeeSearchPage() {
               </div>
             ) : filteredJobs.length > 0 ? (
               /* Search Company Card Section */
-              filteredJobs.map((item, index) => (
-                <SearchCompanyCard
-                  key={item.id || index}
-                  id={item.company.id}
-                  title={item.title}
-                  description={item.description}
-                  type={item.type}
-                  salary={item.salary}
-                  experience={item.experience}
-                  education={item.education}
-                  skills={item.skills}
-                  postedDate={item.postedDate!}
-                  company={item.company}
-                />
-              ))
+              <>
+                {filteredJobs.map((item, index) => (
+                  <SearchCompanyCard
+                    key={item.id || index}
+                    id={item.company.id}
+                    title={item.title}
+                    description={item.description}
+                    type={item.type}
+                    salary={item.salary}
+                    experience={item.experience}
+                    education={item.education}
+                    skills={item.skills}
+                    postedDate={item.postedDate!}
+                    company={item.company}
+                  />
+                ))}
+                {jobs && jobs.length < total && (
+                  <div className="w-full flex justify-center pt-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={loadingMore}
+                      onClick={() =>
+                        loadMoreJobs({
+                          careerScopes:
+                            scopeNamesRef.current.length > 0
+                              ? scopeNamesRef.current
+                              : undefined,
+                          keyword: getValues("keyword") || undefined,
+                          location:
+                            getValues("location") === "all"
+                              ? undefined
+                              : getValues("location"),
+                          jobType:
+                            getValues("jobType") === "all"
+                              ? undefined
+                              : getValues("jobType"),
+                          companySizeMin: getValues("companySize")?.min,
+                          companySizeMax: getValues("companySize")?.max,
+                          postedDateFrom:
+                            getValues("date")?.from?.toISOString(),
+                          postedDateTo: getValues("date")?.to?.toISOString(),
+                          salaryMin: getValues("salaryRange")?.min,
+                          salaryMax: getValues("salaryRange")?.max,
+                          educationRequired: getValues("educationLevel")?.length
+                            ? getValues("educationLevel")
+                            : undefined,
+                          experienceLevel: getValues("experienceLevel"),
+                          sortBy: getValues("sortBy"),
+                          sortOrder: getValues("orderBy")?.toUpperCase() as
+                            | "ASC"
+                            | "DESC",
+                        })
+                      }
+                      className="h-9 px-6 text-sm"
+                    >
+                      {loadingMore ? t("loading") : t("loadMore")}
+                    </Button>
+                  </div>
+                )}
+              </>
             ) : (
               /* Empty List Section */
               <div className="w-full flex flex-col items-center justify-center py-10 gap-3">
@@ -814,22 +952,7 @@ export default function EmployeeSearchPage() {
                 {activeFilterCount > 0 && (
                   <button
                     type="button"
-                    onClick={() => {
-                      setValue("keyword", "");
-                      setValue("location", "all");
-                      setValue("jobType", "all");
-                      setValue("date", {});
-                      setValue("companySize", {
-                        min: undefined,
-                        max: undefined,
-                      });
-                      setValue("salaryRange", {
-                        min: undefined,
-                        max: undefined,
-                      });
-                      setValue("educationLevel", []);
-                      setValue("experienceLevel", undefined);
-                    }}
+                    onClick={clearAllFilters}
                     className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2 text-xs font-semibold text-foreground shadow-sm transition-all hover:bg-muted active:scale-95"
                   >
                     {t("clearFilters")}

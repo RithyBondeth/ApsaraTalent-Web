@@ -15,6 +15,10 @@ type TCountCurrentEmployeeFavoriteState = {
   loading: boolean;
   error: string | null;
   countCurrentEmpFavorites: (employeeId: string) => Promise<void>;
+  /** Instantly +1 when the user saves a new favorite (avoids a re-fetch race). */
+  incrementCount: () => void;
+  /** Instantly -1 when a favorite is removed/auto-removed on like. */
+  decrementCount: () => void;
 };
 
 /* ---------------------------------- Store --------------------------------- */
@@ -23,6 +27,16 @@ export const useCountCurrentEmployeeFavoritesStore =
     totalEmpFavorites: null,
     loading: false,
     error: null,
+    incrementCount: () => {
+      set((s) => ({ totalEmpFavorites: (s.totalEmpFavorites ?? 0) + 1 }));
+    },
+
+    decrementCount: () => {
+      set((s) => ({
+        totalEmpFavorites: Math.max(0, (s.totalEmpFavorites ?? 0) - 1),
+      }));
+    },
+
     countCurrentEmpFavorites: async (employeeId: string) => {
       set({ loading: true, error: null });
 

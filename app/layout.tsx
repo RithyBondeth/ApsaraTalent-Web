@@ -3,21 +3,21 @@ import { LanguageProvider } from "@/components/utils/languages/language-provider
 import { ThemeProvider } from "@/components/utils/themes/theme-provider";
 import { TitleSync } from "@/components/utils/seo/title-sync";
 import type { Metadata } from "next";
-import { Noto_Sans_Khmer, Ubuntu } from "next/font/google";
+import { Koh_Santepheap, Roboto_Slab } from "next/font/google";
 import "./globals.css";
 
-const ubuntu = Ubuntu({
+const robotoSlab = Roboto_Slab({
   subsets: ["latin"],
   weight: ["400", "700"],
   display: "swap",
-  variable: "--font-ubuntu",
+  variable: "--font-roboto-slab",
 });
 
-const notoSansKhmer = Noto_Sans_Khmer({
+const kohSantepheap = Koh_Santepheap({
   subsets: ["khmer"],
   weight: ["400", "700"],
   display: "swap",
-  variable: "--font-khmer",
+  variable: "--font-koh-santepheap",
 });
 
 export const metadata: Metadata = {
@@ -41,9 +41,9 @@ export default function RootLayout({
     /*---------------------------------- Main Layout ----------------------------------*/
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <body
-        className={`${ubuntu.variable} ${notoSansKhmer.variable} antialiased`}
+        className={`${robotoSlab.variable} ${kohSantepheap.variable} antialiased`}
         style={{
-          fontFamily: "var(--font-ubuntu), var(--font-khmer), sans-serif",
+          fontFamily: "var(--font-roboto-slab), var(--font-koh-santepheap), sans-serif",
         }}
         suppressHydrationWarning
       >

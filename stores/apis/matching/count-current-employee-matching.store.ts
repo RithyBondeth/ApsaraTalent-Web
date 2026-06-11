@@ -1,6 +1,7 @@
 import { API_COUNT_CURRENT_EMPLOYEE_MATCHING_URL } from "@/utils/constants/apis/matching.api.constant";
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { create } from "zustand";
 
 const STORAGE_KEY = (id: string) => `matching-seen:emp:${id}`;
@@ -43,10 +44,22 @@ export const useCountCurrentEmployeeMatchingStore =
     },
 
     decrementCount: () => {
-      set((s) => ({
-        totalEmpMatching: Math.max(0, (s.totalEmpMatching ?? 0) - 1),
-        seenEmpMatching: Math.max(0, s.seenEmpMatching - 1),
-      }));
+      set((s) => {
+        const newTotal = Math.max(0, (s.totalEmpMatching ?? 0) - 1);
+        const newSeen = Math.max(0, s.seenEmpMatching - 1);
+        /* 
+          Keep localStorage in sync so the badge survives a page refresh.
+          Without this, stale localStorage "seen" ends up higher than the
+          actual total after unmatches, causing the badge to show 0 incorrectly.
+        */
+        if (typeof window !== "undefined") {
+          const empId = useGetCurrentUserStore.getState().user?.employee?.id;
+          if (empId) {
+            localStorage.setItem(STORAGE_KEY(empId), String(newSeen));
+          }
+        }
+        return { totalEmpMatching: newTotal, seenEmpMatching: newSeen };
+      });
     },
 
     markAsSeen: (employeeId: string) => {

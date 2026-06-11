@@ -629,6 +629,7 @@
     "unmatchConfirmTitle": "Unmatch {name}?",
     "unmatchConfirmDesc": "This will permanently remove the match. You'll both lose access to this conversation and it cannot be undone.",
     "unmatchConfirm": "Yes, Unmatch",
+    "unmatchLoading": "Removing match...",
     "unmatchSuccess": "Unmatched successfully.",
     "unmatchError": "Failed to unmatch. Please try again.",
     "cancel": "Cancel",

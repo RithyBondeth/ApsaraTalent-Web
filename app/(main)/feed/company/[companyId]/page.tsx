@@ -55,8 +55,6 @@ import { useTranslations } from "next-intl";
 import { useGetOneCompanyStore } from "@/stores/apis/company/get-one-cmp.store";
 import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
 import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
-import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-employee-favorites.store";
-import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
 import { useEmployeeLikeStore } from "@/stores/apis/matching/employee-like.store";
 import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-current-employee-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
@@ -95,10 +93,7 @@ export default function CompanyDetailPage() {
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const { loading, companyData, queryOneCompany } = useGetOneCompanyStore();
   const employeeLikeStore = useEmployeeLikeStore();
-  const queryCurrentEmployeeLiked = useGetCurrentEmployeeLikedStore();
   const employeeFavCompanyStore = useEmployeeFavCompanyStore();
-  const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
-  const countCurrentEmployeeMatching = useCountCurrentEmployeeMatchingStore();
   const countAllEmployeeFavoritesStore =
     useCountCurrentEmployeeFavoritesStore();
   const currentEmployeeId = currentUser?.employee?.id;
@@ -176,6 +171,8 @@ export default function CompanyDetailPage() {
       const employeeId = currentUser.employee.id;
       const companyId = companyData?.id;
       if (!employeeId || !companyId) return;
+      // Snapshot before the API call — backend auto-removes from favorites on like
+      const wasFavorited = employeeFavCompanyStore.isFavorite(companyId);
       try {
         triggerEffect("like", e);
         toast.dismiss();
@@ -186,7 +183,7 @@ export default function CompanyDetailPage() {
             toast.success(t("itsAMatch"), {
               description: t("youLikedEachOther", { name: liked.company.name }),
             });
-            countCurrentEmployeeMatching.countCurrentEmpMatching(employeeId);
+            // Matching badge increment handled by socket "newNotification" type=match
             setTimeout(() => router.push("/feed"), DEFAULT_REDIRECT_DELAY_MS);
           } else {
             toast.success(t("youLiked", { name: liked.company.name }), {
@@ -200,8 +197,14 @@ export default function CompanyDetailPage() {
       } catch {
         toast.error(employeeLikeStore.error || t("failedToLikeCompany"));
       } finally {
-        queryCurrentEmployeeLiked.queryCurrentEmployeeLiked(employeeId);
-        countAllEmployeeFavoritesStore.countCurrentEmpFavorites(employeeId);
+        // Optimistically add to liked list (avoids a full re-fetch)
+        if (companyData) {
+          useGetCurrentEmployeeLikedStore
+            .getState()
+            .optimisticAddLiked(companyData);
+        }
+        // Sync favorite badge locally — no network call needed
+        if (wasFavorited) countAllEmployeeFavoritesStore.decrementCount();
       }
     }
   };
@@ -218,11 +221,12 @@ export default function CompanyDetailPage() {
           employeeId,
           companyId,
         );
-        countAllEmployeeFavoritesStore.countCurrentEmpFavorites(employeeId);
+        // Increment badge locally — avoids a count re-fetch and the race
+        // condition where a stale in-flight response overwrites the new value
+        countAllEmployeeFavoritesStore.incrementCount();
         toast.success(t("addedToFavorites", { name: companyData?.name }));
-        await getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
-          employeeId,
-        );
+        // No need to refetch the full favorites list from the detail page;
+        // the favorite page fetches fresh data on its own mount.
       } catch {
         toast.error(
           employeeFavCompanyStore.empFavError || t("failedToSaveFavorite"),
