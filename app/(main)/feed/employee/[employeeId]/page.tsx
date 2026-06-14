@@ -64,6 +64,7 @@ import MetaChip from "@/components/utils/data-display/meta-chip";
 import { DetailCard } from "@/components/utils/data-display/detail-card";
 import { SectionTitle } from "@/components/utils/layout/section-title";
 import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
+import UserModerationMenu from "@/components/moderation/user-moderation-menu";
 
 export default function EmployeeDetailPage() {
   /* ---------------------------------- Utils ---------------------------------- */
@@ -301,6 +302,10 @@ export default function EmployeeDetailPage() {
           <span className="text-sm font-semibold truncate flex-1 min-w-0">
             {fullName || tf("employeeDetail")}
           </span>
+          <UserModerationMenu
+            targetId={employeeData.id}
+            targetName={fullName || tf("employeeDetail")}
+          />
         </div>
       </header>
 

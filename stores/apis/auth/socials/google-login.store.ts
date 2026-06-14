@@ -1,6 +1,6 @@
 import { clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-manager";
 import { API_AUTH_SOCIAL_GOOGLE_URL } from "@/utils/constants/apis/auth.api.constant";
-import { EAuthLoginMethod } from "@/utils/constants/auth.constant";
+import { TAuthLoginMethod } from "@/utils/constants/auth.constant";
 import { TUserRole } from "@/utils/types/auth/role.type";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../../users/get-current-user.store";
@@ -21,7 +21,7 @@ type TGoogleLoginResponse = {
     picture: string | null;
     provider: string | null;
     role: string | null;
-    lastLoginMethod: EAuthLoginMethod | null;
+    lastLoginMethod: TAuthLoginMethod | null;
     lastLoginAt: string | null;
   };
 };
@@ -37,7 +37,7 @@ type TGoogleLoginState = {
   email: string | null;
   firstname: string | null;
   lastname: string | null;
-  lastLoginMethod: EAuthLoginMethod | null;
+  lastLoginMethod: TAuthLoginMethod | null;
   lastLoginAt: string | null;
   picture: string | null;
   provider: string | null;

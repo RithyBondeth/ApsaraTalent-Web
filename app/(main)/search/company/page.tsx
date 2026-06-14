@@ -25,6 +25,7 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useSearchEmployeeStore } from "@/stores/apis/employee/search-emp.store";
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { useModerationStore } from "@/stores/apis/moderation/moderation.store";
 import { SEARCH_DEBOUNCE_MS } from "@/utils/constants/search.constant";
 import { yearOfExperienceConstant } from "@/utils/constants/ui.constant";
 import { TAvailability } from "@/utils/types/user/availability.type";
@@ -60,6 +61,7 @@ export default function CompanySearchPage() {
   const hasUrlFiltersRef = useRef(searchParams.toString() !== "");
 
   // Parse URL params for form initialisation (evaluated once at first render)
+  const urlPage = Math.max(1, parseInt(searchParams.get("page") ?? "1") || 1);
   const urlSortRaw = searchParams.get("sort") ?? "createdAt-desc";
   const [urlSortBy, urlOrderBy] = urlSortRaw.split("-");
   const urlEdu = searchParams.get("edu");
@@ -71,6 +73,7 @@ export default function CompanySearchPage() {
     loadingMore,
     employees,
     total,
+    page: storePage,
     querySearchEmployee,
     loadMoreEmployees,
     resetSearch,
@@ -79,12 +82,28 @@ export default function CompanySearchPage() {
   const { user } = useGetCurrentUserStore();
   const { currentCompanyLiked, queryCurrentCompanyLiked } =
     useGetCurrentCompanyLikedStore();
+  const { blockedUsers, blockedLoaded, getBlockedUsers } = useModerationStore();
 
   /* -------------------------------- All States ------------------------------ */
   const didInitRef = useRef<boolean>(false);
   // Holds the user's career scope names, written synchronously in the init effect.
   const scopeNamesRef = useRef<string[]>([]);
+  // Holds liked employee IDs for server-side exclusion (avoids dep-array churn)
+  const likedEmployeeIdsRef = useRef<string[]>([]);
+  // Holds blocked employees' profile IDs so they never appear in the feed.
+  const blockedEmployeeIdsRef = useRef<string[]>([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
+
+  // Merge liked + blocked exclusions into the single list the search accepts.
+  const buildExcludeEmployeeIds = (): string[] | undefined => {
+    const merged = Array.from(
+      new Set([
+        ...likedEmployeeIdsRef.current,
+        ...blockedEmployeeIdsRef.current,
+      ]),
+    );
+    return merged.length > 0 ? merged : undefined;
+  };
 
   /* ----------------------- React Hook Form: Search Form ---------------------- */
   // defaultValues are seeded from the URL so a page refresh / shared link
@@ -124,6 +143,7 @@ export default function CompanySearchPage() {
   // ── Sync Filter State to URL (immediate, no debounce) ─────────────────────
   // Uses router.replace so each keystroke does NOT push a new history entry —
   // the user's back button still exits the search page cleanly.
+  // Note: filter changes always reset to page 1, so no page param is written here.
   const syncToUrl = useCallback(
     (values: TCompanySearchSchema) => {
       const params = new URLSearchParams();
@@ -143,9 +163,24 @@ export default function CompanySearchPage() {
     [router, pathname],
   );
 
+  // ── Sync page number to URL after load-more ───────────────────────
+  const syncPageToUrl = useCallback(
+    (page: number) => {
+      const params = new URLSearchParams(window.location.search);
+      if (page > 1) {
+        params.set("page", String(page));
+      } else {
+        params.delete("page");
+      }
+      const qs = params.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    },
+    [router, pathname],
+  );
+
   // ── Real Search Function ─────────────────────────────────────────
   const runSearch = useCallback(
-    (data: TCompanySearchSchema) => {
+    (data: TCompanySearchSchema, restorePage?: number) => {
       const normalizedJobType =
         data.jobType === "all" ? undefined : data.jobType;
       const normalizedLocation =
@@ -158,13 +193,20 @@ export default function CompanySearchPage() {
       querySearchEmployee({
         careerScopes:
           scopeNamesRef.current.length > 0 ? scopeNamesRef.current : undefined,
-        keyword: data.keyword || undefined,
+        // Only send keyword when it satisfies the server's @MinLength(2);
+        // a 1-char keyword is treated as no keyword to avoid a 400.
+        keyword:
+          data.keyword && data.keyword.trim().length >= 2
+            ? data.keyword.trim()
+            : undefined,
         location: normalizedLocation as TLocations | undefined,
         jobType: normalizedJobType as TAvailability | undefined,
         experienceLevel: data.experienceLevel,
         education: normalizedEducation,
         sortBy: data.sortBy,
         sortOrder: data.orderBy.toUpperCase() as "ASC" | "DESC",
+        excludeEmployeeIds: buildExcludeEmployeeIds(),
+        restorePage: restorePage && restorePage > 1 ? restorePage : undefined,
       });
     },
     [querySearchEmployee],
@@ -177,7 +219,7 @@ export default function CompanySearchPage() {
     [runSearch],
   );
 
-  // ── Clear All Filters ─────────────────────────────────────────────────────
+  // ── Clear All Filters ───────────────────────────────────────────────
   const clearAllFilters = useCallback(() => {
     setValue("keyword", "");
     setValue("location", "all");
@@ -206,7 +248,8 @@ export default function CompanySearchPage() {
     if (hasUrlFiltersRef.current) {
       // URL already has filter params (page refresh / shared link) — run the
       // search immediately using the values already seeded into the form.
-      runSearch(getValues());
+      // Pass urlPage so we restore all pages loaded before the refresh.
+      runSearch(getValues(), urlPage > 1 ? urlPage : undefined);
     } else {
       // No URL params — seed location from the user's profile so the initial
       // results are relevant to where the user is based.
@@ -230,6 +273,7 @@ export default function CompanySearchPage() {
             : undefined,
         sortBy: "createdAt",
         sortOrder: "DESC",
+        excludeEmployeeIds: buildExcludeEmployeeIds(),
       });
     }
 
@@ -258,21 +302,43 @@ export default function CompanySearchPage() {
     return () => debouncedRunSearch.cancel();
   }, [debouncedRunSearch]);
 
-  // Fetch Liked Employees (So We Can Filter Them Out From Results)
+  // Fetch liked employees, sync ref, and re-search once data is available
   useEffect(() => {
     if (!user?.company?.id) return;
-    if (currentCompanyLiked !== null) return;
+    if (currentCompanyLiked !== null) {
+      const ids = currentCompanyLiked.map((e) => e.id!).filter(Boolean);
+      likedEmployeeIdsRef.current = ids;
+      // Re-run search if initial search already fired (fixes first-load exclusion)
+      if (didInitRef.current) {
+        runSearch(getValues());
+      }
+      return;
+    }
     queryCurrentCompanyLiked(user.company.id);
-  }, [user?.company?.id, currentCompanyLiked, queryCurrentCompanyLiked]);
+  }, [
+    user?.company?.id,
+    currentCompanyLiked,
+    queryCurrentCompanyLiked,
+    runSearch,
+    getValues,
+  ]);
 
-  // Filter Out Employees The Company Has Already Liked
-  const filteredEmployees = useMemo(() => {
-    if (!employees) return null;
-    if (!currentCompanyLiked || currentCompanyLiked.length === 0)
-      return employees;
-    const likedEmployeeIds = new Set(currentCompanyLiked.map((e) => e.id));
-    return employees.filter((emp) => !likedEmployeeIds.has(emp.id));
-  }, [employees, currentCompanyLiked]);
+  // Fetch blocked users, sync ref, and re-search so blocked employees are
+  // hidden from the feed (they reappear only after being unblocked).
+  useEffect(() => {
+    if (!blockedLoaded) {
+      getBlockedUsers();
+      return;
+    }
+    blockedEmployeeIdsRef.current = blockedUsers
+      .filter((u) => u.role === "employee" && u.employeeId)
+      .map((u) => u.employeeId as string);
+    if (didInitRef.current) {
+      runSearch(getValues());
+    }
+  }, [blockedLoaded, blockedUsers, getBlockedUsers, runSearch, getValues]);
+
+  const filteredEmployees = employees;
 
   /* ----------------------------- Event Handlers ---------------------------- */
   // ── Handle Radio Change ─────────────────────────────────────────
@@ -287,7 +353,7 @@ export default function CompanySearchPage() {
   return (
     <form
       className="w-full flex flex-col items-start gap-5 px-2.5 sm:px-5 lg:px-8 animate-page-in"
-      onSubmit={handleSubmit(runSearch)}
+      onSubmit={handleSubmit((data) => runSearch(data))}
     >
       {/* Banner Section */}
       {/* Desktop Banner Section 1050px */}
@@ -670,13 +736,17 @@ export default function CompanySearchPage() {
                       type="button"
                       variant="outline"
                       disabled={loadingMore}
-                      onClick={() =>
-                        loadMoreEmployees({
+                      onClick={async () => {
+                        await loadMoreEmployees({
                           careerScopes:
                             scopeNamesRef.current.length > 0
                               ? scopeNamesRef.current
                               : undefined,
-                          keyword: getValues("keyword") || undefined,
+                          keyword:
+                            getValues("keyword") &&
+                            getValues("keyword")!.trim().length >= 2
+                              ? getValues("keyword")!.trim()
+                              : undefined,
                           location:
                             getValues("location") === "all"
                               ? undefined
@@ -693,8 +763,10 @@ export default function CompanySearchPage() {
                           sortOrder: getValues("orderBy")?.toUpperCase() as
                             | "ASC"
                             | "DESC",
-                        })
-                      }
+                          excludeEmployeeIds: buildExcludeEmployeeIds(),
+                        });
+                        syncPageToUrl(storePage + 1);
+                      }}
                       className="h-9 px-6 text-sm"
                     >
                       {loadingMore ? t("loading") : t("loadMore")}

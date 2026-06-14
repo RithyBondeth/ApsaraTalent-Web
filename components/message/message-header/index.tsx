@@ -7,7 +7,6 @@ import {
   ArrowLeft,
   ChevronLeft,
   ChevronRight,
-  MoreVertical,
   Phone,
   Users,
   Video,
@@ -15,6 +14,7 @@ import {
 import { IChatHeaderProps } from "./props";
 import { useTranslations } from "next-intl";
 import { getNameInitials } from "@/utils/functions/text";
+import UserModerationMenu from "@/components/moderation/user-moderation-menu";
 
 export default function ChatHeader(props: IChatHeaderProps) {
   /* --------------------------------- Props --------------------------------- */
@@ -159,15 +159,10 @@ export default function ChatHeader(props: IChatHeaderProps) {
           </Button>
         )}
 
-        {/* More Options Button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 sm:h-9 sm:w-9"
-          aria-label="More options"
-        >
-          <MoreVertical className="h-5 w-5" />
-        </Button>
+        {/* More Options Button Section: (Block / Report) */}
+        {!chat.isGroup && (
+          <UserModerationMenu targetId={chat.id} targetName={chat.name} />
+        )}
       </div>
     </div>
   );

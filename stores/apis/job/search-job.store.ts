@@ -22,6 +22,9 @@ type TSearchJobQueryParams = {
   postedDateTo?: string;
   sortBy?: string;
   sortOrder?: "ASC" | "DESC";
+  excludeCompanyIds?: string[];
+  /** Restore to this page on initial load (fetches restorePage * PAGE_SIZE items). */
+  restorePage?: number;
 };
 
 // ── Search Job Response ──────────────────────────────────────────────
@@ -131,16 +134,20 @@ export const useSearchJobStore = create<TSearchJobState>((set, get) => ({
     });
 
     try {
-      const url = `${API_SEARCH_JOB_URL}?${buildQueryString({ ...query, page: 1, pageSize: PAGE_SIZE })}`;
+      const effectivePage =
+        (query.restorePage ?? 1) > 1 ? query.restorePage! : 1;
+      const effectivePageSize =
+        effectivePage > 1 ? effectivePage * PAGE_SIZE : PAGE_SIZE;
+      const url = `${API_SEARCH_JOB_URL}?${buildQueryString({ ...query, page: 1, pageSize: effectivePageSize })}`;
       const response = await apiClient.get<TSearchJobPagedResponse>(url, {
         signal: controller.signal,
       });
-      const { data, total, page, pageSize, isUsingFallback } = response.data;
+      const { data, total, isUsingFallback } = response.data;
       set({
         jobs: data,
         total,
-        page,
-        pageSize,
+        page: effectivePage,
+        pageSize: PAGE_SIZE,
         isUsingFallback,
         loading: false,
         error: null,
@@ -166,15 +173,22 @@ export const useSearchJobStore = create<TSearchJobState>((set, get) => ({
   },
 
   loadMoreJobs: async (query) => {
-    const { page, pageSize, total, jobs, loadingMore } = get();
+    const { page, pageSize, total, jobs, loadingMore, isUsingFallback } = get();
     if (loadingMore) return;
     if (jobs !== null && jobs.length >= total) return;
 
     const nextPage = page + 1;
     set({ loadingMore: true });
 
+    // When page 1 fell back to a no-scope query, subsequent pages must also
+    // run without scopes — otherwise the scoped query yields nothing and the
+    // total (from the fallback) no longer matches what Load More can fetch.
+    const effectiveQuery = isUsingFallback
+      ? { ...query, careerScopes: undefined }
+      : query;
+
     try {
-      const url = `${API_SEARCH_JOB_URL}?${buildQueryString({ ...query, page: nextPage, pageSize })}`;
+      const url = `${API_SEARCH_JOB_URL}?${buildQueryString({ ...effectiveQuery, page: nextPage, pageSize })}`;
       const controller = new AbortController();
       const response = await apiClient.get<TSearchJobPagedResponse>(url, {
         signal: controller.signal,

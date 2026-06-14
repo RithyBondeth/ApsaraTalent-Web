@@ -5,7 +5,7 @@ import { create } from "zustand";
 
 /* ---------------------------------- States -------------------------------- */
 // ── Parse Resume Experience ─────────────────────────────────
-type TParsedResumeExperience = {
+export type TParsedResumeExperience = {
   title: string;
   description: string;
   /** ISO date string YYYY-MM-DD */
@@ -15,7 +15,7 @@ type TParsedResumeExperience = {
 };
 
 // ── Parse Resume Education ─────────────────────────────────
-type TParsedResumeEducation = {
+export type TParsedResumeEducation = {
   school: string;
   degree: string;
   /** Graduation year, e.g. 2020 */
@@ -23,7 +23,7 @@ type TParsedResumeEducation = {
 };
 
 // ── Parse Resume API Response ───────────────────────────────
-type TParsedResumeData = {
+export type TParsedResumeData = {
   firstName?: string;
   lastName?: string;
   email?: string;

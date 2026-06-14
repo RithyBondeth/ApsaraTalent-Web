@@ -50,6 +50,10 @@
     "resetPassword": "Reset Password",
     "sendResetLinkDesc": "Send a reset link to your email",
     "reset": "Reset",
+    "blockedUsers": "Blocked users",
+    "blockedUsersDescription": "People you've blocked can't message you or appear in your feed",
+    "noBlockedUsers": "You haven't blocked anyone.",
+    "loading": "Loading...",
     "about": "About",
     "aboutDescription": "App information",
     "version": "Version",
@@ -563,7 +567,9 @@
     "emptyList": "No jobs match your search criteria. Try adjusting your filters.",
     "educationLabel": "Education",
     "experienceLabel": "Experience",
-    "viewCompany": "View Company"
+    "viewCompany": "View Company",
+    "loadMore": "Load More",
+    "loading": "Loading..."
   },
   "searchCompany": {
     "bannerTitle": "Hire Smarter, Anywhere.",
@@ -598,7 +604,9 @@
     "errorDescription": "Try adjusting your filters or search terms and try again.",
     "emptyList": "No employees match your search criteria. Try adjusting your filters.",
     "yrsExp": "yrs exp",
-    "viewProfile": "View Profile"
+    "viewProfile": "View Profile",
+    "loadMore": "Load More",
+    "loading": "Loading..."
   },
   "favorite": {
     "bannerTitle": "Find your favorites at a Glance",
@@ -1097,6 +1105,30 @@
     "bannerSubtitle1": "Stay updated with your latest matches, likes, and messages.",
     "bannerSubtitle2": "Never miss an important update — all your alerts, all in one place.",
     "bannerMuted": "Real-time updates, delivered directly to you."
+  },
+  "moderation": {
+    "moreOptions": "More options",
+    "block": "Block",
+    "unblock": "Unblock",
+    "report": "Report",
+    "blocking": "Blocking {name}...",
+    "unblocking": "Unblocking {name}...",
+    "userBlocked": "You blocked {name}. They can no longer message you.",
+    "userUnblocked": "You unblocked {name}.",
+    "actionFailed": "Something went wrong. Please try again.",
+    "reportDialogTitle": "Report {name}",
+    "reportDialogDescription": "Tell us what's wrong. Our team will review your report.",
+    "reportDetailsPlaceholder": "Add any extra details (optional)",
+    "submitReport": "Submit report",
+    "submittingReport": "Submitting...",
+    "reportSubmitted": "Thanks for the report. Our team will review it shortly.",
+    "cancel": "Cancel",
+    "reasonSpam": "Spam or advertising",
+    "reasonHarassment": "Harassment or bullying",
+    "reasonInappropriate": "Inappropriate content",
+    "reasonFakeProfile": "Fake profile",
+    "reasonScam": "Scam or fraud",
+    "reasonOther": "Other"
   },
   "message": {
     "noMessages": "No messages yet. Say hello! 👋",

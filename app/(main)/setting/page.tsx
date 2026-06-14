@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { AppearanceSection } from "@/components/setting/appearance-section";
 import { LanguageSection } from "@/components/setting/language-section";
 import { AccountSection } from "@/components/setting/account-section";
+import { BlockedUsersSection } from "@/components/setting/blocked-users-section";
 import { AboutSection } from "@/components/setting/about-section";
 import { ResetPasswordDialog } from "@/components/setting/reset-password-dialog";
 import { TwoFactorDialog } from "@/components/setting/two-factor-dialog";
@@ -165,6 +166,9 @@ export default function SettingPage() {
         }}
         onToggleTwoFactor={handleToggleTwoFactor}
       />
+
+      {/* Blocked Users Section */}
+      <BlockedUsersSection />
 
       {/* About Section */}
       <AboutSection />

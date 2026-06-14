@@ -67,6 +67,7 @@ import MetaChip from "@/components/utils/data-display/meta-chip";
 import { DetailCard } from "@/components/utils/data-display/detail-card";
 import { SectionTitle } from "@/components/utils/layout/section-title";
 import { CompanyDetailPageLoadingSkeleton } from "@/components/company/skeleton";
+import UserModerationMenu from "@/components/moderation/user-moderation-menu";
 
 export default function CompanyDetailPage() {
   /* ---------------------------------- Utils ---------------------------------- */
@@ -298,6 +299,10 @@ export default function CompanyDetailPage() {
           <span className="text-sm font-semibold truncate flex-1 min-w-0">
             {companyData.name || tf("companyDetail")}
           </span>
+          <UserModerationMenu
+            targetId={companyData.id}
+            targetName={companyData.name || tf("companyDetail")}
+          />
         </div>
       </header>
 

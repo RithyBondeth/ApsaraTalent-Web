@@ -1,4 +1,4 @@
-import { EAuthLoginMethod } from "@/utils/constants/auth.constant";
+import { TAuthLoginMethod } from "@/utils/constants/auth.constant";
 import { ICompany } from "./company.interface";
 import { IEmployee } from "./employee.interface";
 import { TUserRole } from "@/utils/types/auth/role.type";
@@ -24,7 +24,7 @@ export interface IUser {
   googleId?: string | null;
   linkedinId?: string | null;
   githubId?: string | null;
-  lastLoginMethod?: EAuthLoginMethod | null;
+  lastLoginMethod?: TAuthLoginMethod | null;
   lastLoginAt?: string | null;
   employee: IEmployee | null;
   company: ICompany | null;

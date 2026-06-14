@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-  ParsedResumeData,
+  TParsedResumeData,
   useParseResumeStore,
 } from "@/stores/apis/auth/parse-resume.store";
 import {
@@ -37,7 +37,7 @@ function Chip({ icon, label }: { icon?: React.ReactNode; label: string }) {
 export default function SmartResumeUpload({
   onParsed,
 }: {
-  onParsed: (data: ParsedResumeData) => void;
+  onParsed: (data: TParsedResumeData) => void;
 }) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("auth");
@@ -92,7 +92,7 @@ export default function SmartResumeUpload({
   };
 
   // ── Field count helper ──────────────────────────────────────
-  const countFilledFields = (d: ParsedResumeData): number => {
+  const countFilledFields = (d: TParsedResumeData): number => {
     let count = 0;
     if (d.jobTitle) count++;
     if (d.yearsOfExperience) count++;
