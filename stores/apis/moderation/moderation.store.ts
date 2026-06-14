@@ -7,39 +7,14 @@ import {
   API_REPORT_USER_URL,
   API_UNBLOCK_USER_URL,
 } from "@/utils/constants/apis/moderation.api.constant";
+import {
+  TBlockStatus,
+  TBlockedUser,
+} from "@/utils/types/moderation/block.type";
+import { TReportUserPayload } from "@/utils/types/moderation/report.type";
 import { create } from "zustand";
 
 /* ---------------------------------- Types --------------------------------- */
-export type TReportReason =
-  | "spam"
-  | "harassment"
-  | "inappropriate_content"
-  | "fake_profile"
-  | "scam"
-  | "other";
-
-export type TBlockStatus = {
-  isBlocked: boolean;
-  blockedByMe: boolean;
-  blockedMe: boolean;
-};
-
-export type TBlockedUser = {
-  id: string;
-  employeeId: string | null;
-  companyId: string | null;
-  name: string;
-  avatar: string | null;
-  role: "employee" | "company" | "admin" | "none";
-  blockedAt: string;
-};
-
-type TReportPayload = {
-  reportedId: string;
-  reason: TReportReason;
-  details?: string;
-};
-
 type TModerationState = {
   status: TBlockStatus | null;
   loadingStatus: boolean;
@@ -53,7 +28,7 @@ type TModerationState = {
   getBlockedUsers: () => Promise<void>;
   blockUser: (userId: string) => Promise<boolean>;
   unblockUser: (userId: string) => Promise<boolean>;
-  reportUser: (payload: TReportPayload) => Promise<boolean>;
+  reportUser: (payload: TReportUserPayload) => Promise<boolean>;
   resetStatus: () => void;
 };
 
@@ -154,7 +129,7 @@ export const useModerationStore = create<TModerationState>((set) => ({
     }
   },
 
-  reportUser: async (payload) => {
+  reportUser: async (payload: TReportUserPayload) => {
     set({ reporting: true });
     try {
       await apiClient.post(API_REPORT_USER_URL, payload);

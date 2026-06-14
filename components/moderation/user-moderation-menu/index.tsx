@@ -19,44 +19,34 @@ import {
 import { RadioGroup } from "@/components/ui/radio-group";
 import RadioGroupItemWithLabel from "@/components/ui/radio-group-item";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  TBlockStatus,
-  TReportReason,
-  useModerationStore,
-} from "@/stores/apis/moderation/moderation.store";
+import { useModerationStore } from "@/stores/apis/moderation/moderation.store";
+import { TBlockStatus } from "@/utils/types/moderation/block.type";
+import { TReportReason } from "@/utils/types/moderation/report.type";
 import { Ban, Flag, MoreVertical, ShieldOff } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { IUserModerationMenuProps } from "./props";
+import { REPORT_REASONS } from "@/utils/constants/moderation";
 
-interface IUserModerationMenuProps {
-  /** Target user/employee/company id — the server resolves it to a User id. */
-  targetId: string;
-  /** Display name used in confirmation/report copy. */
-  targetName: string;
-  /** Dropdown alignment relative to the trigger. */
-  align?: "start" | "end";
-  /** Extra classes for the trigger button. */
-  triggerClassName?: string;
-}
+export default function UserModerationMenu(props: IUserModerationMenuProps) {
+  /* --------------------------------- Props --------------------------------- */
+  const {
+    targetId,
+    targetName,
+    align = "end",
+    triggerClassName = "h-8 w-8 sm:h-9 sm:w-9",
+  } = props;
 
-const REPORT_REASONS: { value: TReportReason; labelKey: string }[] = [
-  { value: "spam", labelKey: "reasonSpam" },
-  { value: "harassment", labelKey: "reasonHarassment" },
-  { value: "inappropriate_content", labelKey: "reasonInappropriate" },
-  { value: "fake_profile", labelKey: "reasonFakeProfile" },
-  { value: "scam", labelKey: "reasonScam" },
-  { value: "other", labelKey: "reasonOther" },
-];
-
-export default function UserModerationMenu({
-  targetId,
-  targetName,
-  align = "end",
-  triggerClassName = "h-8 w-8 sm:h-9 sm:w-9",
-}: IUserModerationMenuProps) {
+  /* --------------------------------- Utils --------------------------------- */
   const t = useTranslations("moderation");
 
+  /* ------------------------------- All States ------------------------------ */
+  const [reportOpen, setReportOpen] = useState<boolean>(false);
+  const [reason, setReason] = useState<TReportReason>("spam");
+  const [details, setDetails] = useState<string>("");
+
+  /* ---------------------------- API Integration ---------------------------- */
   const {
     status,
     blocking,
@@ -67,18 +57,17 @@ export default function UserModerationMenu({
     reportUser,
   } = useModerationStore();
 
-  const [reportOpen, setReportOpen] = useState(false);
-  const [reason, setReason] = useState<TReportReason>("spam");
-  const [details, setDetails] = useState("");
-
-  // Refresh block status whenever the target changes.
+  /* -------------------------------- Effects -------------------------------- */
   useEffect(() => {
     if (targetId) getBlockStatus(targetId);
   }, [targetId, getBlockStatus]);
 
+  /* ------------------------------- Computed -------------------------------- */
   const blockedByMe = (status as TBlockStatus | null)?.blockedByMe ?? false;
 
-  const handleBlockToggle = async () => {
+  /* -------------------------------- Methods -------------------------------- */
+  // ── Handle block toggle ──────────────
+  const handleBlockToggle = async (): Promise<void> => {
     if (blockedByMe) {
       const toastId = toast.loading(t("unblocking", { name: targetName }));
       const ok = await unblockUser(targetId);
@@ -100,7 +89,8 @@ export default function UserModerationMenu({
     }
   };
 
-  const handleSubmitReport = async () => {
+  // ── Handle submit report ──────────────
+  const handleSubmitReport = async (): Promise<void> => {
     const ok = await reportUser({
       reportedId: targetId,
       reason,
@@ -116,9 +106,12 @@ export default function UserModerationMenu({
     }
   };
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <>
+      {/* Dropdown Menu Section */}
       <DropdownMenu>
+        {/* Dropdown Menu Trigger Section */}
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
@@ -129,6 +122,8 @@ export default function UserModerationMenu({
             <MoreVertical className="h-5 w-5" />
           </Button>
         </DropdownMenuTrigger>
+
+        {/* Dropdown Menu Content Section */}
         <DropdownMenuContent align={align} className="w-44">
           <DropdownMenuItem
             onClick={handleBlockToggle}
@@ -148,6 +143,8 @@ export default function UserModerationMenu({
             )}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
+
+          {/* Report Section */}
           <DropdownMenuItem
             onClick={() => setReportOpen(true)}
             className="gap-2 text-destructive focus:text-destructive"
@@ -158,9 +155,11 @@ export default function UserModerationMenu({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Report Dialog */}
+      {/* Report Dialog Section */}
       <Dialog open={reportOpen} onOpenChange={setReportOpen}>
+        {/* Report Dialog Content Section */}
         <DialogContent className="sm:max-w-md">
+          {/* Report Dialog Header Section */}
           <DialogHeader>
             <DialogTitle>
               {t("reportDialogTitle", { name: targetName })}
@@ -170,6 +169,7 @@ export default function UserModerationMenu({
             </DialogDescription>
           </DialogHeader>
 
+          {/* Report Dialog Body Section: Reason and Details */}
           <div className="flex flex-col gap-4 py-2">
             <RadioGroup
               value={reason}
@@ -197,6 +197,7 @@ export default function UserModerationMenu({
             />
           </div>
 
+          {/* Report Dialog Footer Section: Cancel and Submit Buttons */}
           <DialogFooter className="gap-2 sm:gap-2">
             <Button
               type="button"

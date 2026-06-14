@@ -6,6 +6,7 @@ export const COVER_LETTER_STYLES: { id: string; label: string }[] = [
   { id: "bold", label: "Bold" },
 ] as const;
 
+/* --------------------------------- Types ---------------------------------- */
 export type TCoverLetterStyle = (typeof COVER_LETTER_STYLES)[number]["id"];
 
 /* ----------------------------- Interview Prep ----------------------------- */
