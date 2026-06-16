@@ -24,6 +24,7 @@ import { TBlockStatus } from "@/utils/types/moderation/block.type";
 import { TReportReason } from "@/utils/types/moderation/report.type";
 import { Ban, Flag, MoreVertical, ShieldOff } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { IUserModerationMenuProps } from "./props";
@@ -40,6 +41,7 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
 
   /* --------------------------------- Utils --------------------------------- */
   const t = useTranslations("moderation");
+  const router = useRouter();
 
   /* ------------------------------- All States ------------------------------ */
   const [reportOpen, setReportOpen] = useState<boolean>(false);
@@ -48,7 +50,6 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
 
   /* ---------------------------- API Integration ---------------------------- */
   const {
-    status,
     blocking,
     reporting,
     getBlockStatus,
@@ -56,6 +57,8 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
     unblockUser,
     reportUser,
   } = useModerationStore();
+  // Read this target's status only — keyed so other profiles can't leak state.
+  const status = useModerationStore((s) => s.statusByTarget[targetId]);
 
   /* -------------------------------- Effects -------------------------------- */
   useEffect(() => {
@@ -63,7 +66,7 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
   }, [targetId, getBlockStatus]);
 
   /* ------------------------------- Computed -------------------------------- */
-  const blockedByMe = (status as TBlockStatus | null)?.blockedByMe ?? false;
+  const blockedByMe = status?.blockedByMe ?? false;
 
   /* -------------------------------- Methods -------------------------------- */
   // ── Handle block toggle ──────────────
@@ -83,6 +86,7 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
       const ok = await blockUser(targetId);
       if (ok) {
         toast.success(t("userBlocked", { name: targetName }), { id: toastId });
+        router.push("/feed");
       } else {
         toast.error(t("actionFailed"), { id: toastId });
       }

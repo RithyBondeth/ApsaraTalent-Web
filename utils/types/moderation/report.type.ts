@@ -1,5 +1,3 @@
-import { TUserRole } from "../auth";
-
 export type TReportReason =
   | "spam"
   | "harassment"

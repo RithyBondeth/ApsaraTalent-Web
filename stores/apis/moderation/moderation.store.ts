@@ -3,6 +3,7 @@ import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import {
   API_BLOCK_STATUS_URL,
   API_BLOCK_USER_URL,
+  API_HIDDEN_PROFILE_IDS_URL,
   API_LIST_BLOCKED_URL,
   API_REPORT_USER_URL,
   API_UNBLOCK_USER_URL,
@@ -16,7 +17,9 @@ import { create } from "zustand";
 
 /* ---------------------------------- Types --------------------------------- */
 type TModerationState = {
-  status: TBlockStatus | null;
+  // Block status keyed by the target id passed in (user/employee/company id).
+  // Keyed so different profiles/chats never read each other's stale status.
+  statusByTarget: Record<string, TBlockStatus>;
   loadingStatus: boolean;
   blocking: boolean;
   reporting: boolean;
@@ -24,17 +27,21 @@ type TModerationState = {
   blockedUsers: TBlockedUser[];
   loadingBlocked: boolean;
   blockedLoaded: boolean;
-  getBlockStatus: (userId: string) => Promise<void>;
+  // Employee/company profile ids hidden in BOTH directions (people I blocked +
+  // people who blocked me) — used to filter the feed client-side.
+  hiddenProfileIds: string[];
+  hiddenLoaded: boolean;
+  getBlockStatus: (targetId: string) => Promise<void>;
   getBlockedUsers: () => Promise<void>;
-  blockUser: (userId: string) => Promise<boolean>;
-  unblockUser: (userId: string) => Promise<boolean>;
+  getHiddenProfileIds: () => Promise<void>;
+  blockUser: (targetId: string) => Promise<boolean>;
+  unblockUser: (targetId: string) => Promise<boolean>;
   reportUser: (payload: TReportUserPayload) => Promise<boolean>;
-  resetStatus: () => void;
 };
 
 /* ---------------------------------- Store --------------------------------- */
 export const useModerationStore = create<TModerationState>((set) => ({
-  status: null,
+  statusByTarget: {},
   loadingStatus: false,
   blocking: false,
   reporting: false,
@@ -42,8 +49,18 @@ export const useModerationStore = create<TModerationState>((set) => ({
   blockedUsers: [],
   loadingBlocked: false,
   blockedLoaded: false,
+  hiddenProfileIds: [],
+  hiddenLoaded: false,
 
-  resetStatus: () => set({ status: null, error: null }),
+  getHiddenProfileIds: async () => {
+    try {
+      const res = await apiClient.get<string[]>(API_HIDDEN_PROFILE_IDS_URL);
+      set({ hiddenProfileIds: res.data ?? [], hiddenLoaded: true });
+    } catch {
+      // Non-fatal: feed simply won't hide blocked users this load.
+      set({ hiddenLoaded: true });
+    }
+  },
 
   getBlockedUsers: async () => {
     set({ loadingBlocked: true });
@@ -64,13 +81,17 @@ export const useModerationStore = create<TModerationState>((set) => ({
     }
   },
 
-  getBlockStatus: async (userId) => {
+  getBlockStatus: async (targetId) => {
     set({ loadingStatus: true });
     try {
       const res = await apiClient.get<TBlockStatus>(
-        API_BLOCK_STATUS_URL(userId),
+        API_BLOCK_STATUS_URL(targetId),
       );
-      set({ status: res.data, loadingStatus: false, error: null });
+      set((s) => ({
+        statusByTarget: { ...s.statusByTarget, [targetId]: res.data },
+        loadingStatus: false,
+        error: null,
+      }));
     } catch (error) {
       set({
         loadingStatus: false,
@@ -79,21 +100,25 @@ export const useModerationStore = create<TModerationState>((set) => ({
     }
   },
 
-  blockUser: async (userId) => {
+  blockUser: async (targetId) => {
     set({ blocking: true });
     try {
-      await apiClient.post(API_BLOCK_USER_URL(userId));
+      await apiClient.post(API_BLOCK_USER_URL(targetId));
       set((s) => ({
         blocking: false,
         error: null,
-        status: {
-          isBlocked: true,
-          blockedByMe: true,
-          blockedMe: s.status?.blockedMe ?? false,
+        statusByTarget: {
+          ...s.statusByTarget,
+          [targetId]: {
+            isBlocked: true,
+            blockedByMe: true,
+            blockedMe: s.statusByTarget[targetId]?.blockedMe ?? false,
+          },
         },
-        // Invalidate the cached blocked list so feeds refetch and hide the
+        // Invalidate the cached lists so feeds refetch and hide the
         // newly-blocked user on next mount.
         blockedLoaded: false,
+        hiddenLoaded: false,
       }));
       return true;
     } catch (error) {
@@ -105,20 +130,36 @@ export const useModerationStore = create<TModerationState>((set) => ({
     }
   },
 
-  unblockUser: async (userId) => {
+  unblockUser: async (targetId) => {
     set({ blocking: true });
     try {
-      await apiClient.delete(API_UNBLOCK_USER_URL(userId));
-      set((s) => ({
-        blocking: false,
-        error: null,
-        status: {
-          blockedByMe: false,
-          blockedMe: s.status?.blockedMe ?? false,
-          isBlocked: s.status?.blockedMe ?? false,
-        },
-        blockedUsers: s.blockedUsers.filter((u) => u.id !== userId),
-      }));
+      await apiClient.delete(API_UNBLOCK_USER_URL(targetId));
+      set((s) => {
+        const prevBlockedMe = s.statusByTarget[targetId]?.blockedMe ?? false;
+        return {
+          blocking: false,
+          error: null,
+          statusByTarget: {
+            ...s.statusByTarget,
+            [targetId]: {
+              blockedByMe: false,
+              blockedMe: prevBlockedMe,
+              isBlocked: prevBlockedMe,
+            },
+          },
+          // The id may be a user/employee/company id — match any of them so the
+          // settings list stays in sync regardless of where unblock was called.
+          blockedUsers: s.blockedUsers.filter(
+            (u) =>
+              u.id !== targetId &&
+              u.employeeId !== targetId &&
+              u.companyId !== targetId,
+          ),
+          // Force the feed to refetch its hidden-id set so the unblocked user
+          // can reappear.
+          hiddenLoaded: false,
+        };
+      });
       return true;
     } catch (error) {
       set({

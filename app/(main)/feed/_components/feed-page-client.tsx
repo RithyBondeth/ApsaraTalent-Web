@@ -23,6 +23,7 @@ import { useGetCurrentEmployeeLikedStore } from "@/stores/apis/matching/get-curr
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useGetEmployeeRecommendationsStore } from "@/stores/apis/recommendation/get-employee-recommendations.store";
 import { useGetCompanyRecommendationsStore } from "@/stores/apis/recommendation/get-company-recommendations.store";
+import { useModerationStore } from "@/stores/apis/moderation/moderation.store";
 import { ICompany } from "@/utils/interfaces/user/company.interface";
 import { IEmployee } from "@/utils/interfaces/user/employee.interface";
 import { Building2, Sparkles, Users } from "lucide-react";
@@ -108,6 +109,12 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
   /* ----------------------------- API Integration ---------------------------- */
   // Current User
   const currentUser = useGetCurrentUserStore((s) => s.user);
+
+  // Moderation — profile ids hidden in BOTH directions (people I blocked AND
+  // people who blocked me), so blocked users vanish from the feed for everyone.
+  const hiddenProfileIds = useModerationStore((s) => s.hiddenProfileIds);
+  const hiddenLoaded = useModerationStore((s) => s.hiddenLoaded);
+  const getHiddenProfileIds = useModerationStore((s) => s.getHiddenProfileIds);
 
   // All Company Data APIs
   const companyData = useGetAllCompanyStore((s) => s.companyData);
@@ -274,30 +281,40 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
     }
   }, [isEmployee, currentUser, companyData, employeesData]);
 
-  // Filter Users Based on Role
+  // Fetch the hidden-id set (both block directions) so blocked profiles are
+  // hidden from the feed regardless of who initiated the block.
+  useEffect(() => {
+    if (!hiddenLoaded) getHiddenProfileIds();
+  }, [hiddenLoaded, getHiddenProfileIds]);
+
+  const blockedProfileIds = useMemo(
+    () => new Set<string>(hiddenProfileIds),
+    [hiddenProfileIds],
+  );
+
   const allUsers: ICompany[] | IEmployee[] = useMemo(() => {
     if (!currentUser) return [];
 
     if (isEmployee) {
       const users = companyData ?? [];
-      if (currentEmployeeLiked) {
-        return users.filter(
-          (company) =>
-            company.id &&
-            !currentEmployeeLiked.some((liked) => liked.id === company.id),
-        );
-      }
-      return users;
+      return users.filter(
+        (company) =>
+          company.id &&
+          !blockedProfileIds.has(company.id) &&
+          !(currentEmployeeLiked ?? []).some(
+            (liked) => liked.id === company.id,
+          ),
+      );
     } else {
       const users = employeesData ?? [];
-      if (currentCompanyLiked) {
-        return users.filter(
-          (employee) =>
-            employee.id &&
-            !currentCompanyLiked.some((liked) => liked.id === employee.id),
-        );
-      }
-      return users;
+      return users.filter(
+        (employee) =>
+          employee.id &&
+          !blockedProfileIds.has(employee.id) &&
+          !(currentCompanyLiked ?? []).some(
+            (liked) => liked.id === employee.id,
+          ),
+      );
     }
   }, [
     currentUser,
@@ -306,26 +323,28 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
     employeesData,
     currentEmployeeLiked,
     currentCompanyLiked,
+    blockedProfileIds,
   ]);
 
-  // Filter recommendations against the liked list so cards vanish immediately after a like
+  // Filter recommendations against the liked + blocked lists so cards vanish
+  // Immediately after a like and never show blocked users.
   const filteredEmployeeRecommendations = useMemo(() => {
     if (!employeeRecommendations) return null;
-    if (!currentEmployeeLiked) return employeeRecommendations;
     return employeeRecommendations.filter(
       (company) =>
-        !currentEmployeeLiked.some((liked) => liked.id === company.id),
+        !blockedProfileIds.has(company.id) &&
+        !(currentEmployeeLiked ?? []).some((liked) => liked.id === company.id),
     );
-  }, [employeeRecommendations, currentEmployeeLiked]);
+  }, [employeeRecommendations, currentEmployeeLiked, blockedProfileIds]);
 
   const filteredCompanyRecommendations = useMemo(() => {
     if (!companyRecommendations) return null;
-    if (!currentCompanyLiked) return companyRecommendations;
     return companyRecommendations.filter(
       (employee) =>
-        !currentCompanyLiked.some((liked) => liked.id === employee.id),
+        !blockedProfileIds.has(employee.id) &&
+        !(currentCompanyLiked ?? []).some((liked) => liked.id === employee.id),
     );
-  }, [companyRecommendations, currentCompanyLiked]);
+  }, [companyRecommendations, currentCompanyLiked, blockedProfileIds]);
 
   // Reset visible count when the feed data source changes
   useEffect(() => {
