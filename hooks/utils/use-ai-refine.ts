@@ -3,6 +3,21 @@ import { toast } from "sonner";
 import { streamFetch } from "@/utils/functions/stream-fetch";
 import { API_RESUME_REFINE_BIO_STREAM_URL } from "@/utils/constants/apis/resume.api.constant";
 
+/* --------------------------------- Usage --------------------------------- */
+/**
+ * Real streaming AI bio / field refinement hook.
+ *
+ * Usage:
+ *   const { isRefining, refineContent } = useAIRefine();
+ *   const result = await refineContent(
+ *     currentText,
+ *     "summary",          // "summary" | "jobTitle" | "companyBio"
+ *     contextObject,      // optional — enriches the AI prompt
+ *     (text) => form.setValue("field", text, { shouldDirty: true }), // optional streaming callback
+ *   );
+ *   if (result) toast.success("Refined!");
+ */
+
 /* ---------------------------------- Types --------------------------------- */
 /** Context that enriches the AI prompt for better output quality. */
 export interface IRefineContext {
@@ -21,19 +36,6 @@ export interface IRefineContext {
 }
 
 /* ---------------------------------- Hook ---------------------------------- */
-/**
- * Real streaming AI bio / field refinement hook.
- *
- * Usage:
- *   const { isRefining, refineContent } = useAIRefine();
- *   const result = await refineContent(
- *     currentText,
- *     "summary",          // "summary" | "jobTitle" | "companyBio"
- *     contextObject,      // optional — enriches the AI prompt
- *     (text) => form.setValue("field", text, { shouldDirty: true }), // optional streaming callback
- *   );
- *   if (result) toast.success("Refined!");
- */
 export function useAIRefine() {
   /* ------------------------------- All States ------------------------------- */
   const [isRefining, setIsRefining] = useState<boolean>(false);

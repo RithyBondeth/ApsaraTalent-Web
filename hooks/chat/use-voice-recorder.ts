@@ -11,6 +11,28 @@ import {
 } from "@/utils/constants/chat.constant";
 import { TChatRecordingState } from "@/utils/types/chat/chat.type";
 
+/* ------------------------------------ Usage ----------------------------------- */
+/**
+ * Manages in-browser microphone recording, amplitude sampling, and audio upload.
+ *
+ * Usage:
+ *   const { recordingState, durationSeconds, errorMessage,
+ *           startRecording, stopRecording, cancelRecording } = useVoiceRecorder();
+ *
+ *   // Start recording
+ *   await startRecording();
+ *
+ *   // Stop, upload, and send as a message attachment
+ *   const ok = await stopRecording((attachment) => {
+ *     sendMessage({ attachment });  // { url, type, filename, duration, amplitude }
+ *   });
+ *
+ *   // Discard without uploading
+ *   cancelRecording();
+ *
+ *   // recordingState: "idle" | "recording" | "uploading"
+ */
+
 /* ------------------------------------ Helpers ---------------------------------- */
 // ── Pick supported MIME type ──────────────────────────────────────────
 function getSupportedMimeType(): string {

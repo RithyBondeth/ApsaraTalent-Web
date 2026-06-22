@@ -3,6 +3,23 @@
 import { useEffect, useState } from "react";
 import { HOOK_TEXT_SELECTION_HIDDEN_STATE } from "@/utils/constants/ui.constant";
 
+/* ---------------------------------- Usage ----------------------------------- */
+/**
+ * Tracks the current text selection inside any element marked
+ * `data-canvas-editable` and returns its position and formatting state.
+ *
+ * Usage:
+ *   const { isVisible, top, left, isBold, isItalic } = useTextSelection();
+ *
+ *   // Show a floating toolbar when text is selected
+ *   {isVisible && (
+ *     <Toolbar style={{ top, left }} isBold={isBold} isItalic={isItalic} />
+ *   )}
+ *
+ *   // Mark editable areas so the hook picks up selections inside them:
+ *   <div data-canvas-editable contentEditable>...</div>
+ */
+
 /* ----------------------------------- Types ---------------------------------- */
 export interface TextSelectionState {
   isVisible: boolean;
@@ -14,18 +31,14 @@ export interface TextSelectionState {
   isItalic: boolean;
 }
 
-/* ----------------------------------- Hook ----------------------------------- */
-/**
- * Tracks `window.getSelection()` and returns position + formatting
- * state whenever text inside `[data-canvas-editable]` is selected.
- */
+/* ----------------------------------- Hook ------------------------------------ */
 export function useTextSelection(): TextSelectionState {
-  /* -------------------------------- All States -------------------------------- */
+  /* -------------------------------- All States ------------------------------- */
   const [state, setState] = useState<TextSelectionState>(
     HOOK_TEXT_SELECTION_HIDDEN_STATE,
   );
 
-  /* --------------------------------- Effects ---------------------------------- */
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     function handleSelectionChange() {
       const sel = window.getSelection();

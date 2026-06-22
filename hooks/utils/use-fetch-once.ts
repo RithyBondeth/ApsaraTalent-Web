@@ -3,6 +3,23 @@ import { USER_ROLE } from "@/utils/constants/auth.constant";
 import { IUser } from "@/utils/interfaces/user/user.interface";
 import { useEffect, useMemo, useRef } from "react";
 
+/* ---------------------------------- Usage ----------------------------------- */
+/**
+ * Fires role-aware profile fetch callbacks exactly once per user session,
+ * deduplicating across multiple mounts via an in-memory cache.
+ *
+ * Usage:
+ *   const { isEmployee, isCompany, employeeId, companyId, currentUser } =
+ *     useFetchOnce({
+ *       onEmployeeFetch: (id) => fetchEmployeeProfile(id),
+ *       onCompanyFetch:  (id) => fetchCompanyProfile(id),
+ *       enabled: true,       // default — set false to pause fetching
+ *       cacheKey: "sidebar", // use different keys to fetch on separate mounts
+ *     });
+ *
+ *   // Returned booleans / IDs reflect the current user's role.
+ */
+
 /* ----------------------------------- Types ---------------------------------- */
 interface UseFetchOnceOptions {
   onEmployeeFetch?: (employeeId: string) => void;

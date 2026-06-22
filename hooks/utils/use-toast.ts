@@ -4,6 +4,30 @@ import * as React from "react";
 import type { ToastActionElement, ToastProps } from "@/components/ui/toast";
 import { TOAST_LIMIT, TOAST_REMOVE_DELAY } from "@/utils/constants/ui.constant";
 
+/* ----------------------------------- Usage ---------------------------------- */
+/**
+ * Provides imperative control over the global toast queue.
+ *
+ * Usage:
+ *   const { toasts, toast, dismiss } = useToast();
+ *
+ *   // Show a toast
+ *   const { id, dismiss, update } = toast({
+ *     title: "Saved!",
+ *     description: "Your changes have been saved.",
+ *     variant: "default",  // or "destructive"
+ *   });
+ *
+ *   // Dismiss a specific toast
+ *   dismiss(id);
+ *
+ *   // Dismiss all toasts
+ *   dismiss();
+ *
+ *   // Alternatively, call the standalone `toast()` helper directly
+ *   // without mounting the hook (e.g. inside server actions or store callbacks).
+ */
+
 /* ----------------------------------- Types ---------------------------------- */
 type ToasterToast = ToastProps & {
   id: string;

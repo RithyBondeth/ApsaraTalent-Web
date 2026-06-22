@@ -1,5 +1,23 @@
 import { useRef, useState } from "react";
 
+/* ----------------------------------- Usage ------------------------------------ */
+/**
+ * Provides a fake-progress bar value that crawls up to a cap, then snaps to
+ * 100 when the actual operation completes — useful for file download UIs.
+ *
+ * Usage:
+ *   const { progress, start, stop } = useDownloadProgress();
+ *
+ *   // Begin the crawl (stops itself at `cap`%, default 92)
+ *   start();          // or start(80) for a different cap
+ *
+ *   // After the real download finishes, snap to 100
+ *   stop();           // or stop(95) for a custom final value
+ *
+ *   <ProgressBar value={progress} />
+ */
+
+/* ------------------------------------ Hook ------------------------------------ */
 export function useDownloadProgress() {
   const [progress, setProgress] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);

@@ -1,5 +1,22 @@
 import { useRef, useState } from "react";
 
+/* ----------------------------------- Usage ------------------------------------ */
+/**
+ * Centralises state for employee resume and cover-letter file management,
+ * including file inputs, remove dialogs, and the shared reference preview.
+ *
+ * Usage:
+ *   const {
+ *     resumeFile, setResumeFile, resumeInputRef,
+ *     openRemoveResumeDialog, setOpenRemoveResumeDialog,
+ *     coverLetterFile, setCoverLetterFile, coverLetterInputRef,
+ *     openRemoveCoverLetterDialog, setOpenRemoveCoverLetterDialog,
+ *     openReferencePreview, setOpenReferencePreview,
+ *     previewReferenceType, setPreviewReferenceType,  // "resume" | "coverletter"
+ *     previewReferenceUrl, setPreviewReferenceUrl,
+ *   } = useReferenceFilesState();
+ */
+
 /* ------------------------------------ Hook ------------------------------------ */
 export function useReferenceFilesState() {
   /* -------------------------------- All States -------------------------------- */

@@ -13,13 +13,28 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import { PUSH_TOKEN_STORAGE_KEY } from "@/utils/constants/cookie.constant";
 
+/* ----------------------------------- Usage ---------------------------------- */
+/**
+ * Requests browser notification permission, registers the Firebase service
+ * worker, and wires up foreground push handlers for the current user.
+ *
+ * Usage:
+ *   // Mount once in the authenticated layout — handles its own deduplication.
+ *   usePushNotifications();
+ *
+ *   // The hook automatically:
+ *   //  - Requests notification permission on first run
+ *   //  - Saves the FCM push token to the backend if it changed
+ *   //  - Updates the unread notification badge on foreground / background pushes
+ */
+
 /* ----------------------------------- Hook ----------------------------------- */
 export const usePushNotifications = () => {
-  /* -------------------------------- All States -------------------------------- */
+  /* ------------------------------- All States ------------------------------- */
   const userId = useGetCurrentUserStore((s) => s.user?.id);
   const initializedRef = useRef(false);
 
-  /* --------------------------------- Effects ---------------------------------- */
+  /* -------------------------------- Effects --------------------------------- */
   useEffect(() => {
     if (!userId || initializedRef.current) {
       return;

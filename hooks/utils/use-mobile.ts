@@ -1,6 +1,18 @@
 import * as React from "react";
 import { MOBILE_BREAKPOINT } from "@/utils/constants/ui.constant";
 
+/* ------------------------------------ Usage ----------------------------------- */
+/**
+ * Returns true when the viewport width is below the mobile breakpoint
+ * (defined by MOBILE_BREAKPOINT in ui.constant.ts).
+ *
+ * Usage:
+ *   const isMobile = useIsMobile();
+ *
+ *   if (isMobile) return <MobileNav />;
+ *   return <DesktopNav />;
+ */
+
 /* ------------------------------------ Hook ------------------------------------ */
 export function useIsMobile() {
   /* -------------------------------- All States -------------------------------- */

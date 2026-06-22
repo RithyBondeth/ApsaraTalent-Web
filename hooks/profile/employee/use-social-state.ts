@@ -1,6 +1,21 @@
 import { ISocialLink } from "@/utils/interfaces/user/social.interface";
 import { useRef, useState } from "react";
 
+/* ----------------------------------- Usage ------------------------------------ */
+/**
+ * Manages local state for the employee social-links list editor.
+ *
+ * Usage:
+ *   const {
+ *     socialInput, setSocialInput,
+ *     socials, setSocials,
+ *     deleteSocialIds, setDeleteSocialIds,
+ *     socialSelectPlatformRef,   // ref to the platform <select> trigger
+ *   } = useSocialsState(profile.socials);
+ *
+ *   // Pass current saved socials as the optional initialSocials arg.
+ */
+
 /* ------------------------------------ Hook ------------------------------------ */
 export function useSocialsState(initialSocials: ISocialLink[] = []) {
   /* -------------------------------- All States -------------------------------- */
