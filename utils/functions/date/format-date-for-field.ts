@@ -1,4 +1,4 @@
-/* --------------------------------- Methods ---------------------------------- */
+/* --------------------------------- Method ---------------------------------- */
 /**
  * Formats a JavaScript Date object into a YYYY-MM-DD string, suitable for HTML date input fields.
  *

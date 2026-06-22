@@ -1,4 +1,4 @@
-/* --------------------------------- Methods ---------------------------------- */
+/* --------------------------------- Method ---------------------------------- */
 /**
  * Decodes a JWT token and extracts the "role" property from its payload.
  * Useful for determining user access levels in middleware or on the client edge.

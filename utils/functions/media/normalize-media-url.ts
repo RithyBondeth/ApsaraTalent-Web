@@ -1,4 +1,4 @@
-/* --------------------------------- Constants -------------------------------- */
+/* --------------------------------- Helpers ---------------------------------- */
 const API_ORIGIN_FALLBACK = "http://localhost:3000";
 
 const LOCAL_STORAGE_URL_REGEX =
@@ -6,7 +6,6 @@ const LOCAL_STORAGE_URL_REGEX =
 
 const ABSOLUTE_HTTP_URL_REGEX = /^https?:\/\//i;
 
-/* --------------------------------- Helpers ---------------------------------- */
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
   Object.prototype.toString.call(value) === "[object Object]";
 

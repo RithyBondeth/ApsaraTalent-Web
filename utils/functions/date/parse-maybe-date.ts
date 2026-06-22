@@ -1,4 +1,4 @@
-/* --------------------------------- Methods ---------------------------------- */
+/* --------------------------------- Method ---------------------------------- */
 /**
  * Safely attempts to parse an unknown string into a Date object.
  * Returns undefined instead of an Invalid Date object.

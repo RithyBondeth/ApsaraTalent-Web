@@ -11,7 +11,7 @@ import {
 import React from "react";
 import { TPlatform } from "@/utils/types/user/platform.type";
 
-/* --------------------------------- Methods ---------------------------------- */
+/* --------------------------------- Method ---------------------------------- */
 /**
  * Returns the corresponding Lucide React icon component for a given social platform.
  *

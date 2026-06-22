@@ -12,6 +12,7 @@
  *     append "Z" to bare ISO-like strings so they're treated as UTC rather than as
  *     local time (which would shift the displayed time by the local UTC offset).
  */
+
 export const parseMessageDate = (
   timestamp: Date | string | number | undefined,
 ): Date => {

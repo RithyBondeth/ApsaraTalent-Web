@@ -1,5 +1,6 @@
 import { AVATAR_INITIALS_LENGTH } from "@/utils/constants/ui.constant";
 
+/* --------------------------------- Method ---------------------------------- */
 /**
  * Extracts and capitalizes the first letters of each word in a name string,
  * suitable for rendering fallback avatar circles.

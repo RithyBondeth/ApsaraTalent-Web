@@ -1,6 +1,6 @@
 import { badgeRandomColorsClass } from "@/utils/constants/ui.constant";
 
-/* --------------------------------- Methods ---------------------------------- */
+/* --------------------------------- Method ---------------------------------- */
 /**
  * Deterministically assigns a random-looking color class from a predefined list
  * by hashing the characters of a label. Useful for tag/badge styling where

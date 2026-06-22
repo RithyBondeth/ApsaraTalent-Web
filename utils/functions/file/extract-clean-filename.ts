@@ -1,4 +1,4 @@
-/* --------------------------------- Methods ---------------------------------- */
+/* --------------------------------- Method ---------------------------------- */
 /**
  * Extracts a human-readable filename from a storage URL and cleans up any unique identifiers.
  * E.g., drops "-123434" suffixes from PDF files appended by the storage system.

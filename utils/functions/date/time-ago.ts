@@ -1,10 +1,10 @@
 /* ---------------------------------- Types ---------------------------------- */
-type TimeAgoTranslator = (
+type TTimeAgoTranslator = (
   key: string,
   values?: Record<string, string | number | Date>,
 ) => string;
 
-/* --------------------------------- Methods ---------------------------------- */
+/* --------------------------------- Method ---------------------------------- */
 /**
  * Calculates a human-readable relative time string (e.g., "just now", "2 hours ago").
  * Optional translator function parameter supports internationalization.
@@ -15,7 +15,7 @@ type TimeAgoTranslator = (
  */
 export function timeAgo(
   timestamp: string | Date | null | undefined,
-  t?: TimeAgoTranslator,
+  t?: TTimeAgoTranslator,
 ): string {
   if (!timestamp) return "";
   const date = typeof timestamp === "string" ? new Date(timestamp) : timestamp;

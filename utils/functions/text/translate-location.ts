@@ -1,3 +1,4 @@
+/* --------------------------------- Helper ---------------------------------- */
 /**
  * Maps lowercase English province names to their i18n key in the "locations" namespace.
  * Handles any casing from the DB (e.g. "Phnom Penh", "phnom penh", "PHNOM PENH").
@@ -31,6 +32,7 @@ const LOCATION_KEY_MAP: Record<string, string> = {
   "tbong khmum": "tbongKhmum",
 };
 
+/* --------------------------------- Method ---------------------------------- */
 /**
  * Translates a location string using the "locations" i18n namespace.
  * Falls back to the original string if the location is not in the known list.

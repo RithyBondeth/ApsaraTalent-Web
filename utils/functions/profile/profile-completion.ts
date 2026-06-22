@@ -37,6 +37,7 @@ function calculateCompletion(fields: IFieldCheck[]): IProfileCompletionResult {
   };
 }
 
+/* --------------------------------- Methods ---------------------------------- */
 /**
  * Employee profile completion — 16 weighted fields totaling 100%
  *
@@ -49,7 +50,6 @@ function calculateCompletion(fields: IFieldCheck[]): IProfileCompletionResult {
  *
  * Total = 100%  (round-safe with Math.round)
  */
-/* --------------------------------- Methods ---------------------------------- */
 export function getEmployeeProfileCompletion(
   employee: IEmployee,
 ): IProfileCompletionResult {

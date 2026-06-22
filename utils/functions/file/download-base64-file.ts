@@ -1,3 +1,4 @@
+/* --------------------------------- Method ---------------------------------- */
 /**
  * Triggers a browser download of a file from a Base64 encoded string payload.
  *

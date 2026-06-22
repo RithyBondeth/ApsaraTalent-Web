@@ -1,4 +1,4 @@
-/* --------------------------------- Methods ---------------------------------- */
+/* --------------------------------- Method ---------------------------------- */
 /**
  * Transforms an UPPER_CASE_SNAKE enum-like string into capitalized title-case words.
  *
@@ -12,5 +12,4 @@ export function formatAvailabilityWords(value: string): string {
     .split("_")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
-
 }

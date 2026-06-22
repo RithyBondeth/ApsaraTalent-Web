@@ -7,7 +7,7 @@ type TGetPaginationPagesOptions = {
   maxVisiblePages?: number;
 };
 
-/* --------------------------------- Methods ---------------------------------- */
+/* ---------------------------------- Method ----------------------------------- */
 /**
  * Generates an array of pagination elements (numbers or "...") based on the
  * current page window and max boundaries. Calculates the visible slice

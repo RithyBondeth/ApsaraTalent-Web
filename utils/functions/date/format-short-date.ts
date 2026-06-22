@@ -1,4 +1,4 @@
-/* --------------------------------- Methods ---------------------------------- */
+/* --------------------------------- Method ---------------------------------- */
 /**
  * Formats a date string into a short textual representation (e.g., "Oct 12, 2023").
  *
@@ -12,5 +12,4 @@ export function formatShortDate(dateString: string): string {
     month: "short",
     day: "2-digit",
   });
-
 }

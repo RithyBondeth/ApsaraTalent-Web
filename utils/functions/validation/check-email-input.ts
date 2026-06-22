@@ -1,4 +1,4 @@
-/* --------------------------------- Methods ---------------------------------- */
+/* --------------------------------- Method ---------------------------------- */
 /**
  * Quick heuristic to check if a login input string resembles an email address
  * rather than a phone number. Looks for standard email characters or the '@' symbol.

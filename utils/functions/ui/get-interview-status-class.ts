@@ -1,6 +1,6 @@
 import { TInterviewStatus } from "@/utils/types/interview";
 
-/* --------------------------------- Methods ---------------------------------- */
+/* --------------------------------- Method ---------------------------------- */
 /**
  * Returns a set of Tailwind color classes (bg, text, border) that correspond
  * to the semantic meaning of an interview status.
