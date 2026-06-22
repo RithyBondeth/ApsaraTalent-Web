@@ -5,6 +5,14 @@ type TimeAgoTranslator = (
 ) => string;
 
 /* --------------------------------- Methods ---------------------------------- */
+/**
+ * Calculates a human-readable relative time string (e.g., "just now", "2 hours ago").
+ * Optional translator function parameter supports internationalization.
+ *
+ * @param timestamp - The past date to compare against the current time
+ * @param t - Optional translation function (i18n)
+ * @returns Relative time string representing how long ago the event occurred
+ */
 export function timeAgo(
   timestamp: string | Date | null | undefined,
   t?: TimeAgoTranslator,

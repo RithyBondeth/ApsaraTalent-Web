@@ -1,3 +1,10 @@
+/**
+ * Triggers a browser download of a file from a Base64 encoded string payload.
+ *
+ * @param data - The base64 encoded data string (without the data URI prefix)
+ * @param mimeType - The MIME type of the file (e.g. application/pdf)
+ * @param filename - The name to use for the downloaded file
+ */
 export function downloadBase64File(
   data: string,
   mimeType: string,

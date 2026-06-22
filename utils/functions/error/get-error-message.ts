@@ -11,6 +11,13 @@ type ErrorLike =
   | undefined;
 
 /* --------------------------------- Methods ---------------------------------- */
+/**
+ * Extracts a human-readable error message string from a react-hook-form field error.
+ * Supports traversing arrays of field errors (e.g., from FieldArray validations).
+ *
+ * @param field - The react-hook-form error object or array
+ * @returns The actual error message string, or undefined if no message is found
+ */
 export const getErrorMessage = (field: ErrorLike): string | undefined => {
   if (Array.isArray(field)) {
     for (const err of field) {

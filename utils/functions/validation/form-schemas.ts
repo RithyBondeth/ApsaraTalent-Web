@@ -6,18 +6,10 @@ import {
 } from "@/utils/constants/config.constant";
 
 /* --------------------------------- Methods ---------------------------------- */
-export const fileValidation = (label: string) =>
-  z
-    .any()
-    .refine((file) => file instanceof File, {
-      message: `${label} is required`,
-    })
-    .refine((file) => file && file.size <= DOCUMENT_SIZE, {
-      message: "Max file size is 5MB",
-    })
-    .refine((file) => file && ACCEPTED_FILE_TYPES.includes(file.type), {
-      message: "Only .pdf, .doc, .docx are supported",
-    });
+/**
+ * Collection of Zod schema factories for form validation across the project.
+ * Most take an optional 'label' argument to generate human-readable error messages.
+ */
 
 export const textValidation = (label?: string, max?: number) => {
   if (max && label) {
@@ -51,16 +43,6 @@ export const emailValidation = z
   .min(1, "Email is required")
   .email({ message: "Invalid email address" });
 
-export const passwordValidation = z
-  .string()
-  .min(1, "Password is required")
-  .min(8, "Password must be at least 8 characters")
-  .regex(/[0-9]/, "Password must contain at least one number")
-  .regex(
-    /[!@#$%^&*(),.?":{}|<>]/,
-    "Password must contain at least one special character",
-  );
-
 export const khmerPhoneNumberValidation = () => {
   return z.preprocess(
     (value) => {
@@ -78,19 +60,6 @@ export const khmerPhoneNumberValidation = () => {
       .optional(),
   );
 };
-
-export const phoneOrEmailValidation = z
-  .string()
-  .min(1, "Email or Phone number is required")
-  .refine((value) => {
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // Check if the value is either a valid email or a Khmer phone number
-    return (
-      emailRegex.test(value) ||
-      /^(?:\+855|0)(?:1\d{8}|[2-9]\d{7,8})$/.test(value)
-    );
-  }, "Invalid email or Khmer phone number");
 
 export const dateValidation = (label?: string) => {
   if (label)
@@ -116,30 +85,6 @@ export const dateValidation = (label?: string) => {
     return arg;
   }, z.date());
 };
-
-export const imageValidation = (label: string) =>
-  z
-    .union([
-      z.custom<File>(
-        (file) => {
-          if (!(file instanceof File)) return false;
-          const validTypes = ["image/jpeg", "image/png", "image/webp"];
-          return validTypes.includes(file.type) && file.size <= MAX_IMAGE_SIZE;
-        },
-        {
-          message: `Invalid file: ${label} must be an image (jpeg, png, webp) and < 5MB`,
-        },
-      ),
-      z.string(), // for existing image URLs
-      z.null(),
-    ])
-    .refine(
-      (file) =>
-        file === null || file instanceof File || typeof file === "string",
-      {
-        message: `Please upload a valid file, URL, or leave it empty.`,
-      },
-    );
 
 export const optionalFileValidation = (label: string) =>
   z

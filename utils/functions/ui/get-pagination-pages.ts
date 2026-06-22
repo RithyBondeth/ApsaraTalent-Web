@@ -8,6 +8,14 @@ type TGetPaginationPagesOptions = {
 };
 
 /* --------------------------------- Methods ---------------------------------- */
+/**
+ * Generates an array of pagination elements (numbers or "...") based on the
+ * current page window and max boundaries. Calculates the visible slice
+ * to show around the current page without overflowing the container bounds.
+ *
+ * @param options - currentPage, totalPages, maxVisiblePages
+ * @returns Array mixed with numeric page indexes and string ellipses ("...")
+ */
 export function getPaginationPages(
   options: TGetPaginationPagesOptions,
 ): TPaginationPageItem[] {
