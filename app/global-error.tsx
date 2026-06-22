@@ -6,6 +6,7 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { Button } from "@/components/ui/button";
 import { LucideRefreshCw, LucideTriangleAlert } from "lucide-react";
 import { useEffect } from "react";
+import * as Sentry from "@sentry/nextjs";
 
 export default function GlobalError({
   error,
@@ -17,6 +18,8 @@ export default function GlobalError({
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     console.error(error);
+    // Report top-level render crashes to Sentry (no-op when DSN is unset).
+    Sentry.captureException(error);
   }, [error]);
 
   /* --------------------------------- Render UI -------------------------------- */

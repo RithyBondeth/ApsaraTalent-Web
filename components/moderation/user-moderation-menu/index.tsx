@@ -20,7 +20,6 @@ import { RadioGroup } from "@/components/ui/radio-group";
 import RadioGroupItemWithLabel from "@/components/ui/radio-group-item";
 import { Textarea } from "@/components/ui/textarea";
 import { useModerationStore } from "@/stores/apis/moderation/moderation.store";
-import { TBlockStatus } from "@/utils/types/moderation/block.type";
 import { TReportReason } from "@/utils/types/moderation/report.type";
 import { Ban, Flag, MoreVertical, ShieldOff } from "lucide-react";
 import { useTranslations } from "next-intl";

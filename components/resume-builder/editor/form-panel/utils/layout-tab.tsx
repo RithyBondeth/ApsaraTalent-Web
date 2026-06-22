@@ -2,7 +2,6 @@
 
 import { useResumeCanvasEditorStore } from "@/stores/apis/resume/resume-canvas-editor.store";
 import { TResumeSectionID } from "@/utils/types/resume/resume-section-id.type";
-import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { GripVertical, Eye, EyeOff } from "lucide-react";
 import { useTranslations } from "next-intl";

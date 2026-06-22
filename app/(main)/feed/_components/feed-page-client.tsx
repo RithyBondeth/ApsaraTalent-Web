@@ -427,7 +427,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
         }
         // Sync with server to confirm (replaces optimistic state)
         await queryCurrentEmployeeLiked(employeeID);
-      } catch (error) {
+      } catch {
         toast.error(
           useEmployeeLikeStore.getState().error || t("failedToLikeCompany"),
         );
@@ -494,7 +494,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
           // Sync with server to confirm (replaces optimistic state)
           await queryCurrentCompanyLiked(companyID);
         }
-      } catch (error) {
+      } catch {
         toast.error(
           useCompanyLikeStore.getState().error || t("failedToLikeCompany"),
         );

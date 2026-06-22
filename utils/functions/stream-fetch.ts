@@ -5,7 +5,7 @@ import { COOKIE_CONFIG } from "@/utils/constants/cookie.constant";
 export type StreamEvent =
   | { t: "chunk"; v: string }
   | { t: "done" }
-  | { t: "error"; v: string };
+  | { t: "error"; v: string; code?: number };
 
 /**
  * Fetch a streaming SSE endpoint and call `onEvent` for each parsed event.
@@ -33,7 +33,21 @@ export async function streamFetch(
   });
 
   if (!res.ok || !res.body) {
-    onEvent({ t: "error", v: `Request failed (${res.status})` });
+    // Surface the server's message (e.g. the AI rate-limit / daily-quota text
+    // from a 429) instead of a bare status code. The gateway returns JSON like
+    // { statusCode, error, message } for non-streaming error responses.
+    let message = `Request failed (${res.status})`;
+    try {
+      const data = await res.json();
+      if (typeof data?.message === "string" && data.message.trim()) {
+        message = data.message;
+      } else if (Array.isArray(data?.message) && data.message.length > 0) {
+        message = data.message.join(", ");
+      }
+    } catch {
+      // non-JSON body — keep the status-based fallback
+    }
+    onEvent({ t: "error", v: message, code: res.status });
     return;
   }
 

@@ -32,7 +32,6 @@ import { RESUME_DOWNLOAD_SETTLE_MS } from "@/utils/constants/config.constant";
 import { TypographyLead } from "@/components/utils/typography/typography-lead";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { TResumeTemplate } from "@/utils/types/resume/resume.type";
 import { AiResumeOptimizerDrawer } from "@/components/resume-builder/ai-optimizer-drawer";
 
 export default function ResumeEditorPage() {

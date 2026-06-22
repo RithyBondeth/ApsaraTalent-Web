@@ -24,6 +24,7 @@ import {
 import { API_AI_INTERVIEW_PREP_STREAM_URL } from "@/utils/constants/apis/matching.api.constant";
 import { IAiInterviewPrepQuestion } from "@/utils/interfaces/resume";
 import { streamFetch } from "@/utils/functions/stream-fetch";
+import { AiQuotaBadge } from "@/components/utils/feedback/ai-quota-badge";
 import { useTranslations } from "next-intl";
 import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import { QuestionCard } from "./question-card";
@@ -103,7 +104,8 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
           tryParseLine(lineBuffer); // flush any remaining content
         } else if (event.t === "error") {
           console.warn("[InterviewPrep] Stream error:", event.v);
-          setError(t("interviewPrepFailed"));
+          // Surface the server's message when the AI quota / rate limit is hit.
+          setError(event.code === 429 ? event.v : t("interviewPrepFailed"));
         }
       });
     } catch (err) {
@@ -196,6 +198,9 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
                     : t("questionsBadge", { count: questions.length })}
                 </span>
               )}
+            </div>
+            <div className="mt-3">
+              <AiQuotaBadge />
             </div>
           </DialogHeader>
 

@@ -24,7 +24,6 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import ErrorMessage from "@/components/utils/feedback/error-message";
-import Tag from "@/components/utils/data-display/tag";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import {
@@ -46,7 +45,6 @@ export default function ProfessionStepForm({
   control,
   errors,
   setValue,
-  getValues,
 }: IStepFormProps<TEmployeeSignUp>) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("auth");

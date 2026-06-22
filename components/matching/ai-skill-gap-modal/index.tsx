@@ -20,6 +20,7 @@ import {
 import { API_AI_SKILL_GAP_STREAM_URL } from "@/utils/constants/apis/matching.api.constant";
 import { ISkillGapMissing, ISkillGapSummary } from "@/utils/interfaces/resume";
 import { streamFetch } from "@/utils/functions/stream-fetch";
+import { AiQuotaBadge } from "@/components/utils/feedback/ai-quota-badge";
 import { useLocale, useTranslations } from "next-intl";
 import MissingCard from "./missing-card";
 import { IAiSkillGapModalProps } from "./props";
@@ -100,7 +101,8 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
             tryParseLine(lineBuffer); // flush any remaining content
           } else if (event.t === "error") {
             console.warn("[SkillGap] Stream error:", event.v);
-            setError(t("skillGapFailed"));
+            // Surface the server's message when the AI quota / rate limit is hit.
+            setError(event.code === 429 ? event.v : t("skillGapFailed"));
           }
         },
       );
@@ -177,6 +179,9 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
                     : t("skillGapBadge", { count: missing.length })}
                 </span>
               )}
+            </div>
+            <div className="mt-3">
+              <AiQuotaBadge />
             </div>
           </DialogHeader>
 

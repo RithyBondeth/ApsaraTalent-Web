@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import { streamFetch } from "@/utils/functions/stream-fetch";
 import { API_RESUME_REFINE_BIO_STREAM_URL } from "@/utils/constants/apis/resume.api.constant";
 
@@ -89,6 +90,9 @@ export function useAIRefine() {
             onChunk?.(accumulated);
           } else if (event.t === "error") {
             console.warn("[AI Refine] stream error:", event.v);
+            // The hook has no error UI of its own, so surface an AI quota /
+            // rate-limit hit directly to the user.
+            if (event.code === 429) toast.error(event.v);
           }
         },
       );

@@ -31,6 +31,7 @@ import {
   API_RESUME_POLISH_COVER_LETTER_STREAM_URL,
 } from "@/utils/constants/apis/resume.api.constant";
 import { streamFetch } from "@/utils/functions/stream-fetch";
+import { AiQuotaBadge } from "@/components/utils/feedback/ai-quota-badge";
 import { useTranslations } from "next-intl";
 import { IAiCoverLetterModalProps } from "./props";
 import {
@@ -106,7 +107,8 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
         if (event.t === "chunk") {
           setCoverLetter((prev) => (prev ?? "") + event.v);
         } else if (event.t === "error") {
-          setGenError(t("coverLetterFailed"));
+          // Surface the server's message when the AI quota / rate limit is hit.
+          setGenError(event.code === 429 ? event.v : t("coverLetterFailed"));
           setCoverLetter(null);
         }
       },
@@ -137,7 +139,8 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
         if (event.t === "chunk") {
           setCoverLetter((prev) => (prev ?? "") + event.v);
         } else if (event.t === "error") {
-          setPolishError(t("polishFailed"));
+          // Surface the server's message when the AI quota / rate limit is hit.
+          setPolishError(event.code === 429 ? event.v : t("polishFailed"));
           setCoverLetter(originalText);
         }
       },
@@ -208,6 +211,9 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
                 {t("aiCoverLetter", { name: props.companyName })}
               </span>
             </DialogTitle>
+            <div className="mt-3">
+              <AiQuotaBadge />
+            </div>
           </DialogHeader>
 
           {/* Style Selector Section */}

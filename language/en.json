@@ -1,4 +1,8 @@
 {
+  "ai": {
+    "usesLeftToday": "{remaining} / {limit} AI uses left today",
+    "usedTodayTooltip": "{used} of {limit} AI uses used today · resets {date}"
+  },
   "sidebar": {
     "dashboard": "Dashboard",
     "feed": "Feed",

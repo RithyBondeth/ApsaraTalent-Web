@@ -35,12 +35,6 @@ export default function TemplateSelector({
     { value: "dark", label: t("templateDark") },
   ];
 
-  /* --------------------------------- Methods --------------------------------- */
-  // ── Handle Change ───────────────────────────────────────────
-  const handleChange = (val: string) => {
-    onChange(val as TResumeTemplate);
-  };
-
   return (
     <div className="flex items-center gap-2">
       <Select

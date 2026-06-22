@@ -1,4 +1,8 @@
 {
+  "ai": {
+    "usesLeftToday": "{remaining} / {limit} ការប្រើ AI នៅសល់ថ្ងៃនេះ",
+    "usedTodayTooltip": "បានប្រើ AI {used} ក្នុងចំណោម {limit} ថ្ងៃនេះ · កំណត់ឡើងវិញ {date}"
+  },
   "sidebar": {
     "dashboard": "ផ្ទាំងគ្រប់គ្រង",
     "feed": "ព័ត៌មានថ្មី",

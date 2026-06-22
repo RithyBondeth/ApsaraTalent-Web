@@ -22,6 +22,7 @@ import {
   IExperienceSuggestion,
 } from "@/utils/interfaces/resume";
 import { streamFetch } from "@/utils/functions/stream-fetch";
+import { AiQuotaBadge } from "@/components/utils/feedback/ai-quota-badge";
 import { Badge } from "@/components/ui/badge";
 import { IAiOptimizerDrawerProps } from "./props";
 
@@ -127,7 +128,12 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
             tryParseLine(lineBuffer);
           } else if (event.t === "error") {
             console.warn("[ResumeOptimizer] Stream error:", event.v);
-            setError("Failed to analyze resume. Please try again.");
+            // Surface the server's message when the AI quota / rate limit is hit.
+            setError(
+              event.code === 429
+                ? event.v
+                : "Failed to analyze resume. Please try again.",
+            );
             setData(null);
           }
         },
@@ -204,6 +210,9 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                 <LucideLoader2 className="size-3.5 animate-spin text-primary ml-1" />
               )}
             </SheetTitle>
+            <div className="mt-3">
+              <AiQuotaBadge />
+            </div>
           </SheetHeader>
 
           {/* Content Section */}

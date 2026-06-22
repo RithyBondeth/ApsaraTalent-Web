@@ -3,7 +3,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
-import { useWatch, Path, UseFormSetValue } from "react-hook-form";
+import { useWatch, Path } from "react-hook-form";
 import { IFormPanelProps } from "../props";
 import { FieldLabel } from "./field-label";
 import { capitalizeWords } from "@/utils/functions/text";
