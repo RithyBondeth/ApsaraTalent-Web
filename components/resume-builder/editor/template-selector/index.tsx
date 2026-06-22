@@ -35,18 +35,21 @@ export default function TemplateSelector({
     { value: "dark", label: t("templateDark") },
   ];
 
+  /* --------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex items-center gap-2">
       <Select
         value={value}
         onValueChange={(v) => onChange(v as TResumeTemplate)}
       >
+        {/* Select Template Trigger Section */}
         <SelectTrigger className="h-8 w-[180px] bg-background text-xs">
           <div className="flex items-center gap-2">
             <Layout size={14} className="text-muted-foreground" />
             <SelectValue placeholder="Select Template" />
           </div>
         </SelectTrigger>
+        {/* Select Template Dropdown Section */}
         <SelectContent>
           {templates.map((tpl) => (
             <SelectItem key={tpl.value} value={tpl.value} className="text-xs">

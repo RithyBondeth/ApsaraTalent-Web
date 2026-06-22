@@ -199,6 +199,7 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
                 </span>
               )}
             </div>
+            {/* AI Quota Badge Section */}
             <div className="mt-3">
               <AiQuotaBadge />
             </div>

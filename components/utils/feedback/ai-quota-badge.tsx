@@ -36,7 +36,10 @@ export function AiQuotaBadge({ className }: { className?: string }) {
 
   const { used, limit, remaining } = data.daily;
   const remainingRatio = limit > 0 ? remaining / limit : 0;
-  const remainingPct = Math.max(0, Math.min(100, Math.round(remainingRatio * 100)));
+  const remainingPct = Math.max(
+    0,
+    Math.min(100, Math.round(remainingRatio * 100)),
+  );
 
   const tone =
     remainingRatio > 0.5

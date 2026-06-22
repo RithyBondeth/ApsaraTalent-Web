@@ -211,6 +211,7 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
                 {t("aiCoverLetter", { name: props.companyName })}
               </span>
             </DialogTitle>
+            {/* AI Quota Badge Section */}
             <div className="mt-3">
               <AiQuotaBadge />
             </div>

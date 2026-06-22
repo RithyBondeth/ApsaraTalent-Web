@@ -180,6 +180,7 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
                 </span>
               )}
             </div>
+            {/* AI Quota Badge Section */}
             <div className="mt-3">
               <AiQuotaBadge />
             </div>

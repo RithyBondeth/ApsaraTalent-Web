@@ -210,6 +210,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                 <LucideLoader2 className="size-3.5 animate-spin text-primary ml-1" />
               )}
             </SheetTitle>
+            {/* AI Quota Badge Section */}
             <div className="mt-3">
               <AiQuotaBadge />
             </div>
