@@ -7,7 +7,9 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: lang === "km" ? "គោលការណ៍ភាពឯកជន" : "Privacy Policy",
     description:
-      "How Apsara Talent collects, uses, and protects your personal information.",
+      lang === "km"
+        ? "របៀបដែល Apsara Talent ប្រមូល ប្រើប្រាស់ និងការពារទិន្នន័យផ្ទាល់ខ្លួនរបស់អ្នក។"
+        : "How Apsara Talent collects, uses, and protects your personal information.",
   };
 }
 

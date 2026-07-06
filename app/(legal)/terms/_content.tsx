@@ -24,9 +24,7 @@ import { TypographySmall } from "@/components/utils/typography/typography-small"
 import { termsBannerSvg } from "@/utils/constants/asset.constant";
 import { useLanguageStore } from "@/stores/languages/language-store";
 
-/* ─────────────────────────────────────────────────────────────
-   Sub-components
-───────────────────────────────────────────────────────────── */
+/* -------------------------- Sub Components -------------------------- */
 function Section({
   id,
   icon,
@@ -64,9 +62,7 @@ function Bullet({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Bilingual content
-───────────────────────────────────────────────────────────── */
+/* -------------------------- Content & Data -------------------------- */
 const content = {
   en: {
     back: "Back",
@@ -481,15 +477,13 @@ const content = {
   },
 };
 
-/* ─────────────────────────────────────────────────────────────
-   Main component
-───────────────────────────────────────────────────────────── */
+/* -------------------------- Main Component -------------------------- */
 export function TermsContent() {
-  /* ----------------------------------- Utils ---------------------------------- */
+  /* ------------------------------ Utils ----------------------------- */
   const { language, setLanguage } = useLanguageStore();
   const c = content[language];
 
-  /* -------------------------------- Render UI --------------------------------- */
+  /* --------------------------- Render UI ---------------------------- */
   return (
     <div className="min-h-screen bg-background animate-page-in">
       {/* Top Nav Section */}

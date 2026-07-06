@@ -22,9 +22,7 @@ import { TypographySmall } from "@/components/utils/typography/typography-small"
 import { privacyBannerSvg } from "@/utils/constants/asset.constant";
 import { useLanguageStore } from "@/stores/languages/language-store";
 
-/* ─────────────────────────────────────────────────────────────
-   Sub-components
-───────────────────────────────────────────────────────────── */
+/* -------------------------- Sub Components -------------------------- */
 function Section({
   id,
   icon,
@@ -62,9 +60,7 @@ function Bullet({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Bilingual content
-───────────────────────────────────────────────────────────── */
+/* -------------------------- Content & Data -------------------------- */
 const content = {
   en: {
     back: "Back",
@@ -548,15 +544,13 @@ const content = {
   },
 };
 
-/* ─────────────────────────────────────────────────────────────
-   Main component
-───────────────────────────────────────────────────────────── */
+/* -------------------------- Main Component -------------------------- */
 export function PrivacyContent() {
-  /* ----------------------------------- Utils --------------------------------- */
+  /* ------------------------------ Utils ----------------------------- */
   const { language, setLanguage } = useLanguageStore();
   const c = content[language];
 
-  /* -------------------------------- Render UI --------------------------------- */
+  /* --------------------------- Render UI ---------------------------- */
   return (
     <div className="min-h-screen bg-background animate-page-in">
       {/* Top Navigation Section */}
@@ -634,14 +628,18 @@ export function PrivacyContent() {
                 {language === "en" ? (
                   <>
                     At{" "}
-                    <strong className="text-foreground">{c.introCompany}</strong>
+                    <strong className="text-foreground">
+                      {c.introCompany}
+                    </strong>
                     {", "}
                     {c.intro.replace("At Apsara Talent, ", "")}
                   </>
                 ) : (
                   <>
                     នៅ{" "}
-                    <strong className="text-foreground">{c.introCompany}</strong>{" "}
+                    <strong className="text-foreground">
+                      {c.introCompany}
+                    </strong>{" "}
                     {c.intro.replace("នៅ Apsara Talent ", "")}
                   </>
                 )}

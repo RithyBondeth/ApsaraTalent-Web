@@ -7,7 +7,9 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: lang === "km" ? "លក្ខខណ្ឌនៃការប្រើប្រាស់" : "Terms of Service",
     description:
-      "The rules and guidelines that govern your use of the Apsara Talent platform.",
+      lang === "km"
+        ? "លក្ខខណ្ឌនៃការប្រើប្រាស់ Apsara Talent"
+        : "The rules and guidelines that govern your use of the Apsara Talent platform.",
   };
 }
 
