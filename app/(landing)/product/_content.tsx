@@ -21,9 +21,7 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useLanguageStore } from "@/stores/languages/language-store";
 
-/* ─────────────────────────────────────────────────────────────
-   Sub-components
-───────────────────────────────────────────────────────────── */
+/* -------------------------- Sub Components -------------------------- */
 function Section({
   id,
   icon,
@@ -83,9 +81,7 @@ function FeatureCard({
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Bilingual content
-───────────────────────────────────────────────────────────── */
+/* -------------------------- Content & Data -------------------------- */
 const content = {
   en: {
     back: "Back",
@@ -266,15 +262,13 @@ const featureIcons = [
   <LucideSearch key="5" />,
 ];
 
-/* ─────────────────────────────────────────────────────────────
-   Main component
-───────────────────────────────────────────────────────────── */
+/* -------------------------------- Main Component ------------------------------- */
 export function ProductContent() {
   /* ----------------------------------- Utils ----------------------------------- */
   const { language } = useLanguageStore();
   const t = content[language] ?? content.en;
 
-  /* --------------------------------- Render UI ---------------------------------- */
+  /* --------------------------------- Render UI --------------------------------- */
   return (
     <div className="min-h-screen bg-background">
       {/* Top Navigation Section */}

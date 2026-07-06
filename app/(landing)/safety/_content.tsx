@@ -17,9 +17,7 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useLanguageStore } from "@/stores/languages/language-store";
 
-/* ─────────────────────────────────────────────────────────────
-   Sub-components
-───────────────────────────────────────────────────────────── */
+/* -------------------------- Sub Components -------------------------- */
 function Section({
   id,
   icon,
@@ -57,17 +55,15 @@ function Bullet({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Content types & data
-───────────────────────────────────────────────────────────── */
-type TocItem = { id: string; label: string };
+/* ----------------------- Content Types & Data ----------------------- */
+type TTocItem = { id: string; label: string };
 
-interface SafetyStrings {
+interface ISafetyStrings {
   back: string;
   pageTitle: string;
   subtitle: string;
   tocHeading: string;
-  toc: TocItem[];
+  toc: TTocItem[];
   commitmentTitle: string;
   commitmentIntro: string;
   commitmentBullets: string[];
@@ -89,7 +85,7 @@ interface SafetyStrings {
   aiSafetyNote: string;
 }
 
-const en: SafetyStrings = {
+const en: ISafetyStrings = {
   back: "Back",
   pageTitle: "Safety",
   subtitle:
@@ -169,7 +165,7 @@ const en: SafetyStrings = {
     "Our AI systems are designed to assist and augment human judgment, never to make autonomous decisions about people\u2019s careers or opportunities.",
 };
 
-const km: SafetyStrings = {
+const km: ISafetyStrings = {
   back: "\u178F\u17D2\u179A\u17A1\u1794\u17CB\u1780\u17D2\u179A\u17C4\u1799",
   pageTitle: "\u179F\u17BB\u179C\u178F\u17D2\u1790\u17B7\u1797\u17B6\u1796",
   subtitle:
@@ -278,17 +274,15 @@ const km: SafetyStrings = {
     "\u1794\u17D2\u179A\u1796\u17D0\u178F\u17D2\u1792 AI \u179A\u1794\u179F\u17CB\u1799\u17BE\u1784\u178F\u17D2\u179A\u17BC\u179C\u1794\u17B6\u178F\u179A\u1785\u178F\u17B6\u1781\u17BE\u1784\u178A\u17BE\u1798\u17D2\u1794\u17B8\u1787\u17BD\u1799 \u178F\u17B7\u1784\u1794\u178F\u17D2\u1790\u17C2\u1798\u1780\u17B6\u179A\u179C\u17B7\u178F\u17B7\u1789\u17D2\u1789\u17B6\u178E\u179A\u1794\u179F\u17CB\u1798\u178F\u17BB\u179F\u17D2\u179F \u1798\u17B7\u178F\u1798\u17C2\u178F\u1787\u17C6\u178F\u17BD\u179F\u179C\u17B6\u1791\u17C1\u17D4",
 };
 
-const content: Record<string, SafetyStrings> = { en, km };
+const content: Record<string, ISafetyStrings> = { en, km };
 
-/* ─────────────────────────────────────────────────────────────
-   Main component
-───────────────────────────────────────────────────────────── */
+/* -------------------------- Main Component -------------------------- */
 export function SafetyContent() {
-  /* ----------------------------- Utils ---------------------------- */
+  /* ------------------------------ Utils ----------------------------- */
   const { language } = useLanguageStore();
   const t = content[language] ?? content.en;
 
-  /* ---------------------------- Render UI -------------------------- */
+  /* ----------------------------- Render UI -------------------------- */
   return (
     <div className="min-h-screen bg-background">
       {/* Top Navigation Section */}

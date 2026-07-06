@@ -5,12 +5,11 @@ import { SupportContent } from "./_content";
 export async function generateMetadata(): Promise<Metadata> {
   const lang = (await cookies()).get("language")?.value ?? "en";
   return {
-    title:
-      lang === "km"
-        ? "ជំនួយ — Apsara Talent"
-        : "Support — Apsara Talent",
+    title: lang === "km" ? "ជំនួយ — Apsara Talent" : "Support — Apsara Talent",
     description:
-      "Get help with Apsara Talent — FAQs, contact support, and resources to resolve any issues quickly.",
+      lang === "km"
+        ? "ស្វែងរកជំនួយសម្រាប់ Apsara Talent — សំណួរដែលគេសួរញឹកញាប់ ទាក់ទងផ្នែកជំនួយ និងធនធានដើម្បីដោះស្រាយបញ្ហាណាមួយបានលឿន។"
+        : "Get help with Apsara Talent — FAQs, contact support, and resources to resolve any issues quickly.",
   };
 }
 

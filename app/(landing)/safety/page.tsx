@@ -8,7 +8,9 @@ export async function generateMetadata(): Promise<Metadata> {
     title:
       lang === "km" ? "សុវត្ថិភាព — Apsara Talent" : "Safety — Apsara Talent",
     description:
-      "Learn about the safety measures, data protection, and trust policies that keep the Apsara Talent community secure.",
+      lang === "km"
+        ? "ស្វែងយល់អំពីវិធានការសុវត្ថិភាព ការការពារទិន្នន័យ និងគោលនយោបាយទំនុកចិត្តដែលរក្សាសហគមន៍ Apsara Talent ឱ្យមានសុវត្ថិភាព។"
+        : "Learn about the safety measures, data protection, and trust policies that keep the Apsara Talent community secure.",
   };
 }
 
