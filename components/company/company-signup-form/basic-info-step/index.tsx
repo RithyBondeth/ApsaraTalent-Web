@@ -65,10 +65,10 @@ export default function BasicInfoStepForm({
   /* ----------------------------- API Integration ---------------------------- */
   const { isRefining, refineContent } = useAIRefine();
 
-  /* ----------------------------- React Hook Form ----------------------------- */
+  /* ----------------------------- React Hook Form ---------------------------- */
   const descValue = useWatch({ control, name: "basicInfo.description" });
 
-  /* --------------------------------- Methods --------------------------------- */
+  /* --------------------------------- Methods -------------------------------- */
   // ── Refine Description ────────────────────────────────────────────
   const handleRefine = async () => {
     const result = await refineContent(descValue, "summary");

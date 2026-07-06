@@ -25,7 +25,7 @@ import { useLocale, useTranslations } from "next-intl";
 import MissingCard from "./missing-card";
 import { IAiSkillGapModalProps } from "./props";
 
-/* ---------------------------------- Helpers ---------------------------------- */
+/* ---------------------------------- Helper ----------------------------------- */
 const GAP_COLOR: Record<string, string> = {
   none: "border-green-500/30 bg-green-50 dark:bg-green-900/10 text-green-800 dark:text-green-300",
   small:

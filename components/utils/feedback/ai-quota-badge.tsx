@@ -6,22 +6,19 @@ import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAiQuotaStore } from "@/stores/apis/ai/get-ai-quota.store";
 
-/**
- * Compact, self-fetching indicator of the user's remaining daily AI usage.
- * Renders nothing until data is available (so it never shows a broken state),
- * and colour-shifts green → amber → red as the quota is consumed.
- *
- * Drop it into any AI feature surface, e.g. <AiQuotaBadge /> in a modal header.
- */
 export function AiQuotaBadge({ className }: { className?: string }) {
+  /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("ai");
+
+  /* ------------------------------ API Integration --------------------------- */
   const { data, loading, fetchQuota } = useAiQuotaStore();
 
+  /* --------------------------------- Effects -------------------------------- */
   useEffect(() => {
     fetchQuota();
   }, [fetchQuota]);
 
-  // Lightweight placeholder on first load; nothing if the fetch failed.
+  /* ------------------------------ Loading State ----------------------------- */
   if (!data && loading) {
     return (
       <div
@@ -32,8 +29,11 @@ export function AiQuotaBadge({ className }: { className?: string }) {
       />
     );
   }
+
+  /* ------------------------------- Empty State ------------------------------ */
   if (!data) return null;
 
+  /* --------------------------------- Helpers -------------------------------- */
   const { used, limit, remaining } = data.daily;
   const remainingRatio = limit > 0 ? remaining / limit : 0;
   const remainingPct = Math.max(
@@ -60,6 +60,7 @@ export function AiQuotaBadge({ className }: { className?: string }) {
             ring: "border-red-500/30 bg-red-50 dark:bg-red-900/10",
           };
 
+  /* -------------------------------- Render UI ------------------------------- */
   return (
     <div
       className={cn(

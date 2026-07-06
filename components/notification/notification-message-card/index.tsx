@@ -18,14 +18,14 @@ export default function NotificationMessageCard(
   const router = useRouter();
   const t = useTranslations("notification");
 
-  /* --------------------------------- Methods --------------------------------- */
+  /* --------------------------------- Methods -------------------------------- */
   // ── Handle Reply ─────────────────────────────────────────
   const handleReply = () => {
     if (props.onMarkRead && !props.seen) props.onMarkRead(props.id);
     router.push(`/message?chat=${props.user.id}`);
   };
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* -------------------------------- Render UI ------------------------------- */
   return (
     <NotificationBaseCard
       id={props.id}

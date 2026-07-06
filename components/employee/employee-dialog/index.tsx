@@ -42,7 +42,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
   return (
     <Dialog open={props.open} onOpenChange={(isOpen) => props.setOpen(isOpen)}>
       <DialogContent className="p-0 gap-0 flex flex-col overflow-hidden sm:max-w-lg sm:rounded-xl max-h-[90dvh] tablet-sm:!left-0 tablet-sm:!translate-x-0 tablet-sm:!translate-y-0 tablet-sm:!top-auto tablet-sm:!bottom-0 tablet-sm:!w-full tablet-sm:!max-w-none tablet-sm:rounded-t-2xl tablet-sm:!rounded-b-none tablet-sm:max-h-[92dvh]">
-        {/* Drag Handle — Mobile Only */}
+        {/* Drag Handle Section — Mobile Only */}
         <div className="hidden tablet-sm:flex justify-center pt-3 pb-1 shrink-0">
           <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
         </div>
@@ -50,7 +50,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
         {/* Gradient Header Section */}
         <div className="relative shrink-0">
           <div className="w-full h-24 bg-gradient-to-br from-primary/90 via-primary/60 to-primary/30" />
-          {/* Avatar Overlapping The Gradient */}
+          {/* Avatar Overlapping The Gradient Section */}
           <div className="absolute -bottom-9 left-4">
             <Avatar
               className="!size-20 ring-4 ring-background shadow-lg"
@@ -73,6 +73,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
             {props.job}
           </DialogDescription>
 
+          {/* Location, Years of Experience, Availability Section */}
           <div className="flex flex-wrap gap-1.5 mt-3">
             {props.location && (
               <span className="inline-flex items-center gap-1 text-xs bg-muted px-2.5 py-1 rounded-full text-muted-foreground">

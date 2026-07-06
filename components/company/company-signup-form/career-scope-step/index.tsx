@@ -61,7 +61,7 @@ export default function CompanyCareerScopeStepForm({
   }, [getValues, register]);
 
   /* --------------------------------- Methods --------------------------------- */
-  // ── Toggle Career ───────────────────────────────────────
+  // ── Toggle Career ──────────────────────────────────────
   const toggleCareer = (career: string) => {
     setSelectedCareers((prev) => {
       const updated = prev.includes(career)
@@ -75,7 +75,7 @@ export default function CompanyCareerScopeStepForm({
   // ── Go To Page ─────────────────────────────────────────
   const goToPage = (page: number) => setCurrentPage(page);
 
-  // ── Paginated Careers ───────────────────────────────────
+  // ── Paginated Careers ──────────────────────────────────
   const paginatedCareers = careerScopesListConstant.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage,

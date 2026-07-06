@@ -18,7 +18,7 @@ export default function NotificationLikeCard(
   const t = useTranslations("notification");
   const router = useRouter();
 
-  /* --------------------------------- Methods --------------------------------- */
+  /* --------------------------------- Methods -------------------------------- */
   // ─── Handle Navigate ─────────────────────────────────
   const handleNavigate = () => {
     if (props.onMarkRead && !props.seen) props.onMarkRead(props.id);
@@ -30,7 +30,7 @@ export default function NotificationLikeCard(
     }
   };
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* -------------------------------- Render UI ------------------------------- */
   return (
     <NotificationBaseCard
       id={props.id}

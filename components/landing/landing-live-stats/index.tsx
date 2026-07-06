@@ -5,7 +5,7 @@ import { useGetLandingStatsStore } from "@/stores/apis/users/get-landing-stats.s
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useTranslations } from "next-intl";
 
-/* ------------------------------------- Helper -------------------------------------- */
+/* ------------------------------------- Helper ------------------------------------- */
 function renderCount(value: number | null, loaded: boolean): string {
   if (value !== null) return value.toLocaleString();
   return loaded ? "N/A" : "...";

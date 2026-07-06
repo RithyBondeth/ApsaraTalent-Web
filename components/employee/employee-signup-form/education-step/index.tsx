@@ -24,12 +24,87 @@ import {
 } from "react-hook-form";
 import { IStepFormProps } from "../props";
 
+/* ------------------------------ Sub Component ------------------------------- */
+function IsStudyingWatcher({
+  index,
+  control,
+  register,
+  errors,
+}: {
+  index: number;
+  control: Control<TEmployeeSignUp> | undefined;
+  register: UseFormRegister<TEmployeeSignUp>;
+  errors: FieldErrors<TEmployeeSignUp> | undefined;
+}) {
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("auth");
+
+  /* -------------------------------- All States ------------------------------ */
+  const isStudying = useWatch({
+    control,
+    name: `educations.${index}.isStudying`,
+  });
+
+  /* -------------------------------- Render UI -------------------------------- */
+  return (
+    <div className="w-full flex flex-col gap-3">
+      {/* Degree Section */}
+      <LabelInput
+        label={t("empEducationDegree")}
+        input={
+          <Input
+            placeholder={
+              isStudying
+                ? t("empEducationDegreePursuingPlaceholder")
+                : t("empEducationDegreePlaceholder")
+            }
+            id={`degree-${index}`}
+            {...register(`educations.${index}.degree`)}
+            prefix={<LucideGraduationCap />}
+            validationMessage={errors!.educations?.[index]?.degree?.message}
+          />
+        }
+      />
+
+      {/* Graduation Year Section */}
+      <div className="w-full flex flex-col items-start gap-2">
+        <div className="w-full flex flex-col items-start gap-2">
+          <TypographyMuted className="text-xs">
+            {isStudying
+              ? t("empEducationExpectedGraduationYear")
+              : t("empEducationGraduationYear")}
+          </TypographyMuted>
+          <Controller
+            name={`educations.${index}.year`}
+            control={control}
+            render={({ field }) => (
+              <YearPicker
+                placeholder={
+                  isStudying
+                    ? t("empEducationExpectedGraduationYearPlaceholder")
+                    : t("empEducationGraduationYearPlaceholder")
+                }
+                year={field.value ? Number(field.value) : undefined}
+                onYearChange={(yr) => field.onChange(yr)}
+              />
+            )}
+          />
+        </div>
+        <ErrorMessage>
+          {errors!.educations?.[index]?.year?.message}
+        </ErrorMessage>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------ Main Component ----------------------------- */
 export default function EducationStepForm({
   register,
   errors,
   control,
 }: IStepFormProps<TEmployeeSignUp>) {
-  /* ---------------------------------- Utils --------------------------------- */
+  /* ---------------------------------- Utils -------------------------------- */
   const t = useTranslations("auth");
 
   /* ---------------------------------- Form --------------------------------- */
@@ -38,7 +113,7 @@ export default function EducationStepForm({
     name: "educations",
   });
 
-  /* --------------------------------- Methods --------------------------------- */
+  /* -------------------------------- Methods -------------------------------- */
   // ── Add Education ─────────────────────────────────────────
   const addEducation = () => {
     append({
@@ -48,7 +123,7 @@ export default function EducationStepForm({
     });
   };
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* ------------------------------- Render UI ------------------------------- */
   return (
     <div className="flex flex-col gap-5 w-full max-h-[500px] overflow-y-auto">
       {/* Title Section */}
@@ -146,79 +221,6 @@ export default function EducationStepForm({
           {t("addMore")}
           <LucidePlus />
         </Button>
-      </div>
-    </div>
-  );
-}
-
-function IsStudyingWatcher({
-  index,
-  control,
-  register,
-  errors,
-}: {
-  index: number;
-  control: Control<TEmployeeSignUp> | undefined;
-  register: UseFormRegister<TEmployeeSignUp>;
-  errors: FieldErrors<TEmployeeSignUp> | undefined;
-}) {
-  /* ---------------------------------- Utils --------------------------------- */
-  const t = useTranslations("auth");
-
-  /* -------------------------------- All States ------------------------------ */
-  const isStudying = useWatch({
-    control,
-    name: `educations.${index}.isStudying`,
-  });
-
-  /* -------------------------------- Render UI -------------------------------- */
-  return (
-    <div className="w-full flex flex-col gap-3">
-      {/* Degree Section */}
-      <LabelInput
-        label={t("empEducationDegree")}
-        input={
-          <Input
-            placeholder={
-              isStudying
-                ? t("empEducationDegreePursuingPlaceholder")
-                : t("empEducationDegreePlaceholder")
-            }
-            id={`degree-${index}`}
-            {...register(`educations.${index}.degree`)}
-            prefix={<LucideGraduationCap />}
-            validationMessage={errors!.educations?.[index]?.degree?.message}
-          />
-        }
-      />
-
-      {/* Graduation Year Section */}
-      <div className="w-full flex flex-col items-start gap-2">
-        <div className="w-full flex flex-col items-start gap-2">
-          <TypographyMuted className="text-xs">
-            {isStudying
-              ? t("empEducationExpectedGraduationYear")
-              : t("empEducationGraduationYear")}
-          </TypographyMuted>
-          <Controller
-            name={`educations.${index}.year`}
-            control={control}
-            render={({ field }) => (
-              <YearPicker
-                placeholder={
-                  isStudying
-                    ? t("empEducationExpectedGraduationYearPlaceholder")
-                    : t("empEducationGraduationYearPlaceholder")
-                }
-                year={field.value ? Number(field.value) : undefined}
-                onYearChange={(yr) => field.onChange(yr)}
-              />
-            )}
-          />
-        </div>
-        <ErrorMessage>
-          {errors!.educations?.[index]?.year?.message}
-        </ErrorMessage>
       </div>
     </div>
   );

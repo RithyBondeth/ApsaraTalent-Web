@@ -30,6 +30,7 @@ export function WeeklyActivityChart({ data }: IWeeklyActivityChartProps) {
   /* ------------------------------ Render UI ------------------------------ */
   return (
     <ResponsiveContainer width="100%" height={250}>
+      {/* Chart Section */}
       <BarChart data={data} barGap={2} barCategoryGap="20%">
         <CartesianGrid
           strokeDasharray="3 3"

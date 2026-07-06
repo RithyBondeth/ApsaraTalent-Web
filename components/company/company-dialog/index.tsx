@@ -38,7 +38,7 @@ export default function CompanyDialog(props: ICompanyDialogProps) {
   return (
     <Dialog open={props.open} onOpenChange={props.setOpen}>
       <DialogContent className="p-0 gap-0 flex flex-col overflow-hidden sm:max-w-lg sm:rounded-xl max-h-[90dvh] tablet-sm:!left-0 tablet-sm:!translate-x-0 tablet-sm:!translate-y-0 tablet-sm:!top-auto tablet-sm:!bottom-0 tablet-sm:!w-full tablet-sm:!max-w-none tablet-sm:rounded-t-2xl tablet-sm:!rounded-b-none tablet-sm:max-h-[92dvh]">
-        {/* Drag Handle — Mobile Only */}
+        {/* Drag Handle Section — Mobile Only */}
         <div className="hidden tablet-sm:flex justify-center pt-3 pb-1 shrink-0">
           <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
         </div>

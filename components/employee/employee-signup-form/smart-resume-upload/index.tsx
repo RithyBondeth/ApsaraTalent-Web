@@ -24,7 +24,7 @@ import { useTranslations } from "next-intl";
 import { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
 
-/* --------------------------------- Helpers -------------------------------- */
+/* ---------------------------------- Helper ---------------------------------- */
 function Chip({ icon, label }: { icon?: React.ReactNode; label: string }) {
   return (
     <span className="inline-flex items-center gap-1 text-[11px] bg-background border rounded-full px-2.5 py-0.5 text-foreground/80">

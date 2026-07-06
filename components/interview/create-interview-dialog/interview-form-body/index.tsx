@@ -34,8 +34,7 @@ import { IInterviewFormBodyProps } from "./props";
 import { useLanguageStore } from "@/stores/languages/language-store";
 import { km, enUS } from "date-fns/locale";
 
-/* --------------------------------- Helpers --------------------------------- */
-
+/* --------------------------------- Helper --------------------------------- */
 function Field({
   label,
   required,

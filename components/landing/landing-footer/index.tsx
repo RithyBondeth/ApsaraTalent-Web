@@ -9,7 +9,7 @@ export default function LandingFooter() {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("landing");
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* -------------------------------- Render UI ------------------------------- */
   return (
     <footer className="relative border-t border-border/60 bg-card/30">
       {/* Dotted Background Section */}

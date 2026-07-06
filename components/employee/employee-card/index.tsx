@@ -212,7 +212,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
     );
   }
 
-  // ─── Default Variant Section ─────────────────────────────────────────────────────────
+  // ─── Default Variant Section ──────────────────────────────────
   return (
     <div className="h-fit w-full flex flex-col items-start gap-4 rounded-2xl border border-border/70 bg-card p-4 shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] cursor-pointer transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_12px_36px_hsl(var(--foreground)/0.11)] hover:border-primary/25">
       {/* Profile Section */}

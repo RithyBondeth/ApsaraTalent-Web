@@ -45,7 +45,7 @@ export default function BenefitValueStepForm({
   const [values, setValues] = useState<string[]>(initialValue);
   const [openValuePopOver, setOpenValuePopOver] = useState<boolean>(false);
 
-  /* --------------------------------- Methods --------------------------------- */
+  /* -------------------------------- Methods ------------------------------- */
   // ── Add Benefits ───────────────────────────────────────
   const addBenefits = async () => {
     const trimmed = benefitInput.trim();

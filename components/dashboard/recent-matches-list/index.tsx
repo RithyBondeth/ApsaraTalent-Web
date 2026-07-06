@@ -13,7 +13,7 @@ export function RecentMatchesList({
   matches,
   isEmployee,
 }: IRecentMatchesListProps) {
-  /* ---------------------------------- Utils --------------------------------- */
+  /* --------------------------------- Utils -------------------------------- */
   const t = useTranslations("dashboard");
   const tc = useTranslations("common");
 

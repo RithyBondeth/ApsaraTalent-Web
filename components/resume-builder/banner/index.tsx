@@ -10,7 +10,7 @@ export default function ResumeBuilderBanner() {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("resumeBuilder");
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* -------------------------------- Render UI ------------------------------- */
   return (
     <>
       {/* Desktop Banner Section 1050px */}

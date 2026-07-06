@@ -18,7 +18,7 @@ function SkeletonCard({
   );
 }
 
-/* ---------------------------- Company Profile Page Loading Skeleton ---------------------------- */
+/* --------------------------- Company Profile Page Loading Skeleton --------------------------- */
 export function CompanyProfilePageLoadingSkeleton() {
   return (
     <div className="flex flex-col gap-5">
@@ -287,7 +287,7 @@ export function CompanyProfilePageLoadingSkeleton() {
   );
 }
 
-/* ---------------------------- Employee Profile Page Loading Skeleton ---------------------------- */
+/* -------------------------- Employee Profile Page Loading Skeleton --------------------------- */
 export function EmployeeProfilePageLoadingSkeleton() {
   return (
     <div className="flex flex-col gap-5">

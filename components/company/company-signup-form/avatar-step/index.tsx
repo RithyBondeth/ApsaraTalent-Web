@@ -20,7 +20,7 @@ export default function AvatarCompanyStepForm({
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [cropDialogOpen, setCropDialogOpen] = useState<boolean>(false);
 
-  /* --------------------------------- Methods --------------------------------- */
+  /* --------------------------------- Methods -------------------------------- */
   // ── Handle Files Selected ─────────────────────────────────────────
   const handleFilesSelected = (files: File[]): void => {
     const file = files?.[0];

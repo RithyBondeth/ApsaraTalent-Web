@@ -2,7 +2,7 @@ import { IMissingCardProps } from "./props";
 import { useTranslations } from "next-intl";
 import { LucideBookOpen } from "lucide-react";
 
-/* ----------------------------- Helpers ----------------------------- */
+/* ----------------------------- Helper ------------------------------ */
 const CRITICALITY_COLOR: Record<string, string> = {
   high: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300",
   medium:
