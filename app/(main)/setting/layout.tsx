@@ -3,7 +3,11 @@ import { cookies } from "next/headers";
 
 export async function generateMetadata(): Promise<Metadata> {
   const lang = (await cookies()).get("language")?.value ?? "en";
-  return { title: lang === "km" ? "ការកំណត់" : "Settings" };
+  return {
+    title: lang === "km" ? "ការកំណត់" : "Settings",
+    description:
+      lang === "km" ? "កែប្រែការកំណត់របស់អ្នក" : "Edit your settings",
+  };
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {

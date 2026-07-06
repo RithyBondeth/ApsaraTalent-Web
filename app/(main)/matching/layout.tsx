@@ -3,7 +3,13 @@ import { cookies } from "next/headers";
 
 export async function generateMetadata(): Promise<Metadata> {
   const lang = (await cookies()).get("language")?.value ?? "en";
-  return { title: lang === "km" ? "ការផ្គូផ្គង" : "Matching" };
+  return {
+    title: lang === "km" ? "ការផ្គូផ្គង" : "Matching",
+    description:
+      lang === "km"
+        ? "បេក្ខជនដែលសាកសមនឹងតម្រូវការរបស់អ្នក"
+        : "Candidates that match your needs",
+  };
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {
