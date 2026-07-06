@@ -327,7 +327,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
       <Dialog open={openLogoutDialog} onOpenChange={setOpenLogoutDialog}>
         <DialogContent className="max-w-sm rounded-2xl">
           <DialogTitle>{t("confirmLogout")}</DialogTitle>
-          <TypographySmall className="text-muted-foreground">
+          <TypographySmall className="text-muted-foreground my-2">
             {t("logoutQuestion")}
           </TypographySmall>
           <DialogFooter>

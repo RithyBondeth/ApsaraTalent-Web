@@ -695,7 +695,7 @@ export default function CompanySearchPage() {
               </div>
             ) : loading || filteredEmployees === null ? (
               /* Loading State Section */
-              <div className="w-full flex flex-col gap-2">
+              <div className="w-full flex flex-col gap-3 mb-3">
                 {Array(3)
                   .fill(0)
                   .map((_, i) => (

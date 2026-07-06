@@ -930,7 +930,7 @@ export default function EmployeeSearchPage() {
               </div>
             ) : loading || filteredJobs === null ? (
               /* Loading Skeleton Section */
-              <div className="w-full mb-3">
+              <div className="w-full flex flex-col gap-3 mb-3">
                 {Array(3)
                   .fill(0)
                   .map((_, index) => (
