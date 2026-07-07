@@ -5,7 +5,7 @@
 importScripts("https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js");
 importScripts("https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js");
 
-// ── Firebase config (must match .env.local values) ──────────────────────────
+// ── Firebase config (must match NEXT_PUBLIC_FIREBASE_* in .env) ─────────────
 // These are public-safe values (no secrets). The service worker cannot read
 // Next.js environment variables, so values are inlined here.
 firebase.initializeApp({
