@@ -1,6 +1,7 @@
 import axios from "@/lib/axios";
 import { API_GET_CURRENT_USER_URL } from "@/utils/constants/apis/user-api/user.api.constant";
 import { IUser } from "@/utils/interfaces/user/user.interface";
+import * as Sentry from "@sentry/nextjs";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { extractApiErrorMessage } from "../../shared/api-error-message";
@@ -29,6 +30,9 @@ export const useGetCurrentUserStore = create<TGetCurrentUserState>()(
 
         try {
           const response = await axios.get<IUser>(API_GET_CURRENT_USER_URL);
+          // Identify the user in Sentry so errors show who was affected.
+          // Only id + role — never email/name, to keep PII out of Sentry.
+          Sentry.setUser({ id: response.data.id, role: response.data.role });
           set({
             user: response.data,
             loading: false,
@@ -47,6 +51,7 @@ export const useGetCurrentUserStore = create<TGetCurrentUserState>()(
       },
 
       clearUser: () => {
+        Sentry.setUser(null);
         useGetCurrentUserStore.persist.clearStorage();
         set({
           user: null,
@@ -58,6 +63,13 @@ export const useGetCurrentUserStore = create<TGetCurrentUserState>()(
     {
       name: STORE_PERSIST_KEYS.currentUser,
       partialize: (state) => ({ user: state.user }),
+      // getCurrentUser is only fetched on profile pages, so a returning user
+      // is usually restored from localStorage — identify them then too.
+      onRehydrateStorage: () => (state) => {
+        if (state?.user) {
+          Sentry.setUser({ id: state.user.id, role: state.user.role });
+        }
+      },
     },
   ),
 );

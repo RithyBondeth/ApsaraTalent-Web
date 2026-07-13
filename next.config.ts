@@ -60,6 +60,9 @@ export default withSentryConfig(withBundleAnalyzer(nextConfig), {
   silent: !process.env.CI,
   // Upload a wider set of client source maps for better stack traces.
   widenClientFileUpload: true,
+  // Proxy browser events through our own domain so ad blockers (which block
+  // *.ingest.sentry.io) can't drop them. Path is excluded from middleware.
+  tunnelRoute: "/monitoring",
   // Tree-shake Sentry logger statements out of the client bundle.
   disableLogger: true,
 });

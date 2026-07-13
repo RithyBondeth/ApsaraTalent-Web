@@ -17,9 +17,30 @@ const replaysOnErrorSampleRate = Number(
 if (dsn) {
   Sentry.init({
     dsn,
-    environment: process.env.NODE_ENV,
+    // Optional override (inlined at build time) for deploys where NODE_ENV
+    // doesn't describe the target; falls back to NODE_ENV.
+    environment:
+      process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT || process.env.NODE_ENV,
     tracesSampleRate:
       Number(process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE) || 0.1,
+    // Known browser noise that would otherwise drown real issues. API
+    // outages are still caught server-side and by the API's own Sentry.
+    ignoreErrors: [
+      // Benign browser quirk; fires constantly and is safe to ignore.
+      /ResizeObserver loop/,
+      // Request cancelled: user navigated away or component unmounted.
+      "AbortError",
+      // Network blips on the user's side (offline, flaky mobile data).
+      "TypeError: Failed to fetch",
+      "TypeError: NetworkError when attempting to fetch a resource.",
+      "TypeError: Load failed",
+    ],
+    // Errors thrown by browser extensions, not our code.
+    denyUrls: [
+      /^chrome-extension:\/\//,
+      /^moz-extension:\/\//,
+      /^safari-(web-)?extension:\/\//,
+    ],
     integrations: [Sentry.replayIntegration()],
     replaysSessionSampleRate: Number.isFinite(replaysSessionSampleRate)
       ? replaysSessionSampleRate
