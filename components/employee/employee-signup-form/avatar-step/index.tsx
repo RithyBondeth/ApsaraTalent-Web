@@ -4,6 +4,7 @@ import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
 import { DragDropFile } from "@/components/utils/forms/drag-drop-file";
 import ErrorMessage from "@/components/utils/feedback/error-message";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 export default function AvatarStepForm({
@@ -11,12 +12,15 @@ export default function AvatarStepForm({
   getValues,
   errors,
 }: IStepFormProps<TEmployeeSignUp>) {
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("auth");
+
   /* -------------------------------- All States ------------------------------ */
   const [preview, setPreview] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [cropDialogOpen, setCropDialogOpen] = useState<boolean>(false);
 
-  /* --------------------------------- Methods --------------------------------- */
+  /* --------------------------------- Methods -------------------------------- */
   // ── Handle Files Selected ─────────────────────────────────────────
   const handleFilesSelected = (files: File[]): void => {
     const file = files?.[0];
@@ -50,7 +54,7 @@ export default function AvatarStepForm({
   return (
     <div className="w-full flex flex-col items-center gap-5">
       {/* Title Section */}
-      <TypographyH4>Add your profile picture (Optional)</TypographyH4>
+      <TypographyH4>{t("empAvatarTitle")}</TypographyH4>
 
       {/* Drag Drop File Section */}
       <div className="w-full flex justify-center">
@@ -61,8 +65,8 @@ export default function AvatarStepForm({
             acceptedFileTypes="image/*"
             maxFileSize={5242880}
             multiple={false}
-            boxText="Drop your company profile picture here"
-            boxSubText="JPG, PNG or GIF files up to 5MB"
+            boxText={t("empAvatarBoxText")}
+            boxSubText={t("empAvatarBoxSubText")}
             fileName="avatar"
             setValue={setValue}
           />
@@ -75,7 +79,7 @@ export default function AvatarStepForm({
       {/* Avatar Crop Dialog Section */}
       {selectedImage && (
         <AvatarCropDialog
-          title="Crop Profile Picture"
+          title={t("empAvatarCropDialogTitle")}
           open={cropDialogOpen}
           setOpen={setCropDialogOpen}
           image={selectedImage}

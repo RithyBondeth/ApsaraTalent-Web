@@ -11,7 +11,13 @@ import {
 import React from "react";
 import { TPlatform } from "@/utils/types/user/platform.type";
 
-/* --------------------------------- Methods ---------------------------------- */
+/* --------------------------------- Method ---------------------------------- */
+/**
+ * Returns the corresponding Lucide React icon component for a given social platform.
+ *
+ * @param platform - The social platform enum/type (e.g., "Facebook", "Github")
+ * @returns ReactNode representing the icon, or null if unknown
+ */
 export const getSocialPlatformTypeIcon = (
   platform: TPlatform,
 ): React.ReactNode => {

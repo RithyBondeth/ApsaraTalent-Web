@@ -5,6 +5,24 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
+/* --------------------------------- Usage --------------------------------- */
+/**
+ * Attaches GSAP scroll-triggered entrance animations to any element inside
+ * the returned ref that carries a `data-gsap` attribute.
+ *
+ * Usage:
+ *   const containerRef = useGsapScrollAnimation<HTMLDivElement>();
+ *
+ *   <div ref={containerRef}>
+ *     <h2 data-gsap="fade-up">Title</h2>
+ *     <p  data-gsap="fade-left">Body</p>
+ *     <ul data-gsap="stagger-children"><li>...</li></ul>
+ *   </div>
+ *
+ *   Variants: fade-up | fade-down | fade-left | fade-right
+ *             scale-up | stagger-children | split-words
+ */
+
 /* --------------------------------- Helpers -------------------------------- */
 /**
  * Splits an element's text into individual word spans for animation.
@@ -37,13 +55,7 @@ function splitTextIntoWords(el: HTMLElement) {
   });
 }
 
-/**
- * Animates child elements when they scroll into view.
- * Add `data-gsap` attributes to children to animate them.
- *
- * Variants: fade-up, fade-down, fade-left, fade-right, scale-up, stagger-children, split-words
- */
-/* ----------------------------------- Hook ----------------------------------- */
+/* ------------------------------------ Hook ------------------------------------ */
 export function useGsapScrollAnimation<T extends HTMLElement>() {
   /* -------------------------------- All States -------------------------------- */
   const containerRef = useRef<T>(null);
@@ -214,8 +226,6 @@ export function useGsapScrollAnimation<T extends HTMLElement>() {
 
     return () => ctx.revert();
   }, []);
-
-  /* --------------------------------- Methods ---------------------------------- */
   return containerRef;
 }
 
@@ -223,7 +233,27 @@ export function useGsapScrollAnimation<T extends HTMLElement>() {
  * Hero-specific entrance animation with word-by-word heading reveal.
  * Plays on every mount (including language-switch remounts via key={language}).
  */
-/* ----------------------------------- Hook ----------------------------------- */
+/* --------------------------------- Usage --------------------------------- */
+/**
+ * Runs a coordinated hero entrance animation on mount.
+ * Mark child elements with `data-hero` attributes to participate.
+ *
+ * Usage:
+ *   const containerRef = useGsapHeroAnimation<HTMLDivElement>();
+ *
+ *   <section ref={containerRef}>
+ *     <span  data-hero="badge">New</span>
+ *     <h1    data-hero="heading">Headline</h1>
+ *     <p     data-hero="description">Subtitle</p>
+ *     <div   data-hero="cta"><Button /></div>
+ *     <div   data-hero="stats">Stats row</div>
+ *     <span  data-hero="scroll">Scroll indicator</span>
+ *   </section>
+ *
+ *   // Re-mount the parent with a new key to replay on language switch.
+ */
+
+/* ------------------------------------ Hook ------------------------------------ */
 export function useGsapHeroAnimation<T extends HTMLElement>() {
   /* -------------------------------- All States -------------------------------- */
   const containerRef = useRef<T>(null);
@@ -302,7 +332,5 @@ export function useGsapHeroAnimation<T extends HTMLElement>() {
 
     return () => ctx.revert();
   }, []);
-
-  /* --------------------------------- Methods ---------------------------------- */
   return containerRef;
 }

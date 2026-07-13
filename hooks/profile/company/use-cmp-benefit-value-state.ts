@@ -2,7 +2,25 @@ import { IBenefits } from "@/utils/interfaces/user/company.interface";
 import { IValues } from "@/utils/interfaces/user/company.interface";
 import { useState } from "react";
 
-/* ----------------------------------- Hook ----------------------------------- */
+/* ----------------------------------- Usage ------------------------------------ */
+/**
+ * Manages the local state for company benefits and company values lists,
+ * including popover open state and IDs to delete on save.
+ *
+ * Usage:
+ *   const {
+ *     benefitInput, setBenefitInput,
+ *     benefits, setBenefits,
+ *     deletedBenefitIds, setDeletedBenefitIds,
+ *     openBenefitPopOver, setOpenBenefitPopOver,
+ *     valueInput, setValueInput,
+ *     values, setValues,
+ *     deletedValueIds, setDeletedValueIds,
+ *     openValuePopOver, setOpenValuePopOver,
+ *   } = useCmpBenefitValueState();
+ */
+
+/* ----------------------------------- Hook ------------------------------------- */
 export default function useCmpBenefitValueState() {
   /* -------------------------------- All States -------------------------------- */
   // ── Benefit States ─────────────────────────────────────────

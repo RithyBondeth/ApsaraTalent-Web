@@ -1,65 +1,101 @@
-import FacebookIcon from "@/assets/socials/facebook.webp";
-import GithubIcon from "@/assets/socials/github.png";
-import GoogleIcon from "@/assets/socials/google.png";
-import LinkedInIcon from "@/assets/socials/linkedin.png";
-import landingSvg from "@/assets/svg/landing.svg";
-import emptySvgImage from "@/assets/svg/empty.svg";
-import matchingSvgImage from "@/assets/svg/matching.svg";
-import NotificationSvgImage from "@/assets/svg/notification.svg";
-import MessageSvgImage from "@/assets/svg/message.svg";
-import favoriteSvgImage from "@/assets/svg/favorite.svg";
-import EmployeeSearchSvg from "@/assets/svg/employee-search.svg";
-import CompanySearchSvg from "@/assets/svg/company-search.svg";
-import addNewEducationSvgImage from "@/assets/svg/add-new-education.svg";
-import addNewExperienceSvgImage from "@/assets/svg/add-new-experience.svg";
-import feedBlackSvg from "@/assets/svg/feed-black.svg";
-import feedCompanySvg from "@/assets/svg/feed-company.svg";
-import feedWhiteSvg from "@/assets/svg/feed-white.svg";
-import signupBlackSvg from "@/assets/svg/signup-black.svg";
-import signupWhiteSvg from "@/assets/svg/signup-white.svg";
-import forgotPasswordWhiteSvg from "@/assets/svg/forgot-password-white.svg";
-import resetPasswordWhiteSvg from "@/assets/svg/reset-password-white.svg";
-import loginBlackSvg from "@/assets/svg/login-black.svg";
-import loginWhiteSvg from "@/assets/svg/login-white.svg";
-import emailVerificationWhiteSvg from "@/assets/svg/email-verification-black.svg";
-import emailVerificationBlackSvg from "@/assets/svg/email-verification-white.svg";
-import phoneNumberWhiteSvg from "@/assets/svg/phone-number-white.svg";
-import phoneOTPWhiteSvg from "@/assets/svg/phone-otp-white.svg";
-import BlackLogo from "@/assets/svg/logo-version2-black.svg";
-import WhiteLogo from "@/assets/svg/logo-version2-white.svg";
-import LogoWithoutTitle from "@/assets/svg/logo-without-title.svg";
-import resumeBuilderImageSvg from "@/assets/svg/resume-builder-banner.svg";
+// ─── Socials ─────────────────────────────────────────────────────────────────
+import facebookIcon from "@/assets/socials/facebook.webp";
+import githubIcon from "@/assets/socials/github.png";
+import googleIcon from "@/assets/socials/google.png";
+import linkedInIcon from "@/assets/socials/linkedin.png";
+
+// ─── Auth ─────────────────────────────────────────────────────────────────────
+import signupSvg from "@/assets/auth/signup.svg";
+import loginSvg from "@/assets/auth/login.svg";
+import forgotPasswordSvg from "@/assets/auth/forgot-password.svg";
+import resetPasswordSvg from "@/assets/auth/reset-password.svg";
+import emailVerificationSvg from "@/assets/auth/email-verification.svg";
+import phoneNumberSvg from "@/assets/auth/phone-number.svg";
+import phoneOTPSvg from "@/assets/auth/phone-otp.svg";
+
+// ─── Feed ─────────────────────────────────────────────────────────────────────
+import feedCompanyBannerSvg from "@/assets/feed/company-banner.svg";
+import feedEmployeeBannerSvg from "@/assets/feed/employee-banner.svg";
+
+// ─── Notification ─────────────────────────────────────────────────────────────
+import notificationBannerSvg from "@/assets/notification/banner.svg";
+import notificationEmptySvg from "@/assets/notification/empty.svg";
+
+// ─── Matching ─────────────────────────────────────────────────────────────────
+import matchingBannerSvg from "@/assets/matching/banner.svg";
+
+// ─── Message ──────────────────────────────────────────────────────────────────
+import messageEmptySvg from "@/assets/message/empty.svg";
+import messageSvg from "@/assets/message/message.svg";
+
+// ─── Favorite ─────────────────────────────────────────────────────────────────
+import favoriteBannerSvg from "@/assets/favorite/banner.svg";
+
+// ─── Search ───────────────────────────────────────────────────────────────────
+import employeeSearchBannerSvg from "@/assets/search/employee-banner.svg";
+import companySearchBannerSvg from "@/assets/search/company-banner.svg";
+
+// ─── Profile ──────────────────────────────────────────────────────────────────
+import addNewEducationSvg from "@/assets/profile/add-new-education.svg";
+import addNewExperienceSvg from "@/assets/profile/add-new-experience.svg";
+
+// ─── Interview ────────────────────────────────────────────────────────────────
+import interviewBannerSvg from "@/assets/interview/banner.svg";
+
+// ─── Resume Builder ───────────────────────────────────────────────────────────
+import resumeBuilderBannerSvg from "@/assets/resume-builder/banner.svg";
+
+// ─── Legal ────────────────────────────────────────────────────────────────────
+import termsBannerSvg from "@/assets/legal/terms-banner.svg";
+import privacyBannerSvg from "@/assets/legal/privacy-banner.svg";
+
+// ─── Utils (shared across pages) ──────────────────────────────────────────────
+import emptySvg from "@/assets/utils/empty.svg";
+import logo from "@/assets/utils/logo.svg";
+import logoWithoutTitle from "@/assets/utils/logo-icon.svg";
 
 export {
-  FacebookIcon,
-  GithubIcon,
-  GoogleIcon,
-  LinkedInIcon,
-  landingSvg,
-  emptySvgImage,
-  matchingSvgImage,
-  NotificationSvgImage,
-  MessageSvgImage,
-  favoriteSvgImage,
-  EmployeeSearchSvg,
-  CompanySearchSvg,
-  addNewEducationSvgImage,
-  addNewExperienceSvgImage,
-  feedBlackSvg,
-  feedCompanySvg,
-  feedWhiteSvg,
-  signupBlackSvg,
-  signupWhiteSvg,
-  forgotPasswordWhiteSvg,
-  resetPasswordWhiteSvg,
-  loginBlackSvg,
-  loginWhiteSvg,
-  emailVerificationWhiteSvg,
-  emailVerificationBlackSvg,
-  phoneNumberWhiteSvg,
-  phoneOTPWhiteSvg,
-  BlackLogo,
-  WhiteLogo,
-  LogoWithoutTitle,
-  resumeBuilderImageSvg,
+  // Socials
+  facebookIcon,
+  githubIcon,
+  googleIcon,
+  linkedInIcon,
+  // Auth
+  signupSvg,
+  loginSvg,
+  forgotPasswordSvg,
+  resetPasswordSvg,
+  emailVerificationSvg,
+  phoneNumberSvg,
+  phoneOTPSvg,
+  // Feed
+  feedCompanyBannerSvg,
+  feedEmployeeBannerSvg,
+  // Notification
+  notificationBannerSvg,
+  notificationEmptySvg,
+  // Matching
+  matchingBannerSvg,
+  // Message
+  messageEmptySvg,
+  messageSvg,
+  // Favorite
+  favoriteBannerSvg,
+  // Search
+  employeeSearchBannerSvg,
+  companySearchBannerSvg,
+  // Profile
+  addNewEducationSvg,
+  addNewExperienceSvg,
+  // Interview
+  interviewBannerSvg,
+  // Resume Builder
+  resumeBuilderBannerSvg,
+  // Legal
+  termsBannerSvg,
+  privacyBannerSvg,
+  // Utils
+  emptySvg,
+  logo,
+  logoWithoutTitle,
 };

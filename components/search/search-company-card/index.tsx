@@ -17,15 +17,19 @@ import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { memo } from "react";
 import { useTranslations } from "next-intl";
+import { translateLocation } from "@/utils/functions/text";
 
-const SearchCompanyCard = memo(function SearchCompanyCard(props: ISearchCompanyCardProps) {
+const SearchCompanyCard = memo(function SearchCompanyCard(
+  props: ISearchCompanyCardProps,
+) {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const t = useTranslations("searchEmployee");
+  const tl = useTranslations("locations");
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
+    <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
       <div className="p-4 sm:p-5 flex flex-col gap-3.5">
         {/* Header Section: Avatar, Title, Name and Industry */}
         <div className="flex gap-4">
@@ -58,7 +62,10 @@ const SearchCompanyCard = memo(function SearchCompanyCard(props: ISearchCompanyC
             icon={<LucideUsers />}
             text={`${props.company.companySize} ${t("employees")}`}
           />
-          <MetaChip icon={<LucideMapPin />} text={props.company.location} />
+          <MetaChip
+            icon={<LucideMapPin />}
+            text={translateLocation(props.company.location, tl)}
+          />
           <MetaChip icon={<LucideBriefcaseBusiness />} text={props.type} />
         </div>
 

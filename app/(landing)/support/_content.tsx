@@ -18,9 +18,7 @@ import { useLanguageStore } from "@/stores/languages/language-store";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-/* ─────────────────────────────────────────────────────────────
-   Sub-components
-───────────────────────────────────────────────────────────── */
+/* -------------------------- Sub Components -------------------------- */
 function Section({
   id,
   icon,
@@ -108,29 +106,27 @@ function ContactCard({
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Content types & data
-───────────────────────────────────────────────────────────── */
-type TocItem = { id: string; label: string };
-type FaqEntry = { q: string; a: string };
-type ContactEntry = {
+/* ----------------------- Content Types & Data ----------------------- */
+type TTocItem = { id: string; label: string };
+type TFaqEntry = { q: string; a: string };
+type TContactEntry = {
   title: string;
   description: string;
   action: string;
 };
 
-interface SupportStrings {
+interface ISupportStrings {
   back: string;
   pageTitle: string;
   subtitle: string;
   tocHeading: string;
-  toc: TocItem[];
+  toc: TTocItem[];
   faqTitle: string;
   faqIntro: string;
-  faqs: FaqEntry[];
+  faqs: TFaqEntry[];
   contactTitle: string;
   contactIntro: string;
-  contacts: ContactEntry[];
+  contacts: TContactEntry[];
   mobileTitle: string;
   mobileIntro: string;
   mobileBullets: string[];
@@ -142,7 +138,7 @@ interface SupportStrings {
   resourcesBullets: string[];
 }
 
-const en: SupportStrings = {
+const en: ISupportStrings = {
   back: "Back",
   pageTitle: "Support",
   subtitle:
@@ -245,7 +241,7 @@ const en: SupportStrings = {
   ],
 };
 
-const km: SupportStrings = {
+const km: ISupportStrings = {
   back: "\u178F\u17D2\u179A\u17A1\u1794\u17CB\u1780\u17D2\u179A\u17C4\u1799",
   pageTitle: "\u1787\u17C6\u178F\u17BD\u1799",
   subtitle:
@@ -367,7 +363,7 @@ const km: SupportStrings = {
   ],
 };
 
-const content: Record<string, SupportStrings> = { en, km };
+const content: Record<string, ISupportStrings> = { en, km };
 
 const contactIcons = [
   <LucideMail key="0" />,
@@ -375,15 +371,13 @@ const contactIcons = [
   <LucideHelpCircle key="2" />,
 ];
 
-/* ─────────────────────────────────────────────────────────────
-   Main component
-───────────────────────────────────────────────────────────── */
+/* -------------------------- Main Component -------------------------- */
 export function SupportContent() {
-  /* ---------------------------- Utils ---------------------------- */
+  /* ------------------------------ Utils ----------------------------- */
   const { language } = useLanguageStore();
   const t = content[language] ?? content.en;
 
-  /* -------------------------- Render UI --------------------------- */
+  /* ---------------------------- Render UI --------------------------- */
   return (
     <div className="min-h-screen bg-background">
       {/* Top Navigation Section */}

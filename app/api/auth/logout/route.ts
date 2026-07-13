@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { COOKIE_CONFIG } from "@/utils/constants/cookie.constant";
 
 export async function POST() {
   try {
@@ -11,7 +12,7 @@ export async function POST() {
     const isProduction = process.env.NODE_ENV === "production";
 
     // Clear the auth-token cookie
-    response.cookies.set("auth-token", "", {
+    response.cookies.set(COOKIE_CONFIG.AUTH_TOKEN, "", {
       expires: new Date(0),
       path: "/",
       httpOnly: true,
@@ -20,7 +21,7 @@ export async function POST() {
     });
 
     // Clear the refresh-token cookie
-    response.cookies.set("refresh-token", "", {
+    response.cookies.set(COOKIE_CONFIG.REFRESH_TOKEN, "", {
       expires: new Date(0),
       path: "/",
       httpOnly: true,

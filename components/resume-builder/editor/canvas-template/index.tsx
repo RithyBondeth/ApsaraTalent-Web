@@ -27,18 +27,19 @@ import { ExperienceEntry } from "./utils/experience-entry";
 import { SkillChips } from "./utils/skill-chip";
 import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
 import { Path, PathValue } from "react-hook-form";
+import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
+
+/* ---------------------------------- Helper --------------------------------- */
+/**
+ * Education is stored as a "|"-separated string in the DB.
+ * Parse it into an array of strings for the editable canvas UI.
+ */
+const parseEducationLines = (raw?: string): string[] =>
+  raw ? raw.split("|").map((l) => l.trim()) : [];
 
 export default function CanvasTemplate(props: ICanvasTemplateProps) {
   /* ----------------------------------- Props -------------------------------- */
   const { data, setValue, getValues } = props;
-
-  /* ----------------------------- API Integration ---------------------------- */
-  const { sectionOrder } = useResumeCanvasEditorStore();
-
-  /* -------------------------------- All States ------------------------------ */
-  const [educationLines, setEducationLinesState] = useState<string[]>(() =>
-    parseEducationLines(education),
-  );
 
   /* ---------------------------------- Utils --------------------------------- */
   const {
@@ -51,23 +52,21 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
     availability,
   } = data;
 
+  /* -------------------------------- All States ------------------------------ */
+  const [educationLines, setEducationLinesState] = useState<string[]>(() =>
+    parseEducationLines(education),
+  );
+
+  /* ----------------------------- API Integration ---------------------------- */
+  const { sectionOrder } = useResumeCanvasEditorStore();
+
   /* PointerSensor with distance constraint so a click doesn't start a drag */
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   );
 
-  /* ── Stable sortable ID
-   * Use stable IDs based on position + a short hash so React
-   * can reconcile correctly even after reorders.  */
   const expIds = (experience || []).map((_, i) => `exp-${i}`);
   const skillIds = (skills || []).map((_, i) => `skill-${i}`);
-
-  /* ── Parse Education Lines
-   * Education stored as "|"-separated lines.
-   * Use local state so add/delete/edit re-render immediately without waiting
-   * for the 600 ms debounce on the parent's previewData. */
-  const parseEducationLines = (raw?: string): string[] =>
-    raw ? raw.split("|").map((l) => l.trim()) : [];
 
   /* --------------------------------- Effects --------------------------------- */
   // Sync from parent when the debounced data prop changes (e.g. form-panel edits)
@@ -77,7 +76,6 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Commit Education Line ──────────────────────────────────────────
-  /** Commit an edited education line and write back to the "|"-separated string */
   function commitEducationLine(idx: number, value: string) {
     const next = [...educationLines];
     next[idx] = value;
@@ -87,7 +85,6 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
   }
 
   // ── Set Education Lines ────────────────────────────────────────────
-  /** Persist the full lines array as the education string */
   function setEducationLines(lines: string[]) {
     setEducationLinesState(lines);
     const nonEmpty = lines.filter(Boolean);
@@ -181,7 +178,13 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
     summary !== undefined ? (
       <SectionWrapper sectionId="summary" isDraggable>
         <SectionHeading>Professional Summary</SectionHeading>
-        <div style={{ fontSize: 12, color: "#374151", lineHeight: 1.6 }}>
+        <div
+          style={{
+            fontSize: 12,
+            color: RESUME_COLOR.TEXT_SECONDARY,
+            lineHeight: 1.6,
+          }}
+        >
           <Editable
             value={summary || ""}
             placeholder="Write a professional summary…"
@@ -247,7 +250,7 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
   const educationSection = (
     <SectionWrapper sectionId="education" isDraggable>
       <SectionHeading>Education</SectionHeading>
-      <div style={{ fontSize: 12, color: "#374151" }}>
+      <div style={{ fontSize: 12, color: RESUME_COLOR.TEXT_SECONDARY }}>
         {educationLines.map((line, i) => (
           <div
             key={i}
@@ -267,7 +270,7 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
               }}
               title="Remove education entry"
               className="absolute -right-5 top-0 opacity-0 group-hover/edu:opacity-60 hover:!opacity-100 transition-opacity"
-              style={{ color: "#ef4444" }}
+              style={{ color: RESUME_COLOR.DANGER }}
             >
               <X size={12} />
             </button>
@@ -296,8 +299,8 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
     <div
       style={{
         fontFamily: "'Segoe UI', Arial, sans-serif",
-        background: "#fff",
-        color: "#111827",
+        background: RESUME_COLOR.WHITE,
+        color: RESUME_COLOR.TEXT_PRIMARY,
         padding: "32px 36px 32px 44px", // extra left padding for drag handles
         fontSize: 13,
         lineHeight: 1.6,
@@ -309,7 +312,7 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
       <SectionWrapper sectionId="header" isDraggable={false}>
         <div
           style={{
-            borderBottom: "2px solid #4f46e5",
+            borderBottom: `2px solid ${RESUME_COLOR.ACCENT}`,
             paddingBottom: 14,
             marginBottom: 16,
           }}
@@ -336,7 +339,7 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
                 style={{
                   fontSize: 22,
                   fontWeight: 700,
-                  color: "#111827",
+                  color: RESUME_COLOR.TEXT_PRIMARY,
                   letterSpacing: -0.3,
                 }}
               >
@@ -351,7 +354,7 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
               <div
                 style={{
                   fontSize: 13,
-                  color: "#4f46e5",
+                  color: RESUME_COLOR.ACCENT,
                   fontWeight: 500,
                   marginTop: 2,
                 }}
@@ -371,7 +374,13 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
           <div
             style={{ marginTop: 6, display: "flex", flexWrap: "wrap", gap: 0 }}
           >
-            <span style={{ fontSize: 11, color: "#6b7280", marginRight: 14 }}>
+            <span
+              style={{
+                fontSize: 11,
+                color: RESUME_COLOR.TEXT_MUTED,
+                marginRight: 14,
+              }}
+            >
               ✉{" "}
               <Editable
                 value={personalInfo.email || ""}
@@ -381,7 +390,13 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
                 }
               />
             </span>
-            <span style={{ fontSize: 11, color: "#6b7280", marginRight: 14 }}>
+            <span
+              style={{
+                fontSize: 11,
+                color: RESUME_COLOR.TEXT_MUTED,
+                marginRight: 14,
+              }}
+            >
               📞{" "}
               <Editable
                 value={personalInfo.phone || ""}
@@ -391,7 +406,13 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
                 }
               />
             </span>
-            <span style={{ fontSize: 11, color: "#6b7280", marginRight: 14 }}>
+            <span
+              style={{
+                fontSize: 11,
+                color: RESUME_COLOR.TEXT_MUTED,
+                marginRight: 14,
+              }}
+            >
               📍{" "}
               <Editable
                 value={personalInfo.location || ""}
@@ -402,7 +423,13 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
               />
             </span>
             {personalInfo.age && (
-              <span style={{ fontSize: 11, color: "#6b7280", marginRight: 14 }}>
+              <span
+                style={{
+                  fontSize: 11,
+                  color: RESUME_COLOR.TEXT_MUTED,
+                  marginRight: 14,
+                }}
+              >
                 🎂 Age:{" "}
                 <Editable
                   value={personalInfo.age?.toString() || ""}
@@ -422,7 +449,11 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
             <div style={{ marginTop: 4 }}>
               {yearsOfExperience && (
                 <span
-                  style={{ fontSize: 11, color: "#6b7280", marginRight: 12 }}
+                  style={{
+                    fontSize: 11,
+                    color: RESUME_COLOR.TEXT_MUTED,
+                    marginRight: 12,
+                  }}
                 >
                   <Editable
                     value={yearsOfExperience}
@@ -436,7 +467,11 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
               )}
               {availability && (
                 <span
-                  style={{ fontSize: 11, color: "#6b7280", marginRight: 12 }}
+                  style={{
+                    fontSize: 11,
+                    color: RESUME_COLOR.TEXT_MUTED,
+                    marginRight: 12,
+                  }}
                 >
                   Available:{" "}
                   <Editable
@@ -461,7 +496,7 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
 
                   return (
                     <span key={key} style={{ marginRight: 10, fontSize: 11 }}>
-                      <span style={{ color: "#9ca3af" }}>
+                      <span style={{ color: RESUME_COLOR.TEXT_SUBTLE }}>
                         {key.charAt(0).toUpperCase() + key.slice(1)}:
                       </span>{" "}
                       <Editable
@@ -474,7 +509,7 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
                             { shouldDirty: true },
                           )
                         }
-                        style={{ color: "#4f46e5" }}
+                        style={{ color: RESUME_COLOR.ACCENT }}
                       />
                     </span>
                   );

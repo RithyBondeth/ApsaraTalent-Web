@@ -18,6 +18,16 @@ export const basicInfoSchema = z.object({
       companySize: positiveNumberValidation().optional(),
       foundedYear: positiveNumberValidation().optional(),
       location: selectedValidation().optional(),
+      websiteUrl: z
+        .string()
+        .url({ message: "Please enter a valid URL (e.g. https://...)" })
+        .optional()
+        .nullable()
+        .or(z.literal("")),
+      companyType: z
+        .enum(["startup", "sme", "enterprise", "ngo", "government"])
+        .optional()
+        .nullable(),
       avatar: z
         .union([
           z.instanceof(File).refine(
@@ -45,7 +55,7 @@ export const basicInfoSchema = z.object({
               );
             },
             {
-              message: `Invalid file: avatar must be an image (jpeg, png, webp) and < 5MB`,
+              message: `Invalid file: cover must be an image (jpeg, png, webp) and < 5MB`,
             },
           ),
           z.string(),
@@ -76,7 +86,15 @@ export const openPositionSchema = z.object({
         experienceRequirement: textValidation().optional(),
         educationRequirement: textValidation().optional(),
         skills: textValidation().optional(),
-        salary: textValidation().optional(),
+        salaryMin: z.number().positive().optional().nullable(),
+        salaryMax: z.number().positive().optional().nullable(),
+        salaryCurrency: z.string().optional().default("USD"),
+        workMode: z
+          .enum(["remote", "on_site", "hybrid", "flexible"])
+          .optional()
+          .nullable(),
+        location: z.string().optional().nullable().or(z.literal("")),
+        openingsCount: z.number().int().positive().optional().nullable(),
         deadlineDate: dateValidation().optional(),
       }),
     )

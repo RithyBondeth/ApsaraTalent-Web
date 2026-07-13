@@ -7,15 +7,13 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { useResumeCanvasEditorStore } from "@/stores/apis/resume/resume-canvas-editor.store";
 import { Button } from "@/components/ui/button";
 import { IPreviewPanelProps } from "./props";
-
-/* ---------------------------------- Helper --------------------------------- */
-// A4 width in pixels at 96 dpi
-export const RESUME_EDITOR_A4_WIDTH = 794;
-// Zoom step per click (10%)
-export const RESUME_EDITOR_ZOOM_STEP = 0.1;
-// Min / max manual zoom multipliers relative to the auto-fit scale
-export const RESUME_EDITOR_ZOOM_MIN = 0.5;
-export const RESUME_EDITOR_ZOOM_MAX = 2.0;
+import { useTranslations } from "next-intl";
+import {
+  RESUME_EDITOR_A4_WIDTH,
+  RESUME_EDITOR_ZOOM_STEP,
+  RESUME_EDITOR_ZOOM_MIN,
+  RESUME_EDITOR_ZOOM_MAX,
+} from "@/utils/constants/resume.constant";
 
 export default function ResumeEditorPreviewPanel({
   data,
@@ -23,6 +21,9 @@ export default function ResumeEditorPreviewPanel({
   getValues,
   updating,
 }: IPreviewPanelProps) {
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("resumeBuilder");
+
   /* -------------------------------- All States ------------------------------ */
   const scrollWrapperRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -99,7 +100,7 @@ export default function ResumeEditorPreviewPanel({
         {/* Left Section: Title */}
         <div className="flex items-center gap-1.5 text-xs font-medium text-foreground sm:text-sm shrink-0">
           <Eye size={15} className="text-muted-foreground" />
-          Resume Canvas
+          {t("resumeCanvas")}
         </div>
 
         {/* Centre Section: Hint or Updating Badge */}
@@ -107,11 +108,11 @@ export default function ResumeEditorPreviewPanel({
           {updating ? (
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground animate-pulse">
               <RefreshCw size={11} className="animate-spin" />
-              Updating…
+              {t("updatingCanvas")}
             </div>
           ) : (
             <span className="hidden text-xs text-muted-foreground md:block">
-              Click text to edit · Hover to add/delete · Drag to reorder
+              {t("canvasHint")}
             </span>
           )}
         </div>

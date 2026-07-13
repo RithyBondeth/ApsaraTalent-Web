@@ -38,6 +38,7 @@ export function LanguageProviderClient({
     <NextIntlClientProvider
       locale={activeLocale}
       messages={messages[activeLocale]}
+      timeZone="Asia/Phnom_Penh"
     >
       {children}
     </NextIntlClientProvider>

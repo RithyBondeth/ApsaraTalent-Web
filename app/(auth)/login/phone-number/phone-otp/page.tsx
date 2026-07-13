@@ -24,24 +24,30 @@ import { useGetCompanyRecommendationsStore } from "@/stores/apis/recommendation/
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 import { toast } from "sonner";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { phoneOTPWhiteSvg } from "@/utils/constants/asset.constant";
-import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
+import { phoneOTPSvg } from "@/utils/constants/asset.constant";
+import {
+  DEFAULT_REDIRECT_DELAY_MS,
+  TOAST_DURATION_MS,
+} from "@/utils/constants/config.constant";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 export default function PhoneOTPPage() {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations("auth");
 
   /* -------------------------------- All States ------------------------------ */
-
-  const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
   const [loginInitiated, setLoginInitiated] = useState<boolean>(false);
   const isProcessingOtpLogin = useRef<boolean>(false);
   const loadingToastIdRef = useRef<string | number | null>(null);
+
+  // Basic Phone Signup Data
+  const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
 
   /* ------------------------------ API Integration --------------------------- */
   // Current User, Get All Employees and Get All Companies
@@ -77,8 +83,25 @@ export default function PhoneOTPPage() {
   const otpRole = useVerifyOTPStore((s) => s.role);
   const otpAuthenticated = useVerifyOTPStore((s) => s.isAuthenticated);
 
+  /* ---------------------- React Hook Form: Verify OTP Form -------------------- */
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<{ otp: string }>();
+
   /* -------------------------------- Methods --------------------------------- */
-  // ── Preload User Data ─────────────────────────────────────────
+  // ── Callback URL Function ─────────────────────────────────────
+  const callbackUrl = useMemo(() => {
+    const value = searchParams.get("callbackUrl");
+    if (!value || !value.startsWith("/") || value.startsWith("//")) {
+      return "/feed";
+    }
+    return value;
+  }, [searchParams]);
+
+  // ── Preload User Data Function ────────────────────────────────
   const preloadUserData = useCallback(async () => {
     try {
       // Fist load current user
@@ -90,14 +113,17 @@ export default function PhoneOTPPage() {
           const userData = useGetCurrentUserStore.getState().user;
 
           if (userData) {
-            if (userData.role === "employee" && userData.employee?.id) {
+            if (userData.role === USER_ROLE.EMPLOYEE && userData.employee?.id) {
               await Promise.all([
                 queryCurrentEmployeeLiked(userData.employee.id),
                 queryAllEmployeeFavorites(userData.employee.id),
                 queryEmployeeRecommendations(userData.employee.id),
                 queryCompany(),
               ]);
-            } else if (userData.role === "company" && userData.company?.id) {
+            } else if (
+              userData.role === USER_ROLE.COMPANY &&
+              userData.company?.id
+            ) {
               await Promise.all([
                 queryCurrentCompanyLiked(userData.company.id),
                 queryAllCompanyFavorites(userData.company.id),
@@ -125,13 +151,7 @@ export default function PhoneOTPPage() {
     queryEmployee,
   ]);
 
-  /* ---------------------- React Hook Form: Verify OTP Form -------------------- */
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<{ otp: string }>();
+  // ── Verify OTP Login Function ─────────────────────────────────
   const onSubmit = async (data: { otp: string }) => {
     isProcessingOtpLogin.current = false;
     setLoginInitiated(true);
@@ -140,7 +160,7 @@ export default function PhoneOTPPage() {
   };
 
   /* --------------------------------- Effects --------------------------------- */
-  // ── Verify OTP Effect ─────────────────────────────────────────
+  // ── Verify OTP Effect ──────────────────────────────────────────
   useEffect(() => {
     if (!loginInitiated) return;
 
@@ -195,14 +215,14 @@ export default function PhoneOTPPage() {
           console.log("User data preload successfully in otp page");
           toast.dismiss(loadingId);
           toast.success(t("successLoggedIn"), {
-            duration: 1000,
+            duration: TOAST_DURATION_MS.SHORT,
           });
         })
         .catch((error) => {
           console.error("Error preloading user data: ", error);
           toast.dismiss(loadingId);
           toast.error(otpMessage ?? String(error), {
-            duration: 1000,
+            duration: TOAST_DURATION_MS.SHORT,
           });
         })
         .finally(() => {
@@ -211,7 +231,7 @@ export default function PhoneOTPPage() {
             toast.dismiss();
             setLoginInitiated(false);
             isProcessingOtpLogin.current = false;
-            router.replace("/feed");
+            router.replace(callbackUrl);
           }, DEFAULT_REDIRECT_DELAY_MS);
         });
     }
@@ -225,6 +245,7 @@ export default function PhoneOTPPage() {
     preloadUserData,
     reset,
     router,
+    callbackUrl,
     t,
   ]);
 
@@ -321,9 +342,9 @@ export default function PhoneOTPPage() {
       </div>
 
       {/* Right Section: Image Poster */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary relative overflow-hidden tablet-md:hidden">
+      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-md:hidden">
         <Image
-          src={phoneOTPWhiteSvg}
+          src={phoneOTPSvg}
           alt="phone-otp"
           height={undefined}
           width={600}

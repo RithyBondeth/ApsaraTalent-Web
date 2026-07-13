@@ -18,25 +18,39 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { forgotPasswordSchema, TForgotPasswordForm } from "./validate";
-import { forgotPasswordWhiteSvg } from "@/utils/constants/asset.constant";
-import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
+import { makeForgotPasswordSchema, TForgotPasswordForm } from "./validate";
+import { forgotPasswordSvg } from "@/utils/constants/asset.constant";
+import {
+  DEFAULT_REDIRECT_DELAY_MS,
+  TOAST_DURATION_MS,
+} from "@/utils/constants/config.constant";
 
 export default function ForgotPasswordPage() {
   /* ---------------------------------- Utils -------------------------------- */
   const router = useRouter();
   const t = useTranslations("auth");
+  const tv = useTranslations("validation");
 
   /* ------------------------------- All States ------------------------------ */
   const [inputValue, setInputValue] = useState<string>("");
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
-  /* ----------------------------- API Integration ---------------------------- */
+  /* ----------------------------- API Integration --------------------------- */
   const { loading, error, message, forgotPassword } = useForgotPasswordStore();
 
-  /* ------------------ React Hook Form: Forgot Password Form ----------------- */
+  /* ------------------ React Hook Form: Forgot Password Form ---------------- */
+  // ── Define Schema For Forgot Password Form ────────────────────────
+  const forgotPasswordSchema = useMemo(
+    () =>
+      makeForgotPasswordSchema({
+        phoneOrEmailRequired: tv("phoneOrEmailRequired"),
+        phoneOrEmailInvalid: tv("phoneOrEmailInvalid"),
+      }),
+    [tv],
+  );
+
   const {
     handleSubmit,
     register,
@@ -72,15 +86,17 @@ export default function ForgotPasswordPage() {
 
     if (!loading && !error && message) {
       toast.dismiss();
-      toast.success(t("forgotPasswordEmailSent"), { duration: 1000 });
+      toast.success(t("forgotPasswordEmailSent"), {
+        duration: TOAST_DURATION_MS.SHORT,
+      });
       setTimeout(
-        () => router.push("/reset-password"),
+        () => router.replace("/reset-password"),
         DEFAULT_REDIRECT_DELAY_MS,
       );
     }
   }, [error, isSubmitted, loading, message, reset, router, t]);
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* -------------------------------- Render UI ------------------------------- */
   return (
     <div className="min-h-screen w-full flex tablet-md:flex-col">
       {/* Left Section */}
@@ -123,7 +139,7 @@ export default function ForgotPasswordPage() {
               validationMessage={errors.forgotPassword?.message}
             />
             <div className="flex items-center justify-stretch gap-3 [&>button]:w-1/2">
-              <Button type="button" onClick={() => router.back()}>
+              <Button type="button" onClick={() => router.replace("/login")}>
                 <LucideArrowLeft />
                 {t("back")}
               </Button>
@@ -134,13 +150,13 @@ export default function ForgotPasswordPage() {
       </div>
 
       {/* Right Section: Image Poster Section */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary relative overflow-hidden tablet-md:hidden">
+      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-md:hidden">
         {/* Decorative Circles Section */}
         <div className="absolute -top-20 -right-20 size-72 rounded-full bg-white/5" />
         <div className="absolute -bottom-32 -left-32 size-96 rounded-full bg-white/5" />
 
         <Image
-          src={forgotPasswordWhiteSvg}
+          src={forgotPasswordSvg}
           alt="forgot-password"
           height={undefined}
           width={600}

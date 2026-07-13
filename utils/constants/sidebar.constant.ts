@@ -9,6 +9,7 @@ import {
   SearchCheck,
 } from "lucide-react";
 
+/* --------------------------------- Sidebar -------------------------------- */
 export const sidebarList = [
   {
     title: "Feed",
@@ -67,4 +68,13 @@ export const sidebarList = [
     icon: BarChart3,
     badge: 0,
   },
+] as const;
+
+/* ------------------------- Mobile Navigation URLs ------------------------- */
+export const MOBILE_PRIMARY_URLS: string[] = [
+  "/feed",
+  "/matching",
+  "/message",
+  "/notification",
+  "/dashboard",
 ] as const;

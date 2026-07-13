@@ -1,4 +1,12 @@
-/* --------------------------------- Methods ---------------------------------- */
+/* --------------------------------- Method ---------------------------------- */
+/**
+ * Formats a date string into a readable format with ordinal suffix (e.g., "October 12th, 2023").
+ * Supports parsing standard ISO strings or "DD/MM/YYYY" format.
+ *
+ * @param dateString - Any valid date string or "DD/MM/YYYY" string
+ * @returns Formatted textual date representation
+ * @throws Error if the date format is invalid
+ */
 export function formatDisplayDate(dateString: string): string {
   if (!dateString || dateString.trim() === "") {
     return "Not specified";
@@ -76,5 +84,3 @@ export function formatDisplayDate(dateString: string): string {
   // Format the final string
   return `${monthName} ${dayWithSuffix}, ${date.getFullYear()}`;
 }
-
-export const dateFormatterv2 = formatDisplayDate;

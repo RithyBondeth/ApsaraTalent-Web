@@ -11,18 +11,21 @@ import {
 import { useRouter } from "next/navigation";
 import { ISearchEmployeeCardProps } from "./props";
 import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
+import { AVATAR_INITIALS_LENGTH } from "@/utils/constants/ui.constant";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useTranslations } from "next-intl";
+import { translateLocation } from "@/utils/functions/text";
 
 export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const t = useTranslations("searchCompany");
+  const tl = useTranslations("locations");
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
+    <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
       <div className="p-4 sm:p-5 flex flex-col gap-3.5">
         {/* Header Section: Avatar, Name, Job and Availability */}
         <div className="flex gap-4">
@@ -32,7 +35,7 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
           >
             <AvatarImage src={props.avatar} />
             <AvatarFallback className="text-xs font-semibold">
-              {props.username?.slice(0, 2)?.toUpperCase()}
+              {props.username?.slice(0, AVATAR_INITIALS_LENGTH)?.toUpperCase()}
             </AvatarFallback>
           </Avatar>
 
@@ -40,10 +43,10 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
                 <h3 className="text-base font-bold leading-tight truncate">
-                  {props.firstname} {props.lastname}
+                  {props.job}
                 </h3>
                 <TypographyP className="[&:not(:first-child)]:mt-0 text-sm text-primary font-medium mt-0.5">
-                  {props.job}
+                  {props.firstname} {props.lastname}
                 </TypographyP>
               </div>
               <span
@@ -61,7 +64,10 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
             icon={<LucideUser />}
             text={`${props.yearOfExperience} ${t("yrsExp")}`}
           />
-          <MetaChip icon={<LucideMapPin />} text={props.location} />
+          <MetaChip
+            icon={<LucideMapPin />}
+            text={translateLocation(props.location, tl)}
+          />
           <MetaChip icon={<LucideClock />} text={props.availability} />
           <MetaChip icon={<LucideGraduationCap />} text={props.education} />
         </div>

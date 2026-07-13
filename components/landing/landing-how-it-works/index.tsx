@@ -12,7 +12,7 @@ export function LandingHowItWorks() {
   const sectionRef = useGsapScrollAnimation<HTMLElement>();
   const t = useTranslations("landing");
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* -------------------------------- Render UI ------------------------------- */
   return (
     <section
       ref={sectionRef}

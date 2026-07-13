@@ -7,19 +7,17 @@ import { useVerifyEmailStore } from "@/stores/apis/auth/verify-email.store";
 import { LucideMail } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { emailVerificationSvg } from "@/utils/constants/asset.constant";
 import {
-  emailVerificationWhiteSvg,
-  emailVerificationBlackSvg,
-} from "@/utils/constants/asset.constant";
-import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
+  DEFAULT_REDIRECT_DELAY_MS,
+  TOAST_DURATION_MS,
+} from "@/utils/constants/config.constant";
 
 export default function EmailVerificationPage() {
   /* ---------------------------------- Utils -------------------------------- */
-  const { resolvedTheme } = useTheme();
   const params = useParams();
   const token = params?.id;
   const router = useRouter();
@@ -39,7 +37,7 @@ export default function EmailVerificationPage() {
   };
 
   /* -------------------------------- Effects -------------------------------- */
-  // ── Verify Email Effect ─────────────────────────────────────────
+  // ── Verify Email Effect ────────────────────────────────────────
   useEffect(() => {
     if (!isSubmitted) return;
 
@@ -52,17 +50,12 @@ export default function EmailVerificationPage() {
 
     if (!loading && !error && message) {
       toast.dismiss();
-      toast.success(t("emailVerifiedSuccess"), { duration: 1500 });
-      setTimeout(() => router.push("/login"), DEFAULT_REDIRECT_DELAY_MS);
+      toast.success(t("emailVerifiedSuccess"), {
+        duration: TOAST_DURATION_MS.MEDIUM,
+      });
+      setTimeout(() => router.replace("/login"), DEFAULT_REDIRECT_DELAY_MS);
     }
   }, [error, isSubmitted, loading, message, router, t]);
-
-  // ── Get Current Image Based on Theme ─────────────────────────────
-  const currentTheme = resolvedTheme || "light";
-  const emailVerificationImage =
-    currentTheme === "dark"
-      ? emailVerificationWhiteSvg
-      : emailVerificationBlackSvg;
 
   /* ------------------------------ Render UI ------------------------------ */
   return (
@@ -95,7 +88,7 @@ export default function EmailVerificationPage() {
           <Button
             variant="link"
             className="w-fit mx-auto"
-            onClick={() => router.back()}
+            onClick={() => router.replace("/login")}
           >
             {t("backToLogin")}
           </Button>
@@ -103,14 +96,14 @@ export default function EmailVerificationPage() {
       </div>
 
       {/* Right Section: Image Poster Section */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary relative overflow-hidden tablet-md:hidden">
+      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-md:hidden">
         {/* Decorative Circles Section */}
         <div className="absolute -top-20 -right-20 size-72 rounded-full bg-white/5" />
         <div className="absolute -bottom-32 -left-32 size-96 rounded-full bg-white/5" />
 
         <Image
-          src={emailVerificationImage}
-          alt="login"
+          src={emailVerificationSvg}
+          alt="email-verification"
           height={undefined}
           width={600}
         />

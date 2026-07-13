@@ -7,7 +7,9 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: lang === "km" ? "ស្វែងយល់ — Apsara Talent" : "Learn — Apsara Talent",
     description:
-      "Learn how to get the most out of Apsara Talent — guides, tutorials, and resources for job seekers and employers.",
+      lang === "km"
+        ? "រៀនពីរបៀបប្រើប្រាស់ Apsara Talent ឲ្យបានពេញលេញ — មគ្គុទ្ទេសក៍ វីដេអូណែនាំ និងធនធានសម្រាប់អ្នកស្វែងរកការងារ និងនិយោជក។"
+        : "Learn how to get the most out of Apsara Talent — guides, tutorials, and resources for job seekers and employers.",
   };
 }
 

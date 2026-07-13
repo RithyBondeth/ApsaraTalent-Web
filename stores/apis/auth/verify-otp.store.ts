@@ -1,8 +1,8 @@
-import { clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-manager";
+import { clearAuthCookies, setSessionRole } from "@/utils/auth/cookie-manager";
 import { API_AUTH_VERIFY_OTP_URL } from "@/utils/constants/apis/auth.api.constant";
 import { IUser } from "@/utils/interfaces/user/user.interface";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../users/get-current-user.store";
 import { IUserAuthResponse } from "@/utils/interfaces/auth/auth.interface";
@@ -11,8 +11,6 @@ import { IUserAuthResponse } from "@/utils/interfaces/auth/auth.interface";
 // ── Verify OTP API Response ─────────────────────────────────
 type TVerifyOTPResponse = {
   message: string | null;
-  accessToken: string | null;
-  refreshToken: string | null;
   user: IUserAuthResponse | null;
 };
 
@@ -36,8 +34,6 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
   loading: false,
   error: null,
   isAuthenticated: false,
-  accessToken: null,
-  refreshToken: null,
   role: null,
   user: null,
   message: null,
@@ -54,9 +50,7 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
       );
 
       const role = response.data.user.role;
-      const hasTokens =
-        !!response.data.accessToken && !!response.data.refreshToken;
-      const fullyAuthed = hasTokens && role !== "none";
+      const fullyAuthed = role !== "none";
 
       set({
         loading: false,
@@ -66,13 +60,8 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
         error: null,
       });
 
-      // Use centralized cookie management
       if (fullyAuthed) {
-        setAuthCookies(
-          response.data.accessToken!,
-          response.data.refreshToken!,
-          rememberMe,
-        );
+        setSessionRole(role, rememberMe);
       } else {
         clearAuthCookies();
       }
@@ -104,8 +93,6 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
         loading: false,
         error: null,
         isAuthenticated: false,
-        accessToken: null,
-        refreshToken: null,
         message: null,
       });
     } catch (error) {
@@ -115,8 +102,6 @@ export const useVerifyOTPStore = create<TVerifyOTPStoreState>((set) => ({
         loading: false,
         error: null,
         isAuthenticated: false,
-        accessToken: null,
-        refreshToken: null,
         message: null,
       });
     }

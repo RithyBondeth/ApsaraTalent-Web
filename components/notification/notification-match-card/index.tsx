@@ -2,102 +2,117 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { TypographyLead } from "@/components/utils/typography/typography-lead";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { timeAgo } from "@/utils/functions/date";
-import { LucideHeartHandshake, LucideX } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { LucideHeartHandshake } from "lucide-react";
 import { INotificationMatchCardProps } from "./props";
 import { useTranslations } from "next-intl";
+import NotificationBaseCard from "../notification-base-card";
+import { useRouter } from "next/navigation";
+import { getNameInitials } from "@/utils/functions/text";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 export default function NotificationMatchCard(
   props: INotificationMatchCardProps,
 ) {
   /* ---------------------------------- Utils --------------------------------- */
-  const router = useRouter();
   const t = useTranslations("notification");
+  const router = useRouter();
 
   /* --------------------------------- Methods --------------------------------- */
-  // ── Handle View Profile ─────────────────────────────────────────
-  const handleViewProfile = () => {
+  // ─── Handle Navigate to Matching ─────────────────────────────────
+  const handleNavigate = () => {
     if (props.onMarkRead && !props.seen) props.onMarkRead(props.id);
-    router.push(`/feed/${props.role}/${props.user.id}`);
+    router.push("/matching");
+  };
+
+  // ─── Handle View Profile ─────────────────────────────────────────
+  const handleViewProfile = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (props.onMarkRead && !props.seen) props.onMarkRead(props.id);
+    if (props.role === USER_ROLE.EMPLOYEE) {
+      router.push(`/feed/company/${props.user.id}`);
+    } else {
+      router.push(`/feed/employee/${props.user.id}`);
+    }
   };
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="group/card relative w-full flex items-start gap-3 rounded-lg p-3 shadow-md sm:gap-5 sm:p-5">
-      {/* Delete Button Section */}
-      {props.onDelete && (
-        <button
-          onClick={() => props.onDelete!(props.id)}
-          className="absolute right-2 top-2 rounded-full p-1 text-muted-foreground opacity-0 transition-opacity hover:bg-destructive/10 hover:text-destructive group-hover/card:opacity-100"
-        >
-          <LucideX className="size-4" />
-        </button>
-      )}
-
-      {/* Matched Icon Section */}
-      <div className="rounded-md bg-blue-100 p-2.5 text-blue-500 sm:p-3">
-        <LucideHeartHandshake className="size-6 sm:size-8" strokeWidth={1.5} />
-      </div>
-
+    <NotificationBaseCard
+      id={props.id}
+      seen={props.seen}
+      timestamp={props.timestamp}
+      title={t("newMatch")}
+      description={
+        props.role === USER_ROLE.EMPLOYEE
+          ? t("matchedWithEmployee", {
+              name: props.user.name,
+              position: props.user.position ?? "",
+            })
+          : t("matchedWithCompany", {
+              name: props.user.name,
+              industry: props.user.industry ?? "",
+            })
+      }
+      icon={<LucideHeartHandshake strokeWidth={1.5} className="size-full" />}
+      iconBgColor="bg-blue-100 dark:bg-blue-900/30"
+      iconColor="text-blue-500"
+      unreadColor="bg-blue-500"
+      onDelete={props.onDelete}
+      onClick={handleNavigate}
+    >
       {/* Content Section */}
-      <div className="w-full flex flex-col items-start gap-2">
-        <div className="w-full flex items-center justify-between phone-xl:flex-col phone-xl:items-start">
-          <TypographyLead className="text-md font-semibold text-primary">
-            {t("newMatch")}
-          </TypographyLead>
-          <div className="flex items-center gap-1">
-            <TypographySmall className="text-muted-foreground phone-xl:text-xs">
-              {timeAgo(props.timestamp)}
-            </TypographySmall>
-            {!props.seen && <div className="size-2 rounded-full bg-blue-500" />}
+      <div className="w-full flex items-center justify-between gap-2 tablet-sm:flex-col tablet-sm:items-start tablet-sm:gap-3">
+        {/* User Info Section */}
+        <div className="flex items-center gap-3 min-w-0">
+          {/* Avatar and Name Section */}
+          <div className="flex items-center gap-2 min-w-0">
+            <Avatar rounded="md" className="bg-secondary size-8 shrink-0">
+              <AvatarFallback className="text-sm">
+                {getNameInitials(props.user.name)}
+              </AvatarFallback>
+              <AvatarImage src={props.user.avatar} />
+            </Avatar>
+            <div className="flex flex-col min-w-0">
+              <TypographySmall className="font-bold text-foreground line-clamp-1">
+                {props.user.name}
+              </TypographySmall>
+              {(props.user.position || props.user.industry) && (
+                <TypographySmall className="text-[10px] text-muted-foreground line-clamp-1">
+                  {props.role === USER_ROLE.EMPLOYEE
+                    ? props.user.industry
+                    : props.user.position}
+                </TypographySmall>
+              )}
+            </div>
+          </div>
+
+          {/* Match Badge Section */}
+          <div className="shrink-0 px-3 py-1 rounded-xl text-[10px] font-bold uppercase tracking-wider text-blue-500 bg-blue-100 dark:bg-blue-900/30">
+            {t("matchBadge")}
           </div>
         </div>
 
-        {/* Description Section */}
-        <TypographyMuted>
-          {props.role === "employee"
-            ? t("matchedWithEmployee", {
-                name: props.user.name,
-                position: props.user.position ?? "",
-              })
-            : t("matchedWithCompany", {
-                name: props.user.name,
-                industry: props.user.industry ?? "",
-              })}
-        </TypographyMuted>
-
-        {/* Action Section */}
-        <div className="w-full flex items-center justify-between gap-2 tablet-sm:mt-1 tablet-sm:justify-end">
-          <div className="flex items-center gap-3 tablet-sm:hidden">
-            <div className="flex items-center gap-2">
-              <Avatar rounded="md" className="bg-secondary size-8">
-                <AvatarFallback className="text-sm">
-                  {props.user.name.slice(0, 2).toUpperCase()}
-                </AvatarFallback>
-                <AvatarImage src={props.user.avatar} />
-              </Avatar>
-              <TypographySmall>{props.user.name}</TypographySmall>
-            </div>
-
-            {/* Match Badge Section */}
-            <div className="px-3 py-1 rounded-xl text-xs font-medium text-blue-500 bg-blue-100">
-              {t("matchBadge")}
-            </div>
-          </div>
-
-          {/* View Profile Button Section */}
+        {/* Button Section */}
+        <div className="flex items-center gap-2 tablet-sm:w-full">
           <Button
-            className="h-8 text-xs tablet-sm:h-9 tablet-sm:w-full tablet-sm:text-xs"
+            variant="outline"
+            className="h-8 text-xs tablet-sm:h-9 tablet-sm:flex-1 tablet-sm:text-xs"
             onClick={handleViewProfile}
           >
             {t("viewProfile")}
           </Button>
+          <Button
+            className="h-8 text-xs tablet-sm:h-9 tablet-sm:flex-1 tablet-sm:text-xs"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleNavigate();
+            }}
+          >
+            {t("viewMatching")}
+          </Button>
         </div>
       </div>
-    </div>
+    </NotificationBaseCard>
   );
 }

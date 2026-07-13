@@ -16,12 +16,12 @@ import { useTranslations } from "next-intl";
 import { useGetOneEmployeeStore } from "@/stores/apis/employee/get-one-emp.store";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
 import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
-import { useGetAllCompanyFavoritesStore } from "@/stores/apis/favorite/get-all-company-favorites.store";
 import { useCompanyLikeStore } from "@/stores/apis/matching/company-like.store";
-import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type";
+import { translateLocation } from "@/utils/functions/text";
+import { AVATAR_INITIALS_LENGTH } from "@/utils/constants/ui.constant";
 import { formatShortDate } from "@/utils/functions/date";
 import { extractCleanFilename } from "@/utils/functions/file";
 import {
@@ -55,11 +55,17 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { EmployeeDetailPageLoadingSkeleton } from "@/components/employee/skeleton";
-import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
+import {
+  DEFAULT_REDIRECT_DELAY_MS,
+  LIKE_DEBOUNCE_MS,
+} from "@/utils/constants/config.constant";
+import { useFeedActionEffect } from "@/components/utils/effects/feed-action-effect";
 import MetaChip from "@/components/utils/data-display/meta-chip";
 import { DetailCard } from "@/components/utils/data-display/detail-card";
 import { SectionTitle } from "@/components/utils/layout/section-title";
 import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
+import UserModerationMenu from "@/components/moderation/user-moderation-menu";
+import { API_GET_EMP_DOCUMENT_URL } from "@/utils/constants/apis/user-api/employee.api.constant";
 
 export default function EmployeeDetailPage() {
   /* ---------------------------------- Utils ---------------------------------- */
@@ -67,6 +73,8 @@ export default function EmployeeDetailPage() {
   const params = useParams<{ employeeId: string }>();
   const id = params.employeeId;
   const t = useTranslations("toast");
+  const tf = useTranslations("feed");
+  const tl = useTranslations("locations");
 
   /* -------------------------------- All States ------------------------------- */
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
@@ -74,15 +82,13 @@ export default function EmployeeDetailPage() {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [openProfilePopup, setOpenProfilePopup] = useState<boolean>(false);
   const ignoreNextClick = useRef<boolean>(false);
+  const { trigger: triggerEffect, effectPortal } = useFeedActionEffect();
 
   /* ------------------------------ API Integration ---------------------------- */
   const currentUser = useGetCurrentUserStore((state) => state.user);
   const { loading, employeeData, queryOneEmployee } = useGetOneEmployeeStore();
   const companyLikeStore = useCompanyLikeStore();
-  const queryCurrentCompanyLiked = useGetCurrentCompanyLikedStore();
   const companyFavEmployeeStore = useCompanyFavEmployeeStore();
-  const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
-  const countCurrentCompanyMatching = useCountCurrentCompanyMatchingStore();
   const countAllCompanyFavoritesStore = useCountCurrentCompanyFavoritesStore();
   const currentCompanyId = currentUser?.company?.id;
 
@@ -129,18 +135,21 @@ export default function EmployeeDetailPage() {
   useEffect(() => {
     if (openProfilePopup) {
       ignoreNextClick.current = true;
-      setTimeout(() => (ignoreNextClick.current = false), 200);
+      setTimeout(() => (ignoreNextClick.current = false), LIKE_DEBOUNCE_MS);
     }
   }, [openProfilePopup]);
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Handle Company Like Employee ─────────────────────────────────────────
-  const handleLike = async () => {
+  const handleLike = async (e: React.MouseEvent) => {
     if (currentUser?.company) {
       const companyId = currentUser.company.id;
       const employeeId = employeeData?.id;
       if (!companyId || !employeeId) return;
+      // Snapshot before the API call — backend auto-removes from favorites on like
+      const wasFavorited = companyFavEmployeeStore.isFavorite(employeeId);
       try {
+        triggerEffect("like", e);
         toast.dismiss();
         await companyLikeStore.companyLike(companyId, employeeId);
         const data = useCompanyLikeStore.getState().data;
@@ -152,27 +161,32 @@ export default function EmployeeDetailPage() {
             toast.success(t("itsAMatch"), {
               description: t("yourCompanyLikedEachOther", { name }),
             });
-            countCurrentCompanyMatching.countCurrentCmpMatching(companyId);
-            setTimeout(
-              () => router.push("/matching"),
-              DEFAULT_REDIRECT_DELAY_MS,
-            );
+            // Matching badge increment handled by socket "newNotification" type=match
+            setTimeout(() => router.push("/feed"), DEFAULT_REDIRECT_DELAY_MS);
           } else {
-            toast.success(t("youLiked", { name }));
+            toast.success(t("youLiked", { name }), {
+              description: tf("likedSuccessDescription"),
+            });
             setTimeout(() => router.push("/feed"), DEFAULT_REDIRECT_DELAY_MS);
           }
         }
       } catch {
         toast.error(companyLikeStore.error || t("failedToLikeEmployee"));
       } finally {
-        queryCurrentCompanyLiked.queryCurrentCompanyLiked(companyId);
-        countAllCompanyFavoritesStore.countCurrentCmpFavorites(companyId);
+        // Optimistically add to liked list (avoids a full re-fetch)
+        if (employeeData) {
+          useGetCurrentCompanyLikedStore
+            .getState()
+            .optimisticAddLiked(employeeData);
+        }
+        // Sync favorite badge locally — no network call needed
+        if (wasFavorited) countAllCompanyFavoritesStore.decrementCount();
       }
     }
   };
 
   // ── Handle Add Employee To Favorite ─────────────────────────────────────
-  const handleAddToFavorite = async () => {
+  const handleAddToFavorite = async (e: React.MouseEvent) => {
     if (currentUser?.company) {
       const companyId = currentUser.company.id;
       const employeeId = employeeData?.id;
@@ -181,13 +195,17 @@ export default function EmployeeDetailPage() {
         `${employeeData?.firstname} ${employeeData?.lastname}`;
       if (!companyId || !employeeId) return;
       try {
+        triggerEffect("save", e);
         await companyFavEmployeeStore.addEmployeeToFavorite(
           companyId,
           employeeId,
         );
-        countAllCompanyFavoritesStore.countCurrentCmpFavorites(companyId);
+        // Increment badge locally — avoids a count re-fetch and the race
+        // condition where a stale in-flight response overwrites the new value
+        countAllCompanyFavoritesStore.incrementCount();
         toast.success(t("addedToFavorites", { name }));
-        getAllCompanyFavoritesStore.queryAllCompanyFavorites(companyId);
+        // No need to refetch the full favorites list from the detail page;
+        // the favorite page fetches fresh data on its own mount.
       } catch {
         toast.error(
           companyFavEmployeeStore.cmpFavError || t("failedToSaveFavorite"),
@@ -207,14 +225,21 @@ export default function EmployeeDetailPage() {
   };
 
   // ── Handle Download File ──────────────────────────────────────────────
-  const handleDownloadFile = (url: string, filename: string) => {
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", filename);
-    link.setAttribute("target", "_blank");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleDownloadFile = async (url: string, filename: string) => {
+    try {
+      const response = await fetch(url, { credentials: "include" });
+      if (!response.ok) throw new Error("Document download failed");
+      const objectUrl = URL.createObjectURL(await response.blob());
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(objectUrl);
+    } catch {
+      toast.error(t("downloadFailed"));
+    }
   };
 
   /* ------------------------------- Loading State ------------------------------- */
@@ -236,7 +261,7 @@ export default function EmployeeDetailPage() {
             variant="destructive"
             onClick={() => window.location.reload()}
           >
-            Retry
+            {tf("retry")}
           </Button>
         </div>
       </div>
@@ -247,9 +272,9 @@ export default function EmployeeDetailPage() {
     return (
       <div className="flex h-[60vh] items-center justify-center animate-page-in">
         <div className="flex flex-col items-center gap-3">
-          <p className="font-medium">Employee not found</p>
+          <p className="font-medium">{tf("employeeNotFound")}</p>
           <Link href="/feed">
-            <Button variant="outline">Back to Feed</Button>
+            <Button variant="outline">{tf("backToFeed")}</Button>
           </Link>
         </div>
       </div>
@@ -267,21 +292,28 @@ export default function EmployeeDetailPage() {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="flex flex-col gap-5 animate-page-in tablet-sm:pb-24">
+      {/* Feed Action Effect Portal Section */}
+      {effectPortal}
+
       {/* Back Navigation Header Section */}
       <header className="sticky top-0 z-10 border-b border-border/60 bg-background/95 backdrop-blur-sm -mx-4 sm:-mx-6 px-4 sm:px-6">
-        <div className="flex items-center gap-4 py-3">
+        <div className="flex items-center gap-4 py-3 min-w-0">
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors shrink-0"
           >
             <LucideArrowLeft className="size-4" />
-            Back
+            {tf("back")}
           </button>
-          <span className="text-border">|</span>
-          <span className="text-sm font-semibold truncate">
-            {fullName || "Employee Detail"}
+          <span className="text-border shrink-0">|</span>
+          <span className="text-sm font-semibold truncate flex-1 min-w-0">
+            {fullName || tf("employeeDetail")}
           </span>
+          <UserModerationMenu
+            targetId={employeeData.id}
+            targetName={fullName || tf("employeeDetail")}
+          />
         </div>
       </header>
 
@@ -308,7 +340,7 @@ export default function EmployeeDetailPage() {
               <AvatarImage src={employeeData.avatar ?? ""} />
               <AvatarFallback className="uppercase font-bold text-xl">
                 {employeeData.username ? (
-                  employeeData.username.slice(0, 2)
+                  employeeData.username.slice(0, AVATAR_INITIALS_LENGTH)
                 ) : (
                   <User />
                 )}
@@ -336,7 +368,13 @@ export default function EmployeeDetailPage() {
                 {employeeData.gender && (
                   <MetaChip
                     icon={<LucideTransgender />}
-                    text={employeeData.gender}
+                    text={
+                      employeeData.gender.toLowerCase() === "male"
+                        ? tf("genderMale")
+                        : employeeData.gender.toLowerCase() === "female"
+                          ? tf("genderFemale")
+                          : tf("genderOther")
+                    }
                   />
                 )}
                 {employeeData.yearsOfExperience && (
@@ -348,7 +386,7 @@ export default function EmployeeDetailPage() {
                 {employeeData.location && (
                   <MetaChip
                     icon={<LucideMapPinned />}
-                    text={employeeData.location}
+                    text={translateLocation(employeeData.location, tl)}
                   />
                 )}
                 {employeeData.username && (
@@ -369,11 +407,11 @@ export default function EmployeeDetailPage() {
                   onClick={handleAddToFavorite}
                   disabled={favDisabled}
                 >
-                  <LucideBookmark className="size-4" /> Save
+                  <LucideBookmark className="size-4" /> {tf("save")}
                 </Button>
               )}
               <Button size="sm" onClick={handleLike} disabled={likeDisabled}>
-                <LucideHeartHandshake className="size-4" /> Like
+                <LucideHeartHandshake className="size-4" /> {tf("like")}
               </Button>
             </div>
           </div>
@@ -387,7 +425,7 @@ export default function EmployeeDetailPage() {
           {/* About Section */}
           {employeeData.description && (
             <DetailCard className="p-5 sm:p-6">
-              <SectionTitle icon={<LucideUser />} title="About" />
+              <SectionTitle icon={<LucideUser />} title={tf("dialogAbout")} />
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {employeeData.description}
               </p>
@@ -397,7 +435,7 @@ export default function EmployeeDetailPage() {
           {/* Skills Section */}
           {employeeData.skills && employeeData.skills.length > 0 && (
             <DetailCard className="p-5 sm:p-6">
-              <SectionTitle icon={<LucideZap />} title="Skills" />
+              <SectionTitle icon={<LucideZap />} title={tf("dialogSkills")} />
               <div className="flex flex-wrap gap-2">
                 {employeeData.skills.map((item: ISkill) => (
                   <HoverCard key={item.id}>
@@ -423,7 +461,7 @@ export default function EmployeeDetailPage() {
             <DetailCard className="p-5 sm:p-6">
               <SectionTitle
                 icon={<LucideBriefcaseBusiness />}
-                title="Experience"
+                title={tf("experience")}
               />
               <div className="flex flex-col gap-3">
                 {employeeData.experiences.map(
@@ -463,7 +501,10 @@ export default function EmployeeDetailPage() {
           {/* Education Section */}
           {employeeData.educations && employeeData.educations.length > 0 && (
             <DetailCard className="p-5 sm:p-6">
-              <SectionTitle icon={<LucideGraduationCap />} title="Education" />
+              <SectionTitle
+                icon={<LucideGraduationCap />}
+                title={tf("dialogEducation")}
+              />
               <div className="flex flex-col gap-3">
                 {employeeData.educations.map((item: IEducation) => (
                   <div
@@ -500,14 +541,24 @@ export default function EmployeeDetailPage() {
           {/* Documents Section */}
           {(employeeData.resume || employeeData.coverLetter) && (
             <DetailCard className="p-5">
-              <SectionTitle icon={<LucideFileText />} title="Documents" />
+              <SectionTitle icon={<LucideFileText />} title={tf("documents")} />
               <div className="flex flex-col gap-2.5">
                 {[
-                  { file: employeeData.resume, suffix: "resume" },
-                  { file: employeeData.coverLetter, suffix: "coverletter" },
+                  {
+                    file: employeeData.resume,
+                    suffix: "resume",
+                    type: "resume" as const,
+                  },
+                  {
+                    file: employeeData.coverLetter,
+                    suffix: "coverletter",
+                    type: "cover-letter" as const,
+                  },
                 ]
                   .filter((d) => d.file)
-                  .map(({ file, suffix }) => (
+                  .map(({ file, suffix, type }) => {
+                    const documentUrl = API_GET_EMP_DOCUMENT_URL(id, type);
+                    return (
                     <div
                       key={suffix}
                       className="flex items-center justify-between gap-2 px-3 py-2.5 bg-muted/50 rounded-xl border border-border/40"
@@ -522,10 +573,11 @@ export default function EmployeeDetailPage() {
                         </span>
                       </div>
                       <div className="flex gap-0.5 flex-shrink-0">
-                        <Link href={file!} target="_blank">
+                        <Link href={documentUrl} target="_blank">
                           <Button
                             variant="ghost"
                             size="icon"
+                            aria-label="View document"
                             className="size-8"
                           >
                             <LucideEye className="size-3.5" />
@@ -534,10 +586,11 @@ export default function EmployeeDetailPage() {
                         <Button
                           variant="ghost"
                           size="icon"
+                          aria-label="Download document"
                           className="size-8"
                           onClick={() =>
                             handleDownloadFile(
-                              file!,
+                              documentUrl,
                               `${employeeData.username || "user"}-${suffix}`,
                             )
                           }
@@ -546,30 +599,31 @@ export default function EmployeeDetailPage() {
                         </Button>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
               </div>
             </DetailCard>
           )}
 
           {/* Contact Section */}
           <DetailCard className="p-5">
-            <SectionTitle icon={<LucidePhone />} title="Contact" />
+            <SectionTitle icon={<LucidePhone />} title={tf("contact")} />
             <div className="space-y-3.5">
               {[
                 {
                   icon: <LucidePhone />,
-                  label: "Phone",
+                  label: tf("phone"),
                   val: employeeData.phone,
                 },
                 {
                   icon: <LucideMail />,
-                  label: "Email",
+                  label: tf("email"),
                   val: employeeData.email,
                 },
                 {
                   icon: <LucideMapPinned />,
-                  label: "Address",
-                  val: employeeData.location,
+                  label: tf("address"),
+                  val: translateLocation(employeeData.location, tl),
                 },
               ]
                 .filter((r) => r.val)
@@ -592,7 +646,7 @@ export default function EmployeeDetailPage() {
           {/* Socials Section */}
           {employeeData.socials && employeeData.socials.length > 0 && (
             <DetailCard className="p-5">
-              <SectionTitle icon={<LucideGlobe />} title="Social Links" />
+              <SectionTitle icon={<LucideGlobe />} title={tf("socialLinks")} />
               <div className="flex flex-wrap gap-2">
                 {employeeData.socials.map((item: ISocialLink) => (
                   <Link
@@ -620,11 +674,11 @@ export default function EmployeeDetailPage() {
             onClick={handleAddToFavorite}
             disabled={favDisabled}
           >
-            <LucideBookmark /> Save
+            <LucideBookmark /> {tf("save")}
           </Button>
         )}
         <Button onClick={handleLike} disabled={likeDisabled}>
-          <LucideHeartHandshake /> Like
+          <LucideHeartHandshake /> {tf("like")}
         </Button>
       </div>
 

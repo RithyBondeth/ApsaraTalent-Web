@@ -12,7 +12,7 @@ export default function LandingFeatures() {
   const sectionRef = useGsapScrollAnimation<HTMLElement>();
   const t = useTranslations("landing");
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* -------------------------------- Render UI ------------------------------- */
   return (
     <section ref={sectionRef} className="relative py-16 sm:py-24 md:py-32">
       {/* Dotted Background Section */}

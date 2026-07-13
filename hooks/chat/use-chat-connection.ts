@@ -4,18 +4,17 @@ import { useChatStore } from "@/stores/features/chat/chat.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useEffect } from "react";
 
-/* ----------------------------------- Hook ----------------------------------- */
+/* --------------------------------- Usage --------------------------------- */
 /**
- * Establishes (and tears down) the global chat socket connection.
+ * Initialises the real-time chat socket for the current user.
  *
- * Mount this once at the layout level so real-time message events —
- * new messages, unread badge updates, read receipts — work on every page,
- * not just when the user is on /message.
- *
- * Safe to call multiple times: the socket singleton in chat.store.ts
- * deduplicates connections, so mounting this in both the layout AND
- * message/page.tsx causes no double-connect.
+ * Usage:
+ *   // Mount once in the authenticated layout so the socket stays alive
+ *   // on every page, not just /message.
+ *   useChatConnection();
  */
+
+/* ----------------------------------- Hook ----------------------------------- */
 export function useChatConnection() {
   /* -------------------------------- All States -------------------------------- */
   const user = useGetCurrentUserStore((s) => s.user);

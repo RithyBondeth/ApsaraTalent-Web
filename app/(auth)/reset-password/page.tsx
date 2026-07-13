@@ -16,18 +16,21 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { resetPasswordSchema, TResetPasswordForm } from "./validate";
-import { resetPasswordWhiteSvg } from "@/utils/constants/asset.constant";
-import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
+import { makeResetPasswordSchema, TResetPasswordForm } from "./validate";
+import { resetPasswordSvg } from "@/utils/constants/asset.constant";
+import {
+  DEFAULT_REDIRECT_DELAY_MS,
+  TOAST_DURATION_MS,
+} from "@/utils/constants/config.constant";
 
 export default function ResetPasswordPage() {
-  /* ---------------------------------- Utils --------------------------------- */
+  /* ---------------------------------- Utils -------------------------------- */
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations("auth");
-
+  const tv = useTranslations("validation");
   /* ── Auto-read token from URL: /reset-password?token=xxx ── */
   const tokenFromUrl = searchParams.get("token") ?? "";
 
@@ -40,7 +43,21 @@ export default function ResetPasswordPage() {
   /* ----------------------------- API Integration ----------------------------- */
   const { loading, error, message, resetPassword } = useResetPasswordStore();
 
-  /* ------------------- React Hook Form: Reset Password Form ------------------- */
+  /* ------------------- React Hook Form: Reset Password Form ------------------ */
+  // ── Initialize Reset Password Form with Default Values ──────────────────
+  const resetPasswordSchema = useMemo(
+    () =>
+      makeResetPasswordSchema({
+        passwordRequired: tv("passwordRequired"),
+        passwordMinLength: tv("passwordMinLength"),
+        passwordNeedsNumber: tv("passwordNeedsNumber"),
+        passwordNeedsSpecial: tv("passwordNeedsSpecial"),
+        confirmPasswordRequired: tv("confirmPasswordRequired"),
+        passwordsMismatch: tv("passwordsMismatch"),
+      }),
+    [tv],
+  );
+
   const {
     handleSubmit,
     register,
@@ -53,17 +70,19 @@ export default function ResetPasswordPage() {
   });
 
   /* --------------------------------- Methods ---------------------------------- */
+  // ── Reset Password Function ──────────────────────────────────────────────
   const onSubmit = async (data: TResetPasswordForm) => {
     setIsSubmitted(true);
-    await resetPassword(data.token, data.password, data.confirmPassword);
+    await resetPassword(data.token ?? "", data.password, data.confirmPassword);
   };
 
   /* --------------------------------- Effects ---------------------------------- */
-  /* ── Pre-fill token whenever URL param is available ── */
+  // ── Pre-fill Token Whenever URL Param is Available Effect ────────────────
   useEffect(() => {
     if (tokenFromUrl) setValue("token", tokenFromUrl);
   }, [tokenFromUrl, setValue]);
 
+  // ── Reset Password Effect ────────────────────────────────────────────────
   useEffect(() => {
     if (!isSubmitted) return;
 
@@ -78,12 +97,14 @@ export default function ResetPasswordPage() {
 
     if (!loading && !error && message) {
       toast.dismiss();
-      toast.success(t("resetPasswordSuccess"), { duration: 1500 });
-      setTimeout(() => router.push("/login"), DEFAULT_REDIRECT_DELAY_MS);
+      toast.success(t("resetPasswordSuccess"), {
+        duration: TOAST_DURATION_MS.MEDIUM,
+      });
+      setTimeout(() => router.replace("/login"), DEFAULT_REDIRECT_DELAY_MS);
     }
   }, [error, isSubmitted, loading, message, reset, router, t]);
 
-  /* --------------------------------------------- Render UI ------------------------------------------- */
+  /* -------------------------------- Render UI --------------------------------- */
   return (
     <div className="min-h-screen w-full flex tablet-md:flex-col">
       {/* Left Section */}
@@ -162,7 +183,7 @@ export default function ResetPasswordPage() {
           {/* Navigate Back Button Section */}
           <div className="w-full flex justify-center">
             <button
-              onClick={() => router.back()}
+              onClick={() => router.replace("/login")}
               className="underline text-sm text-primary hover:text-primary/80 transition-colors text-center"
             >
               {`\u2190 ${t("backToLogin")}`}
@@ -172,13 +193,13 @@ export default function ResetPasswordPage() {
       </div>
 
       {/* Right Section: Image Poster */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary relative overflow-hidden tablet-md:hidden">
+      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-md:hidden">
         {/* Decorative Circles Section */}
         <div className="absolute -top-20 -right-20 size-72 rounded-full bg-white/5" />
         <div className="absolute -bottom-32 -left-32 size-96 rounded-full bg-white/5" />
 
         <Image
-          src={resetPasswordWhiteSvg}
+          src={resetPasswordSvg}
           alt="reset-password"
           height={undefined}
           width={600}

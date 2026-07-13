@@ -18,6 +18,7 @@ import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useLoginStore } from "@/stores/apis/auth/login.store";
+import { useTwoFactorStore } from "@/stores/apis/auth/two-factor.store";
 import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
 import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
@@ -33,43 +34,51 @@ import { useGetEmployeeRecommendationsStore } from "@/stores/apis/recommendation
 import { useGetCompanyRecommendationsStore } from "@/stores/apis/recommendation/get-company-recommendations.store";
 import { getRememberPreference } from "@/utils/auth/cookie-manager";
 import {
-  FacebookIcon as facebookIcon,
-  GithubIcon as githubIcon,
-  GoogleIcon as googleIcon,
-  LinkedInIcon as linkedinIcon,
+  facebookIcon,
+  githubIcon,
+  googleIcon,
+  linkedInIcon as linkedinIcon,
 } from "@/utils/constants/asset.constant";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  LucideAlertCircle,
   LucideEye,
   LucideEyeClosed,
   LucideLockKeyhole,
   LucideMail,
   LucidePhone,
+  LucideShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { loginSchema, TLoginForm } from "./validation";
-import { loginBlackSvg, loginWhiteSvg } from "@/utils/constants/asset.constant";
-import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
+import { makeLoginSchema, TLoginForm } from "./validation";
+import { loginSvg } from "@/utils/constants/asset.constant";
+import {
+  DEFAULT_REDIRECT_DELAY_MS,
+  TOAST_DURATION_MS,
+} from "@/utils/constants/config.constant";
+import { USER_ROLE, OTP_LENGTH } from "@/utils/constants/auth.constant";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 
 function LoginPage() {
   /* ------------------------------------ Utils -------------------------------- */
   const router = useRouter();
-  const { resolvedTheme } = useTheme();
+  const searchParams = useSearchParams();
   const t = useTranslations("auth");
+  const tv = useTranslations("validation");
 
   /* -------------------------------- All States ------------------------------- */
-  const [mounted, setMounted] = useState<boolean>(false);
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [openRmbDialog, setOpenRmbDialog] = useState<boolean>(false);
-
-  // Login Helpers
   const [socialTypeIdentifier, setSocialTypeIdentifier] = useState<
     string | null
   >(null);
@@ -79,27 +88,32 @@ function LoginPage() {
   const isProcessingRegularLogin = useRef<boolean>(false);
   const [loginInitiated, setLoginInitiated] = useState<boolean>(false);
   const [isPreloadingData, setIsPreloadingData] = useState<boolean>(false);
+  const [twoFactorOtp, setTwoFactorOtp] = useState<string>("");
+  const [twoFactorInitiated, setTwoFactorInitiated] = useState<boolean>(false);
 
   /* ----------------------------- API Integration ----------------------------- */
   // Current User, Get All Employees and Companies
   const { getCurrentUser } = useGetCurrentUserStore();
   const { queryCompany } = useGetAllCompanyStore();
   const { queryEmployee } = useGetAllEmployeeStore();
-  // User Liked Store
+
+  // User Liked
   const queryCurrentEmployeeLiked = useGetCurrentEmployeeLikedStore(
     (s) => s.queryCurrentEmployeeLiked,
   ); // Companies liked by current employee
   const queryCurrentCompanyLiked = useGetCurrentCompanyLikedStore(
     (s) => s.queryCurrentCompanyLiked,
   ); // Employees liked by current company
-  // User Favorited Store
+
+  // User Favorited
   const queryAllEmployeeFavorites = useGetAllEmployeeFavoritesStore(
     (s) => s.queryAllEmployeeFavorites,
   ); // Companies favorited by current employee
   const queryAllCompanyFavorites = useGetAllCompanyFavoritesStore(
     (s) => s.queryAllCompanyFavorites,
   ); // Employees favorited by current company
-  // Recommendations Store
+
+  // Recommendations
   const queryEmployeeRecommendations = useGetEmployeeRecommendationsStore(
     (s) => s.queryEmployeeRecommendations,
   );
@@ -107,16 +121,42 @@ function LoginPage() {
     (s) => s.queryCompanyRecommendations,
   );
 
-  // Regular Email-Password Authentication Store
-  const { isAuthenticated, login, error, loading } = useLoginStore();
+  // Regular Email-Password Authentication
+  const {
+    isAuthenticated,
+    login,
+    error,
+    loading,
+    requiresTwoFactor,
+    pendingUserId,
+    pendingRememberMe,
+    clearTwoFactorPending,
+  } = useLoginStore();
 
-  // Social Authentication Stores
+  // Two-Factor Authentication
+  const twoFactorStore = useTwoFactorStore();
+
+  // Social Authentication
   const googleLoginStore = useGoogleLoginStore();
   const linkedInLoginStore = useLinkedInLoginStore();
   const githubLoginStore = useGithubLoginStore();
   const facebookLoginStore = useFacebookLoginStore();
 
   /* ----------------------- React Hook Form: Login Form ----------------------- */
+  // ── Define Schema For Login Form ──────────────────────────
+  const loginSchema = useMemo(
+    () =>
+      makeLoginSchema({
+        emailRequired: tv("emailRequired"),
+        emailInvalid: tv("emailInvalid"),
+        passwordRequired: tv("passwordRequired"),
+        passwordMinLength: tv("passwordMinLength"),
+        passwordNeedsNumber: tv("passwordNeedsNumber"),
+        passwordNeedsSpecial: tv("passwordNeedsSpecial"),
+      }),
+    [tv],
+  );
+
   const {
     handleSubmit,
     register,
@@ -132,7 +172,22 @@ function LoginPage() {
   });
 
   /* --------------------------------- Methods --------------------------------- */
-  // ── Preload User Data ────────────────────────────────────────
+  // ── Callback URL Function ────────────────────────────────────
+  const callbackUrl = useMemo(() => {
+    const value = searchParams.get("callbackUrl");
+    if (!value || !value.startsWith("/") || value.startsWith("//")) {
+      return "/feed";
+    }
+    return value;
+  }, [searchParams]);
+
+  // ── Phone Login Href Function ────────────────────────────────
+  const phoneLoginHref = useMemo(() => {
+    if (callbackUrl === "/feed") return "/login/phone-number";
+    return `/login/phone-number?callbackUrl=${encodeURIComponent(callbackUrl)}`;
+  }, [callbackUrl]);
+
+  // ── Preload User Data Function ────────────────────────────────
   const preloadUserData = useCallback(async () => {
     try {
       // First get current user data
@@ -144,14 +199,17 @@ function LoginPage() {
           const userData = useGetCurrentUserStore.getState().user;
 
           if (userData) {
-            if (userData.role === "employee" && userData.employee?.id) {
+            if (userData.role === USER_ROLE.EMPLOYEE && userData.employee?.id) {
               await Promise.all([
                 queryCurrentEmployeeLiked(userData.employee.id),
                 queryAllEmployeeFavorites(userData.employee.id),
                 queryEmployeeRecommendations(userData.employee.id),
                 queryCompany(),
               ]);
-            } else if (userData.role === "company" && userData.company?.id) {
+            } else if (
+              userData.role === USER_ROLE.COMPANY &&
+              userData.company?.id
+            ) {
               await Promise.all([
                 queryCurrentCompanyLiked(userData.company.id),
                 queryAllCompanyFavorites(userData.company.id),
@@ -179,91 +237,14 @@ function LoginPage() {
     queryEmployee,
   ]);
 
-  // ── Login Function ───────────────────────────────────────
+  // ── Email Password Login Function ────────────────────────────
   const onSubmit = async (data: TLoginForm) => {
     isProcessingRegularLogin.current = false;
     setLoginInitiated(true);
     await login(data.email, data.password, data.rememberMe!);
   };
 
-  /* --------------------------------- Effects --------------------------------- */
-  /*
-    - Mark as mounted so the theme-dependent image is only resolved client-side,
-    - Preventing the SSR/client hydration mismatch on the login image.
-  */
-  useEffect(() => setMounted(true), []);
-
-  // ── Remember Preference Effect ──────────────────────────
-  useEffect(() => {
-    try {
-      const savedRememberPreference = getRememberPreference();
-      setValue("rememberMe", savedRememberPreference);
-    } catch (error) {
-      console.error("Error loading remember preference:", error);
-    }
-  }, [setValue]);
-
-  // ── Login Effect ─────────────────────────────────────────
-  // Regular Email-Password Login Effect
-  useEffect(() => {
-    if (!loginInitiated) return;
-    if (loading) return;
-
-    if (error) {
-      toast.dismiss();
-      toast.error(t("loginFailed"), {
-        action: {
-          label: t("retry"),
-          onClick: () => {
-            reset();
-            setLoginInitiated(false);
-            isProcessingRegularLogin.current = false;
-          },
-        },
-      });
-      setLoginInitiated(false);
-      isProcessingRegularLogin.current = false;
-      return;
-    }
-
-    if (!isAuthenticated || isProcessingRegularLogin.current) return;
-
-    isProcessingRegularLogin.current = true;
-    setIsPreloadingData(true);
-
-    // Preload all user data while showing loading message
-    preloadUserData()
-      .then(() => {
-        console.log("User data preloaded successfully in login page");
-        toast.success(t("successLoggedIn"), {
-          duration: 1000,
-        });
-      })
-      .catch((error) => {
-        console.error("Error preloading user data: ", error);
-        toast.error(String(error), { duration: 1000 });
-      })
-      .finally(() => {
-        setTimeout(() => {
-          toast.dismiss();
-          setIsPreloadingData(false);
-          setLoginInitiated(false);
-          isProcessingRegularLogin.current = false;
-          router.replace("/feed");
-        }, DEFAULT_REDIRECT_DELAY_MS);
-      });
-  }, [
-    error,
-    isAuthenticated,
-    loading,
-    loginInitiated,
-    preloadUserData,
-    reset,
-    router,
-    t,
-  ]);
-
-  // Social Login Function
+  // ── Social Login Function ────────────────────────────────────
   const handleSocialLogin = (rememberMe: "true" | "false") => {
     // Reset all social store states to avoid stale errors triggering the effect
     useGoogleLoginStore.setState({
@@ -310,6 +291,114 @@ function LoginPage() {
     }
   };
 
+  // ── 2FA Verify Function ──────────────────────────────────────
+  const handleTwoFactorVerify = async () => {
+    if (!pendingUserId || twoFactorOtp.length < 6) return;
+    setTwoFactorInitiated(true);
+    const success = await twoFactorStore.verifyLogin(
+      pendingUserId,
+      twoFactorOtp,
+      pendingRememberMe,
+    );
+    if (!success) {
+      setTwoFactorInitiated(false);
+      return;
+    }
+    // Verified — now preload user data and redirect
+    setIsPreloadingData(true);
+    clearTwoFactorPending();
+    preloadUserData()
+      .then(() => {
+        toast.success(t("successLoggedIn"), {
+          duration: TOAST_DURATION_MS.SHORT,
+        });
+      })
+      .catch(() => {
+        toast.error(t("loginFailed"), { duration: TOAST_DURATION_MS.SHORT });
+      })
+      .finally(() => {
+        setTimeout(() => {
+          toast.dismiss();
+          setIsPreloadingData(false);
+          setTwoFactorInitiated(false);
+          setTwoFactorOtp("");
+          router.replace(callbackUrl);
+        }, DEFAULT_REDIRECT_DELAY_MS);
+      });
+  };
+
+  /* --------------------------------- Effects --------------------------------- */
+  // ── Remember Preference Effect ───────────────────────────────
+  useEffect(() => {
+    try {
+      const savedRememberPreference = getRememberPreference();
+      setValue("rememberMe", savedRememberPreference);
+    } catch (error) {
+      console.error("Error loading remember preference:", error);
+    }
+  }, [setValue]);
+
+  // ── Login Effect ─────────────────────────────────────────────
+  // Regular Email-Password Login Effect
+  useEffect(() => {
+    if (!loginInitiated) return;
+    if (loading) return;
+
+    if (error) {
+      toast.dismiss();
+      toast.error(t("loginFailed"), {
+        action: {
+          label: t("retry"),
+          onClick: () => {
+            reset();
+            setLoginInitiated(false);
+            isProcessingRegularLogin.current = false;
+          },
+        },
+      });
+      setLoginInitiated(false);
+      isProcessingRegularLogin.current = false;
+      return;
+    }
+
+    if (!isAuthenticated || isProcessingRegularLogin.current) return;
+
+    isProcessingRegularLogin.current = true;
+    setIsPreloadingData(true);
+
+    // Preload all user data while showing loading message
+    preloadUserData()
+      .then(() => {
+        console.log("User data preloaded successfully in login page");
+        toast.success(t("successLoggedIn"), {
+          duration: TOAST_DURATION_MS.SHORT,
+        });
+      })
+      .catch((error) => {
+        console.error("Error preloading user data: ", error);
+        toast.error(String(error), { duration: TOAST_DURATION_MS.SHORT });
+      })
+      .finally(() => {
+        setTimeout(() => {
+          toast.dismiss();
+          setIsPreloadingData(false);
+          setLoginInitiated(false);
+          isProcessingRegularLogin.current = false;
+          router.replace(callbackUrl);
+        }, DEFAULT_REDIRECT_DELAY_MS);
+      });
+  }, [
+    error,
+    isAuthenticated,
+    loading,
+    loginInitiated,
+    preloadUserData,
+    reset,
+    router,
+    callbackUrl,
+    t,
+  ]);
+
   // Social Login Effect
   useEffect(() => {
     if (!socialLoginInitiated) return;
@@ -355,11 +444,13 @@ function LoginPage() {
       preloadUserData()
         .then(() => {
           console.log("User data preloaded successfully");
-          toast.success(t("successLoggedIn"), { duration: 1000 });
+          toast.success(t("successLoggedIn"), {
+            duration: TOAST_DURATION_MS.SHORT,
+          });
         })
         .catch((error) => {
           console.error("Error preloading user data:", error);
-          toast.error(String(error), { duration: 1000 });
+          toast.error(String(error), { duration: TOAST_DURATION_MS.SHORT });
         })
         .finally(() => {
           setTimeout(() => {
@@ -367,7 +458,7 @@ function LoginPage() {
             setIsPreloadingData(false);
             setSocialLoginInitiated(false);
             isProcessingSocialLogin.current = false;
-            router.replace("/feed");
+            router.replace(callbackUrl);
           }, DEFAULT_REDIRECT_DELAY_MS);
         });
 
@@ -379,7 +470,9 @@ function LoginPage() {
       setIsPreloadingData(false);
       toast.dismiss();
       setSocialLoginInitiated(false);
-      toast.info(t("pleaseRegisterFirst"), { duration: 1500 });
+      toast.info(t("pleaseRegisterFirst"), {
+        duration: TOAST_DURATION_MS.MEDIUM,
+      });
 
       setTimeout(() => {
         toast.dismiss();
@@ -405,6 +498,10 @@ function LoginPage() {
       });
     }
   }, [
+    googleLoginStore,
+    linkedInLoginStore,
+    githubLoginStore,
+    facebookLoginStore,
     googleLoginStore.isAuthenticated,
     googleLoginStore.newUser,
     googleLoginStore.loading,
@@ -421,13 +518,14 @@ function LoginPage() {
     facebookLoginStore.newUser,
     facebookLoginStore.loading,
     facebookLoginStore.error,
+    callbackUrl,
     preloadUserData,
     router,
     socialLoginInitiated,
     t,
   ]);
 
-  /* -------------------------------- Loading State -------------------------------- */
+  /* --------------------------------- Loading State --------------------------------- */
   const isAnySocialLoading =
     googleLoginStore.loading ||
     linkedInLoginStore.loading ||
@@ -443,12 +541,6 @@ function LoginPage() {
     ? t("preparingWorkspace")
     : t("authenticating");
 
-  // Get Current Image Based on Theme
-  // Only resolve the theme after mounting — avoids SSR/client hydration mismatch
-  // Because resolvedTheme is undefined on the server.
-  const loginImage =
-    mounted && resolvedTheme === "dark" ? loginWhiteSvg : loginBlackSvg;
-
   /* ----------------------------------- Render UI ----------------------------------- */
   return (
     <div className="h-screen w-full flex overflow-hidden tablet-lg:flex-col tablet-lg:h-auto tablet-lg:overflow-y-auto">
@@ -457,7 +549,7 @@ function LoginPage() {
         <div className="w-full max-w-[480px] flex flex-col gap-4 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
           {/* Logo & Title Section */}
           <div className="flex flex-col items-start gap-1">
-            <LogoComponent className="!h-16 w-auto self-start" withoutTitle />
+            <LogoComponent className="!h-12 w-auto self-start" />
             <TypographyH2 className="phone-xl:text-2xl">
               {t("loginPageTitle")}
             </TypographyH2>
@@ -469,6 +561,7 @@ function LoginPage() {
           {/* Social Button Login Section */}
           <div className="w-full flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-3">
+              {/* Google Login Button */}
               <SocialButton
                 image={googleIcon}
                 label="Google"
@@ -479,6 +572,7 @@ function LoginPage() {
                   setSocialTypeIdentifier("google");
                 }}
               />
+              {/* Facebook Login Button */}
               <SocialButton
                 image={facebookIcon}
                 label="Facebook"
@@ -489,6 +583,7 @@ function LoginPage() {
                   setSocialTypeIdentifier("facebook");
                 }}
               />
+              {/* LinkedIn Login Button */}
               <SocialButton
                 image={linkedinIcon}
                 label="LinkedIn"
@@ -499,6 +594,7 @@ function LoginPage() {
                   setSocialTypeIdentifier("linkedIn");
                 }}
               />
+              {/* Github Login Button */}
               <SocialButton
                 image={githubIcon}
                 label="Github"
@@ -513,7 +609,7 @@ function LoginPage() {
             <Button
               variant="outline"
               className="w-full transition-colors hover:bg-muted/50"
-              onClick={() => router.push("login/phone-number")}
+              onClick={() => router.push(phoneLoginHref)}
             >
               <LucidePhone />
               {t("phoneNumber")}
@@ -600,20 +696,77 @@ function LoginPage() {
       </div>
 
       {/* Right Section: Image Poster Section */}
-      <div className="w-1/2 h-full flex items-center justify-center bg-primary relative overflow-hidden tablet-lg:hidden">
+      <div className="w-1/2 h-full flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-lg:hidden">
         {/* Decorative circles Section */}
         <div className="absolute -top-20 -right-20 size-64 rounded-full bg-white/5" />
         <div className="absolute -bottom-16 -left-16 size-48 rounded-full bg-white/5" />
         <div className="absolute top-1/4 -left-10 size-32 rounded-full bg-white/[0.03]" />
         <div className="absolute bottom-1/3 right-10 size-20 rounded-full bg-white/[0.07]" />
         <Image
-          src={loginImage}
+          src={loginSvg}
           alt="login"
           height={undefined}
           width={450}
           className="relative z-10"
         />
       </div>
+
+      {/* Two-Factor Auth Verification Dialog Section */}
+      <Dialog
+        open={requiresTwoFactor}
+        onOpenChange={(open) => {
+          if (!open) {
+            clearTwoFactorPending();
+            setTwoFactorOtp("");
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogTitle className="flex items-center gap-2">
+            <LucideShieldCheck className="size-5 text-primary" />
+            {t("twoFactorTitle")}
+          </DialogTitle>
+          <DialogDescription>{t("twoFactorDesc")}</DialogDescription>
+          <div className="flex flex-col items-center gap-3 py-2">
+            <InputOTP
+              maxLength={OTP_LENGTH}
+              value={twoFactorOtp}
+              onChange={setTwoFactorOtp}
+              disabled={twoFactorInitiated}
+            >
+              <InputOTPGroup>
+                {Array.from({ length: OTP_LENGTH }, (_, i) => (
+                  <InputOTPSlot key={i} index={i} />
+                ))}
+              </InputOTPGroup>
+            </InputOTP>
+            {twoFactorStore.error && (
+              <div className="flex items-center gap-1.5 text-destructive text-xs">
+                <LucideAlertCircle className="size-3.5 shrink-0" />
+                {twoFactorStore.error}
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                clearTwoFactorPending();
+                setTwoFactorOtp("");
+              }}
+              disabled={twoFactorInitiated}
+            >
+              {t("cancel")}
+            </Button>
+            <Button
+              onClick={handleTwoFactorVerify}
+              disabled={twoFactorInitiated || twoFactorOtp.length < 6}
+            >
+              {t("verify")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Remember Dialog Section */}
       <Dialog open={openRmbDialog} onOpenChange={setOpenRmbDialog}>

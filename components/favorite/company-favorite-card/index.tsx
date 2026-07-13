@@ -14,15 +14,19 @@ import { Button } from "../../ui/button";
 import Tag from "@/components/utils/data-display/tag";
 import { IFavoriteCompanyCardProps } from "./props";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { useTranslations } from "next-intl";
+import { translateLocation, getNameInitials } from "@/utils/functions/text";
 
 export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("favorite");
+  const tl = useTranslations("locations");
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
-      className={`bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20${props.isRemoving ? " animate-card-pop-shrink" : ""}`}
+      className={`w-full bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20${props.isRemoving ? " animate-card-pop-shrink" : ""}`}
     >
       <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
         {/* Avatar Section: Company Avatar */}
@@ -31,7 +35,7 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
           className="size-16 sm:size-20 flex-shrink-0 ring-[2px] ring-border/40"
         >
           <AvatarFallback className="text-sm font-semibold">
-            {props.name.slice(0, 2).toUpperCase()}
+            {getNameInitials(props.name)}
           </AvatarFallback>
           <AvatarImage src={props.avatar} />
         </Avatar>
@@ -50,7 +54,7 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
               </span>
               <span className="inline-flex items-center gap-1">
                 <LucideClock className="size-3.5" />
-                Founded {props.foundedYear}
+                {t("founded", { year: props.foundedYear })}
               </span>
             </div>
           </div>
@@ -75,21 +79,16 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
           <div className="flex flex-wrap gap-2">
             <MetaChip
               icon={<LucideUsers />}
-              text={
-                props.companySize <= 1
-                  ? `${props.companySize} member`
-                  : `${props.companySize} members`
-              }
+              text={t("memberCount", { count: props.companySize })}
             />
             <MetaChip
               icon={<LucideBriefcaseBusiness />}
-              text={
-                props.openPosition.length <= 1
-                  ? `${props.openPosition.length} position`
-                  : `${props.openPosition.length} positions`
-              }
+              text={t("positionCount", { count: props.openPosition.length })}
             />
-            <MetaChip icon={<LucideMapPin />} text={props.location} />
+            <MetaChip
+              icon={<LucideMapPin />}
+              text={translateLocation(props.location, tl)}
+            />
           </div>
         </div>
       </div>
@@ -103,14 +102,14 @@ export default function FavoriteCompanyCard(props: IFavoriteCompanyCardProps) {
           onClick={props.onRemoveFromFavorite}
         >
           <LucideBookmarkX className="size-3.5" />
-          Remove
+          {t("remove")}
         </Button>
         <Button
           size="sm"
           className="text-xs"
           onClick={() => router.replace(`/feed/company/${props.id}`)}
         >
-          View Detail
+          {t("viewDetail")}
           <LucideArrowRight className="size-3.5" />
         </Button>
       </div>

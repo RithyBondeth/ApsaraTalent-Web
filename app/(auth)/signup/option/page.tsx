@@ -1,6 +1,14 @@
 "use client";
 
+import SmartResumeUpload from "@/components/employee/employee-signup-form/smart-resume-upload";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -18,33 +26,38 @@ import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
 import { userRoleConstant } from "@/utils/constants/ui.constant";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 import { TUserRole } from "@/utils/types/auth/role.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LucideArrowLeft, LucideArrowRight, LucideUsers } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { signupOptionSchema, TSignupOptionSchema } from "./validation";
 
 export default function SingUpOption() {
-  /* ---------------------------------- Utils ---------------------------------- */
+  /* -------------------------------------- Utils -------------------------------------- */
   const router = useRouter();
   const t = useTranslations("auth");
 
-  /* -------------------------------- All States ------------------------------- */
-  // Signup Option Helpers
+  /* ------------------------------------ All States ----------------------------------- */
+  const [showResumeDialog, setShowResumeDialog] = useState<boolean>(false);
+  const navigatingRef = useRef<boolean>(false);
+
+  // Basic Signup Data
   const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData, setBasicPhoneSignupData } =
     useBasicPhoneSignupDataStore();
 
-  /* --------------------- API Integration: Social Data ------------------------ */
-  // Get user basic data from socials: Google, Github, LinkedIn, Facebook
+  /* -------------------------------- API Integrations --------------------------------- */
+  // Get User Basic Data From Socials: Google, Github, LinkedIn, Facebook
   const googleUserData = useGoogleLoginStore();
   const githubUserData = useGithubLoginStore();
   const linkedInUserData = useLinkedInLoginStore();
   const facebookUserData = useFacebookLoginStore();
 
-  /* -------------------- React Hook Form: Signup Option Form ------------------- */
+  /* ------------------------ React Hook Form: Signup Option Form ---------------------- */
   const {
     handleSubmit,
     control,
@@ -56,83 +69,44 @@ export default function SingUpOption() {
     },
   });
 
-  /* --------------------------------- Methods --------------------------------- */
-  // ── Signup Option Function ─────────────────────────────────────────
-  // Set Role For Signup Option Function
-  const onSubmit = (data: TSignupOptionSchema) => {
-    console.log("Form Submitted With role:", data.selectedRole);
-    console.log("Store States:", {
-      basicPhoneSignupData: !!basicPhoneSignupData,
-      basicSignupData: !!basicSignupData,
-      googleNewUser: googleUserData.newUser && !googleUserData.isAuthenticated,
-      linkedInNewUser:
-        linkedInUserData.newUser && !linkedInUserData.isAuthenticated,
-      githubNewUser: githubUserData.newUser && !githubUserData.isAuthenticated,
-      facebookNewUser:
-        facebookUserData.newUser && !facebookUserData.isAuthenticated,
-    });
-
-    // Check different signup flows and navigate accordingly
-    if (basicPhoneSignupData) {
-      setBasicPhoneSignupData({
-        ...basicPhoneSignupData,
-        role: data.selectedRole,
-      });
-
-      setBasicSignupData({
-        ...basicSignupData,
-        selectedRole: data.selectedRole,
-      });
-
-      router.push("/signup");
-      return;
-    }
-
-    if (googleUserData.newUser && !googleUserData.isAuthenticated) {
-      googleUserData.setRole(data.selectedRole as TUserRole);
-      setBasicSignupData({
-        ...basicSignupData,
-        selectedRole: data.selectedRole,
-      });
-      router.push("/signup");
-      return;
-    }
-
-    if (linkedInUserData.newUser && !linkedInUserData.isAuthenticated) {
-      linkedInUserData.setRole(data.selectedRole as TUserRole);
-      setBasicSignupData({
-        ...basicSignupData,
-        selectedRole: data.selectedRole,
-      });
-      router.push("/signup");
-      return;
-    }
-
-    if (githubUserData.newUser && !githubUserData.isAuthenticated) {
-      githubUserData.setRole(data.selectedRole as TUserRole);
-      setBasicSignupData({
-        ...basicSignupData,
-        selectedRole: data.selectedRole,
-      });
-      router.push("/signup");
-      return;
-    }
-
-    if (facebookUserData.newUser && !facebookUserData.isAuthenticated) {
-      facebookUserData.setRole(data.selectedRole as TUserRole);
-      setBasicSignupData({
-        ...basicSignupData,
-        selectedRole: data.selectedRole,
-      });
-      router.push("/signup");
-      return;
-    }
-
-    setBasicSignupData({
-      ...basicSignupData,
-      selectedRole: data.selectedRole,
-    });
+  /* -------------------------------------- Methods -------------------------------------- */
+  // ── Navigate To Signup Function (called after upload or skip) ────────────────
+  const goToSignup = () => {
+    if (navigatingRef.current) return;
+    navigatingRef.current = true;
+    setShowResumeDialog(false);
     router.push("/signup");
+  };
+
+  // ── Commit Role To Stores Function ───────────────────────────────────────────
+  const commitRole = (role: string) => {
+    // Basic Phone Signup Data
+    if (basicPhoneSignupData)
+      setBasicPhoneSignupData({ ...basicPhoneSignupData, role });
+
+    // Social Signup Data
+    if (googleUserData.newUser && !googleUserData.isAuthenticated)
+      googleUserData.setRole(role as TUserRole);
+    if (linkedInUserData.newUser && !linkedInUserData.isAuthenticated)
+      linkedInUserData.setRole(role as TUserRole);
+    if (githubUserData.newUser && !githubUserData.isAuthenticated)
+      githubUserData.setRole(role as TUserRole);
+    if (facebookUserData.newUser && !facebookUserData.isAuthenticated)
+      facebookUserData.setRole(role as TUserRole);
+
+    setBasicSignupData({ ...basicSignupData, selectedRole: role });
+  };
+
+  // ── Commit Signup Option Function ────────────────────────────────────────────
+  const onSubmit = (data: TSignupOptionSchema) => {
+    commitRole(data.selectedRole);
+
+    if (data.selectedRole === USER_ROLE.EMPLOYEE) {
+      // Show the smart resume dialog — navigation happens inside it
+      setShowResumeDialog(true);
+    } else {
+      router.push("/signup");
+    }
   };
 
   /* ---------------------------------------- Render UI ---------------------------------------- */
@@ -151,7 +125,7 @@ export default function SingUpOption() {
 
       <form className="w-full flex flex-col" onSubmit={handleSubmit(onSubmit)}>
         {/* Role Selection Section */}
-        <div className="w-full flex flex-col items-start gap-2">
+        <div className="w-full flex flex-col items-start">
           <Controller
             name="selectedRole"
             control={control}
@@ -163,14 +137,18 @@ export default function SingUpOption() {
                 <SelectContent>
                   {userRoleConstant.map((role) => (
                     <SelectItem key={role.id} value={role.value}>
-                      {role.label}
+                      {role.value === USER_ROLE.EMPLOYEE
+                        ? t("signupOptionRoleEmployee")
+                        : t("signupOptionRoleCompany")}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             )}
           />
-          <ErrorMessage>{errors.selectedRole?.message}</ErrorMessage>
+          <ErrorMessage className="mb-3 mt-1">
+            {errors.selectedRole ? t("signupOptionRoleRequired") : null}
+          </ErrorMessage>
         </div>
 
         {/* Navigate Back Button Section */}
@@ -179,7 +157,7 @@ export default function SingUpOption() {
             className="flex-1"
             variant="outline"
             type="button"
-            onClick={() => router.back()}
+            onClick={() => router.replace("/login")}
           >
             <LucideArrowLeft />
             {t("back")}
@@ -197,6 +175,41 @@ export default function SingUpOption() {
           {t("signupOptionNote")}
         </TypographyMuted>
       </div>
+
+      {/* Smart Resume Upload Dialog Section (Employee Only) */}
+      <Dialog
+        open={showResumeDialog}
+        onOpenChange={(open) => {
+          if (!open) goToSignup();
+        }}
+      >
+        <DialogContent className="max-w-lg">
+          <div className="px-6 pt-6 pb-5 flex flex-col gap-5">
+            {/* Header Section */}
+            <DialogHeader>
+              <DialogTitle className="text-xl">
+                {t("smartUploadDialogTitle")}
+              </DialogTitle>
+              <DialogDescription className="text-sm mt-1">
+                {t("smartUploadDialogSubtitle")}
+              </DialogDescription>
+            </DialogHeader>
+
+            {/* Upload Section */}
+            <SmartResumeUpload onParsed={goToSignup} />
+
+            {/* Skip Button Section */}
+            <Button
+              type="button"
+              variant="ghost"
+              className="w-full text-muted-foreground hover:text-foreground text-sm"
+              onClick={goToSignup}
+            >
+              {t("smartUploadDialogSkip")}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

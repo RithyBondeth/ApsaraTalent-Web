@@ -1,4 +1,5 @@
-import axios from "@/lib/axios";
+import { isAxiosError, isCancel } from "axios";
+import apiClient from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_SEARCH_EMP_URL } from "@/utils/constants/apis/user-api/employee.api.constant";
 import { IEmployee } from "@/utils/interfaces/user/employee.interface";
@@ -17,55 +18,171 @@ type TSearchEmpQueryParams = {
   education?: string | string[];
   sortBy?: string;
   sortOrder?: "ASC" | "DESC";
+  excludeEmployeeIds?: string[];
+  /** Restore to this page on initial load (fetches restorePage * PAGE_SIZE items). */
+  restorePage?: number;
 };
 
-// ── Search Employee API Response ──────────────────────────────────────
-type TSearchEmployeeResponse = IEmployee[];
-
-// ── Search Employee State ──────────────────────────────────────────────
+// ── Search Employee Paged Response ──────────────────────────────────────
+type TSearchEmployeePagedResponse = {
+  data: IEmployee[];
+  total: number;
+  page: number;
+  pageSize: number;
+  isUsingFallback: boolean;
+};
+// ── Search Employee State ───────────────────────────────────────────────
 type TSearchEmployeeState = {
-  employees: TSearchEmployeeResponse | null;
+  employees: IEmployee[] | null;
+  total: number;
+  page: number;
+  pageSize: number;
+  isUsingFallback: boolean;
   error: string | null;
   loading: boolean;
+  loadingMore: boolean;
+  resetSearch: () => void;
   querySearchEmployee: (query: TSearchEmpQueryParams) => Promise<void>;
+  loadMoreEmployees: (query: TSearchEmpQueryParams) => Promise<void>;
 };
 
-/* ---------------------------------- Store --------------------------------- */
-export const useSearchEmployeeStore = create<TSearchEmployeeState>((set) => ({
-  employees: null,
-  loading: false,
-  error: null,
-  querySearchEmployee: async (query: TSearchEmpQueryParams) => {
-    set({ loading: true, error: null });
+let searchEmpAbortController: AbortController | null = null;
 
-    try {
-      const queryParams = new URLSearchParams();
+const PAGE_SIZE = 20;
 
-      Object.entries(query).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== "") {
-          if (Array.isArray(value)) {
-            value.forEach((v) => queryParams.append(key, v));
-          } else {
-            queryParams.append(key, value.toString());
-          }
-        }
-      });
-      const queryString = queryParams.toString();
-      const url = `${API_SEARCH_EMP_URL}?${queryString}`;
-
-      const response = await axios.get<TSearchEmployeeResponse>(url);
-
-      set({
-        employees: response.data,
-        loading: false,
-        error: null,
-      });
-    } catch (error) {
-      set({
-        error: extractApiErrorMessage(error, "Failed to search employee"),
-        loading: false,
-        employees: null,
-      });
+// ── Build Query String ──────────────────────────────────────────────
+function buildQueryString(
+  query: TSearchEmpQueryParams & { page?: number; pageSize?: number },
+): string {
+  const params = new URLSearchParams();
+  Object.entries(query).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      if (Array.isArray(value)) {
+        value.forEach((v) => params.append(key, v));
+      } else {
+        params.append(key, value.toString());
+      }
     }
-  },
-}));
+  });
+  return params.toString();
+}
+
+/* ---------------------------------- Store --------------------------------- */
+export const useSearchEmployeeStore = create<TSearchEmployeeState>(
+  (set, get) => ({
+    employees: null,
+    total: 0,
+    page: 1,
+    pageSize: PAGE_SIZE,
+    isUsingFallback: false,
+    error: null,
+    loading: false,
+    loadingMore: false,
+
+    resetSearch: () => {
+      searchEmpAbortController?.abort();
+      searchEmpAbortController = null;
+      set({
+        employees: null,
+        total: 0,
+        page: 1,
+        isUsingFallback: false,
+        error: null,
+        loading: false,
+        loadingMore: false,
+      });
+    },
+
+    querySearchEmployee: async (query) => {
+      searchEmpAbortController?.abort();
+      const controller = new AbortController();
+      searchEmpAbortController = controller;
+
+      set({
+        loading: true,
+        error: null,
+        employees: null,
+        page: 1,
+        isUsingFallback: false,
+      });
+
+      try {
+        const effectivePage =
+          (query.restorePage ?? 1) > 1 ? query.restorePage! : 1;
+        const effectivePageSize =
+          effectivePage > 1 ? effectivePage * PAGE_SIZE : PAGE_SIZE;
+        const url = `${API_SEARCH_EMP_URL}?${buildQueryString({ ...query, page: 1, pageSize: effectivePageSize })}`;
+        const response = await apiClient.get<TSearchEmployeePagedResponse>(
+          url,
+          {
+            signal: controller.signal,
+          },
+        );
+        const { data, total, isUsingFallback } = response.data;
+        set({
+          employees: data,
+          total,
+          page: effectivePage,
+          pageSize: PAGE_SIZE,
+          isUsingFallback,
+          loading: false,
+          error: null,
+        });
+      } catch (error) {
+        if (isCancel(error)) return;
+        if (isAxiosError(error) && error.response?.status === 404) {
+          set({
+            employees: [],
+            total: 0,
+            loading: false,
+            error: null,
+            isUsingFallback: false,
+          });
+          return;
+        }
+        set({
+          error: extractApiErrorMessage(error, "Failed to search employee"),
+          loading: false,
+          employees: null,
+        });
+      }
+    },
+
+    loadMoreEmployees: async (query) => {
+      const { page, pageSize, total, employees, loadingMore, isUsingFallback } =
+        get();
+      if (loadingMore) return;
+      if (employees !== null && employees.length >= total) return;
+
+      const nextPage = page + 1;
+      set({ loadingMore: true });
+
+      // When page 1 fell back to a no-scope query, subsequent pages must also
+      // run without scopes — otherwise the scoped query yields nothing and the
+      // total (from the fallback) no longer matches what Load More can fetch.
+      const effectiveQuery = isUsingFallback
+        ? { ...query, careerScopes: undefined }
+        : query;
+
+      try {
+        const url = `${API_SEARCH_EMP_URL}?${buildQueryString({ ...effectiveQuery, page: nextPage, pageSize })}`;
+        const controller = new AbortController();
+        const response = await apiClient.get<TSearchEmployeePagedResponse>(
+          url,
+          {
+            signal: controller.signal,
+          },
+        );
+        const { data } = response.data;
+        set((s) => ({
+          employees: [...(s.employees ?? []), ...data],
+          page: nextPage,
+          loadingMore: false,
+        }));
+      } catch (error) {
+        if (isCancel(error)) return;
+        set({ loadingMore: false });
+      }
+    },
+  }),
+);

@@ -17,9 +17,7 @@ import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useLanguageStore } from "@/stores/languages/language-store";
 
-/* ─────────────────────────────────────────────────────────────
-   Sub-components
-───────────────────────────────────────────────────────────── */
+/* -------------------------- Sub Components -------------------------- */
 function Section({
   id,
   icon,
@@ -103,21 +101,19 @@ function StepCard({
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Content types & data
-───────────────────────────────────────────────────────────── */
-type TocItem = { id: string; label: string };
-type TitleDesc = { title: string; description: string };
+/* ----------------------- Content Types & Data ----------------------- */
+type TTocItem = { id: string; label: string };
+type TTitleDesc = { title: string; description: string };
 
-interface LearnStrings {
+interface ILearnStrings {
   back: string;
   pageTitle: string;
   subtitle: string;
   tocHeading: string;
-  toc: TocItem[];
+  toc: TTocItem[];
   gettingStartedTitle: string;
   gettingStartedIntro: string;
-  steps: TitleDesc[];
+  steps: TTitleDesc[];
   jobSeekersTitle: string;
   jobSeekersIntro: string;
   jobSeekersBullets: string[];
@@ -128,10 +124,10 @@ interface LearnStrings {
   aiIntro: string;
   aiBullets: string[];
   guidesTitle: string;
-  guides: TitleDesc[];
+  guides: TTitleDesc[];
 }
 
-const en: LearnStrings = {
+const en: ILearnStrings = {
   back: "Back",
   pageTitle: "Learn",
   subtitle:
@@ -236,7 +232,7 @@ const en: LearnStrings = {
   ],
 };
 
-const km: LearnStrings = {
+const km: ILearnStrings = {
   back: "\u178F\u17D2\u179A\u17A1\u1794\u17CB\u1780\u17D2\u179A\u17C4\u1799",
   pageTitle: "\u179F\u17D2\u179C\u17C2\u1784\u1799\u179B\u17CB",
   subtitle:
@@ -373,7 +369,7 @@ const km: LearnStrings = {
   ],
 };
 
-const content: Record<string, LearnStrings> = { en, km };
+const content: Record<string, ILearnStrings> = { en, km };
 
 const guideIcons = [
   <LucideTarget key="0" />,
@@ -384,15 +380,13 @@ const guideIcons = [
   <LucideLightbulb key="5" />,
 ];
 
-/* ─────────────────────────────────────────────────────────────
-   Main component
-───────────────────────────────────────────────────────────── */
+/* -------------------------------- Main Component ------------------------------- */
 export function LearnContent() {
   /* ----------------------------------- Utils ----------------------------------- */
   const { language } = useLanguageStore();
   const t = content[language] ?? content.en;
 
-  /* --------------------------------- Render UI ---------------------------------- */
+  /* --------------------------------- Render UI --------------------------------- */
   return (
     <div className="min-h-screen bg-background">
       {/* Top Navigation Section */}

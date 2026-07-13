@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { getCookie } from "cookies-next";
 import { API_BASE_URL } from "@/utils/constants/apis/base.api.constant";
 import { IVoiceRecorderResult } from "@/utils/interfaces/chat/chat.interface";
 import {
@@ -10,6 +9,28 @@ import {
   WAVEFORM_POINTS,
 } from "@/utils/constants/chat.constant";
 import { TChatRecordingState } from "@/utils/types/chat/chat.type";
+
+/* ------------------------------------ Usage ----------------------------------- */
+/**
+ * Manages in-browser microphone recording, amplitude sampling, and audio upload.
+ *
+ * Usage:
+ *   const { recordingState, durationSeconds, errorMessage,
+ *           startRecording, stopRecording, cancelRecording } = useVoiceRecorder();
+ *
+ *   // Start recording
+ *   await startRecording();
+ *
+ *   // Stop, upload, and send as a message attachment
+ *   const ok = await stopRecording((attachment) => {
+ *     sendMessage({ attachment });  // { url, type, filename, duration, amplitude }
+ *   });
+ *
+ *   // Discard without uploading
+ *   cancelRecording();
+ *
+ *   // recordingState: "idle" | "recording" | "uploading"
+ */
 
 /* ------------------------------------ Helpers ---------------------------------- */
 // ── Pick supported MIME type ──────────────────────────────────────────
@@ -226,14 +247,10 @@ export function useVoiceRecorder(): IVoiceRecorderResult {
           try {
             const formData = new FormData();
             formData.append("file", blob, filename);
-            const accessToken = getCookie("auth-token");
             const res = await fetch(`${API_BASE_URL}/chat/upload`, {
               method: "POST",
               body: formData,
               credentials: "include",
-              headers: accessToken
-                ? { Authorization: `Bearer ${String(accessToken)}` }
-                : undefined,
             });
             if (!res.ok) {
               const body = await res.json().catch(() => ({}));

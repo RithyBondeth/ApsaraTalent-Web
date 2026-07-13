@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { formatDurationClock } from "@/utils/functions/date";
+import { getNameInitials } from "@/utils/functions/text";
 import { Mic, MicOff, PhoneOff } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ICallOverlayProps } from "./props";
@@ -52,12 +53,7 @@ export function CallOverlay(props: ICallOverlayProps) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("message");
   const partner = caller ?? callee;
-  const partnerInitials = partner?.name
-    .split(" ")
-    .map((namePart: string) => namePart[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+  const partnerInitials = partner ? getNameInitials(partner.name) : undefined;
   const statusLabel =
     status === "calling"
       ? t("calling")
@@ -149,7 +145,9 @@ export function CallOverlay(props: ICallOverlayProps) {
             >
               <PhoneOff className="h-5 w-5 text-white" />
             </button>
-            <span className="text-[10px] text-muted-foreground">{t("endCall")}</span>
+            <span className="text-[10px] text-muted-foreground">
+              {t("endCall")}
+            </span>
           </div>
         </div>
       </div>

@@ -1,11 +1,12 @@
-import axios from "@/lib/axios";
+import { isAxiosError, isCancel } from "axios";
+import apiClient from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_SEARCH_JOB_URL } from "@/utils/constants/apis/job.api.constant";
 import { TLocations } from "@/utils/types/user/location.type";
 import { create } from "zustand";
 
 /* ---------------------------------- States --------------------------------- */
-// ── Search Job Query Params ────────────────────────────────────────
+// ── Search Job Query Params ──────────────────────────────────────────────
 type TSearchJobQueryParams = {
   keyword?: string;
   location?: string;
@@ -21,9 +22,12 @@ type TSearchJobQueryParams = {
   postedDateTo?: string;
   sortBy?: string;
   sortOrder?: "ASC" | "DESC";
+  excludeCompanyIds?: string[];
+  /** Restore to this page on initial load (fetches restorePage * PAGE_SIZE items). */
+  restorePage?: number;
 };
 
-// ── Search Job API Response ────────────────────────────────────────
+// ── Search Job Response ──────────────────────────────────────────────
 type TSearchJobResponse = {
   id?: string;
   title: string;
@@ -46,52 +50,158 @@ type TSearchJobResponse = {
   };
 };
 
-// ── Search Job State ────────────────────────────────────────────────
-type TSearchJobState = {
-  jobs: TSearchJobResponse[] | null;
-  error: string | null;
-  loading: boolean;
-  querySearchJobs: (query: TSearchJobQueryParams) => Promise<void>;
+// ── Search Job Paged Response ──────────────────────────────────────────
+type TSearchJobPagedResponse = {
+  data: TSearchJobResponse[];
+  total: number;
+  page: number;
+  pageSize: number;
+  isUsingFallback: boolean;
 };
 
+// ── Search Job State ──────────────────────────────────────────────────────
+type TSearchJobState = {
+  jobs: TSearchJobResponse[] | null;
+  total: number;
+  page: number;
+  pageSize: number;
+  isUsingFallback: boolean;
+  error: string | null;
+  loading: boolean;
+  loadingMore: boolean;
+  resetSearch: () => void;
+  querySearchJobs: (query: TSearchJobQueryParams) => Promise<void>;
+  loadMoreJobs: (query: TSearchJobQueryParams) => Promise<void>;
+};
+let searchJobAbortController: AbortController | null = null;
+
+const PAGE_SIZE = 20;
+
+// ── Build Query String ──────────────────────────────────────────────
+function buildQueryString(
+  query: TSearchJobQueryParams & { page?: number; pageSize?: number },
+): string {
+  const params = new URLSearchParams();
+  Object.entries(query).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      if (Array.isArray(value)) {
+        value.forEach((v) => params.append(key, v));
+      } else {
+        params.append(key, value.toString());
+      }
+    }
+  });
+  return params.toString();
+}
+
 /* ---------------------------------- Store --------------------------------- */
-export const useSearchJobStore = create<TSearchJobState>((set) => ({
-  loading: false,
-  error: null,
-  message: null,
+
+export const useSearchJobStore = create<TSearchJobState>((set, get) => ({
   jobs: null,
-  querySearchJobs: async (query: TSearchJobQueryParams) => {
-    set({ loading: true, error: null });
+  total: 0,
+  page: 1,
+  pageSize: PAGE_SIZE,
+  isUsingFallback: false,
+  error: null,
+  loading: false,
+  loadingMore: false,
+
+  resetSearch: () => {
+    searchJobAbortController?.abort();
+    searchJobAbortController = null;
+    set({
+      jobs: null,
+      total: 0,
+      page: 1,
+      isUsingFallback: false,
+      error: null,
+      loading: false,
+      loadingMore: false,
+    });
+  },
+
+  querySearchJobs: async (query) => {
+    searchJobAbortController?.abort();
+    const controller = new AbortController();
+    searchJobAbortController = controller;
+
+    set({
+      loading: true,
+      error: null,
+      jobs: null,
+      page: 1,
+      isUsingFallback: false,
+    });
 
     try {
-      const queryParams = new URLSearchParams();
-
-      Object.entries(query).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== "") {
-          if (Array.isArray(value)) {
-            value.forEach((v) => queryParams.append(key, v));
-          } else {
-            queryParams.append(key, value.toString());
-          }
-        }
+      const effectivePage =
+        (query.restorePage ?? 1) > 1 ? query.restorePage! : 1;
+      const effectivePageSize =
+        effectivePage > 1 ? effectivePage * PAGE_SIZE : PAGE_SIZE;
+      const url = `${API_SEARCH_JOB_URL}?${buildQueryString({ ...query, page: 1, pageSize: effectivePageSize })}`;
+      const response = await apiClient.get<TSearchJobPagedResponse>(url, {
+        signal: controller.signal,
       });
-
-      const queryString = queryParams.toString();
-      const url = `${API_SEARCH_JOB_URL}?${queryString}`;
-
-      const response = await axios.get<TSearchJobResponse[]>(url);
-
+      const { data, total, isUsingFallback } = response.data;
       set({
-        jobs: response.data,
+        jobs: data,
+        total,
+        page: effectivePage,
+        pageSize: PAGE_SIZE,
+        isUsingFallback,
         loading: false,
         error: null,
       });
     } catch (error) {
+      if (isCancel(error)) return;
+      if (isAxiosError(error) && error.response?.status === 404) {
+        set({
+          jobs: [],
+          total: 0,
+          loading: false,
+          error: null,
+          isUsingFallback: false,
+        });
+        return;
+      }
       set({
         error: extractApiErrorMessage(error, "Failed to search jobs"),
         loading: false,
         jobs: null,
       });
+    }
+  },
+
+  loadMoreJobs: async (query) => {
+    const { page, pageSize, total, jobs, loadingMore, isUsingFallback } = get();
+    if (loadingMore) return;
+    if (jobs !== null && jobs.length >= total) return;
+
+    const nextPage = page + 1;
+    set({ loadingMore: true });
+
+    // When page 1 fell back to a no-scope query, subsequent pages must also
+    // run without scopes — otherwise the scoped query yields nothing and the
+    // total (from the fallback) no longer matches what Load More can fetch.
+    const effectiveQuery = isUsingFallback
+      ? { ...query, careerScopes: undefined }
+      : query;
+
+    try {
+      const url = `${API_SEARCH_JOB_URL}?${buildQueryString({ ...effectiveQuery, page: nextPage, pageSize })}`;
+      const controller = new AbortController();
+      const response = await apiClient.get<TSearchJobPagedResponse>(url, {
+        signal: controller.signal,
+      });
+      const { data } = response.data;
+      set((s) => ({
+        jobs: [...(s.jobs ?? []), ...data],
+        page: nextPage,
+        loadingMore: false,
+      }));
+    } catch (error) {
+      if (isCancel(error)) return;
+      set({ loadingMore: false });
     }
   },
 }));

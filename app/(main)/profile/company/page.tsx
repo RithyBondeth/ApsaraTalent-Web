@@ -67,12 +67,14 @@ import { useUploadCompanyImagesStore } from "@/stores/apis/company/upload-cmp-im
 import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-scopes.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import {
+  companyTypeConstant,
+  COMPANY_ICON_COLOR,
   locationConstant,
   loginMethodConstant,
   platformConstant,
 } from "@/utils/constants/ui.constant";
 import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type";
-import { capitalizeWords } from "@/utils/functions/text";
+import { capitalizeWords, getNameInitials } from "@/utils/functions/text";
 import { isUuid } from "@/utils/functions/validation/check-uuid";
 import { parseMaybeDate } from "@/utils/functions/date";
 import { IBenefits } from "@/utils/interfaces/user/company.interface";
@@ -88,20 +90,24 @@ import {
   LucideEdit,
   LucideGlobe,
   LucideLink2,
+  LucideLoader2,
   LucideMail,
   LucidePhone,
   LucidePlus,
   LucideSettings,
+  LucideTrash2,
   LucideUsers,
   LucideXCircle,
   LucideZap,
+  Sparkles,
 } from "lucide-react";
+import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { companyFormSchema, TCompanyProfileForm } from "./validation";
-import { emptySvgImage } from "@/utils/constants/asset.constant";
+import { emptySvg } from "@/utils/constants/asset.constant";
 import { getCompanyProfileCompletion } from "@/utils/functions/profile";
 import { CompanyProfilePageLoadingSkeleton } from "@/components/profile/skeleton";
 import { SectionTitle } from "@/components/utils/layout/section-title";
@@ -112,6 +118,7 @@ export default function ProfilePage() {
   const t = useTranslations("toast");
   const tCommon = useTranslations("common");
   const tP = useTranslations("profile");
+  const tr = useTranslations("resumeBuilder");
 
   /* -------------------------------- All States -------------------------------- */
   const [isEdit, setIsEdit] = useState<boolean>(false);
@@ -213,6 +220,12 @@ export default function ProfilePage() {
     cover: undefined,
   });
 
+  const [avatarLoadError, setAvatarLoadError] = useState<boolean>(false);
+  const [coverLoadError, setCoverLoadError] = useState<boolean>(false);
+
+  const lastUploadedAvatarRef = useRef<string | null>(null);
+  const lastUploadedCoverRef = useRef<string | null>(null);
+
   /* ----------------------------- API Integration ---------------------------- */
   // Current User Infomation and Current User CareerScopes
   const { user, loading, getCurrentUser } = useGetCurrentUserStore();
@@ -233,6 +246,9 @@ export default function ProfilePage() {
   const removeCmpCoverStore = useRemoveCmpCoverStore();
   const removeOneOpenPositionStore = useRemoveOneOpenPositionStore();
 
+  // AI Refine
+  const { isRefining: descLoading, refineContent: refineDesc } = useAIRefine();
+
   /* ------------------------------- Profile Form ------------------------------- */
   // React Hook Form: Company Profile Schema
   const form = useForm<TCompanyProfileForm>({
@@ -245,6 +261,8 @@ export default function ProfilePage() {
         companySize: 0,
         foundedYear: 0,
         location: "",
+        websiteUrl: "",
+        companyType: null,
         avatar: null,
         cover: null,
       },
@@ -264,6 +282,12 @@ export default function ProfilePage() {
     shouldFocusError: false,
   });
 
+  // Watch Description Value
+  const descValue = useWatch({
+    control: form.control,
+    name: "basicInfo.description",
+  });
+
   /* --------------------------------- Effects ---------------------------------- */
   // Get Current User Effect
   useEffect(() => {
@@ -271,16 +295,27 @@ export default function ProfilePage() {
   }, [getCurrentUser]);
 
   useEffect(() => {
+    // Reset error states whenever the image sources change
+    setAvatarLoadError(false);
+    setCoverLoadError(false);
+
     let avatarUrl: string | undefined;
     let coverUrl: string | undefined;
 
     if (avatarFile) avatarUrl = URL.createObjectURL(avatarFile);
-
     if (coverFile) coverUrl = URL.createObjectURL(coverFile);
 
     setAvatarOrCoverPreview({
-      avatar: avatarUrl ?? company?.avatar,
-      cover: coverUrl ?? company?.cover,
+      // Priority: local file blob (editing) → retained upload blob → server URL
+      // Retained blob takes priority over server URL so a broken/slow server URL
+      // never causes blank avatar/cover after a successful upload.
+      avatar:
+        avatarUrl ??
+        lastUploadedAvatarRef.current ??
+        company?.avatar ??
+        undefined,
+      cover:
+        coverUrl ?? lastUploadedCoverRef.current ?? company?.cover ?? undefined,
     });
 
     return () => {
@@ -288,6 +323,26 @@ export default function ProfilePage() {
       if (coverUrl) URL.revokeObjectURL(coverUrl);
     };
   }, [avatarFile, coverFile, company?.avatar, company?.cover]);
+
+  // Revoke retained blobs on unmount
+  useEffect(() => {
+    return () => {
+      if (lastUploadedAvatarRef.current)
+        URL.revokeObjectURL(lastUploadedAvatarRef.current);
+      if (lastUploadedCoverRef.current)
+        URL.revokeObjectURL(lastUploadedCoverRef.current);
+    };
+  }, []);
+
+  // Warn the user before leaving the page with unsaved changes
+  useEffect(() => {
+    if (!isEdit || !form.formState.isDirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [isEdit, form.formState.isDirty]);
 
   // FieldArray for OpenPositions
   const openPositionFA = useFieldArray({
@@ -306,6 +361,8 @@ export default function ProfilePage() {
           companySize: company.companySize ?? null,
           foundedYear: company.foundedYear ?? null,
           location: company.location ?? "",
+          websiteUrl: company.websiteUrl ?? "",
+          companyType: company.companyType ?? null,
           avatar: company.avatar ?? null,
           cover: company.cover ?? null,
         },
@@ -321,7 +378,12 @@ export default function ProfilePage() {
             type: op.type,
             educationRequirement: op.education,
             experienceRequirement: op.experience,
-            salary: op.salary,
+            salaryMin: op.salaryMin ?? null,
+            salaryMax: op.salaryMax ?? null,
+            salaryCurrency: op.salaryCurrency ?? "USD",
+            workMode: op.workMode ?? null,
+            location: op.location ?? "",
+            openingsCount: op.openingsCount ?? null,
             deadlineDate: parseMaybeDate(op.deadlineDate),
             skills: Array.isArray(op.skills)
               ? op.skills.join(", ")
@@ -403,6 +465,10 @@ export default function ProfilePage() {
   // ── Avatar, Cover and Image Methods ──────────────────────────────────────
   // ── API: Remove Avatar ─────────────────────────────────────────
   const removeAvatar = async () => {
+    if (lastUploadedAvatarRef.current) {
+      URL.revokeObjectURL(lastUploadedAvatarRef.current);
+      lastUploadedAvatarRef.current = null;
+    }
     if (company) await removeCmpAvatarStore.removeCmpAvatar(company.id);
 
     await disableEditMode();
@@ -412,6 +478,10 @@ export default function ProfilePage() {
 
   // ── API: Remove Cover ─────────────────────────────────────────
   const removeCover = async () => {
+    if (lastUploadedCoverRef.current) {
+      URL.revokeObjectURL(lastUploadedCoverRef.current);
+      lastUploadedCoverRef.current = null;
+    }
     if (company) await removeCmpCoverStore.removeCmpCover(company.id);
 
     await disableEditMode();
@@ -429,7 +499,7 @@ export default function ProfilePage() {
 
     await disableEditMode();
 
-    toast.success(t("removeCoverSuccess"));
+    toast.success(t("removeImageSuccess"));
   };
 
   // ── Handle Click Image Popup ────────────────────────────────────
@@ -506,8 +576,13 @@ export default function ProfilePage() {
       experienceRequirement: "",
       educationRequirement: "",
       skills: "",
-      salary: "",
       type: "",
+      salaryMin: null,
+      salaryMax: null,
+      salaryCurrency: "USD",
+      workMode: null,
+      location: "",
+      openingsCount: null,
       deadlineDate: undefined,
     });
   };
@@ -765,6 +840,8 @@ export default function ProfilePage() {
         "location",
         "companySize",
         "foundedYear",
+        "websiteUrl",
+        "companyType",
       ];
 
       basicInfoKeys.forEach((key) => {
@@ -805,7 +882,12 @@ export default function ProfilePage() {
           updatedPos.skills = Array.isArray(pos.skills)
             ? pos.skills.join(", ")
             : pos.skills;
-          updatedPos.salary = pos.salary;
+          updatedPos.salaryMin = pos.salaryMin ?? null;
+          updatedPos.salaryMax = pos.salaryMax ?? null;
+          updatedPos.salaryCurrency = pos.salaryCurrency ?? "USD";
+          updatedPos.workMode = pos.workMode ?? null;
+          updatedPos.location = pos.location ?? null;
+          updatedPos.openingsCount = pos.openingsCount ?? null;
           updatedPos.deadlineDate =
             pos.deadlineDate?.toISOString() || new Date().toISOString();
 
@@ -920,11 +1002,25 @@ export default function ProfilePage() {
 
       await Promise.all(uploadTasks);
 
+      if (hasAvatarUpload && avatarFileToUpload instanceof File) {
+        if (lastUploadedAvatarRef.current)
+          URL.revokeObjectURL(lastUploadedAvatarRef.current);
+        lastUploadedAvatarRef.current = URL.createObjectURL(avatarFileToUpload);
+      }
+      if (hasCoverUpload && coverFileToUpload instanceof File) {
+        if (lastUploadedCoverRef.current)
+          URL.revokeObjectURL(lastUploadedCoverRef.current);
+        lastUploadedCoverRef.current = URL.createObjectURL(coverFileToUpload);
+      }
+
       /* ------------------------ API UPDATE ------------------------ */
       if (hasUpdateBodyChanges) {
         await updateOneCmpStore.updateOneCompany(company.id, updateBody);
       }
 
+      toast.success(t("profileUpdatedSuccess"), {
+        description: t("profileUpdatedSuccessDescription"),
+      });
       await disableEditMode();
     } catch (error) {
       console.error(error);
@@ -959,9 +1055,7 @@ export default function ProfilePage() {
     if (coverFile)
       form.setValue("basicInfo.cover", coverFile, { shouldDirty: true });
 
-    form.handleSubmit(onSubmit, (errors) => console.log("RHF errors:", errors))(
-      e,
-    );
+    form.handleSubmit(onSubmit, () => toast.error(t("validationError")))(e);
   };
 
   /* -------------------------------- Loading States ------------------------------- */
@@ -1001,13 +1095,17 @@ export default function ProfilePage() {
   if (!user || !company) return null;
 
   /* -------------------------------- Profile Completion ----------------------- */
-  const profileCompletion = getCompanyProfileCompletion(company);
+  const profileCompletion = getCompanyProfileCompletion({
+    ...company,
+    avatar: avatarLoadError ? undefined : company.avatar,
+    cover: coverLoadError ? undefined : company.cover,
+  });
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-5 overflow-x-hidden animate-page-in"
+      className="flex flex-col gap-5 animate-page-in"
       onKeyDown={(e) => {
         if (
           e.key === "Enter" &&
@@ -1017,6 +1115,46 @@ export default function ProfilePage() {
         }
       }}
     >
+      {/* Sticky Edit Action Bar Section */}
+      {isEdit && (
+        <div className="sticky top-14 z-40 -mx-3 sm:-mx-4 lg:-mx-6 px-4 sm:px-5 py-2.5 bg-background/95 backdrop-blur-md border-b border-border/60 flex items-center justify-between gap-3 shadow-sm">
+          {/* Edit Profile Status Section */}
+          <div className="flex items-center gap-2">
+            <span className="relative flex size-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+              <span className="relative inline-flex rounded-full size-2 bg-amber-400" />
+            </span>
+            <span className="text-sm font-medium">{tP("editProfile")}</span>
+          </div>
+
+          {/* Edit Profile Action Buttons Section */}
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-8 text-xs"
+              onClick={disableEditMode}
+            >
+              {tP("cancel")}
+            </Button>
+            <Button
+              type="submit"
+              size="sm"
+              className="h-8 text-xs min-w-[80px]"
+              disabled={updateProfileLoadingState}
+            >
+              {updateProfileLoadingState ? (
+                <LucideLoader2 className="size-3.5 animate-spin" />
+              ) : (
+                <LucideCircleCheck className="size-3.5" />
+              )}
+              {updateProfileLoadingState ? tP("updating") : tP("save")}
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Profile Completion Section */}
       <ProfileCompletionCard
         percentage={profileCompletion.percentage}
@@ -1027,75 +1165,101 @@ export default function ProfilePage() {
       <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
         {/* Cover Image Section */}
         <div
-          className={`h-44 sm:h-56 rounded-t-2xl bg-cover bg-center bg-no-repeat relative ${!company.cover ? "bg-gradient-to-br from-primary/25 via-primary/10 to-muted/80" : ""}`}
+          className={`h-44 sm:h-56 rounded-t-2xl bg-cover bg-center bg-no-repeat relative ${!company.cover ? "bg-gradient-to-br from-primary via-primary/70 to-violet-500/40" : ""}`}
           style={
             company.cover
               ? { backgroundImage: `url(${avatarOrCoverPreview.cover})` }
               : {}
           }
         >
+          {/* Overlay for Gradient Cover Section */}
+          {!company.cover && (
+            <>
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.15)_0%,transparent_60%)]" />
+              <div className="absolute -top-10 -right-10 size-56 rounded-full bg-white/5" />
+              <div className="absolute top-6 right-28 size-28 rounded-full bg-white/5" />
+              <div className="absolute -bottom-8 right-8 size-36 rounded-full bg-white/5" />
+            </>
+          )}
+
+          {/* Cover Edit Controls Section */}
           {isEdit && (
-            <div className="absolute bottom-3 right-3 flex flex-col items-end gap-2">
+            <div className="absolute bottom-3 right-3 flex items-center gap-2">
               <Button
-                className="flex items-center gap-2 cursor-pointer py-1 px-3 rounded-full bg-foreground text-primary-foreground"
+                className="flex items-center gap-1.5 h-8 px-3 rounded-full bg-background/90 text-foreground backdrop-blur-sm text-xs shadow-sm hover:bg-background"
                 onClick={() => coverInputRef.current?.click()}
                 type="button"
               >
-                <LucideCamera strokeWidth={"1.2px"} width={"18px"} />
-                <TypographySmall className="text-xs">
-                  {tP("changeCover")}
-                </TypographySmall>
+                <LucideCamera className="size-3.5" />
+                {tP("changeCover")}
               </Button>
               {company.cover && (
                 <Button
-                  className="flex items-center gap-2 cursor-pointer py-1 px-3 rounded-full bg-red-500 text-red-100"
+                  className="flex items-center gap-1.5 h-8 px-3 rounded-full bg-destructive/90 text-destructive-foreground backdrop-blur-sm text-xs shadow-sm"
                   onClick={() => setOpenRemoveCoverDialog(true)}
                   type="button"
                 >
-                  <LucideXCircle strokeWidth={"1.2px"} width={"18px"} />
-                  <TypographySmall className="text-xs">
-                    {tP("removeCover")}
-                  </TypographySmall>
+                  <LucideXCircle className="size-3.5" />
+                  {tP("removeCover")}
                 </Button>
               )}
             </div>
           )}
         </div>
 
-        <div className="px-4 sm:px-6 pb-5">
-          {/* Identity Section */}
-          <div className="flex items-start gap-4 tablet-md:flex-col tablet-md:items-center">
-            {/* Avatar with Overlap Section */}
-            <div className="relative -mt-10 sm:-mt-12 flex-shrink-0">
+        {/* Identity Row Section */}
+        <div className="px-5 sm:px-6 pb-6">
+          <div className="flex items-end gap-4 -mt-10 sm:-mt-12 tablet-md:flex-col tablet-md:items-center">
+            {/* Avatar Section */}
+            <div className="relative flex-shrink-0">
               <Avatar
-                className="size-20 sm:size-24 ring-[3px] ring-card shadow-xl bg-primary-foreground"
+                className="size-20 sm:size-24 ring-4 ring-card shadow-xl bg-card cursor-pointer"
                 rounded="md"
                 onClick={(e) => {
                   if (!isEdit && company.avatar) handleClickAvatarPopup(e);
                 }}
               >
-                <AvatarImage src={avatarOrCoverPreview.avatar} />
-                <AvatarFallback className="uppercase text-lg font-medium">
-                  {company.name.slice(0, 3)}
+                <AvatarImage
+                  src={avatarOrCoverPreview.avatar}
+                  onError={() => setAvatarLoadError(true)}
+                />
+                <AvatarFallback className="uppercase text-lg font-semibold">
+                  {getNameInitials(company.name)}
                 </AvatarFallback>
               </Avatar>
 
               {isEdit && (
-                <div className="absolute bottom-1 right-1 flex items-center gap-1">
+                <div className="flex items-center gap-1 absolute -bottom-1 -right-1">
                   <Button
-                    className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-foreground text-primary-foreground"
+                    className="size-7 p-0 rounded-full bg-foreground text-primary-foreground shadow-md"
                     onClick={() => avatarInputRef.current?.click()}
                     type="button"
                   >
-                    <LucideCamera width={"18px"} strokeWidth={"1.2px"} />
+                    <LucideCamera className="size-3.5" />
                   </Button>
-                  {company.avatar && (
+                  {company.avatar && !avatarFile && (
                     <Button
-                      className="size-8 flex justify-center items-center cursor-pointer p-1 rounded-full bg-red-500 text-red-100"
+                      className="size-7 p-0 rounded-full bg-destructive text-destructive-foreground shadow-md"
+                      type="button"
                       onClick={() => setOpenRemoveAvatarDialog(true)}
+                    >
+                      <LucideTrash2 className="size-3.5" />
+                    </Button>
+                  )}
+                  {avatarFile && (
+                    <Button
+                      className="size-7 p-0 rounded-full bg-destructive text-destructive-foreground shadow-md"
+                      onClick={() => {
+                        setAvatarFile(null);
+                        form.setValue(
+                          "basicInfo.avatar",
+                          company.avatar ?? null,
+                          { shouldDirty: false },
+                        );
+                      }}
                       type="button"
                     >
-                      <LucideXCircle width={"18px"} strokeWidth={"1.2px"} />
+                      <LucideXCircle className="size-3.5" />
                     </Button>
                   )}
                 </div>
@@ -1119,6 +1283,20 @@ export default function ProfilePage() {
               accept="image/*"
               onChange={(e) => handleFileChange(e, "cover")}
             />
+
+            {/* Hidden Cover Error Detector Section */}
+            {company.cover && !coverFile && (
+              <Image
+                src={company.cover}
+                alt=""
+                width={1}
+                height={1}
+                unoptimized
+                className="hidden"
+                aria-hidden="true"
+                onError={() => setCoverLoadError(true)}
+              />
+            )}
 
             {/* Avatar Crop Dialog Section */}
             <AvatarCropDialog
@@ -1159,48 +1337,29 @@ export default function ProfilePage() {
               onYesClick={removeAvatar}
             />
 
-            {/* Name and Industry */}
-            <div className="flex flex-col items-start gap-1 pt-2 tablet-md:items-center tablet-md:pt-0 flex-1 min-w-0">
-              <h2 className="text-xl font-bold leading-tight">
+            {/* Name and Industry Section */}
+            <div className="flex-1 min-w-0 pb-1 tablet-md:text-center">
+              <h2 className="text-xl font-bold leading-tight truncate">
                 {company.name}
               </h2>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground truncate">
                 {company.industry}
               </p>
             </div>
 
-            {/* Edit Profile Button Section */}
-            <div className="flex items-center gap-3 pt-2 tablet-md:pt-0 tablet-md:w-full tablet-md:justify-center">
-              {isEdit ? (
-                <>
-                  <Button
-                    className="text-xs"
-                    type="submit"
-                    disabled={updateProfileLoadingState}
-                  >
-                    {updateProfileLoadingState ? tP("updating") : tP("save")}
-                    <LucideCircleCheck />
-                  </Button>
-                  <Button
-                    className="text-xs"
-                    type="button"
-                    onClick={disableEditMode}
-                  >
-                    {tP("cancel")}
-                    <LucideXCircle />
-                  </Button>
-                </>
-              ) : (
-                <Button
-                  className="text-xs"
-                  type="button"
-                  onClick={enableEditMode}
-                >
-                  {tP("editProfile")}
-                  <LucideEdit />
-                </Button>
-              )}
-            </div>
+            {/* Edit Profile Button Section — View Mode Only */}
+            {!isEdit && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs mb-1 shrink-0 tablet-md:w-full"
+                type="button"
+                onClick={enableEditMode}
+              >
+                <LucideEdit className="size-3.5" />
+                {tP("editProfile")}
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -1229,10 +1388,50 @@ export default function ProfilePage() {
                   />
                 }
               />
-              <div className="w-full flex flex-col items-start gap-2">
-                <TypographyMuted className="text-xs">
-                  {tP("companyDescription")}
-                </TypographyMuted>
+              <div className="w-full flex flex-col items-start gap-1">
+                <div className="w-full flex items-center justify-between">
+                  <TypographyMuted className="text-xs font-bold text-foreground">
+                    {tP("companyDescription")}
+                  </TypographyMuted>
+                  {isEdit && descValue && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={async () => {
+                        const result = await refineDesc(
+                          descValue,
+                          "companyBio",
+                          {
+                            companyName: form.getValues("basicInfo.name"),
+                            industry: form.getValues("basicInfo.industry"),
+                            openPositions: (
+                              form.getValues("openPositions") ?? []
+                            )
+                              .map((p: { title?: string }) => p.title)
+                              .filter(Boolean) as string[],
+                            benefits: benefits.map((b) => b.label),
+                            values: values.map((v) => v.label),
+                          },
+                          (text) =>
+                            form.setValue("basicInfo.description", text, {
+                              shouldDirty: true,
+                            }),
+                        );
+                        if (result) toast.success(tr("refinedSuccess"));
+                      }}
+                      disabled={descLoading}
+                      className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                    >
+                      {descLoading ? (
+                        <LucideLoader2 size={10} className="animate-spin" />
+                      ) : (
+                        <Sparkles size={10} />
+                      )}
+                      {tr("aiRefine")}
+                    </Button>
+                  )}
+                </div>
                 <Textarea
                   autoResize
                   placeholder={
@@ -1277,6 +1476,59 @@ export default function ProfilePage() {
                           {locationConstant.map((location) => (
                             <SelectItem key={location} value={location}>
                               {location}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                </div>
+              </div>
+
+              {/* Website URL and Company Type Section */}
+              <div className="w-full flex items-center justify-between gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
+                {/* Website URL Section */}
+                <LabelInput
+                  label={tP("websiteUrl")}
+                  input={
+                    <Controller
+                      name="basicInfo.websiteUrl"
+                      control={form.control}
+                      render={({ field }) => (
+                        <Input
+                          placeholder="https://yourcompany.com"
+                          {...field}
+                          value={field.value ?? ""}
+                          disabled={!isEdit}
+                        />
+                      )}
+                    />
+                  }
+                />
+
+                {/* Company Type Section */}
+                <div className="flex flex-col items-start gap-2">
+                  <TypographyMuted className="text-xs">
+                    {tP("companyType")}
+                  </TypographyMuted>
+                  <Controller
+                    name="basicInfo.companyType"
+                    control={form.control}
+                    render={({ field }) => (
+                      <Select
+                        value={field.value ?? ""}
+                        onValueChange={field.onChange}
+                        disabled={!isEdit}
+                      >
+                        <SelectTrigger className="h-12 text-muted-foreground">
+                          <SelectValue
+                            placeholder={tP("companyTypePlaceholder")}
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {companyTypeConstant.map((item) => (
+                            <SelectItem key={item.value} value={item.value}>
+                              {item.label}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -1357,27 +1609,21 @@ export default function ProfilePage() {
           {/* OpenPosition Information Section */}
           {company.openPositions && (
             <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
-              <div className="flex items-center justify-between gap-2.5 mb-0 pb-3.5 border-b border-border/60">
-                <div className="flex items-center gap-2.5">
-                  <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <span className="[&>svg]:size-[18px] [&>svg]:text-primary [&>svg]:stroke-[1.5]">
-                      <LucideUsers />
-                    </span>
-                  </div>
-                  <h3 className="font-semibold text-base">
-                    {tP("openPositionInformation")}
-                  </h3>
-                </div>
-                {isEdit && (
-                  <div onClick={addNewOpenPosition}>
-                    <IconLabel
-                      text={tP("addOpenPosition")}
-                      icon={<LucidePlus className="text-muted-foreground" />}
-                      className="cursor-pointer"
-                    />
-                  </div>
-                )}
-              </div>
+              <SectionTitle
+                icon={<LucideUsers />}
+                title={tP("openPositionInformation")}
+                action={
+                  isEdit ? (
+                    <div onClick={addNewOpenPosition}>
+                      <IconLabel
+                        text={tP("addOpenPosition")}
+                        icon={<LucidePlus className="text-muted-foreground" />}
+                        className="cursor-pointer"
+                      />
+                    </div>
+                  ) : undefined
+                }
+              />
               {/* OpenPosition Form Section */}
               <div className="flex flex-col items-start gap-5">
                 {openPositionFA.fields.length > 0 ? (
@@ -1391,44 +1637,18 @@ export default function ProfilePage() {
                         key={row.id}
                         index={index}
                         form={form}
-                        positionIndex={index}
                         positionUUID={openPositionId ?? ""}
                         isEdit={isEdit}
                         title={form.watch(`openPositions.${index}.title`)}
                         description={form.watch(
                           `openPositions.${index}.description`,
                         )}
-                        type={form.watch(`openPositions.${index}.type`)}
                         experienceReqirement={form.watch(
                           `openPositions.${index}.experienceRequirement`,
                         )}
                         educationRequirement={form.watch(
                           `openPositions.${index}.educationRequirement`,
                         )}
-                        skills={
-                          form.watch(`openPositions.${index}.skills`) ?? ""
-                        }
-                        salary={form.watch(`openPositions.${index}.salary`)}
-                        deadlineDate={{
-                          defaultValue:
-                            (form.getValues(
-                              `openPositions.${index}.deadlineDate`,
-                            ) as unknown as Date) ?? new Date(),
-                          data:
-                            (form.getValues(
-                              `openPositions.${index}.deadlineDate`,
-                            ) as unknown as Date) ?? new Date(),
-                          onDataChange: (date) => {
-                            form.setValue(
-                              `openPositions.${index}.deadlineDate`,
-                              date as unknown as Date,
-                              {
-                                shouldDirty: true,
-                                shouldTouch: true,
-                              },
-                            );
-                          },
-                        }}
                         onRemove={() => {
                           if (openPositionId && isUuid(openPositionId)) {
                             setOpenRemoveOpenPositionDialog({
@@ -1447,7 +1667,7 @@ export default function ProfilePage() {
                     {/* Add New OpenPosition Section */}
                     <Image
                       alt="empty"
-                      src={emptySvgImage}
+                      src={emptySvg}
                       className="size-44 animate-float"
                     />
                     <TypographyMuted className="text-sm">
@@ -1606,7 +1826,10 @@ export default function ProfilePage() {
                     >
                       <IconLabel
                         icon={
-                          <LucideCircleCheck stroke="white" fill="#0073E6" />
+                          <LucideCircleCheck
+                            stroke="white"
+                            fill={COMPANY_ICON_COLOR.BENEFIT}
+                          />
                         }
                         className="[&>p]:text-[#0073E6] font-medium"
                         text={benefit.label}
@@ -1696,7 +1919,10 @@ export default function ProfilePage() {
                     >
                       <IconLabel
                         icon={
-                          <LucideCircleCheck stroke="white" fill="#69B41E" />
+                          <LucideCircleCheck
+                            stroke="white"
+                            fill={COMPANY_ICON_COLOR.VALUE}
+                          />
                         }
                         className="[&>p]:text-[#69B41E] font-medium"
                         text={value.label}
@@ -1832,7 +2058,8 @@ export default function ProfilePage() {
                       className="w-full justify-between"
                       type="button"
                       onClick={() => {
-                        getAllCareerScopeStore.getAllCareerScopes();
+                        if (!getAllCareerScopeStore.careerScopes?.length)
+                          getAllCareerScopeStore.getAllCareerScopes();
                       }}
                     >
                       {careerScopeInput

@@ -4,6 +4,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { X } from "lucide-react";
 import { Editable } from "./editable";
+import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
 
 export function SkillChips(props: {
   skill: string;
@@ -35,8 +36,8 @@ export function SkillChips(props: {
         opacity: isDragging ? 0.4 : 1,
         display: "inline-flex",
         alignItems: "center",
-        background: "#ede9fe",
-        color: "#4f46e5",
+        background: RESUME_COLOR.ACCENT_LIGHT,
+        color: RESUME_COLOR.ACCENT,
         fontSize: 11,
         padding: "2px 6px 2px 8px",
         borderRadius: 99,
@@ -66,7 +67,7 @@ export function SkillChips(props: {
         }}
         onMouseDown={(e) => e.stopPropagation()}
         className="opacity-0 group-hover/chip:opacity-70 hover:!opacity-100 transition-opacity ml-1"
-        style={{ color: "#ef4444", lineHeight: 1 }}
+        style={{ color: RESUME_COLOR.DANGER, lineHeight: 1 }}
         title="Remove skill"
       >
         <X size={9} />

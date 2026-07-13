@@ -1,5 +1,14 @@
-/* --------------------------------- Methods ---------------------------------- */
-export function getStatusBadgeStyleClass(status: string) {
+import { TInterviewStatus } from "@/utils/types/interview";
+
+/* --------------------------------- Method ---------------------------------- */
+/**
+ * Returns a set of Tailwind color classes (bg, text, border) that correspond
+ * to the semantic meaning of an interview status.
+ *
+ * @param status - An interview's state (e.g. "accepted", "declined", "pending")
+ * @returns A string of tailwind utility classes
+ */
+export function getStatusBadgeStyleClass(status: TInterviewStatus) {
   switch (status) {
     case "accepted":
       return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800";

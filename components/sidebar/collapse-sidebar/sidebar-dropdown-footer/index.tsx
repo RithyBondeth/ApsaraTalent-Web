@@ -58,6 +58,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ISidebarDropdownFooterProps } from "./props";
+import { getNameInitials } from "@/utils/functions/text";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
   /* ---------------------------------- Utils --------------------------------- */
@@ -150,7 +152,7 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
               <Avatar className="h-8 w-8 rounded-lg shrink-0">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="rounded-lg">
-                  {user.name.slice(0, 2).toUpperCase()}
+                  {getNameInitials(user.name)}
                 </AvatarFallback>
               </Avatar>
 
@@ -178,7 +180,7 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback className="rounded-lg">
-                    {user.name.slice(0, 2).toUpperCase()}
+                    {getNameInitials(user.name)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
@@ -194,10 +196,10 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
               {/* My Profile Section */}
               <DropdownMenuItem asChild>
                 <Link
-                  href={`/profile/${currentUser?.role ?? "employee"}`}
+                  href={`/profile/${currentUser?.role ?? USER_ROLE.EMPLOYEE}`}
                   prefetch={true}
                 >
-                  {currentUser?.role === "employee" ? (
+                  {currentUser?.role === USER_ROLE.EMPLOYEE ? (
                     <LucideUser className="text-violet-500" />
                   ) : (
                     <LucideBuilding className="text-violet-500" />

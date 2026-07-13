@@ -17,16 +17,21 @@ export default function ResumeBuilderGenerate({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full bg-primary text-secondary flex flex-col items-center justify-center rounded-md gap-3 p-5">
+    <div className="w-full bg-foreground text-background flex flex-col items-center justify-center rounded-2xl gap-3 p-8 sm:p-10">
       {/* Title Section */}
-      <TypographyH4>{t("readyToCreate")}</TypographyH4>
+      <TypographyH4 className="!m-0 text-background">
+        {t("readyToCreate")}
+      </TypographyH4>
 
       {/* Description Section */}
-      <TypographyMuted>{t("generateDesc")}</TypographyMuted>
+      <TypographyMuted className="text-sm text-background/70 text-center">
+        {t("generateDesc")}
+      </TypographyMuted>
 
       {/* Button Section */}
       <Button
-        variant={"secondary"}
+        variant="secondary"
+        className="rounded-full px-6 mt-1"
         onClick={onGenerateClick}
         disabled={disabled}
       >
@@ -34,9 +39,9 @@ export default function ResumeBuilderGenerate({
         {t("generateMyResume")}
       </Button>
 
-      {/* Disabled Section */}
+      {/* Disabled Hint Section */}
       {disabled && (
-        <TypographyMuted className="text-xs">
+        <TypographyMuted className="text-xs text-background/50">
           {t("selectTemplateFirst")}
         </TypographyMuted>
       )}

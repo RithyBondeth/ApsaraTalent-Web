@@ -1,4 +1,11 @@
-/* --------------------------------- Methods ---------------------------------- */
+/* --------------------------------- Method ---------------------------------- */
+/**
+ * Decodes a JWT token and extracts the "role" property from its payload.
+ * Useful for determining user access levels in middleware or on the client edge.
+ *
+ * @param token - The raw JWT string
+ * @returns The user's role as a string, or null if parsing fails/role is missing
+ */
 export function getRoleFromJwt(token: string): string | null {
   try {
     const payloadPart = token.split(".")[1];

@@ -20,26 +20,30 @@ import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { companySignupSchema, TCompanySignup } from "./validation";
-import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
+import { makeCompanySignupSchema, TCompanySignup } from "./validation";
+import {
+  DEFAULT_REDIRECT_DELAY_MS,
+  TOAST_DURATION_MS,
+} from "@/utils/constants/config.constant";
 
 export default function CompanySignup() {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const t = useTranslations("auth");
+  const tv = useTranslations("validation");
   const totalSteps = 6;
 
   /* ------------------------------ All States -------------------------------- */
   const [step, setStep] = useState<number>(1);
   const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
 
-  /* ----------------------------- API Integration ---------------------------- */
-  // Get user basic data from Basic, Phone
+  // Get User Basic Data
   const { basicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
 
+  /* ----------------------------- API Integration ---------------------------- */
   // Upload Avatar, Cover
   const uploadAvatar = useUploadCompanyAvatarStore();
   const uploadCover = useUploadCompanyCoverStore();
@@ -48,7 +52,54 @@ export default function CompanySignup() {
   const cmpSignup = useCompanySignupStore();
 
   /* ------------------- React Hook Form: Company Signup Form ------------------ */
-  const methods = useForm<TCompanySignup>({
+  // ── Define Schema For Company Signup Form ───────────────────────────
+  const companySignupSchema = useMemo(
+    () =>
+      makeCompanySignupSchema({
+        atLeastOneSkill: tv("atLeastOneSkill"),
+        atLeastOnePosition: tv("atLeastOnePosition"),
+        atLeastOneCareer: tv("atLeastOneCareer"),
+        deadlineRequired: tv("deadlineRequired"),
+        fieldRequired: (field) => {
+          const labels: Record<string, string> = {
+            Name: tv("fieldLabelName"),
+            Description: tv("fieldLabelDescription"),
+            Industry: tv("fieldLabelIndustry"),
+            "Company size": tv("fieldLabelCompanySize"),
+            "Founded Year": tv("fieldLabelFoundedYear"),
+            Title: tv("fieldLabelTitle"),
+            "Experience requirement": tv("fieldLabelExperienceReq"),
+            "Education requirement": tv("fieldLabelEducationReq"),
+            Type: tv("fieldLabelType"),
+          };
+          return tv("fieldRequired", { field: labels[field] ?? field });
+        },
+        fieldTooLong: (field, max) => {
+          const labels: Record<string, string> = {
+            Name: tv("fieldLabelName"),
+            Description: tv("fieldLabelDescription"),
+            Industry: tv("fieldLabelIndustry"),
+            "Company size": tv("fieldLabelCompanySize"),
+            "Founded Year": tv("fieldLabelFoundedYear"),
+            Title: tv("fieldLabelTitle"),
+            "Experience requirement": tv("fieldLabelExperienceReq"),
+            "Education requirement": tv("fieldLabelEducationReq"),
+            Type: tv("fieldLabelType"),
+          };
+          return tv("fieldTooLong", { field: labels[field] ?? field, max });
+        },
+        selectRequired: (field) => {
+          const labels: Record<string, string> = {
+            location: tv("fieldLabelLocation"),
+          };
+          return tv("selectRequired", { field: labels[field] ?? field });
+        },
+      }),
+    [tv],
+  );
+
+  // ── Initialize Company Form with Default Values ─────────────────────
+  const cmpForm = useForm<TCompanySignup>({
     mode: "onChange",
     resolver: zodResolver(companySignupSchema),
     defaultValues: {
@@ -67,8 +118,13 @@ export default function CompanySignup() {
           experienceRequirement: "",
           educationRequirement: "",
           skills: [],
-          salary: "",
           types: "",
+          salaryMin: undefined,
+          salaryMax: undefined,
+          salaryCurrency: "USD",
+          workMode: undefined,
+          location: "",
+          openingsCount: undefined,
           deadlineDate: "" as unknown as Date,
         },
       ],
@@ -90,9 +146,9 @@ export default function CompanySignup() {
     getValues,
     setValue,
     formState: { errors },
-  } = methods;
+  } = cmpForm;
 
-  // Field groups per step for selective validation
+  // ── Field Groups Per Step For Selective Validation ──────────────────
   const stepFieldMap: Record<number, (keyof TCompanySignup)[]> = {
     1: ["basicInfo"],
     2: ["openPositions"],
@@ -103,7 +159,7 @@ export default function CompanySignup() {
   };
 
   /* --------------------------------- Methods --------------------------------- */
-  // ── Navigation Helpers ─────────────────────────────────────────
+  // ── Navigation Helpers Function ────────────────────────────────
   // Handle Previous Step
   const prevStep = () => setStep((prev) => prev - 1);
 
@@ -115,7 +171,7 @@ export default function CompanySignup() {
 
     if (isValid) {
       if (step === totalSteps) {
-        // ── Final Submit: Company Registration ────────────────────
+        // Final Submit: Company Registration
         handleSubmit(async (data) => {
           // Register with regular email-password
           if (basicSignupData) {
@@ -138,7 +194,6 @@ export default function CompanySignup() {
                 experience: job.experienceRequirement,
                 education: job.educationRequirement,
                 skills: job.skills,
-                salary: job.salary,
                 deadlineDate: job.deadlineDate.toISOString(),
               })),
               benefits:
@@ -197,7 +252,6 @@ export default function CompanySignup() {
                 experience: job.experienceRequirement,
                 education: job.educationRequirement,
                 skills: job.skills,
-                salary: job.salary,
                 deadlineDate: job.deadlineDate.toISOString(),
               })),
               benefits:
@@ -242,11 +296,10 @@ export default function CompanySignup() {
   };
 
   /* --------------------------------- Effects --------------------------------- */
-  // ── Company Signup Effect ──────────────────────────────────
+  // ── Company Signup Effect ──────────────────────────────────────
   useEffect(() => {
     if (
-      cmpSignup.accessToken &&
-      cmpSignup.refreshToken &&
+      cmpSignup.isAuthenticated &&
       uploadsComplete &&
       !cmpSignup.loading &&
       !uploadAvatar.loading &&
@@ -254,9 +307,9 @@ export default function CompanySignup() {
     ) {
       toast.dismiss();
       toast.success(t("signupSuccessful"), {
-        duration: 1000,
+        duration: TOAST_DURATION_MS.SHORT,
       });
-      setTimeout(() => router.replace("/login"), DEFAULT_REDIRECT_DELAY_MS);
+      setTimeout(() => router.replace("/feed"), DEFAULT_REDIRECT_DELAY_MS);
     }
 
     const errorList = [
@@ -278,8 +331,7 @@ export default function CompanySignup() {
     cmpSignup.loading,
     cmpSignup.error,
     cmpSignup.message,
-    cmpSignup.refreshToken,
-    cmpSignup.accessToken,
+    cmpSignup.isAuthenticated,
     uploadAvatar.loading,
     uploadAvatar.error,
     uploadAvatar.message,
@@ -290,7 +342,7 @@ export default function CompanySignup() {
     router,
   ]);
 
-  /* -------------------------------- Loading State -------------------------------- */
+  /* ------------------------------ Loading State ------------------------------ */
   const isSignupLoading =
     cmpSignup.loading || uploadAvatar.loading || uploadCover.loading;
 
@@ -303,34 +355,34 @@ export default function CompanySignup() {
         ? t("uploadingCompanyCover")
         : t("processingRequest");
 
-  /* -------------------------------------------- Render UI -------------------------------------------- */
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col gap-5 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
       {/* Navigate Back Button Section */}
       <button
         type="button"
-        onClick={() => router.push("/signup")}
+        onClick={() => router.replace("/signup")}
         className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors w-fit"
       >
         <LucideArrowLeft className="size-4" />
-        Back to basic info
+        {t("backToBasicInfo")}
       </button>
 
       {/* Title Section */}
       <div>
-        <TypographyH2>Sign up as company</TypographyH2>
+        <TypographyH2>{t("signupAsCompany")}</TypographyH2>
         <TypographyMuted className="text-md">
-          Find your potential candidate, Apsara Talent.
+          {t("companySignupSubtitle")}
         </TypographyMuted>
       </div>
 
       {/* Step Progress Indicator Section */}
       <div className="w-full overflow-x-auto pb-2 mb-2">
-        <div className="w-full min-w-[360px] flex items-center gap-0">
+        <div className="w-full min-w-[280px] flex items-center gap-0">
           {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
             (st, index) => (
               <div key={st} className="w-full flex items-center">
-                {/* Step Circle */}
+                {/* Step Circle Section */}
                 <div
                   className={`size-8 text-xs sm:size-9 sm:text-sm flex items-center justify-center rounded-full font-bold transition-all ${
                     step >= st
@@ -357,13 +409,15 @@ export default function CompanySignup() {
       </div>
 
       {/* Form Section */}
-      <FormProvider {...methods}>
+      <FormProvider {...cmpForm}>
         <form className="w-full" onSubmit={(e) => e.preventDefault()}>
           {step === 1 && (
             <BasicInfoStepForm
               register={register}
               control={control}
               errors={errors}
+              setValue={setValue}
+              getValues={getValues}
             />
           )}
           {step === 2 && (
@@ -419,7 +473,7 @@ export default function CompanySignup() {
                 className="flex-1 sm:flex-initial sm:min-w-[140px]"
               >
                 <LucideArrowLeft />
-                Back
+                {t("back")}
               </Button>
             ) : (
               <div className="hidden sm:block" />
@@ -433,7 +487,7 @@ export default function CompanySignup() {
                 cmpSignup.loading || uploadAvatar.loading || uploadCover.loading
               }
             >
-              {step === totalSteps ? "Submit" : "Next"}
+              {step === totalSteps ? t("submit") : t("next")}
               <LucideArrowRight />
             </Button>
           </div>

@@ -4,10 +4,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 /* ------------------------- Employee Card Skeleton ------------------------- */
 export default function EmployeeCardSkeleton() {
   return (
-    <div className="w-full flex flex-col rounded-xl border border-muted bg-card overflow-hidden">
-      {/* Header Section  */}
-      <div className="flex items-start gap-3 p-4 pb-3">
-        <Skeleton className="size-14 rounded-md shrink-0" />
+    <div className="h-full w-full flex flex-col rounded-2xl border border-border/70 bg-card overflow-hidden shadow-[0_2px_8px_hsl(var(--foreground)/0.05)]">
+      {/* Header Section */}
+      <div className="flex items-start gap-3 p-4 pb-3 tablet-md:p-3 tablet-md:pb-2">
+        <Skeleton className="size-14 rounded-md shrink-0 ring-2 ring-border" />
         <div className="flex-1 flex flex-col gap-1.5">
           <Skeleton className="h-4 w-28 rounded" />
           <Skeleton className="h-3 w-20 rounded" />
@@ -16,13 +16,16 @@ export default function EmployeeCardSkeleton() {
             <Skeleton className="h-3 w-14 rounded" />
           </div>
         </div>
-        <Skeleton className="size-8 rounded-full shrink-0" />
+        {/* Like and Quick View Buttons Section (Stacked) */}
+        <div className="flex justify-end items-center gap-1 shrink-0">
+          <Skeleton className="size-8 rounded-full" />
+          <Skeleton className="size-8 rounded-full" />
+        </div>
       </div>
 
       {/* Status Badges Section */}
-      <div className="flex gap-1.5 px-4 pb-3">
+      <div className="flex flex-wrap items-center gap-1.5 px-4 pb-3">
         <Skeleton className="h-6 w-20 rounded-full" />
-        <Skeleton className="h-6 w-24 rounded-full" />
       </div>
 
       {/* Skills Section */}
@@ -30,28 +33,25 @@ export default function EmployeeCardSkeleton() {
         <Skeleton className="h-6 w-16 rounded-full" />
         <Skeleton className="h-6 w-20 rounded-full" />
         <Skeleton className="h-6 w-14 rounded-full" />
-        <Skeleton className="h-6 w-18 rounded-full" />
+        <Skeleton className="h-6 w-[4.5rem] rounded-full" />
       </div>
 
       {/* Experience and Education Section */}
-      <div className="flex flex-col gap-1.5 px-4 pb-3">
+      <div className="flex flex-col gap-1 px-4 pb-3">
         <Skeleton className="h-3 w-40 rounded" />
         <Skeleton className="h-3 w-48 rounded" />
       </div>
 
       {/* Description Section */}
-      <div className="px-4 pb-3 space-y-1.5">
+      <div className="px-4 pb-3 flex-1 space-y-1.5">
         <Skeleton className="h-3 w-full rounded" />
         <Skeleton className="h-3 w-4/5 rounded" />
       </div>
 
       {/* Footer Section */}
-      <div className="flex items-center justify-between px-4 pb-3 pt-2 border-t border-muted/50">
-        <Skeleton className="size-8 rounded-full" />
-        <div className="flex gap-1.5">
-          <Skeleton className="h-7 w-16 rounded-full" />
-          <Skeleton className="h-7 w-16 rounded-full" />
-        </div>
+      <div className="flex items-center justify-end gap-2 px-4 pb-3 pt-2 border-t border-border/50">
+        <Skeleton className="h-7 w-16 rounded-full" />
+        <Skeleton className="h-7 w-16 rounded-full" />
       </div>
     </div>
   );

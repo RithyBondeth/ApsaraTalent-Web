@@ -4,7 +4,6 @@ import ResumeBuilderBanner from "@/components/resume-builder/banner";
 import ResumeBuilderFeature from "@/components/resume-builder/feature";
 import ResumeBuilderGenerate from "@/components/resume-builder/generate";
 import TemplateCard from "@/components/resume-builder/template";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { useGetAllTemplateStore } from "@/stores/apis/resume/get-all-template.store";
 import { useResumeEditStore } from "@/stores/apis/resume/resume-edit.store";
 import { useTemplateSelectionStore } from "@/stores/apis/resume/template-selection.store";
@@ -15,6 +14,7 @@ import { buildResumePayloadFromUser } from "./_utils/build-payload";
 import { TResumeTemplate } from "@/utils/types/resume/resume.type";
 import { TemplateCardSkeleton } from "@/components/resume-builder/skeleton";
 import { useTranslations } from "next-intl";
+import { TypographyP } from "@/components/utils/typography/typography-p";
 
 // Module-level flag so templates are only fetched once per app session
 let hasFetchedTemplates = false;
@@ -23,12 +23,14 @@ export default function ResumeBuilder() {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const t = useTranslations("resumeBuilder");
-  const { setPayload } = useResumeEditStore();
-  const { setSelectedTemplate, selectedTemplate } = useTemplateSelectionStore();
 
   /* ----------------------------- API Integration ---------------------------- */
   // API state
-  const { templateData, queryAllTemplates } = useGetAllTemplateStore();
+  const {
+    templateData,
+    loading: templatesLoading,
+    queryAllTemplates,
+  } = useGetAllTemplateStore();
   const currentUser = useGetCurrentUserStore((state) => state.user);
 
   /* -------------------------------- All States ------------------------------ */
@@ -69,6 +71,9 @@ export default function ResumeBuilder() {
     "dark",
   ];
 
+  const { setPayload } = useResumeEditStore();
+  const { setSelectedTemplate, selectedTemplate } = useTemplateSelectionStore();
+
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     if (hasFetchedTemplates) return;
@@ -106,31 +111,44 @@ export default function ResumeBuilder() {
       <ResumeBuilderBanner />
 
       {/* Template Grid Section */}
-      <div className="w-full">
-        <div className="w-full flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between">
-          <TypographyH4>{t("chooseTemplate")}</TypographyH4>
+      <div className="w-full flex flex-col gap-3">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 shrink-0 bg-card border border-border/70 rounded-full px-3 py-1.5 shadow-[0_1px_4px_hsl(var(--foreground)/0.06)]">
+            <span className="text-sm font-semibold text-foreground/80">
+              {t("chooseTemplate")}
+            </span>
+          </div>
+          <div className="flex-1 h-px bg-border/60" />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 my-3">
-          {templateData && templateData.length > 0
-            ? templateData.map((resume) => {
-                const mapped = templateMap[resume.title];
-                const isSelected = mapped && selectedTemplate === mapped;
-                return (
-                  <TemplateCard
-                    key={resume.id}
-                    isPremium={resume.isPremium}
-                    price={resume.price!}
-                    image={resume.image}
-                    title={resume.title}
-                    description={resume.description}
-                    onUseTemplate={() => handleSelectTemplate(resume.title)}
-                    selected={!!isSelected}
-                  />
-                );
-              })
-            : Array.from({ length: 6 }, (_, i) => (
-                <TemplateCardSkeleton key={i} />
-              ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {templatesLoading || templateData === null ? (
+            Array.from({ length: 6 }, (_, i) => (
+              <TemplateCardSkeleton key={i} />
+            ))
+          ) : templateData.length > 0 ? (
+            templateData.map((resume) => {
+              const mapped = templateMap[resume.title];
+              const isSelected = mapped && selectedTemplate === mapped;
+              return (
+                <TemplateCard
+                  key={resume.id}
+                  isPremium={resume.isPremium}
+                  price={resume.price!}
+                  image={resume.image}
+                  title={resume.title}
+                  description={resume.description}
+                  onUseTemplate={() => handleSelectTemplate(resume.title)}
+                  selected={!!isSelected}
+                />
+              );
+            })
+          ) : (
+            <div className="col-span-full flex flex-col items-center justify-center py-12 gap-2">
+              <TypographyP className="text-sm text-muted-foreground">
+                {t("noTemplatesAvailable")}
+              </TypographyP>
+            </div>
+          )}
         </div>
       </div>
 

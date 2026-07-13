@@ -1,3 +1,5 @@
+import { formatAvailabilityWords } from "@/utils/functions/text";
+
 export function AvailabilityBadge({ availability }: { availability: string }) {
   /* ---------------------------------- Utils --------------------------------- */
   const lower = availability.toLowerCase();
@@ -33,7 +35,7 @@ export function AvailabilityBadge({ availability }: { availability: string }) {
       <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${config.dot}`} />
 
       {/* Availability Label Section */}
-      {availability}
+      {formatAvailabilityWords(availability)}
     </span>
   );
 }

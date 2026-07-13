@@ -1,11 +1,12 @@
 "use client";
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { User, Briefcase, GraduationCap } from "lucide-react";
+import { User, Briefcase, GraduationCap, LayoutPanelLeft } from "lucide-react";
 import { IFormPanelProps } from "./props";
 import { PersonalInfoTab } from "./utils/personal-info-tab";
 import { ExperienceTab } from "./utils/experience-tab";
 import { SkillsEducationTab } from "./utils/skills-education-tab";
+import { LayoutTab } from "./utils/layout-tab";
 import { useTranslations } from "next-intl";
 
 export default function ResumeEditorFormPanel(props: IFormPanelProps) {
@@ -16,29 +17,37 @@ export default function ResumeEditorFormPanel(props: IFormPanelProps) {
   return (
     <Tabs defaultValue="personal" className="flex flex-col h-full">
       {/* Tab Bar Section */}
-      <TabsList className="grid w-full shrink-0 grid-cols-3">
-        {/* Personal Tab Trigger */}
+      <TabsList className="grid w-full shrink-0 grid-cols-4 h-9">
+        {/* Personal Tab Trigger Section */}
         <TabsTrigger
           value="personal"
-          className="gap-1 text-[11px] sm:gap-1.5 sm:text-xs"
+          className="gap-1 text-[10px] px-1 sm:gap-1.5 sm:text-xs"
         >
           <User size={12} /> {t("tabPersonal")}
         </TabsTrigger>
 
-        {/* Experience Tab Trigger */}
+        {/* Experience Tab Trigger Section */}
         <TabsTrigger
           value="experience"
-          className="gap-1 text-[11px] sm:gap-1.5 sm:text-xs"
+          className="gap-1 text-[10px] px-1 sm:gap-1.5 sm:text-xs"
         >
           <Briefcase size={12} /> {t("tabExperience")}
         </TabsTrigger>
 
-        {/* Skills Tab Trigger */}
+        {/* Skills Tab Trigger Section */}
         <TabsTrigger
           value="skills"
-          className="gap-1 text-[11px] sm:gap-1.5 sm:text-xs"
+          className="gap-1 text-[10px] px-1 sm:gap-1.5 sm:text-xs"
         >
           <GraduationCap size={12} /> {t("tabSkills")}
+        </TabsTrigger>
+
+        {/* Layout Tab Trigger Section */}
+        <TabsTrigger
+          value="layout"
+          className="gap-1 text-[10px] px-1 sm:gap-1.5 sm:text-xs"
+        >
+          <LayoutPanelLeft size={12} /> {t("tabLayout")}
         </TabsTrigger>
       </TabsList>
 
@@ -47,21 +56,34 @@ export default function ResumeEditorFormPanel(props: IFormPanelProps) {
         value="personal"
         className="flex-1 overflow-y-auto mt-3 pr-1"
       >
-        {/* Personal Info Tab Content */}
-        <PersonalInfoTab register={props.register} control={props.control} />
+        {/* Personal Info Tab Content Section */}
+        <PersonalInfoTab
+          register={props.register}
+          control={props.control}
+          setValue={props.setValue}
+        />
       </TabsContent>
 
       <TabsContent
         value="experience"
         className="flex-1 overflow-y-auto mt-3 pr-1"
       >
-        {/* Experience Tab Content */}
-        <ExperienceTab register={props.register} control={props.control} />
+        {/* Experience Tab Content Section */}
+        <ExperienceTab
+          register={props.register}
+          control={props.control}
+          setValue={props.setValue}
+        />
       </TabsContent>
 
       <TabsContent value="skills" className="flex-1 overflow-y-auto mt-3 pr-1">
-        {/* Skills Tab Content */}
+        {/* Skills Tab Content Section */}
         <SkillsEducationTab {...props} />
+      </TabsContent>
+
+      <TabsContent value="layout" className="flex-1 overflow-y-auto mt-3 pr-1">
+        {/* Layout Tab Content Section */}
+        <LayoutTab />
       </TabsContent>
     </Tabs>
   );

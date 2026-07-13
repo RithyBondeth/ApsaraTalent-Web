@@ -7,20 +7,34 @@ import {
   isSupported,
   onMessage,
 } from "firebase/messaging";
-import axios from "@/lib/axios";
-import { API_UPDATE_PUSH_TOKEN_URL } from "@/utils/constants/apis/user-api/user.api.constant";
+import { useUpdatePushTokenStore } from "@/stores/apis/notification/update-push-token.store";
 import { getFirebaseApp } from "@/lib/firebase";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import { PUSH_TOKEN_STORAGE_KEY } from "@/utils/constants/cookie.constant";
 
+/* ----------------------------------- Usage ---------------------------------- */
+/**
+ * Requests browser notification permission, registers the Firebase service
+ * worker, and wires up foreground push handlers for the current user.
+ *
+ * Usage:
+ *   // Mount once in the authenticated layout — handles its own deduplication.
+ *   usePushNotifications();
+ *
+ *   // The hook automatically:
+ *   //  - Requests notification permission on first run
+ *   //  - Saves the FCM push token to the backend if it changed
+ *   //  - Updates the unread notification badge on foreground / background pushes
+ */
+
 /* ----------------------------------- Hook ----------------------------------- */
 export const usePushNotifications = () => {
-  /* -------------------------------- All States -------------------------------- */
+  /* ------------------------------- All States ------------------------------- */
   const userId = useGetCurrentUserStore((s) => s.user?.id);
   const initializedRef = useRef(false);
 
-  /* --------------------------------- Effects ---------------------------------- */
+  /* -------------------------------- Effects --------------------------------- */
   useEffect(() => {
     if (!userId || initializedRef.current) {
       return;
@@ -102,7 +116,7 @@ export const usePushNotifications = () => {
         const cached = localStorage.getItem(PUSH_TOKEN_STORAGE_KEY);
         if (cached !== token) {
           try {
-            await axios.post(API_UPDATE_PUSH_TOKEN_URL, { token });
+            await useUpdatePushTokenStore.getState().updatePushToken(token);
             localStorage.setItem(PUSH_TOKEN_STORAGE_KEY, token);
             console.log("[Push] Token saved.");
           } catch (error) {
@@ -157,9 +171,14 @@ export const usePushNotifications = () => {
         });
 
         // ── Real-time badge update (foreground) ──────────────────────────────
-        // A push arrived while the tab is focused — bump the bell badge immediately
-        // without waiting for a re-fetch, so the sidebar counter updates instantly.
-        useNotificationStore.getState().incrementUnreadCount();
+        // Only bump the badge if this push was addressed to the current user.
+        // Skipping the check when targetUserId is absent keeps backward compat.
+        // Interview badge + page updates are handled by the interviewUpdate
+        // socket event, not here.
+        const targetUserId = payload.data?.targetUserId;
+        if (!targetUserId || targetUserId === userId) {
+          useNotificationStore.getState().incrementUnreadCount();
+        }
       });
 
       document.addEventListener("visibilitychange", handleVisibilityChange);

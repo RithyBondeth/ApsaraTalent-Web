@@ -11,6 +11,7 @@ import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useEmployeeSignupStore } from "@/stores/apis/auth/employee-signup.store";
+import { useParseResumeStore } from "@/stores/apis/auth/parse-resume.store";
 import { useUploadEmployeeAvatarStore } from "@/stores/apis/employee/upload-emp-avatar.store";
 import { useUploadEmployeeCoverLetter } from "@/stores/apis/employee/upload-emp-coverletter.store";
 import { useUploadEmployeeResumeStore } from "@/stores/apis/employee/upload-emp-resume.store";
@@ -18,65 +19,138 @@ import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-sign
 import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
 import { TGender } from "@/utils/types/user/gender.type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
+import {
+  LucideArrowLeft,
+  LucideArrowRight,
+  LucideCheckCircle2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { employeeSignUpSchema, TEmployeeSignUp } from "./validation";
-import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
+import { makeEmployeeSignUpSchema, TEmployeeSignUp } from "./validation";
+import {
+  DEFAULT_REDIRECT_DELAY_MS,
+  TOAST_DURATION_MS,
+} from "@/utils/constants/config.constant";
 
 export default function EmployeeSignup() {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
   const t = useTranslations("auth");
+  const tv = useTranslations("validation");
   const totalSteps = 6;
 
   /* ------------------------------ All States -------------------------------- */
   const [step, setStep] = useState<number>(1);
   const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
 
-  /* ----------------------------- API Integration ---------------------------- */
-  // Get user basic data from Basic, Phone
+  // Get User Basic Data
   const { basicSignupData } = useBasicSignupDataStore();
   const { basicPhoneSignupData } = useBasicPhoneSignupDataStore();
 
+  /* ----------------------------- API Integration ---------------------------- */
   // Upload Avatar, Resume, CoverLetter
   const uploadAvatar = useUploadEmployeeAvatarStore();
   const uploadResume = useUploadEmployeeResumeStore();
   const uploadCoverLetter = useUploadEmployeeCoverLetter();
 
+  // SmartResumeUpload
+  const { data: parsedData, file: parsedFile } = useParseResumeStore();
+
   // Employee Register
   const empSignup = useEmployeeSignupStore();
 
   /* ------------------ React Hook Form: Employee Signup Form ----------------- */
-  const methods = useForm<TEmployeeSignUp>({
-    mode: "onChange",
-    resolver: zodResolver(employeeSignUpSchema),
-    defaultValues: {
-      profession: {
-        job: "",
-        yearOfExperience: "",
-        availability: "",
-        description: "",
-      },
-      experience: [],
-      educations: [
-        {
-          school: "",
-          degree: "",
-          year: undefined as unknown as number,
+  // ── Define Schema For Employee Signup Form ─────────────────────────
+  const employeeSignUpSchema = useMemo(
+    () =>
+      makeEmployeeSignUpSchema({
+        yearsOfExperienceRequired: tv("yearsOfExperienceRequired"),
+        availabilityRequired: tv("availabilityRequired"),
+        endDateAfterStart: tv("endDateAfterStart"),
+        startDateRequired: tv("startDateRequired"),
+        endDateRequired: tv("endDateRequired"),
+        graduationYearRequired: tv("graduationYearRequired"),
+        atLeastOneSkill: tv("atLeastOneSkill"),
+        atLeastOneCareer: tv("atLeastOneCareer"),
+        fieldRequired: (field) => {
+          const labels: Record<string, string> = {
+            Profession: tv("fieldLabelProfession"),
+            Description: tv("fieldLabelDescription"),
+            Title: tv("fieldLabelTitle"),
+            School: tv("fieldLabelSchool"),
+            Degree: tv("fieldLabelDegree"),
+          };
+          return tv("fieldRequired", { field: labels[field] ?? field });
         },
-      ],
+        fieldTooLong: (field, max) => {
+          const labels: Record<string, string> = {
+            Profession: tv("fieldLabelProfession"),
+            Description: tv("fieldLabelDescription"),
+            Title: tv("fieldLabelTitle"),
+            School: tv("fieldLabelSchool"),
+            Degree: tv("fieldLabelDegree"),
+          };
+          return tv("fieldTooLong", { field: labels[field] ?? field, max });
+        },
+      }),
+    [tv],
+  );
+
+  // ── Pre-fill Employee Form from Resume Parsed ──────────────────────
+  const defaultFormValues = useMemo(
+    (): TEmployeeSignUp => ({
+      profession: {
+        job: parsedData?.jobTitle ?? "",
+        yearOfExperience: parsedData?.yearsOfExperience ?? "",
+        availability: parsedData?.availability ?? "",
+        description: parsedData?.description ?? "",
+        workMode: undefined,
+        noticePeriod: undefined,
+        portfolioUrl: "",
+        linkedinUrl: "",
+        languages: [],
+        expectedSalaryCurrency: "USD",
+        expectedSalaryMin: undefined,
+        expectedSalaryMax: undefined,
+      },
+      experience: parsedData?.experiences?.length
+        ? parsedData.experiences.map((exp) => ({
+            title: exp.title,
+            description: exp.description,
+            startDate: exp.startDate
+              ? new Date(exp.startDate)
+              : ("" as unknown as Date),
+            endDate: exp.endDate
+              ? new Date(exp.endDate)
+              : ("" as unknown as Date),
+          }))
+        : [],
+      educations: parsedData?.educations?.length
+        ? parsedData.educations.map((edu) => ({
+            school: edu.school,
+            degree: edu.degree,
+            year: edu.year,
+          }))
+        : [{ school: "", degree: "", year: undefined as unknown as number }],
       skillAndReference: {
-        skills: [],
-        resume: undefined,
+        skills: parsedData?.skills ?? [],
+        resume: parsedFile ?? undefined,
         coverLetter: undefined,
       },
       avatar: null,
-      careerScopes: [],
-    },
+      careerScopes: parsedData?.careerScopes ?? [],
+    }),
+    [parsedData, parsedFile],
+  );
+
+  // ── Initialize Employee Form with Default Values ───────────────────
+  const empForm = useForm<TEmployeeSignUp>({
+    mode: "onChange",
+    resolver: zodResolver(employeeSignUpSchema),
+    defaultValues: defaultFormValues,
   });
 
   const {
@@ -87,9 +161,9 @@ export default function EmployeeSignup() {
     getValues,
     setValue,
     formState: { errors },
-  } = methods;
+  } = empForm;
 
-  // Field groups per step for selective validation
+  // ── Field Groups Per Step For Selective Validation ─────────────────
   const stepFieldMap: Record<number, (keyof TEmployeeSignUp)[]> = {
     1: ["profession"],
     2: ["experience"],
@@ -100,7 +174,7 @@ export default function EmployeeSignup() {
   };
 
   /* --------------------------------- Methods --------------------------------- */
-  // ── Navigation Helpers ─────────────────────────────────────────
+  // ── Navigation Helpers Function ────────────────────────────────────
   // Check if user has no experience (to skip step 2)
   const hasNoExperience = () =>
     getValues("profession.yearOfExperience") === "No Experience";
@@ -293,12 +367,11 @@ export default function EmployeeSignup() {
     })();
   };
 
-  /* --------------------------------- Effects --------------------------------- */
-  // ── Employee Signup Effect ───────────────────────────────────────
+  /* ----------------------------------- Effects ----------------------------------- */
+  // ── Employee Signup Effect ─────────────────────────────────────────
   useEffect(() => {
     if (
-      empSignup.accessToken &&
-      empSignup.refreshToken &&
+      empSignup.isAuthenticated &&
       uploadsComplete &&
       !empSignup.loading &&
       !uploadAvatar.loading &&
@@ -307,9 +380,9 @@ export default function EmployeeSignup() {
     ) {
       toast.dismiss();
       toast.success(t("signupSuccessful"), {
-        duration: 1000,
+        duration: TOAST_DURATION_MS.SHORT,
       });
-      setTimeout(() => router.replace("/login"), DEFAULT_REDIRECT_DELAY_MS);
+      setTimeout(() => router.replace("/feed"), DEFAULT_REDIRECT_DELAY_MS);
       return;
     }
 
@@ -341,8 +414,7 @@ export default function EmployeeSignup() {
     uploadCoverLetter.message,
     uploadResume.message,
     empSignup.message,
-    empSignup.accessToken,
-    empSignup.refreshToken,
+    empSignup.isAuthenticated,
     uploadsComplete,
     uploadAvatar.message,
     router,
@@ -366,35 +438,43 @@ export default function EmployeeSignup() {
           ? t("uploadingCoverLetter")
           : t("processingRequest");
 
-  /* ----------------------------------- Render UI ----------------------------------- */
+  /* ----------------------------------- Render UI ---------------------------------- */
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col gap-5 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
       {/* Navigate Back Button Section */}
       <button
         type="button"
-        onClick={() => router.push("/signup")}
+        onClick={() => router.replace("/signup")}
         className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors w-fit"
       >
         <LucideArrowLeft className="size-4" />
-        Back to basic info
+        {t("backToBasicInfo")}
       </button>
 
       {/* Header Section */}
       <div>
-        <TypographyH2>Sign up as employee</TypographyH2>
+        <TypographyH2>{t("signupAsEmployee")}</TypographyH2>
         <TypographyMuted className="text-md">
-          Explore your dream job with our platform, Apsara Talent.
+          {t("employeeSignupSubtitle")}
         </TypographyMuted>
       </div>
 
+      {/* SmartResumeUpload Chip Title Section */}
+      {!!parsedData && (
+        <div className="flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/50 dark:border-emerald-800/50 px-3 py-1.5 rounded-full w-fit">
+          <LucideCheckCircle2 size={13} className="shrink-0" />
+          {t("smartUploadDataApplied")}
+        </div>
+      )}
+
       {/* Step Progress Indicator Section */}
       <div className="w-full overflow-x-auto pb-2 mb-2">
-        <div className="w-full min-w-[360px] flex items-center gap-0">
+        <div className="w-full min-w-[280px] flex items-center gap-0">
           {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
             (st, index) => {
               const isSkipped =
                 st === 2 &&
-                methods.watch("profession.yearOfExperience") ===
+                empForm.watch("profession.yearOfExperience") ===
                   "no_experience";
               const isActive = step >= st && !isSkipped;
               return (
@@ -427,13 +507,15 @@ export default function EmployeeSignup() {
       </div>
 
       {/* Form Section */}
-      <FormProvider {...methods}>
+      <FormProvider {...empForm}>
         <form onSubmit={(e) => e.preventDefault()} className="w-full">
           {step === 1 && (
             <ProfessionStepForm
               register={register}
               control={control}
               errors={errors}
+              setValue={setValue}
+              getValues={getValues}
             />
           )}
           {step === 2 && (
@@ -441,6 +523,8 @@ export default function EmployeeSignup() {
               register={register}
               errors={errors}
               control={control}
+              setValue={setValue}
+              getValues={getValues}
             />
           )}
           {step === 3 && (
@@ -448,11 +532,14 @@ export default function EmployeeSignup() {
               register={register}
               errors={errors}
               control={control}
+              setValue={setValue}
+              getValues={getValues}
             />
           )}
           {step === 4 && (
             <SkillReferenceStepForm
               register={register}
+              control={control}
               errors={errors}
               getValues={getValues}
               setValue={setValue}
@@ -486,7 +573,7 @@ export default function EmployeeSignup() {
                 className="flex-1 sm:flex-initial sm:min-w-[140px]"
               >
                 <LucideArrowLeft />
-                Back
+                {t("back")}
               </Button>
             ) : (
               <div className="hidden sm:block" />
@@ -503,7 +590,7 @@ export default function EmployeeSignup() {
                 uploadCoverLetter.loading
               }
             >
-              {step === totalSteps ? "Submit" : "Next"}
+              {step === totalSteps ? t("submit") : t("next")}
               <LucideArrowRight />
             </Button>
           </div>

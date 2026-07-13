@@ -1,5 +1,8 @@
 import MetaChip from "@/components/utils/data-display/meta-chip";
-import { formatAvailabilityWords } from "@/utils/functions/text";
+import {
+  formatAvailabilityWords,
+  getNameInitials,
+} from "@/utils/functions/text";
 import {
   LucideArrowRight,
   LucideBookmarkX,
@@ -14,18 +17,22 @@ import Tag from "@/components/utils/data-display/tag";
 import { IFavoriteEmployeeCardProps } from "./props";
 import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { useTranslations } from "next-intl";
+import { translateLocation } from "@/utils/functions/text";
 
 export default function FavoriteEmployeeCard(
   props: IFavoriteEmployeeCardProps,
 ) {
   /* ---------------------------------- Utils --------------------------------- */
   const router = useRouter();
+  const t = useTranslations("favorite");
+  const tl = useTranslations("locations");
   const availLabel = formatAvailabilityWords(props.availability);
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
-      className={`bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20${props.isRemoving ? " animate-card-pop-shrink" : ""}`}
+      className={`w-full bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20${props.isRemoving ? " animate-card-pop-shrink" : ""}`}
     >
       <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
         {/* Avatar Section */}
@@ -34,7 +41,7 @@ export default function FavoriteEmployeeCard(
           className="size-16 sm:size-20 flex-shrink-0 ring-[2px] ring-border/40"
         >
           <AvatarFallback className="text-sm font-semibold">
-            {props.name.slice(0, 2).toUpperCase()}
+            {getNameInitials(props.name)}
           </AvatarFallback>
           <AvatarImage src={props.avatar} />
         </Avatar>
@@ -82,9 +89,12 @@ export default function FavoriteEmployeeCard(
             />
             <MetaChip
               icon={<LucideClock />}
-              text={`${props.experience} yrs exp`}
+              text={t("yrsExp", { years: props.experience })}
             />
-            <MetaChip icon={<LucideMapPin />} text={props.location} />
+            <MetaChip
+              icon={<LucideMapPin />}
+              text={translateLocation(props.location, tl)}
+            />
           </div>
         </div>
       </div>
@@ -98,14 +108,14 @@ export default function FavoriteEmployeeCard(
           onClick={props.onRemoveFromFavorite}
         >
           <LucideBookmarkX className="size-3.5" />
-          Remove
+          {t("remove")}
         </Button>
         <Button
           size="sm"
           className="text-xs"
           onClick={() => router.replace(`/feed/employee/${props.id}`)}
         >
-          View Detail
+          {t("viewDetail")}
           <LucideArrowRight className="size-3.5" />
         </Button>
       </div>

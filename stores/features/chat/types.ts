@@ -4,7 +4,55 @@ import io from "socket.io-client";
 
 export type SocketInstance = ReturnType<typeof io>;
 
-/* ---------------------------------- States ────────────────────────────────- */
+export type TChatProfile = {
+  id: string;
+  name?: string | null;
+  email?: string | null;
+  employee?: {
+    firstname?: string | null;
+    lastname?: string | null;
+    username?: string | null;
+    avatar?: string | null;
+  } | null;
+  company?: {
+    name?: string | null;
+    avatar?: string | null;
+  } | null;
+};
+
+export type TRawChatMessage = {
+  id: string;
+  sender?: string | TChatProfile | null;
+  receiver?: string | TChatProfile | null;
+  senderId?: string;
+  receiverId?: string;
+  senderName?: string;
+  content?: string | null;
+  sentAt?: string | Date;
+  sendAt?: string | Date;
+  createdAt?: string | Date;
+  timestamp?: string | Date;
+  isRead?: boolean;
+  messageType?: IMessage["messageType"];
+  reactions?: Record<string, string>;
+  isDeleted?: boolean;
+  isEdited?: boolean;
+  attachment?: string | null;
+  attachmentType?: IMessage["attachmentType"];
+  attachmentFilename?: string;
+  attachmentDuration?: number;
+  attachmentAmplitude?: number[];
+  replyToId?: string | null;
+  isMe?: boolean;
+};
+
+export type TChatHistoryResponse = {
+  messages: TRawChatMessage[];
+  partnerId: string;
+  partnerProfile: TChatProfile | null;
+};
+
+/* ---------------------------------- States --------------------------------- */
 // ── Chat State ────────────────────────────────────────────────────────
 export type TChatState = {
   // ── Socket ────
@@ -14,7 +62,7 @@ export type TChatState = {
   // ── Chats ────
   isChatsLoaded: boolean;
   isHistoryLoading: boolean;
-  me: any | null;
+  me: TChatProfile | null;
   activeChat: IChatPreview | null;
   activeChats: IChatPreview[];
   currentMessages: IMessage[];
@@ -25,9 +73,9 @@ export type TChatState = {
   onlineUsers: Record<string, boolean>;
 
   // ── Actions ───
-  connect: (user?: any) => void;
+  connect: (user?: TChatProfile) => void;
   disconnect: () => void;
-  setMe: (user: any) => void;
+  setMe: (user: TChatProfile) => void;
   sendMessage: (
     receiverId: string,
     content: string,
@@ -58,4 +106,6 @@ export type TChatState = {
     receiverId: string,
     newContent: string,
   ) => void;
+  /** Remove a chat from the sidebar and clear it if currently open. Called after unmatch. */
+  removeChatByPartnerId: (partnerId: string) => void;
 };

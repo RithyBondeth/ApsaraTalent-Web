@@ -1,3 +1,5 @@
+"use client";
+
 import {
   LucideBriefcase,
   LucideExternalLink,
@@ -6,7 +8,6 @@ import {
   LucideUser,
 } from "lucide-react";
 import Link from "next/link";
-import { useMemo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import {
@@ -15,30 +16,33 @@ import {
   DialogDescription,
   DialogTitle,
 } from "../../ui/dialog";
-import { ProfileProgressBar } from "../../profile/profile-progress-bar/";
-import { getEmployeeProfileCompletion } from "@/utils/functions/profile";
 import { IEmployeeDialogProps } from "./props";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { AvailabilityBadge } from "@/components/utils/data-display/availability-badge";
+import { useTranslations } from "next-intl";
+import { translateLocation, getNameInitials } from "@/utils/functions/text";
 
 export default function EmployeeDialog(props: IEmployeeDialogProps) {
   /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("feed");
+  const tl = useTranslations("locations");
+
   const fullName =
     [props.firstname, props.lastname].filter(Boolean).join(" ") ||
     props.username ||
     "Talent";
 
-  const completion = useMemo(
-    () => getEmployeeProfileCompletion(props),
-    [props],
-  );
+  const isEmpty =
+    !props.description &&
+    (!props.skills || props.skills.length === 0) &&
+    (!props.educations || props.educations.length === 0);
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={props.open} onOpenChange={(isOpen) => props.setOpen(isOpen)}>
       <DialogContent className="p-0 gap-0 flex flex-col overflow-hidden sm:max-w-lg sm:rounded-xl max-h-[90dvh] tablet-sm:!left-0 tablet-sm:!translate-x-0 tablet-sm:!translate-y-0 tablet-sm:!top-auto tablet-sm:!bottom-0 tablet-sm:!w-full tablet-sm:!max-w-none tablet-sm:rounded-t-2xl tablet-sm:!rounded-b-none tablet-sm:max-h-[92dvh]">
-        {/* Drag Handle — Mobile Only */}
+        {/* Drag Handle Section — Mobile Only */}
         <div className="hidden tablet-sm:flex justify-center pt-3 pb-1 shrink-0">
           <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
         </div>
@@ -46,7 +50,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
         {/* Gradient Header Section */}
         <div className="relative shrink-0">
           <div className="w-full h-24 bg-gradient-to-br from-primary/90 via-primary/60 to-primary/30" />
-          {/* Avatar Overlapping The Gradient */}
+          {/* Avatar Overlapping The Gradient Section */}
           <div className="absolute -bottom-9 left-4">
             <Avatar
               className="!size-20 ring-4 ring-background shadow-lg"
@@ -54,7 +58,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
             >
               <AvatarImage src={props.avatar!} />
               <AvatarFallback className="uppercase text-lg font-semibold">
-                {fullName.slice(0, 2)}
+                {getNameInitials(fullName)}
               </AvatarFallback>
             </Avatar>
           </div>
@@ -69,11 +73,12 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
             {props.job}
           </DialogDescription>
 
+          {/* Location, Years of Experience, Availability Section */}
           <div className="flex flex-wrap gap-1.5 mt-3">
             {props.location && (
               <span className="inline-flex items-center gap-1 text-xs bg-muted px-2.5 py-1 rounded-full text-muted-foreground">
                 <LucideMapPin className="h-3 w-3 shrink-0" />
-                {props.location}
+                {translateLocation(props.location, tl)}
               </span>
             )}
             {props.yearsOfExperience && (
@@ -86,20 +91,22 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
               <AvailabilityBadge availability={props.availability} />
             )}
           </div>
-
-          {/* Profile Progress Section */}
-          <div className="mt-3">
-            <ProfileProgressBar percentage={completion.percentage} />
-          </div>
         </div>
 
         {/* Scrollable Body Section */}
         <div className="flex-1 overflow-y-auto min-h-0 px-4 py-4 space-y-5">
+          {/* Empty State Section */}
+          {isEmpty && (
+            <TypographyMuted className="text-sm text-center py-6">
+              {t("dialogEmptyProfile")}
+            </TypographyMuted>
+          )}
+
           {/* About Section */}
           {props.description && (
             <section>
               <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-semibold mb-1.5">
-                About
+                {t("dialogAbout")}
               </TypographyP>
               <TypographyMuted className="text-sm text-muted-foreground leading-relaxed">
                 {props.description}
@@ -111,7 +118,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
           {props.skills && props.skills.length > 0 && (
             <section>
               <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-semibold mb-2">
-                Skills
+                {t("dialogSkills")}
               </TypographyP>
               <div className="flex flex-wrap gap-1.5">
                 {props.skills.map((skill) => (
@@ -130,7 +137,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
           {props.educations && props.educations.length > 0 && (
             <section>
               <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-semibold mb-2">
-                Education
+                {t("dialogEducation")}
               </TypographyP>
               <div className="space-y-2.5">
                 {props.educations.map((edu, index) => (
@@ -168,7 +175,7 @@ export default function EmployeeDialog(props: IEmployeeDialogProps) {
           <Link href={`/feed/employee/${props.id}`} className="w-full">
             <Button className="w-full gap-2">
               <LucideUser className="h-4 w-4" />
-              View Profile
+              {t("dialogViewProfile")}
               <LucideExternalLink className="h-3.5 w-3.5 ml-auto opacity-70" />
             </Button>
           </Link>

@@ -12,29 +12,40 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LucidePhone } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
-
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { phoneLoginSchema, TPhoneLoginForm } from "./validation";
-import { phoneNumberWhiteSvg } from "@/utils/constants/asset.constant";
-import { DEFAULT_REDIRECT_DELAY_MS } from "@/utils/constants/config.constant";
+import { makePhoneLoginSchema, TPhoneLoginForm } from "./validation";
+import { phoneNumberSvg } from "@/utils/constants/asset.constant";
+import {
+  DEFAULT_REDIRECT_DELAY_MS,
+  TOAST_DURATION_MS,
+} from "@/utils/constants/config.constant";
 
 export default function PhoneNumberPage() {
   /* ----------------------------------- Utils -------------------------------- */
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations("auth");
+  const tv = useTranslations("validation");
 
   /* --------------------------------- All States ----------------------------- */
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+
+  // Get User Basic Data From Phone Signup
   const { setBasicPhoneSignupData } = useBasicPhoneSignupDataStore();
 
   /* ----------------------------- API Integration ---------------------------- */
-  // API Integration
   const { loading, error, message, isSuccess, loginOtp } = useLoginOTPStore();
 
-  /* --------------------- React Hook Form: Phone OTP Form --------------------- */
+  /* --------------------- React Hook Form: Phone OTP Form -------------------- */
+  // ── Define Schema For Phone OTP Form ────────────────────────
+  const phoneLoginSchema = useMemo(
+    () => makePhoneLoginSchema({ phoneInvalid: tv("phoneInvalid") }),
+    [tv],
+  );
+
   const {
     handleSubmit,
     register,
@@ -46,7 +57,24 @@ export default function PhoneNumberPage() {
   });
 
   /* --------------------------------- Methods --------------------------------- */
-  // ── Phone OTP Function ───────────────────────────────────────
+  // ── Callback URL Function ────────────────────────────────────
+  const callbackUrl = useMemo(() => {
+    const value = searchParams.get("callbackUrl");
+    if (!value || !value.startsWith("/") || value.startsWith("//")) {
+      return "/feed";
+    }
+    return value;
+  }, [searchParams]);
+
+  // ── Phone OTP Href Function ──────────────────────────────────
+  const phoneOtpHref = useMemo(() => {
+    if (callbackUrl === "/feed") return "/login/phone-number/phone-otp";
+    return `/login/phone-number/phone-otp?callbackUrl=${encodeURIComponent(
+      callbackUrl,
+    )}`;
+  }, [callbackUrl]);
+
+  // ── Phone Send OTP Function ──────────────────────────────────
   const onSubmit = async (data: TPhoneLoginForm) => {
     setIsSubmitted(true);
     setBasicPhoneSignupData({
@@ -58,17 +86,14 @@ export default function PhoneNumberPage() {
   };
 
   /* --------------------------------- Effects --------------------------------- */
-  // ── Phone OTP Effect ─────────────────────────────────────────
+  // ── Phone Send OTP Effect ────────────────────────────────────
   useEffect(() => {
     if (!isSubmitted) return;
 
     if (isSuccess) {
       toast.dismiss();
-      toast.success(t("otpSent"), { duration: 1000 });
-      setTimeout(
-        () => router.replace("/login/phone-number/phone-otp"),
-        DEFAULT_REDIRECT_DELAY_MS,
-      );
+      toast.success(t("otpSent"), { duration: TOAST_DURATION_MS.SHORT });
+      setTimeout(() => router.replace(phoneOtpHref), DEFAULT_REDIRECT_DELAY_MS);
     }
 
     if (loading) toast.loading(t("loggingIn"));
@@ -79,7 +104,17 @@ export default function PhoneNumberPage() {
         action: { label: t("retry"), onClick: () => reset() },
       });
     }
-  }, [error, isSubmitted, isSuccess, loading, message, reset, router, t]);
+  }, [
+    error,
+    isSubmitted,
+    isSuccess,
+    loading,
+    message,
+    phoneOtpHref,
+    reset,
+    router,
+    t,
+  ]);
 
   return (
     /* -------------------------------- Render UI -------------------------------- */
@@ -88,7 +123,7 @@ export default function PhoneNumberPage() {
       <div className="w-1/2 min-h-screen flex items-center justify-center bg-background p-6 sm:p-10 tablet-md:w-full tablet-md:min-h-0 tablet-md:py-12">
         <div className="w-full max-w-[440px] flex flex-col gap-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
           {/* Logo Section */}
-          <LogoComponent className="!h-24 w-auto self-start" withoutTitle />
+          <LogoComponent className="!h-12 w-auto self-start" />
 
           {/* Title Section */}
           <div className="flex flex-col items-start">
@@ -134,7 +169,7 @@ export default function PhoneNumberPage() {
 
           {/* Navigate Back Button Section */}
           <button
-            onClick={() => router.back()}
+            onClick={() => router.replace("/login")}
             className="underline text-sm text-primary hover:text-primary/80 transition-colors text-center"
           >
             {t("backToEmailLogin")}
@@ -143,9 +178,9 @@ export default function PhoneNumberPage() {
       </div>
 
       {/* Right Section: Image Poster */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary relative overflow-hidden tablet-md:hidden">
+      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-md:hidden">
         <Image
-          src={phoneNumberWhiteSvg}
+          src={phoneNumberSvg}
           alt="phone-number"
           height={undefined}
           width={600}

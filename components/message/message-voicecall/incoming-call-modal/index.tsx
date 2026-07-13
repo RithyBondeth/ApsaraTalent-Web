@@ -5,6 +5,7 @@ import { TypographyMuted } from "@/components/utils/typography/typography-muted"
 import { Phone, PhoneOff } from "lucide-react";
 import { IIncomingCallModalProps } from "./props";
 import { useTranslations } from "next-intl";
+import { getNameInitials } from "@/utils/functions/text";
 
 export function IncomingCallModal(props: IIncomingCallModalProps) {
   /* --------------------------------- Props --------------------------------- */
@@ -12,12 +13,7 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
 
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("message");
-  const initials = caller.name
-    .split(" ")
-    .map((namePart: string) => namePart[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+  const initials = getNameInitials(caller.name);
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Handle Call Actions ─────────────────────────────────────────
@@ -69,7 +65,9 @@ export function IncomingCallModal(props: IIncomingCallModalProps) {
             >
               <PhoneOff className="h-6 w-6 text-white" />
             </button>
-            <span className="text-xs text-muted-foreground">{t("decline")}</span>
+            <span className="text-xs text-muted-foreground">
+              {t("decline")}
+            </span>
           </div>
 
           {/* Accept Call Button Section */}

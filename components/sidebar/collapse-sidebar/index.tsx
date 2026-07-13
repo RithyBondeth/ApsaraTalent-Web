@@ -2,10 +2,12 @@
 
 import { Separator } from "@/components/ui/separator";
 import { useFetchOnce } from "@/hooks/utils/use-fetch-once";
+import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
 import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
 import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
-import { useCountCurrentCompanyMatchingStore } from "@/stores/apis/matching/count-current-company-matching.store";
 import { useCountCurrentEmployeeMatchingStore } from "@/stores/apis/matching/count-current-employee-matching.store";
+import { usePendingInterviewCount } from "@/hooks/utils/use-pending-interview-count";
+import { useInterviewStore } from "@/stores/apis/matching/interview.store";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import { useChatStore } from "@/stores/features/chat/chat.store";
@@ -33,6 +35,7 @@ import { SidebarDropdownFooter } from "./sidebar-dropdown-footer";
 import { SidebarDropdownFooterSkeleton } from "../skeleton";
 import FloatingBadge from "./badge/floating-badge";
 import CountBadge from "./badge/count-badge";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 /* ---------------------------------- Helper --------------------------------- */
 /* ─────────────────────────────────────────────────────────────────────────
@@ -96,9 +99,9 @@ export default function CollapseSidebar({
   const { user, loading } = useGetCurrentUserStore();
 
   // Count Current User Matching
-  const { countCurrentEmpMatching, totalEmpMatching } =
+  const { countCurrentEmpMatching, totalEmpMatching, seenEmpMatching } =
     useCountCurrentEmployeeMatchingStore();
-  const { countCurrentCmpMatching, totalCmpMatching } =
+  const { countCurrentCmpMatching, totalCmpMatching, seenCmpMatching } =
     useCountCurrentCompanyMatchingStore();
 
   // Count Current User Favorites
@@ -114,6 +117,10 @@ export default function CollapseSidebar({
   // Count Unread Message
   const unreadMessages = useChatStore((s) => s.unreadCount);
 
+  // Pending Interview Count (derived from shared store, updated by useFetchOnce below)
+  const pendingInterviewCount = usePendingInterviewCount();
+  const queryInterviews = useInterviewStore((s) => s.queryInterviews);
+
   /* --------------------------------- Effects --------------------------------- */
   // Fetch Current User
   const { isEmployee, isCompany } = useFetchOnce({
@@ -121,10 +128,12 @@ export default function CollapseSidebar({
     onEmployeeFetch: (employeeId) => {
       countCurrentEmpMatching(employeeId);
       countCurrentEmpFavorites(employeeId);
+      queryInterviews(employeeId, USER_ROLE.EMPLOYEE);
     },
     onCompanyFetch: (companyId) => {
       countCurrentCmpMatching(companyId);
       countCurrentCmpFavorites(companyId);
+      queryInterviews(companyId, USER_ROLE.COMPANY);
     },
   });
 
@@ -158,10 +167,19 @@ export default function CollapseSidebar({
 
   // ── Matching Count ─────────────────────────────────────────────────────
   const matchingCount = useMemo(() => {
-    if (isEmployee) return totalEmpMatching ?? 0;
-    if (isCompany) return totalCmpMatching ?? 0;
+    if (isEmployee)
+      return Math.max(0, (totalEmpMatching ?? 0) - seenEmpMatching);
+    if (isCompany)
+      return Math.max(0, (totalCmpMatching ?? 0) - seenCmpMatching);
     return 0;
-  }, [isEmployee, isCompany, totalEmpMatching, totalCmpMatching]);
+  }, [
+    isEmployee,
+    isCompany,
+    totalEmpMatching,
+    seenEmpMatching,
+    totalCmpMatching,
+    seenCmpMatching,
+  ]);
 
   // ── Favorite Count ─────────────────────────────────────────────────────
   const favoriteCount = useMemo(() => {
@@ -198,9 +216,16 @@ export default function CollapseSidebar({
       if (url === "/favorite") return favoriteCount;
       if (url === "/message") return unreadMessages;
       if (url === "/notification") return unreadNotifications;
+      if (url === "/interview") return pendingInterviewCount;
       return 0;
     },
-    [matchingCount, favoriteCount, unreadMessages, unreadNotifications],
+    [
+      matchingCount,
+      favoriteCount,
+      unreadMessages,
+      unreadNotifications,
+      pendingInterviewCount,
+    ],
   );
 
   // ── Check Path Active ───────────────────────────────────────────────
@@ -300,7 +325,7 @@ export default function CollapseSidebar({
         )}
       </SidebarHeader>
 
-      {/* Separator Between Header and Navigation Section */}
+      {/* Separator Section: Between Header and Navigation Section */}
       <Separator className="mb-1" />
 
       {/* Navigation Group Section */}
@@ -330,7 +355,7 @@ export default function CollapseSidebar({
         )}
       </SidebarContent>
 
-      {/* Separator Between Tools / Navigation and Footer */}
+      {/* Separator Section: Between Tools / Navigation and Footer */}
       <Separator />
 
       {/* Footer / User Menu Section */}

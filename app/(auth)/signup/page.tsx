@@ -18,8 +18,8 @@ import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login
 import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
 import { useGoogleLoginStore } from "@/stores/apis/auth/socials/google-login.store";
 import { useLinkedInLoginStore } from "@/stores/apis/auth/socials/linkedin-login.store";
+import { useParseResumeStore } from "@/stores/apis/auth/parse-resume.store";
 import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
-import { useThemeStore } from "@/stores/themes/theme-store";
 import {
   genderConstant,
   locationConstant,
@@ -38,33 +38,68 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, FieldErrors, useForm } from "react-hook-form";
 import {
-  basicSignupCompanySchema,
-  basicSignupEmployeeSchema,
+  makeBasicSignupCompanySchema,
+  makeBasicSignupEmployeeSchema,
   TBasicSignupCompanySchema,
   TBasicSignupEmployeeSchema,
 } from "./validation";
 import { formatDateForField } from "@/utils/functions/date";
+import { USER_ROLE } from "@/utils/constants/auth.constant";
 
 export default function SignupPage() {
-  /* --------------------------------- Utils --------------------------------- */
+  /* --------------------------------------- Utils --------------------------------------- */
   const router = useRouter();
   const t = useTranslations("auth");
-  const { theme } = useThemeStore();
+  const tv = useTranslations("validation");
+  const tLoc = useTranslations("locations");
 
-  /* -------------------------------- All States ------------------------------ */
-  const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
+  const locationLabels: Record<string, string> = {
+    "Phnom Penh": tLoc("phnomPenh"),
+    "Banteay Meanchey": tLoc("banteayMeanchey"),
+    Battambang: tLoc("battambang"),
+    "Kampong Cham": tLoc("kampongCham"),
+    "Kampong Chhnang": tLoc("kampongChhnang"),
+    "Kampong Speu": tLoc("kampongSpeu"),
+    "Kampong Thom": tLoc("kampongThom"),
+    Kampot: tLoc("kampot"),
+    Kandal: tLoc("kandal"),
+    Kep: tLoc("kep"),
+    "Koh Kong": tLoc("kohKong"),
+    Kratie: tLoc("kratie"),
+    Mondulkiri: tLoc("mondulkiri"),
+    "Oddar Meanchey": tLoc("oddarMeanchey"),
+    Pailin: tLoc("pailin"),
+    "Preah Sihanouk": tLoc("preahSihanouk"),
+    "Preah Vihear": tLoc("preahVihear"),
+    "Prey Veng": tLoc("preyVeng"),
+    Pursat: tLoc("pursat"),
+    Ratanakiri: tLoc("ratanakiri"),
+    "Siem Reap": tLoc("siemReap"),
+    "Stung Treng": tLoc("stungTreng"),
+    "Svay Rieng": tLoc("svayRieng"),
+    Takeo: tLoc("takeo"),
+    "Tbong Khmum": tLoc("tbongKhmum"),
+  };
+
+  /* -------------------------------------- All States ------------------------------------ */
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [confirmPassVisibility, setConfirmPassVisibility] =
     useState<boolean>(false);
 
-  /* ----------------------------- API Integration ---------------------------- */
-  // Get user basic data from socials: Google, Github, LinkedIn, Facebook
+  // Basic Signup Data
+  const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
+
+  /* ----------------------------------- API Integration ---------------------------------- */
+  // Get User Basic Data From Socials: Google, Github, LinkedIn, Facebook
   const googleUserData = useGoogleLoginStore();
   const githubUserData = useGithubLoginStore();
   const linkedInUserData = useLinkedInLoginStore();
   const facebookUserData = useFacebookLoginStore();
 
-  /* --------------------------- User Role Handling --------------------------- */
+  // Prased Smart Resume Data
+  const { data: parsedData } = useParseResumeStore();
+
+  /* --------------------------------- User Role Handling --------------------------------- */
   /*
     Determine user role (Employee or Company) by checking local state first,
     then falling back to any connected social login providers.
@@ -84,43 +119,91 @@ export default function SignupPage() {
       facebookUserData.role,
     ],
   );
-  const isEmployeeForm = selectedRole === "employee";
+  const isEmployeeForm = selectedRole === USER_ROLE.EMPLOYEE;
 
   /* ----------------------- React Hook Form: Emp and Cmp Signup Form ---------------------- */
-  const cmpForm = useForm<TBasicSignupCompanySchema>({
-    resolver: zodResolver(basicSignupCompanySchema),
-    defaultValues: {
-      email: "",
-      phone: "",
-      password: "",
-      confirmPassword: "",
-    },
-  });
+  // ── Validation Messages For Signup Forms ───────────────────────────────
+  const signupMessages = useMemo(
+    () => ({
+      phoneInvalid: tv("phoneInvalid"),
+      emailRequired: tv("emailRequired"),
+      emailInvalid: tv("emailInvalid"),
+      passwordRequired: tv("passwordRequired"),
+      passwordMinLength: tv("passwordMinLength"),
+      passwordNeedsNumber: tv("passwordNeedsNumber"),
+      passwordNeedsSpecial: tv("passwordNeedsSpecial"),
+      confirmPasswordRequired: tv("confirmPasswordRequired"),
+      passwordsMismatch: tv("passwordsMismatch"),
+      firstNameRequired: tv("firstNameRequired"),
+      lastNameRequired: tv("lastNameRequired"),
+      dobRequired: tv("dobRequired"),
+      usernameRequired: tv("usernameRequired"),
+      locationRequired: tv("locationRequired"),
+      genderRequired: tv("genderRequired"),
+    }),
+    [tv],
+  );
 
-  const empForm = useForm<TBasicSignupEmployeeSchema>({
-    resolver: zodResolver(basicSignupEmployeeSchema),
-    defaultValues: {
-      firstName: "",
-      lastName: "",
+  // ── Pre-fill Employee Form from Resume Parsed ──────────────────────────
+  const defaultEmpValues = useMemo(() => {
+    const stripped = parsedData?.phone?.replace(/[\s\-().]/g, "") ?? "";
+    const normalizedPhone =
+      stripped.startsWith("855") && !stripped.startsWith("+855")
+        ? `+${stripped}`
+        : stripped;
+    const validPhone = /^(\+855|0)[0-9]{8,9}$/.test(normalizedPhone)
+      ? normalizedPhone
+      : "";
+
+    const matchedLocation = parsedData?.location
+      ? locationConstant.find(
+          (loc) =>
+            loc.toLowerCase() === parsedData.location!.trim().toLowerCase(),
+        )
+      : undefined;
+
+    return {
+      firstName: parsedData?.firstName ?? "",
+      lastName: parsedData?.lastName ?? "",
       dob: "",
-      username: "",
-      selectedLocation: undefined,
+      username:
+        parsedData?.firstName && parsedData?.lastName
+          ? `${parsedData.firstName} ${parsedData.lastName}`
+          : "",
+      selectedLocation: matchedLocation,
       gender: undefined,
-      phone: "",
+      phone: validPhone,
+      email: parsedData?.email ?? "",
+      password: "",
+      confirmPassword: "",
+    };
+  }, [parsedData]);
+
+  // ── Initialize Cmp Form with Default Values ────────────────────────────
+  const cmpForm = useForm<TBasicSignupCompanySchema>({
+    resolver: zodResolver(makeBasicSignupCompanySchema(signupMessages)),
+    defaultValues: {
       email: "",
+      phone: "",
       password: "",
       confirmPassword: "",
     },
   });
 
-  // Employee and Company Error States
+  // ── Initialize Emp Form with Default Values ────────────────────────────
+  const empForm = useForm<TBasicSignupEmployeeSchema>({
+    resolver: zodResolver(makeBasicSignupEmployeeSchema(signupMessages)),
+    defaultValues: defaultEmpValues,
+  });
+
+  // ── Cmp and Emp form error states ──────────────────────────────────────
   const employeeErrors = empForm.formState
     .errors as FieldErrors<TBasicSignupEmployeeSchema>;
   const companyErrors = cmpForm.formState
     .errors as FieldErrors<TBasicSignupCompanySchema>;
 
-  /* --------------------------------- Methods --------------------------------- */
-  // ── Signup Function ─────────────────────────────────────────
+  /* ----------------------------------- Methods ------------------------------------------- */
+  // ── Signup Function ────────────────────────────────────────────────────
   // Set Basic Signup Data for Employee
   const onSubmitEmployee = (data: TBasicSignupEmployeeSchema) => {
     console.log("Basic Employee Data: ", data);
@@ -128,7 +211,7 @@ export default function SignupPage() {
     const payload = {
       ...basicSignupData,
       ...data,
-      selectedRole: "employee" as const,
+      selectedRole: USER_ROLE.EMPLOYEE,
       phone: data.phone ?? undefined,
     };
 
@@ -143,7 +226,7 @@ export default function SignupPage() {
     const payload = {
       ...basicSignupData,
       ...data,
-      selectedRole: "company" as const,
+      selectedRole: USER_ROLE.COMPANY,
       phone: data.phone ?? undefined,
     };
 
@@ -151,8 +234,8 @@ export default function SignupPage() {
     router.push("/signup/company");
   };
 
-  /* --------------------------------- Effects --------------------------------- */
-  // ── Social Signup Effect ─────────────────────────────────────────
+  /* --------------------------------------- Effects --------------------------------------- */
+  // ── Social Signup Effect ────────────────────────────────────────────────
   useEffect(() => {
     // Handle Google login data - Auto Fill Information in Form
     if (
@@ -232,14 +315,11 @@ export default function SignupPage() {
     empForm,
   ]);
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* -------------------------------------- Render UI -------------------------------------- */
   return (
     <div className="w-full max-w-[620px] flex flex-col gap-5 tablet-sm:max-w-full">
       {/* Logo Section */}
-      <LogoComponent
-        isBlackLogo={theme === "light" ? false : true}
-        className="!h-12 w-auto self-start"
-      />
+      <LogoComponent className="!h-12 w-auto self-start" />
 
       {/* Title Section */}
       <div className="flex flex-col items-start">
@@ -251,110 +331,127 @@ export default function SignupPage() {
 
       {/* Form Section */}
       <form
-        className="w-full flex flex-col gap-4"
+        className="w-full flex flex-col gap-6"
         onSubmit={
           isEmployeeForm
             ? empForm.handleSubmit(onSubmitEmployee)
             : cmpForm.handleSubmit(onSubmitCompany)
         }
       >
-        {/* Employee: Firstname & Lastname Section */}
+        {/* Employee Information Section */}
         {isEmployeeForm && (
-          <div className="flex items-center gap-3 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
-            <Input
-              placeholder={t("firstname")}
-              type="text"
-              {...empForm.register("firstName")}
-              validationMessage={employeeErrors.firstName?.message}
-            />
-            <Input
-              placeholder={t("lastname")}
-              type="text"
-              {...empForm.register("lastName")}
-              validationMessage={employeeErrors.lastName?.message}
-            />
-          </div>
-        )}
+          <div className="flex flex-col gap-4">
+            {/* Divider Section */}
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest whitespace-nowrap">
+                {t("signupSectionPersonal")}
+              </span>
+              <div className="flex-1 h-px bg-border" />
+            </div>
 
-        {/* Employee: DOB Section */}
-        {isEmployeeForm && (
-          <div className="w-full flex flex-col items-start gap-1">
-            <Controller
-              name="dob"
-              control={empForm.control}
-              render={({ field }) => {
-                const selectedDate = field.value
-                  ? new Date(field.value)
-                  : undefined;
-                const safeDate =
-                  selectedDate instanceof Date &&
-                  !Number.isNaN(selectedDate.getTime())
-                    ? selectedDate
-                    : undefined;
-
-                return (
-                  <DatePicker
-                    placeholder={t("dateOfBirth")}
-                    date={safeDate}
-                    onDateChange={(date) =>
-                      field.onChange(date ? formatDateForField(date) : "")
-                    }
-                    dateFormat="dd MMM yyyy"
-                  />
-                );
-              }}
-            />
-            <ErrorMessage>{employeeErrors.dob?.message}</ErrorMessage>
-          </div>
-        )}
-
-        {/* Employee: Username & Location Section */}
-        <div className="w-full flex items-center gap-3 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
-          {isEmployeeForm && (
-            <Input
-              type="text"
-              placeholder={t("username")}
-              className="w-full"
-              {...empForm.register("username")}
-              validationMessage={employeeErrors.username?.message}
-            />
-          )}
-          {isEmployeeForm && (
-            <div className="w-full flex flex-col items-start gap-1">
+            {/* Employee: Firstname & Lastname Section */}
+            <div className="flex items-start gap-3 tablet-sm:flex-col">
               <Controller
-                name="selectedLocation"
+                name="firstName"
                 control={empForm.control}
                 render={({ field }) => (
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value || ""}
-                  >
-                    <SelectTrigger className="h-12 text-muted-foreground">
-                      <SelectValue placeholder={t("location")} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {locationConstant.map((location, index) => (
-                        <SelectItem key={index} value={location}>
-                          {location}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Input
+                    placeholder={t("firstname")}
+                    type="text"
+                    {...field}
+                    validationMessage={employeeErrors.firstName?.message}
+                  />
                 )}
               />
-              <ErrorMessage>
-                {typeof employeeErrors.selectedLocation?.message === "string"
-                  ? employeeErrors.selectedLocation?.message
-                  : null}
-              </ErrorMessage>
+              <Controller
+                name="lastName"
+                control={empForm.control}
+                render={({ field }) => (
+                  <Input
+                    placeholder={t("lastname")}
+                    type="text"
+                    {...field}
+                    validationMessage={employeeErrors.lastName?.message}
+                  />
+                )}
+              />
             </div>
-          )}
-        </div>
 
-        <div className="flex flex-col items-stretch gap-4">
-          <div className="flex gap-3 [&>select]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
-            {/* Employee: Gender Section */}
-            {isEmployeeForm && (
+            {/* Employee: DOB Section */}
+            <div className="w-full flex flex-col items-start gap-1">
+              <Controller
+                name="dob"
+                control={empForm.control}
+                render={({ field }) => {
+                  const selectedDate = field.value
+                    ? new Date(field.value)
+                    : undefined;
+                  const safeDate =
+                    selectedDate instanceof Date &&
+                    !Number.isNaN(selectedDate.getTime())
+                      ? selectedDate
+                      : undefined;
+                  return (
+                    <DatePicker
+                      placeholder={t("dateOfBirth")}
+                      date={safeDate}
+                      onDateChange={(date) =>
+                        field.onChange(date ? formatDateForField(date) : "")
+                      }
+                      dateFormat="dd MMM yyyy"
+                    />
+                  );
+                }}
+              />
+              <ErrorMessage>{employeeErrors.dob?.message}</ErrorMessage>
+            </div>
+
+            {/* Employee: Username & Location Section */}
+            <div className="flex items-start gap-3 tablet-sm:flex-col">
+              <Controller
+                name="username"
+                control={empForm.control}
+                render={({ field }) => (
+                  <Input
+                    type="text"
+                    placeholder={t("username")}
+                    {...field}
+                    validationMessage={employeeErrors.username?.message}
+                  />
+                )}
+              />
+              <div className="w-full flex flex-col items-start gap-1">
+                <Controller
+                  name="selectedLocation"
+                  control={empForm.control}
+                  render={({ field }) => (
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value || ""}
+                    >
+                      <SelectTrigger className="h-12 text-muted-foreground">
+                        <SelectValue placeholder={t("location")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {locationConstant.map((location, index) => (
+                          <SelectItem key={index} value={location}>
+                            {locationLabels[location] ?? location}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                <ErrorMessage>
+                  {typeof employeeErrors.selectedLocation?.message === "string"
+                    ? employeeErrors.selectedLocation?.message
+                    : null}
+                </ErrorMessage>
+              </div>
+            </div>
+
+            {/* Employee: Gender & Phone Section */}
+            <div className="flex items-start gap-3 tablet-sm:flex-col">
               <div className="w-full flex flex-col items-start gap-1">
                 <Controller
                   name="gender"
@@ -370,7 +467,7 @@ export default function SignupPage() {
                       <SelectContent>
                         {genderConstant.map((gender) => (
                           <SelectItem key={gender.id} value={gender.value}>
-                            {gender.label}
+                            {t(`gender${gender.label as "Male" | "Female"}`)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -383,35 +480,56 @@ export default function SignupPage() {
                     : null}
                 </ErrorMessage>
               </div>
-            )}
-            {/* Employee & Company: Phone Number Section */}
-            {isEmployeeForm ? (
-              <Input
-                type="number"
-                placeholder={t("mobile")}
-                className="w-full"
-                {...empForm.register("phone")}
-                validationMessage={employeeErrors.phone?.message}
+              <Controller
+                name="phone"
+                control={empForm.control}
+                render={({ field }) => (
+                  <Input
+                    type="text"
+                    placeholder={t("mobile")}
+                    {...field}
+                    validationMessage={employeeErrors.phone?.message}
+                  />
+                )}
               />
-            ) : (
-              <Input
-                type="number"
-                placeholder={t("mobile")}
-                className="w-full"
-                {...cmpForm.register("phone")}
-                validationMessage={companyErrors.phone?.message}
-              />
-            )}
+            </div>
+          </div>
+        )}
+
+        {/* Employee: Account Security Section */}
+        <div className="flex flex-col gap-4">
+          {/* Divider Section */}
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest whitespace-nowrap">
+              {t("signupSectionAccount")}
+            </span>
+            <div className="flex-1 h-px bg-border" />
           </div>
 
-          {/* Employee & Company: Email Section */}
-          {isEmployeeForm ? (
+          {/* Company: Phone Section */}
+          {!isEmployeeForm && (
             <Input
-              prefix={<LucideMail strokeWidth={"1.3px"} />}
-              type="email"
-              placeholder={t("email")}
-              {...empForm.register("email")}
-              validationMessage={employeeErrors.email?.message}
+              type="number"
+              placeholder={t("mobile")}
+              {...cmpForm.register("phone")}
+              validationMessage={companyErrors.phone?.message}
+            />
+          )}
+
+          {/* Employee and Company: Email Section */}
+          {isEmployeeForm ? (
+            <Controller
+              name="email"
+              control={empForm.control}
+              render={({ field }) => (
+                <Input
+                  prefix={<LucideMail strokeWidth={"1.3px"} />}
+                  type="email"
+                  placeholder={t("email")}
+                  {...field}
+                  validationMessage={employeeErrors.email?.message}
+                />
+              )}
             />
           ) : (
             <Input
@@ -423,7 +541,7 @@ export default function SignupPage() {
             />
           )}
 
-          {/* Employee & Company: Password Section */}
+          {/* Employee and Company: Password Section */}
           {isEmployeeForm ? (
             <Input
               prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
@@ -468,7 +586,7 @@ export default function SignupPage() {
             />
           )}
 
-          {/* Employee & Company: Confirm Password Section */}
+          {/* Employee and Company: Confirm Password Section */}
           {isEmployeeForm ? (
             <Input
               prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
@@ -514,20 +632,20 @@ export default function SignupPage() {
           )}
         </div>
 
-        {/* Employee & Company: Back & Next Buttons Section */}
+        {/* Back & Next Buttons Section */}
         <div className="flex items-center gap-3 tablet-sm:flex-col">
           <Button
             type="button"
             className="flex-1 tablet-sm:w-full"
             variant="outline"
-            onClick={() => router.back()}
+            onClick={() => router.replace("/signup/option")}
           >
             <LucideArrowLeft />
             {t("back")}
           </Button>
           <Button className="flex-1 tablet-sm:w-full" type="submit">
-            <LucideArrowRight />
             {t("next")}
+            <LucideArrowRight />
           </Button>
         </div>
       </form>

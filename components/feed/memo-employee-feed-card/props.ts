@@ -4,7 +4,9 @@ export interface IMemoEmployeeFeedCardProps {
   employee: IEmployee;
   companyId: string;
   isLiking: boolean;
+  isSaving: boolean;
   isFavorite: boolean;
+  isRecommended?: boolean;
   onView: (id: string) => void;
   onLike: (companyId: string, employeeId: string) => void;
   onSave: (companyId: string, employeeId: string, name: string) => void;

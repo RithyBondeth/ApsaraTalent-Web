@@ -1,11 +1,17 @@
 import { create } from "zustand";
 import { formatSidebarTime, parseMessageDate } from "@/utils/functions/date";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
-import axios from "@/lib/axios";
-import { getApiOrigin, normalizeMediaUrl } from "@/utils/functions/media";
+import { useGetRecentChatsStore } from "@/stores/apis/chat/get-recent-chats.store";
+import { normalizeMediaUrl } from "@/utils/functions/media";
 import { IChatPreview } from "@/utils/interfaces/chat/chat.interface";
 import { IMessage } from "@/utils/interfaces/chat/chat.interface";
-import { resolveProfile, resolveMessageSnippet, resolvePreview } from "./utils";
+import {
+  parseChatHistory,
+  parseRawChatMessages,
+  resolveProfile,
+  resolveMessageSnippet,
+  resolvePreview,
+} from "./utils";
 import {
   getSocket,
   setSocket,
@@ -14,15 +20,16 @@ import {
   createSocket,
 } from "./socket-manager";
 import { registerSocketListeners } from "./socket-listeners";
-import { TChatState } from "./types";
+import type { TChatProfile, TChatState, TRawChatMessage } from "./types";
+import { CHAT_MESSAGE_FETCH_LIMIT } from "@/utils/constants/chat.constant";
 
-/* ---------------------------------- Store ────────────────────────────────-- */
+/* ------------------------------------------- Store ------------------------------------------- */
 export const useChatStore = create<TChatState>((set, get) => ({
-  // ── Socket ───────────────────────────────
+  // ── Socket ─────────────────────────────────────────────────────────────────────────
   socket: null,
   isConnected: false,
 
-  // ── Chats ────────────────────────────────
+  // ── Chats ──────────────────────────────────────────────────────────────────────────
   isChatsLoaded: false,
   isHistoryLoading: false,
   me: null,
@@ -31,12 +38,12 @@ export const useChatStore = create<TChatState>((set, get) => ({
   currentMessages: [],
   unreadCount: 0,
 
-  // ── UI ───────────────────────────────────
+  // ── UI ─────────────────────────────────────────────────────────────────────────────
   isTyping: {},
   onlineUsers: {},
 
-  // ── API Integration ──────────────────────
-  // ── Get Recent Chats ────
+  // ── API Integration ────────────────────────────────────────────────────────────────
+  // ── Get Recent Chats ────────────────────────────────────────────────
   getRecentChats: () => {
     const { socket, me } = get();
     if (!socket?.connected || !me) {
@@ -44,12 +51,12 @@ export const useChatStore = create<TChatState>((set, get) => ({
       return;
     }
 
-    const applyRecentChats = (chats: any[]) => {
+    const applyRecentChats = (chats: TRawChatMessage[]) => {
       const currentUserId = me.id;
       const seenPartners = new Map<string, IChatPreview>();
       const unreadPerPartner = new Map<string, number>();
 
-      chats.forEach((chat: any) => {
+      chats.forEach((chat) => {
         const senderId =
           typeof chat.sender === "string"
             ? chat.sender
@@ -73,7 +80,9 @@ export const useChatStore = create<TChatState>((set, get) => ({
         }
 
         if (!seenPartners.has(partnerId)) {
-          const { name, avatar } = resolveProfile(otherUser);
+          const { name, avatar } = resolveProfile(
+            typeof otherUser === "string" ? null : otherUser,
+          );
           const isOnline = get().onlineUsers[partnerId] ?? false;
           seenPartners.set(partnerId, {
             id: partnerId,
@@ -81,7 +90,7 @@ export const useChatStore = create<TChatState>((set, get) => ({
             avatar,
             preview: resolvePreview(chat, currentUserId),
             time: formatSidebarTime(
-              chat.sentAt || chat.sendAt || chat.createdAt || Date.now(),
+              chat.sentAt || chat.sendAt || chat.createdAt || new Date(),
             ),
             isRead: chat.isRead,
             lastMessageSenderId: senderId,
@@ -131,9 +140,11 @@ export const useChatStore = create<TChatState>((set, get) => ({
 
     const fallbackFetchRecentChats = async () => {
       try {
-        const response = await axios.get(`${getApiOrigin()}/chat/recent`);
-        if (Array.isArray(response.data)) {
-          applyRecentChats(response.data);
+        const chats = await useGetRecentChatsStore
+          .getState()
+          .fetchRecentChats();
+        if (Array.isArray(chats) && chats.length > 0) {
+          applyRecentChats(parseRawChatMessages(chats));
           return;
         }
       } catch (error) {
@@ -148,22 +159,23 @@ export const useChatStore = create<TChatState>((set, get) => ({
 
     socket
       .timeout(10000)
-      .emit("getRecentChats", (error: Error | null, chats: any[]) => {
+      .emit("getRecentChats", (error: Error | null, chats: unknown) => {
+        const parsedChats = parseRawChatMessages(chats);
         if (error || !Array.isArray(chats)) {
           void fallbackFetchRecentChats();
           return;
         }
 
-        if (chats.length === 0 && get().activeChats.length === 0) {
+        if (parsedChats.length === 0 && get().activeChats.length === 0) {
           void fallbackFetchRecentChats();
           return;
         }
 
-        applyRecentChats(chats);
+        applyRecentChats(parsedChats);
       });
   },
 
-  // ── Get Chat History ────
+  // ── Get Chat History ──────────────────────────────────────────────────
   getChatHistory: (userId2: string) => {
     const { socket, me } = get();
     if (!socket?.connected || !me) return;
@@ -174,14 +186,15 @@ export const useChatStore = create<TChatState>((set, get) => ({
 
     socket.emit(
       "getChatHistory",
-      { userId2, limit: 50 },
-      (
-        res:
-          | { messages: any[]; partnerId: string; partnerProfile: any }
-          | any[],
-      ) => {
-        const history = Array.isArray(res) ? res : res?.messages || [];
-        const partnerProfile = Array.isArray(res) ? null : res?.partnerProfile;
+      { userId2, limit: CHAT_MESSAGE_FETCH_LIMIT },
+      (res: unknown) => {
+        const parsedResponse = parseChatHistory(res);
+        const history = Array.isArray(parsedResponse)
+          ? parsedResponse
+          : (parsedResponse?.messages ?? []);
+        const partnerProfile = Array.isArray(parsedResponse)
+          ? null
+          : (parsedResponse?.partnerProfile ?? null);
 
         const currentActiveChat = get().activeChat;
         if (
@@ -209,10 +222,12 @@ export const useChatStore = create<TChatState>((set, get) => ({
 
             return {
               id: msg.id,
-              senderId,
+              senderId: senderId ?? "",
               senderName: msg.senderName,
-              content: msg.content,
-              timestamp: parseMessageDate(msg.sentAt || msg.createdAt),
+              content: msg.content ?? "",
+              timestamp: parseMessageDate(
+                msg.sentAt || msg.createdAt || new Date(),
+              ),
               isMe: isMine,
               isRead: msg.isRead,
               messageType: msg.messageType,
@@ -273,20 +288,25 @@ export const useChatStore = create<TChatState>((set, get) => ({
     );
   },
 
-  // ── Get Unread Count ────
+  // ── Get Unread Count ──────────────────────────────────────────────────
   getUnreadCount: () => {
     const { socket } = get();
     if (socket?.connected) {
-      socket.emit("getUnreadCount", null, (res: any) => {
-        if (typeof res?.unreadCount === "number") {
+      socket.emit("getUnreadCount", null, (res: unknown) => {
+        if (
+          typeof res === "object" &&
+          res !== null &&
+          "unreadCount" in res &&
+          typeof res.unreadCount === "number"
+        ) {
           set({ unreadCount: res.unreadCount });
         }
       });
     }
   },
 
-  // ── Connect ────
-  connect: (user?: any) => {
+  // ── Connect ──────────────────────────────────────────────────────────
+  connect: (user?: TChatProfile) => {
     if (user) set({ me: user });
 
     clearPendingDisconnect();
@@ -341,7 +361,7 @@ export const useChatStore = create<TChatState>((set, get) => ({
     set({ socket });
   },
 
-  // ── Disconnect ────
+  // ── Disconnect ──────────────────────────────────────────────────────────
   disconnect: () => {
     scheduleDisconnect(() => {
       const socketToClose = getSocket();
@@ -359,10 +379,10 @@ export const useChatStore = create<TChatState>((set, get) => ({
     });
   },
 
-  // ── Set Me ────
-  setMe: (user: any) => set({ me: user }),
+  // ── Set Me ──────────────────────────────────────────────────────────────
+  setMe: (user: TChatProfile) => set({ me: user }),
 
-  // ── Send Message ────
+  // ── Send Message ────────────────────────────────────────────────────────
   sendMessage: (receiverId, content, type = "text", replyTo, attachment) => {
     const { socket, currentMessages, me } = get();
     if (!socket?.connected) return false;
@@ -400,8 +420,17 @@ export const useChatStore = create<TChatState>((set, get) => ({
         attachmentDuration: attachment?.duration ?? null,
         attachmentAmplitude: attachment?.amplitude ?? null,
       },
-      (response: any) => {
-        const realId = response?.message?.id;
+      (response: unknown) => {
+        const realId =
+          typeof response === "object" &&
+          response !== null &&
+          "message" in response &&
+          typeof response.message === "object" &&
+          response.message !== null &&
+          "id" in response.message &&
+          typeof response.message.id === "string"
+            ? response.message.id
+            : null;
         if (realId) {
           set((state) => {
             const alreadyExists = state.currentMessages.some(
@@ -429,7 +458,7 @@ export const useChatStore = create<TChatState>((set, get) => ({
     return true;
   },
 
-  // ── Set Active Chat ────
+  // ── Set Active Chat ──────────────────────────────────────────────────────
   setActiveChat: (chat) => {
     const prevChat = get().activeChat;
     const isSameChat =
@@ -473,7 +502,7 @@ export const useChatStore = create<TChatState>((set, get) => ({
     }
   },
 
-  // ── Mark As Read ────
+  // ── Mark As Read ────────────────────────────────────────────────────────
   markAsRead: (messageId, senderId) => {
     const { socket, activeChat, me } = get();
     if (socket?.connected) {
@@ -498,20 +527,20 @@ export const useChatStore = create<TChatState>((set, get) => ({
     }
   },
 
-  // ── React To Message ────
+  // ── React To Message ────────────────────────────────────────────────────
   reactToMessage: (messageId, receiverId, emoji) => {
     const { socket } = get();
     if (socket?.connected)
       socket.emit("react", { messageId, receiverId, emoji });
   },
 
-  // ── Set Typing ────
+  // ── Set Typing ──────────────────────────────────────────────────────────
   setTyping: (receiverId, isTyping) => {
     const { socket } = get();
     if (socket?.connected) socket.emit("typing", { receiverId, isTyping });
   },
 
-  // ── Delete Message ────
+  // ── Delete Message ───────────────────────────────────────────────────────
   deleteMessage: (messageId, receiverId) => {
     const { socket, currentMessages } = get();
     if (!socket?.connected) return;
@@ -523,7 +552,7 @@ export const useChatStore = create<TChatState>((set, get) => ({
     socket.emit("deleteMessage", { messageId, receiverId });
   },
 
-  // ── Edit Message ────
+  // ── Edit Message ─────────────────────────────────────────────────────────
   editMessage: (messageId, receiverId, newContent) => {
     const { socket, currentMessages } = get();
     if (!socket?.connected) return;
@@ -533,5 +562,27 @@ export const useChatStore = create<TChatState>((set, get) => ({
       ),
     });
     socket.emit("editMessage", { messageId, receiverId, newContent });
+  },
+
+  // ── Remove Chat By Partner ID ────────────────────────────────────────────
+  removeChatByPartnerId: (partnerId: string) => {
+    const { activeChat, activeChats } = get();
+
+    const filtered = activeChats.filter(
+      (c) => c.id.toLowerCase() !== partnerId.toLowerCase(),
+    );
+
+    // If the currently open chat is with this partner, close it too
+    const isActiveChatAffected =
+      activeChat?.id.toLowerCase() === partnerId.toLowerCase();
+
+    set({
+      activeChats: filtered,
+      ...(isActiveChatAffected && {
+        activeChat: null,
+        currentMessages: [],
+        isHistoryLoading: false,
+      }),
+    });
   },
 }));

@@ -4,6 +4,7 @@ import AvatarCropDialog from "@/components/utils/dialogs/avatar-crop-dialog";
 import ErrorMessage from "@/components/utils/feedback/error-message";
 import { DragDropFile } from "@/components/utils/forms/drag-drop-file";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 export default function AvatarCompanyStepForm({
@@ -11,12 +12,15 @@ export default function AvatarCompanyStepForm({
   getValues,
   errors,
 }: IStepFormProps<TCompanySignup>) {
+  /* ---------------------------------- Utils --------------------------------- */
+  const t = useTranslations("auth");
+
   /* -------------------------------- All States ------------------------------ */
   const [preview, setPreview] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [cropDialogOpen, setCropDialogOpen] = useState<boolean>(false);
 
-  /* --------------------------------- Methods --------------------------------- */
+  /* --------------------------------- Methods -------------------------------- */
   // ── Handle Files Selected ─────────────────────────────────────────
   const handleFilesSelected = (files: File[]): void => {
     const file = files?.[0];
@@ -50,7 +54,7 @@ export default function AvatarCompanyStepForm({
   return (
     <div className="w-full flex flex-col items-center gap-5">
       {/* Title Section */}
-      <TypographyH4>Add your company profile picture (Optional)</TypographyH4>
+      <TypographyH4>{t("cmpAvatarTitle")}</TypographyH4>
 
       {/* Drag Drop File Section */}
       <div className="w-full flex justify-center">
@@ -60,8 +64,8 @@ export default function AvatarCompanyStepForm({
             acceptedFileTypes="image/*"
             maxFileSize={5242880}
             multiple={false}
-            boxText="Drop your company profile picture here"
-            boxSubText="JPG, PNG or WEBP files up to 5MB"
+            boxText={t("cmpAvatarBoxText")}
+            boxSubText={t("cmpAvatarBoxSubText")}
             className="max-w-md"
             preview={preview}
             fileName="avatar"
@@ -78,7 +82,7 @@ export default function AvatarCompanyStepForm({
       {/* Crop Avatar Dialog Section */}
       {selectedImage && (
         <AvatarCropDialog
-          title="Crop Company Profile Picture"
+          title={t("cmpAvatarCropDialogTitle")}
           open={cropDialogOpen}
           setOpen={setCropDialogOpen}
           image={selectedImage}

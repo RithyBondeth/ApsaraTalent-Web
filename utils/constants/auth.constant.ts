@@ -1,4 +1,5 @@
-export const EAuthLoginMethod = {
+/* -------------------------------- Constants ------------------------------- */
+export const AUTH_LOGIN_METHODS = {
   EMAIL_PASSWORD: "email_password",
   PHONE_OTP: "phone_otp",
   GOOGLE: "google",
@@ -7,5 +8,16 @@ export const EAuthLoginMethod = {
   GITHUB: "github",
 } as const;
 
-export type EAuthLoginMethod =
-  (typeof EAuthLoginMethod)[keyof typeof EAuthLoginMethod];
+export const USER_ROLE = {
+  EMPLOYEE: "employee",
+  COMPANY: "company",
+  ADMIN: "admin",
+  NONE: "none",
+} as const;
+
+/* ---------------------------------- Types --------------------------------- */
+export type TAuthLoginMethod =
+  (typeof AUTH_LOGIN_METHODS)[keyof typeof AUTH_LOGIN_METHODS];
+
+/* ---------------------------------- OTP ----------------------------------- */
+export const OTP_LENGTH = 6;

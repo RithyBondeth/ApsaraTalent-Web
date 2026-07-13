@@ -1,12 +1,9 @@
 import Image from "next/image";
 import { ReactNode } from "react";
-import {
-  signupBlackSvg,
-  signupWhiteSvg,
-} from "@/utils/constants/asset.constant";
+import { signupSvg } from "@/utils/constants/asset.constant";
 
 export default function SignupLayout({ children }: { children: ReactNode }) {
-  /* ------------------------------- Render UI ------------------------------- */
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="min-h-screen w-full flex items-stretch overflow-x-hidden">
       {/* Children Section */}
@@ -17,21 +14,15 @@ export default function SignupLayout({ children }: { children: ReactNode }) {
       </div>
 
       {/* Image Poster Section */}
-      <div className="w-1/2 min-h-screen flex justify-center items-center bg-primary px-8 py-10 relative overflow-hidden tablet-xl:hidden">
+      <div className="w-1/2 min-h-screen flex justify-center items-center bg-primary dark:bg-secondary px-8 py-10 relative overflow-hidden tablet-xl:hidden">
         <div className="absolute -top-20 -right-20 size-64 rounded-full bg-white/5" />
         <div className="absolute -bottom-10 -left-10 size-48 rounded-full bg-white/5" />
         <div className="absolute top-1/3 left-10 size-32 rounded-full bg-white/[0.03]" />
 
         <Image
-          src={signupWhiteSvg}
+          src={signupSvg}
           alt="signup"
-          className="h-auto w-full max-w-[620px] relative z-10 dark:hidden"
-          priority
-        />
-        <Image
-          src={signupBlackSvg}
-          alt="signup"
-          className="hidden h-auto w-full max-w-[620px] relative z-10 dark:block"
+          className="h-auto w-full max-w-[620px] relative z-10"
           priority
         />
       </div>

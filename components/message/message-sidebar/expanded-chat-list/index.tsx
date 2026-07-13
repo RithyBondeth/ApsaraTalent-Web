@@ -4,19 +4,28 @@ import { Check, CheckCheck, Users } from "lucide-react";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { IChatListProps } from "../props";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
+import { messageSvg } from "@/utils/constants/asset.constant";
+import { getNameInitials } from "@/utils/functions/text";
 
 export default function ExpandedChatList(props: IChatListProps) {
-  /* ---------------------------------- Utils --------------------------------- */
-  const t = useTranslations("message");
-
   /* --------------------------------- Props --------------------------------- */
   const { chats, activeChat, currentUserId, onChatSelect } = props;
+
+  /* ---------------------------------- Utils -------------------------------- */
+  const t = useTranslations("message");
 
   /* ------------------------------ Empty State ------------------------------ */
   if (!chats || chats.length === 0)
     return (
-      <div className="flex flex-col items-center justify-center gap-2 p-8 text-center h-40">
-        <Users className="h-8 w-8 text-muted-foreground/40" />
+      <div className="flex flex-col items-center justify-center gap-2 p-8 text-center">
+        <Image
+          src={messageSvg}
+          alt="No conversations"
+          height={300}
+          width={300}
+          className="animate-float"
+        />
         <TypographyMuted className="text-sm text-muted-foreground">
           {t("noConversations")}
         </TypographyMuted>
@@ -52,12 +61,7 @@ export default function ExpandedChatList(props: IChatListProps) {
                 <Avatar className="h-11 w-11 md:h-12 md:w-12">
                   <AvatarImage src={chat.avatar} alt={chat.name} />
                   <AvatarFallback className="text-sm font-medium">
-                    {chat.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")
-                      .slice(0, 2)
-                      .toUpperCase()}
+                    {getNameInitials(chat.name)}
                   </AvatarFallback>
                 </Avatar>
               )}

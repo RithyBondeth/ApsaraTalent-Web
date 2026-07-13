@@ -6,15 +6,15 @@ import { IFormPanelProps } from "../props";
 import { ExperienceCard } from "./experience-card";
 import { useTranslations } from "next-intl";
 
-/* -------------------------------- Component ------------------------------- */
 export function ExperienceTab({
   register,
   control,
-}: Pick<IFormPanelProps, "register" | "control">) {
+  setValue,
+}: Pick<IFormPanelProps, "register" | "control" | "setValue">) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("resumeBuilder");
 
-  /* --------------------------------- Form --------------------------------- */
+  /* ----------------------------- React Hook Form ---------------------------- */
   const { fields, append, remove } = useFieldArray({
     control,
     name: "experience",
@@ -43,6 +43,7 @@ export function ExperienceTab({
           index={i}
           register={register}
           control={control}
+          setValue={setValue}
           onRemove={() => remove(i)}
           showRemove={fields.length > 1}
         />

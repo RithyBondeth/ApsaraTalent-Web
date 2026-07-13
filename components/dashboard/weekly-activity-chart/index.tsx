@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { IWeeklyActivityChartProps } from "./props";
+import { CHART_COLOR } from "@/utils/constants/ui.constant";
 
 export function WeeklyActivityChart({ data }: IWeeklyActivityChartProps) {
   /* -------------------------------- Utils ------------------------------- */
@@ -29,6 +30,7 @@ export function WeeklyActivityChart({ data }: IWeeklyActivityChartProps) {
   /* ------------------------------ Render UI ------------------------------ */
   return (
     <ResponsiveContainer width="100%" height={250}>
+      {/* Chart Section */}
       <BarChart data={data} barGap={2} barCategoryGap="20%">
         <CartesianGrid
           strokeDasharray="3 3"
@@ -68,14 +70,14 @@ export function WeeklyActivityChart({ data }: IWeeklyActivityChartProps) {
         <Bar
           dataKey="received"
           name="Likes Received"
-          fill="#ec4899"
+          fill={CHART_COLOR.PINK}
           radius={[4, 4, 0, 0]}
           maxBarSize={28}
         />
         <Bar
           dataKey="matches"
           name="Matches"
-          fill="#10b981"
+          fill={CHART_COLOR.GREEN}
           radius={[4, 4, 0, 0]}
           maxBarSize={28}
         />

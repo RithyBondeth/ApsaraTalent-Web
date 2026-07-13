@@ -6,14 +6,16 @@ import { IRecentMatchesListProps } from "./props";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { timeAgo } from "@/utils/functions/date";
+import { getNameInitials } from "@/utils/functions/text";
 import { useTranslations } from "next-intl";
 
 export function RecentMatchesList({
   matches,
   isEmployee,
 }: IRecentMatchesListProps) {
-  /* ---------------------------------- Utils --------------------------------- */
+  /* --------------------------------- Utils -------------------------------- */
   const t = useTranslations("dashboard");
+  const tc = useTranslations("common");
 
   /* --------------------------- Empty List State --------------------------- */
   if (!matches || matches.length === 0) {
@@ -21,7 +23,9 @@ export function RecentMatchesList({
       <div className="flex flex-col items-center justify-center py-8 text-center">
         <Handshake className="h-10 w-10 text-muted-foreground/30 mb-3" />
         <TypographyMuted className="text-sm text-muted-foreground">
-          {t("noMatchesYet", { role: isEmployee ? t("company") : t("candidate") })}
+          {t("noMatchesYet", {
+            role: isEmployee ? t("company") : t("candidate"),
+          })}
         </TypographyMuted>
       </div>
     );
@@ -35,6 +39,7 @@ export function RecentMatchesList({
           key={match.id}
           className="flex items-center gap-3 rounded-xl border border-border/50 bg-accent/30 p-3 transition-colors hover:bg-accent/60"
         >
+          {/* Avatar Section */}
           <CachedAvatar
             src={match.avatar}
             alt={match.name}
@@ -43,14 +48,16 @@ export function RecentMatchesList({
             preload={true}
             showLoadingState={true}
           >
-            {match.name.slice(0, 2)}
+            {getNameInitials(match.name)}
           </CachedAvatar>
+
+          {/* Info Section */}
           <div className="flex-1 min-w-0">
             <TypographyP className="[&:not(:first-child)]:mt-0 text-sm font-medium truncate">
               {match.name}
             </TypographyP>
             <TypographyMuted className="text-[11px] text-muted-foreground">
-              {timeAgo(match.matchDate)}
+              {timeAgo(match.matchDate, tc)}
             </TypographyMuted>
           </div>
         </div>

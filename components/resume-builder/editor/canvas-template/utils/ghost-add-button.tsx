@@ -1,4 +1,5 @@
 import { Plus } from "lucide-react";
+import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
 
 export function GhostAddButton(props: { label: string; onClick: () => void }) {
   /* ----------------------------------- Props --------------------------------- */
@@ -14,8 +15,8 @@ export function GhostAddButton(props: { label: string; onClick: () => void }) {
       className="group/add flex items-center gap-1 opacity-0 group-hover/section:opacity-100 transition-opacity duration-150 mt-2"
       style={{
         fontSize: 11,
-        color: "#4f46e5",
-        border: "1.5px dashed #c7d2fe",
+        color: RESUME_COLOR.ACCENT,
+        border: `1.5px dashed ${RESUME_COLOR.ACCENT_GHOST}`,
         borderRadius: 6,
         padding: "3px 10px",
         background: "transparent",

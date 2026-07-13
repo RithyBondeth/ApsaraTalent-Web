@@ -1,3 +1,5 @@
+import { TInterviewStatus } from "@/utils/types/interview";
+
 export interface IInterview {
   id: string;
   employee: {
@@ -18,7 +20,7 @@ export interface IInterview {
   durationMinutes: number;
   location?: string;
   meetingLink?: string;
-  status: string;
+  status: TInterviewStatus;
   createdBy: string;
   createdAt: string;
 }

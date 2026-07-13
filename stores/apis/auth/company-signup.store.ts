@@ -4,12 +4,12 @@ import { API_AUTH_SIGNUP_URL } from "@/utils/constants/apis/auth.api.constant";
 import { ICompany } from "@/utils/interfaces/user/company.interface";
 import { IUser } from "@/utils/interfaces/user/user.interface";
 import { create } from "zustand";
+import { setSessionRole } from "@/utils/auth/cookie-manager";
 
 /* ---------------------------------- States --------------------------------- */
 // ── Company Signup API Response ─────────────────────────────────
 type TCompanySignupResponse = {
-  accessToken: string | null;
-  refreshToken: string | null;
+  isAuthenticated: boolean;
   message: string | null;
 };
 
@@ -29,8 +29,7 @@ type TCompanySignupState = TCompanySignupResponse & {
 
 /* ---------------------------------- Store --------------------------------- */
 export const useCompanySignupStore = create<TCompanySignupState>()((set) => ({
-  accessToken: null,
-  refreshToken: null,
+  isAuthenticated: false,
   message: null,
   loading: false,
   error: null,
@@ -76,11 +75,11 @@ export const useCompanySignupStore = create<TCompanySignupState>()((set) => ({
 
       const company = response.data.user.company;
       const companyID = company?.id;
+      setSessionRole(response.data.user.role, false);
 
       set({
         loading: false,
-        accessToken: response.data.accessToken,
-        refreshToken: response.data.refreshToken,
+        isAuthenticated: true,
         message: response.data.message,
         error: null,
       });

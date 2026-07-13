@@ -1,4 +1,4 @@
-// Cookie configuration constants
+/* ----------------------------- Configurations ----------------------------- */
 export const COOKIE_CONFIG = {
   // Token expiration times (in seconds)
   REMEMBER_ACCESS_TOKEN: 30 * 24 * 60 * 60, // 30 days
@@ -10,6 +10,7 @@ export const COOKIE_CONFIG = {
   // Cookie names
   AUTH_TOKEN: "auth-token",
   REFRESH_TOKEN: "refresh-token",
+  SESSION_ROLE: "auth-session-role",
   REMEMBER_PREFERENCE: "remember-me",
 
   // Security settings
@@ -18,4 +19,5 @@ export const COOKIE_CONFIG = {
   PATH: "/",
 } as const;
 
+/* ------------------------------- Push Tokens ------------------------------ */
 export const PUSH_TOKEN_STORAGE_KEY = "apsara-push-token";

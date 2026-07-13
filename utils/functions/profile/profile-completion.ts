@@ -37,6 +37,7 @@ function calculateCompletion(fields: IFieldCheck[]): IProfileCompletionResult {
   };
 }
 
+/* --------------------------------- Methods ---------------------------------- */
 /**
  * Employee profile completion — 16 weighted fields totaling 100%
  *
@@ -49,86 +50,85 @@ function calculateCompletion(fields: IFieldCheck[]): IProfileCompletionResult {
  *
  * Total = 100%  (round-safe with Math.round)
  */
-/* --------------------------------- Methods ---------------------------------- */
 export function getEmployeeProfileCompletion(
   employee: IEmployee,
 ): IProfileCompletionResult {
   const fields: IFieldCheck[] = [
     // Core identity — 20%
     {
-      label: "First Name",
+      label: "firstName",
       weight: 4,
       isFilled: isStringFilled(employee.firstname),
     },
     {
-      label: "Last Name",
+      label: "lastName",
       weight: 4,
       isFilled: isStringFilled(employee.lastname),
     },
     {
-      label: "Profile Photo",
+      label: "profilePhoto",
       weight: 8,
       isFilled: isStringFilled(employee.avatar),
     },
     {
-      label: "Username",
+      label: "username",
       weight: 4,
       isFilled: isStringFilled(employee.username),
     },
 
     // Professional — 28%
-    { label: "Job Title", weight: 8, isFilled: isStringFilled(employee.job) },
-    { label: "Bio", weight: 8, isFilled: isStringFilled(employee.description) },
+    { label: "jobTitle", weight: 8, isFilled: isStringFilled(employee.job) },
+    { label: "bio", weight: 8, isFilled: isStringFilled(employee.description) },
     {
-      label: "Location",
+      label: "location",
       weight: 4,
       isFilled: isStringFilled(employee.location),
     },
     {
-      label: "Years of Experience",
+      label: "yearsOfExperience",
       weight: 4,
       isFilled: isStringFilled(employee.yearsOfExperience),
     },
     {
-      label: "Availability",
+      label: "availability",
       weight: 4,
       isFilled: isStringFilled(employee.availability),
     },
 
     // Skills & Education — 28%
-    { label: "Skills", weight: 8, isFilled: isArrayFilled(employee.skills) },
+    { label: "skills", weight: 8, isFilled: isArrayFilled(employee.skills) },
     {
-      label: "Experience",
+      label: "experience",
       weight: 8,
       isFilled: isArrayFilled(employee.experiences),
     },
     {
-      label: "Education",
+      label: "education",
       weight: 8,
       isFilled: isArrayFilled(employee.educations),
     },
     {
-      label: "Career Scopes",
+      label: "careerScopes",
       weight: 4,
       isFilled: isArrayFilled(employee.careerScopes),
     },
 
     // Documents — 14%
-    { label: "Resume", weight: 8, isFilled: isStringFilled(employee.resume) },
+    { label: "resume", weight: 8, isFilled: isStringFilled(employee.resume) },
     {
-      label: "Cover Letter",
+      label: "coverLetter",
       weight: 6,
       isFilled: isStringFilled(employee.coverLetter),
     },
 
     // Social & Contact — 10%
     {
-      label: "Phone Number",
+      label: "phoneNumber",
       weight: 5,
       isFilled: isStringFilled(employee.phone),
     },
     {
-      label: "Social Links",
+      label: "socialLinks",
       weight: 5,
       isFilled: isArrayFilled(employee.socials),
     },
@@ -140,98 +140,98 @@ export function getEmployeeProfileCompletion(
 /**
  * Company profile completion — 16 weighted fields totaling 100%
  *
- * Core identity:   Name (5) + Industry (5) + Profile Photo (8) + Cover (4) = 22%
- * Details:         Description (10) + Location (5) + Phone (4) + Size (4) + Founded (4) = 27%
- * Offerings:       Open Positions (12) + Benefits (5) + Values (5) = 22%
- * Discovery:       Career Scopes (5) + Social Links (4) + Company Images (5) = 14%
+ * Core identity:   Name (5) + Industry (5) + Profile Photo (10) + Cover (4) = 24%
+ * Details:         Description (12) + Location (5) + Phone (4) + Size (4) + Founded (4) = 29%
+ * Offerings:       Open Positions (15) + Benefits (5) + Values (5) = 25%
+ * Discovery:       Career Scopes (5) + Social Links (4) + Company Images (8) = 17%
  * Availability:    Available Times (5) = 5%
  * Bonus:           Email (not counted, only tracked)
  *
- * Note: Adjusted to sum to 100% with rounding safety
+ * Total = 100%
  */
 export function getCompanyProfileCompletion(
   company: ICompany,
 ): IProfileCompletionResult {
   const fields: IFieldCheck[] = [
-    // Core identity — 22%
+    // Core identity — 24%
     {
-      label: "Company Name",
+      label: "companyName",
       weight: 5,
       isFilled: isStringFilled(company.name),
     },
     {
-      label: "Industry",
+      label: "industry",
       weight: 5,
       isFilled: isStringFilled(company.industry),
     },
     {
-      label: "Profile Photo",
-      weight: 8,
+      label: "profilePhoto",
+      weight: 10,
       isFilled: isStringFilled(company.avatar),
     },
     {
-      label: "Cover Image",
+      label: "coverImage",
       weight: 4,
       isFilled: isStringFilled(company.cover),
     },
 
-    // Details — 27%
+    // Details — 29%
     {
-      label: "Description",
-      weight: 10,
+      label: "description",
+      weight: 12,
       isFilled: isStringFilled(company.description),
     },
     {
-      label: "Location",
+      label: "location",
       weight: 5,
       isFilled: isStringFilled(company.location),
     },
     {
-      label: "Phone Number",
+      label: "phoneNumber",
       weight: 4,
       isFilled: isStringFilled(company.phone),
     },
     {
-      label: "Company Size",
+      label: "companySize",
       weight: 4,
       isFilled: isNumberFilled(company.companySize),
     },
     {
-      label: "Founded Year",
+      label: "foundedYear",
       weight: 4,
       isFilled: isNumberFilled(company.foundedYear),
     },
 
-    // Offerings — 22%
+    // Offerings — 25%
     {
-      label: "Open Positions",
-      weight: 12,
+      label: "openPositions",
+      weight: 15,
       isFilled: isArrayFilled(company.openPositions),
     },
-    { label: "Benefits", weight: 5, isFilled: isArrayFilled(company.benefits) },
-    { label: "Values", weight: 5, isFilled: isArrayFilled(company.values) },
+    { label: "benefits", weight: 5, isFilled: isArrayFilled(company.benefits) },
+    { label: "values", weight: 5, isFilled: isArrayFilled(company.values) },
 
-    // Discovery — 14%
+    // Discovery — 17%
     {
-      label: "Career Scopes",
+      label: "careerScopes",
       weight: 5,
       isFilled: isArrayFilled(company.careerScopes),
     },
     {
-      label: "Social Links",
+      label: "socialLinks",
       weight: 4,
       isFilled: isArrayFilled(company.socials),
     },
     {
-      label: "Company Images",
-      weight: 5,
+      label: "companyImages",
+      weight: 8,
       isFilled: isArrayFilled(company.images),
     },
 
-    // Availability — 2%
+    // Availability — 5%
     {
-      label: "Available Times",
-      weight: 2,
+      label: "availableTimes",
+      weight: 5,
       isFilled: isArrayFilled(company.availableTimes),
     },
   ];

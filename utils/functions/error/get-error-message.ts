@@ -2,7 +2,7 @@ import { FieldError, FieldErrorsImpl, Merge } from "react-hook-form";
 
 /* ----------------------------------- Types ---------------------------------- */
 // error handling utility
-type ErrorLike =
+type TErrorLike =
   | FieldError
   | Merge<FieldError, FieldErrorsImpl>
   | Merge<FieldError, (FieldError | undefined)[]>
@@ -10,8 +10,15 @@ type ErrorLike =
   | (FieldError | undefined)[]
   | undefined;
 
-/* --------------------------------- Methods ---------------------------------- */
-export const getErrorMessage = (field: ErrorLike): string | undefined => {
+/* --------------------------------- Method ---------------------------------- */
+/**
+ * Extracts a human-readable error message string from a react-hook-form field error.
+ * Supports traversing arrays of field errors (e.g., from FieldArray validations).
+ *
+ * @param field - The react-hook-form error object or array
+ * @returns The actual error message string, or undefined if no message is found
+ */
+export const getErrorMessage = (field: TErrorLike): string | undefined => {
   if (Array.isArray(field)) {
     for (const err of field) {
       if (

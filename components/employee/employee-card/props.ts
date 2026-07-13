@@ -3,6 +3,7 @@ import { IEmployee } from "@/utils/interfaces/user/employee.interface";
 export interface IEmployeeCardProps extends IEmployee {
   onViewClick: () => void;
   onSaveClick: () => void;
+  onSaveClickDisable?: boolean;
   onLikeClick: () => void | Promise<void>;
   onLikeClickDisable: boolean;
   onProfileImageClick: (e: React.MouseEvent) => void;

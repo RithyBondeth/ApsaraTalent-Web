@@ -23,7 +23,7 @@ The project follows a feature-oriented structure, organized within the Next.js A
 -   **`app/`**: The core of the application, using Next.js App Router conventions.
     -   **`(auth)/`**: Contains all authentication-related pages (login, signup, etc.). This is a route group, so `(auth)` is not part of the URL path.
     -   **`(main)/`**: Contains the main application pages for authenticated users (feed, profile, etc.). This is also a route group.
-    -   **`layout.tsx`**: The root layout, which sets up the global font (`Ubuntu`), the `ThemeProvider` for light/dark mode, and the `Toaster` for notifications.
+    -   **`layout.tsx`**: The root layout, which sets up the global fonts (`Roboto Slab` for English and `Koh Santepheap` for Khmer), the `ThemeProvider` for light/dark mode, and the `Toaster` for notifications.
 -   **`components/`**: Contains all React components.
     -   **`ui/`**: Core UI components provided by `shadcn/ui` (e.g., `Button`, `Card`, `Input`).
     -   **Other subdirectories**: Components are organized by feature (e.g., `profile/`, `feed/`, `message/`).

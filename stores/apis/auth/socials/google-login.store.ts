@@ -1,6 +1,6 @@
-import { clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-manager";
+import { clearAuthCookies, setSessionRole } from "@/utils/auth/cookie-manager";
 import { API_AUTH_SOCIAL_GOOGLE_URL } from "@/utils/constants/apis/auth.api.constant";
-import { EAuthLoginMethod } from "@/utils/constants/auth.constant";
+import { TAuthLoginMethod } from "@/utils/constants/auth.constant";
 import { TUserRole } from "@/utils/types/auth/role.type";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../../users/get-current-user.store";
@@ -11,8 +11,6 @@ type TGoogleLoginResponse = {
   type: "GOOGLE_AUTH_SUCCESS" | "GOOGLE_AUTH_ERROR";
   error?: string;
   newUser?: boolean;
-  accessToken?: string | null;
-  refreshToken?: string | null;
   remember?: boolean;
   user?: {
     email: string | null;
@@ -21,7 +19,7 @@ type TGoogleLoginResponse = {
     picture: string | null;
     provider: string | null;
     role: string | null;
-    lastLoginMethod: EAuthLoginMethod | null;
+    lastLoginMethod: TAuthLoginMethod | null;
     lastLoginAt: string | null;
   };
 };
@@ -37,7 +35,7 @@ type TGoogleLoginState = {
   email: string | null;
   firstname: string | null;
   lastname: string | null;
-  lastLoginMethod: EAuthLoginMethod | null;
+  lastLoginMethod: TAuthLoginMethod | null;
   lastLoginAt: string | null;
   picture: string | null;
   provider: string | null;
@@ -63,16 +61,12 @@ const FINISH_LOGIN = (data: TGoogleLoginResponse) => {
     return;
   }
 
-  // Persist first-party cookies on web domain so Next middleware can read
-  // auth-token even when API and Web run on different domains.
-  if (data.accessToken && data.refreshToken) {
-    setAuthCookies(data.accessToken, data.refreshToken, Boolean(data.remember));
-  }
+  setSessionRole(data.user?.role, Boolean(data.remember));
 
   // Update store with user info
   useGoogleLoginStore.setState({
     loading: false,
-    isAuthenticated: true,
+    isAuthenticated: !data.newUser,
     message: "Login successful",
     role: data.user?.role || null,
     newUser: data.newUser || false,

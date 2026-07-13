@@ -13,7 +13,7 @@ export function FavoriteLoadingSkeleton({
       <FeedBannerSkeleton />
 
       {/* Card List Section */}
-      <div className="flex flex-col gap-3 mt-4">
+      <div className="mt-5 flex flex-col items-start gap-3">
         {[...Array(3)].map((_, index) =>
           isEmployee ? (
             <FavoriteCompanyCardSkeleton key={index} />
@@ -29,7 +29,7 @@ export function FavoriteLoadingSkeleton({
 /* ---------------------- Favorite Company Card Loading Skeleton ---------------------- */
 function FavoriteCompanyCardSkeleton() {
   return (
-    <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
+    <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
       <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
         {/* Avatar Section */}
         <Skeleton className="size-16 sm:size-20 rounded-xl flex-shrink-0" />
@@ -66,8 +66,10 @@ function FavoriteCompanyCardSkeleton() {
 
       {/* Action Bar Section */}
       <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end gap-2">
-        <Skeleton className="h-8 w-20 rounded-md" />
-        <Skeleton className="h-8 w-24 rounded-md" />
+        <Skeleton className="h-9 w-20 rounded-md" />
+        {/* Remove Section */}
+        <Skeleton className="h-9 w-24 rounded-md" />
+        {/* View Detail Section */}
       </div>
     </div>
   );
@@ -76,7 +78,7 @@ function FavoriteCompanyCardSkeleton() {
 /* ---------------------- Favorite Employee Card Loading Skeleton --------------------- */
 function FavoriteEmployeeCardSkeleton() {
   return (
-    <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
+    <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
       <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
         {/* Avatar Section */}
         <Skeleton className="size-16 sm:size-20 rounded-xl flex-shrink-0" />
@@ -113,8 +115,10 @@ function FavoriteEmployeeCardSkeleton() {
 
       {/* Action Bar Section */}
       <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end gap-2">
-        <Skeleton className="h-8 w-20 rounded-md" />
-        <Skeleton className="h-8 w-24 rounded-md" />
+        <Skeleton className="h-9 w-20 rounded-md" />
+        {/* Remove Section */}
+        <Skeleton className="h-9 w-24 rounded-md" />
+        {/* View Detail Section */}
       </div>
     </div>
   );

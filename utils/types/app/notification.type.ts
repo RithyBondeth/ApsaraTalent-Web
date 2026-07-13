@@ -3,4 +3,5 @@ export type TNotificationFilterType =
   | "match"
   | "message"
   | "like"
+  | "interview"
   | "unread";

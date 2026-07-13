@@ -1,8 +1,8 @@
 import {
-  FacebookIcon,
-  GithubIcon,
-  GoogleIcon,
-  LinkedInIcon,
+  facebookIcon,
+  githubIcon,
+  googleIcon,
+  linkedInIcon,
 } from "@/utils/constants/asset.constant";
 import { StaticImageData } from "next/image";
 
@@ -29,12 +29,12 @@ export const platformConstant: {
   label: string;
   value: string;
 }[] = [
-  { id: 1, label: "Facebook", value: "facebook" },
+  { id: 1, label: "Facebook", value: "Facebook" },
   { id: 2, label: "Instagram", value: "Instagram" },
-  { id: 3, label: "Telegram", value: "telegram" },
-  { id: 4, label: "LinkedIn", value: "linkedin" },
-  { id: 5, label: "Github", value: "github" },
-  { id: 6, label: "Website", value: "website" },
+  { id: 3, label: "Telegram", value: "Telegram" },
+  { id: 4, label: "LinkedIn", value: "Linkedin" },
+  { id: 5, label: "Github", value: "Github" },
+  { id: 6, label: "Website", value: "Website" },
 ] as const;
 
 export const loginMethodConstant: {
@@ -42,10 +42,10 @@ export const loginMethodConstant: {
   label: string;
   icon: StaticImageData;
 }[] = [
-  { id: 1, label: "Google", icon: GoogleIcon },
-  { id: 2, label: "Facebook", icon: FacebookIcon },
-  { id: 3, label: "LinkedIn", icon: LinkedInIcon },
-  { id: 4, label: "Github", icon: GithubIcon },
+  { id: 1, label: "Google", icon: googleIcon },
+  { id: 2, label: "Facebook", icon: facebookIcon },
+  { id: 3, label: "LinkedIn", icon: linkedInIcon },
+  { id: 4, label: "Github", icon: githubIcon },
 ] as const;
 
 export const availabilityConstant: {
@@ -58,7 +58,6 @@ export const availabilityConstant: {
   { id: 3, label: "Internship", value: "internship" },
   { id: 4, label: "Contract", value: "contract" },
   { id: 5, label: "Freelance", value: "freelance" },
-  { id: 6, label: "Remote", value: "remote" },
 ] as const;
 
 export const yearOfExperienceConstant: {
@@ -102,19 +101,108 @@ export const locationConstant: string[] = [
   "Tbong Khmum",
 ] as const;
 
+export const workModeConstant: {
+  id: number;
+  label: string;
+  value: string;
+}[] = [
+  { id: 1, label: "Remote", value: "remote" },
+  { id: 2, label: "On-site", value: "on_site" },
+  { id: 3, label: "Hybrid", value: "hybrid" },
+  { id: 4, label: "Flexible", value: "flexible" },
+] as const;
+
+export const noticePeriodConstant: {
+  id: number;
+  label: string;
+  value: string;
+}[] = [
+  { id: 1, label: "Immediate", value: "immediate" },
+  { id: 2, label: "2 Weeks", value: "2_weeks" },
+  { id: 3, label: "1 Month", value: "1_month" },
+] as const;
+
+export const companyTypeConstant: {
+  id: number;
+  label: string;
+  value: string;
+}[] = [
+  { id: 1, label: "Startup", value: "startup" },
+  { id: 2, label: "SME", value: "sme" },
+  { id: 3, label: "Enterprise", value: "enterprise" },
+  { id: 4, label: "NGO", value: "ngo" },
+  { id: 5, label: "Government", value: "government" },
+] as const;
+
+export const languageConstant: string[] = [
+  "Khmer",
+  "English",
+  "Chinese",
+  "French",
+  "Japanese",
+  "Korean",
+  "Thai",
+  "Vietnamese",
+] as const;
+
+export const salaryCurrencyConstant: {
+  id: number;
+  label: string;
+  value: string;
+}[] = [
+  { id: 1, label: "USD ($)", value: "USD" },
+  { id: 2, label: "KHR (៛)", value: "KHR" },
+] as const;
+
 export const badgeRandomColorsClass: { bg: string; text: string }[] = [
-  { bg: "bg-blue-100", text: "text-blue-800" },
-  { bg: "bg-green-100", text: "text-green-800" },
-  { bg: "bg-purple-100", text: "text-purple-800" },
-  { bg: "bg-yellow-100", text: "text-yellow-800" },
-  { bg: "bg-pink-100", text: "text-pink-800" },
-  { bg: "bg-indigo-100", text: "text-indigo-800" },
-  { bg: "bg-red-100", text: "text-red-800" },
-  { bg: "bg-teal-100", text: "text-teal-800" },
-  { bg: "bg-orange-100", text: "text-orange-800" },
-  { bg: "bg-emerald-100", text: "text-emerald-800" },
-  { bg: "bg-cyan-100", text: "text-cyan-800" },
-  { bg: "bg-rose-100", text: "text-rose-800" },
+  {
+    bg: "bg-blue-100    dark:bg-blue-500/15",
+    text: "text-blue-800    dark:text-blue-300",
+  },
+  {
+    bg: "bg-green-100   dark:bg-green-500/15",
+    text: "text-green-800   dark:text-green-300",
+  },
+  {
+    bg: "bg-purple-100  dark:bg-purple-500/15",
+    text: "text-purple-800  dark:text-purple-300",
+  },
+  {
+    bg: "bg-yellow-100  dark:bg-yellow-500/15",
+    text: "text-yellow-800  dark:text-yellow-300",
+  },
+  {
+    bg: "bg-pink-100    dark:bg-pink-500/15",
+    text: "text-pink-800    dark:text-pink-300",
+  },
+  {
+    bg: "bg-indigo-100  dark:bg-indigo-500/15",
+    text: "text-indigo-800  dark:text-indigo-300",
+  },
+  {
+    bg: "bg-red-100     dark:bg-red-500/15",
+    text: "text-red-800     dark:text-red-300",
+  },
+  {
+    bg: "bg-teal-100    dark:bg-teal-500/15",
+    text: "text-teal-800    dark:text-teal-300",
+  },
+  {
+    bg: "bg-orange-100  dark:bg-orange-500/15",
+    text: "text-orange-800  dark:text-orange-300",
+  },
+  {
+    bg: "bg-emerald-100 dark:bg-emerald-500/15",
+    text: "text-emerald-800 dark:text-emerald-300",
+  },
+  {
+    bg: "bg-cyan-100    dark:bg-cyan-500/15",
+    text: "text-cyan-800    dark:text-cyan-300",
+  },
+  {
+    bg: "bg-rose-100    dark:bg-rose-500/15",
+    text: "text-rose-800    dark:text-rose-300",
+  },
 ] as const;
 
 export const careerScopesListConstant: {
@@ -724,6 +812,34 @@ export const careerScopesListConstant: {
 ] as const;
 
 export const MOBILE_BREAKPOINT = 768;
+export const AVATAR_INITIALS_LENGTH = 2;
+
+/* --------------------------------- Colors --------------------------------- */
+export const SCORE_COLOR = {
+  HIGH: "#22c55e", // score >= 75 — green-500
+  MEDIUM: "#f59e0b", // score >= 50 — amber-400
+  LOW: "#ef4444", // score  < 50 — red-500
+} as const;
+
+export const RATE_COLOR = {
+  HIGH: "#10b981", // rate >= 70 — emerald-500
+  MEDIUM: "#f59e0b", // rate >= 20 — amber-400
+  LOW: "#ef4444", // rate  < 20 — red-500
+} as const;
+
+export const CHART_COLOR = {
+  PINK: "#ec4899", // pink-500  — likes received bar
+  GREEN: "#10b981", // emerald-500 — matches bar
+} as const;
+
+export const COMPANY_ICON_COLOR = {
+  BENEFIT: "#0073E6", // blue   — benefit check icon
+  VALUE: "#69B41E", // green  — value check icon
+} as const;
+
+/* Scroll progress bar decorative gradient (fixed top of page) */
+export const SCROLL_PROGRESS_GRADIENT =
+  "linear-gradient(90deg, hsl(var(--primary)) 0%, #7c3aed 55%, #ec4899 100%)";
 
 export const HOOK_TEXT_SELECTION_HIDDEN_STATE = {
   isVisible: false,
@@ -731,7 +847,7 @@ export const HOOK_TEXT_SELECTION_HIDDEN_STATE = {
   left: 0,
   isBold: false,
   isItalic: false,
-};
+} as const;
 
 export const TOAST_LIMIT = 1;
 export const TOAST_REMOVE_DELAY = 1000000;

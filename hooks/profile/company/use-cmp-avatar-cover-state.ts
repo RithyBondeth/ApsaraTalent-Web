@@ -1,8 +1,28 @@
 import { useEffect, useRef, useState } from "react";
 
+/* ---------------------------------- Usage ----------------------------------- */
+/**
+ * Centralises all avatar and cover-photo UI state for company profile editing,
+ * including file selection, crop dialogs, and remove confirmation dialogs.
+ *
+ * Usage:
+ *   const {
+ *     avatarFile, setAvatarFile, avatarInputRef,
+ *     openAvatarPopup, setOpenAvatarPopup,
+ *     openRemoveAvatarDialog, setOpenRemoveAvatarDialog,
+ *     openCropDialog, setOpenCropDialog,
+ *     cropImageUrl, setCropImageUrl,
+ *     coverFile, setCoverFile, coverInputRef,
+ *     openRemoveCoverDialog, setOpenRemoveCoverDialog,
+ *     openCoverCropDialog, setOpenCoverCropDialog,
+ *     coverCropImageUrl, setCoverCropImageUrl,
+ *     ignoreNextClick,
+ *   } = useCmpAvatarCoverState();
+ */
+
 /* ----------------------------------- Hook ----------------------------------- */
 export function useCmpAvatarCoverState() {
-  /* -------------------------------- All States -------------------------------- */
+  /* ------------------------------- All States ------------------------------- */
   // ── Avatar States ─────────────────────────────────────────
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [openAvatarPopup, setOpenAvatarPopup] = useState<boolean>(false);

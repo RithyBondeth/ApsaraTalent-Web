@@ -4,12 +4,12 @@ import { API_AUTH_SIGNUP_URL } from "@/utils/constants/apis/auth.api.constant";
 import { IEmployee } from "@/utils/interfaces/user/employee.interface";
 import { IUser } from "@/utils/interfaces/user/user.interface";
 import { create } from "zustand";
+import { setSessionRole } from "@/utils/auth/cookie-manager";
 
 /* ---------------------------------- States --------------------------------- */
 // ── Employee Signup API Response ─────────────────────────────────
 type TEmployeeSignupResponse = {
-  accessToken: string | null;
-  refreshToken: string | null;
+  isAuthenticated: boolean;
   message: string | null;
 };
 
@@ -29,8 +29,7 @@ type TEmployeeSignupState = TEmployeeSignupResponse & {
 
 /* ---------------------------------- Store --------------------------------- */
 export const useEmployeeSignupStore = create<TEmployeeSignupState>()((set) => ({
-  accessToken: null,
-  refreshToken: null,
+  isAuthenticated: false,
   message: null,
   loading: false,
   error: null,
@@ -82,11 +81,11 @@ export const useEmployeeSignupStore = create<TEmployeeSignupState>()((set) => ({
 
       const employee = response.data.user.employee;
       const employeeID = employee?.id;
+      setSessionRole(response.data.user.role, false);
 
       set({
         loading: false,
-        accessToken: response.data.accessToken,
-        refreshToken: response.data.refreshToken,
+        isAuthenticated: true,
         message: response.data.message,
         error: null,
       });

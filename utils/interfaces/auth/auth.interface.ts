@@ -1,4 +1,4 @@
-import { EAuthLoginMethod } from "@/utils/constants/auth.constant";
+import { TAuthLoginMethod } from "@/utils/constants/auth.constant";
 import { TUserRole } from "@/utils/types/auth/role.type";
 
 export interface IUserAuthResponse {
@@ -6,5 +6,5 @@ export interface IUserAuthResponse {
   phone: string;
   role: TUserRole;
   lastLoginAt: string;
-  lastLoginMethod: EAuthLoginMethod;
+  lastLoginMethod: TAuthLoginMethod;
 }

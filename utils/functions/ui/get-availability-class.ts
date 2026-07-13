@@ -1,4 +1,8 @@
-/* --------------------------------- Methods ---------------------------------- */
+/* --------------------------------- Method ---------------------------------- */
+/**
+ * Maps a job availability keyword to standardized utility colors (Tailwind classes).
+ * Returns appropriate styles for pills and badges based on whether "full", "part", or "free" is matched.
+ */
 export function getAvailabilityStyleClass(availability: string) {
   const s = availability.toLowerCase();
   if (s.includes("full"))

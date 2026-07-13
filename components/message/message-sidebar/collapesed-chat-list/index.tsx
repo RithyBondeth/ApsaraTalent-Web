@@ -10,6 +10,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { IChatListProps } from "../props";
+import { getNameInitials } from "@/utils/functions/text";
 
 export default function CollapsedChatList(props: IChatListProps) {
   /* --------------------------------- Props --------------------------------- */
@@ -47,12 +48,7 @@ export default function CollapsedChatList(props: IChatListProps) {
                     <Avatar className="h-10 w-10">
                       <AvatarImage src={chat.avatar} alt={chat.name} />
                       <AvatarFallback className="text-xs font-medium">
-                        {chat.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")
-                          .slice(0, 2)
-                          .toUpperCase()}
+                        {getNameInitials(chat.name)}
                       </AvatarFallback>
                     </Avatar>
                   )}

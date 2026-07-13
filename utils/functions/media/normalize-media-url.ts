@@ -1,4 +1,4 @@
-/* --------------------------------- Constants -------------------------------- */
+/* --------------------------------- Helpers ---------------------------------- */
 const API_ORIGIN_FALLBACK = "http://localhost:3000";
 
 const LOCAL_STORAGE_URL_REGEX =
@@ -6,16 +6,26 @@ const LOCAL_STORAGE_URL_REGEX =
 
 const ABSOLUTE_HTTP_URL_REGEX = /^https?:\/\//i;
 
-/* --------------------------------- Helpers ---------------------------------- */
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
   Object.prototype.toString.call(value) === "[object Object]";
 
 /* --------------------------------- Methods ---------------------------------- */
+/**
+ * Resolves the absolute backend API origin from the runtime environment.
+ * Prevents slash-duplication or invalid hostnames.
+ */
 export const getApiOrigin = (): string => {
   const raw = process.env.NEXT_PUBLIC_API_URL || API_ORIGIN_FALLBACK;
   return raw.replace(/\/api(?:\/v\d+)?\/?$/i, "").replace(/\/+$/, "");
 };
 
+/**
+ * Standardizes media paths (e.g., /storage/...) into fully qualified HTTP URLs.
+ * Bypasses data URIs, absolute URLs, or local development blob URLs safely.
+ *
+ * @param value - Any raw URL string
+ * @returns Fully qualified absolute URL or unmodified special protocol string
+ */
 export const normalizeMediaUrl = (
   value?: string | null,
 ): string | undefined => {
@@ -36,7 +46,18 @@ export const normalizeMediaUrl = (
 
   const localhostMatch = trimmed.match(LOCAL_STORAGE_URL_REGEX);
   if (localhostMatch) {
+    if (localhostMatch[1].startsWith("chat/")) {
+      return `${apiOrigin}/chat/attachment/${localhostMatch[1].slice(5)}`;
+    }
     return `${apiOrigin}/storage/${localhostMatch[1]}`;
+  }
+
+  if (trimmed.startsWith("/storage/chat/")) {
+    return `${apiOrigin}/chat/attachment/${trimmed.slice(14)}`;
+  }
+
+  if (trimmed.startsWith("/chat/attachment/")) {
+    return `${apiOrigin}${trimmed}`;
   }
 
   if (trimmed.startsWith("/storage/")) {
@@ -54,6 +75,10 @@ export const normalizeMediaUrl = (
   return trimmed;
 };
 
+/**
+ * Recursively scans complex objects (e.g., API responses) and normalizes all string fields
+ * using normalizeMediaUrl. Very useful to resolve relative avatar/cover paths embedded deep inside payloads.
+ */
 export const normalizeMediaUrlsDeep = <T>(input: T): T => {
   if (Array.isArray(input)) {
     return input.map((item) => normalizeMediaUrlsDeep(item)) as T;

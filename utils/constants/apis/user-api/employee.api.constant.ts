@@ -5,6 +5,10 @@ export const API_EMP_BASE_URL = `${API_BASE_URL}/user/employee`;
 export const API_GET_ALL_EMP_URL = `${API_EMP_BASE_URL}/all`;
 export const API_GET_ONE_EMP_URL = (employeeID: string) =>
   `${API_EMP_BASE_URL}/one/${employeeID}`;
+export const API_GET_EMP_DOCUMENT_URL = (
+  employeeID: string,
+  type: "resume" | "cover-letter",
+) => `${API_EMP_BASE_URL}/${employeeID}/document/${type}`;
 export const API_UPDATE_EMP_INFO_URL = (employeeID: string) =>
   `${API_EMP_BASE_URL}/update-info/${employeeID}`;
 export const API_SEARCH_EMP_URL = `${API_EMP_BASE_URL}/search-employee`;

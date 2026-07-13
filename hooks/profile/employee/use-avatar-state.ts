@@ -1,6 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 
-/* ----------------------------------- Hook ----------------------------------- */
+/* ----------------------------------- Usage ------------------------------------ */
+/**
+ * Centralises all avatar UI state for employee profile editing,
+ * including file selection, crop dialog, and remove confirmation dialog.
+ *
+ * Usage:
+ *   const {
+ *     avatarFile, setAvatarFile, avatarInputRef,
+ *     openAvatarPopup, setOpenAvatarPopup,
+ *     openRemoveAvatarDialog, setOpenRemoveAvatarDialog,
+ *     openCropDialog, setOpenCropDialog,
+ *     cropImageUrl, setCropImageUrl,
+ *     ignoreNextClick,
+ *   } = useAvatarState();
+ */
+
+/* ------------------------------------ Hook ------------------------------------ */
 export function useAvatarState() {
   /* -------------------------------- All States -------------------------------- */
   const [avatarFile, setAvatarFile] = useState<File | null>(null);

@@ -15,6 +15,10 @@ type TCountCurrentCompanyFavoriteState = {
   loading: boolean;
   error: string | null;
   countCurrentCmpFavorites: (companyId: string) => Promise<void>;
+  /** Instantly +1 when the user saves a new favorite (avoids a re-fetch race). */
+  incrementCount: () => void;
+  /** Instantly -1 when a favorite is removed/auto-removed on like. */
+  decrementCount: () => void;
 };
 
 /* ---------------------------------- Store --------------------------------- */
@@ -23,6 +27,16 @@ export const useCountCurrentCompanyFavoritesStore =
     totalCmpFavorites: null,
     loading: false,
     error: null,
+    incrementCount: () => {
+      set((s) => ({ totalCmpFavorites: (s.totalCmpFavorites ?? 0) + 1 }));
+    },
+
+    decrementCount: () => {
+      set((s) => ({
+        totalCmpFavorites: Math.max(0, (s.totalCmpFavorites ?? 0) - 1),
+      }));
+    },
+
     countCurrentCmpFavorites: async (companyId: string) => {
       set({ loading: true, error: null });
 

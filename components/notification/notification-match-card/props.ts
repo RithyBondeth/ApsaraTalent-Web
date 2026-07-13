@@ -12,6 +12,6 @@ export interface INotificationMatchCardProps {
     industry: string | null;
     avatar: string;
   };
-  onMarkRead?: (id: string) => void;
   onDelete?: (id: string) => void;
+  onMarkRead?: (id: string) => void;
 }

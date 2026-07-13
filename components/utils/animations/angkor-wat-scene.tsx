@@ -6,6 +6,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three-stdlib";
 import { MeshoptDecoder } from "meshoptimizer";
 
+/* ----------------------------------- Helper ---------------------------------- */
 function fitObjectToCamera(
   object: THREE.Object3D,
   camera: THREE.PerspectiveCamera,
@@ -27,16 +28,21 @@ function fitObjectToCamera(
 }
 
 export default function AngkorWatScene() {
+  /* -------------------------------- All States ------------------------------ */
   const mountRef = useRef<HTMLDivElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  /* ---------------------------------- Utils --------------------------------- */
   const { theme, systemTheme } = useThemeStore();
   const resolvedTheme = theme === "system" ? systemTheme : theme;
   const isDark = resolvedTheme === "dark";
 
+  /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
     const mount = mountRef.current;
     if (!mount) return;
 
+    // ── Setup Scene ─────────────────────────────────────────
     const scene = new THREE.Scene();
     scene.background = null;
 
@@ -62,10 +68,8 @@ export default function AngkorWatScene() {
     renderer.domElement.style.webkitUserSelect = "none";
     mount.appendChild(renderer.domElement);
 
-    const ambientLight = new THREE.AmbientLight(
-      0xffffff,
-      isDark ? 0.55 : 0.8,
-    );
+    // ── Setup Lights ────────────────────────────────────────
+    const ambientLight = new THREE.AmbientLight(0xffffff, isDark ? 0.55 : 0.8);
     scene.add(ambientLight);
 
     const keyLight = new THREE.DirectionalLight(
@@ -103,9 +107,14 @@ export default function AngkorWatScene() {
     let lastPointerX = 0;
     let lastPointerY = 0;
 
+    // ── Helper Methods ──────────────────────────────────────
     const applyRotationDelta = (deltaX: number, deltaY: number) => {
       rotationY += deltaX * 0.01;
-      rotationX = THREE.MathUtils.clamp(rotationX + deltaY * 0.0035, -0.35, 0.2);
+      rotationX = THREE.MathUtils.clamp(
+        rotationX + deltaY * 0.0035,
+        -0.35,
+        0.2,
+      );
       root.rotation.set(rotationX, rotationY, 0);
     };
 
@@ -122,6 +131,7 @@ export default function AngkorWatScene() {
     const observer = new ResizeObserver(resize);
     observer.observe(mount);
 
+    // ── Interaction Handlers ────────────────────────────────
     const onPointerDown = (event: PointerEvent) => {
       isDragging = true;
       pointerId = event.pointerId;
@@ -183,6 +193,7 @@ export default function AngkorWatScene() {
       isDragging = false;
     };
 
+    // ── Event Listeners ─────────────────────────────────────
     renderer.domElement.addEventListener("pointerdown", onPointerDown);
     renderer.domElement.addEventListener("pointermove", onPointerMove);
     renderer.domElement.addEventListener("pointerup", endDrag);
@@ -197,6 +208,7 @@ export default function AngkorWatScene() {
     renderer.domElement.addEventListener("touchend", onTouchEnd);
     renderer.domElement.addEventListener("touchcancel", onTouchEnd);
 
+    // ── Load Model ──────────────────────────────────────────
     const loader = new GLTFLoader();
     loader.setMeshoptDecoder(MeshoptDecoder);
     loader.load(
@@ -233,6 +245,7 @@ export default function AngkorWatScene() {
       },
     );
 
+    // ── Animation Loop ──────────────────────────────────────
     const animate = () => {
       renderer.render(scene, camera);
       frameId = window.requestAnimationFrame(animate);
@@ -241,6 +254,7 @@ export default function AngkorWatScene() {
     let frameId = 0;
     animate();
 
+    // ── Cleanup ─────────────────────────────────────────────
     return () => {
       disposed = true;
       window.cancelAnimationFrame(frameId);
@@ -267,6 +281,7 @@ export default function AngkorWatScene() {
     };
   }, [isDark]);
 
+  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div ref={mountRef} className="absolute inset-0 h-full w-full">
       {!isLoaded && (

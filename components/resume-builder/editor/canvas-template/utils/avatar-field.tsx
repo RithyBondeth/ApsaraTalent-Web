@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
 
 export function AvatarField(props: {
   src?: string;
@@ -64,7 +65,7 @@ export function AvatarField(props: {
               borderRadius: "50%",
               objectFit: "cover",
               display: "block",
-              border: "2px solid #e5e7eb",
+              border: `2px solid ${RESUME_COLOR.BORDER}`,
             }}
           />
         </>
@@ -74,12 +75,12 @@ export function AvatarField(props: {
             width: 72,
             height: 72,
             borderRadius: "50%",
-            background: "#ede9fe",
+            background: RESUME_COLOR.ACCENT_LIGHT,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            border: "2px dashed #a5b4fc",
-            color: "#6366f1",
+            border: `2px dashed ${RESUME_COLOR.ACCENT_SOFT}`,
+            color: RESUME_COLOR.ACCENT_MED,
             fontSize: 11,
             fontWeight: 500,
             textAlign: "center",
@@ -97,7 +98,7 @@ export function AvatarField(props: {
         style={{
           borderRadius: "50%",
           background: "rgba(79,70,229,0.55)",
-          color: "#fff",
+          color: RESUME_COLOR.WHITE,
           fontSize: 10,
           fontWeight: 600,
           textAlign: "center",

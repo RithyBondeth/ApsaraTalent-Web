@@ -5,14 +5,15 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { IMatchRateRadialProps } from "./props";
+import { RATE_COLOR } from "@/utils/constants/ui.constant";
 
 export function MatchRateRadial({ rate }: IMatchRateRadialProps) {
-  /* ---------------------------------- Helper --------------------------------- */
+  /* ---------------------------------- Helpers -------------------------------- */
   const getColorBasedOnRate = (r: number) => {
-    if (r >= 70) return "#10b981";
+    if (r >= 70) return RATE_COLOR.HIGH;
     if (r >= 40) return "hsl(var(--primary))";
-    if (r >= 20) return "#f59e0b";
-    return "#ef4444";
+    if (r >= 20) return RATE_COLOR.MEDIUM;
+    return RATE_COLOR.LOW;
   };
 
   const data = [{ value: rate, fill: "hsl(var(--primary))" }];
@@ -22,6 +23,7 @@ export function MatchRateRadial({ rate }: IMatchRateRadialProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="relative flex flex-col items-center">
+      {/* Chart Section */}
       <ResponsiveContainer width={180} height={180}>
         <RadialBarChart
           cx="50%"
@@ -47,6 +49,7 @@ export function MatchRateRadial({ rate }: IMatchRateRadialProps) {
         </RadialBarChart>
       </ResponsiveContainer>
 
+      {/* Rate Section */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="text-3xl font-bold tracking-tight" style={{ color }}>
           {rate}%

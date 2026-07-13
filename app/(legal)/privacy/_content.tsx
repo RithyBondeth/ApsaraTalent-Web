@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import {
   LucideArrowLeft,
@@ -18,11 +19,10 @@ import { TypographyH1 } from "@/components/utils/typography/typography-h1";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { privacyBannerSvg } from "@/utils/constants/asset.constant";
 import { useLanguageStore } from "@/stores/languages/language-store";
 
-/* ─────────────────────────────────────────────────────────────
-   Sub-components
-───────────────────────────────────────────────────────────── */
+/* -------------------------- Sub Components -------------------------- */
 function Section({
   id,
   icon,
@@ -60,9 +60,7 @@ function Bullet({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Bilingual content
-───────────────────────────────────────────────────────────── */
+/* -------------------------- Content & Data -------------------------- */
 const content = {
   en: {
     back: "Back",
@@ -546,15 +544,13 @@ const content = {
   },
 };
 
-/* ─────────────────────────────────────────────────────────────
-   Main component
-───────────────────────────────────────────────────────────── */
+/* -------------------------- Main Component -------------------------- */
 export function PrivacyContent() {
-  /* ----------------------------------- Utils --------------------------------- */
+  /* ------------------------------ Utils ----------------------------- */
   const { language, setLanguage } = useLanguageStore();
   const c = content[language];
 
-  /* -------------------------------- Render UI --------------------------------- */
+  /* --------------------------- Render UI ---------------------------- */
   return (
     <div className="min-h-screen bg-background animate-page-in">
       {/* Top Navigation Section */}
@@ -617,31 +613,48 @@ export function PrivacyContent() {
 
         {/* Main Content Section */}
         <main className="flex-1 flex flex-col gap-10 min-w-0">
-          {/* Hero Header Section */}
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <LucideCalendar className="size-3.5" />
-              <span>{c.lastUpdated}</span>
+          {/* Banner Section */}
+          <div className="w-full flex items-center justify-between gap-6 lg:gap-10 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8">
+            {/* Content Section */}
+            <div className="flex flex-col items-start gap-3">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <LucideCalendar className="size-3.5" />
+                <span>{c.lastUpdated}</span>
+              </div>
+              <TypographyH1 className="text-3xl font-bold tracking-tight">
+                {c.pageTitle}
+              </TypographyH1>
+              <TypographyP className="text-muted-foreground text-sm leading-relaxed max-w-2xl">
+                {language === "en" ? (
+                  <>
+                    At{" "}
+                    <strong className="text-foreground">
+                      {c.introCompany}
+                    </strong>
+                    {", "}
+                    {c.intro.replace("At Apsara Talent, ", "")}
+                  </>
+                ) : (
+                  <>
+                    នៅ{" "}
+                    <strong className="text-foreground">
+                      {c.introCompany}
+                    </strong>{" "}
+                    {c.intro.replace("នៅ Apsara Talent ", "")}
+                  </>
+                )}
+              </TypographyP>
             </div>
-            <TypographyH1 className="text-3xl font-bold tracking-tight">
-              {c.pageTitle}
-            </TypographyH1>
-            <TypographyP className="text-muted-foreground text-sm leading-relaxed max-w-2xl">
-              {language === "en" ? (
-                <>
-                  At{" "}
-                  <strong className="text-foreground">{c.introCompany}</strong>
-                  {", "}
-                  {c.intro.replace("At Apsara Talent, ", "")}
-                </>
-              ) : (
-                <>
-                  នៅ{" "}
-                  <strong className="text-foreground">{c.introCompany}</strong>{" "}
-                  {c.intro.replace("នៅ Apsara Talent ", "")}
-                </>
-              )}
-            </TypographyP>
+
+            {/* Banner Image Section */}
+            <Image
+              src={privacyBannerSvg}
+              alt="privacy"
+              height={250}
+              width={350}
+              className="h-auto max-w-[340px] tablet-xl:!w-full hidden sm:block"
+              priority
+            />
           </div>
 
           {/* 1. Information We Collect Section */}
