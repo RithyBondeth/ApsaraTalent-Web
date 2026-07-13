@@ -1,7 +1,12 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { logo, logoWithoutTitle } from "@/utils/constants/asset.constant";
+import { useThemeStore } from "@/stores/themes/theme-store";
+import {
+  logo,
+  logoBlack,
+  logoWithoutTitle,
+} from "@/utils/constants/asset.constant";
 import Image from "next/image";
 
 /* ----------------------------------- Helper ---------------------------------- */
@@ -21,7 +26,13 @@ export default function LogoComponent({
   priority = false,
 }: ILogoProps) {
   /* ---------------------------------- Utils ---------------------------------- */
-  const src = withoutTitle ? logoWithoutTitle : logo;
+  const { theme, systemTheme } = useThemeStore();
+  const resolvedTheme = theme === "system" ? systemTheme : theme;
+  const isDark = resolvedTheme === "dark";
+
+  const logoIcon = isDark ? logoBlack : logo;
+
+  const src = withoutTitle ? logoWithoutTitle : logoIcon;
 
   return (
     <Image
