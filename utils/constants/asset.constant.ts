@@ -52,6 +52,7 @@ import privacyBannerSvg from "@/assets/legal/privacy-banner.svg";
 // ─── Utils (shared across pages) ──────────────────────────────────────────────
 import emptySvg from "@/assets/utils/empty.svg";
 import logo from "@/assets/utils/logo.svg";
+import logoBlack from "@/assets/utils/logo-black.svg";
 import logoWithoutTitle from "@/assets/utils/logo-icon.svg";
 
 export {
@@ -97,5 +98,6 @@ export {
   // Utils
   emptySvg,
   logo,
+  logoBlack,
   logoWithoutTitle,
 };

@@ -3,12 +3,25 @@
 import { useEffect } from "react";
 import { useGetLandingStatsStore } from "@/stores/apis/users/get-landing-stats.store";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { CountUp } from "@/components/utils/animations/count-up";
 import { useTranslations } from "next-intl";
 
 /* ------------------------------------- Helper ------------------------------------- */
-function renderCount(value: number | null, loaded: boolean): string {
-  if (value !== null) return value.toLocaleString();
-  return loaded ? "N/A" : "...";
+function StatValue({
+  value,
+  loaded,
+}: {
+  value: number | null;
+  loaded: boolean;
+}) {
+  if (value !== null) {
+    return (
+      <>
+        <CountUp to={value} format />+
+      </>
+    );
+  }
+  return <>{loaded ? "N/A" : "..."}</>;
 }
 
 export default function LandingLiveStats() {
@@ -40,7 +53,7 @@ export default function LandingLiveStats() {
       {/* Number of User Section */}
       <div className="flex flex-col">
         <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent dark:from-amber-400 dark:to-amber-300">
-          {renderCount(users, loaded)}+
+          <StatValue value={users} loaded={loaded} />
         </span>
         <TypographyMuted className="text-[10px] sm:text-xs">
           {t("statsUsers")}
@@ -52,7 +65,7 @@ export default function LandingLiveStats() {
       {/* Number of Company Section */}
       <div className="flex flex-col">
         <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent dark:from-amber-400 dark:to-amber-300">
-          {renderCount(companies, loaded)}+
+          <StatValue value={companies} loaded={loaded} />
         </span>
         <TypographyMuted className="text-[10px] sm:text-xs">
           {t("statsCompanies")}
@@ -64,7 +77,7 @@ export default function LandingLiveStats() {
       {/* Number of Employee Section */}
       <div className="flex flex-col">
         <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent dark:from-amber-400 dark:to-amber-300">
-          {renderCount(employees, loaded)}+
+          <StatValue value={employees} loaded={loaded} />
         </span>
         <TypographyMuted className="text-[10px] sm:text-xs">
           {t("statsEmployees")}

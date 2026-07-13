@@ -6,10 +6,13 @@ export function CountUp({
   to,
   duration = 900,
   className,
+  format = false,
 }: {
   to: number;
   duration?: number;
   className?: string;
+  /** Format the value with locale thousands separators (e.g. 1,234) */
+  format?: boolean;
 }) {
   /* ------------------------------- All State -------------------------------- */
   const [value, setValue] = useState<number>(0);
@@ -48,5 +51,7 @@ export function CountUp({
   }, [to, duration]);
 
   /* -------------------------------- Render UI ------------------------------- */
-  return <span className={className}>{value}</span>;
+  return (
+    <span className={className}>{format ? value.toLocaleString() : value}</span>
+  );
 }
