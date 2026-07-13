@@ -330,7 +330,15 @@ export default function EmployeeSearchPage() {
     }
 
     isInitialSearchDoneRef.current = true;
-  }, [user, querySearchJobs, resetSearch, setValue, runSearch, getValues]);
+  }, [
+    user,
+    querySearchJobs,
+    resetSearch,
+    setValue,
+    runSearch,
+    getValues,
+    urlPage,
+  ]);
 
   /* 
     Auto Search As User Types / Changes Filters Effect

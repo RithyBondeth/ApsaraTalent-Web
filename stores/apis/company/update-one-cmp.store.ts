@@ -1,7 +1,14 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
 import { API_UPDATE_CMP_INFO_URL } from "@/utils/constants/apis/user-api/company.api.constant";
-import { ICompany } from "@/utils/interfaces/user/company.interface";
+import {
+  IBenefits,
+  ICompany,
+  IJobPosition,
+  IValues,
+} from "@/utils/interfaces/user/company.interface";
+import { ICareerScope } from "@/utils/interfaces/user/career.interface";
+import { ISocialLink } from "@/utils/interfaces/user/social.interface";
 import { create } from "zustand";
 
 /* ---------------------------------- States --------------------------------- */
@@ -12,8 +19,17 @@ type TUpdateOneCompanyResponse = {
 };
 
 // ── Update One Company Body ────────────────────────────────────────
-export type TCompanyUpdateBody = Partial<Omit<ICompany, "id">> & {
+export type TCompanyUpdateBody = Omit<
+  Partial<Omit<ICompany, "id">>,
+  "values"
+> & {
   email?: string;
+  coverImage?: string;
+  values?: Array<IValues | string>;
+  openPositions?: IJobPosition[];
+  benefits?: IBenefits[];
+  careerScopes?: ICareerScope[];
+  socials?: ISocialLink[];
   // Delete arrays (match backend DTO/service)
   benefitIdsToDelete?: number[];
   valueIdsToDelete?: number[];
@@ -43,7 +59,7 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
       set({ loading: true, error: null });
       try {
         // Build the request body
-        const requestBody: any = {};
+        const requestBody: Record<string, unknown> = {};
 
         // Basic fields
         if (body.email) requestBody.email = body.email;
@@ -60,16 +76,15 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
           requestBody.companyType = body.companyType;
 
         // If you store these in ICompany
-        if ((body as any).avatar) requestBody.avatar = (body as any).avatar;
-        if ((body as any).coverImage)
-          requestBody.coverImage = (body as any).coverImage;
+        if (body.avatar) requestBody.avatar = body.avatar;
+        if (body.coverImage) requestBody.coverImage = body.coverImage;
 
         /*
          Jobs (O2M upsert)
          backend expects: jobs: [{ id?, title, description, type, experienceRequired, educationRequired, expireDate, skillsRequired, salaryMin, salaryMax, salaryCurrency, workMode, location, openingsCount }]
         */
-        if ((body as any).openPositions) {
-          requestBody.jobs = (body as any).openPositions.map((job: any) => ({
+        if (body.openPositions) {
+          requestBody.jobs = body.openPositions.map((job) => ({
             ...(job.id && { id: job.id }),
             title: job.title,
             description: job.description,
@@ -97,8 +112,8 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
          Benefits (M2M)
          backend expects: benefits: [{ id?, label }]
         */
-        if ((body as any).benefits) {
-          requestBody.benefits = (body as any).benefits.map((benefit: any) => ({
+        if (body.benefits) {
+          requestBody.benefits = body.benefits.map((benefit) => ({
             ...(benefit.id && { id: benefit.id }),
             label: benefit.label,
           }));
@@ -112,9 +127,9 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
          Values (M2M)
          backend expects: values: [{ id?, label }]
         */
-        if ((body as any).values) {
-          requestBody.values = (body as any).values.map((value: any) => ({
-            ...(value.id && { id: value.id }),
+        if (body.values) {
+          requestBody.values = body.values.map((value) => ({
+            ...(typeof value !== "string" && value.id && { id: value.id }),
             label: typeof value === "string" ? value : value.label,
           }));
         }
@@ -127,14 +142,12 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
          Career Scopes (M2M)
          backend expects: careerScopes: [{ id?, name, description? }]
         */
-        if ((body as any).careerScopes) {
-          requestBody.careerScopes = (body as any).careerScopes.map(
-            (cs: any) => ({
-              ...(cs.id && { id: cs.id }),
-              name: cs.name,
-              description: cs.description,
-            }),
-          );
+        if (body.careerScopes) {
+          requestBody.careerScopes = body.careerScopes.map((cs) => ({
+            ...(cs.id && { id: cs.id }),
+            name: cs.name,
+            description: cs.description,
+          }));
         }
 
         if (body.careerScopeIdsToDelete?.length) {
@@ -145,8 +158,8 @@ export const useUpdateOneCompanyStore = create<TUpdateOneCompanyState>(
          Socials (O2M upsert)
          backend expects: socials: [{ id?, platform, url }]
         */
-        if ((body as any).socials) {
-          requestBody.socials = (body as any).socials.map((social: any) => ({
+        if (body.socials) {
+          requestBody.socials = body.socials.map((social) => ({
             ...(social.id && { id: social.id }),
             platform: social.platform,
             url: social.url,

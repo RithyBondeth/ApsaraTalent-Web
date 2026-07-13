@@ -143,7 +143,7 @@ export default function EmployeeSignup() {
       avatar: null,
       careerScopes: parsedData?.careerScopes ?? [],
     }),
-    [],
+    [parsedData, parsedFile],
   );
 
   // ── Initialize Employee Form with Default Values ───────────────────

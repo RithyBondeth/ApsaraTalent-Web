@@ -165,7 +165,10 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
     empFavError,
     optimisticRemove: optimisticRemoveEmpFav,
   } = useEmployeeFavCompanyStore();
-  const isEmpFavorite = (id: string) => favoriteCompanyIds.has(id);
+  const isEmpFavorite = useCallback(
+    (id: string) => favoriteCompanyIds.has(id),
+    [favoriteCompanyIds],
+  );
   const { queryAllEmployeeFavorites } = useGetAllEmployeeFavoritesStore();
 
   // All Company Favorite APIs
@@ -175,7 +178,10 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
     cmpFavError,
     optimisticRemove: optimisticRemoveCmpFav,
   } = useCompanyFavEmployeeStore();
-  const isCmpFavorite = (id: string) => favoriteEmployeeIds.has(id);
+  const isCmpFavorite = useCallback(
+    (id: string) => favoriteEmployeeIds.has(id),
+    [favoriteEmployeeIds],
+  );
   const { queryAllCompanyFavorites } = useGetAllCompanyFavoritesStore();
 
   // Count All Current Employee/Company Favorite APIs
@@ -444,6 +450,10 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
       isEmpFavorite,
       companyData,
       employeeRecommendations,
+      router,
+      t,
+      tFeed,
+      triggerEffect,
     ],
   );
 
@@ -511,6 +521,10 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
       isCmpFavorite,
       employeesData,
       companyRecommendations,
+      router,
+      t,
+      tFeed,
+      triggerEffect,
     ],
   );
 
@@ -541,6 +555,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
       queryAllEmployeeFavorites,
       empFavError,
       t,
+      triggerEffect,
     ],
   );
 
@@ -570,6 +585,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
       queryAllCompanyFavorites,
       cmpFavError,
       t,
+      triggerEffect,
     ],
   );
 

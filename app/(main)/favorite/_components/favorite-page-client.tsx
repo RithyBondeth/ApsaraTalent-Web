@@ -40,6 +40,10 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
   // Get All Employee and Company Favorites
   const getAllEmployeeFavoritesStore = useGetAllEmployeeFavoritesStore();
   const getAllCompanyFavoritesStore = useGetAllCompanyFavoritesStore();
+  const queryAllEmployeeFavorites =
+    getAllEmployeeFavoritesStore.queryAllEmployeeFavorites;
+  const queryAllCompanyFavorites =
+    getAllCompanyFavoritesStore.queryAllCompanyFavorites;
 
   // Remove Employee and Company Favorites
   const employeeFavCompanyStore = useEmployeeFavCompanyStore();
@@ -80,15 +84,16 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
   useEffect(() => {
     if (!currentUser) return;
     if (isEmployee && currentUser.employee?.id) {
-      getAllEmployeeFavoritesStore.queryAllEmployeeFavorites(
-        currentUser.employee.id,
-      );
+      queryAllEmployeeFavorites(currentUser.employee.id);
     } else if (!isEmployee && currentUser.company?.id) {
-      getAllCompanyFavoritesStore.queryAllCompanyFavorites(
-        currentUser.company.id,
-      );
+      queryAllCompanyFavorites(currentUser.company.id);
     }
-  }, [currentUser?.employee?.id, currentUser?.company?.id]);
+  }, [
+    currentUser,
+    isEmployee,
+    queryAllEmployeeFavorites,
+    queryAllCompanyFavorites,
+  ]);
 
   // Filter Out Liked Users From Favorites (Safety Net For Stale Data)
   const filteredEmployeeFavorites = useMemo(() => {

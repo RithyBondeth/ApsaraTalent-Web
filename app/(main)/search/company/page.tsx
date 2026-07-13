@@ -278,7 +278,15 @@ export default function CompanySearchPage() {
     }
 
     didInitRef.current = true;
-  }, [user, querySearchEmployee, resetSearch, setValue, runSearch, getValues]);
+  }, [
+    user,
+    querySearchEmployee,
+    resetSearch,
+    setValue,
+    runSearch,
+    getValues,
+    urlPage,
+  ]);
 
   /* 
     Auto-Search on any form change (Debounced)

@@ -33,7 +33,6 @@ import {
   setPc,
   getPendingOffer,
   setPendingOffer,
-  getPendingIceCandidates,
   clearPendingIceCandidates,
   addPendingIceCandidate,
   closePc,
@@ -44,12 +43,10 @@ import {
   armConnectTimeout,
   flushPendingIceCandidates,
 } from "./webrtc-manager";
+import { getSocket } from "../chat/socket-manager";
 
 function getSocketInstance(): SocketInstance | null {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { useChatStore } =
-    require("../chat/chat.store") as typeof import("../chat/chat.store");
-  return useChatStore.getState().socket;
+  return getSocket();
 }
 
 /* ---------------------------------- Store ---------------------------------- */

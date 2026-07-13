@@ -50,19 +50,27 @@ const nextConfig: NextConfig = {
   },
 };
 
-// Wrap with Sentry. Source maps are only uploaded when SENTRY_AUTH_TOKEN is
-// set (CI/prod); otherwise upload is skipped and the build still succeeds.
-export default withSentryConfig(withBundleAnalyzer(nextConfig), {
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-  authToken: process.env.SENTRY_AUTH_TOKEN,
-  // Quiet logs unless running in CI.
-  silent: !process.env.CI,
-  // Upload a wider set of client source maps for better stack traces.
-  widenClientFileUpload: true,
-  // Proxy browser events through our own domain so ad blockers (which block
-  // *.ingest.sentry.io) can't drop them. Path is excluded from middleware.
-  tunnelRoute: "/monitoring",
-  // Tree-shake Sentry logger statements out of the client bundle.
-  disableLogger: true,
-});
+const analyzedConfig = withBundleAnalyzer(nextConfig);
+const shouldUploadSentryArtifacts =
+  Boolean(process.env.CI) && Boolean(process.env.SENTRY_AUTH_TOKEN);
+
+// Keep local and pull-request builds independent of Sentry. Runtime error
+// reporting still comes from the Sentry instrumentation files.
+const configuredNext = shouldUploadSentryArtifacts
+  ? withSentryConfig(analyzedConfig, {
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      // Quiet logs unless running in CI.
+      silent: !process.env.CI,
+      // Upload a wider set of client source maps for better stack traces.
+      widenClientFileUpload: true,
+      // Proxy browser events through our own domain so ad blockers (which block
+      // *.ingest.sentry.io) can't drop them. Path is excluded from middleware.
+      tunnelRoute: "/monitoring",
+      // Tree-shake Sentry logger statements out of the client bundle.
+      disableLogger: true,
+    })
+  : analyzedConfig;
+
+export default configuredNext;

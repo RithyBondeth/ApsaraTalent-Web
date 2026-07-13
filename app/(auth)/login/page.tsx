@@ -498,6 +498,10 @@ function LoginPage() {
       });
     }
   }, [
+    googleLoginStore,
+    linkedInLoginStore,
+    githubLoginStore,
+    facebookLoginStore,
     googleLoginStore.isAuthenticated,
     googleLoginStore.newUser,
     googleLoginStore.loading,

@@ -58,7 +58,7 @@ export function TwoFactorDialog({
     } else {
       setStep(2);
     }
-  }, [open, mode]);
+  }, [open, mode, reset, setup]);
 
   /* -------------------------------- Methods --------------------------------- */
   // ── Handle Close ──────────────────────────────────

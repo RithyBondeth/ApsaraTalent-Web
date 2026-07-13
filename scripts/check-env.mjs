@@ -8,10 +8,10 @@
  *   node scripts/check-env.mjs              # checks development + production
  *   node scripts/check-env.mjs production   # one mode only
  *
- * IMPORTANT: in real production the site is built on Netlify, which injects its
- * OWN env vars — these local files are NOT used there. A green "production"
- * result here means a local `next build && next start` is wired correctly; it
- * does NOT prove Netlify's dashboard vars are set. Keep the two in sync by hand.
+ * IMPORTANT: production hosts and CI inject their own environment variables.
+ * These local files are not a substitute for deployment configuration. A green
+ * "production" result means a local `next build && next start` is wired
+ * correctly; it does not prove the deployment configuration is set.
  *
  * Exits non-zero when a REQUIRED var is missing in any checked mode.
  */
@@ -29,15 +29,20 @@ const REQUIRED = [
   "NEXT_PUBLIC_FIREBASE_APP_ID",
 ];
 
-// Recommended: absence degrades gracefully (Sentry disables itself), so warn
-// rather than fail. NEXT_PUBLIC_SENTRY_DSN + SENTRY_DSN turn reporting on;
-// the ORG/PROJECT/AUTH_TOKEN trio enables source-map upload at build time.
-const RECOMMENDED = [
+// Recommended: absence degrades gracefully, so warn rather than fail.
+// DSNs turn runtime reporting on; the build values enable source-map upload.
+const SENTRY_RUNTIME_RECOMMENDED = [
   "NEXT_PUBLIC_SENTRY_DSN",
   "SENTRY_DSN",
+];
+const SENTRY_BUILD_RECOMMENDED = [
   "SENTRY_ORG",
   "SENTRY_PROJECT",
   "SENTRY_AUTH_TOKEN",
+];
+const RECOMMENDED = [
+  ...SENTRY_RUNTIME_RECOMMENDED,
+  ...SENTRY_BUILD_RECOMMENDED,
 ];
 
 // Next.js load order (later overrides earlier); .env.local is skipped in test.
@@ -95,7 +100,13 @@ for (const mode of modes) {
   }
   for (const k of RECOMMENDED) {
     if (merged[k]) console.log(`  ✓ ${k}  (${source[k]})`);
-    else console.warn(`  ⚠ ${k}  not set (Sentry feature disabled)`);
+    else if (SENTRY_RUNTIME_RECOMMENDED.includes(k)) {
+      console.warn(`  ⚠ ${k}  not set (runtime Sentry reporting disabled)`);
+    } else {
+      console.warn(
+        `  ⚠ ${k}  not set (source-map upload unavailable locally; configure CI/deployment)`,
+      );
+    }
   }
 
   if (missingRequired.length) {

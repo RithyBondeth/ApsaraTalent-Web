@@ -1,6 +1,8 @@
-import { TChatState, SocketInstance } from "./types";
+import type { StoreApi } from "zustand";
+import type { INotification } from "@/utils/interfaces/notification/notification.interface";
+import type { TChatProfile, TChatState, SocketInstance } from "./types";
 import { IMessage } from "@/utils/interfaces/chat/chat.interface";
-import { resolveMessageSnippet } from "./utils";
+import { parseRawChatMessage, resolveMessageSnippet } from "./utils";
 import { formatSidebarTime, parseMessageDate } from "@/utils/functions/date";
 import { useNotificationStore } from "@/stores/apis/notification/notification.store";
 import { useInterviewStore } from "@/stores/apis/matching/interview.store";
@@ -73,15 +75,47 @@ function decrementMatchingCount() {
   }
 }
 
+function isNotification(value: unknown): value is INotification {
+  if (!value || typeof value !== "object") return false;
+  const notification = value as Record<string, unknown>;
+  return (
+    typeof notification.id === "string" &&
+    typeof notification.title === "string" &&
+    typeof notification.message === "string" &&
+    (typeof notification.type === "string" || notification.type === null) &&
+    typeof notification.isRead === "boolean" &&
+    typeof notification.createdAt === "string" &&
+    typeof notification.updatedAt === "string" &&
+    (notification.data === null ||
+      (typeof notification.data === "object" &&
+        !Array.isArray(notification.data)))
+  );
+}
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "string") return error;
+  return "Unknown";
+}
+
+function getSenderName(
+  sender: string | TChatProfile | null | undefined,
+  senderId: string | undefined,
+): string {
+  return (typeof sender === "string" ? sender : sender?.name) ?? senderId ?? "";
+}
+
 /* ------------------------------------ Socket Listeners ------------------------------------ */
 // ── Register Socket Listeners ─────────────────────────────────────────────
 export const registerSocketListeners = (
   socket: SocketInstance,
-  set: (partial: any) => void,
+  set: StoreApi<TChatState>["setState"],
   get: () => TChatState,
 ) => {
   // ── Incoming New Message ────────────────────────────────────────────────
-  socket.on("newMessage", (message: any) => {
+  socket.on("newMessage", (payload: unknown) => {
+    const message = parseRawChatMessage(payload);
+    if (!message) return;
     const { activeChat, currentMessages, getRecentChats, me } = get();
 
     // ── Resolve Reply To ────
@@ -116,7 +150,7 @@ export const registerSocketListeners = (
     const preview = resolveMessageSnippet(message) || "";
     const previewText = isFromMe ? `You: ${preview}` : preview;
     const newTime = formatSidebarTime(
-      message.sentAt || message.timestamp || Date.now(),
+      message.sentAt || message.timestamp || new Date(),
     );
     const isNewUnread = !isFromMe && isForMe && !isActiveChatOpen;
 
@@ -177,10 +211,12 @@ export const registerSocketListeners = (
           const updatedMessages = [...currentMessages];
           updatedMessages[optimisticIndex] = {
             id: message.id,
-            senderId: message.senderId,
-            senderName: message.sender?.name || message.senderId,
-            content: message.content,
-            timestamp: parseMessageDate(message.timestamp || message.sentAt),
+            senderId: message.senderId ?? "",
+            senderName: getSenderName(message.sender, message.senderId),
+            content: message.content ?? "",
+            timestamp: parseMessageDate(
+              message.timestamp || message.sentAt || new Date(),
+            ),
             isRead: message.isRead,
             isMe: true,
             messageType:
@@ -217,10 +253,12 @@ export const registerSocketListeners = (
 
       const formattedMsg: IMessage = {
         id: message.id || Math.random().toString(36).substring(7),
-        senderId: message.senderId,
-        senderName: message.sender?.name || message.senderId,
-        content: message.content,
-        timestamp: parseMessageDate(message.timestamp || message.sentAt),
+        senderId: message.senderId ?? "",
+        senderName: getSenderName(message.sender, message.senderId),
+        content: message.content ?? "",
+        timestamp: parseMessageDate(
+          message.timestamp || message.sentAt || new Date(),
+        ),
         isRead: message.isRead,
         isMe:
           message.isMe ||
@@ -339,17 +377,17 @@ export const registerSocketListeners = (
   // ── New Notification ─────────────────────────────────────────────────────
   // Fired by the server AFTER the notification record is confirmed saved in DB.
   // This is the single source of truth for badge + list updates — no race condition.
-  socket.on("newNotification", (notification: any) => {
-    if (notification?.id) {
+  socket.on("newNotification", (notification: unknown) => {
+    if (isNotification(notification)) {
       useNotificationStore.getState().addNotification(notification);
     }
     // New mutual match → bump the matching badge + refresh the matching list
-    if (notification?.type === "match") {
+    if (isNotification(notification) && notification.type === "match") {
       incrementMatchingCount();
       silentRefetchMatchingList();
     }
     // New interview → refresh the interview list + badge
-    if (notification?.type === "interview") {
+    if (isNotification(notification) && notification.type === "interview") {
       silentRefetchInterviews();
     }
   });
@@ -393,7 +431,7 @@ export const registerSocketListeners = (
     }
   });
 
-  socket.on("error", (error: any) => {
-    console.error("Socket error:", error?.message || error || "Unknown");
+  socket.on("error", (error: unknown) => {
+    console.error("Socket error:", getErrorMessage(error));
   });
 };

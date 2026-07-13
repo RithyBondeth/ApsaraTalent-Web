@@ -126,7 +126,7 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
         setChatLoadingId(null);
       }
     },
-    [currentUser, chatLoadingId, router],
+    [currentUser, chatLoadingId, initiateChat, router],
   );
 
   // ── Unmatch Handler ──────────────────────────────────────────

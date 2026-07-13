@@ -177,7 +177,7 @@ export default function SignupPage() {
       password: "",
       confirmPassword: "",
     };
-  }, []);
+  }, [parsedData]);
 
   // ── Initialize Cmp Form with Default Values ────────────────────────────
   const cmpForm = useForm<TBasicSignupCompanySchema>({

@@ -1286,9 +1286,12 @@ export default function ProfilePage() {
 
             {/* Hidden Cover Error Detector Section */}
             {company.cover && !coverFile && (
-              <img
+              <Image
                 src={company.cover}
                 alt=""
+                width={1}
+                height={1}
+                unoptimized
                 className="hidden"
                 aria-hidden="true"
                 onError={() => setCoverLoadError(true)}

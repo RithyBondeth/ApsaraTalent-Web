@@ -63,33 +63,39 @@ export default function SmartResumeUpload({
     setIsDragging(false);
   }, []);
 
-  // ── Drag handlers ───────────────────────────────────────────
-  const onDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files[0];
-    if (file) handleFile(file);
-  }, []);
-
   // ── File handler ────────────────────────────────────────────
-  const handleFile = async (file: File) => {
-    if (file.type !== "application/pdf") {
-      toast.error(t("smartUploadPdfOnly"));
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error(t("smartUploadFileTooLarge"));
-      return;
-    }
+  const handleFile = useCallback(
+    async (file: File) => {
+      if (file.type !== "application/pdf") {
+        toast.error(t("smartUploadPdfOnly"));
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error(t("smartUploadFileTooLarge"));
+        return;
+      }
 
-    const parsed = await parseResume(file);
-    if (parsed) {
-      onParsed(parsed);
-      setShowDetails(true);
-    } else {
-      toast.error(t("smartUploadFailed"));
-    }
-  };
+      const parsed = await parseResume(file);
+      if (parsed) {
+        onParsed(parsed);
+        setShowDetails(true);
+      } else {
+        toast.error(t("smartUploadFailed"));
+      }
+    },
+    [onParsed, parseResume, t],
+  );
+
+  // ── Drag handlers ───────────────────────────────────────────
+  const onDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragging(false);
+      const file = e.dataTransfer.files[0];
+      if (file) handleFile(file);
+    },
+    [handleFile],
+  );
 
   // ── Field count helper ──────────────────────────────────────
   const countFilledFields = (d: TParsedResumeData): number => {

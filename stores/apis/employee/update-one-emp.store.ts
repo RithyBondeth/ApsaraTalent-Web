@@ -47,7 +47,7 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
       set({ loading: true, error: null });
       try {
         // Build the request body
-        const requestBody: any = {};
+        const requestBody: Record<string, unknown> = {};
 
         // Basic fields
         if (body.email) requestBody.email = body.email;
@@ -81,17 +81,16 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
           requestBody.expectedSalaryMax = body.expectedSalaryMax;
 
         // If you store these in IEmployee
-        if ((body as any).avatar) requestBody.avatar = (body as any).avatar;
-        if ((body as any).resume) requestBody.resume = (body as any).resume;
-        if ((body as any).coverLetter)
-          requestBody.coverLetter = (body as any).coverLetter;
+        if (body.avatar) requestBody.avatar = body.avatar;
+        if (body.resume) requestBody.resume = body.resume;
+        if (body.coverLetter) requestBody.coverLetter = body.coverLetter;
 
         /*
          Skills (M2M)
          backend expects: skills: [{ id?, name, description? }]
         */
-        if ((body as any).skills) {
-          requestBody.skills = (body as any).skills.map((s: any) => ({
+        if (body.skills) {
+          requestBody.skills = body.skills.map((s) => ({
             ...(s.id && { id: s.id }),
             name: s.name,
             description: s.description,
@@ -106,14 +105,12 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
          Career Scopes (M2M)
          backend expects: careerScopes: [{ id?, name, description? }]
         */
-        if ((body as any).careerScopes) {
-          requestBody.careerScopes = (body as any).careerScopes.map(
-            (cs: any) => ({
-              ...(cs.id && { id: cs.id }),
-              name: cs.name,
-              description: cs.description,
-            }),
-          );
+        if (body.careerScopes) {
+          requestBody.careerScopes = body.careerScopes.map((cs) => ({
+            ...(cs.id && { id: cs.id }),
+            name: cs.name,
+            description: cs.description,
+          }));
         }
 
         if (body.careerScopeIdsToDelete?.length) {
@@ -124,16 +121,14 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
          Experiences (O2M upsert)
          backend expects: experiences: [{ id?, title, description, startDate, endDate? }]
         */
-        if ((body as any).experiences) {
-          requestBody.experiences = (body as any).experiences.map(
-            (exp: any) => ({
-              ...(exp.id && { id: exp.id }),
-              title: exp.title,
-              description: exp.description,
-              startDate: exp.startDate, // should be ISO string or Date -> axios will serialize
-              endDate: exp.endDate ?? null,
-            }),
-          );
+        if (body.experiences) {
+          requestBody.experiences = body.experiences.map((exp) => ({
+            ...(exp.id && { id: exp.id }),
+            title: exp.title,
+            description: exp.description,
+            startDate: exp.startDate, // should be ISO string or Date -> axios will serialize
+            endDate: exp.endDate ?? null,
+          }));
         }
 
         if (body.experienceIdsToDelete?.length) {
@@ -144,8 +139,8 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
          Educations (O2M upsert)
          backend expects: educations: [{ id?, school, degree, year }]
         */
-        if ((body as any).educations) {
-          requestBody.educations = (body as any).educations.map((edu: any) => ({
+        if (body.educations) {
+          requestBody.educations = body.educations.map((edu) => ({
             ...(edu.id && { id: edu.id }),
             school: edu.school,
             degree: edu.degree,
@@ -161,8 +156,8 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
          Socials (O2M upsert)
          backend expects: socials: [{ id?, platform, url }]
         */
-        if ((body as any).socials) {
-          requestBody.socials = (body as any).socials.map((social: any) => ({
+        if (body.socials) {
+          requestBody.socials = body.socials.map((social) => ({
             ...(social.id && { id: social.id }),
             platform: social.platform,
             url: social.url,

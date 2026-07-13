@@ -117,7 +117,7 @@ export default function MessagePageContent() {
     } else if (currentActiveChat) {
       setChat(null);
     }
-  }, [chatId, activeChats, isChatsLoaded, isConnected, currentUser]);
+  }, [chatId, activeChats, isChatsLoaded, isConnected, currentUser, t]);
 
   // 3. Mark unread messages as read when opening a chat
   useEffect(() => {
