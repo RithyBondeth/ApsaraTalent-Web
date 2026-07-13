@@ -1,6 +1,6 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
-import { clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-manager";
+import { clearAuthCookies, setSessionRole } from "@/utils/auth/cookie-manager";
 import { API_AUTH_LOGIN_URL } from "@/utils/constants/apis/auth.api.constant";
 import { create } from "zustand";
 import { useGetCurrentUserStore } from "../users/get-current-user.store";
@@ -9,8 +9,6 @@ import { IUserAuthResponse } from "@/utils/interfaces/auth/auth.interface";
 /* ---------------------------------- States --------------------------------- */
 // ── Login API Response ─────────────────────────────────
 type TLoginResponse = {
-  accessToken?: string;
-  refreshToken?: string;
   message: string;
   user?: IUserAuthResponse;
   requiresTwoFactor?: boolean;
@@ -59,8 +57,7 @@ export const useLoginStore = create<TLoginState>((set) => ({
         identifier: identifier,
         password: password,
       });
-      const { accessToken, refreshToken, message, requiresTwoFactor, userId } =
-        response.data;
+      const { message, requiresTwoFactor, userId, user } = response.data;
 
       if (requiresTwoFactor && userId) {
         set({
@@ -75,22 +72,14 @@ export const useLoginStore = create<TLoginState>((set) => ({
         return;
       }
 
-      // Set cookies for secure token storage
-      console.log("Setting auth cookies...", {
-        accessToken: !!accessToken,
-        refreshToken: !!refreshToken,
-        rememberMe,
-      });
-
-      // Use centralized cookie management
-      setAuthCookies(accessToken!, refreshToken!, rememberMe);
+      setSessionRole(user?.role, rememberMe);
 
       set({
         loading: false,
         error: null,
         isAuthenticated: true,
         message,
-        user: response.data.user ?? null,
+        user: user ?? null,
       });
     } catch (error) {
       const errorMessage = extractApiErrorMessage(

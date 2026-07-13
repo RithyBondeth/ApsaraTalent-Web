@@ -371,8 +371,7 @@ export default function EmployeeSignup() {
   // ── Employee Signup Effect ─────────────────────────────────────────
   useEffect(() => {
     if (
-      empSignup.accessToken &&
-      empSignup.refreshToken &&
+      empSignup.isAuthenticated &&
       uploadsComplete &&
       !empSignup.loading &&
       !uploadAvatar.loading &&
@@ -383,7 +382,7 @@ export default function EmployeeSignup() {
       toast.success(t("signupSuccessful"), {
         duration: TOAST_DURATION_MS.SHORT,
       });
-      setTimeout(() => router.replace("/login"), DEFAULT_REDIRECT_DELAY_MS);
+      setTimeout(() => router.replace("/feed"), DEFAULT_REDIRECT_DELAY_MS);
       return;
     }
 
@@ -415,8 +414,7 @@ export default function EmployeeSignup() {
     uploadCoverLetter.message,
     uploadResume.message,
     empSignup.message,
-    empSignup.accessToken,
-    empSignup.refreshToken,
+    empSignup.isAuthenticated,
     uploadsComplete,
     uploadAvatar.message,
     router,

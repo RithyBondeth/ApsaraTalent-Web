@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getRoleFromJwt } from "./utils/functions/auth/get-role-from-jwt";
 import { COOKIE_CONFIG } from "@/utils/constants/cookie.constant";
 
 /* ---------------------------------- Helper --------------------------------- */
@@ -43,8 +42,9 @@ function buildCallbackUrl(request: NextRequest) {
 export function middleware(request: NextRequest) {
   try {
     const { pathname } = request.nextUrl;
-    const token = request.cookies.get(COOKIE_CONFIG.AUTH_TOKEN)?.value ?? "";
-    const isAuthenticated = token.length > 0;
+    const role =
+      request.cookies.get(COOKIE_CONFIG.SESSION_ROLE)?.value ?? null;
+    const isAuthenticated = role !== null;
 
     const isAuthRoute = isRouteMatch(pathname, AUTH_ROUTES);
     const isProtectedRoute = isRouteMatch(pathname, PROTECTED_ROUTES);
@@ -67,11 +67,7 @@ export function middleware(request: NextRequest) {
       return NextResponse.next();
     }
 
-    // Token is present; role decoding may fail for malformed/expired tokens.
-    // In that case, keep default authenticated behavior without crashing edge runtime.
-    const role = getRoleFromJwt(token);
-
-    // If user has token but role is "none", force onboarding
+    // If the authenticated user has no selected role, force onboarding.
     if (role === "none") {
       if (isProtectedRoute || isGuestLandingRoute) {
         return NextResponse.redirect(new URL("/signup/option", request.url));

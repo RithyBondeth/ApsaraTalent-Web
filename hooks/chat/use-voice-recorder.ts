@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { getCookie } from "cookies-next";
 import { API_BASE_URL } from "@/utils/constants/apis/base.api.constant";
 import { IVoiceRecorderResult } from "@/utils/interfaces/chat/chat.interface";
 import {
@@ -248,14 +247,10 @@ export function useVoiceRecorder(): IVoiceRecorderResult {
           try {
             const formData = new FormData();
             formData.append("file", blob, filename);
-            const accessToken = getCookie("auth-token");
             const res = await fetch(`${API_BASE_URL}/chat/upload`, {
               method: "POST",
               body: formData,
               credentials: "include",
-              headers: accessToken
-                ? { Authorization: `Bearer ${String(accessToken)}` }
-                : undefined,
             });
             if (!res.ok) {
               const body = await res.json().catch(() => ({}));

@@ -1,6 +1,3 @@
-import { getCookie } from "cookies-next";
-import { COOKIE_CONFIG } from "@/utils/constants/cookie.constant";
-
 /** SSE event shape emitted by the API gateway streaming endpoints. */
 export type StreamEvent =
   | { t: "chunk"; v: string }
@@ -10,7 +7,7 @@ export type StreamEvent =
 /**
  * Fetch a streaming SSE endpoint and call `onEvent` for each parsed event.
  * Supports both GET and POST (pass `body` for POST).
- * Automatically attaches the auth-token cookie as a Bearer header.
+ * Authentication is sent through the API's httpOnly cookies.
  */
 export async function streamFetch(
   url: string,
@@ -20,14 +17,11 @@ export async function streamFetch(
   },
   onEvent: (event: StreamEvent) => void,
 ): Promise<void> {
-  const token = getCookie(COOKIE_CONFIG.AUTH_TOKEN);
-
   const res = await fetch(url, {
     method: options.method ?? "GET",
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
   });

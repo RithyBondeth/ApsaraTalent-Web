@@ -1,6 +1,7 @@
 import axios from "@/lib/axios";
 import { extractApiErrorMessage } from "@/stores/shared/api-error-message";
-import { setAuthCookies } from "@/utils/auth/cookie-manager";
+import { setSessionRole } from "@/utils/auth/cookie-manager";
+import { IUserAuthResponse } from "@/utils/interfaces/auth/auth.interface";
 import {
   API_2FA_DISABLE_URL,
   API_2FA_ENABLE_URL,
@@ -18,8 +19,7 @@ type T2FASetupResponse = {
 
 // ── API Response Types ──────────────────────────────────
 type T2FAVerifyLoginResponse = {
-  accessToken: string;
-  refreshToken: string;
+  user: IUserAuthResponse;
 };
 
 /* ---------------------------------- States --------------------------------- */
@@ -100,11 +100,7 @@ export const useTwoFactorStore = create<T2FAState>()((set) => ({
         API_2FA_VERIFY_LOGIN_URL,
         { userId, otp },
       );
-      setAuthCookies(
-        response.data.accessToken,
-        response.data.refreshToken,
-        rememberMe,
-      );
+      setSessionRole(response.data.user.role, rememberMe);
       set({ loading: false });
       return true;
     } catch (error) {

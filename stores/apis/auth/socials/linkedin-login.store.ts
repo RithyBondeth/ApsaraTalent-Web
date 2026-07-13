@@ -1,4 +1,4 @@
-import { clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-manager";
+import { clearAuthCookies, setSessionRole } from "@/utils/auth/cookie-manager";
 import { API_AUTH_SOCIAL_LINKEDIN_URL } from "@/utils/constants/apis/auth.api.constant";
 import { TAuthLoginMethod } from "@/utils/constants/auth.constant";
 import { TUserRole } from "@/utils/types/auth/role.type";
@@ -11,8 +11,6 @@ type TLinkedInLoginResponse = {
   type: "LINKEDIN_AUTH_SUCCESS" | "LINKEDIN_AUTH_ERROR";
   error?: string;
   newUser?: boolean;
-  accessToken?: string | null;
-  refreshToken?: string | null;
   remember?: boolean;
   user?: {
     email: string | null;
@@ -64,16 +62,12 @@ const FINISH_LOGIN = (data: TLinkedInLoginResponse) => {
     return;
   }
 
-  // Persist first-party cookies on web domain so Next middleware can read
-  // auth-token even when API and Web run on different domains.
-  if (data.accessToken && data.refreshToken) {
-    setAuthCookies(data.accessToken, data.refreshToken, Boolean(data.remember));
-  }
+  setSessionRole(data.user?.role, Boolean(data.remember));
 
   // Update store with user info
   useLinkedInLoginStore.setState({
     loading: false,
-    isAuthenticated: true,
+    isAuthenticated: !data.newUser,
     message: "Login successful",
     role: data.user?.role || null,
     newUser: data.newUser || false,

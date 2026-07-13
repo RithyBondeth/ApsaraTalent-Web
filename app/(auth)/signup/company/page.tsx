@@ -299,8 +299,7 @@ export default function CompanySignup() {
   // ── Company Signup Effect ──────────────────────────────────────
   useEffect(() => {
     if (
-      cmpSignup.accessToken &&
-      cmpSignup.refreshToken &&
+      cmpSignup.isAuthenticated &&
       uploadsComplete &&
       !cmpSignup.loading &&
       !uploadAvatar.loading &&
@@ -310,7 +309,7 @@ export default function CompanySignup() {
       toast.success(t("signupSuccessful"), {
         duration: TOAST_DURATION_MS.SHORT,
       });
-      setTimeout(() => router.replace("/login"), DEFAULT_REDIRECT_DELAY_MS);
+      setTimeout(() => router.replace("/feed"), DEFAULT_REDIRECT_DELAY_MS);
     }
 
     const errorList = [
@@ -332,8 +331,7 @@ export default function CompanySignup() {
     cmpSignup.loading,
     cmpSignup.error,
     cmpSignup.message,
-    cmpSignup.refreshToken,
-    cmpSignup.accessToken,
+    cmpSignup.isAuthenticated,
     uploadAvatar.loading,
     uploadAvatar.error,
     uploadAvatar.message,

@@ -10,6 +10,7 @@ export const COOKIE_CONFIG = {
   // Cookie names
   AUTH_TOKEN: "auth-token",
   REFRESH_TOKEN: "refresh-token",
+  SESSION_ROLE: "auth-session-role",
   REMEMBER_PREFERENCE: "remember-me",
 
   // Security settings

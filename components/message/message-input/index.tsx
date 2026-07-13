@@ -21,7 +21,6 @@ import { MessageAttachmentStrip } from "./attachment-strip";
 import { VoiceRecordingUI } from "./voice-recording";
 import { useThemeStore } from "@/stores/themes/theme-store";
 import dynamic from "next/dynamic";
-import { getCookie } from "cookies-next";
 import { MessageReplyPreview } from "./reply-preview";
 import { API_BASE_URL } from "@/utils/constants/apis/base.api.constant";
 import type { IPendingFile } from "@/utils/interfaces/chat/chat.interface";
@@ -223,14 +222,10 @@ export default function ChatInput(props: IChatInputProps) {
         try {
           const formData = new FormData();
           formData.append("file", file);
-          const accessToken = getCookie("auth-token");
           const res = await fetch(`${API_BASE_URL}/chat/upload`, {
             method: "POST",
             body: formData,
             credentials: "include",
-            headers: accessToken
-              ? { Authorization: `Bearer ${String(accessToken)}` }
-              : undefined,
           });
           if (!res.ok) {
             const body = await res.json().catch(() => ({}));
