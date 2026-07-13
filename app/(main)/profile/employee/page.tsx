@@ -78,6 +78,7 @@ import { AVATAR_INITIALS_LENGTH } from "@/utils/constants/ui.constant";
 import { isUuid } from "@/utils/functions/validation/check-uuid";
 import { extractCleanFilename } from "@/utils/functions/file";
 import { parseMaybeDate } from "@/utils/functions/date";
+import { API_GET_EMP_DOCUMENT_URL } from "@/utils/constants/apis/user-api/employee.api.constant";
 import { ICareerScope } from "@/utils/interfaces/user/career.interface";
 import { ISkill } from "@/utils/interfaces/user/employee.interface";
 import { ISocialLink } from "@/utils/interfaces/user/social.interface";
@@ -821,7 +822,7 @@ export default function EmployeeProfilePage() {
   // ── Handle File Download: Resume and CoverLetter ─────────────────────────────────────────
   const downloadFileFromUrl = async (url: string, filename?: string) => {
     try {
-      const res = await fetch(url);
+      const res = await fetch(url, { credentials: "include" });
       if (!res.ok) throw new Error("Failed to fetch file");
 
       const blob = await res.blob();
@@ -2469,7 +2470,9 @@ export default function EmployeeProfilePage() {
                       size="icon"
                       onClick={() => {
                         if (employee.resume)
-                          setPreviewReferenceUrl(employee.resume);
+                          setPreviewReferenceUrl(
+                            API_GET_EMP_DOCUMENT_URL(employee.id, "resume"),
+                          );
                         setPreviewReferenceType("resume");
                         setOpenReferencePreview(true);
                       }}
@@ -2499,7 +2502,7 @@ export default function EmployeeProfilePage() {
                         onClick={() => {
                           if (employee.resume) {
                             downloadFileFromUrl(
-                              employee.resume,
+                              API_GET_EMP_DOCUMENT_URL(employee.id, "resume"),
                               extractCleanFilename(employee.resume),
                             );
                           }
@@ -2570,7 +2573,12 @@ export default function EmployeeProfilePage() {
                       size="icon"
                       onClick={() => {
                         if (employee.coverLetter)
-                          setPreviewReferenceUrl(employee.coverLetter);
+                          setPreviewReferenceUrl(
+                            API_GET_EMP_DOCUMENT_URL(
+                              employee.id,
+                              "cover-letter",
+                            ),
+                          );
                         setPreviewReferenceType("coverletter");
                         setOpenReferencePreview(true);
                       }}
@@ -2600,7 +2608,10 @@ export default function EmployeeProfilePage() {
                         onClick={() => {
                           if (employee.coverLetter) {
                             downloadFileFromUrl(
-                              employee.coverLetter,
+                              API_GET_EMP_DOCUMENT_URL(
+                                employee.id,
+                                "cover-letter",
+                              ),
                               extractCleanFilename(employee.coverLetter),
                             );
                           }

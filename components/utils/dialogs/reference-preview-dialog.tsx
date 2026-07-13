@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
 
 /* ----------------------------------- Helper ---------------------------------- */
 interface IReferencePreviewDialog {
@@ -21,28 +22,42 @@ interface IReferencePreviewDialog {
 export default function ReferencePreviewDialog(props: IReferencePreviewDialog) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("dialog");
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewAvailable, setPreviewAvailable] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  /* --------------------------------- Methods --------------------------------- */
-  // ── Get File Ext ─────────────────────────────────────────
-  const getFileExt = (url: string) => {
-    try {
-      const clean = url.split("?")[0];
-      return clean.split(".").pop()?.toLowerCase() ?? "";
-    } catch {
-      return "";
-    }
-  };
+  useEffect(() => {
+    if (!props.openRefPreview || !props.referenceUrl) return;
+    const controller = new AbortController();
+    let objectUrl: string | null = null;
 
-  // ── Build Preview URL ───────────────────────────────────────
-  const buildPreviewUrl = (url: string) => {
-    const ext = getFileExt(url);
-    // If it's a PDF, show directly
-    if (ext === "pdf") return url;
-    // If it's doc/docx, use Google Docs Viewer (requires public accessible URL)
-    return `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(
-      url,
-    )}`;
-  };
+    setLoading(true);
+    setPreviewUrl(null);
+    fetch(props.referenceUrl, {
+      credentials: "include",
+      signal: controller.signal,
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Document preview failed");
+        return response.blob();
+      })
+      .then((blob) => {
+        objectUrl = URL.createObjectURL(blob);
+        setPreviewAvailable(blob.type === "application/pdf");
+        setPreviewUrl(objectUrl);
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setPreviewAvailable(false);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
+
+    return () => {
+      controller.abort();
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [props.openRefPreview, props.referenceUrl]);
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -60,8 +75,7 @@ export default function ReferencePreviewDialog(props: IReferencePreviewDialog) {
         {/* Document Preview Section */}
         <div className="flex-1 min-h-0 w-full">
           {(() => {
-            const url = props.referenceUrl;
-            if (!url) {
+            if (!props.referenceUrl) {
               return (
                 <div className="h-full flex items-center justify-center">
                   <TypographyMuted>{t("noDocumentFound")}</TypographyMuted>
@@ -69,7 +83,24 @@ export default function ReferencePreviewDialog(props: IReferencePreviewDialog) {
               );
             }
 
-            const previewUrl = buildPreviewUrl(url);
+            if (loading) {
+              return (
+                <div className="h-full flex items-center justify-center">
+                  <TypographyMuted>Loading document…</TypographyMuted>
+                </div>
+              );
+            }
+
+            if (!previewAvailable || !previewUrl) {
+              return (
+                <div className="h-full flex items-center justify-center px-6 text-center">
+                  <TypographyMuted>
+                    Preview is available for PDF documents. Download this file
+                    to view it safely.
+                  </TypographyMuted>
+                </div>
+              );
+            }
 
             return (
               <iframe

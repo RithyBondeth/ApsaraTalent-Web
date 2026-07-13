@@ -65,6 +65,7 @@ import { DetailCard } from "@/components/utils/data-display/detail-card";
 import { SectionTitle } from "@/components/utils/layout/section-title";
 import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
 import UserModerationMenu from "@/components/moderation/user-moderation-menu";
+import { API_GET_EMP_DOCUMENT_URL } from "@/utils/constants/apis/user-api/employee.api.constant";
 
 export default function EmployeeDetailPage() {
   /* ---------------------------------- Utils ---------------------------------- */
@@ -224,14 +225,21 @@ export default function EmployeeDetailPage() {
   };
 
   // ── Handle Download File ──────────────────────────────────────────────
-  const handleDownloadFile = (url: string, filename: string) => {
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", filename);
-    link.setAttribute("target", "_blank");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleDownloadFile = async (url: string, filename: string) => {
+    try {
+      const response = await fetch(url, { credentials: "include" });
+      if (!response.ok) throw new Error("Document download failed");
+      const objectUrl = URL.createObjectURL(await response.blob());
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(objectUrl);
+    } catch {
+      toast.error(t("downloadFailed"));
+    }
   };
 
   /* ------------------------------- Loading State ------------------------------- */
@@ -536,11 +544,21 @@ export default function EmployeeDetailPage() {
               <SectionTitle icon={<LucideFileText />} title={tf("documents")} />
               <div className="flex flex-col gap-2.5">
                 {[
-                  { file: employeeData.resume, suffix: "resume" },
-                  { file: employeeData.coverLetter, suffix: "coverletter" },
+                  {
+                    file: employeeData.resume,
+                    suffix: "resume",
+                    type: "resume" as const,
+                  },
+                  {
+                    file: employeeData.coverLetter,
+                    suffix: "coverletter",
+                    type: "cover-letter" as const,
+                  },
                 ]
                   .filter((d) => d.file)
-                  .map(({ file, suffix }) => (
+                  .map(({ file, suffix, type }) => {
+                    const documentUrl = API_GET_EMP_DOCUMENT_URL(id, type);
+                    return (
                     <div
                       key={suffix}
                       className="flex items-center justify-between gap-2 px-3 py-2.5 bg-muted/50 rounded-xl border border-border/40"
@@ -555,7 +573,7 @@ export default function EmployeeDetailPage() {
                         </span>
                       </div>
                       <div className="flex gap-0.5 flex-shrink-0">
-                        <Link href={file!} target="_blank">
+                        <Link href={documentUrl} target="_blank">
                           <Button
                             variant="ghost"
                             size="icon"
@@ -572,7 +590,7 @@ export default function EmployeeDetailPage() {
                           className="size-8"
                           onClick={() =>
                             handleDownloadFile(
-                              file!,
+                              documentUrl,
                               `${employeeData.username || "user"}-${suffix}`,
                             )
                           }
@@ -581,7 +599,8 @@ export default function EmployeeDetailPage() {
                         </Button>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
               </div>
             </DetailCard>
           )}

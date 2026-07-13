@@ -46,7 +46,18 @@ export const normalizeMediaUrl = (
 
   const localhostMatch = trimmed.match(LOCAL_STORAGE_URL_REGEX);
   if (localhostMatch) {
+    if (localhostMatch[1].startsWith("chat/")) {
+      return `${apiOrigin}/chat/attachment/${localhostMatch[1].slice(5)}`;
+    }
     return `${apiOrigin}/storage/${localhostMatch[1]}`;
+  }
+
+  if (trimmed.startsWith("/storage/chat/")) {
+    return `${apiOrigin}/chat/attachment/${trimmed.slice(14)}`;
+  }
+
+  if (trimmed.startsWith("/chat/attachment/")) {
+    return `${apiOrigin}${trimmed}`;
   }
 
   if (trimmed.startsWith("/storage/")) {
