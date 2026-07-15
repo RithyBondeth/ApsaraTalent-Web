@@ -19,7 +19,8 @@ import {
 import {
   DESIGN_FONTS,
   DESIGN_PALETTES,
-} from "@/components/resume-builder/editor/canvas-template/resume-template-theme";
+  RESUME_TEMPLATE_THEMES,
+} from "@/utils/constants/resume-theme.constant";
 
 /* --------------------------------- Helpers --------------------------------- */
 function humanize(value: string): string {
@@ -37,7 +38,6 @@ function PillGroup<T extends string>({
   value: T;
   onSelect: (next: T) => void;
 }) {
-  /* -------------------------------- Render UI -------------------------------- */
   return (
     <div>
       <FieldLabel>{label}</FieldLabel>
@@ -79,14 +79,17 @@ export function DesignTab({
   const isCustomized = Boolean(design);
 
   /* --------------------------------- Methods --------------------------------- */
+  // ── Apply Design ──────────────────────────────────────────────────
   const applyDesign = (next: IResumeDesign) =>
     setValue("design", next, { shouldDirty: true });
 
+  // ── Apply Field ───────────────────────────────────────────────────
   const applyField = <K extends keyof IResumeDesign>(
     field: K,
     value: IResumeDesign[K],
   ) => applyDesign({ ...activeDesign, [field]: value });
 
+  // ── Toggle Sidebar Section ────────────────────────────────────────
   const toggleSidebarSection = (
     section: IResumeDesign["sidebarSections"][number],
   ) => {

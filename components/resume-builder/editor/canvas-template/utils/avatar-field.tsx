@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
-import { useResumeTemplateTheme } from "../resume-template-theme";
+import { useResumeTemplateTheme } from "@/hooks/resume/use-resume-template-theme";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 

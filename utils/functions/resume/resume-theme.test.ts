@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   resolveResumeLayoutBlueprint,
   resolveResumeTemplateTheme,
-} from "./resume-template-theme";
+} from "./resume-theme";
 
 describe("resolveResumeTemplateTheme", () => {
   it("resolves a constrained AI design into safe visual tokens", () => {

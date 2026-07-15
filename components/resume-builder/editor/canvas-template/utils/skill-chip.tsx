@@ -5,7 +5,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { X } from "lucide-react";
 import { Editable } from "./editable";
 import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
-import { useResumeTemplateTheme } from "../resume-template-theme";
+import { useResumeTemplateTheme } from "@/hooks/resume/use-resume-template-theme";
 import { useTranslations } from "next-intl";
 
 export function SkillChips(props: {

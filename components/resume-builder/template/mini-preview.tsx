@@ -4,8 +4,8 @@ import { CSSProperties } from "react";
 import {
   resolveResumeLayoutBlueprint,
   resolveResumeTemplateTheme,
-  ResumeTemplateTheme,
-} from "@/components/resume-builder/editor/canvas-template/resume-template-theme";
+} from "@/utils/functions/resume/resume-theme";
+import { IResumeTemplateTheme } from "@/utils/interfaces/resume/resume-theme.interface";
 import { RESUME_EDITOR_DEFAULT_SECTION_ORDER } from "@/utils/constants/resume.constant";
 import {
   IResumeDesign,
@@ -22,10 +22,12 @@ const FULL_PAGE_WIDTH = 720;
 const SAMPLE_NAME = "Apsara Talent";
 
 /* ---------------------------------- Helpers --------------------------------- */
+/* Scale px */
 function scalePx(value: number, min = 2): number {
   return Math.max(min, Math.round(value * MINI_SCALE));
 }
 
+/* Scale padding */
 function scalePadding(padding: string): string {
   return padding
     .split(" ")
@@ -33,7 +35,7 @@ function scalePadding(padding: string): string {
     .join(" ");
 }
 
-/** Solid placeholder line standing in for a run of text */
+/* Solid placeholder line standing in for a run of text */
 function Bar({
   width,
   height = 3,
@@ -60,8 +62,8 @@ function Bar({
   );
 }
 
-/** Section heading marker honoring the theme's sectionStyle */
-function MiniSectionHeading({ theme }: { theme: ResumeTemplateTheme }) {
+/* Section heading marker honoring the theme's sectionStyle */
+function MiniSectionHeading({ theme }: { theme: IResumeTemplateTheme }) {
   if (theme.sectionStyle === "pill") {
     return (
       <div
@@ -98,14 +100,14 @@ function MiniSectionHeading({ theme }: { theme: ResumeTemplateTheme }) {
   return <Bar width="34px" height={4} color={theme.text} />;
 }
 
-/** Miniature body section honoring per-section theme styles */
+/* Miniature body section honoring per-section theme styles */
 function MiniSection({
   section,
   theme,
   mutedLine,
 }: {
   section: TResumeContentSection;
-  theme: ResumeTemplateTheme;
+  theme: IResumeTemplateTheme;
   mutedLine: string;
 }) {
   const lines = (
@@ -286,13 +288,20 @@ export function TemplateMiniPreview({
   design?: IResumeDesign;
   className?: string;
 }) {
+  /* ------------------------------- All States -------------------------------- */
   const theme = resolveResumeTemplateTheme(templateKey, design);
   const blueprint = resolveResumeLayoutBlueprint(theme, [
     ...RESUME_EDITOR_DEFAULT_SECTION_ORDER,
   ]);
+
+  /* --------------------------------- Methods --------------------------------- */
+  // ── Muted Line ──────────────────────────────────────────────────
   const mutedLine = `${theme.muted}59`; // ~35% alpha placeholder lines
+
+  // ── Section Gap ──────────────────────────────────────────────────
   const sectionGap = scalePx(theme.sectionGap, 6);
 
+  // ── Sidebar Widths ────────────────────────────────────────────────
   // Sidebar widths in the blueprint are px against the full-size page —
   // convert to percentages so the miniature keeps the same proportions.
   const sidebarPct = Math.round(
@@ -304,6 +313,8 @@ export function TemplateMiniPreview({
       FULL_PAGE_WIDTH) *
       100,
   );
+
+  // ── Grid Template Columns ────────────────────────────────────────
   const gridTemplateColumns =
     blueprint.layout === "single"
       ? undefined
@@ -313,14 +324,19 @@ export function TemplateMiniPreview({
           ? `${sidebarPct}% 1fr`
           : `1fr ${sidebarPct}%`;
 
+  // ── Header Layout ────────────────────────────────────────────────
   const centered = theme.headerLayout === "centered";
   const stackedLike = centered || theme.headerLayout === "stacked";
+
+  // ── Avatar Size ──────────────────────────────────────────────────
   const avatarSize = scalePx(
     theme.headerLayout === "compact"
       ? theme.avatarSize * 0.7
       : theme.avatarSize,
     18,
   );
+
+  // ── Header Align ────────────────────────────────────────────────
   const headerAlign =
     theme.avatarPlacement === "center"
       ? "center"
@@ -328,6 +344,7 @@ export function TemplateMiniPreview({
         ? "flex-end"
         : "flex-start";
 
+  // ── Render Column ────────────────────────────────────────────────
   const renderColumn = (sections: TResumeContentSection[]) => (
     <div style={{ display: "flex", flexDirection: "column", gap: sectionGap }}>
       {sections.map((section) => (
@@ -342,6 +359,7 @@ export function TemplateMiniPreview({
   );
 
   return (
+    /* ------------------------------- Render UI ------------------------------- */
     <div
       aria-hidden
       className={cn("relative overflow-hidden select-none", className)}

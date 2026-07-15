@@ -30,11 +30,12 @@ import { ExperienceEntry } from "./utils/experience-entry";
 import { SkillChips } from "./utils/skill-chip";
 import { Path, PathValue } from "react-hook-form";
 import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
+import { ResumeTemplateThemeContext } from "@/hooks/resume/use-resume-template-theme";
+import { RESUME_TEMPLATE_THEMES } from "@/utils/constants/resume-theme.constant";
 import {
   resolveResumeLayoutBlueprint,
   resolveResumeTemplateTheme,
-  ResumeTemplateThemeContext,
-} from "./resume-template-theme";
+} from "@/utils/functions/resume/resume-theme";
 import { useTranslations } from "next-intl";
 
 /* ---------------------------------- Helper --------------------------------- */
@@ -675,7 +676,7 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
                 items={primaryOrder}
                 strategy={verticalListSortingStrategy}
               >
-                {primaryOrder.map((id) => (
+                {primaryOrder.map((id: TResumeContentSection) => (
                   <div key={id}>{sectionMap[id]}</div>
                 ))}
               </SortableContext>
@@ -700,7 +701,7 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
                   items={secondaryOrder}
                   strategy={verticalListSortingStrategy}
                 >
-                  {secondaryOrder.map((id) => (
+                  {secondaryOrder.map((id: TResumeContentSection) => (
                     <div key={id}>{sectionMap[id]}</div>
                   ))}
                 </SortableContext>

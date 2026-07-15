@@ -1,6 +1,6 @@
 import { IResumeDesign } from "@/utils/interfaces/resume/resume.interface";
 import { TResumeTemplate } from "@/utils/types/resume/resume.type";
-import { RESUME_TEMPLATE_THEMES } from "@/components/resume-builder/editor/canvas-template/resume-template-theme";
+import { RESUME_TEMPLATE_THEMES } from "@/utils/constants/resume-theme.constant";
 
 /* --------------------------------- Options --------------------------------- */
 /** Single source of truth for every editable design dimension. */

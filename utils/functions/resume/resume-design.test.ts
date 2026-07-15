@@ -5,7 +5,7 @@ import {
   RESUME_DESIGN_OPTIONS,
 } from "./resume-design";
 import { resumeDesignSchema } from "./resume-draft";
-import { RESUME_TEMPLATE_THEMES } from "@/components/resume-builder/editor/canvas-template/resume-template-theme";
+import { RESUME_TEMPLATE_THEMES } from "@/utils/constants/resume-theme.constant";
 import { TResumeTemplate } from "@/utils/types/resume/resume.type";
 
 const templates = Object.keys(RESUME_TEMPLATE_THEMES) as TResumeTemplate[];

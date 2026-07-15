@@ -1,4 +1,4 @@
-import { useResumeTemplateTheme } from "../resume-template-theme";
+import { useResumeTemplateTheme } from "@/hooks/resume/use-resume-template-theme";
 
 export function SectionHeading(props: { children: React.ReactNode }) {
   /* ----------------------------------- Props --------------------------------- */

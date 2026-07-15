@@ -1,51 +1,6 @@
-"use client";
-
-import { createContext, useContext } from "react";
-import {
-  IResumeDesign,
-  TResumeContentSection,
-} from "@/utils/interfaces/resume/resume.interface";
+import { IResumeDesign } from "@/utils/interfaces/resume/resume.interface";
 import { TResumeTemplate } from "@/utils/types/resume/resume.type";
-import {
-  deriveCustomAccentColors,
-  isValidCustomAccent,
-} from "@/utils/functions/resume/resume-color";
-
-export interface ResumeTemplateTheme {
-  accent: string;
-  accentSoft: string;
-  background: string;
-  headerBackground: string;
-  headerText: string;
-  text: string;
-  textSecondary: string;
-  muted: string;
-  layout: IResumeDesign["layout"];
-  font: string;
-  radius: string;
-  bodyFontSize: number;
-  lineHeight: number;
-  sidebarWidth: number;
-  headerPadding: string;
-  contentPadding: string;
-  avatarSize: number;
-  nameSize: number;
-  sectionGap: number;
-  experiencePadding: string;
-  chipRadius: string;
-  avatarRadius: string;
-  sectionStyle: IResumeDesign["sectionStyle"];
-  headerStyle: IResumeDesign["headerStyle"];
-  columnRatio: IResumeDesign["columnRatio"];
-  headerLayout: IResumeDesign["headerLayout"];
-  avatarPlacement: IResumeDesign["avatarPlacement"];
-  sidebarSections: IResumeDesign["sidebarSections"];
-  experienceStyle: IResumeDesign["experienceStyle"];
-  skillsStyle: IResumeDesign["skillsStyle"];
-  educationStyle: IResumeDesign["educationStyle"];
-  summaryStyle: IResumeDesign["summaryStyle"];
-  decoration: IResumeDesign["decoration"];
-}
+import { IResumeTemplateTheme } from "@/utils/interfaces/resume/resume-theme.interface";
 
 const DEFAULT_METRICS = {
   radius: "8px",
@@ -83,10 +38,10 @@ function theme(
   background: string,
   headerBackground: string,
   headerText: string,
-  layout: ResumeTemplateTheme["layout"],
+  layout: IResumeTemplateTheme["layout"],
   font = "Arial, Helvetica, sans-serif",
-  overrides: Partial<ResumeTemplateTheme> = {},
-): ResumeTemplateTheme {
+  overrides: Partial<IResumeTemplateTheme> = {},
+): IResumeTemplateTheme {
   return {
     accent,
     accentSoft,
@@ -107,7 +62,7 @@ function theme(
 
 export const RESUME_TEMPLATE_THEMES: Record<
   TResumeTemplate,
-  ResumeTemplateTheme
+  IResumeTemplateTheme
 > = {
   modern: theme(
     "#2563EB",
@@ -408,10 +363,10 @@ export const DESIGN_FONTS: Record<IResumeDesign["typography"], string> = {
   mono: "'Courier New', Courier, monospace",
 };
 
-const DESIGN_DENSITY: Record<
+export const DESIGN_DENSITY: Record<
   IResumeDesign["density"],
   Pick<
-    ResumeTemplateTheme,
+    IResumeTemplateTheme,
     | "bodyFontSize"
     | "lineHeight"
     | "sidebarWidth"
@@ -457,130 +412,3 @@ const DESIGN_DENSITY: Record<
     experiencePadding: "13px 15px",
   },
 };
-
-export function resolveResumeTemplateTheme(
-  template: TResumeTemplate,
-  design?: IResumeDesign,
-): ResumeTemplateTheme {
-  if (!design) return RESUME_TEMPLATE_THEMES[template];
-
-  const palette = DESIGN_PALETTES[design.palette];
-  // A user-picked accent overrides the palette's accent family while text,
-  // muted and page background stay on the named palette for readability.
-  const custom = isValidCustomAccent(design.customAccent)
-    ? deriveCustomAccentColors(design.customAccent)
-    : null;
-  const accent = custom?.accent ?? palette.accent;
-  const accentSoft = custom?.accentSoft ?? palette.accentSoft;
-  const solidHeader = custom?.header ?? palette.header;
-  const solidHeaderText = custom?.headerText ?? palette.headerText;
-  const radius =
-    design.cornerStyle === "square"
-      ? "0"
-      : design.cornerStyle === "soft"
-        ? "7px"
-        : "15px";
-  const headerBackground =
-    design.headerStyle === "solid"
-      ? solidHeader
-      : design.headerStyle === "soft"
-        ? accentSoft
-        : palette.background;
-  const headerText =
-    design.headerStyle === "solid" ? solidHeaderText : palette.text;
-
-  return {
-    accent,
-    accentSoft,
-    background: palette.background,
-    headerBackground,
-    headerText,
-    text: palette.text,
-    textSecondary: palette.text,
-    muted: palette.muted,
-    layout: design.layout,
-    font: DESIGN_FONTS[design.typography],
-    radius,
-    ...DESIGN_DENSITY[design.density],
-    chipRadius: design.cornerStyle === "rounded" ? "999px" : radius,
-    avatarRadius:
-      design.cornerStyle === "rounded"
-        ? "50%"
-        : design.cornerStyle === "soft"
-          ? "14px"
-          : "0",
-    sectionStyle: design.sectionStyle,
-    headerStyle: design.headerStyle,
-    columnRatio: design.columnRatio,
-    headerLayout: design.headerLayout,
-    avatarPlacement: design.avatarPlacement,
-    sidebarSections: [...design.sidebarSections],
-    experienceStyle: design.experienceStyle,
-    skillsStyle: design.skillsStyle,
-    educationStyle: design.educationStyle,
-    summaryStyle: design.summaryStyle,
-    decoration: design.decoration,
-  };
-}
-
-export function resolveResumeLayoutBlueprint(
-  theme: ResumeTemplateTheme,
-  sectionOrder: TResumeContentSection[],
-) {
-  const sidebarSectionSet = new Set<TResumeContentSection>(
-    theme.sidebarSections,
-  );
-  const secondarySections =
-    theme.layout === "single"
-      ? []
-      : sectionOrder.filter((section) => sidebarSectionSet.has(section));
-  const secondarySectionSet = new Set<TResumeContentSection>(secondarySections);
-  const primarySections = sectionOrder.filter(
-    (section) => !secondarySectionSet.has(section),
-  );
-  const layout = secondarySections.length > 0 ? theme.layout : "single";
-  const sidebarWidth = Math.round(
-    theme.sidebarWidth *
-      (theme.columnRatio === "narrow"
-        ? 0.84
-        : theme.columnRatio === "wide"
-          ? 1.18
-          : 1),
-  );
-  const twoColumnGrid =
-    theme.columnRatio === "narrow"
-      ? "1.65fr .75fr"
-      : theme.columnRatio === "wide"
-        ? "1.1fr 1fr"
-        : "1.35fr 1fr";
-  const gridTemplateColumns =
-    layout === "single"
-      ? undefined
-      : layout === "two-column"
-        ? twoColumnGrid
-        : layout === "left-sidebar"
-          ? `${sidebarWidth}px minmax(0, 1fr)`
-          : `minmax(0, 1fr) ${sidebarWidth}px`;
-  const gridTemplateAreas =
-    layout === "left-sidebar"
-      ? '"secondary primary"'
-      : layout === "single"
-        ? undefined
-        : '"primary secondary"';
-
-  return {
-    layout,
-    primarySections,
-    secondarySections,
-    gridTemplateColumns,
-    gridTemplateAreas,
-  };
-}
-
-export const ResumeTemplateThemeContext = createContext<ResumeTemplateTheme>(
-  RESUME_TEMPLATE_THEMES.modern,
-);
-
-export function useResumeTemplateTheme(): ResumeTemplateTheme {
-  return useContext(ResumeTemplateThemeContext);
-}
