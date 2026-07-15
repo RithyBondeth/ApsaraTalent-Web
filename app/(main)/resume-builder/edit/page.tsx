@@ -26,13 +26,28 @@ import { useForm, useWatch } from "react-hook-form";
 import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
 import {
   LIVE_RESUME_PREVIEW_DEBOUNCE_MS,
-  RESUME_LOCAL_STORAGE_KEY,
+  RESUME_EDITOR_DEFAULT_SECTION_ORDER,
 } from "@/utils/constants/resume.constant";
 import { RESUME_DOWNLOAD_SETTLE_MS } from "@/utils/constants/config.constant";
 import { TypographyLead } from "@/components/utils/typography/typography-lead";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { AiResumeOptimizerDrawer } from "@/components/resume-builder/ai-optimizer-drawer";
+import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
+import { useResumeCanvasEditorStore } from "@/stores/apis/resume/resume-canvas-editor.store";
+import { ResumeEditorLoadingSkeleton } from "@/components/resume-builder/skeleton";
+import {
+  loadResumeDraft,
+  normalizeResumePayload,
+  removeLegacyResumeDraft,
+  removeResumeDraft,
+  resumeSchema,
+  saveResumeDraft,
+} from "@/utils/functions/resume/resume-draft";
+import {
+  matchesResumeOwnerName,
+  prepareResumeAvatar,
+} from "@/utils/functions/resume/prepare-resume-avatar";
 
 export default function ResumeEditorPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -45,7 +60,11 @@ export default function ResumeEditorPage() {
   const { generateResume } = useGenerateResumeStore();
 
   /* -------------------------------- All States ------------------------------ */
-  const { payload, clearPayload, setPayload } = useResumeEditStore();
+  const { payload, ownerId, clearPayload, setPayload } = useResumeEditStore();
+  const currentUser = useGetCurrentUserStore((state) => state.user);
+  const sectionOrder = useResumeCanvasEditorStore(
+    (state) => state.sectionOrder,
+  );
 
   // Left panel (form) collapsed state
   const [formPanelOpen, setFormPanelOpen] = useState<boolean>(false);
@@ -58,6 +77,9 @@ export default function ResumeEditorPage() {
   const [previewUpdating, setPreviewUpdating] = useState<boolean>(false);
   const hasInteracted = useRef<boolean>(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const initializedRef = useRef<boolean>(false);
+  const [draftReady, setDraftReady] = useState<boolean>(false);
+  const [userStoreHydrated, setUserStoreHydrated] = useState<boolean>(false);
 
   // Download progress states
   const [downloading, setDownloading] = useState<boolean>(false);
@@ -75,37 +97,111 @@ export default function ResumeEditorPage() {
   const watchedValues = useWatch({ control }) as IBuildResume;
 
   /* --------------------------------- Effects --------------------------------- */
-  // Recover from localStorage on mount if store is empty
+  // Wait for the persisted current-user store before choosing a user-scoped draft.
   useEffect(() => {
-    if (!payload) {
-      const saved = localStorage.getItem(RESUME_LOCAL_STORAGE_KEY);
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved) as IBuildResume;
-          setPayload(parsed);
-          reset(parsed);
-          setPreviewData(parsed);
-        } catch (e) {
-          console.error("Failed to parse saved resume draft", e);
-        }
-      } else {
-        router.replace("/resume-builder");
-      }
+    const persistApi = useGetCurrentUserStore.persist;
+    if (!persistApi) {
+      setUserStoreHydrated(true);
+      return;
     }
-  }, [payload, router, setPayload, reset]);
+    if (persistApi.hasHydrated()) {
+      setUserStoreHydrated(true);
+    }
+    return persistApi.onFinishHydration(() => setUserStoreHydrated(true));
+  }, []);
 
-  // Sync form if the store payload changes after mount
+  // Recover and validate a draft exactly once for the authenticated user.
   useEffect(() => {
-    if (payload) reset(payload);
-  }, [payload, reset]);
+    if (!userStoreHydrated || initializedRef.current) return;
+    if (!currentUser?.id || !currentUser.employee) {
+      router.replace("/resume-builder");
+      return;
+    }
+
+    initializedRef.current = true;
+    const employee = currentUser.employee;
+    const employeeAvatar = employee.avatar;
+    removeLegacyResumeDraft();
+    const initial =
+      payload && ownerId === currentUser.id
+        ? normalizeResumePayload(payload)
+        : loadResumeDraft(currentUser.id);
+
+    if (!initial) {
+      clearPayload();
+      router.replace("/resume-builder");
+      return;
+    }
+
+    let cancelled = false;
+    void (async () => {
+      let hydratedInitial = initial;
+      const employeeFullName = [employee.firstname, employee.lastname]
+        .filter(Boolean)
+        .join(" ");
+      const resumeBelongsToCurrentUser = matchesResumeOwnerName(
+        initial.personalInfo.fullName,
+        [
+          employeeFullName,
+          employee.username ?? undefined,
+          currentUser.email?.split("@")[0] ?? undefined,
+        ],
+      );
+      if (
+        !initial.personalInfo.profilePicture &&
+        employeeAvatar &&
+        resumeBelongsToCurrentUser
+      ) {
+        const profilePicture = await prepareResumeAvatar(employeeAvatar);
+        if (profilePicture) {
+          hydratedInitial = {
+            ...initial,
+            personalInfo: { ...initial.personalInfo, profilePicture },
+          };
+        }
+      }
+      if (cancelled) return;
+
+      const order = hydratedInitial.sectionOrder ?? [
+        ...RESUME_EDITOR_DEFAULT_SECTION_ORDER,
+      ];
+      useResumeCanvasEditorStore.getState().setSectionOrder(order);
+      setPayload(hydratedInitial, currentUser.id);
+      reset(hydratedInitial);
+      setPreviewData(hydratedInitial);
+      saveResumeDraft(currentUser.id, hydratedInitial);
+      hasInteracted.current = false;
+      setDraftReady(true);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    clearPayload,
+    currentUser,
+    ownerId,
+    payload,
+    reset,
+    router,
+    setPayload,
+    userStoreHydrated,
+  ]);
 
   // Update left panel (form) collapsed state based on mobile view
   useEffect(() => {
     setFormPanelOpen(!isMobile);
   }, [isMobile]);
 
-  // Live preview with 600 ms debounce + local storage persistence
+  // Section visibility/order is part of the document contract and PDF payload.
   useEffect(() => {
+    if (!draftReady) return;
+    setValue("sectionOrder", [...sectionOrder], { shouldDirty: true });
+  }, [draftReady, sectionOrder, setValue]);
+
+  // Live preview with 600 ms debounce + user-scoped session draft persistence
+  useEffect(() => {
+    if (!draftReady || !currentUser?.id) return;
     // Skip the initial render — form values haven't changed yet
     if (!hasInteracted.current) {
       hasInteracted.current = true;
@@ -117,24 +213,31 @@ export default function ResumeEditorPage() {
     debounceRef.current = setTimeout(() => {
       setPreviewData({ ...watchedValues } as IBuildResume);
       setPreviewUpdating(false);
-      // Persist to local storage
-      localStorage.setItem(
-        RESUME_LOCAL_STORAGE_KEY,
-        JSON.stringify(watchedValues),
+      saveResumeDraft(
+        currentUser.id,
+        normalizeResumePayload(watchedValues as IBuildResume),
       );
     }, LIVE_RESUME_PREVIEW_DEBOUNCE_MS);
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [watchedValues]);
+  }, [currentUser?.id, draftReady, watchedValues]);
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Handle Download ─────────────────────────────────────────
   const handleDownload = async () => {
-    const raw = getValues() as IBuildResume;
-
-    // Strip careerScopes — hidden section, not shown in resume.
-    const currentPayload: IBuildResume = { ...raw, careerScopes: undefined };
+    const raw = normalizeResumePayload(getValues() as IBuildResume);
+    const validation = resumeSchema.safeParse(raw);
+    if (!validation.success) {
+      const issue = validation.error.issues[0];
+      toast.error(tRb("validationFailed"), {
+        description: issue
+          ? tRb("validationDescription")
+          : t("somethingWentWrong"),
+      });
+      return;
+    }
+    const currentPayload = validation.data as IBuildResume;
     setDownloading(true);
     startProgress(95);
     try {
@@ -172,7 +275,8 @@ export default function ResumeEditorPage() {
   // ── Handle Back ─────────────────────────────────────────
   const handleBack = () => {
     clearPayload();
-    localStorage.removeItem(RESUME_LOCAL_STORAGE_KEY);
+    if (currentUser?.id) removeResumeDraft(currentUser.id);
+    removeLegacyResumeDraft();
     router.push("/resume-builder");
   };
 
@@ -180,7 +284,12 @@ export default function ResumeEditorPage() {
   const handleReset = () => {
     if (confirm(tRb("resetConfirm"))) {
       reset(payload ?? undefined);
-      localStorage.removeItem(RESUME_LOCAL_STORAGE_KEY);
+      useResumeCanvasEditorStore
+        .getState()
+        .setSectionOrder(
+          payload?.sectionOrder ?? [...RESUME_EDITOR_DEFAULT_SECTION_ORDER],
+        );
+      if (payload && currentUser?.id) saveResumeDraft(currentUser.id, payload);
       toast.success(tRb("resetSuccess"));
     }
   };
@@ -189,9 +298,9 @@ export default function ResumeEditorPage() {
   const handleApplySummary = useCallback(
     (summary: string) => {
       setValue("summary", summary, { shouldDirty: true });
-      toast.success("Summary updated");
+      toast.success(tRb("summaryUpdated"));
     },
-    [setValue],
+    [setValue, tRb],
   );
 
   const handleApplySkills = useCallback(
@@ -199,9 +308,9 @@ export default function ResumeEditorPage() {
       const current = getValues("skills") ?? [];
       const merged = Array.from(new Set([...current, ...newSkills]));
       setValue("skills", merged, { shouldDirty: true });
-      toast.success(`Added ${newSkills.length} suggested skills`);
+      toast.success(tRb("suggestedSkillsAdded", { count: newSkills.length }));
     },
-    [setValue, getValues],
+    [setValue, getValues, tRb],
   );
 
   const handleApplyExperience = useCallback(
@@ -212,19 +321,14 @@ export default function ResumeEditorPage() {
       setValue(`experience.${index}.achievements`, achievements, {
         shouldDirty: true,
       });
-      toast.success(`Experience #${index + 1} updated`);
+      toast.success(tRb("experienceUpdated", { number: index + 1 }));
     },
-    [setValue],
+    [setValue, tRb],
   );
 
   /* ------------------------------- Null State -------------------------------- */
-  // During SSR or if no data is available yet, return null.
-  // Redirection and recovery are handled in useEffect.
-  if (
-    typeof window === "undefined" ||
-    (!payload && !localStorage.getItem(RESUME_LOCAL_STORAGE_KEY))
-  ) {
-    return null;
+  if (!draftReady || !currentUser?.id) {
+    return <ResumeEditorLoadingSkeleton />;
   }
 
   /* -------------------------------- Render UI -------------------------------- */
@@ -284,9 +388,10 @@ export default function ResumeEditorPage() {
           {/* Template Selector Section */}
           <TemplateSelector
             value={watchedValues.template}
-            onChange={(next) =>
-              setValue("template", next, { shouldDirty: true })
-            }
+            onChange={(next) => {
+              setValue("template", next, { shouldDirty: true });
+              setValue("design", undefined, { shouldDirty: true });
+            }}
           />
         </div>
 

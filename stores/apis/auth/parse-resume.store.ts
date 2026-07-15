@@ -7,6 +7,7 @@ import { create } from "zustand";
 // ── Parse Resume Experience ─────────────────────────────────
 export type TParsedResumeExperience = {
   title: string;
+  company?: string;
   description: string;
   /** ISO date string YYYY-MM-DD */
   startDate: string;

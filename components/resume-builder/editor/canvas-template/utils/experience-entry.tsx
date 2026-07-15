@@ -7,6 +7,8 @@ import { GripVertical, X, Plus } from "lucide-react";
 import { Editable } from "./editable";
 import { InlineDateField } from "./inline-date-field";
 import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
+import { useResumeTemplateTheme } from "../resume-template-theme";
+import { useTranslations } from "next-intl";
 
 export function ExperienceEntry(props: {
   exp: Experience;
@@ -18,6 +20,8 @@ export function ExperienceEntry(props: {
 }) {
   /* ----------------------------------- Props -------------------------------- */
   const { exp, sortableId, index, setValue, getValues, onDelete } = props;
+  const theme = useResumeTemplateTheme();
+  const t = useTranslations("resumeBuilder");
 
   /* -------------------------------- All States ------------------------------ */
   const {
@@ -37,8 +41,26 @@ export function ExperienceEntry(props: {
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.35 : 1,
-        marginBottom: 14,
+        marginBottom: Math.max(10, theme.sectionGap - 8),
         position: "relative",
+        padding:
+          theme.experienceStyle === "cards"
+            ? theme.experiencePadding
+            : theme.experienceStyle === "timeline"
+              ? "3px 0 3px 14px"
+              : undefined,
+        border:
+          theme.experienceStyle === "cards"
+            ? `1px solid ${theme.accent}`
+            : undefined,
+        borderLeft:
+          theme.experienceStyle === "timeline"
+            ? `3px solid ${theme.accent}`
+            : undefined,
+        borderRadius:
+          theme.experienceStyle === "cards" ? theme.radius : undefined,
+        background:
+          theme.experienceStyle === "cards" ? theme.accentSoft : undefined,
       }}
       className="group/entry"
     >
@@ -46,7 +68,7 @@ export function ExperienceEntry(props: {
       <div
         {...attributes}
         {...listeners}
-        title="Drag to reorder"
+        title={t("dragToReorder")}
         className="absolute -left-5 top-2 cursor-grab active:cursor-grabbing opacity-0 group-hover/entry:opacity-50 transition-opacity"
       >
         <GripVertical size={12} style={{ color: RESUME_COLOR.TEXT_SUBTLE }} />
@@ -58,7 +80,7 @@ export function ExperienceEntry(props: {
           e.stopPropagation();
           onDelete();
         }}
-        title="Remove experience"
+        title={t("removeExperience")}
         className="absolute -right-5 top-0 opacity-0 group-hover/entry:opacity-60 hover:!opacity-100 transition-opacity"
         style={{ color: RESUME_COLOR.DANGER }}
       >
@@ -79,12 +101,12 @@ export function ExperienceEntry(props: {
             style={{
               fontWeight: 600,
               fontSize: 13,
-              color: RESUME_COLOR.TEXT_PRIMARY,
+              color: theme.text,
             }}
           >
             <Editable
               value={exp.position || ""}
-              placeholder="Position"
+              placeholder={t("positionPlaceholder")}
               onCommit={(v) =>
                 setValue(`experience.${index}.position`, v, {
                   shouldDirty: true,
@@ -95,13 +117,13 @@ export function ExperienceEntry(props: {
           <div
             style={{
               fontSize: 12,
-              color: RESUME_COLOR.TEXT_MUTED,
+              color: theme.muted,
               marginTop: 1,
             }}
           >
             <Editable
               value={exp.company || ""}
-              placeholder="Company"
+              placeholder={t("companyPlaceholder")}
               onCommit={(v) =>
                 setValue(`experience.${index}.company`, v, {
                   shouldDirty: true,
@@ -115,7 +137,7 @@ export function ExperienceEntry(props: {
         <div
           style={{
             fontSize: 11,
-            color: RESUME_COLOR.TEXT_SUBTLE,
+            color: theme.muted,
             whiteSpace: "nowrap",
             marginLeft: 8,
             flexShrink: 0,
@@ -123,7 +145,7 @@ export function ExperienceEntry(props: {
         >
           <InlineDateField
             value={exp.startDate || ""}
-            placeholder="Start date"
+            placeholder={t("startDatePlaceholder")}
             onCommit={(v) =>
               setValue(`experience.${index}.startDate`, v, {
                 shouldDirty: true,
@@ -133,7 +155,7 @@ export function ExperienceEntry(props: {
           {" – "}
           <InlineDateField
             value={exp.endDate || "Present"}
-            placeholder="End date"
+            placeholder={t("endDatePlaceholder")}
             onCommit={(v) =>
               setValue(`experience.${index}.endDate`, v, { shouldDirty: true })
             }
@@ -146,13 +168,13 @@ export function ExperienceEntry(props: {
         style={{
           marginTop: 4,
           fontSize: 12,
-          color: RESUME_COLOR.TEXT_SECONDARY,
+          color: theme.textSecondary,
           lineHeight: 1.55,
         }}
       >
         <Editable
           value={exp.description || ""}
-          placeholder="Describe your role…"
+          placeholder={t("roleDescriptionPlaceholder")}
           multiline
           onCommit={(v) =>
             setValue(`experience.${index}.description`, v, {
@@ -171,14 +193,14 @@ export function ExperienceEntry(props: {
               key={ai}
               style={{
                 fontSize: 12,
-                color: RESUME_COLOR.TEXT_SECONDARY,
+                color: theme.textSecondary,
                 marginBottom: 2,
               }}
               className="group/ach relative"
             >
               <Editable
                 value={ach}
-                placeholder="Achievement"
+                placeholder={t("achievement")}
                 onCommit={(v) =>
                   setValue(
                     `experience.${index}.achievements.${ai}` as `experience.${number}.achievements.${number}`,
@@ -202,7 +224,7 @@ export function ExperienceEntry(props: {
                 }}
                 className="absolute -right-4 top-0 opacity-0 group-hover/ach:opacity-60 hover:!opacity-100 transition-opacity"
                 style={{ color: RESUME_COLOR.DANGER }}
-                title="Remove achievement"
+                title={t("removeAchievement")}
               >
                 <X size={10} />
               </button>
@@ -222,11 +244,11 @@ export function ExperienceEntry(props: {
           });
         }}
         className="opacity-0 group-hover/entry:opacity-60 hover:!opacity-100 transition-opacity flex items-center gap-0.5 mt-1"
-        style={{ fontSize: 10, color: RESUME_COLOR.ACCENT }}
-        title="Add achievement"
+        style={{ fontSize: 10, color: theme.accent }}
+        title={t("addAchievement")}
       >
         <Plus size={9} />
-        achievement
+        {t("achievement").toLocaleLowerCase()}
       </button>
     </div>
   );

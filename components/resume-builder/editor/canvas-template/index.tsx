@@ -16,7 +16,10 @@ import {
 } from "@dnd-kit/sortable";
 import { X } from "lucide-react";
 import { SectionWrapper } from "../section-wrapper";
-import { TResumeSectionID } from "@/utils/types/resume/resume-section-id.type";
+import {
+  IBuildResume,
+  TResumeContentSection,
+} from "@/utils/interfaces/resume/resume.interface";
 import { useResumeCanvasEditorStore } from "@/stores/apis/resume/resume-canvas-editor.store";
 import { ICanvasTemplateProps } from "./props";
 import { Editable } from "./utils/editable";
@@ -25,9 +28,14 @@ import { GhostAddButton } from "./utils/ghost-add-button";
 import { AvatarField } from "./utils/avatar-field";
 import { ExperienceEntry } from "./utils/experience-entry";
 import { SkillChips } from "./utils/skill-chip";
-import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
 import { Path, PathValue } from "react-hook-form";
 import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
+import {
+  resolveResumeLayoutBlueprint,
+  resolveResumeTemplateTheme,
+  ResumeTemplateThemeContext,
+} from "./resume-template-theme";
+import { useTranslations } from "next-intl";
 
 /* ---------------------------------- Helper --------------------------------- */
 /**
@@ -50,7 +58,10 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
     education,
     yearsOfExperience,
     availability,
+    careerScopes,
   } = data;
+  const theme = resolveResumeTemplateTheme(data.template, data.design);
+  const t = useTranslations("resumeBuilder");
 
   /* -------------------------------- All States ------------------------------ */
   const [educationLines, setEducationLinesState] = useState<string[]>(() =>
@@ -64,7 +75,6 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   );
-
   const expIds = (experience || []).map((_, i) => `exp-${i}`);
   const skillIds = (skills || []).map((_, i) => `skill-${i}`);
 
@@ -166,8 +176,8 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
     const store = useResumeCanvasEditorStore.getState();
-    const from = store.sectionOrder.indexOf(active.id as TResumeSectionID);
-    const to = store.sectionOrder.indexOf(over.id as TResumeSectionID);
+    const from = store.sectionOrder.indexOf(active.id as TResumeContentSection);
+    const to = store.sectionOrder.indexOf(over.id as TResumeContentSection);
     if (from === -1 || to === -1) return;
     store.reorderSections(from, to);
   }
@@ -177,17 +187,32 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
   const summarySection =
     summary !== undefined ? (
       <SectionWrapper sectionId="summary" isDraggable>
-        <SectionHeading>Professional Summary</SectionHeading>
+        <SectionHeading>{t("professionalSummaryHeading")}</SectionHeading>
         <div
           style={{
             fontSize: 12,
-            color: RESUME_COLOR.TEXT_SECONDARY,
-            lineHeight: 1.6,
+            color: theme.textSecondary,
+            lineHeight: theme.lineHeight,
+            padding:
+              theme.summaryStyle === "highlight"
+                ? theme.experiencePadding
+                : theme.summaryStyle === "quote"
+                  ? "3px 0 3px 14px"
+                  : undefined,
+            background:
+              theme.summaryStyle === "highlight" ? theme.accentSoft : undefined,
+            borderLeft:
+              theme.summaryStyle === "quote"
+                ? `4px solid ${theme.accent}`
+                : undefined,
+            borderRadius:
+              theme.summaryStyle === "highlight" ? theme.radius : undefined,
+            fontStyle: theme.summaryStyle === "quote" ? "italic" : undefined,
           }}
         >
           <Editable
             value={summary || ""}
-            placeholder="Write a professional summary…"
+            placeholder={t("summaryPlaceholder")}
             multiline
             onCommit={(v) => setValue("summary", v, { shouldDirty: true })}
             style={{ display: "block" }}
@@ -199,7 +224,7 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
   // ── Experience UI Section ──────────────────────────────────────────────
   const experienceSection = (
     <SectionWrapper sectionId="experience" isDraggable>
-      <SectionHeading>Work Experience</SectionHeading>
+      <SectionHeading>{t("workExperienceHeading")}</SectionHeading>
       <DndContext sensors={sensors} onDragEnd={handleExpDragEnd}>
         <SortableContext items={expIds} strategy={verticalListSortingStrategy}>
           {(experience || []).map((exp, i) => (
@@ -215,15 +240,23 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
           ))}
         </SortableContext>
       </DndContext>
-      <GhostAddButton label="Add Experience" onClick={addExperience} />
+      <GhostAddButton label={t("addExperience")} onClick={addExperience} />
     </SectionWrapper>
   );
 
   // ── Skills UI Section ────────────────────────────────────────────────
   const skillsSection = (
     <SectionWrapper sectionId="skills" isDraggable>
-      <SectionHeading>Skills</SectionHeading>
-      <div style={{ marginTop: 4 }}>
+      <SectionHeading>{t("skills")}</SectionHeading>
+      <div
+        style={{
+          marginTop: 4,
+          display: theme.skillsStyle === "grid" ? "grid" : undefined,
+          gridTemplateColumns:
+            theme.skillsStyle === "grid" ? "1fr 1fr" : undefined,
+          gap: theme.skillsStyle === "grid" ? "5px 12px" : undefined,
+        }}
+      >
         <DndContext sensors={sensors} onDragEnd={handleSkillDragEnd}>
           <SortableContext
             items={skillIds}
@@ -241,7 +274,7 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
             ))}
           </SortableContext>
         </DndContext>
-        <GhostAddButton label="Add Skill" onClick={addSkill} />
+        <GhostAddButton label={t("addSkill")} onClick={addSkill} />
       </div>
     </SectionWrapper>
   );
@@ -249,17 +282,33 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
   // ── Education UI Section ──────────────────────────────────────────────
   const educationSection = (
     <SectionWrapper sectionId="education" isDraggable>
-      <SectionHeading>Education</SectionHeading>
-      <div style={{ fontSize: 12, color: RESUME_COLOR.TEXT_SECONDARY }}>
+      <SectionHeading>{t("education")}</SectionHeading>
+      <div style={{ fontSize: 12, color: theme.textSecondary }}>
         {educationLines.map((line, i) => (
           <div
             key={i}
-            style={{ position: "relative", marginBottom: 4 }}
+            style={{
+              position: "relative",
+              marginBottom: 6,
+              padding: theme.educationStyle === "cards" ? "7px 9px" : undefined,
+              border:
+                theme.educationStyle === "cards"
+                  ? `1px solid ${theme.accent}`
+                  : undefined,
+              borderLeft:
+                theme.educationStyle === "timeline"
+                  ? `3px solid ${theme.accent}`
+                  : undefined,
+              borderRadius:
+                theme.educationStyle === "cards" ? theme.radius : undefined,
+              background:
+                theme.educationStyle === "cards" ? theme.accentSoft : undefined,
+            }}
             className="group/edu"
           >
             <Editable
               value={line}
-              placeholder="e.g. BSc Computer Science, MIT, 2020"
+              placeholder={t("educationPlaceholder")}
               onCommit={(v) => commitEducationLine(i, v)}
               style={{ display: "block" }}
             />
@@ -268,7 +317,7 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
                 e.stopPropagation();
                 setEducationLines(educationLines.filter((_, idx) => idx !== i));
               }}
-              title="Remove education entry"
+              title={t("removeEducation")}
               className="absolute -right-5 top-0 opacity-0 group-hover/edu:opacity-60 hover:!opacity-100 transition-opacity"
               style={{ color: RESUME_COLOR.DANGER }}
             >
@@ -277,259 +326,389 @@ export default function CanvasTemplate(props: ICanvasTemplateProps) {
           </div>
         ))}
         <GhostAddButton
-          label="Add Education"
+          label={t("addEducation")}
           onClick={() => setEducationLines([...educationLines, ""])}
         />
       </div>
     </SectionWrapper>
   );
 
+  const careerScopesSection = (
+    <SectionWrapper sectionId="careerScopes" isDraggable>
+      <SectionHeading>{t("careerInterests")}</SectionHeading>
+      <div style={{ marginTop: 4 }}>
+        {(careerScopes || []).map((scope, index) => (
+          <span
+            key={`${scope}-${index}`}
+            style={{
+              display: "inline-block",
+              color: theme.accent,
+              border: `1px solid ${theme.accent}`,
+              fontSize: 11,
+              padding: "2px 8px",
+              borderRadius: theme.chipRadius,
+              margin: "2px 3px",
+              width: theme.skillsStyle === "grid" ? "45%" : undefined,
+              background:
+                theme.skillsStyle === "chips"
+                  ? theme.accentSoft
+                  : "transparent",
+            }}
+          >
+            {scope}
+          </span>
+        ))}
+      </div>
+    </SectionWrapper>
+  );
+
   // ── Section Map ────────────────────────────────────────────────────────
-  const sectionMap: Record<TResumeSectionID, React.ReactNode> = {
-    header: null, // header is always rendered first, not in sectionOrder
+  const sectionMap: Record<TResumeContentSection, React.ReactNode> = {
     summary: summarySection,
     experience: experienceSection,
     skills: skillsSection,
     education: educationSection,
-    careerScopes: null, // hidden — not shown in canvas or PDF
+    careerScopes: careerScopesSection,
   };
+
+  const {
+    layout,
+    primarySections: primaryOrder,
+    secondarySections: secondaryOrder,
+    gridTemplateColumns: bodyColumns,
+    gridTemplateAreas: bodyAreas,
+  } = resolveResumeLayoutBlueprint(theme, sectionOrder);
+  const headerIsCentered =
+    theme.headerLayout === "centered" || theme.avatarPlacement === "center";
+  const headerIsVertical = headerIsCentered || theme.headerLayout === "stacked";
+  const headerAlignment = headerIsCentered
+    ? "center"
+    : theme.avatarPlacement === "end"
+      ? "flex-end"
+      : "flex-start";
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div
-      style={{
-        fontFamily: "'Segoe UI', Arial, sans-serif",
-        background: RESUME_COLOR.WHITE,
-        color: RESUME_COLOR.TEXT_PRIMARY,
-        padding: "32px 36px 32px 44px", // extra left padding for drag handles
-        fontSize: 13,
-        lineHeight: 1.6,
-        minHeight: "100%",
-        boxSizing: "border-box",
-      }}
-    >
-      {/* Header Section: Always rendered first, not reorderable */}
-      <SectionWrapper sectionId="header" isDraggable={false}>
-        <div
-          style={{
-            borderBottom: `2px solid ${RESUME_COLOR.ACCENT}`,
-            paddingBottom: 14,
-            marginBottom: 16,
-          }}
-        >
-          {/* Avatar, Name, and Title Row Section */}
+    <ResumeTemplateThemeContext.Provider value={theme}>
+      <div
+        style={{
+          fontFamily: theme.font,
+          background: theme.background,
+          color: theme.text,
+          fontSize: theme.bodyFontSize,
+          lineHeight: theme.lineHeight,
+          minHeight: 1123,
+          boxSizing: "border-box",
+          borderTop:
+            theme.decoration === "top-band"
+              ? `12px solid ${theme.accent}`
+              : undefined,
+          borderLeft:
+            theme.decoration === "side-band"
+              ? `12px solid ${theme.accent}`
+              : undefined,
+        }}
+        data-design-palette={data.design?.palette ?? "template"}
+        data-design-density={data.design?.density ?? "balanced"}
+        data-design-sections={theme.sectionStyle}
+        data-design-layout={layout}
+      >
+        {/* Header Section: Always rendered first, not reorderable */}
+        <SectionWrapper sectionId="header" isDraggable={false}>
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 16,
-              marginBottom: 6,
+              backgroundColor: theme.headerBackground,
+              backgroundImage:
+                theme.decoration === "geometric"
+                  ? `linear-gradient(135deg, transparent 68%, ${theme.accent} 68%, ${theme.accent} 78%, transparent 78%)`
+                  : undefined,
+              color: theme.headerText,
+              borderBottom:
+                theme.layout === "single"
+                  ? `3px solid ${theme.accent}`
+                  : theme.headerStyle === "minimal"
+                    ? `2px solid ${theme.accent}`
+                    : undefined,
+              padding: theme.headerPadding,
+              textAlign:
+                headerAlignment === "center"
+                  ? "center"
+                  : headerAlignment === "flex-end"
+                    ? "right"
+                    : "left",
             }}
           >
-            <AvatarField
-              src={personalInfo.profilePicture}
-              onCommit={(v) =>
-                setValue("personalInfo.profilePicture", v, {
-                  shouldDirty: true,
-                })
-              }
-            />
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div
-                style={{
-                  fontSize: 22,
-                  fontWeight: 700,
-                  color: RESUME_COLOR.TEXT_PRIMARY,
-                  letterSpacing: -0.3,
-                }}
-              >
-                <Editable
-                  value={personalInfo.fullName || ""}
-                  placeholder="Your Name"
-                  onCommit={(v) =>
-                    setValue("personalInfo.fullName", v, { shouldDirty: true })
-                  }
-                />
-              </div>
-              <div
-                style={{
-                  fontSize: 13,
-                  color: RESUME_COLOR.ACCENT,
-                  fontWeight: 500,
-                  marginTop: 2,
-                }}
-              >
-                <Editable
-                  value={personalInfo.job || ""}
-                  placeholder="Job Title"
-                  onCommit={(v) =>
-                    setValue("personalInfo.job", v, { shouldDirty: true })
-                  }
-                />
+            {/* Avatar, Name, and Title Row Section */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: headerIsVertical
+                  ? "column"
+                  : theme.avatarPlacement === "end"
+                    ? "row-reverse"
+                    : "row",
+                alignItems: headerIsVertical ? headerAlignment : "center",
+                gap: theme.headerLayout === "compact" ? 12 : 18,
+                marginBottom: 6,
+              }}
+            >
+              <AvatarField
+                src={personalInfo.profilePicture}
+                onCommit={(v) =>
+                  setValue("personalInfo.profilePicture", v, {
+                    shouldDirty: true,
+                  })
+                }
+              />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div
+                  style={{
+                    fontSize: theme.nameSize,
+                    fontWeight: 700,
+                    color: theme.headerText,
+                    letterSpacing: -0.3,
+                  }}
+                >
+                  <Editable
+                    value={personalInfo.fullName || ""}
+                    placeholder={t("yourNamePlaceholder")}
+                    onCommit={(v) =>
+                      setValue("personalInfo.fullName", v, {
+                        shouldDirty: true,
+                      })
+                    }
+                  />
+                </div>
+                <div
+                  style={{
+                    fontSize: 13,
+                    color:
+                      theme.layout === "single"
+                        ? theme.accent
+                        : theme.headerText,
+                    fontWeight: 500,
+                    marginTop: 2,
+                  }}
+                >
+                  <Editable
+                    value={personalInfo.job || ""}
+                    placeholder={t("jobTitlePlaceholder")}
+                    onCommit={(v) =>
+                      setValue("personalInfo.job", v, { shouldDirty: true })
+                    }
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Contact Row Section */}
-          <div
-            style={{ marginTop: 6, display: "flex", flexWrap: "wrap", gap: 0 }}
-          >
-            <span
+            {/* Contact Row Section */}
+            <div
               style={{
-                fontSize: 11,
-                color: RESUME_COLOR.TEXT_MUTED,
-                marginRight: 14,
+                marginTop: 6,
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 0,
+                justifyContent: headerAlignment,
               }}
             >
-              ✉{" "}
-              <Editable
-                value={personalInfo.email || ""}
-                placeholder="email@example.com"
-                onCommit={(v) =>
-                  setValue("personalInfo.email", v, { shouldDirty: true })
-                }
-              />
-            </span>
-            <span
-              style={{
-                fontSize: 11,
-                color: RESUME_COLOR.TEXT_MUTED,
-                marginRight: 14,
-              }}
-            >
-              📞{" "}
-              <Editable
-                value={personalInfo.phone || ""}
-                placeholder="Phone"
-                onCommit={(v) =>
-                  setValue("personalInfo.phone", v, { shouldDirty: true })
-                }
-              />
-            </span>
-            <span
-              style={{
-                fontSize: 11,
-                color: RESUME_COLOR.TEXT_MUTED,
-                marginRight: 14,
-              }}
-            >
-              📍{" "}
-              <Editable
-                value={personalInfo.location || ""}
-                placeholder="Location"
-                onCommit={(v) =>
-                  setValue("personalInfo.location", v, { shouldDirty: true })
-                }
-              />
-            </span>
-            {personalInfo.age && (
               <span
                 style={{
                   fontSize: 11,
-                  color: RESUME_COLOR.TEXT_MUTED,
+                  color: theme.headerText,
                   marginRight: 14,
                 }}
               >
-                🎂 Age:{" "}
+                ✉{" "}
                 <Editable
-                  value={personalInfo.age?.toString() || ""}
-                  placeholder="Age"
+                  value={personalInfo.email || ""}
+                  placeholder="email@example.com"
                   onCommit={(v) =>
-                    setValue("personalInfo.age", parseInt(v) || 0, {
-                      shouldDirty: true,
-                    })
+                    setValue("personalInfo.email", v, { shouldDirty: true })
                   }
                 />
               </span>
-            )}
-          </div>
-
-          {/* Meta Row Section */}
-          {(yearsOfExperience || availability) && (
-            <div style={{ marginTop: 4 }}>
-              {yearsOfExperience && (
-                <span
-                  style={{
-                    fontSize: 11,
-                    color: RESUME_COLOR.TEXT_MUTED,
-                    marginRight: 12,
-                  }}
-                >
-                  <Editable
-                    value={yearsOfExperience}
-                    placeholder="Years of exp."
-                    onCommit={(v) =>
-                      setValue("yearsOfExperience", v, { shouldDirty: true })
-                    }
-                  />{" "}
-                  yrs exp.
-                </span>
-              )}
-              {availability && (
-                <span
-                  style={{
-                    fontSize: 11,
-                    color: RESUME_COLOR.TEXT_MUTED,
-                    marginRight: 12,
-                  }}
-                >
-                  Available:{" "}
-                  <Editable
-                    value={availability}
-                    placeholder="Availability"
-                    onCommit={(v) =>
-                      setValue("availability", v, { shouldDirty: true })
-                    }
-                  />
-                </span>
-              )}
+              <span
+                style={{
+                  fontSize: 11,
+                  color: theme.headerText,
+                  marginRight: 14,
+                }}
+              >
+                📞{" "}
+                <Editable
+                  value={personalInfo.phone || ""}
+                  placeholder={t("phonePlaceholder")}
+                  onCommit={(v) =>
+                    setValue("personalInfo.phone", v, { shouldDirty: true })
+                  }
+                />
+              </span>
+              <span
+                style={{
+                  fontSize: 11,
+                  color: theme.headerText,
+                  marginRight: 14,
+                }}
+              >
+                📍{" "}
+                <Editable
+                  value={personalInfo.location || ""}
+                  placeholder={t("locationPlaceholder")}
+                  onCommit={(v) =>
+                    setValue("personalInfo.location", v, { shouldDirty: true })
+                  }
+                />
+              </span>
+              {Number.isFinite(personalInfo.age) &&
+                Number(personalInfo.age) > 0 && (
+                  <span
+                    style={{
+                      fontSize: 11,
+                      color: theme.headerText,
+                      marginRight: 14,
+                    }}
+                  >
+                    🎂 {t("age")}:{" "}
+                    <Editable
+                      value={personalInfo.age?.toString() || ""}
+                      placeholder={t("age")}
+                      onCommit={(v) =>
+                        setValue("personalInfo.age", parseInt(v) || 0, {
+                          shouldDirty: true,
+                        })
+                      }
+                    />
+                  </span>
+                )}
             </div>
-          )}
 
-          {/* Social Links Section */}
-          {personalInfo.socials &&
-            Object.keys(personalInfo.socials).length > 0 && (
-              <div style={{ marginTop: 6 }}>
-                {Object.entries(personalInfo.socials).map(([key, url]) => {
-                  const socialPath =
-                    `personalInfo.socials.${key}` as Path<IBuildResume>;
-
-                  return (
-                    <span key={key} style={{ marginRight: 10, fontSize: 11 }}>
-                      <span style={{ color: RESUME_COLOR.TEXT_SUBTLE }}>
-                        {key.charAt(0).toUpperCase() + key.slice(1)}:
-                      </span>{" "}
-                      <Editable
-                        value={url || ""}
-                        placeholder={`https://${key}.com/...`}
-                        onCommit={(v) =>
-                          setValue(
-                            socialPath,
-                            v as PathValue<IBuildResume, typeof socialPath>,
-                            { shouldDirty: true },
-                          )
-                        }
-                        style={{ color: RESUME_COLOR.ACCENT }}
-                      />
-                    </span>
-                  );
-                })}
+            {/* Meta Row Section */}
+            {(yearsOfExperience || availability) && (
+              <div style={{ marginTop: 4 }}>
+                {yearsOfExperience && (
+                  <span
+                    style={{
+                      fontSize: 11,
+                      color: theme.headerText,
+                      marginRight: 12,
+                    }}
+                  >
+                    <Editable
+                      value={yearsOfExperience}
+                      placeholder={t("yearsExpPlaceholder")}
+                      onCommit={(v) =>
+                        setValue("yearsOfExperience", v, { shouldDirty: true })
+                      }
+                    />{" "}
+                    {t("yearsExperienceSuffix")}
+                  </span>
+                )}
+                {availability && (
+                  <span
+                    style={{
+                      fontSize: 11,
+                      color: theme.headerText,
+                      marginRight: 12,
+                    }}
+                  >
+                    {t("availableLabel")}{" "}
+                    <Editable
+                      value={availability}
+                      placeholder={t("availabilityPlaceholder")}
+                      onCommit={(v) =>
+                        setValue("availability", v, { shouldDirty: true })
+                      }
+                    />
+                  </span>
+                )}
               </div>
             )}
-        </div>
-      </SectionWrapper>
 
-      {/* Draggable Sections */}
-      <DndContext sensors={sensors} onDragEnd={handleSectionDragEnd}>
-        <SortableContext
-          items={sectionOrder}
-          strategy={verticalListSortingStrategy}
-        >
-          {sectionOrder.map((id) => (
-            <div key={id}>{sectionMap[id]}</div>
-          ))}
-        </SortableContext>
-      </DndContext>
-    </div>
+            {/* Social Links Section */}
+            {personalInfo.socials &&
+              Object.keys(personalInfo.socials).length > 0 && (
+                <div style={{ marginTop: 6 }}>
+                  {Object.entries(personalInfo.socials).map(([key, url]) => {
+                    const socialPath =
+                      `personalInfo.socials.${key}` as Path<IBuildResume>;
+
+                    return (
+                      <span key={key} style={{ marginRight: 10, fontSize: 11 }}>
+                        <span style={{ color: theme.headerText, opacity: 0.7 }}>
+                          {key.charAt(0).toUpperCase() + key.slice(1)}:
+                        </span>{" "}
+                        <Editable
+                          value={url || ""}
+                          placeholder={`https://${key}.com/...`}
+                          onCommit={(v) =>
+                            setValue(
+                              socialPath,
+                              v as PathValue<IBuildResume, typeof socialPath>,
+                              { shouldDirty: true },
+                            )
+                          }
+                          style={{ color: theme.headerText }}
+                        />
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
+          </div>
+        </SectionWrapper>
+
+        {/* AI-Composed Primary and Secondary Content Regions Section */}
+        <DndContext sensors={sensors} onDragEnd={handleSectionDragEnd}>
+          <div
+            style={{
+              padding: theme.contentPadding,
+              minWidth: 0,
+              display: layout === "single" ? "block" : "grid",
+              gridTemplateColumns: bodyColumns,
+              gridTemplateAreas: bodyAreas,
+              gap: Math.max(18, theme.sectionGap),
+              alignItems: "start",
+            }}
+          >
+            <main style={{ gridArea: "primary", minWidth: 0 }}>
+              <SortableContext
+                items={primaryOrder}
+                strategy={verticalListSortingStrategy}
+              >
+                {primaryOrder.map((id) => (
+                  <div key={id}>{sectionMap[id]}</div>
+                ))}
+              </SortableContext>
+            </main>
+
+            {secondaryOrder.length > 0 && (
+              <aside
+                style={{
+                  gridArea: "secondary",
+                  minWidth: 0,
+                  padding:
+                    layout === "two-column"
+                      ? undefined
+                      : theme.experiencePadding,
+                  borderRadius:
+                    layout === "two-column" ? undefined : theme.radius,
+                  background:
+                    layout === "two-column" ? undefined : theme.accentSoft,
+                }}
+              >
+                <SortableContext
+                  items={secondaryOrder}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {secondaryOrder.map((id) => (
+                    <div key={id}>{sectionMap[id]}</div>
+                  ))}
+                </SortableContext>
+              </aside>
+            )}
+          </div>
+        </DndContext>
+      </div>
+    </ResumeTemplateThemeContext.Provider>
   );
 }

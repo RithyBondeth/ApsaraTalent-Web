@@ -45,6 +45,7 @@ export default function ExperienceStepForm({
       initializedRef.current = true;
       append({
         title: "",
+        company: "",
         description: "",
         startDate: "" as unknown as Date,
         endDate: "" as unknown as Date,
@@ -57,6 +58,7 @@ export default function ExperienceStepForm({
   const addExperience = () => {
     append({
       title: "",
+      company: "",
       description: "",
       startDate: "" as unknown as Date,
       endDate: "" as unknown as Date,
@@ -122,6 +124,19 @@ export default function ExperienceStepForm({
                 placeholder={t("empExperienceTitlePlaceholder")}
                 {...register(`experience.${index}.title`)}
                 validationMessage={errors?.experience?.[index]?.title?.message}
+              />
+            }
+          />
+
+          <LabelInput
+            label={t("empExperienceCompany")}
+            input={
+              <Input
+                placeholder={t("empExperienceCompanyPlaceholder")}
+                {...register(`experience.${index}.company`)}
+                validationMessage={
+                  errors?.experience?.[index]?.company?.message
+                }
               />
             }
           />

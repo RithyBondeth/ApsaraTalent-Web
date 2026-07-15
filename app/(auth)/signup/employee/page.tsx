@@ -119,6 +119,7 @@ export default function EmployeeSignup() {
       experience: parsedData?.experiences?.length
         ? parsedData.experiences.map((exp) => ({
             title: exp.title,
+            company: exp.company ?? "",
             description: exp.description,
             startDate: exp.startDate
               ? new Date(exp.startDate)
@@ -239,6 +240,7 @@ export default function EmployeeSignup() {
             })),
             experiences: data.experience.map((exp) => ({
               title: exp.title,
+              company: exp.company,
               description: exp.description,
               startDate: new Date(exp.startDate).toISOString(),
               endDate: new Date(exp.endDate).toISOString(),
@@ -313,6 +315,7 @@ export default function EmployeeSignup() {
             })),
             experiences: data.experience.map((exp) => ({
               title: exp.title,
+              company: exp.company,
               description: exp.description,
               startDate: new Date(exp.startDate).toISOString(),
               endDate: new Date(exp.endDate).toISOString(),

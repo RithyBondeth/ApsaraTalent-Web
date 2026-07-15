@@ -110,6 +110,7 @@ export const experienceSchema = z.object({
         .object({
           id: z.string().optional(),
           title: textValidation().optional(),
+          company: textValidation().optional(),
           description: textValidation().optional(),
           startDate: dateValidation().optional(),
           endDate: dateValidation().optional(),

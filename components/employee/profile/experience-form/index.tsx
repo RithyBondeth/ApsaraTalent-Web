@@ -83,6 +83,16 @@ export default function EmployeeExperienceForm(
             />
           }
         />
+        <LabelInput
+          label={t("expCompany")}
+          input={
+            <Input
+              placeholder={t("expCompanyPlaceholder")}
+              {...register(`experiences.${props.index}.company`)}
+              disabled={!props.isEdit}
+            />
+          }
+        />
         {/* Description Section */}
         <div className="w-full flex flex-col items-start gap-1">
           <div className="w-full flex items-center justify-between">

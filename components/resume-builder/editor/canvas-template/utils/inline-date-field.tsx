@@ -9,6 +9,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { CalendarDays } from "lucide-react";
 import { Editable } from "./editable";
 import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
+import { useTranslations } from "next-intl";
 
 export function InlineDateField(props: {
   value: string;
@@ -17,6 +18,7 @@ export function InlineDateField(props: {
 }) {
   /* ----------------------------------- Props --------------------------------- */
   const { value, placeholder, onCommit } = props;
+  const t = useTranslations("resumeBuilder");
 
   /* -------------------------------- All States ------------------------------- */
   const [open, setOpen] = useState<boolean>(false);
@@ -48,7 +50,7 @@ export function InlineDateField(props: {
           <button
             onClick={(e) => e.stopPropagation()}
             onMouseDown={(e) => e.stopPropagation()}
-            title="Pick a date"
+            title={t("pickDate")}
             className="opacity-0 group-hover/date:opacity-50 hover:!opacity-100 transition-opacity ml-0.5"
             style={{ color: RESUME_COLOR.TEXT_SUBTLE, lineHeight: 1 }}
           >

@@ -89,7 +89,7 @@ export function PersonalInfoTab({
             )}
           </div>
           <Input
-            placeholder="e.g. Software Engineer"
+            placeholder={t("softwareEngineerPlaceholder")}
             {...register("personalInfo.job")}
           />
         </div>
@@ -100,6 +100,7 @@ export function PersonalInfoTab({
         <div>
           <FieldLabel>{t("email")}</FieldLabel>
           <Input
+            type="email"
             placeholder="email@example.com"
             {...register("personalInfo.email")}
           />
@@ -107,7 +108,7 @@ export function PersonalInfoTab({
         <div>
           <FieldLabel>{t("phone")}</FieldLabel>
           <Input
-            placeholder="+1 234 567 890"
+            placeholder={t("phoneExample")}
             {...register("personalInfo.phone")}
           />
         </div>
@@ -118,7 +119,7 @@ export function PersonalInfoTab({
         <div>
           <FieldLabel>{t("location")}</FieldLabel>
           <Input
-            placeholder="City, Country"
+            placeholder={t("locationExample")}
             {...register("personalInfo.location")}
           />
         </div>
@@ -137,13 +138,16 @@ export function PersonalInfoTab({
         <div>
           <FieldLabel>{t("yearsOfExperience")}</FieldLabel>
           <Input
-            placeholder="e.g. 5 years"
+            placeholder={t("yearsExperienceExample")}
             {...register("yearsOfExperience")}
           />
         </div>
         <div>
           <FieldLabel>{t("availability")}</FieldLabel>
-          <Input placeholder="e.g. Immediately" {...register("availability")} />
+          <Input
+            placeholder={t("immediatelyPlaceholder")}
+            {...register("availability")}
+          />
         </div>
       </div>
 
@@ -169,7 +173,7 @@ export function PersonalInfoTab({
         </div>
         <Textarea
           autoResize
-          placeholder="A brief professional summary about yourself..."
+          placeholder={t("summaryFormPlaceholder")}
           className="min-h-[100px] text-xs leading-relaxed"
           {...register("summary")}
         />

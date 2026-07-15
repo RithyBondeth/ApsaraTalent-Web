@@ -125,6 +125,7 @@ export const useUpdateOneEmployeeStore = create<TUpdateOneEmployeeState>(
           requestBody.experiences = body.experiences.map((exp) => ({
             ...(exp.id && { id: exp.id }),
             title: exp.title,
+            company: exp.company,
             description: exp.description,
             startDate: exp.startDate, // should be ISO string or Date -> axios will serialize
             endDate: exp.endDate ?? null,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,11 +25,15 @@ import { streamFetch } from "@/utils/functions/stream-fetch";
 import { AiQuotaBadge } from "@/components/utils/feedback/ai-quota-badge";
 import { Badge } from "@/components/ui/badge";
 import { IAiOptimizerDrawerProps } from "./props";
+import { useTranslations } from "next-intl";
 
 export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
   /* ---------------------------------- Props ---------------------------------- */
   const { getCurrentValues, onApplySummary, onApplySkills, onApplyExperience } =
     props;
+
+  /* ---------------------------------- Utils ---------------------------------- */
+  const t = useTranslations("resumeBuilder");
 
   /* -------------------------------- All States -------------------------------- */
   const [open, setOpen] = useState<boolean>(false);
@@ -41,12 +45,24 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
   const [appliedSummary, setAppliedSummary] = useState<boolean>(false);
   const [appliedSkills, setAppliedSkills] = useState<boolean>(false);
   const [appliedExp, setAppliedExp] = useState<Set<number>>(new Set());
+  const requestControllerRef = useRef<AbortController | null>(null);
+
+  /* --------------------------------- Effects --------------------------------- */
+  useEffect(
+    () => () => {
+      requestControllerRef.current?.abort();
+    },
+    [],
+  );
 
   /* ---------------------------------- Methods --------------------------------- */
   // ── Handle Analyze Resume ─────────────────
-  const analyze = async () => {
+  const analyze = async (force = false) => {
     setOpen(true);
-    if (data && !generating) return;
+    if (data && !generating && !force) return;
+    requestControllerRef.current?.abort();
+    const controller = new AbortController();
+    requestControllerRef.current = controller;
     setGenerating(true);
     setError(null);
     setData({
@@ -73,33 +89,47 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
       const trimmed = line.trim();
       if (!trimmed) return;
       try {
-        const item = JSON.parse(trimmed);
+        const item: unknown = JSON.parse(trimmed);
+        if (!item || typeof item !== "object") return;
+        const parsed = item as Record<string, unknown>;
         let changed = false;
-        switch (item.type) {
+        switch (parsed.type) {
           case "feedback":
-            acc.overallFeedback = item.value ?? "";
-            changed = true;
+            if (typeof parsed.value === "string") {
+              acc.overallFeedback = parsed.value;
+              changed = true;
+            }
             break;
           case "summary":
-            acc.suggestedSummary = item.value ?? "";
-            changed = true;
+            if (typeof parsed.value === "string") {
+              acc.suggestedSummary = parsed.value;
+              changed = true;
+            }
             break;
           case "skill":
-            if (item.value) {
-              acc.suggestedSkills = [...acc.suggestedSkills, item.value];
+            if (typeof parsed.value === "string" && parsed.value.trim()) {
+              acc.suggestedSkills = [...acc.suggestedSkills, parsed.value];
               changed = true;
             }
             break;
           case "exp":
-            if (item.index !== undefined) {
+            if (
+              typeof parsed.index === "number" &&
+              Number.isInteger(parsed.index) &&
+              parsed.index >= 0 &&
+              typeof parsed.description === "string"
+            ) {
+              const achievements = Array.isArray(parsed.achievements)
+                ? parsed.achievements.filter(
+                    (value): value is string => typeof value === "string",
+                  )
+                : [];
               acc.experienceSuggestions = [
                 ...acc.experienceSuggestions,
                 {
-                  index: item.index,
-                  improvedDescription: item.description ?? "",
-                  improvedAchievements: Array.isArray(item.achievements)
-                    ? item.achievements
-                    : [],
+                  index: parsed.index,
+                  improvedDescription: parsed.description,
+                  improvedAchievements: achievements,
                 } as IExperienceSuggestion,
               ];
               changed = true;
@@ -117,7 +147,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
     try {
       await streamFetch(
         API_RESUME_OPTIMIZE_STREAM_URL,
-        { method: "POST", body: values },
+        { method: "POST", body: values, signal: controller.signal },
         (event) => {
           if (event.t === "chunk") {
             lineBuffer += event.v;
@@ -129,22 +159,23 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
           } else if (event.t === "error") {
             console.warn("[ResumeOptimizer] Stream error:", event.v);
             // Surface the server's message when the AI quota / rate limit is hit.
-            setError(
-              event.code === 429
-                ? event.v
-                : "Failed to analyze resume. Please try again.",
-            );
+            setError(event.code === 429 ? event.v : t("optimizerFailed"));
             setData(null);
           }
         },
       );
     } catch (err) {
-      console.warn("[ResumeOptimizer] Fetch failed:", err);
-      setError("Failed to analyze resume. Please try again.");
-      setData(null);
+      if (!(err instanceof DOMException && err.name === "AbortError")) {
+        console.warn("[ResumeOptimizer] Fetch failed:", err);
+        setError(t("optimizerFailed"));
+        setData(null);
+      }
+    } finally {
+      if (requestControllerRef.current === controller) {
+        requestControllerRef.current = null;
+        setGenerating(false);
+      }
     }
-
-    setGenerating(false);
   };
 
   // ── Handle Reanalyze Resume ───────────────
@@ -153,7 +184,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
     setAppliedSummary(false);
     setAppliedSkills(false);
     setAppliedExp(new Set());
-    analyze();
+    void analyze(true);
   };
 
   // ── Handle Apply Summary ──────────────────
@@ -173,6 +204,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
   // ── Handle Apply Experience ───────────────
   const handleApplyExperience = (index: number) => {
     if (!data) return;
+    if (index < 0 || index >= getCurrentValues().experience.length) return;
     const s = data.experienceSuggestions.find((e) => e.index === index);
     if (!s) return;
     onApplyExperience(index, s.improvedDescription, s.improvedAchievements);
@@ -186,17 +218,23 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
       <Button
         variant="outline"
         size="sm"
-        onClick={analyze}
+        onClick={() => void analyze()}
         className="h-8 text-xs gap-1.5"
-        title="AI Resume Optimizer"
+        title={t("aiOptimizerTitle")}
       >
         <LucideSparkles size={14} className="text-primary" />
-        <span className="hidden lg:inline">AI Optimize</span>
-        <span className="lg:hidden">Optimize</span>
+        <span className="hidden lg:inline">{t("aiOptimize")}</span>
+        <span className="lg:hidden">{t("optimize")}</span>
       </Button>
 
       {/* Drawer Section */}
-      <Sheet open={open} onOpenChange={setOpen}>
+      <Sheet
+        open={open}
+        onOpenChange={(nextOpen) => {
+          setOpen(nextOpen);
+          if (!nextOpen && generating) requestControllerRef.current?.abort();
+        }}
+      >
         <SheetContent
           side="right"
           className="w-full sm:max-w-md flex flex-col gap-0 p-0"
@@ -205,7 +243,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
           <SheetHeader className="px-5 py-4 border-b">
             <SheetTitle className="flex items-center gap-2">
               <LucideSparkles className="size-4 text-primary" />
-              AI Resume Optimizer
+              {t("aiOptimizerTitle")}
               {generating && (
                 <LucideLoader2 className="size-3.5 animate-spin text-primary ml-1" />
               )}
@@ -244,7 +282,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                 {data.overallFeedback && (
                   <div className="rounded-xl bg-muted/50 border border-border/60 p-4 animate-in fade-in-0 slide-in-from-bottom-1 duration-200">
                     <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
-                      Overall Feedback
+                      {t("overallFeedback")}
                     </p>
                     <p className="text-sm text-foreground leading-relaxed">
                       {data.overallFeedback}
@@ -257,11 +295,12 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                   <div className="flex flex-col gap-2 animate-in fade-in-0 slide-in-from-bottom-1 duration-200">
                     <div className="flex items-center justify-between">
                       <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                        Improved Summary
+                        {t("improvedSummary")}
                       </p>
                       {appliedSummary ? (
                         <span className="text-xs text-green-600 flex items-center gap-1">
-                          <LucideCheckCircle2 className="size-3" /> Applied
+                          <LucideCheckCircle2 className="size-3" />{" "}
+                          {t("applied")}
                         </span>
                       ) : (
                         <Button
@@ -271,7 +310,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                           onClick={handleApplySummary}
                           disabled={generating}
                         >
-                          Apply
+                          {t("apply")}
                         </Button>
                       )}
                     </div>
@@ -286,11 +325,12 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                   <div className="flex flex-col gap-2 animate-in fade-in-0 slide-in-from-bottom-1 duration-200">
                     <div className="flex items-center justify-between">
                       <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                        Suggested Skills to Add
+                        {t("suggestedSkills")}
                       </p>
                       {appliedSkills ? (
                         <span className="text-xs text-green-600 flex items-center gap-1">
-                          <LucideCheckCircle2 className="size-3" /> Applied
+                          <LucideCheckCircle2 className="size-3" />{" "}
+                          {t("applied")}
                         </span>
                       ) : (
                         <Button
@@ -300,7 +340,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                           onClick={handleApplySkills}
                           disabled={generating}
                         >
-                          Add All
+                          {t("addAll")}
                         </Button>
                       )}
                     </div>
@@ -327,7 +367,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                 {data.experienceSuggestions.length > 0 && (
                   <div className="flex flex-col gap-3">
                     <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      Experience Improvements
+                      {t("experienceImprovements")}
                     </p>
                     {data.experienceSuggestions.map((s) => (
                       <div
@@ -336,11 +376,12 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                       >
                         <div className="flex items-center justify-between">
                           <p className="text-xs font-medium text-foreground">
-                            Position #{s.index + 1}
+                            {t("positionNumber", { number: s.index + 1 })}
                           </p>
                           {appliedExp.has(s.index) ? (
                             <span className="text-xs text-green-600 flex items-center gap-1">
-                              <LucideCheckCircle2 className="size-3" /> Applied
+                              <LucideCheckCircle2 className="size-3" />{" "}
+                              {t("applied")}
                             </span>
                           ) : (
                             <Button
@@ -350,7 +391,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                               onClick={() => handleApplyExperience(s.index)}
                               disabled={generating}
                             >
-                              Apply
+                              {t("apply")}
                             </Button>
                           )}
                         </div>
@@ -397,7 +438,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                 onClick={handleReanalyze}
               >
                 <LucideSparkles className="size-3.5" />
-                Re-analyze
+                {t("reanalyze")}
               </Button>
             </div>
           )}

@@ -76,6 +76,10 @@ export const makeExperienceStepSchema = (m: {
           .string()
           .min(1, m.fieldRequired("Title"))
           .max(50, m.fieldTooLong("Title", 50)),
+        company: z
+          .string()
+          .min(1, m.fieldRequired("Company"))
+          .max(100, m.fieldTooLong("Company", 100)),
         description: z
           .string()
           .min(1, m.fieldRequired("Description"))

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { streamFetch } from "@/utils/functions/stream-fetch";
 import { API_RESUME_REFINE_BIO_STREAM_URL } from "@/utils/constants/apis/resume.api.constant";
@@ -35,10 +35,19 @@ export interface IRefineContext {
   values?: string[];
 }
 
-/* ---------------------------------- Hook ---------------------------------- */
+/* ----------------------------------- Hook ----------------------------------- */
 export function useAIRefine() {
   /* ------------------------------- All States ------------------------------- */
   const [isRefining, setIsRefining] = useState<boolean>(false);
+  const requestControllerRef = useRef<AbortController | null>(null);
+
+  /* ------------------------------ All Effects ------------------------------- */
+  useEffect(
+    () => () => {
+      requestControllerRef.current?.abort();
+    },
+    [],
+  );
 
   /* --------------------------------- Methods -------------------------------- */
   // ── Handle Refine Content ───────────────────────
@@ -56,6 +65,9 @@ export function useAIRefine() {
     onChunk?: (accumulated: string) => void,
   ): Promise<string | null> => {
     setIsRefining(true);
+    requestControllerRef.current?.abort();
+    const controller = new AbortController();
+    requestControllerRef.current = controller;
 
     // Map hook type → backend API type (RefineProfileBioType enum values)
     const apiType =
@@ -85,6 +97,7 @@ export function useAIRefine() {
             currentText: content ?? "",
             ...context,
           },
+          signal: controller.signal,
         },
         (event) => {
           if (event.t === "chunk") {
@@ -101,10 +114,14 @@ export function useAIRefine() {
 
       return accumulated.trim() || null;
     } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return null;
       console.warn("[AI Refine] fetch failed:", err);
       return null;
     } finally {
-      setIsRefining(false);
+      if (requestControllerRef.current === controller) {
+        requestControllerRef.current = null;
+        setIsRefining(false);
+      }
     }
   };
 

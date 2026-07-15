@@ -1,6 +1,8 @@
 import { TResumeTemplate } from "@/utils/types/resume/resume.type";
 import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
 import { IUser } from "@/utils/interfaces/user/user.interface";
+import { RESUME_EDITOR_DEFAULT_SECTION_ORDER } from "@/utils/constants/resume.constant";
+import { isSafeInlineResumeAvatar } from "@/utils/functions/resume/prepare-resume-avatar";
 
 /* ---------------------------------- Helper ---------------------------------- */
 /**
@@ -30,7 +32,8 @@ function splitDescriptionAndAchievements(description?: string): {
   if (!description) return { summary: "", achievements: [] };
 
   const lines = description
-    .split(/\n|•|-\s/)
+    .replace(/\s*•\s*/g, "\n• ")
+    .split(/\r?\n/)
     .map((l) => l.trim())
     .filter(Boolean);
 
@@ -104,7 +107,7 @@ export function buildResumePayloadFromUser(
       exp.description,
     );
     return {
-      company: "",
+      company: exp.company?.trim() || "",
       position: exp.title || "",
       startDate: formatDateToMonthYear(exp.startDate) || "",
       endDate: exp.endDate ? formatDateToMonthYear(exp.endDate) : "Present",
@@ -165,7 +168,12 @@ export function buildResumePayloadFromUser(
       location: employee.location || undefined,
       age,
       job: employee.job || undefined,
-      profilePicture: employee.avatar || undefined,
+      // The PDF renderer accepts only inline images. Existing remote profile
+      // URLs are not forwarded because candidate-controlled URLs must never be
+      // fetched by the resume service.
+      profilePicture: isSafeInlineResumeAvatar(employee.avatar)
+        ? employee.avatar
+        : undefined,
       socials: Object.keys(socials).length > 0 ? socials : undefined,
     },
     summary,
@@ -175,6 +183,7 @@ export function buildResumePayloadFromUser(
     skills,
     education,
     careerScopes: careerScopes.length > 0 ? careerScopes : undefined,
+    sectionOrder: [...RESUME_EDITOR_DEFAULT_SECTION_ORDER],
     template,
   };
 

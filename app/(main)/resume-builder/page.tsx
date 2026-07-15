@@ -1,23 +1,56 @@
 "use client";
 
 import ResumeBuilderBanner from "@/components/resume-builder/banner";
-import ResumeBuilderFeature from "@/components/resume-builder/feature";
 import ResumeBuilderGenerate from "@/components/resume-builder/generate";
+import ResumeSourceInput from "@/components/resume-builder/source-input";
 import TemplateCard from "@/components/resume-builder/template";
 import { useGetAllTemplateStore } from "@/stores/apis/resume/get-all-template.store";
 import { useResumeEditStore } from "@/stores/apis/resume/resume-edit.store";
 import { useTemplateSelectionStore } from "@/stores/apis/resume/template-selection.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { buildResumePayloadFromUser } from "./_utils/build-payload";
-import { TResumeTemplate } from "@/utils/types/resume/resume.type";
+import {
+  isResumeTemplateKey,
+  TResumeTemplate,
+} from "@/utils/types/resume/resume.type";
 import { TemplateCardSkeleton } from "@/components/resume-builder/skeleton";
 import { useTranslations } from "next-intl";
 import { TypographyP } from "@/components/utils/typography/typography-p";
+import {
+  normalizeResumePayload,
+  removeLegacyResumeDraft,
+  resumeDraftSchema,
+  resumeSchema,
+  saveResumeDraft,
+} from "@/utils/functions/resume/resume-draft";
+import { Button } from "@/components/ui/button";
+import { prepareResumeAvatar } from "@/utils/functions/resume/prepare-resume-avatar";
+import { useGenerateAiResumeStore } from "@/stores/apis/resume/generate-ai-resume.store";
+import { toast } from "sonner";
+import { useAiQuotaStore } from "@/stores/apis/ai/get-ai-quota.store";
+import { IBuildResume } from "@/utils/interfaces/resume/resume.interface";
+import {
+  RESUME_SOURCE_MAX_LENGTH,
+  RESUME_TEMPLATE_LABEL_KEYS,
+} from "@/utils/constants/resume.constant";
 
-// Module-level flag so templates are only fetched once per app session
-let hasFetchedTemplates = false;
+/* --------------------------------- Helper ---------------------------------- */
+/** Numbered step header shared by each stage of the builder flow */
+function StepHeader({ number, title }: { number: string; title: string }) {
+  return (
+    <div className="w-full flex items-center gap-3">
+      <div className="flex size-7 shrink-0 items-center justify-center rounded-full border border-primary/25 bg-primary/10 text-primary text-xs font-bold">
+        {number}
+      </div>
+      <span className="text-sm font-semibold text-foreground/90 shrink-0">
+        {title}
+      </span>
+      <div className="flex-1 h-px bg-border/60" />
+    </div>
+  );
+}
 
 export default function ResumeBuilder() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -28,117 +61,153 @@ export default function ResumeBuilder() {
   // API state
   const {
     templateData,
+    error: templatesError,
     loading: templatesLoading,
     queryAllTemplates,
   } = useGetAllTemplateStore();
   const currentUser = useGetCurrentUserStore((state) => state.user);
+  const generateAiResume = useGenerateAiResumeStore(
+    (state) => state.generateAiResume,
+  );
+  const generateAiResumeFromText = useGenerateAiResumeStore(
+    (state) => state.generateAiResumeFromText,
+  );
+  const refreshAiQuota = useAiQuotaStore((state) => state.fetchQuota);
+  const requestedTemplates = useRef<boolean>(false);
 
   /* -------------------------------- All States ------------------------------ */
-  // Maps DB template titles → ResumeTemplate enum values
-  const templateMap: Record<string, TResumeTemplate> = {
-    "Modern Professional": "modern",
-    "Classic Professional": "classic",
-    "Creative Design": "creative",
-    "Minimalist Pro": "minimalist",
-    "Timeline Resume": "timeline",
-    "Bold Statement": "bold",
-    "Compact One-Page": "compact",
-    "Elegant Style": "elegant",
-    "Colorful Vibrant": "colorful",
-    "Professional Clean": "professional",
-    "Corporate Executive": "corporate",
-    "Dark Mode": "dark",
-    // Legacy / alternate names
-    "Corporate Standard": "corporate",
-    Minimalist: "minimalist",
-    Modern: "modern",
-    Classic: "classic",
-    Creative: "creative",
-  };
-
-  const validKeys: TResumeTemplate[] = [
-    "modern",
-    "classic",
-    "creative",
-    "minimalist",
-    "timeline",
-    "bold",
-    "compact",
-    "elegant",
-    "colorful",
-    "professional",
-    "corporate",
-    "dark",
-  ];
-
   const { setPayload } = useResumeEditStore();
   const { setSelectedTemplate, selectedTemplate } = useTemplateSelectionStore();
+  const [preparingResume, setPreparingResume] = useState<boolean>(false);
+  const [sourceText, setSourceText] = useState<string>("");
 
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
-    if (hasFetchedTemplates) return;
-    hasFetchedTemplates = true;
-    queryAllTemplates();
-  }, [queryAllTemplates]);
+    if (requestedTemplates.current || templateData !== null) return;
+    requestedTemplates.current = true;
+    void queryAllTemplates();
+  }, [queryAllTemplates, templateData]);
 
   /* --------------------------------- Methods --------------------------------- */
   // ── Handle Template Selection ─────────────────────────────────────────
-  const handleSelectTemplate = (templateTitle: string) => {
-    const mapped = templateMap[templateTitle];
-    const titleAsKey = templateTitle.toLowerCase() as TResumeTemplate;
-    const template =
-      mapped ?? (validKeys.includes(titleAsKey) ? titleAsKey : null);
-    if (template) {
-      setSelectedTemplate(template);
-    } else {
-      console.warn("Unrecognized template title:", templateTitle);
-    }
-  };
+  const handleSelectTemplate = (templateKey: TResumeTemplate) =>
+    setSelectedTemplate(templateKey);
 
   // ── Handle Generate Resume Payload ─────────────────────────────────────
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!currentUser || !currentUser.employee) return;
     if (!selectedTemplate) return;
-    const payload = buildResumePayloadFromUser(currentUser, selectedTemplate);
-    setPayload(payload);
-    router.push("/resume-builder/edit");
+    const pastedInfo = sourceText.trim();
+    if (pastedInfo && pastedInfo.length < 20) {
+      toast.error(t("pasteInfoTooShort"));
+      return;
+    }
+    setPreparingResume(true);
+    try {
+      let mergedPayload: IBuildResume;
+
+      if (pastedInfo) {
+        const generatedPayload = await generateAiResumeFromText({
+          sourceText: pastedInfo,
+          template: selectedTemplate,
+        });
+        mergedPayload = normalizeResumePayload({
+          ...generatedPayload,
+          personalInfo: {
+            ...generatedPayload.personalInfo,
+            profilePicture: undefined,
+          },
+          template: selectedTemplate,
+        });
+      } else {
+        const trustedPayload = buildResumePayloadFromUser(
+          currentUser,
+          selectedTemplate,
+        );
+        const aiInput: typeof trustedPayload = {
+          ...trustedPayload,
+          personalInfo: {
+            ...trustedPayload.personalInfo,
+            profilePicture: undefined,
+          },
+        };
+        const [generatedPayload, profilePicture] = await Promise.all([
+          generateAiResume(aiInput),
+          prepareResumeAvatar(currentUser.employee.avatar),
+        ]);
+        mergedPayload = normalizeResumePayload({
+          ...generatedPayload,
+          personalInfo: {
+            ...trustedPayload.personalInfo,
+            profilePicture,
+          },
+          template: trustedPayload.template,
+          sectionOrder: trustedPayload.sectionOrder,
+        });
+      }
+
+      const parsed = (pastedInfo ? resumeDraftSchema : resumeSchema).safeParse(
+        mergedPayload,
+      );
+      if (!parsed.success) throw new Error(t("aiGenerationInvalid"));
+      const payload = parsed.data;
+
+      removeLegacyResumeDraft();
+      saveResumeDraft(currentUser.id, payload);
+      setPayload(payload, currentUser.id);
+      router.push("/resume-builder/edit");
+    } catch (error) {
+      toast.error(t("aiGenerationFailed"), {
+        description:
+          error instanceof Error ? error.message : t("aiGenerationTryAgain"),
+      });
+    } finally {
+      setPreparingResume(false);
+      void refreshAiQuota();
+    }
   };
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col items-start gap-5 px-2.5 sm:px-5 lg:px-8 animate-page-in">
+    <div className="w-full flex flex-col items-start gap-6 px-2.5 pb-4 sm:px-5 lg:px-8 animate-page-in">
       {/* Banner Section */}
       <ResumeBuilderBanner />
 
-      {/* Template Grid Section */}
+      {/* Step 1: Template Selection Section */}
       <div className="w-full flex flex-col gap-3">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 shrink-0 bg-card border border-border/70 rounded-full px-3 py-1.5 shadow-[0_1px_4px_hsl(var(--foreground)/0.06)]">
-            <span className="text-sm font-semibold text-foreground/80">
-              {t("chooseTemplate")}
-            </span>
-          </div>
-          <div className="flex-1 h-px bg-border/60" />
-        </div>
+        <StepHeader number="1" title={t("chooseTemplate")} />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {templatesLoading || templateData === null ? (
+          {templatesLoading || (templateData === null && !templatesError) ? (
             Array.from({ length: 6 }, (_, i) => (
               <TemplateCardSkeleton key={i} />
             ))
-          ) : templateData.length > 0 ? (
+          ) : templatesError ? (
+            <div className="col-span-full flex flex-col items-center justify-center py-12 gap-3">
+              <TypographyP className="text-sm text-destructive text-center">
+                {templatesError}
+              </TypographyP>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => void queryAllTemplates()}
+              >
+                {t("retry")}
+              </Button>
+            </div>
+          ) : templateData && templateData.length > 0 ? (
             templateData.map((resume) => {
-              const mapped = templateMap[resume.title];
-              const isSelected = mapped && selectedTemplate === mapped;
+              if (!isResumeTemplateKey(resume.templateKey)) return null;
+              const templateKey = resume.templateKey;
+              const isSelected = selectedTemplate === templateKey;
               return (
                 <TemplateCard
                   key={resume.id}
-                  isPremium={resume.isPremium}
-                  price={resume.price!}
+                  templateKey={templateKey}
                   image={resume.image}
-                  title={resume.title}
+                  title={t(RESUME_TEMPLATE_LABEL_KEYS[templateKey])}
                   description={resume.description}
-                  onUseTemplate={() => handleSelectTemplate(resume.title)}
-                  selected={!!isSelected}
+                  onUseTemplate={() => handleSelectTemplate(templateKey)}
+                  selected={isSelected}
                 />
               );
             })
@@ -152,13 +221,28 @@ export default function ResumeBuilder() {
         </div>
       </div>
 
-      {/* Features Section */}
-      <ResumeBuilderFeature />
+      {/* Step 2: Information Source Section */}
+      <div className="w-full flex flex-col gap-3">
+        <StepHeader number="2" title={t("pasteInfoTitle")} />
+        <ResumeSourceInput
+          value={sourceText}
+          onChange={setSourceText}
+          disabled={preparingResume}
+          maxLength={RESUME_SOURCE_MAX_LENGTH}
+        />
+      </div>
 
-      {/* Generate Section */}
+      {/* Sticky Generate Bar Section */}
       <ResumeBuilderGenerate
-        disabled={!selectedTemplate}
-        onGenerateClick={handleGenerate}
+        disabled={!selectedTemplate || preparingResume}
+        loading={preparingResume}
+        onGenerateClick={() => void handleGenerate()}
+        selectedTemplate={selectedTemplate}
+        selectedTemplateLabel={
+          selectedTemplate
+            ? t(RESUME_TEMPLATE_LABEL_KEYS[selectedTemplate])
+            : null
+        }
       />
     </div>
   );
