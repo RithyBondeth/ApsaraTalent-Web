@@ -528,6 +528,108 @@ input[type="number"] {
   }
 }
 
+/* ==========================================================================
+   Ambient Controls — theme & language toggles (landing + auth)
+   ========================================================================== */
+
+/* --- Sun ⇄ Moon morph (ThemeToggle) ---
+   Geometry animated via CSS (SVG2 geometry properties). The `.tt-ready` gate
+   is added one frame after mount so the icon never morphs on page load. */
+.tt-icon .tt-core {
+  r: 4.4px;
+}
+.tt-icon .tt-eclipse {
+  cx: 26px;
+  cy: -2px;
+}
+.tt-icon .tt-rays {
+  transform-origin: 12px 12px;
+}
+.tt-icon.tt-dark .tt-core {
+  r: 8.5px;
+}
+.tt-icon.tt-dark .tt-eclipse {
+  cx: 17.5px;
+  cy: 6.5px;
+}
+.tt-icon.tt-dark .tt-rays {
+  transform: rotate(100deg) scale(0);
+  opacity: 0;
+}
+.tt-icon.tt-ready {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.tt-icon.tt-ready .tt-core {
+  transition: r 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.tt-icon.tt-ready .tt-eclipse {
+  transition:
+    cx 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    cy 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.tt-icon.tt-ready .tt-rays {
+  transition:
+    transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.4s ease;
+}
+/* Hover flourishes: the sun spins its rays, the moon rocks toward the sky */
+.group:hover .tt-icon.tt-ready:not(.tt-dark) .tt-rays {
+  transform: rotate(25deg);
+}
+.group:hover .tt-icon.tt-ready.tt-dark {
+  transform: rotate(-16deg);
+}
+
+/* --- Language pill thumb slide + squash (LanguageToggle) --- */
+.lang-thumb-track {
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes lang-thumb-pop {
+  0% {
+    transform: scale(1, 1);
+  }
+  40% {
+    transform: scale(1.14, 0.86);
+  }
+  70% {
+    transform: scale(0.96, 1.05);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}
+.lang-thumb-pop {
+  animation: lang-thumb-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* --- Golden-hour circular theme reveal (View Transitions API) ---
+   The new theme irises out from the toggle button; coordinates are set as
+   CSS variables by ThemeToggle right before startViewTransition(). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 9999;
+  animation: theme-reveal 0.65s cubic-bezier(0.25, 1, 0.3, 1) both;
+}
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0px at var(--theme-reveal-x, 50%) var(--theme-reveal-y, 0%));
+  }
+  to {
+    clip-path: circle(
+      var(--theme-reveal-r, 150vmax) at var(--theme-reveal-x, 50%)
+        var(--theme-reveal-y, 0%)
+    );
+  }
+}
+
 /* Respect user's reduced-motion preference */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -536,5 +638,10 @@ input[type="number"] {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
   }
 }

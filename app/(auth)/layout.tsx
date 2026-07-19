@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import LanguageSwitcher from "@/components/utils/language-switcher";
+import LanguageToggle from "@/components/utils/toggles/language-toggle";
+import ThemeToggle from "@/components/utils/toggles/theme-toggle";
 
 export async function generateMetadata(): Promise<Metadata> {
   const lang = (await cookies()).get("language")?.value ?? "en";
@@ -16,7 +17,10 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <LanguageSwitcher />
+      <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
+        <LanguageToggle />
+        <ThemeToggle />
+      </div>
       {children}
     </>
   );

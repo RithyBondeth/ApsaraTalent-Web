@@ -1,7 +1,4 @@
-"use client";
-
 import { cn } from "@/lib/utils";
-import { useThemeStore } from "@/stores/themes/theme-store";
 import {
   logo,
   logoBlack,
@@ -25,23 +22,41 @@ export default function LogoComponent({
   className,
   priority = false,
 }: ILogoProps) {
-  /* ---------------------------------- Utils ---------------------------------- */
-  const { theme, systemTheme } = useThemeStore();
-  const resolvedTheme = theme === "system" ? systemTheme : theme;
-  const isDark = resolvedTheme === "dark";
+  /* -------------------------------- Render UI -------------------------------- */
+  if (withoutTitle) {
+    return (
+      <Image
+        src={logoWithoutTitle}
+        alt="Apsara Talent logo"
+        height={height}
+        width={width}
+        className={cn("h-auto w-auto", className)}
+        priority={priority}
+      />
+    );
+  }
 
-  const logoIcon = isDark ? logoBlack : logo;
-
-  const src = withoutTitle ? logoWithoutTitle : logoIcon;
-
+  // Both variants are always rendered and the `dark` class picks one via CSS.
+  // Choosing the src in JS breaks hydration: the server can't know the theme,
+  // and React keeps the mismatched src in the DOM without patching it.
   return (
-    <Image
-      src={src}
-      alt="Apsara Talent logo"
-      height={height}
-      width={width}
-      className={cn("h-auto w-auto", className)}
-      priority={priority}
-    />
+    <>
+      <Image
+        src={logo}
+        alt="Apsara Talent logo"
+        height={height}
+        width={width}
+        className={cn("h-auto w-auto dark:hidden", className)}
+        priority={priority}
+      />
+      <Image
+        src={logoBlack}
+        alt="Apsara Talent logo"
+        height={height}
+        width={width}
+        className={cn("hidden h-auto w-auto dark:block", className)}
+        priority={priority}
+      />
+    </>
   );
 }
