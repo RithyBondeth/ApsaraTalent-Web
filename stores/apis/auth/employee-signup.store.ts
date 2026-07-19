@@ -60,6 +60,7 @@ export const useEmployeeSignupStore = create<TEmployeeSignupState>()((set) => ({
         })),
         experiences: body.experiences.map((exp) => ({
           title: exp.title,
+          company: exp.company,
           description: exp.description,
           startDate: exp.startDate,
           endDate: exp.endDate,

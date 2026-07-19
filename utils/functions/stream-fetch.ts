@@ -4,6 +4,28 @@ export type StreamEvent =
   | { t: "done" }
   | { t: "error"; v: string; code?: number };
 
+export function parseStreamEvent(payload: string): StreamEvent | null {
+  try {
+    const parsed: unknown = JSON.parse(payload);
+    if (!parsed || typeof parsed !== "object") return null;
+    const event = parsed as Record<string, unknown>;
+    if (event.t === "done") return { t: "done" };
+    if (event.t === "chunk" && typeof event.v === "string") {
+      return { t: "chunk", v: event.v };
+    }
+    if (event.t === "error" && typeof event.v === "string") {
+      return {
+        t: "error",
+        v: event.v,
+        code: typeof event.code === "number" ? event.code : undefined,
+      };
+    }
+  } catch {
+    // Ignore malformed events from a broken or interrupted stream.
+  }
+  return null;
+}
+
 /**
  * Fetch a streaming SSE endpoint and call `onEvent` for each parsed event.
  * Supports both GET and POST (pass `body` for POST).
@@ -14,6 +36,7 @@ export async function streamFetch(
   options: {
     method?: "GET" | "POST";
     body?: unknown;
+    signal?: AbortSignal;
   },
   onEvent: (event: StreamEvent) => void,
 ): Promise<void> {
@@ -24,6 +47,7 @@ export async function streamFetch(
       "Content-Type": "application/json",
     },
     body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
+    signal: options.signal,
   });
 
   if (!res.ok || !res.body) {
@@ -48,24 +72,25 @@ export async function streamFetch(
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
+  const emitLine = (line: string) => {
+    if (!line.startsWith("data: ")) return;
+    const event = parseStreamEvent(line.slice(6).trim());
+    if (event) onEvent(event);
+  };
 
   while (true) {
     const { done, value } = await reader.read();
-    if (done) break;
+    if (done) {
+      buffer += decoder.decode();
+      break;
+    }
 
     buffer += decoder.decode(value, { stream: true });
     const lines = buffer.split("\n");
     buffer = lines.pop() ?? ""; // keep the last (possibly incomplete) line
 
-    for (const line of lines) {
-      if (!line.startsWith("data: ")) continue;
-      const payload = line.slice(6).trim();
-      if (!payload) continue;
-      try {
-        onEvent(JSON.parse(payload) as StreamEvent);
-      } catch {
-        // ignore malformed events
-      }
-    }
+    lines.forEach(emitLine);
   }
+
+  buffer.split("\n").forEach(emitLine);
 }

@@ -144,14 +144,14 @@ export function ExperienceCard({
             <div>
               <FieldLabel>{t("positionRole")}</FieldLabel>
               <Input
-                placeholder="Software Engineer"
+                placeholder={t("softwareEngineerPlaceholder")}
                 {...register(`experience.${index}.position`)}
               />
             </div>
             <div>
               <FieldLabel>{t("company")}</FieldLabel>
               <Input
-                placeholder="Company Name"
+                placeholder={t("companyNamePlaceholder")}
                 {...register(`experience.${index}.company`)}
               />
             </div>
@@ -162,14 +162,14 @@ export function ExperienceCard({
             <div>
               <FieldLabel>{t("startDate")}</FieldLabel>
               <Input
-                placeholder="January 2022"
+                placeholder={t("monthYearPlaceholder")}
                 {...register(`experience.${index}.startDate`)}
               />
             </div>
             <div>
               <FieldLabel>{t("endDate")}</FieldLabel>
               <Input
-                placeholder="Present"
+                placeholder={t("presentPlaceholder")}
                 {...register(`experience.${index}.endDate`)}
               />
             </div>
@@ -199,7 +199,7 @@ export function ExperienceCard({
             </div>
             <Textarea
               autoResize
-              placeholder="Brief description of your role..."
+              placeholder={t("briefRolePlaceholder")}
               className="min-h-[70px] text-xs"
               {...register(`experience.${index}.description`)}
             />
@@ -230,7 +230,7 @@ export function ExperienceCard({
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-bold text-muted-foreground uppercase">
-                      Achievement {ai + 1}
+                      {t("achievementNumber", { number: ai + 1 })}
                     </span>
                     <div className="flex items-center gap-1">
                       {achievements?.[ai] && (
@@ -247,7 +247,7 @@ export function ExperienceCard({
                           ) : (
                             <Sparkles size={9} />
                           )}
-                          Refine
+                          {t("refine")}
                         </Button>
                       )}
                       <button
@@ -260,7 +260,7 @@ export function ExperienceCard({
                     </div>
                   </div>
                   <Input
-                    placeholder="e.g. Increased revenue by 30%"
+                    placeholder={t("achievementPlaceholder")}
                     className="h-8 text-xs bg-background"
                     {...register(
                       `experience.${index}.achievements.${ai}` as Path<IBuildResume>,

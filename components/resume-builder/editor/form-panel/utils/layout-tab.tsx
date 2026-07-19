@@ -1,7 +1,7 @@
 "use client";
 
 import { useResumeCanvasEditorStore } from "@/stores/apis/resume/resume-canvas-editor.store";
-import { TResumeSectionID } from "@/utils/types/resume/resume-section-id.type";
+import { TResumeContentSection } from "@/utils/interfaces/resume/resume.interface";
 import { Switch } from "@/components/ui/switch";
 import { GripVertical, Eye, EyeOff } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -26,10 +26,10 @@ function SectionItem({
   isVisible,
   onToggle,
 }: {
-  id: TResumeSectionID;
+  id: TResumeContentSection;
   label: string;
   isVisible: boolean;
-  onToggle: (id: TResumeSectionID) => void;
+  onToggle: (id: TResumeContentSection) => void;
 }) {
   /* -------------------------------- All State ------------------------------- */
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -91,11 +91,12 @@ function SectionItem({
 export function LayoutTab() {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("resumeBuilder");
-  const allSections: { id: TResumeSectionID; label: string }[] = [
+  const allSections: { id: TResumeContentSection; label: string }[] = [
     { id: "summary", label: t("professionalSummary") },
     { id: "experience", label: t("tabExperience") },
     { id: "skills", label: t("tabSkills") },
     { id: "education", label: t("education") },
+    { id: "careerScopes", label: t("careerInterests") },
   ];
 
   /* ------------------------------- All State -------------------------------- */
@@ -103,7 +104,7 @@ export function LayoutTab() {
 
   /* --------------------------------- Methods -------------------------------- */
   // ── Toggle Section Visibility ────────────────────────────────
-  const handleToggle = (id: TResumeSectionID) => {
+  const handleToggle = (id: TResumeContentSection) => {
     const isVisible = sectionOrder.includes(id);
     if (isVisible) {
       useResumeCanvasEditorStore.setState((s) => ({
@@ -120,8 +121,8 @@ export function LayoutTab() {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
-      const from = sectionOrder.indexOf(active.id as TResumeSectionID);
-      const to = sectionOrder.indexOf(over.id as TResumeSectionID);
+      const from = sectionOrder.indexOf(active.id as TResumeContentSection);
+      const to = sectionOrder.indexOf(over.id as TResumeContentSection);
       reorderSections(from, to);
     }
   };

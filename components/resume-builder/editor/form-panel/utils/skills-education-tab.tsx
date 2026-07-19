@@ -86,7 +86,7 @@ export function SkillsEducationTab({
         .filter(Boolean);
       const nextSkills = [...new Set([...skills, ...suggested])];
       setValue("skills", nextSkills, { shouldDirty: true });
-      toast.success("Skills suggested based on your job title!");
+      toast.success(t("skillsSuggested"));
     }
   };
 
@@ -119,7 +119,7 @@ export function SkillsEducationTab({
             ) : (
               <Sparkles size={10} />
             )}
-            Suggest
+            {t("suggest")}
           </Button>
         </div>
 
@@ -142,7 +142,7 @@ export function SkillsEducationTab({
           ))}
           {skills.length === 0 && (
             <span className="text-[11px] text-muted-foreground italic">
-              No skills added yet.
+              {t("noSkillsAdded")}
             </span>
           )}
         </div>
@@ -193,13 +193,13 @@ export function SkillsEducationTab({
               ) : (
                 <Wand2 size={10} />
               )}
-              Polish
+              {t("polish")}
             </Button>
           )}
         </div>
         <Textarea
           autoResize
-          placeholder="e.g. Bachelor of Science, Computer Science, MIT, 2020"
+          placeholder={t("educationExample")}
           className="min-h-[80px] text-xs leading-relaxed"
           {...register("education")}
         />
@@ -233,7 +233,7 @@ export function SkillsEducationTab({
           ))}
           {careerScopes.length === 0 && (
             <span className="text-[11px] text-muted-foreground italic">
-              No interests added yet.
+              {t("noInterestsAdded")}
             </span>
           )}
         </div>

@@ -402,6 +402,7 @@ export default function EmployeeProfilePage() {
         employee.experiences?.map((exp) => ({
           id: exp.id,
           title: exp.title ?? "",
+          company: exp.company ?? "",
           description: exp.description ?? "",
           startDate: parseMaybeDate(exp.startDate),
           endDate: parseMaybeDate(exp.endDate),
@@ -570,6 +571,7 @@ export default function EmployeeProfilePage() {
     experienceFA.append({
       id: "",
       title: "",
+      company: "",
       description: "",
       startDate: undefined,
       endDate: undefined,

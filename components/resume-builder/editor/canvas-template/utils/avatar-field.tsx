@@ -1,5 +1,11 @@
 import { useRef } from "react";
 import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
+import { useResumeTemplateTheme } from "@/hooks/resume/use-resume-template-theme";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
+
+const MAX_AVATAR_BYTES = 5 * 1024 * 1024;
+const ALLOWED_AVATAR_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 export function AvatarField(props: {
   src?: string;
@@ -7,6 +13,8 @@ export function AvatarField(props: {
 }) {
   /* ----------------------------------- Props --------------------------------- */
   const { src, onCommit } = props;
+  const theme = useResumeTemplateTheme();
+  const t = useTranslations("resumeBuilder");
 
   /* -------------------------------- All States ------------------------------- */
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -18,6 +26,15 @@ export function AvatarField(props: {
     if (!file) return;
     // Reset input so re-selecting the same file triggers onChange again
     e.target.value = "";
+
+    if (!ALLOWED_AVATAR_TYPES.has(file.type)) {
+      toast.error(t("invalidImageType"));
+      return;
+    }
+    if (file.size > MAX_AVATAR_BYTES) {
+      toast.error(t("imageTooLarge"));
+      return;
+    }
 
     const reader = new FileReader();
     reader.onload = (ev) => {
@@ -33,11 +50,20 @@ export function AvatarField(props: {
         const cvs = document.createElement("canvas");
         cvs.width = w;
         cvs.height = h;
-        cvs.getContext("2d")!.drawImage(img, 0, 0, w, h);
+        const context = cvs.getContext("2d");
+        if (!context) {
+          toast.error(t("imageReadFailed"));
+          return;
+        }
+        context.fillStyle = "#ffffff";
+        context.fillRect(0, 0, w, h);
+        context.drawImage(img, 0, 0, w, h);
         onCommit(cvs.toDataURL("image/jpeg", 0.7));
       };
+      img.onerror = () => toast.error(t("imageReadFailed"));
       img.src = dataUrl;
     };
+    reader.onerror = () => toast.error(t("imageReadFailed"));
     reader.readAsDataURL(file);
   }
 
@@ -45,12 +71,12 @@ export function AvatarField(props: {
   return (
     <div
       className="group/avatar relative shrink-0 cursor-pointer"
-      style={{ width: 72, height: 72 }}
+      style={{ width: theme.avatarSize, height: theme.avatarSize }}
       onClick={(e) => {
         e.stopPropagation();
         inputRef.current?.click();
       }}
-      title="Click to change photo"
+      title={t("changePhotoTitle")}
     >
       {/* Avatar Image or Placeholder Section */}
       {src ? (
@@ -58,29 +84,29 @@ export function AvatarField(props: {
           {/* eslint-disable-next-line @next/next/no-img-element -- avatar preview may be a base64 data URL generated on the client */}
           <img
             src={src}
-            alt="Profile"
+            alt={t("profileImageAlt")}
             style={{
-              width: 72,
-              height: 72,
-              borderRadius: "50%",
+              width: theme.avatarSize,
+              height: theme.avatarSize,
+              borderRadius: theme.avatarRadius,
               objectFit: "cover",
               display: "block",
-              border: `2px solid ${RESUME_COLOR.BORDER}`,
+              border: `2px solid ${theme.accent}`,
             }}
           />
         </>
       ) : (
         <div
           style={{
-            width: 72,
-            height: 72,
-            borderRadius: "50%",
-            background: RESUME_COLOR.ACCENT_LIGHT,
+            width: theme.avatarSize,
+            height: theme.avatarSize,
+            borderRadius: theme.avatarRadius,
+            background: theme.accentSoft,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            border: `2px dashed ${RESUME_COLOR.ACCENT_SOFT}`,
-            color: RESUME_COLOR.ACCENT_MED,
+            border: `2px dashed ${theme.accent}`,
+            color: theme.accent,
             fontSize: 11,
             fontWeight: 500,
             textAlign: "center",
@@ -88,7 +114,7 @@ export function AvatarField(props: {
             padding: 4,
           }}
         >
-          Add Photo
+          {t("addPhoto")}
         </div>
       )}
 
@@ -96,7 +122,7 @@ export function AvatarField(props: {
       <div
         className="absolute inset-0 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex items-center justify-center"
         style={{
-          borderRadius: "50%",
+          borderRadius: theme.avatarRadius,
           background: "rgba(79,70,229,0.55)",
           color: RESUME_COLOR.WHITE,
           fontSize: 10,
@@ -106,16 +132,14 @@ export function AvatarField(props: {
           pointerEvents: "none",
         }}
       >
-        Change
-        <br />
-        Photo
+        {t("changePhoto")}
       </div>
 
       {/* Hidden File Input Section */}
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp"
         style={{ display: "none" }}
         onChange={handleFileChange}
       />

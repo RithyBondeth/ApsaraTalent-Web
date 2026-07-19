@@ -1,12 +1,19 @@
 "use client";
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { User, Briefcase, GraduationCap, LayoutPanelLeft } from "lucide-react";
+import {
+  User,
+  Briefcase,
+  GraduationCap,
+  LayoutPanelLeft,
+  Palette,
+} from "lucide-react";
 import { IFormPanelProps } from "./props";
 import { PersonalInfoTab } from "./utils/personal-info-tab";
 import { ExperienceTab } from "./utils/experience-tab";
 import { SkillsEducationTab } from "./utils/skills-education-tab";
 import { LayoutTab } from "./utils/layout-tab";
+import { DesignTab } from "./utils/design-tab";
 import { useTranslations } from "next-intl";
 
 export default function ResumeEditorFormPanel(props: IFormPanelProps) {
@@ -17,7 +24,7 @@ export default function ResumeEditorFormPanel(props: IFormPanelProps) {
   return (
     <Tabs defaultValue="personal" className="flex flex-col h-full">
       {/* Tab Bar Section */}
-      <TabsList className="grid w-full shrink-0 grid-cols-4 h-9">
+      <TabsList className="grid w-full shrink-0 grid-cols-5 h-9">
         {/* Personal Tab Trigger Section */}
         <TabsTrigger
           value="personal"
@@ -48,6 +55,14 @@ export default function ResumeEditorFormPanel(props: IFormPanelProps) {
           className="gap-1 text-[10px] px-1 sm:gap-1.5 sm:text-xs"
         >
           <LayoutPanelLeft size={12} /> {t("tabLayout")}
+        </TabsTrigger>
+
+        {/* Design Tab Trigger Section */}
+        <TabsTrigger
+          value="design"
+          className="gap-1 text-[10px] px-1 sm:gap-1.5 sm:text-xs"
+        >
+          <Palette size={12} /> {t("tabDesign")}
         </TabsTrigger>
       </TabsList>
 
@@ -84,6 +99,11 @@ export default function ResumeEditorFormPanel(props: IFormPanelProps) {
       <TabsContent value="layout" className="flex-1 overflow-y-auto mt-3 pr-1">
         {/* Layout Tab Content Section */}
         <LayoutTab />
+      </TabsContent>
+
+      <TabsContent value="design" className="flex-1 overflow-y-auto mt-3 pr-1">
+        {/* Design Tab Content Section */}
+        <DesignTab control={props.control} setValue={props.setValue} />
       </TabsContent>
     </Tabs>
   );

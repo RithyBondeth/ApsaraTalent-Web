@@ -5,10 +5,12 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useResumeCanvasEditorStore } from "@/stores/apis/resume/resume-canvas-editor.store";
 import { ISectionWrapperProps } from "./props";
+import { useTranslations } from "next-intl";
 
 export function SectionWrapper(props: ISectionWrapperProps) {
   /* ---------------------------------- Props --------------------------------- */
   const { sectionId, children, isDraggable = false } = props;
+  const t = useTranslations("resumeBuilder");
 
   /* ----------------------------- API Integration ---------------------------- */
   const { selectedSection, setSelectedSection } = useResumeCanvasEditorStore();
@@ -50,7 +52,7 @@ export function SectionWrapper(props: ISectionWrapperProps) {
         <div
           {...attributes}
           {...listeners}
-          title="Drag to reorder section"
+          title={t("dragToReorderSection")}
           className={[
             "absolute -left-6 top-2 cursor-grab active:cursor-grabbing",
             "opacity-0 group-hover/section:opacity-50 transition-opacity duration-150",

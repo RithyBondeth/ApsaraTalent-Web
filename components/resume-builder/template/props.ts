@@ -1,9 +1,10 @@
+import { TResumeTemplate } from "@/utils/types/resume/resume.type";
+
 export interface ITemplateCardProps {
-  isPremium: boolean;
-  image: string;
+  templateKey: TResumeTemplate;
+  image: string | null;
   title: string;
   description: string;
-  price?: number;
   onUseTemplate: () => void;
   selected?: boolean;
 }

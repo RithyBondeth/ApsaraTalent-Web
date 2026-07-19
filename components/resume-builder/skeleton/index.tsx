@@ -1,50 +1,76 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { FeedBannerSkeleton } from "@/components/feed/skeleton";
+
+/* ------------------------------------------- Helpers -------------------------------------------- */
+/** Numbered step header placeholder matching the builder page's StepHeader */
+function StepHeaderSkeleton() {
+  return (
+    <div className="w-full flex items-center gap-3">
+      <Skeleton className="size-7 shrink-0 rounded-full" />
+      <Skeleton className="h-4 w-40 rounded" />
+      <div className="flex-1 h-px bg-border/60" />
+    </div>
+  );
+}
 
 /* -------------------------------- Resume Builder Loading Skeleton ------------------------------- */
 export default function ResumeBuilderLoadingSkeleton() {
   return (
-    <div className="w-full flex flex-col items-start gap-5 px-2.5 sm:px-5 lg:px-8">
+    <div className="w-full flex flex-col items-start gap-6 px-2.5 pb-4 sm:px-5 lg:px-8">
       {/* Banner Section */}
-      <FeedBannerSkeleton />
-
-      {/* Template Section Header */}
-      <div className="w-full flex items-center gap-4">
-        <div className="flex items-center gap-2 shrink-0 bg-card border border-border/70 rounded-full px-3 py-1.5 shadow-[0_1px_4px_hsl(var(--foreground)/0.06)]">
-          <Skeleton className="h-4 w-32 rounded" />
+      <div className="w-full flex items-center justify-between gap-6 rounded-2xl border border-border/50 bg-gradient-to-br from-primary/[0.04] via-transparent to-muted/20 px-5 py-6 sm:px-8 sm:py-8">
+        <div className="flex flex-col items-start gap-3 flex-1">
+          <Skeleton className="h-6 w-36 rounded-full" />
+          <Skeleton className="h-6 w-3/5 rounded" />
+          <Skeleton className="h-4 w-4/5 rounded" />
+          <Skeleton className="hidden sm:block h-3 w-2/5 rounded" />
         </div>
-        <div className="flex-1 h-px bg-border/60" />
+        <Skeleton className="hidden md:block h-36 w-[220px] lg:w-[300px] shrink-0 rounded-xl" />
       </div>
 
-      {/* Template Grid Section */}
-      <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {Array.from({ length: 6 }, (_, index) => (
-          <TemplateCardSkeleton key={index} />
-        ))}
-      </div>
-
-      {/* Features Section */}
-      <div className="w-full flex flex-col items-center gap-8 p-6 sm:p-8 rounded-2xl border border-border/70 bg-card shadow-[0_2px_8px_hsl(var(--foreground)/0.05)]">
-        {/* Title */}
-        <Skeleton className="h-5 w-48 rounded" />
-        {/* 3 Feature Cards Section */}
-        <div className="w-full flex justify-between items-center gap-6 tablet-lg:flex-col">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="flex flex-col items-center gap-3 flex-1">
-              <Skeleton className="h-[3.75rem] w-[3.75rem] rounded-2xl shrink-0" />
-              <Skeleton className="h-4 w-32 rounded" />
-              <Skeleton className="h-3 w-40 rounded" />
-              <Skeleton className="h-3 w-36 rounded" />
-            </div>
+      {/* Step 1: Template Grid Section */}
+      <div className="w-full flex flex-col gap-3">
+        <StepHeaderSkeleton />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Array.from({ length: 6 }, (_, index) => (
+            <TemplateCardSkeleton key={index} />
           ))}
         </div>
       </div>
 
-      {/* Generate Section */}
-      <div className="w-full bg-foreground/[0.08] flex flex-col items-center justify-center rounded-2xl gap-3 p-8 sm:p-10">
-        <Skeleton className="h-5 w-44 rounded" />
-        <Skeleton className="h-3 w-64 rounded" />
-        <Skeleton className="h-9 w-36 rounded-full mt-1" />
+      {/* Step 2: Information Source Section */}
+      <div className="w-full flex flex-col gap-3">
+        <StepHeaderSkeleton />
+        <div className="w-full rounded-2xl border border-border/70 bg-card p-5 sm:p-6 shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] flex flex-col gap-5">
+          <div className="flex items-start gap-3">
+            <Skeleton className="size-10 rounded-xl shrink-0" />
+            <div className="flex-1 flex flex-col gap-2">
+              <Skeleton className="h-4 w-48 rounded" />
+              <Skeleton className="h-3 w-4/5 rounded" />
+            </div>
+          </div>
+          <Skeleton className="h-48 w-full rounded-lg" />
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-3 w-52 rounded" />
+            <Skeleton className="h-3 w-20 rounded" />
+          </div>
+        </div>
+      </div>
+
+      {/* Sticky Generate Bar Section */}
+      <div className="sticky bottom-3 z-30 w-full">
+        <div className="flex items-center justify-between gap-3 rounded-2xl border border-border/70 bg-background/95 px-4 py-3 shadow-[0_8px_30px_hsl(var(--foreground)/0.1)] backdrop-blur-lg">
+          <div className="flex items-center gap-3 flex-1">
+            <Skeleton className="size-9 rounded-xl shrink-0" />
+            <div className="flex flex-col gap-1.5 flex-1 max-w-64">
+              <Skeleton className="h-4 w-2/3 rounded" />
+              <Skeleton className="hidden sm:block h-3 w-full rounded" />
+            </div>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <Skeleton className="hidden md:block h-6 w-32 rounded-full" />
+            <Skeleton className="h-9 w-36 rounded-full" />
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -54,28 +80,32 @@ export default function ResumeBuilderLoadingSkeleton() {
 export function TemplateCardSkeleton() {
   return (
     <div className="h-fit w-full flex flex-col rounded-2xl border border-border/70 shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] overflow-hidden">
-      {/* Preview Area Section */}
-      <div className="w-full h-52 relative bg-muted/40">
-        {/* Free/Premium Badge Section */}
-        <div className="absolute top-2 left-2">
-          <Skeleton className="h-5 w-12 rounded-full" />
+      {/* Preview Area Section: Mirrors the live TemplateMiniPreview structure */}
+      <div className="w-full h-52 relative bg-muted/30 flex flex-col">
+        {/* Mini Header Band Section */}
+        <div className="w-full px-4 py-4 bg-muted/50 flex items-center gap-2.5">
+          <Skeleton className="size-9 rounded-full shrink-0" />
+          <div className="flex flex-col gap-1.5">
+            <Skeleton className="h-2.5 w-20 rounded" />
+            <Skeleton className="h-1.5 w-14 rounded" />
+          </div>
         </div>
-        {/* Style Badge Section */}
-        <div className="absolute top-2 right-2">
-          <Skeleton className="h-5 w-16 rounded-full" />
-        </div>
-        {/* Mini Resume Skeleton Section */}
-        <div className="w-full h-full flex items-center justify-center">
-          <div className="w-28 h-36 rounded-lg border border-muted bg-background/60 p-2 flex flex-col gap-1.5">
-            <Skeleton className="w-8 h-8 rounded-full mx-auto" />
-            <Skeleton className="h-1.5 w-14 mx-auto" />
-            <Skeleton className="h-1 w-10 mx-auto" />
-            <div className="border-t border-muted mt-1 pt-1 flex flex-col gap-1">
-              <Skeleton className="h-1 w-full" />
-              <Skeleton className="h-1 w-4/5" />
-              <Skeleton className="h-1 w-3/4" />
-              <Skeleton className="h-1 w-full mt-0.5" />
-              <Skeleton className="h-1 w-2/3" />
+        {/* Mini Body Section */}
+        <div className="flex-1 grid grid-cols-[1fr_38%] gap-3 px-4 py-3">
+          <div className="flex flex-col gap-2">
+            <Skeleton className="h-1.5 w-12 rounded" />
+            <Skeleton className="h-1 w-full rounded" />
+            <Skeleton className="h-1 w-4/5 rounded" />
+            <Skeleton className="h-1.5 w-12 rounded mt-2" />
+            <Skeleton className="h-1 w-full rounded" />
+            <Skeleton className="h-1 w-3/4 rounded" />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Skeleton className="h-1.5 w-10 rounded" />
+            <div className="flex flex-wrap gap-1">
+              <Skeleton className="h-2 w-8 rounded-full" />
+              <Skeleton className="h-2 w-10 rounded-full" />
+              <Skeleton className="h-2 w-7 rounded-full" />
             </div>
           </div>
         </div>

@@ -7,7 +7,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { TResumeTemplate } from "@/utils/types/resume/resume.type";
+import {
+  RESUME_TEMPLATE_KEYS,
+  TResumeTemplate,
+} from "@/utils/types/resume/resume.type";
+import { RESUME_TEMPLATE_LABEL_KEYS } from "@/utils/constants/resume.constant";
 import { useTranslations } from "next-intl";
 import { Layout } from "lucide-react";
 
@@ -20,20 +24,6 @@ export default function TemplateSelector({
 }) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("resumeBuilder");
-  const templates: { value: TResumeTemplate; label: string }[] = [
-    { value: "modern", label: t("templateModern") },
-    { value: "classic", label: t("templateClassic") },
-    { value: "creative", label: t("templateCreative") },
-    { value: "minimalist", label: t("templateMinimalist") },
-    { value: "timeline", label: t("templateTimeline") },
-    { value: "bold", label: t("templateBold") },
-    { value: "compact", label: t("templateCompact") },
-    { value: "elegant", label: t("templateElegant") },
-    { value: "colorful", label: t("templateColorful") },
-    { value: "professional", label: t("templateProfessional") },
-    { value: "corporate", label: t("templateCorporate") },
-    { value: "dark", label: t("templateDark") },
-  ];
 
   /* --------------------------------- Render UI -------------------------------- */
   return (
@@ -46,14 +36,18 @@ export default function TemplateSelector({
         <SelectTrigger className="h-8 w-[180px] bg-background text-xs">
           <div className="flex items-center gap-2">
             <Layout size={14} className="text-muted-foreground" />
-            <SelectValue placeholder="Select Template" />
+            <SelectValue placeholder={t("selectTemplate")} />
           </div>
         </SelectTrigger>
         {/* Select Template Dropdown Section */}
         <SelectContent>
-          {templates.map((tpl) => (
-            <SelectItem key={tpl.value} value={tpl.value} className="text-xs">
-              {tpl.label}
+          {RESUME_TEMPLATE_KEYS.map((templateKey) => (
+            <SelectItem
+              key={templateKey}
+              value={templateKey}
+              className="text-xs"
+            >
+              {t(RESUME_TEMPLATE_LABEL_KEYS[templateKey])}
             </SelectItem>
           ))}
         </SelectContent>
