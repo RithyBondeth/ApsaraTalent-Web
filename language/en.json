@@ -1,7 +1,9 @@
 {
   "ai": {
     "usesLeftToday": "{remaining} / {limit} AI uses left today",
-    "usedTodayTooltip": "{used} of {limit} AI uses used today · resets {date}"
+    "usedTodayTooltip": "{used} of {limit} AI uses used today · resets {date}",
+    "cvLeftToday": "{remaining} / {limit} CV generations left today",
+    "cvUsedTodayTooltip": "{used} of {limit} CV generations used today · resets {date}"
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -30,6 +32,25 @@
     "cancel": "Cancel",
     "logout": "Logout",
     "language": "Language"
+  },
+  "reportProblem": {
+    "title": "Report a problem",
+    "description": "Tell us what went wrong and we'll send this straight to our support team.",
+    "categoryLabel": "What kind of problem is it?",
+    "categoryBug": "Something is broken or not working",
+    "categoryAccount": "Account or login issue",
+    "categoryPayment": "Billing or payment issue",
+    "categoryContent": "Inappropriate or incorrect content",
+    "categoryOther": "Something else",
+    "detailsLabel": "What happened?",
+    "detailsPlaceholder": "Describe the problem, and what you were doing when it happened.",
+    "detailsRequired": "Please describe the problem before sending.",
+    "diagnosticsNote": "We'll include your page address and browser details to help us investigate.",
+    "cancel": "Cancel",
+    "send": "Send report",
+    "sending": "Sending...",
+    "reportSent": "Thanks for the report. Our team will look into it shortly.",
+    "reportFailed": "We couldn't send your report. Please try again, or email us at {email}."
   },
   "setting": {
     "title": "Settings",
@@ -832,6 +853,8 @@
     "generateDesc": "AI will turn your provided information into the selected style. You can review and edit everything before downloading.",
     "generateMyResume": "Generate my resume",
     "preparingResume": "AI is writing your resume...",
+    "cvQuotaExhaustedShort": "Daily limit reached",
+    "cvQuotaExhausted": "You've used all of today's CV generations. Your saved CVs stay editable and downloadable — the limit resets tomorrow.",
     "aiGenerationFailed": "AI couldn't generate your resume",
     "aiGenerationInvalid": "AI returned an invalid resume. Please try again.",
     "aiGenerationTryAgain": "Please try again in a moment.",

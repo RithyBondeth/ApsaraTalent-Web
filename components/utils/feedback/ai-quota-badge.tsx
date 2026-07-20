@@ -4,9 +4,23 @@ import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useAiQuotaStore } from "@/stores/apis/ai/get-ai-quota.store";
+import {
+  TAiQuotaAction,
+  useAiQuotaStore,
+} from "@/stores/apis/ai/get-ai-quota.store";
 
-export function AiQuotaBadge({ className }: { className?: string }) {
+export function AiQuotaBadge({
+  className,
+  action,
+}: {
+  className?: string;
+  /**
+   * Show a per-action cap (e.g. CV generation) instead of the global daily
+   * quota. Use on surfaces where the action's own limit is the one the user
+   * will actually hit first.
+   */
+  action?: TAiQuotaAction;
+}) {
   /* ---------------------------------- Utils --------------------------------- */
   const t = useTranslations("ai");
 
@@ -34,7 +48,12 @@ export function AiQuotaBadge({ className }: { className?: string }) {
   if (!data) return null;
 
   /* --------------------------------- Helpers -------------------------------- */
-  const { used, limit, remaining } = data.daily;
+  // `actions` is absent if the badge renders against an older API build.
+  const bucket = (action ? data.actions?.[action] : data.daily) ?? data.daily;
+  const { used, limit, remaining } = bucket;
+  const labelKey = action === "cvGeneration" ? "cvLeftToday" : "usesLeftToday";
+  const tooltipKey =
+    action === "cvGeneration" ? "cvUsedTodayTooltip" : "usedTodayTooltip";
   const remainingRatio = limit > 0 ? remaining / limit : 0;
   const remainingPct = Math.max(
     0,
@@ -68,7 +87,7 @@ export function AiQuotaBadge({ className }: { className?: string }) {
         tone.ring,
         className,
       )}
-      title={t("usedTodayTooltip", {
+      title={t(tooltipKey, {
         used,
         limit,
         date: new Date(data.resetsAt).toLocaleString(),
@@ -76,7 +95,7 @@ export function AiQuotaBadge({ className }: { className?: string }) {
     >
       <Sparkles className={cn("size-3.5 shrink-0", tone.text)} />
       <span className={cn("text-xs font-medium whitespace-nowrap", tone.text)}>
-        {t("usesLeftToday", { remaining, limit })}
+        {t(labelKey, { remaining, limit })}
       </span>
       <span className="h-1.5 w-10 overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
         <span

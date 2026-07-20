@@ -6,6 +6,7 @@ import { IResumeBuilderGenerateProps } from "./props";
 import { useTranslations } from "next-intl";
 import { AiQuotaBadge } from "@/components/utils/feedback/ai-quota-badge";
 import { resolveResumeTemplateTheme } from "@/utils/functions/resume/resume-theme";
+import { useAiQuotaStore } from "@/stores/apis/ai/get-ai-quota.store";
 
 /**
  * Sticky action bar pinned to the bottom of the builder flow — keeps the
@@ -23,6 +24,12 @@ export default function ResumeBuilderGenerate({
   const theme = selectedTemplate
     ? resolveResumeTemplateTheme(selectedTemplate)
     : null;
+
+  /* ------------------------------ API Integration --------------------------- */
+  // With only a few CV generations per day, let the button say so up front
+  // rather than letting the user spend a click on a guaranteed 429.
+  const cvQuota = useAiQuotaStore((state) => state.data?.actions?.cvGeneration);
+  const cvExhausted = cvQuota ? cvQuota.remaining <= 0 : false;
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -60,15 +67,20 @@ export default function ResumeBuilderGenerate({
         {/* Actions Section */}
         <div className="flex shrink-0 items-center gap-3">
           <div className="hidden md:block">
-            <AiQuotaBadge />
+            <AiQuotaBadge action="cvGeneration" />
           </div>
           <Button
             className="rounded-full px-5 sm:px-6"
             onClick={onGenerateClick}
-            disabled={disabled}
+            disabled={disabled || cvExhausted}
+            title={cvExhausted ? t("cvQuotaExhausted") : undefined}
           >
             {loading ? <Loader2 className="animate-spin" /> : <LucideRocket />}
-            {loading ? t("preparingResume") : t("generateMyResume")}
+            {loading
+              ? t("preparingResume")
+              : cvExhausted
+                ? t("cvQuotaExhaustedShort")
+                : t("generateMyResume")}
           </Button>
         </div>
       </div>

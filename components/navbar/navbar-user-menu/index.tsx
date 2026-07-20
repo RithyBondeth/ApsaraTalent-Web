@@ -50,6 +50,7 @@ import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import ReportProblemDialog from "@/components/report-problem/report-problem-dialog";
 import MenuIcon from "./menu-icon";
 import { INavbarUserMenuProps } from "./props";
 import { getNameInitials } from "@/utils/functions/text";
@@ -68,6 +69,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
 
   /* -------------------------------- All States ----------------------------- */
   const [openLogoutDialog, setOpenLogoutDialog] = useState<boolean>(false);
+  const [openReportDialog, setOpenReportDialog] = useState<boolean>(false);
 
   /* ----------------------------- API Integration --------------------------- */
   // Current User
@@ -299,7 +301,10 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
               </DropdownMenuItem>
 
               {/* Report Problem Section */}
-              <DropdownMenuItem className="flex items-center gap-2.5">
+              <DropdownMenuItem
+                onClick={() => setOpenReportDialog(true)}
+                className="flex items-center gap-2.5"
+              >
                 <MenuIcon className="bg-orange-500/10">
                   <LucideInfo className="size-3.5 text-orange-500" />
                 </MenuIcon>
@@ -343,6 +348,12 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Report Problem Dialog Section */}
+      <ReportProblemDialog
+        open={openReportDialog}
+        onOpenChange={setOpenReportDialog}
+      />
     </>
   );
 }

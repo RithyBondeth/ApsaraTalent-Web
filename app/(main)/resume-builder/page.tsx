@@ -72,7 +72,7 @@ export default function ResumeBuilder() {
   const generateAiResumeFromText = useGenerateAiResumeStore(
     (state) => state.generateAiResumeFromText,
   );
-  const refreshAiQuota = useAiQuotaStore((state) => state.fetchQuota);
+  const refreshAiQuota = useAiQuotaStore((state) => state.refreshAfterUse);
   const requestedTemplates = useRef<boolean>(false);
 
   /* -------------------------------- All States ------------------------------ */

@@ -1,3 +1,5 @@
+import { useAiQuotaStore } from "@/stores/apis/ai/get-ai-quota.store";
+
 /** SSE event shape emitted by the API gateway streaming endpoints. */
 export type StreamEvent =
   | { t: "chunk"; v: string }
@@ -30,8 +32,31 @@ export function parseStreamEvent(payload: string): StreamEvent | null {
  * Fetch a streaming SSE endpoint and call `onEvent` for each parsed event.
  * Supports both GET and POST (pass `body` for POST).
  * Authentication is sent through the API's httpOnly cookies.
+ *
+ * Every endpoint reachable through here is an AI endpoint that consumes quota,
+ * so the AI quota snapshot is refreshed centrally when the stream settles —
+ * individual callers cannot forget to do it, and the badge stops showing a
+ * stale count while the user keeps generating.
  */
 export async function streamFetch(
+  url: string,
+  options: {
+    method?: "GET" | "POST";
+    body?: unknown;
+    signal?: AbortSignal;
+  },
+  onEvent: (event: StreamEvent) => void,
+): Promise<void> {
+  try {
+    await runStream(url, options, onEvent);
+  } finally {
+    // Also refresh after a 429 so the badge drops to 0 rather than sitting on
+    // a number the server has already rejected.
+    void useAiQuotaStore.getState().refreshAfterUse();
+  }
+}
+
+async function runStream(
   url: string,
   options: {
     method?: "GET" | "POST";
