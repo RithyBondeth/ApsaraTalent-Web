@@ -134,47 +134,56 @@ export default function ResetPasswordPage() {
           >
             {/* Token Field Section: Hidden when auto-filled from URL query param */}
             {!tokenFromUrl && (
-              <Input
-                prefix={<LucideKey />}
-                type="text"
-                placeholder={t("tokenPlaceholder")}
-                {...register("token")}
-                validationMessage={errors.token?.message}
-              />
+              <div className="rounded-lg border border-input bg-card p-4">
+                <Input
+                  prefix={<LucideKey />}
+                  type="text"
+                  placeholder={t("tokenPlaceholder")}
+                  className="border-0 ring-0 focus-within:ring-0 focus-within:ring-offset-0 h-auto px-0"
+                  {...register("token")}
+                  validationMessage={errors.token?.message}
+                />
+              </div>
             )}
 
-            <Input
-              prefix={<LucideLockKeyhole />}
-              suffix={
-                passwordVisibility ? (
-                  <LucideEyeClosed
-                    onClick={() => setPasswordVisibility(false)}
-                  />
-                ) : (
-                  <LucideEye onClick={() => setPasswordVisibility(true)} />
-                )
-              }
-              type={passwordVisibility ? "text" : "password"}
-              placeholder={t("newPassword")}
-              {...register("password")}
-              validationMessage={errors.password?.message}
-            />
-            <Input
-              prefix={<LucideLockKeyhole />}
-              suffix={
-                confirmPassVisibility ? (
-                  <LucideEyeClosed
-                    onClick={() => setConfirmPassVisibility(false)}
-                  />
-                ) : (
-                  <LucideEye onClick={() => setConfirmPassVisibility(true)} />
-                )
-              }
-              type={confirmPassVisibility ? "text" : "password"}
-              placeholder={t("confirmPassword")}
-              {...register("confirmPassword")}
-              validationMessage={errors.confirmPassword?.message}
-            />
+            <div className="rounded-lg border border-input bg-card p-4">
+              <Input
+                prefix={<LucideLockKeyhole />}
+                suffix={
+                  passwordVisibility ? (
+                    <LucideEyeClosed
+                      onClick={() => setPasswordVisibility(false)}
+                    />
+                  ) : (
+                    <LucideEye onClick={() => setPasswordVisibility(true)} />
+                  )
+                }
+                type={passwordVisibility ? "text" : "password"}
+                placeholder={t("newPassword")}
+                className="border-0 ring-0 focus-within:ring-0 focus-within:ring-offset-0 h-auto px-0"
+                {...register("password")}
+                validationMessage={errors.password?.message}
+              />
+            </div>
+            <div className="rounded-lg border border-input bg-card p-4">
+              <Input
+                prefix={<LucideLockKeyhole />}
+                suffix={
+                  confirmPassVisibility ? (
+                    <LucideEyeClosed
+                      onClick={() => setConfirmPassVisibility(false)}
+                    />
+                  ) : (
+                    <LucideEye onClick={() => setConfirmPassVisibility(true)} />
+                  )
+                }
+                type={confirmPassVisibility ? "text" : "password"}
+                placeholder={t("confirmPassword")}
+                className="border-0 ring-0 focus-within:ring-0 focus-within:ring-offset-0 h-auto px-0"
+                {...register("confirmPassword")}
+                validationMessage={errors.confirmPassword?.message}
+              />
+            </div>
             <Button type="submit" disabled={loading}>
               {loading ? t("resetting") : t("resetPassword")}
             </Button>

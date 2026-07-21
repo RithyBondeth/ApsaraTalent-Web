@@ -3,21 +3,21 @@ import { LanguageProvider } from "@/components/utils/languages/language-provider
 import { ThemeProvider } from "@/components/utils/themes/theme-provider";
 import { TitleSync } from "@/components/utils/seo/title-sync";
 import type { Metadata } from "next";
-import { Koh_Santepheap, Roboto_Slab } from "next/font/google";
+import { Preahvihear, Ubuntu } from "next/font/google";
 import "./globals.css";
 
-const robotoSlab = Roboto_Slab({
+const ubuntuFont = Ubuntu({
   subsets: ["latin"],
   weight: ["400", "700"],
   display: "swap",
-  variable: "--font-roboto-slab",
+  variable: "--font-ubuntu",
 });
 
-const kohSantepheap = Koh_Santepheap({
+const preahvihearFont = Preahvihear({
   subsets: ["khmer"],
-  weight: ["400", "700"],
+  weight: ["400"],
   display: "swap",
-  variable: "--font-koh-santepheap",
+  variable: "--font-preahvihear",
 });
 
 export const metadata: Metadata = {
@@ -41,9 +41,9 @@ export default function RootLayout({
     /*---------------------------------- Main Layout ----------------------------------*/
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <body
-        className={`${robotoSlab.variable} ${kohSantepheap.variable} antialiased`}
+        className={`${ubuntuFont.variable} ${preahvihearFont.variable} antialiased`}
         style={{
-          fontFamily: "var(--font-roboto-slab), var(--font-koh-santepheap), sans-serif",
+          fontFamily: "var(--font-ubuntu), var(--font-preahvihear), sans-serif",
         }}
         suppressHydrationWarning
       >

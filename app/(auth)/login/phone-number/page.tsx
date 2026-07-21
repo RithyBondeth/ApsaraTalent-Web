@@ -141,13 +141,16 @@ export default function PhoneNumberPage() {
             className="flex flex-col items-stretch gap-3"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <Input
-              prefix={<LucidePhone />}
-              type="number"
-              placeholder={t("phoneNumber")}
-              {...register("phone")}
-              validationMessage={errors.phone?.message}
-            />
+            <div className="rounded-lg border border-input bg-card p-4">
+              <Input
+                prefix={<LucidePhone />}
+                type="number"
+                placeholder={t("phoneNumber")}
+                className="border-0 ring-0 focus-within:ring-0 focus-within:ring-offset-0 h-auto px-0"
+                {...register("phone")}
+                validationMessage={errors.phone?.message}
+              />
+            </div>
             <div className="flex items-center gap-1">
               <Controller
                 name="rememberMe"

@@ -631,33 +631,39 @@ function LoginPage() {
             onSubmit={handleSubmit(onSubmit)}
           >
             <div className="flex flex-col gap-3">
-              <Input
-                prefix={<LucideMail strokeWidth={"1.3px"} />}
-                placeholder={t("email")}
-                type="email"
-                {...register("email")}
-                validationMessage={errors.email?.message}
-              />
-              <Input
-                prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
-                suffix={
-                  passwordVisibility ? (
-                    <LucideEyeClosed
-                      strokeWidth={"1.3px"}
-                      onClick={() => setPasswordVisibility(false)}
-                    />
-                  ) : (
-                    <LucideEye
-                      strokeWidth={"1.3px"}
-                      onClick={() => setPasswordVisibility(true)}
-                    />
-                  )
-                }
-                placeholder={t("password")}
-                type={passwordVisibility ? "text" : "password"}
-                {...register("password")}
-                validationMessage={errors.password?.message}
-              />
+              <div className="rounded-lg border border-input bg-card p-4">
+                <Input
+                  prefix={<LucideMail strokeWidth={"1.3px"} />}
+                  placeholder={t("email")}
+                  type="email"
+                  className="border-0 ring-0 focus-within:ring-0 focus-within:ring-offset-0 h-auto px-0"
+                  {...register("email")}
+                  validationMessage={errors.email?.message}
+                />
+              </div>
+              <div className="rounded-lg border border-input bg-card p-4">
+                <Input
+                  prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
+                  suffix={
+                    passwordVisibility ? (
+                      <LucideEyeClosed
+                        strokeWidth={"1.3px"}
+                        onClick={() => setPasswordVisibility(false)}
+                      />
+                    ) : (
+                      <LucideEye
+                        strokeWidth={"1.3px"}
+                        onClick={() => setPasswordVisibility(true)}
+                      />
+                    )
+                  }
+                  placeholder={t("password")}
+                  type={passwordVisibility ? "text" : "password"}
+                  className="border-0 ring-0 focus-within:ring-0 focus-within:ring-offset-0 h-auto px-0"
+                  {...register("password")}
+                  validationMessage={errors.password?.message}
+                />
+              </div>
             </div>
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-1.5">

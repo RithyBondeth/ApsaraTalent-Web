@@ -123,21 +123,24 @@ export default function ForgotPasswordPage() {
             className="w-full flex flex-col gap-3"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <Input
-              type="text"
-              placeholder={t("emailOrMobile")}
-              value={inputValue}
-              prefix={
-                isEmailInput(inputValue) ? (
-                  <LucideMail strokeWidth={"1.3px"} />
-                ) : isNumberPhoneInput(inputValue) ? (
-                  <LucidePhone strokeWidth={"1.3px"} />
-                ) : null
-              }
-              {...register("forgotPassword")}
-              onChange={(e) => setInputValue(e.target.value)}
-              validationMessage={errors.forgotPassword?.message}
-            />
+            <div className="rounded-lg border border-input bg-card p-4">
+              <Input
+                type="text"
+                placeholder={t("emailOrMobile")}
+                value={inputValue}
+                className="border-0 ring-0 focus-within:ring-0 focus-within:ring-offset-0 h-auto px-0"
+                prefix={
+                  isEmailInput(inputValue) ? (
+                    <LucideMail strokeWidth={"1.3px"} />
+                  ) : isNumberPhoneInput(inputValue) ? (
+                    <LucidePhone strokeWidth={"1.3px"} />
+                  ) : null
+                }
+                {...register("forgotPassword")}
+                onChange={(e) => setInputValue(e.target.value)}
+                validationMessage={errors.forgotPassword?.message}
+              />
+            </div>
             <div className="flex items-center justify-stretch gap-3 [&>button]:w-1/2">
               <Button type="button" onClick={() => router.replace("/login")}>
                 <LucideArrowLeft />
