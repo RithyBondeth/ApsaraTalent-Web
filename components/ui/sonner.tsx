@@ -23,7 +23,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }}
       style={{
         fontFamily:
-          "var(--font-roboto-slab), var(--font-koh-santepheap), sans-serif",
+          "var(--font-source-sans), var(--font-khmer), ui-sans-serif, system-ui, sans-serif",
       }}
       toastOptions={{
         classNames: {

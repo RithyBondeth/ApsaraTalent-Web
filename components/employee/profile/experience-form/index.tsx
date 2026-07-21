@@ -69,7 +69,7 @@ export default function EmployeeExperienceForm(
       </div>
 
       {/* Content Section */}
-      <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md bg-card">
+      <div className="w-full flex flex-col items-start gap-5 rounded-xl border border-border/60 bg-background/50 p-4 sm:p-5">
         {/* Title Section */}
         <LabelInput
           label={t("expTitle")}
@@ -106,7 +106,7 @@ export default function EmployeeExperienceForm(
                 size="sm"
                 onClick={handleRefine}
                 disabled={isRefining}
-                className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                className="h-7 gap-1 rounded-lg px-2 text-[10px] text-brand hover:bg-brand-soft hover:text-brand"
               >
                 {isRefining ? (
                   <Loader2 size={10} className="animate-spin" />

@@ -61,6 +61,13 @@ export default function BasicInfoStepForm({
     Takeo: tLoc("takeo"),
     "Tbong Khmum": tLoc("tbongKhmum"),
   };
+  const companyTypeLabels: Record<string, string> = {
+    startup: t("companyTypeStartup"),
+    sme: t("companyTypeSme"),
+    enterprise: t("companyTypeEnterprise"),
+    ngo: t("companyTypeNgo"),
+    government: t("companyTypeGovernment"),
+  };
 
   /* ----------------------------- API Integration ---------------------------- */
   const { isRefining, refineContent } = useAIRefine();
@@ -80,7 +87,7 @@ export default function BasicInfoStepForm({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex flex-col items-start gap-5">
+    <div className="auth-step-section flex flex-col items-start gap-5">
       {/* Title Section */}
       <TypographyH4>{t("cmpBasicInfoTitle")}</TypographyH4>
       {/* Form Section */}
@@ -128,7 +135,7 @@ export default function BasicInfoStepForm({
           />
         </div>
       </div>
-      <div className="w-full flex justify-between items-center gap-3 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
+      <div className="grid w-full grid-cols-2 items-start gap-4 tablet-md:grid-cols-1 [&>div]:min-w-0">
         <LabelInput
           label={t("cmpBasicInfoIndustry")}
           input={
@@ -153,7 +160,7 @@ export default function BasicInfoStepForm({
           }
         />
       </div>
-      <div className="w-full flex justify-between items-center gap-3 [&>div]:w-1/2 phone-xl:flex-col phone-xl:[&>div]:w-full">
+      <div className="grid w-full grid-cols-2 items-start gap-4 tablet-md:grid-cols-1 [&>div]:min-w-0">
         <LabelInput
           label={t("cmpBasicInfoFoundedYear")}
           input={
@@ -200,7 +207,7 @@ export default function BasicInfoStepForm({
       </div>
 
       {/* Website URL and Company Type Section */}
-      <div className="w-full flex justify-between items-center gap-3 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
+      <div className="grid w-full grid-cols-2 items-start gap-4 tablet-md:grid-cols-1 [&>div]:min-w-0">
         {/* Website URL Section */}
         <LabelInput
           label={t("cmpBasicInfoWebsiteUrl")}
@@ -232,7 +239,7 @@ export default function BasicInfoStepForm({
                 <SelectContent>
                   {companyTypeConstant.map((item) => (
                     <SelectItem key={item.value} value={item.value}>
-                      {item.label}
+                      {companyTypeLabels[item.value] ?? item.label}
                     </SelectItem>
                   ))}
                 </SelectContent>

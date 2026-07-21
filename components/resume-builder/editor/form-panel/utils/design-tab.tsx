@@ -19,7 +19,6 @@ import {
 import {
   DESIGN_FONTS,
   DESIGN_PALETTES,
-  RESUME_TEMPLATE_THEMES,
 } from "@/utils/constants/resume-theme.constant";
 
 /* --------------------------------- Helpers --------------------------------- */
@@ -50,7 +49,7 @@ function PillGroup<T extends string>({
             className={cn(
               "rounded-full border px-2.5 py-1 text-[11px] capitalize transition-colors",
               option === value
-                ? "border-primary bg-primary/10 text-primary font-medium"
+                ? "border-brand/40 bg-brand-soft text-brand-soft-foreground font-medium"
                 : "border-border/70 bg-card text-muted-foreground hover:border-border hover:text-foreground",
             )}
           >
@@ -162,7 +161,7 @@ export function DesignTab({
                 className={cn(
                   "size-8 rounded-full border transition-all",
                   selected
-                    ? "ring-2 ring-primary ring-offset-2 ring-offset-background border-transparent scale-105"
+                    ? "ring-2 ring-brand ring-offset-2 ring-offset-background border-transparent scale-105"
                     : "border-border/60 hover:scale-105",
                 )}
                 style={{
@@ -179,7 +178,7 @@ export function DesignTab({
             className={cn(
               "relative flex cursor-pointer items-center gap-2 rounded-full border px-2.5 py-1.5 transition-colors",
               activeDesign.customAccent
-                ? "border-primary bg-primary/10"
+                ? "border-brand/40 bg-brand-soft"
                 : "border-border/70 bg-card hover:border-border",
             )}
           >
@@ -199,7 +198,7 @@ export function DesignTab({
               size={12}
               className={
                 activeDesign.customAccent
-                  ? "text-primary"
+                  ? "text-brand"
                   : "text-muted-foreground"
               }
             />
@@ -216,7 +215,7 @@ export function DesignTab({
               className={cn(
                 "text-[11px] font-medium tabular-nums",
                 activeDesign.customAccent
-                  ? "text-primary"
+                  ? "text-brand"
                   : "text-muted-foreground",
               )}
             >
@@ -253,14 +252,14 @@ export function DesignTab({
                 className={cn(
                   "flex min-w-[52px] flex-col items-center gap-0.5 rounded-lg border px-2 py-1.5 transition-colors",
                   selected
-                    ? "border-primary bg-primary/10"
+                    ? "border-brand/40 bg-brand-soft"
                     : "border-border/70 bg-card hover:border-border",
                 )}
               >
                 <span
                   className={cn(
                     "text-base leading-none",
-                    selected ? "text-primary" : "text-foreground",
+                    selected ? "text-brand" : "text-foreground",
                   )}
                   style={{ fontFamily: DESIGN_FONTS[typography] }}
                 >
@@ -312,7 +311,7 @@ export function DesignTab({
                     className={cn(
                       "rounded-full border px-2.5 py-1 text-[11px] capitalize transition-colors",
                       selected
-                        ? "border-primary bg-primary/10 text-primary font-medium"
+                        ? "border-brand/40 bg-brand-soft text-brand-soft-foreground font-medium"
                         : "border-border/70 bg-card text-muted-foreground hover:border-border hover:text-foreground",
                     )}
                   >

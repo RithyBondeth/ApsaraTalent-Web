@@ -3,14 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { AuthBrandPanel } from "@/components/auth/auth-brand-panel";
+import LogoComponent from "@/components/utils/brand/logo";
 import { useVerifyEmailStore } from "@/stores/apis/auth/verify-email.store";
 import { LucideMail } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { emailVerificationSvg } from "@/utils/constants/asset.constant";
 import {
   DEFAULT_REDIRECT_DELAY_MS,
   TOAST_DURATION_MS,
@@ -59,17 +59,19 @@ export default function EmailVerificationPage() {
 
   /* ------------------------------ Render UI ------------------------------ */
   return (
-    <div className="min-h-screen w-full flex tablet-md:flex-col">
+    <div className="auth-static-page flex h-[100dvh] min-h-0 w-full overflow-hidden tablet-md:flex-col">
       {/* Left Section */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-background p-6 sm:p-10 tablet-md:w-full tablet-md:min-h-0 tablet-md:py-16">
-        <div className="w-full max-w-[440px] flex flex-col items-start gap-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
+      <div className="auth-static-pane flex h-full min-h-0 w-[58%] items-center justify-center overflow-hidden bg-background px-7 py-10 sm:px-12 tablet-md:w-full tablet-md:pb-5 tablet-md:pt-16">
+        <div className="auth-static-content flex w-full max-w-[440px] flex-col items-start gap-6">
+          <LogoComponent className="auth-form-logo !h-10 w-auto self-start" />
+
           {/* Icon Badge Section */}
-          <div className="size-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+          <div className="auth-icon-badge size-16 rounded-2xl bg-primary/10 flex items-center justify-center">
             <LucideMail className="size-7 text-primary" />
           </div>
 
           {/* Title Section */}
-          <div className="flex flex-col items-start">
+          <div className="auth-heading-group flex flex-col items-start">
             <TypographyH2 className="tablet-sm:text-2xl">
               {t("emailVerificationTitle")}
             </TypographyH2>
@@ -79,7 +81,10 @@ export default function EmailVerificationPage() {
           </div>
 
           {/* Button Section */}
-          <Button className="w-full" onClick={() => handleVerifyEmail()}>
+          <Button
+            className="auth-primary-action w-full"
+            onClick={() => handleVerifyEmail()}
+          >
             <LucideMail />
             {t("verify")}
           </Button>
@@ -87,7 +92,7 @@ export default function EmailVerificationPage() {
           {/* Back to Login Link */}
           <Button
             variant="link"
-            className="w-fit mx-auto"
+            className="auth-text-link w-fit mx-auto"
             onClick={() => router.replace("/login")}
           >
             {t("backToLogin")}
@@ -95,19 +100,8 @@ export default function EmailVerificationPage() {
         </div>
       </div>
 
-      {/* Right Section: Image Poster Section */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-md:hidden">
-        {/* Decorative Circles Section */}
-        <div className="absolute -top-20 -right-20 size-72 rounded-full bg-white/5" />
-        <div className="absolute -bottom-32 -left-32 size-96 rounded-full bg-white/5" />
-
-        <Image
-          src={emailVerificationSvg}
-          alt="email-verification"
-          height={undefined}
-          width={600}
-        />
-      </div>
+      {/* Right Section: Auth Panel */}
+      <AuthBrandPanel />
     </div>
   );
 }

@@ -317,12 +317,12 @@ export default function SignupPage() {
 
   /* -------------------------------------- Render UI -------------------------------------- */
   return (
-    <div className="w-full max-w-[620px] flex flex-col gap-5 tablet-sm:max-w-full">
+    <div className="auth-basic-signup flex w-full max-w-[620px] flex-col gap-5 tablet-sm:max-w-full">
       {/* Logo Section */}
-      <LogoComponent className="!h-12 w-auto self-start" />
+      <LogoComponent className="auth-form-logo !h-12 w-auto self-start" />
 
       {/* Title Section */}
-      <div className="flex flex-col items-start">
+      <div className="auth-heading-group flex flex-col items-start">
         <TypographyH2>{t("signupPageTitle")}</TypographyH2>
         <TypographyMuted className="text-md">
           {t("signupSubtitle")}
@@ -331,7 +331,7 @@ export default function SignupPage() {
 
       {/* Form Section */}
       <form
-        className="w-full flex flex-col gap-6"
+        className="auth-basic-signup-form flex w-full flex-col gap-6"
         onSubmit={
           isEmployeeForm
             ? empForm.handleSubmit(onSubmitEmployee)
@@ -340,7 +340,7 @@ export default function SignupPage() {
       >
         {/* Employee Information Section */}
         {isEmployeeForm && (
-          <div className="flex flex-col gap-4">
+          <div className="auth-signup-section flex flex-col gap-4">
             {/* Divider Section */}
             <div className="flex items-center gap-3">
               <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest whitespace-nowrap">
@@ -350,35 +350,46 @@ export default function SignupPage() {
             </div>
 
             {/* Employee: Firstname & Lastname Section */}
-            <div className="flex items-start gap-3 tablet-sm:flex-col">
-              <Controller
-                name="firstName"
-                control={empForm.control}
-                render={({ field }) => (
-                  <Input
-                    placeholder={t("firstname")}
-                    type="text"
-                    {...field}
-                    validationMessage={employeeErrors.firstName?.message}
-                  />
-                )}
-              />
-              <Controller
-                name="lastName"
-                control={empForm.control}
-                render={({ field }) => (
-                  <Input
-                    placeholder={t("lastname")}
-                    type="text"
-                    {...field}
-                    validationMessage={employeeErrors.lastName?.message}
-                  />
-                )}
-              />
+            <div className="auth-signup-field-row flex items-start gap-3 tablet-sm:flex-col">
+              <div className="auth-field flex w-full flex-col gap-1.5">
+                <label htmlFor="signup-first-name">{t("firstname")}</label>
+                <Controller
+                  name="firstName"
+                  control={empForm.control}
+                  render={({ field }) => (
+                    <Input
+                      id="signup-first-name"
+                      placeholder={t("firstname")}
+                      type="text"
+                      autoComplete="given-name"
+                      {...field}
+                      validationMessage={employeeErrors.firstName?.message}
+                    />
+                  )}
+                />
+              </div>
+              <div className="auth-field flex w-full flex-col gap-1.5">
+                <label htmlFor="signup-last-name">{t("lastname")}</label>
+                <Controller
+                  name="lastName"
+                  control={empForm.control}
+                  render={({ field }) => (
+                    <Input
+                      id="signup-last-name"
+                      placeholder={t("lastname")}
+                      type="text"
+                      autoComplete="family-name"
+                      {...field}
+                      validationMessage={employeeErrors.lastName?.message}
+                    />
+                  )}
+                />
+              </div>
             </div>
 
             {/* Employee: DOB Section */}
-            <div className="w-full flex flex-col items-start gap-1">
+            <div className="auth-field w-full flex flex-col items-start gap-1.5">
+              <span className="auth-field-label">{t("dateOfBirth")}</span>
               <Controller
                 name="dob"
                 control={empForm.control}
@@ -407,20 +418,26 @@ export default function SignupPage() {
             </div>
 
             {/* Employee: Username & Location Section */}
-            <div className="flex items-start gap-3 tablet-sm:flex-col">
-              <Controller
-                name="username"
-                control={empForm.control}
-                render={({ field }) => (
-                  <Input
-                    type="text"
-                    placeholder={t("username")}
-                    {...field}
-                    validationMessage={employeeErrors.username?.message}
-                  />
-                )}
-              />
-              <div className="w-full flex flex-col items-start gap-1">
+            <div className="auth-signup-field-row flex items-start gap-3 tablet-sm:flex-col">
+              <div className="auth-field flex w-full flex-col gap-1.5">
+                <label htmlFor="signup-username">{t("username")}</label>
+                <Controller
+                  name="username"
+                  control={empForm.control}
+                  render={({ field }) => (
+                    <Input
+                      id="signup-username"
+                      type="text"
+                      autoComplete="username"
+                      placeholder={t("username")}
+                      {...field}
+                      validationMessage={employeeErrors.username?.message}
+                    />
+                  )}
+                />
+              </div>
+              <div className="auth-field w-full flex flex-col items-start gap-1.5">
+                <label htmlFor="signup-location">{t("location")}</label>
                 <Controller
                   name="selectedLocation"
                   control={empForm.control}
@@ -429,7 +446,10 @@ export default function SignupPage() {
                       onValueChange={field.onChange}
                       value={field.value || ""}
                     >
-                      <SelectTrigger className="h-12 text-muted-foreground">
+                      <SelectTrigger
+                        id="signup-location"
+                        className="h-12 text-muted-foreground"
+                      >
                         <SelectValue placeholder={t("location")} />
                       </SelectTrigger>
                       <SelectContent>
@@ -451,8 +471,9 @@ export default function SignupPage() {
             </div>
 
             {/* Employee: Gender & Phone Section */}
-            <div className="flex items-start gap-3 tablet-sm:flex-col">
-              <div className="w-full flex flex-col items-start gap-1">
+            <div className="auth-signup-field-row flex items-start gap-3 tablet-sm:flex-col">
+              <div className="auth-field w-full flex flex-col items-start gap-1.5">
+                <label htmlFor="signup-gender">{t("gender")}</label>
                 <Controller
                   name="gender"
                   control={empForm.control}
@@ -461,7 +482,10 @@ export default function SignupPage() {
                       onValueChange={field.onChange}
                       value={field.value || ""}
                     >
-                      <SelectTrigger className="h-12 text-muted-foreground">
+                      <SelectTrigger
+                        id="signup-gender"
+                        className="h-12 text-muted-foreground"
+                      >
                         <SelectValue placeholder={t("gender")} />
                       </SelectTrigger>
                       <SelectContent>
@@ -480,24 +504,30 @@ export default function SignupPage() {
                     : null}
                 </ErrorMessage>
               </div>
-              <Controller
-                name="phone"
-                control={empForm.control}
-                render={({ field }) => (
-                  <Input
-                    type="text"
-                    placeholder={t("mobile")}
-                    {...field}
-                    validationMessage={employeeErrors.phone?.message}
-                  />
-                )}
-              />
+              <div className="auth-field flex w-full flex-col gap-1.5">
+                <label htmlFor="signup-phone">{t("mobile")}</label>
+                <Controller
+                  name="phone"
+                  control={empForm.control}
+                  render={({ field }) => (
+                    <Input
+                      id="signup-phone"
+                      type="tel"
+                      inputMode="tel"
+                      autoComplete="tel"
+                      placeholder={t("mobile")}
+                      {...field}
+                      validationMessage={employeeErrors.phone?.message}
+                    />
+                  )}
+                />
+              </div>
             </div>
           </div>
         )}
 
         {/* Employee: Account Security Section */}
-        <div className="flex flex-col gap-4">
+        <div className="auth-signup-section flex flex-col gap-4">
           {/* Divider Section */}
           <div className="flex items-center gap-3">
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest whitespace-nowrap">
@@ -508,142 +538,174 @@ export default function SignupPage() {
 
           {/* Company: Phone Section */}
           {!isEmployeeForm && (
-            <Input
-              type="number"
-              placeholder={t("mobile")}
-              {...cmpForm.register("phone")}
-              validationMessage={companyErrors.phone?.message}
-            />
+            <div className="auth-field flex w-full flex-col gap-1.5">
+              <label htmlFor="company-signup-phone">{t("mobile")}</label>
+              <Input
+                id="company-signup-phone"
+                type="tel"
+                inputMode="tel"
+                autoComplete="tel"
+                placeholder={t("mobile")}
+                {...cmpForm.register("phone")}
+                validationMessage={companyErrors.phone?.message}
+              />
+            </div>
           )}
 
           {/* Employee and Company: Email Section */}
-          {isEmployeeForm ? (
-            <Controller
-              name="email"
-              control={empForm.control}
-              render={({ field }) => (
-                <Input
-                  prefix={<LucideMail strokeWidth={"1.3px"} />}
-                  type="email"
-                  placeholder={t("email")}
-                  {...field}
-                  validationMessage={employeeErrors.email?.message}
-                />
-              )}
-            />
-          ) : (
-            <Input
-              prefix={<LucideMail strokeWidth={"1.3px"} />}
-              type="email"
-              placeholder={t("email")}
-              {...cmpForm.register("email")}
-              validationMessage={companyErrors.email?.message}
-            />
-          )}
+          <div className="auth-field flex w-full flex-col gap-1.5">
+            <label htmlFor="signup-email">{t("email")}</label>
+            {isEmployeeForm ? (
+              <Controller
+                name="email"
+                control={empForm.control}
+                render={({ field }) => (
+                  <Input
+                    id="signup-email"
+                    prefix={<LucideMail strokeWidth={1.5} />}
+                    type="email"
+                    autoComplete="email"
+                    placeholder={t("email")}
+                    {...field}
+                    validationMessage={employeeErrors.email?.message}
+                  />
+                )}
+              />
+            ) : (
+              <Input
+                id="signup-email"
+                prefix={<LucideMail strokeWidth={1.5} />}
+                type="email"
+                autoComplete="email"
+                placeholder={t("email")}
+                {...cmpForm.register("email")}
+                validationMessage={companyErrors.email?.message}
+              />
+            )}
+          </div>
 
           {/* Employee and Company: Password Section */}
-          {isEmployeeForm ? (
-            <Input
-              prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
-              suffix={
-                passwordVisibility ? (
-                  <LucideEyeClosed
-                    strokeWidth={"1.3px"}
-                    onClick={() => setPasswordVisibility(false)}
-                  />
-                ) : (
-                  <LucideEye
-                    strokeWidth={"1.3px"}
-                    onClick={() => setPasswordVisibility(true)}
-                  />
-                )
-              }
-              type={passwordVisibility ? "text" : "password"}
-              placeholder={t("password")}
-              {...empForm.register("password")}
-              validationMessage={employeeErrors.password?.message}
-            />
-          ) : (
-            <Input
-              prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
-              suffix={
-                passwordVisibility ? (
-                  <LucideEyeClosed
-                    strokeWidth={"1.3px"}
-                    onClick={() => setPasswordVisibility(false)}
-                  />
-                ) : (
-                  <LucideEye
-                    strokeWidth={"1.3px"}
-                    onClick={() => setPasswordVisibility(true)}
-                  />
-                )
-              }
-              type={passwordVisibility ? "text" : "password"}
-              placeholder={t("password")}
-              {...cmpForm.register("password")}
-              validationMessage={companyErrors.password?.message}
-            />
-          )}
+          <div className="auth-field flex w-full flex-col gap-1.5">
+            <label htmlFor="signup-password">{t("password")}</label>
+            {isEmployeeForm ? (
+              <Input
+                id="signup-password"
+                prefix={<LucideLockKeyhole strokeWidth={1.5} />}
+                suffix={
+                  passwordVisibility ? (
+                    <LucideEyeClosed
+                      strokeWidth={1.5}
+                      onClick={() => setPasswordVisibility(false)}
+                    />
+                  ) : (
+                    <LucideEye
+                      strokeWidth={1.5}
+                      onClick={() => setPasswordVisibility(true)}
+                    />
+                  )
+                }
+                type={passwordVisibility ? "text" : "password"}
+                autoComplete="new-password"
+                placeholder={t("password")}
+                {...empForm.register("password")}
+                validationMessage={employeeErrors.password?.message}
+              />
+            ) : (
+              <Input
+                id="signup-password"
+                prefix={<LucideLockKeyhole strokeWidth={1.5} />}
+                suffix={
+                  passwordVisibility ? (
+                    <LucideEyeClosed
+                      strokeWidth={1.5}
+                      onClick={() => setPasswordVisibility(false)}
+                    />
+                  ) : (
+                    <LucideEye
+                      strokeWidth={1.5}
+                      onClick={() => setPasswordVisibility(true)}
+                    />
+                  )
+                }
+                type={passwordVisibility ? "text" : "password"}
+                autoComplete="new-password"
+                placeholder={t("password")}
+                {...cmpForm.register("password")}
+                validationMessage={companyErrors.password?.message}
+              />
+            )}
+          </div>
 
           {/* Employee and Company: Confirm Password Section */}
-          {isEmployeeForm ? (
-            <Input
-              prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
-              suffix={
-                confirmPassVisibility ? (
-                  <LucideEyeClosed
-                    strokeWidth={"1.3px"}
-                    onClick={() => setConfirmPassVisibility(false)}
-                  />
-                ) : (
-                  <LucideEye
-                    strokeWidth={"1.3px"}
-                    onClick={() => setConfirmPassVisibility(true)}
-                  />
-                )
-              }
-              type={confirmPassVisibility ? "text" : "password"}
-              placeholder={t("confirmPassword")}
-              {...empForm.register("confirmPassword")}
-              validationMessage={employeeErrors.confirmPassword?.message}
-            />
-          ) : (
-            <Input
-              prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
-              suffix={
-                confirmPassVisibility ? (
-                  <LucideEyeClosed
-                    strokeWidth={"1.3px"}
-                    onClick={() => setConfirmPassVisibility(false)}
-                  />
-                ) : (
-                  <LucideEye
-                    strokeWidth={"1.3px"}
-                    onClick={() => setConfirmPassVisibility(true)}
-                  />
-                )
-              }
-              type={confirmPassVisibility ? "text" : "password"}
-              placeholder={t("confirmPassword")}
-              {...cmpForm.register("confirmPassword")}
-              validationMessage={companyErrors.confirmPassword?.message}
-            />
-          )}
+          <div className="auth-field flex w-full flex-col gap-1.5">
+            <label htmlFor="signup-confirm-password">
+              {t("confirmPassword")}
+            </label>
+            {isEmployeeForm ? (
+              <Input
+                id="signup-confirm-password"
+                prefix={<LucideLockKeyhole strokeWidth={1.5} />}
+                suffix={
+                  confirmPassVisibility ? (
+                    <LucideEyeClosed
+                      strokeWidth={1.5}
+                      onClick={() => setConfirmPassVisibility(false)}
+                    />
+                  ) : (
+                    <LucideEye
+                      strokeWidth={1.5}
+                      onClick={() => setConfirmPassVisibility(true)}
+                    />
+                  )
+                }
+                type={confirmPassVisibility ? "text" : "password"}
+                autoComplete="new-password"
+                placeholder={t("confirmPassword")}
+                {...empForm.register("confirmPassword")}
+                validationMessage={employeeErrors.confirmPassword?.message}
+              />
+            ) : (
+              <Input
+                id="signup-confirm-password"
+                prefix={<LucideLockKeyhole strokeWidth={1.5} />}
+                suffix={
+                  confirmPassVisibility ? (
+                    <LucideEyeClosed
+                      strokeWidth={1.5}
+                      onClick={() => setConfirmPassVisibility(false)}
+                    />
+                  ) : (
+                    <LucideEye
+                      strokeWidth={1.5}
+                      onClick={() => setConfirmPassVisibility(true)}
+                    />
+                  )
+                }
+                type={confirmPassVisibility ? "text" : "password"}
+                autoComplete="new-password"
+                placeholder={t("confirmPassword")}
+                {...cmpForm.register("confirmPassword")}
+                validationMessage={companyErrors.confirmPassword?.message}
+              />
+            )}
+          </div>
         </div>
 
         {/* Back & Next Buttons Section */}
-        <div className="flex items-center gap-3 tablet-sm:flex-col">
+        <div className="auth-signup-actions flex items-center gap-3 tablet-sm:flex-col">
           <Button
             type="button"
-            className="flex-1 tablet-sm:w-full"
+            className="auth-secondary-action flex-1 tablet-sm:w-full"
             variant="outline"
             onClick={() => router.replace("/signup/option")}
           >
             <LucideArrowLeft />
             {t("back")}
           </Button>
-          <Button className="flex-1 tablet-sm:w-full" type="submit">
+          <Button
+            className="auth-primary-action flex-1 tablet-sm:w-full"
+            type="submit"
+          >
             {t("next")}
             <LucideArrowRight />
           </Button>

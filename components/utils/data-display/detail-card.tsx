@@ -10,7 +10,7 @@ export function DetailCard({ children, className }: IDetailCardProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
-      className={`bg-card rounded-2xl border border-border/60 shadow-sm ${className ?? ""}`}
+      className={`overflow-hidden rounded-2xl border border-border/70 bg-card shadow-[0_2px_8px_hsl(var(--foreground)/0.04)] ${className ?? ""}`}
     >
       {children}
     </div>

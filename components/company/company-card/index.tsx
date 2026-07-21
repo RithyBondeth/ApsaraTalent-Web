@@ -5,17 +5,15 @@ import {
   LucideBookmark,
   LucideBriefcaseBusiness,
   LucideBuilding,
-  LucideBuilding2,
-  LucideCalendar,
   LucideCircleArrowRight,
   LucideClock,
   LucideEye,
   LucideHeartHandshake,
   LucideLoader2,
   LucideMapPin,
+  LucideSparkles,
   LucideUsers,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "../../ui/button";
@@ -64,189 +62,144 @@ export default function CompanyCard(props: ICompanyCardProps) {
   // ── Grid variant: flat card, top border divider, no vertical gap ──────────
   if (isGrid) {
     return (
-      <>
-        <div className="group relative h-full w-full flex flex-col rounded-2xl border border-border/70 bg-card overflow-hidden cursor-pointer shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] transition-all duration-300 ease-out hover:z-10 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_hsl(var(--foreground)/0.13)] hover:border-primary/25 active:scale-[0.98] active:shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] active:translate-y-0">
-          {/* Cover Banner Section */}
-          <div className="relative h-28 tablet-md:h-12 w-full shrink-0 bg-gradient-to-br from-primary/20 via-primary/10 to-muted/40 overflow-hidden">
-            {props.cover && (
-              <Image
-                src={props.cover}
-                alt="cover"
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 400px"
-              />
-            )}
-            {/* Like Button and Dialog Button Section */}
-            <div className="absolute top-2 right-2 flex justify-center items-center gap-1">
-              <Button
-                size="icon"
-                variant="ghost"
-                aria-label="Like"
-                className="size-8 rounded-full bg-background/70 backdrop-blur-sm text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-all duration-200"
-                onClick={props.onLikeClick}
-                disabled={props.onLikeClickDisable}
-              >
-                {props.onLikeClickDisable ? (
-                  <LucideLoader2 className="!size-4 animate-spin text-rose-500" />
-                ) : (
-                  <LucideHeartHandshake className="!size-4" />
-                )}
-              </Button>
-              <Button
-                size="icon"
-                variant="ghost"
-                aria-label="Quick view"
-                className="size-8 rounded-full bg-background/70 backdrop-blur-sm text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
-                onClick={handleClickDialog}
-              >
-                <LucideEye className="!size-4" />
-              </Button>
+      <article className="group flex h-full w-full flex-col overflow-hidden rounded-2xl border border-border/80 bg-card shadow-[0_1px_2px_hsl(var(--foreground)/0.03),0_8px_24px_hsl(var(--foreground)/0.035)] transition duration-200 hover:border-primary/30 hover:shadow-[0_12px_32px_hsl(var(--foreground)/0.08)]">
+        <div className="flex items-start gap-3.5 px-4 pb-3 pt-4 sm:px-5 sm:pt-5">
+          {/* Avatar Section */}
+          <CachedAvatar
+            src={props.avatar}
+            alt={props.name}
+            className="size-14 shrink-0 border border-border shadow-sm"
+            rounded="md"
+            onClick={props.onProfileImageClick}
+            preload={true}
+            showLoadingState={true}
+          >
+            {getNameInitials(props.name)}
+          </CachedAvatar>
+
+          {/* Company Info Section */}
+          <div className="min-w-0 flex-1">
+            <h3 className="truncate text-base font-bold leading-tight text-foreground">
+              {props.name}
+            </h3>
+            <p className="mt-1 truncate text-xs font-medium text-primary">
+              {props.industry}
+            </p>
+            <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+              <span className="inline-flex items-center gap-1">
+                <LucideMapPin className="size-3.5" />
+                {translateLocation(props.location, tl)}
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <LucideUsers className="size-3.5" />
+                {t("companyPeopleCount", { count: props.companySize })}
+              </span>
             </div>
           </div>
 
-          {/* Avatar and Identity Section */}
-          <div className="flex items-end justify-between gap-3 px-4 -mt-6 tablet-md:-mt-4 z-10">
-            <CachedAvatar
-              src={props.avatar}
-              alt={props.name}
-              className="size-14 tablet-md:size-10 shrink-0 ring-2 ring-card shadow-md"
-              rounded="md"
-              onClick={props.onProfileImageClick}
-              preload={true}
-              showLoadingState={true}
+          {/* Save Button Section */}
+          {!props.hideSaveButton ? (
+            <Button
+              size="icon"
+              variant="ghost"
+              aria-label={t("save")}
+              className="size-10 shrink-0 rounded-xl border border-border/80 text-muted-foreground hover:border-primary/30 hover:bg-primary/5 hover:text-primary"
+              onClick={props.onSaveClick}
+              disabled={props.onSaveClickDisable}
             >
-              {getNameInitials(props.name)}
-            </CachedAvatar>
-          </div>
+              {props.onSaveClickDisable ? (
+                <LucideLoader2 className="!size-4 animate-spin" />
+              ) : (
+                <LucideBookmark className="!size-4" />
+              )}
+            </Button>
+          ) : (
+            <span
+              title={t("saved")}
+              className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"
+            >
+              <LucideBookmark className="size-4 fill-current" />
+              <span className="sr-only">{t("saved")}</span>
+            </span>
+          )}
+        </div>
 
-          {/* Main Content Section */}
-          <div className="flex flex-1 flex-col gap-2 tablet-md:gap-1.5 px-4 pt-2 pb-3">
-            {/* Name and Meta Section */}
-            <div className="flex flex-col gap-1">
-              <TypographyP className="!m-0 font-semibold text-sm leading-tight">
-                {props.name}
-              </TypographyP>
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
-                <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
-                  <LucideBuilding2 className="size-3 shrink-0" />
-                  <span className="truncate">{props.industry}</span>
-                </TypographySmall>
-                <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
-                  <LucideMapPin className="size-3 shrink-0" />
-                  <span className="truncate">
-                    {translateLocation(props.location, tl)}
+        {/* Company Content Section */}
+        <div className="flex flex-1 flex-col gap-3 px-4 pb-4 sm:px-5 sm:pb-5">
+          {/* Recommendation Section */}
+          {props.isRecommended && (
+            <div className="flex items-start gap-2 rounded-xl border border-primary/15 bg-primary/[0.055] px-3 py-2.5 text-xs leading-relaxed text-[hsl(var(--brand-soft-foreground))] dark:text-[hsl(var(--brand-soft-foreground))]">
+              <LucideSparkles className="mt-0.5 size-3.5 shrink-0 text-primary" />
+              <span>
+                <strong className="font-semibold">{t("topMatch")}</strong>
+                <span className="mx-1 text-muted-foreground">·</span>
+                {t("companyRecommendationReason")}
+              </span>
+            </div>
+          )}
+
+          <TypographyMuted className="line-clamp-2 text-sm leading-relaxed">
+            {props.description}
+          </TypographyMuted>
+
+          {props.openPositions.length > 0 && (
+            <div className="flex flex-col gap-2">
+              <span className="flex items-center gap-1.5 text-xs font-semibold text-foreground/80">
+                <LucideBriefcaseBusiness className="size-3.5 text-primary" />
+                {t("openPositionCount", { count: props.openPositions.length })}
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {props.openPositions
+                  .slice(0, 3)
+                  .map((item: IJobPosition, index) => (
+                    <Tag key={index} label={item.title} />
+                  ))}
+                {props.openPositions.length > 3 && (
+                  <span className="self-center text-xs font-medium text-muted-foreground">
+                    {t("moreItems", { count: props.openPositions.length - 3 })}
                   </span>
-                </TypographySmall>
-                <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
-                  <LucideUsers className="size-3 shrink-0" />
-                  <span>
-                    {t("companyPeopleCount", { count: props.companySize })}
-                  </span>
-                </TypographySmall>
-                {props.foundedYear && (
-                  <TypographySmall className="text-[11px] flex items-center gap-1 text-muted-foreground">
-                    <LucideCalendar className="size-3 shrink-0" />
-                    <span>{t("established", { year: props.foundedYear })}</span>
-                  </TypographySmall>
                 )}
               </div>
             </div>
+          )}
 
-            {/* Description Section */}
-            <TypographyMuted className="text-xs leading-relaxed line-clamp-2 tablet-md:line-clamp-1">
-              {props.description}
-            </TypographyMuted>
-
-            {/* Open Positions Section */}
-            {props.openPositions.length > 0 && (
-              <div className="flex flex-col gap-1.5">
-                <TypographySmall className="text-[11px] font-semibold text-foreground/70 flex items-center gap-1">
-                  <LucideBriefcaseBusiness className="size-3" />
-                  {t("openPositionCount", {
-                    count: props.openPositions.length,
-                  })}
-                </TypographySmall>
-                <div className="flex flex-wrap gap-1.5">
-                  {props.openPositions
-                    .slice(0, 3)
-                    .map((item: IJobPosition, index) => (
-                      <Tag key={index} label={item.title} />
-                    ))}
-                  {props.openPositions.length > 3 && (
-                    <span className="text-[11px] text-muted-foreground self-center font-medium">
-                      {t("moreItems", {
-                        count: props.openPositions.length - 3,
-                      })}
-                    </span>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Benefits Section */}
-            {props.benefits && props.benefits.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
-                {props.benefits.slice(0, 3).map((b, i) => (
-                  <Tag key={i} label={b.label} />
-                ))}
-                {props.benefits.length > 3 && (
-                  <span className="text-[11px] text-muted-foreground self-center font-medium">
-                    {t("moreItems", { count: props.benefits.length - 3 })}
-                  </span>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Footer Section */}
-          <div className=" flex items-center justify-end gap-2 px-4 pb-3 pt-3 border-t border-border/50">
-            {!props.hideSaveButton && (
-              <Button
-                className="text-xs h-7 px-3 rounded-full"
-                variant="outline"
-                size="sm"
-                onClick={props.onSaveClick}
-                disabled={props.onSaveClickDisable}
-              >
-                {props.onSaveClickDisable ? (
-                  <LucideLoader2 className="!size-3 animate-spin" />
-                ) : (
-                  <LucideBookmark className="!size-3" />
-                )}
-                {t("save")}
-              </Button>
-            )}
+          {/* Action Buttons Section */}
+          <div className="mt-auto grid grid-cols-2 gap-2 border-t border-border/60 pt-4">
+            <Button
+              variant="outline"
+              className="h-11 rounded-xl border-border text-xs font-semibold hover:border-primary/35 hover:bg-primary/5 hover:text-primary"
+              onClick={props.onLikeClick}
+              disabled={props.onLikeClickDisable}
+            >
+              {props.onLikeClickDisable ? (
+                <LucideLoader2 className="!size-4 animate-spin" />
+              ) : (
+                <LucideHeartHandshake className="!size-4" />
+              )}
+              {t("interested")}
+            </Button>
             {props.viewHref ? (
               <Button
-                className="text-xs h-7 px-3 rounded-full"
-                size="sm"
+                className="h-11 rounded-xl text-xs font-semibold shadow-none"
                 asChild
               >
                 <Link href={props.viewHref} prefetch={true}>
-                  {t("view")}
-                  <LucideCircleArrowRight className="!size-3" />
+                  {t("viewJobs")}
+                  <LucideCircleArrowRight className="!size-4" />
                 </Link>
               </Button>
             ) : (
               <Button
-                className="text-xs h-7 px-3 rounded-full"
-                size="sm"
+                className="h-11 rounded-xl text-xs font-semibold shadow-none"
                 onClick={props.onViewClick}
               >
-                {t("view")}
-                <LucideCircleArrowRight className="!size-3" />
+                {t("viewJobs")}
+                <LucideCircleArrowRight className="!size-4" />
               </Button>
             )}
           </div>
         </div>
-
-        <CompanyDialog
-          open={openCompanyDialog}
-          setOpen={setOpenCompanyDialog}
-          {...props}
-        />
-      </>
+      </article>
     );
   }
 

@@ -33,7 +33,7 @@ export default function TemplateSelector({
         onValueChange={(v) => onChange(v as TResumeTemplate)}
       >
         {/* Select Template Trigger Section */}
-        <SelectTrigger className="h-8 w-[180px] bg-background text-xs">
+        <SelectTrigger className="h-9 w-[154px] rounded-xl border-border/80 bg-background text-xs sm:w-[184px]">
           <div className="flex items-center gap-2">
             <Layout size={14} className="text-muted-foreground" />
             <SelectValue placeholder={t("selectTemplate")} />

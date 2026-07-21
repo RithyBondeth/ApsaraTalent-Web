@@ -219,10 +219,10 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
         variant="outline"
         size="sm"
         onClick={() => void analyze()}
-        className="h-8 text-xs gap-1.5"
+        className="h-9 shrink-0 gap-1.5 rounded-xl px-3 text-xs"
         title={t("aiOptimizerTitle")}
       >
-        <LucideSparkles size={14} className="text-primary" />
+        <LucideSparkles size={14} className="text-brand" />
         <span className="hidden lg:inline">{t("aiOptimize")}</span>
         <span className="lg:hidden">{t("optimize")}</span>
       </Button>
@@ -242,10 +242,10 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
           {/* Header Section */}
           <SheetHeader className="px-5 py-4 border-b">
             <SheetTitle className="flex items-center gap-2">
-              <LucideSparkles className="size-4 text-primary" />
+              <LucideSparkles className="size-4 text-brand" />
               {t("aiOptimizerTitle")}
               {generating && (
-                <LucideLoader2 className="size-3.5 animate-spin text-primary ml-1" />
+                <LucideLoader2 className="ml-1 size-3.5 animate-spin text-brand" />
               )}
             </SheetTitle>
             {/* AI Quota Badge Section */}
@@ -405,7 +405,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
                                 key={i}
                                 className="flex items-start gap-1.5 text-xs text-muted-foreground"
                               >
-                                <LucideCheckCircle2 className="size-3 mt-0.5 shrink-0 text-primary/60" />
+                                <LucideCheckCircle2 className="mt-0.5 size-3 shrink-0 text-brand/70" />
                                 {a}
                               </li>
                             ))}

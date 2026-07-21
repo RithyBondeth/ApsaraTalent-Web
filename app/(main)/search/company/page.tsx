@@ -1,6 +1,5 @@
 "use client";
 
-import SearchBar from "@/components/search/search-bar";
 import SearchEmployeeCard from "@/components/search/search-employee-card";
 import { SearchErrorCard } from "@/components/search/search-error-card";
 import { Button } from "@/components/ui/button";
@@ -16,9 +15,6 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
-import { emptySvg } from "@/utils/constants/asset.constant";
-import { TypographyH3 } from "@/components/utils/typography/typography-h3";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
@@ -38,16 +34,16 @@ import {
   LucideSlidersHorizontal,
   LucideX,
 } from "lucide-react";
-import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Controller, useForm } from "react-hook-form";
 import { companySearchSchema, TCompanySearchSchema } from "./validation";
-import { companySearchBannerSvg } from "@/utils/constants/asset.constant";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { SearchEmployeeCardSkeleton } from "@/components/search/skeleton";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
+import { FeaturePageHeader } from "@/components/utils/layout/feature-page-header";
+import { EditorialIllustration } from "@/components/utils/data-display/editorial-illustration";
 
 export default function CompanySearchPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -108,7 +104,7 @@ export default function CompanySearchPage() {
   /* ----------------------- React Hook Form: Search Form ---------------------- */
   // defaultValues are seeded from the URL so a page refresh / shared link
   // restores the exact filter state that was active when the URL was captured.
-  const { register, setValue, getValues, control, handleSubmit, watch } =
+  const { setValue, getValues, control, handleSubmit, watch } =
     useForm<TCompanySearchSchema>({
       resolver: zodResolver(companySearchSchema),
       defaultValues: {
@@ -121,10 +117,6 @@ export default function CompanySearchPage() {
         orderBy: urlOrderBy ?? "desc",
       },
     });
-
-  // Watch Only What SearchBar Needs  (Prevent full page rerender on every key)
-  const location = watch("location");
-  const jobType = watch("jobType");
 
   // Active filter count for the mobile filter badge
   const allValues = watch();
@@ -363,72 +355,11 @@ export default function CompanySearchPage() {
       className="w-full flex flex-col items-start gap-5 px-2.5 sm:px-5 lg:px-8 animate-page-in"
       onSubmit={handleSubmit((data) => runSearch(data))}
     >
-      {/* Banner Section */}
-      {/* Desktop Banner Section 1050px */}
-      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8 tablet-xl:hidden">
-        <div className="w-full flex flex-col items-start gap-3">
-          <TypographyH2 className="leading-relaxed">
-            {t("bannerTitle")}
-          </TypographyH2>
-          <TypographyH4 className="leading-relaxed">
-            {t("bannerSubtitle1")}
-          </TypographyH4>
-          <TypographyH4 className="leading-relaxed">
-            {t("bannerSubtitle2")}
-          </TypographyH4>
-          <TypographyMuted className="leading-relaxed">
-            {t("bannerMuted")}
-          </TypographyMuted>
-          <SearchBar
-            isEmployee={false}
-            register={register}
-            setValue={setValue}
-            initialLocation={location as TLocations}
-            initialJobType={jobType as TAvailability}
-          />
-        </div>
-        <Image
-          src={companySearchBannerSvg}
-          alt="company-search"
-          height={300}
-          width={400}
-          className="h-auto max-w-[340px] shrink-0"
-          priority
-        />
-      </div>
-
-      {/* Tablet Banner Section 651px–1050px */}
-      <div className="hidden tablet-xl:flex tablet-md:!hidden w-full flex-col gap-4 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-5 py-5">
-        <div className="flex flex-col gap-2">
-          <TypographyH3 className="!leading-snug">
-            {t("bannerTitle")}
-          </TypographyH3>
-          <TypographyMuted className="!leading-snug">
-            {t("bannerSubtitle1")}
-          </TypographyMuted>
-        </div>
-        <SearchBar
-          isEmployee={false}
-          register={register}
-          setValue={setValue}
-          initialLocation={location as TLocations}
-          initialJobType={jobType as TAvailability}
-        />
-      </div>
-
-      {/* Mobile Banner Section ≤650px */}
-      <div className="hidden tablet-md:flex w-full flex-col gap-3 rounded-2xl bg-gradient-to-br from-primary/[0.08] via-primary/[0.03] to-muted/40 border border-border/50 px-4 py-4">
-        <p className="font-bold text-sm leading-snug text-foreground">
-          {t("bannerTitle")}
-        </p>
-        <SearchBar
-          isEmployee={false}
-          register={register}
-          setValue={setValue}
-          initialLocation={location as TLocations}
-          initialJobType={jobType as TAvailability}
-        />
-      </div>
+      {/* Compact Page Introduction Section */}
+      <FeaturePageHeader
+        title={t("bannerTitle")}
+        description={t("bannerSubtitle1")}
+      />
 
       {/* Mobile/Tablet Filter Toggle Section */}
       <div className="hidden w-full tablet-xl:flex">
@@ -785,16 +716,15 @@ export default function CompanySearchPage() {
             ) : (
               /* Empty List Section */
               <div className="w-full flex flex-col items-center justify-center py-10 gap-3">
-                <Image
-                  src={emptySvg}
-                  alt="empty"
-                  height={160}
-                  width={160}
-                  className="animate-float"
-                />
+                {/* Editorial Illustration Section */}
+                <EditorialIllustration variant="companySearch" />
+
+                {/* Empty List Text Section */}
                 <TypographyP className="text-muted-foreground">
                   {t("emptyList")}
                 </TypographyP>
+
+                {/* Clear Filters Button Section */}
                 {activeFilterCount > 0 && (
                   <button
                     type="button"

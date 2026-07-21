@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import SocialButton from "@/components/utils/buttons/social-button";
+import { AuthBrandPanel } from "@/components/auth/auth-brand-panel";
 import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import LogoComponent from "@/components/utils/brand/logo";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
@@ -33,12 +34,10 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 import { useGetEmployeeRecommendationsStore } from "@/stores/apis/recommendation/get-employee-recommendations.store";
 import { useGetCompanyRecommendationsStore } from "@/stores/apis/recommendation/get-company-recommendations.store";
 import { getRememberPreference } from "@/utils/auth/cookie-manager";
-import {
-  facebookIcon,
-  githubIcon,
-  googleIcon,
-  linkedInIcon as linkedinIcon,
-} from "@/utils/constants/asset.constant";
+import facebookIcon from "@/assets/socials/facebook.webp";
+import githubIcon from "@/assets/socials/github.png";
+import googleIcon from "@/assets/socials/google.png";
+import linkedinIcon from "@/assets/socials/linkedin.png";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   LucideAlertCircle,
@@ -51,13 +50,11 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { makeLoginSchema, TLoginForm } from "./validation";
-import { loginSvg } from "@/utils/constants/asset.constant";
 import {
   DEFAULT_REDIRECT_DELAY_MS,
   TOAST_DURATION_MS,
@@ -543,30 +540,33 @@ function LoginPage() {
 
   /* ----------------------------------- Render UI ----------------------------------- */
   return (
-    <div className="h-screen w-full flex overflow-hidden tablet-lg:flex-col tablet-lg:h-auto tablet-lg:overflow-y-auto">
+    <div className="auth-page auth-login-page flex h-[100dvh] min-h-0 w-full overflow-hidden tablet-lg:flex-col">
       {/* Left Section */}
-      <div className="w-1/2 h-full flex items-center justify-center bg-background p-6 sm:p-10 tablet-lg:w-full tablet-lg:h-auto tablet-lg:py-12">
-        <div className="w-full max-w-[480px] flex flex-col gap-4 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
+      <div className="auth-form-pane relative flex h-full min-h-0 w-[58%] items-center justify-center overflow-hidden bg-background px-7 py-10 sm:px-12 tablet-lg:w-full tablet-lg:px-5 tablet-lg:pb-5 tablet-lg:pt-16">
+        <div className="auth-form-shell relative z-10 flex w-full max-w-[440px] flex-col gap-6">
           {/* Logo & Title Section */}
-          <div className="flex flex-col items-start gap-1">
-            <LogoComponent className="!h-12 w-auto self-start" />
-            <TypographyH2 className="phone-xl:text-2xl">
+          <div className="auth-heading-group auth-stagger flex flex-col items-start gap-1.5">
+            <LogoComponent
+              className="auth-form-logo mb-3 !h-11 w-auto self-start"
+              priority
+            />
+            <TypographyH2 className="text-3xl font-semibold tracking-[-0.035em] phone-xl:text-2xl">
               {t("loginPageTitle")}
             </TypographyH2>
-            <TypographyMuted className="text-md phone-xl:text-sm">
+            <TypographyMuted className="text-sm leading-6 phone-xl:text-sm">
               {t("loginSubtitle")}
             </TypographyMuted>
           </div>
 
           {/* Social Button Login Section */}
-          <div className="w-full flex flex-col gap-3">
+          <div className="auth-stagger flex w-full flex-col gap-3">
             <div className="grid grid-cols-2 gap-3">
               {/* Google Login Button */}
               <SocialButton
                 image={googleIcon}
                 label="Google"
                 variant="outline"
-                className="w-full transition-colors hover:bg-muted/50"
+                className="w-full"
                 onClick={() => {
                   setOpenRmbDialog(true);
                   setSocialTypeIdentifier("google");
@@ -577,7 +577,7 @@ function LoginPage() {
                 image={facebookIcon}
                 label="Facebook"
                 variant="outline"
-                className="w-full transition-colors hover:bg-muted/50"
+                className="w-full"
                 onClick={() => {
                   setOpenRmbDialog(true);
                   setSocialTypeIdentifier("facebook");
@@ -588,7 +588,7 @@ function LoginPage() {
                 image={linkedinIcon}
                 label="LinkedIn"
                 variant="outline"
-                className="w-full transition-colors hover:bg-muted/50"
+                className="w-full"
                 onClick={() => {
                   setOpenRmbDialog(true);
                   setSocialTypeIdentifier("linkedIn");
@@ -599,7 +599,7 @@ function LoginPage() {
                 image={githubIcon}
                 label="Github"
                 variant="outline"
-                className="w-full transition-colors hover:bg-muted/50"
+                className="w-full"
                 onClick={() => {
                   setOpenRmbDialog(true);
                   setSocialTypeIdentifier("github");
@@ -608,7 +608,7 @@ function LoginPage() {
             </div>
             <Button
               variant="outline"
-              className="w-full transition-colors hover:bg-muted/50"
+              className="auth-social-button h-11 w-full rounded-xl"
               onClick={() => router.push(phoneLoginHref)}
             >
               <LucidePhone />
@@ -617,7 +617,7 @@ function LoginPage() {
           </div>
 
           {/* Divider Section */}
-          <div className="w-full flex items-center gap-3">
+          <div className="auth-stagger flex w-full items-center gap-3">
             <Separator className="flex-1" />
             <TypographyMuted className="text-xs whitespace-nowrap">
               {t("orContinueWithEmail")}
@@ -627,37 +627,47 @@ function LoginPage() {
 
           {/* Login Form Section */}
           <form
-            className="w-full flex flex-col items-stretch gap-3"
+            className="auth-form auth-stagger flex w-full flex-col items-stretch gap-3"
             onSubmit={handleSubmit(onSubmit)}
           >
             <div className="flex flex-col gap-3">
-              <Input
-                prefix={<LucideMail strokeWidth={"1.3px"} />}
-                placeholder={t("email")}
-                type="email"
-                {...register("email")}
-                validationMessage={errors.email?.message}
-              />
-              <Input
-                prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
-                suffix={
-                  passwordVisibility ? (
-                    <LucideEyeClosed
-                      strokeWidth={"1.3px"}
-                      onClick={() => setPasswordVisibility(false)}
-                    />
-                  ) : (
-                    <LucideEye
-                      strokeWidth={"1.3px"}
-                      onClick={() => setPasswordVisibility(true)}
-                    />
-                  )
-                }
-                placeholder={t("password")}
-                type={passwordVisibility ? "text" : "password"}
-                {...register("password")}
-                validationMessage={errors.password?.message}
-              />
+              <div className="auth-field flex flex-col gap-1.5">
+                <label htmlFor="login-email">{t("email")}</label>
+                <Input
+                  id="login-email"
+                  prefix={<LucideMail strokeWidth={1.5} />}
+                  placeholder={t("email")}
+                  type="email"
+                  autoComplete="email"
+                  {...register("email")}
+                  validationMessage={errors.email?.message}
+                />
+              </div>
+              <div className="auth-field flex flex-col gap-1.5">
+                <label htmlFor="login-password">{t("password")}</label>
+                <Input
+                  id="login-password"
+                  prefix={<LucideLockKeyhole strokeWidth={1.5} />}
+                  suffix={
+                    passwordVisibility ? (
+                      <LucideEyeClosed
+                        strokeWidth={1.5}
+                        onClick={() => setPasswordVisibility(false)}
+                      />
+                    ) : (
+                      <LucideEye
+                        strokeWidth={1.5}
+                        onClick={() => setPasswordVisibility(true)}
+                      />
+                    )
+                  }
+                  placeholder={t("password")}
+                  type={passwordVisibility ? "text" : "password"}
+                  autoComplete="current-password"
+                  {...register("password")}
+                  validationMessage={errors.password?.message}
+                />
+              </div>
             </div>
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-1.5">
@@ -667,20 +677,28 @@ function LoginPage() {
                   defaultValue={false}
                   render={({ field }) => (
                     <Checkbox
+                      id="remember-me"
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
                   )}
                 />
-                <TypographyMuted className="text-xs">
+                <label
+                  htmlFor="remember-me"
+                  className="cursor-pointer text-xs text-muted-foreground"
+                >
                   {t("rememberMeLabel")}
-                </TypographyMuted>
+                </label>
               </div>
               <TypographySmall className="text-xs cursor-pointer hover:text-muted-foreground transition-colors">
                 <Link href="/forgot-password">{t("forgotPasswordLink")}</Link>
               </TypographySmall>
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button
+              type="submit"
+              className="auth-primary-action h-12 w-full rounded-xl"
+              disabled={loading}
+            >
               {t("loginButton")}
             </Button>
             <div className="flex items-center justify-center gap-2">
@@ -695,21 +713,8 @@ function LoginPage() {
         </div>
       </div>
 
-      {/* Right Section: Image Poster Section */}
-      <div className="w-1/2 h-full flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-lg:hidden">
-        {/* Decorative circles Section */}
-        <div className="absolute -top-20 -right-20 size-64 rounded-full bg-white/5" />
-        <div className="absolute -bottom-16 -left-16 size-48 rounded-full bg-white/5" />
-        <div className="absolute top-1/4 -left-10 size-32 rounded-full bg-white/[0.03]" />
-        <div className="absolute bottom-1/3 right-10 size-20 rounded-full bg-white/[0.07]" />
-        <Image
-          src={loginSvg}
-          alt="login"
-          height={undefined}
-          width={450}
-          className="relative z-10"
-        />
-      </div>
+      {/* Right Section: Auth Panel */}
+      <AuthBrandPanel className="w-[42%] tablet-lg:hidden" />
 
       {/* Two-Factor Auth Verification Dialog Section */}
       <Dialog

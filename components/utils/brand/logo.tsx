@@ -1,9 +1,7 @@
 import { cn } from "@/lib/utils";
-import {
-  logo,
-  logoBlack,
-  logoWithoutTitle,
-} from "@/utils/constants/asset.constant";
+import logo from "@/assets/utils/logo.svg";
+import logoBlack from "@/assets/utils/logo-black.svg";
+import logoWithoutTitle from "@/assets/utils/logo-icon.svg";
 import Image from "next/image";
 
 /* ----------------------------------- Helper ---------------------------------- */
@@ -22,7 +20,7 @@ export default function LogoComponent({
   className,
   priority = false,
 }: ILogoProps) {
-  /* -------------------------------- Render UI -------------------------------- */
+  /* ------------------------------- Render UI ------------------------------- */
   if (withoutTitle) {
     return (
       <Image
@@ -36,9 +34,6 @@ export default function LogoComponent({
     );
   }
 
-  // Both variants are always rendered and the `dark` class picks one via CSS.
-  // Choosing the src in JS breaks hydration: the server can't know the theme,
-  // and React keeps the mismatched src in the DOM without patching it.
   return (
     <>
       <Image

@@ -9,29 +9,27 @@ export function SettingWrapper(props: ISettingWrapperProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex flex-col gap-4">
+    <section className="setting-section-card overflow-hidden rounded-2xl border border-border/70 bg-card shadow-[0_2px_8px_hsl(var(--foreground)/0.04)]">
       {/* Setting Wrapper Header Section */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-start gap-3 border-b border-border/60 px-4 py-4 sm:px-5">
         {/* Setting Wrapper Icon Section */}
-        <div className="flex items-center justify-center size-9 rounded-xl bg-primary/10 border border-primary/20 shrink-0">
-          <span className="text-primary [&>svg]:size-4">{icon}</span>
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-brand/15 bg-brand-soft">
+          <span className="text-brand [&>svg]:size-4">{icon}</span>
         </div>
 
         {/* Setting Wrapper Title and Description Section */}
-        <div className="flex flex-col">
-          <TypographySmall className="font-semibold leading-none">
+        <div className="min-w-0 flex-1 pt-0.5">
+          <TypographySmall className="font-semibold leading-tight">
             {title}
           </TypographySmall>
-          <TypographyMuted className="text-xs mt-0.5">
+          <TypographyMuted className="mt-1 text-xs leading-relaxed">
             {description}
           </TypographyMuted>
         </div>
       </div>
 
       {/* Setting Wrapper Content Section */}
-      <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
-        {children}
-      </div>
-    </div>
+      <div>{children}</div>
+    </section>
   );
 }

@@ -1,12 +1,7 @@
 "use client";
 
-import EmployeeCardSkeleton from "@/components/employee/skeleton";
 import ImagePopup from "@/components/utils/data-display/image-popup";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
-import { TypographyH3 } from "@/components/utils/typography/typography-h3";
-import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { TypographyP } from "@/components/utils/typography/typography-p";
+import { EditorialIllustration } from "@/components/utils/data-display/editorial-illustration";
 import { useFetchOnce } from "@/hooks/utils/use-fetch-once";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
@@ -26,8 +21,15 @@ import { useGetCompanyRecommendationsStore } from "@/stores/apis/recommendation/
 import { useModerationStore } from "@/stores/apis/moderation/moderation.store";
 import { ICompany } from "@/utils/interfaces/user/company.interface";
 import { IEmployee } from "@/utils/interfaces/user/employee.interface";
-import { Building2, Sparkles, Users } from "lucide-react";
-import Image from "next/image";
+import {
+  ArrowRight,
+  Building2,
+  Search,
+  SlidersHorizontal,
+  Sparkles,
+  Users,
+  X,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, {
   useCallback,
@@ -37,22 +39,11 @@ import React, {
   useState,
 } from "react";
 import {
-  emptySvg,
-  feedCompanyBannerSvg,
-  feedEmployeeBannerSvg,
-} from "@/utils/constants/asset.constant";
-import {
   DEFAULT_REDIRECT_DELAY_MS,
   FEED_PAGE_SIZE,
   LIKE_DEBOUNCE_MS,
 } from "@/utils/constants/config.constant";
-import CompanyCardSkeleton from "@/components/company/skeleton";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  FeedBannerSkeleton,
-  FeedDividerSkeleton,
-  FeedRecommendationsSkeleton,
-} from "@/components/feed/skeleton";
+import FeedPageLoadingSkeleton from "@/components/feed/skeleton";
 import { MemoCompanyFeedCard } from "@/components/feed/memo-company-feed-card";
 import { MemoEmployeeFeedCard } from "@/components/feed/memo-employee-feed-card";
 import { useFeedActionEffect } from "@/components/utils/effects/feed-action-effect";
@@ -61,6 +52,7 @@ import { OnboardingFlow } from "@/components/utils/onboarding/onboarding-flow";
 import Link from "next/link";
 import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
 import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   initialIsEmployee: boolean;
@@ -71,8 +63,15 @@ const fetchInitiated = {
   employees: false,
 };
 
-const FEED_CARD_GRID_CLASS =
-  "w-full pt-2 grid grid-cols-3 gap-4 items-stretch laptop-sm:grid-cols-2 tablet-lg:!grid-cols-1 stagger-list [&>*]:min-w-0 [&>*]:h-full";
+const FEATURED_GRID_CLASS =
+  "stagger-list grid w-full grid-flow-col auto-cols-[86%] items-stretch gap-4 overflow-x-auto pb-2 snap-x snap-mandatory sm:auto-cols-[48%] lg:grid-flow-row lg:auto-cols-auto lg:grid-cols-3 lg:overflow-visible [&>*]:h-full [&>*]:min-w-0 [&>*]:snap-start";
+
+const DISCOVERY_GRID_CLASS =
+  "stagger-list grid w-full grid-cols-1 items-stretch gap-4 lg:grid-cols-2 [&>*]:h-full [&>*]:min-w-0";
+
+function uniqueById<T extends { id: string }>(items: T[]): T[] {
+  return Array.from(new Map(items.map((item) => [item.id, item])).values());
+}
 
 export default function FeedPageClient({ initialIsEmployee }: Props) {
   /* ---------------------------------- Utils --------------------------------- */
@@ -89,9 +88,10 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
   const skeletonIsEmployee = initialIsEmployee;
   const [recsHasFetched, setRecsHasFetched] = useState<boolean>(false);
 
-  // Infinite scroll
+  // Discovery controls
   const [visibleCount, setVisibleCount] = useState<number>(FEED_PAGE_SIZE);
-  const sentinelRef = useRef<HTMLDivElement>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortMode, setSortMode] = useState<"recommended" | "az">("recommended");
 
   // Liked helper
   const [likingId, setLikingId] = useState<string | null>(null);
@@ -206,9 +206,6 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
   const employeeRecommendations = useGetEmployeeRecommendationsStore(
     (s) => s.recommendations,
   );
-  const employeeRecommendationsLoading = useGetEmployeeRecommendationsStore(
-    (s) => s.loading,
-  );
   const employeeRecommendationsError = useGetEmployeeRecommendationsStore(
     (s) => s.error,
   );
@@ -217,9 +214,6 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
   );
   const companyRecommendations = useGetCompanyRecommendationsStore(
     (s) => s.recommendations,
-  );
-  const companyRecommendationsLoading = useGetCompanyRecommendationsStore(
-    (s) => s.loading,
   );
   const companyRecommendationsError = useGetCompanyRecommendationsStore(
     (s) => s.error,
@@ -352,28 +346,90 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
     );
   }, [companyRecommendations, currentCompanyLiked, blockedProfileIds]);
 
-  // Reset visible count when the feed data source changes
+  const normalizedSearch = searchQuery.trim().toLocaleLowerCase();
+
+  const featuredCompanies = useMemo(
+    () =>
+      isEmployee ? (filteredEmployeeRecommendations ?? []).slice(0, 3) : [],
+    [isEmployee, filteredEmployeeRecommendations],
+  );
+
+  const featuredEmployees = useMemo(
+    () =>
+      !isEmployee ? (filteredCompanyRecommendations ?? []).slice(0, 3) : [],
+    [isEmployee, filteredCompanyRecommendations],
+  );
+
+  const companyDiscovery = useMemo(() => {
+    if (!isEmployee) return [];
+    const recommendations = filteredEmployeeRecommendations ?? [];
+    const combined = normalizedSearch
+      ? [...recommendations, ...(allUsers as ICompany[])]
+      : [...recommendations.slice(3), ...(allUsers as ICompany[])];
+    const filtered = uniqueById(combined).filter((company) => {
+      if (!normalizedSearch) return true;
+      const searchable = [
+        company.name,
+        company.industry,
+        company.location,
+        ...company.openPositions.map((position) => position.title),
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLocaleLowerCase();
+      return searchable.includes(normalizedSearch);
+    });
+    return sortMode === "az"
+      ? [...filtered].sort((a, b) => a.name.localeCompare(b.name))
+      : filtered;
+  }, [
+    isEmployee,
+    filteredEmployeeRecommendations,
+    allUsers,
+    normalizedSearch,
+    sortMode,
+  ]);
+
+  const employeeDiscovery = useMemo(() => {
+    if (isEmployee) return [];
+    const recommendations = filteredCompanyRecommendations ?? [];
+    const combined = normalizedSearch
+      ? [...recommendations, ...(allUsers as IEmployee[])]
+      : [...recommendations.slice(3), ...(allUsers as IEmployee[])];
+    const filtered = uniqueById(combined).filter((employee) => {
+      if (!normalizedSearch) return true;
+      const searchable = [
+        employee.username,
+        employee.job,
+        employee.location,
+        ...employee.skills.map((skill) => skill.name),
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLocaleLowerCase();
+      return searchable.includes(normalizedSearch);
+    });
+    return sortMode === "az"
+      ? [...filtered].sort((a, b) =>
+          (a.username ?? "").localeCompare(b.username ?? ""),
+        )
+      : filtered;
+  }, [
+    isEmployee,
+    filteredCompanyRecommendations,
+    allUsers,
+    normalizedSearch,
+    sortMode,
+  ]);
+
+  const discoveryCount = isEmployee
+    ? companyDiscovery.length
+    : employeeDiscovery.length;
+
+  // Reset the explicit pagination whenever the discovery view changes.
   useEffect(() => {
     setVisibleCount(FEED_PAGE_SIZE);
-  }, [isEmployee]);
-
-  // Infinite scroll — reveal more cards when sentinel enters the viewport
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setVisibleCount((prev) => prev + FEED_PAGE_SIZE);
-        }
-      },
-      { rootMargin: "200px" },
-    );
-
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, []);
+  }, [isEmployee, normalizedSearch, sortMode]);
 
   // Profile Pop up Effect
   useEffect(() => {
@@ -619,251 +675,302 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
     (!isEmployee && (employeeLoading || currentCompanyLikedLoading));
 
   /* -------------------------------- Render UI -------------------------------- */
+  const recommendationsError = isEmployee
+    ? employeeRecommendationsError
+    : companyRecommendationsError;
+  const searchHref = isEmployee ? "/search/employee" : "/search/company";
+  const visibleCompanies = companyDiscovery.slice(0, visibleCount);
+  const visibleEmployees = employeeDiscovery.slice(0, visibleCount);
+  const hasSearch = normalizedSearch.length > 0;
+  const retryId = isEmployee
+    ? currentUser?.employee?.id
+    : currentUser?.company?.id;
+  const retryRecommendations = isEmployee
+    ? queryEmployeeRecommendations
+    : queryCompanyRecommendations;
+  const allCompaniesForMetrics = isEmployee
+    ? uniqueById([
+        ...(filteredEmployeeRecommendations ?? []),
+        ...(allUsers as ICompany[]),
+      ])
+    : [];
+  const allEmployeesForMetrics = !isEmployee
+    ? uniqueById([
+        ...(filteredCompanyRecommendations ?? []),
+        ...(allUsers as IEmployee[]),
+      ])
+    : [];
+  const primaryMetric = isEmployee
+    ? allCompaniesForMetrics.length
+    : allEmployeesForMetrics.length;
+  const secondaryMetric = isEmployee
+    ? allCompaniesForMetrics.reduce(
+        (total, company) => total + company.openPositions.length,
+        0,
+      )
+    : featuredEmployees.length;
+
   return (
-    <div className="w-full flex flex-col items-start gap-4 sm:gap-5 animate-page-in">
+    <div className="flex w-full flex-col items-start gap-7 animate-page-in">
       {effectPortal}
-      {/* First-Time User Onboarding Flow */}
       <OnboardingFlow />
-      {/* Header Section */}
+
       {isLoading ? (
-        <FeedBannerSkeleton />
+        <FeedPageLoadingSkeleton isEmployee={skeletonIsEmployee} />
       ) : (
-        <FadeIn className="w-full">
-          {isEmployee ? (
-            <>
-              {/* Desktop Banner Section 1050px */}
-              <div className="w-full flex items-center justify-between gap-6 lg:gap-10 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8 tablet-xl:hidden">
-                <div className="flex flex-col items-start gap-3">
-                  <TypographyH2 className="!leading-relaxed text-2xl sm:text-4xl">
-                    {tFeed("employeeBannerTitle")}
-                  </TypographyH2>
-                  <TypographyH4 className="!leading-relaxed">
-                    {tFeed("employeeBannerSubtitle1")}
-                  </TypographyH4>
-                  <TypographyH4 className="!leading-relaxed">
-                    {tFeed("employeeBannerSubtitle2")}
-                  </TypographyH4>
-                  <TypographyMuted className="!leading-relaxed">
-                    {tFeed("employeeBannerMuted")}
-                  </TypographyMuted>
-                </div>
-                <Image
-                  src={feedEmployeeBannerSvg}
-                  alt="feed"
-                  height={300}
-                  width={400}
-                  className="h-auto max-w-[360px] shrink-0"
-                  priority
-                />
-              </div>
-
-              {/* Tablet Banner Section 651px–1050px */}
-              <div className="hidden tablet-xl:flex tablet-md:!hidden w-full items-center justify-between gap-4 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-5 py-5 overflow-hidden">
-                <div className="flex-1 min-w-0 flex flex-col gap-2">
-                  <TypographyH3 className="!leading-snug">
-                    {tFeed("employeeBannerTitle")}
-                  </TypographyH3>
-                  <TypographyMuted className="!leading-snug">
-                    {tFeed("employeeBannerSubtitle1")}
-                  </TypographyMuted>
-                  <TypographyMuted className="!leading-snug">
-                    {tFeed("employeeBannerSubtitle2")}
-                  </TypographyMuted>
-                </div>
-                <Image
-                  src={feedEmployeeBannerSvg}
-                  alt="feed"
-                  width={160}
-                  height={160}
-                  className="shrink-0 h-auto object-contain"
-                  priority
-                />
-              </div>
-
-              {/* Mobile Banner Section ≤650px */}
-              <div className="hidden tablet-md:flex w-full items-center gap-3 rounded-2xl bg-gradient-to-br from-primary/[0.08] via-primary/[0.03] to-muted/40 border border-border/50 px-4 py-3 overflow-hidden">
-                <div className="flex-1 min-w-0 flex flex-col gap-1">
-                  <h2 className="font-bold text-sm leading-snug text-foreground">
-                    {tFeed("employeeBannerTitle")}
-                  </h2>
-                  <p className="text-xs text-muted-foreground leading-snug line-clamp-2">
-                    {tFeed("employeeBannerSubtitle1")}
+        <>
+          {/* Product-First Discovery Header Section */}
+          <FadeIn className="w-full">
+            <section className="feed-editorial-header relative w-full overflow-hidden border-b border-border/80 pb-7 pt-1 sm:pb-8">
+              <span
+                className="pointer-events-none absolute -right-10 -top-16 size-40 rounded-full border border-brand/10"
+                aria-hidden="true"
+              />
+              <span
+                className="pointer-events-none absolute right-9 top-3 size-2 rounded-full bg-brand/35"
+                aria-hidden="true"
+              />
+              <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-end">
+                <div className="min-w-0">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand">
+                    <Sparkles className="size-3" />
+                    {isEmployee
+                      ? tFeed("employeeHeroEyebrow")
+                      : tFeed("companyHeroEyebrow")}
+                  </span>
+                  <h1 className="mt-2 max-w-2xl text-3xl font-bold leading-[1.12] tracking-[-0.035em] text-foreground sm:text-4xl">
+                    {isEmployee
+                      ? tFeed("employeeHeroTitle")
+                      : tFeed("companyHeroTitle")}
+                  </h1>
+                  <p className="mt-2.5 max-w-xl text-sm leading-relaxed text-muted-foreground">
+                    {isEmployee
+                      ? tFeed("employeeHeroDescription")
+                      : tFeed("companyHeroDescription")}
                   </p>
-                </div>
-                <Image
-                  src={feedEmployeeBannerSvg}
-                  alt="feed"
-                  width={88}
-                  height={88}
-                  className="flex-shrink-0 object-contain"
-                  priority
-                />
-              </div>
-            </>
-          ) : (
-            <>
-              {/* Desktop Banner Section 1050px */}
-              <div className="w-full flex items-center justify-between gap-6 lg:gap-10 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8 tablet-xl:hidden">
-                <div className="flex flex-col items-start gap-3">
-                  <TypographyH2 className="!leading-relaxed text-2xl sm:text-4xl">
-                    {tFeed("companyBannerTitle")}
-                  </TypographyH2>
-                  <TypographyH4 className="!leading-relaxed">
-                    {tFeed("companyBannerSubtitle1")}
-                  </TypographyH4>
-                  <TypographyH4 className="!leading-relaxed">
-                    {tFeed("companyBannerSubtitle2")}
-                  </TypographyH4>
-                  <TypographyMuted className="!leading-relaxed">
-                    {tFeed("companyBannerMuted")}
-                  </TypographyMuted>
-                </div>
-                <Image
-                  src={feedCompanyBannerSvg}
-                  alt="feed"
-                  height={250}
-                  width={350}
-                  className="h-auto max-w-[340px] shrink-0"
-                  priority
-                />
-              </div>
 
-              {/* Tablet Banner Section 651px–1050px */}
-              <div className="hidden tablet-xl:flex tablet-md:!hidden w-full items-center justify-between gap-4 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-5 py-5 overflow-hidden">
-                <div className="flex-1 min-w-0 flex flex-col gap-2">
-                  <TypographyH3 className="!leading-snug">
-                    {tFeed("companyBannerTitle")}
-                  </TypographyH3>
-                  <TypographyMuted className="!leading-snug">
-                    {tFeed("companyBannerSubtitle1")}
-                  </TypographyMuted>
-                  <TypographyMuted className="!leading-snug">
-                    {tFeed("companyBannerSubtitle2")}
-                  </TypographyMuted>
+                  <div className="mt-5 flex max-w-2xl flex-col gap-2 sm:flex-row">
+                    <label className="relative flex-1">
+                      <span className="sr-only">
+                        {isEmployee
+                          ? tFeed("searchCompaniesPlaceholder")
+                          : tFeed("searchTalentPlaceholder")}
+                      </span>
+                      <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                      <input
+                        type="search"
+                        value={searchQuery}
+                        onChange={(event) => setSearchQuery(event.target.value)}
+                        placeholder={
+                          isEmployee
+                            ? tFeed("searchCompaniesPlaceholder")
+                            : tFeed("searchTalentPlaceholder")
+                        }
+                        className="h-12 w-full rounded-xl border border-input bg-card pl-10 pr-10 text-sm shadow-sm outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/75 focus:border-brand/60 focus:ring-4 focus:ring-brand/10"
+                      />
+                      {searchQuery && (
+                        <button
+                          type="button"
+                          onClick={() => setSearchQuery("")}
+                          aria-label={tFeed("clearSearch")}
+                          className="absolute right-1.5 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                        >
+                          <X className="size-4" />
+                        </button>
+                      )}
+                    </label>
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="h-12 rounded-xl border-border bg-transparent px-4 text-xs font-semibold sm:w-auto"
+                    >
+                      <Link href={searchHref}>
+                        <SlidersHorizontal className="size-4" />
+                        {tFeed("advancedSearch")}
+                      </Link>
+                    </Button>
+                  </div>
                 </div>
-                <Image
-                  src={feedCompanyBannerSvg}
-                  alt="feed"
-                  width={160}
-                  height={160}
-                  className="shrink-0 h-auto object-contain"
-                  priority
-                />
-              </div>
 
-              {/* Mobile Banner Section ≤650px */}
-              <div className="hidden tablet-md:flex w-full items-center gap-3 rounded-2xl bg-gradient-to-br from-primary/[0.08] via-primary/[0.03] to-muted/40 border border-border/50 px-4 py-3 overflow-hidden">
-                <div className="flex-1 min-w-0 flex flex-col gap-1">
-                  <h2 className="font-bold text-sm leading-snug text-foreground">
-                    {tFeed("companyBannerTitle")}
-                  </h2>
-                  <p className="text-xs text-muted-foreground leading-snug line-clamp-2">
-                    {tFeed("companyBannerSubtitle1")}
+                <aside className="hidden pb-1 lg:block">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                    {tFeed("atAGlance")}
                   </p>
-                </div>
-                <Image
-                  src={feedCompanyBannerSvg}
-                  alt="feed"
-                  width={88}
-                  height={88}
-                  className="flex-shrink-0 object-contain"
-                  priority
-                />
+                  <div className="mt-4 grid grid-cols-2 gap-5">
+                    <div className="border-l-2 border-brand/35 pl-4">
+                      <strong className="block text-3xl font-bold tracking-[-0.04em] text-foreground">
+                        {primaryMetric}
+                      </strong>
+                      <span className="mt-1 block text-xs text-muted-foreground">
+                        {isEmployee
+                          ? tFeed("availableCompanies")
+                          : tFeed("availableTalent")}
+                      </span>
+                    </div>
+                    <div className="border-l-2 border-border pl-4">
+                      <strong className="block text-3xl font-bold tracking-[-0.04em] text-foreground">
+                        {secondaryMetric}
+                      </strong>
+                      <span className="mt-1 block text-xs text-muted-foreground">
+                        {isEmployee
+                          ? tFeed("openRolesStat")
+                          : tFeed("topMatchesStat")}
+                      </span>
+                    </div>
+                  </div>
+                </aside>
               </div>
-            </>
-          )}
-        </FadeIn>
-      )}
+            </section>
+          </FadeIn>
 
-      {/* Recommended for You Section */}
-      {isLoading ? (
-        <FeedRecommendationsSkeleton isEmployee={skeletonIsEmployee} />
-      ) : (
-        (() => {
-          const recs = isEmployee
-            ? filteredEmployeeRecommendations
-            : filteredCompanyRecommendations;
-          const recsLoading = isEmployee
-            ? employeeRecommendationsLoading
-            : companyRecommendationsLoading;
-          const recsError = isEmployee
-            ? employeeRecommendationsError
-            : companyRecommendationsError;
-
-          if (recsLoading) {
-            return (
-              <div className="w-full flex flex-col gap-3">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-primary" />
-                  <TypographyH4>{tFeed("recommendedForYou")}</TypographyH4>
+          {/* Focused Shortlist Section: Recommendations are intentionally capped */}
+          {!hasSearch &&
+            (isEmployee
+              ? featuredCompanies.length > 0
+              : featuredEmployees.length > 0) && (
+              <FadeIn className="flex w-full flex-col gap-4">
+                <div className="flex items-end justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="size-4 text-primary" />
+                      <h2 className="text-xl font-bold tracking-tight sm:text-2xl">
+                        {tFeed("topMatches")}
+                      </h2>
+                    </div>
+                    <p className="mt-1.5 text-sm text-muted-foreground">
+                      {isEmployee
+                        ? tFeed("companyMatchesDescription")
+                        : tFeed("talentMatchesDescription")}
+                    </p>
+                  </div>
+                  <Link
+                    href={searchHref}
+                    className="hidden items-center gap-1.5 text-xs font-semibold text-primary transition hover:text-primary/75 sm:flex"
+                  >
+                    {tFeed("seeMore")}
+                    <ArrowRight className="size-3.5" />
+                  </Link>
                 </div>
-                <div className={FEED_CARD_GRID_CLASS}>
-                  {Array.from({ length: 3 }).map((_, i) =>
-                    isEmployee ? (
-                      <div key={i} className="flex h-full flex-col">
-                        <div className="flex items-center gap-1 mb-1.5 px-1">
-                          <Skeleton className="size-3 rounded" />
-                          <Skeleton className="h-2.5 w-16 rounded" />
-                        </div>
-                        <CompanyCardSkeleton />
-                      </div>
-                    ) : (
-                      <div key={i} className="flex h-full flex-col">
-                        <div className="flex items-center gap-1 mb-1.5 px-1">
-                          <Skeleton className="size-3 rounded" />
-                          <Skeleton className="h-2.5 w-16 rounded" />
-                        </div>
-                        <EmployeeCardSkeleton />
-                      </div>
-                    ),
-                  )}
+
+                <div className={FEATURED_GRID_CLASS}>
+                  {isEmployee
+                    ? featuredCompanies.map((company) => (
+                        <MemoCompanyFeedCard
+                          key={company.id}
+                          company={company}
+                          employeeId={currentUser?.employee?.id ?? ""}
+                          isLiking={
+                            company.id === likingId && employeeLikeLoading
+                          }
+                          isSaving={company.id === savingId}
+                          isFavorite={isEmpFavorite(company.id)}
+                          isRecommended
+                          onView={handleEmployeeViewCompany}
+                          onLike={handleEmployeeLikeCompany}
+                          onSave={handleEmployeeFavoriteCompany}
+                          onProfileImageClick={handleClickProfilePopup}
+                          onSetProfileImage={setCurrentProfileImage}
+                        />
+                      ))
+                    : featuredEmployees.map((employee) => (
+                        <MemoEmployeeFeedCard
+                          key={employee.id}
+                          employee={employee}
+                          companyId={currentUser?.company?.id ?? ""}
+                          isLiking={
+                            employee.id === likingId && companyLikeLoading
+                          }
+                          isSaving={employee.id === savingId}
+                          isFavorite={isCmpFavorite(employee.id)}
+                          isRecommended
+                          onView={handleCompanyViewEmployee}
+                          onLike={handleCompanyLikeEmployee}
+                          onSave={handleCompanyFavoriteEmployee}
+                          onProfileImageClick={handleClickProfilePopup}
+                          onSetProfileImage={setCurrentProfileImage}
+                        />
+                      ))}
                 </div>
-              </div>
-            );
-          }
+              </FadeIn>
+            )}
 
-          // Only show the retry button after this instance's own fetch has settled.
-          // Guarding with recsHasFetched prevents flashing stale error state that
-          // may still be in the store from a previous session's failed fetch.
-          if (recsHasFetched && recsError && (!recs || recs.length === 0)) {
-            const retryId = isEmployee
-              ? currentUser?.employee?.id
-              : currentUser?.company?.id;
-            const retryFn = isEmployee
-              ? queryEmployeeRecommendations
-              : queryCompanyRecommendations;
-
-            return (
-              <div className="w-full flex items-center gap-3">
-                <Sparkles className="h-5 w-5 text-muted-foreground" />
-                <TypographyMuted>{tFeed("recommendedForYou")}</TypographyMuted>
+          {recommendationsError &&
+            !hasSearch &&
+            featuredCompanies.length === 0 &&
+            featuredEmployees.length === 0 && (
+              <div className="flex w-full items-center justify-between gap-3 rounded-2xl border border-border/70 bg-card px-4 py-3">
+                <span className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Sparkles className="size-4" />
+                  {tFeed("recommendationsUnavailable")}
+                </span>
                 {retryId && (
-                  <button
+                  <Button
+                    variant="ghost"
+                    className="h-10 rounded-xl text-xs"
                     onClick={() => {
                       recsFetchedForRef.current = null;
                       setRecsHasFetched(false);
-                      retryFn(retryId).finally(() => setRecsHasFetched(true));
+                      retryRecommendations(retryId).finally(() =>
+                        setRecsHasFetched(true),
+                      );
                     }}
-                    className="text-xs text-primary underline underline-offset-2 hover:opacity-70 transition-opacity"
                   >
                     {tFeed("retry")}
-                  </button>
+                  </Button>
                 )}
               </div>
-            );
-          }
+            )}
 
-          if (!recs || recs.length === 0) return null;
-
-          return (
-            <FadeIn className="w-full flex flex-col gap-3">
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-primary" />
-                <TypographyH4>{tFeed("recommendedForYou")}</TypographyH4>
+          {/* Browsable and Non-Duplicated Discovery Results Section */}
+          <section
+            className="flex w-full flex-col gap-4"
+            aria-labelledby="feed-discovery-title"
+          >
+            <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+              <div>
+                <div className="flex items-center gap-2">
+                  {isEmployee ? (
+                    <Building2 className="size-4 text-primary" />
+                  ) : (
+                    <Users className="size-4 text-primary" />
+                  )}
+                  <h2
+                    id="feed-discovery-title"
+                    className="text-xl font-bold tracking-tight sm:text-2xl"
+                  >
+                    {hasSearch
+                      ? tFeed("searchResults")
+                      : isEmployee
+                        ? tFeed("exploreCompanies")
+                        : tFeed("exploreTalent")}
+                  </h2>
+                </div>
+                <p className="mt-1.5 text-sm text-muted-foreground">
+                  {tFeed("resultCount", { count: discoveryCount })}
+                </p>
               </div>
-              <div className={FEED_CARD_GRID_CLASS}>
+
+              <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                <span>{tFeed("sortBy")}</span>
+                <select
+                  value={sortMode}
+                  onChange={(event) =>
+                    setSortMode(event.target.value as "recommended" | "az")
+                  }
+                  className="h-11 min-w-36 rounded-xl border border-border bg-card px-3 text-xs font-semibold text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
+                >
+                  <option value="recommended">
+                    {tFeed("sortRecommended")}
+                  </option>
+                  <option value="az">{tFeed("sortAZ")}</option>
+                </select>
+              </label>
+            </div>
+
+            {discoveryCount > 0 ? (
+              <div className={DISCOVERY_GRID_CLASS}>
                 {isEmployee
-                  ? (recs as ICompany[]).map((company) => (
+                  ? visibleCompanies.map((company) => (
                       <MemoCompanyFeedCard
                         key={company.id}
                         company={company}
@@ -873,7 +980,6 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
                         }
                         isSaving={company.id === savingId}
                         isFavorite={isEmpFavorite(company.id)}
-                        isRecommended
                         onView={handleEmployeeViewCompany}
                         onLike={handleEmployeeLikeCompany}
                         onSave={handleEmployeeFavoriteCompany}
@@ -881,7 +987,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
                         onSetProfileImage={setCurrentProfileImage}
                       />
                     ))
-                  : (recs as IEmployee[]).map((employee) => (
+                  : visibleEmployees.map((employee) => (
                       <MemoEmployeeFeedCard
                         key={employee.id}
                         employee={employee}
@@ -891,7 +997,6 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
                         }
                         isSaving={employee.id === savingId}
                         isFavorite={isCmpFavorite(employee.id)}
-                        isRecommended
                         onView={handleCompanyViewEmployee}
                         onLike={handleCompanyLikeEmployee}
                         onSave={handleCompanyFavoriteEmployee}
@@ -900,131 +1005,65 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
                       />
                     ))}
               </div>
-            </FadeIn>
-          );
-        })()
-      )}
-
-      {/* Divider Section: All Companies / All Talent */}
-      {isLoading ? (
-        <FeedDividerSkeleton />
-      ) : (
-        <FadeIn className="w-full flex items-center gap-4">
-          <div className="flex items-center gap-2 shrink-0 bg-card border border-border/70 rounded-full px-3 py-1.5 shadow-[0_1px_4px_hsl(var(--foreground)/0.06)]">
-            {isEmployee ? (
-              <Building2 className="h-4 w-4 text-primary" />
             ) : (
-              <Users className="h-4 w-4 text-primary" />
-            )}
-            <span className="text-sm font-semibold text-foreground/80">
-              {isEmployee ? tFeed("allCompanies") : tFeed("allTalent")}
-            </span>
-          </div>
-          <div className="flex-1 h-px bg-border/60" />
-        </FadeIn>
-      )}
-
-      {/* Feed Card Section */}
-      <div
-        key={isEmployee ? "companies" : "employees"}
-        className={FEED_CARD_GRID_CLASS}
-      >
-        {/* Loading Skeleton Section */}
-        {isLoading
-          ? Array.from({ length: FEED_PAGE_SIZE }).map((_, index) =>
-              skeletonIsEmployee ? (
-                <div
-                  key={`company-skeleton-${index}`}
-                  className="flex h-full flex-col"
-                >
-                  <CompanyCardSkeleton />
-                </div>
-              ) : (
-                <div
-                  key={`employee-skeleton-${index}`}
-                  className="flex h-full flex-col"
-                >
-                  <EmployeeCardSkeleton />
-                </div>
-              ),
-            )
-          : allUsers
-              .slice(0, visibleCount)
-              .map((user) =>
-                isEmployee ? (
-                  <MemoCompanyFeedCard
-                    key={user.id}
-                    company={user as ICompany}
-                    employeeId={currentUser?.employee?.id ?? ""}
-                    isLiking={user.id === likingId && employeeLikeLoading}
-                    isSaving={user.id === savingId}
-                    isFavorite={isEmpFavorite(user.id)}
-                    onView={handleEmployeeViewCompany}
-                    onLike={handleEmployeeLikeCompany}
-                    onSave={handleEmployeeFavoriteCompany}
-                    onProfileImageClick={handleClickProfilePopup}
-                    onSetProfileImage={setCurrentProfileImage}
-                  />
+              <div className="flex min-h-52 w-full flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card px-5 py-10 text-center">
+                <EditorialIllustration variant="discovery" />
+                <h3 className="mt-5 text-base font-bold">
+                  {hasSearch
+                    ? tFeed("noSearchResults")
+                    : isEmployee
+                      ? tFeed("companyListEmpty")
+                      : tFeed("employeeListEmpty")}
+                </h3>
+                <p className="mt-1 max-w-md text-sm leading-relaxed text-muted-foreground">
+                  {hasSearch
+                    ? tFeed("tryAnotherSearch")
+                    : tFeed("emptyDiscoveryDescription")}
+                </p>
+                {hasSearch ? (
+                  <Button
+                    variant="outline"
+                    className="mt-4 h-11 rounded-xl"
+                    onClick={() => setSearchQuery("")}
+                  >
+                    {tFeed("clearSearch")}
+                  </Button>
                 ) : (
-                  <MemoEmployeeFeedCard
-                    key={user.id}
-                    employee={user as IEmployee}
-                    companyId={currentUser?.company?.id ?? ""}
-                    isLiking={user.id === likingId && companyLikeLoading}
-                    isSaving={user.id === savingId}
-                    isFavorite={isCmpFavorite(user.id)}
-                    onView={handleCompanyViewEmployee}
-                    onLike={handleCompanyLikeEmployee}
-                    onSave={handleCompanyFavoriteEmployee}
-                    onProfileImageClick={handleClickProfilePopup}
-                    onSetProfileImage={setCurrentProfileImage}
-                  />
-                ),
-              )}
-      </div>
+                  <Button asChild className="mt-4 h-11 rounded-xl">
+                    <Link href={searchHref}>
+                      {isEmployee
+                        ? tFeed("exploreAllCompanies")
+                        : tFeed("exploreAllTalent")}
+                    </Link>
+                  </Button>
+                )}
+              </div>
+            )}
 
-      {/* Empty List Section */}
-      {!isLoading && allUsers.length === 0 && (
-        <div className="w-full flex flex-col items-center justify-center gap-4 my-16">
-          <Image
-            src={emptySvg}
-            alt="empty"
-            height={200}
-            width={200}
-            className="animate-float"
-          />
-          <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
-            {isEmployee
-              ? tFeed("companyListEmpty")
-              : tFeed("employeeListEmpty")}
-          </TypographyP>
-          <Link
-            href={isEmployee ? "/search/company" : "/search/employee"}
-            className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2 text-xs font-semibold text-background shadow-sm transition-all hover:opacity-85 active:scale-95"
-          >
-            {isEmployee
-              ? tFeed("exploreAllCompanies")
-              : tFeed("exploreAllTalent")}
-          </Link>
-        </div>
-      )}
+            {visibleCount < discoveryCount && (
+              <Button
+                type="button"
+                variant="outline"
+                className="mx-auto h-11 min-w-36 rounded-xl"
+                onClick={() =>
+                  setVisibleCount((count) => count + FEED_PAGE_SIZE)
+                }
+              >
+                {tFeed("loadMore")}
+              </Button>
+            )}
 
-      {/* Infinite Scroll Sentinel Section: Triggers revealing the next batch of already-loaded cards */}
-      {!isLoading && visibleCount < allUsers.length && (
-        <div ref={sentinelRef} className="w-full h-1" />
-      )}
-
-      {/* End of Results Section */}
-      {!isLoading && allUsers.length > 0 && visibleCount >= allUsers.length && (
-        <div className="flex flex-col items-center gap-2 py-8 text-center">
-          <div className="flex items-center gap-3 w-full max-w-xs">
-            <div className="flex-1 h-px bg-border/60" />
-            <span className="text-xs font-medium text-muted-foreground/60 shrink-0">
-              {tFeed("endOfResults")}
-            </span>
-            <div className="flex-1 h-px bg-border/60" />
-          </div>
-        </div>
+            {discoveryCount > 0 && visibleCount >= discoveryCount && (
+              <div className="flex items-center gap-3 py-4 text-center">
+                <div className="h-px flex-1 bg-border/60" />
+                <span className="shrink-0 text-xs font-medium text-muted-foreground/70">
+                  {tFeed("endOfResults")}
+                </span>
+                <div className="h-px flex-1 bg-border/60" />
+              </div>
+            )}
+          </section>
+        </>
       )}
 
       {/* Image Popup Section */}

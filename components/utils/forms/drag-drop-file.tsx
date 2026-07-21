@@ -30,6 +30,7 @@ interface IDragDropFileProps<T extends FieldValues> {
 
 export const DragDropFile = <T extends FieldValues>({
   onFilesSelected,
+  onEdit,
   acceptedFileTypes = "image/*",
   maxFileSize = 10485760,
   multiple = false,
@@ -116,6 +117,10 @@ export const DragDropFile = <T extends FieldValues>({
 
   // ── Handle File Box Click ─────────────────────────────────────────
   const handleFileBoxClick = (): void => {
+    if (filePreview && onEdit) {
+      onEdit();
+      return;
+    }
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
@@ -153,14 +158,23 @@ export const DragDropFile = <T extends FieldValues>({
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
-      className={`w-full h-60 flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-5 text-center cursor-pointer relative ${
+      className={`auth-dropzone relative flex h-56 w-full cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed p-4 text-center tablet-sm:h-44 ${
         isDragging ? "border-blue-500 bg-blue-50" : "border-muted-foreground"
-      } ${className} h-64`}
+      } ${className}`}
+      role="button"
+      tabIndex={0}
+      aria-label={boxText}
       onDragEnter={handleDragEnter}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       onClick={handleFileBoxClick}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          handleFileBoxClick();
+        }
+      }}
     >
       {/* Hidden File Input Section */}
       <input

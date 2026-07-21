@@ -118,12 +118,16 @@ export default function TopNavbar() {
 
   // ── User Data ──────────────────────────────────────────────────────────
   const userData = useMemo(() => {
-    if (isEmployee && user?.employee)
+    if (isEmployee && user?.employee) {
+      const fullName = [user.employee.firstname, user.employee.lastname]
+        .filter(Boolean)
+        .join(" ");
       return {
-        name: user.employee.username ?? "",
+        name: fullName || user.employee.username || "",
         email: user.email ?? user.phone ?? "",
         avatar: user.employee.avatar ?? "",
       };
+    }
     if (isCompany && user?.company)
       return {
         name: user.company.name ?? "",
@@ -198,9 +202,9 @@ export default function TopNavbar() {
     <>
       {/* Sticky Top Navbar Section */}
       <nav className="sticky top-0 z-50 w-full">
-        <div className="border-b border-border/40 bg-background/85 backdrop-blur-xl shadow-[0_1px_0_hsl(var(--border)/0.3),0_4px_24px_hsl(var(--foreground)/0.05)]">
+        <div className="border-b border-border/70 bg-card/95 backdrop-blur-xl shadow-[0_1px_0_hsl(var(--border)/0.25)]">
           <div
-            className="mx-auto flex h-14 max-w-screen-2xl items-center justify-between gap-2 px-3 sm:gap-4 sm:px-4 lg:px-6"
+            className="mx-auto flex h-16 max-w-screen-2xl items-center justify-between gap-2 px-3 sm:gap-4 sm:px-4 lg:px-6"
             style={{ paddingTop: "env(safe-area-inset-top)" }}
           >
             {/* Logo Section */}
@@ -219,7 +223,7 @@ export default function TopNavbar() {
             </Link>
 
             {/* Desktop Navigation Section */}
-            <div className="hidden flex-1 items-center justify-center gap-0.5 lg:flex">
+            <div className="hidden flex-1 items-center justify-center gap-0.5 lg:flex xl:gap-1">
               {sidebarList.map((item) => (
                 <DesktopNavItem
                   key={item.url}
@@ -255,7 +259,7 @@ export default function TopNavbar() {
 
       {/* Mobile Bottom Tab Bar Section */}
       <div
-        className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/40 bg-background/85 backdrop-blur-xl shadow-[0_-1px_0_hsl(var(--border)/0.3),0_-4px_24px_hsl(var(--foreground)/0.05)] lg:hidden"
+        className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/70 bg-card/95 backdrop-blur-xl shadow-[0_-1px_0_hsl(var(--border)/0.25)] lg:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <div className="flex h-16 items-stretch justify-around">
@@ -273,7 +277,10 @@ export default function TopNavbar() {
           {/* More Sheet Section */}
           <Sheet open={moreOpen} onOpenChange={setMoreOpen}>
             <SheetTrigger asChild>
-              <button className="relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2">
+              <button
+                aria-label={t("more")}
+                className="relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2"
+              >
                 <span className="flex flex-col items-center gap-0.5">
                   <span className="flex h-7 w-7 items-center justify-center">
                     <MoreHorizontal

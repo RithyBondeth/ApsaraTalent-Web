@@ -79,7 +79,7 @@ export default function ExperienceStepForm({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex flex-col gap-5 w-full max-h-[500px] overflow-y-auto pr-1">
+    <div className="auth-step-section flex w-full flex-col gap-5">
       {/* Title Section */}
       <TypographyH4>{t("empExperienceTitle")}</TypographyH4>
 
@@ -87,7 +87,7 @@ export default function ExperienceStepForm({
       {fields.map((field, index) => (
         <div
           key={field.id}
-          className="relative flex flex-col items-start gap-3 w-full border border-muted-foreground/10 rounded-xl bg-muted p-5"
+          className="auth-step-card relative flex w-full flex-col items-start gap-3 rounded-xl border border-muted-foreground/10 bg-muted p-4 sm:p-5"
         >
           {/* Header Without Remove Button Section */}
           {fields.length === 1 && (
@@ -177,7 +177,7 @@ export default function ExperienceStepForm({
           </div>
 
           {/* StartDate and EndDate Section */}
-          <div className="w-full flex items-center gap-4">
+          <div className="grid w-full grid-cols-2 items-start gap-4 tablet-sm:grid-cols-1">
             {/* StartDate Section */}
             <div className="w-full flex flex-col gap-1">
               <TypographyMuted className="text-xs">

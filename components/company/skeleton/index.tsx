@@ -4,60 +4,34 @@ import { Skeleton } from "../../ui/skeleton";
 /* --------------------------- Company Card Skeleton ---------------------------- */
 export default function CompanyCardSkeleton() {
   return (
-    <div className="h-full w-full flex flex-col rounded-2xl border border-border/70 bg-card overflow-hidden shadow-[0_2px_8px_hsl(var(--foreground)/0.05)]">
-      {/* Cover Banner Section */}
-      <div className="relative h-28 tablet-md:h-12 w-full shrink-0 bg-gradient-to-br from-primary/20 via-primary/10 to-muted/40">
-        {/* Like and Quick View Buttons Section */}
-        <div className="absolute top-2 right-2 flex justify-center items-center gap-1">
-          <Skeleton className="size-8 rounded-full" />
-          <Skeleton className="size-8 rounded-full" />
-        </div>
-      </div>
-
-      {/* Avatar Section */}
-      <div className="flex items-end justify-between gap-3 px-4 -mt-6 tablet-md:-mt-4 z-10">
-        <Skeleton className="size-14 tablet-md:size-10 rounded-md ring-2 ring-card" />
-      </div>
-
-      <div className="flex flex-1 flex-col gap-2 tablet-md:gap-1.5 px-4 pt-2 pb-3">
-        {/* Name and Meta Section */}
-        <div className="flex flex-col gap-1">
+    <div className="flex h-full min-h-72 w-full flex-col overflow-hidden rounded-2xl border border-border/80 bg-card shadow-[0_1px_2px_hsl(var(--foreground)/0.03),0_8px_24px_hsl(var(--foreground)/0.03)]">
+      {/* Company Card Skeleton Section */}
+      <div className="flex items-start gap-3.5 px-5 pb-3 pt-5">
+        <Skeleton className="size-14 shrink-0 rounded-lg" />
+        <div className="min-w-0 flex-1 space-y-2">
           <Skeleton className="h-4 w-32 rounded" />
-          <div className="flex flex-wrap gap-x-3 gap-y-0.5">
+          <Skeleton className="h-3 w-24 rounded" />
+          <div className="flex gap-2">
             <Skeleton className="h-3 w-20 rounded" />
             <Skeleton className="h-3 w-16 rounded" />
-            <Skeleton className="h-3 w-[4.5rem] rounded" />
-            <Skeleton className="h-3 w-14 rounded" />
           </div>
         </div>
-
-        {/* Description Section */}
+        <Skeleton className="size-10 shrink-0 rounded-xl" />
+      </div>
+      <div className="flex flex-1 flex-col gap-3 px-5 pb-5">
         <div className="space-y-1.5">
           <Skeleton className="h-3 w-full rounded" />
           <Skeleton className="h-3 w-4/5 rounded" />
         </div>
-
-        {/* Open Positions Section */}
-        <div className="space-y-1.5">
-          <Skeleton className="h-3 w-28 rounded" />
-          <div className="flex flex-wrap gap-1.5">
-            <Skeleton className="h-6 w-20 rounded-full" />
-            <Skeleton className="h-6 w-24 rounded-full" />
-            <Skeleton className="h-6 w-16 rounded-full" />
-          </div>
+        <div className="flex gap-1.5">
+          <Skeleton className="h-7 w-20 rounded-lg" />
+          <Skeleton className="h-7 w-24 rounded-lg" />
+          <Skeleton className="h-7 w-16 rounded-lg" />
         </div>
-
-        {/* Benefits Section */}
-        <div className="flex flex-wrap gap-1.5">
-          <Skeleton className="h-6 w-[4.5rem] rounded-full" />
-          <Skeleton className="h-6 w-[5.5rem] rounded-full" />
+        <div className="mt-auto grid grid-cols-2 gap-2 border-t border-border/60 pt-4">
+          <Skeleton className="h-11 rounded-xl" />
+          <Skeleton className="h-11 rounded-xl" />
         </div>
-      </div>
-
-      {/* Footer Section */}
-      <div className="flex items-center justify-end gap-2 px-4 pb-3 border-t border-border/50 pt-3">
-        <Skeleton className="h-7 w-16 rounded-full" />
-        <Skeleton className="h-7 w-16 rounded-full" />
       </div>
     </div>
   );
@@ -73,7 +47,7 @@ function SkeletonCard({
 }) {
   return (
     <div
-      className={`bg-card rounded-2xl border border-border/60 shadow-sm ${className ?? ""}`}
+      className={`overflow-hidden rounded-2xl border border-border/70 bg-card shadow-[0_2px_8px_hsl(var(--foreground)/0.04)] ${className ?? ""}`}
     >
       {children}
     </div>
@@ -85,28 +59,28 @@ export function CompanyDetailPageLoadingSkeleton() {
   return (
     <div className="flex flex-col gap-5">
       {/* Back Navigation Header Section */}
-      <div className="border-b border-border/60 -mx-4 sm:-mx-6 px-4 sm:px-6">
-        <div className="flex items-center gap-4 py-3">
-          <Skeleton className="h-4 w-12" />
-          <Skeleton className="h-4 w-px" />
-          <Skeleton className="h-4 w-36" />
+      <div className="-mx-3 border-b border-border/70 px-3 sm:-mx-4 sm:px-4 lg:-mx-5 lg:px-5">
+        <div className="flex items-center gap-3 py-2.5">
+          <Skeleton className="h-9 w-16 rounded-xl" />
+          <Skeleton className="h-5 w-px" />
+          <Skeleton className="h-4 w-36 rounded" />
         </div>
       </div>
 
       {/* Hero Card Section */}
       <SkeletonCard>
-        {/* Cover Section */}
-        <Skeleton className="h-44 sm:h-56 rounded-t-2xl rounded-b-none w-full" />
+        {/* Compact Cover Section */}
+        <Skeleton className="h-28 w-full rounded-none sm:h-32" />
 
         {/* Identity Section */}
         <div className="px-4 sm:px-6 pb-5">
-          <div className="flex items-start gap-4">
+          <div className="flex items-start gap-4 tablet-md:flex-col tablet-md:items-center">
             {/* Avatar Overlapping Cover Section */}
-            <Skeleton className="size-20 sm:size-24 -mt-10 sm:-mt-12 rounded-xl flex-shrink-0" />
+            <Skeleton className="-mt-9 size-20 flex-shrink-0 rounded-xl sm:-mt-10 sm:size-24" />
 
             {/* Name and Chips Section */}
-            <div className="flex-1 min-w-0 pt-2 space-y-2">
-              <Skeleton className="h-7 w-48" />
+            <div className="min-w-0 flex-1 space-y-2 pt-3 tablet-md:w-full tablet-md:pt-0">
+              <Skeleton className="h-8 w-48" />
               <Skeleton className="h-4 w-32" />
               <div className="flex flex-wrap gap-2 mt-1">
                 <Skeleton className="h-7 w-28 rounded-full" />
@@ -116,9 +90,9 @@ export function CompanyDetailPageLoadingSkeleton() {
             </div>
 
             {/* Action Button Section */}
-            <div className="flex gap-2 flex-shrink-0 pt-2">
-              <Skeleton className="h-8 w-20 rounded-md" />
-              <Skeleton className="h-8 w-16 rounded-md" />
+            <div className="flex gap-2 flex-shrink-0 pt-3 tablet-md:hidden">
+              <Skeleton className="h-10 w-20 rounded-xl" />
+              <Skeleton className="h-10 w-24 rounded-xl" />
             </div>
           </div>
         </div>

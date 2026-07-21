@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import {
   LucideArrowLeft,
@@ -19,8 +18,8 @@ import { TypographyH1 } from "@/components/utils/typography/typography-h1";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyP } from "@/components/utils/typography/typography-p";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
-import { privacyBannerSvg } from "@/utils/constants/asset.constant";
 import { useLanguageStore } from "@/stores/languages/language-store";
+import { EditorialIllustration } from "@/components/utils/data-display/editorial-illustration";
 
 /* -------------------------- Sub Components -------------------------- */
 function Section({
@@ -646,14 +645,10 @@ export function PrivacyContent() {
               </TypographyP>
             </div>
 
-            {/* Banner Image Section */}
-            <Image
-              src={privacyBannerSvg}
-              alt="privacy"
-              height={250}
-              width={350}
-              className="h-auto max-w-[340px] tablet-xl:!w-full hidden sm:block"
-              priority
+            {/* Editorial Illustration Section */}
+            <EditorialIllustration
+              variant="trust"
+              className="hidden h-40 w-56 sm:block"
             />
           </div>
 

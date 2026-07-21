@@ -44,7 +44,7 @@ export default function EmployeeEducationForm(
       </div>
 
       {/* Content Section */}
-      <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
+      <div className="w-full flex flex-col items-start gap-5 rounded-xl border border-border/60 bg-background/50 p-4 sm:p-5">
         {/* School Section */}
         <div className="w-full flex flex-col items-start gap-2">
           <LabelInput

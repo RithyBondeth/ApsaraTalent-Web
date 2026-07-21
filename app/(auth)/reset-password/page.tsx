@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
+import { AuthBrandPanel } from "@/components/auth/auth-brand-panel";
+import LogoComponent from "@/components/utils/brand/logo";
 import { useResetPasswordStore } from "@/stores/apis/auth/reset-password.store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -14,12 +16,10 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { makeResetPasswordSchema, TResetPasswordForm } from "./validate";
-import { resetPasswordSvg } from "@/utils/constants/asset.constant";
 import {
   DEFAULT_REDIRECT_DELAY_MS,
   TOAST_DURATION_MS,
@@ -106,17 +106,19 @@ export default function ResetPasswordPage() {
 
   /* -------------------------------- Render UI --------------------------------- */
   return (
-    <div className="min-h-screen w-full flex tablet-md:flex-col">
+    <div className="auth-static-page flex h-[100dvh] min-h-0 w-full overflow-hidden tablet-md:flex-col">
       {/* Left Section */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-background p-6 sm:p-10 tablet-md:w-full tablet-md:min-h-0 tablet-md:py-16">
-        <div className="w-full max-w-[440px] flex flex-col items-start gap-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
+      <div className="auth-static-pane flex h-full min-h-0 w-[58%] items-center justify-center overflow-hidden bg-background px-7 py-10 sm:px-12 tablet-md:w-full tablet-md:pb-5 tablet-md:pt-16">
+        <div className="auth-static-content flex w-full max-w-[440px] flex-col items-start gap-6">
+          <LogoComponent className="auth-form-logo !h-10 w-auto self-start" />
+
           {/* Icon Badge Section */}
-          <div className="size-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+          <div className="auth-icon-badge size-16 rounded-2xl bg-primary/10 flex items-center justify-center">
             <LucideKey className="size-7 text-primary" />
           </div>
 
           {/* Title Section */}
-          <div className="flex flex-col items-start">
+          <div className="auth-heading-group flex flex-col items-start">
             <TypographyH2 className="phone-xl:text-2xl">
               {t("resetPageTitle")}
             </TypographyH2>
@@ -129,53 +131,73 @@ export default function ResetPasswordPage() {
 
           {/* Form Section */}
           <form
-            className="w-full flex flex-col gap-3"
+            className="auth-card-form w-full flex flex-col gap-3"
             onSubmit={handleSubmit(onSubmit)}
           >
             {/* Token Field Section: Hidden when auto-filled from URL query param */}
             {!tokenFromUrl && (
-              <Input
-                prefix={<LucideKey />}
-                type="text"
-                placeholder={t("tokenPlaceholder")}
-                {...register("token")}
-                validationMessage={errors.token?.message}
-              />
+              <div className="auth-field flex flex-col gap-1.5">
+                <label htmlFor="reset-token">{t("tokenPlaceholder")}</label>
+                <Input
+                  id="reset-token"
+                  prefix={<LucideKey />}
+                  type="text"
+                  placeholder={t("tokenPlaceholder")}
+                  {...register("token")}
+                  validationMessage={errors.token?.message}
+                />
+              </div>
             )}
 
-            <Input
-              prefix={<LucideLockKeyhole />}
-              suffix={
-                passwordVisibility ? (
-                  <LucideEyeClosed
-                    onClick={() => setPasswordVisibility(false)}
-                  />
-                ) : (
-                  <LucideEye onClick={() => setPasswordVisibility(true)} />
-                )
-              }
-              type={passwordVisibility ? "text" : "password"}
-              placeholder={t("newPassword")}
-              {...register("password")}
-              validationMessage={errors.password?.message}
-            />
-            <Input
-              prefix={<LucideLockKeyhole />}
-              suffix={
-                confirmPassVisibility ? (
-                  <LucideEyeClosed
-                    onClick={() => setConfirmPassVisibility(false)}
-                  />
-                ) : (
-                  <LucideEye onClick={() => setConfirmPassVisibility(true)} />
-                )
-              }
-              type={confirmPassVisibility ? "text" : "password"}
-              placeholder={t("confirmPassword")}
-              {...register("confirmPassword")}
-              validationMessage={errors.confirmPassword?.message}
-            />
-            <Button type="submit" disabled={loading}>
+            <div className="auth-field flex flex-col gap-1.5">
+              <label htmlFor="new-password">{t("newPassword")}</label>
+              <Input
+                id="new-password"
+                prefix={<LucideLockKeyhole />}
+                suffix={
+                  passwordVisibility ? (
+                    <LucideEyeClosed
+                      onClick={() => setPasswordVisibility(false)}
+                    />
+                  ) : (
+                    <LucideEye onClick={() => setPasswordVisibility(true)} />
+                  )
+                }
+                type={passwordVisibility ? "text" : "password"}
+                autoComplete="new-password"
+                placeholder={t("newPassword")}
+                {...register("password")}
+                validationMessage={errors.password?.message}
+              />
+            </div>
+            <div className="auth-field flex flex-col gap-1.5">
+              <label htmlFor="confirm-new-password">
+                {t("confirmPassword")}
+              </label>
+              <Input
+                id="confirm-new-password"
+                prefix={<LucideLockKeyhole />}
+                suffix={
+                  confirmPassVisibility ? (
+                    <LucideEyeClosed
+                      onClick={() => setConfirmPassVisibility(false)}
+                    />
+                  ) : (
+                    <LucideEye onClick={() => setConfirmPassVisibility(true)} />
+                  )
+                }
+                type={confirmPassVisibility ? "text" : "password"}
+                autoComplete="new-password"
+                placeholder={t("confirmPassword")}
+                {...register("confirmPassword")}
+                validationMessage={errors.confirmPassword?.message}
+              />
+            </div>
+            <Button
+              type="submit"
+              className="auth-primary-action"
+              disabled={loading}
+            >
               {loading ? t("resetting") : t("resetPassword")}
             </Button>
           </form>
@@ -184,7 +206,7 @@ export default function ResetPasswordPage() {
           <div className="w-full flex justify-center">
             <button
               onClick={() => router.replace("/login")}
-              className="underline text-sm text-primary hover:text-primary/80 transition-colors text-center"
+              className="auth-text-link text-sm text-primary transition-colors text-center"
             >
               {`\u2190 ${t("backToLogin")}`}
             </button>
@@ -192,19 +214,8 @@ export default function ResetPasswordPage() {
         </div>
       </div>
 
-      {/* Right Section: Image Poster */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-md:hidden">
-        {/* Decorative Circles Section */}
-        <div className="absolute -top-20 -right-20 size-72 rounded-full bg-white/5" />
-        <div className="absolute -bottom-32 -left-32 size-96 rounded-full bg-white/5" />
-
-        <Image
-          src={resetPasswordSvg}
-          alt="reset-password"
-          height={undefined}
-          width={600}
-        />
-      </div>
+      {/* Right Section: Auth Panel */}
+      <AuthBrandPanel />
     </div>
   );
 }

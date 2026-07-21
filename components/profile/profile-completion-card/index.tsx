@@ -14,36 +14,15 @@ export default function ProfileCompletionCard({
   const isComplete = percentage >= 100;
 
   /* --------------------------------- Helpers --------------------------------- */
-  const barColor = isComplete
-    ? "bg-emerald-500"
-    : percentage >= 60
-      ? "bg-primary"
-      : percentage >= 30
-        ? "bg-amber-500"
-        : "bg-rose-500";
-
-  const textColor = isComplete
-    ? "text-emerald-500"
-    : percentage >= 60
-      ? "text-primary"
-      : percentage >= 30
-        ? "text-amber-500"
-        : "text-rose-500";
-
-  const bgColor = isComplete
-    ? "bg-emerald-500/10 border-emerald-500/20"
-    : percentage >= 60
-      ? "bg-primary/5 border-primary/20"
-      : percentage >= 30
-        ? "bg-amber-500/10 border-amber-500/20"
-        : "bg-rose-500/10 border-rose-500/20";
+  const barColor = isComplete ? "bg-emerald-500" : "bg-brand";
+  const textColor = isComplete ? "text-emerald-600" : "text-brand";
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className={`rounded-2xl border shadow-sm p-4 sm:p-5 ${bgColor}`}>
+    <div className="profile-completion-card rounded-2xl border border-border/70 bg-card p-4 shadow-[0_2px_8px_hsl(var(--foreground)/0.04)] sm:p-5">
       <div className="flex items-center gap-4 sm:gap-5">
         {/* Circular Progress Indicator Section */}
-        <div className="relative shrink-0 size-14 sm:size-16">
+        <div className="relative size-14 shrink-0 rounded-2xl border border-brand/15 bg-brand-soft p-1.5 sm:size-16">
           <svg className="size-full -rotate-90" viewBox="0 0 36 36">
             <circle
               cx="18"
@@ -52,7 +31,7 @@ export default function ProfileCompletionCard({
               fill="none"
               stroke="currentColor"
               strokeWidth="2.5"
-              className="text-border/40"
+              className="text-border/70"
             />
             <circle
               cx="18"
@@ -81,14 +60,16 @@ export default function ProfileCompletionCard({
 
         {/* Info Section */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-2 mb-1.5">
+          <div className="mb-1.5 flex items-center justify-between gap-2">
             <span className="text-sm font-semibold">{t("completion")}</span>
-            <span className={`text-xs font-bold tabular-nums ${textColor}`}>
+            <span
+              className={`rounded-full border border-current/15 bg-background/70 px-2.5 py-1 text-xs font-semibold tabular-nums ${textColor}`}
+            >
               {t("percentComplete", { percentage })}
             </span>
           </div>
           {/* Progress Bar Section */}
-          <div className="w-full h-1.5 rounded-full bg-border/40 overflow-hidden mb-2">
+          <div className="mb-2 h-1.5 w-full overflow-hidden rounded-full bg-border/50">
             <div
               className={`h-full rounded-full transition-all duration-700 ${barColor}`}
               style={{ width: `${percentage}%` }}
@@ -103,7 +84,7 @@ export default function ProfileCompletionCard({
               {missingFields.slice(0, 4).map((field) => (
                 <span
                   key={field}
-                  className="inline-flex items-center gap-1 text-[11px] text-muted-foreground bg-background/70 border border-border/50 rounded-full px-2 py-0.5"
+                  className="inline-flex items-center gap-1 rounded-lg border border-border/60 bg-background/70 px-2 py-0.5 text-[11px] text-muted-foreground"
                 >
                   <LucideCircleAlert className="size-2.5 shrink-0" />
                   {tFields(field as Parameters<typeof tFields>[0])}

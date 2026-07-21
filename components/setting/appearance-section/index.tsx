@@ -35,9 +35,9 @@ export function AppearanceSection(props: IAppearanceSectionProps) {
       description={t("appearanceDescription")}
     >
       {/* Theme Section */}
-      <div className="flex flex-col gap-4 p-4">
+      <div className="flex flex-col gap-4 p-4 sm:p-5">
         {/* Theme Cards List Section */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-3 phone-xl:grid-cols-1">
           <ThemeCard
             value="light"
             label={t("themeLight")}
@@ -61,7 +61,7 @@ export function AppearanceSection(props: IAppearanceSectionProps) {
           />
         </div>
         {/* Theme Description Section */}
-        <TypographyMuted className="text-xs text-center">
+        <TypographyMuted className="text-center text-xs leading-relaxed">
           {theme === "system"
             ? t("followsSystem")
             : t("usingMode", { theme: themeLabel[theme] ?? theme })}

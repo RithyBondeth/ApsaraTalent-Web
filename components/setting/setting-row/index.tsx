@@ -10,17 +10,19 @@ export function SettingRow(props: ISettingRowProps) {
   return (
     <>
       {/* Setting Row Section */}
-      <div className="flex items-center justify-between gap-4 px-4 py-3.5">
+      <div className="flex items-center justify-between gap-4 px-4 py-3.5 transition-colors hover:bg-muted/25 sm:px-5">
         {/* Setting Row Left Section */}
         <div className="flex items-center gap-3 min-w-0">
-          <span className="text-muted-foreground shrink-0 [&>svg]:size-4">
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted/55 text-muted-foreground [&>svg]:size-4">
             {icon}
           </span>
           <span className="text-sm font-medium truncate">{label}</span>
         </div>
 
         {/* Setting Row Right Section */}
-        <div className="shrink-0 text-sm text-muted-foreground">{value}</div>
+        <div className="max-w-[58%] shrink-0 break-words text-right text-sm text-muted-foreground">
+          {value}
+        </div>
       </div>
 
       {/* Separator Section */}

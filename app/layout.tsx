@@ -3,21 +3,21 @@ import { LanguageProvider } from "@/components/utils/languages/language-provider
 import { ThemeProvider } from "@/components/utils/themes/theme-provider";
 import { TitleSync } from "@/components/utils/seo/title-sync";
 import type { Metadata } from "next";
-import { Koh_Santepheap, Roboto_Slab } from "next/font/google";
+import { Source_Sans_3, Suwannaphum } from "next/font/google";
 import "./globals.css";
 
-const robotoSlab = Roboto_Slab({
+const sourceSans = Source_Sans_3({
   subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
-  variable: "--font-roboto-slab",
+  variable: "--font-source-sans",
 });
 
-const kohSantepheap = Koh_Santepheap({
+const suwannaphum = Suwannaphum({
   subsets: ["khmer"],
-  weight: ["400", "700"],
+  weight: ["300", "400", "700", "900", "100"],
   display: "swap",
-  variable: "--font-koh-santepheap",
+  variable: "--font-khmer",
 });
 
 export const metadata: Metadata = {
@@ -41,10 +41,7 @@ export default function RootLayout({
     /*---------------------------------- Main Layout ----------------------------------*/
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <body
-        className={`${robotoSlab.variable} ${kohSantepheap.variable} antialiased`}
-        style={{
-          fontFamily: "var(--font-roboto-slab), var(--font-koh-santepheap), sans-serif",
-        }}
+        className={`${sourceSans.variable} ${suwannaphum.variable} antialiased`}
         suppressHydrationWarning
       >
         {/* Language Provider Section */}

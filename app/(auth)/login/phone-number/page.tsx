@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import LogoComponent from "@/components/utils/brand/logo";
+import { AuthBrandPanel } from "@/components/auth/auth-brand-panel";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useLoginOTPStore } from "@/stores/apis/auth/login-otp.store";
@@ -11,13 +12,11 @@ import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-sign
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LucidePhone } from "lucide-react";
 import { toast } from "sonner";
-import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { makePhoneLoginSchema, TPhoneLoginForm } from "./validation";
-import { phoneNumberSvg } from "@/utils/constants/asset.constant";
 import {
   DEFAULT_REDIRECT_DELAY_MS,
   TOAST_DURATION_MS,
@@ -118,15 +117,15 @@ export default function PhoneNumberPage() {
 
   return (
     /* -------------------------------- Render UI -------------------------------- */
-    <div className="min-h-screen w-full flex tablet-md:flex-col">
+    <div className="auth-static-page flex h-[100dvh] min-h-0 w-full overflow-hidden tablet-md:flex-col">
       {/* Left Section */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-background p-6 sm:p-10 tablet-md:w-full tablet-md:min-h-0 tablet-md:py-12">
-        <div className="w-full max-w-[440px] flex flex-col gap-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
+      <div className="auth-static-pane flex h-full min-h-0 w-[58%] items-center justify-center overflow-hidden bg-background px-7 py-10 sm:px-12 tablet-md:w-full tablet-md:pb-5 tablet-md:pt-16">
+        <div className="auth-static-content flex w-full max-w-[440px] flex-col gap-6">
           {/* Logo Section */}
-          <LogoComponent className="!h-12 w-auto self-start" />
+          <LogoComponent className="auth-form-logo !h-12 w-auto self-start" />
 
           {/* Title Section */}
-          <div className="flex flex-col items-start">
+          <div className="auth-heading-group flex flex-col items-start">
             <TypographyH2 className="phone-xl:text-xl">
               {t("phoneLoginTitle")}
             </TypographyH2>
@@ -138,16 +137,22 @@ export default function PhoneNumberPage() {
           {/* Form Section */}
           <form
             action=""
-            className="flex flex-col items-stretch gap-3"
+            className="auth-card-form flex flex-col items-stretch gap-3"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <Input
-              prefix={<LucidePhone />}
-              type="number"
-              placeholder={t("phoneNumber")}
-              {...register("phone")}
-              validationMessage={errors.phone?.message}
-            />
+            <div className="auth-field flex flex-col gap-1.5">
+              <label htmlFor="phone-number">{t("phoneNumber")}</label>
+              <Input
+                id="phone-number"
+                prefix={<LucidePhone />}
+                type="tel"
+                inputMode="tel"
+                autoComplete="tel"
+                placeholder={t("phoneNumber")}
+                {...register("phone")}
+                validationMessage={errors.phone?.message}
+              />
+            </div>
             <div className="flex items-center gap-1">
               <Controller
                 name="rememberMe"
@@ -155,39 +160,34 @@ export default function PhoneNumberPage() {
                 defaultValue={false}
                 render={({ field }) => (
                   <Checkbox
+                    id="phone-remember-me"
                     checked={field.value}
                     onCheckedChange={field.onChange}
                   />
                 )}
               />
-              <TypographyMuted className="text-xs">
+              <label
+                htmlFor="phone-remember-me"
+                className="cursor-pointer text-xs text-muted-foreground"
+              >
                 {t("rememberMeLabel")}
-              </TypographyMuted>
+              </label>
             </div>
-            <Button>{t("loginButton")}</Button>
+            <Button className="auth-primary-action">{t("loginButton")}</Button>
           </form>
 
           {/* Navigate Back Button Section */}
           <button
             onClick={() => router.replace("/login")}
-            className="underline text-sm text-primary hover:text-primary/80 transition-colors text-center"
+            className="auth-text-link text-sm text-primary transition-colors text-center"
           >
             {t("backToEmailLogin")}
           </button>
         </div>
       </div>
 
-      {/* Right Section: Image Poster */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-md:hidden">
-        <Image
-          src={phoneNumberSvg}
-          alt="phone-number"
-          height={undefined}
-          width={600}
-        />
-        <div className="absolute -top-20 -right-20 size-64 rounded-full bg-white/5" />
-        <div className="absolute -bottom-10 -left-10 size-48 rounded-full bg-white/5" />
-      </div>
+      {/* Right Section: Auth Panel */}
+      <AuthBrandPanel />
     </div>
   );
 }

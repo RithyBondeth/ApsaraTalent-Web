@@ -68,7 +68,6 @@ import { useGetAllCareerScopesStore } from "@/stores/apis/users/get-all-career-s
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
 import {
   companyTypeConstant,
-  COMPANY_ICON_COLOR,
   locationConstant,
   loginMethodConstant,
   platformConstant,
@@ -107,11 +106,11 @@ import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { companyFormSchema, TCompanyProfileForm } from "./validation";
-import { emptySvg } from "@/utils/constants/asset.constant";
 import { getCompanyProfileCompletion } from "@/utils/functions/profile";
 import { CompanyProfilePageLoadingSkeleton } from "@/components/profile/skeleton";
 import { SectionTitle } from "@/components/utils/layout/section-title";
 import ProfileCompletionCard from "@/components/profile/profile-completion-card";
+import { EditorialIllustration } from "@/components/utils/data-display/editorial-illustration";
 
 export default function ProfilePage() {
   /* ---------------------------------- Utils ----------------------------------- */
@@ -1105,7 +1104,8 @@ export default function ProfilePage() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-5 animate-page-in"
+      className="profile-page flex flex-col gap-5 animate-page-in"
+      data-editing={isEdit}
       onKeyDown={(e) => {
         if (
           e.key === "Enter" &&
@@ -1117,13 +1117,10 @@ export default function ProfilePage() {
     >
       {/* Sticky Edit Action Bar Section */}
       {isEdit && (
-        <div className="sticky top-14 z-40 -mx-3 sm:-mx-4 lg:-mx-6 px-4 sm:px-5 py-2.5 bg-background/95 backdrop-blur-md border-b border-border/60 flex items-center justify-between gap-3 shadow-sm">
+        <div className="sticky top-14 z-40 -mx-3 flex items-center justify-between gap-3 border-b border-border/70 bg-card/95 px-4 py-2.5 shadow-[0_8px_24px_hsl(var(--foreground)/0.05)] backdrop-blur-xl sm:-mx-4 sm:px-5 lg:-mx-5">
           {/* Edit Profile Status Section */}
           <div className="flex items-center gap-2">
-            <span className="relative flex size-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
-              <span className="relative inline-flex rounded-full size-2 bg-amber-400" />
-            </span>
+            <span className="size-2 rounded-full bg-brand" />
             <span className="text-sm font-medium">{tP("editProfile")}</span>
           </div>
 
@@ -1133,7 +1130,7 @@ export default function ProfilePage() {
               type="button"
               variant="ghost"
               size="sm"
-              className="h-8 text-xs"
+              className="h-9 rounded-xl px-3 text-xs"
               onClick={disableEditMode}
             >
               {tP("cancel")}
@@ -1141,7 +1138,7 @@ export default function ProfilePage() {
             <Button
               type="submit"
               size="sm"
-              className="h-8 text-xs min-w-[80px]"
+              className="h-9 min-w-[88px] rounded-xl text-xs shadow-sm"
               disabled={updateProfileLoadingState}
             >
               {updateProfileLoadingState ? (
@@ -1155,30 +1152,25 @@ export default function ProfilePage() {
         </div>
       )}
 
-      {/* Profile Completion Section */}
-      <ProfileCompletionCard
-        percentage={profileCompletion.percentage}
-        missingFields={profileCompletion.missingFields}
-      />
-
       {/* Header Section */}
-      <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
+      <div className="profile-identity-header overflow-hidden rounded-2xl border border-border/70 bg-card shadow-[0_2px_8px_hsl(var(--foreground)/0.045)]">
         {/* Cover Image Section */}
         <div
-          className={`h-44 sm:h-56 rounded-t-2xl bg-cover bg-center bg-no-repeat relative ${!company.cover ? "bg-gradient-to-br from-primary via-primary/70 to-violet-500/40" : ""}`}
+          className="relative h-28 bg-[hsl(var(--illustration-surface))] bg-cover bg-center bg-no-repeat sm:h-32"
           style={
-            company.cover
+            avatarOrCoverPreview.cover
               ? { backgroundImage: `url(${avatarOrCoverPreview.cover})` }
-              : {}
+              : undefined
           }
         >
           {/* Overlay for Gradient Cover Section */}
-          {!company.cover && (
+          {avatarOrCoverPreview.cover ? (
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/5" />
+          ) : (
             <>
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.15)_0%,transparent_60%)]" />
-              <div className="absolute -top-10 -right-10 size-56 rounded-full bg-white/5" />
-              <div className="absolute top-6 right-28 size-28 rounded-full bg-white/5" />
-              <div className="absolute -bottom-8 right-8 size-36 rounded-full bg-white/5" />
+              <span className="absolute -right-8 -top-12 size-36 rounded-full border border-brand/15" />
+              <span className="absolute right-20 top-7 size-3 rounded-full bg-brand/25" />
+              <span className="absolute bottom-5 left-[42%] h-px w-24 bg-border/80" />
             </>
           )}
 
@@ -1186,7 +1178,7 @@ export default function ProfilePage() {
           {isEdit && (
             <div className="absolute bottom-3 right-3 flex items-center gap-2">
               <Button
-                className="flex items-center gap-1.5 h-8 px-3 rounded-full bg-background/90 text-foreground backdrop-blur-sm text-xs shadow-sm hover:bg-background"
+                className="h-9 rounded-xl border border-white/40 bg-background/90 px-3 text-xs text-foreground shadow-sm backdrop-blur-sm hover:bg-background"
                 onClick={() => coverInputRef.current?.click()}
                 type="button"
               >
@@ -1195,7 +1187,7 @@ export default function ProfilePage() {
               </Button>
               {company.cover && (
                 <Button
-                  className="flex items-center gap-1.5 h-8 px-3 rounded-full bg-destructive/90 text-destructive-foreground backdrop-blur-sm text-xs shadow-sm"
+                  className="h-9 rounded-xl bg-destructive/90 px-3 text-xs text-destructive-foreground shadow-sm backdrop-blur-sm"
                   onClick={() => setOpenRemoveCoverDialog(true)}
                   type="button"
                 >
@@ -1208,12 +1200,12 @@ export default function ProfilePage() {
         </div>
 
         {/* Identity Row Section */}
-        <div className="px-5 sm:px-6 pb-6">
-          <div className="flex items-end gap-4 -mt-10 sm:-mt-12 tablet-md:flex-col tablet-md:items-center">
+        <div className="px-4 pb-5 sm:px-6 sm:pb-6">
+          <div className="flex items-start gap-4 tablet-md:flex-col tablet-md:items-center">
             {/* Avatar Section */}
             <div className="relative flex-shrink-0">
               <Avatar
-                className="size-20 sm:size-24 ring-4 ring-card shadow-xl bg-card cursor-pointer"
+                className="-mt-9 size-20 cursor-pointer bg-card ring-[3px] ring-card shadow-[0_10px_28px_hsl(var(--foreground)/0.14)] sm:-mt-10 sm:size-24"
                 rounded="md"
                 onClick={(e) => {
                   if (!isEdit && company.avatar) handleClickAvatarPopup(e);
@@ -1338,11 +1330,11 @@ export default function ProfilePage() {
             />
 
             {/* Name and Industry Section */}
-            <div className="flex-1 min-w-0 pb-1 tablet-md:text-center">
-              <h2 className="text-xl font-bold leading-tight truncate">
+            <div className="min-w-0 flex-1 pt-3 tablet-md:pt-0 tablet-md:text-center">
+              <h2 className="truncate text-2xl font-bold leading-tight tracking-[-0.03em] sm:text-3xl">
                 {company.name}
               </h2>
-              <p className="text-sm text-muted-foreground truncate">
+              <p className="mt-1 truncate text-sm text-muted-foreground">
                 {company.industry}
               </p>
             </div>
@@ -1351,8 +1343,7 @@ export default function ProfilePage() {
             {!isEdit && (
               <Button
                 variant="outline"
-                size="sm"
-                className="text-xs mb-1 shrink-0 tablet-md:w-full"
+                className="mt-3 h-10 shrink-0 rounded-xl px-4 text-xs tablet-md:w-full"
                 type="button"
                 onClick={enableEditMode}
               >
@@ -1364,12 +1355,18 @@ export default function ProfilePage() {
         </div>
       </div>
 
+      {/* Profile Completion Section */}
+      <ProfileCompletionCard
+        percentage={profileCompletion.percentage}
+        missingFields={profileCompletion.missingFields}
+      />
+
       {/* Content Section */}
-      <div className="flex items-start gap-5 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
+      <div className="grid grid-cols-[minmax(0,1.65fr)_minmax(280px,0.85fr)] items-start gap-5 tablet-lg:grid-cols-1">
         {/* LEFT Side Section */}
-        <div className="w-[60%] min-w-0 flex flex-col gap-5">
+        <div className="stagger-list min-w-0 flex flex-col gap-5">
           {/* Company Information Section */}
-          <div className="w-full flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
+          <div className="profile-section-card w-full flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/70 p-5 sm:p-6 overflow-hidden">
             <SectionTitle
               icon={<LucideBuilding />}
               title={tP("companyInformation")}
@@ -1421,7 +1418,7 @@ export default function ProfilePage() {
                         if (result) toast.success(tr("refinedSuccess"));
                       }}
                       disabled={descLoading}
-                      className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                      className="h-7 gap-1 rounded-lg px-2 text-[10px] text-brand hover:bg-brand-soft hover:text-brand"
                     >
                       {descLoading ? (
                         <LucideLoader2 size={10} className="animate-spin" />
@@ -1608,7 +1605,7 @@ export default function ProfilePage() {
 
           {/* OpenPosition Information Section */}
           {company.openPositions && (
-            <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
+            <div className="profile-section-card w-full bg-card rounded-2xl border border-border/70 p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
               <SectionTitle
                 icon={<LucideUsers />}
                 title={tP("openPositionInformation")}
@@ -1665,10 +1662,9 @@ export default function ProfilePage() {
                 ) : (
                   <div className="w-full flex flex-col items-center justify-center p-5">
                     {/* Add New OpenPosition Section */}
-                    <Image
-                      alt="empty"
-                      src={emptySvg}
-                      className="size-44 animate-float"
+                    <EditorialIllustration
+                      variant="openPosition"
+                      className="mb-4 h-32 w-44"
                     />
                     <TypographyMuted className="text-sm">
                       {tP("noOpenPositionAvailable")}
@@ -1701,7 +1697,7 @@ export default function ProfilePage() {
           )}
 
           {/* Company Images Section */}
-          <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
+          <div className="profile-section-card w-full bg-card rounded-2xl border border-border/70 p-5 sm:p-6 overflow-hidden">
             <SectionTitle
               icon={<LucideBuilding />}
               title={tP("companyImagesInformation")}
@@ -1805,9 +1801,9 @@ export default function ProfilePage() {
         </div>
 
         {/* RIGHT SIDE Section */}
-        <div className="w-[40%] min-w-0 flex flex-col gap-5">
+        <div className="stagger-list min-w-0 flex flex-col gap-5">
           {/* Benefits Section */}
-          <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
+          <div className="profile-section-card bg-card rounded-2xl border border-border/70 p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
             <div className="w-full">
               <SectionTitle
                 icon={<LucideCircleCheck />}
@@ -1821,17 +1817,12 @@ export default function ProfilePage() {
                 {benefits.length > 0 ? (
                   benefits.map((benefit) => (
                     <div
-                      className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs"
+                      className="flex items-center gap-2 rounded-xl border border-border/60 bg-background/50 px-3 py-2 [&>div>p]:text-xs"
                       key={benefit.label}
                     >
                       <IconLabel
-                        icon={
-                          <LucideCircleCheck
-                            stroke="white"
-                            fill={COMPANY_ICON_COLOR.BENEFIT}
-                          />
-                        }
-                        className="[&>p]:text-[#0073E6] font-medium"
+                        icon={<LucideCircleCheck className="text-brand" />}
+                        className="font-medium [&>p]:text-foreground"
                         text={benefit.label}
                       />
                       {isEdit && (
@@ -1903,7 +1894,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Values Section */}
-          <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
+          <div className="profile-section-card bg-card rounded-2xl border border-border/70 p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
             <div className="w-full">
               <SectionTitle icon={<LucideZap />} title={tP("values")} />
             </div>
@@ -1914,17 +1905,12 @@ export default function ProfilePage() {
                 {values.length > 0 ? (
                   values.map((value, index) => (
                     <div
-                      className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs"
+                      className="flex items-center gap-2 rounded-xl border border-border/60 bg-background/50 px-3 py-2 [&>div>p]:text-xs"
                       key={index}
                     >
                       <IconLabel
-                        icon={
-                          <LucideCircleCheck
-                            stroke="white"
-                            fill={COMPANY_ICON_COLOR.VALUE}
-                          />
-                        }
-                        className="[&>p]:text-[#69B41E] font-medium"
+                        icon={<LucideCircleCheck className="text-brand" />}
+                        className="font-medium [&>p]:text-foreground"
                         text={value.label}
                       />
                       {isEdit && (
@@ -1995,7 +1981,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Career Scopes Section */}
-          <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
+          <div className="profile-section-card bg-card rounded-2xl border border-border/70 p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
             <div className="w-full">
               <SectionTitle
                 icon={<LucideCompass />}
@@ -2136,7 +2122,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Social Section */}
-          <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
+          <div className="profile-section-card w-full bg-card rounded-2xl border border-border/70 p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
             <SectionTitle
               icon={<LucideGlobe />}
               title={tP("socialInformation")}
@@ -2151,7 +2137,7 @@ export default function ProfilePage() {
                   >
                     <Link
                       href={item.url}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 rounded-full hover:underline max-w-[200px] sm:max-w-[260px] overflow-hidden"
+                      className="inline-flex max-w-[200px] items-center gap-1.5 overflow-hidden rounded-xl border border-border/60 bg-background/50 px-3 py-1.5 text-foreground transition-colors hover:border-brand/20 hover:bg-brand-soft/60 sm:max-w-[260px]"
                     >
                       <span className="flex-shrink-0">
                         {getSocialPlatformTypeIcon(item.platform as TPlatform)}
@@ -2289,7 +2275,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Authentication Section */}
-          <div className="flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
+          <div className="profile-section-card flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/70 p-5 sm:p-6 overflow-hidden">
             <SectionTitle
               icon={<LucideSettings />}
               title={tP("authentication")}
@@ -2299,30 +2285,29 @@ export default function ProfilePage() {
               {/* Google, Facebook, LinkedIn and Github Methods Section */}
               {loginMethodConstant.map((item) => (
                 <div
-                  className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer"
+                  className="flex w-full items-center justify-between rounded-xl border border-border/60 bg-background/50 px-3 py-3"
                   key={item.id}
                 >
                   <div className="flex items-center gap-2">
-                    <Image
-                      src={item.icon}
-                      alt={item.label}
-                      width={30}
-                      height={30}
-                      className="rounded-full"
-                    />
+                    <span
+                      className="flex size-8 items-center justify-center rounded-full border border-border bg-card text-[10px] font-semibold text-foreground"
+                      aria-hidden="true"
+                    >
+                      {item.mark}
+                    </span>
                     <TypographySmall>{item.label}</TypographySmall>
                   </div>
 
                   {user.lastLoginMethod &&
                   user.lastLoginMethod.toUpperCase() ===
                     item.label.toUpperCase() ? (
-                    <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
+                    <div className="rounded-lg border border-border/60 bg-muted/60 px-3 py-1 text-muted-foreground">
                       <TypographySmall className="text-xs font-medium">
                         {tP("disconnect")}
                       </TypographySmall>
                     </div>
                   ) : (
-                    <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
+                    <div className="rounded-lg border border-brand/15 bg-brand-soft px-3 py-1 text-brand">
                       <TypographySmall className="text-xs font-medium">
                         {tP("connect")}
                       </TypographySmall>
@@ -2332,19 +2317,19 @@ export default function ProfilePage() {
               ))}
 
               {/* Email/Password Method Section */}
-              <div className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer">
+              <div className="flex w-full items-center justify-between rounded-xl border border-border/60 bg-background/50 px-3 py-3">
                 <div className="flex items-center gap-2">
                   <LucideMail className="mx-1" strokeWidth={1.5} />
                   <TypographySmall>{tP("email")}</TypographySmall>
                 </div>
                 {user.email ? (
-                  <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
+                  <div className="rounded-lg border border-border/60 bg-muted/60 px-3 py-1 text-muted-foreground">
                     <TypographySmall className="text-xs font-medium">
                       {tP("disconnect")}
                     </TypographySmall>
                   </div>
                 ) : (
-                  <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
+                  <div className="rounded-lg border border-brand/15 bg-brand-soft px-3 py-1 text-brand">
                     <TypographySmall className="text-xs font-medium">
                       {tP("connect")}
                     </TypographySmall>
@@ -2353,19 +2338,19 @@ export default function ProfilePage() {
               </div>
 
               {/* PhoneOTP Method Section */}
-              <div className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer">
+              <div className="flex w-full items-center justify-between rounded-xl border border-border/60 bg-background/50 px-3 py-3">
                 <div className="flex items-center gap-2">
                   <LucidePhone className="mx-1" strokeWidth={1.5} />
                   <TypographySmall>{tP("phoneOtp")}</TypographySmall>
                 </div>
                 {user.phone ? (
-                  <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
+                  <div className="rounded-lg border border-border/60 bg-muted/60 px-3 py-1 text-muted-foreground">
                     <TypographySmall className="text-xs font-medium">
                       {tP("disconnect")}
                     </TypographySmall>
                   </div>
                 ) : (
-                  <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
+                  <div className="rounded-lg border border-brand/15 bg-brand-soft px-3 py-1 text-brand">
                     <TypographySmall className="text-xs font-medium">
                       {tP("connect")}
                     </TypographySmall>

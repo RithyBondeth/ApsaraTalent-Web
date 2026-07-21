@@ -1,6 +1,5 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   HoverCard,
@@ -32,7 +31,6 @@ import {
 import { ISocialLink } from "@/utils/interfaces/user/social.interface";
 import { TPlatform } from "@/utils/types/user/platform.type";
 import {
-  LucideArrowLeft,
   LucideAtSign,
   LucideBookmark,
   LucideBriefcaseBusiness,
@@ -66,6 +64,7 @@ import { SectionTitle } from "@/components/utils/layout/section-title";
 import { getAvailabilityStyleClass } from "@/utils/functions/ui/get-availability-class";
 import UserModerationMenu from "@/components/moderation/user-moderation-menu";
 import { API_GET_EMP_DOCUMENT_URL } from "@/utils/constants/apis/user-api/employee.api.constant";
+import { DetailIdentityHeader } from "@/components/utils/layout/detail-identity-header";
 
 export default function EmployeeDetailPage() {
   /* ---------------------------------- Utils ---------------------------------- */
@@ -295,133 +294,96 @@ export default function EmployeeDetailPage() {
       {/* Feed Action Effect Portal Section */}
       {effectPortal}
 
-      {/* Back Navigation Header Section */}
-      <header className="sticky top-0 z-10 border-b border-border/60 bg-background/95 backdrop-blur-sm -mx-4 sm:-mx-6 px-4 sm:px-6">
-        <div className="flex items-center gap-4 py-3 min-w-0">
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors shrink-0"
-          >
-            <LucideArrowLeft className="size-4" />
-            {tf("back")}
-          </button>
-          <span className="text-border shrink-0">|</span>
-          <span className="text-sm font-semibold truncate flex-1 min-w-0">
-            {fullName || tf("employeeDetail")}
-          </span>
+      {/* Detail Identity Header Section */}
+      <DetailIdentityHeader
+        title={fullName || tf("employeeDetail")}
+        subtitle={employeeData.job}
+        avatar={employeeData.avatar}
+        fallback={
+          employeeData.username ? (
+            employeeData.username.slice(0, AVATAR_INITIALS_LENGTH)
+          ) : (
+            <User />
+          )
+        }
+        backLabel={tf("back")}
+        onBack={() => router.back()}
+        onAvatarClick={
+          employeeData.avatar
+            ? (event) => handleClickProfilePopup(event)
+            : undefined
+        }
+        menu={
           <UserModerationMenu
             targetId={employeeData.id}
             targetName={fullName || tf("employeeDetail")}
           />
-        </div>
-      </header>
-
-      {/* Hero Card Section */}
-      <DetailCard>
-        {/* Banner Section */}
-        <div className="h-36 sm:h-44 rounded-t-2xl bg-gradient-to-r from-primary to-primary/50 relative overflow-hidden">
-          <div className="absolute -top-6 right-10 size-36 rounded-full bg-white/5" />
-          <div className="absolute top-4 right-32 size-20 rounded-full bg-white/5" />
-          <div className="absolute -bottom-4 right-4 size-24 rounded-full bg-white/5" />
-        </div>
-
-        {/* Identity Section */}
-        <div className="px-4 sm:px-6 pb-5">
-          <div className="flex items-start gap-4 tablet-md:flex-col tablet-md:items-center">
-            {/* Avatar Section */}
-            <Avatar
-              className="size-20 sm:size-24 -mt-10 sm:-mt-12 ring-[3px] ring-card shadow-xl flex-shrink-0 cursor-pointer"
-              rounded="md"
-              onClick={(e) => {
-                if (employeeData.avatar) handleClickProfilePopup(e);
-              }}
-            >
-              <AvatarImage src={employeeData.avatar ?? ""} />
-              <AvatarFallback className="uppercase font-bold text-xl">
-                {employeeData.username ? (
-                  employeeData.username.slice(0, AVATAR_INITIALS_LENGTH)
-                ) : (
-                  <User />
-                )}
-              </AvatarFallback>
-            </Avatar>
-
-            {/* Information Section: FullName, Username, JobTitle, Gender, YearOfExperience, Location. */}
-            <div className="flex-1 min-w-0 pt-2 tablet-md:text-center tablet-md:pt-0 tablet-md:mt-1">
-              <div className="flex items-center gap-2 flex-wrap tablet-md:justify-center">
-                <h1 className="text-xl sm:text-2xl font-bold leading-tight">
-                  {fullName}
-                </h1>
-                {employeeData.availability && (
-                  <span
-                    className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${getAvailabilityStyleClass(employeeData.availability)}`}
-                  >
-                    {employeeData.availability}
-                  </span>
-                )}
-              </div>
-              <p className="text-muted-foreground text-sm mt-0.5">
-                {employeeData.job}
-              </p>
-              <div className="flex flex-wrap gap-2 mt-3 tablet-md:justify-center">
-                {employeeData.gender && (
-                  <MetaChip
-                    icon={<LucideTransgender />}
-                    text={
-                      employeeData.gender.toLowerCase() === "male"
-                        ? tf("genderMale")
-                        : employeeData.gender.toLowerCase() === "female"
-                          ? tf("genderFemale")
-                          : tf("genderOther")
-                    }
-                  />
-                )}
-                {employeeData.yearsOfExperience && (
-                  <MetaChip
-                    icon={<LucideBriefcaseBusiness />}
-                    text={employeeData.yearsOfExperience}
-                  />
-                )}
-                {employeeData.location && (
-                  <MetaChip
-                    icon={<LucideMapPinned />}
-                    text={translateLocation(employeeData.location, tl)}
-                  />
-                )}
-                {employeeData.username && (
-                  <MetaChip
-                    icon={<LucideAtSign />}
-                    text={employeeData.username}
-                  />
-                )}
-              </div>
-            </div>
-
-            {/* Desktop Action Buttons Section */}
-            <div className="flex gap-2 flex-shrink-0 pt-2 tablet-md:hidden">
-              {!isFav && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleAddToFavorite}
-                  disabled={favDisabled}
-                >
-                  <LucideBookmark className="size-4" /> {tf("save")}
-                </Button>
-              )}
-              <Button size="sm" onClick={handleLike} disabled={likeDisabled}>
-                <LucideHeartHandshake className="size-4" /> {tf("like")}
+        }
+        meta={
+          <>
+            {employeeData.availability && (
+              <span
+                className={`rounded-full px-2.5 py-1 text-xs font-medium ${getAvailabilityStyleClass(employeeData.availability)}`}
+              >
+                {employeeData.availability}
+              </span>
+            )}
+            {employeeData.gender && (
+              <MetaChip
+                icon={<LucideTransgender />}
+                text={
+                  employeeData.gender.toLowerCase() === "male"
+                    ? tf("genderMale")
+                    : employeeData.gender.toLowerCase() === "female"
+                      ? tf("genderFemale")
+                      : tf("genderOther")
+                }
+              />
+            )}
+            {employeeData.yearsOfExperience && (
+              <MetaChip
+                icon={<LucideBriefcaseBusiness />}
+                text={employeeData.yearsOfExperience}
+              />
+            )}
+            {employeeData.location && (
+              <MetaChip
+                icon={<LucideMapPinned />}
+                text={translateLocation(employeeData.location, tl)}
+              />
+            )}
+            {employeeData.username && (
+              <MetaChip icon={<LucideAtSign />} text={employeeData.username} />
+            )}
+          </>
+        }
+        actions={
+          <>
+            {!isFav && (
+              <Button
+                variant="outline"
+                className="h-10 rounded-xl px-4"
+                onClick={handleAddToFavorite}
+                disabled={favDisabled}
+              >
+                <LucideBookmark className="size-4" /> {tf("save")}
               </Button>
-            </div>
-          </div>
-        </div>
-      </DetailCard>
+            )}
+            <Button
+              className="h-10 rounded-xl px-4 shadow-sm"
+              onClick={handleLike}
+              disabled={likeDisabled}
+            >
+              <LucideHeartHandshake className="size-4" /> {tf("interested")}
+            </Button>
+          </>
+        }
+      />
 
       {/* Content Grid Section */}
       <div className="flex items-start gap-5 tablet-xl:flex-col">
         {/* Left Section */}
-        <div className="flex-1 min-w-0 flex flex-col gap-5">
+        <div className="stagger-list flex-1 min-w-0 flex flex-col gap-5">
           {/* About Section */}
           {employeeData.description && (
             <DetailCard className="p-5 sm:p-6">
@@ -469,7 +431,7 @@ export default function EmployeeDetailPage() {
                     <div key={item.id} className="flex gap-3">
                       {/* Timeline dot + line */}
                       <div className="flex flex-col items-center pt-1 flex-shrink-0">
-                        <div className="size-2.5 rounded-full bg-primary ring-2 ring-primary/20 flex-shrink-0" />
+                        <div className="size-2.5 rounded-full bg-brand ring-2 ring-brand/20 flex-shrink-0" />
                         {i < employeeData.experiences.length - 1 && (
                           <div className="w-px flex-1 bg-border/60 mt-1.5" />
                         )}
@@ -478,7 +440,7 @@ export default function EmployeeDetailPage() {
                       <div
                         className={`flex-1 min-w-0 ${i < employeeData.experiences.length - 1 ? "pb-3" : ""}`}
                       >
-                        <div className="rounded-xl border border-border/60 p-4 hover:border-primary/30 hover:shadow-sm transition-all duration-200">
+                        <div className="rounded-xl border border-border/60 bg-background/50 p-4 transition-all duration-200 hover:border-brand/25 hover:shadow-[0_4px_16px_hsl(var(--foreground)/0.05)]">
                           <p className="font-semibold text-sm">{item.title}</p>
                           <p className="text-xs text-muted-foreground mt-0.5">
                             {formatShortDate(item.startDate)} —{" "}
@@ -509,11 +471,11 @@ export default function EmployeeDetailPage() {
                 {employeeData.educations.map((item: IEducation) => (
                   <div
                     key={item.id}
-                    className="flex items-start gap-3 rounded-xl border border-border/60 p-4 hover:border-primary/30 hover:shadow-sm transition-all duration-200"
+                    className="flex items-start gap-3 rounded-xl border border-border/60 bg-background/50 p-4 transition-all duration-200 hover:border-brand/25 hover:shadow-[0_4px_16px_hsl(var(--foreground)/0.05)]"
                   >
-                    <div className="size-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <div className="size-9 rounded-xl border border-brand/15 bg-brand-soft flex items-center justify-center flex-shrink-0">
                       <LucideGraduationCap
-                        className="size-4 text-primary"
+                        className="size-4 text-brand"
                         strokeWidth={1.5}
                       />
                     </div>
@@ -537,7 +499,7 @@ export default function EmployeeDetailPage() {
         </div>
 
         {/* Right Section: Sidebar Section */}
-        <div className="w-72 flex flex-col gap-5 tablet-xl:w-full">
+        <div className="stagger-list w-72 flex flex-col gap-5 tablet-xl:w-full">
           {/* Documents Section */}
           {(employeeData.resume || employeeData.coverLetter) && (
             <DetailCard className="p-5">
@@ -559,46 +521,46 @@ export default function EmployeeDetailPage() {
                   .map(({ file, suffix, type }) => {
                     const documentUrl = API_GET_EMP_DOCUMENT_URL(id, type);
                     return (
-                    <div
-                      key={suffix}
-                      className="flex items-center justify-between gap-2 px-3 py-2.5 bg-muted/50 rounded-xl border border-border/40"
-                    >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <LucideFileText
-                          className="size-4 text-muted-foreground flex-shrink-0"
-                          strokeWidth={1.5}
-                        />
-                        <span className="text-xs text-muted-foreground truncate">
-                          {extractCleanFilename(file!)}
-                        </span>
-                      </div>
-                      <div className="flex gap-0.5 flex-shrink-0">
-                        <Link href={documentUrl} target="_blank">
+                      <div
+                        key={suffix}
+                        className="flex items-center justify-between gap-2 rounded-xl border border-border/60 bg-background/50 px-3 py-2.5 transition-colors hover:border-brand/20"
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          <LucideFileText
+                            className="size-4 text-muted-foreground flex-shrink-0"
+                            strokeWidth={1.5}
+                          />
+                          <span className="text-xs text-muted-foreground truncate">
+                            {extractCleanFilename(file!)}
+                          </span>
+                        </div>
+                        <div className="flex gap-0.5 flex-shrink-0">
+                          <Link href={documentUrl} target="_blank">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              aria-label="View document"
+                              className="size-8"
+                            >
+                              <LucideEye className="size-3.5" />
+                            </Button>
+                          </Link>
                           <Button
                             variant="ghost"
                             size="icon"
-                            aria-label="View document"
+                            aria-label="Download document"
                             className="size-8"
+                            onClick={() =>
+                              handleDownloadFile(
+                                documentUrl,
+                                `${employeeData.username || "user"}-${suffix}`,
+                              )
+                            }
                           >
-                            <LucideEye className="size-3.5" />
+                            <LucideDownload className="size-3.5" />
                           </Button>
-                        </Link>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          aria-label="Download document"
-                          className="size-8"
-                          onClick={() =>
-                            handleDownloadFile(
-                              documentUrl,
-                              `${employeeData.username || "user"}-${suffix}`,
-                            )
-                          }
-                        >
-                          <LucideDownload className="size-3.5" />
-                        </Button>
+                        </div>
                       </div>
-                    </div>
                     );
                   })}
               </div>
@@ -654,7 +616,7 @@ export default function EmployeeDetailPage() {
                     href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-muted hover:bg-muted/80 rounded-full text-xs font-medium transition-colors"
+                    className="flex items-center gap-1.5 rounded-xl border border-border/60 bg-background/50 px-3 py-1.5 text-xs font-medium transition-colors hover:border-brand/20 hover:bg-brand-soft/60"
                   >
                     {getSocialPlatformTypeIcon(item.platform as TPlatform)}
                     {item.platform}
@@ -667,7 +629,7 @@ export default function EmployeeDetailPage() {
       </div>
 
       {/* Mobile Sticky Action Bar Section */}
-      <div className="hidden tablet-md:flex fixed bottom-0 left-0 right-0 z-20 gap-3 px-4 py-3 bg-background/95 backdrop-blur-sm border-t border-border [&>button]:flex-1">
+      <div className="fixed bottom-0 left-0 right-0 z-20 hidden gap-3 border-t border-border/80 bg-card/95 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-[0_-8px_24px_hsl(var(--foreground)/0.06)] backdrop-blur-xl tablet-md:flex [&>button]:h-12 [&>button]:flex-1 [&>button]:rounded-xl">
         {!isFav && (
           <Button
             variant="outline"
@@ -678,7 +640,7 @@ export default function EmployeeDetailPage() {
           </Button>
         )}
         <Button onClick={handleLike} disabled={likeDisabled}>
-          <LucideHeartHandshake /> {tf("like")}
+          <LucideHeartHandshake /> {tf("interested")}
         </Button>
       </div>
 

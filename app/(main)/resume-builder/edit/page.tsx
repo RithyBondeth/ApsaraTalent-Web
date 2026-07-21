@@ -333,53 +333,34 @@ export default function ResumeEditorPage() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex flex-col h-[calc(100dvh-4rem)] overflow-hidden animate-page-in text-foreground">
+    <div className="flex h-[calc(100dvh-4rem)] flex-col overflow-hidden bg-background text-foreground animate-page-in">
       {/* Top Action Bar Section */}
-      <div className="flex flex-col gap-2 border-b bg-background px-2.5 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5">
-        {/* Left Section: Back + Toggle Form + Title */}
-        <div className="flex w-full flex-wrap items-start gap-2 sm:w-auto sm:items-center sm:gap-3">
+      <div className="z-20 flex flex-col gap-2.5 border-b border-border/80 bg-card/95 px-3 py-3 backdrop-blur-xl sm:px-5 lg:flex-row lg:items-center lg:justify-between lg:gap-4">
+        {/* Left Section: Back + Title + Template */}
+        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <Button
             variant="outline"
             size="sm"
             onClick={handleBack}
-            className="gap-1.5 h-8 text-xs"
+            className="h-9 shrink-0 gap-1.5 rounded-xl px-3 text-xs"
           >
             <ArrowLeft size={14} />
-            {tRb("back")}
-          </Button>
-
-          {/* Toggle The Form Panel Section */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setFormPanelOpen((v) => !v)}
-            className="gap-1.5 h-8 text-xs"
-            title={formPanelOpen ? tRb("hideFields") : tRb("showFields")}
-          >
-            {formPanelOpen ? (
-              <PanelLeftClose size={14} />
-            ) : (
-              <PanelLeftOpen size={14} />
-            )}
-            <span className="hidden sm:inline">
-              {formPanelOpen ? tRb("hideFields") : tRb("showFields")}
-            </span>
-            <span className="sm:hidden">
-              {formPanelOpen ? tRb("hide") : tRb("fields")}
-            </span>
+            <span className="hidden sm:inline">{tRb("back")}</span>
           </Button>
 
           {/* Vertical Separator Section */}
-          <div className="hidden h-6 w-px bg-border sm:block" />
+          <div className="h-7 w-px shrink-0 bg-border" />
 
           {/* Resume Title Section */}
-          <div className="flex items-center gap-2">
-            <FileText size={16} className="text-primary shrink-0" />
-            <div className="flex flex-col">
-              <TypographyLead className="text-[13px] font-bold leading-none">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-brand/20 bg-brand-soft">
+              <FileText size={16} className="shrink-0 text-brand" />
+            </div>
+            <div className="hidden min-w-0 flex-col sm:flex">
+              <TypographyLead className="truncate text-[13px] font-bold leading-none">
                 {tRb("resumeEditor")}
               </TypographyLead>
-              <TypographySmall className="text-[10px] text-muted-foreground mt-0.5 uppercase tracking-tight font-medium">
+              <TypographySmall className="mt-1 text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
                 {tRb("templateLabel")}
               </TypographySmall>
             </div>
@@ -395,8 +376,22 @@ export default function ResumeEditorPage() {
           />
         </div>
 
-        {/* Right Section: Actions */}
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+        {/* Right Section: Editing + Export Actions */}
+        <div className="scrollbar-none flex w-full items-center gap-2 overflow-x-auto lg:w-auto">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setFormPanelOpen((v) => !v)}
+            className="h-9 shrink-0 gap-1.5 rounded-xl px-3 text-xs"
+            title={formPanelOpen ? tRb("hideFields") : tRb("showFields")}
+          >
+            {formPanelOpen ? (
+              <PanelLeftClose size={14} />
+            ) : (
+              <PanelLeftOpen size={14} />
+            )}
+            <span>{formPanelOpen ? tRb("hideFields") : tRb("showFields")}</span>
+          </Button>
           <AiResumeOptimizerDrawer
             getCurrentValues={() => getValues() as IBuildResume}
             onApplySummary={handleApplySummary}
@@ -407,7 +402,7 @@ export default function ResumeEditorPage() {
             variant="ghost"
             size="sm"
             onClick={handleReset}
-            className="h-8 text-xs gap-1.5 text-muted-foreground hover:text-foreground"
+            className="h-9 shrink-0 gap-1.5 rounded-xl px-3 text-xs text-muted-foreground hover:text-foreground"
             title={tRb("reset")}
           >
             <RotateCcw size={14} />
@@ -417,7 +412,7 @@ export default function ResumeEditorPage() {
             onClick={handleDownload}
             disabled={downloading}
             size="sm"
-            className="h-8 text-xs flex-1 shrink-0 justify-center gap-2 sm:w-auto sm:flex-none px-4"
+            className="h-9 flex-1 shrink-0 justify-center gap-2 rounded-xl px-4 text-xs shadow-sm sm:w-auto sm:flex-none"
           >
             <Download size={15} />
             {tRb("downloadPdf")}
@@ -426,12 +421,16 @@ export default function ResumeEditorPage() {
       </div>
 
       {/* Split Layout Section */}
-      <div className="flex flex-1 overflow-hidden flex-col lg:flex-row bg-muted/20">
+      <div className="flex flex-1 flex-col overflow-hidden bg-[hsl(var(--illustration-surface))] lg:flex-row">
         {/* Left Section: Form Panel (Collapsible) */}
         {formPanelOpen && (
-          <div className="w-full shrink-0 flex flex-col border-b bg-background overflow-hidden max-h-[60vh] lg:max-h-none lg:w-[420px] lg:border-b-0 lg:border-r border-border/60 shadow-sm">
-            <div className="shrink-0 px-3 pt-3 pb-1 sm:px-4 sm:pt-4">
-              <TypographyP className="text-[10px] sm:text-xs text-muted-foreground uppercase font-bold tracking-wider">
+          <div className="resume-editor-form-panel flex max-h-[62vh] w-full shrink-0 flex-col overflow-hidden border-b border-border/70 bg-card lg:max-h-none lg:w-[400px] lg:border-b-0 lg:border-r">
+            <div className="flex shrink-0 items-center gap-2 px-3 pb-2 pt-3 sm:px-4 sm:pt-4">
+              <span
+                className="size-2 rounded-full bg-brand"
+                aria-hidden="true"
+              />
+              <TypographyP className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground sm:text-xs">
                 {tRb("editDetails")}
               </TypographyP>
             </div>

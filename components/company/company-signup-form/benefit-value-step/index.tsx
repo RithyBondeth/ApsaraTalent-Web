@@ -120,9 +120,9 @@ export default function BenefitValueStepForm({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col items-start gap-5">
+    <div className="auth-step-section flex w-full flex-col items-start gap-5">
       {/* Benefit Section */}
-      <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5">
+      <div className="auth-step-card flex w-full flex-col items-start gap-5 rounded-2xl border border-border/60 bg-card p-4 shadow-sm sm:p-6">
         <div className="w-full">
           <SectionTitle
             icon={<LucideCircleCheck />}
@@ -206,7 +206,7 @@ export default function BenefitValueStepForm({
       </div>
 
       {/* Value Section */}
-      <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5">
+      <div className="auth-step-card flex w-full flex-col items-start gap-5 rounded-2xl border border-border/60 bg-card p-4 shadow-sm sm:p-6">
         <div className="w-full">
           <SectionTitle icon={<LucideZap />} title={t("cmpValueTitle")} />
         </div>

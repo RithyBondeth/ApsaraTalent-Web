@@ -102,7 +102,7 @@ export default function SkillReferenceStepForm({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col items-start gap-8">
+    <div className="auth-step-section flex w-full flex-col items-start gap-6">
       {/* Skills Section */}
       <div className="w-full flex flex-col items-start gap-3">
         <div className="w-full flex items-center justify-between">
@@ -121,7 +121,7 @@ export default function SkillReferenceStepForm({
               ) : (
                 <Sparkles size={12} />
               )}
-              Suggest
+              {t("empSkillSuggest")}
             </Button>
           )}
         </div>
@@ -176,7 +176,7 @@ export default function SkillReferenceStepForm({
       {/* References Section */}
       <div className="w-full flex flex-col items-start gap-3">
         <TypographyH4>{t("empReferenceTitle")}</TypographyH4>
-        <div className="w-full flex items-start gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
+        <div className="grid w-full grid-cols-2 items-start gap-4 tablet-md:grid-cols-1 [&>div]:min-w-0">
           {/* Resume Section */}
           {resumeFile ? (
             <div className="flex flex-col items-start gap-2">

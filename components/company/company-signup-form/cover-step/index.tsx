@@ -53,7 +53,7 @@ export default function CoverCompanyStepForm({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col items-center gap-5">
+    <div className="auth-step-section flex w-full flex-col items-center gap-5">
       {/* Title Section */}
       <TypographyH4>{t("cmpCoverTitle")}</TypographyH4>
       {/* Form Section */}

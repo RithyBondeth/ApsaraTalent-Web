@@ -11,13 +11,7 @@ const OPTIONS: { value: TLanguage; label: string; hint: string }[] = [
   { value: "km", label: "ខ្មែរ", hint: "ភាសាខ្មែរ" },
 ];
 
-/**
- * Segmented language pill shared by the landing and auth pages.
- *
- * Two fixed segments (EN | ខ្មែរ) with a gold-gradient thumb that slides with
- * a springy overshoot and squashes as it lands — no dropdown needed for a
- * two-language switch.
- */
+/** Minimal segmented language control shared by landing and auth pages. */
 export default function LanguageToggle({ className }: { className?: string }) {
   /* ---------------------------------- Utils ---------------------------------- */
   const { language, setLanguage } = useLanguageStore();
@@ -35,25 +29,17 @@ export default function LanguageToggle({ className }: { className?: string }) {
       role="group"
       aria-label="Language / ភាសា"
       className={cn(
-        "relative inline-flex h-10 shrink-0 items-center rounded-full p-1",
-        "border border-border/70 bg-background/60 backdrop-blur-md",
-        "transition-[border-color,box-shadow] duration-300 ease-out",
-        "hover:border-amber-400/50 hover:shadow-[0_0_20px_-6px_rgba(245,158,11,0.45)]",
+        "relative inline-flex h-9 shrink-0 items-center rounded-lg bg-muted/65 p-0.5",
         className,
       )}
     >
-      {/* Sliding gold thumb */}
+      {/* Quiet Sliding Selection Section */}
       <span
         aria-hidden
         suppressHydrationWarning
-        className="lang-thumb-track absolute bottom-1 left-1 top-1 w-[calc(50%-0.25rem)]"
+        className="language-selection absolute bottom-0.5 left-0.5 top-0.5 w-[calc(50%-0.125rem)] rounded-md border border-border/70 bg-background shadow-[0_1px_2px_hsl(var(--foreground)/0.08)]"
         style={{ transform: `translateX(${activeIndex * 100}%)` }}
-      >
-        <span
-          key={language}
-          className="lang-thumb-pop block size-full rounded-full bg-gradient-to-r from-amber-600 to-amber-500 shadow-md shadow-amber-500/30 dark:from-amber-500 dark:to-amber-400 dark:shadow-amber-400/25"
-        />
-      </span>
+      />
 
       {OPTIONS.map((option) => {
         const isActive = language === option.value;
@@ -65,13 +51,13 @@ export default function LanguageToggle({ className }: { className?: string }) {
             aria-pressed={isActive}
             title={option.hint}
             className={cn(
-              "relative z-10 flex h-8 w-11 items-center justify-center rounded-full sm:w-12",
-              "text-xs font-semibold leading-none",
-              "transition-colors duration-300 ease-out",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background",
+              "relative z-10 flex h-8 w-11 items-center justify-center rounded-md sm:w-12",
+              "text-[11px] font-semibold leading-none tracking-[-0.01em]",
+              "transition-colors duration-200 ease-out",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 ring-offset-background",
               isActive
-                ? "text-white dark:text-black"
-                : "text-muted-foreground hover:text-foreground",
+                ? "text-foreground"
+                : "text-muted-foreground hover:text-foreground/80",
             )}
           >
             {option.label}

@@ -26,6 +26,7 @@ interface CreatableComboboxProps {
   onChange: (value: string) => void;
   placeholder?: string;
   emptyText?: string;
+  createLabel?: string;
   disabled?: boolean;
 }
 
@@ -35,6 +36,7 @@ export function CreatableCombobox({
   onChange,
   placeholder = "Select or type...",
   emptyText = "Type to create...",
+  createLabel = "Use",
   disabled = false,
 }: CreatableComboboxProps) {
   const [open, setOpen] = React.useState(false);
@@ -85,7 +87,7 @@ export function CreatableCombobox({
                       setOpen(false);
                     }}
                   >
-                    Use &quot;{inputValue}&quot;
+                    {createLabel} &quot;{inputValue}&quot;
                   </Button>
                 )}
               </div>
@@ -132,7 +134,7 @@ export function CreatableCombobox({
                         value === inputValue ? "opacity-100" : "opacity-0",
                       )}
                     />
-                    Use &quot;{inputValue}&quot;
+                    {createLabel} &quot;{inputValue}&quot;
                   </CommandItem>
                 )}
             </CommandGroup>

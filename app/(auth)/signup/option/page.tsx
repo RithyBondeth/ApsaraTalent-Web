@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ErrorMessage from "@/components/utils/feedback/error-message";
+import LogoComponent from "@/components/utils/brand/logo";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
@@ -111,27 +112,35 @@ export default function SingUpOption() {
 
   /* ---------------------------------------- Render UI ---------------------------------------- */
   return (
-    <div className="w-full max-w-[500px] mx-auto flex flex-col items-start gap-6 py-8 tablet-lg:py-4">
+    <div className="auth-signup-option mx-auto flex w-full max-w-[500px] flex-col items-start gap-6">
+      <LogoComponent className="auth-form-logo !h-10 w-auto self-start" />
+
       {/* Icon Badge Section */}
-      <div className="size-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+      <div className="auth-icon-badge size-14 rounded-2xl bg-primary/10 flex items-center justify-center">
         <LucideUsers className="size-6 text-primary" />
       </div>
 
-      {/* Title Section */}
-      <TypographyH2>{t("signupOptionTitle")}</TypographyH2>
+      <div className="auth-heading-group flex flex-col items-start">
+        {/* Title Section */}
+        <TypographyH2>{t("signupOptionTitle")}</TypographyH2>
 
-      {/* Subtitle Section */}
-      <TypographyMuted>{t("signupOptionSubtitle")}</TypographyMuted>
+        {/* Subtitle Section */}
+        <TypographyMuted>{t("signupOptionSubtitle")}</TypographyMuted>
+      </div>
 
       <form className="w-full flex flex-col" onSubmit={handleSubmit(onSubmit)}>
         {/* Role Selection Section */}
-        <div className="w-full flex flex-col items-start">
+        <div className="auth-field w-full flex flex-col items-start gap-1.5">
+          <label htmlFor="signup-role">{t("signupOptionPlaceholder")}</label>
           <Controller
             name="selectedRole"
             control={control}
             render={({ field }) => (
               <Select onValueChange={field.onChange} value={field.value || ""}>
-                <SelectTrigger className="h-12 text-muted-foreground">
+                <SelectTrigger
+                  id="signup-role"
+                  className="h-12 text-muted-foreground"
+                >
                   <SelectValue placeholder={t("signupOptionPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -154,7 +163,7 @@ export default function SingUpOption() {
         {/* Navigate Back Button Section */}
         <div className="w-full flex items-center gap-3">
           <Button
-            className="flex-1"
+            className="auth-secondary-action flex-1"
             variant="outline"
             type="button"
             onClick={() => router.replace("/login")}
@@ -162,7 +171,7 @@ export default function SingUpOption() {
             <LucideArrowLeft />
             {t("back")}
           </Button>
-          <Button className="flex-1" type="submit">
+          <Button className="auth-primary-action flex-1" type="submit">
             {t("next")}
             <LucideArrowRight />
           </Button>

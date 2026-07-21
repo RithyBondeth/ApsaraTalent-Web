@@ -1,4 +1,4 @@
-import { FeedBannerSkeleton } from "@/components/feed/skeleton";
+import { FeaturePageHeaderSkeleton } from "@/components/feed/skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 
 /* -------------------------------- Matching Page Loading Skeleton -------------------------------- */
@@ -9,10 +9,10 @@ export function MatchingLoadingSkeleton({
 }) {
   return (
     <div className="w-full flex flex-col gap-5 px-2.5 sm:px-5">
-      {/* Banner Section */}
-      <FeedBannerSkeleton />
+      {/* Header Skeleton Section */}
+      <FeaturePageHeaderSkeleton />
 
-      {/* Card List Section */}
+      {/* Card List Skeleton Section */}
       <div className="w-full flex flex-col items-start gap-3">
         {[...Array(3)].map((_, index) =>
           isEmployee ? (

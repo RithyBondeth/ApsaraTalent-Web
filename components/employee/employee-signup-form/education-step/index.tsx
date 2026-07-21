@@ -125,14 +125,14 @@ export default function EducationStepForm({
 
   /* ------------------------------- Render UI ------------------------------- */
   return (
-    <div className="flex flex-col gap-5 w-full max-h-[500px] overflow-y-auto">
+    <div className="auth-step-section flex w-full flex-col gap-5">
       {/* Title Section */}
       <TypographyH4>{t("empEducationTitle")}</TypographyH4>
 
       {/* Education Form Section */}
       {fields.map((field, index) => (
         <div
-          className="relative flex flex-col items-start gap-3 w-full border border-muted-foreground/10 rounded-xl bg-muted p-5"
+          className="auth-step-card relative flex w-full flex-col items-start gap-3 rounded-xl border border-muted-foreground/10 bg-muted p-4 sm:p-5"
           key={field.id}
         >
           {/* Header Without Remove Button Section */}

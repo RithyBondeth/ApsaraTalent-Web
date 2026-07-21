@@ -4,54 +4,34 @@ import { Skeleton } from "@/components/ui/skeleton";
 /* ------------------------- Employee Card Skeleton ------------------------- */
 export default function EmployeeCardSkeleton() {
   return (
-    <div className="h-full w-full flex flex-col rounded-2xl border border-border/70 bg-card overflow-hidden shadow-[0_2px_8px_hsl(var(--foreground)/0.05)]">
-      {/* Header Section */}
-      <div className="flex items-start gap-3 p-4 pb-3 tablet-md:p-3 tablet-md:pb-2">
-        <Skeleton className="size-14 rounded-md shrink-0 ring-2 ring-border" />
-        <div className="flex-1 flex flex-col gap-1.5">
-          <Skeleton className="h-4 w-28 rounded" />
-          <Skeleton className="h-3 w-20 rounded" />
-          <div className="flex gap-2 mt-0.5">
+    <div className="flex h-full min-h-72 w-full flex-col overflow-hidden rounded-2xl border border-border/80 bg-card shadow-[0_1px_2px_hsl(var(--foreground)/0.03),0_8px_24px_hsl(var(--foreground)/0.03)]">
+      {/* Employee Card Skeleton Section */}
+      <div className="flex items-start gap-3.5 px-5 pb-3 pt-5">
+        <Skeleton className="size-14 shrink-0 rounded-lg" />
+        <div className="min-w-0 flex-1 space-y-2">
+          <Skeleton className="h-4 w-32 rounded" />
+          <Skeleton className="h-3 w-24 rounded" />
+          <div className="flex gap-2">
+            <Skeleton className="h-3 w-20 rounded" />
             <Skeleton className="h-3 w-16 rounded" />
-            <Skeleton className="h-3 w-14 rounded" />
           </div>
         </div>
-        {/* Like and Quick View Buttons Section (Stacked) */}
-        <div className="flex justify-end items-center gap-1 shrink-0">
-          <Skeleton className="size-8 rounded-full" />
-          <Skeleton className="size-8 rounded-full" />
+        <Skeleton className="size-10 shrink-0 rounded-xl" />
+      </div>
+      <div className="flex flex-1 flex-col gap-3 px-5 pb-5">
+        <div className="space-y-1.5">
+          <Skeleton className="h-3 w-full rounded" />
+          <Skeleton className="h-3 w-4/5 rounded" />
         </div>
-      </div>
-
-      {/* Status Badges Section */}
-      <div className="flex flex-wrap items-center gap-1.5 px-4 pb-3">
-        <Skeleton className="h-6 w-20 rounded-full" />
-      </div>
-
-      {/* Skills Section */}
-      <div className="flex flex-wrap gap-1.5 px-4 pb-3">
-        <Skeleton className="h-6 w-16 rounded-full" />
-        <Skeleton className="h-6 w-20 rounded-full" />
-        <Skeleton className="h-6 w-14 rounded-full" />
-        <Skeleton className="h-6 w-[4.5rem] rounded-full" />
-      </div>
-
-      {/* Experience and Education Section */}
-      <div className="flex flex-col gap-1 px-4 pb-3">
-        <Skeleton className="h-3 w-40 rounded" />
-        <Skeleton className="h-3 w-48 rounded" />
-      </div>
-
-      {/* Description Section */}
-      <div className="px-4 pb-3 flex-1 space-y-1.5">
-        <Skeleton className="h-3 w-full rounded" />
-        <Skeleton className="h-3 w-4/5 rounded" />
-      </div>
-
-      {/* Footer Section */}
-      <div className="flex items-center justify-end gap-2 px-4 pb-3 pt-2 border-t border-border/50">
-        <Skeleton className="h-7 w-16 rounded-full" />
-        <Skeleton className="h-7 w-16 rounded-full" />
+        <div className="flex gap-1.5">
+          <Skeleton className="h-7 w-20 rounded-lg" />
+          <Skeleton className="h-7 w-24 rounded-lg" />
+          <Skeleton className="h-7 w-16 rounded-lg" />
+        </div>
+        <div className="mt-auto grid grid-cols-2 gap-2 border-t border-border/60 pt-4">
+          <Skeleton className="h-11 rounded-xl" />
+          <Skeleton className="h-11 rounded-xl" />
+        </div>
       </div>
     </div>
   );
@@ -67,7 +47,7 @@ function SkeletonCard({
 }) {
   return (
     <div
-      className={`bg-card rounded-2xl border border-border/60 shadow-sm ${className ?? ""}`}
+      className={`overflow-hidden rounded-2xl border border-border/70 bg-card shadow-[0_2px_8px_hsl(var(--foreground)/0.04)] ${className ?? ""}`}
     >
       {children}
     </div>
@@ -79,29 +59,32 @@ export function EmployeeDetailPageLoadingSkeleton() {
   return (
     <div className="flex flex-col gap-5">
       {/* Back Navigation Header Section */}
-      <div className="border-b border-border/60 -mx-4 sm:-mx-6 px-4 sm:px-6">
-        <div className="flex items-center gap-4 py-3">
-          <Skeleton className="h-4 w-12" />
-          <Skeleton className="h-4 w-px" />
-          <Skeleton className="h-4 w-32" />
+      <div className="-mx-3 border-b border-border/70 px-3 sm:-mx-4 sm:px-4 lg:-mx-5 lg:px-5">
+        <div className="flex items-center gap-3 py-2.5">
+          <Skeleton className="h-9 w-16 rounded-xl" />
+          <Skeleton className="h-5 w-px" />
+          <Skeleton className="h-4 w-32 rounded" />
         </div>
       </div>
 
       {/* Hero Card Section */}
       <SkeletonCard>
-        {/* Gradient Banner Section */}
-        <Skeleton className="h-28 sm:h-36 rounded-t-2xl rounded-b-none w-full" />
+        {/* Compact Banner Section */}
+        <div className="relative h-28 overflow-hidden bg-[hsl(var(--illustration-surface))] sm:h-32">
+          <Skeleton className="absolute -right-8 -top-12 size-36 rounded-full opacity-50" />
+          <Skeleton className="absolute right-20 top-7 size-3 rounded-full" />
+        </div>
 
         {/* Identity Section */}
         <div className="px-4 sm:px-6 pb-5">
-          <div className="flex items-start gap-4">
+          <div className="flex items-start gap-4 tablet-md:flex-col tablet-md:items-center">
             {/* Avatar Overlapping Banner Section */}
-            <Skeleton className="size-20 sm:size-24 -mt-10 sm:-mt-12 rounded-xl flex-shrink-0" />
+            <Skeleton className="-mt-9 size-20 flex-shrink-0 rounded-xl sm:-mt-10 sm:size-24" />
 
             {/* Name, JobTitle, Availability and Chips Section */}
-            <div className="flex-1 min-w-0 pt-2 space-y-2">
+            <div className="min-w-0 flex-1 space-y-2 pt-3 tablet-md:w-full tablet-md:pt-0">
               <div className="flex items-center gap-2">
-                <Skeleton className="h-7 w-40" />
+                <Skeleton className="h-8 w-40" />
                 <Skeleton className="h-5 w-24 rounded-full" />
               </div>
               <Skeleton className="h-4 w-28" />
@@ -114,9 +97,9 @@ export function EmployeeDetailPageLoadingSkeleton() {
             </div>
 
             {/* Action Buttons Section */}
-            <div className="flex gap-2 flex-shrink-0 pt-2">
-              <Skeleton className="h-8 w-20 rounded-md" />
-              <Skeleton className="h-8 w-16 rounded-md" />
+            <div className="flex gap-2 flex-shrink-0 pt-3 tablet-md:hidden">
+              <Skeleton className="h-10 w-20 rounded-xl" />
+              <Skeleton className="h-10 w-24 rounded-xl" />
             </div>
           </div>
         </div>

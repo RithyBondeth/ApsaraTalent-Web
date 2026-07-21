@@ -52,7 +52,7 @@ export default function AvatarStepForm({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col items-center gap-5">
+    <div className="auth-step-section flex w-full flex-col items-center gap-5">
       {/* Title Section */}
       <TypographyH4>{t("empAvatarTitle")}</TypographyH4>
 
@@ -67,6 +67,7 @@ export default function AvatarStepForm({
             multiple={false}
             boxText={t("empAvatarBoxText")}
             boxSubText={t("empAvatarBoxSubText")}
+            className="max-w-md"
             fileName="avatar"
             setValue={setValue}
           />

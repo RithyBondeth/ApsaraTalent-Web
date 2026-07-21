@@ -54,14 +54,14 @@ export function BlockedUsersSection() {
       <div className="flex flex-col">
         {/* Loading Section */}
         {!blockedLoaded && loadingBlocked ? (
-          <div className="px-4 py-6">
-            <TypographyMuted className="text-xs">
+          <div className="m-4 rounded-xl border border-dashed border-border/70 bg-background/40 px-4 py-5 sm:m-5">
+            <TypographyMuted className="text-center text-xs">
               {tS("loading")}
             </TypographyMuted>
           </div>
         ) : blockedUsers.length === 0 ? (
-          <div className="px-4 py-6">
-            <TypographyMuted className="text-xs">
+          <div className="m-4 rounded-xl border border-dashed border-border/70 bg-background/40 px-4 py-5 sm:m-5">
+            <TypographyMuted className="text-center text-xs">
               {tS("noBlockedUsers")}
             </TypographyMuted>
           </div>
@@ -69,7 +69,7 @@ export function BlockedUsersSection() {
           /* ── Blocked Users List Section ────────────────────── */
           blockedUsers.map((u, index) => (
             <div key={u.id}>
-              <div className="flex items-center justify-between gap-3 px-4 py-3">
+              <div className="flex items-center justify-between gap-3 px-4 py-3.5 transition-colors hover:bg-muted/25 sm:px-5">
                 <div className="flex items-center gap-3 min-w-0">
                   <Avatar className="h-9 w-9 shrink-0">
                     <AvatarImage src={u.avatar ?? ""} alt={u.name} />
@@ -86,7 +86,7 @@ export function BlockedUsersSection() {
                   size="sm"
                   disabled={blocking}
                   onClick={() => handleUnblock(u.id, u.name)}
-                  className="shrink-0 text-xs h-8"
+                  className="h-9 shrink-0 rounded-xl px-3 text-xs"
                 >
                   {tM("unblock")}
                 </Button>

@@ -11,17 +11,19 @@ export function SectionTitle(props: {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex items-center justify-between gap-2.5 mb-4 pb-3.5 border-b border-border/60">
-      <div className="flex items-center gap-2.5 min-w-0">
+    <div className="mb-4 flex items-center justify-between gap-2.5 border-b border-border/60 pb-3.5">
+      <div className="flex min-w-0 items-center gap-2.5">
         {/* Icon Section */}
-        <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-          <span className="[&>svg]:size-[18px] [&>svg]:text-primary [&>svg]:stroke-[1.5]">
+        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-brand/15 bg-brand-soft">
+          <span className="[&>svg]:size-[18px] [&>svg]:stroke-[1.5] [&>svg]:text-brand">
             {icon}
           </span>
         </div>
 
         {/* Title Section */}
-        <h3 className="font-semibold text-base truncate">{title}</h3>
+        <h3 className="truncate text-base font-semibold tracking-[-0.01em]">
+          {title}
+        </h3>
       </div>
 
       {/* Optional Action Slot Section */}

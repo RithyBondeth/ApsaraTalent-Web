@@ -17,7 +17,9 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
+  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
@@ -28,7 +30,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useLoginStore } from "@/stores/apis/auth/login.store";
 import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
@@ -149,17 +150,21 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
       <DropdownMenu>
         {/* User Menu Trigger Section */}
         <DropdownMenuTrigger asChild>
-          <button className="group flex items-center gap-2 rounded-xl border border-border/50 bg-gradient-to-br from-card via-card to-muted/40 px-2 py-1.5 shadow-sm transition-all duration-200 hover:border-border/80 hover:shadow-md hover:from-accent hover:to-accent/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          <button
+            type="button"
+            aria-label={`${t("myProfile")}: ${user.name}`}
+            className="group flex h-10 items-center gap-2 rounded-xl border border-border/70 bg-card px-1.5 pr-2 shadow-[0_1px_3px_hsl(var(--foreground)/0.04)] transition-colors duration-200 hover:border-brand/20 hover:bg-muted/35 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:border-brand/25 data-[state=open]:bg-brand-soft/55"
+          >
             {/* Avatar Section */}
-            <Avatar className="h-7 w-7 shrink-0 ring-2 ring-border/60 transition-all duration-200 group-hover:ring-primary/40">
+            <Avatar className="size-7 shrink-0 ring-2 ring-card shadow-sm">
               <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback className="bg-primary/10 text-[10px] font-bold text-primary">
+              <AvatarFallback className="bg-brand-soft text-[10px] font-bold text-brand-soft-foreground">
                 {getNameInitials(user.name)}
               </AvatarFallback>
             </Avatar>
 
             {/* Name and Role Section */}
-            <div className="flex min-w-0 flex-col gap-0.5">
+            <div className="flex min-w-0 items-start flex-col gap-0.5 phone-xl:hidden">
               <span className="max-w-[90px] truncate text-xs font-semibold leading-none sm:max-w-[140px]">
                 {user.name}
               </span>
@@ -175,17 +180,19 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
 
         {/* Dropdown Content Section */}
         <DropdownMenuContent
-          className="w-64 overflow-hidden rounded-2xl border border-border/70 p-0 shadow-[0_8px_32px_hsl(var(--foreground)/0.12)]"
+          className="w-72 overflow-hidden rounded-2xl border border-border/70 bg-card/95 p-0 shadow-[0_16px_44px_hsl(var(--foreground)/0.14)] backdrop-blur-xl"
           side="bottom"
           align="end"
           sideOffset={8}
         >
           {/* Dropdown Header Section: Avatar, Name and Email */}
-          <div className="bg-gradient-to-br from-primary/[0.08] via-transparent to-muted/40 px-4 py-4">
-            <div className="flex items-center gap-3">
-              <Avatar className="h-11 w-11 ring-2 ring-background shadow-sm">
+          <div className="relative overflow-hidden bg-[hsl(var(--illustration-surface))] px-4 py-4">
+            <span className="absolute -right-5 -top-8 size-24 rounded-full border border-brand/15" />
+            <span className="absolute right-16 top-5 size-2 rounded-full bg-brand/25" />
+            <div className="relative flex items-center gap-3">
+              <Avatar className="size-12 ring-2 ring-card shadow-[0_8px_20px_hsl(var(--foreground)/0.1)]">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="bg-primary/10 font-bold text-primary">
+                <AvatarFallback className="bg-brand-soft font-bold text-brand-soft-foreground">
                   {getNameInitials(user.name)}
                 </AvatarFallback>
               </Avatar>
@@ -196,7 +203,7 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
                 <p className="mt-0.5 truncate text-xs text-muted-foreground">
                   {user.email}
                 </p>
-                <span className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary capitalize">
+                <span className="mt-1.5 inline-flex items-center gap-1 rounded-lg border border-brand/15 bg-brand-soft px-2 py-0.5 text-[10px] font-semibold capitalize text-brand-soft-foreground">
                   {isEmployee ? (
                     <LucideUser className="size-2.5" />
                   ) : (
@@ -209,24 +216,39 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
           </div>
 
           {/* Dropdown Menu Content Section */}
-          <div className="p-1.5">
+          <div className="p-2">
             {/* Dropdown Menu Group Section */}
             <DropdownMenuGroup>
               {/* My Profile Section */}
-              <DropdownMenuItem asChild>
+              <DropdownMenuItem
+                asChild
+                className="h-11 rounded-xl px-2.5 focus:bg-brand-soft/60"
+              >
                 <Link
                   href={`/profile/${currentUser?.role ?? USER_ROLE.EMPLOYEE}`}
                   prefetch={true}
                   className="flex items-center gap-2.5"
                 >
-                  <MenuIcon className="bg-violet-500/10">
-                    {isEmployee ? (
-                      <LucideUser className="size-3.5 text-violet-500" />
-                    ) : (
-                      <LucideBuilding className="size-3.5 text-violet-500" />
-                    )}
+                  <MenuIcon>
+                    {isEmployee ? <LucideUser /> : <LucideBuilding />}
                   </MenuIcon>
                   {t("myProfile")}
+                </Link>
+              </DropdownMenuItem>
+              {/* Favorite Section */}
+              <DropdownMenuItem
+                asChild
+                className="h-11 rounded-xl px-2.5 focus:bg-brand-soft/60"
+              >
+                <Link
+                  href="/favorite"
+                  prefetch={true}
+                  className="flex items-center gap-2.5"
+                >
+                  <MenuIcon>
+                    <LucideBookMarked />
+                  </MenuIcon>
+                  {t("favorite")}
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -236,14 +258,17 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
             {/* Dropdown Menu Group Section */}
             <DropdownMenuGroup>
               {/* Settings Section */}
-              <DropdownMenuItem asChild>
+              <DropdownMenuItem
+                asChild
+                className="h-11 rounded-xl px-2.5 focus:bg-brand-soft/60"
+              >
                 <Link
                   href="/setting"
                   prefetch={true}
                   className="flex items-center gap-2.5"
                 >
-                  <MenuIcon className="bg-slate-500/10">
-                    <LucideSettings className="size-3.5 text-slate-500" />
+                  <MenuIcon>
+                    <LucideSettings />
                   </MenuIcon>
                   {t("settings")}
                 </Link>
@@ -252,20 +277,10 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
               {/* Appearance Section */}
               <DropdownMenuItem
                 onClick={handleThemeToggle}
-                className="flex items-center gap-2.5"
+                className="flex h-11 items-center gap-2.5 rounded-xl px-2.5 focus:bg-brand-soft/60"
               >
-                <MenuIcon
-                  className={
-                    resolvedTheme === "dark"
-                      ? "bg-amber-500/10"
-                      : "bg-indigo-500/10"
-                  }
-                >
-                  {resolvedTheme === "dark" ? (
-                    <LucideSun className="size-3.5 text-amber-500" />
-                  ) : (
-                    <LucideMoon className="size-3.5 text-indigo-500" />
-                  )}
+                <MenuIcon>
+                  {resolvedTheme === "dark" ? <LucideSun /> : <LucideMoon />}
                 </MenuIcon>
                 {t("appearance")}
               </DropdownMenuItem>
@@ -273,40 +288,24 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
               {/* Language Section */}
               <DropdownMenuItem
                 onClick={() => setLanguage(language === "en" ? "km" : "en")}
-                className="flex items-center gap-2.5"
+                className="flex h-11 items-center gap-2.5 rounded-xl px-2.5 focus:bg-brand-soft/60"
               >
-                <MenuIcon className="bg-emerald-500/10">
-                  <Globe className="size-3.5 text-emerald-500" />
+                <MenuIcon>
+                  <Globe />
                 </MenuIcon>
-                <span>
-                  {t("language")}
-                  <span className="ml-1 text-xs text-muted-foreground">
-                    {language === "en" ? "English" : "ខ្មែរ"}
-                  </span>
+                <span className="min-w-0 flex-1">{t("language")}</span>
+                <span className="rounded-lg bg-muted/70 px-2 py-1 text-[10px] font-medium text-muted-foreground">
+                  {language === "en" ? "English" : "ខ្មែរ"}
                 </span>
-              </DropdownMenuItem>
-
-              {/* Favorite Section */}
-              <DropdownMenuItem asChild>
-                <Link
-                  href="/favorite"
-                  prefetch={true}
-                  className="flex items-center gap-2.5"
-                >
-                  <MenuIcon className="bg-pink-500/10">
-                    <LucideBookMarked className="size-3.5 text-pink-500" />
-                  </MenuIcon>
-                  {t("favorite")}
-                </Link>
               </DropdownMenuItem>
 
               {/* Report Problem Section */}
               <DropdownMenuItem
                 onClick={() => setOpenReportDialog(true)}
-                className="flex items-center gap-2.5"
+                className="flex h-11 items-center gap-2.5 rounded-xl px-2.5 focus:bg-brand-soft/60"
               >
-                <MenuIcon className="bg-orange-500/10">
-                  <LucideInfo className="size-3.5 text-orange-500" />
+                <MenuIcon>
+                  <LucideInfo />
                 </MenuIcon>
                 {t("reportProblem")}
               </DropdownMenuItem>
@@ -317,10 +316,10 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
             {/* Logout Section */}
             <DropdownMenuItem
               onClick={() => setOpenLogoutDialog(true)}
-              className="flex items-center gap-2.5 text-destructive focus:bg-destructive/10 focus:text-destructive"
+              className="flex h-11 items-center gap-2.5 rounded-xl px-2.5 text-destructive focus:bg-destructive/10 focus:text-destructive"
             >
-              <MenuIcon className="bg-destructive/10">
-                <LogOut className="size-3.5 text-destructive" />
+              <MenuIcon className="border-destructive/10 bg-destructive/10 text-destructive">
+                <LogOut />
               </MenuIcon>
               {t("logOut")}
             </DropdownMenuItem>
@@ -331,18 +330,28 @@ export function NavbarUserMenu(props: INavbarUserMenuProps) {
       {/* Logout Dialog Section */}
       <Dialog open={openLogoutDialog} onOpenChange={setOpenLogoutDialog}>
         <DialogContent className="max-w-sm rounded-2xl">
-          <DialogTitle>{t("confirmLogout")}</DialogTitle>
-          <TypographySmall className="text-muted-foreground my-2">
-            {t("logoutQuestion")}
-          </TypographySmall>
-          <DialogFooter>
+          <DialogHeader>
+            <div className="mb-1 flex size-12 items-center justify-center rounded-2xl border border-destructive/15 bg-destructive/10">
+              <LogOut className="size-5 text-destructive" />
+            </div>
+            <DialogTitle className="tracking-[-0.02em]">
+              {t("confirmLogout")}
+            </DialogTitle>
+            <DialogDescription>{t("logoutQuestion")}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button
               variant="outline"
+              className="rounded-xl"
               onClick={() => setOpenLogoutDialog(false)}
             >
               {t("cancel")}
             </Button>
-            <Button variant="destructive" onClick={handleLogout}>
+            <Button
+              variant="destructive"
+              className="rounded-xl"
+              onClick={handleLogout}
+            >
               {t("logout")}
             </Button>
           </DialogFooter>

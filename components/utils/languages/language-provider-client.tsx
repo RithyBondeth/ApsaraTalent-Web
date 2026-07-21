@@ -21,8 +21,12 @@ export function LanguageProviderClient({
 }) {
   /* ----------------------------- API Integration ---------------------------- */
   const { language, setLanguage } = useLanguageStore();
+
   /* -------------------------------- All States ------------------------------ */
   const [mounted, setMounted] = useState<boolean>(false);
+
+  /* ---------------------------------- Utils --------------------------------- */
+  const activeLocale = mounted ? language : (defaultLanguage as "en" | "km");
 
   /* --------------------------------- Effects --------------------------------- */
   useEffect(() => {
@@ -30,8 +34,9 @@ export function LanguageProviderClient({
     setMounted(true);
   }, [defaultLanguage, setLanguage]);
 
-  /* ---------------------------------- Utils --------------------------------- */
-  const activeLocale = mounted ? language : (defaultLanguage as "en" | "km");
+  useEffect(() => {
+    document.documentElement.lang = activeLocale;
+  }, [activeLocale]);
 
   /* -------------------------------- Render UI -------------------------------- */
   return (

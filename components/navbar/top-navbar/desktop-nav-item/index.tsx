@@ -12,11 +12,13 @@ export default function DesktopNavItem(props: IDesktopNavItemProps) {
     <Link
       href={href}
       prefetch={true}
+      aria-current={active ? "page" : undefined}
+      aria-label={label}
       className={cn(
-        "group relative flex flex-col items-center gap-0.5 rounded-xl px-3 py-2",
-        "text-xs font-medium transition-all duration-200",
+        "group relative flex h-10 items-center gap-2 rounded-xl px-2 xl:px-3",
+        "text-xs font-semibold transition-all duration-200",
         active
-          ? "animate-navbar-active-in bg-gradient-to-b from-primary/15 to-primary/5 text-primary shadow-[0_0_0_1px_hsl(var(--primary)/0.2),0_2px_8px_hsl(var(--primary)/0.08)]"
+          ? "animate-navbar-active-in bg-primary text-primary-foreground shadow-sm"
           : "text-muted-foreground hover:bg-accent/80 hover:text-foreground",
       )}
     >
@@ -24,16 +26,18 @@ export default function DesktopNavItem(props: IDesktopNavItemProps) {
       <span className="relative">
         <Icon
           className={cn(
-            "size-[18px] shrink-0 transition-all duration-200 group-hover:-translate-y-0.5 group-hover:scale-110",
-            active && "[filter:drop-shadow(0_0_6px_hsl(var(--primary)/0.5))]",
+            "size-[18px] shrink-0 transition-all duration-200 group-hover:scale-105",
+            active && "text-primary-foreground",
           )}
           strokeWidth={active ? 2.2 : 1.6}
         />
         <BadgePill count={count} />
       </span>
 
+      <span className="hidden whitespace-nowrap xl:inline">{label}</span>
+
       {/* Hover Tooltip Section */}
-      <span className="pointer-events-none absolute left-1/2 top-full z-50 mt-2 -translate-x-1/2 translate-y-1 whitespace-nowrap rounded-lg bg-foreground/90 px-2.5 py-1 text-[11px] font-medium text-background opacity-0 shadow-lg backdrop-blur-sm transition-all duration-150 group-hover:translate-y-0 group-hover:opacity-100">
+      <span className="pointer-events-none absolute left-1/2 top-full z-50 mt-2 -translate-x-1/2 translate-y-1 whitespace-nowrap rounded-lg bg-foreground/90 px-2.5 py-1 text-[11px] font-medium text-background opacity-0 shadow-lg backdrop-blur-sm transition-all duration-150 group-hover:translate-y-0 group-hover:opacity-100 xl:hidden">
         {label}
       </span>
     </Link>

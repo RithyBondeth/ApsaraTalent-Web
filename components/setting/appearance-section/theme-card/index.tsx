@@ -9,12 +9,14 @@ export function ThemeCard(props: IThemeCardProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <button
+      type="button"
       onClick={onClick}
+      aria-pressed={active}
       className={cn(
-        "relative flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all duration-200 cursor-pointer w-full text-left",
+        "relative flex w-full cursor-pointer flex-col items-center gap-2 rounded-xl border p-3 text-left transition-colors duration-200",
         active
-          ? "border-primary bg-primary/5 shadow-[0_0_0_1px_hsl(var(--primary)/0.15)]"
-          : "border-border bg-card hover:border-primary/40 hover:bg-accent/50",
+          ? "border-brand/35 bg-brand-soft/70 shadow-[0_0_0_1px_hsl(var(--brand)/0.08)]"
+          : "border-border/70 bg-background/50 hover:border-brand/20 hover:bg-muted/35",
       )}
     >
       {/* Mini Window Preview Section */}
@@ -61,7 +63,7 @@ export function ThemeCard(props: IThemeCardProps) {
         <span
           className={cn(
             "[&>svg]:size-3.5",
-            active ? "text-primary" : "text-muted-foreground",
+            active ? "text-brand" : "text-muted-foreground",
           )}
         >
           {icon}
@@ -69,7 +71,7 @@ export function ThemeCard(props: IThemeCardProps) {
         <span
           className={cn(
             "text-xs font-medium",
-            active ? "text-primary" : "text-muted-foreground",
+            active ? "text-brand" : "text-muted-foreground",
           )}
         >
           {label}
@@ -78,9 +80,9 @@ export function ThemeCard(props: IThemeCardProps) {
 
       {/* Active Checkmark Section */}
       {active && (
-        <span className="absolute top-2 right-2 flex items-center justify-center size-4 rounded-full bg-primary">
+        <span className="absolute right-2 top-2 flex size-4 items-center justify-center rounded-full bg-brand">
           <LucideCheck
-            className="size-2.5 text-primary-foreground"
+            className="size-2.5 text-brand-foreground"
             strokeWidth={3}
           />
         </span>

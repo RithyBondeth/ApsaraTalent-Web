@@ -114,18 +114,14 @@ import { useAIRefine } from "@/hooks/utils/use-ai-refine";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import Link from "next/link";
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { employeeFormSchema, TEmployeeProfileForm } from "./validation";
-import {
-  addNewEducationSvg,
-  addNewExperienceSvg,
-} from "@/utils/constants/asset.constant";
 import { getEmployeeProfileCompletion } from "@/utils/functions/profile";
 import { SectionTitle } from "@/components/utils/layout/section-title";
 import ProfileCompletionCard from "@/components/profile/profile-completion-card";
 import { EmployeeProfilePageLoadingSkeleton } from "@/components/profile/skeleton";
+import { EditorialIllustration } from "@/components/utils/data-display/editorial-illustration";
 
 export default function EmployeeProfilePage() {
   /* ----------------------------------- Utils ---------------------------------- */
@@ -1174,11 +1170,15 @@ export default function EmployeeProfilePage() {
     ...employee,
     avatar: avatarLoadError ? undefined : employee.avatar,
   });
+  const employeeDisplayName = [employee.firstname, employee.lastname]
+    .filter(Boolean)
+    .join(" ");
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <form
-      className="!min-w-full flex flex-col gap-5 animate-page-in"
+      className="profile-page !min-w-full flex flex-col gap-5 animate-page-in"
+      data-editing={isEdit}
       onSubmit={handleSubmit}
       onKeyDown={(e) => {
         if (
@@ -1191,12 +1191,9 @@ export default function EmployeeProfilePage() {
     >
       {/* Sticky Edit Action Bar Section */}
       {isEdit && (
-        <div className="sticky top-14 z-40 -mx-3 sm:-mx-4 lg:-mx-6 px-4 sm:px-5 py-2.5 bg-background/95 backdrop-blur-md border-b border-border/60 flex items-center justify-between gap-3 shadow-sm">
+        <div className="sticky top-14 z-40 -mx-3 flex items-center justify-between gap-3 border-b border-border/70 bg-card/95 px-4 py-2.5 shadow-[0_8px_24px_hsl(var(--foreground)/0.05)] backdrop-blur-xl sm:-mx-4 sm:px-5 lg:-mx-5">
           <div className="flex items-center gap-2">
-            <span className="relative flex size-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
-              <span className="relative inline-flex rounded-full size-2 bg-amber-400" />
-            </span>
+            <span className="size-2 rounded-full bg-brand" />
             <span className="text-sm font-medium">{tP("editProfile")}</span>
           </div>
           <div className="flex items-center gap-2">
@@ -1204,7 +1201,7 @@ export default function EmployeeProfilePage() {
               type="button"
               variant="ghost"
               size="sm"
-              className="h-8 text-xs"
+              className="h-9 rounded-xl px-3 text-xs"
               onClick={disableEditMode}
             >
               {tP("cancel")}
@@ -1212,7 +1209,7 @@ export default function EmployeeProfilePage() {
             <Button
               type="submit"
               size="sm"
-              className="h-8 text-xs min-w-[80px]"
+              className="h-9 min-w-[88px] rounded-xl text-xs shadow-sm"
               disabled={updateProfileLoadingState}
             >
               {updateProfileLoadingState ? (
@@ -1226,26 +1223,18 @@ export default function EmployeeProfilePage() {
         </div>
       )}
 
-      {/* Profile Completion Section */}
-      <ProfileCompletionCard
-        percentage={profileCompletion.percentage}
-        missingFields={profileCompletion.missingFields}
-      />
-
       {/* Header Section */}
-      <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
-        {/* Gradient Banner Section */}
-        <div className="h-32 sm:h-44 bg-gradient-to-br from-primary via-primary/80 to-violet-500/40 relative overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.15)_0%,transparent_60%)]" />
-          <div className="absolute -top-10 -right-10 size-56 rounded-full bg-white/5" />
-          <div className="absolute top-6 right-28 size-28 rounded-full bg-white/5" />
-          <div className="absolute -bottom-8 right-8 size-36 rounded-full bg-white/5" />
-          <div className="absolute bottom-4 left-1/3 size-16 rounded-full bg-white/5" />
+      <div className="profile-identity-header overflow-hidden rounded-2xl border border-border/70 bg-card shadow-[0_2px_8px_hsl(var(--foreground)/0.045)]">
+        {/* Decorative Banner Section */}
+        <div className="relative h-28 overflow-hidden bg-[hsl(var(--illustration-surface))] sm:h-32">
+          <span className="absolute -right-8 -top-12 size-36 rounded-full border border-brand/15" />
+          <span className="absolute right-20 top-7 size-3 rounded-full bg-brand/25" />
+          <span className="absolute bottom-5 left-[42%] h-px w-24 bg-border/80" />
         </div>
 
         {/* Identity Row Section */}
-        <div className="px-5 sm:px-6 pb-6">
-          <div className="flex items-end gap-4 -mt-10 sm:-mt-12 tablet-md:flex-col tablet-md:items-center">
+        <div className="px-4 pb-5 sm:px-6 sm:pb-6">
+          <div className="flex items-start gap-4 tablet-md:flex-col tablet-md:items-center">
             {/* Avatar Section */}
             <div
               className="relative flex-shrink-0"
@@ -1254,7 +1243,7 @@ export default function EmployeeProfilePage() {
               }}
             >
               <Avatar
-                className="size-20 sm:size-24 ring-4 ring-card shadow-xl cursor-pointer"
+                className="-mt-9 size-20 cursor-pointer ring-[3px] ring-card shadow-[0_10px_28px_hsl(var(--foreground)/0.14)] sm:-mt-10 sm:size-24"
                 rounded="md"
               >
                 <AvatarImage
@@ -1333,13 +1322,18 @@ export default function EmployeeProfilePage() {
             />
 
             {/* Name and Job Section */}
-            <div className="flex-1 min-w-0 pb-1 tablet-md:text-center">
-              <h2 className="text-xl font-bold leading-tight truncate">
-                {employee.username}
+            <div className="min-w-0 flex-1 pt-3 tablet-md:pt-0 tablet-md:text-center">
+              <h2 className="truncate text-2xl font-bold leading-tight tracking-[-0.03em] sm:text-3xl">
+                {employeeDisplayName || employee.username}
               </h2>
-              <p className="text-sm text-muted-foreground truncate">
+              <p className="mt-1 truncate text-sm text-muted-foreground">
                 {employee.job}
               </p>
+              {employeeDisplayName && employee.username && (
+                <p className="mt-1 text-xs text-muted-foreground/80">
+                  @{employee.username}
+                </p>
+              )}
             </div>
 
             {/* Edit Profile Button Section - View mode only, single location */}
@@ -1347,8 +1341,7 @@ export default function EmployeeProfilePage() {
               <Button
                 type="button"
                 variant="outline"
-                size="sm"
-                className="text-xs mb-1 shrink-0 tablet-md:w-full"
+                className="mt-3 h-10 shrink-0 rounded-xl px-4 text-xs tablet-md:w-full"
                 onClick={enableEditMode}
               >
                 <LucideEdit className="size-3.5" />
@@ -1359,12 +1352,18 @@ export default function EmployeeProfilePage() {
         </div>
       </div>
 
+      {/* Profile Completion Section */}
+      <ProfileCompletionCard
+        percentage={profileCompletion.percentage}
+        missingFields={profileCompletion.missingFields}
+      />
+
       {/* Content Section */}
-      <div className="flex items-start gap-5 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
+      <div className="grid grid-cols-[minmax(0,1.65fr)_minmax(280px,0.85fr)] items-start gap-5 tablet-lg:grid-cols-1">
         {/* LEFT Side Section */}
-        <div className="w-[60%] tablet-lg:w-full min-w-0 flex flex-col gap-5">
+        <div className="stagger-list min-w-0 flex flex-col gap-5">
           {/* Personal Information Section: Firstname, Lastname, Username, DOB, Location, Gender, Email and Phone Number */}
-          <div className="w-full flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
+          <div className="profile-section-card w-full flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/70 p-5 sm:p-6 overflow-hidden">
             <SectionTitle
               icon={<LucideUser />}
               title={tP("personalInformation")}
@@ -1522,7 +1521,7 @@ export default function EmployeeProfilePage() {
           </div>
 
           {/* Professional Information Section */}
-          <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
+          <div className="profile-section-card w-full bg-card rounded-2xl border border-border/70 p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
             <SectionTitle
               icon={<LucideBriefcaseBusiness />}
               title={tP("professionalInformation")}
@@ -1555,7 +1554,7 @@ export default function EmployeeProfilePage() {
                         if (result) toast.success(tr("refinedSuccess"));
                       }}
                       disabled={jobLoading}
-                      className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                      className="h-7 gap-1 rounded-lg px-2 text-[10px] text-brand hover:bg-brand-soft hover:text-brand"
                     >
                       {jobLoading ? (
                         <LucideLoader2 size={10} className="animate-spin" />
@@ -1721,12 +1720,12 @@ export default function EmployeeProfilePage() {
                       key={lang}
                       className="flex items-center gap-1 bg-primary/10 rounded-full pl-3 pr-2 py-1"
                     >
-                      <span className="text-xs font-medium text-primary">
+                      <span className="text-xs font-medium text-brand">
                         {lang}
                       </span>
                       {isEdit && (
                         <LucideXCircle
-                          className="text-primary/60 cursor-pointer hover:text-primary"
+                          className="cursor-pointer text-brand/60 hover:text-brand"
                           width="14px"
                           onClick={() => {
                             const updated = (languagesValue ?? []).filter(
@@ -1906,7 +1905,7 @@ export default function EmployeeProfilePage() {
                         if (result) toast.success(tr("refinedSuccess"));
                       }}
                       disabled={descLoading}
-                      className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                      className="h-7 gap-1 rounded-lg px-2 text-[10px] text-brand hover:bg-brand-soft hover:text-brand"
                     >
                       {descLoading ? (
                         <LucideLoader2 size={10} className="animate-spin" />
@@ -1932,7 +1931,7 @@ export default function EmployeeProfilePage() {
 
           {/* Experience Information Section */}
           {employee.experiences && (
-            <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
+            <div className="profile-section-card w-full bg-card rounded-2xl border border-border/70 p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
               <SectionTitle
                 icon={<LucideBriefcaseBusiness />}
                 title={tP("experienceInformation")}
@@ -2021,10 +2020,9 @@ export default function EmployeeProfilePage() {
                 ) : (
                   <div className="w-full flex flex-col items-center justify-center p-3">
                     {/* Add New Experience Section */}
-                    <Image
-                      alt="empty"
-                      src={addNewExperienceSvg}
-                      className="size-60 animate-float"
+                    <EditorialIllustration
+                      variant="experience"
+                      className="mb-4 h-32 w-44"
                     />
                     <Button
                       className="text-xs"
@@ -2070,7 +2068,7 @@ export default function EmployeeProfilePage() {
 
           {/* Education Information Section */}
           {employee.educations && (
-            <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
+            <div className="profile-section-card w-full bg-card rounded-2xl border border-border/70 p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
               <SectionTitle
                 icon={<LucideGraduationCap />}
                 title={tP("educationInformation")}
@@ -2139,10 +2137,9 @@ export default function EmployeeProfilePage() {
                 ) : (
                   <div className="w-full flex flex-col items-center justify-center p-3">
                     {/* Add New Education Section */}
-                    <Image
-                      alt="empty"
-                      src={addNewEducationSvg}
-                      className="size-60 animate-float"
+                    <EditorialIllustration
+                      variant="education"
+                      className="mb-4 h-32 w-44"
                     />
                     <Button
                       variant={"secondary"}
@@ -2185,9 +2182,9 @@ export default function EmployeeProfilePage() {
         </div>
 
         {/* RIGHT Side Section*/}
-        <div className="w-[40%] tablet-lg:w-full min-w-0 flex flex-col gap-5">
+        <div className="stagger-list min-w-0 flex flex-col gap-5">
           {/* Skill Section*/}
-          <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
+          <div className="profile-section-card bg-card rounded-2xl border border-border/70 p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
             <div className="w-full">
               <SectionTitle icon={<LucideZap />} title={tP("skillsSection")} />
             </div>
@@ -2277,7 +2274,7 @@ export default function EmployeeProfilePage() {
           </div>
 
           {/* Career Scopes Section */}
-          <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
+          <div className="profile-section-card bg-card rounded-2xl border border-border/70 p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
             <div className="w-full">
               <SectionTitle
                 icon={<LucideCompass />}
@@ -2418,14 +2415,14 @@ export default function EmployeeProfilePage() {
           </div>
 
           {/* References Section */}
-          <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
+          <div className="profile-section-card w-full bg-card rounded-2xl border border-border/70 p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
             <SectionTitle
               icon={<LucideFileText />}
               title={tP("referencesInformation")}
             />
             <div className="w-full flex flex-col items-start gap-5 [&>div]:w-full">
               {/* Resume Section */}
-              <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
+              <div className="flex items-center justify-between rounded-xl border border-border/60 bg-background/50 px-3 py-2.5">
                 <div className="flex items-center text-muted-foreground gap-1">
                   <LucideFileText strokeWidth={"1.3px"} />
                   <TypographyMuted>
@@ -2490,7 +2487,7 @@ export default function EmployeeProfilePage() {
                       type="button"
                       variant="outline"
                       size="icon"
-                      className="text-red-500 bg-red-100"
+                      className="border-destructive/20 bg-destructive/10 text-destructive"
                       onClick={() => setOpenRemoveResumeDialog(true)}
                     >
                       <LucideTrash2 />
@@ -2528,7 +2525,7 @@ export default function EmployeeProfilePage() {
               </div>
 
               {/* CoverLetter Section */}
-              <div className="flex justify-between items-center px-3 py-2 bg-muted rounded-md">
+              <div className="flex items-center justify-between rounded-xl border border-border/60 bg-background/50 px-3 py-2.5">
                 <div className="flex items-center text-muted-foreground gap-1">
                   <LucideFileText strokeWidth={"1.3px"} />
                   <TypographyMuted>
@@ -2596,7 +2593,7 @@ export default function EmployeeProfilePage() {
                       type="button"
                       variant="outline"
                       size="icon"
-                      className="text-red-500 bg-red-100"
+                      className="border-destructive/20 bg-destructive/10 text-destructive"
                       onClick={() => setOpenRemoveCoverLetterDialog(true)}
                     >
                       <LucideTrash2 />
@@ -2648,7 +2645,7 @@ export default function EmployeeProfilePage() {
           </div>
 
           {/* Socials Section */}
-          <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
+          <div className="profile-section-card w-full bg-card rounded-2xl border border-border/70 p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
             <SectionTitle
               icon={<LucideGlobe />}
               title={tP("socialInformation")}
@@ -2664,7 +2661,7 @@ export default function EmployeeProfilePage() {
                   >
                     <Link
                       href={item.url}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 rounded-full hover:underline max-w-[200px] sm:max-w-[260px] overflow-hidden"
+                      className="inline-flex max-w-[200px] items-center gap-1.5 overflow-hidden rounded-xl border border-border/60 bg-background/50 px-3 py-1.5 text-foreground transition-colors hover:border-brand/20 hover:bg-brand-soft/60 sm:max-w-[260px]"
                     >
                       <span className="flex-shrink-0">
                         {getSocialPlatformTypeIcon(item.platform as TPlatform)}
@@ -2802,7 +2799,7 @@ export default function EmployeeProfilePage() {
           </div>
 
           {/* Authentication Section */}
-          <div className="flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
+          <div className="profile-section-card flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/70 p-5 sm:p-6 overflow-hidden">
             <SectionTitle
               icon={<LucideSettings />}
               title={tP("authentication")}
@@ -2812,30 +2809,29 @@ export default function EmployeeProfilePage() {
               {/* Google, Facebook, LinkedIn and Github Methods Section */}
               {loginMethodConstant.map((item) => (
                 <div
-                  className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer"
+                  className="flex w-full items-center justify-between rounded-xl border border-border/60 bg-background/50 px-3 py-3"
                   key={item.id}
                 >
                   <div className="flex items-center gap-2">
-                    <Image
-                      src={item.icon}
-                      alt={item.label}
-                      width={30}
-                      height={30}
-                      className="rounded-full"
-                    />
+                    <span
+                      className="flex size-8 items-center justify-center rounded-full border border-border bg-card text-[10px] font-semibold text-foreground"
+                      aria-hidden="true"
+                    >
+                      {item.mark}
+                    </span>
                     <TypographySmall>{item.label}</TypographySmall>
                   </div>
 
                   {user.lastLoginMethod &&
                   user.lastLoginMethod.toUpperCase() ===
                     item.label.toUpperCase() ? (
-                    <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
+                    <div className="rounded-lg border border-border/60 bg-muted/60 px-3 py-1 text-muted-foreground">
                       <TypographySmall className="text-xs font-medium">
                         {tP("disconnect")}
                       </TypographySmall>
                     </div>
                   ) : (
-                    <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
+                    <div className="rounded-lg border border-brand/15 bg-brand-soft px-3 py-1 text-brand">
                       <TypographySmall className="text-xs font-medium">
                         {tP("connect")}
                       </TypographySmall>
@@ -2845,19 +2841,19 @@ export default function EmployeeProfilePage() {
               ))}
 
               {/* Email/Password Method Section */}
-              <div className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer">
+              <div className="flex w-full items-center justify-between rounded-xl border border-border/60 bg-background/50 px-3 py-3">
                 <div className="flex items-center gap-2">
                   <LucideMail className="mx-1" strokeWidth={1.5} />
                   <TypographySmall>{tP("email")}</TypographySmall>
                 </div>
                 {user.email ? (
-                  <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
+                  <div className="rounded-lg border border-border/60 bg-muted/60 px-3 py-1 text-muted-foreground">
                     <TypographySmall className="text-xs font-medium">
                       {tP("disconnect")}
                     </TypographySmall>
                   </div>
                 ) : (
-                  <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
+                  <div className="rounded-lg border border-brand/15 bg-brand-soft px-3 py-1 text-brand">
                     <TypographySmall className="text-xs font-medium">
                       {tP("connect")}
                     </TypographySmall>
@@ -2866,19 +2862,19 @@ export default function EmployeeProfilePage() {
               </div>
 
               {/* PhoneOTP Method Section */}
-              <div className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer">
+              <div className="flex w-full items-center justify-between rounded-xl border border-border/60 bg-background/50 px-3 py-3">
                 <div className="flex items-center gap-2">
                   <LucidePhone className="mx-1" strokeWidth={1.5} />
                   <TypographySmall>{tP("phoneOtp")}</TypographySmall>
                 </div>
                 {user.phone ? (
-                  <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
+                  <div className="rounded-lg border border-border/60 bg-muted/60 px-3 py-1 text-muted-foreground">
                     <TypographySmall className="text-xs font-medium">
                       {tP("disconnect")}
                     </TypographySmall>
                   </div>
                 ) : (
-                  <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
+                  <div className="rounded-lg border border-brand/15 bg-brand-soft px-3 py-1 text-brand">
                     <TypographySmall className="text-xs font-medium">
                       {tP("connect")}
                     </TypographySmall>

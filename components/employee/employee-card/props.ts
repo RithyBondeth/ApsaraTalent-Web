@@ -12,4 +12,6 @@ export interface IEmployeeCardProps extends IEmployee {
   variant?: "default" | "grid";
   /** If provided, the View button renders as a prefetching <Link> instead of a <button> */
   viewHref?: string;
+  /** Surfaces why this card appears in the focused recommendation section. */
+  isRecommended?: boolean;
 }

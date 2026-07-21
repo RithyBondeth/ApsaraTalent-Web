@@ -11,6 +11,8 @@ import ErrorMessage from "@/components/utils/feedback/error-message";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
+import { AuthBrandPanel } from "@/components/auth/auth-brand-panel";
+import LogoComponent from "@/components/utils/brand/logo";
 import { useVerifyOTPStore } from "@/stores/apis/auth/verify-otp.store";
 import { useGetAllCompanyStore } from "@/stores/apis/company/get-all-cmp.store";
 import { useGetAllEmployeeStore } from "@/stores/apis/employee/get-all-emp.store";
@@ -23,12 +25,10 @@ import { useGetEmployeeRecommendationsStore } from "@/stores/apis/recommendation
 import { useGetCompanyRecommendationsStore } from "@/stores/apis/recommendation/get-company-recommendations.store";
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
 import { toast } from "sonner";
-import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { phoneOTPSvg } from "@/utils/constants/asset.constant";
 import {
   DEFAULT_REDIRECT_DELAY_MS,
   TOAST_DURATION_MS,
@@ -251,12 +251,14 @@ export default function PhoneOTPPage() {
 
   /* --------------------------------------------- Render UI ---------------------------------------------- */
   return (
-    <div className="min-h-screen w-full flex tablet-md:flex-col">
+    <div className="auth-static-page flex h-[100dvh] min-h-0 w-full overflow-hidden tablet-md:flex-col">
       {/* Left Section */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-background p-6 sm:p-10 tablet-md:w-full tablet-md:min-h-0 tablet-md:py-12">
-        <div className="w-full max-w-[440px] flex flex-col gap-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
+      <div className="auth-static-pane flex h-full min-h-0 w-[58%] items-center justify-center overflow-hidden bg-background px-7 py-10 sm:px-12 tablet-md:w-full tablet-md:pb-5 tablet-md:pt-16">
+        <div className="auth-static-content flex w-full max-w-[440px] flex-col gap-6">
+          <LogoComponent className="auth-form-logo !h-10 w-auto self-start" />
+
           {/* Title Section */}
-          <div className="flex flex-col items-start">
+          <div className="auth-heading-group flex flex-col items-start">
             <TypographyH2 className="phone-xl:text-2xl">
               {t("otpTitle")}
             </TypographyH2>
@@ -268,7 +270,7 @@ export default function PhoneOTPPage() {
           {/* Form Section */}
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col items-stretch gap-5"
+            className="auth-card-form flex flex-col items-stretch gap-5"
           >
             {/* OTP Input Section */}
             <Controller
@@ -328,7 +330,9 @@ export default function PhoneOTPPage() {
                 </div>
               )}
             />
-            <Button type="submit">{t("continue")}</Button>
+            <Button type="submit" className="auth-primary-action">
+              {t("continue")}
+            </Button>
           </form>
 
           {/* Resend Code Text Section */}
@@ -341,17 +345,8 @@ export default function PhoneOTPPage() {
         </div>
       </div>
 
-      {/* Right Section: Image Poster */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-md:hidden">
-        <Image
-          src={phoneOTPSvg}
-          alt="phone-otp"
-          height={undefined}
-          width={600}
-        />
-        <div className="absolute -top-20 -right-20 size-64 rounded-full bg-white/5" />
-        <div className="absolute -bottom-10 -left-10 size-48 rounded-full bg-white/5" />
-      </div>
+      {/* Right Section: Auth Panel */}
+      <AuthBrandPanel />
     </div>
   );
 }

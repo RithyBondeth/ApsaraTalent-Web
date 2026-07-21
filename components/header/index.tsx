@@ -42,11 +42,13 @@ export default function Header({ className }: { className?: string }) {
 
       {/* Right Menu Section */}
       <div className="flex items-center gap-1.5 sm:gap-3 lg:gap-5 shrink-0">
-        {/* Language Toggle Section */}
-        <LanguageToggle />
-
-        {/* Theme Toggle Section */}
-        <ThemeToggle />
+        <div className="ambient-control-cluster flex items-center gap-1 rounded-xl border border-border/70 bg-card/80 p-1 shadow-[0_1px_2px_hsl(var(--foreground)/0.04)] backdrop-blur-md">
+          {/* Language Toggle Section */}
+          <LanguageToggle />
+          <span className="h-5 w-px bg-border/70" aria-hidden />
+          {/* Theme Toggle Section */}
+          <ThemeToggle />
+        </div>
 
         {/* Login Section */}
         <Link href="/login">

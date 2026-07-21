@@ -73,8 +73,8 @@ export const sidebarList = [
 /* ------------------------- Mobile Navigation URLs ------------------------- */
 export const MOBILE_PRIMARY_URLS: string[] = [
   "/feed",
+  "/search",
   "/matching",
   "/message",
   "/notification",
-  "/dashboard",
 ] as const;

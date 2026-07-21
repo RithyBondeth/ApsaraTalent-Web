@@ -1,4 +1,4 @@
-import { FeedBannerSkeleton } from "@/components/feed/skeleton";
+import { FeaturePageHeaderSkeleton } from "@/components/feed/skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 
 /* ------------------------- Favorite Page Loading Skeleton ------------------------- */
@@ -10,7 +10,7 @@ export function FavoriteLoadingSkeleton({
   return (
     <div className="w-full flex flex-col px-2.5 sm:px-5">
       {/* Banner Section */}
-      <FeedBannerSkeleton />
+      <FeaturePageHeaderSkeleton />
 
       {/* Card List Section */}
       <div className="mt-5 flex flex-col items-start gap-3">

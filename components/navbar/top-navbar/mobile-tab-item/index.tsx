@@ -13,6 +13,8 @@ export default function MobileTabItem(props: IMobileTabItemProps) {
       href={href}
       prefetch={true}
       onClick={onClick}
+      aria-current={active ? "page" : undefined}
+      aria-label={label}
       className="relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2"
     >
       {/* Capsule Pill Section */}
@@ -21,7 +23,7 @@ export default function MobileTabItem(props: IMobileTabItemProps) {
           className={cn(
             "relative flex items-center justify-center rounded-2xl transition-all duration-300",
             active
-              ? "h-7 w-14 bg-gradient-to-b from-primary/20 to-primary/8 shadow-[0_0_0_1px_hsl(var(--primary)/0.2)]"
+              ? "h-7 w-14 bg-primary/10 shadow-[0_0_0_1px_hsl(var(--primary)/0.14)]"
               : "h-7 w-7",
           )}
         >
@@ -30,7 +32,7 @@ export default function MobileTabItem(props: IMobileTabItemProps) {
             className={cn(
               "size-5 transition-all duration-200",
               active
-                ? "animate-nav-tab-bounce text-primary [filter:drop-shadow(0_0_6px_hsl(var(--primary)/0.4))]"
+                ? "animate-nav-tab-bounce text-primary"
                 : "text-muted-foreground",
             )}
             strokeWidth={active ? 2.3 : 1.7}

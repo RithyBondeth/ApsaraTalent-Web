@@ -34,7 +34,7 @@ export default function ResumeBuilderGenerate({
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div className="sticky bottom-3 z-30 w-full">
-      <div className="flex items-center justify-between gap-3 rounded-2xl border border-border/70 bg-background/95 px-4 py-3 shadow-[0_8px_30px_hsl(var(--foreground)/0.14)] backdrop-blur-lg">
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card/95 px-4 py-3 shadow-[0_12px_36px_hsl(var(--foreground)/0.12)] backdrop-blur-xl">
         {/* Selection Summary Section */}
         <div className="flex min-w-0 items-center gap-3">
           {theme ? (
@@ -50,7 +50,7 @@ export default function ResumeBuilderGenerate({
               />
             </div>
           ) : (
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-border/60 bg-muted/50">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-border/70 bg-muted/50">
               <LucideLayoutTemplate className="size-4 text-muted-foreground" />
             </div>
           )}
@@ -70,7 +70,7 @@ export default function ResumeBuilderGenerate({
             <AiQuotaBadge action="cvGeneration" />
           </div>
           <Button
-            className="rounded-full px-5 sm:px-6"
+            className="h-10 rounded-xl px-5 shadow-sm sm:px-6"
             onClick={onGenerateClick}
             disabled={disabled || cvExhausted}
             title={cvExhausted ? t("cvQuotaExhausted") : undefined}

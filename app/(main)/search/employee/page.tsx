@@ -1,6 +1,5 @@
 "use client";
 
-import SearchBar from "@/components/search/search-bar";
 import SearchCompanyCard from "@/components/search/search-company-card";
 import { SearchErrorCard } from "@/components/search/search-error-card";
 import { Button } from "@/components/ui/button";
@@ -17,9 +16,6 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
-import { emptySvg } from "@/utils/constants/asset.constant";
-import { TypographyH3 } from "@/components/utils/typography/typography-h3";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
@@ -29,7 +25,6 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 import { useModerationStore } from "@/stores/apis/moderation/moderation.store";
 import { SEARCH_DEBOUNCE_MS } from "@/utils/constants/search.constant";
 import { yearOfExperienceConstant } from "@/utils/constants/ui.constant";
-import { TAvailability } from "@/utils/types/user/availability.type";
 import { TLocations } from "@/utils/types/user/location.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import debounce from "lodash.debounce";
@@ -42,16 +37,16 @@ import {
   LucideUsers,
   LucideX,
 } from "lucide-react";
-import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Controller, useForm } from "react-hook-form";
 import { employeeSearchSchema, TEmployeeSearchSchema } from "./validation";
-import { employeeSearchBannerSvg } from "@/utils/constants/asset.constant";
 import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { SearchCompanyCardSkeleton } from "@/components/search/skeleton";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
+import { FeaturePageHeader } from "@/components/utils/layout/feature-page-header";
+import { EditorialIllustration } from "@/components/utils/data-display/editorial-illustration";
 
 export default function EmployeeSearchPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -120,7 +115,7 @@ export default function EmployeeSearchPage() {
     defaultValues are seeded from the URL so a page refresh / shared link
     restores the exact filter state that was active when the URL was captured.
   */
-  const { register, control, setValue, getValues, handleSubmit, watch } =
+  const { control, setValue, getValues, handleSubmit, watch } =
     useForm<TEmployeeSearchSchema>({
       resolver: zodResolver(employeeSearchSchema),
       defaultValues: {
@@ -145,10 +140,6 @@ export default function EmployeeSearchPage() {
         orderBy: urlOrderBy ?? "desc",
       },
     });
-
-  // Watch Only What SearchBar Needs (prevents full page rerender on every key)
-  const location = watch("location");
-  const jobType = watch("jobType");
 
   // Active filter count for the mobile filter badge
   const allValues = watch();
@@ -415,72 +406,11 @@ export default function EmployeeSearchPage() {
       className="w-full flex flex-col items-start gap-5 px-2.5 sm:px-5 lg:px-8 animate-page-in"
       onSubmit={handleSubmit((data) => runSearch(data))}
     >
-      {/* Banner Section */}
-      {/* Desktop Banner Section 1050px */}
-      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8 tablet-xl:hidden">
-        <div className="w-full flex flex-col items-start gap-3">
-          <TypographyH2 className="leading-relaxed">
-            {t("bannerTitle")}
-          </TypographyH2>
-          <TypographyH4 className="leading-relaxed">
-            {t("bannerSubtitle1")}
-          </TypographyH4>
-          <TypographyH4 className="leading-relaxed">
-            {t("bannerSubtitle2")}
-          </TypographyH4>
-          <TypographyMuted className="leading-relaxed">
-            {t("bannerMuted")}
-          </TypographyMuted>
-          <SearchBar
-            isEmployee={true}
-            register={register}
-            setValue={setValue}
-            initialLocation={location as TLocations}
-            initialJobType={jobType as TAvailability}
-          />
-        </div>
-        <Image
-          src={employeeSearchBannerSvg}
-          alt="employee-search"
-          height={300}
-          width={400}
-          className="h-auto max-w-[340px] shrink-0"
-          priority
-        />
-      </div>
-
-      {/* Tablet Banner Section 651px–1050px */}
-      <div className="hidden tablet-xl:flex tablet-md:!hidden w-full flex-col gap-4 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-5 py-5">
-        <div className="flex flex-col gap-2">
-          <TypographyH3 className="!leading-snug">
-            {t("bannerTitle")}
-          </TypographyH3>
-          <TypographyMuted className="!leading-snug">
-            {t("bannerSubtitle1")}
-          </TypographyMuted>
-        </div>
-        <SearchBar
-          isEmployee={true}
-          register={register}
-          setValue={setValue}
-          initialLocation={location as TLocations}
-          initialJobType={jobType as TAvailability}
-        />
-      </div>
-
-      {/* Mobile Banner Section ≤650px */}
-      <div className="hidden tablet-md:flex w-full flex-col gap-3 rounded-2xl bg-gradient-to-br from-primary/[0.08] via-primary/[0.03] to-muted/40 border border-border/50 px-4 py-4">
-        <p className="font-bold text-sm leading-snug text-foreground">
-          {t("bannerTitle")}
-        </p>
-        <SearchBar
-          isEmployee={true}
-          register={register}
-          setValue={setValue}
-          initialLocation={location as TLocations}
-          initialJobType={jobType as TAvailability}
-        />
-      </div>
+      {/* Compact Page Introduction Section */}
+      <FeaturePageHeader
+        title={t("bannerTitle")}
+        description={t("bannerSubtitle1")}
+      />
 
       {/* Mobile/Tablet Filter Toggle Section */}
       <div className="hidden w-full tablet-xl:flex">
@@ -1017,16 +947,15 @@ export default function EmployeeSearchPage() {
             ) : (
               /* Empty List Section */
               <div className="w-full flex flex-col items-center justify-center py-10 gap-3">
-                <Image
-                  src={emptySvg}
-                  alt="empty"
-                  height={160}
-                  width={160}
-                  className="animate-float"
-                />
+                {/* Editorial Illustration Section */}
+                <EditorialIllustration variant="employeeSearch" />
+
+                {/* Empty List Text Section */}
                 <TypographyP className="text-muted-foreground">
                   {t("emptyList")}
                 </TypographyP>
+
+                {/* Clear Filters Button Section */}
                 {activeFilterCount > 0 && (
                   <button
                     type="button"

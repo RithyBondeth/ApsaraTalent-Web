@@ -112,7 +112,7 @@ export function SkillsEducationTab({
             size="sm"
             onClick={handleSuggestSkills}
             disabled={skillsLoading}
-            className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+            className="h-6 gap-1 px-1.5 text-[9px] text-brand hover:bg-brand-soft hover:text-brand"
           >
             {skillsLoading ? (
               <Loader2 size={10} className="animate-spin" />
@@ -128,13 +128,13 @@ export function SkillsEducationTab({
           {skills.map((skill, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-1 bg-primary/10 text-primary text-[11px] px-2 py-0.5 rounded-full border border-primary/20"
+              className="inline-flex items-center gap-1 rounded-full border border-brand/20 bg-brand-soft px-2 py-0.5 text-[11px] text-brand-soft-foreground"
             >
               {skill}
               <button
                 type="button"
                 onClick={() => removeSkill(i)}
-                className="text-primary/60 hover:text-destructive transition-colors ml-0.5"
+                className="ml-0.5 text-brand/70 transition-colors hover:text-destructive"
               >
                 ×
               </button>
@@ -186,7 +186,7 @@ export function SkillsEducationTab({
               size="sm"
               onClick={handleEduStandardize}
               disabled={eduLoading}
-              className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+              className="h-6 gap-1 px-1.5 text-[9px] text-brand hover:bg-brand-soft hover:text-brand"
             >
               {eduLoading ? (
                 <Loader2 size={10} className="animate-spin" />

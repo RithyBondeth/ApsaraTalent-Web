@@ -6,6 +6,7 @@ import BenefitValueStepForm from "@/components/company/company-signup-form/benef
 import CompanyCareerScopeStepForm from "@/components/company/company-signup-form/career-scope-step";
 import CoverCompanyStepForm from "@/components/company/company-signup-form/cover-step";
 import OpenPositionStepForm from "@/components/company/company-signup-form/open-position-step";
+import { SignupStepProgress } from "@/components/auth/signup-step-progress";
 import { Button } from "@/components/ui/button";
 import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
@@ -20,7 +21,7 @@ import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { makeCompanySignupSchema, TCompanySignup } from "./validation";
 import {
@@ -34,10 +35,19 @@ export default function CompanySignup() {
   const t = useTranslations("auth");
   const tv = useTranslations("validation");
   const totalSteps = 6;
+  const stepLabels = [
+    t("companyStepDetails"),
+    t("companyStepPositions"),
+    t("companyStepCulture"),
+    t("companyStepPhoto"),
+    t("companyStepCover"),
+    t("companyStepCareer"),
+  ];
 
   /* ------------------------------ All States -------------------------------- */
   const [step, setStep] = useState<number>(1);
   const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
+  const stepBodyRef = useRef<HTMLDivElement>(null);
 
   // Get User Basic Data
   const { basicSignupData } = useBasicSignupDataStore();
@@ -50,6 +60,11 @@ export default function CompanySignup() {
 
   // Company Register
   const cmpSignup = useCompanySignupStore();
+
+  /* ------------------------------- All Effects ------------------------------ */
+  useEffect(() => {
+    stepBodyRef.current?.scrollTo({ top: 0 });
+  }, [step]);
 
   /* ------------------- React Hook Form: Company Signup Form ------------------ */
   // ── Define Schema For Company Signup Form ───────────────────────────
@@ -166,7 +181,7 @@ export default function CompanySignup() {
   // Handle Next Step and Final Submit
   const nextStep = async () => {
     const fieldsToValidate = stepFieldMap[step];
-    const isValid = await trigger(fieldsToValidate);
+    const isValid = await trigger(fieldsToValidate, { shouldFocus: true });
     if (!isValid) return;
 
     if (isValid) {
@@ -357,7 +372,7 @@ export default function CompanySignup() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full max-w-4xl mx-auto flex flex-col gap-5 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
+    <div className="advanced-signup-page company-signup-page mx-auto flex h-full min-h-0 w-full max-w-4xl flex-col gap-3 px-1 tablet-lg:max-w-full tablet-lg:px-2">
       {/* Navigate Back Button Section */}
       <button
         type="button"
@@ -369,108 +384,95 @@ export default function CompanySignup() {
       </button>
 
       {/* Title Section */}
-      <div>
+      <div className="auth-heading-group">
         <TypographyH2>{t("signupAsCompany")}</TypographyH2>
         <TypographyMuted className="text-md">
           {t("companySignupSubtitle")}
         </TypographyMuted>
       </div>
 
-      {/* Step Progress Indicator Section */}
-      <div className="w-full overflow-x-auto pb-2 mb-2">
-        <div className="w-full min-w-[280px] flex items-center gap-0">
-          {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
-            (st, index) => (
-              <div key={st} className="w-full flex items-center">
-                {/* Step Circle Section */}
-                <div
-                  className={`size-8 text-xs sm:size-9 sm:text-sm flex items-center justify-center rounded-full font-bold transition-all ${
-                    step >= st
-                      ? "bg-primary text-primary-foreground shadow-md shadow-primary/30"
-                      : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  {st}
-                </div>
-                {/* Line Between Steps Section (Only Render Before Last Step) */}
-                {index < totalSteps - 1 && (
-                  <div className="flex-1 h-1 bg-muted rounded-full relative">
-                    <div
-                      className={`absolute top-0 left-0 h-full rounded-full bg-primary transition-all duration-300 ${
-                        step > st ? "w-full" : "w-0"
-                      }`}
-                    />
-                  </div>
-                )}
-              </div>
-            ),
-          )}
-        </div>
-      </div>
+      {/* Step Progress Section */}
+      <SignupStepProgress
+        currentStep={step}
+        labels={stepLabels}
+        progressLabel={t("signupStepProgress", {
+          current: step,
+          total: totalSteps,
+        })}
+        skippedLabel={t("signupStepSkipped")}
+      />
 
       {/* Form Section */}
       <FormProvider {...cmpForm}>
-        <form className="w-full" onSubmit={(e) => e.preventDefault()}>
-          {step === 1 && (
-            <BasicInfoStepForm
-              register={register}
-              control={control}
-              errors={errors}
-              setValue={setValue}
-              getValues={getValues}
-            />
-          )}
-          {step === 2 && (
-            <OpenPositionStepForm
-              register={register}
-              getValues={getValues}
-              setValue={setValue}
-              trigger={trigger}
-              errors={errors}
-              control={control}
-            />
-          )}
-          {step === 3 && (
-            <BenefitValueStepForm
-              register={register}
-              getValues={getValues}
-              setValue={setValue}
-              trigger={trigger}
-              errors={errors}
-            />
-          )}
-          {step === 4 && (
-            <AvatarCompanyStepForm
-              register={register}
-              setValue={setValue}
-              getValues={getValues}
-            />
-          )}
-          {step === 5 && (
-            <CoverCompanyStepForm
-              register={register}
-              setValue={setValue}
-              getValues={getValues}
-              errors={errors}
-            />
-          )}
-          {step === 6 && (
-            <CompanyCareerScopeStepForm
-              register={register}
-              getValues={getValues}
-              setValue={setValue}
-              errors={errors}
-            />
-          )}
+        <form
+          className="advanced-signup-form flex min-h-0 w-full flex-1 flex-col overflow-hidden"
+          onSubmit={(e) => e.preventDefault()}
+        >
+          <div
+            ref={stepBodyRef}
+            className="advanced-signup-step-body min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1"
+          >
+            {step === 1 && (
+              <BasicInfoStepForm
+                register={register}
+                control={control}
+                errors={errors}
+                setValue={setValue}
+                getValues={getValues}
+              />
+            )}
+            {step === 2 && (
+              <OpenPositionStepForm
+                register={register}
+                getValues={getValues}
+                setValue={setValue}
+                trigger={trigger}
+                errors={errors}
+                control={control}
+              />
+            )}
+            {step === 3 && (
+              <BenefitValueStepForm
+                register={register}
+                getValues={getValues}
+                setValue={setValue}
+                trigger={trigger}
+                errors={errors}
+              />
+            )}
+            {step === 4 && (
+              <AvatarCompanyStepForm
+                register={register}
+                setValue={setValue}
+                getValues={getValues}
+              />
+            )}
+            {step === 5 && (
+              <CoverCompanyStepForm
+                register={register}
+                setValue={setValue}
+                getValues={getValues}
+                errors={errors}
+              />
+            )}
+            {step === 6 && (
+              <CompanyCareerScopeStepForm
+                register={register}
+                getValues={getValues}
+                setValue={setValue}
+                errors={errors}
+              />
+            )}
+          </div>
 
           {/* Navigation Buttons Section */}
-          <div className="mt-6 mb-4 flex gap-3 sm:justify-between">
+          <div className="advanced-signup-nav mt-3 flex shrink-0 gap-3 border-t border-border/70 bg-background/95 pt-3 sm:justify-between">
             {step > 1 ? (
               <Button
                 type="button"
                 variant="outline"
                 onClick={prevStep}
-                className="flex-1 sm:flex-initial sm:min-w-[140px]"
+                className="auth-secondary-action flex-1 sm:flex-initial sm:min-w-[140px]"
               >
                 <LucideArrowLeft />
                 {t("back")}
@@ -481,7 +483,7 @@ export default function CompanySignup() {
 
             <Button
               type="button"
-              className="flex-1 sm:flex-initial sm:min-w-[140px]"
+              className="auth-primary-action flex-1 sm:flex-initial sm:min-w-[140px]"
               onClick={nextStep}
               disabled={
                 cmpSignup.loading || uploadAvatar.loading || uploadCover.loading

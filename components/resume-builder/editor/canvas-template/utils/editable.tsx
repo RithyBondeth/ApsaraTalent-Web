@@ -45,8 +45,8 @@ export function Editable(props: {
       style={style}
       className={[
         "outline-none rounded-sm cursor-text transition-all",
-        "hover:ring-1 hover:ring-primary/30 hover:bg-primary/5",
-        "focus:ring-2 focus:ring-primary/50 focus:bg-primary/8",
+        "hover:ring-1 hover:ring-brand/35 hover:bg-brand/5",
+        "focus:ring-2 focus:ring-brand/60 focus:bg-brand/5",
         "empty:before:content-[attr(data-placeholder)] empty:before:text-gray-300 empty:before:italic",
         className,
       ].join(" ")}

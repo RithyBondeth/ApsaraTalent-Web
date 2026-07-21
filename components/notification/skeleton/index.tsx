@@ -1,12 +1,12 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { FeedBannerSkeleton } from "@/components/feed/skeleton";
+import { FeaturePageHeaderSkeleton } from "@/components/feed/skeleton";
 
 /* ---------------------------- Notification Page Loading Skeleton ---------------------------- */
 export default function NotificationLoadingSkeleton() {
   return (
     <div className="w-full flex flex-col gap-4 sm:gap-5 px-2.5 sm:px-5">
-      {/* Banner Section */}
-      <FeedBannerSkeleton />
+      {/* Header Section */}
+      <FeaturePageHeaderSkeleton />
 
       {/* Header Section: Filter tabs + action buttons */}
       <div className="w-full flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

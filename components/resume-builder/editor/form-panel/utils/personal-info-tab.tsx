@@ -77,7 +77,7 @@ export function PersonalInfoTab({
                 size="sm"
                 onClick={handleJobRefine}
                 disabled={jobLoading}
-                className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                className="h-6 gap-1 px-1.5 text-[9px] text-brand hover:bg-brand-soft hover:text-brand"
               >
                 {jobLoading ? (
                   <Loader2 size={10} className="animate-spin" />
@@ -161,7 +161,7 @@ export function PersonalInfoTab({
             size="sm"
             onClick={handleSummaryRefine}
             disabled={summaryLoading}
-            className="h-7 px-2 text-[10px] gap-1 text-primary hover:text-primary hover:bg-primary/5 border border-primary/20"
+            className="h-7 gap-1 border border-brand/20 px-2 text-[10px] text-brand hover:bg-brand-soft hover:text-brand"
           >
             {summaryLoading ? (
               <Loader2 size={12} className="animate-spin" />

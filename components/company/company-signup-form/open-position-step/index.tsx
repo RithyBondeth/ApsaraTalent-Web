@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
+import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import {
   Popover,
   PopoverContent,
@@ -23,6 +24,7 @@ import Tag from "@/components/utils/data-display/tag";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import {
+  availabilityConstant,
   salaryCurrencyConstant,
   workModeConstant,
 } from "@/utils/constants/ui.constant";
@@ -52,6 +54,23 @@ export default function OpenPositionStepForm({
   const t = useTranslations("auth");
   const tr = useTranslations("resumeBuilder");
   const tToast = useTranslations("toast");
+  const workModeLabels: Record<string, string> = {
+    remote: t("workModeRemote"),
+    on_site: t("workModeOnSite"),
+    hybrid: t("workModeHybrid"),
+    flexible: t("workModeFlexible"),
+  };
+  const positionTypeOptions = availabilityConstant.map((item) => ({
+    ...item,
+    label:
+      {
+        full_time: t("availabilityFullTime"),
+        part_time: t("availabilityPartTime"),
+        internship: t("availabilityInternship"),
+        contract: t("availabilityContract"),
+        freelance: t("availabilityFreelance"),
+      }[item.value] ?? item.label,
+  }));
 
   /* ----------------------------- API Integration ---------------------------- */
   const { isRefining, refineContent } = useAIRefine();
@@ -146,7 +165,7 @@ export default function OpenPositionStepForm({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex flex-col gap-5 w-full max-h-[500px] overflow-y-auto pr-1">
+    <div className="auth-step-section flex w-full flex-col gap-5">
       {/* Title Section */}
       <TypographyH4>{t("cmpOpenPositionTitle")}</TypographyH4>
 
@@ -154,7 +173,7 @@ export default function OpenPositionStepForm({
       {fields.map((field, index) => (
         <Card
           key={field.id}
-          className="relative flex flex-col items-start gap-3 w-full p-5"
+          className="auth-step-card relative flex w-full flex-col items-start gap-3 p-4 sm:p-5"
         >
           {/* Header With Remove Button Section */}
           {fields.length > 1 && (
@@ -192,13 +211,25 @@ export default function OpenPositionStepForm({
           <LabelInput
             label={t("cmpOpenPositionType")}
             input={
-              <Input
-                placeholder={t("cmpOpenPositionTypePlaceholder")}
-                {...register(`openPositions.${index}.types`)}
-                validationMessage={errors?.openPositions?.[
-                  index
-                ]?.types?.message?.toString()}
-              />
+              <div className="w-full">
+                <Controller
+                  control={control!}
+                  name={`openPositions.${index}.types`}
+                  render={({ field }) => (
+                    <CreatableCombobox
+                      options={positionTypeOptions}
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      placeholder={t("cmpOpenPositionTypePlaceholder")}
+                      emptyText={t("comboboxCreateHint")}
+                      createLabel={t("comboboxUse")}
+                    />
+                  )}
+                />
+                <ErrorMessage>
+                  {errors?.openPositions?.[index]?.types?.message?.toString()}
+                </ErrorMessage>
+              </div>
             }
           />
 
@@ -238,7 +269,7 @@ export default function OpenPositionStepForm({
           </div>
 
           {/* Experience and Education Section */}
-          <div className="w-full flex gap-3 [&>div]:w-1/2 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
+          <div className="grid w-full grid-cols-2 gap-3 tablet-sm:grid-cols-1 [&>div]:min-w-0">
             <LabelInput
               label={t("cmpOpenPositionExpRequired")}
               input={
@@ -343,7 +374,7 @@ export default function OpenPositionStepForm({
           </div>
 
           {/* Work Mode, Location, Openings Count Section */}
-          <div className="w-full flex gap-3 [&>div]:flex-1 tablet-md:flex-col">
+          <div className="grid w-full grid-cols-2 gap-3 tablet-sm:grid-cols-1 [&>div]:min-w-0">
             {/* Work Mode Section */}
             <div className="flex flex-col gap-1">
               <TypographyMuted className="text-xs">
@@ -365,7 +396,7 @@ export default function OpenPositionStepForm({
                     <SelectContent>
                       {workModeConstant.map((item) => (
                         <SelectItem key={item.value} value={item.value}>
-                          {item.label}
+                          {workModeLabels[item.value] ?? item.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -440,11 +471,11 @@ export default function OpenPositionStepForm({
             </TypographyMuted>
             <div className="flex flex-wrap gap-3">
               {(getValues?.(`openPositions.${index}.skills`) || []).map(
-                (skill, index) => {
+                (skill, skillIndex) => {
                   const { bg } = getRandomBadgeColor(skill);
                   return (
                     <div
-                      key={index}
+                      key={`${skill}-${skillIndex}`}
                       className={`flex items-center ${bg} pr-2 rounded-2xl`}
                     >
                       <Tag label={skill} />

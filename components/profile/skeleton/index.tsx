@@ -11,7 +11,7 @@ function SkeletonCard({
 }) {
   return (
     <div
-      className={`bg-card rounded-2xl border border-border/60 shadow-sm ${className ?? ""}`}
+      className={`overflow-hidden rounded-2xl border border-border/70 bg-card shadow-[0_2px_8px_hsl(var(--foreground)/0.04)] ${className ?? ""}`}
     >
       {children}
     </div>
@@ -25,32 +25,50 @@ export function CompanyProfilePageLoadingSkeleton() {
       {/* Hero Card Section */}
       <SkeletonCard>
         {/* Cover image Section */}
-        <Skeleton className="h-44 sm:h-56 rounded-t-2xl rounded-b-none w-full" />
+        <Skeleton className="h-28 w-full rounded-none sm:h-32" />
 
         {/* Identity Section */}
         <div className="px-4 sm:px-6 pb-5">
           <div className="flex items-start gap-4 tablet-md:flex-col tablet-md:items-center">
             {/* Avatar Overlapping Cover Section */}
-            <Skeleton className="size-20 sm:size-24 -mt-10 sm:-mt-12 rounded-xl flex-shrink-0" />
+            <Skeleton className="-mt-9 size-20 flex-shrink-0 rounded-xl sm:-mt-10 sm:size-24" />
 
             {/* Name and Industry Section */}
-            <div className="flex-1 min-w-0 pt-2 space-y-1.5 tablet-md:flex tablet-md:flex-col tablet-md:items-center">
-              <Skeleton className="h-6 w-48" />
+            <div className="min-w-0 flex-1 space-y-1.5 pt-3 tablet-md:flex tablet-md:flex-col tablet-md:items-center tablet-md:pt-0">
+              <Skeleton className="h-8 w-48" />
               <Skeleton className="h-4 w-32" />
             </div>
 
             {/* Edit Button Section */}
-            <div className="flex gap-2 flex-shrink-0 pt-2">
-              <Skeleton className="h-8 w-24 rounded-md" />
+            <div className="flex flex-shrink-0 gap-2 pt-3 tablet-md:w-full">
+              <Skeleton className="h-10 w-28 rounded-xl tablet-md:w-full" />
+            </div>
+          </div>
+        </div>
+      </SkeletonCard>
+
+      {/* Completion Section */}
+      <SkeletonCard className="p-4 sm:p-5">
+        <div className="flex items-center gap-4 sm:gap-5">
+          <Skeleton className="size-14 shrink-0 rounded-2xl sm:size-16" />
+          <div className="min-w-0 flex-1 space-y-2">
+            <div className="flex items-center justify-between gap-3">
+              <Skeleton className="h-4 w-32 rounded" />
+              <Skeleton className="h-7 w-24 rounded-full" />
+            </div>
+            <Skeleton className="h-1.5 w-full rounded-full" />
+            <div className="flex gap-1.5">
+              <Skeleton className="h-5 w-20 rounded-lg" />
+              <Skeleton className="h-5 w-24 rounded-lg" />
             </div>
           </div>
         </div>
       </SkeletonCard>
 
       {/* Content Grid Section */}
-      <div className="flex items-start gap-5 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
+      <div className="grid grid-cols-[minmax(0,1.65fr)_minmax(280px,0.85fr)] items-start gap-5 tablet-lg:grid-cols-1">
         {/* Left: 60% Section */}
-        <div className="w-[60%] min-w-0 flex flex-col gap-5 tablet-lg:w-full">
+        <div className="min-w-0 flex flex-col gap-5">
           {/* Company Information Section */}
           <SkeletonCard className="p-5 sm:p-6">
             <SectionTitleSkeleton />
@@ -206,7 +224,7 @@ export function CompanyProfilePageLoadingSkeleton() {
         </div>
 
         {/* Right: 40% Section */}
-        <div className="w-[40%] min-w-0 flex flex-col gap-5 tablet-lg:w-full">
+        <div className="min-w-0 flex flex-col gap-5">
           {/* Benefits Section */}
           <SkeletonCard className="p-5 sm:p-6">
             <SectionTitleSkeleton />
@@ -294,32 +312,53 @@ export function EmployeeProfilePageLoadingSkeleton() {
       {/* Hero Card Section */}
       <SkeletonCard>
         {/* Gradient banner */}
-        <Skeleton className="h-28 sm:h-36 rounded-t-2xl rounded-b-none w-full" />
+        <div className="relative h-28 overflow-hidden bg-[hsl(var(--illustration-surface))] sm:h-32">
+          <Skeleton className="absolute -right-8 -top-12 size-36 rounded-full opacity-50" />
+          <Skeleton className="absolute right-20 top-7 size-3 rounded-full" />
+        </div>
 
         {/* Identity Section */}
         <div className="px-4 sm:px-6 pb-5">
           <div className="flex items-start gap-4 tablet-md:flex-col tablet-md:items-center">
             {/* Avatar Overlapping Banner Section */}
-            <Skeleton className="size-20 sm:size-24 -mt-10 sm:-mt-12 rounded-xl flex-shrink-0" />
+            <Skeleton className="-mt-9 size-20 flex-shrink-0 rounded-xl sm:-mt-10 sm:size-24" />
 
             {/* Name and JobTitle Section */}
-            <div className="flex-1 min-w-0 pt-2 space-y-1.5 tablet-md:flex tablet-md:flex-col tablet-md:items-center">
-              <Skeleton className="h-6 w-40" />
+            <div className="min-w-0 flex-1 space-y-1.5 pt-3 tablet-md:flex tablet-md:flex-col tablet-md:items-center tablet-md:pt-0">
+              <Skeleton className="h-8 w-40" />
               <Skeleton className="h-4 w-28" />
             </div>
 
             {/* Edit Button Section */}
-            <div className="flex gap-2 flex-shrink-0 pt-2">
-              <Skeleton className="h-8 w-24 rounded-md" />
+            <div className="flex flex-shrink-0 gap-2 pt-3 tablet-md:w-full">
+              <Skeleton className="h-10 w-28 rounded-xl tablet-md:w-full" />
+            </div>
+          </div>
+        </div>
+      </SkeletonCard>
+
+      {/* Completion Section */}
+      <SkeletonCard className="p-4 sm:p-5">
+        <div className="flex items-center gap-4 sm:gap-5">
+          <Skeleton className="size-14 shrink-0 rounded-2xl sm:size-16" />
+          <div className="min-w-0 flex-1 space-y-2">
+            <div className="flex items-center justify-between gap-3">
+              <Skeleton className="h-4 w-32 rounded" />
+              <Skeleton className="h-7 w-24 rounded-full" />
+            </div>
+            <Skeleton className="h-1.5 w-full rounded-full" />
+            <div className="flex gap-1.5">
+              <Skeleton className="h-5 w-20 rounded-lg" />
+              <Skeleton className="h-5 w-24 rounded-lg" />
             </div>
           </div>
         </div>
       </SkeletonCard>
 
       {/* Content Grid Section */}
-      <div className="flex items-start gap-5 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
+      <div className="grid grid-cols-[minmax(0,1.65fr)_minmax(280px,0.85fr)] items-start gap-5 tablet-lg:grid-cols-1">
         {/* Left: 60% Section */}
-        <div className="w-[60%] min-w-0 flex flex-col gap-5 tablet-lg:w-full">
+        <div className="min-w-0 flex flex-col gap-5">
           {/* Personal Information Section */}
           <SkeletonCard className="p-5 sm:p-6">
             <SectionTitleSkeleton />
@@ -493,7 +532,7 @@ export function EmployeeProfilePageLoadingSkeleton() {
         </div>
 
         {/* Right: 40% Section */}
-        <div className="w-[40%] min-w-0 flex flex-col gap-5 tablet-lg:w-full">
+        <div className="min-w-0 flex flex-col gap-5">
           {/* Skills Section */}
           <SkeletonCard className="p-5 sm:p-6">
             <SectionTitleSkeleton />

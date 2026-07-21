@@ -186,7 +186,7 @@ export function ExperienceCard({
                   size="sm"
                   onClick={handleDescRefine}
                   disabled={descLoading}
-                  className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                  className="h-6 gap-1 px-1.5 text-[9px] text-brand hover:bg-brand-soft hover:text-brand"
                 >
                   {descLoading ? (
                     <Loader2 size={10} className="animate-spin" />
@@ -214,7 +214,7 @@ export function ExperienceCard({
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="h-6 px-2 text-[10px] text-primary"
+                className="h-6 px-2 text-[10px] text-brand hover:bg-brand-soft hover:text-brand"
                 onClick={() => achAppend("" as unknown as Experience)}
               >
                 <PlusCircle size={11} className="mr-1" /> {t("add")}
@@ -240,7 +240,7 @@ export function ExperienceCard({
                           size="sm"
                           onClick={() => handleAchRefine(ai)}
                           disabled={achLoading}
-                          className="h-5 px-1.5 text-[8px] gap-1 text-primary hover:text-primary hover:bg-primary/10"
+                          className="h-5 gap-1 px-1.5 text-[8px] text-brand hover:bg-brand-soft hover:text-brand"
                         >
                           {achLoading ? (
                             <Loader2 size={9} className="animate-spin" />

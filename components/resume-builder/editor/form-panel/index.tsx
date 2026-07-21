@@ -22,54 +22,69 @@ export default function ResumeEditorFormPanel(props: IFormPanelProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <Tabs defaultValue="personal" className="flex flex-col h-full">
+    <Tabs defaultValue="personal" className="flex h-full flex-col">
       {/* Tab Bar Section */}
-      <TabsList className="grid w-full shrink-0 grid-cols-5 h-9">
+      <TabsList className="grid h-10 w-full shrink-0 grid-cols-5 rounded-xl bg-muted/70 p-1">
         {/* Personal Tab Trigger Section */}
         <TabsTrigger
           value="personal"
-          className="gap-1 text-[10px] px-1 sm:gap-1.5 sm:text-xs"
+          aria-label={t("tabPersonal")}
+          title={t("tabPersonal")}
+          className="gap-1 rounded-lg px-1 text-[10px] data-[state=active]:bg-card sm:gap-1.5 sm:text-xs"
         >
-          <User size={12} /> {t("tabPersonal")}
+          <User size={13} />
+          <span className="hidden sm:inline">{t("tabPersonal")}</span>
         </TabsTrigger>
 
         {/* Experience Tab Trigger Section */}
         <TabsTrigger
           value="experience"
-          className="gap-1 text-[10px] px-1 sm:gap-1.5 sm:text-xs"
+          aria-label={t("tabExperience")}
+          title={t("tabExperience")}
+          className="gap-1 rounded-lg px-1 text-[10px] data-[state=active]:bg-card sm:gap-1.5 sm:text-xs"
         >
-          <Briefcase size={12} /> {t("tabExperience")}
+          <Briefcase size={13} />
+          <span className="hidden sm:inline">{t("tabExperience")}</span>
         </TabsTrigger>
 
         {/* Skills Tab Trigger Section */}
         <TabsTrigger
           value="skills"
-          className="gap-1 text-[10px] px-1 sm:gap-1.5 sm:text-xs"
+          aria-label={t("tabSkills")}
+          title={t("tabSkills")}
+          className="gap-1 rounded-lg px-1 text-[10px] data-[state=active]:bg-card sm:gap-1.5 sm:text-xs"
         >
-          <GraduationCap size={12} /> {t("tabSkills")}
+          <GraduationCap size={13} />
+          <span className="hidden sm:inline">{t("tabSkills")}</span>
         </TabsTrigger>
 
         {/* Layout Tab Trigger Section */}
         <TabsTrigger
           value="layout"
-          className="gap-1 text-[10px] px-1 sm:gap-1.5 sm:text-xs"
+          aria-label={t("tabLayout")}
+          title={t("tabLayout")}
+          className="gap-1 rounded-lg px-1 text-[10px] data-[state=active]:bg-card sm:gap-1.5 sm:text-xs"
         >
-          <LayoutPanelLeft size={12} /> {t("tabLayout")}
+          <LayoutPanelLeft size={13} />
+          <span className="hidden sm:inline">{t("tabLayout")}</span>
         </TabsTrigger>
 
         {/* Design Tab Trigger Section */}
         <TabsTrigger
           value="design"
-          className="gap-1 text-[10px] px-1 sm:gap-1.5 sm:text-xs"
+          aria-label={t("tabDesign")}
+          title={t("tabDesign")}
+          className="gap-1 rounded-lg px-1 text-[10px] data-[state=active]:bg-card sm:gap-1.5 sm:text-xs"
         >
-          <Palette size={12} /> {t("tabDesign")}
+          <Palette size={13} />
+          <span className="hidden sm:inline">{t("tabDesign")}</span>
         </TabsTrigger>
       </TabsList>
 
       {/* Tab Contents Section: Each scrolls independently */}
       <TabsContent
         value="personal"
-        className="flex-1 overflow-y-auto mt-3 pr-1"
+        className="mt-3 flex-1 overflow-y-auto pr-1.5"
       >
         {/* Personal Info Tab Content Section */}
         <PersonalInfoTab
@@ -81,7 +96,7 @@ export default function ResumeEditorFormPanel(props: IFormPanelProps) {
 
       <TabsContent
         value="experience"
-        className="flex-1 overflow-y-auto mt-3 pr-1"
+        className="mt-3 flex-1 overflow-y-auto pr-1.5"
       >
         {/* Experience Tab Content Section */}
         <ExperienceTab
@@ -91,17 +106,26 @@ export default function ResumeEditorFormPanel(props: IFormPanelProps) {
         />
       </TabsContent>
 
-      <TabsContent value="skills" className="flex-1 overflow-y-auto mt-3 pr-1">
+      <TabsContent
+        value="skills"
+        className="mt-3 flex-1 overflow-y-auto pr-1.5"
+      >
         {/* Skills Tab Content Section */}
         <SkillsEducationTab {...props} />
       </TabsContent>
 
-      <TabsContent value="layout" className="flex-1 overflow-y-auto mt-3 pr-1">
+      <TabsContent
+        value="layout"
+        className="mt-3 flex-1 overflow-y-auto pr-1.5"
+      >
         {/* Layout Tab Content Section */}
         <LayoutTab />
       </TabsContent>
 
-      <TabsContent value="design" className="flex-1 overflow-y-auto mt-3 pr-1">
+      <TabsContent
+        value="design"
+        className="mt-3 flex-1 overflow-y-auto pr-1.5"
+      >
         {/* Design Tab Content Section */}
         <DesignTab control={props.control} setValue={props.setValue} />
       </TabsContent>

@@ -159,7 +159,8 @@ export default function ApsaraLoadingSpinner(props: IApsaraLoadingProps) {
             fill="currentColor"
             opacity={isAnimating ? "1" : "0"}
             style={{
-              fontFamily: "Arial, sans-serif",
+              fontFamily:
+                "var(--font-source-sans), var(--font-khmer), ui-sans-serif, system-ui, sans-serif",
               transition: "opacity 0.3s ease",
             }}
           >

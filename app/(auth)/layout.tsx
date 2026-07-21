@@ -16,12 +16,13 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <>
-      <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
+    <div className="auth-scope relative isolate min-h-screen overflow-x-hidden bg-background">
+      <div className="auth-toolbar ambient-control-cluster fixed right-4 top-4 z-50 flex items-center gap-1 rounded-xl border border-border/70 bg-card/80 p-1 shadow-[0_1px_2px_hsl(var(--foreground)/0.04)] backdrop-blur-md">
         <LanguageToggle />
+        <span className="h-5 w-px bg-border/70" aria-hidden />
         <ThemeToggle />
       </div>
       {children}
-    </>
+    </div>
   );
 }

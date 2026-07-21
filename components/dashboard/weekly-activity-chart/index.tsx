@@ -10,7 +10,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { IWeeklyActivityChartProps } from "./props";
-import { CHART_COLOR } from "@/utils/constants/ui.constant";
 
 export function WeeklyActivityChart({ data }: IWeeklyActivityChartProps) {
   /* -------------------------------- Utils ------------------------------- */
@@ -70,14 +69,14 @@ export function WeeklyActivityChart({ data }: IWeeklyActivityChartProps) {
         <Bar
           dataKey="received"
           name="Likes Received"
-          fill={CHART_COLOR.PINK}
+          fill="hsl(var(--primary) / 0.55)"
           radius={[4, 4, 0, 0]}
           maxBarSize={28}
         />
         <Bar
           dataKey="matches"
           name="Matches"
-          fill={CHART_COLOR.GREEN}
+          fill="hsl(var(--teal))"
           radius={[4, 4, 0, 0]}
           maxBarSize={28}
         />

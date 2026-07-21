@@ -23,7 +23,6 @@ import {
   salaryCurrencyConstant,
   workModeConstant,
 } from "@/utils/constants/ui.constant";
-import { getRandomBadgeColor } from "@/utils/functions/ui";
 import { Popover } from "@radix-ui/react-popover";
 import {
   LucidePlus,
@@ -139,7 +138,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
       </div>
 
       {/* Content Section */}
-      <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md bg-card">
+      <div className="w-full flex flex-col items-start gap-5 rounded-xl border border-border/60 bg-background/50 p-4 sm:p-5">
         {/* Title Section */}
         <LabelInput
           label={tP("expTitle")}
@@ -166,7 +165,7 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
                 size="sm"
                 onClick={handleRefine}
                 disabled={isRefining}
-                className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                className="h-7 gap-1 rounded-lg px-2 text-[10px] text-brand hover:bg-brand-soft hover:text-brand"
               >
                 {isRefining ? (
                   <Loader2 size={10} className="animate-spin" />
@@ -296,11 +295,10 @@ export default function OpenPositionForm(props: IOpenPositionFormProps) {
             {skills &&
               skills.length > 0 &&
               skills.split(", ").map((item, index) => {
-                const { bg } = getRandomBadgeColor(item);
                 return (
                   <div
                     key={index}
-                    className={`flex items-center ${props.isEdit && `${bg} pr-2 rounded-2xl`}`}
+                    className={`flex items-center ${props.isEdit ? "rounded-xl border border-border/60 bg-background/60 pr-2" : ""}`}
                   >
                     <Tag label={item} />
                     {props.isEdit && (

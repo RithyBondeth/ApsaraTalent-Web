@@ -18,14 +18,14 @@ export default function ResumeSourceInput(props: IResumeSourceInputProps) {
 
   /* -------------------------------- Render UI ------------------------------- */
   return (
-    <section className="w-full rounded-2xl border border-border/70 bg-card p-5 sm:p-6 shadow-[0_2px_8px_hsl(var(--foreground)/0.05)]">
+    <section className="w-full rounded-2xl border border-border/70 bg-card p-5 shadow-[0_2px_8px_hsl(var(--foreground)/0.04)] transition-[border-color,box-shadow] duration-300 hover:border-brand/20 hover:shadow-[0_10px_28px_hsl(var(--foreground)/0.06)] sm:p-6">
       <div className="flex flex-col gap-5">
         {/* Header Section */}
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           {/* Left Section */}
           <div className="flex items-start gap-3">
-            <div className="rounded-xl border border-violet-500/20 bg-violet-500/10 p-2.5">
-              <Sparkles className="size-5 text-violet-500" />
+            <div className="rounded-xl border border-brand/20 bg-brand-soft p-2.5">
+              <Sparkles className="size-5 text-brand" />
             </div>
             <div>
               <h2 className="text-base font-semibold text-foreground">
@@ -42,7 +42,7 @@ export default function ResumeSourceInput(props: IResumeSourceInputProps) {
             className={cn(
               "inline-flex w-fit items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium",
               usingPastedInfo
-                ? "border-violet-500/25 bg-violet-500/10 text-violet-600 dark:text-violet-300"
+                ? "border-brand/25 bg-brand-soft text-brand-soft-foreground"
                 : "border-border bg-muted/50 text-muted-foreground",
             )}
           >
@@ -77,7 +77,7 @@ export default function ResumeSourceInput(props: IResumeSourceInputProps) {
             value={value}
             onChange={(event) => onChange(event.target.value)}
             placeholder={t("pasteInfoPlaceholder")}
-            className="min-h-48 resize-y bg-background/70"
+            className="min-h-48 resize-y rounded-xl border-input bg-background/60 px-4 py-3 leading-relaxed transition-[border-color,box-shadow] focus-visible:border-brand/60 focus-visible:ring-brand/10"
             maxLength={maxLength}
             disabled={disabled}
             aria-describedby="resume-source-help"

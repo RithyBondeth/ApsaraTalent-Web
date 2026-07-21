@@ -56,7 +56,7 @@ export default function NotificationBaseCard(
         "group/card relative w-full flex items-start gap-3 rounded-xl p-4 transition-all duration-300 sm:gap-5 sm:p-5",
         "bg-card border border-border shadow-sm",
         onClick &&
-          "cursor-pointer hover:bg-muted/30 hover:shadow-md active:scale-[0.99]",
+          "cursor-pointer hover:-translate-y-0.5 hover:border-brand/20 hover:bg-muted/30 hover:shadow-[0_10px_28px_hsl(var(--foreground)/0.08)] active:scale-[0.99]",
         !seen && "ring-1 ring-primary/10",
         isDeleting && "animate-card-pop-shrink",
         className,

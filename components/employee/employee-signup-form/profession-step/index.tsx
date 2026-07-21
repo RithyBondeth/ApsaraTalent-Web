@@ -89,6 +89,16 @@ export default function ProfessionStepForm({
           : "noticePeriodOneMonth",
     ),
   }));
+  const languageLabels: Record<string, string> = {
+    Khmer: t("languageKhmer"),
+    English: t("languageEnglish"),
+    Chinese: t("languageChinese"),
+    French: t("languageFrench"),
+    Japanese: t("languageJapanese"),
+    Korean: t("languageKorean"),
+    Thai: t("languageThai"),
+    Vietnamese: t("languageVietnamese"),
+  };
 
   /* --------------------------------- All State -------------------------------- */
   const [langPopoverOpen, setLangPopoverOpen] = useState<boolean>(false);
@@ -140,7 +150,7 @@ export default function ProfessionStepForm({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex flex-col items-start gap-5">
+    <div className="auth-step-section flex flex-col items-start gap-5">
       {/* Title Section */}
       <TypographyH4>{t("empProfessionTitle")}</TypographyH4>
 
@@ -183,7 +193,7 @@ export default function ProfessionStepForm({
       </div>
 
       {/* Year of Experience and Availability Section */}
-      <div className="w-full flex justify-between items-start gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
+      <div className="grid w-full grid-cols-2 items-start gap-4 tablet-md:grid-cols-1 [&>div]:min-w-0">
         {/* Year of Experience Section */}
         <div className="w-full flex flex-col items-start gap-2">
           <div className="w-full flex flex-col items-start gap-2">
@@ -199,6 +209,8 @@ export default function ProfessionStepForm({
                   value={field.value || ""}
                   onChange={field.onChange}
                   placeholder={t("empProfessionYearOfExperiencePlaceholder")}
+                  emptyText={t("comboboxCreateHint")}
+                  createLabel={t("comboboxUse")}
                 />
               )}
             />
@@ -223,6 +235,8 @@ export default function ProfessionStepForm({
                   value={field.value || ""}
                   onChange={field.onChange}
                   placeholder={t("empProfessionAvailabilityPlaceholder")}
+                  emptyText={t("comboboxCreateHint")}
+                  createLabel={t("comboboxUse")}
                 />
               )}
             />
@@ -234,7 +248,7 @@ export default function ProfessionStepForm({
       </div>
 
       {/* Work Mode and Notice Period Section */}
-      <div className="w-full flex justify-between items-start gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
+      <div className="grid w-full grid-cols-2 items-start gap-4 tablet-md:grid-cols-1 [&>div]:min-w-0">
         {/* Work Mode Section */}
         <div className="w-full flex flex-col items-start gap-2">
           <TypographyMuted className="text-xs">
@@ -249,6 +263,8 @@ export default function ProfessionStepForm({
                 value={field.value ?? ""}
                 onChange={field.onChange}
                 placeholder={t("empProfessionWorkModePlaceholder")}
+                emptyText={t("comboboxCreateHint")}
+                createLabel={t("comboboxUse")}
               />
             )}
           />
@@ -269,6 +285,8 @@ export default function ProfessionStepForm({
                 value={field.value ?? ""}
                 onChange={field.onChange}
                 placeholder={t("empProfessionNoticePeriodPlaceholder")}
+                emptyText={t("comboboxCreateHint")}
+                createLabel={t("comboboxUse")}
               />
             )}
           />
@@ -279,7 +297,7 @@ export default function ProfessionStepForm({
       </div>
 
       {/* Portfolio URL and LinkedIn URL Section */}
-      <div className="w-full flex justify-between items-start gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
+      <div className="grid w-full grid-cols-2 items-start gap-4 tablet-md:grid-cols-1 [&>div]:min-w-0">
         {/* Portfolio URL Section */}
         <div className="w-full flex flex-col items-start gap-2">
           <TypographyMuted className="text-xs">
@@ -331,7 +349,9 @@ export default function ProfessionStepForm({
               key={lang}
               className="flex items-center gap-1 bg-primary/10 rounded-full pl-3 pr-2 py-1"
             >
-              <span className="text-xs font-medium text-primary">{lang}</span>
+              <span className="text-xs font-medium text-primary">
+                {languageLabels[lang] ?? lang}
+              </span>
               <LucideXCircle
                 className="text-primary/60 cursor-pointer hover:text-primary"
                 width="14px"
@@ -358,7 +378,7 @@ export default function ProfessionStepForm({
                 placeholder={t("empProfessionLanguagesPlaceholder")}
               />
               <CommandList>
-                <CommandEmpty>No language found.</CommandEmpty>
+                <CommandEmpty>{t("languageNotFound")}</CommandEmpty>
                 <CommandGroup>
                   {languageConstant.map((lang) => (
                     <CommandItem
@@ -374,7 +394,7 @@ export default function ProfessionStepForm({
                             : "opacity-0",
                         )}
                       />
-                      {lang}
+                      {languageLabels[lang] ?? lang}
                     </CommandItem>
                   ))}
                 </CommandGroup>
@@ -390,9 +410,9 @@ export default function ProfessionStepForm({
         <TypographyMuted className="text-xs">
           {t("empProfessionExpectedSalary")}
         </TypographyMuted>
-        <div className="w-full flex items-start gap-3">
+        <div className="grid w-full grid-cols-[7rem_minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-3 tablet-sm:grid-cols-2">
           {/* Currency Section */}
-          <div className="shrink-0 w-28">
+          <div className="w-28 tablet-sm:col-span-2 tablet-sm:w-full">
             <Controller
               name="profession.expectedSalaryCurrency"
               control={control!}
@@ -443,7 +463,7 @@ export default function ProfessionStepForm({
             </TypographyMuted>
           </div>
 
-          <TypographyMuted className="text-sm self-center pt-1">
+          <TypographyMuted className="self-center pt-1 text-sm tablet-sm:hidden">
             —
           </TypographyMuted>
 

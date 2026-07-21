@@ -1,4 +1,4 @@
-import { FeedBannerSkeleton } from "@/components/feed/skeleton";
+import { FeaturePageHeaderSkeleton } from "@/components/feed/skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 import { TUserRole } from "@/utils/types/auth";
@@ -12,8 +12,8 @@ export default function InterviewLoadingSkeleton({
 
   return (
     <div className="w-full flex flex-col gap-4 px-2.5 sm:px-5">
-      {/* Banner Section */}
-      <FeedBannerSkeleton />
+      {/* Header Skeleton Section */}
+      <FeaturePageHeaderSkeleton />
 
       {/* Create Interview Button Section (Company Only) */}
       {isCompany && (

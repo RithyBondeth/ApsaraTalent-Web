@@ -18,15 +18,14 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ImperativePanelHandle } from "react-resizable-panels";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import Image from "next/image";
 import MessageLoadingSkeleton, {
   MessagePaneSkeleton,
   MessageThreadSkeleton,
 } from "@/components/message/skeleton/index";
-import { messageEmptySvg } from "@/utils/constants/asset.constant";
 import { CHAT_LOADING_TIMEOUT_MS } from "@/utils/constants/chat.constant";
 import { IMessage } from "@/utils/interfaces/chat/chat.interface";
 import { useTranslations } from "next-intl";
+import { EditorialIllustration } from "@/components/utils/data-display/editorial-illustration";
 
 export default function MessagePageContent() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -256,13 +255,10 @@ export default function MessagePageContent() {
   const desktopEmptyStateView = (
     <div className="flex flex-1 flex-col items-center justify-center p-8 text-center bg-muted/5">
       <div className="w-full flex flex-col items-center justify-center my-16">
-        <Image
-          src={messageEmptySvg}
-          alt="Message"
-          height={300}
-          width={300}
-          className="animate-float"
-        />
+        {/* Editorial Illustration Section */}
+        <EditorialIllustration variant="messaging" className="mb-5 h-44 w-56" />
+
+        {/* Empty List Text Section */}
         <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
           {t("selectConversation")}
         </TypographyP>

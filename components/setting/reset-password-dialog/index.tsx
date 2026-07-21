@@ -27,20 +27,20 @@ export function ResetPasswordDialog(props: IResetPasswordDialogProps) {
       <DialogContent className="max-w-sm rounded-2xl">
         <DialogHeader>
           {/* Reset Password Icon Header Section */}
-          <div className="mx-auto mb-2 flex items-center justify-center size-14 rounded-2xl bg-primary/10 border border-primary/20">
-            <LucideKeyRound className="size-6 text-primary" />
+          <div className="mx-auto mb-2 flex size-14 items-center justify-center rounded-2xl border border-brand/15 bg-brand-soft">
+            <LucideKeyRound className="size-6 text-brand" />
           </div>
 
           {/* Reset Password Title Section */}
-          <DialogTitle className="text-center">{t("resetPasswordTitle")}</DialogTitle>
+          <DialogTitle className="text-center tracking-[-0.02em]">
+            {t("resetPasswordTitle")}
+          </DialogTitle>
 
           {/* Reset Password Description Section */}
           <DialogDescription className="text-center text-sm leading-relaxed">
-            {sent ? (
-              t("resetSentDesc", { email: email ?? "" })
-            ) : (
-              t("resetDesc", { email: email ?? "" })
-            )}
+            {sent
+              ? t("resetSentDesc", { email: email ?? "" })
+              : t("resetDesc", { email: email ?? "" })}
           </DialogDescription>
         </DialogHeader>
 

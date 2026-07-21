@@ -1,4 +1,3 @@
-import { getRandomBadgeColor } from "@/utils/functions/ui";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
 /* ----------------------------------- Helper ---------------------------------- */
@@ -9,23 +8,20 @@ interface ITagInterface {
 }
 
 export default function Tag(props: ITagInterface) {
-  /* ---------------------------------- Utils --------------------------------- */
-  const { bg, text } = getRandomBadgeColor(props.label);
-
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <div
-      className={`w-fit flex items-center ${
+      className={`flex w-fit items-center border border-border/70 bg-muted/65 ${
         props.icon ? "gap-1 py-1.5" : "py-1.5"
-      } px-3 rounded-full cursor-pointer transition-all duration-200 ease-out hover:scale-[1.04] hover:shadow-sm active:scale-95 ${bg} ${props.className ?? ""}`}
+      } rounded-lg px-2.5 ${props.className ?? ""}`}
     >
       {/* Icon Section */}
       {props.icon && (
-        <span className={`${text} [&>svg]:!size-4`}>{props.icon}</span>
+        <span className="text-primary [&>svg]:!size-3.5">{props.icon}</span>
       )}
 
       {/* Label Section */}
-      <TypographyMuted className={`text-xs ${text} font-medium leading-none`}>
+      <TypographyMuted className="text-xs font-medium leading-none text-foreground/75">
         {props.label}
       </TypographyMuted>
     </div>

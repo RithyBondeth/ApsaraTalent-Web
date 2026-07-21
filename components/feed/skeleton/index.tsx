@@ -1,155 +1,155 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import CompanyCardSkeleton from "@/components/company/skeleton";
-import EmployeeCardSkeleton from "@/components/employee/skeleton";
 
-const FEED_CARD_GRID_CLASS =
-  "w-full pt-2 grid grid-cols-3 gap-4 items-stretch laptop-sm:grid-cols-2 tablet-lg:!grid-cols-1 [&>*]:min-w-0 [&>*]:h-full";
+const FEATURED_GRID_CLASS =
+  "grid w-full grid-flow-col auto-cols-[86%] gap-4 overflow-hidden sm:auto-cols-[48%] lg:grid-flow-row lg:auto-cols-auto lg:grid-cols-3";
 
-function RecommendedCardSkeleton({ isEmployee }: { isEmployee?: boolean }) {
-  return (
-    <div className="flex h-full flex-col">
-      <div className="flex items-center gap-1 mb-1.5 px-1">
-        <Skeleton className="size-3 rounded" />
-        <Skeleton className="h-2.5 w-16 rounded" />
-      </div>
-      {isEmployee === undefined ? (
-        <NeutralCardSkeleton />
-      ) : isEmployee ? (
-        <CompanyCardSkeleton />
-      ) : (
-        <EmployeeCardSkeleton />
-      )}
-    </div>
-  );
-}
+const DISCOVERY_GRID_CLASS = "grid w-full grid-cols-1 gap-4 lg:grid-cols-2";
 
-/* ------------ Neutral Card Skeleton (Shown Before user role is known) ------------ */
 export function NeutralCardSkeleton() {
   return (
-    <div className="h-full w-full flex flex-col rounded-2xl border border-border/70 bg-card overflow-hidden shadow-[0_2px_8px_hsl(var(--foreground)/0.05)]">
-      <div className="flex items-start gap-3 p-4 pb-3">
-        <Skeleton className="size-14 rounded-md shrink-0" />
-        <div className="flex-1 flex flex-col gap-1.5">
-          <Skeleton className="h-4 w-28 rounded" />
-          <Skeleton className="h-3 w-20 rounded" />
-          <Skeleton className="h-3 w-16 rounded" />
+    <div className="flex h-full min-h-72 w-full flex-col overflow-hidden rounded-2xl border border-border/80 bg-card shadow-[0_1px_2px_hsl(var(--foreground)/0.03),0_8px_24px_hsl(var(--foreground)/0.03)]">
+      {/* Header Skeleton Section */}
+      <div className="flex items-start gap-3.5 px-5 pb-3 pt-5">
+        <Skeleton className="size-14 shrink-0 rounded-lg" />
+        <div className="min-w-0 flex-1 space-y-2">
+          <Skeleton className="h-4 w-32 rounded" />
+          <Skeleton className="h-3 w-24 rounded" />
+          <div className="flex gap-2">
+            <Skeleton className="h-3 w-20 rounded" />
+            <Skeleton className="h-3 w-16 rounded" />
+          </div>
         </div>
-        <div className="flex flex-col gap-1 shrink-0">
-          <Skeleton className="size-8 rounded-full" />
-          <Skeleton className="size-8 rounded-full" />
+        <Skeleton className="size-10 shrink-0 rounded-xl" />
+      </div>
+
+      {/* Content Skeleton Section */}
+      <div className="flex flex-1 flex-col gap-3 px-5 pb-5">
+        <Skeleton className="h-14 w-full rounded-xl" />
+        <div className="space-y-1.5">
+          <Skeleton className="h-3 w-full rounded" />
+          <Skeleton className="h-3 w-4/5 rounded" />
         </div>
-      </div>
-      <div className="flex gap-1.5 px-4 pb-3">
-        <Skeleton className="h-6 w-16 rounded-full" />
-        <Skeleton className="h-6 w-20 rounded-full" />
-        <Skeleton className="h-6 w-14 rounded-full" />
-      </div>
-      <div className="px-4 pb-3 space-y-1.5">
-        <Skeleton className="h-3 w-full rounded" />
-        <Skeleton className="h-3 w-4/5 rounded" />
-      </div>
-      <div className="flex items-center justify-end gap-2 px-4 pb-3 pt-2 border-t border-border/50">
-        <Skeleton className="h-7 w-16 rounded-full" />
-        <Skeleton className="h-7 w-16 rounded-full" />
+        <div className="flex gap-1.5">
+          <Skeleton className="h-7 w-20 rounded-lg" />
+          <Skeleton className="h-7 w-24 rounded-lg" />
+          <Skeleton className="h-7 w-16 rounded-lg" />
+        </div>
+        <div className="mt-auto grid grid-cols-2 gap-2 border-t border-border/60 pt-4">
+          <Skeleton className="h-11 rounded-xl" />
+          <Skeleton className="h-11 rounded-xl" />
+        </div>
       </div>
     </div>
   );
 }
 
-/* ------------------------- Feed Page Loading Skeleton ------------------------- */
 export default function FeedPageLoadingSkeleton({
   isEmployee,
 }: {
   isEmployee?: boolean;
 }) {
   return (
-    <div className="w-full flex flex-col items-start gap-4 sm:gap-5">
-      {/* Banner Section */}
+    <div
+      className="flex w-full flex-col gap-7"
+      data-feed-role={
+        isEmployee === undefined
+          ? "unknown"
+          : isEmployee
+            ? "employee"
+            : "company"
+      }
+    >
+      {/* Feed Page Skeleton Section */}
       <FeedBannerSkeleton />
 
-      {/* Recommended for You Section */}
+      {/* Feed Recommendations Section */}
       <FeedRecommendationsSkeleton isEmployee={isEmployee} />
 
-      {/* All Companies/Talent Divider Section */}
+      {/* Feed Divider Section */}
       <FeedDividerSkeleton />
 
-      {/* Feed Card Grid Section */}
-      <div className={FEED_CARD_GRID_CLASS}>
-        {Array.from({ length: 9 }).map((_, i) => (
-          <div key={i} className="flex h-full flex-col">
-            {isEmployee === undefined ? (
-              <NeutralCardSkeleton />
-            ) : isEmployee ? (
-              <CompanyCardSkeleton />
-            ) : (
-              <EmployeeCardSkeleton />
-            )}
-          </div>
+      {/* Feed Discovery Section */}
+      <div className={DISCOVERY_GRID_CLASS}>
+        {Array.from({ length: 4 }).map((_, index) => (
+          <NeutralCardSkeleton key={index} />
         ))}
       </div>
     </div>
   );
 }
 
-/* ------------------------ Feed Banner Loading Skeleton ------------------------ */
 export function FeedBannerSkeleton() {
   return (
-    <>
-      {/* Desktop Skeleton Section 1050px */}
-      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8 tablet-xl:hidden">
-        <div className="flex flex-col items-start gap-3">
-          <div className="flex flex-col gap-1.5">
-            <Skeleton className="h-8 sm:h-10 w-72 sm:w-96" />
-            <Skeleton className="h-8 sm:h-10 w-48 sm:w-64" />
+    <div className="grid w-full gap-7 border-b border-border/80 pb-7 pt-1 sm:pb-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-end">
+      {/* Main Content Skeleton Section */}
+      <div>
+        <Skeleton className="h-4 w-28 rounded" />
+        <Skeleton className="mt-3 h-9 w-4/5 max-w-xl rounded sm:h-11" />
+        <Skeleton className="mt-2 h-4 w-3/4 max-w-lg rounded" />
+        <Skeleton className="mt-5 h-12 w-full max-w-2xl rounded-xl" />
+      </div>
+
+      {/* Right Side Skeleton Section */}
+      <div className="hidden pb-1 lg:block">
+        <Skeleton className="h-3 w-20 rounded" />
+        <div className="mt-4 grid grid-cols-2 gap-5">
+          <div className="border-l-2 border-border pl-4">
+            <Skeleton className="h-9 w-14 rounded" />
+            <Skeleton className="mt-2 h-3 w-20 rounded" />
           </div>
-          <Skeleton className="h-5 w-72" />
-          <Skeleton className="h-5 w-80" />
-          <Skeleton className="h-4 w-64" />
+          <div className="border-l-2 border-border pl-4">
+            <Skeleton className="h-9 w-14 rounded" />
+            <Skeleton className="mt-2 h-3 w-20 rounded" />
+          </div>
         </div>
-        <Skeleton className="h-[240px] w-[340px] sm:h-[260px] sm:w-[360px] rounded-xl shrink-0" />
       </div>
-
-      {/* Tablet Skeleton Section 651px–1050px */}
-      <div className="hidden tablet-xl:flex tablet-md:!hidden w-full items-center justify-between gap-4 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-5 py-5 overflow-hidden">
-        <div className="flex-1 min-w-0 flex flex-col gap-2">
-          <Skeleton className="h-7 w-3/4 rounded" />
-          <Skeleton className="h-4 w-full rounded" />
-          <Skeleton className="h-4 w-4/5 rounded" />
-        </div>
-        <Skeleton className="size-[160px] rounded-xl shrink-0" />
-      </div>
-
-      {/* Mobile Skeleton Section ≤650px */}
-      <div className="hidden tablet-md:flex w-full items-center gap-3 rounded-2xl bg-gradient-to-br from-primary/[0.08] via-primary/[0.03] to-muted/40 border border-border/50 px-4 py-3 overflow-hidden">
-        <div className="flex-1 min-w-0 flex flex-col gap-2">
-          <Skeleton className="h-4 w-3/4 rounded" />
-          <Skeleton className="h-3 w-full rounded" />
-          <Skeleton className="h-3 w-4/5 rounded" />
-        </div>
-        <Skeleton className="size-[88px] rounded-xl shrink-0" />
-      </div>
-    </>
+    </div>
   );
 }
 
-/* ------------------- Feed Recommendations Loading Skeleton ------------------- */
+export function FeaturePageHeaderSkeleton() {
+  return (
+    <div className="flex w-full items-start gap-4 border-b border-border/80 pb-5 pt-1 sm:pb-6">
+      {/* Icon Skeleton Section */}
+      <Skeleton className="size-10 shrink-0 rounded-xl sm:size-11" />
+
+      {/* Text Skeleton Section */}
+      <div className="min-w-0 flex-1 pt-0.5">
+        <Skeleton className="h-7 w-56 max-w-3/4 rounded" />
+        <Skeleton className="mt-2 h-4 w-3/4 max-w-xl rounded" />
+      </div>
+    </div>
+  );
+}
+
 export function FeedRecommendationsSkeleton({
   isEmployee,
 }: {
   isEmployee?: boolean;
 }) {
   return (
-    <div className="w-full flex flex-col gap-3">
-      {/* Title Section */}
-      <div className="flex items-center gap-2">
-        <Skeleton className="h-5 w-5 rounded" />
-        <Skeleton className="h-5 w-44 rounded" />
+    <div
+      className="flex w-full flex-col gap-4"
+      data-card-type={
+        isEmployee === undefined
+          ? "unknown"
+          : isEmployee
+            ? "company"
+            : "employee"
+      }
+    >
+      {/* Header Skeleton Section */}
+      <div>
+        <div className="flex items-center gap-2">
+          <Skeleton className="size-4 rounded" />
+          <Skeleton className="h-6 w-36 rounded" />
+        </div>
+        <Skeleton className="mt-2 h-4 w-72 max-w-full rounded" />
       </div>
-
-      {/* Card Grid Section */}
-      <div className={FEED_CARD_GRID_CLASS}>
-        {Array.from({ length: 3 }).map((_, i) => (
-          <RecommendedCardSkeleton key={i} isEmployee={isEmployee} />
+      {/* Card Grid Skeleton Section */}
+      <div className={FEATURED_GRID_CLASS}>
+        {Array.from({ length: 3 }).map((_, index) => (
+          <NeutralCardSkeleton key={index} />
         ))}
       </div>
     </div>
@@ -159,15 +159,17 @@ export function FeedRecommendationsSkeleton({
 /* --------------------- Feed Divider Loading Skeleton ------------------------- */
 export function FeedDividerSkeleton() {
   return (
-    <div className="w-full flex items-center gap-4">
+    <div className="flex w-full items-end justify-between gap-4">
       {/* Pill Badge Section */}
-      <div className="flex items-center gap-2 shrink-0 bg-card border border-border/70 rounded-full px-3 py-1.5 shadow-[0_1px_4px_hsl(var(--foreground)/0.06)]">
-        <Skeleton className="h-4 w-4 rounded" />
-        <Skeleton className="h-4 w-24 rounded" />
+      <div>
+        <div className="flex items-center gap-2">
+          <Skeleton className="size-4 rounded" />
+          <Skeleton className="h-6 w-40 rounded" />
+        </div>
+        <Skeleton className="mt-2 h-4 w-20 rounded" />
       </div>
-
       {/* Divider Line Section */}
-      <div className="flex-1 h-px bg-border/60" />
+      <Skeleton className="h-11 w-36 rounded-xl" />
     </div>
   );
 }

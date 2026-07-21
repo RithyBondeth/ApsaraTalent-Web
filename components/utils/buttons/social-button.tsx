@@ -26,16 +26,20 @@ export default function SocialButton(props: ISocialButtonProps) {
     <Button
       type="button"
       variant={props.variant}
-      className={cn(props.className, "py-5 rounded-md")}
+      className={cn(
+        "auth-social-button h-11 rounded-lg border-border bg-background py-5 shadow-none hover:border-foreground/25 hover:bg-muted/40",
+        props.className,
+      )}
       onClick={props.onClick}
     >
       {/* Social Image Section */}
       <Image
         src={props.image}
-        alt="social"
+        alt={`${props.label} icon`}
         height={30}
         width={30}
         className="rounded-full"
+        priority
       />
 
       {/* Social Label Section */}

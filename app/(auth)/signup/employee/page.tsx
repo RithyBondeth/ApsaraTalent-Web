@@ -6,6 +6,7 @@ import EducationStepForm from "@/components/employee/employee-signup-form/educat
 import ExperienceStepForm from "@/components/employee/employee-signup-form/experience-step";
 import ProfessionStepForm from "@/components/employee/employee-signup-form/profession-step";
 import SkillReferenceStepForm from "@/components/employee/employee-signup-form/skill-reference-step";
+import { SignupStepProgress } from "@/components/auth/signup-step-progress";
 import { Button } from "@/components/ui/button";
 import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
@@ -27,7 +28,7 @@ import {
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { makeEmployeeSignUpSchema, TEmployeeSignUp } from "./validation";
 import {
@@ -41,10 +42,19 @@ export default function EmployeeSignup() {
   const t = useTranslations("auth");
   const tv = useTranslations("validation");
   const totalSteps = 6;
+  const stepLabels = [
+    t("employeeStepProfession"),
+    t("employeeStepExperience"),
+    t("employeeStepEducation"),
+    t("employeeStepSkills"),
+    t("employeeStepPhoto"),
+    t("employeeStepCareer"),
+  ];
 
   /* ------------------------------ All States -------------------------------- */
   const [step, setStep] = useState<number>(1);
   const [uploadsComplete, setUploadsComplete] = useState<boolean>(false);
+  const stepBodyRef = useRef<HTMLDivElement>(null);
 
   // Get User Basic Data
   const { basicSignupData } = useBasicSignupDataStore();
@@ -61,6 +71,11 @@ export default function EmployeeSignup() {
 
   // Employee Register
   const empSignup = useEmployeeSignupStore();
+
+  /* ------------------------------- All Effects ------------------------------ */
+  useEffect(() => {
+    stepBodyRef.current?.scrollTo({ top: 0 });
+  }, [step]);
 
   /* ------------------ React Hook Form: Employee Signup Form ----------------- */
   // ── Define Schema For Employee Signup Form ─────────────────────────
@@ -196,7 +211,7 @@ export default function EmployeeSignup() {
   // Handle Next Step and Final Submit
   const nextStep = async () => {
     const fieldsToValidate = stepFieldMap[step];
-    const isValid = await trigger(fieldsToValidate);
+    const isValid = await trigger(fieldsToValidate, { shouldFocus: true });
 
     if (!isValid) return;
 
@@ -443,7 +458,7 @@ export default function EmployeeSignup() {
 
   /* ----------------------------------- Render UI ---------------------------------- */
   return (
-    <div className="w-full max-w-4xl mx-auto flex flex-col gap-5 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
+    <div className="advanced-signup-page employee-signup-page mx-auto flex h-full min-h-0 w-full max-w-4xl flex-col gap-3 px-1 tablet-lg:max-w-full tablet-lg:px-2">
       {/* Navigate Back Button Section */}
       <button
         type="button"
@@ -455,7 +470,7 @@ export default function EmployeeSignup() {
       </button>
 
       {/* Header Section */}
-      <div>
+      <div className="auth-heading-group">
         <TypographyH2>{t("signupAsEmployee")}</TypographyH2>
         <TypographyMuted className="text-md">
           {t("employeeSignupSubtitle")}
@@ -470,110 +485,91 @@ export default function EmployeeSignup() {
         </div>
       )}
 
-      {/* Step Progress Indicator Section */}
-      <div className="w-full overflow-x-auto pb-2 mb-2">
-        <div className="w-full min-w-[280px] flex items-center gap-0">
-          {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
-            (st, index) => {
-              const isSkipped =
-                st === 2 &&
-                empForm.watch("profession.yearOfExperience") ===
-                  "no_experience";
-              const isActive = step >= st && !isSkipped;
-              return (
-                <div key={st} className="w-full flex items-center">
-                  <div
-                    className={`size-8 text-xs sm:size-9 sm:text-sm flex items-center justify-center rounded-full font-bold transition-all ${
-                      isSkipped
-                        ? "bg-muted text-muted-foreground opacity-40 line-through"
-                        : isActive
-                          ? "bg-primary text-primary-foreground shadow-md shadow-primary/30"
-                          : "bg-muted text-muted-foreground"
-                    }`}
-                  >
-                    {st}
-                  </div>
-                  {index < totalSteps - 1 && (
-                    <div className="flex-1 h-1 bg-muted rounded-full relative">
-                      <div
-                        className={`absolute top-0 left-0 h-full rounded-full bg-primary transition-all duration-300 ${
-                          step > st && !isSkipped ? "w-full" : "w-0"
-                        }`}
-                      />
-                    </div>
-                  )}
-                </div>
-              );
-            },
-          )}
-        </div>
-      </div>
+      {/* Step Progress Section */}
+      <SignupStepProgress
+        currentStep={step}
+        labels={stepLabels}
+        progressLabel={t("signupStepProgress", {
+          current: step,
+          total: totalSteps,
+        })}
+        skippedLabel={t("signupStepSkipped")}
+        skippedSteps={hasNoExperience() ? [2] : []}
+      />
 
       {/* Form Section */}
       <FormProvider {...empForm}>
-        <form onSubmit={(e) => e.preventDefault()} className="w-full">
-          {step === 1 && (
-            <ProfessionStepForm
-              register={register}
-              control={control}
-              errors={errors}
-              setValue={setValue}
-              getValues={getValues}
-            />
-          )}
-          {step === 2 && (
-            <ExperienceStepForm
-              register={register}
-              errors={errors}
-              control={control}
-              setValue={setValue}
-              getValues={getValues}
-            />
-          )}
-          {step === 3 && (
-            <EducationStepForm
-              register={register}
-              errors={errors}
-              control={control}
-              setValue={setValue}
-              getValues={getValues}
-            />
-          )}
-          {step === 4 && (
-            <SkillReferenceStepForm
-              register={register}
-              control={control}
-              errors={errors}
-              getValues={getValues}
-              setValue={setValue}
-              trigger={trigger}
-            />
-          )}
-          {step === 5 && (
-            <AvatarStepForm
-              register={register}
-              errors={errors}
-              getValues={getValues}
-              setValue={setValue}
-            />
-          )}
-          {step === 6 && (
-            <EmployeeCareerScopeStepForm
-              register={register}
-              getValues={getValues}
-              setValue={setValue}
-              errors={errors}
-            />
-          )}
+        <form
+          onSubmit={(e) => e.preventDefault()}
+          className="advanced-signup-form flex min-h-0 w-full flex-1 flex-col overflow-hidden"
+        >
+          <div
+            ref={stepBodyRef}
+            className="advanced-signup-step-body min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1"
+          >
+            {step === 1 && (
+              <ProfessionStepForm
+                register={register}
+                control={control}
+                errors={errors}
+                setValue={setValue}
+                getValues={getValues}
+              />
+            )}
+            {step === 2 && (
+              <ExperienceStepForm
+                register={register}
+                errors={errors}
+                control={control}
+                setValue={setValue}
+                getValues={getValues}
+              />
+            )}
+            {step === 3 && (
+              <EducationStepForm
+                register={register}
+                errors={errors}
+                control={control}
+                setValue={setValue}
+                getValues={getValues}
+              />
+            )}
+            {step === 4 && (
+              <SkillReferenceStepForm
+                register={register}
+                control={control}
+                errors={errors}
+                getValues={getValues}
+                setValue={setValue}
+                trigger={trigger}
+              />
+            )}
+            {step === 5 && (
+              <AvatarStepForm
+                register={register}
+                errors={errors}
+                getValues={getValues}
+                setValue={setValue}
+              />
+            )}
+            {step === 6 && (
+              <EmployeeCareerScopeStepForm
+                register={register}
+                getValues={getValues}
+                setValue={setValue}
+                errors={errors}
+              />
+            )}
+          </div>
 
           {/* Navigation Buttons Section */}
-          <div className="mt-6 mb-4 flex gap-3 sm:justify-between">
+          <div className="advanced-signup-nav mt-3 flex shrink-0 gap-3 border-t border-border/70 bg-background/95 pt-3 sm:justify-between">
             {step > 1 ? (
               <Button
                 type="button"
                 variant="outline"
                 onClick={prevStep}
-                className="flex-1 sm:flex-initial sm:min-w-[140px]"
+                className="auth-secondary-action flex-1 sm:flex-initial sm:min-w-[140px]"
               >
                 <LucideArrowLeft />
                 {t("back")}
@@ -584,7 +580,7 @@ export default function EmployeeSignup() {
 
             <Button
               type="button"
-              className="flex-1 sm:flex-initial sm:min-w-[140px]"
+              className="auth-primary-action flex-1 sm:flex-initial sm:min-w-[140px]"
               onClick={nextStep}
               disabled={
                 empSignup.loading ||

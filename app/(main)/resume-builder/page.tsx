@@ -40,14 +40,14 @@ import {
 /** Numbered step header shared by each stage of the builder flow */
 function StepHeader({ number, title }: { number: string; title: string }) {
   return (
-    <div className="w-full flex items-center gap-3">
-      <div className="flex size-7 shrink-0 items-center justify-center rounded-full border border-primary/25 bg-primary/10 text-primary text-xs font-bold">
-        {number}
+    <div className="flex w-full items-center gap-3">
+      <div className="flex h-7 min-w-9 shrink-0 items-center justify-center rounded-lg border border-brand/25 bg-brand-soft px-2 text-[11px] font-bold tabular-nums text-brand-soft-foreground">
+        {number.padStart(2, "0")}
       </div>
-      <span className="text-sm font-semibold text-foreground/90 shrink-0">
+      <span className="shrink-0 text-sm font-semibold text-foreground/90">
         {title}
       </span>
-      <div className="flex-1 h-px bg-border/60" />
+      <div className="h-px flex-1 bg-border/70" />
     </div>
   );
 }
@@ -169,14 +169,14 @@ export default function ResumeBuilder() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full flex flex-col items-start gap-6 px-2.5 pb-4 sm:px-5 lg:px-8 animate-page-in">
+    <div className="flex w-full flex-col items-start gap-7 px-2.5 pb-5 sm:px-5 lg:px-8 animate-page-in">
       {/* Banner Section */}
       <ResumeBuilderBanner />
 
       {/* Step 1: Template Selection Section */}
-      <div className="w-full flex flex-col gap-3">
+      <section className="flex w-full flex-col gap-4">
         <StepHeader number="1" title={t("chooseTemplate")} />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="stagger-list grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {templatesLoading || (templateData === null && !templatesError) ? (
             Array.from({ length: 6 }, (_, i) => (
               <TemplateCardSkeleton key={i} />
@@ -219,10 +219,10 @@ export default function ResumeBuilder() {
             </div>
           )}
         </div>
-      </div>
+      </section>
 
       {/* Step 2: Information Source Section */}
-      <div className="w-full flex flex-col gap-3">
+      <section className="flex w-full flex-col gap-4">
         <StepHeader number="2" title={t("pasteInfoTitle")} />
         <ResumeSourceInput
           value={sourceText}
@@ -230,7 +230,7 @@ export default function ResumeBuilder() {
           disabled={preparingResume}
           maxLength={RESUME_SOURCE_MAX_LENGTH}
         />
-      </div>
+      </section>
 
       {/* Sticky Generate Bar Section */}
       <ResumeBuilderGenerate

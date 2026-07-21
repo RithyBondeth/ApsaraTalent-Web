@@ -21,7 +21,7 @@ export function LanguageSection(props: ILanguageSectionProps) {
       title={t("language")}
       description={t("languageDescription")}
     >
-      <div className="flex flex-col gap-3 p-4">
+      <div className="flex flex-col gap-3 p-4 sm:p-5">
         {/* English Language Card Section */}
         <LanguageCard
           value="en"
@@ -53,12 +53,14 @@ function LanguageCard(props: ILanguageCardProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <button
+      type="button"
       onClick={onClick}
+      aria-pressed={active}
       className={cn(
-        "relative flex items-center gap-3 px-4 py-3.5 rounded-xl border-2 transition-all duration-200 cursor-pointer w-full text-left",
+        "relative flex w-full cursor-pointer items-center gap-3 rounded-xl border px-4 py-3.5 text-left transition-colors duration-200",
         active
-          ? "border-primary bg-primary/5 shadow-[0_0_0_1px_hsl(var(--primary)/0.15)]"
-          : "border-border bg-card hover:border-primary/40 hover:bg-accent/50",
+          ? "border-brand/35 bg-brand-soft/70 shadow-[0_0_0_1px_hsl(var(--brand)/0.08)]"
+          : "border-border/70 bg-background/50 hover:border-brand/20 hover:bg-muted/35",
       )}
     >
       {/* Flag Section */}
@@ -67,7 +69,7 @@ function LanguageCard(props: ILanguageCardProps) {
       {/* Label Section */}
       <div className="flex flex-col flex-1 min-w-0">
         <span
-          className={cn("text-sm font-semibold", active ? "text-primary" : "")}
+          className={cn("text-sm font-semibold", active ? "text-brand" : "")}
         >
           {label}
         </span>
@@ -76,9 +78,9 @@ function LanguageCard(props: ILanguageCardProps) {
 
       {/* Active Checkmark Section */}
       {active && (
-        <span className="flex items-center justify-center size-5 rounded-full bg-primary shrink-0">
+        <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-brand">
           <LucideCheck
-            className="size-3 text-primary-foreground"
+            className="size-3 text-brand-foreground"
             strokeWidth={3}
           />
         </span>

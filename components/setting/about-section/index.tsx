@@ -37,7 +37,7 @@ export function AboutSection() {
         value={
           <Link
             href="/privacy"
-            className="text-xs text-primary hover:underline"
+            className="text-xs font-medium text-brand hover:underline"
           >
             {t("view")}
           </Link>
@@ -49,7 +49,10 @@ export function AboutSection() {
         icon={<LucideInfo />}
         label={t("termsOfService")}
         value={
-          <Link href="/terms" className="text-xs text-primary hover:underline">
+          <Link
+            href="/terms"
+            className="text-xs font-medium text-brand hover:underline"
+          >
             {t("view")}
           </Link>
         }

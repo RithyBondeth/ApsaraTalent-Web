@@ -46,15 +46,17 @@ export function AccountSection(props: IAccountSectionProps) {
       description={t("accountDescription")}
     >
       {/* Header Section: Avatar, DisplayName, Email, Role */}
-      <div className="flex items-center gap-4 px-4 py-4 bg-muted/30">
-        <Avatar className="size-14 rounded-xl shrink-0">
+      <div className="relative flex items-center gap-4 overflow-hidden bg-[hsl(var(--illustration-surface))] px-4 py-5 sm:px-5">
+        <span className="absolute -right-5 -top-8 size-24 rounded-full border border-brand/15" />
+        <span className="absolute right-16 top-5 size-2 rounded-full bg-brand/25" />
+        <Avatar className="size-14 shrink-0 rounded-xl ring-2 ring-card shadow-[0_8px_20px_hsl(var(--foreground)/0.1)]">
           <AvatarImage src={avatarSrc} alt={displayName} />
           <AvatarFallback className="rounded-xl text-base font-semibold">
             {getNameInitials(displayName)}
           </AvatarFallback>
         </Avatar>
-        <div className="flex flex-col gap-1 min-w-0">
-          <TypographySmall className="font-semibold leading-none truncate block">
+        <div className="relative flex min-w-0 flex-col gap-1">
+          <TypographySmall className="block truncate font-semibold leading-none">
             {displayName}
           </TypographySmall>
           <TypographyMuted className="text-xs truncate">
@@ -62,7 +64,7 @@ export function AccountSection(props: IAccountSectionProps) {
           </TypographyMuted>
           <Badge
             variant="secondary"
-            className="w-fit mt-0.5 text-[10px] capitalize"
+            className="mt-0.5 w-fit border border-brand/15 bg-brand-soft text-[10px] capitalize text-brand-soft-foreground hover:bg-brand-soft"
           >
             {role ?? "—"}
           </Badge>
@@ -78,9 +80,9 @@ export function AccountSection(props: IAccountSectionProps) {
       />
 
       {/* Two-Factor Auth Section */}
-      <div className="flex items-center justify-between gap-4 px-4 py-3">
+      <div className="flex items-center justify-between gap-4 px-4 py-3.5 sm:px-5 tablet-sm:flex-col tablet-sm:items-stretch">
         <div className="flex items-center gap-3 min-w-0">
-          <span className="text-muted-foreground shrink-0 [&>svg]:size-4">
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted/55 text-muted-foreground [&>svg]:size-4">
             <LucideShieldCheck />
           </span>
           <div className="flex flex-col">
@@ -92,9 +94,9 @@ export function AccountSection(props: IAccountSectionProps) {
             </span>
           </div>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex shrink-0 items-center gap-2 tablet-sm:justify-end">
           {isTwoFactorEnabled ? (
-            <Badge className="text-[10px] bg-emerald-500/10 text-emerald-600 border border-emerald-300/40 hover:bg-emerald-500/10">
+            <Badge className="border border-brand/15 bg-brand-soft text-[10px] text-brand hover:bg-brand-soft">
               {t("enabled")}
             </Badge>
           ) : (
@@ -108,13 +110,14 @@ export function AccountSection(props: IAccountSectionProps) {
           <Button
             size="sm"
             variant={isTwoFactorEnabled ? "outline" : "default"}
-            className="shrink-0 text-xs rounded-lg"
+            className="h-9 shrink-0 rounded-xl px-3 text-xs"
             onClick={onToggleTwoFactor}
           >
             {isTwoFactorEnabled ? t("disable") : t("enable")}
           </Button>
         </div>
       </div>
+      <Separator />
 
       {/* Last Login Section */}
       <SettingRow
@@ -131,9 +134,9 @@ export function AccountSection(props: IAccountSectionProps) {
       />
 
       {/* Reset Password Section */}
-      <div className="flex items-center justify-between gap-4 px-4 py-3">
+      <div className="flex items-center justify-between gap-4 px-4 py-3.5 sm:px-5 tablet-sm:flex-col tablet-sm:items-stretch">
         <div className="flex items-center gap-3 min-w-0">
-          <span className="text-muted-foreground shrink-0 [&>svg]:size-4">
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted/55 text-muted-foreground [&>svg]:size-4">
             <LucideKeyRound />
           </span>
           <div className="flex flex-col">
@@ -146,7 +149,7 @@ export function AccountSection(props: IAccountSectionProps) {
         <Button
           size="sm"
           variant="outline"
-          className="shrink-0 text-xs rounded-lg"
+          className="h-9 shrink-0 rounded-xl px-3 text-xs tablet-sm:self-end"
           onClick={onResetPassword}
         >
           {t("reset")}

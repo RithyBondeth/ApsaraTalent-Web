@@ -4,7 +4,6 @@ import {
   googleIcon,
   linkedInIcon,
 } from "@/utils/constants/asset.constant";
-import { StaticImageData } from "next/image";
 
 export const genderConstant: {
   id: number;
@@ -40,7 +39,7 @@ export const platformConstant: {
 export const loginMethodConstant: {
   id: number;
   label: string;
-  icon: StaticImageData;
+  mark: string;
 }[] = [
   { id: 1, label: "Google", icon: googleIcon },
   { id: 2, label: "Facebook", icon: facebookIcon },

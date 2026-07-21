@@ -108,13 +108,13 @@ export default function ResumeEditorPreviewPanel({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex h-full flex-col">
       {/* Top Bar Section */}
-      <div className="flex items-center justify-between gap-2 border-b bg-muted/30 px-2.5 py-2 sm:gap-3 sm:px-4 shrink-0">
+      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border/70 bg-card/80 px-2.5 py-2.5 sm:gap-3 sm:px-4">
         {/* Left Section: Title and Page Count */}
         <div className="flex items-center gap-2 shrink-0">
-          <div className="flex items-center gap-1.5 text-xs font-medium text-foreground sm:text-sm">
-            <Eye size={15} className="text-muted-foreground" />
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground sm:text-sm">
+            <Eye size={15} className="text-brand" />
             {t("resumeCanvas")}
           </div>
           {/* Page-Count Chip Section: Amber once the resume spills past one page */}
@@ -151,7 +151,7 @@ export default function ResumeEditorPreviewPanel({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 sm:h-7 sm:w-7"
+            className="h-8 w-8 rounded-lg sm:h-8 sm:w-8"
             onClick={zoomOut}
             disabled={zoomMultiplier <= RESUME_EDITOR_ZOOM_MIN}
             title={t("zoomOut")}
@@ -162,7 +162,7 @@ export default function ResumeEditorPreviewPanel({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 sm:h-7 sm:w-7"
+            className="h-8 min-w-12 rounded-lg px-1 text-[10px] tabular-nums sm:h-8"
             onClick={zoomFit}
             title={t("resetToFit")}
           >
@@ -172,7 +172,7 @@ export default function ResumeEditorPreviewPanel({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 sm:h-7 sm:w-7"
+            className="h-8 w-8 rounded-lg sm:h-8 sm:w-8"
             onClick={zoomIn}
             disabled={zoomMultiplier >= RESUME_EDITOR_ZOOM_MAX}
             title={t("zoomIn")}
@@ -183,7 +183,7 @@ export default function ResumeEditorPreviewPanel({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 sm:h-7 sm:w-7"
+            className="h-8 w-8 rounded-lg sm:h-8 sm:w-8"
             onClick={zoomFit}
             title={t("fitToWindow")}
           >
@@ -195,12 +195,12 @@ export default function ResumeEditorPreviewPanel({
       {/* Scroll Wrapper Section */}
       <div
         ref={scrollWrapperRef}
-        className="flex-1 overflow-auto bg-zinc-100 dark:bg-zinc-900 flex items-start justify-center p-2.5 sm:p-6"
+        className="flex flex-1 items-start justify-center overflow-auto bg-[hsl(var(--illustration-surface))] p-3 sm:p-7"
         onClick={() => useResumeCanvasEditorStore.getState().clearSelection()}
       >
         {/* Shell Section: Layout dimensions after CSS transform */}
         <div
-          className="relative shadow-2xl shrink-0 bg-white"
+          className="relative shrink-0 bg-white shadow-[0_18px_50px_rgba(38,35,30,0.16)] ring-1 ring-black/5"
           style={{
             width: RESUME_EDITOR_A4_WIDTH * scale,
             height: scaledHeight || "auto",

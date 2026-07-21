@@ -74,7 +74,7 @@ function SectionItem({
       {/* Visibility Toggle Section */}
       <div className="flex items-center gap-2">
         {isVisible ? (
-          <Eye size={14} className="text-primary" />
+          <Eye size={14} className="text-brand" />
         ) : (
           <EyeOff size={14} className="text-muted-foreground" />
         )}
@@ -181,8 +181,8 @@ export function LayoutTab() {
       </DndContext>
 
       {/* Pro Tip Section */}
-      <div className="rounded-xl bg-primary/5 border border-primary/10 p-4">
-        <h5 className="text-xs font-bold text-primary uppercase tracking-widest mb-2">
+      <div className="rounded-xl border border-brand/15 bg-brand-soft/70 p-4">
+        <h5 className="mb-2 text-xs font-bold uppercase tracking-widest text-brand-soft-foreground">
           {t("proTip")}
         </h5>
         <p className="text-xs text-muted-foreground leading-relaxed">

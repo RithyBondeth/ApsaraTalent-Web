@@ -19,9 +19,8 @@ import { AboutSection } from "@/components/setting/about-section";
 import { ResetPasswordDialog } from "@/components/setting/reset-password-dialog";
 import { TwoFactorDialog } from "@/components/setting/two-factor-dialog";
 import { T2FADialogMode } from "@/components/setting/two-factor-dialog/props";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
-import { TypographyP } from "@/components/utils/typography/typography-p";
 import SettingLoadingSkeleton from "@/components/setting/skeleton";
+import { FeaturePageHeader } from "@/components/utils/layout/feature-page-header";
 
 export default function SettingPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -49,17 +48,26 @@ export default function SettingPage() {
   const [twoFactorMode, setTwoFactorMode] = useState<T2FADialogMode>("enable");
 
   // Account helpers
+  const employeeName = [
+    currentUser?.employee?.firstname,
+    currentUser?.employee?.lastname,
+  ]
+    .filter(Boolean)
+    .join(" ");
   const displayName =
-    currentUser?.employee?.username ??
-    currentUser?.company?.name ??
-    currentUser?.email ??
+    employeeName ||
+    currentUser?.company?.name ||
+    currentUser?.employee?.username ||
+    currentUser?.email ||
     "—";
 
   const avatarSrc =
     currentUser?.employee?.avatar ?? currentUser?.company?.avatar ?? undefined;
 
+  const dateLocale = language === "km" ? "km-KH" : "en-US";
+
   const memberSince = currentUser?.createdAt
-    ? new Date(currentUser.createdAt).toLocaleDateString("en-US", {
+    ? new Date(currentUser.createdAt).toLocaleDateString(dateLocale, {
         year: "numeric",
         month: "long",
         day: "numeric",
@@ -67,7 +75,7 @@ export default function SettingPage() {
     : "—";
 
   const lastLogin = currentUser?.lastLoginAt
-    ? new Date(currentUser.lastLoginAt).toLocaleDateString("en-US", {
+    ? new Date(currentUser.lastLoginAt).toLocaleDateString(dateLocale, {
         year: "numeric",
         month: "short",
         day: "numeric",
@@ -133,45 +141,43 @@ export default function SettingPage() {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full max-w-2xl mx-auto flex flex-col gap-8 px-3 py-6 sm:px-5 sm:py-8 animate-page-in">
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 animate-page-in">
       {/* Header Section */}
-      <div className="flex flex-col gap-1">
-        <TypographyH2>{tS("title")}</TypographyH2>
-        <TypographyP className="text-muted-foreground !m-0">
-          {tS("description")}
-        </TypographyP>
+      <FeaturePageHeader title={tS("title")} description={tS("description")} />
+
+      <div className="grid grid-cols-[minmax(0,1.35fr)_minmax(300px,0.8fr)] items-start gap-5 tablet-lg:grid-cols-1">
+        {/* Account and Safety Column Section */}
+        <div className="stagger-list flex min-w-0 flex-col gap-5">
+          <AccountSection
+            displayName={displayName}
+            avatarSrc={avatarSrc}
+            email={currentUser?.email}
+            role={currentUser?.role}
+            isTwoFactorEnabled={currentUser?.isTwoFactorEnabled ?? false}
+            lastLogin={lastLogin}
+            memberSince={memberSince}
+            onResetPassword={() => {
+              setSent(false);
+              setResetDialogOpen(true);
+            }}
+            onToggleTwoFactor={handleToggleTwoFactor}
+          />
+
+          <BlockedUsersSection />
+        </div>
+
+        {/* Preferences and App Information Column Section */}
+        <div className="stagger-list flex min-w-0 flex-col gap-5">
+          <AppearanceSection theme={theme} onThemeChange={handleThemeChange} />
+
+          <LanguageSection
+            language={language}
+            onLanguageChange={handleLanguageChange}
+          />
+
+          <AboutSection />
+        </div>
       </div>
-
-      {/* Appearance Section */}
-      <AppearanceSection theme={theme} onThemeChange={handleThemeChange} />
-
-      {/* Language Section */}
-      <LanguageSection
-        language={language}
-        onLanguageChange={handleLanguageChange}
-      />
-
-      {/* Account Section */}
-      <AccountSection
-        displayName={displayName}
-        avatarSrc={avatarSrc}
-        email={currentUser?.email}
-        role={currentUser?.role}
-        isTwoFactorEnabled={currentUser?.isTwoFactorEnabled ?? false}
-        lastLogin={lastLogin}
-        memberSince={memberSince}
-        onResetPassword={() => {
-          setSent(false);
-          setResetDialogOpen(true);
-        }}
-        onToggleTwoFactor={handleToggleTwoFactor}
-      />
-
-      {/* Blocked Users Section */}
-      <BlockedUsersSection />
-
-      {/* About Section */}
-      <AboutSection />
 
       {/* Two-Factor Auth Dialog Section */}
       <TwoFactorDialog

@@ -31,7 +31,6 @@ import { SkillChips } from "./utils/skill-chip";
 import { Path, PathValue } from "react-hook-form";
 import { RESUME_COLOR } from "@/utils/constants/resume-colors.constant";
 import { ResumeTemplateThemeContext } from "@/hooks/resume/use-resume-template-theme";
-import { RESUME_TEMPLATE_THEMES } from "@/utils/constants/resume-theme.constant";
 import {
   resolveResumeLayoutBlueprint,
   resolveResumeTemplateTheme,
