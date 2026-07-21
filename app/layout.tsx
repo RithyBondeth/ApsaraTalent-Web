@@ -3,7 +3,7 @@ import { LanguageProvider } from "@/components/utils/languages/language-provider
 import { ThemeProvider } from "@/components/utils/themes/theme-provider";
 import { TitleSync } from "@/components/utils/seo/title-sync";
 import type { Metadata } from "next";
-import { Source_Sans_3, Suwannaphum } from "next/font/google";
+import { Kantumruy_Pro, Source_Sans_3, Suwannaphum } from "next/font/google";
 import "./globals.css";
 
 const sourceSans = Source_Sans_3({
@@ -13,11 +13,11 @@ const sourceSans = Source_Sans_3({
   variable: "--font-source-sans",
 });
 
-const suwannaphum = Suwannaphum({
+const kantumruyPro = Kantumruy_Pro({
   subsets: ["khmer"],
-  weight: ["300", "400", "700", "900", "100"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
-  variable: "--font-khmer",
+  variable: "--font-kantumruy",
 });
 
 export const metadata: Metadata = {
@@ -41,7 +41,7 @@ export default function RootLayout({
     /*---------------------------------- Main Layout ----------------------------------*/
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <body
-        className={`${sourceSans.variable} ${suwannaphum.variable} antialiased`}
+        className={`${sourceSans.variable} ${kantumruyPro.variable} antialiased`}
         suppressHydrationWarning
       >
         {/* Language Provider Section */}

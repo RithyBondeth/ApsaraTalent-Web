@@ -99,11 +99,6 @@ export function AuthBrandPanel({
           />
         </div>
       </div>
-
-      {/* Footer Section */}
-      <p className="auth-panel-foot relative z-10 text-[11px] font-medium text-black/40">
-        Apsara Talent · Cambodia
-      </p>
     </aside>
   );
 }
