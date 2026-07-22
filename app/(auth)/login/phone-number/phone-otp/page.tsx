@@ -22,8 +22,9 @@ import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.sto
 import { useGetEmployeeRecommendationsStore } from "@/stores/apis/recommendation/get-employee-recommendations.store";
 import { useGetCompanyRecommendationsStore } from "@/stores/apis/recommendation/get-company-recommendations.store";
 import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-signup-data.store";
+import AuthShell from "@/components/auth/auth-shell";
+import { AuthBackButton } from "@/components/auth/auth-back-button";
 import { toast } from "sonner";
-import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -100,6 +101,12 @@ export default function PhoneOTPPage() {
     }
     return value;
   }, [searchParams]);
+
+  // ── Phone Login Href Function ───────────────────────────────────
+  const phoneLoginHref = useMemo(() => {
+    if (callbackUrl === "/feed") return "/login/phone-number";
+    return `/login/phone-number?callbackUrl=${encodeURIComponent(callbackUrl)}`;
+  }, [callbackUrl]);
 
   // ── Preload User Data Function ────────────────────────────────
   const preloadUserData = useCallback(async () => {
@@ -251,107 +258,109 @@ export default function PhoneOTPPage() {
 
   /* --------------------------------------------- Render UI ---------------------------------------------- */
   return (
-    <div className="min-h-screen w-full flex tablet-md:flex-col">
-      {/* Left Section */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-background p-6 sm:p-10 tablet-md:w-full tablet-md:min-h-0 tablet-md:py-12">
-        <div className="w-full max-w-[440px] flex flex-col gap-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
-          {/* Title Section */}
-          <div className="flex flex-col items-start">
-            <TypographyH2 className="phone-xl:text-2xl">
-              {t("otpTitle")}
-            </TypographyH2>
-            <TypographyMuted className="text-md phone-xl:text-sm">
-              {t("otpSubtitle")}
-            </TypographyMuted>
-          </div>
-
-          {/* Form Section */}
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col items-stretch gap-5"
-          >
-            {/* OTP Input Section */}
-            <Controller
-              name="otp"
-              control={control}
-              defaultValue=""
-              rules={{
-                required: t("otpRequired"),
-                minLength: {
-                  value: 6,
-                  message: t("otpLength"),
-                },
-              }}
-              render={({ field }) => (
-                <div className="flex flex-col items-start gap-3">
-                  <InputOTP
-                    maxLength={6}
-                    value={field.value}
-                    onChange={field.onChange}
-                  >
-                    <InputOTPGroup>
-                      <InputOTPSlot
-                        index={0}
-                        className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
-                      />
-                      <InputOTPSlot
-                        index={1}
-                        className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
-                      />
-                      <InputOTPSlot
-                        index={2}
-                        className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
-                      />
-                    </InputOTPGroup>
-                    <InputOTPSeparator />
-                    <InputOTPGroup>
-                      <InputOTPSlot
-                        index={3}
-                        className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
-                      />
-                      <InputOTPSlot
-                        index={4}
-                        className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
-                      />
-                      <InputOTPSlot
-                        index={5}
-                        className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
-                      />
-                    </InputOTPGroup>
-                  </InputOTP>
-                  <TypographySmall className="text-muted-foreground phone-xl:text-sm">
-                    {t("otpInstructions")}
-                  </TypographySmall>
-                  {errors.otp && (
-                    <ErrorMessage>{errors.otp.message}</ErrorMessage>
-                  )}
-                </div>
-              )}
-            />
-            <Button type="submit">{t("continue")}</Button>
-          </form>
-
-          {/* Resend Code Text Section */}
-          <TypographyMuted className="text-center">
-            {t("didntReceiveCode")}{" "}
-            <TypographySmall className="text-foreground font-medium cursor-pointer">
-              {t("resend")}
-            </TypographySmall>
+    <AuthShell
+      image={phoneOTPSvg}
+      imageAlt={t("otpTitle")}
+      eyebrowKey="otpPanelEyebrow"
+      titleKey="otpPanelTitle"
+      subtitleKey="otpPanelSubtitle"
+    >
+      <div className="auth-stagger flex w-full flex-col gap-7">
+        {/* Title Section */}
+        <div style={{ "--d": "0ms" } as React.CSSProperties}>
+          <TypographyH2 className="phone-xl:text-2xl">
+            {t("otpTitle")}
+          </TypographyH2>
+          <TypographyMuted className="text-md phone-xl:text-sm">
+            {t("otpSubtitle")}
           </TypographyMuted>
         </div>
-      </div>
 
-      {/* Right Section: Image Poster */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-md:hidden">
-        <Image
-          src={phoneOTPSvg}
-          alt="phone-otp"
-          height={undefined}
-          width={600}
-        />
-        <div className="absolute -top-20 -right-20 size-64 rounded-full bg-white/5" />
-        <div className="absolute -bottom-10 -left-10 size-48 rounded-full bg-white/5" />
+        {/* Form Section */}
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col items-stretch gap-5"
+          style={{ "--d": "90ms" } as React.CSSProperties}
+        >
+          {/* OTP Input Section */}
+          <Controller
+            name="otp"
+            control={control}
+            defaultValue=""
+            rules={{
+              required: t("otpRequired"),
+              minLength: {
+                value: 6,
+                message: t("otpLength"),
+              },
+            }}
+            render={({ field }) => (
+              <div className="flex flex-col items-start gap-3">
+                <InputOTP
+                  maxLength={6}
+                  value={field.value}
+                  onChange={field.onChange}
+                >
+                  <InputOTPGroup>
+                    <InputOTPSlot
+                      index={0}
+                      className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
+                    />
+                    <InputOTPSlot
+                      index={1}
+                      className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
+                    />
+                    <InputOTPSlot
+                      index={2}
+                      className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
+                    />
+                  </InputOTPGroup>
+                  <InputOTPSeparator />
+                  <InputOTPGroup>
+                    <InputOTPSlot
+                      index={3}
+                      className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
+                    />
+                    <InputOTPSlot
+                      index={4}
+                      className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
+                    />
+                    <InputOTPSlot
+                      index={5}
+                      className="input-otp-slot !size-12 sm:!size-14 tablet-md:!size-10"
+                    />
+                  </InputOTPGroup>
+                </InputOTP>
+                <TypographySmall className="text-muted-foreground phone-xl:text-sm">
+                  {t("otpInstructions")}
+                </TypographySmall>
+                {errors.otp && (
+                  <ErrorMessage>{errors.otp.message}</ErrorMessage>
+                )}
+              </div>
+            )}
+          />
+          <div className="auth-action-row">
+            <AuthBackButton onClick={() => router.replace(phoneLoginHref)}>
+              {t("back")}
+            </AuthBackButton>
+            <Button type="submit" className="auth-submit h-11">
+              {t("continue")}
+            </Button>
+          </div>
+        </form>
+
+        {/* Resend Code Text Section */}
+        <TypographyMuted
+          className="text-center"
+          style={{ "--d": "150ms" } as React.CSSProperties}
+        >
+          {t("didntReceiveCode")}{" "}
+          <TypographySmall className="text-foreground font-medium cursor-pointer hover:opacity-70 transition-opacity">
+            {t("resend")}
+          </TypographySmall>
+        </TypographyMuted>
       </div>
-    </div>
+    </AuthShell>
   );
 }

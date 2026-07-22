@@ -50,12 +50,14 @@ export default function RootLayout({
         {/* Language Provider Section */}
         <LanguageProvider>
           {/* Theme Provider Section */}
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            {children}
+            {/* Toast Container Section */}
+            <Toaster />
+          </ThemeProvider>
         </LanguageProvider>
         {/* Title Section: Sync document.title on client-side language toggle */}
         <TitleSync />
-        {/* Toast Container Section */}
-        <Toaster />
       </body>
     </html>
   );

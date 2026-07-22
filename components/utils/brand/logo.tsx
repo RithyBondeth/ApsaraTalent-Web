@@ -1,7 +1,6 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { useThemeStore } from "@/stores/themes/theme-store";
 import {
   logo,
   logoBlack,
@@ -25,23 +24,47 @@ export default function LogoComponent({
   className,
   priority = false,
 }: ILogoProps) {
-  /* ---------------------------------- Utils ---------------------------------- */
-  const { theme, systemTheme } = useThemeStore();
-  const resolvedTheme = theme === "system" ? systemTheme : theme;
-  const isDark = resolvedTheme === "dark";
-
-  const logoIcon = isDark ? logoBlack : logo;
-
-  const src = withoutTitle ? logoWithoutTitle : logoIcon;
+  if (withoutTitle) {
+    return (
+      <Image
+        src={logoWithoutTitle}
+        alt="Apsara Talent logo"
+        height={height}
+        width={width}
+        className={cn("h-auto w-auto", className)}
+        priority={priority}
+      />
+    );
+  }
 
   return (
-    <Image
-      src={src}
-      alt="Apsara Talent logo"
-      height={height}
-      width={width}
-      className={cn("h-auto w-auto", className)}
-      priority={priority}
-    />
+    <span
+      role="img"
+      aria-label="Apsara Talent"
+      className={cn(
+        "relative inline-grid aspect-[5/3] overflow-visible",
+        className,
+      )}
+      style={className ? undefined : { width, height }}
+    >
+      <Image
+        src={logo}
+        alt=""
+        fill
+        sizes={`${width}px`}
+        aria-hidden
+        className="object-contain opacity-100 blur-0 transition-[opacity,transform,filter] duration-500 ease-out dark:scale-[0.98] dark:opacity-0 dark:blur-[2px]"
+        priority={priority}
+      />
+      <Image
+        src={logoBlack}
+        alt=""
+        fill
+        sizes={`${width}px`}
+        aria-hidden
+        className="scale-[1.08] object-contain opacity-0 blur-[2px] transition-[opacity,transform,filter] duration-500 ease-out dark:scale-[1.11] dark:opacity-100 dark:blur-0"
+        priority={priority}
+      />
+    </span>
   );
 }

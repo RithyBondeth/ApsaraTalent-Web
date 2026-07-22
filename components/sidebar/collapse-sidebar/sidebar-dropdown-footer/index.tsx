@@ -13,13 +13,7 @@ import {
   LucideUser,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { LogoutConfirmationDialog } from "@/components/auth/logout-confirmation-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,7 +29,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useLoginStore } from "@/stores/apis/auth/login.store";
 import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
 import { useGithubLoginStore } from "@/stores/apis/auth/socials/github-login.store";
@@ -109,8 +102,6 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
   /* --------------------------------- Methods --------------------------------- */
   // ── Handle Logout ─────────────────────────────────────────
   const handleLogout = async () => {
-    setOpenLogoutDialog(false);
-
     // Clear all potential authentication tokens from stores
     normalLogout();
     otpLogout();
@@ -264,23 +255,15 @@ export function SidebarDropdownFooter({ user }: ISidebarDropdownFooterProps) {
       </SidebarMenuItem>
 
       {/* Logout Dialog Section */}
-      <Dialog open={openLogoutDialog} onOpenChange={setOpenLogoutDialog}>
-        <DialogContent>
-          <DialogTitle>{t("confirmLogout")}</DialogTitle>
-          <TypographySmall>{t("logoutQuestion")}</TypographySmall>
-          <DialogFooter>
-            <Button
-              variant={"outline"}
-              onClick={() => setOpenLogoutDialog(false)}
-            >
-              {t("cancel")}
-            </Button>
-            <Button variant={"destructive"} onClick={handleLogout}>
-              {t("logout")}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <LogoutConfirmationDialog
+        open={openLogoutDialog}
+        onOpenChange={setOpenLogoutDialog}
+        onConfirm={handleLogout}
+        title={t("confirmLogout")}
+        description={t("logoutQuestion")}
+        cancelLabel={t("cancel")}
+        confirmLabel={t("logout")}
+      />
     </SidebarMenu>
   );
 }

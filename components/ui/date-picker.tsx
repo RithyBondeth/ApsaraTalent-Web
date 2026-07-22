@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button, type ButtonProps } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -11,14 +11,16 @@ import { cn } from "@/lib/utils";
 import { enUS, km } from "date-fns/locale";
 import { format, isValid } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import * as React from "react";
 
-interface DatePickerProps {
+interface DatePickerProps extends Omit<
+  ButtonProps,
+  "value" | "defaultValue" | "onChange"
+> {
   date: Date | undefined;
   onDateChange: (date: Date | undefined) => void;
   placeholder?: string;
-  className?: string;
-  disabled?: boolean;
   popoverSide?: "top" | "right" | "bottom" | "left";
   dateFormat?: string;
 }
@@ -26,42 +28,59 @@ interface DatePickerProps {
 export function DatePicker({
   date,
   onDateChange,
-  placeholder = "Pick a date",
+  placeholder,
   className = "",
   disabled = false,
   popoverSide = "bottom",
   dateFormat = "PPP",
+  ...triggerProps
 }: DatePickerProps) {
-  const locale = useLocale() === "km" ? km : enUS;
+  const localeCode = useLocale();
+  const t = useTranslations("calendar");
+  const locale = localeCode === "km" ? km : enUS;
+  const [open, setOpen] = React.useState(false);
   const isValidDate = date instanceof Date && isValid(date);
+  const resolvedPlaceholder = placeholder ?? t("selectDate");
+
+  const handleSelect = (selectedDate: Date | undefined) => {
+    onDateChange(selectedDate);
+    if (selectedDate) setOpen(false);
+  };
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           type="button"
           variant="outline"
           className={cn(
-            "w-full justify-between border rounded-md px-4 py-6 text-left text-muted-foreground bg-primary-foreground",
+            "w-full justify-between border rounded-lg px-4 py-6 text-left text-muted-foreground bg-primary-foreground",
             !isValidDate && "text-muted-foreground",
             disabled && "opacity-50 cursor-not-allowed",
             className,
           )}
           disabled={disabled}
+          {...triggerProps}
         >
           {isValidDate ? (
             format(date, dateFormat, { locale })
           ) : (
-            <span>{placeholder}</span>
+            <span>{resolvedPlaceholder}</span>
           )}
           <CalendarIcon className="ml-auto h-5 w-5 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start" side={popoverSide}>
+      <PopoverContent
+        className="auth-calendar-popover w-[var(--radix-popover-trigger-width)] max-w-[calc(100vw-1.5rem)] min-w-[17.5rem] overflow-hidden p-0"
+        align="start"
+        side={popoverSide}
+        sideOffset={8}
+        aria-label={t("selectDate")}
+      >
         <Calendar
           mode="single"
           selected={isValidDate ? date : undefined}
-          onSelect={onDateChange}
+          onSelect={handleSelect}
           initialFocus
           disabled={disabled}
           fromYear={1900}

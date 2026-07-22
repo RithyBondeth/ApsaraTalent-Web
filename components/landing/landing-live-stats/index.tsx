@@ -49,10 +49,10 @@ export default function LandingLiveStats() {
 
   /* ----------------------------------- Render UI ----------------------------------- */
   return (
-    <div className="flex items-center gap-4 sm:gap-6 2xl:gap-8 pt-3">
+    <div className="flex items-center gap-4 border-t border-border pt-5 sm:gap-7 2xl:gap-9">
       {/* Number of User Section */}
       <div className="flex flex-col">
-        <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent dark:from-amber-400 dark:to-amber-300">
+        <span className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
           <StatValue value={users} loaded={loaded} />
         </span>
         <TypographyMuted className="text-[10px] sm:text-xs">
@@ -60,11 +60,11 @@ export default function LandingLiveStats() {
         </TypographyMuted>
       </div>
 
-      <div className="h-6 sm:h-8 w-px bg-amber-300/30 dark:bg-amber-500/20" />
+      <div className="h-7 w-px bg-border sm:h-8" />
 
       {/* Number of Company Section */}
       <div className="flex flex-col">
-        <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent dark:from-amber-400 dark:to-amber-300">
+        <span className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
           <StatValue value={companies} loaded={loaded} />
         </span>
         <TypographyMuted className="text-[10px] sm:text-xs">
@@ -72,11 +72,11 @@ export default function LandingLiveStats() {
         </TypographyMuted>
       </div>
 
-      <div className="h-6 sm:h-8 w-px bg-amber-300/30 dark:bg-amber-500/20" />
+      <div className="h-7 w-px bg-border sm:h-8" />
 
       {/* Number of Employee Section */}
       <div className="flex flex-col">
-        <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent dark:from-amber-400 dark:to-amber-300">
+        <span className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
           <StatValue value={employees} loaded={loaded} />
         </span>
         <TypographyMuted className="text-[10px] sm:text-xs">

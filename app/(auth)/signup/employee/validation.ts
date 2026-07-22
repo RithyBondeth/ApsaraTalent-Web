@@ -44,16 +44,6 @@ export const makeProfessionStepSchema = (m: {
         .max(1000, m.fieldTooLong("Description", 1000)),
       workMode: z.enum(["remote", "on_site", "hybrid", "flexible"]).optional(),
       noticePeriod: z.enum(["immediate", "2_weeks", "1_month"]).optional(),
-      portfolioUrl: z
-        .string()
-        .url({ message: "Please enter a valid URL (e.g. https://...)" })
-        .optional()
-        .or(z.literal("")),
-      linkedinUrl: z
-        .string()
-        .url({ message: "Please enter a valid URL (e.g. https://...)" })
-        .optional()
-        .or(z.literal("")),
       languages: z.array(z.string()).optional().default([]),
       expectedSalaryCurrency: z.string().optional().default("USD"),
       expectedSalaryMin: z.number().positive().optional(),

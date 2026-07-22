@@ -153,15 +153,17 @@ export default function CompanyCareerScopeStepForm({
       )}
 
       {/* Pagination Section */}
-      <Pagination className="mt-5">
-        <PaginationContent>
+      <Pagination className="mt-2">
+        <PaginationContent className="w-full justify-between sm:w-auto sm:justify-center">
           <PaginationItem>
             <PaginationLink
+              size="default"
+              aria-label={tCommon("previous")}
               onClick={() => goToPage(Math.max(currentPage - 1, 1))}
-              className={`gap-1 pl-2.5 ${currentPage === 1 ? "pointer-events-none opacity-50" : ""}`}
+              className={`h-10 w-10 cursor-pointer gap-1 px-0 sm:w-auto sm:px-3 ${currentPage === 1 ? "pointer-events-none opacity-50" : ""}`}
             >
               <ChevronLeft className="h-4 w-4" />
-              <span>{tCommon("previous")}</span>
+              <span className="hidden sm:inline">{tCommon("previous")}</span>
             </PaginationLink>
           </PaginationItem>
 
@@ -173,6 +175,8 @@ export default function CompanyCareerScopeStepForm({
                 <PaginationLink
                   isActive={currentPage === page}
                   onClick={() => goToPage(Number(page))}
+                  aria-label={`${page}`}
+                  className="h-10 w-10 cursor-pointer"
                 >
                   {page}
                 </PaginationLink>
@@ -182,10 +186,12 @@ export default function CompanyCareerScopeStepForm({
 
           <PaginationItem>
             <PaginationLink
+              size="default"
+              aria-label={tCommon("next")}
               onClick={() => goToPage(Math.min(currentPage + 1, totalPages))}
-              className={`gap-1 pr-2.5 ${currentPage === totalPages ? "pointer-events-none opacity-50" : ""}`}
+              className={`h-10 w-10 cursor-pointer gap-1 px-0 sm:w-auto sm:px-3 ${currentPage === totalPages ? "pointer-events-none opacity-50" : ""}`}
             >
-              <span>{tCommon("next")}</span>
+              <span className="hidden sm:inline">{tCommon("next")}</span>
               <ChevronRight className="h-4 w-4" />
             </PaginationLink>
           </PaginationItem>

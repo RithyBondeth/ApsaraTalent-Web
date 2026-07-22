@@ -27,6 +27,8 @@ interface CreatableComboboxProps {
   placeholder?: string;
   emptyText?: string;
   disabled?: boolean;
+  icon?: React.ReactNode;
+  required?: boolean;
 }
 
 export function CreatableCombobox({
@@ -36,6 +38,8 @@ export function CreatableCombobox({
   placeholder = "Select or type...",
   emptyText = "Type to create...",
   disabled = false,
+  icon,
+  required = false,
 }: CreatableComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
@@ -53,16 +57,27 @@ export function CreatableCombobox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
+          aria-required={required}
           disabled={disabled}
           className="w-full justify-between h-12 text-muted-foreground font-normal overflow-hidden"
         >
-          <span className="truncate">
-            {selectedOption ? selectedOption.label : value || placeholder}
+          <span className="flex min-w-0 items-center gap-2">
+            {icon && (
+              <span className="shrink-0 text-muted-foreground [&_svg]:size-[18px]">
+                {icon}
+              </span>
+            )}
+            <span className="truncate">
+              {selectedOption ? selectedOption.label : value || placeholder}
+            </span>
           </span>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+      <PopoverContent
+        align="start"
+        className="w-[var(--radix-popover-trigger-width)] p-0"
+      >
         <Command>
           <CommandInput
             placeholder={placeholder}

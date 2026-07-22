@@ -70,7 +70,7 @@ export default function TopNavbar() {
   const queryInterviews = useInterviewStore((s) => s.queryInterviews);
 
   /* --------------------------------- Effects --------------------------------- */
-  // Fetch Current User
+  // ── Fetch Current User ───────────────────────
   const { isEmployee, isCompany } = useFetchOnce({
     cacheKey: "navbar-component",
     onEmployeeFetch: (id) => {
@@ -84,12 +84,13 @@ export default function TopNavbar() {
       queryInterviews(id, USER_ROLE.COMPANY);
     },
   });
-  // Fetch Unread Notification
-  useEffect(() => {
-    void queryUnreadCount();
-  }, [queryUnreadCount]);
 
-  // Set Mounted
+  // ── Fetch Unread Notification ────────────────
+  useEffect(() => {
+    if (user) void queryUnreadCount();
+  }, [queryUnreadCount, user]);
+
+  // ── Set Mounted ──────────────────────────────
   useEffect(() => setMounted(true), []);
 
   /* --------------------------------- Methods --------------------------------- */
@@ -193,33 +194,47 @@ export default function TopNavbar() {
     (i) => !MOBILE_PRIMARY_URLS.includes(i.url),
   );
 
+  // ──── Is More Active ──────────────────────────────────────────────────
+  const isMoreActive =
+    moreItems.some((item) => isActive(item.url)) ||
+    (isEmployee && isActive("/resume-builder"));
+
+  // ──── More Badge Count ────────────────────────────────────────────────
+  const moreBadgeCount = moreItems.reduce(
+    (total, item) => total + getBadgeCount(item.url),
+    0,
+  );
+
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <>
       {/* Sticky Top Navbar Section */}
-      <nav className="sticky top-0 z-50 w-full">
-        <div className="border-b border-border/40 bg-background/85 backdrop-blur-xl shadow-[0_1px_0_hsl(var(--border)/0.3),0_4px_24px_hsl(var(--foreground)/0.05)]">
+      <nav
+        aria-label={`${t("navigationGroup")} — Apsara Talent`}
+        className="sticky top-0 z-50 w-full"
+      >
+        <div className="app-top-navbar relative border-b border-border bg-background/92 backdrop-blur-xl">
           <div
-            className="mx-auto flex h-14 max-w-screen-2xl items-center justify-between gap-2 px-3 sm:gap-4 sm:px-4 lg:px-6"
+            className="relative mx-auto flex h-[60px] max-w-screen-2xl items-center justify-between px-3 sm:px-4 lg:h-16 lg:px-5"
             style={{ paddingTop: "env(safe-area-inset-top)" }}
           >
             {/* Logo Section */}
             <Link
               href="/feed"
               prefetch={true}
-              className="flex shrink-0 items-center rounded-lg px-2 py-1.5 transition-colors hover:bg-accent"
+              aria-label="Apsara Talent"
+              className="group flex h-full shrink-0 items-center border-x border-transparent px-1 transition-colors hover:border-border hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:px-2 lg:min-w-[96px] lg:justify-center"
             >
               <LogoComponent
-                withoutTitle
                 priority
-                height={36}
-                width={36}
-                className="h-9 w-auto"
+                height={48}
+                width={80}
+                className="h-12 w-20 transition-transform duration-300 group-hover:-translate-y-0.5"
               />
             </Link>
 
             {/* Desktop Navigation Section */}
-            <div className="hidden flex-1 items-center justify-center gap-0.5 lg:flex">
+            <div className="hidden min-w-0 flex-1 items-center justify-center gap-1 px-3 lg:flex">
               {sidebarList.map((item) => (
                 <DesktopNavItem
                   key={item.url}
@@ -242,7 +257,7 @@ export default function TopNavbar() {
             </div>
 
             {/* Right Section: User Menu */}
-            <div className="flex shrink-0 items-center gap-1">
+            <div className="flex shrink-0 items-center border-l border-border/70 pl-2 lg:min-w-[156px] lg:justify-end">
               {loading || !user ? (
                 <NavbarUserMenuSkeleton />
               ) : (
@@ -254,11 +269,12 @@ export default function TopNavbar() {
       </nav>
 
       {/* Mobile Bottom Tab Bar Section */}
-      <div
-        className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/40 bg-background/85 backdrop-blur-xl shadow-[0_-1px_0_hsl(var(--border)/0.3),0_-4px_24px_hsl(var(--foreground)/0.05)] lg:hidden"
+      <nav
+        aria-label={t("navigationGroup")}
+        className="app-mobile-navbar fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/94 backdrop-blur-xl lg:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
-        <div className="flex h-16 items-stretch justify-around">
+        <div className="mx-auto flex h-[68px] max-w-xl items-stretch justify-around">
           {mobilePrimaryItems.map((item) => (
             <MobileTabItem
               key={item.url}
@@ -273,15 +289,40 @@ export default function TopNavbar() {
           {/* More Sheet Section */}
           <Sheet open={moreOpen} onOpenChange={setMoreOpen}>
             <SheetTrigger asChild>
-              <button className="relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2">
-                <span className="flex flex-col items-center gap-0.5">
-                  <span className="flex h-7 w-7 items-center justify-center">
+              <button
+                aria-label={t("more")}
+                className="group relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 px-1 py-2 text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+              >
+                <span
+                  aria-hidden="true"
+                  className={`absolute left-1/2 top-0 h-[3px] -translate-x-1/2 bg-foreground transition-[width,opacity] duration-200 ${isMoreActive ? "w-8 opacity-100" : "w-0 opacity-0"}`}
+                />
+                <span className="flex flex-col items-center gap-1">
+                  <span
+                    className={`relative flex h-8 w-9 items-center justify-center border transition-[background-color,border-color,color,transform] duration-200 ${
+                      isMoreActive
+                        ? "border-foreground bg-foreground text-background shadow-[2px_2px_0_hsl(var(--foreground)/0.12)]"
+                        : "border-transparent group-hover:border-border group-hover:bg-muted/60 group-active:translate-y-px"
+                    }`}
+                  >
                     <MoreHorizontal
-                      className="size-5 text-muted-foreground"
-                      strokeWidth={1.7}
+                      className="size-[18px]"
+                      strokeWidth={isMoreActive ? 2.3 : 1.7}
                     />
+                    <span className="sr-only">{t("more")}</span>
+                    {moreBadgeCount > 0 && (
+                      <span className="absolute -right-2 -top-2 flex h-[17px] min-w-[17px] items-center justify-center border border-background bg-destructive px-1 text-[9px] font-extrabold leading-none text-destructive-foreground shadow-[1px_1px_0_hsl(var(--foreground)/0.18)]">
+                        {moreBadgeCount > 99 ? "99+" : moreBadgeCount}
+                      </span>
+                    )}
                   </span>
-                  <span className="text-[10px] font-medium leading-none text-muted-foreground">
+                  <span
+                    className={`max-w-[4.5rem] truncate text-[10px] leading-none ${
+                      isMoreActive
+                        ? "font-bold text-foreground"
+                        : "font-medium text-muted-foreground"
+                    }`}
+                  >
                     {t("more")}
                   </span>
                 </span>
@@ -289,13 +330,18 @@ export default function TopNavbar() {
             </SheetTrigger>
             <SheetContent
               side="bottom"
-              className="rounded-t-3xl"
+              className="max-h-[76dvh] overflow-y-auto border-t border-foreground/20 p-0 [&>button]:rounded-none [&>button]:border [&>button]:border-border [&>button]:p-2"
               style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
             >
-              <SheetTitle className="mb-5 text-base font-bold">
-                {t("more")}
-              </SheetTitle>
-              <div className="grid grid-cols-3 gap-3 pb-4">
+              <div className="border-b border-border px-5 py-4 pr-14">
+                <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+                  Apsara Talent
+                </p>
+                <SheetTitle className="text-lg font-bold tracking-tight">
+                  {t("navigationGroup")}
+                </SheetTitle>
+              </div>
+              <div className="grid grid-cols-2 gap-2 p-3 sm:grid-cols-3 sm:p-4">
                 {moreItems.map((item) => (
                   <MoreSheetItem
                     key={item.url}
@@ -321,7 +367,7 @@ export default function TopNavbar() {
             </SheetContent>
           </Sheet>
         </div>
-      </div>
+      </nav>
     </>
   );
 }

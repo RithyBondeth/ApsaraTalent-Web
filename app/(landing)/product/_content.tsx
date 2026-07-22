@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import {
-  LucideArrowLeft,
   LucideSmartphone,
   LucideGlobe,
   LucideBrain,
@@ -15,71 +13,16 @@ import {
   LucideDownload,
   LucideMonitor,
 } from "lucide-react";
-import { TypographyH1 } from "@/components/utils/typography/typography-h1";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyP } from "@/components/utils/typography/typography-p";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
+import {
+  StaticBullet,
+  StaticCard,
+  StaticNote,
+  StaticPageArtworkSlot,
+  StaticPageShell,
+  StaticSection,
+} from "@/components/static-content/static-page";
 import { useLanguageStore } from "@/stores/languages/language-store";
-
-/* -------------------------- Sub Components -------------------------- */
-function Section({
-  id,
-  icon,
-  title,
-  children,
-}: {
-  id: string;
-  icon: React.ReactNode;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section id={id} className="flex flex-col gap-4 scroll-mt-8">
-      <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center size-9 rounded-xl bg-primary/10 border border-primary/20 shrink-0">
-          <span className="text-primary [&>svg]:size-4">{icon}</span>
-        </div>
-        <TypographyH2 className="text-lg font-bold tracking-tight">
-          {title}
-        </TypographyH2>
-      </div>
-      <div className="flex flex-col gap-3 text-sm text-muted-foreground leading-relaxed pl-0">
-        {children}
-      </div>
-    </section>
-  );
-}
-
-function Bullet({ children }: { children: React.ReactNode }) {
-  return (
-    <li className="flex items-start gap-2">
-      <span className="mt-1.5 size-1.5 rounded-full bg-primary/60 shrink-0" />
-      <span>{children}</span>
-    </li>
-  );
-}
-
-function FeatureCard({
-  icon,
-  title,
-  description,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="flex flex-col gap-2 rounded-xl border border-border/60 bg-card/50 p-4">
-      <div className="flex items-center gap-2.5">
-        <span className="text-primary [&>svg]:size-4">{icon}</span>
-        <span className="text-sm font-semibold">{title}</span>
-      </div>
-      <span className="text-xs text-muted-foreground leading-relaxed">
-        {description}
-      </span>
-    </div>
-  );
-}
 
 /* -------------------------- Content & Data -------------------------- */
 const content = {
@@ -270,112 +213,77 @@ export function ProductContent() {
 
   /* --------------------------------- Render UI --------------------------------- */
   return (
-    <div className="min-h-screen bg-background">
-      {/* Top Navigation Section */}
-      <header className="sticky top-0 z-10 border-b border-border/60 bg-background/95 backdrop-blur-sm">
-        <div className="max-w-5xl mx-auto flex items-center gap-4 px-4 py-3 sm:px-6">
-          <Link
-            href="/"
-            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <LucideArrowLeft className="size-3.5" />
-            {t.back}
-          </Link>
-          <span className="text-border">|</span>
-          <span className="text-sm font-semibold">{t.pageTitle}</span>
-        </div>
-      </header>
-
-      <div className="max-w-5xl mx-auto px-4 py-10 sm:px-6 lg:flex lg:gap-12">
-        {/* Sticky TOC Sidebar (Desktop) Section */}
-        <aside className="hidden lg:block w-56 shrink-0">
-          <nav className="sticky top-20 flex flex-col gap-2">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-              {t.tocHeading}
-            </span>
-            {t.toc.map((item) => (
-              <a
-                key={item.id}
-                href={`#${item.id}`}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors py-0.5"
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
-        </aside>
-
-        {/* Main Content Section */}
-        <main className="flex-1 flex flex-col gap-10 min-w-0">
-          {/* Hero Header Section */}
-          <div className="flex flex-col gap-4">
-            <TypographyH1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-              {t.pageTitle}
-            </TypographyH1>
-            <TypographyP className="text-muted-foreground max-w-2xl">
-              {t.subtitle}
-            </TypographyP>
-          </div>
-
+    <StaticPageShell
+      pageNumber="02"
+      title={t.pageTitle}
+      subtitle={t.subtitle}
+      tocHeading={t.tocHeading}
+      toc={t.toc}
+      icon={<LucideSmartphone />}
+      heroVisual={
+        <StaticPageArtworkSlot
+          icon={<LucideSmartphone />}
+          label={t.pageTitle}
+        />
+      }
+    >
           {/* Mobile App Section */}
-          <Section
+          <StaticSection
             id="mobile-app"
+            number="01"
             icon={<LucideSmartphone />}
             title={t.mobileTitle}
           >
             <TypographyP>{t.mobileIntro}</TypographyP>
             <ul className="flex flex-col gap-2 mt-1">
               {t.mobileBullets.map((b, i) => (
-                <Bullet key={i}>{b}</Bullet>
+                <StaticBullet key={i}>{b}</StaticBullet>
               ))}
             </ul>
-            <div className="mt-2 flex items-center gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
-              <LucideDownload className="size-4 text-primary shrink-0" />
-              <TypographySmall className="text-primary font-medium">
-                {t.mobileDownload}
-              </TypographySmall>
-            </div>
-          </Section>
+            <StaticNote icon={<LucideDownload />}>{t.mobileDownload}</StaticNote>
+          </StaticSection>
 
           {/* Web Platform Section */}
-          <Section
+          <StaticSection
             id="web-platform"
+            number="02"
             icon={<LucideMonitor />}
             title={t.webTitle}
           >
             <TypographyP>{t.webIntro}</TypographyP>
             <ul className="flex flex-col gap-2 mt-1">
               {t.webBullets.map((b, i) => (
-                <Bullet key={i}>{b}</Bullet>
+                <StaticBullet key={i}>{b}</StaticBullet>
               ))}
             </ul>
-          </Section>
+          </StaticSection>
 
           {/* Apsara Agentic AI Section */}
-          <Section id="agentic-ai" icon={<LucideBrain />} title={t.aiTitle}>
+          <StaticSection
+            id="agentic-ai"
+            number="03"
+            icon={<LucideBrain />}
+            title={t.aiTitle}
+          >
             <TypographyP>{t.aiIntro}</TypographyP>
             <ul className="flex flex-col gap-2 mt-1">
               {t.aiBullets.map((b, i) => (
-                <Bullet key={i}>{b}</Bullet>
+                <StaticBullet key={i}>{b}</StaticBullet>
               ))}
             </ul>
-            <div className="mt-2 flex items-center gap-3 rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3">
-              <LucideSparkles className="size-4 text-amber-500 shrink-0" />
-              <TypographySmall className="text-amber-600 dark:text-amber-400 font-medium">
-                {t.aiNote}
-              </TypographySmall>
-            </div>
-          </Section>
+            <StaticNote icon={<LucideSparkles />}>{t.aiNote}</StaticNote>
+          </StaticSection>
 
           {/* Key Features Grid Section */}
-          <Section
+          <StaticSection
             id="key-features"
+            number="04"
             icon={<LucideGlobe />}
             title={t.featuresTitle}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
               {t.features.map((f, i) => (
-                <FeatureCard
+                <StaticCard
                   key={i}
                   icon={featureIcons[i]}
                   title={f.title}
@@ -383,9 +291,7 @@ export function ProductContent() {
                 />
               ))}
             </div>
-          </Section>
-        </main>
-      </div>
-    </div>
+          </StaticSection>
+    </StaticPageShell>
   );
 }

@@ -29,9 +29,9 @@ export const MemoEmployeeFeedCard = React.memo(function EmployeeFeedCard({
     >
       {/* Recommended Badge Section */}
       {isRecommended && (
-        <div className="flex items-center gap-1 mb-1.5 px-1">
-          <Sparkles className="size-3 text-primary" />
-          <span className="text-[10px] font-semibold text-primary">
+        <div className="mb-2 flex items-center gap-1.5 border-l-2 border-foreground pl-2">
+          <Sparkles className="size-3 text-foreground" />
+          <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
             {t("recommended")}
           </span>
         </div>

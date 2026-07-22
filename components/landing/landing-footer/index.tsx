@@ -1,5 +1,6 @@
 "use client";
 
+import { GridRunners } from "@/components/ui/grid-runners";
 import LogoComponent from "@/components/utils/brand/logo";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import Link from "next/link";
@@ -11,21 +12,25 @@ export default function LandingFooter() {
 
   /* -------------------------------- Render UI ------------------------------- */
   return (
-    <footer className="relative border-t border-border/60 bg-card/30">
-      {/* Dotted Background Section */}
-      <div className="pointer-events-none absolute inset-0 opacity-[0.03] dark:opacity-[0.06] [background-image:radial-gradient(circle,hsl(var(--foreground))_1px,transparent_1px)] [background-size:24px_24px]" />
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-8 py-10 sm:py-12 md:py-16">
-        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-10">
+    <footer className="relative border-t border-border bg-background">
+      {/* Grid Background Section */}
+      <div className="landing-grid pointer-events-none absolute inset-0" />
+      <GridRunners
+        className="landing-grid-runners opacity-35"
+        density="quiet"
+      />
+      <div className="relative mx-auto max-w-7xl border-x border-border px-6 py-12 sm:px-10 sm:py-16 lg:px-14">
+        <div className="flex flex-col gap-12 md:flex-row md:items-start md:justify-between">
           {/* Brand Section */}
           <div className="flex flex-col gap-3 max-w-xs">
-            <LogoComponent className="!h-14 w-auto self-start" />
+            <LogoComponent className="!h-12 w-auto self-start" />
             <TypographyMuted className="!text-xs !leading-relaxed">
-              {t("angkorWatDescription")}
+              {t("matchVisualDescription")}
             </TypographyMuted>
           </div>
 
           {/* Links Section */}
-          <div className="flex flex-wrap gap-8 sm:gap-12 md:gap-16">
+          <div className="grid grid-cols-2 gap-x-12 gap-y-10 sm:grid-cols-3 md:gap-x-16">
             {/* Platform Section */}
             <div className="flex flex-col gap-3">
               <span className="text-sm font-semibold">
@@ -86,11 +91,14 @@ export default function LandingFooter() {
         </div>
 
         {/* Bottom Bar Section */}
-        <div className="mt-10 pt-6 border-t border-border/40">
-          <TypographyMuted className="!text-xs text-center">
+        <div className="mt-14 flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <TypographyMuted className="!text-xs">
             &copy; {new Date().getFullYear()} Apsara Talent.{" "}
             {t("footerAllRightsReserved")}
           </TypographyMuted>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            Apsara Talent · Cambodia
+          </span>
         </div>
       </div>
     </footer>

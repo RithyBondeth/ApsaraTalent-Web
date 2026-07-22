@@ -1,42 +1,90 @@
 "use client";
 
-import { CircleCheck, Info, OctagonX, TriangleAlert } from "lucide-react";
+import {
+  CircleCheck,
+  Info,
+  LoaderCircle,
+  OctagonX,
+  TriangleAlert,
+  X,
+} from "lucide-react";
 import { useTheme } from "next-themes";
+import type { ComponentProps } from "react";
 import { Toaster as Sonner } from "sonner";
-import ApsaraLoadingSpinner from "@/components/utils/feedback/apsara-loading-spinner";
 
-type ToasterProps = React.ComponentProps<typeof Sonner>;
+type ToasterProps = ComponentProps<typeof Sonner>;
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "system" } = useTheme();
+  const { resolvedTheme, theme = "system" } = useTheme();
+  const statusIconClassName = "apsara-toast-status-icon";
 
   return (
     <Sonner
-      theme={theme as ToasterProps["theme"]}
-      className="toaster group"
+      {...props}
+      theme={
+        (props.theme ?? resolvedTheme ?? theme) as ToasterProps["theme"]
+      }
+      position={props.position ?? "bottom-right"}
+      expand={props.expand ?? true}
+      visibleToasts={props.visibleToasts ?? 4}
+      duration={props.duration ?? 4500}
+      gap={props.gap ?? 10}
+      closeButton={props.closeButton ?? true}
+      richColors={props.richColors ?? false}
+      dir={props.dir ?? "auto"}
+      offset={props.offset ?? { right: 20, bottom: 20 }}
+      mobileOffset={props.mobileOffset ?? 12}
+      swipeDirections={props.swipeDirections ?? ["right", "bottom"]}
+      containerAriaLabel={props.containerAriaLabel ?? "Notifications"}
+      className={["apsara-toaster", props.className]
+        .filter(Boolean)
+        .join(" ")}
       icons={{
-        success: <CircleCheck className="h-4 w-4 text-emerald-500" />,
-        info: <Info className="h-4 w-4 text-blue-500" />,
-        warning: <TriangleAlert className="h-4 w-4 text-amber-500" />,
-        error: <OctagonX className="h-4 w-4 text-destructive" />,
-        loading: <ApsaraLoadingSpinner size={32} loop />,
+        success: (
+          <CircleCheck aria-hidden className={statusIconClassName} />
+        ),
+        info: <Info aria-hidden className={statusIconClassName} />,
+        warning: (
+          <TriangleAlert aria-hidden className={statusIconClassName} />
+        ),
+        error: <OctagonX aria-hidden className={statusIconClassName} />,
+        loading: (
+          <LoaderCircle
+            aria-hidden
+            className={`${statusIconClassName} apsara-toast-spinner`}
+          />
+        ),
+        close: <X aria-hidden className="apsara-toast-close-icon" />,
+        ...props.icons,
       }}
       style={{
         fontFamily:
-          "var(--font-roboto-slab), var(--font-koh-santepheap), sans-serif",
+          "var(--font-ubuntu), var(--font-preahvihear), sans-serif",
+        ...props.style,
       }}
       toastOptions={{
+        unstyled: true,
+        closeButton: true,
+        ...props.toastOptions,
         classNames: {
-          toast:
-            "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
-          description: "group-[.toast]:text-muted-foreground",
-          actionButton:
-            "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
-          cancelButton:
-            "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
+          toast: "apsara-toast",
+          title: "apsara-toast-title",
+          description: "apsara-toast-description",
+          content: "apsara-toast-content",
+          icon: "apsara-toast-icon",
+          loader: "apsara-toast-loader",
+          actionButton: "apsara-toast-action",
+          cancelButton: "apsara-toast-cancel",
+          closeButton: "apsara-toast-close",
+          success: "apsara-toast-success",
+          info: "apsara-toast-info",
+          warning: "apsara-toast-warning",
+          error: "apsara-toast-error",
+          loading: "apsara-toast-loading",
+          default: "apsara-toast-default",
+          ...props.toastOptions?.classNames,
         },
       }}
-      {...props}
     />
   );
 };

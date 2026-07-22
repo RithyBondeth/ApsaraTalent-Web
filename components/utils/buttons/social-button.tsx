@@ -29,17 +29,22 @@ export default function SocialButton(props: ISocialButtonProps) {
       className={cn(props.className, "py-5 rounded-md")}
       onClick={props.onClick}
     >
-      {/* Social Image Section */}
-      <Image
-        src={props.image}
-        alt="social"
-        height={30}
-        width={30}
-        className="rounded-full"
-      />
+      <span className="grid w-full max-w-36 grid-cols-[2rem_minmax(0,1fr)] items-center gap-3 text-left">
+        {/* Social Image Section */}
+        <span className="auth-social-icon grid size-8 shrink-0 place-items-center overflow-hidden rounded-full border border-border bg-white p-1">
+          <Image
+            src={props.image}
+            alt=""
+            aria-hidden="true"
+            height={28}
+            width={28}
+            className="size-full rounded-full object-contain [clip-path:circle(50%)]"
+          />
+        </span>
 
-      {/* Social Label Section */}
-      <TypographyP>{props.label}</TypographyP>
+        {/* Social Label Section */}
+        <TypographyP className="min-w-0 text-left">{props.label}</TypographyP>
+      </span>
     </Button>
   );
 }

@@ -1,18 +1,21 @@
 import { getRandomBadgeColor } from "@/utils/functions/ui";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 
-/* ----------------------------------- Helper ---------------------------------- */
+/* ----------------------------------- Helper --------------------------------- */
 interface ITagInterface {
   label: string;
   icon?: React.ReactNode;
   className?: string;
+  neutral?: boolean;
 }
 
 export default function Tag(props: ITagInterface) {
   /* ---------------------------------- Utils --------------------------------- */
-  const { bg, text } = getRandomBadgeColor(props.label);
+  const { bg, text } = props.neutral
+    ? { bg: "bg-muted/50", text: "text-foreground/75" }
+    : getRandomBadgeColor(props.label);
 
-  /* -------------------------------- Render UI -------------------------------- */
+  /* -------------------------------- Render UI ------------------------------- */
   return (
     <div
       className={`w-fit flex items-center ${

@@ -6,7 +6,7 @@ import LandingMarquee from "@/components/landing/landing-marquee";
 import LandingFeatures from "@/components/landing/landing-features";
 import { LandingHowItWorks } from "@/components/landing/landing-how-it-works";
 import LandingCta from "@/components/landing/landing-cta";
-import LandingAngkorWat from "@/components/landing/landing-angkor-wat";
+import LandingMatchVisual from "@/components/landing/landing-match-visual";
 import LandingFooter from "@/components/landing/landing-footer";
 import { ScrollProgress } from "@/components/utils/animations/scroll-progress";
 import { useLanguageStore } from "@/stores/languages/language-store";
@@ -17,18 +17,18 @@ export default function IndexPage() {
 
   /* --------------------------------- Render UI -------------------------------- */
   return (
-    <div className="relative bg-background">
+    <div className="landing-scope relative min-h-screen bg-background text-foreground">
       {/* Scroll Progress Bar */}
       <ScrollProgress />
 
       {/* Header Section */}
-      <Header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/40" />
+      <Header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/90 backdrop-blur-xl" />
 
       {/* Section 1: Hero */}
       <LandingHero key={`hero-${language}`} />
 
-      {/* Section 2: 3D Angkor Wat */}
-      <LandingAngkorWat key={`angkor-${language}`} />
+      {/* Section 2: Mutual Match Visualization */}
+      <LandingMatchVisual key={`match-visual-${language}`} />
 
       {/* Section 3: Feature Marquee Ribbon */}
       <LandingMarquee key={`marquee-${language}`} />

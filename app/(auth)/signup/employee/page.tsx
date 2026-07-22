@@ -6,10 +6,9 @@ import EducationStepForm from "@/components/employee/employee-signup-form/educat
 import ExperienceStepForm from "@/components/employee/employee-signup-form/experience-step";
 import ProfessionStepForm from "@/components/employee/employee-signup-form/profession-step";
 import SkillReferenceStepForm from "@/components/employee/employee-signup-form/skill-reference-step";
+import { AuthBackButton } from "@/components/auth/auth-back-button";
 import { Button } from "@/components/ui/button";
 import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useEmployeeSignupStore } from "@/stores/apis/auth/employee-signup.store";
 import { useParseResumeStore } from "@/stores/apis/auth/parse-resume.store";
 import { useUploadEmployeeAvatarStore } from "@/stores/apis/employee/upload-emp-avatar.store";
@@ -19,11 +18,7 @@ import { useBasicPhoneSignupDataStore } from "@/stores/contexts/basic-phone-sign
 import { useBasicSignupDataStore } from "@/stores/contexts/basic-signup-data.store";
 import { TGender } from "@/utils/types/user/gender.type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  LucideArrowLeft,
-  LucideArrowRight,
-  LucideCheckCircle2,
-} from "lucide-react";
+import { LucideArrowRight, LucideCheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -109,8 +104,6 @@ export default function EmployeeSignup() {
         description: parsedData?.description ?? "",
         workMode: undefined,
         noticePeriod: undefined,
-        portfolioUrl: "",
-        linkedinUrl: "",
         languages: [],
         expectedSalaryCurrency: "USD",
         expectedSalaryMin: undefined,
@@ -443,35 +436,17 @@ export default function EmployeeSignup() {
 
   /* ----------------------------------- Render UI ---------------------------------- */
   return (
-    <div className="w-full max-w-4xl mx-auto flex flex-col gap-5 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
-      {/* Navigate Back Button Section */}
-      <button
-        type="button"
-        onClick={() => router.replace("/signup")}
-        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors w-fit"
-      >
-        <LucideArrowLeft className="size-4" />
-        {t("backToBasicInfo")}
-      </button>
-
-      {/* Header Section */}
-      <div>
-        <TypographyH2>{t("signupAsEmployee")}</TypographyH2>
-        <TypographyMuted className="text-md">
-          {t("employeeSignupSubtitle")}
-        </TypographyMuted>
-      </div>
-
+    <div className="auth-wizard w-full max-w-4xl mx-auto flex flex-col gap-4 px-1 py-2 tablet-lg:max-w-full tablet-lg:px-2">
       {/* SmartResumeUpload Chip Title Section */}
       {!!parsedData && (
-        <div className="flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/50 dark:border-emerald-800/50 px-3 py-1.5 rounded-full w-fit">
+        <div className="auth-wizard-notice flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/50 dark:border-emerald-800/50 px-3 py-1.5 rounded-full w-fit">
           <LucideCheckCircle2 size={13} className="shrink-0" />
           {t("smartUploadDataApplied")}
         </div>
       )}
 
       {/* Step Progress Indicator Section */}
-      <div className="w-full overflow-x-auto pb-2 mb-2">
+      <div className="auth-wizard-progress w-full overflow-x-auto pb-1">
         <div className="w-full min-w-[280px] flex items-center gap-0">
           {Array.from({ length: totalSteps }, (_, i) => i + 1).map(
             (st, index) => {
@@ -511,80 +486,80 @@ export default function EmployeeSignup() {
 
       {/* Form Section */}
       <FormProvider {...empForm}>
-        <form onSubmit={(e) => e.preventDefault()} className="w-full">
-          {step === 1 && (
-            <ProfessionStepForm
-              register={register}
-              control={control}
-              errors={errors}
-              setValue={setValue}
-              getValues={getValues}
-            />
-          )}
-          {step === 2 && (
-            <ExperienceStepForm
-              register={register}
-              errors={errors}
-              control={control}
-              setValue={setValue}
-              getValues={getValues}
-            />
-          )}
-          {step === 3 && (
-            <EducationStepForm
-              register={register}
-              errors={errors}
-              control={control}
-              setValue={setValue}
-              getValues={getValues}
-            />
-          )}
-          {step === 4 && (
-            <SkillReferenceStepForm
-              register={register}
-              control={control}
-              errors={errors}
-              getValues={getValues}
-              setValue={setValue}
-              trigger={trigger}
-            />
-          )}
-          {step === 5 && (
-            <AvatarStepForm
-              register={register}
-              errors={errors}
-              getValues={getValues}
-              setValue={setValue}
-            />
-          )}
-          {step === 6 && (
-            <EmployeeCareerScopeStepForm
-              register={register}
-              getValues={getValues}
-              setValue={setValue}
-              errors={errors}
-            />
-          )}
+        <form
+          onSubmit={(e) => e.preventDefault()}
+          className="auth-wizard-form w-full"
+        >
+          <div className="auth-wizard-step">
+            {step === 1 && (
+              <ProfessionStepForm
+                register={register}
+                control={control}
+                errors={errors}
+                setValue={setValue}
+                getValues={getValues}
+              />
+            )}
+            {step === 2 && (
+              <ExperienceStepForm
+                register={register}
+                errors={errors}
+                control={control}
+                setValue={setValue}
+                getValues={getValues}
+              />
+            )}
+            {step === 3 && (
+              <EducationStepForm
+                register={register}
+                errors={errors}
+                control={control}
+                setValue={setValue}
+                getValues={getValues}
+              />
+            )}
+            {step === 4 && (
+              <SkillReferenceStepForm
+                register={register}
+                control={control}
+                errors={errors}
+                getValues={getValues}
+                setValue={setValue}
+                trigger={trigger}
+              />
+            )}
+            {step === 5 && (
+              <AvatarStepForm
+                register={register}
+                errors={errors}
+                getValues={getValues}
+                setValue={setValue}
+              />
+            )}
+            {step === 6 && (
+              <EmployeeCareerScopeStepForm
+                register={register}
+                getValues={getValues}
+                setValue={setValue}
+                errors={errors}
+              />
+            )}
+          </div>
 
           {/* Navigation Buttons Section */}
-          <div className="mt-6 mb-4 flex gap-3 sm:justify-between">
-            {step > 1 ? (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={prevStep}
-                className="flex-1 sm:flex-initial sm:min-w-[140px]"
-              >
-                <LucideArrowLeft />
-                {t("back")}
-              </Button>
-            ) : (
-              <div className="hidden sm:block" />
-            )}
+          <div className="auth-wizard-actions auth-action-row mt-5">
+            <AuthBackButton
+              className="w-full"
+              onClick={() =>
+                step > 1 ? prevStep() : router.replace("/signup")
+              }
+            >
+              {t("back")}
+            </AuthBackButton>
 
             <Button
               type="button"
-              className="flex-1 sm:flex-initial sm:min-w-[140px]"
+              className="w-full"
               onClick={nextStep}
               disabled={
                 empSignup.loading ||

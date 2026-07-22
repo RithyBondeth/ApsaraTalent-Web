@@ -13,25 +13,37 @@ export default function MobileTabItem(props: IMobileTabItemProps) {
       href={href}
       prefetch={true}
       onClick={onClick}
-      className="relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2"
+      aria-current={active ? "page" : undefined}
+      aria-label={label}
+      className={cn(
+        "group relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 px-1 py-2",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
+        active ? "text-foreground" : "text-muted-foreground",
+      )}
     >
-      {/* Capsule Pill Section */}
-      <span className="relative flex flex-col items-center gap-0.5">
+      {/* Active Edge Section */}
+      <span
+        aria-hidden="true"
+        className={cn(
+          "absolute left-1/2 top-0 h-[3px] -translate-x-1/2 bg-foreground transition-[width,opacity] duration-200",
+          active ? "w-8 opacity-100" : "w-0 opacity-0",
+        )}
+      />
+
+      {/* Icon Section */}
+      <span className="relative flex flex-col items-center gap-1">
         <span
           className={cn(
-            "relative flex items-center justify-center rounded-2xl transition-all duration-300",
+            "relative flex h-8 w-9 items-center justify-center border transition-[background-color,border-color,color,transform] duration-200",
             active
-              ? "h-7 w-14 bg-gradient-to-b from-primary/20 to-primary/8 shadow-[0_0_0_1px_hsl(var(--primary)/0.2)]"
-              : "h-7 w-7",
+              ? "border-foreground bg-foreground text-background shadow-[2px_2px_0_hsl(var(--foreground)/0.12)]"
+              : "border-transparent group-hover:border-border group-hover:bg-muted/60 group-active:translate-y-px",
           )}
         >
-          {/* Icon Section */}
           <Icon
             className={cn(
-              "size-5 transition-all duration-200",
-              active
-                ? "animate-nav-tab-bounce text-primary [filter:drop-shadow(0_0_6px_hsl(var(--primary)/0.4))]"
-                : "text-muted-foreground",
+              "size-[18px] transition-transform duration-200",
+              active ? "animate-nav-tab-bounce text-background" : "",
             )}
             strokeWidth={active ? 2.3 : 1.7}
           />
@@ -43,9 +55,9 @@ export default function MobileTabItem(props: IMobileTabItemProps) {
         {/* Label Section */}
         <span
           className={cn(
-            "text-[10px] leading-none transition-all duration-200",
+            "max-w-[4.5rem] truncate text-[10px] leading-none transition-colors duration-200",
             active
-              ? "font-semibold text-primary"
+              ? "font-bold text-foreground"
               : "font-medium text-muted-foreground",
           )}
         >

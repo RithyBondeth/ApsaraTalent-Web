@@ -16,14 +16,14 @@ export default function Header({ className }: { className?: string }) {
   return (
     <nav
       className={cn(
-        "mx-auto flex w-full max-w-[1920px] items-center justify-between px-4 py-3 sm:px-6 lg:px-10",
+        "mx-auto flex h-[72px] w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8",
         className,
       )}
     >
       {/* Left Menu Section */}
-      <div className="flex items-center gap-2 sm:gap-3">
-        <LogoComponent className="!h-14 sm:!h-16 xl:!h-20 w-auto shrink-0" />
-        <div className="hidden xl:flex items-center gap-1.5 2xl:gap-2.5">
+      <div className="flex items-center gap-8">
+        <LogoComponent className="!h-11 w-auto shrink-0" priority />
+        <div className="hidden items-center gap-1 lg:flex">
           <Link href="/product">
             <Button variant="ghost">{t("products")}</Button>
           </Link>
@@ -40,14 +40,17 @@ export default function Header({ className }: { className?: string }) {
       </div>
 
       {/* Right Menu Section */}
-      <div className="flex items-center gap-1.5 sm:gap-3 lg:gap-5 shrink-0">
+      <div className="flex shrink-0 items-center gap-2 sm:gap-4">
         {/* Combined Language + Theme Switcher */}
         <Switcher inline />
 
         {/* Login Section */}
         <Link href="/login">
-          <Button className="text-xs sm:text-sm">
-            {t("login")}
+          <Button
+            className="size-10 rounded-none p-0 text-xs shadow-none sm:h-10 sm:w-auto sm:px-5 sm:text-sm"
+            aria-label={t("login")}
+          >
+            <span className="hidden sm:inline">{t("login")}</span>
             <LucideLogIn />
           </Button>
         </Link>

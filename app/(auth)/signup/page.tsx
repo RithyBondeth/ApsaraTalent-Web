@@ -1,16 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { DatePicker } from "@/components/ui/date-picker";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import ErrorMessage from "@/components/utils/feedback/error-message";
+import { AuthField } from "@/components/auth/auth-field";
+import { AuthSelect } from "@/components/auth/auth-select";
+import { AuthDateField } from "@/components/auth/auth-date-field";
+import { AuthBackButton } from "@/components/auth/auth-back-button";
 import LogoComponent from "@/components/utils/brand/logo";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
@@ -26,16 +20,18 @@ import {
 } from "@/utils/constants/ui.constant";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  LucideArrowLeft,
   LucideArrowRight,
-  LucideEye,
-  LucideEyeClosed,
+  LucideCalendar,
   LucideLockKeyhole,
   LucideMail,
+  LucideMapPin,
+  LucidePhone,
+  LucideUser,
+  LucideUsers,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { Controller, FieldErrors, useForm } from "react-hook-form";
 import {
   makeBasicSignupCompanySchema,
@@ -82,10 +78,6 @@ export default function SignupPage() {
   };
 
   /* -------------------------------------- All States ------------------------------------ */
-  const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
-  const [confirmPassVisibility, setConfirmPassVisibility] =
-    useState<boolean>(false);
-
   // Basic Signup Data
   const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
 
@@ -100,10 +92,6 @@ export default function SignupPage() {
   const { data: parsedData } = useParseResumeStore();
 
   /* --------------------------------- User Role Handling --------------------------------- */
-  /*
-    Determine user role (Employee or Company) by checking local state first,
-    then falling back to any connected social login providers.
-  */
   const selectedRole = useMemo(
     () =>
       basicSignupData?.selectedRole ||
@@ -121,8 +109,26 @@ export default function SignupPage() {
   );
   const isEmployeeForm = selectedRole === USER_ROLE.EMPLOYEE;
 
+  /* ------------------------- Options for floating-label selects ------------------------- */
+  const locationOptions = useMemo(
+    () =>
+      locationConstant.map((loc) => ({
+        value: loc,
+        label: locationLabels[loc] ?? loc,
+      })),
+    [locationLabels],
+  );
+  const genderOptions = useMemo(
+    () =>
+      genderConstant.map((g) => ({
+        value: g.value,
+        label: t(`gender${g.label as "Male" | "Female"}`),
+      })),
+    [t],
+  );
+
   /* ----------------------- React Hook Form: Emp and Cmp Signup Form ---------------------- */
-  // ── Validation Messages For Signup Forms ───────────────────────────────
+    // ── Validation Messages For Signup Forms ───────────────────────────────
   const signupMessages = useMemo(
     () => ({
       phoneInvalid: tv("phoneInvalid"),
@@ -206,8 +212,6 @@ export default function SignupPage() {
   // ── Signup Function ────────────────────────────────────────────────────
   // Set Basic Signup Data for Employee
   const onSubmitEmployee = (data: TBasicSignupEmployeeSchema) => {
-    console.log("Basic Employee Data: ", data);
-
     const payload = {
       ...basicSignupData,
       ...data,
@@ -219,10 +223,9 @@ export default function SignupPage() {
     router.push("/signup/employee");
   };
 
+  // ── Signup Function ────────────────────────────────────────────────────
   // Set Basic Signup Data for Company
   const onSubmitCompany = (data: TBasicSignupCompanySchema) => {
-    console.log("Basic Company Data: ", data);
-
     const payload = {
       ...basicSignupData,
       ...data,
@@ -237,14 +240,12 @@ export default function SignupPage() {
   /* --------------------------------------- Effects --------------------------------------- */
   // ── Social Signup Effect ────────────────────────────────────────────────
   useEffect(() => {
-    // Handle Google login data - Auto Fill Information in Form
     if (
       googleUserData.email &&
       googleUserData.firstname &&
       googleUserData.lastname
     ) {
       cmpForm.setValue("email", googleUserData.email);
-
       empForm.setValue("email", googleUserData.email);
       empForm.setValue("firstName", googleUserData.firstname);
       empForm.setValue("lastName", googleUserData.lastname);
@@ -254,14 +255,12 @@ export default function SignupPage() {
       );
     }
 
-    // Handle LinkedIn login data - Auto Fill Information in Form
     if (
       linkedInUserData.email &&
       linkedInUserData.firstname &&
       linkedInUserData.lastname
     ) {
       cmpForm.setValue("email", linkedInUserData.email);
-
       empForm.setValue("email", linkedInUserData.email);
       empForm.setValue("firstName", linkedInUserData.firstname);
       empForm.setValue("lastName", linkedInUserData.lastname);
@@ -271,22 +270,18 @@ export default function SignupPage() {
       );
     }
 
-    // Handle GitHub login data - Auto Fill Information in Form
     if (githubUserData.email && githubUserData.username) {
       cmpForm.setValue("email", githubUserData.email);
-
       empForm.setValue("email", githubUserData.email);
       empForm.setValue("username", githubUserData.username);
     }
 
-    // Handle Facebook login data - Auto Fill Information in Form
     if (
       facebookUserData.email &&
       facebookUserData.firstname &&
       facebookUserData.lastname
     ) {
       cmpForm.setValue("email", facebookUserData.email);
-
       empForm.setValue("email", facebookUserData.email);
       empForm.setValue("firstName", facebookUserData.firstname);
       empForm.setValue("lastName", facebookUserData.lastname);
@@ -296,7 +291,6 @@ export default function SignupPage() {
       );
     }
 
-    // Clear username field if no social login data is available (default signup flow)
     const hasSocialData =
       googleUserData.email ||
       linkedInUserData.email ||
@@ -315,14 +309,24 @@ export default function SignupPage() {
     empForm,
   ]);
 
+  /* -------------------------------- Section divider helper ------------------------------- */
+  const SectionLabel = ({ children }: { children: React.ReactNode }) => (
+    <div className="flex items-center gap-3">
+      <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.16em] whitespace-nowrap">
+        {children}
+      </span>
+      <div className="flex-1 h-px bg-border" />
+    </div>
+  );
+
   /* -------------------------------------- Render UI -------------------------------------- */
   return (
-    <div className="w-full max-w-[620px] flex flex-col gap-5 tablet-sm:max-w-full">
+    <div className="flex w-full flex-col gap-6">
       {/* Logo Section */}
-      <LogoComponent className="!h-12 w-auto self-start" />
+      <LogoComponent className="!h-16 w-auto self-start" priority />
 
       {/* Title Section */}
-      <div className="flex flex-col items-start">
+      <div>
         <TypographyH2>{t("signupPageTitle")}</TypographyH2>
         <TypographyMuted className="text-md">
           {t("signupSubtitle")}
@@ -331,35 +335,31 @@ export default function SignupPage() {
 
       {/* Form Section */}
       <form
-        className="w-full flex flex-col gap-6"
+        className="flex w-full flex-col gap-6"
         onSubmit={
           isEmployeeForm
             ? empForm.handleSubmit(onSubmitEmployee)
             : cmpForm.handleSubmit(onSubmitCompany)
         }
       >
-        {/* Employee Information Section */}
+        {/* Employee: Personal Section */}
         {isEmployeeForm && (
           <div className="flex flex-col gap-4">
-            {/* Divider Section */}
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest whitespace-nowrap">
-                {t("signupSectionPersonal")}
-              </span>
-              <div className="flex-1 h-px bg-border" />
-            </div>
+            <SectionLabel>{t("signupSectionPersonal")}</SectionLabel>
 
             {/* Employee: Firstname & Lastname Section */}
-            <div className="flex items-start gap-3 tablet-sm:flex-col">
+            <div className="field-row w-full">
               <Controller
                 name="firstName"
                 control={empForm.control}
                 render={({ field }) => (
-                  <Input
-                    placeholder={t("firstname")}
-                    type="text"
+                  <AuthField
+                    label={t("firstname")}
+                    icon={
+                      <LucideUser className="size-[18px]" strokeWidth={1.6} />
+                    }
+                    error={employeeErrors.firstName?.message}
                     {...field}
-                    validationMessage={employeeErrors.firstName?.message}
                   />
                 )}
               />
@@ -367,18 +367,20 @@ export default function SignupPage() {
                 name="lastName"
                 control={empForm.control}
                 render={({ field }) => (
-                  <Input
-                    placeholder={t("lastname")}
-                    type="text"
+                  <AuthField
+                    label={t("lastname")}
+                    icon={
+                      <LucideUser className="size-[18px]" strokeWidth={1.6} />
+                    }
+                    error={employeeErrors.lastName?.message}
                     {...field}
-                    validationMessage={employeeErrors.lastName?.message}
                   />
                 )}
               />
             </div>
 
-            {/* Employee: DOB Section */}
-            <div className="w-full flex flex-col items-start gap-1">
+            {/* Employee: DOB and Username Section */}
+            <div className="field-row w-full">
               <Controller
                 name="dob"
                 control={empForm.control}
@@ -392,103 +394,79 @@ export default function SignupPage() {
                       ? selectedDate
                       : undefined;
                   return (
-                    <DatePicker
-                      placeholder={t("dateOfBirth")}
+                    <AuthDateField
+                      label={t("dateOfBirth")}
+                      icon={
+                        <LucideCalendar
+                          className="size-[18px]"
+                          strokeWidth={1.6}
+                        />
+                      }
                       date={safeDate}
                       onDateChange={(date) =>
                         field.onChange(date ? formatDateForField(date) : "")
                       }
-                      dateFormat="dd MMM yyyy"
+                      error={employeeErrors.dob?.message}
                     />
                   );
                 }}
               />
-              <ErrorMessage>{employeeErrors.dob?.message}</ErrorMessage>
-            </div>
-
-            {/* Employee: Username & Location Section */}
-            <div className="flex items-start gap-3 tablet-sm:flex-col">
               <Controller
                 name="username"
                 control={empForm.control}
                 render={({ field }) => (
-                  <Input
-                    type="text"
-                    placeholder={t("username")}
+                  <AuthField
+                    label={t("username")}
+                    icon={
+                      <LucideUser className="size-[18px]" strokeWidth={1.6} />
+                    }
+                    error={employeeErrors.username?.message}
                     {...field}
-                    validationMessage={employeeErrors.username?.message}
                   />
                 )}
               />
-              <div className="w-full flex flex-col items-start gap-1">
-                <Controller
-                  name="selectedLocation"
-                  control={empForm.control}
-                  render={({ field }) => (
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value || ""}
-                    >
-                      <SelectTrigger className="h-12 text-muted-foreground">
-                        <SelectValue placeholder={t("location")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {locationConstant.map((location, index) => (
-                          <SelectItem key={index} value={location}>
-                            {locationLabels[location] ?? location}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-                <ErrorMessage>
-                  {typeof employeeErrors.selectedLocation?.message === "string"
-                    ? employeeErrors.selectedLocation?.message
-                    : null}
-                </ErrorMessage>
-              </div>
             </div>
 
-            {/* Employee: Gender & Phone Section */}
-            <div className="flex items-start gap-3 tablet-sm:flex-col">
-              <div className="w-full flex flex-col items-start gap-1">
-                <Controller
-                  name="gender"
-                  control={empForm.control}
-                  render={({ field }) => (
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value || ""}
-                    >
-                      <SelectTrigger className="h-12 text-muted-foreground">
-                        <SelectValue placeholder={t("gender")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {genderConstant.map((gender) => (
-                          <SelectItem key={gender.id} value={gender.value}>
-                            {t(`gender${gender.label as "Male" | "Female"}`)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-                <ErrorMessage>
-                  {typeof employeeErrors.gender?.message === "string"
-                    ? employeeErrors.gender?.message
-                    : null}
-                </ErrorMessage>
-              </div>
+            {/* Employee: Gender and Location Section */}
+            <div className="field-row w-full">
               <Controller
-                name="phone"
+                name="selectedLocation"
                 control={empForm.control}
                 render={({ field }) => (
-                  <Input
-                    type="text"
-                    placeholder={t("mobile")}
-                    {...field}
-                    validationMessage={employeeErrors.phone?.message}
+                  <AuthSelect
+                    label={t("location")}
+                    icon={
+                      <LucideMapPin className="size-[18px]" strokeWidth={1.6} />
+                    }
+                    options={locationOptions}
+                    value={field.value || ""}
+                    onValueChange={field.onChange}
+                    error={
+                      typeof employeeErrors.selectedLocation?.message ===
+                      "string"
+                        ? employeeErrors.selectedLocation?.message
+                        : undefined
+                    }
+                  />
+                )}
+              />
+              <Controller
+                name="gender"
+                control={empForm.control}
+                render={({ field }) => (
+                  <AuthSelect
+                    label={t("gender")}
+                    icon={
+                      <LucideUsers className="size-[18px]" strokeWidth={1.6} />
+                    }
+                    options={genderOptions}
+                    value={field.value || ""}
+                    onValueChange={field.onChange}
+                    error={
+                      typeof employeeErrors.gender?.message === "string"
+                        ? employeeErrors.gender?.message
+                        : undefined
+                    }
                   />
                 )}
               />
@@ -496,154 +474,115 @@ export default function SignupPage() {
           </div>
         )}
 
-        {/* Employee: Account Security Section */}
+        {/* Company: Account Security Section */}
         <div className="flex flex-col gap-4">
-          {/* Divider Section */}
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest whitespace-nowrap">
-              {t("signupSectionAccount")}
-            </span>
-            <div className="flex-1 h-px bg-border" />
+          <SectionLabel>{t("signupSectionAccount")}</SectionLabel>
+
+          {/* Company: Phone and Email Section */}
+          <div className="field-row w-full">
+            {isEmployeeForm ? (
+              <Controller
+                name="phone"
+                control={empForm.control}
+                render={({ field }) => (
+                  <AuthField
+                    label={t("mobile")}
+                    type="tel"
+                    inputMode="numeric"
+                    icon={
+                      <LucidePhone className="size-[18px]" strokeWidth={1.6} />
+                    }
+                    error={employeeErrors.phone?.message}
+                    {...field}
+                  />
+                )}
+              />
+            ) : (
+              <AuthField
+                label={t("mobile")}
+                type="tel"
+                inputMode="numeric"
+                icon={<LucidePhone className="size-[18px]" strokeWidth={1.6} />}
+                error={companyErrors.phone?.message}
+                {...cmpForm.register("phone")}
+              />
+            )}
+
+            {isEmployeeForm ? (
+              <Controller
+                name="email"
+                control={empForm.control}
+                render={({ field }) => (
+                  <AuthField
+                    label={t("email")}
+                    type="email"
+                    autoComplete="email"
+                    icon={
+                      <LucideMail className="size-[18px]" strokeWidth={1.6} />
+                    }
+                    error={employeeErrors.email?.message}
+                    {...field}
+                  />
+                )}
+              />
+            ) : (
+              <AuthField
+                label={t("email")}
+                type="email"
+                autoComplete="email"
+                icon={<LucideMail className="size-[18px]" strokeWidth={1.6} />}
+                error={companyErrors.email?.message}
+                {...cmpForm.register("email")}
+              />
+            )}
           </div>
 
-          {/* Company: Phone Section */}
-          {!isEmployeeForm && (
-            <Input
-              type="number"
-              placeholder={t("mobile")}
-              {...cmpForm.register("phone")}
-              validationMessage={companyErrors.phone?.message}
-            />
-          )}
-
-          {/* Employee and Company: Email Section */}
-          {isEmployeeForm ? (
-            <Controller
-              name="email"
-              control={empForm.control}
-              render={({ field }) => (
-                <Input
-                  prefix={<LucideMail strokeWidth={"1.3px"} />}
-                  type="email"
-                  placeholder={t("email")}
-                  {...field}
-                  validationMessage={employeeErrors.email?.message}
-                />
-              )}
-            />
-          ) : (
-            <Input
-              prefix={<LucideMail strokeWidth={"1.3px"} />}
-              type="email"
-              placeholder={t("email")}
-              {...cmpForm.register("email")}
-              validationMessage={companyErrors.email?.message}
-            />
-          )}
-
-          {/* Employee and Company: Password Section */}
-          {isEmployeeForm ? (
-            <Input
-              prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
-              suffix={
-                passwordVisibility ? (
-                  <LucideEyeClosed
-                    strokeWidth={"1.3px"}
-                    onClick={() => setPasswordVisibility(false)}
-                  />
-                ) : (
-                  <LucideEye
-                    strokeWidth={"1.3px"}
-                    onClick={() => setPasswordVisibility(true)}
-                  />
-                )
+          {/* Company: Password and Confirm Password Section */}
+          <div className="field-row w-full">
+            <AuthField
+              label={t("password")}
+              type="password"
+              autoComplete="new-password"
+              icon={
+                <LucideLockKeyhole className="size-[18px]" strokeWidth={1.6} />
               }
-              type={passwordVisibility ? "text" : "password"}
-              placeholder={t("password")}
-              {...empForm.register("password")}
-              validationMessage={employeeErrors.password?.message}
-            />
-          ) : (
-            <Input
-              prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
-              suffix={
-                passwordVisibility ? (
-                  <LucideEyeClosed
-                    strokeWidth={"1.3px"}
-                    onClick={() => setPasswordVisibility(false)}
-                  />
-                ) : (
-                  <LucideEye
-                    strokeWidth={"1.3px"}
-                    onClick={() => setPasswordVisibility(true)}
-                  />
-                )
+              error={
+                isEmployeeForm
+                    ? employeeErrors.password?.message
+                  : companyErrors.password?.message
               }
-              type={passwordVisibility ? "text" : "password"}
-              placeholder={t("password")}
-              {...cmpForm.register("password")}
-              validationMessage={companyErrors.password?.message}
+              {...(isEmployeeForm
+                ? empForm.register("password")
+                : cmpForm.register("password"))}
             />
-          )}
-
-          {/* Employee and Company: Confirm Password Section */}
-          {isEmployeeForm ? (
-            <Input
-              prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
-              suffix={
-                confirmPassVisibility ? (
-                  <LucideEyeClosed
-                    strokeWidth={"1.3px"}
-                    onClick={() => setConfirmPassVisibility(false)}
-                  />
-                ) : (
-                  <LucideEye
-                    strokeWidth={"1.3px"}
-                    onClick={() => setConfirmPassVisibility(true)}
-                  />
-                )
+            <AuthField
+              label={t("confirmPassword")}
+              type="password"
+              autoComplete="new-password"
+              icon={
+                <LucideLockKeyhole className="size-[18px]" strokeWidth={1.6} />
               }
-              type={confirmPassVisibility ? "text" : "password"}
-              placeholder={t("confirmPassword")}
-              {...empForm.register("confirmPassword")}
-              validationMessage={employeeErrors.confirmPassword?.message}
-            />
-          ) : (
-            <Input
-              prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
-              suffix={
-                confirmPassVisibility ? (
-                  <LucideEyeClosed
-                    strokeWidth={"1.3px"}
-                    onClick={() => setConfirmPassVisibility(false)}
-                  />
-                ) : (
-                  <LucideEye
-                    strokeWidth={"1.3px"}
-                    onClick={() => setConfirmPassVisibility(true)}
-                  />
-                )
+              error={
+                isEmployeeForm
+                  ? employeeErrors.confirmPassword?.message
+                  : companyErrors.confirmPassword?.message
               }
-              type={confirmPassVisibility ? "text" : "password"}
-              placeholder={t("confirmPassword")}
-              {...cmpForm.register("confirmPassword")}
-              validationMessage={companyErrors.confirmPassword?.message}
+              {...(isEmployeeForm
+                ? empForm.register("confirmPassword")
+                : cmpForm.register("confirmPassword"))}
             />
-          )}
+          </div>
         </div>
 
         {/* Back & Next Buttons Section */}
-        <div className="flex items-center gap-3 tablet-sm:flex-col">
-          <Button
-            type="button"
-            className="flex-1 tablet-sm:w-full"
-            variant="outline"
+        <div className="auth-action-row w-full">
+          <AuthBackButton
+            className="w-full"
             onClick={() => router.replace("/signup/option")}
           >
-            <LucideArrowLeft />
             {t("back")}
-          </Button>
-          <Button className="flex-1 tablet-sm:w-full" type="submit">
+          </AuthBackButton>
+          <Button className="auth-submit w-full h-11" type="submit">
             {t("next")}
             <LucideArrowRight />
           </Button>

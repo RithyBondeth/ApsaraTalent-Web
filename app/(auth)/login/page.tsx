@@ -9,14 +9,14 @@ import {
   DialogFooter,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import AuthShell from "@/components/auth/auth-shell";
+import { AuthField } from "@/components/auth/auth-field";
 import SocialButton from "@/components/utils/buttons/social-button";
 import LoadingDialog from "@/components/utils/dialogs/loading-dialog";
 import LogoComponent from "@/components/utils/brand/logo";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { TypographySmall } from "@/components/utils/typography/typography-small";
 import { useLoginStore } from "@/stores/apis/auth/login.store";
 import { useTwoFactorStore } from "@/stores/apis/auth/two-factor.store";
 import { useFacebookLoginStore } from "@/stores/apis/auth/socials/facebook-login.store";
@@ -42,8 +42,6 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   LucideAlertCircle,
-  LucideEye,
-  LucideEyeClosed,
   LucideLockKeyhole,
   LucideMail,
   LucidePhone,
@@ -51,7 +49,6 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -77,7 +74,6 @@ function LoginPage() {
   const tv = useTranslations("validation");
 
   /* -------------------------------- All States ------------------------------- */
-  const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   const [openRmbDialog, setOpenRmbDialog] = useState<boolean>(false);
   const [socialTypeIdentifier, setSocialTypeIdentifier] = useState<
     string | null
@@ -543,14 +539,19 @@ function LoginPage() {
 
   /* ----------------------------------- Render UI ----------------------------------- */
   return (
-    <div className="h-screen w-full flex overflow-hidden tablet-lg:flex-col tablet-lg:h-auto tablet-lg:overflow-y-auto">
-      {/* Left Section */}
-      <div className="w-1/2 h-full flex items-center justify-center bg-background p-6 sm:p-10 tablet-lg:w-full tablet-lg:h-auto tablet-lg:py-12">
-        <div className="w-full max-w-[480px] flex flex-col gap-4 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
+    <>
+      <AuthShell
+        image={loginSvg}
+        imageAlt={t("loginPageTitle")}
+        eyebrowKey="loginPanelEyebrow"
+        titleKey="loginPanelTitle"
+        subtitleKey="loginPanelSubtitle"
+      >
+        <div className="auth-stagger flex w-full flex-col gap-6">
           {/* Logo & Title Section */}
-          <div className="flex flex-col items-start gap-1">
-            <LogoComponent className="!h-12 w-auto self-start" />
-            <TypographyH2 className="phone-xl:text-2xl">
+          <div style={{ "--d": "0ms" } as React.CSSProperties}>
+            <LogoComponent className="!h-16 w-auto self-start" priority />
+            <TypographyH2 className="mt-5 phone-xl:text-2xl">
               {t("loginPageTitle")}
             </TypographyH2>
             <TypographyMuted className="text-md phone-xl:text-sm">
@@ -559,14 +560,17 @@ function LoginPage() {
           </div>
 
           {/* Social Button Login Section */}
-          <div className="w-full flex flex-col gap-3">
+          <div
+            className="w-full flex flex-col gap-3"
+            style={{ "--d": "80ms" } as React.CSSProperties}
+          >
             <div className="grid grid-cols-2 gap-3">
               {/* Google Login Button */}
               <SocialButton
                 image={googleIcon}
                 label="Google"
                 variant="outline"
-                className="w-full transition-colors hover:bg-muted/50"
+                className="auth-social w-full"
                 onClick={() => {
                   setOpenRmbDialog(true);
                   setSocialTypeIdentifier("google");
@@ -577,7 +581,7 @@ function LoginPage() {
                 image={facebookIcon}
                 label="Facebook"
                 variant="outline"
-                className="w-full transition-colors hover:bg-muted/50"
+                className="auth-social w-full"
                 onClick={() => {
                   setOpenRmbDialog(true);
                   setSocialTypeIdentifier("facebook");
@@ -588,7 +592,7 @@ function LoginPage() {
                 image={linkedinIcon}
                 label="LinkedIn"
                 variant="outline"
-                className="w-full transition-colors hover:bg-muted/50"
+                className="auth-social w-full"
                 onClick={() => {
                   setOpenRmbDialog(true);
                   setSocialTypeIdentifier("linkedIn");
@@ -599,7 +603,7 @@ function LoginPage() {
                 image={githubIcon}
                 label="Github"
                 variant="outline"
-                className="w-full transition-colors hover:bg-muted/50"
+                className="auth-social w-full"
                 onClick={() => {
                   setOpenRmbDialog(true);
                   setSocialTypeIdentifier("github");
@@ -608,7 +612,7 @@ function LoginPage() {
             </div>
             <Button
               variant="outline"
-              className="w-full transition-colors hover:bg-muted/50"
+              className="auth-social w-full"
               onClick={() => router.push(phoneLoginHref)}
             >
               <LucidePhone />
@@ -617,7 +621,10 @@ function LoginPage() {
           </div>
 
           {/* Divider Section */}
-          <div className="w-full flex items-center gap-3">
+          <div
+            className="w-full flex items-center gap-3"
+            style={{ "--d": "140ms" } as React.CSSProperties}
+          >
             <Separator className="flex-1" />
             <TypographyMuted className="text-xs whitespace-nowrap">
               {t("orContinueWithEmail")}
@@ -627,46 +634,35 @@ function LoginPage() {
 
           {/* Login Form Section */}
           <form
-            className="w-full flex flex-col items-stretch gap-3"
+            className="w-full flex flex-col items-stretch gap-4"
             onSubmit={handleSubmit(onSubmit)}
+            style={{ "--d": "200ms" } as React.CSSProperties}
           >
-            <div className="flex flex-col gap-3">
-              <div className="rounded-lg border border-input bg-card p-4">
-                <Input
-                  prefix={<LucideMail strokeWidth={"1.3px"} />}
-                  placeholder={t("email")}
-                  type="email"
-                  className="border-0 ring-0 focus-within:ring-0 focus-within:ring-offset-0 h-auto px-0"
-                  {...register("email")}
-                  validationMessage={errors.email?.message}
-                />
-              </div>
-              <div className="rounded-lg border border-input bg-card p-4">
-                <Input
-                  prefix={<LucideLockKeyhole strokeWidth={"1.3px"} />}
-                  suffix={
-                    passwordVisibility ? (
-                      <LucideEyeClosed
-                        strokeWidth={"1.3px"}
-                        onClick={() => setPasswordVisibility(false)}
-                      />
-                    ) : (
-                      <LucideEye
-                        strokeWidth={"1.3px"}
-                        onClick={() => setPasswordVisibility(true)}
-                      />
-                    )
-                  }
-                  placeholder={t("password")}
-                  type={passwordVisibility ? "text" : "password"}
-                  className="border-0 ring-0 focus-within:ring-0 focus-within:ring-offset-0 h-auto px-0"
-                  {...register("password")}
-                  validationMessage={errors.password?.message}
-                />
-              </div>
+            <div className="flex flex-col gap-3.5">
+              <AuthField
+                label={t("email")}
+                type="email"
+                autoComplete="email"
+                icon={<LucideMail strokeWidth={1.6} className="size-[18px]" />}
+                error={errors.email?.message}
+                {...register("email")}
+              />
+              <AuthField
+                label={t("password")}
+                type="password"
+                autoComplete="current-password"
+                icon={
+                  <LucideLockKeyhole
+                    strokeWidth={1.6}
+                    className="size-[18px]"
+                  />
+                }
+                error={errors.password?.message}
+                {...register("password")}
+              />
             </div>
             <div className="flex justify-between items-center">
-              <div className="flex items-center gap-1.5">
+              <label className="flex items-center gap-2 cursor-pointer">
                 <Controller
                   name="rememberMe"
                   control={control}
@@ -681,41 +677,35 @@ function LoginPage() {
                 <TypographyMuted className="text-xs">
                   {t("rememberMeLabel")}
                 </TypographyMuted>
-              </div>
-              <TypographySmall className="text-xs cursor-pointer hover:text-muted-foreground transition-colors">
-                <Link href="/forgot-password">{t("forgotPasswordLink")}</Link>
-              </TypographySmall>
+              </label>
+              <Link
+                href="/forgot-password"
+                className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {t("forgotPasswordLink")}
+              </Link>
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button
+              type="submit"
+              className="auth-submit w-full h-11"
+              disabled={loading}
+            >
               {t("loginButton")}
             </Button>
-            <div className="flex items-center justify-center gap-2">
-              <TypographyMuted>{t("noAccount")}</TypographyMuted>
-              <Link href="/signup/option">
-                <TypographySmall className="text-xs cursor-pointer hover:text-muted-foreground transition-colors">
-                  {t("createAccount")}
-                </TypographySmall>
+            <div className="flex items-center justify-center gap-1.5">
+              <TypographyMuted className="text-sm">
+                {t("noAccount")}
+              </TypographyMuted>
+              <Link
+                href="/signup/option"
+                className="text-sm font-semibold text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground transition-colors"
+              >
+                {t("createAccount")}
               </Link>
             </div>
           </form>
         </div>
-      </div>
-
-      {/* Right Section: Image Poster Section */}
-      <div className="w-1/2 h-full flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-lg:hidden">
-        {/* Decorative circles Section */}
-        <div className="absolute -top-20 -right-20 size-64 rounded-full bg-white/5" />
-        <div className="absolute -bottom-16 -left-16 size-48 rounded-full bg-white/5" />
-        <div className="absolute top-1/4 -left-10 size-32 rounded-full bg-white/[0.03]" />
-        <div className="absolute bottom-1/3 right-10 size-20 rounded-full bg-white/[0.07]" />
-        <Image
-          src={loginSvg}
-          alt="login"
-          height={undefined}
-          width={450}
-          className="relative z-10"
-        />
-      </div>
+      </AuthShell>
 
       {/* Two-Factor Auth Verification Dialog Section */}
       <Dialog
@@ -807,7 +797,7 @@ function LoginPage() {
         title={authLoadingTitle}
         subTitle={t("pleaseWaitAuth")}
       />
-    </div>
+    </>
   );
 }
 

@@ -11,9 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import ErrorMessage from "@/components/utils/feedback/error-message";
-import LabelInput from "@/components/utils/forms/label-input";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import {
   companyTypeConstant,
   locationConstant,
@@ -21,7 +19,18 @@ import {
 import { useTranslations } from "next-intl";
 import { Controller, useWatch } from "react-hook-form";
 import { useAIRefine } from "@/hooks/utils/use-ai-refine";
-import { Sparkles, Loader2 } from "lucide-react";
+import {
+  Building2,
+  CalendarDays,
+  Factory,
+  FileText,
+  Globe2,
+  Loader2,
+  MapPin,
+  Shapes,
+  Sparkles,
+  Users,
+} from "lucide-react";
 import { toast } from "sonner";
 
 export default function BasicInfoStepForm({
@@ -82,95 +91,84 @@ export default function BasicInfoStepForm({
   return (
     <div className="flex flex-col items-start gap-5">
       {/* Title Section */}
-      <TypographyH4>{t("cmpBasicInfoTitle")}</TypographyH4>
+      <div className="flex w-full items-center justify-between gap-3">
+        <TypographyH4>{t("cmpBasicInfoTitle")}</TypographyH4>
+        <span className="shrink-0 text-[11px] text-muted-foreground">
+          <span className="text-destructive">*</span> {t("requiredFieldsHint")}
+        </span>
+      </div>
       {/* Form Section */}
-      <LabelInput
-        label={t("cmpBasicInfoCompanyName")}
-        input={
-          <Input
-            placeholder={t("cmpBasicInfoCompanyNamePlaceholder")}
-            id="company-name"
-            {...register("basicInfo.name")}
-            validationMessage={errors!.basicInfo?.name?.message}
-          />
-        }
+      <Input
+        placeholder={`${t("cmpBasicInfoCompanyNamePlaceholder")} *`}
+        prefix={<Building2 />}
+        aria-required="true"
+        id="company-name"
+        {...register("basicInfo.name")}
+        validationMessage={errors!.basicInfo?.name?.message}
       />
       <div className="w-full flex flex-col items-start gap-2">
         <div className="w-full flex flex-col items-start gap-2">
-          <div className="w-full flex items-center justify-between">
-            <TypographyMuted className="text-xs">
-              {t("cmpBasicInfoDescription")}
-            </TypographyMuted>
-            {descValue && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={handleRefine}
-                disabled={isRefining}
-                className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
-              >
-                {isRefining ? (
-                  <Loader2 size={10} className="animate-spin" />
-                ) : (
-                  <Sparkles size={10} />
-                )}
-                {tr("aiRefine")}
-              </Button>
-            )}
-          </div>
           <Textarea
             autoResize
-            placeholder={t("cmpBasicInfoDescriptionPlaceholder")}
+            placeholder={`${t("cmpBasicInfoDescriptionPlaceholder")} *`}
+            prefix={<FileText />}
+            action={
+              descValue ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleRefine}
+                  disabled={isRefining}
+                  className="h-6 px-1.5 text-[9px] gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                >
+                  {isRefining ? (
+                    <Loader2 size={10} className="animate-spin" />
+                  ) : (
+                    <Sparkles size={10} />
+                  )}
+                  {tr("aiRefine")}
+                </Button>
+              ) : undefined
+            }
+            aria-required="true"
             className="placeholder:text-sm"
             {...register("basicInfo.description")}
             validationMessage={errors!.basicInfo?.description?.message}
           />
         </div>
       </div>
-      <div className="w-full flex justify-between items-center gap-3 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
-        <LabelInput
-          label={t("cmpBasicInfoIndustry")}
-          input={
-            <Input
-              placeholder={t("cmpBasicInfoIndustryPlaceholder")}
-              id="industry"
-              {...register("basicInfo.industry")}
-              validationMessage={errors!.basicInfo?.industry?.message}
-            />
-          }
+      <div className="field-row w-full">
+        <Input
+          placeholder={`${t("cmpBasicInfoIndustryPlaceholder")} *`}
+          prefix={<Factory />}
+          aria-required="true"
+          id="industry"
+          {...register("basicInfo.industry")}
+          validationMessage={errors!.basicInfo?.industry?.message}
         />
-        <LabelInput
-          label={t("cmpBasicInfoCompanySize")}
-          input={
-            <Input
-              type="number"
-              placeholder={t("cmpBasicInfoCompanySizePlaceholder")}
-              id="company-size"
-              {...register("basicInfo.companySize")}
-              validationMessage={errors!.basicInfo?.companySize?.message}
-            />
-          }
+        <Input
+          type="number"
+          placeholder={`${t("cmpBasicInfoCompanySizePlaceholder")} *`}
+          prefix={<Users />}
+          aria-required="true"
+          id="company-size"
+          {...register("basicInfo.companySize")}
+          validationMessage={errors!.basicInfo?.companySize?.message}
         />
       </div>
-      <div className="w-full flex justify-between items-center gap-3 [&>div]:w-1/2 phone-xl:flex-col phone-xl:[&>div]:w-full">
-        <LabelInput
-          label={t("cmpBasicInfoFoundedYear")}
-          input={
-            <Input
-              type="number"
-              placeholder={t("cmpBasicInfoFoundedYearPlaceholder")}
-              id="founded-year"
-              {...register("basicInfo.foundedYear")}
-              validationMessage={errors!.basicInfo?.foundedYear?.message}
-            />
-          }
+      <div className="field-row w-full">
+        <Input
+          type="number"
+          placeholder={`${t("cmpBasicInfoFoundedYearPlaceholder")} *`}
+          prefix={<CalendarDays />}
+          aria-required="true"
+          id="founded-year"
+          {...register("basicInfo.foundedYear")}
+          validationMessage={errors!.basicInfo?.foundedYear?.message}
         />
         <div className="w-full flex flex-col items-start gap-2">
-          <div className="w-full flex flex-col items-start gap-3">
-            <TypographyMuted className="text-xs">
-              {t("cmpBasicInfoLocations")}
-            </TypographyMuted>
+          <div className="w-full flex flex-col items-start gap-2">
             <Controller
               name="basicInfo.location"
               control={control!}
@@ -179,9 +177,13 @@ export default function BasicInfoStepForm({
                   onValueChange={field.onChange}
                   value={field.value || ""}
                 >
-                  <SelectTrigger className="h-12 text-muted-foreground">
+                  <SelectTrigger
+                    className="h-12 text-muted-foreground"
+                    aria-required="true"
+                  >
+                    <MapPin className="mr-2 size-[18px] shrink-0" />
                     <SelectValue
-                      placeholder={t("cmpBasicInfoLocationPlaceholder")}
+                      placeholder={`${t("cmpBasicInfoLocationPlaceholder")} *`}
                     />
                   </SelectTrigger>
                   <SelectContent>
@@ -200,31 +202,25 @@ export default function BasicInfoStepForm({
       </div>
 
       {/* Website URL and Company Type Section */}
-      <div className="w-full flex justify-between items-center gap-3 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
+      <div className="field-row w-full">
         {/* Website URL Section */}
-        <LabelInput
-          label={t("cmpBasicInfoWebsiteUrl")}
-          input={
-            <Input
-              placeholder={t("cmpBasicInfoWebsiteUrlPlaceholder")}
-              id="website-url"
-              {...register("basicInfo.websiteUrl")}
-              validationMessage={errors!.basicInfo?.websiteUrl?.message}
-            />
-          }
+        <Input
+          placeholder={t("cmpBasicInfoWebsiteUrlPlaceholder")}
+          prefix={<Globe2 />}
+          id="website-url"
+          {...register("basicInfo.websiteUrl")}
+          validationMessage={errors!.basicInfo?.websiteUrl?.message}
         />
 
         {/* Company Type Section */}
         <div className="w-full flex flex-col items-start gap-2">
-          <TypographyMuted className="text-xs">
-            {t("cmpBasicInfoCompanyType")}
-          </TypographyMuted>
           <Controller
             name="basicInfo.companyType"
             control={control!}
             render={({ field }) => (
               <Select onValueChange={field.onChange} value={field.value ?? ""}>
                 <SelectTrigger className="h-12 text-muted-foreground">
+                  <Shapes className="mr-2 size-[18px] shrink-0" />
                   <SelectValue
                     placeholder={t("cmpBasicInfoCompanyTypePlaceholder")}
                   />

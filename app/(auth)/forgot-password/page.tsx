@@ -1,22 +1,17 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import AuthShell from "@/components/auth/auth-shell";
+import { AuthField } from "@/components/auth/auth-field";
+import { AuthBackButton } from "@/components/auth/auth-back-button";
 import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useForgotPasswordStore } from "@/stores/apis/auth/forgot-password.store";
-import { isEmailInput } from "@/utils/functions/validation/check-email-input";
 import { isNumberPhoneInput } from "@/utils/functions/validation/check-phone-input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  LucideArrowLeft,
-  LucideLock,
-  LucideMail,
-  LucidePhone,
-} from "lucide-react";
+import { LucideKeyRound, LucideMail, LucidePhone } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -60,6 +55,8 @@ export default function ForgotPasswordPage() {
     resolver: zodResolver(forgotPasswordSchema),
   });
 
+  const identifierField = register("forgotPassword");
+
   /* -------------------------------- Methods -------------------------------- */
   // ── Forgot Password Function ───────────────────────────────────────
   const onSubmit = async (data: TForgotPasswordForm) => {
@@ -98,73 +95,60 @@ export default function ForgotPasswordPage() {
 
   /* -------------------------------- Render UI ------------------------------- */
   return (
-    <div className="min-h-screen w-full flex tablet-md:flex-col">
-      {/* Left Section */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-background p-6 sm:p-10 tablet-md:w-full tablet-md:min-h-0 tablet-md:py-16">
-        <div className="w-full max-w-[440px] flex flex-col items-start gap-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-700 fill-mode-both">
-          {/* Icon Badge Section */}
-          <div className="size-16 rounded-2xl bg-primary/10 flex items-center justify-center">
-            <LucideLock className="size-7 text-primary" />
+    <AuthShell
+      image={forgotPasswordSvg}
+      imageAlt={t("forgotPageTitle")}
+      eyebrowKey="forgotPanelEyebrow"
+      titleKey="forgotPanelTitle"
+      subtitleKey="forgotPanelSubtitle"
+    >
+      <div className="auth-stagger flex w-full flex-col gap-7">
+        {/* Icon Badge and Title Section */}
+        <div style={{ "--d": "0ms" } as React.CSSProperties}>
+          <div className="mb-5 grid size-12 place-items-center rounded-xl border border-border bg-muted text-foreground">
+            <LucideKeyRound className="size-5" strokeWidth={1.6} />
           </div>
-
-          {/* Title Section */}
-          <div className="flex flex-col items-start">
-            <TypographyH2 className="tablet-sm:text-2xl">
-              {t("forgotPageTitle")}
-            </TypographyH2>
-            <TypographyMuted className="text-md tablet-sm:text-sm">
-              {t("forgotSubtitle")}
-            </TypographyMuted>
-          </div>
-
-          {/* Form Section */}
-          <form
-            action=""
-            className="w-full flex flex-col gap-3"
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <div className="rounded-lg border border-input bg-card p-4">
-              <Input
-                type="text"
-                placeholder={t("emailOrMobile")}
-                value={inputValue}
-                className="border-0 ring-0 focus-within:ring-0 focus-within:ring-offset-0 h-auto px-0"
-                prefix={
-                  isEmailInput(inputValue) ? (
-                    <LucideMail strokeWidth={"1.3px"} />
-                  ) : isNumberPhoneInput(inputValue) ? (
-                    <LucidePhone strokeWidth={"1.3px"} />
-                  ) : null
-                }
-                {...register("forgotPassword")}
-                onChange={(e) => setInputValue(e.target.value)}
-                validationMessage={errors.forgotPassword?.message}
-              />
-            </div>
-            <div className="flex items-center justify-stretch gap-3 [&>button]:w-1/2">
-              <Button type="button" onClick={() => router.replace("/login")}>
-                <LucideArrowLeft />
-                {t("back")}
-              </Button>
-              <Button type="submit">{t("continue")}</Button>
-            </div>
-          </form>
+          <TypographyH2 className="tablet-sm:text-2xl">
+            {t("forgotPageTitle")}
+          </TypographyH2>
+          <TypographyMuted className="text-md tablet-sm:text-sm">
+            {t("forgotSubtitle")}
+          </TypographyMuted>
         </div>
-      </div>
 
-      {/* Right Section: Image Poster Section */}
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-primary dark:bg-secondary relative overflow-hidden tablet-md:hidden">
-        {/* Decorative Circles Section */}
-        <div className="absolute -top-20 -right-20 size-72 rounded-full bg-white/5" />
-        <div className="absolute -bottom-32 -left-32 size-96 rounded-full bg-white/5" />
-
-        <Image
-          src={forgotPasswordSvg}
-          alt="forgot-password"
-          height={undefined}
-          width={600}
-        />
+        {/* Form Section */}
+        <form
+          className="w-full flex flex-col gap-4"
+          onSubmit={handleSubmit(onSubmit)}
+          style={{ "--d": "90ms" } as React.CSSProperties}
+        >
+          <AuthField
+            label={t("emailOrMobile")}
+            type="text"
+            icon={
+              isNumberPhoneInput(inputValue) ? (
+                <LucidePhone className="size-[18px]" strokeWidth={1.6} />
+              ) : (
+                <LucideMail className="size-[18px]" strokeWidth={1.6} />
+              )
+            }
+            error={errors.forgotPassword?.message}
+            {...identifierField}
+            onChange={(e) => {
+              identifierField.onChange(e);
+              setInputValue(e.target.value);
+            }}
+          />
+          <div className="auth-action-row">
+            <AuthBackButton onClick={() => router.replace("/login")}>
+              {t("back")}
+            </AuthBackButton>
+            <Button type="submit" className="auth-submit" disabled={loading}>
+              {t("continue")}
+            </Button>
+          </div>
+        </form>
       </div>
-    </div>
+    </AuthShell>
   );
 }

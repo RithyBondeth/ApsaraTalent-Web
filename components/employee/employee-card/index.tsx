@@ -65,13 +65,13 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
 
     return (
       <>
-        <div className="relative h-full w-full flex flex-col bg-card border border-border/70 rounded-2xl overflow-hidden cursor-pointer shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] transition-all duration-300 ease-out hover:z-10 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_hsl(var(--foreground)/0.13)] hover:border-primary/25 active:scale-[0.98] active:shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] active:translate-y-0">
+        <article className="relative flex h-full w-full cursor-pointer flex-col overflow-hidden border border-border border-t-[5px] border-t-foreground bg-card transition-all duration-300 ease-out hover:z-10 hover:-translate-y-1 hover:border-foreground/45 hover:border-t-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)] active:translate-y-0 active:scale-[0.985] active:shadow-none">
           {/* Header Section: Avatar, Identity, Quick View and Like */}
-          <div className="flex items-start gap-3 p-4 pb-3 tablet-md:p-3 tablet-md:pb-2">
+          <div className="flex items-start gap-3 p-4 pb-3">
             <CachedAvatar
               src={props.avatar}
               alt={props.username ?? "Profile"}
-              className="size-14 shrink-0 ring-2 ring-border shadow-sm"
+              className="size-16 shrink-0 border border-border shadow-none"
               rounded="md"
               onClick={props.onProfileImageClick}
               preload={true}
@@ -81,7 +81,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
             </CachedAvatar>
 
             <div className="flex-1 min-w-0">
-              <TypographyP className="!m-0 font-semibold text-sm leading-tight">
+              <TypographyP className="!m-0 text-base font-black leading-tight tracking-[-0.02em]">
                 {props.username}
               </TypographyP>
               <TypographyMuted className="text-xs truncate mt-0.5 block font-medium">
@@ -108,7 +108,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
                 size="icon"
                 variant="ghost"
                 aria-label="Like"
-                className="size-8 rounded-full text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-all duration-200"
+                className="size-8 rounded-none border border-border text-muted-foreground transition-all duration-200 hover:bg-foreground hover:text-background"
                 onClick={props.onLikeClick}
                 disabled={props.onLikeClickDisable}
               >
@@ -122,7 +122,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
                 size="icon"
                 variant="ghost"
                 aria-label="Quick view"
-                className="size-8 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
+                className="size-8 rounded-none border border-border text-muted-foreground transition-all duration-200 hover:bg-foreground hover:text-background"
                 onClick={handleClickDialog}
               >
                 <LucideEye className="!size-4" />
@@ -132,14 +132,23 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
 
           {/* Status Badges Section */}
           <div className="flex flex-wrap items-center gap-1.5 px-4 pb-3">
-            <Tag label={formatAvailabilityWords(props.availability)} />
+            <Tag
+              label={formatAvailabilityWords(props.availability)}
+              neutral
+              className="!rounded-none border border-border hover:shadow-none"
+            />
           </div>
 
           {/* Skills Section */}
           {props.skills.length > 0 && (
             <div className="flex flex-wrap gap-1.5 px-4 pb-3">
               {props.skills.slice(0, 4).map((skill) => (
-                <Tag key={skill.id} label={skill.name} />
+                <Tag
+                  key={skill.id}
+                  label={skill.name}
+                  neutral
+                  className="!rounded-none border border-border hover:shadow-none"
+                />
               ))}
               {props.skills.length > 4 && (
                 <span className="text-[11px] text-muted-foreground self-center font-medium">
@@ -175,10 +184,10 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
           </div>
 
           {/* Footer Section */}
-          <div className="flex items-center justify-end gap-2 px-4 pb-3 pt-2 border-t border-border/50">
+          <div className="flex items-center justify-end gap-2 border-t border-border px-4 py-3">
             {!props.hideSaveButton && (
               <Button
-                className="text-[11px] h-7 px-2.5 rounded-full gap-1"
+                className="h-8 gap-1 rounded-none px-3 text-[11px]"
                 variant="outline"
                 size="sm"
                 onClick={props.onSaveClick}
@@ -193,7 +202,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
               </Button>
             )}
             <Button
-              className="text-[11px] h-7 px-3 rounded-full gap-1"
+              className="h-8 gap-1 rounded-none px-3 text-[11px]"
               size="sm"
               onClick={props.onViewClick}
             >
@@ -201,7 +210,7 @@ export default function EmployeeCard(props: IEmployeeCardProps) {
               <LucideCircleArrowRight className="!size-3" />
             </Button>
           </div>
-        </div>
+        </article>
 
         <EmployeeDialog
           open={openProfileDialog}

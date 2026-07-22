@@ -40,9 +40,9 @@ class AngkorWatErrorBoundary extends Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-amber-50/40 to-background dark:from-amber-950/10 dark:to-background">
+        <div className="absolute inset-0 flex items-center justify-center bg-background">
           <div className="mx-auto flex max-w-md flex-col items-center gap-3 px-6 text-center">
-            <div className="flex size-14 items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-300">
+            <div className="flex size-14 items-center justify-center border border-destructive/30 bg-destructive/10 text-destructive">
               <LucideTriangleAlert className="size-7" />
             </div>
             <p className="text-lg font-semibold text-foreground">

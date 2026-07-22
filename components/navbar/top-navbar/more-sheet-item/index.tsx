@@ -13,17 +13,28 @@ export default function MoreSheetItem(props: IMoreSheetItemProps) {
       href={href}
       prefetch={true}
       onClick={onClick}
+      aria-current={active ? "page" : undefined}
       className={cn(
-        "flex flex-col items-center gap-2 rounded-2xl p-4 transition-all",
-        active ? "bg-accent shadow-sm" : "bg-muted/50 hover:bg-muted",
+        "group relative flex min-h-20 items-center gap-3 border p-3 transition-[background-color,border-color,color,transform]",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
+        active
+          ? "border-foreground bg-foreground text-background shadow-[3px_3px_0_hsl(var(--foreground)/0.12)]"
+          : "border-border bg-background hover:border-foreground/35 hover:bg-muted/60 active:translate-y-px",
       )}
     >
-      <span className="relative">
+      <span
+        className={cn(
+          "relative flex size-9 shrink-0 items-center justify-center border",
+          active
+            ? "border-background/25 bg-background/10"
+            : "border-border bg-muted/60",
+        )}
+      >
         {/* Icon Section */}
         <Icon
           className={cn(
-            "size-6",
-            active ? "text-primary" : "text-foreground/80",
+            "size-[18px] transition-transform duration-200 group-hover:-translate-y-0.5",
+            active ? "text-background" : "text-foreground/80",
           )}
           strokeWidth={active ? 2.3 : 1.7}
         />
@@ -35,11 +46,21 @@ export default function MoreSheetItem(props: IMoreSheetItemProps) {
       {/* Label Section */}
       <span
         className={cn(
-          "text-center text-xs font-medium",
-          active ? "text-primary" : "text-foreground/80",
+          "min-w-0 text-left text-xs font-semibold leading-snug",
+          active ? "text-background" : "text-foreground/80",
         )}
       >
         {label}
+      </span>
+      
+      <span
+        aria-hidden="true"
+        className={cn(
+          "ml-auto text-sm transition-transform duration-200 group-hover:translate-x-0.5",
+          active ? "text-background/70" : "text-muted-foreground",
+        )}
+      >
+        →
       </span>
     </Link>
   );
