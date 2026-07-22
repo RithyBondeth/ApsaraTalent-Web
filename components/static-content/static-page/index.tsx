@@ -1,49 +1,52 @@
-import type { ReactNode } from "react";
 import Header from "@/components/header";
 import LandingFooter from "@/components/landing/landing-footer";
 import { GridRunners } from "@/components/ui/grid-runners";
 import { ScrollProgress } from "@/components/utils/animations/scroll-progress";
+import {
+  IStaticBulletProps,
+  IStaticCardProps,
+  IStaticNoteProps,
+  IStaticPageArtworkSlotProps,
+  IStaticPageShellProps,
+  IStaticSectionProps,
+  IStaticStepProps,
+} from "./props";
 
-export type StaticPageTocItem = {
-  id: string;
-  label: string;
-};
+export type { StaticPageTocItem } from "./props";
 
-type StaticPageShellProps = {
-  pageNumber: string;
-  pageTotal?: string;
-  title: string;
-  subtitle: ReactNode;
-  tocHeading: string;
-  toc: StaticPageTocItem[];
-  icon: ReactNode;
-  meta?: ReactNode;
-  heroVisual?: ReactNode;
-  children: ReactNode;
-};
+export function StaticPageShell(props: IStaticPageShellProps) {
+  /* ------------------------------- Props ------------------------------- */
+  const {
+    pageNumber,
+    pageTotal = "04",
+    title,
+    subtitle,
+    tocHeading,
+    toc,
+    icon,
+    meta,
+    heroVisual,
+    children,
+  } = props;
 
-export function StaticPageShell({
-  pageNumber,
-  pageTotal = "04",
-  title,
-  subtitle,
-  tocHeading,
-  toc,
-  icon,
-  meta,
-  heroVisual,
-  children,
-}: StaticPageShellProps) {
+  /* ----------------------------- Render UI ----------------------------- */
   return (
     <div className="landing-scope static-page-scope relative min-h-screen bg-background text-foreground">
+      {/* Page Progress Section */}
       <ScrollProgress />
+
+      {/* Page Header Section */}
       <Header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/90 backdrop-blur-xl" />
 
+      {/* Page Hero Section */}
       <section className="relative overflow-hidden border-b border-border pt-[72px]">
+        {/* Hero Background Animation Section */}
         <div className="landing-grid pointer-events-none absolute inset-0" />
         <GridRunners className="landing-grid-runners" density="quiet" />
 
+        {/* Hero Content Grid Section */}
         <div className="relative mx-auto grid min-h-[420px] max-w-7xl border-x border-border lg:grid-cols-[1.08fr_0.92fr]">
+          {/* Hero Copy Section */}
           <div className="flex flex-col justify-center px-6 py-12 sm:px-10 sm:py-14 lg:px-14 lg:py-16">
             <div className="static-page-reveal flex items-center gap-3">
               <span className="h-px w-8 bg-foreground" />
@@ -65,18 +68,24 @@ export function StaticPageShell({
             ) : null}
           </div>
 
+          {/* Hero Visual Panel Section */}
           <div className="landing-swap-panel relative flex min-h-[350px] flex-col overflow-hidden border-t border-border p-6 sm:p-8 lg:min-h-0 lg:border-l lg:border-t-0 lg:p-9">
+            {/* Visual Panel Background Section */}
             <div className="landing-dark-grid pointer-events-none absolute inset-0" />
             <GridRunners
               className="landing-swap-grid-runners"
               density="quiet"
             />
 
+            {/* Visual Panel Header Section */}
             <div className="relative z-10 flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.2em] text-[hsl(var(--landing-panel-ink)/0.52)]">
               <span>{title}</span>
-              <span>{pageNumber} / {pageTotal}</span>
+              <span>
+                {pageNumber} / {pageTotal}
+              </span>
             </div>
 
+            {/* Hero Artwork Section */}
             <div className="relative z-10 my-auto flex items-center justify-center py-6">
               {heroVisual ? (
                 <div className="static-page-legal-visual">{heroVisual}</div>
@@ -89,6 +98,7 @@ export function StaticPageShell({
               )}
             </div>
 
+            {/* Hero Table of Contents Section */}
             <div className="relative z-10 border-t border-[hsl(var(--landing-panel-ink)/0.16)]">
               <div className="py-4 text-[10px] font-semibold uppercase tracking-[0.2em] text-[hsl(var(--landing-panel-ink)/0.45)]">
                 {tocHeading}
@@ -114,7 +124,9 @@ export function StaticPageShell({
         </div>
       </section>
 
+      {/* Page Content Section */}
       <div className="mx-auto max-w-7xl border-x border-border">
+        {/* Mobile Table of Contents Section */}
         <nav
           aria-label={tocHeading}
           className="static-page-mobile-toc flex gap-1 overflow-x-auto border-b border-border p-3 lg:hidden"
@@ -133,7 +145,9 @@ export function StaticPageShell({
           ))}
         </nav>
 
+        {/* Desktop Content Grid Section */}
         <div className="grid lg:grid-cols-[260px_minmax(0,1fr)]">
+          {/* Desktop Table of Contents Section */}
           <aside className="hidden border-r border-border lg:block">
             <nav aria-label={tocHeading} className="sticky top-[104px] p-8">
               <span className="mb-5 block text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
@@ -156,39 +170,34 @@ export function StaticPageShell({
             </nav>
           </aside>
 
+          {/* Main Article Content Section */}
           <main className="min-w-0">{children}</main>
         </div>
       </div>
 
+      {/* Page Footer Section */}
       <LandingFooter />
     </div>
   );
 }
 
-type StaticSectionProps = {
-  id: string;
-  number: string;
-  icon: ReactNode;
-  title: string;
-  children: ReactNode;
-};
+export function StaticSection(props: IStaticSectionProps) {
+  /* ------------------------------- Props ------------------------------- */
+  const { id, number, icon, title, children } = props;
 
-export function StaticSection({
-  id,
-  number,
-  icon,
-  title,
-  children,
-}: StaticSectionProps) {
+  /* ----------------------------- Render UI ----------------------------- */
   return (
     <section
       id={id}
       className="static-page-section scroll-mt-24 border-b border-border px-6 py-14 sm:px-10 sm:py-16 lg:px-14 lg:py-20"
     >
+      {/* Static Content Section */}
       <div className="grid gap-6 sm:grid-cols-[64px_minmax(0,1fr)] sm:gap-8">
+        {/* Section Icon Section */}
         <div className="flex size-12 items-center justify-center border border-border bg-muted/45 text-foreground sm:size-14">
           <span className="[&>svg]:size-5 [&>svg]:stroke-[1.5]">{icon}</span>
         </div>
+        {/* Section Copy Section */}
         <div className="min-w-0">
           <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
             Section {number}
@@ -205,9 +214,15 @@ export function StaticSection({
   );
 }
 
-export function StaticBullet({ children }: { children: ReactNode }) {
+export function StaticBullet(props: IStaticBulletProps) {
+  /* ------------------------------- Props ------------------------------- */
+  const { children } = props;
+
+  /* ----------------------------- Render UI ----------------------------- */
   return (
     <li className="grid grid-cols-[22px_1fr] items-start gap-3 border-b border-border/65 py-3 first:border-t">
+      {/* Static Bullet Item Section */}
+      {/* Bullet Marker Section */}
       <span className="mt-[0.45rem] flex size-3 items-center justify-center border border-foreground/30">
         <span className="size-1 bg-foreground/65" />
       </span>
@@ -216,24 +231,19 @@ export function StaticBullet({ children }: { children: ReactNode }) {
   );
 }
 
-type StaticCardProps = {
-  icon: ReactNode;
-  title: string;
-  description: string;
-  footer?: ReactNode;
-};
+export function StaticCard(props: IStaticCardProps) {
+  /* ------------------------------- Props ------------------------------- */
+  const { icon, title, description, footer } = props;
 
-export function StaticCard({
-  icon,
-  title,
-  description,
-  footer,
-}: StaticCardProps) {
+  /* ----------------------------- Render UI ----------------------------- */
   return (
     <article className="static-page-card group flex min-h-full flex-col border border-border bg-card/45 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-foreground/25 hover:bg-card sm:p-6">
+      {/* Static Information Card Section */}
+      {/* Card Icon Section */}
       <div className="flex size-10 items-center justify-center border border-border bg-muted/60 text-foreground transition-colors group-hover:border-foreground/25 group-hover:bg-foreground group-hover:text-background">
         <span className="[&>svg]:size-4 [&>svg]:stroke-[1.6]">{icon}</span>
       </div>
+      {/* Card Content Section */}
       <h3 className="mt-5 text-sm font-semibold text-foreground">{title}</h3>
       <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
         {description}
@@ -243,18 +253,19 @@ export function StaticCard({
   );
 }
 
-type StaticStepProps = {
-  step: number;
-  title: string;
-  description: string;
-};
+export function StaticStep(props: IStaticStepProps) {
+  /* ------------------------------- Props ------------------------------- */
+  const { step, title, description } = props;
 
-export function StaticStep({ step, title, description }: StaticStepProps) {
+  /* ----------------------------- Render UI ----------------------------- */
   return (
     <div className="static-page-step relative grid grid-cols-[48px_1fr] gap-4 pb-6 last:pb-0">
+      {/* Static Step Section */}
+      {/* Step Number Section */}
       <div className="relative z-10 flex size-10 items-center justify-center border border-foreground/25 bg-background text-xs font-semibold tabular-nums text-foreground">
         {String(step).padStart(2, "0")}
       </div>
+      {/* Step Content Section */}
       <div className="pt-1">
         <h3 className="text-sm font-semibold text-foreground">{title}</h3>
         <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
@@ -265,15 +276,15 @@ export function StaticStep({ step, title, description }: StaticStepProps) {
   );
 }
 
-export function StaticNote({
-  icon,
-  children,
-}: {
-  icon: ReactNode;
-  children: ReactNode;
-}) {
+export function StaticNote(props: IStaticNoteProps) {
+  /* ------------------------------- Props ------------------------------- */
+  const { icon, children } = props;
+
+  /* ----------------------------- Render UI ----------------------------- */
   return (
     <div className="static-page-note mt-2 flex items-start gap-3 border border-foreground/15 bg-foreground/[0.035] px-4 py-4 text-foreground">
+      {/* Static Note Section */}
+      {/* Note Icon Section */}
       <span className="mt-0.5 shrink-0 [&>svg]:size-4 [&>svg]:stroke-[1.6]">
         {icon}
       </span>
@@ -282,23 +293,26 @@ export function StaticNote({
   );
 }
 
-export function StaticPageArtworkSlot({
-  icon,
-  label,
-}: {
-  icon: ReactNode;
-  label: string;
-}) {
+export function StaticPageArtworkSlot(props: IStaticPageArtworkSlotProps) {
+  /* ------------------------------- Props ------------------------------- */
+  const { icon, label } = props;
+
+  /* ----------------------------- Render UI ----------------------------- */
   return (
     <div
       className="static-page-artwork-slot"
       role="img"
       aria-label={`${label} artwork`}
     >
+      {/* Static Artwork Slot Section */}
+      {/* Artwork Background Section */}
       <div className="static-page-artwork-slot-grid" />
+
+      {/* Artwork Mark Section */}
       <div className="static-page-artwork-slot-mark">
         <span className="[&>svg]:size-8 [&>svg]:stroke-[1.25]">{icon}</span>
       </div>
+      {/* Artwork Caption Section */}
       <div className="relative z-10 mt-auto flex w-full items-end justify-between border-t border-[hsl(var(--landing-panel-ink)/0.16)] pt-4">
         <span className="text-xs font-medium text-[hsl(var(--landing-panel-ink)/0.8)]">
           {label}

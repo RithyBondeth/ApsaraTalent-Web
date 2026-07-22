@@ -5,35 +5,25 @@ import { GridRunners } from "@/components/ui/grid-runners";
 import { DetailCard } from "@/components/utils/data-display/detail-card";
 import { cn } from "@/lib/utils";
 import { User } from "lucide-react";
-import type { ReactNode } from "react";
+import { IProfileDetailHeroProps } from "./props";
 
-interface ProfileDetailHeroProps {
-  kind: "employee" | "company";
-  eyebrow: string;
-  name: string;
-  headline?: string | null;
-  avatar?: string | null;
-  cover?: string | null;
-  fallback?: ReactNode;
-  status?: ReactNode;
-  meta?: ReactNode;
-  actions?: ReactNode;
-  onAvatarClick?: () => void;
-}
+export function ProfileDetailHero(props: IProfileDetailHeroProps) {
+  /* ------------------------------- Props ------------------------------- */
+  const {
+    kind,
+    eyebrow,
+    name,
+    headline,
+    avatar,
+    cover,
+    fallback,
+    status,
+    meta,
+    actions,
+    onAvatarClick,
+  } = props;
 
-export function ProfileDetailHero({
-  kind,
-  eyebrow,
-  name,
-  headline,
-  avatar,
-  cover,
-  fallback,
-  status,
-  meta,
-  actions,
-  onAvatarClick,
-}: ProfileDetailHeroProps) {
+  /* ------------------------------- Utils ------------------------------- */
   const profileAvatar = (
     <Avatar
       rounded="md"
@@ -50,17 +40,22 @@ export function ProfileDetailHero({
     </Avatar>
   );
 
+  /* ----------------------------- Render UI ----------------------------- */
   if (kind === "employee") {
     return (
       <DetailCard className="profile-detail-employee-card overflow-hidden">
+        {/* Employee Hero Card Section */}
         <div className="grid md:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+          {/* Employee Identity Panel Section */}
           <section className="profile-detail-employee-intro relative flex min-h-[300px] flex-col overflow-hidden bg-foreground p-5 text-background sm:min-h-[340px] sm:p-7 md:min-h-[410px]">
+            {/* Animated Grid Background Section */}
             <div className="profile-detail-hero-grid" aria-hidden />
             <GridRunners
               className="profile-detail-grid-runners"
               density="quiet"
             />
 
+            {/* Employee Panel Header Section */}
             <div className="relative z-[2] flex items-start justify-between gap-4">
               <p className="text-[10px] font-extrabold uppercase tracking-[0.24em] opacity-65">
                 {eyebrow}
@@ -70,6 +65,7 @@ export function ProfileDetailHero({
               </span>
             </div>
 
+            {/* Employee Identity Section */}
             <div className="relative z-[2] mt-auto flex items-end gap-4 sm:gap-5 tablet-sm:flex-col tablet-sm:items-start">
               <div className="[&>span]:size-24 sm:[&>span]:size-28">
                 {profileAvatar}
@@ -85,10 +81,13 @@ export function ProfileDetailHero({
             </div>
           </section>
 
+          {/* Employee Professional Focus Panel Section */}
           <section className="profile-detail-employee-focus relative flex min-h-[320px] flex-col overflow-hidden bg-card p-5 sm:min-h-[360px] sm:p-7 md:min-h-[410px]">
+            {/* Decorative Index Section */}
             <div className="profile-detail-focus-index" aria-hidden>
               AT
             </div>
+            {/* Employee Headline Section */}
             <div className="relative z-[1]">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-muted-foreground">
@@ -103,12 +102,14 @@ export function ProfileDetailHero({
               )}
             </div>
 
+            {/* Employee Metadata Section */}
             {meta && (
               <div className="profile-detail-meta profile-detail-meta-grid relative z-[1] mt-8 grid grid-cols-2 gap-px border border-border bg-border sm:mt-auto">
                 {meta}
               </div>
             )}
 
+            {/* Employee Actions Section */}
             {actions && (
               <div className="relative z-[1] mt-4 hidden items-center justify-end gap-2 md:flex [&>button]:rounded-none">
                 {actions}
@@ -122,6 +123,8 @@ export function ProfileDetailHero({
 
   return (
     <DetailCard className="profile-detail-company-card overflow-hidden">
+      {/* Company Hero Card Section */}
+      {/* Company Cover Section */}
       <section
         className={cn(
           "profile-detail-hero profile-detail-company-cover relative flex min-h-[300px] flex-col overflow-hidden bg-foreground p-5 sm:min-h-[360px] sm:p-8",
@@ -129,9 +132,11 @@ export function ProfileDetailHero({
         )}
         style={cover ? { backgroundImage: `url(${cover})` } : undefined}
       >
+        {/* Animated Grid Background Section */}
         <div className="profile-detail-hero-grid" aria-hidden />
         <GridRunners className="profile-detail-grid-runners" density="quiet" />
 
+        {/* Company Cover Header Section */}
         <div className="relative z-[2] flex items-start justify-between gap-4">
           <p className="text-[10px] font-extrabold uppercase tracking-[0.24em] opacity-65">
             {eyebrow}
@@ -141,6 +146,7 @@ export function ProfileDetailHero({
           </span>
         </div>
 
+        {/* Company Identity Section */}
         <div className="relative z-[2] mt-auto max-w-4xl pb-10 sm:pb-0">
           {headline && (
             <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] opacity-70">
@@ -153,17 +159,21 @@ export function ProfileDetailHero({
         </div>
       </section>
 
+      {/* Company Metadata Rail Section */}
       <div className="relative grid gap-5 px-4 pb-5 sm:px-6 sm:pb-6 md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-end">
+        {/* Company Avatar Section */}
         <div className="-mt-12 [&>span]:size-24 sm:-mt-14 sm:[&>span]:size-28">
           {profileAvatar}
         </div>
 
+        {/* Company Metadata Section */}
         {meta && (
           <div className="profile-detail-meta profile-detail-company-meta grid min-w-0 grid-cols-2 gap-px border border-border bg-border sm:grid-cols-4 md:mb-1">
             {meta}
           </div>
         )}
 
+        {/* Company Actions Section */}
         {actions && (
           <div className="hidden shrink-0 items-center gap-2 md:mb-1 md:flex [&>button]:rounded-none">
             {actions}
@@ -171,6 +181,7 @@ export function ProfileDetailHero({
         )}
       </div>
 
+      {/* Company Accent Line Section */}
       <div className="h-1 bg-foreground" aria-hidden />
     </DetailCard>
   );

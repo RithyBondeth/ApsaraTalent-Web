@@ -7,27 +7,24 @@ import { setCookie } from "cookies-next";
 import { LucideMoon, LucideSun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
-import type { SwitcherProps } from "./props";
-
-type TAnimationKind = "language" | "theme" | null;
-
-interface ThemeViewTransition {
-  ready: Promise<void>;
-  finished: Promise<void>;
-}
-
-type ThemeTransitionDocument = Document & {
-  startViewTransition?: (
-    update: () => void | Promise<void>,
-  ) => ThemeViewTransition;
-};
+import type {
+  ISwitcherProps,
+  TAnimationKind,
+  TThemeTransitionDocument,
+} from "./props";
 
 const SPARK_ANGLES = [0, 45, 90, 135, 180, 225, 270, 315] as const;
 
-export default function Switcher({ className, inline = false }: SwitcherProps) {
+export default function Switcher(props: ISwitcherProps) {
+  /* ------------------------------- Props ------------------------------- */
+  const { className, inline = false } = props;
+
+  /* ------------------------------- Utils ------------------------------- */
   const { language, setLanguage } = useLanguageStore();
   const { theme, setTheme: setStoredTheme } = useThemeStore();
   const { resolvedTheme, setTheme } = useTheme();
+
+  /* ---------------------------- All States ---------------------------- */
   const [mounted, setMounted] = useState(false);
   const [animationKind, setAnimationKind] = useState<TAnimationKind>(null);
   const animationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -36,6 +33,7 @@ export default function Switcher({ className, inline = false }: SwitcherProps) {
   );
   const isThemeTransitioning = useRef(false);
 
+  /* ----------------------------- Effects ------------------------------ */
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
@@ -61,20 +59,25 @@ export default function Switcher({ className, inline = false }: SwitcherProps) {
     [],
   );
 
+  /* -------------------------- Derived States -------------------------- */
   const isDark = mounted && resolvedTheme === "dark";
 
+  /* ----------------------------- Methods ------------------------------ */
+  // ── Play Control Animation ───────────────────────────────────────────
   const playAnimation = (kind: Exclude<TAnimationKind, null>) => {
     if (animationTimer.current) clearTimeout(animationTimer.current);
     setAnimationKind(kind);
     animationTimer.current = setTimeout(() => setAnimationKind(null), 720);
   };
 
+  // ── Handle Language Change ───────────────────────────────────────────
   const handleLanguageChange = (nextLanguage: "en" | "km") => {
     if (nextLanguage === language) return;
     playAnimation("language");
     setLanguage(nextLanguage);
   };
 
+  // ── Handle Theme Toggle ──────────────────────────────────────────────
   const handleThemeToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (isThemeTransitioning.current) return;
 
@@ -98,7 +101,7 @@ export default function Switcher({ className, inline = false }: SwitcherProps) {
       return;
     }
 
-    const transitionDocument = document as ThemeTransitionDocument;
+    const transitionDocument = document as TThemeTransitionDocument;
     const startViewTransition =
       transitionDocument.startViewTransition?.bind(transitionDocument);
 
@@ -152,6 +155,7 @@ export default function Switcher({ className, inline = false }: SwitcherProps) {
     });
   };
 
+  /* ----------------------------- Render UI ----------------------------- */
   return (
     <div
       className={cn(
@@ -160,14 +164,18 @@ export default function Switcher({ className, inline = false }: SwitcherProps) {
         className,
       )}
     >
+      {/* Language and Theme Switcher Section */}
+      {/* Switcher Control Section */}
       <div
         className="switcher-pill"
         data-language={language}
         data-theme={isDark ? "dark" : "light"}
         data-animating={animationKind ?? "idle"}
       >
+        {/* Switcher Sheen Section */}
         <span className="switcher-sheen" aria-hidden />
 
+        {/* Language Controls Section */}
         <div
           className="switcher-lang-segment"
           role="group"
@@ -196,8 +204,10 @@ export default function Switcher({ className, inline = false }: SwitcherProps) {
           </button>
         </div>
 
+        {/* Control Divider Section */}
         <span className="switcher-divider" aria-hidden />
 
+        {/* Theme Control Section */}
         <button
           type="button"
           onClick={handleThemeToggle}
@@ -205,12 +215,14 @@ export default function Switcher({ className, inline = false }: SwitcherProps) {
           aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
           title={isDark ? "Light theme" : "Dark theme"}
         >
+          {/* Theme Track Section */}
           <span className="switcher-theme-track" aria-hidden>
             <span className="switcher-theme-knob">
               <LucideSun className="switcher-theme-icon switcher-sun-icon" />
               <LucideMoon className="switcher-theme-icon switcher-moon-icon" />
             </span>
           </span>
+          {/* Theme Spark Animation Section */}
           <span className="switcher-sparks" aria-hidden>
             {SPARK_ANGLES.map((angle, index) => (
               <span

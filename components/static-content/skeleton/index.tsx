@@ -1,7 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import React from "react";
 
 export default function StaticContentLoadingSkeleton() {
+  /* ----------------------------- Render UI ----------------------------- */
   return (
     <div className="landing-scope min-h-screen bg-background text-foreground">
       {/* Loading Skeleton for Top Navigation */}
