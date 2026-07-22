@@ -49,34 +49,6 @@ export default function SignupPage() {
   const tv = useTranslations("validation");
   const tLoc = useTranslations("locations");
 
-  const locationLabels: Record<string, string> = {
-    "Phnom Penh": tLoc("phnomPenh"),
-    "Banteay Meanchey": tLoc("banteayMeanchey"),
-    Battambang: tLoc("battambang"),
-    "Kampong Cham": tLoc("kampongCham"),
-    "Kampong Chhnang": tLoc("kampongChhnang"),
-    "Kampong Speu": tLoc("kampongSpeu"),
-    "Kampong Thom": tLoc("kampongThom"),
-    Kampot: tLoc("kampot"),
-    Kandal: tLoc("kandal"),
-    Kep: tLoc("kep"),
-    "Koh Kong": tLoc("kohKong"),
-    Kratie: tLoc("kratie"),
-    Mondulkiri: tLoc("mondulkiri"),
-    "Oddar Meanchey": tLoc("oddarMeanchey"),
-    Pailin: tLoc("pailin"),
-    "Preah Sihanouk": tLoc("preahSihanouk"),
-    "Preah Vihear": tLoc("preahVihear"),
-    "Prey Veng": tLoc("preyVeng"),
-    Pursat: tLoc("pursat"),
-    Ratanakiri: tLoc("ratanakiri"),
-    "Siem Reap": tLoc("siemReap"),
-    "Stung Treng": tLoc("stungTreng"),
-    "Svay Rieng": tLoc("svayRieng"),
-    Takeo: tLoc("takeo"),
-    "Tbong Khmum": tLoc("tbongKhmum"),
-  };
-
   /* -------------------------------------- All States ------------------------------------ */
   // Basic Signup Data
   const { basicSignupData, setBasicSignupData } = useBasicSignupDataStore();
@@ -110,14 +82,40 @@ export default function SignupPage() {
   const isEmployeeForm = selectedRole === USER_ROLE.EMPLOYEE;
 
   /* ------------------------- Options for floating-label selects ------------------------- */
-  const locationOptions = useMemo(
-    () =>
-      locationConstant.map((loc) => ({
+  const locationOptions = useMemo(() => {
+    const locationLabels: Record<string, string> = {
+      "Phnom Penh": tLoc("phnomPenh"),
+      "Banteay Meanchey": tLoc("banteayMeanchey"),
+      Battambang: tLoc("battambang"),
+      "Kampong Cham": tLoc("kampongCham"),
+      "Kampong Chhnang": tLoc("kampongChhnang"),
+      "Kampong Speu": tLoc("kampongSpeu"),
+      "Kampong Thom": tLoc("kampongThom"),
+      Kampot: tLoc("kampot"),
+      Kandal: tLoc("kandal"),
+      Kep: tLoc("kep"),
+      "Koh Kong": tLoc("kohKong"),
+      Kratie: tLoc("kratie"),
+      Mondulkiri: tLoc("mondulkiri"),
+      "Oddar Meanchey": tLoc("oddarMeanchey"),
+      Pailin: tLoc("pailin"),
+      "Preah Sihanouk": tLoc("preahSihanouk"),
+      "Preah Vihear": tLoc("preahVihear"),
+      "Prey Veng": tLoc("preyVeng"),
+      Pursat: tLoc("pursat"),
+      Ratanakiri: tLoc("ratanakiri"),
+      "Siem Reap": tLoc("siemReap"),
+      "Stung Treng": tLoc("stungTreng"),
+      "Svay Rieng": tLoc("svayRieng"),
+      Takeo: tLoc("takeo"),
+      "Tbong Khmum": tLoc("tbongKhmum"),
+    };
+
+    return locationConstant.map((loc) => ({
         value: loc,
         label: locationLabels[loc] ?? loc,
-      })),
-    [locationLabels],
-  );
+      }));
+  }, [tLoc]);
   const genderOptions = useMemo(
     () =>
       genderConstant.map((g) => ({
@@ -128,7 +126,7 @@ export default function SignupPage() {
   );
 
   /* ----------------------- React Hook Form: Emp and Cmp Signup Form ---------------------- */
-    // ── Validation Messages For Signup Forms ───────────────────────────────
+  // ── Validation Messages For Signup Forms ───────────────────────────────
   const signupMessages = useMemo(
     () => ({
       phoneInvalid: tv("phoneInvalid"),
