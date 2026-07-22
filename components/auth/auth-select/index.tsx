@@ -1,7 +1,5 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import * as React from "react";
 import {
   Select,
   SelectContent,
@@ -9,22 +7,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-/* ------------------------------- Helpers -------------------------------- */
-export interface IAuthSelectOption {
-  value: string;
-  label: string;
-}
-
-export interface IAuthSelectProps {
-  label: string;
-  options: IAuthSelectOption[];
-  value?: string;
-  onValueChange?: (value: string) => void;
-  icon?: React.ReactNode;
-  error?: string;
-  className?: string;
-}
+import { cn } from "@/lib/utils";
+import { useId } from "react";
+import { IAuthSelectProps } from "./props";
 
 export function AuthSelect(props: IAuthSelectProps) {
   /* ------------------------------- Props -------------------------------- */
@@ -32,7 +17,7 @@ export function AuthSelect(props: IAuthSelectProps) {
     props;
 
   /* ------------------------------- Utils --------------------------------- */
-  const errorId = React.useId();
+  const errorId = useId();
 
   /* ------------------------------ Render UI ------------------------------- */
   return (
@@ -55,9 +40,9 @@ export function AuthSelect(props: IAuthSelectProps) {
               <SelectValue placeholder={label} />
             </SelectTrigger>
             <SelectContent>
-              {options.map((o) => (
-                <SelectItem key={o.value} value={o.value}>
-                  {o.label}
+              {options.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
                 </SelectItem>
               ))}
             </SelectContent>

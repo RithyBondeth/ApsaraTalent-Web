@@ -1,21 +1,6 @@
+import AuthBrandPanel from "@/components/auth/auth-brand-panel";
 import { cn } from "@/lib/utils";
-import type { StaticImageData } from "next/image";
-import AuthBrandPanel from "./auth-brand-panel";
-
-/* ----------------------------------- Helper ----------------------------------- */
-interface IAuthShellProps {
-  children: React.ReactNode;
-  /** The page's own illustration, shown as the brand-panel hero. */
-  image?: StaticImageData;
-  imageAlt?: string;
-  /** Dynamic per-page brand-panel copy (i18n keys under the "auth" namespace). */
-  eyebrowKey?: string;
-  titleKey?: string;
-  subtitleKey?: string;
-  /** Widen the form column for multi-column signup wizards. */
-  wide?: boolean;
-  className?: string;
-}
+import { IAuthShellProps } from "./props";
 
 export default function AuthShell(props: IAuthShellProps) {
   /* ----------------------------------- Props ----------------------------------- */

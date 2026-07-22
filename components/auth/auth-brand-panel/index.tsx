@@ -1,20 +1,11 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { GridRunners } from "@/components/ui/grid-runners";
+import { cn } from "@/lib/utils";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
-import Image, { type StaticImageData } from "next/image";
 import { useCallback, useRef } from "react";
-
-/* ------------------------------- Helper -------------------------------- */
-interface IAuthBrandPanelProps {
-  image?: StaticImageData;
-  imageAlt?: string;
-  eyebrowKey?: string;
-  titleKey?: string;
-  subtitleKey?: string;
-  className?: string;
-}
+import { IAuthBrandPanelProps } from "./props";
 
 export default function AuthBrandPanel(props: IAuthBrandPanelProps) {
   /* ------------------------------- Props ------------------------------- */

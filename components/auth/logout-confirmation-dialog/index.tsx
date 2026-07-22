@@ -10,17 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { LoaderCircle, LogOut } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-
-/* ------------------------------ Helper ------------------------------ */
-interface ILogoutConfirmationDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onConfirm: () => void | Promise<void>;
-  title: string;
-  description: string;
-  cancelLabel: string;
-  confirmLabel: string;
-}
+import { ILogoutConfirmationDialogProps } from "./props";
 
 export function LogoutConfirmationDialog(
   props: ILogoutConfirmationDialogProps,

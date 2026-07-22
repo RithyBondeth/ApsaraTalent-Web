@@ -2,20 +2,11 @@
 
 import { cn } from "@/lib/utils";
 import { LucideEye, LucideEyeOff } from "lucide-react";
-import * as React from "react";
+import { forwardRef, useId, useState } from "react";
+import { IAuthFieldProps } from "./props";
 
-/* ------------------------------- Helper -------------------------------- */
-export interface IAuthFieldProps extends Omit<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  "prefix"
-> {
-  label: string;
-  icon?: React.ReactNode;
-  error?: string;
-}
-
-const AuthField = React.forwardRef<HTMLInputElement, IAuthFieldProps>(
-  (props: IAuthFieldProps, ref: React.Ref<HTMLInputElement>) => {
+const AuthField = forwardRef<HTMLInputElement, IAuthFieldProps>(
+  (props, ref) => {
     /* ------------------------------- Props ------------------------------- */
     const {
       label,
@@ -25,15 +16,16 @@ const AuthField = React.forwardRef<HTMLInputElement, IAuthFieldProps>(
       className,
       id,
       placeholder,
+      ...inputProps
     } = props;
 
     /* ------------------------------- Utils ------------------------------- */
-    const [reveal, setReveal] = React.useState(false);
-    const generatedId = React.useId();
+    const [reveal, setReveal] = useState<boolean>(false);
+    const generatedId = useId();
     const isPassword = type === "password";
     const inputType = isPassword ? (reveal ? "text" : "password") : type;
 
-    const fieldId = id ?? props.name ?? generatedId;
+    const fieldId = id ?? inputProps.name ?? generatedId;
     const errorId = `${fieldId}-error`;
 
     /* ----------------------------- Render UI ----------------------------- */
@@ -53,6 +45,7 @@ const AuthField = React.forwardRef<HTMLInputElement, IAuthFieldProps>(
           {/* Field Main Section */}
           <div className="auth-field-main">
             <input
+              {...inputProps}
               id={fieldId}
               ref={ref}
               type={inputType}
@@ -60,7 +53,6 @@ const AuthField = React.forwardRef<HTMLInputElement, IAuthFieldProps>(
               className="auth-field-input"
               aria-invalid={Boolean(error)}
               aria-describedby={error ? errorId : undefined}
-              {...props}
             />
           </div>
           {/* Password Toggle Section */}
@@ -69,7 +61,7 @@ const AuthField = React.forwardRef<HTMLInputElement, IAuthFieldProps>(
               type="button"
               tabIndex={-1}
               className="auth-field-toggle"
-              onClick={() => setReveal((v) => !v)}
+              onClick={() => setReveal((value) => !value)}
               aria-label={reveal ? "Hide password" : "Show password"}
             >
               {reveal ? (
@@ -96,4 +88,5 @@ const AuthField = React.forwardRef<HTMLInputElement, IAuthFieldProps>(
 );
 
 AuthField.displayName = "AuthField";
+
 export { AuthField };

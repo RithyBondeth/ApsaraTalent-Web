@@ -1,19 +1,9 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { DatePicker } from "@/components/ui/date-picker";
-import * as React from "react";
-
-/* ------------------------------- Helper -------------------------------- */
-export interface IAuthDateFieldProps {
-  label: string;
-  date: Date | undefined;
-  onDateChange: (date: Date | undefined) => void;
-  icon?: React.ReactNode;
-  error?: string;
-  dateFormat?: string;
-  className?: string;
-}
+import { cn } from "@/lib/utils";
+import { useId } from "react";
+import { IAuthDateFieldProps } from "./props";
 
 export function AuthDateField(props: IAuthDateFieldProps) {
   /* ------------------------------- Props ------------------------------- */
@@ -28,7 +18,7 @@ export function AuthDateField(props: IAuthDateFieldProps) {
   } = props;
 
   /* ------------------------------- Utils ------------------------------- */
-  const errorId = React.useId();
+  const errorId = useId();
 
   /* ----------------------------- Render UI ----------------------------- */
   return (
