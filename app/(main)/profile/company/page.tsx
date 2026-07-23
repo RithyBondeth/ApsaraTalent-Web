@@ -121,6 +121,7 @@ import { getCompanyProfileCompletion } from "@/utils/functions/profile";
 import { CompanyProfilePageLoadingSkeleton } from "@/components/profile/skeleton";
 import { SectionTitle } from "@/components/utils/layout/section-title";
 import ProfileCompletionCard from "@/components/profile/profile-completion-card";
+import ProfileEditActionBar from "@/components/profile/profile-edit-action-bar";
 import MissingProfileFieldButton from "@/components/profile/missing-profile-field-button";
 
 export default function ProfilePage() {
@@ -1167,42 +1168,14 @@ export default function ProfilePage() {
     >
       {/* Sticky Edit Action Bar Section */}
       {isEdit && (
-        <div className="profile-edit-bar sticky top-14 z-40 -mx-3 flex items-center justify-between gap-3 border-b border-border bg-background/95 px-4 py-2.5 backdrop-blur-md sm:-mx-4 sm:px-5 lg:-mx-6">
-          {/* Edit Profile Status Section */}
-          <div className="flex items-center gap-2">
-            <span className="relative flex size-2">
-              <span className="absolute inline-flex h-full w-full animate-ping bg-foreground opacity-50" />
-              <span className="relative inline-flex size-2 bg-foreground" />
-            </span>
-            <span className="text-sm font-medium">{tP("editProfile")}</span>
-          </div>
-
-          {/* Edit Profile Action Buttons Section */}
-          <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="h-8 text-xs"
-              onClick={disableEditMode}
-            >
-              {tP("cancel")}
-            </Button>
-            <Button
-              type="submit"
-              size="sm"
-              className="h-8 text-xs min-w-[80px]"
-              disabled={updateProfileLoadingState}
-            >
-              {updateProfileLoadingState ? (
-                <LucideLoader2 className="size-3.5 animate-spin" />
-              ) : (
-                <LucideCircleCheck className="size-3.5" />
-              )}
-              {updateProfileLoadingState ? tP("updating") : tP("save")}
-            </Button>
-          </div>
-        </div>
+        <ProfileEditActionBar
+          editLabel={tP("editProfile")}
+          cancelLabel={tP("cancel")}
+          saveLabel={tP("save")}
+          savingLabel={tP("updating")}
+          isSaving={updateProfileLoadingState}
+          onCancel={disableEditMode}
+        />
       )}
 
       {/* Profile Completion Section */}

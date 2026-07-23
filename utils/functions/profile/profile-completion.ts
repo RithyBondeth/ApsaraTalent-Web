@@ -39,16 +39,8 @@ function calculateCompletion(fields: IFieldCheck[]): IProfileCompletionResult {
 
 /* --------------------------------- Methods ---------------------------------- */
 /**
- * Employee profile completion — 16 weighted fields totaling 100%
- *
- * Core identity:   First Name (4) + Last Name (4) + Profile Photo (8) + Username (4) = 20%
- * Professional:    Job Title (8) + Bio (8) + Location (4) + Years of Exp (4) + Availability (4) = 28%
- * Skills & Edu:    Skills (8) + Experience (8) + Education (8) + Career Scopes (4) = 28%
- * Documents:       Resume (8) + Cover Letter (6) = 14%
- * Social:          Social Links (4) + Phone (4) = 8%
- * Bonus:           (not counted, only tracked)
- *
- * Total = 100%  (round-safe with Math.round)
+ * Employee profile completion uses 27 weighted fields totaling 100%.
+ * Keep the weights and the boundary tests in sync when fields change.
  */
 export function getEmployeeProfileCompletion(
   employee: IEmployee,
@@ -185,16 +177,8 @@ export function getEmployeeProfileCompletion(
 }
 
 /**
- * Company profile completion — 16 weighted fields totaling 100%
- *
- * Core identity:   Name (5) + Industry (5) + Profile Photo (10) + Cover (4) = 24%
- * Details:         Description (12) + Location (5) + Phone (4) + Size (4) + Founded (4) = 29%
- * Offerings:       Open Positions (15) + Benefits (5) + Values (5) = 25%
- * Discovery:       Career Scopes (5) + Social Links (4) + Company Images (8) = 17%
- * Availability:    Available Times (5) = 5%
- * Bonus:           Email (not counted, only tracked)
- *
- * Total = 100%
+ * Company profile completion uses 18 weighted fields totaling 100%.
+ * Keep the weights and the boundary tests in sync when fields change.
  */
 export function getCompanyProfileCompletion(
   company: ICompany,

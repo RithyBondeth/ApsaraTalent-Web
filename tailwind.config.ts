@@ -1,4 +1,21 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
+import tailwindcssAnimate from "tailwindcss-animate";
+
+const maxWidthVariants = {
+  "message-xs": "400px",
+  "message-xl": "980px",
+  "phone-xl": "480px",
+  "phone-lg": "360px",
+  "phone-340": "340px",
+  "phone-md": "300px",
+  "phone-sm": "260px",
+  "tablet-md": "650px",
+  "tablet-sm": "565px",
+  "tablet-lg": "865px",
+  "tablet-xl": "1050px",
+  "laptop-sm": "1280px",
+} as const;
 
 export default {
     darkMode: ["class"],
@@ -25,52 +42,7 @@ export default {
     },
   ],
   theme: {
-  	extend: {
-  		screens: {
-			// Standard mobile-first breakpoints (min-width)
-			'sm': '640px',
-			'md': '768px',
-			'lg': '1024px',
-			'xl': '1280px',
-			'2xl': '1536px',
-			// Legacy message-specific max-width breakpoints
-			'message-xs': {
-				max: '400px'
-			},
-			'message-xl': {
-				max: '980px'
-			},
-  			'phone-xl': {
-  				max: '480px'
-  			},
-  			'phone-lg': {
-  				max: '360px'
-  			},
-			'phone-340': {
-				max: '340px'
-			},
-  			'phone-md': {
-  				max: '300px'
-  			},
-  			'phone-sm': {
-  				max: '260px'
-  			},
-  			'tablet-md': {
-  				max: '650px'
-  			},
-  			'tablet-sm': {
-  				max: '565px'
-  			},
-  			'tablet-lg': {
-  				max: '865px'
-  			},
-  			'tablet-xl': {
-  				max: '1050px'
-  			},
-			'laptop-sm': {
-				max: '1280px'
-			}
-  		},
+	  	extend: {
   		keyframes: {
   			'caret-blink': {
   				'0%,70%,100%': {
@@ -143,6 +115,12 @@ export default {
   		}
   	}
   },
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    tailwindcssAnimate,
+    plugin(({ addVariant }) => {
+      Object.entries(maxWidthVariants).forEach(([name, width]) => {
+        addVariant(name, `@media (max-width: ${width})`);
+      });
+    }),
+  ],
 } satisfies Config;
