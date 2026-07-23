@@ -23,43 +23,40 @@ const clearLegacyPersistedUser = () => {
 
 /* ---------------------------------- Store ---------------------------------- */
 export const useGetCurrentUserStore = create<TGetCurrentUserState>()((set) => ({
+  loading: false,
+  error: null,
+  user: null,
+
+  getCurrentUser: async () => {
+    clearLegacyPersistedUser();
+    set({ loading: true, error: null });
+
+    try {
+      const response = await axios.get<IUser>(API_GET_CURRENT_USER_URL);
+      // Identify the user in Sentry so errors show who was affected.
+      // Only id + role — never email/name, to keep PII out of Sentry.
+      Sentry.setUser({ id: response.data.id, role: response.data.role });
+      set({
+        user: response.data,
+        loading: false,
+        error: null,
+      });
+    } catch (error) {
+      set({
+        user: null,
+        loading: false,
+        error: extractApiErrorMessage(error, "Failed to fetch current user"),
+      });
+    }
+  },
+
+  clearUser: () => {
+    Sentry.setUser(null);
+    clearLegacyPersistedUser();
+    set({
+      user: null,
       loading: false,
       error: null,
-      user: null,
-
-      getCurrentUser: async () => {
-        clearLegacyPersistedUser();
-        set({ loading: true, error: null });
-
-        try {
-          const response = await axios.get<IUser>(API_GET_CURRENT_USER_URL);
-          // Identify the user in Sentry so errors show who was affected.
-          // Only id + role — never email/name, to keep PII out of Sentry.
-          Sentry.setUser({ id: response.data.id, role: response.data.role });
-          set({
-            user: response.data,
-            loading: false,
-            error: null,
-          });
-        } catch (error) {
-          set({
-            user: null,
-            loading: false,
-            error: extractApiErrorMessage(
-              error,
-              "Failed to fetch current user",
-            ),
-          });
-        }
-      },
-
-      clearUser: () => {
-        Sentry.setUser(null);
-        clearLegacyPersistedUser();
-        set({
-          user: null,
-          loading: false,
-          error: null,
-        });
-      },
-    }));
+    });
+  },
+}));

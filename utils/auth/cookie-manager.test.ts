@@ -1,4 +1,4 @@
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { COOKIE_CONFIG } from "@/utils/constants/cookie.constant";
 
 const { deleteCookie, getCookie, setCookie } = vi.hoisted(() => ({
@@ -16,32 +16,7 @@ import {
   setSessionRole,
 } from "./cookie-manager";
 
-function createStorage(): Storage {
-  const values = new Map<string, string>();
-  return {
-    get length() {
-      return values.size;
-    },
-    clear: () => values.clear(),
-    getItem: (key) => values.get(key) ?? null,
-    key: (index) => [...values.keys()][index] ?? null,
-    removeItem: (key) => values.delete(key),
-    setItem: (key, value) => values.set(key, String(value)),
-  };
-}
-
 describe("cookie manager", () => {
-  beforeAll(() => {
-    Object.defineProperty(window, "localStorage", {
-      configurable: true,
-      value: createStorage(),
-    });
-    Object.defineProperty(window, "sessionStorage", {
-      configurable: true,
-      value: createStorage(),
-    });
-  });
-
   beforeEach(() => {
     localStorage.clear();
     sessionStorage.clear();

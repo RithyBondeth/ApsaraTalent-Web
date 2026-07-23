@@ -1,4 +1,4 @@
-import { beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import {
   loadResumeDraft,
   removeLegacyResumeDraft,
@@ -42,26 +42,7 @@ const payload: IBuildResume = {
   template: "modern",
 };
 
-const localValues = new Map<string, string>();
-const localStorageMock: Storage = {
-  get length() {
-    return localValues.size;
-  },
-  clear: () => localValues.clear(),
-  getItem: (key) => localValues.get(key) ?? null,
-  key: (index) => [...localValues.keys()][index] ?? null,
-  removeItem: (key) => void localValues.delete(key),
-  setItem: (key, value) => void localValues.set(key, value),
-};
-
 describe("resume drafts", () => {
-  beforeAll(() => {
-    Object.defineProperty(window, "localStorage", {
-      configurable: true,
-      value: localStorageMock,
-    });
-  });
-
   beforeEach(() => {
     window.sessionStorage.clear();
     window.localStorage.clear();
