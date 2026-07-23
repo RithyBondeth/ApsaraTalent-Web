@@ -142,26 +142,7 @@ import { getEmployeeProfileCompletion } from "@/utils/functions/profile";
 import { SectionTitle } from "@/components/utils/layout/section-title";
 import ProfileCompletionCard from "@/components/profile/profile-completion-card";
 import { EmployeeProfilePageLoadingSkeleton } from "@/components/profile/skeleton";
-
-function MissingProfileFieldButton({
-  label,
-  onClick,
-}: {
-  label: string;
-  onClick: () => void;
-}) {
-  return (
-    <Button
-      type="button"
-      variant="outline"
-      className="h-12 w-full justify-start border-dashed px-3 font-normal text-muted-foreground hover:border-foreground/35 hover:bg-muted/40 hover:text-foreground"
-      onClick={onClick}
-    >
-      <LucidePlus className="size-[18px] shrink-0" />
-      <span className="truncate">{label}</span>
-    </Button>
-  );
-}
+import MissingProfileFieldButton from "@/components/profile/missing-profile-field-button";
 
 export default function EmployeeProfilePage() {
   /* ----------------------------------- Utils ---------------------------------- */
