@@ -730,7 +730,7 @@ export function PrivacyContent() {
               {c.s7.note}{" "}
               <a
                 href={`mailto:${c.s7.email}`}
-                className="text-primary hover:underline"
+                className="text-primary underline underline-offset-2"
               >
                 {c.s7.email}
               </a>
@@ -776,7 +776,7 @@ export function PrivacyContent() {
                 📧{" "}
                 <a
                   href="mailto:privacy@apsaratalent.com"
-                  className="text-primary hover:underline"
+                  className="text-primary underline underline-offset-2"
                 >
                   privacy@apsaratalent.com
                 </a>
@@ -785,7 +785,7 @@ export function PrivacyContent() {
                 🌐{" "}
                 <a
                   href="https://apsaratalent.com"
-                  className="text-primary hover:underline"
+                  className="text-primary underline underline-offset-2"
                 >
                   apsaratalent.com
                 </a>

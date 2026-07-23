@@ -556,7 +556,7 @@
   border: 1px solid hsl(var(--border));
   border-radius: 0;
   background: hsl(var(--muted) / 0.55);
-  color: hsl(var(--foreground) / 0.72);
+  color: hsl(var(--foreground) / 0.9);
 }
 
 .profile-detail-meta > span:hover {
@@ -1550,14 +1550,14 @@ html.theme-fallback-transition body *::after {
 .dark .switcher-lang-text {
   position: relative;
   z-index: 1;
-  color: hsl(var(--muted-foreground));
+  color: hsl(var(--foreground) / 0.72);
   font-size: 10px;
   font-weight: 700;
   line-height: 1;
   letter-spacing: 0.08em;
   white-space: nowrap;
   transform: scale(0.94);
-  opacity: 0.68;
+  opacity: 1;
   transition:
     color 0.35s ease,
     opacity 0.35s ease,
@@ -2841,7 +2841,7 @@ body:has(.landing-scope),
   --popover: 40 33% 99%;
   --popover-foreground: 40 9% 18%;
   --muted: 43 18% 93%;
-  --muted-foreground: 40 6% 44%;
+  --muted-foreground: 40 6% 42%;
   --accent: 43 18% 92%;
   --accent-foreground: 40 9% 18%;
   --secondary: 43 18% 93%;

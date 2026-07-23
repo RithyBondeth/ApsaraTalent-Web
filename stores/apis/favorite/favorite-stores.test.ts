@@ -107,6 +107,37 @@ describe("favorite API stores", () => {
     });
   });
 
+  it("rolls back failed employee favorite additions and both removal types", async () => {
+    axiosMocks.post.mockRejectedValue(new Error("favorite request failed"));
+
+    await expect(
+      useEmployeeFavCompanyStore
+        .getState()
+        .addCompanyToFavorite("employee-1", "company-1"),
+    ).rejects.toThrow("favorite request failed");
+    expect(useEmployeeFavCompanyStore.getState().favoriteCompanyIds).toEqual(new Set());
+
+    useEmployeeFavCompanyStore.setState({ favoriteCompanyIds: new Set(["company-1"]) });
+    await expect(
+      useEmployeeFavCompanyStore
+        .getState()
+        .removeCompanyFromFavorite("employee-1", "company-1", "favorite-1"),
+    ).rejects.toThrow("favorite request failed");
+    expect(useEmployeeFavCompanyStore.getState().favoriteCompanyIds).toEqual(
+      new Set(["company-1"]),
+    );
+
+    useCompanyFavEmployeeStore.setState({ favoriteEmployeeIds: new Set(["employee-1"]) });
+    await expect(
+      useCompanyFavEmployeeStore
+        .getState()
+        .removeEmployeeFromFavorite("company-1", "employee-1", "favorite-1"),
+    ).rejects.toThrow("favorite request failed");
+    expect(useCompanyFavEmployeeStore.getState().favoriteEmployeeIds).toEqual(
+      new Set(["employee-1"]),
+    );
+  });
+
   it("loads and locally adjusts favorite counts for both roles", async () => {
     axiosMocks.get
       .mockResolvedValueOnce({ data: { count: 4 } })
@@ -125,6 +156,35 @@ describe("favorite API stores", () => {
 
     expect(useCountCurrentCompanyFavoritesStore.getState().totalCmpFavorites).toBe(4);
     expect(useCountCurrentEmployeeFavoritesStore.getState().totalEmpFavorites).toBe(7);
+  });
+
+  it("keeps favorite counts non-negative and handles count failures", async () => {
+    useCountCurrentCompanyFavoritesStore.setState({ totalCmpFavorites: null });
+    useCountCurrentEmployeeFavoritesStore.setState({ totalEmpFavorites: 0 });
+    useCountCurrentCompanyFavoritesStore.getState().decrementCount();
+    useCountCurrentEmployeeFavoritesStore.getState().decrementCount();
+    expect(useCountCurrentCompanyFavoritesStore.getState().totalCmpFavorites).toBe(0);
+    expect(useCountCurrentEmployeeFavoritesStore.getState().totalEmpFavorites).toBe(0);
+
+    axiosMocks.get
+      .mockRejectedValueOnce(new Error("company count failed"))
+      .mockRejectedValueOnce(new Error("employee count failed"));
+    await useCountCurrentCompanyFavoritesStore
+      .getState()
+      .countCurrentCmpFavorites("company-1");
+    await useCountCurrentEmployeeFavoritesStore
+      .getState()
+      .countCurrentEmpFavorites("employee-1");
+    expect(useCountCurrentCompanyFavoritesStore.getState()).toMatchObject({
+      totalCmpFavorites: null,
+      loading: false,
+      error: "company count failed",
+    });
+    expect(useCountCurrentEmployeeFavoritesStore.getState()).toMatchObject({
+      totalEmpFavorites: null,
+      loading: false,
+      error: "employee count failed",
+    });
   });
 
   it("loads company favorites and synchronizes the favorite employee set", async () => {
@@ -155,5 +215,27 @@ describe("favorite API stores", () => {
     expect(useEmployeeFavCompanyStore.getState().favoriteCompanyIds).toEqual(
       new Set(["company-1", "company-2"]),
     );
+  });
+
+  it("records failures when favorite collections cannot be loaded", async () => {
+    axiosMocks.get
+      .mockRejectedValueOnce(new Error("company favorites failed"))
+      .mockRejectedValueOnce(new Error("employee favorites failed"));
+
+    await useGetAllCompanyFavoritesStore.getState().queryAllCompanyFavorites("company-1");
+    await useGetAllEmployeeFavoritesStore
+      .getState()
+      .queryAllEmployeeFavorites("employee-1");
+
+    expect(useGetAllCompanyFavoritesStore.getState()).toMatchObject({
+      employeeData: null,
+      loading: false,
+      error: "company favorites failed",
+    });
+    expect(useGetAllEmployeeFavoritesStore.getState()).toMatchObject({
+      companyData: null,
+      loading: false,
+      error: "employee favorites failed",
+    });
   });
 });

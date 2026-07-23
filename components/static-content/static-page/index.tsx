@@ -137,7 +137,7 @@ export function StaticPageShell(props: IStaticPageShellProps) {
               href={`#${item.id}`}
               className="shrink-0 border border-border px-3 py-2 text-xs text-muted-foreground transition-colors hover:border-foreground/30 hover:bg-muted hover:text-foreground"
             >
-              <span className="mr-2 text-[10px] tabular-nums opacity-50">
+              <span className="mr-2 text-[10px] tabular-nums text-foreground">
                 {String(index + 1).padStart(2, "0")}
               </span>
               {item.label}
@@ -160,7 +160,7 @@ export function StaticPageShell(props: IStaticPageShellProps) {
                     href={`#${item.id}`}
                     className="group grid grid-cols-[28px_1fr] gap-2 border-b border-border py-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
-                    <span className="text-[10px] tabular-nums opacity-45">
+                    <span className="text-[10px] tabular-nums text-foreground">
                       {String(index + 1).padStart(2, "0")}
                     </span>
                     <span>{item.label}</span>

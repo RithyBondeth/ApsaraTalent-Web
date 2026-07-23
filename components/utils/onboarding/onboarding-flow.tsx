@@ -125,6 +125,7 @@ export function OnboardingFlow() {
           {/* Close Button Section */}
           <button
             onClick={dismiss}
+            aria-label="Close onboarding"
             className="absolute right-3 top-3 flex size-6 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
           >
             <LucideX className="size-3.5" />
@@ -158,6 +159,8 @@ export function OnboardingFlow() {
                 <button
                   key={i}
                   onClick={() => setStep(i)}
+                  aria-label={`Go to onboarding step ${i + 1}`}
+                  aria-current={i === step ? "step" : undefined}
                   className={cn(
                     "rounded-full transition-all duration-200",
                     i === step

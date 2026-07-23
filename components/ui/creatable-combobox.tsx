@@ -32,6 +32,7 @@ interface CreatableComboboxProps {
   contentClassName?: string;
   triggerClassName?: string;
   triggerId?: string;
+  ariaLabel?: string;
 }
 
 export function CreatableCombobox({
@@ -46,6 +47,7 @@ export function CreatableCombobox({
   contentClassName,
   triggerClassName,
   triggerId,
+  ariaLabel,
 }: CreatableComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
@@ -64,6 +66,7 @@ export function CreatableCombobox({
           type="button"
           variant="outline"
           role="combobox"
+          aria-label={ariaLabel ?? placeholder}
           aria-expanded={open}
           aria-required={required}
           disabled={disabled}

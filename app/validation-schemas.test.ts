@@ -13,6 +13,8 @@ import { makeEmployeeSignUpSchema } from "./(auth)/signup/employee/validation";
 import { signupOptionSchema } from "./(auth)/signup/option/validation";
 import { companySearchSchema } from "./(main)/search/company/validation";
 import { employeeSearchSchema } from "./(main)/search/employee/validation";
+import { companyFormSchema } from "./(main)/profile/company/validation";
+import { employeeFormSchema } from "./(main)/profile/employee/validation";
 
 const passwordMessages = {
   passwordRequired: "Password is required",
@@ -211,5 +213,68 @@ describe("application validation schemas", () => {
         orderBy: "ASC",
       }).success,
     ).toBe(true);
+  });
+
+  it("validates company profile media, URLs, and open-position constraints", () => {
+    const image = new File(["image"], "logo.png", { type: "image/png" });
+    const unsupported = new File(["image"], "logo.svg", { type: "image/svg+xml" });
+    expect(
+      companyFormSchema.safeParse({
+        basicInfo: {
+          websiteUrl: "https://apsaratalent.com",
+          avatar: image,
+          cover: image,
+        },
+        images: [{ id: "image-1", image }],
+        openPositions: [
+          {
+            title: "Engineer",
+            salaryMin: 500,
+            salaryMax: 1500,
+            openingsCount: 2,
+            deadlineDate: "2027-01-01",
+          },
+        ],
+      }).success,
+    ).toBe(true);
+    expect(
+      companyFormSchema.safeParse({ basicInfo: { websiteUrl: "invalid", avatar: unsupported } })
+        .success,
+    ).toBe(false);
+    expect(
+      companyFormSchema.safeParse({
+        openPositions: [{ salaryMin: -1, openingsCount: 0, deadlineDate: "invalid" }],
+      }).success,
+    ).toBe(false);
+  });
+
+  it("validates employee profile dates, media, documents, and social URLs", () => {
+    const image = new File(["image"], "avatar.webp", { type: "image/webp" });
+    const resume = new File(["resume"], "resume.pdf", { type: "application/pdf" });
+    const unsupported = new File(["text"], "resume.txt", { type: "text/plain" });
+    expect(
+      employeeFormSchema.safeParse({
+        basicInfo: { avatar: image, dob: "2000-01-01" },
+        profession: {
+          portfolioUrl: "https://portfolio.example.com",
+          linkedinUrl: "https://linkedin.com/in/candidate",
+          expectedSalaryMin: 500,
+          expectedSalaryMax: 1500,
+        },
+        experiences: [{ startDate: "2024-01-01", endDate: "2025-01-01" }],
+        references: { resume, coverLetter: resume },
+        socials: [{ platform: "Github", url: "https://github.com/candidate" }],
+      }).success,
+    ).toBe(true);
+    expect(
+      employeeFormSchema.safeParse({
+        experiences: [{ startDate: "2025-01-01", endDate: "2024-01-01" }],
+        references: { resume: unsupported },
+        socials: [{ url: "invalid" }],
+      }).success,
+    ).toBe(false);
+    expect(
+      employeeFormSchema.safeParse({ basicInfo: { avatar: unsupported } }).success,
+    ).toBe(false);
   });
 });

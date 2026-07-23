@@ -531,7 +531,7 @@ export function TermsContent() {
           <Section id="acceptance" icon={<LucideFileText />} title={c.s1.title}>
             <TypographyP>
               {c.s1.p1}{" "}
-              <Link href="/privacy" className="text-primary hover:underline">
+              <Link href="/privacy" className="text-primary underline underline-offset-2">
                 {c.s1.privacyLink}
               </Link>
               {c.s1.p1suffix}
@@ -646,7 +646,7 @@ export function TermsContent() {
           <Section id="privacy" icon={<LucideLock />} title={c.s10.title}>
             <TypographyP>
               {c.s10.p1}{" "}
-              <Link href="/privacy" className="text-primary hover:underline">
+              <Link href="/privacy" className="text-primary underline underline-offset-2">
                 {c.s10.privacyLink}
               </Link>
               {c.s10.p1suffix}
@@ -728,7 +728,7 @@ export function TermsContent() {
                 📧{" "}
                 <a
                   href="mailto:legal@apsaratalent.com"
-                  className="text-primary hover:underline"
+                  className="text-primary underline underline-offset-2"
                 >
                   legal@apsaratalent.com
                 </a>
@@ -737,7 +737,7 @@ export function TermsContent() {
                 🌐{" "}
                 <a
                   href="https://apsaratalent.com"
-                  className="text-primary hover:underline"
+                  className="text-primary underline underline-offset-2"
                 >
                   apsaratalent.com
                 </a>

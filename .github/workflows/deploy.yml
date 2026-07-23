@@ -66,6 +66,9 @@ jobs:
         run: npm run build
         env:
           NEXT_TELEMETRY_DISABLED: "1"
+          # Browser tests intercept this local-only API origin. Never let CI
+          # journeys read from or write to production services.
+          NEXT_PUBLIC_API_URL: "http://127.0.0.1:13000"
           # Configure these in GitHub repository settings, never in tracked files.
           # Source map upload is skipped automatically when the token is absent
           # (for example, pull requests from forks).
@@ -73,7 +76,10 @@ jobs:
           SENTRY_ORG: ${{ vars.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
 
-      - name: Run standalone end-to-end smoke tests
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Run standalone smoke and browser journeys
         run: E2E_SKIP_BUILD=1 npm run test:e2e
 
   deploy-preview:

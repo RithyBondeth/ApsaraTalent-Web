@@ -103,7 +103,10 @@ export default function SearchBar<T extends FieldValues>(
           }}
           value={selectedLocation}
         >
-          <SelectTrigger className="h-12 justify-start rounded-none border-0 text-muted-foreground focus:ring-0 [&>span]:flex-1 [&>span]:text-left">
+          <SelectTrigger
+            aria-label={t("location")}
+            className="h-12 justify-start rounded-none border-0 text-muted-foreground focus:ring-0 [&>span]:flex-1 [&>span]:text-left"
+          >
             <MapPin className="mr-2 size-[18px] shrink-0" />
             <SelectValue placeholder={t("location")} />
           </SelectTrigger>
@@ -147,6 +150,7 @@ export default function SearchBar<T extends FieldValues>(
             })),
           ]}
           placeholder={t("jobType")}
+          ariaLabel={t("jobType")}
           emptyText={t("typeJobType")}
           icon={<BriefcaseBusiness />}
           triggerClassName="rounded-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0"

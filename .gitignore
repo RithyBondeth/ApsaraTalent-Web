@@ -52,3 +52,5 @@ docker-compose.yml
 .cursor
 CLAUDE.md
 GEMINI.md
+playwright-report/
+test-results/

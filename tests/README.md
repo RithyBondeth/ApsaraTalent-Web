@@ -30,4 +30,21 @@ Commands:
   executable domain logic plus the critical components with interaction tests.
 - `npm run test:e2e` builds and validates the standalone production runtime,
   including public pages, anonymous redirects, authenticated pages, onboarding,
-  security headers, logout cookies, static assets, and the 404 response.
+  security headers, logout cookies, static assets, browser form journeys,
+  successful mocked product flows, error recovery, responsive layouts,
+  accessibility checks, performance budgets, visual regression, and the 404
+  response. Desktop journeys run in Chromium, Firefox, and WebKit; the mobile
+  matrix uses an emulated Pixel viewport.
+- `npm run test:e2e:smoke` runs the fast HTTP-level standalone checks only.
+- `npm run test:e2e:browser` runs Playwright and builds first unless
+  `PLAYWRIGHT_SKIP_BUILD=1` is set.
+- `npm run test:e2e:browser:ui` opens Playwright's interactive runner.
+
+Reviewed visual baselines live beside the browser suite in
+`tests/e2e/visual.spec.ts-snapshots`. Update them intentionally with
+`npm run test:e2e:browser -- --update-snapshots` after reviewing a design
+change.
+
+Install the browser runtimes once on a new machine with
+`npx playwright install chromium firefox webkit`. CI installs all three browser
+engines and their Linux system dependencies automatically.

@@ -870,7 +870,10 @@ export default function EmployeeSearchPage() {
                           });
                         }}
                       >
-                        <SelectTrigger className="h-10 w-full rounded-none text-sm sm:w-[220px]">
+                        <SelectTrigger
+                          aria-label={t("sortBy")}
+                          className="h-10 w-full rounded-none text-sm sm:w-[220px]"
+                        >
                           <SelectValue placeholder={t("sortBy")} />
                         </SelectTrigger>
                         <SelectContent className="rounded-none border-border shadow-[5px_5px_0_hsl(var(--foreground)/0.08)] [&_[role=option]]:rounded-none">
