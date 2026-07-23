@@ -300,6 +300,7 @@ export default function EmployeeDetailPage() {
           <UserModerationMenu
             targetId={employeeData.id}
             targetName={fullName || tf("employeeDetail")}
+            variant="editorial"
             triggerClassName="size-10 rounded-none border border-border bg-card hover:border-foreground/35"
           />
         </div>
@@ -462,7 +463,9 @@ export default function EmployeeDetailPage() {
                           </p>
                           <p className="text-xs text-muted-foreground mt-0.5">
                             {formatShortDate(item.startDate)} —{" "}
-                            {formatShortDate(item.endDate)}
+                            {item.endDate
+                              ? formatShortDate(item.endDate)
+                              : tf("present")}
                           </p>
                           {item.description && (
                             <TypographyMuted className="text-sm leading-relaxed mt-2">

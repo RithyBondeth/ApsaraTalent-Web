@@ -152,7 +152,7 @@ export function ExperienceEntry(props: {
               })
             }
           />
-          {" – "}
+          {" - "}
           <InlineDateField
             value={exp.endDate || "Present"}
             placeholder={t("endDatePlaceholder")}

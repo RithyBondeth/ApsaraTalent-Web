@@ -86,8 +86,8 @@ export const openPositionSchema = z.object({
         experienceRequirement: textValidation().optional(),
         educationRequirement: textValidation().optional(),
         skills: textValidation().optional(),
-        salaryMin: z.number().positive().optional().nullable(),
-        salaryMax: z.number().positive().optional().nullable(),
+        salaryMin: z.coerce.number().positive().optional().nullable(),
+        salaryMax: z.coerce.number().positive().optional().nullable(),
         salaryCurrency: z.string().optional().default("USD"),
         workMode: z
           .enum(["remote", "on_site", "hybrid", "flexible"])

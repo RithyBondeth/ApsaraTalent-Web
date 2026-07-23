@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 /* ------------------------- Employee Card Skeleton ------------------------- */
 export default function EmployeeCardSkeleton() {
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden border border-border border-t-[5px] border-t-foreground bg-card">
+    <div className="flex h-full w-full flex-col overflow-hidden rounded-none border border-border border-t-[5px] border-t-foreground bg-card">
       {/* Header Section */}
       <div className="flex items-start gap-3 p-4 pb-3 tablet-md:p-3 tablet-md:pb-2">
         <Skeleton className="size-16 shrink-0 rounded-none" />

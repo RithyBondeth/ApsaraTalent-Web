@@ -61,7 +61,7 @@ export interface IJobPosition {
   education: string;
   skills: string[];
   postedDate?: string;
-  deadlineDate: string;
+  deadlineDate?: string | null;
 }
 
 export interface IImage {

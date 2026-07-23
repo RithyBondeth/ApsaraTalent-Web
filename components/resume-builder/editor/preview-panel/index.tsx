@@ -1,14 +1,7 @@
 "use client";
 
 import CanvasTemplate from "../canvas-template";
-import {
-  Eye,
-  Files,
-  RefreshCw,
-  ZoomIn,
-  ZoomOut,
-  Maximize2,
-} from "lucide-react";
+import { Eye, Files, RefreshCw, ZoomIn, ZoomOut } from "lucide-react";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useResumeCanvasEditorStore } from "@/stores/apis/resume/resume-canvas-editor.store";
 import { Button } from "@/components/ui/button";
@@ -108,9 +101,9 @@ export default function ResumeEditorPreviewPanel({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex h-full flex-col">
       {/* Top Bar Section */}
-      <div className="flex items-center justify-between gap-2 border-b bg-muted/30 px-2.5 py-2 sm:gap-3 sm:px-4 shrink-0">
+      <div className="resume-editor-controls flex shrink-0 items-center justify-between gap-2 border-b border-border bg-card px-2.5 py-2 sm:gap-3 sm:px-4">
         {/* Left Section: Title and Page Count */}
         <div className="flex items-center gap-2 shrink-0">
           <div className="flex items-center gap-1.5 text-xs font-medium text-foreground sm:text-sm">
@@ -120,7 +113,7 @@ export default function ResumeEditorPreviewPanel({
           {/* Page-Count Chip Section: Amber once the resume spills past one page */}
           <span
             className={cn(
-              "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium tabular-nums transition-colors",
+              "inline-flex items-center gap-1 border px-2 py-0.5 text-[10px] font-medium tabular-nums transition-colors",
               pageCount > 1
                 ? "border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400"
                 : "border-border/60 bg-muted/50 text-muted-foreground",
@@ -151,7 +144,7 @@ export default function ResumeEditorPreviewPanel({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 sm:h-7 sm:w-7"
+            className="h-8 w-8 rounded-none border border-transparent sm:h-7 sm:w-7"
             onClick={zoomOut}
             disabled={zoomMultiplier <= RESUME_EDITOR_ZOOM_MIN}
             title={t("zoomOut")}
@@ -162,7 +155,7 @@ export default function ResumeEditorPreviewPanel({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 sm:h-7 sm:w-7"
+            className="h-8 w-12 rounded-none border border-border sm:h-7"
             onClick={zoomFit}
             title={t("resetToFit")}
           >
@@ -172,22 +165,12 @@ export default function ResumeEditorPreviewPanel({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 sm:h-7 sm:w-7"
+            className="h-8 w-8 rounded-none border border-transparent sm:h-7 sm:w-7"
             onClick={zoomIn}
             disabled={zoomMultiplier >= RESUME_EDITOR_ZOOM_MAX}
             title={t("zoomIn")}
           >
             <ZoomIn size={14} />
-          </Button>
-
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 sm:h-7 sm:w-7"
-            onClick={zoomFit}
-            title={t("fitToWindow")}
-          >
-            <Maximize2 size={13} />
           </Button>
         </div>
       </div>
@@ -195,7 +178,7 @@ export default function ResumeEditorPreviewPanel({
       {/* Scroll Wrapper Section */}
       <div
         ref={scrollWrapperRef}
-        className="flex-1 overflow-auto bg-zinc-100 dark:bg-zinc-900 flex items-start justify-center p-2.5 sm:p-6"
+        className="resume-canvas-workspace flex flex-1 items-start justify-center overflow-auto p-2.5 sm:p-6"
         onClick={() => useResumeCanvasEditorStore.getState().clearSelection()}
       >
         {/* Shell Section: Layout dimensions after CSS transform */}
@@ -231,7 +214,7 @@ export default function ResumeEditorPreviewPanel({
               style={{ top: breakY * scale }}
             >
               <div className="border-t-2 border-dashed border-amber-500/50" />
-              <span className="absolute right-1 top-1 rounded bg-amber-500/90 px-1.5 py-0.5 text-[9px] font-semibold text-white shadow-sm">
+              <span className="absolute right-1 top-1 bg-amber-500/90 px-1.5 py-0.5 text-[9px] font-semibold text-white shadow-sm">
                 {t("resumeCanvasPageMarker", { number: index + 2 })}
               </span>
             </div>

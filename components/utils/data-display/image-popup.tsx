@@ -15,7 +15,7 @@ export default function ImagePopup(props: {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={props.open} onOpenChange={props.setOpen}>
-      <DialogContent className="w-fit p-0 border-0">
+      <DialogContent className="w-fit rounded-none border-0 p-0 sm:rounded-none [&>button]:rounded-none">
         <DialogHeader className="hidden">
           <DialogTitle />
           <DialogDescription />
@@ -25,7 +25,7 @@ export default function ImagePopup(props: {
           alt="Image"
           width={1600}
           height={1200}
-          className="rounded-lg h-auto w-auto max-h-[85vh] max-w-[90vw]"
+          className="h-auto w-auto max-h-[85vh] max-w-[90vw] rounded-none"
           unoptimized
         />
       </DialogContent>

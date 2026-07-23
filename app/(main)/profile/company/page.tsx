@@ -77,13 +77,20 @@ import { getSocialPlatformTypeIcon } from "@/utils/functions/ui/get-social-type"
 import { capitalizeWords, getNameInitials } from "@/utils/functions/text";
 import { isUuid } from "@/utils/functions/validation/check-uuid";
 import { parseMaybeDate } from "@/utils/functions/date";
+import {
+  isSupportedProfileImage,
+  readImageFileAsDataUrl,
+} from "@/utils/functions/file";
+import { MAX_IMAGE_SIZE } from "@/utils/constants/config.constant";
 import { IBenefits } from "@/utils/interfaces/user/company.interface";
 import { IValues } from "@/utils/interfaces/user/company.interface";
 import { TPlatform } from "@/utils/types/user/platform.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ChevronDown,
+  LucideBriefcase,
   LucideBuilding,
+  LucideCalendarDays,
   LucideCamera,
   LucideCircleCheck,
   LucideCompass,
@@ -92,9 +99,11 @@ import {
   LucideLink2,
   LucideLoader2,
   LucideMail,
+  LucideMapPin,
   LucidePhone,
   LucidePlus,
   LucideSettings,
+  LucideShapes,
   LucideTrash2,
   LucideUsers,
   LucideXCircle,
@@ -113,6 +122,26 @@ import { CompanyProfilePageLoadingSkeleton } from "@/components/profile/skeleton
 import { SectionTitle } from "@/components/utils/layout/section-title";
 import ProfileCompletionCard from "@/components/profile/profile-completion-card";
 
+function MissingProfileFieldButton({
+  label,
+  onClick,
+}: {
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      className="h-12 w-full justify-start border-dashed px-3 font-normal text-muted-foreground hover:border-foreground/35 hover:bg-muted/40 hover:text-foreground"
+      onClick={onClick}
+    >
+      <LucidePlus className="size-[18px] shrink-0" />
+      <span className="truncate">{label}</span>
+    </Button>
+  );
+}
+
 export default function ProfilePage() {
   /* ---------------------------------- Utils ----------------------------------- */
   const t = useTranslations("toast");
@@ -122,6 +151,7 @@ export default function ProfilePage() {
 
   /* -------------------------------- All States -------------------------------- */
   const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [hasLoadedProfile, setHasLoadedProfile] = useState<boolean>(false);
   const editModeEnteredAtRef = useRef<number | null>(null);
 
   // Image States
@@ -228,7 +258,7 @@ export default function ProfilePage() {
 
   /* ----------------------------- API Integration ---------------------------- */
   // Current User Infomation and Current User CareerScopes
-  const { user, loading, getCurrentUser } = useGetCurrentUserStore();
+  const { user, getCurrentUser } = useGetCurrentUserStore();
   const company = user?.company;
   const getAllCareerScopeStore = useGetAllCareerScopesStore();
 
@@ -289,11 +319,20 @@ export default function ProfilePage() {
   });
 
   /* --------------------------------- Effects ---------------------------------- */
-  // Get Current User Effect
+  // ── Get Current User Effect ────────────────────────
   useEffect(() => {
-    getCurrentUser();
+    let isActive = true;
+
+    void getCurrentUser().finally(() => {
+      if (isActive) setHasLoadedProfile(true);
+    });
+
+    return () => {
+      isActive = false;
+    };
   }, [getCurrentUser]);
 
+   // ── Avatar and Cover Effect ───────────────────────
   useEffect(() => {
     // Reset error states whenever the image sources change
     setAvatarLoadError(false);
@@ -324,7 +363,7 @@ export default function ProfilePage() {
     };
   }, [avatarFile, coverFile, company?.avatar, company?.cover]);
 
-  // Revoke retained blobs on unmount
+  // ── Revoke Retained Blobs on Unmount Effect ────────
   useEffect(() => {
     return () => {
       if (lastUploadedAvatarRef.current)
@@ -334,7 +373,7 @@ export default function ProfilePage() {
     };
   }, []);
 
-  // Warn the user before leaving the page with unsaved changes
+  // ── Warn the user before leaving the page  ─────────
   useEffect(() => {
     if (!isEdit || !form.formState.isDirty) return;
     const handler = (e: BeforeUnloadEvent) => {
@@ -344,13 +383,13 @@ export default function ProfilePage() {
     return () => window.removeEventListener("beforeunload", handler);
   }, [isEdit, form.formState.isDirty]);
 
-  // FieldArray for OpenPositions
+ // ── FieldArray for OpenPositions  ─────────────────── 
   const openPositionFA = useFieldArray({
     control: form.control,
     name: "openPositions",
   });
 
-  // Hydrate Current User (Company) Data from API
+  // ── Hydrate CurrentUser (Company) Data from API  ───
   useEffect(() => {
     if (user && company) {
       form.reset({
@@ -406,6 +445,7 @@ export default function ProfilePage() {
         },
         careerScopes:
           company.careerScopes.map((cs) => ({
+            id: cs.id,
             name: cs.name,
             description: cs.description ?? "",
           })) ?? [],
@@ -447,6 +487,22 @@ export default function ProfilePage() {
   const enableEditMode = () => {
     editModeEnteredAtRef.current = Date.now();
     setIsEdit(true);
+  };
+
+  const beginEditingField = (fieldId?: string, openControl = false) => {
+    enableEditMode();
+
+    if (!fieldId) return;
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const field = document.getElementById(fieldId);
+        if (!(field instanceof HTMLElement)) return;
+
+        field.focus();
+        if (openControl) field.click();
+      });
+    });
   };
 
   // ── Disable Edit Mode ────────────────────────────────────────────────────
@@ -542,27 +598,37 @@ export default function ProfilePage() {
   };
 
   // ── Handle File Change for Avatar and Cover ──────────────────────────
-  const handleFileChange = (
+  const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
     type: "avatar" | "cover",
   ) => {
     const file = event.target.files ? event.target.files[0] : null;
     if (!file) return;
 
-    if (type === "avatar") {
-      const previewUrl = URL.createObjectURL(file);
+    event.target.value = "";
 
-      setCropImageUrl(previewUrl);
-      setOpenCropDialog(true);
-
-      event.target.value = "";
+    if (!isSupportedProfileImage(file)) {
+      toast.error(tr("invalidImageType"));
+      return;
     }
 
-    if (type === "cover") {
-      const previewUrl = URL.createObjectURL(file);
-      setCoverCropImageUrl(previewUrl);
-      setOpenCoverCropDialog(true);
-      event.target.value = "";
+    if (file.size > MAX_IMAGE_SIZE) {
+      toast.error(tr("imageTooLarge"));
+      return;
+    }
+
+    try {
+      const previewUrl = await readImageFileAsDataUrl(file);
+
+      if (type === "avatar") {
+        setCropImageUrl(previewUrl);
+        setOpenCropDialog(true);
+      } else {
+        setCoverCropImageUrl(previewUrl);
+        setOpenCoverCropDialog(true);
+      }
+    } catch {
+      toast.error(tr("imageReadFailed"));
     }
   };
 
@@ -846,7 +912,11 @@ export default function ProfilePage() {
 
       basicInfoKeys.forEach((key) => {
         if (dirtyFields?.basicInfo?.[key]) {
-          (updateBody as Record<string, unknown>)[key] = data.basicInfo?.[key];
+          const value = data.basicInfo?.[key];
+          (updateBody as Record<string, unknown>)[key] =
+            key === "websiteUrl" && (typeof value !== "string" || !value.trim())
+              ? null
+              : value;
         }
       });
 
@@ -872,8 +942,6 @@ export default function ProfilePage() {
           const updatedPos: Record<string, unknown> = {};
 
           if (pos.uuid) updatedPos.id = pos.uuid;
-          if (!pos.uuid) updatedPos.isNew = true;
-
           updatedPos.title = pos.title;
           updatedPos.description = pos.description;
           updatedPos.type = pos.type;
@@ -888,8 +956,7 @@ export default function ProfilePage() {
           updatedPos.workMode = pos.workMode ?? null;
           updatedPos.location = pos.location ?? null;
           updatedPos.openingsCount = pos.openingsCount ?? null;
-          updatedPos.deadlineDate =
-            pos.deadlineDate?.toISOString() || new Date().toISOString();
+          updatedPos.deadlineDate = pos.deadlineDate?.toISOString() ?? null;
 
           return updatedPos;
         });
@@ -1089,7 +1156,7 @@ export default function ProfilePage() {
                   ? tP("updatingCompany")
                   : "";
 
-  if (loading && !user) return <CompanyProfilePageLoadingSkeleton />;
+  if (!hasLoadedProfile) return <CompanyProfilePageLoadingSkeleton />;
 
   /* -------------------------------- Empty State ------------------------------ */
   if (!user || !company) return null;
@@ -1097,6 +1164,7 @@ export default function ProfilePage() {
   /* -------------------------------- Profile Completion ----------------------- */
   const profileCompletion = getCompanyProfileCompletion({
     ...company,
+    email: user.email,
     avatar: avatarLoadError ? undefined : company.avatar,
     cover: coverLoadError ? undefined : company.cover,
   });
@@ -1105,7 +1173,8 @@ export default function ProfilePage() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-5 animate-page-in"
+      data-profile-editing={isEdit}
+      className="profile-editorial profile-company flex flex-col gap-6 animate-page-in sm:gap-7"
       onKeyDown={(e) => {
         if (
           e.key === "Enter" &&
@@ -1117,12 +1186,12 @@ export default function ProfilePage() {
     >
       {/* Sticky Edit Action Bar Section */}
       {isEdit && (
-        <div className="sticky top-14 z-40 -mx-3 sm:-mx-4 lg:-mx-6 px-4 sm:px-5 py-2.5 bg-background/95 backdrop-blur-md border-b border-border/60 flex items-center justify-between gap-3 shadow-sm">
+        <div className="profile-edit-bar sticky top-14 z-40 -mx-3 flex items-center justify-between gap-3 border-b border-border bg-background/95 px-4 py-2.5 backdrop-blur-md sm:-mx-4 sm:px-5 lg:-mx-6">
           {/* Edit Profile Status Section */}
           <div className="flex items-center gap-2">
             <span className="relative flex size-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
-              <span className="relative inline-flex rounded-full size-2 bg-amber-400" />
+              <span className="absolute inline-flex h-full w-full animate-ping bg-foreground opacity-50" />
+              <span className="relative inline-flex size-2 bg-foreground" />
             </span>
             <span className="text-sm font-medium">{tP("editProfile")}</span>
           </div>
@@ -1162,10 +1231,10 @@ export default function ProfilePage() {
       />
 
       {/* Header Section */}
-      <div className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
+      <section className="profile-hero profile-company-hero overflow-hidden border border-border bg-card">
         {/* Cover Image Section */}
         <div
-          className={`h-44 sm:h-56 rounded-t-2xl bg-cover bg-center bg-no-repeat relative ${!company.cover ? "bg-gradient-to-br from-primary via-primary/70 to-violet-500/40" : ""}`}
+          className={`profile-cover relative h-48 bg-cover bg-center bg-no-repeat sm:h-64 ${!company.cover ? "bg-foreground" : ""}`}
           style={
             company.cover
               ? { backgroundImage: `url(${avatarOrCoverPreview.cover})` }
@@ -1174,28 +1243,39 @@ export default function ProfilePage() {
         >
           {/* Overlay for Gradient Cover Section */}
           {!company.cover && (
-            <>
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.15)_0%,transparent_60%)]" />
-              <div className="absolute -top-10 -right-10 size-56 rounded-full bg-white/5" />
-              <div className="absolute top-6 right-28 size-28 rounded-full bg-white/5" />
-              <div className="absolute -bottom-8 right-8 size-36 rounded-full bg-white/5" />
-            </>
+            <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,transparent_48%,hsl(var(--background)/0.09)_48%,hsl(var(--background)/0.09)_50%,transparent_50%,transparent_100%)] bg-[length:34px_34px]" />
           )}
 
+          <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/65 to-transparent" />
+          <span className="absolute bottom-4 left-5 text-[10px] font-bold uppercase tracking-[0.24em] text-white sm:left-6">
+            {tP("companyProfileLabel")}
+          </span>
+
           {/* Cover Edit Controls Section */}
-          {isEdit && (
+          {(isEdit || !company.cover) && (
             <div className="absolute bottom-3 right-3 flex items-center gap-2">
               <Button
-                className="flex items-center gap-1.5 h-8 px-3 rounded-full bg-background/90 text-foreground backdrop-blur-sm text-xs shadow-sm hover:bg-background"
-                onClick={() => coverInputRef.current?.click()}
+                className="flex h-8 items-center gap-1.5 rounded-none border border-white/30 bg-background/90 px-3 text-xs text-foreground backdrop-blur-sm hover:bg-background"
+                onClick={() => {
+                  if (isEdit) {
+                    coverInputRef.current?.click();
+                    return;
+                  }
+                  enableEditMode();
+                  requestAnimationFrame(() => coverInputRef.current?.click());
+                }}
                 type="button"
               >
                 <LucideCamera className="size-3.5" />
-                {tP("changeCover")}
+                {company.cover
+                  ? tP("changeCover")
+                  : tP("addMissingField", {
+                      field: tP("completionFields.coverImage"),
+                    })}
               </Button>
               {company.cover && (
                 <Button
-                  className="flex items-center gap-1.5 h-8 px-3 rounded-full bg-destructive/90 text-destructive-foreground backdrop-blur-sm text-xs shadow-sm"
+                  className="flex h-8 items-center gap-1.5 rounded-none bg-destructive/90 px-3 text-xs text-destructive-foreground backdrop-blur-sm"
                   onClick={() => setOpenRemoveCoverDialog(true)}
                   type="button"
                 >
@@ -1213,7 +1293,7 @@ export default function ProfilePage() {
             {/* Avatar Section */}
             <div className="relative flex-shrink-0">
               <Avatar
-                className="size-20 sm:size-24 ring-4 ring-card shadow-xl bg-card cursor-pointer"
+                className="size-24 cursor-pointer border-[6px] border-card bg-card shadow-none sm:size-28 !rounded-none"
                 rounded="md"
                 onClick={(e) => {
                   if (!isEdit && company.avatar) handleClickAvatarPopup(e);
@@ -1228,18 +1308,30 @@ export default function ProfilePage() {
                 </AvatarFallback>
               </Avatar>
 
-              {isEdit && (
+              {(isEdit || !company.avatar) && (
                 <div className="flex items-center gap-1 absolute -bottom-1 -right-1">
                   <Button
-                    className="size-7 p-0 rounded-full bg-foreground text-primary-foreground shadow-md"
-                    onClick={() => avatarInputRef.current?.click()}
+                    className="size-7 rounded-none bg-foreground p-0 text-primary-foreground shadow-none"
+                    onClick={() => {
+                      if (isEdit) {
+                        avatarInputRef.current?.click();
+                        return;
+                      }
+                      enableEditMode();
+                      requestAnimationFrame(() =>
+                        avatarInputRef.current?.click(),
+                      );
+                    }}
+                    aria-label={tP("addMissingField", {
+                      field: tP("completionFields.profilePhoto"),
+                    })}
                     type="button"
                   >
                     <LucideCamera className="size-3.5" />
                   </Button>
                   {company.avatar && !avatarFile && (
                     <Button
-                      className="size-7 p-0 rounded-full bg-destructive text-destructive-foreground shadow-md"
+                      className="size-7 rounded-none bg-destructive p-0 text-destructive-foreground shadow-none"
                       type="button"
                       onClick={() => setOpenRemoveAvatarDialog(true)}
                     >
@@ -1248,7 +1340,7 @@ export default function ProfilePage() {
                   )}
                   {avatarFile && (
                     <Button
-                      className="size-7 p-0 rounded-full bg-destructive text-destructive-foreground shadow-md"
+                      className="size-7 rounded-none bg-destructive p-0 text-destructive-foreground shadow-none"
                       onClick={() => {
                         setAvatarFile(null);
                         form.setValue(
@@ -1271,7 +1363,7 @@ export default function ProfilePage() {
               ref={avatarInputRef}
               type="file"
               className="hidden"
-              accept="image/*"
+              accept="image/jpeg,image/png,image/webp"
               onChange={(e) => handleFileChange(e, "avatar")}
             />
 
@@ -1280,7 +1372,7 @@ export default function ProfilePage() {
               ref={coverInputRef}
               type="file"
               className="hidden"
-              accept="image/*"
+              accept="image/jpeg,image/png,image/webp"
               onChange={(e) => handleFileChange(e, "cover")}
             />
 
@@ -1339,10 +1431,10 @@ export default function ProfilePage() {
 
             {/* Name and Industry Section */}
             <div className="flex-1 min-w-0 pb-1 tablet-md:text-center">
-              <h2 className="text-xl font-bold leading-tight truncate">
+              <h1 className="truncate text-2xl font-black leading-tight tracking-[-0.04em] sm:text-3xl">
                 {company.name}
-              </h2>
-              <p className="text-sm text-muted-foreground truncate">
+              </h1>
+              <p className="mt-1 truncate text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">
                 {company.industry}
               </p>
             </div>
@@ -1352,7 +1444,7 @@ export default function ProfilePage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="text-xs mb-1 shrink-0 tablet-md:w-full"
+                className="mb-1 shrink-0 rounded-none text-xs tablet-md:w-full"
                 type="button"
                 onClick={enableEditMode}
               >
@@ -1362,33 +1454,66 @@ export default function ProfilePage() {
             )}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Content Section */}
-      <div className="flex items-start gap-5 tablet-lg:flex-col tablet-lg:[&>div]:w-full">
+      <div className="profile-grid grid grid-cols-[minmax(0,1.55fr)_minmax(280px,0.75fr)] items-start gap-5 tablet-lg:grid-cols-1">
         {/* LEFT Side Section */}
-        <div className="w-[60%] min-w-0 flex flex-col gap-5">
+        <div className="profile-main-column flex min-w-0 flex-col gap-5">
           {/* Company Information Section */}
-          <div className="w-full flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
+          <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border border-border bg-card p-5 sm:p-6">
             <SectionTitle
               icon={<LucideBuilding />}
               title={tP("companyInformation")}
             />
 
-            {/* Name and Description Section */}
-            <div className="flex flex-col items-start gap-5">
+            {/* Company Details Grid Section */}
+            <div className="grid w-full grid-cols-12 gap-x-4 gap-y-5 tablet-md:grid-cols-1">
               <LabelInput
+                className="col-span-7 tablet-md:col-span-1"
                 label={tP("companyName")}
                 input={
-                  <Input
-                    placeholder={isEdit ? tP("companyName") : company.name}
-                    id="company-name"
-                    {...form.register("basicInfo.name")}
-                    disabled={!isEdit}
-                  />
+                  !isEdit && !company.name?.trim() ? (
+                    <MissingProfileFieldButton
+                      label={tP("addMissingField", {
+                        field: tP("companyName"),
+                      })}
+                      onClick={() => beginEditingField("company-name")}
+                    />
+                  ) : (
+                    <Input
+                      placeholder={tP("companyName")}
+                      id="company-name"
+                      {...form.register("basicInfo.name")}
+                      prefix={<LucideBuilding />}
+                      disabled={!isEdit}
+                    />
+                  )
                 }
               />
-              <div className="w-full flex flex-col items-start gap-1">
+
+              <LabelInput
+                className="col-span-5 tablet-md:col-span-1"
+                label={tP("industry")}
+                input={
+                  !isEdit && !company.industry?.trim() ? (
+                    <MissingProfileFieldButton
+                      label={tP("addMissingField", { field: tP("industry") })}
+                      onClick={() => beginEditingField("industry")}
+                    />
+                  ) : (
+                    <Input
+                      placeholder={tP("industry")}
+                      id="industry"
+                      {...form.register("basicInfo.industry")}
+                      prefix={<LucideBriefcase />}
+                      disabled={!isEdit}
+                    />
+                  )
+                }
+              />
+
+              <div className="col-span-12 flex w-full flex-col items-start gap-1 tablet-md:col-span-1">
                 <div className="w-full flex items-center justify-between">
                   <TypographyMuted className="text-xs font-bold text-foreground">
                     {tP("companyDescription")}
@@ -1432,47 +1557,58 @@ export default function ProfilePage() {
                     </Button>
                   )}
                 </div>
-                <Textarea
-                  autoResize
-                  placeholder={
-                    isEdit ? tP("companyDescription") : company.description
-                  }
-                  id="company-description"
-                  {...form.register("basicInfo.description")}
-                  disabled={!isEdit}
-                />
+                {!isEdit && !company.description?.trim() ? (
+                  <MissingProfileFieldButton
+                    label={tP("addMissingField", {
+                      field: tP("companyDescription"),
+                    })}
+                    onClick={() => beginEditingField("company-description")}
+                  />
+                ) : (
+                  <Textarea
+                    autoResize
+                    placeholder={tP("companyDescription")}
+                    id="company-description"
+                    {...form.register("basicInfo.description")}
+                    disabled={!isEdit}
+                  />
+                )}
               </div>
 
-              {/* Industry and Location Section */}
-              <div className="w-full flex items-center justify-between gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
-                <LabelInput
-                  label={tP("industry")}
-                  input={
-                    <Input
-                      placeholder={isEdit ? tP("industry") : company.industry}
-                      id="industry"
-                      {...form.register("basicInfo.industry")}
-                      disabled={!isEdit}
-                    />
-                  }
-                />
-                <div className="flex flex-col items-start gap-2">
-                  <TypographyMuted className="text-xs">
-                    {tP("locations")}
-                  </TypographyMuted>
-                  <Controller
-                    name="basicInfo.location"
-                    control={form.control}
-                    render={({ field }) => (
+              {/* Location Section */}
+              <div className="col-span-5 flex flex-col items-start gap-2 tablet-md:col-span-1">
+                <TypographyMuted className="text-xs">
+                  {tP("locations")}
+                </TypographyMuted>
+                <Controller
+                  name="basicInfo.location"
+                  control={form.control}
+                  render={({ field }) =>
+                    !isEdit && !field.value?.trim() ? (
+                      <MissingProfileFieldButton
+                        label={tP("addMissingField", {
+                          field: tP("locations"),
+                        })}
+                        onClick={() =>
+                          beginEditingField("company-location", true)
+                        }
+                      />
+                    ) : (
                       <Select
                         value={field.value}
                         onValueChange={field.onChange}
                         disabled={!isEdit}
                       >
-                        <SelectTrigger className="h-12 text-muted-foreground">
-                          <SelectValue placeholder={tP("locations")} />
+                        <SelectTrigger
+                          id="company-location"
+                          className="h-12 gap-2 text-muted-foreground [&>svg:last-child]:ml-auto"
+                        >
+                          <div className="flex min-w-0 items-center gap-2">
+                            <LucideMapPin className="size-[18px] shrink-0" />
+                            <SelectValue placeholder={tP("locations")} />
+                          </div>
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="profile-overlay profile-select-content">
                           {locationConstant.map((location) => (
                             <SelectItem key={location} value={location}>
                               {location}
@@ -1480,52 +1616,76 @@ export default function ProfilePage() {
                           ))}
                         </SelectContent>
                       </Select>
-                    )}
-                  />
-                </div>
+                    )
+                  }
+                />
               </div>
 
-              {/* Website URL and Company Type Section */}
-              <div className="w-full flex items-center justify-between gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
-                {/* Website URL Section */}
-                <LabelInput
-                  label={tP("websiteUrl")}
-                  input={
-                    <Controller
-                      name="basicInfo.websiteUrl"
-                      control={form.control}
-                      render={({ field }) => (
+              {/* Website URL Section */}
+              <LabelInput
+                className="col-span-7 tablet-md:col-span-1"
+                label={tP("websiteUrl")}
+                input={
+                  <Controller
+                    name="basicInfo.websiteUrl"
+                    control={form.control}
+                    render={({ field }) =>
+                      !isEdit && !field.value?.trim() ? (
+                        <MissingProfileFieldButton
+                          label={tP("addMissingField", {
+                            field: tP("websiteUrl"),
+                          })}
+                          onClick={() => beginEditingField("company-website")}
+                        />
+                      ) : (
                         <Input
+                          id="company-website"
                           placeholder="https://yourcompany.com"
                           {...field}
                           value={field.value ?? ""}
+                          prefix={<LucideGlobe />}
                           disabled={!isEdit}
                         />
-                      )}
-                    />
-                  }
-                />
+                      )
+                    }
+                  />
+                }
+              />
 
-                {/* Company Type Section */}
-                <div className="flex flex-col items-start gap-2">
-                  <TypographyMuted className="text-xs">
-                    {tP("companyType")}
-                  </TypographyMuted>
-                  <Controller
-                    name="basicInfo.companyType"
-                    control={form.control}
-                    render={({ field }) => (
+              {/* Company Type Section */}
+              <div className="col-span-4 flex flex-col items-start gap-2 tablet-md:col-span-1">
+                <TypographyMuted className="text-xs">
+                  {tP("companyType")}
+                </TypographyMuted>
+                <Controller
+                  name="basicInfo.companyType"
+                  control={form.control}
+                  render={({ field }) =>
+                    !isEdit && !field.value ? (
+                      <MissingProfileFieldButton
+                        label={tP("addMissingField", {
+                          field: tP("companyType"),
+                        })}
+                        onClick={() => beginEditingField("company-type", true)}
+                      />
+                    ) : (
                       <Select
                         value={field.value ?? ""}
                         onValueChange={field.onChange}
                         disabled={!isEdit}
                       >
-                        <SelectTrigger className="h-12 text-muted-foreground">
-                          <SelectValue
-                            placeholder={tP("companyTypePlaceholder")}
-                          />
+                        <SelectTrigger
+                          id="company-type"
+                          className="h-12 gap-2 text-muted-foreground [&>svg:last-child]:ml-auto"
+                        >
+                          <div className="flex min-w-0 items-center gap-2">
+                            <LucideShapes className="size-[18px] shrink-0" />
+                            <SelectValue
+                              placeholder={tP("companyTypePlaceholder")}
+                            />
+                          </div>
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="profile-overlay profile-select-content">
                           {companyTypeConstant.map((item) => (
                             <SelectItem key={item.value} value={item.value}>
                               {item.label}
@@ -1533,88 +1693,119 @@ export default function ProfilePage() {
                           ))}
                         </SelectContent>
                       </Select>
-                    )}
-                  />
-                </div>
+                    )
+                  }
+                />
               </div>
 
               {/* CompanySize, FoundedYear, Email and PhoneNumber Section */}
-              <div className="w-full flex items-center justify-between gap-5 [&>div]:w-1/2 tablet-sm:flex-col tablet-sm:[&>div]:w-full">
-                {company.companySize && (
-                  <LabelInput
-                    label={tP("companySize")}
-                    input={
-                      <Input
-                        type="number"
-                        placeholder={
-                          isEdit ? tP("companySize") : `${company.companySize}`
-                        }
-                        id="company-size"
-                        {...form.register("basicInfo.companySize")}
-                        prefix={<LucideUsers />}
-                        disabled={!isEdit}
-                      />
-                    }
-                  />
-                )}
-                {company.foundedYear && (
-                  <LabelInput
-                    label={tP("foundedYear")}
-                    input={
-                      <Input
-                        type="number"
-                        placeholder={
-                          isEdit ? tP("foundedYear") : `${company.foundedYear}`
-                        }
-                        id="company-founded-year"
-                        {...form.register("basicInfo.foundedYear")}
-                        prefix={<LucideBuilding />}
-                        disabled={!isEdit}
-                      />
-                    }
-                  />
-                )}
-              </div>
-              {user.email && (
-                <LabelInput
-                  label={tP("email")}
-                  input={
+              <LabelInput
+                className="col-span-4 tablet-md:col-span-1"
+                label={tP("companySize")}
+                input={
+                  !isEdit && !company.companySize ? (
+                    <MissingProfileFieldButton
+                      label={tP("addMissingField", {
+                        field: tP("companySize"),
+                      })}
+                      onClick={() => beginEditingField("company-size")}
+                    />
+                  ) : (
                     <Input
-                      placeholder={isEdit ? tP("email") : user.email}
+                      type="number"
+                      placeholder={tP("companySize")}
+                      id="company-size"
+                      {...form.register("basicInfo.companySize")}
+                      prefix={<LucideUsers />}
+                      disabled={!isEdit}
+                    />
+                  )
+                }
+              />
+
+              <LabelInput
+                className="col-span-4 tablet-md:col-span-1"
+                label={tP("foundedYear")}
+                input={
+                  !isEdit && !company.foundedYear ? (
+                    <MissingProfileFieldButton
+                      label={tP("addMissingField", {
+                        field: tP("foundedYear"),
+                      })}
+                      onClick={() => beginEditingField("company-founded-year")}
+                    />
+                  ) : (
+                    <Input
+                      type="number"
+                      placeholder={tP("foundedYear")}
+                      id="company-founded-year"
+                      {...form.register("basicInfo.foundedYear")}
+                      prefix={<LucideCalendarDays />}
+                      disabled={!isEdit}
+                    />
+                  )
+                }
+              />
+
+              <LabelInput
+                className="col-span-7 tablet-md:col-span-1"
+                label={tP("email")}
+                input={
+                  !isEdit && !user.email?.trim() ? (
+                    <MissingProfileFieldButton
+                      label={tP("addMissingField", { field: tP("email") })}
+                      onClick={() => beginEditingField("email")}
+                    />
+                  ) : (
+                    <Input
+                      placeholder={tP("email")}
                       id="email"
                       {...form.register("accountSetting.email")}
                       prefix={<LucideMail />}
                       disabled={!isEdit}
                     />
-                  }
-                />
-              )}
-              {company.phone && (
-                <LabelInput
-                  label={tP("phoneNumber")}
-                  input={
+                  )
+                }
+              />
+              <LabelInput
+                className="col-span-5 tablet-md:col-span-1"
+                label={tP("phoneNumber")}
+                input={
+                  !isEdit && !company.phone?.trim() ? (
+                    <MissingProfileFieldButton
+                      label={tP("addMissingField", {
+                        field: tP("phoneNumber"),
+                      })}
+                      onClick={() => beginEditingField("phone")}
+                    />
+                  ) : (
                     <Input
-                      placeholder={isEdit ? tP("phoneNumber") : company.phone}
+                      placeholder={tP("phoneNumber")}
                       id="phone"
                       {...form.register("accountSetting.phone")}
                       prefix={<LucidePhone />}
                       disabled={!isEdit}
                     />
-                  }
-                />
-              )}
+                  )
+                }
+              />
             </div>
-          </div>
+          </section>
 
           {/* OpenPosition Information Section */}
           {company.openPositions && (
-            <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
+            <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border border-border bg-card p-5 sm:p-6">
               <SectionTitle
                 icon={<LucideUsers />}
                 title={tP("openPositionInformation")}
                 action={
-                  isEdit ? (
-                    <div onClick={addNewOpenPosition}>
+                  isEdit || openPositionFA.fields.length === 0 ? (
+                    <div
+                      onClick={() => {
+                        if (!isEdit) enableEditMode();
+                        addNewOpenPosition();
+                      }}
+                    >
                       <IconLabel
                         text={tP("addOpenPosition")}
                         icon={<LucidePlus className="text-muted-foreground" />}
@@ -1697,11 +1888,11 @@ export default function ProfilePage() {
                   }
                 }}
               />
-            </div>
+            </section>
           )}
 
           {/* Company Images Section */}
-          <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
+          <section className="profile-section w-full overflow-hidden border border-border bg-card p-5 sm:p-6">
             <SectionTitle
               icon={<LucideBuilding />}
               title={tP("companyImagesInformation")}
@@ -1728,7 +1919,7 @@ export default function ProfilePage() {
                             }
                           }
                         }}
-                        className="h-[180px] bg-muted rounded-md my-2 ml-2 bg-cover bg-center"
+                        className="my-2 ml-2 h-[180px] bg-muted bg-cover bg-center"
                         style={{ backgroundImage: `url(${imageUrl})` }}
                       />
                       {isEdit && (
@@ -1768,7 +1959,7 @@ export default function ProfilePage() {
                   <CarouselItem className="max-w-[280px]">
                     <label
                       htmlFor="image-upload"
-                      className="h-[180px] bg-muted rounded-md my-2 ml-2 flex justify-center items-center cursor-pointer"
+                      className="profile-image-upload my-2 ml-2 flex h-[180px] cursor-pointer items-center justify-center border border-dashed border-foreground/30 bg-muted/50 transition-colors hover:bg-muted"
                     >
                       <input
                         id="image-upload"
@@ -1801,13 +1992,13 @@ export default function ProfilePage() {
               <CarouselPrevious type="button" className="ml-8" />
               <CarouselNext type="button" className="mr-8" />
             </Carousel>
-          </div>
+          </section>
         </div>
 
         {/* RIGHT SIDE Section */}
-        <div className="w-[40%] min-w-0 flex flex-col gap-5">
+        <aside className="profile-side-column flex min-w-0 flex-col gap-5">
           {/* Benefits Section */}
-          <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
+          <section className="profile-section flex flex-col items-start gap-5 overflow-hidden border border-border bg-card p-5 sm:p-6">
             <div className="w-full">
               <SectionTitle
                 icon={<LucideCircleCheck />}
@@ -1821,7 +2012,7 @@ export default function ProfilePage() {
                 {benefits.length > 0 ? (
                   benefits.map((benefit) => (
                     <div
-                      className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs"
+                      className="flex cursor-pointer items-center gap-2 border border-border bg-muted px-3 py-2 [&>div>p]:text-xs"
                       key={benefit.label}
                     >
                       <IconLabel
@@ -1867,14 +2058,18 @@ export default function ProfilePage() {
                       <LucidePlus />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
+                  <PopoverContent
+                    align="start"
+                    sideOffset={8}
+                    className="profile-overlay profile-form-popover flex w-[var(--radix-popper-anchor-width)] flex-col items-end gap-3"
+                  >
                     <Input
                       placeholder={tP("enterBenefitPlaceholder")}
                       onChange={(e) =>
                         setBenefitInput({ label: e.target.value })
                       }
                     />
-                    <div className="flex items-center gap-1 [&>button]:text-xs">
+                    <div className="grid w-full grid-cols-2 gap-2 [&>button]:w-full [&>button]:text-xs">
                       <Button
                         variant="outline"
                         type="button"
@@ -1900,10 +2095,10 @@ export default function ProfilePage() {
                 </Popover>
               )}
             </div>
-          </div>
+          </section>
 
           {/* Values Section */}
-          <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
+          <section className="profile-section flex flex-col items-start gap-5 overflow-hidden border border-border bg-card p-5 sm:p-6">
             <div className="w-full">
               <SectionTitle icon={<LucideZap />} title={tP("values")} />
             </div>
@@ -1914,7 +2109,7 @@ export default function ProfilePage() {
                 {values.length > 0 ? (
                   values.map((value, index) => (
                     <div
-                      className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted cursor-pointer [&>div>p]:text-xs"
+                      className="flex cursor-pointer items-center gap-2 border border-border bg-muted px-3 py-2 [&>div>p]:text-xs"
                       key={index}
                     >
                       <IconLabel
@@ -1961,12 +2156,16 @@ export default function ProfilePage() {
                       <LucidePlus />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="p-5 flex flex-col items-end gap-3 w-[var(--radix-popper-anchor-width)]">
+                  <PopoverContent
+                    align="start"
+                    sideOffset={8}
+                    className="profile-overlay profile-form-popover flex w-[var(--radix-popper-anchor-width)] flex-col items-end gap-3"
+                  >
                     <Input
                       placeholder={tP("enterValuePlaceholder")}
                       onChange={(e) => setValueInput({ label: e.target.value })}
                     />
-                    <div className="flex items-center gap-1 [&>button]:text-xs">
+                    <div className="grid w-full grid-cols-2 gap-2 [&>button]:w-full [&>button]:text-xs">
                       <Button
                         variant="outline"
                         type="button"
@@ -1992,10 +2191,10 @@ export default function ProfilePage() {
                 </Popover>
               )}
             </div>
-          </div>
+          </section>
 
           {/* Career Scopes Section */}
-          <div className="bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-start gap-5 overflow-hidden">
+          <section className="profile-section flex flex-col items-start gap-5 overflow-hidden border border-border bg-card p-5 sm:p-6">
             <div className="w-full">
               <SectionTitle
                 icon={<LucideCompass />}
@@ -2011,7 +2210,11 @@ export default function ProfilePage() {
                     <HoverCard>
                       <HoverCardTrigger asChild>
                         <div>
-                          <Tag label={career.name} />
+                          <Tag
+                            label={career.name}
+                            neutral
+                            className="!rounded-none border border-border hover:shadow-none"
+                          />
                         </div>
                       </HoverCardTrigger>
                       <HoverCardContent>
@@ -2070,7 +2273,11 @@ export default function ProfilePage() {
                       <ChevronDown className="opacity-50" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="p-0">
+                  <PopoverContent
+                    align="start"
+                    sideOffset={8}
+                    className="profile-overlay profile-command-popover w-[var(--radix-popper-anchor-width)] p-0"
+                  >
                     <Command>
                       <CommandInput
                         placeholder={tP("selectCareers")}
@@ -2133,10 +2340,10 @@ export default function ProfilePage() {
                 </Button>
               </>
             )}
-          </div>
+          </section>
 
           {/* Social Section */}
-          <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 flex flex-col items-stretch gap-5 overflow-hidden">
+          <section className="profile-section flex w-full flex-col items-stretch gap-5 overflow-hidden border border-border bg-card p-5 sm:p-6">
             <SectionTitle
               icon={<LucideGlobe />}
               title={tP("socialInformation")}
@@ -2151,7 +2358,7 @@ export default function ProfilePage() {
                   >
                     <Link
                       href={item.url}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 rounded-full hover:underline max-w-[200px] sm:max-w-[260px] overflow-hidden"
+                      className="inline-flex max-w-[200px] items-center gap-1.5 overflow-hidden border border-border bg-muted/50 px-3 py-1.5 text-foreground hover:bg-muted sm:max-w-[260px]"
                     >
                       <span className="flex-shrink-0">
                         {getSocialPlatformTypeIcon(item.platform as TPlatform)}
@@ -2181,9 +2388,9 @@ export default function ProfilePage() {
             {(isEdit || company.socials.length === 0) && (
               <div>
                 {isEdit && (
-                  <div className="w-full flex flex-col items-start gap-4 p-4 mt-3 border border-muted rounded-xl overflow-hidden">
-                    <div className="w-full flex flex-col sm:flex-row gap-3 sm:gap-4">
-                      <div className="w-full sm:w-[180px] flex-shrink-0 flex flex-col items-start gap-1">
+                  <div className="mt-3 flex w-full flex-col items-start gap-4 overflow-hidden border border-border p-4">
+                    <div className="w-full flex flex-col gap-3">
+                      <div className="w-full flex-shrink-0 flex flex-col items-start gap-1">
                         <TypographyMuted className="text-xs">
                           {tP("platform")}
                         </TypographyMuted>
@@ -2197,18 +2404,36 @@ export default function ProfilePage() {
                           value={socialInput?.platform ?? ""}
                         >
                           <SelectTrigger
-                            className="h-10 text-muted-foreground"
+                            className="h-12 gap-2 text-muted-foreground [&>svg:last-child]:ml-auto"
                             ref={socialSelectPlatformRef}
                           >
-                            <SelectValue placeholder={tP("platform")} />
+                            <div className="flex min-w-0 items-center gap-2">
+                              <span className="flex size-5 shrink-0 items-center justify-center [&>svg]:size-4">
+                                {socialInput?.platform ? (
+                                  getSocialPlatformTypeIcon(
+                                    socialInput.platform as TPlatform,
+                                  )
+                                ) : (
+                                  <LucideGlobe />
+                                )}
+                              </span>
+                              <SelectValue placeholder={tP("platform")} />
+                            </div>
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent className="profile-overlay profile-select-content">
                             {platformConstant.map((platform) => (
                               <SelectItem
                                 key={platform.id}
                                 value={platform.value}
                               >
-                                {platform.label}
+                                <span className="flex items-center gap-2">
+                                  <span className="flex size-5 shrink-0 items-center justify-center [&>svg]:size-4">
+                                    {getSocialPlatformTypeIcon(
+                                      platform.value as TPlatform,
+                                    )}
+                                  </span>
+                                  {platform.label}
+                                </span>
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -2286,10 +2511,10 @@ export default function ProfilePage() {
                 </Button>
               </div>
             )}
-          </div>
+          </section>
 
           {/* Authentication Section */}
-          <div className="flex flex-col items-stretch gap-5 bg-card rounded-2xl border border-border/60 shadow-sm p-5 sm:p-6 overflow-hidden">
+          <section className="profile-section flex flex-col items-stretch gap-5 overflow-hidden border border-border bg-card p-5 sm:p-6">
             <SectionTitle
               icon={<LucideSettings />}
               title={tP("authentication")}
@@ -2299,7 +2524,7 @@ export default function ProfilePage() {
               {/* Google, Facebook, LinkedIn and Github Methods Section */}
               {loginMethodConstant.map((item) => (
                 <div
-                  className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer"
+                  className="flex w-full cursor-pointer items-center justify-between border border-border bg-muted/35 px-3 py-3"
                   key={item.id}
                 >
                   <div className="flex items-center gap-2">
@@ -2316,13 +2541,13 @@ export default function ProfilePage() {
                   {user.lastLoginMethod &&
                   user.lastLoginMethod.toUpperCase() ===
                     item.label.toUpperCase() ? (
-                    <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
+                    <div className="cursor-pointer border border-red-500/20 bg-red-100 px-3 py-1 text-red-500 dark:bg-red-950/30">
                       <TypographySmall className="text-xs font-medium">
                         {tP("disconnect")}
                       </TypographySmall>
                     </div>
                   ) : (
-                    <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
+                    <div className="cursor-pointer border border-blue-500/20 bg-blue-100 px-3 py-1 text-blue-500 dark:bg-blue-950/30">
                       <TypographySmall className="text-xs font-medium">
                         {tP("connect")}
                       </TypographySmall>
@@ -2332,19 +2557,19 @@ export default function ProfilePage() {
               ))}
 
               {/* Email/Password Method Section */}
-              <div className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer">
+              <div className="flex w-full cursor-pointer items-center justify-between border border-border bg-muted/35 px-3 py-3">
                 <div className="flex items-center gap-2">
                   <LucideMail className="mx-1" strokeWidth={1.5} />
                   <TypographySmall>{tP("email")}</TypographySmall>
                 </div>
                 {user.email ? (
-                  <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
+                  <div className="cursor-pointer border border-red-500/20 bg-red-100 px-3 py-1 text-red-500 dark:bg-red-950/30">
                     <TypographySmall className="text-xs font-medium">
                       {tP("disconnect")}
                     </TypographySmall>
                   </div>
                 ) : (
-                  <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
+                  <div className="cursor-pointer border border-blue-500/20 bg-blue-100 px-3 py-1 text-blue-500 dark:bg-blue-950/30">
                     <TypographySmall className="text-xs font-medium">
                       {tP("connect")}
                     </TypographySmall>
@@ -2353,19 +2578,19 @@ export default function ProfilePage() {
               </div>
 
               {/* PhoneOTP Method Section */}
-              <div className="w-full flex items-center justify-between bg-primary-foreground rounded-xl py-3 px-2 cursor-pointer">
+              <div className="flex w-full cursor-pointer items-center justify-between border border-border bg-muted/35 px-3 py-3">
                 <div className="flex items-center gap-2">
                   <LucidePhone className="mx-1" strokeWidth={1.5} />
                   <TypographySmall>{tP("phoneOtp")}</TypographySmall>
                 </div>
                 {user.phone ? (
-                  <div className="bg-red-100 text-red-500 px-3 py-1 rounded-2xl cursor-pointer">
+                  <div className="cursor-pointer border border-red-500/20 bg-red-100 px-3 py-1 text-red-500 dark:bg-red-950/30">
                     <TypographySmall className="text-xs font-medium">
                       {tP("disconnect")}
                     </TypographySmall>
                   </div>
                 ) : (
-                  <div className="bg-blue-100 text-blue-500 px-3 py-1 rounded-2xl cursor-pointer">
+                  <div className="cursor-pointer border border-blue-500/20 bg-blue-100 px-3 py-1 text-blue-500 dark:bg-blue-950/30">
                     <TypographySmall className="text-xs font-medium">
                       {tP("connect")}
                     </TypographySmall>
@@ -2373,8 +2598,8 @@ export default function ProfilePage() {
                 )}
               </div>
             </div>
-          </div>
-        </div>
+          </section>
+        </aside>
       </div>
 
       {/* Loading Dialog Section */}

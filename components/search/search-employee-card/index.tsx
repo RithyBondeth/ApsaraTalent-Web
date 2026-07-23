@@ -7,6 +7,7 @@ import {
   LucideGraduationCap,
   LucideMapPin,
   LucideUser,
+  MoveUpRight,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ISearchEmployeeCardProps } from "./props";
@@ -25,13 +26,13 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-md hover:border-primary/20">
-      <div className="p-4 sm:p-5 flex flex-col gap-3.5">
+    <article className="group w-full overflow-hidden rounded-none border border-border border-l-[5px] border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)]">
+      <div className="flex flex-col gap-4 p-4 sm:p-5">
         {/* Header Section: Avatar, Name, Job and Availability */}
         <div className="flex gap-4">
           <Avatar
             rounded="md"
-            className="size-14 sm:size-16 flex-shrink-0 ring-[2px] ring-border/40"
+            className="size-14 flex-shrink-0 !rounded-none border border-border sm:size-16"
           >
             <AvatarImage src={props.avatar} />
             <AvatarFallback className="text-xs font-semibold">
@@ -42,15 +43,15 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <h3 className="text-base font-bold leading-tight truncate">
+                <h3 className="truncate text-base font-black leading-tight tracking-[-0.02em] sm:text-lg">
                   {props.job}
                 </h3>
-                <TypographyP className="[&:not(:first-child)]:mt-0 text-sm text-primary font-medium mt-0.5">
+                <TypographyP className="mt-0.5 text-sm font-medium text-muted-foreground [&:not(:first-child)]:mt-0">
                   {props.firstname} {props.lastname}
                 </TypographyP>
               </div>
               <span
-                className={`text-[11px] font-semibold px-2.5 py-1 rounded-full whitespace-nowrap flex-shrink-0 ${getAvailabilityStyleClass(props.availability)}`}
+                className={`flex-shrink-0 whitespace-nowrap rounded-none border border-current/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${getAvailabilityStyleClass(props.availability)}`}
               >
                 {props.availability}
               </span>
@@ -63,13 +64,23 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
           <MetaChip
             icon={<LucideUser />}
             text={`${props.yearOfExperience} ${t("yrsExp")}`}
+            className="rounded-none border border-border bg-muted/45"
           />
           <MetaChip
             icon={<LucideMapPin />}
             text={translateLocation(props.location, tl)}
+            className="rounded-none border border-border bg-muted/45"
           />
-          <MetaChip icon={<LucideClock />} text={props.availability} />
-          <MetaChip icon={<LucideGraduationCap />} text={props.education} />
+          <MetaChip
+            icon={<LucideClock />}
+            text={props.availability}
+            className="rounded-none border border-border bg-muted/45"
+          />
+          <MetaChip
+            icon={<LucideGraduationCap />}
+            text={props.education}
+            className="rounded-none border border-border bg-muted/45"
+          />
         </div>
 
         {/* Description Section */}
@@ -82,24 +93,38 @@ export default function SearchEmployeeCard(props: ISearchEmployeeCardProps) {
         {/* Skills Tags Section */}
         {props.skills.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
-            {props.skills.map((item, index) => (
-              <Tag label={item} key={index} />
+            {props.skills.slice(0, 6).map((item, index) => (
+              <Tag
+                label={item}
+                key={index}
+                neutral
+                className="!rounded-none border border-border hover:shadow-none"
+              />
             ))}
+            {props.skills.length > 6 && (
+              <span className="self-center text-[11px] font-semibold text-muted-foreground">
+                +{props.skills.length - 6}
+              </span>
+            )}
           </div>
         )}
       </div>
 
       {/* Action Bar Section */}
-      <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-end">
+      <div className="flex items-center justify-between gap-3 border-t border-border bg-muted/25 px-4 py-3 sm:px-5">
+        <span className="min-w-0 truncate text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+          {props.username || `${props.firstname} ${props.lastname}`}
+        </span>
         <Button
           size="sm"
-          className="text-xs"
-          onClick={() => router.replace(`/feed/employee/${props.id}`)}
+          className="flex-shrink-0 rounded-none text-xs"
+          onClick={() => router.push(`/feed/employee/${props.id}`)}
         >
           <LucideUser className="size-3.5" />
           {t("viewProfile")}
+          <MoveUpRight className="size-3.5" />
         </Button>
       </div>
-    </div>
+    </article>
   );
 }

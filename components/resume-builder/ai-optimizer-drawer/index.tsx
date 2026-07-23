@@ -219,7 +219,7 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
         variant="outline"
         size="sm"
         onClick={() => void analyze()}
-        className="h-8 text-xs gap-1.5"
+        className="h-8 gap-1.5 rounded-none text-xs"
         title={t("aiOptimizerTitle")}
       >
         <LucideSparkles size={14} className="text-primary" />

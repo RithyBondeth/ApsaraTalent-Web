@@ -28,6 +28,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { IUserModerationMenuProps } from "./props";
 import { REPORT_REASONS } from "@/utils/constants/moderation";
+import { cn } from "@/lib/utils";
 
 export default function UserModerationMenu(props: IUserModerationMenuProps) {
   /* --------------------------------- Props --------------------------------- */
@@ -36,11 +37,13 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
     targetName,
     align = "end",
     triggerClassName = "h-8 w-8 sm:h-9 sm:w-9",
+    variant = "default",
   } = props;
 
   /* --------------------------------- Utils --------------------------------- */
   const t = useTranslations("moderation");
   const router = useRouter();
+  const isEditorial = variant === "editorial";
 
   /* ------------------------------- All States ------------------------------ */
   const [reportOpen, setReportOpen] = useState<boolean>(false);
@@ -119,7 +122,7 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
           <Button
             variant="ghost"
             size="icon"
-            className={triggerClassName}
+            className={cn(isEditorial && "rounded-none", triggerClassName)}
             aria-label={t("moreOptions")}
           >
             <MoreVertical className="h-5 w-5" />
@@ -127,11 +130,22 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
         </DropdownMenuTrigger>
 
         {/* Dropdown Menu Content Section */}
-        <DropdownMenuContent align={align} className="w-44">
+        <DropdownMenuContent
+          align={align}
+          className={cn(
+            "w-44",
+            isEditorial &&
+              "rounded-none border-border bg-popover p-0 shadow-[6px_6px_0_hsl(var(--foreground)/0.09)]",
+          )}
+        >
           <DropdownMenuItem
             onClick={handleBlockToggle}
             disabled={blocking}
-            className="gap-2"
+            className={cn(
+              "gap-2",
+              isEditorial &&
+                "min-h-11 rounded-none px-3 py-2.5 font-medium focus:bg-muted",
+            )}
           >
             {blockedByMe ? (
               <>
@@ -145,12 +159,18 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
               </>
             )}
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
+          <DropdownMenuSeparator
+            className={cn(isEditorial && "m-0 bg-border")}
+          />
 
           {/* Report Section */}
           <DropdownMenuItem
             onClick={() => setReportOpen(true)}
-            className="gap-2 text-destructive focus:text-destructive"
+            className={cn(
+              "gap-2 text-destructive focus:text-destructive",
+              isEditorial &&
+                "min-h-11 rounded-none px-3 py-2.5 font-medium focus:bg-destructive/10",
+            )}
           >
             <Flag className="h-4 w-4" />
             {t("report")}
@@ -161,9 +181,19 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
       {/* Report Dialog Section */}
       <Dialog open={reportOpen} onOpenChange={setReportOpen}>
         {/* Report Dialog Content Section */}
-        <DialogContent className="sm:max-w-md">
+        <DialogContent
+          className={cn(
+            "sm:max-w-md",
+            isEditorial &&
+              "rounded-none border-border p-0 sm:rounded-none [&>button]:rounded-none",
+          )}
+        >
           {/* Report Dialog Header Section */}
-          <DialogHeader>
+          <DialogHeader
+            className={cn(
+              isEditorial && "border-b border-border px-5 pb-4 pt-5 pr-14",
+            )}
+          >
             <DialogTitle>
               {t("reportDialogTitle", { name: targetName })}
             </DialogTitle>
@@ -173,7 +203,12 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
           </DialogHeader>
 
           {/* Report Dialog Body Section: Reason and Details */}
-          <div className="flex flex-col gap-4 py-2">
+          <div
+            className={cn(
+              "flex flex-col gap-4 py-2",
+              isEditorial && "px-5 py-5",
+            )}
+          >
             <RadioGroup
               value={reason}
               onValueChange={(v) => setReason(v as TReportReason)}
@@ -185,6 +220,10 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
                   value={r.value}
                   id={`report-${r.value}`}
                   htmlFor={`report-${r.value}`}
+                  className={cn(
+                    isEditorial &&
+                      "min-h-11 border border-border px-3 py-2.5 [&>button]:rounded-none",
+                  )}
                 >
                   {t(r.labelKey)}
                 </RadioGroupItemWithLabel>
@@ -196,12 +235,21 @@ export default function UserModerationMenu(props: IUserModerationMenuProps) {
               onChange={(e) => setDetails(e.target.value)}
               placeholder={t("reportDetailsPlaceholder")}
               maxLength={1000}
-              className="min-h-24 resize-none"
+              className={cn(
+                "min-h-24 resize-none",
+                isEditorial && "rounded-none",
+              )}
             />
           </div>
 
           {/* Report Dialog Footer Section: Cancel and Submit Buttons */}
-          <DialogFooter className="gap-2 sm:gap-2">
+          <DialogFooter
+            className={cn(
+              "gap-2 sm:gap-2",
+              isEditorial &&
+                "grid grid-cols-2 border-t border-border px-5 pb-5 pt-4 [&>button]:w-full [&>button]:rounded-none",
+            )}
+          >
             <Button
               type="button"
               variant="outline"

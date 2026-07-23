@@ -62,7 +62,7 @@ export default function ReferencePreviewDialog(props: IReferencePreviewDialog) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <Dialog open={props.openRefPreview} onOpenChange={props.setOpenRefPreview}>
-      <DialogContent className="w-[95vw] sm:w-[85vw] lg:w-[60vw] max-w-5xl h-[85vh] p-0 overflow-hidden flex flex-col">
+      <DialogContent className="flex h-[85vh] w-[95vw] max-w-5xl flex-col overflow-hidden rounded-none p-0 sm:w-[85vw] sm:rounded-none lg:w-[60vw] [&>button]:rounded-none">
         {/* Dialog Header Section: Title */}
         <DialogHeader className="px-4 py-3 border-b">
           <DialogTitle className="text-sm">

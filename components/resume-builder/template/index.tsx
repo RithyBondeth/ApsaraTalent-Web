@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import ImagePopup from "@/components/utils/data-display/image-popup";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { Eye } from "lucide-react";
+import { Check, Eye } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { ITemplateCardProps } from "./props";
@@ -20,35 +20,48 @@ export default function TemplateCard(props: ITemplateCardProps) {
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div
-      className={`h-fit w-full flex flex-col rounded-2xl cursor-pointer transition-all duration-300 ease-out border overflow-hidden ${
+    <article
+      className={`group h-full w-full cursor-pointer overflow-hidden border bg-card transition-[border-color,box-shadow,transform] duration-200 ease-out ${
         props.selected
-          ? "border-primary ring-2 ring-primary/25 shadow-[0_8px_32px_hsl(var(--foreground)/0.14)] -translate-y-1"
-          : "border-border/70 shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_8px_24px_hsl(var(--foreground)/0.12)]"
+          ? "-translate-y-0.5 border-foreground shadow-[7px_7px_0_hsl(var(--foreground)/0.12)]"
+          : "border-border shadow-[4px_4px_0_hsl(var(--foreground)/0.045)] hover:-translate-y-0.5 hover:border-foreground/35 hover:shadow-[7px_7px_0_hsl(var(--foreground)/0.07)]"
       }`}
     >
       {/* Preview Area Section */}
-      <div className="w-full h-52 relative group overflow-hidden">
+      <div className="relative h-52 w-full overflow-hidden border-b border-border bg-muted/30">
+        {/* Selection State Section */}
+        <div
+          className={`absolute left-3 top-3 z-20 flex h-7 items-center gap-1.5 border px-2 text-[10px] font-black uppercase tracking-[0.12em] transition-colors ${
+            props.selected
+              ? "border-foreground bg-foreground text-background"
+              : "border-border bg-background/90 text-muted-foreground backdrop-blur"
+          }`}
+        >
+          {props.selected ? <Check className="size-3" /> : null}
+          {props.selected ? t("selectedTemplate") : t("templateLabel")}
+        </div>
+
         {props.image ? (
           <Image
             src={props.image}
             fill
             alt={props.title}
-            className="object-cover object-top"
+            className="object-cover object-top transition-transform duration-300 group-hover:scale-[1.025]"
           />
         ) : (
           /* Live Theme Preview Section: real palette/layout from the theme engine */
           <TemplateMiniPreview
             templateKey={props.templateKey}
-            className="absolute inset-0 transition-transform duration-300 group-hover:scale-[1.04] origin-top"
+            className="absolute inset-0 origin-top transition-transform duration-300 group-hover:scale-[1.025]"
           />
         )}
 
         {/* Hover Overlay with Preview Button Section */}
         {props.image && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100 group-hover:pointer-events-auto">
+          <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-black/50 opacity-0 transition-opacity duration-200 group-hover:pointer-events-auto group-hover:opacity-100">
             <button
-              className="flex items-center gap-2 bg-white text-gray-900 rounded-full px-4 py-2 text-xs font-semibold shadow-lg hover:bg-gray-100 transition"
+              type="button"
+              className="flex items-center gap-2 border border-white bg-black/75 px-4 py-2 text-xs font-semibold text-white transition hover:bg-black"
               onClick={(e) => {
                 e.stopPropagation();
                 setPopupResume(true);
@@ -62,28 +75,30 @@ export default function TemplateCard(props: ITemplateCardProps) {
       </div>
 
       {/* Card Body Section */}
-      <div className="w-full p-4 flex flex-col gap-3 bg-card">
+      <div className="flex min-h-[156px] w-full flex-col justify-between gap-4 p-4">
         {/* Title and Description Section */}
         <div className="flex flex-col gap-1">
-          <TypographyH4 className="!m-0 text-sm font-semibold leading-tight">
+          <TypographyH4 className="!m-0 text-sm font-black leading-tight tracking-[-0.015em]">
             {props.title}
           </TypographyH4>
-          <TypographyMuted className="text-xs leading-relaxed line-clamp-2">
+          <TypographyMuted className="line-clamp-3 text-xs leading-relaxed">
             {props.description}
           </TypographyMuted>
         </div>
 
         {/* Action Buttons Section */}
-        <div className="flex items-center justify-between">
-          <Button
-            size="sm"
-            className="text-xs h-8 rounded-full px-4"
-            variant={props.selected ? "default" : "outline"}
-            onClick={props.onUseTemplate}
-          >
-            {props.selected ? `✓ ${t("selectedTemplate")}` : t("useTemplate")}
-          </Button>
-        </div>
+        <Button
+          type="button"
+          size="sm"
+          className="h-9 w-full justify-between rounded-none px-3 text-xs"
+          variant={props.selected ? "default" : "outline"}
+          onClick={props.onUseTemplate}
+        >
+          <span>
+            {props.selected ? t("selectedTemplate") : t("useTemplate")}
+          </span>
+          {props.selected ? <Check className="size-3.5" /> : null}
+        </Button>
       </div>
 
       {/* Image Popup Section */}
@@ -94,6 +109,6 @@ export default function TemplateCard(props: ITemplateCardProps) {
           setOpen={setPopupResume}
         />
       )}
-    </div>
+    </article>
   );
 }

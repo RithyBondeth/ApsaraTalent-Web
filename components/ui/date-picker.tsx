@@ -1,7 +1,7 @@
 "use client";
 
 import { Button, type ButtonProps } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+import { Calendar, type CalendarProps } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
@@ -23,6 +23,12 @@ interface DatePickerProps extends Omit<
   placeholder?: string;
   popoverSide?: "top" | "right" | "bottom" | "left";
   dateFormat?: string;
+  popoverClassName?: string;
+  calendarClassName?: string;
+  calendarDisabled?: CalendarProps["disabled"];
+  calendarToDate?: Date;
+  fromYear?: number;
+  toYear?: number;
 }
 
 export function DatePicker({
@@ -33,6 +39,12 @@ export function DatePicker({
   disabled = false,
   popoverSide = "bottom",
   dateFormat = "PPP",
+  popoverClassName,
+  calendarClassName,
+  calendarDisabled,
+  calendarToDate,
+  fromYear = 1900,
+  toYear = new Date().getFullYear() + 10,
   ...triggerProps
 }: DatePickerProps) {
   const localeCode = useLocale();
@@ -71,7 +83,10 @@ export function DatePicker({
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="auth-calendar-popover w-[var(--radix-popover-trigger-width)] max-w-[calc(100vw-1.5rem)] min-w-[17.5rem] overflow-hidden p-0"
+        className={cn(
+          "auth-calendar-popover w-[var(--radix-popover-trigger-width)] max-w-[calc(100vw-1.5rem)] min-w-[17.5rem] overflow-hidden p-0",
+          popoverClassName,
+        )}
         align="start"
         side={popoverSide}
         sideOffset={8}
@@ -80,13 +95,16 @@ export function DatePicker({
         <Calendar
           mode="single"
           selected={isValidDate ? date : undefined}
+          defaultMonth={isValidDate ? date : undefined}
           onSelect={handleSelect}
           initialFocus
-          disabled={disabled}
-          fromYear={1900}
-          toYear={new Date().getFullYear() + 10}
+          disabled={disabled ? true : calendarDisabled}
+          fromYear={fromYear}
+          toYear={toYear}
+          toDate={calendarToDate}
           captionLayout="dropdown-buttons"
           locale={locale}
+          className={calendarClassName}
         />
       </PopoverContent>
     </Popover>

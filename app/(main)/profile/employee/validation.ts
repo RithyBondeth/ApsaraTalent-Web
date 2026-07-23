@@ -21,6 +21,7 @@ export const basicInfoSchema = z.object({
       username: textValidation().optional(),
       gender: selectedValidation().optional(),
       location: selectedValidation().optional(),
+      isHide: z.boolean().optional(),
       avatar: z
         .union([
           z.instanceof(File).refine(
@@ -80,8 +81,8 @@ export const professionInfoSchema = z.object({
         .nullable()
         .or(z.literal("")),
       languages: z.array(z.string()).optional().nullable(),
-      expectedSalaryMin: z.number().positive().optional().nullable(),
-      expectedSalaryMax: z.number().positive().optional().nullable(),
+      expectedSalaryMin: z.coerce.number().positive().optional().nullable(),
+      expectedSalaryMax: z.coerce.number().positive().optional().nullable(),
       salaryCurrency: z.string().optional().default("USD"),
     })
     .optional(),

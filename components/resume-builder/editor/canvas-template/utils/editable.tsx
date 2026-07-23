@@ -1,4 +1,5 @@
 import { useCallback, useRef } from "react";
+import { useResumeTemplateTheme } from "@/hooks/resume/use-resume-template-theme";
 
 export function Editable(props: {
   value: string;
@@ -16,6 +17,7 @@ export function Editable(props: {
 
   /* ---------------------------------- Utils ---------------------------------- */
   const Tag = multiline ? "div" : "span";
+  const theme = useResumeTemplateTheme();
 
   /* --------------------------------- Methods ---------------------------------- */
   // ── Handle Blur ─────────────────────────────────────────
@@ -42,12 +44,12 @@ export function Editable(props: {
       onBlur={handleBlur}
       onKeyDown={handleKeyDown}
       data-placeholder={placeholder}
-      style={style}
+      style={{ borderRadius: theme.radius, fontFamily: "inherit", ...style }}
       className={[
-        "outline-none rounded-sm cursor-text transition-all",
+        "cursor-text outline-none transition-all",
         "hover:ring-1 hover:ring-primary/30 hover:bg-primary/5",
         "focus:ring-2 focus:ring-primary/50 focus:bg-primary/8",
-        "empty:before:content-[attr(data-placeholder)] empty:before:text-gray-300 empty:before:italic",
+        "empty:before:content-[attr(data-placeholder)] empty:before:font-[inherit] empty:before:not-italic empty:before:text-current empty:before:opacity-35",
         className,
       ].join(" ")}
     >

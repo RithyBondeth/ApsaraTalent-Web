@@ -30,12 +30,12 @@ export default function EmployeeEducationForm(
     <div className="w-full flex flex-col items-start gap-3">
       {/* Header Section */}
       <div className="w-full flex items-center justify-between">
-        <TypographyMuted>
+        <TypographyMuted className="font-bold text-foreground">
           {t("educationIndex", { index: props.index + 1 })}
         </TypographyMuted>
         {props.isEdit && (
           <LucideTrash2
-            className="cursor-pointer text-red-500"
+            className="cursor-pointer text-red-500 hover:text-red-600"
             strokeWidth={"1.5px"}
             width={"18px"}
             onClick={props.onRemove}
@@ -44,58 +44,61 @@ export default function EmployeeEducationForm(
       </div>
 
       {/* Content Section */}
-      <div className="w-full flex flex-col items-start gap-5 p-5 border-[1px] border-muted rounded-md">
+      <div className="grid w-full grid-cols-12 items-end gap-4 border border-border bg-card p-5 tablet-md:grid-cols-1">
         {/* School Section */}
-        <div className="w-full flex flex-col items-start gap-2">
-          <LabelInput
-            label={t("school")}
-            input={
-              <Input
-                placeholder={t("school")}
-                id="school"
-                {...register(`educations.${props.index}.school`)}
-                prefix={<LucideSchool strokeWidth={"1.3px"} />}
-                disabled={!props.isEdit}
-              />
-            }
-          />
-          {/* isStudying Checkbox Section */}
-          <div className="flex items-center space-x-2 mt-1">
-            <Controller
-              control={control}
-              name={`educations.${props.index}.isStudying`}
-              render={({ field }) => (
-                <Checkbox
-                  id={`isStudying-profile-${props.index}`}
-                  checked={field.value ?? false}
-                  onCheckedChange={field.onChange}
-                  disabled={!props.isEdit}
-                />
-              )}
+        <LabelInput
+          className="col-span-7 tablet-md:col-span-1"
+          label={t("school")}
+          input={
+            <Input
+              placeholder={t("school")}
+              id="school"
+              {...register(`educations.${props.index}.school`)}
+              prefix={<LucideSchool />}
+              disabled={!props.isEdit}
             />
-            <label
-              htmlFor={`isStudying-profile-${props.index}`}
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground"
-            >
-              {t("currentlyStudying")}
-            </label>
-          </div>
-        </div>
+          }
+        />
+
         {/* Degree Section */}
         <LabelInput
+          className="col-span-5 tablet-md:col-span-1"
           label={t("degree")}
           input={
             <Input
               placeholder={isStudying ? t("pursuingDegree") : t("degree")}
               id="degree"
               {...register(`educations.${props.index}.degree`)}
-              prefix={<LucideGraduationCap strokeWidth={"1.3px"} />}
+              prefix={<LucideGraduationCap />}
               disabled={!props.isEdit}
             />
           }
         />
+
+        {/* isStudying Checkbox Section */}
+        <div className="col-span-7 flex h-12 w-full items-center gap-2 border border-input bg-background px-3 tablet-md:col-span-1">
+          <Controller
+            control={control}
+            name={`educations.${props.index}.isStudying`}
+            render={({ field }) => (
+              <Checkbox
+                id={`isStudying-profile-${props.index}`}
+                checked={field.value ?? false}
+                onCheckedChange={field.onChange}
+                disabled={!props.isEdit}
+              />
+            )}
+          />
+          <label
+            htmlFor={`isStudying-profile-${props.index}`}
+            className="text-sm font-medium leading-none text-muted-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            {t("currentlyStudying")}
+          </label>
+        </div>
         {/* Graduation Section */}
         <LabelInput
+          className="col-span-5 tablet-md:col-span-1"
           label={isStudying ? t("expectedGraduationYear") : t("graduationYear")}
           input={
             <Controller
@@ -111,6 +114,7 @@ export default function EmployeeEducationForm(
                   year={field.value ? Number(field.value) : undefined}
                   onYearChange={(yr) => field.onChange(yr)}
                   disabled={!props.isEdit}
+                  popoverClassName="profile-overlay profile-year-popover"
                 />
               )}
             />

@@ -29,6 +29,7 @@ export interface IEmployee {
   languages?: string[] | null;
   expectedSalaryMin?: number | null;
   expectedSalaryMax?: number | null;
+  isHide?: boolean;
   skills: ISkill[];
   experiences: IExperience[];
   educations: IEducation[];
@@ -50,7 +51,7 @@ export interface IExperience {
   company?: string;
   description: string;
   startDate: string;
-  endDate: string;
+  endDate?: string | null;
 }
 
 export interface IEducation {

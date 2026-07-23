@@ -77,6 +77,209 @@
   }
 }
 
+/* -------------------------------------------------------------------------- */
+/* Profile dossier                                                            */
+/* -------------------------------------------------------------------------- */
+
+@keyframes profile-cover-reveal {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0);
+  }
+}
+
+@keyframes profile-metric-enter {
+  from {
+    opacity: 0;
+    transform: translateX(-10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.profile-editorial .profile-cover {
+  animation: profile-cover-reveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.profile-editorial .profile-completion-card > div > :first-child {
+  animation: profile-metric-enter 0.55s 0.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.profile-editorial .profile-section {
+  position: relative;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+.profile-editorial .profile-section::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 52px;
+  height: 4px;
+  background: hsl(var(--foreground));
+  pointer-events: none;
+}
+
+.profile-editorial[data-profile-editing="true"] .profile-section {
+  border-color: hsl(var(--foreground) / 0.28);
+}
+
+.profile-editorial .profile-section h3 {
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+
+.profile-editorial .profile-section button,
+.profile-editorial .profile-section textarea,
+.profile-editorial .profile-section [role="combobox"],
+.profile-editorial .profile-edit-bar button,
+.profile-editorial .profile-hero button,
+.profile-editorial .profile-section a,
+.profile-editorial .profile-section div:has(> input:not([type="file"])) {
+  border-radius: 0 !important;
+}
+
+.profile-editorial
+  .profile-section
+  :is(.rounded-md, .rounded-lg, .rounded-xl, .rounded-2xl),
+.profile-editorial .profile-section .rounded-full:not(img) {
+  border-radius: 0 !important;
+}
+
+.profile-editorial .profile-section div:has(> h3) > div:first-child {
+  border: 1px solid hsl(var(--border));
+  border-radius: 0 !important;
+  background: hsl(var(--foreground));
+}
+
+.profile-editorial .profile-section div:has(> h3) > div:first-child svg {
+  color: hsl(var(--background)) !important;
+}
+
+.profile-editorial[data-profile-editing="false"]
+  .profile-section
+  div:has(> input:disabled),
+.profile-editorial[data-profile-editing="false"]
+  .profile-section
+  textarea:disabled,
+.profile-editorial[data-profile-editing="false"]
+  .profile-section
+  [role="combobox"]:disabled {
+  border-color: hsl(var(--border));
+  background: hsl(var(--muted) / 0.28);
+  opacity: 1;
+}
+
+.profile-editorial[data-profile-editing="false"]
+  .profile-section
+  :is(input:disabled, textarea:disabled) {
+  color: hsl(var(--foreground));
+  -webkit-text-fill-color: hsl(var(--foreground));
+  opacity: 1;
+}
+
+.profile-editorial .profile-section a {
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--muted) / 0.45);
+  color: hsl(var(--foreground));
+}
+
+/* Profile controls render in portals, so their editorial treatment is opt-in. */
+.profile-overlay {
+  z-index: 70;
+  border-color: hsl(var(--border)) !important;
+  border-radius: 0 !important;
+  background: hsl(var(--popover)) !important;
+  color: hsl(var(--popover-foreground)) !important;
+  box-shadow: 6px 6px 0 hsl(var(--foreground) / 0.09) !important;
+}
+
+.profile-overlay,
+.profile-overlay * {
+  border-radius: 0 !important;
+}
+
+.profile-select-content {
+  width: var(--radix-select-trigger-width) !important;
+  min-width: var(--radix-select-trigger-width) !important;
+  max-width: calc(100vw - 1.5rem) !important;
+}
+
+.profile-select-content [role="option"],
+.profile-command-popover [cmdk-item] {
+  min-height: 2.5rem;
+}
+
+.profile-select-content [role="option"][data-highlighted],
+.profile-command-popover [cmdk-item][data-selected="true"] {
+  background: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+}
+
+.profile-form-popover {
+  max-width: calc(100vw - 1.5rem) !important;
+  padding: 0.75rem !important;
+}
+
+.profile-command-popover {
+  max-width: calc(100vw - 1.5rem) !important;
+}
+
+.profile-calendar-popover {
+  width: min(20rem, calc(100vw - 1.5rem)) !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+}
+
+.profile-calendar-popover .profile-calendar {
+  width: 100%;
+  padding: 0.75rem;
+}
+
+.profile-year-popover {
+  width: min(18rem, calc(100vw - 1.5rem)) !important;
+  max-width: calc(100vw - 1.5rem) !important;
+  padding: 0.75rem !important;
+}
+
+.profile-editorial-skeleton .animate-shimmer {
+  border-radius: 0 !important;
+}
+
+.profile-editorial-skeleton
+  :is(.rounded-md, .rounded-lg, .rounded-xl, .rounded-2xl, .rounded-full) {
+  border-radius: 0 !important;
+}
+
+.profile-editorial-skeleton .profile-social-icon-skeleton {
+  border-radius: 9999px !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .profile-editorial .profile-section:hover {
+    border-color: hsl(var(--foreground) / 0.32);
+    box-shadow: 7px 7px 0 hsl(var(--foreground) / 0.055);
+    transform: translateY(-1px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-editorial .profile-cover,
+  .profile-editorial .profile-completion-card > div > :first-child {
+    animation: none !important;
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -4320,6 +4523,167 @@ body:has(.auth-scope) [data-ui-button]:not(:disabled):active::after {
 
   .feed-hero-node-three {
     bottom: -18px;
+  }
+}
+
+/* ═════════════════════════ Search Experience ═════════════════════════ */
+.search-editorial
+  :is(
+    button,
+    input,
+    textarea,
+    [role="combobox"],
+    [role="radio"],
+    [role="checkbox"]
+  ) {
+  border-radius: 0 !important;
+}
+
+.search-hero-visual .feed-hero-artwork {
+  width: min(88%, 300px);
+}
+
+/* ════════════════════════ Resume Builder Experience ════════════════════════ */
+.resume-builder-editorial
+  :is(
+    button,
+    input,
+    textarea,
+    [role="combobox"],
+    [role="tab"],
+    [role="radio"],
+    [role="checkbox"]
+  ),
+.resume-editor-controls
+  :is(
+    button,
+    input,
+    textarea,
+    [role="combobox"],
+    [role="tab"],
+    [role="radio"],
+    [role="checkbox"]
+  ) {
+  border-radius: 0 !important;
+}
+
+.resume-builder-editorial
+  :is(
+    .rounded,
+    .rounded-md,
+    .rounded-lg,
+    .rounded-xl,
+    .rounded-2xl,
+    .rounded-full
+  ),
+.resume-editor-controls
+  :is(
+    .rounded,
+    .rounded-md,
+    .rounded-lg,
+    .rounded-xl,
+    .rounded-2xl,
+    .rounded-full
+  ) {
+  border-radius: 0 !important;
+}
+
+.resume-builder-hero-visual .feed-hero-artwork {
+  width: min(86%, 310px);
+}
+
+.resume-template-strip {
+  scroll-snap-type: x mandatory;
+  scrollbar-color: hsl(var(--foreground) / 0.22) transparent;
+  scrollbar-width: thin;
+}
+
+.resume-template-strip > * {
+  scroll-snap-align: start;
+}
+
+.resume-template-strip::-webkit-scrollbar {
+  height: 5px;
+}
+
+.resume-template-strip::-webkit-scrollbar-thumb {
+  background: hsl(var(--foreground) / 0.22);
+}
+
+@media (min-width: 640px) {
+  .resume-template-strip {
+    scroll-snap-type: none;
+  }
+}
+
+@media (min-width: 1400px) {
+  .resume-template-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+.resume-canvas-workspace {
+  background-color: hsl(var(--muted) / 0.45);
+  background-image:
+    linear-gradient(hsl(var(--border) / 0.5) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--border) / 0.5) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.dark .resume-canvas-workspace {
+  background-color: hsl(var(--background));
+  background-image:
+    linear-gradient(hsl(var(--border) / 0.42) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--border) / 0.42) 1px, transparent 1px);
+}
+
+@media (max-width: 650px) {
+  .search-hero-visual {
+    min-height: 180px;
+    padding: 40px 10px 14px;
+  }
+
+  .search-hero-visual .feed-hero-network-chip {
+    top: 8px;
+    left: 8px;
+    max-width: calc(100% - 16px);
+  }
+
+  .search-hero-visual .feed-hero-network-chip > span:nth-child(2) {
+    display: none;
+  }
+
+  .search-hero-visual .feed-hero-art-stage {
+    width: min(78%, 250px);
+    height: 124px;
+  }
+
+  .search-hero-visual .feed-hero-artwork {
+    max-height: 118px;
+  }
+
+  .resume-builder-hero-visual {
+    min-height: 180px;
+    padding: 40px 10px 14px;
+  }
+
+  .resume-builder-hero-visual .feed-hero-network-chip {
+    top: 8px;
+    left: 8px;
+    max-width: calc(100% - 16px);
+  }
+
+  .resume-builder-hero-visual .feed-hero-network-chip > span:nth-child(2) {
+    display: none;
+  }
+
+  .resume-builder-hero-visual .feed-hero-art-stage {
+    width: min(78%, 250px);
+    height: 124px;
+  }
+
+  .resume-builder-hero-visual .feed-hero-artwork {
+    max-height: 118px;
   }
 }
 

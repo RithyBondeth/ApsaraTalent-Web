@@ -299,6 +299,7 @@ export default function CompanyDetailPage() {
           <UserModerationMenu
             targetId={companyData.id}
             targetName={companyData.name || tf("companyDetail")}
+            variant="editorial"
             triggerClassName="size-10 rounded-none border border-border bg-card hover:border-foreground/35"
           />
         </div>

@@ -2,6 +2,7 @@
 
 import SearchBar from "@/components/search/search-bar";
 import SearchCompanyCard from "@/components/search/search-company-card";
+import SearchPageHero from "@/components/search/search-page-hero";
 import { SearchErrorCard } from "@/components/search/search-error-card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -17,9 +18,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { emptySvg } from "@/utils/constants/asset.constant";
-import { TypographyH3 } from "@/components/utils/typography/typography-h3";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { TypographyP } from "@/components/utils/typography/typography-p";
@@ -35,6 +34,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import debounce from "lodash.debounce";
 import {
   LucideBriefcaseBusiness,
+  LucideBuilding2,
   LucideCalendarDays,
   LucideCircleDollarSign,
   LucideGraduationCap,
@@ -412,53 +412,20 @@ export default function EmployeeSearchPage() {
   /* -------------------------------- Render UI -------------------------------- */
   return (
     <form
-      className="w-full flex flex-col items-start gap-5 px-2.5 sm:px-5 lg:px-8 animate-page-in"
+      className="search-editorial mx-auto flex w-full max-w-[1500px] flex-col items-start gap-6 px-3 animate-page-in sm:px-4 lg:px-5"
       onSubmit={handleSubmit((data) => runSearch(data))}
     >
-      {/* Banner Section */}
-      {/* Desktop Banner Section 1050px */}
-      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8 tablet-xl:hidden">
-        <div className="w-full flex flex-col items-start gap-3">
-          <TypographyH2 className="leading-relaxed">
-            {t("bannerTitle")}
-          </TypographyH2>
-          <TypographyH4 className="leading-relaxed">
-            {t("bannerSubtitle1")}
-          </TypographyH4>
-          <TypographyH4 className="leading-relaxed">
-            {t("bannerSubtitle2")}
-          </TypographyH4>
-          <TypographyMuted className="leading-relaxed">
-            {t("bannerMuted")}
-          </TypographyMuted>
-          <SearchBar
-            isEmployee={true}
-            register={register}
-            setValue={setValue}
-            initialLocation={location as TLocations}
-            initialJobType={jobType as TAvailability}
-          />
-        </div>
-        <Image
-          src={employeeSearchBannerSvg}
-          alt="employee-search"
-          height={300}
-          width={400}
-          className="h-auto max-w-[340px] shrink-0"
-          priority
-        />
-      </div>
-
-      {/* Tablet Banner Section 651px–1050px */}
-      <div className="hidden tablet-xl:flex tablet-md:!hidden w-full flex-col gap-4 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-5 py-5">
-        <div className="flex flex-col gap-2">
-          <TypographyH3 className="!leading-snug">
-            {t("bannerTitle")}
-          </TypographyH3>
-          <TypographyMuted className="!leading-snug">
-            {t("bannerSubtitle1")}
-          </TypographyMuted>
-        </div>
+      {/* Responsive Search Hero Section */}
+      <SearchPageHero
+        eyebrow="Apsara Talent"
+        title={t("bannerTitle")}
+        subtitle={t("bannerSubtitle1")}
+        supportingText={t("bannerSubtitle2")}
+        mutedText={t("bannerMuted")}
+        image={employeeSearchBannerSvg}
+        imageAlt="employee-search"
+        visualIcon={<LucideBuilding2 />}
+      >
         <SearchBar
           isEmployee={true}
           register={register}
@@ -466,35 +433,21 @@ export default function EmployeeSearchPage() {
           initialLocation={location as TLocations}
           initialJobType={jobType as TAvailability}
         />
-      </div>
-
-      {/* Mobile Banner Section ≤650px */}
-      <div className="hidden tablet-md:flex w-full flex-col gap-3 rounded-2xl bg-gradient-to-br from-primary/[0.08] via-primary/[0.03] to-muted/40 border border-border/50 px-4 py-4">
-        <p className="font-bold text-sm leading-snug text-foreground">
-          {t("bannerTitle")}
-        </p>
-        <SearchBar
-          isEmployee={true}
-          register={register}
-          setValue={setValue}
-          initialLocation={location as TLocations}
-          initialJobType={jobType as TAvailability}
-        />
-      </div>
+      </SearchPageHero>
 
       {/* Mobile/Tablet Filter Toggle Section */}
       <div className="hidden w-full tablet-xl:flex">
         <Button
           type="button"
           variant="outline"
-          className="h-10 w-full justify-between"
+          className="h-11 w-full justify-between rounded-none border-border"
           onClick={() => setMobileFiltersOpen((v) => !v)}
         >
           <div className="flex items-center gap-2">
             <div className="relative">
               <LucideSlidersHorizontal className="h-4 w-4" />
               {activeFilterCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 flex size-3.5 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground leading-none">
+                <span className="absolute -right-1.5 -top-1.5 flex size-3.5 items-center justify-center rounded-none bg-foreground text-[9px] font-bold leading-none text-background">
                   {activeFilterCount > 9 ? "9+" : activeFilterCount}
                 </span>
               )}
@@ -509,15 +462,15 @@ export default function EmployeeSearchPage() {
         </Button>
       </div>
 
-      <div className="w-full flex items-start gap-6 tablet-xl:flex-col">
+      <div className="flex w-full items-start gap-5 tablet-xl:flex-col">
         {/* Left Side: Filter Section */}
         <div
-          className={`w-72 xl:w-80 shrink-0 sticky top-5 self-start flex flex-col bg-card rounded-2xl border border-border/70 shadow-[0_2px_8px_hsl(var(--foreground)/0.05)] tablet-xl:w-full tablet-xl:static ${
+          className={`search-filter-panel flex w-72 shrink-0 flex-col self-start rounded-none border border-border border-t-[5px] border-t-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] xl:w-80 tablet-xl:w-full ${
             mobileFiltersOpen ? "tablet-xl:flex" : "tablet-xl:hidden"
           }`}
         >
-          {/* Header Section: Always visible, never scrolls */}
-          <div className="flex items-center justify-between px-5 py-4 border-b border-border/40 shrink-0">
+          {/* Filter Header Section */}
+          <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-4 sm:px-5">
             <TypographyH4 className="font-semibold">
               {t("refineResult")}
             </TypographyH4>
@@ -526,23 +479,23 @@ export default function EmployeeSearchPage() {
               variant="outline"
               size="sm"
               onClick={clearAllFilters}
-              className="text-xs h-8 px-2"
+              className="h-8 rounded-none px-2 text-xs"
             >
               {t("clearFilters")}
             </Button>
           </div>
 
-          {/* Scrollable Filter Body Section */}
-          <div className="flex flex-col gap-5 p-5">
+          {/* Filter Body Section */}
+          <div className="flex flex-col gap-5 p-4 sm:p-5">
             {/* Filter Panel Skeleton Section */}
             {jobs === null ? (
               <div className="w-full flex flex-col gap-6">
                 {Array.from({ length: 4 }).map((_, i) => (
                   <div key={i} className="flex flex-col gap-3">
-                    <Skeleton className="h-4 w-32 rounded" />
-                    <Skeleton className="h-3 w-24 rounded ml-3" />
-                    <Skeleton className="h-3 w-28 rounded ml-3" />
-                    <Skeleton className="h-3 w-20 rounded ml-3" />
+                    <Skeleton className="h-4 w-32 rounded-none" />
+                    <Skeleton className="ml-3 h-3 w-24 rounded-none" />
+                    <Skeleton className="ml-3 h-3 w-28 rounded-none" />
+                    <Skeleton className="ml-3 h-3 w-20 rounded-none" />
                   </div>
                 ))}
               </div>
@@ -638,11 +591,16 @@ export default function EmployeeSearchPage() {
                 <Separator />
 
                 {/* Company Size Section */}
-                <div className="flex flex-col items-start gap-3">
-                  <TypographyP className="text-sm font-medium flex items-center gap-1">
-                    <LucideUsers strokeWidth={"1.5px"} />
-                    {t("companySize")}
-                  </TypographyP>
+                <div className="flex w-full flex-col items-start gap-3">
+                  <div className="flex w-full items-center justify-between gap-3">
+                    <TypographyP className="flex items-center gap-2 text-sm font-medium">
+                      <LucideUsers strokeWidth={"1.5px"} />
+                      {t("companySize")}
+                    </TypographyP>
+                    <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                      {t("employees")}
+                    </span>
+                  </div>
 
                   <Controller
                     name="companySize"
@@ -650,7 +608,7 @@ export default function EmployeeSearchPage() {
                     render={({ field }) => {
                       const { min, max } = field.value ?? {};
                       return (
-                        <div className="flex flex-wrap items-center gap-2">
+                        <div className="grid w-full min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
                           <Input
                             type="number"
                             placeholder={t("min")}
@@ -664,9 +622,14 @@ export default function EmployeeSearchPage() {
                                 max,
                               });
                             }}
-                            className="h-9 w-[88px] shrink-0"
+                            className="h-10 min-w-0 rounded-none"
                           />
-                          <span className="text-muted-foreground">-</span>
+                          <span
+                            aria-hidden
+                            className="text-xs text-muted-foreground"
+                          >
+                            —
+                          </span>
                           <Input
                             type="number"
                             placeholder={t("max")}
@@ -680,11 +643,8 @@ export default function EmployeeSearchPage() {
                                 max: numVal,
                               });
                             }}
-                            className="h-9 w-[88px] shrink-0"
+                            className="h-10 min-w-0 rounded-none"
                           />
-                          <span className="text-sm text-muted-foreground whitespace-nowrap">
-                            {t("employees")}
-                          </span>
                         </div>
                       );
                     }}
@@ -694,11 +654,16 @@ export default function EmployeeSearchPage() {
                 <Separator />
 
                 {/* Salary Range Section */}
-                <div className="flex flex-col items-start gap-3">
-                  <TypographyP className="text-sm font-medium flex items-center gap-1">
-                    <LucideCircleDollarSign strokeWidth={"1.5px"} />
-                    {t("salaryRange")}
-                  </TypographyP>
+                <div className="flex w-full flex-col items-start gap-3">
+                  <div className="flex w-full items-center justify-between gap-3">
+                    <TypographyP className="flex items-center gap-2 text-sm font-medium">
+                      <LucideCircleDollarSign strokeWidth={"1.5px"} />
+                      {t("salaryRange")}
+                    </TypographyP>
+                    <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                      USD
+                    </span>
+                  </div>
 
                   <Controller
                     name="salaryRange"
@@ -706,7 +671,7 @@ export default function EmployeeSearchPage() {
                     render={({ field }) => {
                       const { min, max } = field.value ?? {};
                       return (
-                        <div className="flex flex-wrap items-center gap-2">
+                        <div className="grid w-full min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
                           <Input
                             type="number"
                             placeholder={t("min")}
@@ -720,9 +685,14 @@ export default function EmployeeSearchPage() {
                                 max,
                               });
                             }}
-                            className="h-9 w-[88px] shrink-0"
+                            className="h-10 min-w-0 rounded-none"
                           />
-                          <span className="text-muted-foreground">-</span>
+                          <span
+                            aria-hidden
+                            className="text-xs text-muted-foreground"
+                          >
+                            —
+                          </span>
                           <Input
                             type="number"
                             placeholder={t("max")}
@@ -736,11 +706,8 @@ export default function EmployeeSearchPage() {
                                 max: numVal,
                               });
                             }}
-                            className="h-9 w-[88px] shrink-0"
+                            className="h-10 min-w-0 rounded-none"
                           />
-                          <span className="text-sm text-muted-foreground whitespace-nowrap">
-                            $
-                          </span>
                         </div>
                       );
                     }}
@@ -777,6 +744,7 @@ export default function EmployeeSearchPage() {
                             >
                               <Checkbox
                                 id={`edu-${edu.value}`}
+                                className="rounded-none"
                                 checked={selectedEdu.includes(edu.value)}
                                 onCheckedChange={(checked) => {
                                   let updated = [...selectedEdu];
@@ -831,7 +799,7 @@ export default function EmployeeSearchPage() {
                             handleRadioChange("experienceLevel", value)
                           }
                           value={field.value ?? ""}
-                          className="ml-1.5 flex flex-col gap-3 sm:ml-3"
+                          className="ml-1.5 flex flex-col gap-3 sm:ml-3 [&>div>button]:rounded-none"
                         >
                           {yearOfExperienceConstant.map((option) => (
                             <RadioGroupItemWithLabel
@@ -854,13 +822,13 @@ export default function EmployeeSearchPage() {
         </div>
 
         {/* Right Side: Results Section */}
-        <div className="flex-1 min-w-0 tablet-xl:w-full flex flex-col items-start gap-3">
+        <div className="flex min-w-0 flex-1 flex-col items-start gap-4 tablet-xl:w-full">
           {/* Results Header Section */}
-          <div className="w-full flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-3">
-            <div className="flex flex-col gap-1">
-              <TypographyH4 className="text-lg">
+          <div className="flex w-full flex-col gap-3 border-y border-border py-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-fit shrink-0 flex flex-col gap-1">
+              <TypographyH4 className="whitespace-nowrap text-lg">
                 {loading || filteredJobs === null ? (
-                  <Skeleton className="h-6 w-40 bg-muted" />
+                  <Skeleton className="h-6 w-40 rounded-none bg-muted" />
                 ) : error ? (
                   <TypographySmall className="text-destructive">
                     {t("zeroJobsListing")}
@@ -902,10 +870,10 @@ export default function EmployeeSearchPage() {
                           });
                         }}
                       >
-                        <SelectTrigger className="w-full sm:w-[200px] h-9 text-sm">
+                        <SelectTrigger className="h-10 w-full rounded-none text-sm sm:w-[220px]">
                           <SelectValue placeholder={t("sortBy")} />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="rounded-none border-border shadow-[5px_5px_0_hsl(var(--foreground)/0.08)] [&_[role=option]]:rounded-none">
                           <SelectItem value="createdAt-desc">
                             {t("newestFirst")}
                           </SelectItem>
@@ -928,7 +896,7 @@ export default function EmployeeSearchPage() {
           </div>
 
           {/* Results List Section */}
-          <div className="w-full flex flex-col items-start gap-2">
+          <div className="flex w-full flex-col items-start gap-3">
             {error && !loading ? (
               <div className="w-full mb-3">
                 <SearchErrorCard
@@ -1007,7 +975,7 @@ export default function EmployeeSearchPage() {
                         });
                         syncPageToUrl(storePage + 1);
                       }}
-                      className="h-9 px-6 text-sm"
+                      className="h-10 rounded-none px-6 text-sm"
                     >
                       {loadingMore ? t("loading") : t("loadMore")}
                     </Button>
@@ -1016,7 +984,7 @@ export default function EmployeeSearchPage() {
               </>
             ) : (
               /* Empty List Section */
-              <div className="w-full flex flex-col items-center justify-center py-10 gap-3">
+              <div className="flex w-full flex-col items-center justify-center gap-3 border border-border bg-card px-5 py-12 text-center">
                 <Image
                   src={emptySvg}
                   alt="empty"
@@ -1031,7 +999,7 @@ export default function EmployeeSearchPage() {
                   <button
                     type="button"
                     onClick={clearAllFilters}
-                    className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2 text-xs font-semibold text-foreground shadow-sm transition-all hover:bg-muted active:scale-95"
+                    className="inline-flex items-center gap-2 rounded-none border border-border bg-card px-5 py-2 text-xs font-semibold text-foreground transition-all hover:bg-muted active:scale-95"
                   >
                     {t("clearFilters")}
                   </button>

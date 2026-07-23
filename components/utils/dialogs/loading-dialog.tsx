@@ -30,7 +30,7 @@ export default function LoadingDialog(props: ILoadingDialogProps) {
   return (
     <Dialog open={loading}>
       <DialogContent
-        className="max-w-sm overflow-hidden border-border/60 bg-background/95 backdrop-blur-sm shadow-2xl [&>button]:hidden"
+        className="max-w-sm overflow-hidden rounded-none border-border/60 bg-background/95 shadow-2xl backdrop-blur-sm sm:rounded-none [&>button]:hidden"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
@@ -54,9 +54,9 @@ export default function LoadingDialog(props: ILoadingDialogProps) {
           {hasProgress ? (
             <div className="w-full flex flex-col gap-3">
               {/* Progress Bar Section */}
-              <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
+              <div className="h-1.5 w-full overflow-hidden bg-muted">
                 <div
-                  className="h-full bg-primary rounded-full transition-all duration-700 ease-in-out"
+                  className="h-full bg-primary transition-all duration-700 ease-in-out"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -98,7 +98,7 @@ export default function LoadingDialog(props: ILoadingDialogProps) {
                           className="shrink-0 animate-spin text-primary"
                         />
                       ) : (
-                        <span className="w-3.5 h-3.5 shrink-0 rounded-full border border-muted-foreground/40 inline-block" />
+                        <span className="inline-block h-3.5 w-3.5 shrink-0 border border-muted-foreground/40" />
                       )}
                       {step.label}
                     </li>

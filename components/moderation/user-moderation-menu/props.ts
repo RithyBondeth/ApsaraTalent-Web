@@ -3,4 +3,5 @@ export interface IUserModerationMenuProps {
   targetName: string;
   align?: "start" | "end";
   triggerClassName?: string;
+  variant?: "default" | "editorial";
 }
