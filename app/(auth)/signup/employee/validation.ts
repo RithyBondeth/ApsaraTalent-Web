@@ -20,7 +20,7 @@ const makeDateRequired = (requiredError: string) =>
   );
 
 // ─── Define schema for step 1: Profession ───────────────────────
-export const makeProfessionStepSchema = (m: {
+const makeProfessionStepSchema = (m: {
   yearsOfExperienceRequired: string;
   availabilityRequired: string;
   fieldRequired: (field: string) => string;
@@ -52,7 +52,7 @@ export const makeProfessionStepSchema = (m: {
   });
 
 // ─── Define schema for step 2: Experience ───────────────────────
-export const makeExperienceStepSchema = (m: {
+const makeExperienceStepSchema = (m: {
   endDateAfterStart: string;
   startDateRequired: string;
   endDateRequired: string;
@@ -87,7 +87,7 @@ export const makeExperienceStepSchema = (m: {
   });
 
 // ─── Define schema for step 3: Education ───────────────────────
-export const makeEducationStepSchema = (m: {
+const makeEducationStepSchema = (m: {
   graduationYearRequired: string;
   fieldRequired: (field: string) => string;
   fieldTooLong: (field: string, max: number) => string;
@@ -117,7 +117,7 @@ export const makeEducationStepSchema = (m: {
   });
 
 // ─── Define schema for step 4: Skill and Reference ─────────────
-export const makeSkillReferenceStepSchema = (m: { atLeastOneSkill: string }) =>
+const makeSkillReferenceStepSchema = (m: { atLeastOneSkill: string }) =>
   z.object({
     skillAndReference: z.object({
       skills: z.array(z.string()).min(1, { message: m.atLeastOneSkill }),
@@ -127,12 +127,12 @@ export const makeSkillReferenceStepSchema = (m: { atLeastOneSkill: string }) =>
   });
 
 // ─── Define schema for step 5: Avatar ───────────────────────────
-export const avatarStepSchema = z.object({
+const avatarStepSchema = z.object({
   avatar: optionalImageValidation("Avatar"),
 });
 
 // ─── Define schema for step 6: Career Scopes ─────────────────────
-export const makeCareerScopesStepSchema = (m: { atLeastOneCareer: string }) =>
+const makeCareerScopesStepSchema = (m: { atLeastOneCareer: string }) =>
   z.object({
     careerScopes: z.array(z.string()).min(1, { message: m.atLeastOneCareer }),
   });
@@ -159,23 +159,6 @@ export const makeEmployeeSignUpSchema = (m: {
     ...avatarStepSchema.shape,
     ...makeCareerScopesStepSchema(m).shape,
   });
-
-export type TProfessionStepInfo = z.infer<
-  ReturnType<typeof makeProfessionStepSchema>
->;
-export type TExperienceStepInfo = z.infer<
-  ReturnType<typeof makeExperienceStepSchema>
->;
-export type TEducationStepInfo = z.infer<
-  ReturnType<typeof makeEducationStepSchema>
->;
-export type TSkillReferenceStepInfo = z.infer<
-  ReturnType<typeof makeSkillReferenceStepSchema>
->;
-export type TAvatarStepInfo = z.infer<typeof avatarStepSchema>;
-export type TCareerScopeStepInfo = z.infer<
-  ReturnType<typeof makeCareerScopesStepSchema>
->;
 
 export type TEmployeeSignUp = z.infer<
   ReturnType<typeof makeEmployeeSignUpSchema>

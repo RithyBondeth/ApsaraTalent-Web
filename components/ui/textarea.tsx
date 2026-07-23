@@ -9,7 +9,7 @@ type RHFMessage =
   | FieldError
   | Merge<FieldError, FieldErrorsImpl<Record<string, unknown>>>;
 
-export interface TextareaProps extends Omit<
+interface TextareaProps extends Omit<
   React.ComponentProps<"textarea">,
   "prefix"
 > {

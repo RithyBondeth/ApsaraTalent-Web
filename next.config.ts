@@ -6,6 +6,36 @@ const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
 });
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const apiImagePattern = (() => {
+  if (!apiUrl) return null;
+  try {
+    const url = new URL(apiUrl);
+    return {
+      protocol: url.protocol.replace(":", "") as "http" | "https",
+      hostname: url.hostname,
+      port: url.port,
+      pathname: "/storage/**",
+    };
+  } catch {
+    return null;
+  }
+})();
+
+const securityHeaders = [
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "X-Frame-Options", value: "DENY" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  {
+    key: "Permissions-Policy",
+    value: "camera=(), geolocation=(), microphone=(self)",
+  },
+  {
+    key: "Strict-Transport-Security",
+    value: "max-age=63072000; includeSubDomains; preload",
+  },
+];
+
 const nextConfig: NextConfig = {
   output: "standalone",
 
@@ -20,9 +50,18 @@ const nextConfig: NextConfig = {
   images: {
     domains: [],
     remotePatterns: [
+      ...(apiImagePattern ? [apiImagePattern] : []),
       {
         protocol: "https",
-        hostname: "**", // Allows images from all domains
+        hostname: "lh3.googleusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "platform-lookaside.fbsbx.com",
       },
     ],
     // Cache images for 7 days — profile/avatar images rarely change
@@ -36,6 +75,10 @@ const nextConfig: NextConfig = {
   // Add headers for better caching
   async headers() {
     return [
+      {
+        source: "/(.*)",
+        headers: securityHeaders,
+      },
       {
         source: "/:all*(svg|jpg|jpeg|png|gif|webp|avif)",
         headers: [

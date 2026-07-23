@@ -9,7 +9,7 @@ import {
 } from "@/utils/functions/validation/form-schemas";
 import * as z from "zod";
 
-export const basicInfoSchema = z.object({
+const basicInfoSchema = z.object({
   basicInfo: z
     .object({
       name: textValidation().optional(),
@@ -66,7 +66,7 @@ export const basicInfoSchema = z.object({
     .optional(),
 });
 
-export const accountSettingSchema = z.object({
+const accountSettingSchema = z.object({
   accountSetting: z
     .object({
       email: emailValidation.optional(),
@@ -75,7 +75,7 @@ export const accountSettingSchema = z.object({
     .optional(),
 });
 
-export const openPositionSchema = z.object({
+const openPositionSchema = z.object({
   openPositions: z
     .array(
       z.object({
@@ -101,7 +101,7 @@ export const openPositionSchema = z.object({
     .optional(),
 });
 
-export const imagesSchema = z.object({
+const imagesSchema = z.object({
   images: z
     .array(
       z
@@ -130,7 +130,7 @@ export const imagesSchema = z.object({
     .optional(),
 });
 
-export const benefitAndValueSchema = z.object({
+const benefitAndValueSchema = z.object({
   benefitsAndValues: z
     .object({
       benefits: z
@@ -153,7 +153,7 @@ export const benefitAndValueSchema = z.object({
     .optional(),
 });
 
-export const careerScopesSchema = z.object({
+const careerScopesSchema = z.object({
   careerScopes: z
     .array(
       z.object({
@@ -165,7 +165,7 @@ export const careerScopesSchema = z.object({
     .default([]),
 });
 
-export const socialSchema = z.object({
+const socialSchema = z.object({
   socials: z
     .array(
       z

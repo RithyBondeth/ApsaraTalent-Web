@@ -1,6 +1,6 @@
 import { API_BASE_URL } from "./base.api.constant";
 
-export const API_MATCHING_BASE_URL = `${API_BASE_URL}/match`;
+const API_MATCHING_BASE_URL = `${API_BASE_URL}/match`;
 export const API_MATCHING_CMP_LIKE_URL = (cmpID: string, empID: string) =>
   `${API_MATCHING_BASE_URL}/company/${cmpID}/like/${empID}`;
 export const API_MATCHING_EMP_LIKE_URL = (empID: string, cmpID: string) =>
@@ -33,11 +33,6 @@ export const API_AI_MATCH_EXPLANATION_URL = (
   lang?: string,
 ) =>
   `${API_MATCHING_BASE_URL}/ai-explanation/${eid}/${cid}${lang ? `?lang=${lang}` : ""}`;
-export const API_AI_MATCH_EXPLANATION_STREAM_URL = (eid: string, cid: string) =>
-  `${API_MATCHING_BASE_URL}/ai-explanation/${eid}/${cid}/stream`;
-
-export const API_AI_INTERVIEW_PREP_URL = (eid: string, cid: string) =>
-  `${API_MATCHING_BASE_URL}/ai-interview-prep/${eid}/${cid}`;
 export const API_AI_INTERVIEW_PREP_STREAM_URL = (eid: string, cid: string) =>
   `${API_MATCHING_BASE_URL}/ai-interview-prep/${eid}/${cid}/stream`;
 

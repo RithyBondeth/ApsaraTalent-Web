@@ -323,4 +323,3 @@ export function AiMatchExplanationModal(props: IAiMatchExplanationModalProps) {
   );
 }
 
-export default AiMatchExplanationModal;

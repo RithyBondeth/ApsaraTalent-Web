@@ -76,6 +76,9 @@ export default function ResumeEditorPage() {
   /* ----------------------------- API Integration ---------------------------- */
   const { generateResume } = useGenerateResumeStore();
   const currentUser = useGetCurrentUserStore((state) => state.user);
+  const getCurrentUser = useGetCurrentUserStore(
+    (state) => state.getCurrentUser,
+  );
 
   /* -------------------------------- All States ------------------------------ */
   const { payload, ownerId, clearPayload, setPayload } = useResumeEditStore();
@@ -102,7 +105,7 @@ export default function ResumeEditorPage() {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const initializedRef = useRef<boolean>(false);
   const [draftReady, setDraftReady] = useState<boolean>(false);
-  const [userStoreHydrated, setUserStoreHydrated] = useState<boolean>(false);
+  const [userResolved, setUserResolved] = useState<boolean>(false);
   const [downloading, setDownloading] = useState<boolean>(false);
   const {
     progress: dlProgress,
@@ -118,22 +121,17 @@ export default function ResumeEditorPage() {
   const watchedValues = useWatch({ control }) as IBuildResume;
 
   /* ------------------------------ All Effects --------------------------------- */
-  // Wait for the persisted current-user store before choosing a user-scoped draft.
   useEffect(() => {
-    const persistApi = useGetCurrentUserStore.persist;
-    if (!persistApi) {
-      setUserStoreHydrated(true);
+    if (currentUser) {
+      setUserResolved(true);
       return;
     }
-    if (persistApi.hasHydrated()) {
-      setUserStoreHydrated(true);
-    }
-    return persistApi.onFinishHydration(() => setUserStoreHydrated(true));
-  }, []);
+    void getCurrentUser().finally(() => setUserResolved(true));
+  }, [currentUser, getCurrentUser]);
 
   // Recover and validate a draft exactly once for the authenticated user.
   useEffect(() => {
-    if (!userStoreHydrated || initializedRef.current) return;
+    if (!userResolved || initializedRef.current) return;
     if (!currentUser?.id || !currentUser.employee) {
       router.replace("/resume-builder");
       return;
@@ -206,7 +204,7 @@ export default function ResumeEditorPage() {
     reset,
     router,
     setPayload,
-    userStoreHydrated,
+    userResolved,
   ]);
 
   // Mobile always uses the dedicated Edit/Preview switch instead of a hidden panel.

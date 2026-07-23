@@ -389,4 +389,3 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
   );
 }
 
-export default AiCoverLetterModal;

@@ -448,4 +448,3 @@ export function AiResumeOptimizerDrawer(props: IAiOptimizerDrawerProps) {
   );
 }
 
-export default AiResumeOptimizerDrawer;

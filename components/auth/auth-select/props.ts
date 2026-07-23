@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export interface IAuthSelectOption {
+interface IAuthSelectOption {
   value: string;
   label: string;
 }

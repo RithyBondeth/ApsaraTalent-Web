@@ -5,7 +5,7 @@ export function DashboardChartSkeleton() {
   return <Skeleton className="h-full w-full min-h-[180px] rounded-xl" />;
 }
 
-export function ProfileCompletenessCardSkeleton() {
+function ProfileCompletenessCardSkeleton() {
   return (
     <div className="w-full flex items-center gap-4 sm:gap-6 bg-card rounded-2xl border border-border/60 px-5 py-4 sm:px-6">
       {/* Icon Section: Hidden on mobile */}

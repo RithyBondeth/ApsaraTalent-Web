@@ -1,6 +1,6 @@
 import { API_BASE_URL } from "./base.api.constant";
 
-export const API_MODERATION_BASE_URL = `${API_BASE_URL}/user/moderation`;
+const API_MODERATION_BASE_URL = `${API_BASE_URL}/user/moderation`;
 
 export const API_BLOCK_USER_URL = (userId: string) =>
   `${API_MODERATION_BASE_URL}/block/${userId}`;

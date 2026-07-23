@@ -6,7 +6,7 @@ export interface ISwitcherProps {
 
 export type TAnimationKind = "language" | "theme" | null;
 
-export interface IThemeViewTransition {
+interface IThemeViewTransition {
   ready: Promise<void>;
   finished: Promise<void>;
 }

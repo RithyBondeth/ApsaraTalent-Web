@@ -840,14 +840,3 @@ export const COMPANY_ICON_COLOR = {
 /* Scroll progress bar decorative gradient (fixed top of page) */
 export const SCROLL_PROGRESS_GRADIENT =
   "linear-gradient(90deg, hsl(var(--primary)) 0%, #7c3aed 55%, #ec4899 100%)";
-
-export const HOOK_TEXT_SELECTION_HIDDEN_STATE = {
-  isVisible: false,
-  top: 0,
-  left: 0,
-  isBold: false,
-  isItalic: false,
-} as const;
-
-export const TOAST_LIMIT = 1;
-export const TOAST_REMOVE_DELAY = 1000000;

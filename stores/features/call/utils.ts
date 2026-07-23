@@ -1,7 +1,7 @@
 import { getApiOrigin, normalizeMediaUrl } from "@/utils/functions/media";
 import { ICallParticipant } from "./types";
 
-export const FALLBACK_ICE_SERVERS: RTCIceServer[] = [
+const FALLBACK_ICE_SERVERS: RTCIceServer[] = [
   { urls: "stun:stun.l.google.com:19302" },
   { urls: "stun:stun1.l.google.com:19302" },
 ];

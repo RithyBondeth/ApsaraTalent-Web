@@ -34,7 +34,7 @@ export interface IResumeDesign {
   customAccent?: string;
 }
 
-export interface IPersonalInfo {
+interface IPersonalInfo {
   fullName: string;
   email: string;
   phone?: string;

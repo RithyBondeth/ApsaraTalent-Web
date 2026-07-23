@@ -12,7 +12,7 @@ import {
 } from "@/utils/functions/validation/form-schemas";
 import * as z from "zod";
 
-export const basicInfoSchema = z.object({
+const basicInfoSchema = z.object({
   basicInfo: z
     .object({
       firstname: textValidation().optional(),
@@ -44,7 +44,7 @@ export const basicInfoSchema = z.object({
     .optional(),
 });
 
-export const accountSettingSchema = z.object({
+const accountSettingSchema = z.object({
   accountSetting: z
     .object({
       email: emailValidation.optional(),
@@ -53,7 +53,7 @@ export const accountSettingSchema = z.object({
     .optional(),
 });
 
-export const professionInfoSchema = z.object({
+const professionInfoSchema = z.object({
   profession: z
     .object({
       job: textValidation().optional(),
@@ -88,7 +88,7 @@ export const professionInfoSchema = z.object({
     .optional(),
 });
 
-export const educationSchema = z.object({
+const educationSchema = z.object({
   educations: z
     .array(
       z
@@ -104,7 +104,7 @@ export const educationSchema = z.object({
     .optional(),
 });
 
-export const experienceSchema = z.object({
+const experienceSchema = z.object({
   experiences: z
     .array(
       z
@@ -133,7 +133,7 @@ export const experienceSchema = z.object({
     .optional(),
 });
 
-export const skillSchema = z.object({
+const skillSchema = z.object({
   skills: z
     .array(
       z
@@ -147,7 +147,7 @@ export const skillSchema = z.object({
     .optional(),
 });
 
-export const referenceSchema = z.object({
+const referenceSchema = z.object({
   references: z
     .object({
       resume: z
@@ -182,7 +182,7 @@ export const referenceSchema = z.object({
     .optional(),
 });
 
-export const careerScopesSchema = z.object({
+const careerScopesSchema = z.object({
   careerScopes: z
     .array(
       z
@@ -196,7 +196,7 @@ export const careerScopesSchema = z.object({
     .optional(),
 });
 
-export const socialSchema = z.object({
+const socialSchema = z.object({
   socials: z
     .array(
       z

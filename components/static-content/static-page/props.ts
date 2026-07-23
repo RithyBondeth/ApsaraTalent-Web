@@ -1,11 +1,9 @@
 import type { ReactNode } from "react";
 
-export interface IStaticPageTocItem {
+interface IStaticPageTocItem {
   id: string;
   label: string;
 }
-
-export type StaticPageTocItem = IStaticPageTocItem;
 
 export interface IStaticPageShellProps {
   pageNumber: string;

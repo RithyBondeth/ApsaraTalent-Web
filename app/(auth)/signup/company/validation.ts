@@ -17,7 +17,7 @@ const makeDateRequired = (requiredError: string) =>
   );
 
 // ─── Define Schema for step 1: Basic Information ──────────────────
-export const makeBasicInfoStepSchema = (m: {
+const makeBasicInfoStepSchema = (m: {
   fieldRequired: (field: string) => string;
   fieldTooLong: (field: string, max: number) => string;
   selectRequired: (field: string) => string;
@@ -59,7 +59,7 @@ export const makeBasicInfoStepSchema = (m: {
   });
 
 // ─── Define schema for step 2: OpenPosition ──────────────────────
-export const makeOpenPositionStepSchema = (m: {
+const makeOpenPositionStepSchema = (m: {
   atLeastOneSkill: string;
   atLeastOnePosition: string;
   deadlineRequired: string;
@@ -106,7 +106,7 @@ export const makeOpenPositionStepSchema = (m: {
   });
 
 // ─── Define schema for step 3: Benefit and Value ──────────────────
-export const benefitAndValueStepSchema = z.object({
+const benefitAndValueStepSchema = z.object({
   benefitsAndValues: z.object({
     benefits: z.array(z.string()).optional(),
     values: z.array(z.string()).optional(),
@@ -114,17 +114,17 @@ export const benefitAndValueStepSchema = z.object({
 });
 
 // ─── Define schema for step 4: Company Avatar ─────────────────────
-export const companyAvatarStepSchema = z.object({
+const companyAvatarStepSchema = z.object({
   avatar: optionalImageValidation("Avatar"),
 });
 
 // ─── Define schema for step 5: Company Cover ──────────────────────
-export const companyCoverStepSchema = z.object({
+const companyCoverStepSchema = z.object({
   cover: optionalImageValidation("Cover"),
 });
 
 // ─── Define schema for step 6: Career Scopes ──────────────────────
-export const makeCareerScopesStepSchema = (m: { atLeastOneCareer: string }) =>
+const makeCareerScopesStepSchema = (m: { atLeastOneCareer: string }) =>
   z.object({
     careerScopes: z.array(z.string()).min(1, { message: m.atLeastOneCareer }),
   });
@@ -147,19 +147,6 @@ export const makeCompanySignupSchema = (m: {
     ...companyCoverStepSchema.shape,
     ...makeCareerScopesStepSchema(m).shape,
   });
-
-export type TBasicInfoStep = z.infer<
-  ReturnType<typeof makeBasicInfoStepSchema>
->;
-export type TOpenPositionStep = z.infer<
-  ReturnType<typeof makeOpenPositionStepSchema>
->;
-export type TBenefitAndValueStep = z.infer<typeof benefitAndValueStepSchema>;
-export type TCompanyAvatarStep = z.infer<typeof companyAvatarStepSchema>;
-export type TCompanyCoverStep = z.infer<typeof companyCoverStepSchema>;
-export type TCompanyCareerStep = z.infer<
-  ReturnType<typeof makeCareerScopesStepSchema>
->;
 
 export type TCompanySignup = z.infer<
   ReturnType<typeof makeCompanySignupSchema>

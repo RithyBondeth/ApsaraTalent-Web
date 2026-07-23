@@ -27,7 +27,7 @@ export function MatchingLoadingSkeleton({
 }
 
 /* -------------------------------- Matching Employee Card Skeleton -------------------------------- */
-export function MatchingEmployeeCardSkeleton() {
+function MatchingEmployeeCardSkeleton() {
   return (
     <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
       <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
@@ -80,7 +80,7 @@ export function MatchingEmployeeCardSkeleton() {
 }
 
 /* -------------------------------- Matching Company Card Skeleton -------------------------------- */
-export function MatchingCompanyCardSkeleton() {
+function MatchingCompanyCardSkeleton() {
   return (
     <div className="w-full bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden">
       <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">

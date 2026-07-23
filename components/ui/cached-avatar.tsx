@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import React from "react";
 
-export interface CachedAvatarProps {
+interface CachedAvatarProps {
   src?: string | null;
   alt?: string;
   fallback?: string;
@@ -37,7 +37,7 @@ const roundedClasses = {
 /**
  * Optimized Avatar component with image caching
  */
-export function CachedAvatar({
+function CachedAvatar({
   src,
   alt = "Avatar",
   className,

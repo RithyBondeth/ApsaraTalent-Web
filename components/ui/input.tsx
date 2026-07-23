@@ -8,7 +8,7 @@ type TRHFMessage =
   | FieldError
   | Merge<FieldError, FieldErrorsImpl<Record<string, unknown>>>;
 
-export interface IInputProps extends Omit<
+interface IInputProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   "prefix" | "suffix"
 > {

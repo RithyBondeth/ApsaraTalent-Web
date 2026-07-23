@@ -326,4 +326,3 @@ export function AiSkillGapModal(props: IAiSkillGapModalProps) {
   );
 }
 
-export default AiSkillGapModal;

@@ -12,7 +12,7 @@ import {
   IStaticStepProps,
 } from "./props";
 
-export type { StaticPageTocItem } from "./props";
+;
 
 export function StaticPageShell(props: IStaticPageShellProps) {
   /* ------------------------------- Props ------------------------------- */

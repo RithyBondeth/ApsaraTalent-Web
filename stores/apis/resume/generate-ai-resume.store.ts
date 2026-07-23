@@ -11,7 +11,7 @@ import { create } from "zustand";
 
 /* ---------------------------------- States --------------------------------- */
 // ── Generate Resume From Text API Payload ─────────────────────
-export type TGenerateResumeFromTextPayload = {
+type TGenerateResumeFromTextPayload = {
   sourceText: string;
   template: TResumeTemplate;
 };

@@ -331,4 +331,3 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
   );
 }
 
-export default AiInterviewPrepModal;
