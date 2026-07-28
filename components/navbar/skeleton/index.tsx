@@ -1,5 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
+/* -------------------------------- Navbar User Menu Skeleton -------------------------------- */
 export function NavbarUserMenuSkeleton() {
   /* -------------------------------- Render UI -------------------------------- */
   return (

@@ -3,6 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 import { TUserRole } from "@/utils/types/auth";
 
+/* -------------------------------- Interview Loading Skeleton -------------------------------- */
 export default function InterviewLoadingSkeleton({
   role,
 }: {

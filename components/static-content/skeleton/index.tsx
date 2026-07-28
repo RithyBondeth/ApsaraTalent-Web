@@ -1,5 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
+/* -------------------------------- Static Content Loading Skeleton -------------------------------- */
 export default function StaticContentLoadingSkeleton() {
   /* ----------------------------- Render UI ----------------------------- */
   return (

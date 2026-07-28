@@ -5,6 +5,7 @@ import EmployeeCardSkeleton from "@/components/employee/skeleton";
 const FEED_CARD_GRID_CLASS =
   "w-full grid grid-cols-3 gap-4 items-stretch laptop-sm:grid-cols-2 tablet-lg:!grid-cols-1 [&>*]:min-w-0 [&>*]:h-full";
 
+/* ------------------------- Recommended Card Skeleton ------------------------- */
 function RecommendedCardSkeleton({ isEmployee }: { isEmployee?: boolean }) {
   return (
     <div className="flex h-full flex-col">

@@ -2,6 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 /* ------------------------------------------- Helpers -------------------------------------------- */
 /** Numbered step header placeholder matching the builder page's StepHeader */
+/* -------------------------------- Step Header Skeleton -------------------------------- */
 function StepHeaderSkeleton() {
   return (
     <div className="flex w-full items-center gap-3">

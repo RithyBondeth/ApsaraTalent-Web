@@ -1,6 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { FeedBannerSkeleton } from "@/components/feed/skeleton";
 
+/* -------------------------------- Dashboard Chart Skeleton -------------------------------- */
 export function DashboardChartSkeleton({
   variant = "activity",
 }: {
@@ -17,6 +18,7 @@ export function DashboardChartSkeleton({
   return <Skeleton className="h-[250px] w-full rounded-none" />;
 }
 
+/* -------------------------------- Profile Completeness Card Skeleton -------------------------------- */
 function ProfileCompletenessCardSkeleton() {
   return (
     <div className="flex w-full items-center gap-4 border border-border border-l-[5px] border-l-foreground bg-card px-5 py-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:gap-6 sm:px-6">
@@ -41,6 +43,7 @@ function ProfileCompletenessCardSkeleton() {
   );
 }
 
+/* -------------------------------- Dashboard Loading Skeleton -------------------------------- */
 export function DashboardLoadingSkeleton() {
   return (
     <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-7 px-3 sm:gap-9 sm:px-4 lg:px-5">
@@ -126,6 +129,7 @@ export function DashboardLoadingSkeleton() {
   );
 }
 
+/* -------------------------------- Dashboard Section Header Skeleton -------------------------------- */
 function DashboardSectionHeaderSkeleton({ titleWidth }: { titleWidth: string }) {
   return (
     <div className="flex items-end justify-between border-b border-border pb-4">
