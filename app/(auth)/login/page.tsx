@@ -662,7 +662,7 @@ function LoginPage() {
               />
             </div>
             <div className="flex justify-between items-center">
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex min-h-11 items-center gap-2 cursor-pointer">
                 <Controller
                   name="rememberMe"
                   control={control}
@@ -680,7 +680,7 @@ function LoginPage() {
               </label>
               <Link
                 href="/forgot-password"
-                className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+                className="inline-flex min-h-11 items-center text-xs font-medium text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 {t("forgotPasswordLink")}
               </Link>

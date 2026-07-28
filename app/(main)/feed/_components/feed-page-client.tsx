@@ -3,7 +3,6 @@
 import EmployeeCardSkeleton from "@/components/employee/skeleton";
 import ImagePopup from "@/components/utils/data-display/image-popup";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
-import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useFetchOnce } from "@/hooks/utils/use-fetch-once";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
@@ -53,9 +52,9 @@ import {
 import { MemoCompanyFeedCard } from "@/components/feed/memo-company-feed-card";
 import { MemoEmployeeFeedCard } from "@/components/feed/memo-employee-feed-card";
 import { useFeedActionEffect } from "@/components/utils/effects/feed-action-effect";
+import { PageState } from "@/components/utils/feedback/page-state";
 import { FadeIn } from "@/components/utils/layout/fade-in";
 import { OnboardingFlow } from "@/components/utils/onboarding/onboarding-flow";
-import Link from "next/link";
 import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
 import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/count-current-company-favorites.store";
 
@@ -116,11 +115,13 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
   // All Company Data APIs
   const companyData = useGetAllCompanyStore((s) => s.companyData);
   const companyLoading = useGetAllCompanyStore((s) => s.loading);
+  const companyError = useGetAllCompanyStore((s) => s.error);
   const queryCompany = useGetAllCompanyStore((s) => s.queryCompany);
 
   // All Employee Data APIs
   const employeesData = useGetAllEmployeeStore((s) => s.employeesData);
   const employeeLoading = useGetAllEmployeeStore((s) => s.loading);
+  const employeeError = useGetAllEmployeeStore((s) => s.error);
   const queryEmployee = useGetAllEmployeeStore((s) => s.queryEmployee);
 
   // All Employee Liked APIs
@@ -614,6 +615,7 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
     !recsHasFetched ||
     (isEmployee && (companyLoading || currentEmployeeLikedLoading)) ||
     (!isEmployee && (employeeLoading || currentCompanyLikedLoading));
+  const feedError = isEmployee ? companyError : employeeError;
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
@@ -938,30 +940,40 @@ export default function FeedPageClient({ initialIsEmployee }: Props) {
               )}
       </div>
 
+      {/* Error State Section */}
+      {!isLoading && feedError && (
+        <PageState
+          variant="error"
+          title={feedError}
+          description={tFeed("loadErrorDescription")}
+          compact
+          className="my-6 sm:my-8"
+          action={{
+            label: tFeed("retry"),
+            onClick: isEmployee ? queryCompany : queryEmployee,
+          }}
+        />
+      )}
+
       {/* Empty List Section */}
-      {!isLoading && allUsers.length === 0 && (
-        <div className="my-8 flex w-full flex-col items-center justify-center gap-4 border border-border bg-card px-5 py-12 text-center">
-          <Image
-            src={emptySvg}
-            alt="empty"
-            height={200}
-            width={200}
-            className="animate-float grayscale"
-          />
-          <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
-            {isEmployee
+      {!isLoading && !feedError && allUsers.length === 0 && (
+        <PageState
+          variant="empty"
+          title={
+            isEmployee
               ? tFeed("companyListEmpty")
-              : tFeed("employeeListEmpty")}
-          </TypographyP>
-          <Link
-            href={isEmployee ? "/search/company" : "/search/employee"}
-            className="inline-flex min-h-10 items-center gap-2 bg-foreground px-5 py-2 text-xs font-semibold text-background transition-all hover:opacity-85 active:scale-95"
-          >
-            {isEmployee
+              : tFeed("employeeListEmpty")
+          }
+          image={emptySvg}
+          compact
+          className="my-6 sm:my-8"
+          action={{
+            label: isEmployee
               ? tFeed("exploreAllCompanies")
-              : tFeed("exploreAllTalent")}
-          </Link>
-        </div>
+              : tFeed("exploreAllTalent"),
+            href: isEmployee ? "/search/company" : "/search/employee",
+          }}
+        />
       )}
 
       {/* Infinite Scroll Sentinel Section: Triggers revealing the next batch of already-loaded cards */}

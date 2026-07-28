@@ -21,6 +21,7 @@ import {
   getEmployeeProfileCompletion,
   getCompanyProfileCompletion,
 } from "@/utils/functions/profile";
+import { PageState } from "@/components/utils/feedback/page-state";
 
 const WeeklyActivityChart = dynamic(
   () =>
@@ -90,6 +91,7 @@ export default function DashboardPage() {
   /* --------------------------- User Role Handling --------------------------- */
   const isEmployee = user?.role === USER_ROLE.EMPLOYEE;
   const profileUrl = `/profile/${user?.role ?? USER_ROLE.EMPLOYEE}`;
+  const analyticsId = isEmployee ? user?.employee?.id : user?.company?.id;
 
   /* -------------------------------- Methods --------------------------------- */
   // ── Profile Completion Function ────────────────
@@ -102,18 +104,28 @@ export default function DashboardPage() {
     return null;
   }, [user]);
 
-  /* ---------------------------- Loading State ------------------------------ */
-  if (loading || !data) return <DashboardLoadingSkeleton />;
-
   /* ----------------------------- Error State ------------------------------- */
   if (error)
     return (
       <div className="mx-auto w-full max-w-[1500px] px-3 py-10 sm:px-4 lg:px-5">
-        <div className="border border-destructive/30 border-l-[5px] border-l-destructive bg-destructive/5 p-6 text-center text-destructive">
-        {error}
-        </div>
+        <PageState
+          variant="error"
+          title={error}
+          compact
+          action={{
+            label: t("retry"),
+            onClick: () => {
+              if (analyticsId && user?.role) {
+                void queryAnalytics(analyticsId, user.role);
+              }
+            },
+          }}
+        />
       </div>
     );
+
+  /* ---------------------------- Loading State ------------------------------ */
+  if (loading || !data) return <DashboardLoadingSkeleton />;
 
   /* ------------------------------- Render UI ------------------------------- */
   return (

@@ -5,7 +5,6 @@ import { useGetAllEmployeeFavoritesStore } from "@/stores/apis/favorite/get-all-
 import Image from "next/image";
 import FavoriteCompanyCard from "@/components/favorite/company-favorite-card";
 import FavoriteEmployeeCard from "@/components/favorite/employee-favorite-card";
-import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useCompanyFavEmployeeStore } from "@/stores/apis/favorite/company-fav-employee.store";
 import { useEmployeeFavCompanyStore } from "@/stores/apis/favorite/employee-fav-company.store";
 import { useGetCurrentCompanyLikedStore } from "@/stores/apis/matching/get-current-company-liked.store";
@@ -20,7 +19,7 @@ import { useCountCurrentCompanyFavoritesStore } from "@/stores/apis/favorite/cou
 import { useCountCurrentEmployeeFavoritesStore } from "@/stores/apis/favorite/count-current-employee-favorites.store";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 import { Bookmark, Building2, Users } from "lucide-react";
-import Link from "next/link";
+import { PageState } from "@/components/utils/feedback/page-state";
 
 interface Props {
   initialIsEmployee: boolean;
@@ -233,11 +232,21 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
   if (apiError)
     return (
       <div className="mx-auto flex w-full max-w-[1500px] items-center justify-center px-3 py-10 sm:px-4 lg:px-5">
-        <div className="w-full max-w-md border border-destructive/30 border-l-[5px] border-l-destructive bg-destructive/5 px-6 py-8 text-center shadow-[5px_5px_0_hsl(var(--destructive)/0.08)]">
-          <TypographyP className="text-sm font-medium text-destructive">
-            {apiError}
-          </TypographyP>
-        </div>
+        <PageState
+          variant="error"
+          title={apiError}
+          compact
+          action={{
+            label: tFav("retry"),
+            onClick: () => {
+              if (isEmployee && currentUser?.employee?.id) {
+                void queryAllEmployeeFavorites(currentUser.employee.id);
+              } else if (currentUser?.company?.id) {
+                void queryAllCompanyFavorites(currentUser.company.id);
+              }
+            },
+          }}
+        />
       </div>
     );
 
@@ -391,24 +400,17 @@ export default function FavoritePageClient({ initialIsEmployee }: Props) {
           ))
         ) : (
           /* Empty Favorite List */
-          <div className="my-8 flex w-full flex-col items-center justify-center gap-4 border border-border bg-card px-5 py-12 text-center">
-            <Image
-              src={emptySvg}
-              alt="empty"
-              height={200}
-              width={200}
-              className="animate-float grayscale"
-            />
-            <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
-              {tFav("emptyList")}
-            </TypographyP>
-            <Link
-              href={isEmployee ? "/search/company" : "/search/employee"}
-              className="inline-flex min-h-10 items-center gap-2 bg-foreground px-5 py-2 text-xs font-semibold text-background transition-all hover:opacity-85 active:scale-95"
-            >
-              {tFav("explore")}
-            </Link>
-          </div>
+          <PageState
+            variant="empty"
+            title={tFav("emptyList")}
+            image={emptySvg}
+            compact
+            className="my-6 sm:my-8"
+            action={{
+              label: tFav("explore"),
+              href: isEmployee ? "/search/company" : "/search/employee",
+            }}
+          />
         )}
         </div>
       </section>

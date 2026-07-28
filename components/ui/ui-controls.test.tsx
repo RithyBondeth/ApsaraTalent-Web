@@ -5,6 +5,7 @@ import { AuthBackButton } from "@/components/auth/auth-back-button";
 import { ThemeCard } from "@/components/setting/appearance-section/theme-card";
 import { Button } from "./button";
 import { Input } from "./input";
+import { Textarea } from "./textarea";
 
 describe("shared UI controls", () => {
   it("forwards button interaction and supports child composition", async () => {
@@ -31,10 +32,26 @@ describe("shared UI controls", () => {
         validationMessage={{ type: "required", message: "Email is required" }}
       />,
     );
-    expect(screen.getByLabelText("Email")).toHaveAttribute("aria-invalid", "true");
-    expect(screen.getByText("Email is required")).toBeInTheDocument();
+    const input = screen.getByLabelText("Email");
+    const validationMessage = screen.getByText("Email is required");
+    expect(input).toHaveAttribute("aria-invalid", "true");
+    expect(input).toHaveAttribute("aria-describedby", validationMessage.id);
+    expect(validationMessage).toHaveAttribute("role", "alert");
     expect(screen.getByText("prefix")).toBeInTheDocument();
     expect(screen.getByText("suffix")).toBeInTheDocument();
+  });
+
+  it("connects textarea validation feedback to the field", () => {
+    render(
+      <Textarea
+        aria-label="Description"
+        validationMessage="Description is required"
+      />,
+    );
+    const textarea = screen.getByLabelText("Description");
+    const validationMessage = screen.getByText("Description is required");
+    expect(textarea).toHaveAttribute("aria-describedby", validationMessage.id);
+    expect(validationMessage).toHaveAttribute("role", "alert");
   });
 
   it("uses auth back-button defaults while preserving caller behavior", () => {

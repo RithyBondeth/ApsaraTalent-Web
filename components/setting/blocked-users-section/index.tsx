@@ -11,6 +11,7 @@ import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { SettingWrapper } from "../setting-wrapper";
+import { PageState } from "@/components/utils/feedback/page-state";
 
 export function BlockedUsersSection() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -23,6 +24,7 @@ export function BlockedUsersSection() {
     loadingBlocked,
     blockedLoaded,
     blocking,
+    error,
     getBlockedUsers,
     unblockUser,
   } = useModerationStore();
@@ -53,18 +55,31 @@ export function BlockedUsersSection() {
     >
       <div className="flex flex-col">
         {/* Loading Section */}
-        {!blockedLoaded && loadingBlocked ? (
+        {loadingBlocked ? (
           <div className="border-l-[4px] border-l-muted-foreground/25 px-5 py-7">
             <TypographyMuted className="text-xs">
               {tS("loading")}
             </TypographyMuted>
           </div>
+        ) : error ? (
+          <PageState
+            variant="error"
+            title={error}
+            description={tS("blockedUsersLoadErrorDescription")}
+            compact
+            className="min-h-0 border-x-0 border-b-0 py-7 shadow-none"
+            action={{
+              label: tS("retry"),
+              onClick: () => void getBlockedUsers(),
+            }}
+          />
         ) : blockedUsers.length === 0 ? (
-          <div className="border-l-[4px] border-l-muted-foreground/25 px-5 py-7">
-            <TypographyMuted className="text-xs">
-              {tS("noBlockedUsers")}
-            </TypographyMuted>
-          </div>
+          <PageState
+            variant="empty"
+            title={tS("noBlockedUsers")}
+            compact
+            className="min-h-0 border-x-0 border-b-0 py-7 shadow-none"
+          />
         ) : (
           /* ── Blocked Users List Section ────────────────────── */
           blockedUsers.map((u, index) => (

@@ -13,8 +13,8 @@ import { CreateInterviewDialog } from "@/components/interview/create-interview-d
 import { emptySvg, interviewBannerSvg } from "@/utils/constants/asset.constant";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 import Image from "next/image";
-import { TypographyP } from "@/components/utils/typography/typography-p";
 import { CalendarCheck2 } from "lucide-react";
+import { PageState } from "@/components/utils/feedback/page-state";
 
 interface Props {
   initialIsEmployee: boolean;
@@ -172,7 +172,7 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
       </section>
 
       {/* Error Banner Section */}
-      {error && (
+      {error && interviews.length > 0 && (
         <div className="w-full border border-destructive/20 border-l-[5px] border-l-destructive bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {error}
         </div>
@@ -208,7 +208,22 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
         </div>
 
         {/* Interview List Section */}
-        {interviews.length > 0 ? (
+        {error && interviews.length === 0 ? (
+          <PageState
+            variant="error"
+            title={error}
+            compact
+            className="my-6 sm:my-8"
+            action={
+              currentId && currentUser?.role
+                ? {
+                    label: t("retry"),
+                    onClick: () => queryInterviews(currentId, currentUser.role),
+                  }
+                : undefined
+            }
+          />
+        ) : interviews.length > 0 ? (
           <div className="flex w-full flex-col gap-3 stagger-list">
             {interviews.map((interview) => (
               <InterviewCard
@@ -223,20 +238,17 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
           </div>
         ) : (
           /* Interview Empty State Section */
-          <div className="my-8 flex w-full flex-col items-center justify-center gap-4 border border-border bg-card px-5 py-12 text-center">
-            <Image
-              src={emptySvg}
-              alt="empty"
-              height={200}
-              width={200}
-              className="animate-float grayscale"
-            />
-            <TypographyP className="!m-0 text-center text-sm font-medium text-muted-foreground">
-              {isEmployee
+          <PageState
+            variant="empty"
+            title={
+              isEmployee
                 ? t("noInterviewsEmployee")
-                : t("noInterviewsCompany")}
-            </TypographyP>
-          </div>
+                : t("noInterviewsCompany")
+            }
+            image={emptySvg}
+            compact
+            className="my-6 sm:my-8"
+          />
         )}
       </section>
     </div>

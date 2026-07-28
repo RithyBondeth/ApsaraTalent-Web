@@ -11,9 +11,12 @@ import {
 } from "recharts";
 import { IWeeklyActivityChartProps } from "./props";
 import { CHART_COLOR } from "@/utils/constants/ui.constant";
+import { BarChart3 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export function WeeklyActivityChart({ data }: IWeeklyActivityChartProps) {
   /* -------------------------------- Utils ------------------------------- */
+  const t = useTranslations("dashboard");
   const hasData = data.some(
     (d) => d.likes > 0 || d.received > 0 || d.matches > 0,
   );
@@ -21,15 +24,27 @@ export function WeeklyActivityChart({ data }: IWeeklyActivityChartProps) {
   /* -------------------------- Empty List State -------------------------- */
   if (!hasData) {
     return (
-      <div className="flex items-center justify-center h-[250px] text-muted-foreground text-sm">
-        No activity this week. Start liking to see your chart!
+      <div
+        role="status"
+        aria-live="polite"
+        className="flex h-[250px] flex-col items-center justify-center gap-3 border border-dashed border-border bg-muted/20 px-5 text-center text-sm text-muted-foreground"
+      >
+        <span className="grid size-11 place-items-center bg-primary/10 text-primary">
+          <BarChart3 className="size-5" aria-hidden />
+        </span>
+        <span className="max-w-sm">{t("noActivityThisWeek")}</span>
       </div>
     );
   }
 
   /* ------------------------------ Render UI ------------------------------ */
   return (
-    <ResponsiveContainer width="100%" height={250}>
+    <div
+      role="img"
+      aria-label={t("weeklyActivityDescription")}
+      className="h-[250px] w-full"
+    >
+    <ResponsiveContainer width="100%" height="100%">
       {/* Chart Section */}
       <BarChart data={data} barGap={2} barCategoryGap="20%">
         <CartesianGrid
@@ -83,5 +98,6 @@ export function WeeklyActivityChart({ data }: IWeeklyActivityChartProps) {
         />
       </BarChart>
     </ResponsiveContainer>
+    </div>
   );
 }

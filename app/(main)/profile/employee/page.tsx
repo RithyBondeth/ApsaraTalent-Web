@@ -133,6 +133,7 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
+import { PageState } from "@/components/utils/feedback/page-state";
 import { employeeFormSchema, TEmployeeProfileForm } from "./validation";
 import {
   addNewEducationSvg,
@@ -1242,7 +1243,18 @@ export default function EmployeeProfilePage() {
   if (!hasLoadedProfile) return <EmployeeProfilePageLoadingSkeleton />;
 
   /* -------------------------------- Empty State ------------------------------ */
-  if (!user || !employee) return null;
+  if (!user || !employee)
+    return (
+      <PageState
+        variant="error"
+        title={tP("profileUnavailable")}
+        description={tP("profileUnavailableDescription")}
+        action={{
+          label: tP("reloadProfile"),
+          onClick: () => window.location.reload(),
+        }}
+      />
+    );
 
   /* -------------------------------- Profile Completion ---------------------- */
   const profileCompletion = getEmployeeProfileCompletion({

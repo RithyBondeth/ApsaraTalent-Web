@@ -1495,10 +1495,10 @@ html.theme-fallback-transition body *::after {
   position: relative;
   display: grid;
   width: 102px;
-  height: 34px;
+  height: 46px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: stretch;
-  padding: 2px;
+  padding: 0;
   border: 1px solid hsl(var(--border) / 0.76);
   border-radius: 1px;
   background: hsl(var(--muted) / 0.56);
@@ -1535,7 +1535,8 @@ html.theme-fallback-transition body *::after {
   position: relative;
   z-index: 1;
   display: grid;
-  min-width: 0;
+  min-width: 44px;
+  min-height: 44px;
   height: 100%;
   place-items: center;
   padding: 0 5px;
@@ -1600,7 +1601,7 @@ html.theme-fallback-transition body *::after {
   position: relative;
   display: grid;
   width: 46px;
-  height: 34px;
+  height: 44px;
   place-items: center;
   padding: 0;
   border: 0;
@@ -2459,7 +2460,12 @@ body:has(.auth-scope),
 
 .auth-field-toggle {
   display: flex;
+  width: 44px;
+  height: 44px;
   flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  margin-right: -0.75rem;
   color: hsl(var(--muted-foreground));
   transition:
     color 0.2s ease,
@@ -2467,6 +2473,10 @@ body:has(.auth-scope),
 }
 .auth-field-toggle:hover {
   color: hsl(var(--foreground));
+}
+.auth-field-toggle:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
 }
 .auth-field-toggle:active {
   transform: scale(0.9);

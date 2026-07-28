@@ -17,7 +17,6 @@ import {
 } from "@/utils/types/resume/resume.type";
 import { TemplateCardSkeleton } from "@/components/resume-builder/skeleton";
 import { useTranslations } from "next-intl";
-import { TypographyP } from "@/components/utils/typography/typography-p";
 import {
   normalizeResumePayload,
   removeLegacyResumeDraft,
@@ -25,7 +24,6 @@ import {
   resumeSchema,
   saveResumeDraft,
 } from "@/utils/functions/resume/resume-draft";
-import { Button } from "@/components/ui/button";
 import { prepareResumeAvatar } from "@/utils/functions/resume/prepare-resume-avatar";
 import { useGenerateAiResumeStore } from "@/stores/apis/resume/generate-ai-resume.store";
 import { toast } from "sonner";
@@ -35,6 +33,7 @@ import {
   RESUME_SOURCE_MAX_LENGTH,
   RESUME_TEMPLATE_LABEL_KEYS,
 } from "@/utils/constants/resume.constant";
+import { PageState } from "@/components/utils/feedback/page-state";
 
 /* --------------------------------- Helper ---------------------------------- */
 /** Numbered step header shared by each stage of the builder flow */
@@ -186,19 +185,17 @@ export default function ResumeBuilder() {
                 <TemplateCardSkeleton key={i} />
               ))
             ) : templatesError ? (
-              <div className="col-span-full flex flex-col items-center justify-center gap-3 border border-destructive/30 bg-destructive/5 px-6 py-12">
-                <TypographyP className="text-center text-sm text-destructive">
-                  {templatesError}
-                </TypographyP>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-none"
-                  onClick={() => void queryAllTemplates()}
-                >
-                  {t("retry")}
-                </Button>
-              </div>
+              <PageState
+                variant="error"
+                title={templatesError}
+                description={t("templatesErrorDescription")}
+                compact
+                className="col-span-full"
+                action={{
+                  label: t("retry"),
+                  onClick: () => void queryAllTemplates(),
+                }}
+              />
             ) : templateData && templateData.length > 0 ? (
               templateData.map((resume) => {
                 if (!isResumeTemplateKey(resume.templateKey)) return null;
@@ -217,11 +214,17 @@ export default function ResumeBuilder() {
                 );
               })
             ) : (
-              <div className="col-span-full flex flex-col items-center justify-center gap-2 border border-border px-6 py-12">
-                <TypographyP className="text-sm text-muted-foreground">
-                  {t("noTemplatesAvailable")}
-                </TypographyP>
-              </div>
+              <PageState
+                variant="empty"
+                title={t("noTemplatesTitle")}
+                description={t("noTemplatesAvailable")}
+                compact
+                className="col-span-full"
+                action={{
+                  label: t("retry"),
+                  onClick: () => void queryAllTemplates(),
+                }}
+              />
             )}
           </div>
         </section>

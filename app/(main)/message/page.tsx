@@ -17,8 +17,6 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ImperativePanelHandle } from "react-resizable-panels";
-import { TypographyP } from "@/components/utils/typography/typography-p";
-import Image from "next/image";
 import MessageLoadingSkeleton, {
   MessagePaneSkeleton,
   MessageThreadSkeleton,
@@ -27,6 +25,7 @@ import { messageEmptySvg } from "@/utils/constants/asset.constant";
 import { CHAT_LOADING_TIMEOUT_MS } from "@/utils/constants/chat.constant";
 import { IMessage } from "@/utils/interfaces/chat/chat.interface";
 import { useTranslations } from "next-intl";
+import { PageState } from "@/components/utils/feedback/page-state";
 
 export default function MessagePageContent() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -216,6 +215,21 @@ export default function MessagePageContent() {
 
   if (isLoading) return <MessageLoadingSkeleton />;
 
+  if (loadingTimedOut && (!isConnected || !isChatsLoaded))
+    return (
+      <div className="mx-auto flex h-full w-full max-w-[1500px] items-center px-3 sm:px-4 lg:px-5">
+        <PageState
+          variant="error"
+          title={t("connectionError")}
+          description={t("connectionErrorDescription")}
+          action={{
+            label: t("retry"),
+            onClick: () => window.location.reload(),
+          }}
+        />
+      </div>
+    );
+
   /* -------------------------------- Render UI -------------------------------- */
   // Chat View Section
   const chatView = activeChat ? (
@@ -254,19 +268,14 @@ export default function MessagePageContent() {
 
   // Desktop Empty State View Section
   const desktopEmptyStateView = (
-    <div className="flex flex-1 flex-col items-center justify-center p-8 text-center bg-muted/10">
-      <div className="w-full flex flex-col items-center justify-center my-16">
-        <Image
-          src={messageEmptySvg}
-          alt="Message"
-          height={300}
-          width={300}
-          className="animate-float border-b-[5px] border-b-foreground pb-4"
-        />
-        <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
-          {t("selectConversation")}
-        </TypographyP>
-      </div>
+    <div className="flex flex-1 items-center bg-muted/10 p-8">
+      <PageState
+        variant="empty"
+        title={t("selectConversationTitle")}
+        description={t("selectConversation")}
+        image={messageEmptySvg}
+        compact
+      />
     </div>
   );
 

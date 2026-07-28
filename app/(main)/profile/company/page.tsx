@@ -123,6 +123,7 @@ import { SectionTitle } from "@/components/utils/layout/section-title";
 import ProfileCompletionCard from "@/components/profile/profile-completion-card";
 import ProfileEditActionBar from "@/components/profile/profile-edit-action-bar";
 import MissingProfileFieldButton from "@/components/profile/missing-profile-field-button";
+import { PageState } from "@/components/utils/feedback/page-state";
 
 export default function ProfilePage() {
   /* ---------------------------------- Utils ----------------------------------- */
@@ -1141,7 +1142,18 @@ export default function ProfilePage() {
   if (!hasLoadedProfile) return <CompanyProfilePageLoadingSkeleton />;
 
   /* -------------------------------- Empty State ------------------------------ */
-  if (!user || !company) return null;
+  if (!user || !company)
+    return (
+      <PageState
+        variant="error"
+        title={tP("profileUnavailable")}
+        description={tP("profileUnavailableDescription")}
+        action={{
+          label: tP("reloadProfile"),
+          onClick: () => window.location.reload(),
+        }}
+      />
+    );
 
   /* -------------------------------- Profile Completion ----------------------- */
   const profileCompletion = getCompanyProfileCompletion({

@@ -31,6 +31,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     },
     ref,
   ) => {
+    const generatedId = React.useId();
     const textareaRef = React.useRef<HTMLTextAreaElement>(null);
 
     React.useImperativeHandle(
@@ -63,6 +64,14 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       typeof validationMessage === "string"
         ? validationMessage
         : validationMessage?.message;
+    const hasError = Boolean(message);
+    const validationMessageId = `${props.id ?? generatedId}-validation`;
+    const describedBy = [
+      props["aria-describedby"],
+      hasError ? validationMessageId : undefined,
+    ]
+      .filter(Boolean)
+      .join(" ") || undefined;
 
     return (
       <div className="relative w-full flex flex-col items-start gap-1">
@@ -79,7 +88,8 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             {...props}
             ref={textareaRef}
             onChange={handleChange}
-            aria-invalid={Boolean(message) || props["aria-invalid"]}
+            aria-invalid={hasError || props["aria-invalid"]}
+            aria-describedby={describedBy}
             className={cn(
               "flex min-h-[80px] w-full rounded-none border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm !leading-loose",
               prefix && "pl-10",
@@ -89,8 +99,10 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             )}
           />
         </div>
-        {Boolean(message) && (
+        {hasError && (
           <TypographySmall
+            id={validationMessageId}
+            role="alert"
             className="field-validation-message field-validation-message-textarea text-xs text-red-500"
             title={typeof message === "string" ? message : String(message)}
           >

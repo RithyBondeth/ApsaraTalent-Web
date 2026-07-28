@@ -5,8 +5,8 @@ import { ChatTypingIndicator } from "./message-utils/typing-indicator";
 import { parseMessageDate } from "@/utils/functions/date";
 import { IMessage } from "@/utils/interfaces/chat/chat.interface";
 import { IChatMessagesProps } from "./props";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { useTranslations } from "next-intl";
+import { PageState } from "@/components/utils/feedback/page-state";
 
 /* --------------------------------- Helper --------------------------------- */
 // Resolve last seen message index
@@ -82,26 +82,13 @@ export const ChatMessages = (props: IChatMessagesProps) => {
     <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain bg-muted/10 px-3 py-4 sm:px-4 md:px-5">
       {messages.length === 0 ? (
         /* Empty State Section */
-        <div className="h-full flex flex-col items-center justify-center gap-2 text-center px-4">
-          <div className="w-12 h-12 rounded-none bg-foreground text-background flex items-center justify-center">
-            <svg
-              className="w-6 h-6 text-background"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-              />
-            </svg>
-          </div>
-          <TypographyMuted className="text-sm text-muted-foreground">
-            {t("noMessages")}
-          </TypographyMuted>
-        </div>
+        <PageState
+          variant="empty"
+          title={t("noMessagesTitle")}
+          description={t("noMessages")}
+          compact
+          className="h-full min-h-0 shadow-none"
+        />
       ) : (
         /* Messages Section */
         <>

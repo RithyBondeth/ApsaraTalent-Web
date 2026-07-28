@@ -4,7 +4,7 @@ import { PageState } from "@/components/utils/feedback/page-state";
 import * as Sentry from "@sentry/nextjs";
 import { useEffect } from "react";
 
-export default function MainError({
+export default function AppError({
   error,
   reset,
 }: {
@@ -19,15 +19,17 @@ export default function MainError({
 
   /* ------------------------------- Render UI ------------------------------ */
   return (
-    <div className="mx-auto w-full max-w-3xl px-3 sm:px-4">
-      <PageState
-        variant="error"
-        title="Something went wrong"
-        description={`An unexpected error occurred. Try this page again.${
-          error.digest ? ` Error ID: ${error.digest}` : ""
-        }`}
-        action={{ label: "Try again", onClick: reset }}
-      />
+    <div className="flex min-h-screen items-center bg-background px-4">
+      <div className="mx-auto w-full max-w-3xl">
+        <PageState
+          variant="error"
+          title="Something went wrong"
+          description={`This page could not be displayed. Try loading it again.${
+            error.digest ? ` Error ID: ${error.digest}` : ""
+          }`}
+          action={{ label: "Try again", onClick: reset }}
+        />
+      </div>
     </div>
   );
 }

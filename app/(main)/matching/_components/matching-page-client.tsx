@@ -2,7 +2,6 @@
 
 import MatchingCompanyCard from "@/components/matching/matching-company-card";
 import MatchingEmployeeCard from "@/components/matching/matching-employee-card";
-import { TypographyP } from "@/components/utils/typography/typography-p";
 import { useFetchOnce } from "@/hooks/utils/use-fetch-once";
 import { useGetCurrentCompanyMatchingStore } from "@/stores/apis/matching/get-current-company-matching.store";
 import { useGetCurrentEmployeeMatchingStore } from "@/stores/apis/matching/get-current-employee-matching.store";
@@ -19,11 +18,11 @@ import { MatchingLoadingSkeleton } from "@/components/matching/skeleton";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import Link from "next/link";
 import { emptySvg, matchingBannerSvg } from "@/utils/constants/asset.constant";
 import { USER_ROLE } from "@/utils/constants/auth.constant";
 import { CountUp } from "@/components/utils/animations/count-up";
 import { Building2, Handshake, Users } from "lucide-react";
+import { PageState } from "@/components/utils/feedback/page-state";
 
 interface Props {
   initialIsEmployee: boolean;
@@ -209,6 +208,39 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
   );
 
   /* ------------------------------- Loading State ----------------------------- */
+  const matchingError = isEmployee
+    ? getCurrentEmpStore.error
+    : getCurrentCmpStore.error;
+  const matchingUserId = isEmployee
+    ? currentUser?.employee?.id
+    : currentUser?.company?.id;
+
+  if (mounted && currentUser && matchingError)
+    return (
+      <div className="mx-auto w-full max-w-[1500px] px-3 py-10 sm:px-4 lg:px-5">
+        <PageState
+          variant="error"
+          title={matchingError}
+          description={t("loadErrorDescription")}
+          action={
+            matchingUserId
+              ? {
+                  label: t("retry"),
+                  onClick: () =>
+                    isEmployee
+                      ? getCurrentEmpStore.queryCurrentEmployeeMatching(
+                          matchingUserId,
+                        )
+                      : getCurrentCmpStore.queryCurrentCompanyMatching(
+                          matchingUserId,
+                        ),
+                }
+              : undefined
+          }
+        />
+      </div>
+    );
+
   const isLoadingForEmployee =
     isEmployee &&
     (getCurrentEmpStore.loading ||
@@ -388,24 +420,14 @@ export default function MatchingPageClient({ initialIsEmployee }: Props) {
           ))
         ) : (
           /* Empty Matching List Section */
-          <div className="my-8 flex w-full flex-col items-center justify-center gap-4 border border-border bg-card px-5 py-12 text-center">
-            <Image
-              src={emptySvg}
-              alt="empty"
-              height={200}
-              width={200}
-              className="animate-float grayscale"
-            />
-            <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
-              {t("emptyList")}
-            </TypographyP>
-            <Link
-              href="/feed"
-              className="inline-flex min-h-10 items-center gap-2 bg-foreground px-5 py-2 text-xs font-semibold text-background transition-all hover:opacity-85 active:scale-95"
-            >
-              {t("goToFeed")}
-            </Link>
-          </div>
+          <PageState
+            variant="empty"
+            title={t("emptyList")}
+            image={emptySvg}
+            compact
+            className="my-6 sm:my-8"
+            action={{ label: t("goToFeed"), href: "/feed" }}
+          />
         )}
         </div>
       </section>

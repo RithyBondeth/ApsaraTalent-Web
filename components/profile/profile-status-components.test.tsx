@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import ProfileCompletionCard from "./profile-completion-card";
 import { AvailabilityBadge } from "@/components/utils/data-display/availability-badge";
@@ -40,8 +40,18 @@ describe("profile status components", () => {
   });
 
   it("renders a visible search failure", () => {
-    render(<SearchErrorCard title="Could not search" description="Try again later" />);
+    const onRetry = vi.fn();
+    render(
+      <SearchErrorCard
+        title="Could not search"
+        description="Try again later"
+        retryLabel="Try again"
+        onRetry={onRetry}
+      />,
+    );
     expect(screen.getByText("Could not search")).toBeInTheDocument();
     expect(screen.getByText("Try again later")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Try again" }));
+    expect(onRetry).toHaveBeenCalledOnce();
   });
 });

@@ -59,7 +59,6 @@ const AuthField = forwardRef<HTMLInputElement, IAuthFieldProps>(
           {isPassword && (
             <button
               type="button"
-              tabIndex={-1}
               className="auth-field-toggle"
               onClick={() => setReveal((value) => !value)}
               aria-label={reveal ? "Hide password" : "Show password"}

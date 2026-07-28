@@ -4,9 +4,9 @@ import { Check, CheckCheck, Users } from "lucide-react";
 import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import { IChatListProps } from "../props";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import { messageSvg } from "@/utils/constants/asset.constant";
 import { getNameInitials } from "@/utils/functions/text";
+import { PageState } from "@/components/utils/feedback/page-state";
 
 export default function ExpandedChatList(props: IChatListProps) {
   /* --------------------------------- Props --------------------------------- */
@@ -18,18 +18,15 @@ export default function ExpandedChatList(props: IChatListProps) {
   /* ------------------------------ Empty State ------------------------------ */
   if (!chats || chats.length === 0)
     return (
-      <div className="flex flex-col items-center justify-center gap-2 p-8 text-center">
-        <Image
-          src={messageSvg}
-          alt="No conversations"
-          height={300}
-          width={300}
-          className="animate-float"
-        />
-        <TypographyMuted className="text-sm text-muted-foreground">
-          {t("noConversations")}
-        </TypographyMuted>
-      </div>
+      <PageState
+        variant="empty"
+        title={t("noConversations")}
+        description={t("noConversationsDescription")}
+        image={messageSvg}
+        compact
+        className="m-3 w-auto shadow-none"
+        action={{ label: t("discoverMatches"), href: "/matching" }}
+      />
     );
 
   /* -------------------------------- Render UI -------------------------------- */

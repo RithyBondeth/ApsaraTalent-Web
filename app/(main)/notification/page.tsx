@@ -18,7 +18,6 @@ import { BellRing, LucideCheckCheck, LucideTrash2 } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { TypographyP } from "@/components/utils/typography/typography-p";
 import {
   notificationEmptySvg,
   notificationBannerSvg,
@@ -28,6 +27,7 @@ import NotificationLoadingSkeleton, {
   NotificationCardSkeleton,
 } from "@/components/notification/skeleton";
 import { INotification } from "@/utils/interfaces/notification/notification.interface";
+import { PageState } from "@/components/utils/feedback/page-state";
 
 /* ---------------------------------- Helper --------------------------------- */
 /** Fallback name parser for old notifications that pre-date the senderName data field. */
@@ -87,6 +87,7 @@ export default function NotificationPage() {
   const {
     notifications,
     loading,
+    error,
     unreadCount,
     queryNotifications,
     markRead,
@@ -224,9 +225,10 @@ export default function NotificationPage() {
                 key={f}
                 type="button"
                 onClick={() => setNotificationFilter(f)}
-                className={`shrink-0 px-3 py-1.5 text-xs font-bold transition-all duration-200 ${
+                aria-pressed={active}
+                className={`min-h-10 shrink-0 px-3 py-1.5 text-xs font-bold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
                   active
-                    ? "bg-foreground text-background"
+                    ? "bg-primary text-primary-foreground"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -239,7 +241,7 @@ export default function NotificationPage() {
         {/* Responsive Dropdown Section */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild className="hidden tablet-sm:flex">
-            <Button className="h-9 w-full rounded-none text-xs tablet-sm:w-auto">
+            <Button className="h-11 w-full rounded-none text-xs tablet-sm:w-auto">
               {t("filterLabel")}{" "}
               {
                 (
@@ -311,24 +313,51 @@ export default function NotificationPage() {
             <NotificationCardSkeleton />
           </>
         )}
+        {/* Error State Section */}
+        {!loading && error && (
+          <PageState
+            variant="error"
+            title={error}
+            description={t("loadErrorDescription")}
+            compact
+            className="my-6 sm:my-8"
+            action={{
+              label: t("retry"),
+              onClick: () =>
+                void queryNotifications({
+                  page: 1,
+                  limit: 50,
+                  ...(notificationFilter === "unread" && {
+                    unreadOnly: true,
+                  }),
+                }),
+            }}
+          />
+        )}
+
         {/* Empty State Section */}
-        {!loading && filteredNotifications.length === 0 && (
-          <div className="my-8 flex w-full flex-col items-center justify-center gap-4 border border-border bg-card px-5 py-12 text-center">
-            <Image
-              src={notificationEmptySvg}
-              alt="Notification"
-              height={200}
-              width={200}
-              className="animate-float grayscale"
-            />
-            <TypographyP className="!m-0 text-sm font-medium text-muted-foreground">
-              {t("emptyList")}
-            </TypographyP>
-          </div>
+        {!loading && !error && filteredNotifications.length === 0 && (
+          <PageState
+            variant="empty"
+            title={t("emptyList")}
+            description={t("emptyListDescription")}
+            image={notificationEmptySvg}
+            compact
+            className="my-6 sm:my-8"
+            action={
+              notificationFilter !== "all"
+                ? {
+                    label: t("filterAll"),
+                    onClick: () => setNotificationFilter("all"),
+                  }
+                : undefined
+            }
+          />
         )}
 
         {/* Notification Cards Section */}
         {!loading &&
+          !error &&
           filteredNotifications.map((notification: INotification) => {
             const notifUser = resolveNotificationUser(notification, role);
 

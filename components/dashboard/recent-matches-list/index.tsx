@@ -20,8 +20,14 @@ export function RecentMatchesList({
   /* --------------------------- Empty List State --------------------------- */
   if (!matches || matches.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-8 text-center">
-        <Handshake className="h-10 w-10 text-muted-foreground/30 mb-3" />
+      <div
+        role="status"
+        aria-live="polite"
+        className="flex flex-col items-center justify-center border border-dashed border-border bg-muted/20 px-5 py-8 text-center"
+      >
+        <span className="mb-3 grid size-11 place-items-center bg-primary/10 text-primary">
+          <Handshake className="size-5" aria-hidden />
+        </span>
         <TypographyMuted className="text-sm text-muted-foreground">
           {t("noMatchesYet", {
             role: isEmployee ? t("company") : t("candidate"),

@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { PageState } from "@/components/utils/feedback/page-state";
 import {
   Carousel,
   CarouselContent,
@@ -244,32 +245,27 @@ export default function CompanyDetailPage() {
   /* -------------------------------- Error State -------------------------------- */
   if (fetchError)
     return (
-      <div className="flex min-h-[60vh] items-center justify-center animate-page-in">
-        <div className="max-w-md border border-destructive/30 bg-card p-6 text-center shadow-[5px_5px_0_hsl(var(--destructive)/0.08)]">
-          <p className="font-semibold text-destructive">{fetchError}</p>
-          <Button
-            variant="destructive"
-            onClick={() => window.location.reload()}
-            className="mt-4 min-w-32 rounded-none"
-          >
-            {tf("retry")}
-          </Button>
-        </div>
+      <div className="animate-page-in">
+        <PageState
+          variant="error"
+          title={fetchError}
+          action={{
+            label: tf("retry"),
+            onClick: () => window.location.reload(),
+          }}
+        />
       </div>
     );
 
   /* ------------------------------ Not Found State ------------------------------ */
   if (!companyData)
     return (
-      <div className="flex min-h-[60vh] items-center justify-center animate-page-in">
-        <div className="max-w-md border border-border bg-card p-6 text-center shadow-[5px_5px_0_hsl(var(--foreground)/0.06)]">
-          <p className="font-semibold">{tf("companyNotFound")}</p>
-          <Link href="/feed" className="mt-4 inline-flex">
-            <Button variant="outline" className="min-w-36 rounded-none">
-              {tf("backToFeed")}
-            </Button>
-          </Link>
-        </div>
+      <div className="animate-page-in">
+        <PageState
+          variant="empty"
+          title={tf("companyNotFound")}
+          action={{ label: tf("backToFeed"), href: "/feed" }}
+        />
       </div>
     );
 

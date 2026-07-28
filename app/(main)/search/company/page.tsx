@@ -4,6 +4,7 @@ import SearchBar from "@/components/search/search-bar";
 import SearchEmployeeCard from "@/components/search/search-employee-card";
 import SearchPageHero from "@/components/search/search-page-hero";
 import { SearchErrorCard } from "@/components/search/search-error-card";
+import { PageState } from "@/components/utils/feedback/page-state";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup } from "@/components/ui/radio-group";
@@ -38,7 +39,6 @@ import {
   LucideUsers,
   LucideX,
 } from "lucide-react";
-import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -656,6 +656,8 @@ export default function CompanySearchPage() {
                 <SearchErrorCard
                   title={error}
                   description={t("errorDescription")}
+                  retryLabel={t("retry")}
+                  onRetry={() => runSearch(getValues())}
                 />
               </div>
             ) : loading || filteredEmployees === null ? (
@@ -741,27 +743,17 @@ export default function CompanySearchPage() {
               </>
             ) : (
               /* Empty List Section */
-              <div className="flex w-full flex-col items-center justify-center gap-3 border border-border bg-card px-5 py-12 text-center">
-                <Image
-                  src={emptySvg}
-                  alt="empty"
-                  height={160}
-                  width={160}
-                  className="animate-float"
-                />
-                <TypographyP className="text-muted-foreground">
-                  {t("emptyList")}
-                </TypographyP>
-                {activeFilterCount > 0 && (
-                  <button
-                    type="button"
-                    onClick={clearAllFilters}
-                    className="inline-flex items-center gap-2 rounded-none border border-border bg-card px-5 py-2 text-xs font-semibold text-foreground transition-all hover:bg-muted active:scale-95"
-                  >
-                    {t("clearFilters")}
-                  </button>
-                )}
-              </div>
+              <PageState
+                variant="empty"
+                title={t("emptyList")}
+                image={emptySvg}
+                compact
+                action={
+                  activeFilterCount > 0
+                    ? { label: t("clearFilters"), onClick: clearAllFilters }
+                    : undefined
+                }
+              />
             )}
           </div>
         </div>
