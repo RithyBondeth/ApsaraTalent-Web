@@ -349,11 +349,11 @@ export function AiCoverLetterModal(props: IAiCoverLetterModalProps) {
             {generating && !coverLetter ? (
               <>
                 {/* Skeleton Loader Section */}
-                <Skeleton className="h-7 w-24 rounded-md" />
+                <Skeleton className="h-7 w-24 rounded-none" />
                 <div className="flex items-center gap-2">
-                  <Skeleton className="h-7 w-16 rounded-md" />
-                  <Skeleton className="size-7 rounded-md" />
-                  <Skeleton className="h-7 w-28 rounded-md" />
+                  <Skeleton className="h-7 w-16 rounded-none" />
+                  <Skeleton className="size-7 rounded-none" />
+                  <Skeleton className="h-7 w-28 rounded-none" />
                 </div>
               </>
             ) : (

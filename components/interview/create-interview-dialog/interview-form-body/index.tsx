@@ -237,7 +237,7 @@ export function InterviewFormBody(props: IInterviewFormBodyProps) {
             </Field>
 
             <Field label={t("duration")} icon={<LucideTimer />}>
-              <div className="flex items-center h-10 rounded-md border border-input bg-background px-3 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-background">
+              <div className="flex items-center h-10 rounded-none border border-input bg-background px-3 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-background">
                 <input
                   type="number"
                   min={5}

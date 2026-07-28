@@ -61,7 +61,7 @@ export function YearPicker({
           variant="outline"
           disabled={disabled}
           className={cn(
-            "w-full justify-between border rounded-md px-4 py-6 text-left text-muted-foreground bg-primary-foreground",
+            "w-full justify-between border rounded-none px-4 py-6 text-left text-muted-foreground bg-primary-foreground",
             disabled && "opacity-50 cursor-not-allowed",
             className,
           )}

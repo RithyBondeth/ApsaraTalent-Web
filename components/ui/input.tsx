@@ -31,7 +31,7 @@ const Input = React.forwardRef<HTMLInputElement, IInputProps>(
         <div
           data-error={hasError}
           className={cn(
-            "flex items-center h-12 w-full rounded-lg border border-input bg-background px-3 text-base transition-[color,border-color,box-shadow] duration-200",
+            "flex items-center h-12 w-full rounded-none border border-input bg-background px-3 text-base transition-[color,border-color,box-shadow] duration-200",
             "hover:border-foreground/25",
             "focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/20",
             "data-[error=true]:border-destructive data-[error=true]:focus-within:border-destructive data-[error=true]:focus-within:ring-destructive/20",

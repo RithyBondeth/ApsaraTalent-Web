@@ -226,7 +226,7 @@ export function ExperienceCard({
               {achFields.map((f, ai) => (
                 <div
                   key={f.id}
-                  className="group/ach flex flex-col gap-1.5 p-2 rounded-md bg-muted/20 border border-border/40"
+                  className="group/ach flex flex-col gap-1.5 p-2 rounded-none bg-muted/20 border border-border border-l-[4px] border-l-foreground"
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-bold text-muted-foreground uppercase">
