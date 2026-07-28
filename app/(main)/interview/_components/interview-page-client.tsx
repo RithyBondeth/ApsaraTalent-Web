@@ -111,7 +111,7 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
       <section className="feed-hero grid min-h-[280px] w-full grid-cols-[minmax(0,1.45fr)_minmax(260px,0.75fr)] overflow-hidden border border-border bg-card tablet-md:grid-cols-1">
         <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 sm:px-9 sm:py-10 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6">
           <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-            <span className="h-px w-7 bg-foreground" />
+            <span className="h-px w-7 bg-primary" />
             {t("interviewDesk")}
           </div>
           <div className="max-w-3xl">
@@ -201,7 +201,7 @@ export default function InterviewPageClient({ initialIsEmployee }: Props) {
               initialEmployeeId={initialEmployeeId}
             />
           ) : (
-            <div className="grid size-9 shrink-0 place-items-center bg-foreground text-background">
+            <div className="grid size-9 shrink-0 place-items-center bg-primary text-primary-foreground">
               <CalendarCheck2 className="size-4" />
             </div>
           )}

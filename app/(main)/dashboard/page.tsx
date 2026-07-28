@@ -52,7 +52,7 @@ function SectionHeader({ number, title, icon }: { number: string; title: string;
         <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">{number}</span>
         <h2 className="text-xl font-black tracking-[-0.03em] text-foreground sm:text-2xl">{title}</h2>
       </div>
-      <div className="grid size-9 shrink-0 place-items-center bg-foreground text-background">{icon}</div>
+      <div className="grid size-9 shrink-0 place-items-center bg-primary text-primary-foreground">{icon}</div>
     </div>
   );
 }
@@ -122,7 +122,7 @@ export default function DashboardPage() {
       <section className="feed-hero grid min-h-[280px] w-full grid-cols-[minmax(0,1.45fr)_minmax(260px,0.75fr)] overflow-hidden border border-border bg-card tablet-md:grid-cols-1">
         <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 sm:px-9 sm:py-10 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6">
           <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-            <span className="h-px w-7 bg-foreground" />
+            <span className="h-px w-7 bg-primary" />
             {t("insightCenter")}
           </div>
           <div className="max-w-3xl">
@@ -185,7 +185,7 @@ export default function DashboardPage() {
       <SectionHeader number="02" title={t("performance")} icon={<BarChart3 className="size-4" />} />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Weekly Activity Bar Chart Section */}
-        <div className="border border-border border-t-[5px] border-t-foreground bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:col-span-2 sm:p-6 lg:col-span-2">
+        <div className="border border-border border-t-[5px] border-t-primary bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:col-span-2 sm:p-6 lg:col-span-2">
           {/* Weekly Activity Header Section */}
           <div className="flex items-start justify-between gap-3 mb-4 flex-wrap">
             <div className="flex flex-col items-start gap-2">
@@ -214,7 +214,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Match Rate Radial Chart Section */}
-        <div className="flex flex-col border border-border border-t-[5px] border-t-foreground bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:p-6">
+        <div className="flex flex-col border border-border border-t-[5px] border-t-primary bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:p-6">
           {/* Match Rate Header Section */}
           <div className="flex flex-col items-start gap-2">
             <TypographyH4>{t("matchRate")}</TypographyH4>
@@ -233,7 +233,7 @@ export default function DashboardPage() {
       {/* Recent Match Row Section */}
       <section className="flex w-full flex-col gap-5">
       <SectionHeader number="03" title={t("recentMatches")} icon={<LucideUsers className="size-4" />} />
-      <div className="border border-border border-t-[5px] border-t-foreground bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:p-6">
+      <div className="border border-border border-t-[5px] border-t-primary bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:p-6">
         <RecentMatchesList
           matches={data.recentMatches}
           isEmployee={isEmployee}

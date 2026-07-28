@@ -301,7 +301,7 @@ export default function TopNavbar() {
                   <span
                     className={`relative flex h-8 w-9 items-center justify-center border transition-[background-color,border-color,color,transform] duration-200 ${
                       isMoreActive
-                        ? "border-foreground bg-foreground text-background shadow-[2px_2px_0_hsl(var(--foreground)/0.12)]"
+                        ? "border-primary bg-primary text-primary-foreground shadow-[2px_2px_0_hsl(var(--primary)/0.22)]"
                         : "border-transparent group-hover:border-border group-hover:bg-muted/60 group-active:translate-y-px"
                     }`}
                   >

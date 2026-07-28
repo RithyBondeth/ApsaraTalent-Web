@@ -134,7 +134,7 @@ export default function SettingPage() {
   return (
     <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-7 px-3 animate-page-in sm:gap-9 sm:px-4 lg:px-5">
       {/* Header Section */}
-      <header className="relative overflow-hidden border border-border border-t-[5px] border-t-foreground bg-card px-5 py-7 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:px-7 sm:py-9">
+      <header className="relative overflow-hidden border border-border border-t-[5px] border-t-primary bg-card px-5 py-7 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:px-7 sm:py-9">
         <div className="pointer-events-none absolute -right-10 -top-16 size-52 rotate-12 border-[28px] border-primary/5" />
         <div className="relative flex items-start gap-4 sm:gap-5">
           <div className="flex size-11 shrink-0 items-center justify-center bg-primary text-primary-foreground sm:size-12">

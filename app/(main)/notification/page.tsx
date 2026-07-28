@@ -141,7 +141,7 @@ export default function NotificationPage() {
       <section className="feed-hero grid min-h-[280px] w-full grid-cols-[minmax(0,1.45fr)_minmax(260px,0.75fr)] overflow-hidden border border-border bg-card tablet-md:grid-cols-1">
         <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 sm:px-9 sm:py-10 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6">
           <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-            <span className="h-px w-7 bg-foreground" />
+            <span className="h-px w-7 bg-primary" />
             {t("activityCenter")}
           </div>
           <div className="max-w-3xl">
@@ -193,11 +193,11 @@ export default function NotificationPage() {
               <p className="mt-1 text-xs font-medium text-muted-foreground">{t("notificationCount", { count: filteredNotifications.length })}</p>
             </div>
           </div>
-          <div className="grid size-9 shrink-0 place-items-center bg-foreground text-background"><BellRing className="size-4" /></div>
+          <div className="grid size-9 shrink-0 place-items-center bg-primary text-primary-foreground"><BellRing className="size-4" /></div>
         </div>
 
       {/* Controls Section */}
-      <div className="flex w-full flex-col gap-3 border border-border border-t-[5px] border-t-foreground bg-card p-3 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex w-full flex-col gap-3 border border-border border-t-[5px] border-t-primary bg-card p-3 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:flex-row sm:items-center sm:justify-between">
         {/* Pill Tabs Filter Section */}
         <div className="flex items-center gap-1 overflow-x-auto bg-muted/45 p-1 scrollbar-none tablet-sm:hidden">
           {(

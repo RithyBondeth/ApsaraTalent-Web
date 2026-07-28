@@ -79,7 +79,7 @@ export function DashboardLoadingSkeleton() {
         <DashboardSectionHeaderSkeleton titleWidth="w-32" />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {/* Bar Chart Section */}
-        <div className="border border-border border-t-[5px] border-t-foreground bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:col-span-2 sm:p-6 lg:col-span-2">
+        <div className="border border-border border-t-[5px] border-t-primary bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:col-span-2 sm:p-6 lg:col-span-2">
           <div className="flex items-start flex-wrap justify-between gap-3 mb-4">
             <div>
               <Skeleton className="mb-1.5 h-5 w-32 rounded-none" />
@@ -95,7 +95,7 @@ export function DashboardLoadingSkeleton() {
         </div>
 
         {/* Radial Chart Section */}
-        <div className="flex flex-col border border-border border-t-[5px] border-t-foreground bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:p-6">
+        <div className="flex flex-col border border-border border-t-[5px] border-t-primary bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:p-6">
           <Skeleton className="mb-1.5 h-5 w-24 rounded-none" />
           <Skeleton className="h-3 w-44 rounded-none" />
           <div className="flex-1 flex items-center justify-center min-h-[200px]">
@@ -108,7 +108,7 @@ export function DashboardLoadingSkeleton() {
       {/* Recent Matches Section */}
       <section className="flex w-full flex-col gap-5">
         <DashboardSectionHeaderSkeleton titleWidth="w-40" />
-        <div className="border border-border border-t-[5px] border-t-foreground bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:p-6">
+        <div className="border border-border border-t-[5px] border-t-primary bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:p-6">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {Array.from({ length: 5 }).map((_, i) => (
             <div

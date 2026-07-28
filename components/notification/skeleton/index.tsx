@@ -22,7 +22,7 @@ export default function NotificationLoadingSkeleton() {
         </div>
 
       {/* Header Section: Filter tabs + action buttons */}
-      <div className="flex w-full flex-col gap-3 border border-border border-t-[5px] border-t-foreground bg-card p-3 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex w-full flex-col gap-3 border border-border border-t-[5px] border-t-primary bg-card p-3 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:flex-row sm:items-center sm:justify-between">
         {/* Pill Tabs Filter Section: Hidden on tablet-sm */}
         <div className="flex items-center gap-1 overflow-x-auto bg-muted/45 p-1 scrollbar-none tablet-sm:hidden">
           {Array.from({ length: 6 }).map((_, i) => (
