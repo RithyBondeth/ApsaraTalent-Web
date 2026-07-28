@@ -452,6 +452,9 @@
     "twoFactorDisabled": "Two-factor authentication disabled."
   },
   "dashboard": {
+    "insightCenter": "Insight Center",
+    "overview": "Overview",
+    "performance": "Performance",
     "title": "Dashboard",
     "description": "Your activity overview at a glance.",
     "weeklyActivity": "Weekly Activity",
@@ -1293,6 +1296,9 @@
     "noDocumentFound": "No document found."
   },
   "notification": {
+    "activityCenter": "Activity Center",
+    "recentActivity": "Recent Activity",
+    "notificationCount": "{count, plural, one {# notification} other {# notifications}}",
     "emptyList": "No notifications yet",
     "filterAll": "All",
     "filterMatches": "Matches",
@@ -1461,6 +1467,9 @@
   },
   "interview": {
     "title": "Interviews",
+    "interviewDesk": "Interview Desk",
+    "scheduledInterviews": "Scheduled Interviews",
+    "scheduledCount": "{count, plural, one {# interview} other {# interviews}}",
     "bannerTitleEmployee": "Your Upcoming Interviews",
     "bannerSubtitle1Employee": "Stay prepared and make every interview count.",
     "bannerSubtitle2Employee": "Review schedules, join meetings, and track your progress — all in one place.",

@@ -53,11 +53,10 @@ export default function NotificationBaseCard(
     <div
       onClick={onClick}
       className={cn(
-        "group/card relative w-full flex items-start gap-3 rounded-xl p-4 transition-all duration-300 sm:gap-5 sm:p-5",
-        "bg-card border border-border shadow-sm",
+        "group/card relative flex w-full items-start gap-3 overflow-hidden rounded-none border border-border border-l-[5px] border-l-foreground bg-card p-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 sm:gap-5 sm:p-5",
         onClick &&
-          "cursor-pointer hover:bg-muted/30 hover:shadow-md active:scale-[0.99]",
-        !seen && "ring-1 ring-primary/10",
+          "cursor-pointer hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:bg-muted/20 hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)] active:scale-[0.99]",
+        !seen && "bg-muted/15",
         isDeleting && "animate-card-pop-shrink",
         className,
       )}
@@ -66,7 +65,7 @@ export default function NotificationBaseCard(
       {!seen && (
         <div
           className={cn(
-            "absolute left-0 top-1/2 -translate-y-1/2 h-2/3 w-1 rounded-r-full transition-all duration-300",
+            "absolute bottom-0 left-0 top-0 w-1 transition-all duration-300",
             unreadColor.replace("bg-", "bg-"), // Ensure it's a bg class
           )}
         />
@@ -76,7 +75,7 @@ export default function NotificationBaseCard(
       {onDelete && (
         <button
           onClick={handleDelete}
-          className="absolute right-3 top-3 rounded-full p-1.5 text-muted-foreground opacity-0 transition-all duration-200 hover:bg-destructive/10 hover:text-destructive group-hover/card:opacity-100 focus:opacity-100"
+          className="absolute right-3 top-3 p-1.5 text-muted-foreground opacity-0 transition-all duration-200 hover:bg-destructive/10 hover:text-destructive group-hover/card:opacity-100 focus:opacity-100"
           aria-label={t("deleteNotification")}
         >
           <LucideX className="size-4" />
@@ -86,7 +85,7 @@ export default function NotificationBaseCard(
       {/* Icon Section */}
       <div
         className={cn(
-          "shrink-0 rounded-xl p-2.5 sm:p-3 transition-transform duration-300 group-hover/card:scale-110",
+          "shrink-0 border border-current/10 p-2.5 transition-transform duration-300 group-hover/card:scale-105 sm:p-3",
           iconBgColor,
           iconColor,
         )}
@@ -95,9 +94,9 @@ export default function NotificationBaseCard(
       </div>
 
       {/* Content Section */}
-      <div className="flex-1 flex flex-col gap-1.5 min-w-0">
-        <div className="w-full flex items-center justify-between gap-2">
-          <TypographyLead className="text-sm sm:text-base font-bold text-foreground line-clamp-1">
+      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+        <div className="flex w-full items-center justify-between gap-2 pr-7">
+          <TypographyLead className="line-clamp-1 text-sm font-black tracking-[-0.02em] text-foreground sm:text-base">
             {title}
           </TypographyLead>
           <div className="flex items-center gap-2 shrink-0">

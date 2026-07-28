@@ -52,7 +52,7 @@ export default function NotificationMessageCard(
         <div className="flex items-center gap-3 min-w-0">
           {/* Avatar and Name Section */}
           <div className="flex items-center gap-2 min-w-0">
-            <Avatar rounded="md" className="bg-secondary size-8 shrink-0">
+            <Avatar rounded="md" className="size-8 shrink-0 !rounded-none border border-border bg-secondary">
               <AvatarFallback className="text-sm">
                 {getNameInitials(props.user.name)}
               </AvatarFallback>
@@ -73,14 +73,14 @@ export default function NotificationMessageCard(
           </div>
 
           {/* Message Badge Section */}
-          <div className="shrink-0 px-3 py-1 rounded-xl text-[10px] font-bold uppercase tracking-wider text-green-500 bg-green-100 dark:bg-green-900/30">
+          <div className="shrink-0 border border-green-500/15 bg-green-100 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-green-500 dark:bg-green-900/30">
             {t("messageBadge")}
           </div>
         </div>
 
         {/* Button Section */}
         <Button
-          className="h-8 text-xs tablet-sm:h-9 tablet-sm:w-full tablet-sm:text-xs"
+          className="h-8 rounded-none text-xs tablet-sm:h-9 tablet-sm:w-full tablet-sm:text-xs"
           onClick={(e) => {
             e.stopPropagation();
             handleReply();

@@ -11,54 +11,71 @@ export default function InterviewLoadingSkeleton({
   const isCompany = role === USER_ROLE.COMPANY;
 
   return (
-    <div className="w-full flex flex-col gap-4 px-2.5 sm:px-5">
+    <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-7 px-3 sm:gap-9 sm:px-4 lg:px-5">
       {/* Banner Section */}
       <FeedBannerSkeleton />
 
-      {/* Create Interview Button Section (Company Only) */}
-      {isCompany && (
-        <div className="flex items-center justify-end">
-          <Skeleton className="h-9 w-44 rounded-md" />
-        </div>
-      )}
-
-      {/* Interview Cards Section */}
-      {[...Array(3)].map((_, index) => (
-        <div
-          key={index}
-          className="bg-card rounded-2xl border border-border/60 shadow-sm overflow-hidden"
-        >
-          {/* Card Body Section */}
-          <div className="p-4 sm:p-5 flex flex-col gap-3">
-            {/* Header Row Section: Title + Status Badge */}
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex flex-col gap-1.5">
-                <Skeleton className="h-5 w-48" />
-                <Skeleton className="h-3.5 w-36" />
-              </div>
-              <Skeleton className="h-6 w-20 rounded-full flex-shrink-0" />
-            </div>
-            {/* Description Section (line-clamp-2) */}
-            <div className="space-y-1.5">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-4/5" />
-            </div>
-            {/* Meta Pills Section: Date, Duration, Location/Link */}
-            <div className="flex flex-wrap gap-3">
-              <Skeleton className="h-7 w-32 rounded-full" />
-              <Skeleton className="h-7 w-20 rounded-full" />
-              <Skeleton className="h-7 w-28 rounded-full" />
+      {/* Interview Schedule Section */}
+      <section className="flex w-full flex-col gap-5">
+        <div className="flex items-end justify-between border-b border-border pb-4">
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-3 w-5 rounded-none" />
+            <div className="space-y-2">
+              <Skeleton className="h-7 w-48 rounded-none" />
+              <Skeleton className="h-3 w-24 rounded-none" />
             </div>
           </div>
-
-          {/* Action Bar Section (Employee always has AI prep footer; Company has no footer (conditional on pending+received)) */}
-          {!isCompany && (
-            <div className="px-4 sm:px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center gap-2">
-              <Skeleton className="h-8 w-36 rounded-md" />
-            </div>
-          )}
+          <Skeleton
+            className={
+              isCompany
+                ? "h-9 w-44 rounded-none"
+                : "size-9 rounded-none"
+            }
+          />
         </div>
-      ))}
+
+        {/* Interview Cards Section */}
+        <div className="flex w-full flex-col gap-3">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div
+              key={index}
+              className="w-full overflow-hidden rounded-none border border-border border-l-[5px] border-l-foreground bg-card shadow-[5px_5px_0_hsl(var(--foreground)/0.055)]"
+            >
+              {/* Card Body Section */}
+              <div className="flex flex-col gap-4 p-4 sm:p-5">
+                {/* Header Row Section: Title + Status Badge */}
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex flex-col gap-0.5">
+                    <Skeleton className="h-5 w-48 rounded-none sm:h-6" />
+                    <Skeleton className="h-5 w-36 rounded-none" />
+                  </div>
+                  <Skeleton className="h-6 w-20 flex-shrink-0 rounded-none" />
+                </div>
+
+                {/* Description Section */}
+                <div className="space-y-1.5">
+                  <Skeleton className="h-5 w-full rounded-none" />
+                  <Skeleton className="h-5 w-4/5 rounded-none" />
+                </div>
+
+                {/* Schedule Metadata Section */}
+                <div className="flex flex-wrap gap-2">
+                  <Skeleton className="h-7 w-32 rounded-none" />
+                  <Skeleton className="h-7 w-20 rounded-none" />
+                  <Skeleton className="h-7 w-28 rounded-none" />
+                </div>
+              </div>
+
+              {/* Employee Action Bar Section */}
+              {!isCompany && (
+                <div className="flex items-center gap-2 border-t border-border bg-muted/25 px-4 py-3 sm:px-5">
+                  <Skeleton className="h-9 w-36 rounded-none" />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

@@ -2,16 +2,13 @@
 
 import { useAnalyticsStore } from "@/stores/apis/matching/analytics.store";
 import { useGetCurrentUserStore } from "@/stores/apis/users/get-current-user.store";
-import { LucideUsers } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Activity, BarChart3, LucideUsers } from "lucide-react";
+import { useEffect, useMemo, useRef } from "react";
 import { statisticCardConstants } from "@/utils/constants/dashboard.constant";
 import dynamic from "next/dynamic";
 import { DashboardChartSkeleton } from "@/components/dashboard/skeleton";
 import { RecentMatchesList } from "@/components/dashboard/recent-matches-list";
-import { TypographyH2 } from "@/components/utils/typography/typography-h2";
 import { TypographyH4 } from "@/components/utils/typography/typography-h4";
-import { TypographyH3 } from "@/components/utils/typography/typography-h3";
-import { TypographyMuted } from "@/components/utils/typography/typography-muted";
 import StatisticCard from "@/components/dashboard/statistic-card";
 import { ProfileCompletenessCard } from "@/components/dashboard/profile-completeness-card";
 import { DashboardLoadingSkeleton } from "@/components/dashboard/skeleton";
@@ -30,7 +27,10 @@ const WeeklyActivityChart = dynamic(
     import("@/components/dashboard/weekly-activity-chart").then(
       (m) => m.WeeklyActivityChart,
     ),
-  { loading: () => <DashboardChartSkeleton />, ssr: false },
+  {
+    loading: () => <DashboardChartSkeleton variant="activity" />,
+    ssr: false,
+  },
 );
 
 const MatchRateRadial = dynamic(
@@ -38,8 +38,24 @@ const MatchRateRadial = dynamic(
     import("@/components/dashboard/match-rate-radial").then(
       (m) => m.MatchRateRadial,
     ),
-  { loading: () => <DashboardChartSkeleton />, ssr: false },
+  {
+    loading: () => <DashboardChartSkeleton variant="rate" />,
+    ssr: false,
+  },
 );
+
+/* ---------------------------------- Helper --------------------------------- */
+function SectionHeader({ number, title, icon }: { number: string; title: string; icon: React.ReactNode }) {
+  return (
+    <div className="flex w-full items-end justify-between gap-4 border-b border-border pb-4">
+      <div className="flex items-center gap-3">
+        <span className="text-xs font-black tracking-[0.16em] text-muted-foreground">{number}</span>
+        <h2 className="text-xl font-black tracking-[-0.03em] text-foreground sm:text-2xl">{title}</h2>
+      </div>
+      <div className="grid size-9 shrink-0 place-items-center bg-foreground text-background">{icon}</div>
+    </div>
+  );
+}
 
 export default function DashboardPage() {
   /* ---------------------------------- Utils --------------------------------- */
@@ -47,16 +63,12 @@ export default function DashboardPage() {
 
   /* -------------------------------- All States ------------------------------ */
   const hasFetched = useRef<boolean>(false);
-  const [mounted, setMounted] = useState<boolean>(false);
 
   /* ----------------------------- API Integration ---------------------------- */
   const { user } = useGetCurrentUserStore();
   const { data, loading, error, queryAnalytics } = useAnalyticsStore();
 
   /* --------------------------------- Effects -------------------------------- */
-  // ── Mounted Effect ─────────────────────────────
-  useEffect(() => setMounted(true), []);
-
   // ── Query Analytics Effect ─────────────────────
   useEffect(() => {
     if (!user || hasFetched.current) return;
@@ -96,99 +108,53 @@ export default function DashboardPage() {
   /* ----------------------------- Error State ------------------------------- */
   if (error)
     return (
-      <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-6 text-center text-destructive">
+      <div className="mx-auto w-full max-w-[1500px] px-3 py-10 sm:px-4 lg:px-5">
+        <div className="border border-destructive/30 border-l-[5px] border-l-destructive bg-destructive/5 p-6 text-center text-destructive">
         {error}
+        </div>
       </div>
     );
 
   /* ------------------------------- Render UI ------------------------------- */
   return (
-    <div className="flex flex-col gap-6 p-4 md:p-6 animate-page-in">
+    <div className="dashboard-editorial mx-auto flex w-full max-w-[1500px] flex-col items-start gap-7 px-3 animate-page-in sm:gap-9 sm:px-4 lg:px-5">
       {/* Banner Section */}
-      {/* Desktop Banner Section 1050px */}
-      <div className="w-full flex items-center justify-between gap-6 lg:gap-10 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-6 py-8 sm:px-8 tablet-xl:hidden">
-        <div className="flex flex-col items-start gap-3">
-          <TypographyH2 className="leading-relaxed">
-            {isEmployee ? t("bannerTitleEmployee") : t("bannerTitleCompany")}
-          </TypographyH2>
-          <TypographyH4 className="leading-relaxed">
-            {isEmployee
-              ? t("bannerSubtitle1Employee")
-              : t("bannerSubtitle1Company")}
-          </TypographyH4>
-          <TypographyH4 className="leading-relaxed">
-            {isEmployee
-              ? t("bannerSubtitle2Employee")
-              : t("bannerSubtitle2Company")}
-          </TypographyH4>
-          <TypographyMuted className="leading-relaxed">
+      <section className="feed-hero grid min-h-[280px] w-full grid-cols-[minmax(0,1.45fr)_minmax(260px,0.75fr)] overflow-hidden border border-border bg-card tablet-md:grid-cols-1">
+        <div className="flex min-w-0 flex-col justify-between gap-8 px-7 py-8 sm:px-9 sm:py-10 tablet-md:gap-5 tablet-md:px-5 tablet-md:py-6">
+          <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+            <span className="h-px w-7 bg-foreground" />
+            {t("insightCenter")}
+          </div>
+          <div className="max-w-3xl">
+            <h1 className="max-w-[18ch] text-balance text-3xl font-black leading-[1.05] tracking-[-0.045em] text-foreground sm:text-4xl lg:text-5xl">
+              {isEmployee ? t("bannerTitleEmployee") : t("bannerTitleCompany")}
+            </h1>
+            <p className="mt-4 max-w-[60ch] text-sm leading-6 text-muted-foreground sm:text-base">
+              {isEmployee ? t("bannerSubtitle1Employee") : t("bannerSubtitle1Company")} {isEmployee ? t("bannerSubtitle2Employee") : t("bannerSubtitle2Company")}
+            </p>
+          </div>
+          <p className="max-w-[70ch] border-l-2 border-foreground pl-3 text-xs leading-5 text-muted-foreground">
             {isEmployee ? t("bannerMutedEmployee") : t("bannerMutedCompany")}
-          </TypographyMuted>
-        </div>
-        {mounted && (
-          <Image
-            src={matchingBannerSvg}
-            alt="dashboard"
-            height={250}
-            width={350}
-            className="h-auto max-w-[340px] shrink-0"
-            priority
-          />
-        )}
-      </div>
-
-      {/* Tablet Banner Section 651px–1050px */}
-      <div className="hidden tablet-xl:flex tablet-md:!hidden w-full items-center justify-between gap-4 rounded-2xl bg-gradient-to-br from-primary/[0.06] via-transparent to-muted/30 border border-border/50 px-5 py-5 overflow-hidden">
-        <div className="flex-1 min-w-0 flex flex-col gap-2">
-          <TypographyH3 className="!leading-snug">
-            {isEmployee ? t("bannerTitleEmployee") : t("bannerTitleCompany")}
-          </TypographyH3>
-          <TypographyMuted className="!leading-snug">
-            {isEmployee
-              ? t("bannerSubtitle1Employee")
-              : t("bannerSubtitle1Company")}
-          </TypographyMuted>
-          <TypographyMuted className="!leading-snug">
-            {isEmployee
-              ? t("bannerSubtitle2Employee")
-              : t("bannerSubtitle2Company")}
-          </TypographyMuted>
-        </div>
-        {mounted && (
-          <Image
-            src={matchingBannerSvg}
-            alt="dashboard"
-            width={160}
-            height={160}
-            className="shrink-0 h-auto object-contain"
-            priority
-          />
-        )}
-      </div>
-
-      {/* Mobile Banner Section ≤ 650px */}
-      <div className="hidden tablet-md:flex w-full items-center gap-3 rounded-2xl bg-gradient-to-br from-primary/[0.08] via-primary/[0.03] to-muted/40 border border-border/50 px-4 py-3 overflow-hidden">
-        <div className="flex-1 min-w-0 flex flex-col gap-1">
-          <h2 className="font-bold text-sm leading-snug text-foreground">
-            {isEmployee ? t("bannerTitleEmployee") : t("bannerTitleCompany")}
-          </h2>
-          <p className="text-xs text-muted-foreground leading-snug line-clamp-2">
-            {isEmployee
-              ? t("bannerSubtitle1Employee")
-              : t("bannerSubtitle1Company")}
           </p>
         </div>
-        {mounted && (
-          <Image
-            src={matchingBannerSvg}
-            alt="dashboard"
-            width={88}
-            height={88}
-            className="flex-shrink-0 object-contain"
-            priority
-          />
-        )}
-      </div>
+
+        <div className="feed-hero-visual">
+          <div aria-hidden className="feed-hero-visual-grid" />
+          <div className="feed-hero-network-chip"><span className="feed-hero-network-icon" aria-hidden><Activity /></span><span>{t("insightCenter")}</span><span aria-hidden className="feed-hero-network-status" /></div>
+          <div aria-hidden className="feed-hero-art-stage">
+            <span className="feed-hero-node feed-hero-node-one" /><span className="feed-hero-node feed-hero-node-two" /><span className="feed-hero-node feed-hero-node-three" />
+            <div className="feed-hero-art-frame">
+              <div className="feed-hero-art-grid" /><div className="feed-hero-art-glow" />
+              <Image src={matchingBannerSvg} alt="" height={260} width={360} className="feed-hero-artwork" priority />
+              <span className="feed-hero-corner feed-hero-corner-nw" /><span className="feed-hero-corner feed-hero-corner-ne" /><span className="feed-hero-corner feed-hero-corner-sw" /><span className="feed-hero-corner feed-hero-corner-se" />
+            </div>
+          </div>
+          <div aria-hidden className="feed-hero-signal-bars"><span /><span /><span /><span /></div>
+        </div>
+      </section>
+
+      <section className="flex w-full flex-col gap-5">
+        <SectionHeader number="01" title={t("overview")} icon={<Activity className="size-4" />} />
 
       {/* Profile Completeness Card Section */}
       {profileCompletion && (
@@ -212,11 +178,14 @@ export default function DashboardPage() {
           />
         ))}
       </div>
+      </section>
 
       {/* Charts Row Section */}
+      <section className="flex w-full flex-col gap-5">
+      <SectionHeader number="02" title={t("performance")} icon={<BarChart3 className="size-4" />} />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Weekly Activity Bar Chart Section */}
-        <div className="sm:col-span-2 lg:col-span-2 bg-card rounded-2xl border border-border/60 p-5 sm:p-6">
+        <div className="border border-border border-t-[5px] border-t-foreground bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:col-span-2 sm:p-6 lg:col-span-2">
           {/* Weekly Activity Header Section */}
           <div className="flex items-start justify-between gap-3 mb-4 flex-wrap">
             <div className="flex flex-col items-start gap-2">
@@ -227,15 +196,15 @@ export default function DashboardPage() {
             </div>
             <div className="flex items-center flex-wrap gap-x-3 gap-y-1.5 text-xs text-muted-foreground">
               <span className="flex items-center gap-1.5">
-                <span className="size-2.5 rounded-full bg-primary" />
+                <span className="size-2.5 bg-primary" />
                 {t("likes")}
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="size-2.5 rounded-full bg-pink-500" />
+                <span className="size-2.5 bg-pink-500" />
                 {t("received")}
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="size-2.5 rounded-full bg-emerald-500" />
+                <span className="size-2.5 bg-emerald-500" />
                 {t("matches")}
               </span>
             </div>
@@ -245,7 +214,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Match Rate Radial Chart Section */}
-        <div className="bg-card rounded-2xl border border-border/60 p-5 sm:p-6 flex flex-col">
+        <div className="flex flex-col border border-border border-t-[5px] border-t-foreground bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:p-6">
           {/* Match Rate Header Section */}
           <div className="flex flex-col items-start gap-2">
             <TypographyH4>{t("matchRate")}</TypographyH4>
@@ -259,18 +228,18 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+      </section>
 
       {/* Recent Match Row Section */}
-      <div className="bg-card rounded-2xl border border-border/60 p-5 sm:p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <LucideUsers className="h-4.5 w-4.5 text-primary" />
-          <TypographyH4>{t("recentMatches")}</TypographyH4>
-        </div>
+      <section className="flex w-full flex-col gap-5">
+      <SectionHeader number="03" title={t("recentMatches")} icon={<LucideUsers className="size-4" />} />
+      <div className="border border-border border-t-[5px] border-t-foreground bg-card p-5 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:p-6">
         <RecentMatchesList
           matches={data.recentMatches}
           isEmployee={isEmployee}
         />
       </div>
+      </section>
     </div>
   );
 }

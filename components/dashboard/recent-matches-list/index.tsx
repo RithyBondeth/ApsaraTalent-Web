@@ -33,17 +33,17 @@ export function RecentMatchesList({
 
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
       {matches.map((match) => (
         <div
           key={match.id}
-          className="flex items-center gap-3 rounded-xl border border-border/50 bg-accent/30 p-3 transition-colors hover:bg-accent/60"
+          className="flex items-center gap-3 border border-border border-l-[3px] border-l-foreground bg-muted/25 p-3 transition-all hover:-translate-y-0.5 hover:bg-muted/45"
         >
           {/* Avatar Section */}
           <CachedAvatar
             src={match.avatar}
             alt={match.name}
-            className="size-10 shrink-0 ring-1 ring-border"
+            className="size-10 shrink-0 !rounded-none border border-border"
             rounded="md"
             preload={true}
             showLoadingState={true}

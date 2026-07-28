@@ -13,7 +13,7 @@ export default function StatisticCard({
 }: IStatisticCardProps) {
   /* -------------------------------- Render UI -------------------------------- */
   return (
-    <div className="group relative overflow-hidden bg-card rounded-2xl border border-border/60 p-4 sm:p-5 transition-all duration-300 hover:shadow-md hover:border-border">
+    <article className="group relative overflow-hidden border border-border border-l-[5px] border-l-foreground bg-card p-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/35 hover:border-l-foreground hover:shadow-[8px_8px_0_hsl(var(--foreground)/0.08)] sm:p-5">
       {/* Subtle Gradient bg on hover Section */}
       <div
         className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${bgColor}`}
@@ -23,7 +23,7 @@ export default function StatisticCard({
         <div className="flex items-center justify-between mb-3">
           {/* Icon Section */}
           <div
-            className={`flex h-9 w-9 items-center justify-center rounded-lg ${bgColor}`}
+            className={`flex h-9 w-9 items-center justify-center border border-current/10 ${bgColor}`}
           >
             <Icon className={`h-4.5 w-4.5 ${color}`} />
           </div>
@@ -40,6 +40,6 @@ export default function StatisticCard({
           {label}
         </TypographyMuted>
       </div>
-    </div>
+    </article>
   );
 }

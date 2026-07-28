@@ -65,7 +65,7 @@ export default function NotificationInterviewCard(
         <div className="flex items-center gap-3 min-w-0">
           {/* Avatar and Name Section */}
           <div className="flex items-center gap-2 min-w-0">
-            <Avatar rounded="md" className="bg-secondary size-8 shrink-0">
+            <Avatar rounded="md" className="size-8 shrink-0 !rounded-none border border-border bg-secondary">
               <AvatarFallback className="text-sm">
                 {getNameInitials(props.user.name)}
               </AvatarFallback>
@@ -86,14 +86,14 @@ export default function NotificationInterviewCard(
           </div>
 
           {/* Interview Badge Section */}
-          <div className="shrink-0 px-3 py-1 rounded-xl text-[10px] font-bold uppercase tracking-wider text-teal-600 bg-teal-100 dark:bg-teal-900/30">
+          <div className="shrink-0 border border-teal-500/15 bg-teal-100 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-teal-600 dark:bg-teal-900/30">
             {t("interviewBadge")}
           </div>
         </div>
 
         {/* Button Section */}
         <Button
-          className="h-8 text-xs tablet-sm:h-9 tablet-sm:w-full tablet-sm:text-xs"
+          className="h-8 rounded-none text-xs tablet-sm:h-9 tablet-sm:w-full tablet-sm:text-xs"
           onClick={(e) => {
             e.stopPropagation();
             handleNavigate();

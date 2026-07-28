@@ -452,6 +452,9 @@
     "twoFactorDisabled": "ការផ្ទៀងផ្ទាត់ពីរជំហានបានបិទ។"
   },
   "dashboard": {
+    "insightCenter": "មជ្ឈមណ្ឌលទិន្នន័យ",
+    "overview": "ទិដ្ឋភាពទូទៅ",
+    "performance": "លទ្ធផលសកម្មភាព",
     "title": "ផ្ទាំងគ្រប់គ្រង",
     "description": "ទិដ្ឋភាពទូទៅនៃសកម្មភាពរបស់អ្នកដោយក្រឡេកមើល។",
     "weeklyActivity": "សកម្មភាពប្រចាំសប្តាហ៍",
@@ -1293,6 +1296,9 @@
     "noDocumentFound": "រករឯកសារមិនឃើញ។"
   },
   "notification": {
+    "activityCenter": "មជ្ឈមណ្ឌលសកម្មភាព",
+    "recentActivity": "សកម្មភាពថ្មីៗ",
+    "notificationCount": "{count, plural, one {# ការជូនដំណឹង} other {# ការជូនដំណឹង}}",
     "emptyList": "មិនទាន់មានការជូនដំណឹងនៅឡើយទេ",
     "filterAll": "ទាំងអស់",
     "filterMatches": "ការផ្គូផ្គង",
@@ -1461,6 +1467,9 @@
   },
   "interview": {
     "title": "សម្ភាសន៍",
+    "interviewDesk": "ផ្នែកសម្ភាសន៍",
+    "scheduledInterviews": "ការសម្ភាសន៍ដែលបានគ្រោង",
+    "scheduledCount": "{count, plural, one {# ការសម្ភាសន៍} other {# ការសម្ភាសន៍}}",
     "scheduleInterview": "គ្រោងការសម្ភាសន៍",
     "selectEmployee": "ជ្រើសរើសបុគ្គលិក",
     "chooseMatchedEmployee": "ជ្រើសរើសបុគ្គលិកដែលបានផ្គូផ្គង",

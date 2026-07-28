@@ -157,7 +157,7 @@ export function CreateInterviewDialog({
 
   // ── Trigger Button ──────────────────────────────────────────────────
   const trigger = (
-    <Button size="sm">
+    <Button size="sm" className="rounded-none">
       <LucidePlus className="size-4" />
       {t("scheduleInterview")}
     </Button>

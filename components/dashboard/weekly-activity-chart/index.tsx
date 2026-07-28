@@ -54,7 +54,7 @@ export function WeeklyActivityChart({ data }: IWeeklyActivityChartProps) {
           contentStyle={{
             backgroundColor: "hsl(var(--card))",
             border: "1px solid hsl(var(--border))",
-            borderRadius: "12px",
+            borderRadius: "0",
             fontSize: "12px",
             boxShadow: "0 4px 12px hsl(var(--foreground) / 0.08)",
           }}
@@ -64,21 +64,21 @@ export function WeeklyActivityChart({ data }: IWeeklyActivityChartProps) {
           dataKey="likes"
           name="Likes Given"
           fill="hsl(var(--primary))"
-          radius={[4, 4, 0, 0]}
+          radius={[0, 0, 0, 0]}
           maxBarSize={28}
         />
         <Bar
           dataKey="received"
           name="Likes Received"
           fill={CHART_COLOR.PINK}
-          radius={[4, 4, 0, 0]}
+          radius={[0, 0, 0, 0]}
           maxBarSize={28}
         />
         <Bar
           dataKey="matches"
           name="Matches"
           fill={CHART_COLOR.GREEN}
-          radius={[4, 4, 0, 0]}
+          radius={[0, 0, 0, 0]}
           maxBarSize={28}
         />
       </BarChart>

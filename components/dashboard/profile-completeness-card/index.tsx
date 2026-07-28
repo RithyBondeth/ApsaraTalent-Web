@@ -44,10 +44,10 @@ export function ProfileCompletenessCard({
 
   /* ---------------------------------- Render UI --------------------------------- */
   return (
-    <div className="w-full flex items-center gap-4 sm:gap-6 bg-card rounded-2xl border border-border/60 px-5 py-4 sm:px-6">
+    <div className="flex w-full items-center gap-4 border border-border border-l-[5px] border-l-foreground bg-card px-5 py-4 shadow-[5px_5px_0_hsl(var(--foreground)/0.055)] sm:gap-6 sm:px-6">
       {/* Icon Section */}
       <div
-        className={`hidden sm:flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${bgColor}`}
+        className={`hidden h-10 w-10 shrink-0 items-center justify-center border border-current/10 sm:flex ${bgColor}`}
       >
         {isComplete ? (
           <LucideCheckCircle2 className={`h-5 w-5 ${textColor}`} />
@@ -67,9 +67,9 @@ export function ProfileCompletenessCard({
           </span>
         </div>
         {/* Progress Bar Section */}
-        <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
+        <div className="h-1.5 w-full overflow-hidden bg-muted">
           <div
-            className={`h-full rounded-full transition-all duration-500 ${barColor}`}
+            className={`h-full transition-all duration-500 ${barColor}`}
             style={{ width: `${percentage}%` }}
           />
         </div>
@@ -87,7 +87,7 @@ export function ProfileCompletenessCard({
           asChild
           size="sm"
           variant="outline"
-          className="shrink-0 hidden xs:flex text-xs rounded-xl gap-1"
+          className="hidden shrink-0 gap-1 rounded-none text-xs xs:flex"
         >
           <Link href={profileUrl}>
             {t("completeProfile")}

@@ -164,7 +164,7 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
       <Button
         size="sm"
         variant="outline"
-        className="text-xs gap-1.5"
+        className="gap-1.5 rounded-none text-xs"
         onClick={handleOpen}
       >
         <LucideMessageCircleQuestion className="size-3.5 text-primary" />
@@ -330,4 +330,3 @@ export function AiInterviewPrepModal(props: IAiInterviewPrepModalProps) {
     </>
   );
 }
-
